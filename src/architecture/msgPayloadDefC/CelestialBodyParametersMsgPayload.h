@@ -28,12 +28,13 @@
 typedef struct {
     char bodyName[MAX_STRING_LENGTH];
     char shapeModel[MAX_STRING_LENGTH];
+    double sigma_BN[3];
     double perlinNoise;
     double proceduralRocks;
     char brdf[MAX_STRING_LENGTH];
     double reflectanceParameters[MAX_PARAMETER_LENGTH];
     double meanRadius;
-    double principalAxisDistortion;
+    double principalAxisDistortion[3];
 }CelestialBodyParametersMsgPayload;
 
 #endif //CELESTIAL_BODY_PARAMETERS
