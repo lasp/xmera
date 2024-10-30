@@ -112,7 +112,6 @@ void ZmqConnector::ping() {
     //      but our socket is not non-blocking
     //   2) the returned length in the (present) optional is recoverable from `pong.size()`.
     static_cast<void>(this->requesterSocket->recv(message, zmq::recv_flags::none));
-    std::cout << message.str() << std::endl;
 }
 
 void ZmqConnector::setComPortNumber(std::string &portNumber) {
