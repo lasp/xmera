@@ -110,8 +110,8 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
             cobBuffer.valid = true;
             cobBuffer.timeTag = this->sensorTimeTag;
             cobBuffer.cameraID = imageBuffer.cameraID;
-            cobBuffer.centerOfBrightness[0] = cobData.first[0];
-            cobBuffer.centerOfBrightness[1] = cobData.first[1];
+            cobBuffer.centerOfBrightness[0] = cobData.first[0] + 0.5;
+            cobBuffer.centerOfBrightness[1] = cobData.first[1] + 0.5;
             cobBuffer.pixelsFound = static_cast<int32_t> (locations.size());
         }
         cobBuffer.rollingAverageBrightness = averageBrightnessNew;
