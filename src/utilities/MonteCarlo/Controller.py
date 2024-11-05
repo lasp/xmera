@@ -826,10 +826,16 @@ class SimulationExecutor:
 
             # apply the dispersions and the random seeds
             for variable, value in list(modifications.items()):
-                disperseStatement = "simInstance." + variable + "=" + value
+                expresion = "simInstance." + variable
+                dispersionExpresion = None
+                if eval("callable(" + expresion + ")"):
+                    dispersionExpresion = expresion + "(" + value + ")"
+                else:
+                    dispersionExpresion = expresion + "=" + value
+
                 if simParams.verbose:
-                    print("Executing parameter modification -> ", disperseStatement)
-                exec(disperseStatement)
+                    print("Executing parameter modification -> ", dispersionExpresion)
+                exec(dispersionExpresion)
 
             # setup data logging
             if len(simParams.retentionPolicies) > 0:
@@ -921,4 +927,3 @@ class SimulationExecutor:
             if ".RNGSeed" in variable:
                 rngStatement = "simInstance." + variable + "=" + value
                 exec(rngStatement)
-
