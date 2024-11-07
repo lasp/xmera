@@ -22,11 +22,13 @@
 
 #include "cielimMessage.pb.h"
 #include <zmq.hpp>
+#include <Eigen/Core>
 #include <string>
 
 struct ImageData{
     int32_t imageBufferLength;
     void *imageBuffer;
+    std::optional<Eigen::Vector2d> centerOfBrightness;
 };
 
 class ZmqConnector {
@@ -37,7 +39,7 @@ public:
     void connect();
     [[nodiscard]] bool isConnected() const;
     void send(const cielimMessage::CielimMessage& messagePayload);
-    ImageData requestImage(size_t cameraId);
+    ImageData requestImage(size_t cameraId, bool shoudReturnImage=true);
     void setComPortNumber(std::string &portNumber);
     void ping();
 

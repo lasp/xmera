@@ -33,6 +33,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "cielimInterface.h"
 
 %include "architecture/msgPayloadDefCpp/CameraModelMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/OpNavCOBMsgPayload.h"
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 %include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
