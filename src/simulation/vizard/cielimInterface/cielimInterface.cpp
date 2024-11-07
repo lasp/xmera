@@ -288,7 +288,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         /*! - If the camera is requesting periodic images, request them */
         if (this->opNavMode != ClosedLoopMode::OPEN_LOOP &&
             currentSimNanos % this->cameraModelPayload.renderRate == 0 &&
-            this->cameraModelPayload.isOn == 1) {
+            this->cameraModelPayload.renderRate > 0) {
             this->requestImage(currentSimNanos);
 
         }
@@ -319,7 +319,7 @@ void CielimInterface::updateState(uint64_t currentSimNanos) {
  * */
 bool CielimInterface::shouldRequestACameraImage(uint64_t currentSimNanos) const{
     if (currentSimNanos % this->cameraModelPayload.renderRate == 0 &&
-        this->cameraModelPayload.isOn == 1 /*|| this->firstPass < 11*/) {
+        this->cameraModelPayload.renderRate > 0) {
         return true;
     }
     return false;
@@ -341,6 +341,16 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
     imagePayload.imageType = 3;
     if (imageData.imageBufferLength > 0) { imagePayload.valid = 1; }
     this->imageOutMessage.write(&imagePayload, this->moduleID, currentSimNanos);
+
+    OpNavCOBMsgPayload centerOfBrightnessPayload = {};
+    centerOfBrightnessPayload.timeTag = currentSimNanos;
+    centerOfBrightnessPayload.cameraID = this->cameraModelPayload.cameraId;
+    if (imageData.centerOfBrightness) {
+        centerOfBrightnessPayload.valid = true;
+        centerOfBrightnessPayload.centerOfBrightness[0] = imageData.centerOfBrightness.value()[0] + 0.5;
+        centerOfBrightnessPayload.centerOfBrightness[1] = imageData.centerOfBrightness.value()[1] + 0.5;
+    }
+    this->centerOfBrightnessOutMessage.write(&centerOfBrightnessPayload, this->moduleID, currentSimNanos);
 }
 
 /*! Get the communication mode

@@ -27,6 +27,7 @@
 #include "architecture/msgPayloadDefC/EpochMsgPayload.h"
 #include "architecture/msgPayloadDefC/CelestialBodyParametersMsgPayload.h"
 #include "architecture/msgPayloadDefC/CameraRenderingMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/OpNavCOBMsgPayload.h"
 
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include "utilities/vizProtobuffer/cielimMessage.pb.h"
@@ -90,6 +91,7 @@ public:
     ReadFunctor<EpochMsgPayload> epochMessage;    //!< [-] simulation epoch date/time input msg
 
     Message<CameraImageMsgPayload> imageOutMessage;  //!< vector of vizard instrument camera output messages
+    Message<OpNavCOBMsgPayload> centerOfBrightnessOutMessage;  //!< The true image center of brightness output message
 
 private:
     void requestImage(uint64_t currentSimNanos);  //!<   request image and store it in output image message

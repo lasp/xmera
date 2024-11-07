@@ -73,17 +73,14 @@ void ZmqConnector::message_buffer_deallocate(void *data, void *hint)
     free(data);
 }
 
-ImageData ZmqConnector::requestImage(size_t cameraId) {
-    std::string cmdMsg = "REQUEST_IMAGE_";
-    cmdMsg += std::to_string(cameraId);
-    void* img_message = malloc(cmdMsg.length() * sizeof(char));
-    memcpy(img_message, cmdMsg.c_str(), cmdMsg.length());
-
-    auto imageRequestMessage = zmq::message_t(img_message,
-                                              cmdMsg.length(),
-                                              ZmqConnector::message_buffer_deallocate,
-                                              nullptr);
-    this->requesterSocket->send(imageRequestMessage, zmq::send_flags::none);
+ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
+    auto cameraIdAsString = std::to_string(cameraId);
+    zmq::message_t msgCameraId(cameraIdAsString);
+    zmq::message_t msgShouldReturnImage(std::to_string(shouldReturnImage).c_str(), sizeof(char));
+    auto res = this->requesterSocket->send(zmq::str_buffer("REQUEST_IMAGE"),
+                                           zmq::send_flags::sndmore);
+    this->requesterSocket->send(msgCameraId, zmq::send_flags::sndmore);
+    this->requesterSocket->send(msgShouldReturnImage, zmq::send_flags::none);
 
     // SAFETY: it's okay to discard these [[nodiscard]] values because
     //   1) the returned optional could only be empty if ZeroMQ fails due to EAGAIN on a non-blocking socket;
@@ -91,6 +88,10 @@ ImageData ZmqConnector::requestImage(size_t cameraId) {
     //   2) the returned length in the (present) optional is recoverable from the given message's `.size()` method.
     auto imageLengthMessage = zmq::message_t();
     auto imageMessage = zmq::message_t();
+    auto centerOfBrightnessX = zmq::message_t();
+    auto centerOfBrightnessY = zmq::message_t();
+    auto cobYMsgSize = this->requesterSocket->recv(centerOfBrightnessY, zmq::recv_flags::none);
+    auto cobXMsgSize = this->requesterSocket->recv(centerOfBrightnessX, zmq::recv_flags::none);
     static_cast<void>(this->requesterSocket->recv(imageLengthMessage, zmq::recv_flags::none));
     static_cast<void>(this->requesterSocket->recv(imageMessage, zmq::recv_flags::none));
 
@@ -100,7 +101,17 @@ ImageData ZmqConnector::requestImage(size_t cameraId) {
     void* image = malloc(imageBufferLength*sizeof(char));
     memcpy(image, imagePoint, imageBufferLength*sizeof(char));
 
-    return  ImageData{imageBufferLength, image};
+    auto returnData = ImageData();
+    returnData.imageBuffer = image;
+    returnData.imageBufferLength = imageBufferLength;
+    returnData.centerOfBrightness = std::nullopt;
+
+    if (cobXMsgSize.has_value()) {
+        returnData.centerOfBrightness = Eigen::Vector2d(*centerOfBrightnessX.data<double>(),
+                *centerOfBrightnessY.data<double>());
+    }
+
+    return  returnData;
 }
 
 
