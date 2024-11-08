@@ -271,9 +271,9 @@ public:
     ~Recorder(){};
 
     //! -- self initialization
-    void SelfInit(){};
+    void selfInit(){};
     //! -- cross initialization
-    void IntegratedInit(){};
+    void integratedInit(){};
     //! -- Read and record the message
     void updateState(uint64_t CurrentSimNanos){
         if (CurrentSimNanos >= this->nextUpdateTime) {

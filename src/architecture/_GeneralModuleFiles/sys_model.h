@@ -34,10 +34,10 @@ public:
     virtual ~SysModel(){};
 
     /** Initializes the module, create messages */
-    virtual void SelfInit(){};
+    virtual void selfInit(){};
 
     /** ??? */
-    virtual void IntegratedInit(){};
+    virtual void integratedInit(){};
 
     /** Reads incoming messages, performs module actions, writes output messages */
     virtual void updateState(uint64_t currentSimNanos){};

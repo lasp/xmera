@@ -36,7 +36,7 @@ Module Programming
    variable definitions, etc.
 -  Module startup and initialization
 
-   -  The ``SelfInit()`` routine should declare the module output
+   -  The ``selfInit()`` routine should declare the module output
       messages
    -  The ``CrossInit()`` routine should subscribe to the module input
       messages

@@ -38,7 +38,7 @@ void SysModelTask::SelfInitTaskList() const
 {
     for(auto const& modelPair : this->TaskModels) {
         SysModel* NonIt = modelPair.ModelPtr;
-        NonIt->SelfInit();
+        NonIt->selfInit();
     }
 }
 
