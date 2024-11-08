@@ -101,7 +101,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
 
     # Construct algorithm and associated C++ container
     testModule = magnetometer.Magnetometer()
-    testModule.ModelTag = "TAM_sensor"
+    testModule.modelTag = "TAM_sensor"
     NoiseStd = [3e-9, 3e-9, 3e-9]  # Tesla
     bias = [1e-6, 1e-6, 1e-5]  # Tesla
     minOut = -1e-4  # Tesla
@@ -178,9 +178,9 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
 
     #   print out success or failure message
     if testFailCount == 0:
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
     else:
-        print("Failed: " + testModule.ModelTag)
+        print("Failed: " + testModule.modelTag)
     print("This test uses a relative accuracy value of " + str(errTol*100) + " percent")
 
     return [testFailCount, ''.join(testMessages)]

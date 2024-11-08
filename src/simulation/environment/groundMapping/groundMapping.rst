@@ -66,7 +66,7 @@ To use this module, the user must first instantiate the module
 .. code-block:: python
 
     groundMap = groundMapping.GroundMapping()
-    groundMap.ModelTag = "groundMapping"
+    groundMap.modelTag = "groundMapping"
 
 The user must then set several variables within the module. First, the minimum elevation and maximum range should be
 set. The minimum elevation is the minimum required elevation of the spacecraft with respect to the mapping points. The

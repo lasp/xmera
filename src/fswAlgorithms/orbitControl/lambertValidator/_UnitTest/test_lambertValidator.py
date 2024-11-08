@@ -292,7 +292,7 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
 
     # setup module to be tested
     module = lambertValidator.LambertValidator()
-    module.ModelTag = "lambertValidator"
+    module.modelTag = "lambertValidator"
     module.finalTime = tf
     module.maneuverTime = tm
     module.maxDistanceTarget = maxDistanceTarget

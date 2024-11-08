@@ -78,7 +78,7 @@ def spacecraftPointingTestFunction(show_plots, case):
 
     # Construct algorithm and associated C++ container
     module = spacecraftPointing.SpacecraftPointing()
-    module.ModelTag = "spacecraftPointing"
+    module.modelTag = "spacecraftPointing"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -203,7 +203,7 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
+                testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
                                     str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
 
@@ -230,7 +230,7 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
+                testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_N unit test at t=" +
                                     str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
 
@@ -256,7 +256,7 @@ def spacecraftPointingTestFunction(show_plots, case):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
+                testMessages.append("FAILED: " + module.modelTag + " Module failed domega_RN_N unit test at t=" +
                                     str(dataLog.times()[i]*macros.NANO2SEC) +
                                     "sec\n")
     elif (case == 2):
@@ -267,17 +267,17 @@ def spacecraftPointingTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isVectorEqual(np.array(module.sigma_BA), np.array(trueVector), accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed, sigma_BA is calculated incorrectly\n")
+            testMessages.append("FAILED: " + module.modelTag + " Module failed, sigma_BA is calculated incorrectly\n")
 
     #   print out success message if no error were found
     snippentName = "passFail" + str(case)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("FAILED: " + module.ModelTag)
+        print("FAILED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

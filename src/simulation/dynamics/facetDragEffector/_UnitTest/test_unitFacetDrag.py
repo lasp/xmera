@@ -75,15 +75,15 @@ def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     ##   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-    newAtmo.ModelTag = "ExpAtmo"
+    newAtmo.modelTag = "ExpAtmo"
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
-    newDrag.ModelTag = "FacetDrag"
+    newDrag.modelTag = "FacetDrag"
     newDrag.atmoDensInMsg.subscribeTo(newAtmo.envOutMsgs[0])
 
     scObject.addDynamicEffector(newDrag)
@@ -207,18 +207,18 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     simpleNavObj = simpleNav.SimpleNav()
     simpleNavObj.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     ##   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-    newAtmo.ModelTag = "ExpAtmo"
+    newAtmo.modelTag = "ExpAtmo"
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
-    newDrag.ModelTag = "FacetDrag"
+    newDrag.modelTag = "FacetDrag"
     newDrag.atmoDensInMsg.subscribeTo(newAtmo.envOutMsgs[0])
 
     scObject.addDynamicEffector(newDrag)

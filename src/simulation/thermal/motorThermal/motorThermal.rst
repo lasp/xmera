@@ -117,7 +117,7 @@ The temperature module is created in python using:
     :linenos:
 
     thermalModel = motorThermal.MotorThermal()
-    thermalModel.ModelTag = 'rwThermals'
+    thermalModel.modelTag = 'rwThermals'
 
 A sample setup is done using:
 

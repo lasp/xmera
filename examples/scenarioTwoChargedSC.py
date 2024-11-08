@@ -115,11 +115,11 @@ def run(show_plots):
 
     # initialize leader spacecraft object and set properties
     scObjectLeader = spacecraft.Spacecraft()
-    scObjectLeader.ModelTag = "Leader"
+    scObjectLeader.modelTag = "Leader"
 
     # initialize follower spacecraft object and set properties
     scObjectFollower = spacecraft.Spacecraft()
-    scObjectFollower.ModelTag = "Follower"
+    scObjectFollower.modelTag = "Follower"
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(dynTaskName, scObjectLeader)
@@ -139,7 +139,7 @@ def run(show_plots):
 
     # setup MSM module
     MSMmodule = msmForceTorque.MsmForceTorque()
-    MSMmodule.ModelTag = "msmForceTorqueTag"
+    MSMmodule.modelTag = "msmForceTorqueTag"
     scSim.AddModelToTask(dynTaskName, MSMmodule)
 
     # define electric potentials
@@ -197,7 +197,7 @@ def run(show_plots):
     # setup extForceTorque module for Leader
     # the electrostatic force from the MSM module is read in through the messaging system
     extFTObjectLeader = extForceTorque.ExtForceTorque()
-    extFTObjectLeader.ModelTag = "eForceLeader"
+    extFTObjectLeader.modelTag = "eForceLeader"
     extFTObjectLeader.cmdForceInertialInMsg.subscribeTo(MSMmodule.eForceOutMsgs[0])
     scObjectLeader.addDynamicEffector(extFTObjectLeader)
     scSim.AddModelToTask(dynTaskName, extFTObjectLeader)
@@ -205,7 +205,7 @@ def run(show_plots):
     # setup extForceTorque module for Follower
     # the electrostatic force from the MSM module is read in through the messaging system
     extFTObjectFollower = extForceTorque.ExtForceTorque()
-    extFTObjectFollower.ModelTag = "eForceDebris"
+    extFTObjectFollower.modelTag = "eForceDebris"
     extFTObjectFollower.cmdForceInertialInMsg.subscribeTo(MSMmodule.eForceOutMsgs[1])
     scObjectFollower.addDynamicEffector(extFTObjectFollower)
     scSim.AddModelToTask(dynTaskName, extFTObjectFollower)

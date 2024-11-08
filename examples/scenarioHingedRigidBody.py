@@ -197,7 +197,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -254,7 +254,7 @@ def run(show_plots):
 
     # setup extForceTorque module
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "maneuverThrust"
+    extFTObject.modelTag = "maneuverThrust"
     extFTObject.extForce_N = [[0.], [0.], [0.]]
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)

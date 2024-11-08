@@ -106,7 +106,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
     # Construct algorithm
     module = houghCircles.HoughCircles()
-    module.ModelTag = "houghCircles"
+    module.modelTag = "houghCircles"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

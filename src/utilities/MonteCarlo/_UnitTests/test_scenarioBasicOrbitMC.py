@@ -73,13 +73,13 @@ def myCreationFunction():
     # Setup the simulation modules
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
     # Add spacecraft object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 
     # Set up SimpleTestModule to test a getter function using AddVariableForMultiProcessLogging
     testModule = SimpleTestModule()
-    testModule.ModelTag = "helloworldModule"
+    testModule.modelTag = "helloworldModule"
     sim.AddModelToTask(simTaskName, testModule)
 
     # Setup Earth gravity body and attach gravity model to spacecraft

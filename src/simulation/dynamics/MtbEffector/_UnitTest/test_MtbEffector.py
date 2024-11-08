@@ -112,7 +112,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskTestSat"
+    scObject.modelTag = "bskTestSat"
 
     I = [10.5, 0., 0.,
          0., 8., 0.,
@@ -141,7 +141,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     
     # add magnetic field module
     magModule = magneticFieldWMM.MagneticFieldWMM()
-    magModule.ModelTag = "WMM"
+    magModule.modelTag = "WMM"
     magModule.dataPath = bskPath + '/supportData/MagneticField/'
     epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2020 May 12, 00:00:0.0 (UTC)')
     magModule.epochInMsg.subscribeTo(epochMsg)
@@ -151,7 +151,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     
     # add magnetic torque bar effector
     mtbEff = MtbEffector.MtbEffector()
-    mtbEff.ModelTag = "MtbEff"
+    mtbEff.modelTag = "MtbEff"
     scObject.addDynamicEffector(mtbEff)
     scSim.AddModelToTask(simTaskName, mtbEff)
     

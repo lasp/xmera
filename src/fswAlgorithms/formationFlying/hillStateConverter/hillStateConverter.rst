@@ -74,7 +74,7 @@ A simple example of this module's initialization alongside a recorder to store t
     .. code-block:: python
         :linenos:
         hillStateNavData = hillStateConverter.hillStateConverter()
-        hillStateNavData.ModelTag = "dep_hillStateNav"
+        hillStateNavData.modelTag = "dep_hillStateNav"
         hillStateNavData.chiefStateInMsg.subscribeTo(chiefNavMsg)
         hillStateNavData.depStateInMsg.subscribeTo(depNavMsg)
         hillRecorder = hillStateNavData.hillStateOutMsg.recorder()

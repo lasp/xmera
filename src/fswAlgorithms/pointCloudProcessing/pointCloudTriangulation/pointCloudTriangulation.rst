@@ -81,7 +81,7 @@ The module is first initialized as follows:
 .. code-block:: python
 
     module = pointCloudTriangulation.PointCloudTriangulation()
-    module.ModelTag = "pointCloudTriangulation"
+    module.modelTag = "pointCloudTriangulation"
     module.numberTimeStepsInitialPhase = 3  # optional (defaults to 5)
     unitTestSim.AddModelToTask(unitTaskName, module)
 

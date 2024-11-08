@@ -450,7 +450,7 @@ def run(show_plots):
 
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.modelTag = 'planetEphemeris'
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
 
     # specify orbits of gravitational bodies
@@ -496,7 +496,7 @@ def run(show_plots):
 
     # create SC object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
     gravFactory.addBodiesTo(scObject)
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame
@@ -534,8 +534,8 @@ def run(show_plots):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
     rwConfigMsg = rwFactory.getConfigMessage()
 
     # Create a zero'd out thruster message
@@ -552,12 +552,12 @@ def run(show_plots):
 
     # Create an ephemeris converter
     ephemConverter = ephemerisConverter.EphemerisConverter()
-    ephemConverter.ModelTag = "ephemConverter"
+    ephemConverter.modelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(gravBodyEphem.planetOutMsgs[0])
 
     # Set up simpleNav for s/c "measurements"
     simpleNavMeas = simpleNav.SimpleNav()
-    simpleNavMeas.ModelTag = 'SimpleNav'
+    simpleNavMeas.modelTag = 'SimpleNav'
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     pos_sigma_sc = 40.0
     vel_sigma_sc = 0.05
@@ -588,7 +588,7 @@ def run(show_plots):
     simpleNavMeas.walkBounds = walk_bounds_sc
 
     simpleNavMeas2 = simpleNav.SimpleNav()
-    simpleNavMeas2.ModelTag = 'SimpleNav2'
+    simpleNavMeas2.modelTag = 'SimpleNav2'
     simpleNavMeas2.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     simpleNavMeas2.PMatrix = p_matrix_sc
     simpleNavMeas2.walkBounds = walk_bounds_sc
@@ -619,12 +619,12 @@ def run(show_plots):
 
     # Sun pointing configuration
     sunPoint = hillPoint.HillPoint()
-    sunPoint.ModelTag = "sunPoint"
+    sunPoint.modelTag = "sunPoint"
     sunPoint.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
 
     # Attitude error configuration
     trackingError = attTrackingError.AttTrackingError()
-    trackingError.ModelTag = "trackingError"
+    trackingError.modelTag = "trackingError"
     trackingError.attRefInMsg.subscribeTo(sunPoint.attRefOutMsg)
 
     # Specify the vehicle configuration message to tell things what the vehicle inertia is
@@ -634,7 +634,7 @@ def run(show_plots):
 
     #   Attitude controller configuration
     mrpFeedbackControl = mrpFeedback.MrpFeedback()
-    mrpFeedbackControl.ModelTag = "mrpFeedbackControl"
+    mrpFeedbackControl.modelTag = "mrpFeedbackControl"
     mrpFeedbackControl.guidInMsg.subscribeTo(trackingError.attGuidOutMsg)
     mrpFeedbackControl.vehConfigInMsg.subscribeTo(vcConfigMsg)
     mrpFeedbackControl.K = 7.
@@ -644,7 +644,7 @@ def run(show_plots):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(rwConfigMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpFeedbackControl.cmdTorqueOutMsg)
@@ -669,7 +669,7 @@ def run(show_plots):
 
     # Set up the small body EKF
     smallBodyNav = smallBodyNavEKF.SmallBodyNavEKF()
-    smallBodyNav.ModelTag = "smallBodyNavEKF"
+    smallBodyNav.modelTag = "smallBodyNavEKF"
 
     # Set the filter parameters (sc area, mass, gravitational constants, etc.)
     smallBodyNav.A_sc = 1.  # Surface area of the spacecraft, m^2

@@ -1161,14 +1161,14 @@ def enableCielimVisualization(scSim, scList, **kwargs):
 
     # setup the Vizard interface module
     cielimMessenger = cielimInterface.CielimInterface()
-    cielimMessenger.ModelTag = "cielimMessenger"
+    cielimMessenger.modelTag = "cielimMessenger"
 
     # ensure the spacecraft object list is a list
     if not isinstance(scList, list):
         scList = [scList]
     scListLength = len(scList)
 
-    firstSpacecraftName = scList[0].ModelTag
+    firstSpacecraftName = scList[0].modelTag
 
     # process the RW effector argument
     rwEffectorScList = False
@@ -1363,8 +1363,8 @@ def enableCielimVisualization(scSim, scList, **kwargs):
         # link to spacecraft state message
         if isinstance(sc, type(spacecraft.Spacecraft())):
             # set spacecraft name
-            scData.spacecraftName = sc.ModelTag
-            spacecraftParentName = sc.ModelTag
+            scData.spacecraftName = sc.modelTag
+            spacecraftParentName = sc.modelTag
             scData.scStateInMsg.subscribeTo(sc.scStateOutMsg)
 
             # link to celestial bodies information
@@ -1386,9 +1386,9 @@ def enableCielimVisualization(scSim, scList, **kwargs):
         else:
             # the scList object is an effector belonging to the parent spacecraft
             scData.parentSpacecraftName = spacecraftParentName
-            ModelTag = sc[0]
+            modelTag = sc[0]
             effStateOutMsg = sc[1]
-            scData.spacecraftName = ModelTag
+            scData.spacecraftName = modelTag
             scData.scStateInMsg.subscribeTo(effStateOutMsg)
 
         # process RW effectors
@@ -1408,7 +1408,7 @@ def enableCielimVisualization(scSim, scList, **kwargs):
                 clusterCounter = 0
                 for thrEff in thrEffectorScList[c]:  # loop over the THR effectors attached to this spacecraft
                     thSet = cielimInterface.ThrClusterMap()
-                    thSet.thrTag = thrEff.ModelTag  # set the label for this cluster of THR devices
+                    thSet.thrTag = thrEff.modelTag  # set the label for this cluster of THR devices
                     if thrColorsScList:
                         if thrColorsScList[c] is not None:
                             thSet.color = thrColorsScList[c][clusterCounter]

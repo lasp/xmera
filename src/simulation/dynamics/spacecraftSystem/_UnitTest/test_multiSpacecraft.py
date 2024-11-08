@@ -65,7 +65,7 @@ def SCConnected(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scSystem = spacecraftSystem.SpacecraftSystem()
-    scSystem.ModelTag = "spacecraftSystem"
+    scSystem.modelTag = "spacecraftSystem"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -342,7 +342,7 @@ def SCConnectedAndUnconnected(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scSystem = spacecraftSystem.SpacecraftSystem()
-    scSystem.ModelTag = "spacecraftSystem"
+    scSystem.modelTag = "spacecraftSystem"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)

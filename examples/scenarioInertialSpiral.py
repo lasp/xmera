@@ -138,7 +138,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -162,14 +162,14 @@ def run(show_plots):
     # set up extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -178,7 +178,7 @@ def run(show_plots):
 
     # set up inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
@@ -186,14 +186,14 @@ def run(show_plots):
     # and the modules provide a 3-2-1 sequence.  Thus, we do a 0-0-1 321-rotation and then a 0-1-0 321-rotation
     # get a 1-2 result.
     attGuidanceEuler1 = eulerRotation.EulerRotation()
-    attGuidanceEuler1.ModelTag = "eulerRotation1"
+    attGuidanceEuler1.modelTag = "eulerRotation1"
     attGuidanceEuler1.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
     scSim.AddModelToTask(simTaskName, attGuidanceEuler1)
     # Make rotation 1 be 0.02 rad/s about 1 axis
     attGuidanceEuler1.angleRates = [0.0, 0.0, 0.02]
 
     attGuidanceEuler2 = eulerRotation.EulerRotation()
-    attGuidanceEuler2.ModelTag = "eulerRotation2"
+    attGuidanceEuler2.modelTag = "eulerRotation2"
     attGuidanceEuler2.attRefInMsg.subscribeTo(attGuidanceEuler1.attRefOutMsg)
     scSim.AddModelToTask(simTaskName, attGuidanceEuler2)
     # Make rotation 2 be 0.0001 rad/s about 2 axis
@@ -201,12 +201,12 @@ def run(show_plots):
 
     # set up the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attError"
+    attError.modelTag = "attError"
     scSim.AddModelToTask(simTaskName, attError)
 
     # set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.K = 3.5
     mrpControl.Ki = -1  # make value negative to turn off integral feedback

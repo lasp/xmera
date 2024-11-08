@@ -124,7 +124,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # Define the simulation inertia
     I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
@@ -177,26 +177,26 @@ def run(show_plots):
 
     # Set up extForceTorque module
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject, 97)
 
     # Add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject, ModelPriority=101)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Create the ephemeris converter
     ephemConverter = ephemerisConverter.EphemerisConverter()
-    ephemConverter.ModelTag = "ephemConverter"
+    ephemConverter.modelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0])
     ephemConverter.addSpiceInputMsg(spiceObject.planetStateOutMsgs[1])
     scSim.AddModelToTask(simTaskName, ephemConverter)
 
     # Set up sun pointing guidance module
     locPoint = locationPointing.LocationPointing()
-    locPoint.ModelTag = "locPoint"
+    locPoint.modelTag = "locPoint"
     scSim.AddModelToTask(simTaskName, locPoint, 99)
     locPoint.pHat_B = [0, 0, 1]
     locPoint.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -205,7 +205,7 @@ def run(show_plots):
 
     # Set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl, 98)
     mrpControl.guidInMsg.subscribeTo(locPoint.attGuidOutMsg)
     mrpControl.K = 5.5

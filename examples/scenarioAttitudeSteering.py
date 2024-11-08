@@ -291,7 +291,7 @@ def run(show_plots, simCase):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     # define the simulation inertia
     I = [500., 0., 0.,
          0., 300., 0.,
@@ -336,7 +336,7 @@ def run(show_plots, simCase):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
@@ -346,12 +346,12 @@ def run(show_plots, simCase):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     if simCase < 2:
         extFTObject = extForceTorque.ExtForceTorque()
-        extFTObject.ModelTag = "externalDisturbance"
+        extFTObject.modelTag = "externalDisturbance"
         extFTObject.extTorquePntB_B = [[0.01], [-0.01], [0.005]]
         scObject.addDynamicEffector(extFTObject)
         scSim.AddModelToTask(simTaskName, extFTObject)
@@ -362,17 +362,17 @@ def run(show_plots, simCase):
 
     # setup guidance module
     attGuidance = hillPoint.HillPoint()
-    attGuidance.ModelTag = "hillPoint"
+    attGuidance.modelTag = "hillPoint"
     scSim.AddModelToTask(simTaskName, attGuidance)
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP steering control module
     mrpControl = mrpSteering.MrpSteering()
-    mrpControl.ModelTag = "MRP_Steering"
+    mrpControl.modelTag = "MRP_Steering"
 
     scSim.AddModelToTask(simTaskName, mrpControl)
 
@@ -390,7 +390,7 @@ def run(show_plots, simCase):
 
     # setup Rate servo module
     servo = rateServoFullNonlinear.RateServoFullNonlinear()
-    servo.ModelTag = "rate_servo"
+    servo.modelTag = "rate_servo"
 
     if simCase == 1:
         servo.Ki = -1
@@ -404,7 +404,7 @@ def run(show_plots, simCase):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes

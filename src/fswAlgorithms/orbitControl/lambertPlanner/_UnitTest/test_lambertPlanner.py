@@ -131,7 +131,7 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
 
     # setup module to be tested
     module = lambertPlanner.LambertPlanner()
-    module.ModelTag = "lambertPlanner"
+    module.modelTag = "lambertPlanner"
     module.r_TN_N = targetPosition
     module.finalTime = tf
     module.maneuverTime = tm

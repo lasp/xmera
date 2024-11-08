@@ -68,7 +68,7 @@ The gravity effector setup follows the standard process of creating the effector
 spacecraft as well as adding it to the task list::
 
     ggEff = GravityGradientEffector.GravityGradientEffector()
-    ggEff.ModelTag = scObject.ModelTag
+    ggEff.modelTag = scObject.modelTag
     scObject.addDynamicEffector(ggEff)
     scSim.AddModelToTask(simTaskName, ggEff)
 

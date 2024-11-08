@@ -83,7 +83,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
 
     # Construct algorithm and associated C++ container
     module = planetEphemeris.PlanetEphemeris()
-    module.ModelTag = 'planetEphemeris'
+    module.modelTag = 'planetEphemeris'
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -251,11 +251,11 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
     snippentName = "passFail" + str(setRAN) + str(setDEC) + str(setLST) + str(setRate)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

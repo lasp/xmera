@@ -65,7 +65,7 @@ def rwConfigDataTestFunction():
     rwConstInMsg = messaging.RWConstellationMsg().write(rwConstellationFswMsg)
     module.rwConstellationInMsg.subscribeTo(rwConstInMsg)
 
-    module.ModelTag = "rwConfigData"
+    module.modelTag = "rwConfigData"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -98,7 +98,7 @@ def rwConfigDataTestFunction():
                                                                  3*numRW, testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
 
     return [testFailCount, ''.join(testMessages)]
 

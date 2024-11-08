@@ -82,7 +82,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     # Construct algorithm and associated C++ container
     testModule = exponentialAtmosphere.ExponentialAtmosphere()
-    testModule.ModelTag = "exponential"
+    testModule.modelTag = "exponential"
 
     if useDefault:
         refBaseDens = 0
@@ -208,11 +208,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + testModule.ModelTag)
+        print("Failed: " + testModule.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

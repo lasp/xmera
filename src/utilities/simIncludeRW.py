@@ -335,7 +335,7 @@ class rwFactory(object):
             :param sc: spacecraft object
         """
 
-        rwStateEffector.ModelTag = modelTag
+        rwStateEffector.modelTag = modelTag
 
         for key, rw in list(self.rwList.items()):
             rwStateEffector.addReactionWheel(rw)

@@ -109,8 +109,8 @@ def run(show_plots, useClassicElem, numOrbits):
     # sc
     scObject = spacecraft.Spacecraft()
     scObject2 = spacecraft.Spacecraft()
-    scObject.ModelTag = "scObject"
-    scObject2.ModelTag = "scObject2"
+    scObject.modelTag = "scObject"
+    scObject2.modelTag = "scObject2"
 
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -136,7 +136,7 @@ def run(show_plots, useClassicElem, numOrbits):
 
     # extObj
     extFTObject2 = extForceTorque.ExtForceTorque()
-    extFTObject2.ModelTag = "externalDisturbance2"
+    extFTObject2.modelTag = "externalDisturbance2"
     scObject2.addDynamicEffector(extFTObject2)
     scSim.AddModelToTask(dynTaskName, extFTObject2, 3)
 
@@ -157,7 +157,7 @@ def run(show_plots, useClassicElem, numOrbits):
 
     # meanOEFeedback
     meanOEFeedbackObj = meanOEFeedback.MeanOEFeedback()
-    meanOEFeedbackObj.ModelTag = "meanOEFeedback"
+    meanOEFeedbackObj.modelTag = "meanOEFeedback"
     meanOEFeedbackObj.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
     meanOEFeedbackObj.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
     extFTObject2.cmdForceInertialInMsg.subscribeTo(meanOEFeedbackObj.forceOutMsg)

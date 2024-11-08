@@ -419,7 +419,7 @@ def createScenarioAttitudeFeedbackRW():
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -433,7 +433,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.AddModelToTask(simTaskName, scObject, 1)
 
     rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
-    rwVoltageIO.ModelTag = "rwVoltageInterface"
+    rwVoltageIO.modelTag = "rwVoltageInterface"
 
     # set module parameters(s)
     rwVoltageIO.setGains(np.array([0.2/10.]*3))  # [Nm/V] conversion gain
@@ -485,7 +485,7 @@ def createScenarioAttitudeFeedbackRW():
     numRW = rwFactory.getNumOfDevices()
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.motorTorqueOutMsg)
 
     # Add RWs to sim for dispersion
@@ -498,7 +498,7 @@ def createScenarioAttitudeFeedbackRW():
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
@@ -520,20 +520,20 @@ def createScenarioAttitudeFeedbackRW():
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
@@ -546,7 +546,7 @@ def createScenarioAttitudeFeedbackRW():
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
     # Initialize the test module msg names
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -560,7 +560,7 @@ def createScenarioAttitudeFeedbackRW():
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     fswRWVoltage = rwMotorVoltage.RwMotorVoltage()
-    fswRWVoltage.ModelTag = "rwMotorVoltage"
+    fswRWVoltage.modelTag = "rwMotorVoltage"
 
     # Add test module to runtime call list
     scSim.AddModelToTask(simTaskName, fswRWVoltage)

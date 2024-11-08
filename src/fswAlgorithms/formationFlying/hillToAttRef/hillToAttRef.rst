@@ -66,7 +66,7 @@ A simple example of this module's initialization alongside a recorder to store t
 
     #   Set up the hillStateConverter
     depAttRefData = hillToAttRef.HillToAttRef()
-    depAttRefData.ModelTag = "dep_hillControl"
+    depAttRefData.modelTag = "dep_hillControl"
     depAttRefData.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
     depAttRefData.hillStateInMsg.subscribeTo(hillStateMsg)
     if msg_type == 'NavAttMsg':

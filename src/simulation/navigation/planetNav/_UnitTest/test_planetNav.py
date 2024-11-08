@@ -76,7 +76,7 @@ def planetNavTestFunction(show_plots):
 
     # setup module to be tested
     module = planetNav.PlanetNav()
-    module.ModelTag = "planetNavTag"
+    module.modelTag = "planetNavTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure blank module input messages
@@ -90,7 +90,7 @@ def planetNavTestFunction(show_plots):
     # subscribe input messages to module
     module.ephemerisInMsg.subscribeTo(ephemerisInMsg)
 
-    module.ModelTag = "PlanetNavigation"
+    module.modelTag = "PlanetNavigation"
     posBound = numpy.array([1000.0] * 3)
     velBound = numpy.array([1.0] * 3)
     attBound = numpy.array([5E-3] * 3)

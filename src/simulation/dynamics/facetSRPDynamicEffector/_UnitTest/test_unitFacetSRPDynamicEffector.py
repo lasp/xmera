@@ -98,7 +98,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "scObject"
+    scObject.modelTag = "scObject"
 
     oe = orbitalMotion.ClassicElements()
     oe.a = 149597870700.0  # [m]
@@ -129,7 +129,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
 
     # Create an instance of the facetSRPDynamicEffector module to be tested
     srpEffector = facetSRPDynamicEffector.FacetSRPDynamicEffector()
-    srpEffector.ModelTag = "srpEffector"
+    srpEffector.modelTag = "srpEffector"
     numFacets = 10  # Total number of spacecraft facets
     numArticulatedFacets = 4  # Number of articulated facets
     srpEffector.numFacets = numFacets

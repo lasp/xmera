@@ -76,7 +76,7 @@ def test_dvExecuteGuidance(show_plots, p1_dv, p2_tmin, p3_tmax, p4_tstart):
 
     # Construct algorithm and associated C++ container
     module = dvExecuteGuidance.DvExecuteGuidance()
-    module.ModelTag = "dvExecuteGuidance"
+    module.modelTag = "dvExecuteGuidance"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

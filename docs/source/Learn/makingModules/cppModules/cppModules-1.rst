@@ -5,7 +5,7 @@ Module Header File
 
 Parent Class
 ------------
-Every Basilisk module is a sub-class of :ref:`sys_model`.  This parent class provides common modules variables such as ``ModelTag`` and ``moduleID``.
+Every Basilisk module is a sub-class of :ref:`sys_model`.  This parent class provides common modules variables such as ``modelTag`` and ``moduleID``.
 
 Module Class Name
 -----------------

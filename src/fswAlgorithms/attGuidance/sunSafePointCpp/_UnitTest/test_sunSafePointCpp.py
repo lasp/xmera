@@ -69,7 +69,7 @@ def test_SunSafePointTestFunction(show_plots, case):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     module = sunSafePointCpp.SunSafePointCpp()
-    module.ModelTag = "sunSafePoint"
+    module.modelTag = "sunSafePoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

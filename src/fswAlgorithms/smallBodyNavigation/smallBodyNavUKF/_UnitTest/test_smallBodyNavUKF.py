@@ -56,7 +56,7 @@ def smallBodyNavUKFTestFunction(show_plots):
 
     # setup module to be tested
     module = smallBodyNavUKF.SmallBodyNavUKF()
-    module.ModelTag = "smallBodyNavUKFTag"
+    module.modelTag = "smallBodyNavUKFTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Set the filter parameters (hyperparameters, small body gravitational constant, noise matrices)
@@ -165,7 +165,7 @@ def smallBodyNavUKFTestFunction(show_plots):
         plt.show()
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

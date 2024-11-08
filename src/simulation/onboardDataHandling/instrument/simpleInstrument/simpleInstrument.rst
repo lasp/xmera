@@ -17,7 +17,7 @@ User Guide
 To set up this module users must create a SimpleInstrument instance::
 
    simpleInstrument = simpleInstrument.SimpleInstrument()
-   simpleInstrument.ModelTag = "instrument1"
+   simpleInstrument.modelTag = "instrument1"
 
 Set the `nodeBaudRate` and `nodeDataName` variables::
 

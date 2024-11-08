@@ -102,7 +102,7 @@ the Sun as a gravitational body in the simulation to use this module.
 #. Next, create an instantiation of the SRP dynamic effector::
 
     SRPEffector = facetSRPDynamicEffector.FacetSRPDynamicEffector()
-    SRPEffector.ModelTag = "SRPEffector"
+    SRPEffector.modelTag = "SRPEffector"
 
 #. The user is required to set the total number of spacecraft facets and the number of articulated facets. For example, if the user wants to create a spacecraft with 10 total facets, four of which articulate; the user would set these module variables to::
 

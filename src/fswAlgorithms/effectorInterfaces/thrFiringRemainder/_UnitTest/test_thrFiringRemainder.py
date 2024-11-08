@@ -76,7 +76,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     # Construct algorithm and associated C++ container
     module = thrFiringRemainder.ThrFiringRemainder()
-    module.ModelTag = "thrFiringRemainder"
+    module.modelTag = "thrFiringRemainder"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -196,11 +196,11 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     snippentName = "passFail" + str(resetCheck) + str(dvOn)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

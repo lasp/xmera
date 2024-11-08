@@ -67,7 +67,7 @@ User Guide
 The required module configuration is::
 
     solarArray = solarArrayRotation.solarArrayRotation()
-    solarArray.ModelTag = "solarArrayRotation"  
+    solarArray.modelTag = "solarArrayRotation"
     solarArray.a1Hat_B = [1, 0, 0]
     solarArray.a2Hat_B = [0, 0, 1]
     solarArray.attitudeFrame = 0

@@ -67,13 +67,13 @@ def run(show_plots, accuracy):
 
     # create the CSS modules
     CSS1 = coarseSunSensor.CoarseSunSensor()
-    CSS1.ModelTag = "CSS1"
+    CSS1.modelTag = "CSS1"
     CSS1.fov = 80. * macros.D2R
     CSS1.maxOutput = 10.
     CSS1.nHat_B = [1.0, 0.0, 0.0]
 
     CSS2 = coarseSunSensor.CoarseSunSensor()
-    CSS2.ModelTag = "CSS2"
+    CSS2.modelTag = "CSS2"
     CSS2.r_B = [1., 2., 3.]
     CSS2.fov = 70. * macros.D2R
     CSS2.minOutput = 1.0

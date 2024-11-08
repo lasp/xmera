@@ -16,7 +16,7 @@ created, configured, and added to the simulation through the following syntax::
 
     module = someModule.someModule()
     module.someParameter = 5
-    module.ModelTag = "someModuleName"
+    module.modelTag = "someModuleName"
     scSim.AddModelToTask("taskName", module, priority)
 
 In order to perform the same operations on an old-syntax C module, one would do::
@@ -24,7 +24,7 @@ In order to perform the same operations on an old-syntax C module, one would do:
     moduleConfig = someModule.someModuleConfig()
     moduleConfig.someParameter = 5
     moduleWrap = scSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "someModuleName"
+    moduleWrap.modelTag = "someModuleName"
     scSim.AddModelToTask("taskName", moduleWrap, moduleConfig, priority)
 
 Note that in this case, we created a "Config" object ``someModule.someModuleConfig``. Connecting 

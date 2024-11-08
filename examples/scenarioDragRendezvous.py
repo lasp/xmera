@@ -135,7 +135,7 @@ def setup_spacecraft_plant(rN, vN, modelName):
     """
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = modelName
+    scObject.modelTag = modelName
     scObject.hub.mHub = 6.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     I = [10., 0., 0.,
@@ -146,7 +146,7 @@ def setup_spacecraft_plant(rN, vN, modelName):
     scObject.hub.v_CN_NInit = vN
 
     scNav = simpleNav.SimpleNav()
-    scNav.ModelTag = modelName+'_navigator'
+    scNav.modelTag = modelName+'_navigator'
     scNav.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     dragArea = 0.3*0.2
@@ -154,7 +154,7 @@ def setup_spacecraft_plant(rN, vN, modelName):
     normalVector = -rbk.euler3(np.radians(45.)).dot(np.array([0,-1,0]))
     panelLocation = [0,0,0]
     dragEffector = facetDragDynamicEffector.FacetDragDynamicEffector()
-    dragEffector.ModelTag = modelName+'_dragEffector'
+    dragEffector.modelTag = modelName+'_dragEffector'
     dragEffector.addFacet(dragArea, dragCoeff, normalVector, panelLocation)
     scObject.addDynamicEffector(dragEffector)
 
@@ -202,7 +202,7 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
 
     #   Density
     atmosphere = exponentialAtmosphere.ExponentialAtmosphere()
-    atmosphere.ModelTag = 'atmosphere'
+    atmosphere.modelTag = 'atmosphere'
     # atmosphere.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
     atmosphere.planetRadius = orbitalMotion.REQ_EARTH*1e3 + 300e3 #   m
     atmosphere.envMinReach = -300e3
@@ -258,26 +258,26 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     #   Chief S/C
     #   hillPoint - set such that the chief attitude follows its hill frame.
     chiefAttRef = hillPoint.HillPoint()
-    chiefAttRef.ModelTag = 'chief_att_ref'
+    chiefAttRef.modelTag = 'chief_att_ref'
     chiefAttRef.transNavInMsg.subscribeTo(chiefNav.transOutMsg)
     # chiefAttRefData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[-1]) #   We shouldn't need this because the planet is the origin
     chiefSc.attRefInMsg.subscribeTo(chiefAttRef.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction
 
     depHillRef = hillPoint.HillPoint()
-    depHillRef.ModelTag = 'dep_hill_ref'
+    depHillRef.modelTag = 'dep_hill_ref'
     depHillRef.transNavInMsg.subscribeTo(depNav.transOutMsg)
     # chiefAttRefData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[-1]) #   We shouldn't need this because the planet is the origin
     #chiefSc.attRefInMsg.subscribeTo(chiefAttRefData.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction
 
     # hillStateConverter
     hillStateNavObj = hillStateConverter.HillStateConverter()
-    hillStateNavObj.ModelTag = "dep_hillStateNav"
+    hillStateNavObj.modelTag = "dep_hillStateNav"
     hillStateNavObj.depStateInMsg.subscribeTo(depNav.transOutMsg)
     hillStateNavObj.chiefStateInMsg.subscribeTo(chiefNav.transOutMsg)
 
     # hillToAtt guidance law w/ static gain
     depAttRef = hillToAttRef.HillToAttRef()
-    depAttRef.ModelTag = 'dep_att_ref'
+    depAttRef.modelTag = 'dep_att_ref'
     depAttRef.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
     #   Configure parameters common to relative attitude guidance modules
     depAttRef.hillStateInMsg.subscribeTo(hillStateNavObj.hillStateOutMsg)

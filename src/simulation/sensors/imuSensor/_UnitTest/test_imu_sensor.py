@@ -184,7 +184,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
     #Sensor Setup
     ImuSensor = imuSensor.ImuSensor()
-    ImuSensor.ModelTag = "imusensor"
+    ImuSensor.modelTag = "imusensor"
     ImuSensor.sensorPos_B = np.array(r_SB_B) #must be set by user - no default. check if this works by giving an array - SJKC
     yaw = 0.7854 #should be given as parameter [rad]
     pitch = 1.0  # [rad]

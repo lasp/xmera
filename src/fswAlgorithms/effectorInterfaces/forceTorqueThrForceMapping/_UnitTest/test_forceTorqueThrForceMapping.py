@@ -219,7 +219,7 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
 
     # setup module to be tested
     module = forceTorqueThrForceMapping.ForceTorqueThrForceMapping()
-    module.ModelTag = "forceTorqueThrForceMappingTag"
+    module.modelTag = "forceTorqueThrForceMappingTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure blank module input messages
@@ -265,7 +265,7 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
                                                                  "CompareForces", testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

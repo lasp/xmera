@@ -39,7 +39,7 @@ def test_msgTimeWritten():
 
     # create modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
-    mod1.ModelTag = "cModule1"
+    mod1.modelTag = "cModule1"
     scSim.AddModelToTask("dynamicsTask", mod1)
     mod1.dataInMsg.subscribeTo(mod1.dataOutMsg)
 

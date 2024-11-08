@@ -66,7 +66,7 @@ def icp_init_sim(validICP = True, validCloud = True, normalize = True):
 
     # setup module to be tested
     module = initializeICP.InitializeICP()
-    # module.ModelTag = 'initializationICP'
+    # module.modelTag = 'initializationICP'
     module.normalizeMeasuredCloud = normalize
     unit_test_sim.AddModelToTask(unit_task_name, module)
 

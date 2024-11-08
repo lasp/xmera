@@ -76,7 +76,7 @@ def mtbMomentumManagementSimpleTestFunction():
     # Construct algorithm and associated C++ container
     module = mtbMomentumManagementSimple.MtbMomentumManagementSimple()
     module.Kp = 0.003
-    module.ModelTag = "mtbMomentumManagementSimple"           # update python name of test module
+    module.modelTag = "mtbMomentumManagementSimple"           # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # wheelConfigData message (column major format)

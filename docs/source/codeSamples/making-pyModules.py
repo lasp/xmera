@@ -42,15 +42,15 @@ def run():
 
     # create copies of the Basilisk modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
-    mod1.ModelTag = "module1"
+    mod1.modelTag = "module1"
     scSim.AddModelToTask("dynamicsTask", mod1, 0)
 
     mod2 = cppModuleTemplate.CppModuleTemplate()
-    mod2.ModelTag = "module2"
+    mod2.modelTag = "module2"
     scSim.AddModelToTask("dynamicsTask", mod2, 5)
 
     mod3 = cppModuleTemplate.CppModuleTemplate()
-    mod3.ModelTag = "module3"
+    mod3.modelTag = "module3"
     scSim.AddModelToTask("dynamicsTask", mod3, 15)
 
     # The following is a Python module, which has a higher priority
@@ -58,7 +58,7 @@ def run():
     # how the Python module is called in the order that respects
     # its priority with respect to the rest of the modules.
     mod4 = TestPythonModule()
-    mod4.ModelTag = "pythonModule4"
+    mod4.modelTag = "pythonModule4"
     scSim.AddModelToTask("dynamicsTask", mod4, 10)
 
     mod2.dataInMsg.subscribeTo(mod4.dataOutMsg)

@@ -44,7 +44,7 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     __tracebackhide__ = True
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"

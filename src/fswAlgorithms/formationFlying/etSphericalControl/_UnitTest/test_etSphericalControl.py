@@ -88,7 +88,7 @@ def etSphericalControlTestFunction(show_plots, accuracy):
 
     # Construct algorithm and associated C++ container
     module = etSphericalControl.EtSphericalControl()
-    module.ModelTag = "ETcontrol"           # update python name of test module
+    module.modelTag = "ETcontrol"           # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -199,22 +199,22 @@ def etSphericalControlTestFunction(show_plots, accuracy):
         if not unitTestSupport.isArrayEqual(forceInertialOutput[i], trueInertialVector[i], 3, accuracy):
             testFailCount += 1
             print(forceInertialOutput[i])
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed "
+            testMessages.append("FAILED: " + module.modelTag + " Module failed "
                                 + "Inertial Force Output" + " unit test at t="
                                 + str(forceInertialOutput[i, 0] * macros.NANO2SEC) + "sec\n")
         if not unitTestSupport.isArrayEqual(forceBodyOutput[i], trueBodyVector[i], 3, accuracy):
             testFailCount += 1
             print(forceBodyOutput[i])
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed "
+            testMessages.append("FAILED: " + module.modelTag + " Module failed "
                                 + "Body Force Output" + " unit test at t="
                                 + str(forceBodyOutput[i, 0] * macros.NANO2SEC) + "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         print("This test uses an accuracy value of " + str(accuracy))
     else:
-        print("FAILED " + module.ModelTag)
+        print("FAILED " + module.modelTag)
         print(testMessages)
 
     # each test method requires a single assert method to be called

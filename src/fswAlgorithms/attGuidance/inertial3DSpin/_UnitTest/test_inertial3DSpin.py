@@ -65,7 +65,7 @@ def subModuleTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     module = inertial3DSpin.Inertial3DSpin()
-    module.ModelTag = "inertial3DSpin"
+    module.modelTag = "inertial3DSpin"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -121,7 +121,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.sigma_RN[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) + "sec\n")
 
 
@@ -140,7 +140,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.omega_RN_N[i], trueVector[i] , 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N  unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_N  unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) + "sec\n")
 
     #
@@ -159,7 +159,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.domega_RN_N[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed domega_RN_N unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) +"sec\n")
 
     # Note that we can continue to step the simulation however we feel like.
@@ -193,7 +193,7 @@ def subModuleTestFunction2(show_plots):
 
     # Construct algorithm and associated C++ container
     module = inertial3DSpin.Inertial3DSpin()
-    module.ModelTag = "inertial3DSpin"
+    module.modelTag = "inertial3DSpin"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -254,7 +254,7 @@ def subModuleTestFunction2(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.sigma_RN[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -274,7 +274,7 @@ def subModuleTestFunction2(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.omega_RN_N[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_N unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -296,7 +296,7 @@ def subModuleTestFunction2(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleLog.domega_RN_N[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed domega_RN_N unit test at t=" +
                                 str(moduleLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 

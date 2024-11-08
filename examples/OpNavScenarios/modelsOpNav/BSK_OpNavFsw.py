@@ -75,47 +75,47 @@ class BSKFswModels():
 
         # Create module data and module wraps
         self.hillPoint = hillPoint.HillPoint()
-        self.hillPoint.ModelTag = "hillPoint"
+        self.hillPoint.modelTag = "hillPoint"
 
         self.opNavPoint = opNavPoint.OpNavPoint()
-        self.opNavPoint.ModelTag = "opNavPoint"
+        self.opNavPoint.modelTag = "opNavPoint"
 
         self.trackingErrorCam = attTrackingError.AttTrackingError()
-        self.trackingErrorCam.ModelTag = "trackingErrorCam"
+        self.trackingErrorCam.modelTag = "trackingErrorCam"
 
         self.mrpFeedbackRWs = mrpFeedback.MrpFeedback()
-        self.mrpFeedbackRWs.ModelTag = "mrpFeedbackRWs"
+        self.mrpFeedbackRWs.modelTag = "mrpFeedbackRWs"
 
         self.rwMotorTorque = rwMotorTorque.RwMotorTorque()
-        self.rwMotorTorque.ModelTag = "rwMotorTorque"
+        self.rwMotorTorque.modelTag = "rwMotorTorque"
 
         self.imageProcessing = houghCircles.HoughCircles()
-        self.imageProcessing.ModelTag = "houghCircles"
+        self.imageProcessing.modelTag = "houghCircles"
 
         if centerRadiusCNNIncluded:
             self.opNavCNN = centerRadiusCNN.CenterRadiusCNN()
-            self.opNavCNN.ModelTag = "opNavCNN"
+            self.opNavCNN.modelTag = "opNavCNN"
 
         self.pixelLine = pixelLineConverter.PixelLineConverter()
-        self.pixelLine.ModelTag = "pixelLine"
+        self.pixelLine.modelTag = "pixelLine"
 
         self.opNavFault = faultDetection.FaultDetection()
-        self.opNavFault.ModelTag = "OpNav_Fault"
+        self.opNavFault.modelTag = "OpNav_Fault"
 
         self.limbFinding = limbFinding.LimbFinding()
-        self.limbFinding.ModelTag = "limbFind"
+        self.limbFinding.modelTag = "limbFind"
 
         self.horizonNav = horizonOpNav.HorizonOpNav()
-        self.horizonNav.ModelTag = "limbNav"
+        self.horizonNav.modelTag = "limbNav"
 
         self.relativeOD = relativeODuKF.RelODuKF()
-        self.relativeOD.ModelTag = "relativeOD"
+        self.relativeOD.modelTag = "relativeOD"
 
         self.pixelLineFilter = pixelLineBiasUKF.PixelLineBiasUKF()
-        self.pixelLineFilter.ModelTag = "pixelLineFilter"
+        self.pixelLineFilter.modelTag = "pixelLineFilter"
 
         self.headingUKF = headingSuKF.HeadingSuKF()
-        self.headingUKF.ModelTag = "headingUKF"
+        self.headingUKF.modelTag = "headingUKF"
 
         # create the FSW module gateway messages
         self.setupGatewayMsgs()

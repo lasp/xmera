@@ -84,10 +84,10 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
 
     # Construct algorithm and associated C++ container
     module = mrpSteering.MrpSteering()
-    module.ModelTag = "mrpSteering"
+    module.modelTag = "mrpSteering"
 
     servo = rateServoFullNonlinear.RateServoFullNonlinear()
-    servo.ModelTag = "rate_servo"
+    servo.modelTag = "rate_servo"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -187,7 +187,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], trueVals[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed torqueRequestBody unit test at t="
+            testMessages.append("FAILED: " + module.modelTag + " Module failed torqueRequestBody unit test at t="
                                 + str(dataLog.times[i] * macros.NANO2SEC) + "sec \n")
 
 
@@ -198,7 +198,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

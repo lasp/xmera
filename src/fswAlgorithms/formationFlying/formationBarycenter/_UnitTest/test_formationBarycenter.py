@@ -76,7 +76,7 @@ def formationBarycenterTestFunction(show_plots, accuracy):
 
     # setup module to be tested
     barycenterModule = formationBarycenter.FormationBarycenter()
-    barycenterModule.ModelTag = "barycenterModuleTag"
+    barycenterModule.modelTag = "barycenterModuleTag"
     unitTestSim.AddModelToTask(unitTaskName, barycenterModule)
 
     # Configure each spacecraft's position and velocity

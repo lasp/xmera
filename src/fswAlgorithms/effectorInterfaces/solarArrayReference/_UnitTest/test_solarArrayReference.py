@@ -138,7 +138,7 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
 
     # Construct tested module and associated C container
     solarArray = solarArrayReference.SolarArrayReference()
-    solarArray.ModelTag = "solarArrayReference"
+    solarArray.modelTag = "solarArrayReference"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, solarArray)
@@ -196,14 +196,14 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     if not unitTestSupport.isDoubleEqual(dataLog.theta[0], thetaR, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: "
-                    + solarArray.ModelTag
+                    + solarArray.modelTag
                     + "solarArrayRotation module failed unit test on thetaR for sigma_BN = [{},{},{}], "
                       "sigma_RN = [{},{},{}] and attitudeFrame = {} \n".format(
                         sigma_BN[0], sigma_BN[1], sigma_BN[2], sigma_RN[0], sigma_RN[1], sigma_RN[2], attitudeFrame))
     if not unitTestSupport.isDoubleEqual(dataLog.thetaDot[0], 0, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: "
-                    + solarArray.ModelTag
+                    + solarArray.modelTag
                     + "solarArrayRotation module failed unit test on thetaDotR for sigma_BN = [{},{},{}], "
                       "sigma_RN = [{},{},{}] and attitudeFrame = {} \n".format(
                         sigma_BN[0], sigma_BN[1], sigma_BN[2], sigma_RN[0], sigma_RN[1], sigma_RN[2], attitudeFrame))

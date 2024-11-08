@@ -73,7 +73,7 @@ where each line contains information about only one intermediate point of the ma
 The required module configuration is::
 
     waypointReferenceModule = waypointReference.WaypointReference()
-    waypointReferenceModule.ModelTag = "waypointReference"
+    waypointReferenceModule.modelTag = "waypointReference"
     waypointReferenceModule.dataFileName = dataFileName
     waypointReferenceModule.attitudeType = 0
     unitTestSim.AddModelToTask(unitTaskName, waypointReferenceModule)

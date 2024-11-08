@@ -25,7 +25,7 @@ To set up this module users must create a SimplePowerMonitor instance.
     :linenos:
 
     battery = simplePowerMonitor.SimplePowerMonitor()
-    battery.ModelTag = "powerMonitorModel"
+    battery.modelTag = "powerMonitorModel"
 
 
 The next step is to attach one or more :ref:`PowerNodeUsageMsgPayload` instances to it using the ``addNodeToStorage()`` method.

@@ -79,7 +79,7 @@ def SCTranslation(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -211,7 +211,7 @@ def SCTransAndRotation(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -390,7 +390,7 @@ def SCRotation(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -615,7 +615,7 @@ def SCTransBOE(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -641,7 +641,7 @@ def SCTransBOE(show_plots):
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extFTObject.extForce_B = [[F1], [0], [0]]
     scObject.addDynamicEffector(extFTObject)
@@ -762,7 +762,7 @@ def SCPointBVsPointC(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -785,7 +785,7 @@ def SCPointBVsPointC(show_plots):
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[torquePntC_B[0]], [torquePntC_B[1]], [torquePntC_B[2]]]
     extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
     scObject.addDynamicEffector(extFTObject)
@@ -815,7 +815,7 @@ def SCPointBVsPointC(show_plots):
     ####################
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -838,7 +838,7 @@ def SCPointBVsPointC(show_plots):
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[torquePntB_B[0]], [torquePntB_B[1]], [torquePntB_B[2]]]
     extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
     scObject.addDynamicEffector(extFTObject)
@@ -926,7 +926,7 @@ def scOptionalRef(show_plots, accuracy):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -954,7 +954,7 @@ def scOptionalRef(show_plots, accuracy):
 
     # add gravity gradient effector
     ggEff = GravityGradientEffector.GravityGradientEffector()
-    ggEff.ModelTag = scObject.ModelTag
+    ggEff.modelTag = scObject.modelTag
     ggEff.addPlanetName(earth.planetName)
     scObject.addDynamicEffector(ggEff)
     unitTestSim.AddModelToTask(unitTaskName, ggEff)
@@ -1032,7 +1032,7 @@ def scAccumDV():
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -1115,7 +1115,7 @@ def scAccumDVExtForce():
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -1134,7 +1134,7 @@ def scAccumDVExtForce():
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extForce = numpy.array([random() for _ in range(3)])
     extFTObject.extForce_B = [[item] for item in extForce]

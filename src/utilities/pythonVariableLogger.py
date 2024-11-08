@@ -74,7 +74,7 @@ class PythonVariableLogger(sysModel.SysModel):
                 except Exception as ex:
                     self.bskLogger.bskLog(sysModel.BSK_ERROR,
                                         f"Error while logging '{variable_name}'"
-                                        f" in logger '{self.ModelTag}': {ex}")
+                                        f" in logger '{self.modelTag}': {ex}")
                     val = None
                 val = np.array(val).squeeze()
                 self._variables[variable_name].append(val)

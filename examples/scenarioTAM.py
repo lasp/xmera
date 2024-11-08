@@ -165,7 +165,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -186,13 +186,13 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 
     if planetCase == 'Jupiter':
         magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
-        magModule.ModelTag = "CenteredDipole"
+        magModule.modelTag = "CenteredDipole"
         # The following command is a support function that sets up the centered dipole parameters.
         # These parameters can also be setup manually
         simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'jupiter')
     elif planetCase == 'Earth':
         magModule = magneticFieldWMM.MagneticFieldWMM()
-        magModule.ModelTag = "WMM"
+        magModule.modelTag = "WMM"
         magModule.dataPath = bskPath + '/supportData/MagneticField/'
         # set epoch date/time message
         epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
@@ -209,7 +209,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 
     # create the minimal TAM module
     TAM = magnetometer.Magnetometer()
-    TAM.ModelTag = "TAM_sensor"
+    TAM.modelTag = "TAM_sensor"
     # specify the optional TAM variables
     TAM.scaleFactor = 1.0
     TAM.senNoiseStd = [100e-9,  100e-9, 100e-9]

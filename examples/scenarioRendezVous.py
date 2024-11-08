@@ -209,7 +209,7 @@ def run(show_plots):
 
     # initialize servicer spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "servicer"
+    scObject.modelTag = "servicer"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -219,7 +219,7 @@ def run(show_plots):
 
     # create the debris object states
     scObject2 = spacecraft.Spacecraft()
-    scObject2.ModelTag = "debris"
+    scObject2.modelTag = "debris"
     I2 = [600., 0., 0.,
           0., 650., 0.,
           0., 0, 450.]
@@ -286,19 +286,19 @@ def run(show_plots):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     sNavObject2 = simpleNav.SimpleNav()
-    sNavObject2.ModelTag = "SimpleNavigation2"
+    sNavObject2.modelTag = "SimpleNavigation2"
     sNavObject2.scStateInMsg.subscribeTo(scObject2.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, sNavObject2)
 
     # Create an ephemeris converter to convert messages of type
     # 'SpicePlanetStateMsgPayload' to 'EphemerisMsgPayload'
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = 'EphemData'
+    ephemObject.modelTag = 'EphemData'
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
     scSim.AddModelToTask(simTaskName, ephemObject)
@@ -309,14 +309,14 @@ def run(show_plots):
 
     # setup hillPoint guidance module
     hillPointing = hillPoint.HillPoint()
-    hillPointing.ModelTag = "hillPoint"
+    hillPointing.modelTag = "hillPoint"
     hillPointing.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     hillPointing.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
     scSim.AddModelToTask(simTaskName, hillPointing)
 
     # setup spacecraftPointing guidance module
     scPointing = locationPointing.LocationPointing()
-    scPointing.ModelTag = "scPointing"
+    scPointing.modelTag = "scPointing"
     scPointing.pHat_B = [1, 0, 0]
     scPointing.useBoresightRateDamping = 1
     scPointing.scTargetInMsg.subscribeTo(sNavObject2.transOutMsg)
@@ -326,7 +326,7 @@ def run(show_plots):
 
     # setup sunPointing guidance module
     sunPointing = locationPointing.LocationPointing()
-    sunPointing.ModelTag = "scPointing"
+    sunPointing.modelTag = "scPointing"
     sunPointing.pHat_B = [0, 0, 1]
     sunPointing.useBoresightRateDamping = 1
     sunPointing.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
@@ -336,7 +336,7 @@ def run(show_plots):
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(scPointing.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -351,7 +351,7 @@ def run(show_plots):
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
@@ -364,7 +364,7 @@ def run(show_plots):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
     # Initialize the test module msg names
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)

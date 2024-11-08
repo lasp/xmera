@@ -52,4 +52,4 @@ The module is created in python using:
     :linenos:
 
     scMassPropsModule = simpleMassProps.SimpleMassProps()
-    scMassPropsModule.ModelTag = "scMassPropsModule"
+    scMassPropsModule.modelTag = "scMassPropsModule"

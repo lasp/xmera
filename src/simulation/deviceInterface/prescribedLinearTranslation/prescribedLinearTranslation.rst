@@ -450,7 +450,7 @@ This section is to outline the steps needed to setup the prescribed linear trans
 
 #. Define all of the configuration data associated with the module. For example, to configure the smoothed bang-coast-bang option::
 
-    prescribedLinearTrans.ModelTag = "prescribedLinearTranslation"
+    prescribedLinearTrans.modelTag = "prescribedLinearTranslation"
     prescribedLinearTrans.setTransHat_M(np.array([0.5, 0.0, 0.5 * np.sqrt(3)]))
     prescribedLinearTrans.setTransAccelMax(0.01)  # [m/s^2]
     prescribedLinearTrans.setTransPosInit(0.5)  # [m]

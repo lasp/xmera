@@ -214,7 +214,7 @@ def run(show_plots, damping_parameter, timeStep):
 
     #  create spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
 
     scSim.AddModelToTask(simTaskName, scObject)
 

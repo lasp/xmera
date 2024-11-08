@@ -183,7 +183,7 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
 
     # Construct algorithm and associated C++ container
     testModule = waypointReference.WaypointReference()
-    testModule.ModelTag = "testModule"
+    testModule.modelTag = "testModule"
 
     # load the data path from the same folder where this python script is
     testModule.dataFileName = dataFileName
@@ -222,13 +222,13 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
         if timeData[i] < t[0]:
             if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], attReal_RN[0], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
             if not unitTestSupport.isVectorEqual(dataLog.omega_RN_N[i], np.array([0.0, 0.0, 0.0]), accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
             if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], np.array([0.0, 0.0, 0.0]), accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
         
         # checking attitude msg for t_min <= t <= t_max
         elif timeData[i] >= t[0] and timeData[i] <= t[-1]:
@@ -249,31 +249,31 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
             if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], sigma_RN_int, accuracy):
                 print(timeData[i], dataLog.sigma_RN[i], sigma_RN_int)
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
             if not unitTestSupport.isVectorEqual(dataLog.omega_RN_N[i], omega_RN_N_int, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
             if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], omegaDot_RN_N_int, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
         
         # checking attitude msg for t < t_max
         else:
             if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], attReal_RN[-1], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
             if not unitTestSupport.isVectorEqual(dataLog.omega_RN_N[i], [0.0, 0.0, 0.0], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
             if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], [0.0, 0.0, 0.0], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
+                testMessages.append("FAILED: " + testModule.modelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
 
     # print out success or failure message
     if testFailCount == 0:
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
     else:
-        print("FAILED: " + testModule.ModelTag)
+        print("FAILED: " + testModule.modelTag)
         print(testMessages)
 
     return [testFailCount, ''.join(testMessages)]

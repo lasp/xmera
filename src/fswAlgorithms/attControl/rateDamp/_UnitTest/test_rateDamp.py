@@ -51,7 +51,7 @@ def test_rateDamp(show_plots, P, accuracy):
     # Construct algorithm and associated C++ container
     attControl = rateDamp.RateDamp()
     attControl.setRateGain(P)
-    attControl.ModelTag = "rateDamp"
+    attControl.modelTag = "rateDamp"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, attControl)

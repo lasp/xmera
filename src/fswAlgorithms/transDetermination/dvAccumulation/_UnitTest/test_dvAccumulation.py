@@ -85,7 +85,7 @@ def dvAccumulationTestFunction():
     module = dvAccumulation.DVAccumulation()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    module.ModelTag = "dvAccumulation"
+    module.modelTag = "dvAccumulation"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -151,11 +151,11 @@ def dvAccumulationTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

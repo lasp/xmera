@@ -100,7 +100,7 @@ def lambertSecondDVTestFunction(show_plots, p1_dv, p2_tm, p3_valid, accuracy):
 
     # setup module to be tested
     module = lambertSecondDV.LambertSecondDV()
-    module.ModelTag = "lambertSecondDV"
+    module.modelTag = "lambertSecondDV"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure input messages

@@ -149,7 +149,7 @@ This section is to outline the steps needed to setup a prescribed 1 DOF rotation
 #. Create an instantiation of a prescribed rotational 1 DOF C module and the associated C++ container::
 
     PrescribedRot1DOF = prescribedRot1DOF.prescribedRot1DOF()
-    PrescribedRot1DOF.ModelTag = "prescribedRot1DOF"
+    PrescribedRot1DOF.modelTag = "prescribedRot1DOF"
 
 #. Define all of the configuration data associated with the module. For example::
 

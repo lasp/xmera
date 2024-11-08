@@ -42,7 +42,7 @@ def test_hillStateConverter(show_plots):
 
     #   Set up the hillStateConverter
     hillStateNav = hillStateConverter.HillStateConverter()
-    hillStateNav.ModelTag = "dep_hillStateNav"
+    hillStateNav.modelTag = "dep_hillStateNav"
     hillStateNav.chiefStateInMsg.subscribeTo(chiefNavMsg)
     hillStateNav.depStateInMsg.subscribeTo(depNavMsg)
     hillRecorder = hillStateNav.hillStateOutMsg.recorder()

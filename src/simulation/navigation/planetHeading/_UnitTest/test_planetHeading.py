@@ -55,7 +55,7 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
     scMsg = messaging.SCStatesMsg().write(scPositionMessage)
 
     ph = planetHeading.PlanetHeading()
-    ph.ModelTag = "planetHeading"
+    ph.modelTag = "planetHeading"
     sim.AddModelToTask(task.Name, ph)
 
     ph.planetPositionInMsg.subscribeTo(plMsg)

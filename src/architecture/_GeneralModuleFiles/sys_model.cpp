@@ -25,7 +25,7 @@ SysModel::SysModel()
 {}
 
 SysModel::SysModel(const SysModel &obj)
-    : ModelTag{obj.ModelTag},
+    : modelTag{obj.modelTag},
     RNGSeed{obj.RNGSeed},
     moduleID{ModuleIdGenerator::GetInstance()->checkoutModuleID()}
 {}

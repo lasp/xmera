@@ -77,7 +77,7 @@ class BSKDynamicModels():
     # These are module-initialization methods
 
     def SetSpacecraftHub(self):
-        self.scObject.ModelTag = "chief"
+        self.scObject.modelTag = "chief"
         self.I_sc = [900., 0., 0.,
                      0., 800., 0.,
                      0., 0., 600.]
@@ -85,7 +85,7 @@ class BSKDynamicModels():
         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
         self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
 
-        self.scObject2.ModelTag = "deputy"
+        self.scObject2.modelTag = "deputy"
         self.I_sc2 = [900., 0., 0.,
                       0., 800., 0.,
                       0., 0., 600.]
@@ -94,10 +94,10 @@ class BSKDynamicModels():
         self.scObject2.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc2)
 
     def SetSimpleNavObject(self):
-        self.simpleNavObject.ModelTag = "SimpleNavigation_chief"
+        self.simpleNavObject.modelTag = "SimpleNavigation_chief"
         self.simpleNavObject.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
 
-        self.simpleNavObject2.ModelTag = "SimpleNavigation_deputy"
+        self.simpleNavObject2.modelTag = "SimpleNavigation_deputy"
         self.simpleNavObject2.scStateInMsg.subscribeTo(self.scObject2.scStateOutMsg)
 
     def SetReactionWheelDynEffector(self):
@@ -131,7 +131,7 @@ class BSKDynamicModels():
         self.rwFactory2.addToSpacecraft("RW_deputy", self.rwStateEffector2, self.scObject2)
 
     def SetExternalForceTorqueObject(self):
-        self.extForceTorqueObject2.ModelTag = "externalDisturbance"
+        self.extForceTorqueObject2.modelTag = "externalDisturbance"
         self.scObject2.addDynamicEffector(self.extForceTorqueObject2)
 
     # Global call to initialize every module

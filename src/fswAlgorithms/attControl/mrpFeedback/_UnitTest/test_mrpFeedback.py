@@ -105,7 +105,7 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
 
     #   Construct algorithm and associated C++ container
     module = mrpFeedback.MrpFeedback()
-    module.ModelTag = "mrpFeedback"
+    module.modelTag = "mrpFeedback"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -216,14 +216,14 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
         # check vector values
         if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], LrTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed mrpFeedback unit test at t="
+            testMessages.append("FAILED: " + module.modelTag + " Module failed mrpFeedback unit test at t="
                                 + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

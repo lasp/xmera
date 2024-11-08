@@ -79,7 +79,7 @@ This section is to outline the steps needed to setup a OpticalFlow in Python.
 #. Define general parameters. The minTimeBetweenPairs forces a minimum number of seconds between two images for
 feature tracking. For example::
 
-    module.ModelTag = "opticalFlow"
+    module.modelTag = "opticalFlow"
     module.minTimeBetweenPairs = 5
 
 #. Define parameters for the goodFeaturesToTrack method::

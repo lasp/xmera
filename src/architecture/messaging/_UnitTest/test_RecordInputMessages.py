@@ -38,7 +38,7 @@ def test_RecordingInputMessages():
 
     # create modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
-    mod1.ModelTag = "module1"
+    mod1.modelTag = "module1"
     scSim.AddModelToTask("dynamicsTask", mod1)
 
     # Write input data

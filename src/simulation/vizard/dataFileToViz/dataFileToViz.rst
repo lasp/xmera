@@ -50,7 +50,7 @@ The module assumes the data file is in plain text form and the following format:
 The required module configuration is::
 
     testModule = dataFileToViz.DataFileToViz()
-    testModule.ModelTag = "testModule"
+    testModule.modelTag = "testModule"
     testModule.setNumOfSatellites(2)
     testModule.dataFileName = "dataFile.dat"
     unitTestSim.AddModelToTask(unitTaskName, testModule)

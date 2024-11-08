@@ -64,7 +64,7 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     module.OmegaGain = .5 # The feedback gain value applied for the RW despin control law
 
     # This calls the algContain to setup the selfInit, update, and reset
-    module.ModelTag = "rwNullSpace"
+    module.modelTag = "rwNullSpace"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -182,11 +182,11 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     snippentName = "passFail" + str(numWheels)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

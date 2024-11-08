@@ -64,31 +64,31 @@ class BSKFswModels:
         # Create module data and module wraps
         self.earthPointData = oneAxisSolarArrayPoint.OneAxisSolarArrayPointConfig()
         self.earthPointWrap = SimBase.setModelDataWrap(self.earthPointData)
-        self.earthPointWrap.ModelTag = "earthPoint"
+        self.earthPointWrap.modelTag = "earthPoint"
 
         self.sepPointData = oneAxisSolarArrayPoint.OneAxisSolarArrayPointConfig()
         self.sepPointWrap = SimBase.setModelDataWrap(self.sepPointData)
-        self.sepPointWrap.ModelTag = "sepPoint"
+        self.sepPointWrap.modelTag = "sepPoint"
 
         self.cruisePointData = oneAxisSolarArrayPoint.OneAxisSolarArrayPointConfig()
         self.cruisePointWrap = SimBase.setModelDataWrap(self.cruisePointData)
-        self.cruisePointWrap.ModelTag = "cruisePoint"
+        self.cruisePointWrap.modelTag = "cruisePoint"
 
         self.platform1ReferenceData = thrusterPlatformReference.ThrusterPlatformReferenceConfig()
         self.platform1ReferenceWrap = SimBase.setModelDataWrap(self.platform1ReferenceData)
-        self.platform1ReferenceWrap.ModelTag = "thrusterPlatform1Reference"
+        self.platform1ReferenceWrap.modelTag = "thrusterPlatform1Reference"
 
         self.platform2ReferenceData = thrusterPlatformReference.ThrusterPlatformReferenceConfig()
         self.platform2ReferenceWrap = SimBase.setModelDataWrap(self.platform2ReferenceData)
-        self.platform2ReferenceWrap.ModelTag = "thrusterPlatform2Reference"
+        self.platform2ReferenceWrap.modelTag = "thrusterPlatform2Reference"
 
         self.platform1StateData = thrusterPlatformState.ThrusterPlatformStateConfig()
         self.platform1StateWrap = SimBase.setModelDataWrap(self.platform1StateData)
-        self.platform1StateWrap.ModelTag = "thrusterPlatform1State"
+        self.platform1StateWrap.modelTag = "thrusterPlatform1State"
 
         self.platform2StateData = thrusterPlatformState.ThrusterPlatformStateConfig()
         self.platform2StateWrap = SimBase.setModelDataWrap(self.platform2StateData)
-        self.platform2StateWrap.ModelTag = "thrusterPlatform2State"
+        self.platform2StateWrap.modelTag = "thrusterPlatform2State"
 
         self.solarArrayReferenceDataList = []
         self.solarArrayReferenceWrapList = []
@@ -101,59 +101,59 @@ class BSKFswModels:
         for item in range(SimBase.DynModels[spacecraftIndex].numRSA):
             self.solarArrayReferenceDataList.append(solarArrayReference.solarArrayReferenceConfig())
             self.solarArrayReferenceWrapList.append(SimBase.setModelDataWrap(self.solarArrayReferenceDataList[item]))
-            self.solarArrayReferenceWrapList[item].ModelTag = "solarArrayReference"
+            self.solarArrayReferenceWrapList[item].modelTag = "solarArrayReference"
 
             self.solarArrayControllerDataList.append(hingedRigidBodyPIDMotor.hingedRigidBodyPIDMotorConfig())
             self.solarArrayControllerWrapList.append(SimBase.setModelDataWrap(self.solarArrayControllerDataList[item]))
-            self.solarArrayControllerWrapList[item].ModelTag = "solarArrayReference"
+            self.solarArrayControllerWrapList[item].modelTag = "solarArrayReference"
 
         for item in range(2):
             self.platform1ControllerDataList.append(hingedRigidBodyPIDMotor.hingedRigidBodyPIDMotorConfig())
             self.platform1ControllerWrapList.append(SimBase.setModelDataWrap(self.platform1ControllerDataList[item]))
-            self.platform1ControllerWrapList[item].ModelTag = "platform1Controller"
+            self.platform1ControllerWrapList[item].modelTag = "platform1Controller"
 
             self.platform2ControllerDataList.append(hingedRigidBodyPIDMotor.hingedRigidBodyPIDMotorConfig())
             self.platform2ControllerWrapList.append(SimBase.setModelDataWrap(self.platform2ControllerDataList[item]))
-            self.platform2ControllerWrapList[item].ModelTag = "platform2Controller"
+            self.platform2ControllerWrapList[item].modelTag = "platform2Controller"
 
         self.torqueScheduler1EarthData = torqueScheduler.torqueSchedulerConfig()
         self.torqueScheduler1EarthWrap = SimBase.setModelDataWrap(self.torqueScheduler1EarthData)
-        self.torqueScheduler1EarthWrap.ModelTag = "torqueScheduler1Earth"
+        self.torqueScheduler1EarthWrap.modelTag = "torqueScheduler1Earth"
 
         self.torqueScheduler2EarthData = torqueScheduler.torqueSchedulerConfig()
         self.torqueScheduler2EarthWrap = SimBase.setModelDataWrap(self.torqueScheduler2EarthData)
-        self.torqueScheduler2EarthWrap.ModelTag = "torqueScheduler2Earth"
+        self.torqueScheduler2EarthWrap.modelTag = "torqueScheduler2Earth"
 
         self.torqueScheduler1SepData = torqueScheduler.torqueSchedulerConfig()
         self.torqueScheduler1SepWrap = SimBase.setModelDataWrap(self.torqueScheduler1SepData)
-        self.torqueScheduler1SepWrap.ModelTag = "torqueScheduler1SEP"
+        self.torqueScheduler1SepWrap.modelTag = "torqueScheduler1SEP"
 
         self.torqueScheduler2SepData = torqueScheduler.torqueSchedulerConfig()
         self.torqueScheduler2SepWrap = SimBase.setModelDataWrap(self.torqueScheduler2SepData)
-        self.torqueScheduler2SepWrap.ModelTag = "torqueScheduler2SEP"
+        self.torqueScheduler2SepWrap.modelTag = "torqueScheduler2SEP"
 
         self.torqueScheduler1CruiseData = torqueScheduler.torqueSchedulerConfig()
         self.torqueScheduler1CruiseWrap = SimBase.setModelDataWrap(self.torqueScheduler1CruiseData)
-        self.torqueScheduler1CruiseWrap.ModelTag = "torqueScheduler1Cruise"
+        self.torqueScheduler1CruiseWrap.modelTag = "torqueScheduler1Cruise"
 
         self.torqueScheduler2CruiseData = torqueScheduler.torqueSchedulerConfig()
         self.torqueScheduler2CruiseWrap = SimBase.setModelDataWrap(self.torqueScheduler2CruiseData)
-        self.torqueScheduler2CruiseWrap.ModelTag = "torqueScheduler2Cruise"
+        self.torqueScheduler2CruiseWrap.modelTag = "torqueScheduler2Cruise"
 
         self.trackingErrorData = attTrackingError.AttTrackingError()
         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
-        self.trackingErrorWrap.ModelTag = "trackingError"
+        self.trackingErrorWrap.modelTag = "trackingError"
 
         self.mrpFeedbackRWsData = mrpFeedback.MrpFeedback()
         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
-        self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
+        self.mrpFeedbackRWsWrap.modelTag = "mrpFeedbackRWs"
 
         self.rwMotorTorqueData = rwMotorTorque.RwMotorTorque()
         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
-        self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+        self.rwMotorTorqueWrap.modelTag = "rwMotorTorque"
 
         self.cmEstimationData = thrustCMEstimation.ThrustCMEstimation()
-        self.cmEstimationData.ModelTag = "cmEstimation"
+        self.cmEstimationData.modelTag = "cmEstimation"
 
         # create the FSW module gateway messages
         self.setupGatewayMsgs(SimBase)

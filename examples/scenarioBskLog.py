@@ -83,7 +83,7 @@ def run(case):
 
     # Construct algorithm and associated C++ container
     module = cppModuleTemplate.CppModuleTemplate()
-    module.ModelTag = "cppModuleTemplate"
+    module.modelTag = "cppModuleTemplate"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

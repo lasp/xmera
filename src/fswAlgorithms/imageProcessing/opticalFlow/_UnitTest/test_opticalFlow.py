@@ -94,7 +94,7 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
 
     # Construct algorithm and associated C++ container
     moduleConfig = opticalFlow.OpticalFlow()
-    moduleConfig.ModelTag = "opticalFlow"
+    moduleConfig.modelTag = "opticalFlow"
     moduleConfig.minTimeBetweenPairs = 5
     moduleConfig.slidingWindowImages = slidingWindow
 

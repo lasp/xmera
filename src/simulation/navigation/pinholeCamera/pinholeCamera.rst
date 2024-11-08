@@ -95,7 +95,7 @@ An instance of pinholeCamera, alongside necessary user-supplied parameters, can 
 .. code-block:: python
 
     camera = pinholeCamera.PinholeCamera()
-    camera.ModelTag = "camera"
+    camera.modelTag = "camera"
     camera.nxPixel = 2048 # Sets number of horizontal pixels
     camera.nyPixel = 1536 # Sets number of vertical pixels
     camera.wPixel = (17.3*1e-3)/2048 # Sets pixel width

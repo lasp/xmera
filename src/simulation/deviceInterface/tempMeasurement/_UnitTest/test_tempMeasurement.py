@@ -107,7 +107,7 @@ def run(tempFault):
     #   set up the truth value temperature modeling
     #
     sensorThermalModel = sensorThermal.SensorThermal()
-    sensorThermalModel.ModelTag = 'sensorThermalModel'
+    sensorThermalModel.modelTag = 'sensorThermalModel'
     sensorThermalModel.nHat_B = [0, 0, 1]
     sensorThermalModel.sensorArea = 1.0  # m^2
     sensorThermalModel.sensorAbsorptivity = 0.25

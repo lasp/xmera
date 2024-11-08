@@ -100,7 +100,7 @@ def run(cssFault):
     CSS.nHat_B = np.array([1., 0., 0.])
     CSS.sunInMsg.subscribeTo(sunMsg)
     CSS.stateInMsg.subscribeTo(scMsg)
-    CSS.ModelTag = "CSS"
+    CSS.modelTag = "CSS"
     CSS.RNGSeed = 123
     unitTestSim.AddModelToTask(testTaskName, CSS)
 

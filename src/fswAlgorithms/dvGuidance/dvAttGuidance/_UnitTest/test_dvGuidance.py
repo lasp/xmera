@@ -48,7 +48,7 @@ def dvGuidanceTestFunction(show_plots):
     module = dvGuidance.DvGuidance()
 
     # This calls the algContain to setup the selfInit, and update
-    module.ModelTag = "dvGuidance"
+    module.modelTag = "dvGuidance"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -104,17 +104,17 @@ def dvGuidanceTestFunction(show_plots):
         if not unitTestSupport.isArrayEqual(outSigma[i], trueSigma[i], 3, accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" + str(
+                "FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" + str(
                     dataLog.times()[i] * macros.NANO2SEC) + "sec\n")
         if not unitTestSupport.isArrayEqual(outOmega[i], trueOmega[i], 3, accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" + str(
+                "FAILED: " + module.modelTag + " Module failed omega_RN_N unit test at t=" + str(
                     dataLog.times()[i] * macros.NANO2SEC) + "sec\n")
         if not unitTestSupport.isArrayEqual(outDOmega[i], trueDOmega[i], 3, accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" + str(
+                "FAILED: " + module.modelTag + " Module failed domega_RN_N unit test at t=" + str(
                     dataLog.times()[i] * macros.NANO2SEC) + "sec\n")
 
     # print(outSigma)
@@ -151,11 +151,11 @@ def dvGuidanceTestFunction(show_plots):
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

@@ -98,7 +98,7 @@ def run(show_plots):
 
     # initialize servicer spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "Servicer"
+    scObject.modelTag = "Servicer"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -108,7 +108,7 @@ def run(show_plots):
 
     # create the debris object states
     scObject2 = spacecraft.Spacecraft()
-    scObject2.ModelTag = "Debris"
+    scObject2.modelTag = "Debris"
     I2 = [600., 0., 0.,
           0., 650., 0.,
           0., 0, 450.]
@@ -133,20 +133,20 @@ def run(show_plots):
 
     # add external control torque to scObject
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "extTorque"
+    extFTObject.modelTag = "extTorque"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     # setup spacecraft location access module
     scLocation = spacecraftLocation.SpacecraftLocation()
-    scLocation.ModelTag = "scAccess"
+    scLocation.modelTag = "scAccess"
     scLocation.addSpacecraftToModel(scObject2.scStateOutMsg)
     scLocation.primaryScStateInMsg.subscribeTo(scObject.scStateOutMsg)
     scLocation.rEquator = earth.radEquator
@@ -162,13 +162,13 @@ def run(show_plots):
 
     # setup hillPoint guidance module
     attGuidance = hillPoint.HillPoint()
-    attGuidance.ModelTag = "hillPoint"
+    attGuidance.modelTag = "hillPoint"
     attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     scSim.AddModelToTask(simTaskName, attGuidance)
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attError"
+    attError.modelTag = "attError"
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -180,7 +180,7 @@ def run(show_plots):
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)

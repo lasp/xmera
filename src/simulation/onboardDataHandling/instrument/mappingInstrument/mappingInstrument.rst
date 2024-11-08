@@ -37,7 +37,7 @@ To use this module, the user must first instantiate the module
 .. code-block:: python
 
     mapInstrument = mappingInstrument.mappingInstrument()
-    mapInstrument.ModelTag = "mapInstrument"
+    mapInstrument.modelTag = "mapInstrument"
 
 The user must then set the nodeBaudRate, in bits/second, within the module. This is a required parameter.
 

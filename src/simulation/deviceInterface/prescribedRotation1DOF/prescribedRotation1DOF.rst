@@ -460,7 +460,7 @@ This section is to outline the steps needed to set up the prescribed rotational 
 
 #. Define all of the configuration data associated with the module. For example, to configure the smoothed bang-coast-bang option::
 
-    prescribedRot1DOF.ModelTag = "prescribedRotation1DOF"
+    prescribedRot1DOF.modelTag = "prescribedRotation1DOF"
     prescribedRot1DOF.setRotHat_M(np.array([0.0, 1.0, 0.0]))
     prescribedRot1DOF.setThetaDDotMax(macros.D2R * 1.0)  # [rad/s^2]
     prescribedRot1DOF.setThetaInit(macros.D2R * 10.0)  # [rad]

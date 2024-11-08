@@ -75,7 +75,7 @@ def hingedBodyLinearProfilerTestFunction(show_plots, startTime, endTime, startTh
 
     # setup module to be tested
     module = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
-    module.ModelTag = "hingedBodyLinearProfilerTag"
+    module.modelTag = "hingedBodyLinearProfilerTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
     module.startTime = startTime
     module.endTime = endTime
@@ -98,7 +98,7 @@ def hingedBodyLinearProfilerTestFunction(show_plots, startTime, endTime, startTh
     testFailCount, testMessages = unitTestSupport.compareVector(trueThetaDot, dataLog.thetaDot, accuracy, "thetaDot", testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

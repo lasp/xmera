@@ -78,7 +78,7 @@ User Guide
 The required module configuration is::
 
     CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(N)
-    CAM.ModelTag = "constrainedAttitudeManeuvering"
+    CAM.modelTag = "constrainedAttitudeManeuvering"
     CAM.sigma_BN_goal = sigma_BN_G
     CAM.omega_BN_B_goal = [0, 0, 0]
     CAM.avgOmega = 0.04

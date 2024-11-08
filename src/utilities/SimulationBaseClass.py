@@ -202,7 +202,7 @@ class SimBaseClass:
                       ", " + taskColor + "priority: " + endColor + str(task.taskPriority) +
                       ", " + taskColor + "TaskPeriod: " + endColor + str(task.TaskPtr.getTaskPeriod()/1.0e9) + "s")
                 for module in task.TaskPtr.TaskModels:
-                    print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.ModelTag +
+                    print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.modelTag +
                           ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
             print("")
 
@@ -217,7 +217,7 @@ class SimBaseClass:
             for task in processData.processTasks:
                 moduleList = []
                 for module in task.TaskPtr.TaskModels:
-                    moduleList.append(module.ModelPtr.ModelTag + " (" + str(module.CurrentModelPriority) + ")")
+                    moduleList.append(module.ModelPtr.modelTag + " (" + str(module.CurrentModelPriority) + ")")
                 taskList[task.TaskPtr.TaskName + " (" + str(task.taskPriority) + ", " + str(task.TaskPtr.TaskPeriod/1.0e9) + "s)"] = moduleList
             processList[processData.processName + " (" + str(processData.processPriority) + ")"] = taskList
 
@@ -361,12 +361,12 @@ class SimBaseClass:
         in `VarName`.
 
         Args:
-            VarName (str): The variable to log in the format "<ModelTag>.<variable_name>"
+            VarName (str): The variable to log in the format "<modelTag>.<variable_name>"
             LogPeriod (int, optional): The minimum time between logs. Defaults to 0.
         """
         if "." not in VarName:
             raise ValueError('The variable to log must be given in the format '
-                             '"<ModelTag>.<variable_name>"')
+                             '"<modelTag>.<variable_name>"')
 
         modelTag = VarName.split('.')[0]
 
@@ -378,7 +378,7 @@ class SimBaseClass:
         # task where this model was added
         modelOrConfig = task = None
         for model, modelData, task in self.allModels:
-            if model.ModelTag == modelTag:
+            if model.modelTag == modelTag:
                 modelOrConfig = modelData or model
                 break
 
@@ -395,7 +395,7 @@ class SimBaseClass:
             return val
 
         logger = PythonVariableLogger({"variable": fun}, LogPeriod)
-        logger.ModelTag = f"Logger:{VarName}"
+        logger.modelTag = f"Logger:{VarName}"
         self.AddModelToTask(task.Name, logger)
 
         self.oldSyntaxVariableLog[VarName] = logger
@@ -407,12 +407,12 @@ class SimBaseClass:
         Generates a logger and adds it to the same task as the module
         in `VarName`.
         Args:
-            VarName (str): The variable to log in the format "<ModelTag>.<variable_name>"
+            VarName (str): The variable to log in the format "<modelTag>.<variable_name>"
             LogPeriod (int, optional): The minimum time between logs. Defaults to 0.
         """
         if "." not in VarName:
             raise ValueError('The variable to log must be given in the format '
-                             '"<ModelTag>.<variable_name>"')
+                             '"<modelTag>.<variable_name>"')
 
         modelTag = VarName.split('.')[0]
         # Calling eval on a pre-compiled string is faster than
@@ -423,7 +423,7 @@ class SimBaseClass:
         # task where this model was added
         modelOrConfig = task = None
         for model, modelData, task in self.allModels:
-            if model.ModelTag == modelTag:
+            if model.modelTag == modelTag:
                 modelOrConfig = modelData or model
                 break
         if task is None or modelOrConfig is None:
@@ -439,7 +439,7 @@ class SimBaseClass:
             return val
 
         logger = PythonVariableLogger({"variable": fun}, LogPeriod)
-        logger.ModelTag = f"Logger:{VarName}"
+        logger.modelTag = f"Logger:{VarName}"
         self.AddModelToTask(task.Name, logger)
 
         self.multiProcessVariableLoggers[VarName] = logger

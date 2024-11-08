@@ -158,7 +158,7 @@ def run(show_plots):
 
     # Add the spacecraft module
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     scSim.AddModelToTask(dynTaskName, scObject)
 
     # Define the mass properties of the rigid spacecraft hub
@@ -250,8 +250,8 @@ def run(show_plots):
     for i in range(num_elements):
         array1ElementList.append(prescribedMotionStateEffector.PrescribedMotionStateEffector())
         array2ElementList.append(prescribedMotionStateEffector.PrescribedMotionStateEffector())
-        array1ElementList[i].ModelTag = "array1Element" + str(i + 1)
-        array2ElementList[i].ModelTag = "array2Element" + str(i + 1)
+        array1ElementList[i].modelTag = "array1Element" + str(i + 1)
+        array2ElementList[i].modelTag = "array2Element" + str(i + 1)
         array1ElementList[i].mass = mass_element  # [kg]
         array2ElementList[i].mass = mass_element  # [kg]
         array1ElementList[i].IPntFc_F = IElement_PntFc_F  # [kg m^2]
@@ -336,8 +336,8 @@ def run(show_plots):
     for i in range(num_elements):
         array1RotProfilerList.append(prescribedRotation1DOF.PrescribedRotation1DOF())
         array2RotProfilerList.append(prescribedRotation1DOF.PrescribedRotation1DOF())
-        array1RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray1Element" + str(i + 1)
-        array2RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray2Element" + str(i + 1)
+        array1RotProfilerList[i].modelTag = "prescribedRotation1DOFArray1Element" + str(i + 1)
+        array2RotProfilerList[i].modelTag = "prescribedRotation1DOFArray2Element" + str(i + 1)
         array1RotProfilerList[i].setCoastOptionBangDuration(ramp_duration)  # [s]
         array2RotProfilerList[i].setCoastOptionBangDuration(ramp_duration)  # [s]
         array1RotProfilerList[i].setRotHat_M(rot_hat_M)
@@ -413,7 +413,7 @@ def run(show_plots):
                                                   )
         viz.settings.showSpacecraftAsSprites = -1
         vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[scObject.ModelTag]
+                                     , simBodiesToModify=[scObject.modelTag]
                                      , modelPath="CYLINDER"
                                      , scale=[widthHub, depthHub, lengthHub]
                                      , color=vizSupport.toRGBA255("gray"))

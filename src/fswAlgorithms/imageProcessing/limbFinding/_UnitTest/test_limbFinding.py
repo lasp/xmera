@@ -108,7 +108,7 @@ def limbFindingTest(show_plots, image, blur, cannyLow, cannyHigh, saveImage):
 
     # Construct algorithm and associated C++ container
     module = limbFinding.LimbFinding()
-    module.ModelTag = "limbFind"
+    module.modelTag = "limbFind"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

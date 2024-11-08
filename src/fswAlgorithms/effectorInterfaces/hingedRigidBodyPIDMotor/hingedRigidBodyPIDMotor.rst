@@ -49,7 +49,7 @@ User Guide
 The required module configuration is::
 
     motor = hingedRigidBodyPIDMotorConfig.hingedRigidBodyPIDMotorConfig()
-    motor.ModelTag = "solarArrayPDController"  
+    motor.modelTag = "solarArrayPDController"
     motor.K = K
     motor.P = P
     motor.P = I

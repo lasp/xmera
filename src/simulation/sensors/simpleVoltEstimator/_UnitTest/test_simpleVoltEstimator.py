@@ -68,7 +68,7 @@ def unitSimpleVoltEstimator(show_plots):
     voltMsg = messaging.VoltMsg().write(voltMessageData)
     sVoltObject.voltInMsg.subscribeTo(voltMsg)
 
-    sVoltObject.ModelTag = "SimpleVoltageEstimation"
+    sVoltObject.modelTag = "SimpleVoltageEstimation"
     voltBound = numpy.array([1000.0])
     voltSigma = 50.0
 

@@ -139,7 +139,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     # Construct algorithm and associated C++ container
     module = camera.Camera()
-    module.ModelTag = "cameras"
+    module.modelTag = "cameras"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

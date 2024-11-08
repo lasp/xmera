@@ -112,7 +112,7 @@ class BSKDynamicModels():
 
     def SetCamera(self):
         self.cameraMod.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsgs[0])
-        self.cameraMod.ModelTag = "instrument"
+        self.cameraMod.modelTag = "instrument"
         self.cameraMod.cameraIsOn = 1
         self.cameraMod.cameraID = 1
         self.cameraMod.saveImages = 0
@@ -143,14 +143,14 @@ class BSKDynamicModels():
         self.cameraSize = [10.*1E-3, self.cameraRez[1]/self.cameraRez[0]*10.*1E-3]  # in m
         self.cameraMod.resolution = self.cameraRez
         self.cameraMod.fieldOfView = np.deg2rad(55)
-        self.cameraMod.parentName = self.scObject.ModelTag
+        self.cameraMod.parentName = self.scObject.modelTag
         self.cameraMod.skyBox = 'black'
         self.cameraFocal = self.cameraSize[1]/2./np.tan(self.cameraMod.fieldOfView/2.)  # in m
 
     def SetCamera2(self):
         # this 2nd camera is setup, but not used in the FSW image processing
         self.cameraMod2.imageInMsg.subscribeTo(self.vizInterface.opnavImageOutMsgs[1])
-        self.cameraMod2.ModelTag = "cam2"
+        self.cameraMod2.modelTag = "cam2"
         self.cameraMod2.cameraIsOn = 1
         self.cameraMod2.cameraID = 3
         self.cameraMod2.saveImages = 0
@@ -173,7 +173,7 @@ class BSKDynamicModels():
         self.cameraMod2.cameraPos_B = [0., 0.2, 2.2]  # in meters
         self.cameraMod2.resolution = self.cameraRez
         self.cameraMod2.fieldOfView = np.deg2rad(55)
-        self.cameraMod2.parentName = self.scObject.ModelTag
+        self.cameraMod2.parentName = self.scObject.modelTag
         self.cameraMod2.skyBox = 'black'
 
     def SetVizInterface(self, SimBase):
@@ -190,7 +190,7 @@ class BSKDynamicModels():
         self.vizInterface.settings.ambient = 0.5
 
     def SetSpacecraftHub(self):
-        self.scObject.ModelTag = "bskSat"
+        self.scObject.modelTag = "bskSat"
         # -- Crate a new variable for the sim sc inertia I_sc. Note: this is currently accessed from FSWClass
         self.I_sc = [900., 0., 0.,
                      0., 800., 0.,
@@ -235,11 +235,11 @@ class BSKDynamicModels():
         self.eclipseObject.addSpacecraftToModel(self.scObject.scStateOutMsg)
 
     def SetExternalForceTorqueObject(self):
-        self.extForceTorqueObject.ModelTag = "externalDisturbance"
+        self.extForceTorqueObject.modelTag = "externalDisturbance"
         self.scObject.addDynamicEffector(self.extForceTorqueObject)
 
     def SetSimpleNavObject(self):
-        self.SimpleNavObject.ModelTag = "SimpleNavigation"
+        self.SimpleNavObject.modelTag = "SimpleNavigation"
         posSigma = 10.0
         velSigma = 0.001
         attSigma = 1.0 / 36000.0 * math.pi / 180.0
@@ -326,7 +326,7 @@ class BSKDynamicModels():
 
     def SetCSSConstellation(self):
         """Set the 8 CSS sensors"""
-        self.CSSConstellationObject.ModelTag = "cssConstellation"
+        self.CSSConstellationObject.modelTag = "cssConstellation"
 
         def setupCSS(cssDevice):
             cssDevice.fov = 80. * mc.D2R         # half-angle field of view value
@@ -354,7 +354,7 @@ class BSKDynamicModels():
         for nHat_B, i in zip(nHat_B_List, list(range(1, numCSS+1))):
             CSS = coarseSunSensor.CoarseSunSensor()
             setupCSS(CSS)
-            CSS.ModelTag = "CSS" + str(i)
+            CSS.modelTag = "CSS" + str(i)
             CSS.nHat_B = np.array(nHat_B)
             cssList.append(CSS)
 
@@ -363,7 +363,7 @@ class BSKDynamicModels():
 
     def SetEphemConvert(self):
         # Initialize the ephemeris module
-        self.ephemObject.ModelTag = 'EphemData'
+        self.ephemObject.modelTag = 'EphemData'
         self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.mars])
 
     def SetSimpleGrav(self):

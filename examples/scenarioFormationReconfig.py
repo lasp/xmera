@@ -118,8 +118,8 @@ def run(show_plots, useRefAttitude):
     # sc
     scObject = spacecraft.Spacecraft()
     scObject2 = spacecraft.Spacecraft()
-    scObject.ModelTag = "scObject"
-    scObject2.ModelTag = "scObject2"
+    scObject.modelTag = "scObject"
+    scObject2.modelTag = "scObject2"
 
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -150,11 +150,11 @@ def run(show_plots, useRefAttitude):
     direction = [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]  # get thrust in +z direction
     for pos_B, dir_B in zip(location, direction):
         thFactory2.create('MOOG_Monarc_22_6', pos_B, dir_B, useMinPulseTime=False)
-    thFactory2.addToSpacecraft(scObject2.ModelTag, thrusterEffector2, scObject2)
+    thFactory2.addToSpacecraft(scObject2.modelTag, thrusterEffector2, scObject2)
 
     # extObj
     extFTObject2 = extForceTorque.ExtForceTorque()
-    extFTObject2.ModelTag = "externalDisturbance2"
+    extFTObject2.modelTag = "externalDisturbance2"
     scObject2.addDynamicEffector(extFTObject2)
     scSim.AddModelToTask(dynTaskName, extFTObject2, 3)
 
@@ -181,7 +181,7 @@ def run(show_plots, useRefAttitude):
 
     # inertial 3D target attitude
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial_3D2"
+    inertial3DObj.modelTag = "inertial_3D2"
     inertial3DObj.sigma_R0N = [1.0, 0.0, 0.0]
     scSim.AddModelToTask(fswTaskName, inertial3DObj, 11)
 
@@ -195,7 +195,7 @@ def run(show_plots, useRefAttitude):
 
     # spacecraftReconfig
     spacecraftReconfigModule = spacecraftReconfig.SpacecraftReconfig()
-    spacecraftReconfigModule.ModelTag = "spacecraftReconfig"
+    spacecraftReconfigModule.modelTag = "spacecraftReconfig"
     spacecraftReconfigModule.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
     spacecraftReconfigModule.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
     if useRefAttitude:
@@ -210,14 +210,14 @@ def run(show_plots, useRefAttitude):
 
     # att_Error
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attError"
+    attError.modelTag = "attError"
     scSim.AddModelToTask(fswTaskName, attError, 9)
     attError.attRefInMsg.subscribeTo(spacecraftReconfigModule.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(simpleNavObject2.attOutMsg)
 
     # MRP_FeedBack
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTaskName, mrpControl, 8)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)

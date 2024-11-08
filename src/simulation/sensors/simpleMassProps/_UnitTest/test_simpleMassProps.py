@@ -101,7 +101,7 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
 
     # Construct algorithm and associated C++ container
     scMassPropsModule = simpleMassProps.SimpleMassProps()  # update with current values
-    scMassPropsModule.ModelTag = "scMassPropsModule"  # update python name of test module
+    scMassPropsModule.modelTag = "scMassPropsModule"  # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scMassPropsModule)
@@ -159,7 +159,7 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + scMassPropsModule.ModelTag)
+        print("PASSED: " + scMassPropsModule.modelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

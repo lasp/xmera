@@ -64,7 +64,7 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
 
     # setup module to be tested
     module = msmForceTorque.MsmForceTorque()
-    module.ModelTag = "msmForceTorqueTag"
+    module.modelTag = "msmForceTorqueTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure space object state and voltage input messages
@@ -159,7 +159,7 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
                                                        testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

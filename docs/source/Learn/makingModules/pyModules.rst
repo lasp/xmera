@@ -18,7 +18,7 @@ Then, one can implement the ``__init__``,
 implement these methods in C++. Remember to always call ``__init__`` of
 the parent class ``SysModel`` if you are implementing your own ``__init__``.
 
-The ``ModelTag`` value of these python BSK modules will be a unique positive number,
+The ``modelTag`` value of these python BSK modules will be a unique positive number,
 same as with C/C++ BSK modules.
 
 All Python modules have a logger stored in ``bskLogger`` (although it will

@@ -107,7 +107,7 @@ def run(show_plots, voltage):
 
     # Construct algorithm and associated C++ container
     testModule = motorVoltageInterface.MotorVoltageInterface()
-    testModule.ModelTag = "motorVoltageInterface"
+    testModule.modelTag = "motorVoltageInterface"
 
     # set module parameters(s)
     testModule.setGains(np.array([1.32, 0.99, 1.31]))      # [Nm/V] conversion gain
@@ -179,7 +179,7 @@ def run(show_plots, voltage):
     snippetName = "passFail" + '{:1.1f}'.format(voltage)
     if testFailCount == 0:
         colorText = "ForestGreen"
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = "Red"

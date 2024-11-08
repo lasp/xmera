@@ -241,7 +241,7 @@ public:
     Recorder(Message<messageType>* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
         this->readMessage = message->addSubscriber();
-        this->ModelTag = "Rec:" + findMsgName(std::string(typeid(*message).name()));
+        this->modelTag = "Rec:" + findMsgName(std::string(typeid(*message).name()));
     }
     //! -- Use this to record C messages
     Recorder(void* message, uint64_t timeDiff = 0){
@@ -253,10 +253,10 @@ public:
         payloadPointer = (messageType *) (++pt);
 
         this->readMessage = ReadFunctor<messageType>(payloadPointer, msgPt);
-        this->ModelTag = "Rec:";
+        this->modelTag = "Rec:";
         Message<messageType> tempMsg;
         std::string msgName = typeid(tempMsg).name();
-        this->ModelTag += findMsgName(msgName);
+        this->modelTag += findMsgName(msgName);
     }
     //! -- Use this to keep track of what someone is reading
     Recorder(ReadFunctor<messageType>* messageReader, uint64_t timeDiff = 0){
@@ -266,7 +266,7 @@ public:
             messageType var;
             bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting to record an un-connected input message of type %s.", typeid(var).name());
         }
-        this->ModelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
+        this->modelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
     }
     ~Recorder(){};
 

@@ -51,7 +51,7 @@ depend on velocity or attitude error should depend on angular velocity.
 .. code-block:: python
 
     planetNavigation = planetNav.PlanetNav()
-    planetNavigation.ModelTag = "planetNavigation"
+    planetNavigation.modelTag = "planetNavigation"
     planetNavigation.walkBounds = errorBounds
     planetNavigation.PMatrix = pMatrix
     planetNavigation.crossTrans = True

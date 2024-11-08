@@ -70,7 +70,7 @@ def hingedRigidBodyGravity(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraftSystem.SpacecraftSystem()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -97,7 +97,7 @@ def hingedRigidBodyGravity(show_plots):
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
-    unitTestSim.panel1.ModelTag = "Panel1"
+    unitTestSim.panel1.modelTag = "Panel1"
 
     # Define Variables for panel 2
     unitTestSim.panel2.mass = 100.0
@@ -109,7 +109,7 @@ def hingedRigidBodyGravity(show_plots):
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
-    unitTestSim.panel2.ModelTag = "Panel2"
+    unitTestSim.panel2.modelTag = "Panel2"
 
     # Add panels to spaceCraft
     scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
@@ -300,7 +300,7 @@ def hingedRigidBodyNoGravity(show_plots):
     testMessages = []  # create empty list to store test log messages
     
     scObject = spacecraftSystem.SpacecraftSystem()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -531,7 +531,7 @@ def hingedRigidBodyNoGravityDamping(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraftSystem.SpacecraftSystem()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -720,7 +720,7 @@ def hingedRigidBodyThetaSS(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraftSystem.SpacecraftSystem()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -765,7 +765,7 @@ def hingedRigidBodyThetaSS(show_plots):
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extFTObject.extForce_B = [[0], [1], [0]]
     scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)
@@ -912,7 +912,7 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraftSystem.SpacecraftSystem()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -957,7 +957,7 @@ def hingedRigidBodyFrequencyAmp(show_plots):
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     force = 1
     extFTObject.extForce_B = [[0], [force], [0]]
@@ -1195,11 +1195,11 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     if useScPlus:
         scObject = spacecraft.Spacecraft()
-        scObject.ModelTag = "spacecraftBody"
+        scObject.modelTag = "spacecraftBody"
     else:
         scObject = spacecraftSystem.SpacecraftSystem()
-        scObject.ModelTag = "spacecraftBody"
-        scObject.primaryCentralSpacecraft.spacecraftName = scObject.ModelTag
+        scObject.modelTag = "spacecraftBody"
+        scObject.primaryCentralSpacecraft.spacecraftName = scObject.modelTag
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -1225,7 +1225,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel1.thetaInit = 0 * numpy.pi / 180.0
     unitTestSim.panel1.thetaDotInit = 0.0
-    unitTestSim.panel1.ModelTag = "panel1"
+    unitTestSim.panel1.modelTag = "panel1"
 
     # set a fixed motor torque message
     motorMsgData = messaging.ArrayMotorTorqueMsgPayload()
@@ -1243,7 +1243,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel2.thetaInit = 0.0 * macros.D2R
     unitTestSim.panel2.thetaDotInit = 0.0
-    unitTestSim.panel2.ModelTag = "panel2"
+    unitTestSim.panel2.modelTag = "panel2"
 
     # Add panels to spaceCraft
     scObjectPrimary = scObject
@@ -1434,7 +1434,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraftSystem.SpacecraftSystem()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -1487,7 +1487,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extForce_B = [[force1_B[0]], [force1_B[1]], [force1_B[2]]]
     extFTObject.extTorquePntB_B = [[torque1_B[0]], [torque1_B[1]], [torque1_B[2]]]
     scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)

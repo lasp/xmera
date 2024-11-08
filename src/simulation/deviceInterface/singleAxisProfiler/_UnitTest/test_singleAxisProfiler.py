@@ -90,7 +90,7 @@ def test_singleAxisProfiler(show_plots, theta, thetaDot, thetaDDot, rotAxis_MAng
     # Create an instance of the singleAxisProfiler module to be tested
     rotAxis_M = np.array([np.cos(rotAxis_MAngle), np.sin(rotAxis_MAngle), 0.0])
     singleAxisRotProfiler = singleAxisProfiler.SingleAxisProfiler()
-    singleAxisRotProfiler.ModelTag = "singleAxisProfiler"
+    singleAxisRotProfiler.modelTag = "singleAxisProfiler"
     singleAxisRotProfiler.setRotHat_M(rotAxis_M)
     unitTestSim.AddModelToTask(unitTaskName, singleAxisRotProfiler)
 

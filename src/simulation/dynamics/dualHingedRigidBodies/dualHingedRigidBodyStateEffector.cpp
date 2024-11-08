@@ -70,7 +70,7 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
         this->dualHingedRigidBodyConfigLogOutMsgs.push_back(scMsg);
     }
 
-    this->ModelTag = "";
+    this->modelTag = "";
 
     return;
 }

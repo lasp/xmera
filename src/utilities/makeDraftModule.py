@@ -214,7 +214,7 @@ class moduleGenerator:
         else:
             self.log(failColor + "ERROR: " + endColor + "Wrong module type provided to test file method.")
             exit(0)
-        testFile += '    module.ModelTag = "' + self.moduleName + 'Tag"\n'
+        testFile += '    module.modelTag = "' + self.moduleName + 'Tag"\n'
         testFile += '    unitTestSim.AddModelToTask(unitTaskName, module)\n'
         testFile += '\n'
         testFile += '    # Configure blank module input messages\n'
@@ -238,7 +238,7 @@ class moduleGenerator:
         testFile += '    # pull module data and make sure it is correct\n'
         testFile += '\n'
         testFile += '    if testFailCount == 0:\n'
-        testFile += '        print("PASSED: " + module.ModelTag)\n'
+        testFile += '        print("PASSED: " + module.modelTag)\n'
         testFile += '    else:\n'
         testFile += '        print(testMessages)\n'
         testFile += '\n'

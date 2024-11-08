@@ -52,7 +52,7 @@ The electrostatic force and torque module is created using:
     :linenos:
 
     module = msmForceTorque.MsmForceTorque()
-    module.ModelTag = "msmForceTorqueTag"
+    module.modelTag = "msmForceTorqueTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
 To add a spacecraft, along with the associated list of MSM sphere body-fixed locations and radii, use::

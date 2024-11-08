@@ -82,7 +82,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     # Construct algorithm and associated C++ container
     module = mrpSteering.MrpSteering()
-    module.ModelTag = "mrpSteering"
+    module.modelTag = "mrpSteering"
 
 
     # Add test module to runtime call list
@@ -129,7 +129,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omega_BastR_B[i], omegaAstTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BastR_B unit test at t="
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_BastR_B unit test at t="
                                 + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
     # compare the module results to the truth values
@@ -138,7 +138,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omegap_BastR_B[i], omegaAstPTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omegap_BastR_B unit test at t="
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omegap_BastR_B unit test at t="
                                 + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
@@ -148,7 +148,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

@@ -52,7 +52,7 @@ def mappingInstrumentTestFunction():
 
     # setup module to be tested
     module = mappingInstrument.MappingInstrument()
-    module.ModelTag = "mappingInstrumentTag"
+    module.modelTag = "mappingInstrumentTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
     module.nodeBaudRate = 1.
 
@@ -102,7 +102,7 @@ def mappingInstrumentTestFunction():
         testFailCount += 1
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

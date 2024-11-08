@@ -169,7 +169,7 @@ def run(show_plots, planetCase):
     # Construct algorithm and associated C++ container
     # change module to tabAtmo
     tabAtmo = tabularAtmosphere.TabularAtmosphere()   # update with current values
-    tabAtmo.ModelTag = "tabularAtmosphere"            # update python name of test module
+    tabAtmo.modelTag = "tabularAtmosphere"            # update python name of test module
     atmoTaskName = "atmosphere"
     
     # define constants & load data
@@ -194,7 +194,7 @@ def run(show_plots, planetCase):
     m_sc = 2530.0    # kg
 
     dragEffector = dragDynamicEffector.DragDynamicEffector()
-    dragEffector.ModelTag = "DragEff"
+    dragEffector.modelTag = "DragEff"
 
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
@@ -214,7 +214,7 @@ def run(show_plots, planetCase):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     scObject.hub.mHub = m_sc
     tabAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
     

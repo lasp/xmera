@@ -77,7 +77,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
 
     # setup module to be tested
     module = hingedRigidBodyMotorSensor.HingedRigidBodyMotorSensor()
-    module.ModelTag = "hingedRigidBodyMotorSensorTag"
+    module.modelTag = "hingedRigidBodyMotorSensorTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure blank module input messages
@@ -152,7 +152,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
             testFailCount += 1
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
         

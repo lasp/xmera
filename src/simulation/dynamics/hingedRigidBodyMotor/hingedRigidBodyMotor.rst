@@ -50,7 +50,7 @@ The interface module is created in python using:
     :linenos:
 
     testModule = hingedRigidBodyMotor.hingedRigidBodyMotor()
-    testModule.ModelTag = "hingedRigidBodyMotor"
+    testModule.modelTag = "hingedRigidBodyMotor"
 
 
 A sample setup is done using:

@@ -133,7 +133,7 @@ def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, p4_noise
 
     # setup module to be tested
     module = cameraTriangulation.CameraTriangulation()
-    module.ModelTag = "cameraTriangulation"
+    module.modelTag = "cameraTriangulation"
     module.uncertaintyImageMeasurement = p4_noise
     unitTestSim.AddModelToTask(unitTaskName, module)
 

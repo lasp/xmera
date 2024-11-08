@@ -84,7 +84,7 @@ def spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, th
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -128,7 +128,7 @@ def spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, th
         spinningBody.theta2DotInit = 0 * macros.D2R
     else:
         spinningBody.theta2DotInit = -1.0 * macros.D2R
-    spinningBody.ModelTag = "SpinningBody"
+    spinningBody.modelTag = "SpinningBody"
 
     # Add spinning body to spacecraft
     scObject.addStateEffector(spinningBody)

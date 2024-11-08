@@ -81,7 +81,7 @@ def mtbMomentumManagementModuleTestFunction():
     module = mtbMomentumManagement.MtbMomentumManagement()
     module.cGain = 0.005
     module.wheelSpeedBiases = [0., 0., 0, 0.]
-    module.ModelTag = "mtbMomentumManagement"           # update python name of test module
+    module.modelTag = "mtbMomentumManagement"           # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # wheelConfigData message (array is ordered c11, c22, c33, c44, ...)

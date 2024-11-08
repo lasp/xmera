@@ -95,7 +95,7 @@ The encoder module is created in python using:
     :linenos:
 
     wheelSpeedEncoder = encoder.Encoder()
-    wheelSpeedEncoder.ModelTag = 'rwSpeedsEncoder'
+    wheelSpeedEncoder.modelTag = 'rwSpeedsEncoder'
 
 A sample setup is done using:
 

@@ -81,7 +81,7 @@ The module is created in python using, for example:
     :linenos:
 
     tempMeasurementModel = tempMeasurement.TempMeasurement()
-    tempMeasurementModel.ModelTag = 'tempMeasModel'
+    tempMeasurementModel.modelTag = 'tempMeasModel'
 
 A sample setup is done using:
 

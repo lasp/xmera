@@ -243,7 +243,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             viz.settings.mainCameraTarget = "sat-1"
             viz.liveSettings.relativeOrbitChief = "sat-0"  # set the chief for relative orbit trajectory
             for i in range(self.numberSpacecraft):
-                vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
+                vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.modelTag,
                                                    showGenericStoragePanel=True)
 
     def configure_initial_conditions(self):

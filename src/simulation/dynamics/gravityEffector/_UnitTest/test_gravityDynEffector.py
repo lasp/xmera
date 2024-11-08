@@ -307,7 +307,7 @@ def singleGravityBody(show_plots):
     # Initialize the modules that we are using.
     SpiceObject = spiceInterface.SpiceInterface()
 
-    SpiceObject.ModelTag = "SpiceInterfaceData"
+    SpiceObject.modelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     SpiceObject.addPlanetNames(spiceInterface.StringVector(["earth", "mars barycenter", "sun"]))
     SpiceObject.UTCCalInit = DateSpice

@@ -534,7 +534,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
     testModule.appendKeepOutDirection(keepOutBoresight_B[0], keepOutFov)
     testModule.appendKeepInDirection(keepInBoresight_B[0], keepInFov)
     testModule.appendKeepInDirection(keepInBoresight_B[1], keepInFov)
-    testModule.ModelTag = "testModule"
+    testModule.modelTag = "testModule"
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # connect messages
@@ -587,10 +587,10 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
                         sigma_BN_BSK.append( testModule.returnNodeCoord([i, j, k], p) )
                     if not unitTestSupport.isVectorEqual(sigma_BN, sigma_BN_BSK, accuracy):
                         testFailCount += 1
-                        testMessages.append("FAILED: " + testModule.ModelTag + " Error in the coordinates of node ({},{},{}) \n".format(i, j, k))
+                        testMessages.append("FAILED: " + testModule.modelTag + " Error in the coordinates of node ({},{},{}) \n".format(i, j, k))
                     if not nodes[(i, j, k)].isFree == testModule.returnNodeState([i, j, k]):
                         testFailCount += 1
-                        testMessages.append("FAILED: " + testModule.ModelTag + " Error in the state of node ({},{},{}) \n".format(i, j, k))
+                        testMessages.append("FAILED: " + testModule.modelTag + " Error in the state of node ({},{},{}) \n".format(i, j, k))
 
     # check that the same path is produced
     for p in range(len(path)):
@@ -600,7 +600,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
             sigma_BN_BSK.append(testModule.returnPathCoord(p,j))
         if not unitTestSupport.isVectorEqual(sigma_BN, sigma_BN_BSK, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in waypoint number {} in path \n".format(p))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error in waypoint number {} in path \n".format(p))
 
     # check interpolated path compliance
     for n in range(len(Output.T)):
@@ -616,16 +616,16 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
 
         if not unitTestSupport.isDoubleEqual(T, T_BSK, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in time at index #{} in trajectory \n".format(n))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error in time at index #{} in trajectory \n".format(n))
         if not unitTestSupport.isVectorEqual(sigma, sigma_BSK, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in sigma at index #{} in trajectory \n".format(n))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error in sigma at index #{} in trajectory \n".format(n))
         if not unitTestSupport.isVectorEqual(sigmaDot, sigmaDot_BSK, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in sigmaDot at index #{} in trajectory \n".format(n))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error in sigmaDot at index #{} in trajectory \n".format(n))
         if not unitTestSupport.isVectorEqual(sigmaDDot, sigmaDDot_BSK, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in sigmaDDot at index #{} in trajectory \n".format(n))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error in sigmaDDot at index #{} in trajectory \n".format(n))
 
     # check same path cost for every spline point
     for n in range(len(Output.T)):
@@ -638,11 +638,11 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
 
         if not unitTestSupport.isDoubleEqual(c1, c2, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error torque norm in point {} in trajectory \n".format(n))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error torque norm in point {} in trajectory \n".format(n))
 
     if not unitTestSupport.isDoubleEqual(pathCost, testModule.pathCost, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + testModule.ModelTag + " Error in path cost \n")
+        testMessages.append("FAILED: " + testModule.modelTag + " Error in path cost \n")
 
     # check correctness of output message
     for n in range(len(timeData)):
@@ -658,13 +658,13 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
 
         if not unitTestSupport.isVectorEqual(sigma_RN, CAMLog.sigma_RN[n], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error in attitude reference message at t = {} sec \n".format(t))
         if not unitTestSupport.isVectorEqual(omega_RN_N, CAMLog.omega_RN_N[n], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error in attitude reference message at t = {} sec \n".format(t))
         if not unitTestSupport.isVectorEqual(omegaDot_RN_N, CAMLog.domega_RN_N[n], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in attitude reference message at t = {} sec \n".format(t))
+            testMessages.append("FAILED: " + testModule.modelTag + " Error in attitude reference message at t = {} sec \n".format(t))
 
     return [testFailCount, ''.join(testMessages)]
 

@@ -123,7 +123,7 @@ def encoderTest(show_plots, accuracy):
     #
 
     wheelSpeedEncoder = encoder.Encoder()
-    wheelSpeedEncoder.ModelTag = 'rwSpeedsEncoder'
+    wheelSpeedEncoder.modelTag = 'rwSpeedsEncoder'
     wheelSpeedEncoder.clicksPerRotation = 2
     wheelSpeedEncoder.numRW = numRW
     wheelSpeedEncoder.rwSpeedInMsg.subscribeTo(speedMsg)

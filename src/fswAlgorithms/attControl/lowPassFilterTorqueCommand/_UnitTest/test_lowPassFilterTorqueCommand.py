@@ -63,7 +63,7 @@ def subModuleTestFunction(show_plots):
 
     #   Construct algorithm and associated C++ container
     module = lowPassFilterTorqueCommand.LowPassFilterTorqueCommand()
-    module.ModelTag = "lowPassFilterTorqueCommand"      # python name of test module.
+    module.modelTag = "lowPassFilterTorqueCommand"      # python name of test module.
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -114,7 +114,7 @@ def subModuleTestFunction(show_plots):
     for i in range(0,len(LrFtrue)):
         if not unitTestSupport.isArrayEqual(LrF[i], LrFtrue[i], 3, 1e-12):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed LrFtrue unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: " + module.modelTag + " Module failed LrFtrue unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 
@@ -126,7 +126,7 @@ def subModuleTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
 
 
     # each test method requires a single assert method to be called

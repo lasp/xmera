@@ -90,7 +90,7 @@ def flybyPointTestFunction(show_plots, initial_position, initial_velocity, filte
 
     # setup flybyPoint guidance module
     flyby_guidance = flybyPoint.FlybyPoint()
-    flyby_guidance.ModelTag = "flybyPoint"
+    flyby_guidance.modelTag = "flybyPoint"
     flyby_guidance.setTimeBetweenFilterData(filter_dt)
     flyby_guidance.setToleranceForCollinearity(1E-5)
     flyby_guidance.setSignOfOrbitNormalFrameVector(orbit_normal_sign)

@@ -239,7 +239,7 @@ def run(show_plots, useDVThrusters):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -265,7 +265,7 @@ def run(show_plots, useDVThrusters):
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0.25], [-0.25], [0.1]]
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(dynTaskName, extFTObject)
@@ -273,7 +273,7 @@ def run(show_plots, useDVThrusters):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(dynTaskName, sNavObject)
 
     # create arrays for thrusters' locations and directions
@@ -428,8 +428,8 @@ def run(show_plots, useDVThrusters):
     numTh = thFactory.getNumOfDevices()
 
     # create thruster object container and tie to spacecraft object
-    thrModelTag = "ACSThrusterDynamics"
-    thFactory.addToSpacecraft(thrModelTag, thrusterSet, scObject)
+    thrmodelTag = "ACSThrusterDynamics"
+    thFactory.addToSpacecraft(thrmodelTag, thrusterSet, scObject)
 
     #
     #   setup the FSW algorithm tasks
@@ -437,18 +437,18 @@ def run(show_plots, useDVThrusters):
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
     scSim.AddModelToTask(fswTaskName, inertial3DObj)
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(fswTaskName, attError)
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTaskName, mrpControl)
     mrpControl.K = 3.5 * 10.0
     mrpControl.Ki = 0.0002  # make value negative to turn off integral feedback
@@ -457,7 +457,7 @@ def run(show_plots, useDVThrusters):
 
     # setup the thruster force mapping module
     thrForceMappingObj = thrForceMapping.ThrForceMapping()
-    thrForceMappingObj.ModelTag = "thrForceMapping"
+    thrForceMappingObj.modelTag = "thrForceMapping"
     scSim.AddModelToTask(fswTaskName, thrForceMappingObj)
 
     if useDVThrusters:
@@ -473,7 +473,7 @@ def run(show_plots, useDVThrusters):
 
     # setup the Schmitt trigger thruster firing logic module
     thrFiringSchmittObj = thrFiringSchmitt.ThrFiringSchmitt()
-    thrFiringSchmittObj.ModelTag = "thrFiringSchmitt"
+    thrFiringSchmittObj.modelTag = "thrFiringSchmitt"
     scSim.AddModelToTask(fswTaskName, thrFiringSchmittObj)
     thrFiringSchmittObj.thrMinFireTime = 0.002
     thrFiringSchmittObj.level_on = .75

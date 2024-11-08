@@ -28,4 +28,4 @@ the :ref:`SimulationBaseClass` method::
 
     scSim.GetLogVariableData(variableString)
 
-Here ``variableString`` is again composed of the ``ModelTag`` and variable name as before.  Note that the returned array has a first column that represents the time where the variable is recorded in nano-seconds.  Executing the script you should thus see the following output:
+Here ``variableString`` is again composed of the ``modelTag`` and variable name as before.  Note that the returned array has a first column that represents the time where the variable is recorded in nano-seconds.  Executing the script you should thus see the following output:

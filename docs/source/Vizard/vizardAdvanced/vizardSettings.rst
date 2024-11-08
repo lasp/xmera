@@ -32,7 +32,7 @@ for a multi-satellite simulation:
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject1, scObject2, scObject3]
 	                                          , saveFile=fileName)
 
-The spacecraft names are pulled from ``scObject.ModelTag``.
+The spacecraft names are pulled from ``scObject.modelTag``.
 If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
 of settings, as is appropriate.
@@ -1713,8 +1713,8 @@ be instances of :ref:`hingedRigidBodyStateEffector` which are attached to spacec
 all three components can be visualized using::
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject
-                                                                    , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
-                                                                    , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
+                                                                    , [panel1.modelTag, panel1.hingedRigidBodyConfigLogOutMsg]
+                                                                    , [panel2.modelTag, panel2.hingedRigidBodyConfigLogOutMsg]
                                                                    ]
                                               , saveFile=fileName
                                               )

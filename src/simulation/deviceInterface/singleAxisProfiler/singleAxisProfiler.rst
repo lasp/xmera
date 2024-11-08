@@ -85,7 +85,7 @@ single axis profiler module in python using Basilisk.
 
 #. Define all of the configuration data associated with the module::
 
-    singleAxisRotProfiler.ModelTag = "singleAxisProfiler"
+    singleAxisRotProfiler.modelTag = "singleAxisProfiler"
     singleAxisRotProfiler.setRotHat_M([1.0, 0.0, 0.0])
 
 #. Connect the :ref:`StepperMotorMsgPayload` input message to the module that tracks the stepper motor states in time. For example, the user can create a stand-alone message to specify a non-rotating spinning body::

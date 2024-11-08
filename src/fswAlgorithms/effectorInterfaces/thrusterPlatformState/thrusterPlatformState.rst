@@ -40,7 +40,7 @@ User Guide
 The required module configuration is::
 
     platformState = thrusterPlatformState.thrusterPlatformState()
-    platformState.ModelTag = "platformState"
+    platformState.modelTag = "platformState"
     platformState.sigma_MB = sigma_MB
     platformState.r_BM_M = r_BM_M
     platformState.r_FM_F = r_FM_F

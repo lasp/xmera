@@ -95,7 +95,7 @@ def sunlineEphemTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     sunlineEphemObj = sunlineEphem.SunlineEphem()
-    sunlineEphemObj.ModelTag = "sunlineEphem"           # update python name of test module
+    sunlineEphemObj.modelTag = "sunlineEphem"           # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, sunlineEphemObj)
@@ -164,7 +164,7 @@ def sunlineEphemTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(estVector[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + sunlineEphemObj.ModelTag + " Module failed sunlineEphem " +
+            testMessages.append("FAILED: " + sunlineEphemObj.modelTag + " Module failed sunlineEphem " +
                                 " unit test at t=" + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
 
@@ -172,7 +172,7 @@ def sunlineEphemTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + sunlineEphemObj.ModelTag)
+        print("PASSED: " + sunlineEphemObj.modelTag)
     else:
         print(testMessages)
 

@@ -75,7 +75,7 @@ def pointCloudTriangulationTestFunction(show_plots, p1_n, p2_cam, p3_scRot, accu
 
     # setup module to be tested
     module = pointCloudTriangulation.PointCloudTriangulation()
-    module.ModelTag = "pointCloudTriangulation"
+    module.modelTag = "pointCloudTriangulation"
     module.numberTimeStepsInitialPhase = p1_n
     unitTestSim.AddModelToTask(unitTaskName, module)
 

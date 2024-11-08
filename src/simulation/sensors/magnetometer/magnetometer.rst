@@ -98,7 +98,7 @@ This section outlines the steps needed to add a Magnetometer module to a sim. Fi
 
       from Basilisk.simulation import magneticFieldCenteredDipole
       magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
-      magModule.ModelTag = "CenteredDipole"
+      magModule.modelTag = "CenteredDipole"
 
 and/or
 
@@ -106,7 +106,7 @@ and/or
 
       from Basilisk.simulation import magneticFieldWMM
       magModule = magneticFieldWMM.MagneticFieldWMM()
-      magModule.ModelTag = "WMM"
+      magModule.modelTag = "WMM"
 
 Then, the magnetic field measurements must be imported and initialized:
 
@@ -114,7 +114,7 @@ Then, the magnetic field measurements must be imported and initialized:
 
       from Basilisk.simulation import magnetometer
       testModule = magnetometer.Magnetometer()
-      testModule.ModelTag = "TAM_sensor"
+      testModule.modelTag = "TAM_sensor"
 
 The model can  be added to a task like other simModels.
 

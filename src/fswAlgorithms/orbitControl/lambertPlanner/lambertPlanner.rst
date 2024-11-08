@@ -55,7 +55,7 @@ The module is first initialized as follows:
 .. code-block:: python
 
     module = lambertPlanner.LambertPlanner()
-    module.ModelTag = "lambertPlanner"
+    module.modelTag = "lambertPlanner"
     module.r_TN_N = np.array([0., 8000. * 1000,0.])
     module.finalTime = 2000.
     module.maneuverTime = 1000.

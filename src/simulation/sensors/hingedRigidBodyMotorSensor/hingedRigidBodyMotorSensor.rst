@@ -44,7 +44,7 @@ The interface module is created in python using:
     :linenos:
 
     testModule = hingedRigidBodyMotorSensor.HingedRigidBodyMotorSensor()
-    testModule.ModelTag = "motorSensor"
+    testModule.modelTag = "motorSensor"
 
 The sensor adds an optional noise (defined by a standard deviation), bias, and discretization to ``theta`` and ``thetaDot``.
 If no noise is specified then the default behavior is for the actual panel states to be passed along as the

@@ -81,7 +81,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
 
     # Construct algorithm and associated C++ container
     module = rwMotorVoltage.RwMotorVoltage()
-    module.ModelTag = "rwMotorVoltage"
+    module.modelTag = "rwMotorVoltage"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -247,7 +247,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     snippentName = "passFail" + testName
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'

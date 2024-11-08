@@ -149,7 +149,7 @@ This section outlines the steps needed to add Albedo module to a sim. First, the
 
       from Basilisk.simulation import albedo
       albModule = albedo.Albedo()
-      albModule.ModelTag = "Albedo_module"
+      albModule.modelTag = "Albedo_module"
 
 The instruments' configuration must be added by using,
 

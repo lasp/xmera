@@ -70,7 +70,7 @@ def test_flexiblePaneTestFunction(show_plots, frequency):
     scObject.hub.omega_BN_BInit = np.array([0.001, 0.001, 0.001])
 
     stateSpace = stateSpaceStateEffector.StateSpaceStateEffector(7)
-    stateSpace.ModelTag = "stateSpace"
+    stateSpace.modelTag = "stateSpace"
 
     mass = mass1 + mass2
     r_Sc2S1_F = r_Sc2S2_F + r_S2S1_F
@@ -150,7 +150,7 @@ def test_flexiblePaneTestFunction(show_plots, frequency):
                             @ np.array(rbk.v3Tilde(dcm_FB.transpose() @ r_ScS1_F + r_FB_B - rUnified_BcB_B)))
 
     scObjectUnified = spacecraft.Spacecraft()
-    scObjectUnified.ModelTag = "scObjectUnified"
+    scObjectUnified.modelTag = "scObjectUnified"
     scObjectUnified.hub.mHub = mUnified
     scObjectUnified.hub.r_BcB_B = rUnified_BcB_B
     scObjectUnified.hub.IHubPntBc_B = IUnifiedPntBc_B

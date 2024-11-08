@@ -86,7 +86,7 @@ The temperature module is created in python using:
     :linenos:
 
     barycenterModule = formationBarycenter.FormationBarycenter()
-    barycenterModule.ModelTag = 'barycenter'
+    barycenterModule.modelTag = 'barycenter'
 
 A sample setup is done using:
 

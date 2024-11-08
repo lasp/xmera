@@ -142,7 +142,7 @@ def run(show_plots, numberPanels):
 
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "scObject"
+    scObject.modelTag = "scObject"
     scObject.hub.mHub = massSC
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[massSC / 16 * diameter ** 2 + massSC / 12 * height ** 2, 0.0, 0.0],
@@ -157,7 +157,7 @@ def run(show_plots, numberPanels):
 
     # Create two hinged rigid bodies
     spinningBody = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
-    spinningBody.ModelTag = "SpinningBody"
+    spinningBody.modelTag = "SpinningBody"
 
     # Set up the spinning bodies module
     if numberPanels == 1:
@@ -260,7 +260,7 @@ def run(show_plots, numberPanels):
                                                   )
 
         vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[scObject.ModelTag]
+                                     , simBodiesToModify=[scObject.modelTag]
                                      , modelPath="CYLINDER"
                                      , scale=[diameter, diameter, height / 2]
                                      , color=vizSupport.toRGBA255("blue"))

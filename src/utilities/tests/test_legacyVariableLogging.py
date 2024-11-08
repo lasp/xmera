@@ -34,7 +34,7 @@ def test_legacy_variable_logging(show_plots):
     task1Name = "task1"
     process.addTask(simulation.CreateNewTask(task1Name, macros.sec2nano(1.0)))
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     scObject.hub.r_CN_NInit = [0.0, 0.0, 0.0]
     scObject.hub.v_CN_NInit = [1.0, 0.0, 0.0]
     simulation.AddModelToTask(task1Name, scObject)
@@ -46,7 +46,7 @@ def test_legacy_variable_logging(show_plots):
     task2Name = "task2"
     process.addTask(simulation.CreateNewTask(task2Name, macros.sec2nano(1.0)))
     scObject1 = spacecraft.Spacecraft()
-    scObject1.ModelTag = "spacecraftBody1"
+    scObject1.modelTag = "spacecraftBody1"
     simulation.AddModelToTask(task2Name, scObject1)
     simulation.disableTask(task2Name)
 

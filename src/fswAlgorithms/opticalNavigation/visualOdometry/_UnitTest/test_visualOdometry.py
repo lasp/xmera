@@ -84,7 +84,7 @@ def odometryTest(show_plots, dx = 5, dy = -3,
 
     # setup module to be tested
     module = visualOdometry.VisualOdometry()
-    module.ModelTag = "directionOfMotion"
+    module.modelTag = "directionOfMotion"
     module.errorTolerance = 1E-5
     module.sigma_uv = 1
     unitTestSim.AddModelToTask(unitTaskName, module)

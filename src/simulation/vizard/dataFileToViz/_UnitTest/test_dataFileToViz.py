@@ -178,7 +178,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
 
     # Construct algorithm and associated C++ container
     testModule = dataFileToViz.DataFileToViz()
-    testModule.ModelTag = "testModule"
+    testModule.modelTag = "testModule"
 
     # set number of satellites
     testModule.setNumOfSatellites(2)
@@ -386,58 +386,58 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
 
     if not unitTestSupport.isVectorEqual(pos1[0], pos1In*convertPosUnits, 0.1):
         testFailCount += 1
-        testMessages.append("FAILED: " + testModule.ModelTag + " Module failed pos1 check.")
+        testMessages.append("FAILED: " + testModule.modelTag + " Module failed pos1 check.")
     if not unitTestSupport.isVectorEqual(pos2[0], pos2In*convertPosUnits, 0.1):
         testFailCount += 1
-        testMessages.append("FAILED: " + testModule.ModelTag + " Module failed pos2 check.")
+        testMessages.append("FAILED: " + testModule.modelTag + " Module failed pos2 check.")
     if not unitTestSupport.isVectorEqual(att1[0], att1In, 0.1):
         testFailCount += 1
-        testMessages.append("FAILED: " + testModule.ModelTag + " Module failed att1 check.")
+        testMessages.append("FAILED: " + testModule.modelTag + " Module failed att1 check.")
     if not unitTestSupport.isVectorEqual(att2[0], att2In, 0.1):
         testFailCount += 1
-        testMessages.append("FAILED: " + testModule.ModelTag + " Module failed att2 check.")
+        testMessages.append("FAILED: " + testModule.modelTag + " Module failed att2 check.")
     if checkThruster:
         if not unitTestSupport.isDoubleEqualRelative(thrData[0][0], th1ACS, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th1ACS check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed th1ACS check.")
         if not unitTestSupport.isDoubleEqualRelative(thrData[1][0], th1DV, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th1ACS check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed th1ACS check.")
         if not unitTestSupport.isDoubleEqualRelative(thrData[2][0], th2ACS, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th2ACS check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed th2ACS check.")
         if not unitTestSupport.isDoubleEqualRelative(thrData[3][0], th2DV, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th2DV (1st) check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed th2DV (1st) check.")
         if not unitTestSupport.isDoubleEqualRelative(thrData[4][0], th2DV, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed th2DV (2nd) check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed th2DV (2nd) check.")
     if checkRW:
         if not unitTestSupport.isDoubleEqualRelative(rw1Sc1OmegaData[0], Omega1sc1, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed Omega1sc1 check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed Omega1sc1 check.")
         if not unitTestSupport.isDoubleEqualRelative(rw1Sc1uData[0], u1sc1, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed u1sc1 check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed u1sc1 check.")
         if not unitTestSupport.isDoubleEqualRelative(rw2Sc1OmegaData[0], Omega2sc1, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed Omega1sc1 check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed Omega1sc1 check.")
         if not unitTestSupport.isDoubleEqualRelative(rw2Sc1uData[0], u2sc1, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed u1sc1 check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed u1sc1 check.")
         if not unitTestSupport.isDoubleEqualRelative(rw1Sc2OmegaData[0], Omega1sc2, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed Omega1sc2 check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed Omega1sc2 check.")
         if not unitTestSupport.isDoubleEqualRelative(rw1Sc2uData[0], u1sc2, 0.001):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Module failed u1sc2 check.")
+            testMessages.append("FAILED: " + testModule.modelTag + " Module failed u1sc2 check.")
 
 
     # print out success or failure message
     if testFailCount == 0:
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
     else:
-        print("Failed: " + testModule.ModelTag)
+        print("Failed: " + testModule.modelTag)
         print(testMessages)
 
     return [testFailCount, ''.join(testMessages)]

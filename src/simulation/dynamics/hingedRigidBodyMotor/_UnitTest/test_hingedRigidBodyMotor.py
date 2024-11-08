@@ -72,7 +72,7 @@ def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaD
 
     # setup module to be tested
     module = hingedRigidBodyMotor.HingedRigidBodyMotor()
-    module.ModelTag = "hingedRigidBodyMotorTag"
+    module.modelTag = "hingedRigidBodyMotorTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure blank module input messages
@@ -108,7 +108,7 @@ def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaD
         testFailCount += 1;
         testMessages.append("Failed motor torque.")
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

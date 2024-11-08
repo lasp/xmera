@@ -101,7 +101,7 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    faults.ModelTag = "faultDet"
+    faults.modelTag = "faultDet"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, faults)
@@ -230,10 +230,10 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     #   print out success message if no error were found
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + faults.ModelTag)
+        print("PASSED: " + faults.modelTag)
     else:
         colorText = 'Red'
-        print("Failed: " + faults.ModelTag)
+        print("Failed: " + faults.modelTag)
 
 
     return [testFailCount, ''.join(testMessages)]

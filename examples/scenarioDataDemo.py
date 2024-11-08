@@ -102,7 +102,7 @@ def run(show_plots):
 
     # Create a spacecraft around Earth
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -142,21 +142,21 @@ def run(show_plots):
 
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
-    instrument.ModelTag = "instrument1"
+    instrument.modelTag = "instrument1"
     instrument.nodeBaudRate = 1200.  # baud
     instrument.nodeDataName = "Instrument 1"  # baud
     scenarioSim.AddModelToTask(taskName, instrument)
 
     # Create another instrument
     instrument2 = simpleInstrument.SimpleInstrument()
-    instrument2.ModelTag = "instrument2"
+    instrument2.modelTag = "instrument2"
     instrument2.nodeBaudRate = 1200. # baud
     instrument2.nodeDataName = "Instrument 2" # baud
     scenarioSim.AddModelToTask(taskName, instrument2)
 
     # Create a "transmitter"
     transmitter = simpleTransmitter.SimpleTransmitter()
-    transmitter.ModelTag = "transmitter"
+    transmitter.modelTag = "transmitter"
     transmitter.nodeBaudRate = -16000.  # baud
     transmitter.packetSize = -1E6  # bits
     transmitter.numBuffers = 2
@@ -164,7 +164,7 @@ def run(show_plots):
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
-    dataMonitor.ModelTag = "dataMonitor"
+    dataMonitor.modelTag = "dataMonitor"
     dataMonitor.storageCapacity = 8E9  # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(instrument2.nodeDataOutMsg)
@@ -177,7 +177,7 @@ def run(show_plots):
 
     # Create a simpleStorageUnit and attach the instrument to it
     dataMonitor2 = simpleStorageUnit.SimpleStorageUnit()
-    dataMonitor2.ModelTag = "dataMonitor2"
+    dataMonitor2.modelTag = "dataMonitor2"
     dataMonitor2.storageCapacity = 1E5  # bits
     dataMonitor2.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor2.addDataNodeToModel(instrument2.nodeDataOutMsg)

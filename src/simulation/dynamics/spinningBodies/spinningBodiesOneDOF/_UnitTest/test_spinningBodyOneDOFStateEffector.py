@@ -93,7 +93,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
@@ -123,7 +123,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
         spinningBody.c = 50
     if lock:
         spinningBody.thetaDotInit = 0.0
-    spinningBody.ModelTag = "SpinningBody"
+    spinningBody.modelTag = "SpinningBody"
 
     # Add spinning body to spacecraft
     scObject.addStateEffector(spinningBody)

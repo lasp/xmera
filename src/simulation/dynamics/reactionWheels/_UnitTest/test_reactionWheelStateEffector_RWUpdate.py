@@ -101,7 +101,7 @@ def RWUpdateTest(show_plots, accuracy):
 
     # create the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     #
     # add RW devices
@@ -136,8 +136,8 @@ def RWUpdateTest(show_plots, accuracy):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "ReactionWheel"
-    rwFactory.addToSpacecraft(rwStateEffector.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "ReactionWheel"
+    rwFactory.addToSpacecraft(rwStateEffector.modelTag, rwStateEffector, scObject)
 
     # set RW torque command
     cmdArray = messaging.ArrayMotorTorqueMsgPayload()

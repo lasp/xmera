@@ -45,7 +45,7 @@ Because Spice will not be used to generate the ephemeris information for Bennu, 
 ``planetEphemeris`` is created to generate Bennu's ephemeris::
 
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.modelTag = 'planetEphemeris'
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["Bennu"]))
 
@@ -136,7 +136,7 @@ To add a sensor visualization for the science-pointing mode, a sensor is created
 
 To add a camera to the science-pointing mode, the ``createStandardCamera`` method is used::
 
-    vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
+    vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.modelTag,
                                     fieldOfView=10 * macros.D2R,
                                     pointingVector_B=[0,1,0], position_B=cameraLocation)
 
@@ -146,7 +146,7 @@ normally does for us.  The main difference is that we are manually setting the t
 the spacecraft dynamics does not contain a thruster effector::
 
     scData = vizInterface.VizSpacecraftData()
-    scData.spacecraftName = scObject.ModelTag
+    scData.spacecraftName = scObject.modelTag
     scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
     scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
@@ -247,7 +247,7 @@ def run(show_plots):
 
     # Setup celestial object ephemeris module for the asteroid
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.modelTag = 'planetEphemeris'
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
 
@@ -314,7 +314,7 @@ def run(show_plots):
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
 
     # Connect all gravitational bodies to the spacecraft
     gravFactory.addBodiesTo(scObject)
@@ -323,7 +323,7 @@ def run(show_plots):
     # Create an ephemeris converter to convert messages of type
     # 'SpicePlanetStateMsgPayload' to 'EphemerisMsgPayload'
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = 'EphemData'
+    ephemObject.modelTag = 'EphemData'
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
     # Recall the asteroid was not created with Spice.
@@ -366,14 +366,14 @@ def run(show_plots):
 
     # Set up the extForceTorque module
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
     # Add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
@@ -382,7 +382,7 @@ def run(show_plots):
     #
     # Set up solar panel Sun-pointing guidance module
     sunPointGuidance = locationPointing.LocationPointing()
-    sunPointGuidance.ModelTag = "panelSunPoint"
+    sunPointGuidance.modelTag = "panelSunPoint"
     sunPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
     sunPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     sunPointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -392,7 +392,7 @@ def run(show_plots):
 
     # Set up asteroid-relative velocityPoint guidance module
     velAsteroidGuidance = velocityPoint.VelocityPoint()
-    velAsteroidGuidance.ModelTag = "velocityPointAsteroid"
+    velAsteroidGuidance.modelTag = "velocityPointAsteroid"
     velAsteroidGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     velAsteroidGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[asteroidIdx])
     velAsteroidGuidance.mu = mu
@@ -401,7 +401,7 @@ def run(show_plots):
     # Set up sensor science-pointing guidance module
     cameraLocation = [0.0, 1.5, 0.0]
     sciencePointGuidance = locationPointing.LocationPointing()
-    sciencePointGuidance.ModelTag = "sciencePointAsteroid"
+    sciencePointGuidance.modelTag = "sciencePointAsteroid"
     sciencePointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[asteroidIdx])
     sciencePointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     sciencePointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -411,7 +411,7 @@ def run(show_plots):
 
     # Set up an antenna pointing to Earth guidance module
     earthPointGuidance = locationPointing.LocationPointing()
-    earthPointGuidance.ModelTag = "antennaEarthPoint"
+    earthPointGuidance.modelTag = "antennaEarthPoint"
     earthPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
     earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     earthPointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -421,7 +421,7 @@ def run(show_plots):
 
     # Set up the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)  # initial flight mode
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -433,7 +433,7 @@ def run(show_plots):
 
     # Set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
@@ -479,7 +479,7 @@ def run(show_plots):
         # The following code creates a thruster visualization only.
         # before adding the thruster
         scData = vizInterface.VizSpacecraftData()
-        scData.spacecraftName = scObject.ModelTag
+        scData.spacecraftName = scObject.modelTag
         scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
         scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
         scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
@@ -508,7 +508,7 @@ def run(show_plots):
         viz.settings.keyboardAngularRate = np.deg2rad(0.5)
 
         # Create the science mode camera
-        vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
+        vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.modelTag,
                                         fieldOfView=10 * macros.D2R,
                                         displayName="10˚ FOV Camera",
                                         pointingVector_B=[0, 1, 0], position_B=cameraLocation)

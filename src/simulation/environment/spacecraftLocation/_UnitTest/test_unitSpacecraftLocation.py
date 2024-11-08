@@ -69,7 +69,7 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
 
     #   Initialize new atmosphere and drag model, add them to task
     module = spacecraftLocation.SpacecraftLocation()
-    module.ModelTag = "scLocation"
+    module.modelTag = "scLocation"
     module.rEquator = orbitalMotion.REQ_EARTH * 1000.
     if not defaultPolarRadius:
         module.rPolar = orbitalMotion.REQ_EARTH * 1000. * 0.5
@@ -112,7 +112,7 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
     # check polar planet radius default behavior
     if defaultPolarRadius and module.rPolar < 0:
         testFailCount += 1
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed default polar radius check.")
+        testMessages.append("FAILED: " + module.modelTag + " Module failed default polar radius check.")
 
     scSim.TotalSim.SingleStepProcesses()
 
@@ -128,23 +128,23 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
 
         if accessMsg.hasAccess != trueAccess:
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed access test.")
+            testMessages.append("FAILED: " + module.modelTag + " Module failed access test.")
 
         if accessMsg.slantRange <= 1e-6:
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed positive slant range test.")
+            testMessages.append("FAILED: " + module.modelTag + " Module failed positive slant range test.")
     if (latitude == 65 and defaultPolarRadius) or latitude == 115:
         # should not have access
         if accessMsg.hasAccess != 0:
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed negative have access test.")
+            testMessages.append("FAILED: " + module.modelTag + " Module failed negative have access test.")
 
         if np.abs(accessMsg.slantRange) > 1e-6:
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed negative slant range test.")
+            testMessages.append("FAILED: " + module.modelTag + " Module failed negative slant range test.")
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

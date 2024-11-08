@@ -90,7 +90,7 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
     windowCenter = computeWindowCenter(windowPointTopLeft, windowPointBottomRight)
     [windowWidth, windowHeight] = computeWindowSize(windowPointTopLeft, windowPointBottomRight)
     moduleConfig = centerOfBrightness.CenterOfBrightness()
-    moduleConfig.ModelTag = "centerOfBrightness"
+    moduleConfig.modelTag = "centerOfBrightness"
     if windowCenter.all() != 0 and windowWidth != 0 and windowHeight != 0:
         moduleConfig.setWindowCenter(windowCenter)
         moduleConfig.setWindowSize(windowWidth, windowHeight)

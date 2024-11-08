@@ -93,7 +93,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
 
     # Albedo A1
     albModule = albedo.Albedo()
-    albModule.ModelTag = "Albedo_0"
+    albModule.modelTag = "Albedo_0"
     if modelType == 'ALBEDO_DATA':
         dataPath = os.path.abspath(bskPath + "/supportData/AlbedoData/")
         if planetCase == 'earth':
@@ -205,9 +205,9 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
         testFailCount += 1
     #   print out success or failure message
     if testFailCount == 0:
-            print("PASSED: " + albModule.ModelTag)
+            print("PASSED: " + albModule.modelTag)
     else:
-            print("Failed: " + albModule.ModelTag)
+            print("Failed: " + albModule.modelTag)
     print("This test uses a relative accuracy value of " + str(errTol * 100) + " percent")
 
     return [testFailCount, ''.join(testMessages)]

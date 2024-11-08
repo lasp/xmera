@@ -116,7 +116,7 @@ User's Guide
 To set up this module users must create the config data and module wrap::
 
     module = forceTorqueThrForceMapping.forceTorqueThrForceMapping()
-    module.ModelTag = "forceTorqueThrForceMappingTag"
+    module.modelTag = "forceTorqueThrForceMappingTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
 The ``cmdForceInMsg`` and ``cmdTorqueInMsg`` are optional. However, the ``thrConfigInMsg`` and ``vehConfigInMsg`` are not. These

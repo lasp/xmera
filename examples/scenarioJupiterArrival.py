@@ -117,7 +117,7 @@ def run(show_plots):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Create Jupiter as central body
     gravFactory = simIncludeGravBody.gravBodyFactory()

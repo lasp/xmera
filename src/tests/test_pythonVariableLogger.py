@@ -51,7 +51,7 @@ def test_logging():
     process.addTask(simulation.CreateNewTask(task1Name, macros.sec2nano(1.0)))
 
     testModule = TickerModule()
-    testModule.ModelTag = "helloworldModule"
+    testModule.modelTag = "helloworldModule"
     simulation.AddModelToTask(task1Name, testModule)
 
     testLogger = PythonVariableLogger({"ticker": lambda _: testModule.GetTicker()})

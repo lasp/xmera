@@ -51,7 +51,7 @@ The module is first initialized as follows:
 .. code-block:: python
 
     module = visualOdometry.VisualOdometry()
-    module.ModelTag = "directionOfMotion"
+    module.modelTag = "directionOfMotion"
     module.errorTolerance = 1E-5
     module.sigma_uv = 1
     module.deltaKsi_tilde = 0.1

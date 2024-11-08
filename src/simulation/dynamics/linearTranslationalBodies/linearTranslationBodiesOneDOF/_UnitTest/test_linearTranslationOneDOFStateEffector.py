@@ -99,7 +99,7 @@ def translatingBodyNoInput(show_plots):
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
@@ -143,7 +143,7 @@ def translatingBodyNoInput(show_plots):
     translatingBody.setIPntFc_F(IPntFc_F)
     translatingBody.setDCM_FB(dcm_FB)
 
-    translatingBody.ModelTag = "translatingBody"
+    translatingBody.modelTag = "translatingBody"
 
     # Add translating body to spacecraft
     scObject.addStateEffector(translatingBody)
@@ -278,7 +278,7 @@ def translatingBodyLockFlag(show_plots):
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
@@ -322,7 +322,7 @@ def translatingBodyLockFlag(show_plots):
     translatingBody.setIPntFc_F(IPntFc_F)
     translatingBody.setDCM_FB(dcm_FB)
 
-    translatingBody.ModelTag = "translatingBody"
+    translatingBody.modelTag = "translatingBody"
 
     # Add translating body to spacecraft
     scObject.addStateEffector(translatingBody)
@@ -463,7 +463,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
@@ -507,7 +507,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     translatingBody.setIPntFc_F(IPntFc_F)
     translatingBody.setDCM_FB(dcm_FB)
 
-    translatingBody.ModelTag = "translatingBody"
+    translatingBody.modelTag = "translatingBody"
 
     # Add translating body to spacecraft
     scObject.addStateEffector(translatingBody)
@@ -637,7 +637,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Define mass properties of the rigid hub of the spacecraft
     scObject.hub.mHub = 750.0
@@ -681,7 +681,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     translatingBody.setIPntFc_F(IPntFc_F)
     translatingBody.setDCM_FB(dcm_FB)
 
-    translatingBody.ModelTag = "translatingBody"
+    translatingBody.modelTag = "translatingBody"
 
     # Add translating body to spacecraft
     scObject.addStateEffector(translatingBody)

@@ -353,7 +353,7 @@ def checkStateUpdateSunLine(show_plots):
 
     # Construct algorithm and associated C++ container
     module = sunlineUKF.SunlineUKF()
-    module.ModelTag = "SunlineUKF"
+    module.modelTag = "SunlineUKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -457,7 +457,7 @@ def checkStateUpdateSunLine(show_plots):
     FilterPlots.PostFitResiduals(postFitLog, module.qObsVal, 'update', show_plots)
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state update")
+        print("PASSED: " + module.modelTag + " state update")
     else:
         print(testMessages)
 
@@ -489,7 +489,7 @@ def checkStatePropSunLine(show_plots):
 
     # Construct algorithm and associated C++ container
     module = sunlineUKF.SunlineUKF()
-    module.ModelTag = "SunlineUKF"
+    module.modelTag = "SunlineUKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -526,7 +526,7 @@ def checkStatePropSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state propagation")
+        print("PASSED: " + module.modelTag + " state propagation")
     else:
         print(testMessages)
 

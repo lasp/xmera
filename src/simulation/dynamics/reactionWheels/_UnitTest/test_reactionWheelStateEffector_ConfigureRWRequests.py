@@ -101,7 +101,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
     # configure module
     ReactionWheel = reactionWheelStateEffector.ReactionWheelStateEffector()
-    ReactionWheel.ModelTag = "ReactionWheel"
+    ReactionWheel.modelTag = "ReactionWheel"
 
     numRW = 2
 
@@ -182,7 +182,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
     if testFail:
         testFailCount += 1
-        testMessages.append("FAILED: " + ReactionWheel.ModelTag + " Module failed " +
+        testMessages.append("FAILED: " + ReactionWheel.modelTag + " Module failed " +
                             outputName + " unit test")
 
     np.set_printoptions(precision=16)

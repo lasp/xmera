@@ -26,7 +26,7 @@ User Guide
 To set up this module users must create a PartitionedStorageUnit instance::
 
    storageUnit = partitionedStorageUnit.PartitionedStorageUnit()
-   storageUnit.ModelTag = "storageUnit"
+   storageUnit.modelTag = "storageUnit"
 
 In addition to the variables that must be set for the :ref:`DataStorageUnitBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total data stored in the storageUnit will be limited to not exceed this capacity value::
 

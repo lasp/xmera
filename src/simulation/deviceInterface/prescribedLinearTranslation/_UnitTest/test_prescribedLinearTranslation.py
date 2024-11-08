@@ -110,7 +110,7 @@ def test_prescribedLinearTranslation(show_plots,
     # Create an instance of the prescribedLinearTranslation module to be tested
     transAxis_M = np.array([1.0, 0.0, 0.0])  # Axis of translation
     prescribedTrans = prescribedLinearTranslation.PrescribedLinearTranslation()
-    prescribedTrans.ModelTag = "prescribedTrans"
+    prescribedTrans.modelTag = "prescribedTrans"
     prescribedTrans.setCoastOptionBangDuration(coastOptionBangDuration)
     prescribedTrans.setSmoothingDuration(smoothingDuration)
     prescribedTrans.setTransHat_M(transAxis_M)

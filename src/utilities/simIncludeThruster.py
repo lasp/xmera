@@ -220,7 +220,7 @@ class thrusterFactory(object):
             sc: spacecraft
         """
 
-        thEffector.ModelTag = modelTag
+        thEffector.modelTag = modelTag
 
         for key, th in list(self.thrusterList.items()):
             thEffector.addThruster(th)

@@ -144,7 +144,7 @@ This section is to outline the steps needed to setup a prescribed translational 
 #. Create an instantiation of a prescribed translational C module and the associated C++ container::
 
     PrescribedTrans = prescribedTrans.prescribedTrans()
-    PrescribedTrans.ModelTag = "prescribedTrans"
+    PrescribedTrans.modelTag = "prescribedTrans"
 
 #. Define all of the configuration data associated with the module. For example::
 

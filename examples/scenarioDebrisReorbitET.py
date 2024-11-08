@@ -122,12 +122,12 @@ def run(show_plots):
 
     # initialize servicer spacecraft object and set properties
     scObjectServicer = spacecraft.Spacecraft()
-    scObjectServicer.ModelTag = "Servicer"
+    scObjectServicer.modelTag = "Servicer"
     scObjectServicer.hub.mHub = 500.0  # [kg] servicer mass
 
     # initialize servicer spacecraft object and set properties
     scObjectDebris = spacecraft.Spacecraft()
-    scObjectDebris.ModelTag = "DebrisSat"
+    scObjectDebris.modelTag = "DebrisSat"
     scObjectDebris.hub.mHub = 2000.0  # kg
 
     # add spacecraftPlus object to the simulation process
@@ -157,7 +157,7 @@ def run(show_plots):
 
     # setup MSM module
     MSMmodule = msmForceTorque.MsmForceTorque()
-    MSMmodule.ModelTag = "msmForceTorqueTag"
+    MSMmodule.modelTag = "msmForceTorqueTag"
     scSim.AddModelToTask(dynTaskName, MSMmodule)
 
     # define electric potentials
@@ -188,7 +188,7 @@ def run(show_plots):
     # setup extForceTorque module for Servicer
     # the electrostatic force from the MSM module is read in through the messaging system
     extFTObjectServicer = extForceTorque.ExtForceTorque()
-    extFTObjectServicer.ModelTag = "eForceServicer"
+    extFTObjectServicer.modelTag = "eForceServicer"
     extFTObjectServicer.cmdForceInertialInMsg.subscribeTo(MSMmodule.eForceOutMsgs[0])
     scObjectServicer.addDynamicEffector(extFTObjectServicer)
     scSim.AddModelToTask(dynTaskName, extFTObjectServicer)
@@ -196,7 +196,7 @@ def run(show_plots):
     # setup extForceTorque module for Debris
     # the electrostatic force from the MSM module is read in through the messaging system
     extFTObjectDebris = extForceTorque.ExtForceTorque()
-    extFTObjectDebris.ModelTag = "eForceDebris"
+    extFTObjectDebris.modelTag = "eForceDebris"
     extFTObjectDebris.cmdForceInertialInMsg.subscribeTo(MSMmodule.eForceOutMsgs[1])
     scObjectDebris.addDynamicEffector(extFTObjectDebris)
     scSim.AddModelToTask(dynTaskName, extFTObjectDebris)
@@ -204,19 +204,19 @@ def run(show_plots):
     # setup extForceTorque module
     # the control force from the ET relative motion control module is read in through the messaging system
     extFTObjectServicerControl = extForceTorque.ExtForceTorque()
-    extFTObjectServicerControl.ModelTag = "controlServicer"
+    extFTObjectServicerControl.modelTag = "controlServicer"
     scObjectServicer.addDynamicEffector(extFTObjectServicerControl)
     scSim.AddModelToTask(dynTaskName, extFTObjectServicerControl)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObjectServicer = simpleNav.SimpleNav()
-    sNavObjectServicer.ModelTag = "SimpleNavigation"
+    sNavObjectServicer.modelTag = "SimpleNavigation"
     sNavObjectServicer.scStateInMsg.subscribeTo(scObjectServicer.scStateOutMsg)
     scSim.AddModelToTask(dynTaskName, sNavObjectServicer)
 
     sNavObjectDebris = simpleNav.SimpleNav()
-    sNavObjectDebris.ModelTag = "SimpleNavigation3"
+    sNavObjectDebris.modelTag = "SimpleNavigation3"
     sNavObjectDebris.scStateInMsg.subscribeTo(scObjectDebris.scStateOutMsg)
     scSim.AddModelToTask(dynTaskName, sNavObjectDebris)
 
@@ -229,7 +229,7 @@ def run(show_plots):
 
     # setup ET Relative Motion Control module
     etSphericalControlObj = etSphericalControl.EtSphericalControl()
-    etSphericalControlObj.ModelTag = "ETcontrol"
+    etSphericalControlObj.modelTag = "ETcontrol"
 
     # connect required messages
     etSphericalControlObj.servicerTransInMsg.subscribeTo(sNavObjectServicer.transOutMsg)  # servicer translation

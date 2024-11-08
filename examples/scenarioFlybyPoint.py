@@ -134,7 +134,7 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # Connect all gravitational bodies to the spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
@@ -169,8 +169,8 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process.  This is required for the updateState() method
     # to be called which logs the RW states
@@ -179,7 +179,7 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -188,7 +188,7 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
 
     # se tup flybyPoint guidance module
     flybyGuid = flybyPoint.FlybyPoint()
-    flybyGuid.ModelTag = "flybyPoint"
+    flybyGuid.modelTag = "flybyPoint"
     flybyGuid.setTimeBetweenFilterData(dtFilterData)
     flybyGuid.setSignOfOrbitNormalFrameVector(-1)
     scSim.AddModelToTask(simTaskName, flybyGuid)
@@ -203,12 +203,12 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
     # set up the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.AttTrackingError()
     attErrorConfig.sigma_R0R = rbk.C2MRP(R0R)
-    attErrorConfig.ModelTag = "attErrorInertial3D"
+    attErrorConfig.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorConfig)
 
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.MrpFeedback()
-    mrpControlConfig.ModelTag = "mrpFeedback"
+    mrpControlConfig.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControlConfig)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
@@ -217,7 +217,7 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueConfig = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueConfig.ModelTag = "rwMotorTorque"
+    rwMotorTorqueConfig.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueConfig)
 
     # Make the RW control all three body axes

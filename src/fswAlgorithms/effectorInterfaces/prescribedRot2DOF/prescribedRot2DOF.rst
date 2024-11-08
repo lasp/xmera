@@ -169,7 +169,7 @@ This section is to outline the steps needed to setup a prescribed 2 DOF rotation
 #. Create an instantiation of a prescribed rotational 2 DOF C module and the associated C++ container::
 
     PrescribedRot2DOF = prescribedRot2DOF.prescribedRot2DOF()
-    PrescribedRot2DOF.ModelTag = "PrescribedRot2DOF"
+    PrescribedRot2DOF.modelTag = "PrescribedRot2DOF"
 
 #. Define all of the configuration data associated with the module. For example::
 

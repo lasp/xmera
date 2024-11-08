@@ -38,16 +38,16 @@ def test_PySysModel():
 
     # create copies of the Basilisk modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
-    mod1.ModelTag = "module1"
+    mod1.modelTag = "module1"
 
     mod2 = cppModuleTemplate.CppModuleTemplate()
-    mod2.ModelTag = "module2"
+    mod2.modelTag = "module2"
 
     mod3 = cppModuleTemplate.CppModuleTemplate()
-    mod3.ModelTag = "module3"
+    mod3.modelTag = "module3"
 
     mod4 = PythonModule()
-    mod4.ModelTag = "pythonModule4"
+    mod4.modelTag = "pythonModule4"
 
     mod2.dataInMsg.subscribeTo(mod4.dataOutMsg)
 

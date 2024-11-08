@@ -135,7 +135,7 @@ def cameraColorTest(image, HSV, BGR):
 
     # Construct algorithm and associated C++ container
     module = camera.Camera()
-    module.ModelTag = "cameras"
+    module.modelTag = "cameras"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

@@ -101,7 +101,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
 
     # Construct algorithm and associated C++ container
     module = tabularAtmosphere.TabularAtmosphere()   # update with current values
-    module.ModelTag = "tabularAtmosphere"            # update python name of test module
+    module.modelTag = "tabularAtmosphere"            # update python name of test module
     
     # define constants & load data
     r_eq = 6378136.6
@@ -218,7 +218,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)       
+        print("PASSED: " + module.modelTag)
 
     return [testFailCount, testMessage]         
 

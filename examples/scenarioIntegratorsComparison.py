@@ -283,7 +283,7 @@ def get_solution(integrator, time_step):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Set up integrator depending on the data
     integratorData = INTEGRATORS[integrator]

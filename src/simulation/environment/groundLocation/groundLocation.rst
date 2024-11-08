@@ -113,7 +113,7 @@ A new instance of groundLocation, alongside necessary user-supplied parameters, 
 .. code-block:: python
 
     groundTarget = groundLocation.GroundLocation()
-    groundTarget.ModelTag = "groundTarget"
+    groundTarget.modelTag = "groundTarget"
     groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
     groundTarget.maximumRange = 100e3 # Sets maximum range for visibility in meters
     groundTarget.minimumElevation = np.radians(10.) #   Sets necessary minimum elevation for visibility to 10 deg in radians

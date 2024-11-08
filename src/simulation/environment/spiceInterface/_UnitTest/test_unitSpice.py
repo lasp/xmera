@@ -169,7 +169,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
 
     # Initialize the spice modules that we are using.
     SpiceObject = spiceInterface.SpiceInterface()
-    SpiceObject.ModelTag = "SpiceInterfaceData"
+    SpiceObject.modelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     planetNames = ["earth", "mars barycenter", "sun"]
     SpiceObject.addPlanetNames(spiceInterface.StringVector(planetNames))

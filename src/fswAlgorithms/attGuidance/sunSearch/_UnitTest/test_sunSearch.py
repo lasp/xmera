@@ -92,7 +92,7 @@ def test_rateDamp(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
     attGuidance.setMaxRate(omega_M, omega_M, omega_M)
     attGuidance.setMaxTorque(u_M, u_M, u_M)
     attGuidance.setRotAxis(axis1, axis2, axis3)
-    attGuidance.ModelTag = "sunSearch"
+    attGuidance.modelTag = "sunSearch"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, attGuidance)

@@ -88,7 +88,7 @@ class BSKEnvironmentModel:
         """
 
         # self.epochMsg = self.gravFactory.epochMsg
-        self.ephemObject.ModelTag = 'EphemData'
+        self.ephemObject.modelTag = 'EphemData'
         self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
         self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.earth])
 

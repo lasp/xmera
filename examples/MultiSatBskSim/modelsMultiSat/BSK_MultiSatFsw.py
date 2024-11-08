@@ -65,25 +65,25 @@ class BSKFswModels:
 
         # Create module data and module wraps
         self.inertial3DPoint = inertial3D.Inertial3D()
-        self.inertial3DPoint.ModelTag = "inertial3D"
+        self.inertial3DPoint.modelTag = "inertial3D"
 
         self.sunPoint = locationPointing.LocationPointing()
-        self.sunPoint.ModelTag = "sunPoint"
+        self.sunPoint.modelTag = "sunPoint"
 
         self.locPoint = locationPointing.LocationPointing()
-        self.locPoint.ModelTag = "locPoint"
+        self.locPoint.modelTag = "locPoint"
 
         self.spacecraftReconfig = spacecraftReconfig.SpacecraftReconfig()
-        self.spacecraftReconfig.ModelTag = "spacecraftReconfig"
+        self.spacecraftReconfig.modelTag = "spacecraftReconfig"
 
         self.trackingError = attTrackingError.AttTrackingError()
-        self.trackingError.ModelTag = "trackingError"
+        self.trackingError.modelTag = "trackingError"
 
         self.mrpFeedbackRWs = mrpFeedback.MrpFeedback()
-        self.mrpFeedbackRWs.ModelTag = "mrpFeedbackRWs"
+        self.mrpFeedbackRWs.modelTag = "mrpFeedbackRWs"
 
         self.rwMotorTorque = rwMotorTorque.RwMotorTorque()
-        self.rwMotorTorque.ModelTag = "rwMotorTorque"
+        self.rwMotorTorque.modelTag = "rwMotorTorque"
 
         # create the FSW module gateway messages
         self.setupGatewayMsgs(SimBase)

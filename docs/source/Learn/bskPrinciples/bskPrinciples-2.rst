@@ -28,7 +28,7 @@ The following simulation creates a single process called ``dynamicsProcess`` and
 The resulting demonstration code is shown above. Let us create some module ``someModule.someModule`` and give it a unique name.  This is done as::
 
     module = someModule.someModule()
-    module.ModelTag = "someModuleName"
+    module.modelTag = "someModuleName"
 
 With BSK C-modules the module name is repeated.  With C++ modules the first variable is the module name, the second
 variable is the module class name which begins with a capital letter.  See the above script for examples of each.

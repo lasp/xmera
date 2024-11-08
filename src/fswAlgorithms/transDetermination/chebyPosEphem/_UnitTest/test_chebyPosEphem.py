@@ -97,7 +97,7 @@ def sineCosine(show_plots):
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(8640.0)))
 
     chebyFitModel = chebyPosEphem.ChebyPosEphem()
-    chebyFitModel.ModelTag = "chebyFitModel"
+    chebyFitModel.modelTag = "chebyFitModel"
     TotalSim.AddModelToTask(unitTaskName, chebyFitModel)
 
     totalList = numpy.array(chebCosCoeff).tolist()
@@ -201,7 +201,7 @@ def earthOrbitFit(show_plots):
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))))
 
     chebyFitModel = chebyPosEphem.ChebyPosEphem()
-    chebyFitModel.ModelTag = "chebyFitModel"
+    chebyFitModel.modelTag = "chebyFitModel"
     TotalSim.AddModelToTask(unitTaskName, chebyFitModel)
 
     totalList = chebCoeff[:,0].tolist()

@@ -269,7 +269,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [0.02 / 3, 0., 0.,
          0., 0.1256 / 3, 0.,
@@ -330,8 +330,8 @@ def run(show_plots):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process.  This is required for the updateState() method
     # to be called which logs the RW states
@@ -341,12 +341,12 @@ def run(show_plots):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     # create magnetic field module
     magModule = magneticFieldWMM.MagneticFieldWMM()
-    magModule.ModelTag = "WMM"
+    magModule.modelTag = "WMM"
     magModule.dataPath = bskPath + '/supportData/MagneticField/'
     epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
     magModule.epochInMsg.subscribeTo(epochMsg)
@@ -355,7 +355,7 @@ def run(show_plots):
 
     # add magnetic torque bar effector
     mtbEff = MtbEffector.MtbEffector()
-    mtbEff.ModelTag = "MtbEff"
+    mtbEff.modelTag = "MtbEff"
     scObject.addDynamicEffector(mtbEff)
     scSim.AddModelToTask(simTaskName, mtbEff)
 
@@ -366,18 +366,18 @@ def run(show_plots):
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
 
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
@@ -388,7 +388,7 @@ def run(show_plots):
 
     # create the minimal TAM module
     TAM = magnetometer.Magnetometer()
-    TAM.ModelTag = "TAM_sensor"
+    TAM.modelTag = "TAM_sensor"
     # specify the optional TAM variables
     TAM.scaleFactor = 1.0
     TAM.senNoiseStd = [0.0,  0.0, 0.0]
@@ -397,18 +397,18 @@ def run(show_plots):
     # setup tamComm module
     tamCommObj = tamComm.TamComm()
     tamCommObj.dcm_BS = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
-    tamCommObj.ModelTag = "tamComm"
+    tamCommObj.modelTag = "tamComm"
     scSim.AddModelToTask(simTaskName, tamCommObj)
 
     # setup mtbMomentumManagement module
     mtbMomentumManagementSimpleObj = mtbMomentumManagementSimple.MtbMomentumManagementSimple()
     mtbMomentumManagementSimpleObj.Kp = 0.003
-    mtbMomentumManagementSimpleObj.ModelTag = "mtbMomentumManagementSimple"
+    mtbMomentumManagementSimpleObj.modelTag = "mtbMomentumManagementSimple"
     scSim.AddModelToTask(simTaskName, mtbMomentumManagementSimpleObj)
 
     # setup torque2Dipole module
     torque2DipoleObj = torque2Dipole.Torque2Dipole()
-    torque2DipoleObj.ModelTag = "torque2Dipole"
+    torque2DipoleObj.modelTag = "torque2Dipole"
     scSim.AddModelToTask(simTaskName, torque2DipoleObj)
 
     # mtbConfigData message
@@ -432,17 +432,17 @@ def run(show_plots):
                                           -0.25, 0.75, 0.,
                                            0., 0., 1.,
                                            0.35355339, 0.35355339, 0.]
-    dipoleMappingObj.ModelTag = "dipoelMapping"
+    dipoleMappingObj.modelTag = "dipoelMapping"
     scSim.AddModelToTask(simTaskName, dipoleMappingObj)
 
     # setup mtbFeedforward module
     mtbFeedforwardObj = mtbFeedforward.MtbFeedforward()
-    mtbFeedforwardObj.ModelTag = "mtbFeedforward"
+    mtbFeedforwardObj.modelTag = "mtbFeedforward"
     scSim.AddModelToTask(simTaskName, mtbFeedforwardObj)
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
@@ -454,7 +454,7 @@ def run(show_plots):
     # setup rwNullSpace module
     rwNullSpaceObj = rwNullSpace.RwNullSpace()
     rwNullSpaceObj.OmegaGain = 0.0000003
-    rwNullSpaceObj.ModelTag = "rwNullSpace"
+    rwNullSpaceObj.modelTag = "rwNullSpace"
     scSim.AddModelToTask(simTaskName, rwNullSpaceObj)
 
     # setup RWConstellationMsgPayload

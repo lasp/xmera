@@ -191,7 +191,7 @@ def run(show_plots, rFirst, rSecond):
 
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
@@ -218,7 +218,7 @@ def run(show_plots, rFirst, rSecond):
 
     # Add ephemeris for Hill frame
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = "ephem data"
+    ephemObject.modelTag = "ephem data"
     ephemObject.addSpiceInputMsg(gravFactory.spiceObject.planetStateOutMsgs[0])
     scSim.AddModelToTask(simTaskName, ephemObject, None, 1)
 
@@ -228,13 +228,13 @@ def run(show_plots, rFirst, rSecond):
     RW2 = rwFactory.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.)
     RW3 = rwFactory.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.)
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(rwStateEffector.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(rwStateEffector.modelTag, rwStateEffector, scObject)
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 
     # Add the navigation sensor module. This sets the SC attitude, rate, position and velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     # Create guidance message to connect 3 flight modes to attitude error
@@ -243,13 +243,13 @@ def run(show_plots, rFirst, rSecond):
 
     # Set up velocity-point guidance module for first burn
     firstBurn = velocityPoint.VelocityPoint()
-    firstBurn.ModelTag = "velocityPoint"
+    firstBurn.modelTag = "velocityPoint"
     firstBurn.mu = mu
     scSim.fswProcess.addTask(scSim.CreateNewTask("firstBurnTask", simulationTimeStep), 5)
     scSim.AddModelToTask("firstBurnTask", firstBurn)
 
     firstBurnMRPRotation = mrpRotation.MrpRotation()
-    firstBurnMRPRotation.ModelTag = "mrpRotation"
+    firstBurnMRPRotation.modelTag = "mrpRotation"
     sigma_RR0 = np.array([np.tan(- np.pi / 8), 0, 0])
     firstBurnMRPRotation.mrpSet = sigma_RR0
     scSim.AddModelToTask("firstBurnTask", firstBurnMRPRotation)
@@ -257,14 +257,14 @@ def run(show_plots, rFirst, rSecond):
 
     # setup velocity-point guidance module for second burn
     secondBurn = velocityPoint.VelocityPoint()
-    secondBurn.ModelTag = "velocityPoint"
+    secondBurn.modelTag = "velocityPoint"
     secondBurn.mu = mu
     scSim.fswProcess.addTask(scSim.CreateNewTask("secondBurnTask", simulationTimeStep), 5)
     scSim.AddModelToTask("secondBurnTask", secondBurn)
 
     # Need to get this reference attitude to rotate 180
     secondBurnMRPRotation = mrpRotation.MrpRotation()
-    secondBurnMRPRotation.ModelTag = "mrpRotation"
+    secondBurnMRPRotation.modelTag = "mrpRotation"
     sigma_RR0 = np.array([np.tan(np.pi / 8), 0, 0])
     secondBurnMRPRotation.mrpSet = sigma_RR0
     scSim.AddModelToTask("secondBurnTask", secondBurnMRPRotation)
@@ -272,7 +272,7 @@ def run(show_plots, rFirst, rSecond):
 
     # Set up hill point guidance module
     attGuidanceHillPoint = hillPoint.HillPoint()
-    attGuidanceHillPoint.ModelTag = "hillPoint"
+    attGuidanceHillPoint.modelTag = "hillPoint"
     scSim.fswProcess.addTask(scSim.CreateNewTask("hillPointTask", simulationTimeStep), 5)
     scSim.AddModelToTask("hillPointTask", attGuidanceHillPoint)
     attGuidanceHillPoint.attRefOutMsg = attRefMsg
@@ -283,12 +283,12 @@ def run(show_plots, rFirst, rSecond):
 
     # Set up the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attError"
+    attError.modelTag = "attError"
     scSim.AddModelToTask(fswTaskName, attError)
 
     # Set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTaskName, mrpControl)
     mrpControl.K = 3.5
     mrpControl.P = 30.0
@@ -297,7 +297,7 @@ def run(show_plots, rFirst, rSecond):
 
     # Add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
     scSim.AddModelToTask(fswTaskName, rwMotorTorqueObj)

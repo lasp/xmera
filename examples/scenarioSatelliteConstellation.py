@@ -62,7 +62,7 @@ Simulation Visualization In Vizard
 To add a visualization of each spacecraft's Earth nadir pointing, a cone aligned with the pointing direction
 is created through the ``vizInterface``::
 
-    vizSupport.createConeInOut(viz, fromBodyName=scList[i].ModelTag, toBodyName='earth', coneColor='teal',
+    vizSupport.createConeInOut(viz, fromBodyName=scList[i].modelTag, toBodyName='earth', coneColor='teal',
                                normalVector_B=[1, 0, 0], incidenceAngle=30/macros.D2R, isKeepIn=False,
                                coneHeight=10.0, coneName='pointingCone')
 
@@ -143,7 +143,7 @@ def run(show_plots, a, i, T, P, F):
     spiceObject.zeroBase = 'Earth'
     scSim.AddModelToTask(simTaskName, spiceObject)
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = "ephemData"
+    ephemObject.modelTag = "ephemData"
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0]) # Earth
     scSim.AddModelToTask(simTaskName, ephemObject)
 
@@ -184,7 +184,7 @@ def run(show_plots, a, i, T, P, F):
     for i in range(T):
         # initialize spacecraft object
         scList.append(spacecraft.Spacecraft())
-        scList[i].ModelTag = "bsk-Sat-"+str(i)
+        scList[i].modelTag = "bsk-Sat-"+str(i)
         scSim.AddModelToTask(simTaskName, scList[i])
 
         # attach gravity model to spacecraft
@@ -205,13 +205,13 @@ def run(show_plots, a, i, T, P, F):
 
         # set up prescribed attitude guidance
         navList.append(simpleNav.SimpleNav())
-        navList[i].ModelTag = "SimpleNav"+str(i)
+        navList[i].modelTag = "SimpleNav"+str(i)
         scSim.AddModelToTask(simTaskName, navList[i])
         navList[i].scStateInMsg.subscribeTo(scList[i].scStateOutMsg)
 
         # setup nadir pointing guidance module
         guideList.append(locationPointing.LocationPointing())
-        guideList[i].ModelTag = "nadirPoint"+str(i)
+        guideList[i].modelTag = "nadirPoint"+str(i)
         guideList[i].pHat_B = [1, 0, 0]
         guideList[i].scTransInMsg.subscribeTo(navList[i].transOutMsg)
         guideList[i].scAttInMsg.subscribeTo(navList[i].attOutMsg)
@@ -230,7 +230,7 @@ def run(show_plots, a, i, T, P, F):
                                                   # saveFile=__file__
                                                   )
         for i in range(T):
-            vizSupport.createConeInOut(viz, fromBodyName=scList[i].ModelTag, toBodyName='earth', coneColor='teal',
+            vizSupport.createConeInOut(viz, fromBodyName=scList[i].modelTag, toBodyName='earth', coneColor='teal',
                            normalVector_B=[1, 0, 0], incidenceAngle=30/macros.D2R, isKeepIn=False,
                            coneHeight=10.0, coneName='pointingCone')
 

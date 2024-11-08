@@ -42,4 +42,4 @@ The required module configuration is::
 
     attControl = rateDamp.RateDamp()
     attControl.setRateGain(P)
-    attControl.ModelTag = "rateDamp"
+    attControl.modelTag = "rateDamp"

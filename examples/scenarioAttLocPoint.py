@@ -168,7 +168,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -211,7 +211,7 @@ def run(show_plots):
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     # use the input flag to determine which external torque should be applied
     # Note that all variables are initialized to zero.  Thus, not setting this
     # vector would leave it's components all zero for the simulation.
@@ -221,13 +221,13 @@ def run(show_plots):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
-    groundStation.ModelTag = "BoulderGroundStation"
+    groundStation.modelTag = "BoulderGroundStation"
     groundStation.planetRadius = astroFunctions.E_radius*1e3  # meters
     groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
     groundStation.minimumElevation = np.radians(10.)
@@ -241,7 +241,7 @@ def run(show_plots):
 
     # setup Boulder pointing guidance module
     locPoint = locationPointing.LocationPointing()
-    locPoint.ModelTag = "locPoint"
+    locPoint.modelTag = "locPoint"
     scSim.AddModelToTask(simTaskName, locPoint)
     locPoint.pHat_B = [0, 0, 1]
     locPoint.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -254,7 +254,7 @@ def run(show_plots):
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(locPoint.attGuidOutMsg)
     mrpControl.K = 5.5

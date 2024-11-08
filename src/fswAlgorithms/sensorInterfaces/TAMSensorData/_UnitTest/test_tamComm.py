@@ -85,7 +85,7 @@ def tamCommTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     module = tamComm.TamComm()
-    module.ModelTag = "tamComm"
+    module.modelTag = "tamComm"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -137,10 +137,10 @@ def tamCommTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         print("This test uses an accuracy value of " + str(accuracy))
     else:
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

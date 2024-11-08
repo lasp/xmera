@@ -219,7 +219,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -276,11 +276,11 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     # In this simulation each case uses two CSS sensors.  The minimum
     # variables that must be set for each CSS includes
     CSS1 = coarseSunSensor.CoarseSunSensor()
-    CSS1.ModelTag = "CSS1_sensor"
+    CSS1.modelTag = "CSS1_sensor"
     setupCSS(CSS1)
 
     CSS2 = coarseSunSensor.CoarseSunSensor()
-    CSS2.ModelTag = "CSS2_sensor"
+    CSS2.modelTag = "CSS2_sensor"
     setupCSS(CSS2)
     CSS2.CSSGroupID = 0
     CSS2.r_B = [-3.05, 0.55, 1.0]
@@ -291,7 +291,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
         CSS2.nHat_B = np.array([0.0, 1.0, 0.0])
 
     CSS3 = coarseSunSensor.CoarseSunSensor()
-    CSS3.ModelTag = "CSS3_sensor"
+    CSS3.modelTag = "CSS3_sensor"
     setupCSS(CSS3)
     CSS3.CSSGroupID = 1
     CSS3.fov = 45.0*macros.D2R
@@ -308,7 +308,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
         # then they can be grouped into a list, and added to the Basilisk execution
         # stack as a single entity.  This is done with
         cssArray = coarseSunSensor.CSSConstellation()
-        cssArray.ModelTag = "css_array"
+        cssArray.modelTag = "css_array"
         cssArray.sensorList = coarseSunSensor.CSSVector(cssList)
         scSim.AddModelToTask(simTaskName, cssArray)
         # Here the CSSConstellation() module will call the individual CSS

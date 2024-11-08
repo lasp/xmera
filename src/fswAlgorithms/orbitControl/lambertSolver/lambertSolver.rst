@@ -61,7 +61,7 @@ The module is first initialized as follows:
 .. code-block:: python
 
     lambertModule = lambertSolver.LambertSolver()
-    lambertModule.ModelTag = "lambertSolver"
+    lambertModule.modelTag = "lambertSolver"
     lambertModule.alignmentThreshold = 1.0 # module defaults this value to 1.0 degrees if not specified
     unitTestSim.AddModelToTask(unitTaskName, lambertModule)
 

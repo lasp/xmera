@@ -37,10 +37,10 @@ def run():
 
     # create modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
-    mod1.ModelTag = "module1"
+    mod1.modelTag = "module1"
 
     mod2 = cppModuleTemplate.CppModuleTemplate()
-    mod2.ModelTag = "module2"
+    mod2.modelTag = "module2"
 
     # add modules to task list
     scSim.AddModelToTask("dynamicsTask", mod1)

@@ -65,7 +65,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     testMessages = []  # create empty list to store test log messages
     
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)

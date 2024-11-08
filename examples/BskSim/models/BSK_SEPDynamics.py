@@ -107,7 +107,7 @@ class BSKDynamicModels:
         """
         Defines the spacecraft object properties
         """
-        self.scObject.ModelTag = "sat-" + str(self.spacecraftIndex)
+        self.scObject.modelTag = "sat-" + str(self.spacecraftIndex)
         self.I_sc = [ 1725.697021321552,    -5.098169104856651,  -11.96633789093479,
                         -5.098169104856651,  5524.699699357305,   42.83593479126124,
                        -11.96633789093479,   42.83593479126124,   4809.231017715462]
@@ -126,7 +126,7 @@ class BSKDynamicModels:
         """
         Defines the navigation module
         """
-        self.simpleNavObject.ModelTag = "SimpleNavigation" + str(self.spacecraftIndex)
+        self.simpleNavObject.modelTag = "SimpleNavigation" + str(self.spacecraftIndex)
         self.simpleNavObject.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.simpleNavObject.sunStateInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.sun])
 
@@ -134,7 +134,7 @@ class BSKDynamicModels:
         """
         Defines the mass properties module
         """
-        self.simpleMassPropsObject.ModelTag = "SimpleMassProperties" + str(self.spacecraftIndex)
+        self.simpleMassPropsObject.modelTag = "SimpleMassProperties" + str(self.spacecraftIndex)
         self.simpleMassPropsObject.scMassPropsInMsg.subscribeTo(self.scObject.scMassOutMsg)
 
     def SetReactionWheelDynEffector(self):
@@ -179,7 +179,7 @@ class BSKDynamicModels:
         self.RSAList[0].c = 0
         self.RSAList[0].thetaInit = 0
         self.RSAList[0].thetaDotInit = 0
-        self.RSAList[0].ModelTag = "solarArray0"
+        self.RSAList[0].modelTag = "solarArray0"
         self.scObject.addStateEffector(self.RSAList[0])
 
         # Define the second solar array
@@ -195,45 +195,45 @@ class BSKDynamicModels:
         self.RSAList[1].c = 0
         self.RSAList[1].thetaInit = 0
         self.RSAList[1].thetaDotInit = 0
-        self.RSAList[1].ModelTag = "solarArray1"
+        self.RSAList[1].modelTag = "solarArray1"
         self.scObject.addStateEffector(self.RSAList[1])
 
     def SetEarthBoresight(self, SimBase):
         """Sets up the boresight calc module"""
-        self.earthBoresight.ModelTag = "earthBoresight"
+        self.earthBoresight.modelTag = "earthBoresight"
         self.earthBoresight.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.earthBoresight.celBodyInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.earth])
         self.earthBoresight.boreVec_B = [0, 1, 0]
 
     def SetSunBoresight(self, SimBase):
         """Sets up the boresight calc module"""
-        self.sunBoresightList[0].ModelTag = "boresight"
+        self.sunBoresightList[0].modelTag = "boresight"
         self.sunBoresightList[0].scStateInMsg.subscribeTo(self.RSAList[0].spinningBodyConfigLogOutMsg)
         self.sunBoresightList[0].celBodyInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.sun])
         self.sunBoresightList[0].boreVec_B = [0, 1, 0]
 
-        self.sunBoresightList[1].ModelTag = "boresight"
+        self.sunBoresightList[1].modelTag = "boresight"
         self.sunBoresightList[1].scStateInMsg.subscribeTo(self.RSAList[1].spinningBodyConfigLogOutMsg)
         self.sunBoresightList[1].celBodyInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.sun])
         self.sunBoresightList[1].boreVec_B = [0, 1, 0]
 
     def SetInertialBoresight1(self, SimBase):
         """Sets up the boresight calc module"""
-        self.inertialBoresight1.ModelTag = "inertialBoresight1"
+        self.inertialBoresight1.modelTag = "inertialBoresight1"
         self.inertialBoresight1.scStateInMsg.subscribeTo(self.platform1.spinningBodyConfigLogOutMsgs[1])
         self.inertialBoresight1.boreVec_B = self.thrDir_F
         self.inertialBoresight1.inertialHeadingVec_N = [1, 0, 0]
 
     def SetInertialBoresight2(self, SimBase):
         """Sets up the boresight calc module"""
-        self.inertialBoresight2.ModelTag = "inertialBoresight2"
+        self.inertialBoresight2.modelTag = "inertialBoresight2"
         self.inertialBoresight2.scStateInMsg.subscribeTo(self.platform2.spinningBodyConfigLogOutMsgs[1])
         self.inertialBoresight2.boreVec_B = self.thrDir_F
         self.inertialBoresight2.inertialHeadingVec_N = [1, 0, 0]
 
     def SetSensitiveBoresight(self, SimBase):
         """Sets up the boresight calc module"""
-        self.sensitiveBoresight.ModelTag = "sensitivePlatformBoresight"
+        self.sensitiveBoresight.modelTag = "sensitivePlatformBoresight"
         self.sensitiveBoresight.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.sensitiveBoresight.celBodyInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.sun])
         self.sensitiveBoresight.boreVec_B = [0, -1, 0]
@@ -263,7 +263,7 @@ class BSKDynamicModels:
         self.platform1.IS2PntSc2_S2 = [[2, 0, 0], [0, 3, 0], [0, 0, 4]]
         self.platform1.dcm_S10B = [[1, 0, 0], [0, c, s], [0, -s, c]]
         self.platform1.dcm_S20S1 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        self.platform1.ModelTag = "platform1"
+        self.platform1.modelTag = "platform1"
         self.scObject.addStateEffector(self.platform1)
 
     def SetPlatform2(self):
@@ -291,7 +291,7 @@ class BSKDynamicModels:
         self.platform2.IS2PntSc2_S2 = [[2, 0, 0], [0, 3, 0], [0, 0, 4]]
         self.platform2.dcm_S10B = [[1, 0, 0], [0, c, -s], [0, s, c]]
         self.platform2.dcm_S20S1 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        self.platform2.ModelTag = "platform2"
+        self.platform2.modelTag = "platform2"
         self.scObject.addStateEffector(self.platform2)
 
     def SetSEPTrusterStateEffectors(self):
@@ -308,12 +308,12 @@ class BSKDynamicModels:
 
         self.SEPThruster1.addThruster(thruster, self.platform1.spinningBodyConfigLogOutMsgs[1])
         self.SEPThruster1.kappaInit = messaging.DoubleVector([0.0])
-        self.SEPThruster1.ModelTag = "SEPThruster1"
+        self.SEPThruster1.modelTag = "SEPThruster1"
         self.scObject.addStateEffector(self.SEPThruster1)
         
         self.SEPThruster2.addThruster(thruster, self.platform2.spinningBodyConfigLogOutMsgs[1])
         self.SEPThruster2.kappaInit = messaging.DoubleVector([0.0])
-        self.SEPThruster2.ModelTag = "SEPThruster2"
+        self.SEPThruster2.modelTag = "SEPThruster2"
         self.scObject.addStateEffector(self.SEPThruster2)
 
     def SetFacetSRPDynamicEffector(self, SimBase):
@@ -362,7 +362,7 @@ class BSKDynamicModels:
         for i in range(len(facetAreas)):
             self.newSRP.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], normals_B[i], locationsPntB_B[i])
 
-        self.newSRP.ModelTag = "FacetSRP"
+        self.newSRP.modelTag = "FacetSRP"
         self.newSRP.sunInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.sun])
         self.scObject.addDynamicEffector(self.newSRP)
 

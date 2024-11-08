@@ -73,7 +73,7 @@ First, an ``ephemerisConverter`` module must be configured to convert Spice mess
 to ephemeris messages of type ``ephemOutMsgs``. This converter is required for all attitude pointing modules::
 
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = 'EphemData'
+    ephemObject.modelTag = 'EphemData'
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[moonIdx])
@@ -101,7 +101,7 @@ Next the ``velocityPoint`` module is configured for each planet case. This modul
 orbit velocity frame. See :ref:`velocityPoint` for a more detailed description of this module. The Mars velocity-pointing case is shown below::
 
     velMarsGuidance = velocityPoint.VelocityPoint()
-    velMarsGuidance.ModelTag = "velocityPointMars"
+    velMarsGuidance.modelTag = "velocityPointMars"
     velMarsGuidance.mu = marsMu
 
 The velocity pointing module has two input messages that must be connected. First, the module's
@@ -123,7 +123,7 @@ of interest. See :ref:`locationPointing` for a more detailed description of this
 The Earth-pointing guidance module setup is shown below::
 
     earthPointGuidance = locationPointing.LocationPointing()
-    earthPointGuidance.ModelTag = "antennaEarthPoint"
+    earthPointGuidance.modelTag = "antennaEarthPoint"
     earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     earthPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
     earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
@@ -138,7 +138,7 @@ detailed description of this module::
 
     cameraLocation = [0.0, 1.5, 0.0]
     sciencePointGuidance = hillPoint.HillPoint()
-    sciencePointGuidance.ModelTag = "sciencePointAsteroid"
+    sciencePointGuidance.modelTag = "sciencePointAsteroid"
     sciencePointGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     sciencePointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[planetIdx])
     scSim.AddModelToTask(simTaskName, sciencePointGuidance)
@@ -146,7 +146,7 @@ detailed description of this module::
 Next, the attitude tracking error module must be configured with the initial flight mode::
 
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(velEarthGuidance.attRefOutMsg)  # initial flight mode
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -160,7 +160,7 @@ Then, the flight software vehicle configuration message is configured::
 The MRP Feedback control module is configured next for attitude control::
 
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
@@ -190,7 +190,7 @@ through the ``vizInterface``::
 
 To add a camera to the science-pointing mode, the ``createStandardCamera`` method is used::
 
-    vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
+    vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.modelTag,
                                     fieldOfView=10 * macros.D2R,
                                     pointingVector_B=[0,1,0], position_B=cameraLocation)
 
@@ -291,7 +291,7 @@ def run(planetCase):
 
     # Configure the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spiceSat"  # Name of the spacecraft
+    scObject.modelTag = "spiceSat"  # Name of the spacecraft
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -345,7 +345,7 @@ def run(planetCase):
     # Create an ephemeris converter to convert Spice messages of type plantetStateOutMsgs to ephemeris messages
     # of type ephemOutMsgs. This converter is required for the velocityPoint and locationPointing modules.
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = 'EphemData'
+    ephemObject.modelTag = 'EphemData'
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[moonIdx])
@@ -367,14 +367,14 @@ def run(planetCase):
 
     # Set up extForceTorque module
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
     # Add the simple Navigation sensor module.  This sets the SC attitude, rate, position,
     # and velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
@@ -384,7 +384,7 @@ def run(planetCase):
 
     # Set up Venus relative velocityPoint guidance module
     velVenusGuidance = velocityPoint.VelocityPoint()
-    velVenusGuidance.ModelTag = "velocityPointVenus"
+    velVenusGuidance.modelTag = "velocityPointVenus"
     velVenusGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     velVenusGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[venusIdx])
     velVenusGuidance.mu = venusMu
@@ -392,7 +392,7 @@ def run(planetCase):
 
     # Set up Earth relative velocityPoint guidance module
     velEarthGuidance = velocityPoint.VelocityPoint()
-    velEarthGuidance.ModelTag = "velocityPointEarth"
+    velEarthGuidance.modelTag = "velocityPointEarth"
     velEarthGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     velEarthGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
     velEarthGuidance.mu = earthMu
@@ -400,7 +400,7 @@ def run(planetCase):
 
     # Set up Mars relative velocityPoint guidance module
     velMarsGuidance = velocityPoint.VelocityPoint()
-    velMarsGuidance.ModelTag = "velocityPointMars"
+    velMarsGuidance.modelTag = "velocityPointMars"
     velMarsGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     velMarsGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[marsIdx])
     velMarsGuidance.mu = marsMu
@@ -421,7 +421,7 @@ def run(planetCase):
 
     # Set up the Earth antenna-pointing guidance module
     earthPointGuidance = locationPointing.LocationPointing()
-    earthPointGuidance.ModelTag = "antennaEarthPoint"
+    earthPointGuidance.modelTag = "antennaEarthPoint"
     earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     earthPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[earthIdx])
     earthPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
@@ -432,7 +432,7 @@ def run(planetCase):
 
     # Set up the solar panel Sun-pointing guidance module
     sunPointGuidance = locationPointing.LocationPointing()
-    sunPointGuidance.ModelTag = "panelSunPoint"
+    sunPointGuidance.modelTag = "panelSunPoint"
     sunPointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[sunIdx])
     sunPointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     sunPointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -443,14 +443,14 @@ def run(planetCase):
     # Set up the sensor science-pointing guidance module
     cameraLocation = [0.0, 1.5, 0.0]
     sciencePointGuidance = hillPoint.HillPoint()
-    sciencePointGuidance.ModelTag = "sciencePointAsteroid"
+    sciencePointGuidance.modelTag = "sciencePointAsteroid"
     sciencePointGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     sciencePointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[planetIdx])
     scSim.AddModelToTask(simTaskName, sciencePointGuidance)
 
     # Set up the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(velEarthGuidance.attRefOutMsg)  # initial flight mode
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -462,7 +462,7 @@ def run(planetCase):
 
     # Set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
@@ -498,7 +498,7 @@ def run(planetCase):
         viz.settings.keyboardAngularRate = np.deg2rad(0.5)
         viz.settings.showMissionTime = 1
 
-        vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
+        vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.modelTag,
                                         fieldOfView=10 * macros.D2R,
                                         displayName="10˚ FOV Camera",
                                         pointingVector_B=[0,1,0], position_B=cameraLocation)

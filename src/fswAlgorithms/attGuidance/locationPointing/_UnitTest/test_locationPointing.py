@@ -89,7 +89,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
 
     # setup module to be tested
     module = locationPointing.LocationPointing()
-    module.ModelTag = "locationPointingTag"
+    module.modelTag = "locationPointingTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
     module.pHat_B = pHat_B
     eps = 0.1 * macros.D2R
@@ -155,7 +155,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         # check a vector values
         if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.sigma_BR[i], truthSigmaBR[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_BR unit test at t=" +
                                 str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
@@ -163,7 +163,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         # check a vector values
         if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.omega_BR_B[i], truthOmegaBR[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_BR_B unit test at t=" +
                                 str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
@@ -171,7 +171,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         # check a vector values
         if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], truthSigmaRN[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
                                 str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
@@ -179,12 +179,12 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         # check a vector values
         if not unitTestSupport.isArrayEqual(attRefOutMsgRec.omega_RN_N[i], truthOmegaRN[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_N unit test at t=" +
                                 str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

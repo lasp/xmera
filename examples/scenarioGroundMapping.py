@@ -212,7 +212,7 @@ def run(show_plots, useCentral):
 
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
@@ -268,14 +268,14 @@ def run(show_plots, useCentral):
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject, ModelPriority=95)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject, ModelPriority=99)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
@@ -285,7 +285,7 @@ def run(show_plots, useCentral):
 
     # Create the ground mapping module
     groundMap = groundMapping.GroundMapping()
-    groundMap.ModelTag = "groundMapping"
+    groundMap.modelTag = "groundMapping"
     for map_idx in range(N):
         groundMap.addPointToModel(mapping_points[map_idx, :])
     groundMap.minimumElevation = np.radians(45.0)
@@ -306,7 +306,7 @@ def run(show_plots, useCentral):
 
     # Create the partitioned storage unit
     storageUnit = partitionedStorageUnit.PartitionedStorageUnit()
-    storageUnit.ModelTag = "storageUnit"
+    storageUnit.modelTag = "storageUnit"
     storageUnit.storageCapacity = 8e9  # bits (1 GB)
     for map_idx in range(N):
         storageUnit.addDataNodeToModel(mapInstrument.dataNodeOutMsgs[map_idx])
@@ -315,13 +315,13 @@ def run(show_plots, useCentral):
 
     # Create the ephemeris converter module
     ephemConverter = ephemerisConverter.EphemerisConverter()
-    ephemConverter.ModelTag = "ephemConverter"
+    ephemConverter.modelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0])
     scSim.AddModelToTask(simTaskName, ephemConverter)
 
     # Setup nadir pointing guidance module
     locPoint = locationPointing.LocationPointing()
-    locPoint.ModelTag = "locPoint"
+    locPoint.modelTag = "locPoint"
     scSim.AddModelToTask(simTaskName, locPoint, ModelPriority=97)
     locPoint.pHat_B = [0, 0, 1]
     locPoint.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -330,7 +330,7 @@ def run(show_plots, useCentral):
 
     # Setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "MRP_Feedback"
+    mrpControl.modelTag = "MRP_Feedback"
     scSim.AddModelToTask(
         simTaskName, mrpControl, ModelPriority=96
     )

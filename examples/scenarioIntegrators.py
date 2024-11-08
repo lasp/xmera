@@ -206,7 +206,7 @@ def run(show_plots, integratorCase):
     #
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
 
     # default case, RK4 is automatically setup, no extra code is needed
     if integratorCase == "rkf45":

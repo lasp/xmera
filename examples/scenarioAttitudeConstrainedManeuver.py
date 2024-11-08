@@ -134,7 +134,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "Bevo2-Sat"
+    scObject.modelTag = "Bevo2-Sat"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, 1)
@@ -228,15 +228,15 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 
     # add the simple Navigation sensor module
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -251,7 +251,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # setup readManeuver guidance module
     CAM = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(8)
-    CAM.ModelTag = "constrainedAttitudeManeuvering"
+    CAM.modelTag = "constrainedAttitudeManeuvering"
     CAM.sigma_BN_goal = sigma_BN_target[attitudeSetCase]
     CAM.omega_BN_B_goal = [0, 0, 0]
     CAM.avgOmega = 0.04
@@ -263,12 +263,12 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     decayTime = 10.0
     xi = 1.0
@@ -279,7 +279,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
@@ -288,19 +288,19 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # Boresight vector modules.
     stBACObject = boreAngCalc.BoreAngCalc()
-    stBACObject.ModelTag = "starTrackerBoresight"
+    stBACObject.modelTag = "starTrackerBoresight"
     stBACObject.boreVec_B = [1., 0., 0.]  # boresight in body frame
     scSim.AddModelToTask(simTaskName, stBACObject)
 
     ssyBACObject = boreAngCalc.BoreAngCalc()
-    ssyBACObject.ModelTag = "SunSensorBoresight"
+    ssyBACObject.modelTag = "SunSensorBoresight"
     ssyBACObject.boreVec_B = [0., 1., 0.]  # boresight in body frame
     scSim.AddModelToTask(simTaskName, ssyBACObject)
 
     if use2SunSensors:
         CAM.appendKeepInDirection([0,0,1], sunSensorFov*macros.D2R)
         sszBACObject = boreAngCalc.BoreAngCalc()
-        sszBACObject.ModelTag = "SunSensorBoresight"
+        sszBACObject.modelTag = "SunSensorBoresight"
         sszBACObject.boreVec_B = [0., 0., 1.]  # boresight in body frame
         scSim.AddModelToTask(simTaskName, sszBACObject)
 

@@ -75,7 +75,7 @@ def pixelLineConverterTestFunction():
     pixelLine = pixelLineConverter.PixelLineConverter()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    pixelLine.ModelTag = "pixelLineConverter"
+    pixelLine.modelTag = "pixelLineConverter"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, pixelLine)
@@ -165,11 +165,11 @@ def pixelLineConverterTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + pixelLine.ModelTag)
+        print("PASSED: " + pixelLine.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + pixelLine.ModelTag)
+        print("Failed: " + pixelLine.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

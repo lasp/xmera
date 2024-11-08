@@ -9,7 +9,7 @@ First, import the module and set its tag:
 \begin{verbatim}
 from Basilisk.simulation import facetDragDynamicEffector
 newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
-newDrag.ModelTag = "FacetDrag"
+newDrag.modelTag = "FacetDrag"
 \end{verbatim}
 
 Assuming an atmospheric density model has already been set up, the density message to be used by this drag effector can be set by calling
@@ -32,7 +32,7 @@ for ind in range(0,len(scAreas)):
 Finally, add the module to a spacecraft object using the \verb|addDynamicEffector| method:
 \begin{verbatim}
 scObject = spacecraft.Spacecraft()
-scObject.ModelTag = "spacecraftBody"
+scObject.modelTag = "spacecraftBody"
 scObject.addDynamicEffector(newDrag)
 \end{verbatim}
 

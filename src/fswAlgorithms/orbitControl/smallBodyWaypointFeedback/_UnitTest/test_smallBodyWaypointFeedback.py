@@ -70,7 +70,7 @@ def smallBodyWaypointFeedbackTestFunction1():
 
     # setup module to be tested
     module = smallBodyWaypointFeedback.SmallBodyWaypointFeedback()
-    module.ModelTag = "smallBodyWaypointFeedback1"
+    module.modelTag = "smallBodyWaypointFeedback1"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     module.A_sc = 1.  # Surface area of the spacecraft, m^2
@@ -134,11 +134,11 @@ def smallBodyWaypointFeedbackTestFunction1():
 
     if np.linalg.norm(forceOutMsgRec.forceRequestBody) <= 1:
         testFailCount += 1
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed "
+        testMessages.append("FAILED: " + module.modelTag + " Module failed "
                             + "force output" + " unit test")
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 
@@ -158,7 +158,7 @@ def smallBodyWaypointFeedbackTestFunction2():
 
     # setup module to be tested
     module = smallBodyWaypointFeedback.SmallBodyWaypointFeedback()
-    module.ModelTag = "smallBodyWaypointFeedback2"
+    module.modelTag = "smallBodyWaypointFeedback2"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     module.A_sc = 1.  # Surface area of the spacecraft, m^2
@@ -220,11 +220,11 @@ def smallBodyWaypointFeedbackTestFunction2():
 
     if np.linalg.norm(forceOutMsgRec.forceRequestBody) >= 1e-8:
         testFailCount += 1
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed "
+        testMessages.append("FAILED: " + module.modelTag + " Module failed "
                             + "force output" + " unit test")
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

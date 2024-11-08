@@ -122,7 +122,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     module = celestialTwoBodyPoint.CelestialTwoBodyPoint()
-    module.ModelTag = "celestialTwoBodyPoint"
+    module.modelTag = "celestialTwoBodyPoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -215,7 +215,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     for i in range(0, len(moduleOutput)):
         if not unitTestSupport.isArrayEqual(moduleOutput[i], sigma_RN, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
             unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
@@ -230,7 +230,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     for i in range(0, len(moduleOutput)):
         if not unitTestSupport.isArrayEqual(moduleOutput[i], omega_RN_N, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_N unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
             unitTestSupport.writeTeXSnippet('passFail12', textSnippetFailed, path)
@@ -245,7 +245,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     for i in range(0, len(moduleOutput)):
         if not unitTestSupport.isArrayEqual(moduleOutput[i], domega_RN_N, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed domega_RN_N unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
             unitTestSupport.writeTeXSnippet('passFail13', textSnippetFailed, path)
@@ -283,7 +283,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     module = celestialTwoBodyPoint.CelestialTwoBodyPoint()
-    module.ModelTag = "secBodyCelestialTwoBodyPoint"
+    module.modelTag = "secBodyCelestialTwoBodyPoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -365,7 +365,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
                                 str(dataLog.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
             unitTestSupport.writeTeXSnippet('passFail21', textSnippetFailed, path)
@@ -382,7 +382,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_N unit test at t=" +
                                 str(dataLog.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
             unitTestSupport.writeTeXSnippet('passFail22', textSnippetFailed, path)
@@ -400,7 +400,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed domega_RN_N unit test at t=" +
                                 str(dataLog.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
             unitTestSupport.writeTeXSnippet('passFail23', textSnippetFailed, path)

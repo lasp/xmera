@@ -38,7 +38,7 @@ def run():
 
     # create modules
     mod2 = cppModuleTemplate.CppModuleTemplate()
-    mod2.ModelTag = "cppModule2"
+    mod2.modelTag = "cppModule2"
     scSim.AddModelToTask("cppTask", mod2)
 
     #  initialize Simulation:

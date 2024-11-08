@@ -80,7 +80,7 @@ User Guide
 The required module configuration is::
 
     platformReference = thrusterPlatformReference.thrusterPlatformReference()
-    platformReference.ModelTag  = "platformReference"
+    platformReference.modelTag  = "platformReference"
     platformReference.sigma_MB  = sigma_MB
     platformReference.r_BM_M    = r_BM_M
     platformReference.r_FM_F    = r_FM_F

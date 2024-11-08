@@ -68,7 +68,7 @@ def unitSpiceSc(show_plots):
 
     # Initialize the spice modules that we are using.
     spiceObject = spiceInterface.SpiceInterface()
-    spiceObject.ModelTag = "SpiceInterfaceData"
+    spiceObject.modelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     scNames = ["HUBBLE SPACE TELESCOPE"]
     spiceObject.addSpacecraftNames(spiceInterface.StringVector(scNames))

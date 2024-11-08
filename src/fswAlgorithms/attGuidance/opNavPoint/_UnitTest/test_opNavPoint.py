@@ -81,7 +81,7 @@ def opNavPointTestFunction(show_plots, case):
 
     # Construct algorithm and associated C++ container
     module = opNavPoint.OpNavPoint()
-    module.ModelTag = "opNavPoint"
+    module.modelTag = "opNavPoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -165,7 +165,7 @@ def opNavPointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.sigma_BR[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_BR unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -189,7 +189,7 @@ def opNavPointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omega_BR_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_BR_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
     #
@@ -212,7 +212,7 @@ def opNavPointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.omega_RN_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_B unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -231,7 +231,7 @@ def opNavPointTestFunction(show_plots, case):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.domega_RN_B[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_B unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed domega_RN_B unit test at t=" +
                                 str(dataLog.times()[i] * mc.NANO2SEC) +
                                 "sec\n")
 
@@ -239,11 +239,11 @@ def opNavPointTestFunction(show_plots, case):
     snippentName = "passFail" + str(case)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("FAILED: " + module.ModelTag)
+        print("FAILED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

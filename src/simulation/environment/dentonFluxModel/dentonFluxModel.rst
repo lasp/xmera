@@ -64,7 +64,7 @@ The Denton model averaged GEO space plasma properties module is created using:
     :linenos:
 
     fluxModule = dentonFluxModel.DentonFluxModel()
-    fluxModule.ModelTag = "dentonFluxModule"
+    fluxModule.modelTag = "dentonFluxModule"
     fluxModule.dataPath = bskPath + '/supportData/DentonGEO/'
     fluxModule.kpIndex = "2+"
     fluxModule.numOutputEnergies = 30

@@ -61,34 +61,34 @@ class BSKFswModels():
 
         # Create modules
         self.inertial3D = inertial3D.Inertial3D()
-        self.inertial3D.ModelTag = "inertial3D"
+        self.inertial3D.modelTag = "inertial3D"
 
         self.trackingError = attTrackingError.AttTrackingError()
-        self.trackingError.ModelTag = "trackingError"
+        self.trackingError.modelTag = "trackingError"
 
         self.mrpFeedbackRWs = mrpFeedback.MrpFeedback()
-        self.mrpFeedbackRWs.ModelTag = "mrpFeedbackRWs"
+        self.mrpFeedbackRWs.modelTag = "mrpFeedbackRWs"
 
         self.rwMotorTorque = rwMotorTorque.RwMotorTorque()
-        self.rwMotorTorque.ModelTag = "rwMotorTorque"
+        self.rwMotorTorque.modelTag = "rwMotorTorque"
 
         self.inertial3D2 = inertial3D.Inertial3D()
-        self.inertial3D2.ModelTag = "inertial3D2"
+        self.inertial3D2.modelTag = "inertial3D2"
 
         self.trackingError2 = attTrackingError.AttTrackingError()
-        self.trackingError2.ModelTag = "trackingError2"
+        self.trackingError2.modelTag = "trackingError2"
 
         self.mrpFeedbackRWs2 = mrpFeedback.MrpFeedback()
-        self.mrpFeedbackRWs2.ModelTag = "mrpFeedbackRWs2"
+        self.mrpFeedbackRWs2.modelTag = "mrpFeedbackRWs2"
 
         self.rwMotorTorque2 = rwMotorTorque.RwMotorTorque()
-        self.rwMotorTorque2.ModelTag = "rwMotorTorque2"
+        self.rwMotorTorque2.modelTag = "rwMotorTorque2"
 
         self.spacecraftPointing = spacecraftPointing.SpacecraftPointing()
-        self.spacecraftPointing.ModelTag = "spacecraftPointing"
+        self.spacecraftPointing.modelTag = "spacecraftPointing"
 
         self.mrpFeedbackControl = mrpFeedback.MrpFeedback()
-        self.mrpFeedbackControl.ModelTag = "mrpFeedbackControl"
+        self.mrpFeedbackControl.modelTag = "mrpFeedbackControl"
 
         # create the FSW module gateway messages
         self.setupGatewayMsgs(SimBase)

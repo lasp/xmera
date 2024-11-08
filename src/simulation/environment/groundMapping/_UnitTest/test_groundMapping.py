@@ -68,7 +68,7 @@ def groundMappingTestFunction():
 
     # Create the initial imaging target
     groundMap = groundMapping.GroundMapping()
-    groundMap.ModelTag = "groundMapping"
+    groundMap.modelTag = "groundMapping"
     groundMap.addPointToModel([0., -0.1, 0.])
     groundMap.addPointToModel([0., 0., math.tan(np.radians(22.5))+0.1])
     groundMap.minimumElevation = np.radians(45.)
@@ -111,7 +111,7 @@ def groundMappingTestFunction():
         testFailCount += 1
 
     if testFailCount == 0:
-        print("PASSED: " + groundMap.ModelTag)
+        print("PASSED: " + groundMap.modelTag)
     else:
         print(testMessages)
 

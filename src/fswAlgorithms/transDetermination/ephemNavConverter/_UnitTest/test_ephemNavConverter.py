@@ -51,7 +51,7 @@ def ephemNavConverterTestFunction():
     ephemNav = ephemNavConverter.EphemNavConverter()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    ephemNav.ModelTag = "ephemNavConverter"
+    ephemNav.modelTag = "ephemNavConverter"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, ephemNav)
@@ -106,11 +106,11 @@ def ephemNavConverterTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + ephemNav.ModelTag)
+        print("PASSED: " + ephemNav.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + ephemNav.ModelTag)
+        print("Failed: " + ephemNav.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

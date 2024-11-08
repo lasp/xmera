@@ -86,7 +86,7 @@ def test_PrescribedMotionStateEffector_Rotation(show_plots, theta_init, theta_re
 
     # Add the spacecraft module to test file
     sc_object = spacecraft.Spacecraft()
-    sc_object.ModelTag = "spacecraftBody"
+    sc_object.modelTag = "spacecraftBody"
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
     # Define the mass properties of the rigid spacecraft hub
@@ -110,7 +110,7 @@ def test_PrescribedMotionStateEffector_Rotation(show_plots, theta_init, theta_re
     prescribed_rot_1_dof.setThetaInit(theta_init)
     prescribed_rot_1_dof.setCoastOptionBangDuration(1.0)
     prescribed_rot_1_dof.setSmoothingDuration(1.0)
-    prescribed_rot_1_dof.ModelTag = "prescribedRotation1DOF"
+    prescribed_rot_1_dof.modelTag = "prescribedRotation1DOF"
     unit_test_sim.AddModelToTask(unit_task_name, prescribed_rot_1_dof)
 
     # Create the prescribedRotation1DOF input message
@@ -258,7 +258,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
 
     # Add the spacecraft module to test file
     sc_object = spacecraft.Spacecraft()
-    sc_object.ModelTag = "spacecraftBody"
+    sc_object.modelTag = "spacecraftBody"
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
     # Define the mass properties of the rigid spacecraft hub
@@ -280,7 +280,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     prescribed_translation.setTransPosInit(trans_pos_init)
     prescribed_translation.setCoastOptionBangDuration(1.0)
     prescribed_translation.setSmoothingDuration(1.0)
-    prescribed_translation.ModelTag = "prescribedLinearTranslation"
+    prescribed_translation.modelTag = "prescribedLinearTranslation"
     unit_test_sim.AddModelToTask(unit_task_name, prescribed_translation)
 
     # Create the prescribed_translation input message
@@ -436,7 +436,7 @@ def set_prescribed_motion_effector(prescribed_motion_body):
     prescribed_motion_body.setOmega_MB_M([0.0, 0.0, 0.0])
     prescribed_motion_body.setOmegaPrime_MB_B([0.0, 0.0, 0.0])
     prescribed_motion_body.setSigma_MB([0.0, 0.0, 0.0])
-    prescribed_motion_body.ModelTag = "prescribedMotionBody"
+    prescribed_motion_body.modelTag = "prescribedMotionBody"
 
 def plot_conservation(timespan, orb_ang_mom_n, orb_energy, rot_ang_mom_n, rot_energy):
     plt.figure()

@@ -43,7 +43,7 @@ typedef struct
 ThrClusterMap
 //@endcond
 {
-    std::string thrTag;   //!< [-] ModelTag associated with the thruster grouping
+    std::string thrTag;   //!< [-] modelTag associated with the thruster grouping
     int color[4] = {-1};  //!< [-] RGBA thruster plume color for all thrusters in this group
 }ThrClusterMap;
 

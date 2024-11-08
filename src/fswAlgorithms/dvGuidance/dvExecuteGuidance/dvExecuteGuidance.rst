@@ -56,7 +56,7 @@ The module is first initialized as follows:
 
     moduleConfig = dvExecuteGuidance.dvExecuteGuidanceConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "dvExecuteGuidance"
+    moduleWrap.modelTag = "dvExecuteGuidance"
     moduleConfig.defaultControlPeriod = 0.5
     moduleConfig.minTime = 2.0
     moduleConfig.maxTime = 10.0

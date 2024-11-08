@@ -21,7 +21,7 @@ If no planets are designated as central bodies, an absolute initial position and
 \verb|oe.f = radians(orbit_f) # orbit true anomaly, radians|\\
 \verb|r_sc_E, v_sc_E = om.elem2rv(muEarth, oe) #get xyz coordinates from keplerian elements|\\\\
 \verb|ephemerides = spice_interface.SpiceInterface()|\\
-\verb|ephemerides.ModelTag = "SpiceInterfaceData"|\\
+\verb|ephemerides.modelTag = "SpiceInterfaceData"|\\
 \verb|ephemerides.SPICEDataPath = splitPath[0] + '../supportData/EphemerisData/'|\\
 \verb|ephemerides.outputBufferCount = 2|\\
 \verb|ephemerides.planetNames = spice_interface.StringVector(["earth", "sun"])|\\

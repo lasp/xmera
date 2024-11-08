@@ -161,7 +161,7 @@ def run(show_plots, scCase):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # The spacecraft() module is setup as before, except that we need to specify a priority to this task.
     # If BSK modules are added to the simulation task process, they are executed in the order that they are added

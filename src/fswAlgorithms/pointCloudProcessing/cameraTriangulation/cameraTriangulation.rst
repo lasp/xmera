@@ -72,7 +72,7 @@ The module is first initialized as follows:
 .. code-block:: python
 
     module = cameraTriangulation.CameraTriangulation()
-    module.ModelTag = "cameraTriangulation"
+    module.modelTag = "cameraTriangulation"
     module.uncertaintyImageMeasurement = 0.25   # optional, default = 0.
     unitTestSim.AddModelToTask(unitTaskName, module)
 

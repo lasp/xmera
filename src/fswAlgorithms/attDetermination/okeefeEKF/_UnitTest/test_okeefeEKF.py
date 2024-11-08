@@ -445,7 +445,7 @@ def StatePropStatic():
 
     # Construct algorithm and associated C++ container
     module = okeefeEKF.OkeefeEKF()
-    module.ModelTag = "okeefeEKF"
+    module.modelTag = "okeefeEKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -511,7 +511,7 @@ def StatePropVariable(show_plots):
 
     # Construct algorithm and associated C++ container
     module = okeefeEKF.OkeefeEKF()
-    module.ModelTag = "okeefeEKF"
+    module.modelTag = "okeefeEKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -659,7 +659,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Construct algorithm and associated C++ container
     module = okeefeEKF.OkeefeEKF()
-    module.ModelTag = "okeefeEKF"
+    module.modelTag = "okeefeEKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

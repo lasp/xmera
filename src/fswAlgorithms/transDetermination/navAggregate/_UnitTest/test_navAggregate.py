@@ -106,7 +106,7 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
 
     # Construct an instance of the module being tested
     module = navAggregate.NavAggregate()
-    module.ModelTag = "navAggregate"
+    module.modelTag = "navAggregate"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -330,11 +330,11 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     snippentName = "passFail" + str(numAttNav) + str(numTransNav)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

@@ -412,7 +412,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -456,7 +456,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         CSS.this.disown()
     for CSSHat in CSSOrientationList:
         newCSS = coarseSunSensor.CoarseSunSensor()
-        newCSS.ModelTag = "CSS" + str(counter)
+        newCSS.modelTag = "CSS" + str(counter)
         counter += 1
         setupCSS(newCSS)
         newCSS.nHat_B = CSSHat
@@ -486,7 +486,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     bVecLogger = None
     if FilterType == 'EKF':
         module = sunlineEKF.SunlineEKF()
-        module.ModelTag = "SunlineEKF"
+        module.modelTag = "SunlineEKF"
         setupEKFData(module)
 
         # Add test module to runtime call list
@@ -496,7 +496,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         numStates = 3
 
         module = okeefeEKF.OkeefeEKF()
-        module.ModelTag = "okeefeEKF"
+        module.modelTag = "okeefeEKF"
         setupOEKFData(module)
 
         # Add test module to runtime call list
@@ -504,7 +504,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
     if FilterType == 'uKF':
         module = sunlineUKF.SunlineUKF()
-        module.ModelTag = "SunlineUKF"
+        module.modelTag = "SunlineUKF"
         setupUKFData(module)
 
         # Add test module to runtime call list
@@ -514,7 +514,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         numStates = 5
 
         module = sunlineSEKF.SunlineSEKF()
-        module.ModelTag = "SunlineSEKF"
+        module.modelTag = "SunlineSEKF"
         setupSEKFData(module)
 
         # Add test module to runtime call list
@@ -525,7 +525,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     if FilterType == 'SuKF':
         numStates = 6
         module = sunlineSuKF.SunlineSuKF()
-        module.ModelTag = "SunlineSuKF"
+        module.modelTag = "SunlineSuKF"
         setupSuKFData(module)
 
         # Add test module to runtime call list

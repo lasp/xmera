@@ -139,7 +139,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # Construct algorithm and associated C++ container
     module = cppModuleTemplate.CppModuleTemplate()   # update with current values
-    module.ModelTag = "cppModuleTemplate"            # update python name of test module
+    module.modelTag = "cppModuleTemplate"            # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -209,7 +209,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
                        ]
             else:
                 testFailCount += 1
-                testMessages.append("FAILED: " + module.ModelTag
+                testMessages.append("FAILED: " + module.modelTag
                                     + " Module failed with unsupported input parameters")
     else:
         if param1 == 2:
@@ -222,7 +222,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
                        ]
         else:
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed with unsupported input parameters")
+            testMessages.append("FAILED: " + module.modelTag + " Module failed with unsupported input parameters")
 
     # compare the module results to the truth values
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
@@ -266,7 +266,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

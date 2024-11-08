@@ -67,7 +67,7 @@ def run(show_plots, offCount):
     dynProcess.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
     testObject = ExtPulsedTorque.ExtPulsedTorque()
-    testObject.ModelTag = "externalPulsedTorque"
+    testObject.modelTag = "externalPulsedTorque"
 
     # These don't do anything. They are here to confirm they don't do anything
     testObject.readInputMessages()

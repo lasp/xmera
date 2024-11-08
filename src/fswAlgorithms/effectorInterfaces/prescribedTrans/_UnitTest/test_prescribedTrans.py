@@ -95,7 +95,7 @@ def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarA
 
     # Construct algorithm and associated C++ container
     PrescribedTrans = prescribedTrans.PrescribedTrans()
-    PrescribedTrans.ModelTag = "prescribedTrans"
+    PrescribedTrans.modelTag = "prescribedTrans"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, PrescribedTrans)
@@ -175,11 +175,11 @@ def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarA
     # set the filtered output truth states
     if not unitTestSupport.isDoubleEqual(scalarVel_Final, scalarVelRef, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "scalarVel_Final and scalarVelRef do not match")
+        testMessages.append("FAILED: " + PrescribedTrans.modelTag + "scalarVel_Final and scalarVelRef do not match")
 
     if not unitTestSupport.isDoubleEqual(scalarPos_Final, scalarPosRef, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "scalarPos_Final and scalarPosRef do not match")
+        testMessages.append("FAILED: " + PrescribedTrans.modelTag + "scalarPos_Final and scalarPosRef do not match")
 
     return [testFailCount, ''.join(testMessages)]
 

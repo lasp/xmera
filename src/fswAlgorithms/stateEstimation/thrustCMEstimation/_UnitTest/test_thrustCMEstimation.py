@@ -88,7 +88,7 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
 
     # setup thrustCMEstimation module
     cmEstimation = thrustCMEstimation.ThrustCMEstimation()
-    cmEstimation.ModelTag = "cmEstimator"
+    cmEstimation.modelTag = "cmEstimator"
     cmEstimation.attitudeTol = 1e-4
     cmEstimation.r_CB_B = [0.01, -0.025, 0.04]
     cmEstimation.P0 = [0.0025, 0.0025, 0.0025]

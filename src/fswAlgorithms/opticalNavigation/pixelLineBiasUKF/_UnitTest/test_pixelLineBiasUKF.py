@@ -258,7 +258,7 @@ def StatePropRelOD(show_plots, dt):
 
     # Construct algorithm and associated C++ container
     module = pixelLineBiasUKF.PixelLineBiasUKF()
-    module.ModelTag = "relodSuKF"
+    module.modelTag = "relodSuKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -322,7 +322,7 @@ def StatePropRelOD(show_plots, dt):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state propagation")
+        print("PASSED: " + module.modelTag + " state propagation")
     else:
         print(testMessages)
 

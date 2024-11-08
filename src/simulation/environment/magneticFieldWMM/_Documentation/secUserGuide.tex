@@ -8,7 +8,7 @@ First, the planet magnetic field model must be imported and initialized:
 \begin{verbatim}
      from Basilisk.simulation import magneticFieldWMM
      magModule = magneticFieldWMM.MagneticFieldWMM()
-     magModule.ModelTag = "WMM"
+     magModule.modelTag = "WMM"
      magModule.dataPath = splitPath[0] + 'Basilisk/supportData/MagneticField/'
 \end{verbatim}
 By default the model assumes the BSK epoch date and time.  To set a common epoch time across various BSK modules, then the {\tt EpochMsgPayload} must be created and written.
@@ -39,7 +39,7 @@ Each {\tt MagneticField} module calculates the magnetic field based on the outpu
 To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
 \begin{verbatim}
 scObject = spacecraft.Spacecraft()
-scObject.ModelTag = "spacecraftBody"
+scObject.modelTag = "spacecraftBody"
 magModule.addSpacecraftToModel(scObject.scStateOutMsg)
 \end{verbatim}
 

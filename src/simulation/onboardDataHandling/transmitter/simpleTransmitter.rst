@@ -39,7 +39,7 @@ This module inherits the user guide from the :ref:`DataNodeBase` base class, but
 To set up this module users must create a SimpleTransmitter instance::
 
    transmitter = simpleTransmitter.SimpleTransmitter()
-   transmitter.ModelTag = "transmitter"
+   transmitter.modelTag = "transmitter"
 
 Set the `nodeBaudRate`, `packetSize`, and numBuffers variables::
 

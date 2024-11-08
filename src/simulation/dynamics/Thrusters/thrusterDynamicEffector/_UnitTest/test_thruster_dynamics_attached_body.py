@@ -89,7 +89,7 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 750.0
@@ -106,7 +106,7 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
     #  Create the thrusters
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
-    thrusterSet.ModelTag = "ACSThrusterDynamics"
+    thrusterSet.modelTag = "ACSThrusterDynamics"
 
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust) for thruster 1
     long_angle_deg = long_angle  # Parametrized angle of thrust
@@ -129,7 +129,7 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
     # Create the module
     pyModule = attachedBodyModule(dcm_BF, r_FB_B, True, 100)
-    pyModule.ModelTag = "attachedBody"
+    pyModule.modelTag = "attachedBody"
     TotalSim.AddModelToTask(unitTaskName3, pyModule)
 
     # Attach messages

@@ -135,7 +135,7 @@ def run(show_plots, integratorCase, relTol, absTol):
     #
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
 
     # set the variable time step integrator
     if integratorCase == "rkf45":

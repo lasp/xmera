@@ -118,7 +118,7 @@ def hingedRigidBodyPIDMotorTestFunction(show_plots, thetaR, thetaDotR, theta, th
 
     # Construct algorithm and associated C++ container
     motor = hingedRigidBodyPIDMotor.HingedRigidBodyPIDMotor()
-    motor.ModelTag = "hingedRigidBodyPIDMotor"
+    motor.modelTag = "hingedRigidBodyPIDMotor"
     motor.K = K
     motor.P = P
     motor.I = I
@@ -159,7 +159,7 @@ def hingedRigidBodyPIDMotorTestFunction(show_plots, thetaR, thetaDotR, theta, th
     # compare the module results to the truth values
     if not unitTestSupport.isDoubleEqual(dataLog.motorTorque[0][0], T, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + motor.ModelTag + " module failed unit test for thetaR = {}, thetaDotR  = {}, theta = {}, thetaDot = {}, K = {}, P = {} \n".format(thetaR, thetaDotR, theta, thetaDot, K, P))
+        testMessages.append("FAILED: " + motor.modelTag + " module failed unit test for thetaR = {}, thetaDotR  = {}, theta = {}, thetaDot = {}, K = {}, P = {} \n".format(thetaR, thetaDotR, theta, thetaDot, K, P))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

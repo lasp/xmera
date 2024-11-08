@@ -143,7 +143,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
     # Set up first spacecraft
     scObject_0 = spacecraft.Spacecraft()
-    scObject_0.ModelTag = "spacecraft"
+    scObject_0.modelTag = "spacecraft"
     unitTestSim.AddModelToTask(testTaskName, scObject_0)
 
     # setup Gravity Bodies
@@ -334,7 +334,7 @@ def unitEclipseCustom(show_plots):
 
     # Set up first spacecraft
     scObject_0 = spacecraft.Spacecraft()
-    scObject_0.ModelTag = "spacecraft"
+    scObject_0.modelTag = "spacecraft"
     unitTestSim.AddModelToTask(testTaskName, scObject_0)
 
     # setup Gravity Bodies
@@ -346,7 +346,7 @@ def unitEclipseCustom(show_plots):
     # Create the ephemeris data for the bodies
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.modelTag = 'planetEphemeris'
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["custom"]))
 
     # Specify bennu orbit

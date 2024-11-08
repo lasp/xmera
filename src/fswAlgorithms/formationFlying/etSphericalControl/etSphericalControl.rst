@@ -68,7 +68,7 @@ The ETcontrol module is created using:
     :linenos:
 
     etSphericalControl = etSphericalControl.etSphericalControl()
-    etSphericalControl.ModelTag = "etSphericalControl"
+    etSphericalControl.modelTag = "etSphericalControl"
     scSim.AddModelToTask(fswTaskName, etSphericalControl, etSphericalControl)
 
 The reference position variables in the spherical frame :math:`L_r`, :math:`theta_r`, :math:`phi_r`,

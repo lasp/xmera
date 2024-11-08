@@ -44,7 +44,7 @@ given priority and can run before C++/C modules.
 Similarly to C++ modules, creating an instance of the Python module is done with the code::
 
     pyMRPPD = PythonMRPPD()
-    pyMRPPD.ModelTag = "pyMRP_PD"
+    pyMRPPD.modelTag = "pyMRP_PD"
     pyMRPPD.K = 3.5
     pyMRPPD.P = 30.0
     scSim.AddModelToTask(simTaskName, pyMRPPD)
@@ -144,7 +144,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -161,14 +161,14 @@ def run(show_plots):
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -177,18 +177,18 @@ def run(show_plots):
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
 
     # setup Python MRP PD control module
     pyMRPPD = PythonMRPPD()
-    pyMRPPD.ModelTag = "pyMRP_PD"
+    pyMRPPD.modelTag = "pyMRP_PD"
     pyMRPPD.K = 3.5
     pyMRPPD.P = 30.0
     scSim.AddModelToTask(simTaskName, pyMRPPD)
