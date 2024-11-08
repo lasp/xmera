@@ -47,7 +47,7 @@ void CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
  */
-void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
+void CppModuleTemplate::updateState(uint64_t CurrentSimNanos)
 {
     double Lr[3];                                   /*!< [unit] variable description */
     CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */

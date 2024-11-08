@@ -41,7 +41,7 @@ public:
     ~MsmForceTorque();
 
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg, std::vector<double> radii, std::vector<Eigen::Vector3d> r_SB_B);
 
 private:

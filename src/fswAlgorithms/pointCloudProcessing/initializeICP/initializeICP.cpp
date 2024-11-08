@@ -153,7 +153,7 @@ void InitializeICP::writeOutputMessages(uint64_t CurrentSimNanos){
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void InitializeICP::UpdateState(uint64_t CurrentSimNanos)
+void InitializeICP::updateState(uint64_t CurrentSimNanos)
 {
     //! - Normalize the measured point cloud if it is valid
     this->normalizePointCloud();

@@ -38,7 +38,7 @@ void FlybyPoint::Reset(uint64_t currentSimNanos)
  @return void
  @param currentSimNanos The current simulation time for system
  */
-void FlybyPoint::UpdateState(uint64_t currentSimNanos)
+void FlybyPoint::updateState(uint64_t currentSimNanos)
 {
     /*! compute dt from current time and last filter read time and get new states*/
     this->dt = (currentSimNanos - this->lastFilterReadTime)*NANO2SEC;

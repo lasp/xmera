@@ -49,7 +49,7 @@ void LambertSecondDV::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSecondDV::UpdateState(uint64_t currentSimNanos)
+void LambertSecondDV::updateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();

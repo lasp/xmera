@@ -55,7 +55,7 @@ void LowPassFilterTorqueCommand::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void LowPassFilterTorqueCommand::UpdateState(uint64_t callTime)
+void LowPassFilterTorqueCommand::updateState(uint64_t callTime)
 {
     double      v3[3];                      /*!<      3d vector sub-result */
     int         i;

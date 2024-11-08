@@ -125,7 +125,7 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep)
  @return void
  @param CurrentSimNanos current simulation time in nanoseconds
  */
-void RadiationPressure::UpdateState(uint64_t CurrentSimNanos)
+void RadiationPressure::updateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
 }

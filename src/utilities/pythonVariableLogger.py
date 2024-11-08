@@ -65,7 +65,7 @@ class PythonVariableLogger(sysModel.SysModel):
         self.clear()
         return super().Reset(CurrentSimNanos)
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, CurrentSimNanos):
         if CurrentSimNanos >= self._next_update_time:
             self._times.append(CurrentSimNanos)
             for variable_name, logging_function in self.logging_functions.items():
@@ -80,7 +80,7 @@ class PythonVariableLogger(sysModel.SysModel):
                 self._variables[variable_name].append(val)
 
             self._next_update_time += self.min_log_period
-        return super().UpdateState(CurrentSimNanos)
+        return super().updateState(CurrentSimNanos)
 
     def GetData(self, name:str):
         """

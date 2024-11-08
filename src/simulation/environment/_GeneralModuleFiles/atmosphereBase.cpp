@@ -272,7 +272,7 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime)
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
+void AtmosphereBase::updateState(uint64_t CurrentSimNanos)
 {
     //! - clear the output buffer
     std::vector<AtmoPropsMsgPayload>::iterator it;

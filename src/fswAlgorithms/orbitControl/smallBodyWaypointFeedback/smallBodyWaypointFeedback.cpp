@@ -140,7 +140,7 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
 */
-void SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
+void SmallBodyWaypointFeedback::updateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
     this->computeControl(CurrentSimNanos);

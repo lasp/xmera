@@ -66,7 +66,7 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos)
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
 */
-void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
+void MtbEffector::updateState(uint64_t CurrentSimNanos)
 {
     /*
      * Write to the output message.

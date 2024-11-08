@@ -97,7 +97,7 @@ void EtSphericalControl::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void EtSphericalControl::UpdateState(uint64_t callTime)
+void EtSphericalControl::updateState(uint64_t callTime)
 {
     // in
     NavTransMsgPayload servicerTransInMsgBuffer;

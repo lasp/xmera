@@ -133,7 +133,7 @@ void GravityEffector::Reset(uint64_t currentSimNanos)
     }
 }
 
-void GravityEffector::UpdateState(uint64_t currentSimNanos)
+void GravityEffector::updateState(uint64_t currentSimNanos)
 {
     // Updates the central body
     this->centralBody.reset();

@@ -33,7 +33,7 @@ void HillPointCpp::Reset(uint64_t currentSimNanos){
 /*! This method creates a orbit hill frame reference message.  The desired orientation is
  defined within the module.
  */
-void HillPointCpp::UpdateState(uint64_t currentSimNanos){
+void HillPointCpp::updateState(uint64_t currentSimNanos){
 
     /*! - zero the output message */
     AttRefMsgPayload AttRefOutBuffer = AttRefMsgPayload();

@@ -222,7 +222,7 @@ void GroundLocation::computeAccess()
  update module 
  @param CurrentSimNanos
  */
-void GroundLocation::UpdateState(uint64_t CurrentSimNanos)
+void GroundLocation::updateState(uint64_t CurrentSimNanos)
 {
     this->ReadMessages();
     this->computeAccess();

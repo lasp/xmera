@@ -34,7 +34,7 @@
 class SepPoint: public SysModel {
 public:
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
 
     AlignmentPriority alignmentPriority;                           //!< flag to indicate which flyby model is being used
     double            a1Hat_B[3];                                  //!< solar array drive axis in B-frame coordinates

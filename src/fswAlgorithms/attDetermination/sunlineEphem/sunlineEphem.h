@@ -34,7 +34,7 @@
 /*! @brief Top level structure for the sub-module routines. */
 class SunlineEphem : public SysModel {
 public:
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* declare module IO interfaces */
     Message<NavAttMsgPayload> navStateOutMsg;                     /*!< The name of the output message*/

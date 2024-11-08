@@ -66,7 +66,7 @@ AttRefMsgPayload HillToAttRef::relativeToInertialMRP(double relativeAtt[3], doub
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HillToAttRef::UpdateState(uint64_t callTime) {
+void HillToAttRef::updateState(uint64_t callTime) {
 
     HillRelStateMsgPayload hillStateInPayload;
     NavAttMsgPayload attStateInPayload;

@@ -153,7 +153,7 @@ void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
 
 /*! This is the main method that gets called every time the module is updated.
 */
-void FormationBarycenter::UpdateState(uint64_t CurrentSimNanos)
+void FormationBarycenter::updateState(uint64_t CurrentSimNanos)
 {
     this->ReadInputMessages();
     this->transOutBuffer = this->transOutMsg.zeroMsgPayload; // zero the output message buffer

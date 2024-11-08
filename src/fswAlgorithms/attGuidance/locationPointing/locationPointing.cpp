@@ -80,7 +80,7 @@ void LocationPointing::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void LocationPointing::UpdateState(uint64_t callTime)
+void LocationPointing::updateState(uint64_t callTime)
 {
     /* Local copies*/
     NavAttMsgPayload scAttInMsgBuffer;  //!< local copy of input message buffer

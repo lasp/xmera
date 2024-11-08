@@ -53,7 +53,7 @@ void PointCloudTriangulation::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void PointCloudTriangulation::UpdateState(uint64_t currentSimNanos)
+void PointCloudTriangulation::updateState(uint64_t currentSimNanos)
 {
     if (this->numberTimesCalled >= this->numberTimeStepsInitialPhase) {
         this->initialPhase = false;

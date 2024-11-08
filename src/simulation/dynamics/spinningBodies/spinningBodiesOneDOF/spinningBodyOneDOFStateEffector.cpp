@@ -318,7 +318,7 @@ void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
 }
 
 /*! This method is used so that the simulation will ask SB to update messages */
-void SpinningBodyOneDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void SpinningBodyOneDOFStateEffector::updateState(uint64_t CurrentSimNanos)
 {
     //! - Read the incoming command array
     if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {

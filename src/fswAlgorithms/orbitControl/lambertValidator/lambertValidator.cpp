@@ -67,7 +67,7 @@ void LambertValidator::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertValidator::UpdateState(uint64_t currentSimNanos)
+void LambertValidator::updateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();

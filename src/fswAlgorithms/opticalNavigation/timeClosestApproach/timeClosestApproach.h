@@ -35,7 +35,7 @@ class TimeClosestApproach: public SysModel {
 public:
     TimeClosestApproach();
     ~TimeClosestApproach() override;
-    void UpdateState(uint64_t CurrentSimNanos) override;
+    void updateState(uint64_t CurrentSimNanos) override;
 
     ReadFunctor<FilterMsgPayload>  filterInMsg;  //!< relative state and covariance input msg
     ReadFunctor<NavTransMsgPayload> navFilterMsg;

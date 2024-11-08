@@ -74,7 +74,7 @@ void DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload> *t
  @param CurrentSimNanos The current simulation time in nanoseconds
  @return void
  */
-void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
+void DataStorageUnitBase::updateState(uint64_t CurrentSimNanos)
 {
     //! - update data information
     if(this->readMessages())

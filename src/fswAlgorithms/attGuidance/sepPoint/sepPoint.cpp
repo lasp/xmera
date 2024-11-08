@@ -47,7 +47,7 @@ void SepPoint::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The current simulation time for system
  */
-void SepPoint::UpdateState(uint64_t CurrentSimNanos)
+void SepPoint::updateState(uint64_t CurrentSimNanos)
 {
     /*! create and zero the output message */
     AttRefMsgPayload attRefOut = this->attRefOutMsg.zeroMsgPayload;

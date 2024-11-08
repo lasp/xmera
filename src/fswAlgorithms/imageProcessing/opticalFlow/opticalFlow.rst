@@ -45,7 +45,7 @@ provides information on what this message is used for.
 Module Description
 -------------------------------
 
-The logic of the module flows as such: as UpdateState is called and messages are processed, it checks
+The logic of the module flows as such: as updateState is called and messages are processed, it checks
 for when a newImage is processed. If no image was processed prior, it finds features in the image,
 and stores this data as the old image.
 When a second image comes through the module, it is now the new image of a pair. A bool is raised that

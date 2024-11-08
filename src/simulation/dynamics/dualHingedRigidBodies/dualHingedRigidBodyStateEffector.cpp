@@ -393,7 +393,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void DualHingedRigidBodyStateEffector::updateState(uint64_t CurrentSimNanos)
 {
     //! - Zero the command buffer and read the incoming command array
     if (this->motorTorqueInMsg.isLinked()) {

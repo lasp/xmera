@@ -38,7 +38,7 @@
 class ThrFiringRemainder : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 	double              pulseRemainder[MAX_EFF_CNT];            //!< [-] Unimplemented thrust pulses (number of minimum pulses)
 	double              thrMinFireTime;              			//!< [s] Minimum fire time
 	int      			numThrusters;							//!< [-] The number of thrusters available on vehicle

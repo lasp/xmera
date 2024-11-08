@@ -291,7 +291,7 @@ class PythonMRPPD(sysModel.SysModel):
 
     #. ``Reset``: The method that will initialize any persistent data in your model to a common
        "ready to run" state (e.g. filter states, integral control sums, etc).
-    #. ``UpdateState``: The method that will be called at the rate specified
+    #. ``updateState``: The method that will be called at the rate specified
        in the PythonTask that was created in the input file.
 
     Additionally, your class should ensure that in the ``__init__`` method, your call the super
@@ -327,12 +327,12 @@ class PythonMRPPD(sysModel.SysModel):
         """
         return
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, CurrentSimNanos):
         """
         The updateState method is the cyclical worker method for a given Basilisk class.  It
         will get called periodically at the rate specified in the task that the model is
         attached to.  It persists and anything can be done inside of it.  If you have realtime
-        requirements though, be careful about how much processing you put into a Python UpdateState
+        requirements though, be careful about how much processing you put into a Python updateState
         method.  You could easily detonate your sim's ability to run in realtime.
 
         :param CurrentSimNanos: current simulation time in nano-seconds

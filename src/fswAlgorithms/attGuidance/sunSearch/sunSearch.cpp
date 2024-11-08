@@ -51,7 +51,7 @@ void SunSearch::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The current simulation time for system
  */
-void SunSearch::UpdateState(uint64_t CurrentSimNanos)
+void SunSearch::updateState(uint64_t CurrentSimNanos)
 {
     /*! create and zero the output message */
     AttGuidMsgPayload attGuidOut = this->attGuidOutMsg.zeroMsgPayload;

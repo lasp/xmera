@@ -42,7 +42,7 @@ void CenterOfBrightness::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
+void CenterOfBrightness::updateState(uint64_t CurrentSimNanos)
 {
     CameraImageMsgPayload imageBuffer = this->imageInMsg.zeroMsgPayload;
 

@@ -116,7 +116,7 @@ public:
 
     /** Updates the central body, loads the ephemeris data for every `GravBodyData`,
      * and writes the output messages. */
-    void UpdateState(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
     /** Links the correlation between times property */
     void linkInStates(DynParamManager &statesIn);

@@ -45,7 +45,7 @@ void LambertSolver::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSolver::UpdateState(uint64_t currentSimNanos)
+void LambertSolver::updateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();

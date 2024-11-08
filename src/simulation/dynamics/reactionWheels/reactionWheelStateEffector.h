@@ -58,7 +58,7 @@ public:
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void Reset(uint64_t CurrentSimNanos);
     void addReactionWheel(RWConfigMsgPayload *NewRW);
-	void UpdateState(uint64_t CurrentSimNanos);
+	void updateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);

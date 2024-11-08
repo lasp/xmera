@@ -33,7 +33,7 @@ public:
     ~StepperMotor() = default;                                        //!< Destructor
 
     void Reset(uint64_t CurrentSimNanos) override;                    //!< Reset member function
-    void UpdateState(uint64_t CurrentSimNanos) override;              //!< Update member function
+    void updateState(uint64_t CurrentSimNanos) override;              //!< Update member function
     double getThetaInit() const;                                      //!< Getter method for the initial motor angle
     double getStepAngle() const;                                      //!< Getter method for the motor step angle
     double getStepTime() const;                                       //!< Getter method for the motor step time

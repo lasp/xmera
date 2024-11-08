@@ -36,7 +36,7 @@ public:
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
     void computeMassProperties();
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
 
 
 public:

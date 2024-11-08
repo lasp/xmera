@@ -44,7 +44,7 @@ struct SlewProperties {
 class SunSearch: public SysModel {
 public:
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
 
     void setSlewTime(double const t1, const double t2, const double t3);
     void setSlewAngle(double const theta1, double const theta2, double const theta3);

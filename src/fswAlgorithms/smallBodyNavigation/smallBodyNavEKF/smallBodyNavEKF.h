@@ -40,7 +40,7 @@ public:
     SmallBodyNavEKF();
 
     void Reset(uint64_t CurrentSimNanos);  //!< Resets module
-    void UpdateState(uint64_t CurrentSimNanos);  //!< Updates state
+    void updateState(uint64_t CurrentSimNanos);  //!< Updates state
     void addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg);  //!< Adds thruster message
 
 private:

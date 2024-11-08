@@ -48,7 +48,7 @@ void LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSurfaceRelativeVelocity::UpdateState(uint64_t currentSimNanos)
+void LambertSurfaceRelativeVelocity::updateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();

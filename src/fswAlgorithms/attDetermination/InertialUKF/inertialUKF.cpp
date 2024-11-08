@@ -167,7 +167,7 @@ void Read_STMessages(InertialUKF *configData)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void InertialUKF::UpdateState(uint64_t callTime)
+void InertialUKF::updateState(uint64_t callTime)
 {
     double newTimeTag;  /* [s] Local Time-tag variable*/
     uint64_t timeOfRWSpeeds; /* [ns] Read time for the RWs*/

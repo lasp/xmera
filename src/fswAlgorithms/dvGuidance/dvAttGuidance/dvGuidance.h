@@ -36,7 +36,7 @@
 class DvGuidance : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     Message<AttRefMsgPayload> attRefOutMsg;           //!< The name of the output message
     ReadFunctor<DvBurnCmdMsgPayload> burnDataInMsg;       //!< Input message that configures the vehicle burn
 

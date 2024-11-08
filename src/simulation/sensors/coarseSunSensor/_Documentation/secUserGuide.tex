@@ -100,7 +100,7 @@ The following module variables can be set, but they are not currently used by th
 
 \subsection{Setting Up CSS Modules}
 \subsubsection{Individual CSS Units}
-It is possible to add Individual CSS units to the Basilisk simulation.   This is done by invoking instances of the {\tt CoarseSunSensor()} class from python, configuring the required states, and then adding each to the BSK evaluation stack.  Each {\tt CoarseSunSensor} class has it's own {\tt UpdateState()} method that get's evaluated each update period.  
+It is possible to add Individual CSS units to the Basilisk simulation.   This is done by invoking instances of the {\tt CoarseSunSensor()} class from python, configuring the required states, and then adding each to the BSK evaluation stack.  Each {\tt CoarseSunSensor} class has it's own {\tt updateState()} method that get's evaluated each update period.
 
 This setup is convenient if only 1-2 CSS units have to be modeled, but can be cumbersome if a larger cluster of CSS units must be administered.  When setup this way, each CSS unit will output an individual CSS output message.
 

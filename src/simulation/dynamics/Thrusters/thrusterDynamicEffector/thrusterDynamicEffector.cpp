@@ -171,7 +171,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 }
 
 /*! This method is used to update the location and orientation of the thrusters
-* at every UpdateState call when the thrusters are attached to a body other than
+* at every updateState call when the thrusters are attached to a body other than
 * the hub.
  @return void
  */
@@ -614,7 +614,7 @@ double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData,
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+void ThrusterDynamicEffector::updateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if(this->ReadInputs())

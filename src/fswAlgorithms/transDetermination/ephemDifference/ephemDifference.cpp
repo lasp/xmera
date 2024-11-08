@@ -54,7 +54,7 @@ void EphemDifference::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void EphemDifference::UpdateState(uint64_t callTime)
+void EphemDifference::updateState(uint64_t callTime)
 {
     // read input msg
     EphemerisMsgPayload tmpBaseEphem = this->ephBaseInMsg();

@@ -98,7 +98,7 @@ void ThrForceMapping::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrForceMapping::UpdateState(uint64_t callTime)
+void ThrForceMapping::updateState(uint64_t callTime)
 {
     int         counterPosForces;             /* []      counter for number of positive thruster forces */
     double      F[MAX_EFF_CNT];               /* [N]     vector of commanded thruster forces */

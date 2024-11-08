@@ -50,7 +50,7 @@ void DipoleMapping::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void DipoleMapping::UpdateState(uint64_t callTime)
+void DipoleMapping::updateState(uint64_t callTime)
 {
     /*
      * Initialize local variables.

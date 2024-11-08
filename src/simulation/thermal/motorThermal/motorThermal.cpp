@@ -140,7 +140,7 @@ void MotorThermal::computeTemperature(uint64_t CurrentSimNanos)
 
 /*! This method is used to update the module.
 */
-void MotorThermal::UpdateState(uint64_t CurrentSimNanos)
+void MotorThermal::updateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     computeTemperature(CurrentSimNanos);

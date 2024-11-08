@@ -157,7 +157,7 @@ Naturally, this means that conditions are held piecewise-constant over an integr
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+void FacetDragDynamicEffector::updateState(uint64_t CurrentSimNanos)
 {
 	ReadInputs();
 	return;

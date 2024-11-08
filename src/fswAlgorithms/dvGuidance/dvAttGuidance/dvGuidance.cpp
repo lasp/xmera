@@ -41,7 +41,7 @@ void DvGuidance::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvGuidance::UpdateState(uint64_t callTime)
+void DvGuidance::updateState(uint64_t callTime)
 {
     double dcm_BubN[3][3];           /* dcm, inertial to base burn frame */
     double dcm_ButN[3][3];           /* dcm, inertial to current burn frame */

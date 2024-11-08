@@ -216,7 +216,7 @@ void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *pl
 /*! Read Messages, calculate albedo then write it out
  @return void
  */
-void Albedo::UpdateState(uint64_t CurrentSimNanos)
+void Albedo::updateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
     this->albOutData.clear();

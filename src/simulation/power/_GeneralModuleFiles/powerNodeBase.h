@@ -41,7 +41,7 @@ public:
     ~PowerNodeBase();
     void Reset(uint64_t CurrentSimNanos);
     void computePowerStatus(double currentTime);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);

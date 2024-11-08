@@ -33,7 +33,7 @@
 class Torque2Dipole : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* Inputs.*/
     ReadFunctor<TAMSensorBodyMsgPayload> tamSensorBodyInMsg;          //!< [Tesla] input message for magnetic field sensor data in the Body frame

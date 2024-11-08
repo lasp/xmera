@@ -47,9 +47,9 @@ void SimpleMassProps::Reset(uint64_t CurrentSimNanos)
     // zero the incoming message buffer
     this->scMassPropsMsgBuffer = this->scMassPropsInMsg.zeroMsgPayload;
 
-    // call the UpdateState function. This make sure the vehicleConfig message is populated with the correct values upon the initialization of the simulation.
+    // call the updateState function. This make sure the vehicleConfig message is populated with the correct values upon the initialization of the simulation.
     // Some FSW modules like mrpFeedback require this, as they only set the necessary mas properties on Reset and not throughout the sim.
-    UpdateState(CurrentSimNanos);
+    updateState(CurrentSimNanos);
 }
 
 /*! This method reads the spacecraft mass properties state input message
@@ -98,7 +98,7 @@ void SimpleMassProps::computeMassProperties()
 /*! This is the main method that gets called every time the module is updated. It reads the simulation message, transfers its contents and writes to an output FSW message.
     @return void
  */
-void SimpleMassProps::UpdateState(uint64_t CurrentSimNanos)
+void SimpleMassProps::updateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     computeMassProperties();

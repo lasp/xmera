@@ -47,7 +47,7 @@ static void computeInertialPointingReference(double sigma_R0N[3], AttRefMsgPaylo
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Inertial3D::UpdateState(uint64_t callTime)
+void Inertial3D::updateState(uint64_t callTime)
 {
     AttRefMsgPayload attRefOut = {};         /* output message structure */
 

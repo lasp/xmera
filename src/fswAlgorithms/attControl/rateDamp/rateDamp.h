@@ -33,7 +33,7 @@
 class RateDamp: public SysModel {
 public:
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
 
     ReadFunctor<NavAttMsgPayload>          attNavInMsg;           //!< input msg measured attitude
     Message<CmdTorqueBodyMsgPayload>       cmdTorqueOutMsg;       //!< commanded torque output message

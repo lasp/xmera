@@ -32,7 +32,7 @@
 class ThrMomentumManagement : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* declare module private variables */
     int initRequest;                                    //!< [-] status flag of the momentum dumping management

@@ -39,7 +39,7 @@ public:
     KalmanFilter() = default;
     ~KalmanFilter() = default;
     void Reset(uint64_t currentSimNanos) override;
-    void UpdateState(uint64_t currentSimNanos) final;
+    void updateState(uint64_t currentSimNanos) final;
 
     void setInitialPosition(const Eigen::VectorXd &initialPositionInput);
     std::optional<Eigen::VectorXd> getInitialPosition() const;

@@ -37,7 +37,7 @@ void RasterManager::Reset(uint64_t callTime)
 }
 
 
-void RasterManager::UpdateState(uint64_t callTime)
+void RasterManager::updateState(uint64_t callTime)
 {
     double currentMnvrTime;
     this->scanSelector = this->scanSelector % this->numRasters;

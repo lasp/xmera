@@ -56,7 +56,7 @@ void HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos)
     relative to the start and stop times for the linear deployment.
     @return void
 */
-void HingedBodyLinearProfiler::UpdateState(uint64_t CurrentSimNanos)
+void HingedBodyLinearProfiler::updateState(uint64_t CurrentSimNanos)
 {
     double refTheta;
     double refThetaDot;

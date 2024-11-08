@@ -57,7 +57,7 @@ void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
 /*! This is the main method that gets called every time the module is updated.  It calculates a motor torque on a hinged rigid body using a simple PD control law.
     @return void
 */
-void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotor::updateState(uint64_t CurrentSimNanos)
 {
     //! local variables
     double sensedTheta;

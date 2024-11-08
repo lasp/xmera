@@ -165,7 +165,7 @@ void BoreAngCalc::computeInertialOutputData()
  @return void
  @param CurrentSimNanos The current simulation time for system
  */
-void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
+void BoreAngCalc::updateState(uint64_t CurrentSimNanos)
 {
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();

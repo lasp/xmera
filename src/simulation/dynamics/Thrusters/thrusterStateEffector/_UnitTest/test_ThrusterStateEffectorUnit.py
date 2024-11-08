@@ -378,7 +378,7 @@ class attachedBodyModule(sysModel.SysModel):
         self.dcm_BF = dcm_BF
         self.r_FB_B = r_FB_B
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, CurrentSimNanos):
         # Read input message
         self.scMsgBuffer = self.scInMsg()
 

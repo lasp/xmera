@@ -118,7 +118,7 @@ void HorizonOpNav::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HorizonOpNav::UpdateState(uint64_t callTime)
+void HorizonOpNav::updateState(uint64_t callTime)
 {
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3], Q[3][3], B[3][3];
     double planetRad_Eq;

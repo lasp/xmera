@@ -40,7 +40,7 @@ void SolarFlux::Reset(uint64_t CurrentSimNanos)
 /*! Read Messages and scale the solar flux then write it out
  @return void
  */
-void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
+void SolarFlux::updateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
 

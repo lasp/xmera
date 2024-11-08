@@ -125,7 +125,7 @@ void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
     update module states
     @param CurrentSimNanos time in nano-seconds
  */
-void EphemerisConverter::UpdateState(uint64_t CurrentSimNanos)
+void EphemerisConverter::updateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     convertEphemData(CurrentSimNanos);

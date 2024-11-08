@@ -159,7 +159,7 @@ void Encoder::encode(uint64_t CurrentSimNanos)
 
 /*! This method runs the encoder module in the sim.
 */
-void Encoder::UpdateState(uint64_t CurrentSimNanos)
+void Encoder::updateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->encode(CurrentSimNanos);

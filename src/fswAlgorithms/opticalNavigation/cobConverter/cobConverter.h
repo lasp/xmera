@@ -47,7 +47,7 @@ public:
     CobConverter(PhaseAngleCorrectionMethod method, double radiusObject);
     ~CobConverter();
 
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
 
     void setRadius(const double radius);

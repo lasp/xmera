@@ -52,7 +52,7 @@ void SolarArrayReference::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void SolarArrayReference::UpdateState(uint64_t callTime)
+void SolarArrayReference::updateState(uint64_t callTime)
 {
      /*! - Create and assign buffer messages */
     NavAttMsgPayload            attNavIn = this->attNavInMsg();

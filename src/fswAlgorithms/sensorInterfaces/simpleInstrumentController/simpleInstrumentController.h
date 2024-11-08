@@ -33,7 +33,7 @@
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 class SimpleInstrumentController : public SysModel{
 public:
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void Reset(uint64_t callTime) override;
 
     /* User configurable variables */

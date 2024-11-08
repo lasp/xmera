@@ -46,11 +46,11 @@ The following sample code assumes that the class variable ``value`` should be re
 
 Update Method
 -------------
-The ``UpdateState()`` is the method that is called each time the Basilisk simulation runs the module.  This method needs to perform all the required BSK module function, including reading in input messages and writing to output messages.  In the sample code below the message reading and writing, as well as the module function is done directly within this ``UpdateState()`` method.  Some modules also create additional class method to separate out the various functions.  This is left up to the module developer as a code design choice.
+The ``updateState()`` is the method that is called each time the Basilisk simulation runs the module.  This method needs to perform all the required BSK module function, including reading in input messages and writing to output messages.  In the sample code below the message reading and writing, as well as the module function is done directly within this ``updateState()`` method.  Some modules also create additional class method to separate out the various functions.  This is left up to the module developer as a code design choice.
 
 .. code:: cpp
 
-    void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
+    void CppModuleTemplate::updateState(uint64_t CurrentSimNanos)
     {
         SomeMsgPayload outMsgBuffer;       /*!< local output message copy */
         SomeMsgPayload inMsgBuffer;        /*!< local copy of input message */

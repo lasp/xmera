@@ -155,7 +155,7 @@ class BSKDynamicModels():
         self.cameraMod2.cameraID = 3
         self.cameraMod2.saveImages = 0
 
-        self.cameraMod2.UpdateState(0)
+        self.cameraMod2.updateState(0)
 
         imgFolder = os.path.abspath(os.path.dirname(__file__)) + "/imgTest/"
         imgFileName = "instr2Images"

@@ -42,7 +42,7 @@ void HillStateConverter::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void HillStateConverter::UpdateState(uint64_t callTime)
+void HillStateConverter::updateState(uint64_t callTime)
 {
     /*! - Read the input messages */
     NavTransMsgPayload chiefStateIn;

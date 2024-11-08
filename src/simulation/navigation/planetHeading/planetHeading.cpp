@@ -31,7 +31,7 @@ PlanetHeading::PlanetHeading()
 /*! This method reads messages, calculates the planet heading, and writes out the heading message
  @return void
  */
-void PlanetHeading::UpdateState(uint64_t CurrentSimNanos)
+void PlanetHeading::updateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
 

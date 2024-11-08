@@ -84,7 +84,7 @@ public:
     void calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B);  //!< -- This method computes the force and torque from the stateEffectors
     void Reset(uint64_t CurrentSimNanos);
 	void writeOutputStateMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
-    void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
+    void updateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
     void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system

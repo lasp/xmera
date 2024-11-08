@@ -160,7 +160,7 @@ void Magnetometer::writeOutputMessages(uint64_t Clock)
  calls to compute the current magnetic field information and write the output message for
  the rest of the model.
  @param CurrentSimNanos The current simulation time from the architecture */
-void Magnetometer::UpdateState(uint64_t CurrentSimNanos)
+void Magnetometer::updateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs
     this->readInputMessages();

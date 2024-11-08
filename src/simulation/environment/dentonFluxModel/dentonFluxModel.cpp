@@ -129,7 +129,7 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     @param CurrentSimNanos current simulation time in nano-seconds
     @return void
 */
-void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
+void DentonFluxModel::updateState(uint64_t CurrentSimNanos)
 {
     // Make local copies of messages
     SCStatesMsgPayload scStateInMsgBuffer;  //!< local copy of spacecraft states

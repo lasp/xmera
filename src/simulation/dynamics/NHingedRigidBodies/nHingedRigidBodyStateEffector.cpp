@@ -514,7 +514,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void NHingedRigidBodyStateEffector::updateState(uint64_t CurrentSimNanos)
 {
     WriteOutputMessages(CurrentSimNanos);
 

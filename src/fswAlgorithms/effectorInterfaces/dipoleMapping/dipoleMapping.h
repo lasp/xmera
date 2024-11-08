@@ -34,7 +34,7 @@
 class DipoleMapping : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* Configs.*/
     double steeringMatrix[MAX_EFF_CNT * 3];             //!< matrix for mapping body frame dipole request to individual torque bar dipoles

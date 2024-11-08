@@ -56,7 +56,7 @@ public:
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);
     void Reset(uint64_t CurrentSimNanos);               //!< class method
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);

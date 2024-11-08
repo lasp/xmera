@@ -101,7 +101,7 @@ class TestPythonModule(sysModel.SysModel):
 
         self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, CurrentSimNanos):
         # Read input message
         inPayload = self.dataInMsg()
         inputVector = inPayload.dataVector

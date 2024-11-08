@@ -38,7 +38,7 @@ void ThrMomentumManagementCpp::Reset(uint64_t currentSimNanos)
     this->initRequest = 1;
 }
 
-void ThrMomentumManagementCpp::UpdateState(uint64_t currentSimNanos)
+void ThrMomentumManagementCpp::updateState(uint64_t currentSimNanos)
 {
     Eigen::Vector3d Delta_H_B = Eigen::Vector3d::Zero();
 

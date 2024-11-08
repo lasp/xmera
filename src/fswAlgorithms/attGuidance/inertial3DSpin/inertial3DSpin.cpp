@@ -54,7 +54,7 @@ void Inertial3DSpin::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Inertial3DSpin::UpdateState(uint64_t callTime)
+void Inertial3DSpin::updateState(uint64_t callTime)
 {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer = {};

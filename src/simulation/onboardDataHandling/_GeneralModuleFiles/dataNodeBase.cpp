@@ -109,7 +109,7 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
  @param CurrentSimNanos
  @return void
  */
-void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
+void DataNodeBase::updateState(uint64_t CurrentSimNanos)
 {
     //! - Only update the data status if we were able to read in messages.
     if(this->readMessages())

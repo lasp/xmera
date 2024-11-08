@@ -44,7 +44,7 @@ public:
     ~DataStorageUnitBase();
     void Reset(uint64_t CurrentSimNanos);
     void addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg); //!< Adds dataNode to the storageUnit
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void setDataBuffer(std::string partitionName, int64_t data); //!< Adds/removes the data from the partitionName partition once
 
 protected:

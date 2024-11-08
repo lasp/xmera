@@ -112,7 +112,7 @@ void PowerNodeBase::computePowerStatus(double currentTime)
 /*! Provides logic for running the read / compute / write operation that is the module's function.
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
+void PowerNodeBase::updateState(uint64_t CurrentSimNanos)
 {
 
     //! - Only update the power status if we were able to read in messages.

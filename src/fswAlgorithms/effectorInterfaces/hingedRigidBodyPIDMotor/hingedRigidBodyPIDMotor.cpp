@@ -48,7 +48,7 @@ void HingedRigidBodyPIDMotor::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void HingedRigidBodyPIDMotor::UpdateState(uint64_t callTime)
+void HingedRigidBodyPIDMotor::updateState(uint64_t callTime)
 {
     /*! - Create and assign buffer messages */
     ArrayMotorTorqueMsgPayload motorTorqueOut = {};

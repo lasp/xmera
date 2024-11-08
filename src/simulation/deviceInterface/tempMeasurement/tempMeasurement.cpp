@@ -103,7 +103,7 @@ void TempMeasurement::applySensorErrors()
 /*! This is the main method that gets called every time the module is updated.
     @return void
 */
-void TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
+void TempMeasurement::updateState(uint64_t CurrentSimNanos)
 {
     TemperatureMsgPayload tempInMsgBuffer;  //!< local copy of message buffer
     TemperatureMsgPayload tempOutMsgBuffer;  //!< local copy of message buffer

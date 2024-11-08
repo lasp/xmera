@@ -61,7 +61,7 @@ void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
+void ThrustCMEstimation::updateState(uint64_t CurrentSimNanos)
 {
     /*! create output message buffers */
     VehicleConfigMsgPayload vehConfigOutBuffer = {};

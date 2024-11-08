@@ -275,7 +275,7 @@ public:
     //! -- cross initialization
     void IntegratedInit(){};
     //! -- Read and record the message
-    void UpdateState(uint64_t CurrentSimNanos){
+    void updateState(uint64_t CurrentSimNanos){
         if (CurrentSimNanos >= this->nextUpdateTime) {
             this->msgRecordTimes.push_back(CurrentSimNanos);
             this->msgWrittenTimes.push_back(this->readMessage.timeWritten());

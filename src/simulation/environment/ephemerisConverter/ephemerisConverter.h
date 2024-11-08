@@ -36,7 +36,7 @@ public:
     EphemerisConverter();
     ~EphemerisConverter();
     
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
     void readInputMessages();                       //!< class method
     void convertEphemData(uint64_t clockNow);

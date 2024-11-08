@@ -93,7 +93,7 @@ public:
     ConstrainedAttitudeManeuver(int N);
 
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void ReadInputs();
     void GenerateGrid(Node startNode, Node goalNode);
     void appendKeepOutDirection(double direction[3], double Fov);

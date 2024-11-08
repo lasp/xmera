@@ -36,7 +36,7 @@ public:
     ~SunSafePointCpp() = default;                               //!< Destructor
 
     void Reset(uint64_t CurrentSimNanos) override;              //!< Reset member function
-    void UpdateState(uint64_t CurrentSimNanos) override;        //!< Update member function
+    void updateState(uint64_t CurrentSimNanos) override;        //!< Update member function
 
     double getMinUnitMag() const;                               //!< Getter method for the minimally accepted sun body vector norm
     double getSmallAngle() const;                               //!< Getter method for the small alignment tolerance angle near 0 or 180 degrees

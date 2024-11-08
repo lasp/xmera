@@ -39,7 +39,7 @@ public:
     SmallBodyWaypointFeedback();
 
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void readMessages();
     void computeControl(uint64_t CurrentSimNanos);
     void writeMessages(uint64_t CurrentSimNanos);

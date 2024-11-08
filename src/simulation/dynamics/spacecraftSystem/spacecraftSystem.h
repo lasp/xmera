@@ -167,7 +167,7 @@ public:
     void initializeSCPosVelocity(SpacecraftUnit& spacecraft); //!< class method
     void Reset(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
-    void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
+    void updateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSC(double integTimeSeconds, double timeStep, SpacecraftUnit& spacecraft);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSystem(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system

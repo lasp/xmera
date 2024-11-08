@@ -46,7 +46,7 @@ public:
 
     void addPointToModel(Eigen::Vector3d& r_LP_P_init);
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
 
 private:
     void ReadMessages();

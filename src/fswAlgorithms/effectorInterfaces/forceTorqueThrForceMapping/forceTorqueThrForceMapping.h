@@ -36,7 +36,7 @@
 class ForceTorqueThrForceMapping : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     /* declare module public variables */
     double   rThruster_B[MAX_EFF_CNT][3];           //!< [m]     local copy of the thruster locations
     double   gtThruster_B[MAX_EFF_CNT][3];          //!< []      local copy of the thruster force unit direction vectors

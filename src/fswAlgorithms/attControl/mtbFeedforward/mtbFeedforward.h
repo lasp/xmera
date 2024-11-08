@@ -33,7 +33,7 @@
 class MtbFeedforward : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* Inputs. */
     ReadFunctor<CmdTorqueBodyMsgPayload> vehControlInMsg;                 //!< input message containing the current control torque in the Body frame

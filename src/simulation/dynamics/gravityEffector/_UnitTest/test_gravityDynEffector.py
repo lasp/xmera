@@ -344,7 +344,7 @@ def singleGravityBody(show_plots):
     gravBody1.initBody(0)
     newManager = stateArchitecture.DynParamManager()
     gravBody1.registerProperties(newManager)
-    SpiceObject.UpdateState(0)
+    SpiceObject.updateState(0)
 
     for i in range(2*3600):
         stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
@@ -358,7 +358,7 @@ def singleGravityBody(show_plots):
         normVec.append(np.linalg.norm(stateOut[0:3]))
 
         stateOut*=1000.0
-        SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
+        SpiceObject.J2000Current = etCurr;SpiceObject.updateState(0)
         gravBody1.loadEphemeris()
         gravOut = gravBody1.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
         gravErrNorm.append(np.linalg.norm(gravVec*1000.0 - np.array(gravOut).reshape(3))/

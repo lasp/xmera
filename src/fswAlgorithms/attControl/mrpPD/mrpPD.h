@@ -33,7 +33,7 @@
 class MrpPD : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* declare public module variables */
     double K;                           //!< [rad/sec] Proportional gain applied to MRP errors

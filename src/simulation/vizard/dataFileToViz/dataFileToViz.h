@@ -36,7 +36,7 @@ public:
     DataFileToViz();
     ~DataFileToViz();
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void appendThrPos(double pos_B[3]);
     void appendThrDir(double dir_B[3]);
     void appendThrForceMax(double);

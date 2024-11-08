@@ -65,7 +65,7 @@ void MtbMomentumManagementSimple::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MtbMomentumManagementSimple::UpdateState(uint64_t callTime)
+void MtbMomentumManagementSimple::updateState(uint64_t callTime)
 {
     /*
      * Initialize local variables.

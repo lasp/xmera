@@ -370,26 +370,26 @@ void SpacecraftSystem::writeOutputMessages(uint64_t clockTime)
 }
 
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
-void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
+void SpacecraftSystem::updateState(uint64_t CurrentSimNanos)
 {
     // - Convert current time to seconds
     double newTime = CurrentSimNanos*NANO2SEC;
 
     // - Get access to the spice bodies
-    this->primaryCentralSpacecraft.gravField.UpdateState(CurrentSimNanos);
+    this->primaryCentralSpacecraft.gravField.updateState(CurrentSimNanos);
 
     // - Call this for all of the connected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
-        (*spacecraftConnectedIt)->gravField.UpdateState(CurrentSimNanos);
+        (*spacecraftConnectedIt)->gravField.updateState(CurrentSimNanos);
     }
 
     // - Call this for all of the unconnected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
-        (*spacecraftUnConnectedIt)->gravField.UpdateState(CurrentSimNanos);
+        (*spacecraftUnConnectedIt)->gravField.updateState(CurrentSimNanos);
     }
 
     // - Integrate the state forward in time

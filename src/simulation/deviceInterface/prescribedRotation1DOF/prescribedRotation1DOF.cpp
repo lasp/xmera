@@ -46,7 +46,7 @@ void PrescribedRotation1DOF::Reset(uint64_t callTime) {
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
+void PrescribedRotation1DOF::updateState(uint64_t callTime) {
     // Read the input message
     HingedRigidBodyMsgPayload spinningBodyIn = HingedRigidBodyMsgPayload();
     if (this->spinningBodyInMsg.isWritten()) {

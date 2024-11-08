@@ -33,7 +33,7 @@
 class SpacecraftPointing : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     Message<AttRefMsgPayload> attReferenceOutMsg;                     /*!< The name of the output message */
     ReadFunctor<NavTransMsgPayload> chiefPositionInMsg;                   /*!< The name of the Input message of the chief */
     ReadFunctor<NavTransMsgPayload> deputyPositionInMsg;                  /*!< The name of the Input message of the deputy */

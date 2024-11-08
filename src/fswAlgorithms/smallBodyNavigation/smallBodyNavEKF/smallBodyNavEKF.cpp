@@ -380,7 +380,7 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
 /*! This is the main method that gets called every time the module is updated.
     @return void
 */
-void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::updateState(uint64_t CurrentSimNanos)
 {
     this->readMessages(CurrentSimNanos);
     this->predict(CurrentSimNanos);

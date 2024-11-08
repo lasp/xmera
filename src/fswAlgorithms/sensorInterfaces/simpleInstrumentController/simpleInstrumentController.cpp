@@ -46,7 +46,7 @@ void SimpleInstrumentController::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void SimpleInstrumentController::UpdateState(uint64_t callTime)
+void SimpleInstrumentController::updateState(uint64_t callTime)
 {
     double sigma_BR_norm; //!< Norm of sigma_BR
     double omega_BR_norm; //!< Norm of omega_BR

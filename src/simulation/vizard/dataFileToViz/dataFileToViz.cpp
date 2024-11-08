@@ -257,7 +257,7 @@ void DataFileToViz::appendRwDir(double dir_B[3])
 /*! Update this module at the task rate
  @param CurrentSimNanos The current sim time
  */
-void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
+void DataFileToViz::updateState(uint64_t CurrentSimNanos)
 {
     /* ensure that a file was opened */
     if (this->fileHandle.is_open()) {

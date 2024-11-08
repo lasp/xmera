@@ -54,7 +54,7 @@ void DvExecuteGuidance::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvExecuteGuidance::UpdateState(uint64_t callTime)
+void DvExecuteGuidance::updateState(uint64_t callTime)
 {
     double burnAccum[3];
     double dvExecuteMag;

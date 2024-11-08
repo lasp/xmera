@@ -387,7 +387,7 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     update module states
     @param CurrentSimNanos current time (ns)
  */
-void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
+void ImuSensor::updateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
 

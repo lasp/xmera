@@ -34,7 +34,7 @@
 class MrpRotation : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void checkRasterCommands();
     void computeTimeStep(uint64_t callTime);
     void computeMRPRotationReference(double sigma_R0N[3],

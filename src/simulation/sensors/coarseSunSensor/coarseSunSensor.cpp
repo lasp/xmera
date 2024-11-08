@@ -389,7 +389,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
  calls to compute the current sun information and write the output message for
  the rest of the model.
  @param CurrentSimNanos The current simulation time from the architecture*/
-void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
+void CoarseSunSensor::updateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs
     this->readInputMessages();
@@ -440,7 +440,7 @@ void CSSConstellation::Reset(uint64_t CurrentSimNanos)
 
 }
 
-void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
+void CSSConstellation::updateState(uint64_t CurrentSimNanos)
 {
     std::vector<CoarseSunSensor*>::iterator itp;
     CoarseSunSensor* it;

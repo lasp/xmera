@@ -65,7 +65,7 @@ void SpacecraftReconfig::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SpacecraftReconfig::UpdateState(uint64_t callTime)
+void SpacecraftReconfig::updateState(uint64_t callTime)
 {
     // in
     NavTransMsgPayload chiefTransMsgBuffer;

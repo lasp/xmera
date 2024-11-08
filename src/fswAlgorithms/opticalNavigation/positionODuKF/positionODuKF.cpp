@@ -81,7 +81,7 @@ void PositionODuKF::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void PositionODuKF::UpdateState(uint64_t CurrentSimNanos)
+void PositionODuKF::updateState(uint64_t CurrentSimNanos)
 {
     this->readFilterMeasurements();
     /*! - If the time tag from the measured data is new compared to previous step,

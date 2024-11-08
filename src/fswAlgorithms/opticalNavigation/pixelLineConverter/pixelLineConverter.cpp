@@ -44,7 +44,7 @@ void PixelLineConverter::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void PixelLineConverter::UpdateState(uint64_t callTime)
+void PixelLineConverter::updateState(uint64_t callTime)
 {
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3];
     double reCentered[2];

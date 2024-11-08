@@ -44,7 +44,7 @@ void ThrusterPlatformState::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void ThrusterPlatformState::UpdateState(uint64_t callTime)
+void ThrusterPlatformState::updateState(uint64_t callTime)
 {
     /*! - Create and assign message buffers */
     THRConfigMsgPayload        thrusterConfigFIn = this->thrusterConfigFInMsg();

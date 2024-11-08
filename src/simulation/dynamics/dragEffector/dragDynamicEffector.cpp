@@ -91,7 +91,7 @@ Naturally, this means that atmospheric conditions are held piecewise-constant ov
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void DragDynamicEffector::UpdateState(uint64_t currentSimNanos)
+void DragDynamicEffector::updateState(uint64_t currentSimNanos)
 {
 	this->readMessages();
 }

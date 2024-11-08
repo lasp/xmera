@@ -326,7 +326,7 @@ def run(show_plots):
     rwStateEffector.ModelTag = "RW_cluster"
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
 
-    # add RW object array to the simulation process.  This is required for the UpdateState() method
+    # add RW object array to the simulation process.  This is required for the updateState() method
     # to be called which logs the RW states
     scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 

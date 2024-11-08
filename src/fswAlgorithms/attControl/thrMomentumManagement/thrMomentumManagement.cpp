@@ -53,7 +53,7 @@ void ThrMomentumManagement::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrMomentumManagement::UpdateState(uint64_t callTime)
+void ThrMomentumManagement::updateState(uint64_t callTime)
 {
     RWSpeedMsgPayload   rwSpeedMsg;         /* Reaction wheel speed estimate message */
     CmdTorqueBodyMsgPayload controlOutMsg = {};  /* Control torque output message */

@@ -191,7 +191,7 @@ Eigen::MatrixXd ScalingIterativeClosestPoint::computeTk(const double s_k, const 
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ScalingIterativeClosestPoint::UpdateState(uint64_t CurrentSimNanos)
+void ScalingIterativeClosestPoint::updateState(uint64_t CurrentSimNanos)
 {
     //! - Read input messages and zero output messages
     this->outputCloudBuffer = this->outputPointCloud.zeroMsgPayload;

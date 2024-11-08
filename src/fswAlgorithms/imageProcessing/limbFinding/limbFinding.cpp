@@ -65,7 +65,7 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
+void LimbFinding::updateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;

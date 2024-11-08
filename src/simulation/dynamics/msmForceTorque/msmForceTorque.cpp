@@ -142,7 +142,7 @@ void MsmForceTorque::readMessages()
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
 */
-void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
+void MsmForceTorque::updateState(uint64_t CurrentSimNanos)
 {
     // read the input messages
     this->readMessages();

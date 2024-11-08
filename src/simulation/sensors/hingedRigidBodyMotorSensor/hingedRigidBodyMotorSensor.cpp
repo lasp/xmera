@@ -69,7 +69,7 @@ void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
 /*! This is the main method that gets called every time the module is updated.  Adds Gaussian noise and bias and diescretizes output.
     @return void
 */
-void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotorSensor::updateState(uint64_t CurrentSimNanos)
 {
     //! variables for  calculations
     double trueTheta;               //! [rad] actual planel angle

@@ -62,7 +62,7 @@ void CSSComm::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void CSSComm::UpdateState(uint64_t callTime)
+void CSSComm::updateState(uint64_t callTime)
 {
     uint32_t i, j;
     double inputValues[MAX_NUM_CSS_SENSORS]; /* [-] Current measured CSS value for the constellation of CSS sensor */

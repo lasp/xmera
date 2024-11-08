@@ -108,7 +108,7 @@ void HillPoint::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HillPoint::UpdateState(uint64_t callTime)
+void HillPoint::updateState(uint64_t callTime)
 {
     /*! - Read input message */
     NavTransMsgPayload      navData;

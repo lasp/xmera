@@ -310,7 +310,7 @@ class moduleGenerator:
         headerFile += '    ~' + self._className + '();\n'
         headerFile += '\n'
         headerFile += '    void Reset(uint64_t CurrentSimNanos);\n'
-        headerFile += '    void UpdateState(uint64_t CurrentSimNanos);\n'
+        headerFile += '    void updateState(uint64_t CurrentSimNanos);\n'
         headerFile += '\n'
         headerFile += 'public:\n'
         for msg in inMsgList:
@@ -371,7 +371,7 @@ class moduleGenerator:
                    'Provide an appropriate description.\n'
         defFile += '    @return void\n'
         defFile += '*/\n'
-        defFile += 'void ' + self._className + '::UpdateState(uint64_t CurrentSimNanos)\n'
+        defFile += 'void ' + self._className + '::updateState(uint64_t CurrentSimNanos)\n'
         defFile += '{\n'
         for msg in inMsgList + outMsgList:
             defFile += '    ' + msg['type'] + 'Payload ' + msg['var'] + 'Buffer;  //!< local copy of message buffer\n'

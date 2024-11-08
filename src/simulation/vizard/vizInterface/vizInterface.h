@@ -49,7 +49,7 @@ public:
     VizInterface();
     ~VizInterface();
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void ReadBSKMessages();
     void WriteProtobuffer(uint64_t CurrentSimNanos);
     void addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg);

@@ -63,7 +63,7 @@ void MeanOEFeedback::Reset(uint64_t callTime) {
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MeanOEFeedback::UpdateState(uint64_t callTime) {
+void MeanOEFeedback::updateState(uint64_t callTime) {
     // in
     NavTransMsgPayload chiefTransMsg;
     NavTransMsgPayload deputyTransMsg;

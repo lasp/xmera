@@ -302,7 +302,7 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void Camera::UpdateState(uint64_t currentSimNanos)
+void Camera::updateState(uint64_t currentSimNanos)
 {
     this->localCurrentSimNanos = currentSimNanos;
     std::string localPath;

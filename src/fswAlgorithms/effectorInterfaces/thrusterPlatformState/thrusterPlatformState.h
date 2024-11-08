@@ -33,7 +33,7 @@
 class ThrusterPlatformState : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* declare these user-defined quantities */
     double sigma_MB[3];                                   //!< orientation of the M frame w.r.t. the B frame

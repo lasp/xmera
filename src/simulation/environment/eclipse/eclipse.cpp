@@ -93,7 +93,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
  @param CurrentSimNanos The current clock time for the simulation
  @return void
  */
-void Eclipse::UpdateState(uint64_t CurrentSimNanos)
+void Eclipse::updateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     

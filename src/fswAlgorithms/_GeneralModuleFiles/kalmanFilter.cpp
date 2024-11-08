@@ -38,7 +38,7 @@ void KalmanFilter::Reset(uint64_t currentSimNanos) {
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void KalmanFilter::UpdateState(uint64_t currentSimNanos)
+void KalmanFilter::updateState(uint64_t currentSimNanos)
 {
     this->customInitializeUpdate();
     /*! Read all available measurements, add their information to the Measurement container class, then sort the

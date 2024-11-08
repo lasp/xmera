@@ -51,7 +51,7 @@ void CameraTriangulation::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void CameraTriangulation::UpdateState(uint64_t currentSimNanos)
+void CameraTriangulation::updateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();

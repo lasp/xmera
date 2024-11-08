@@ -41,7 +41,7 @@ public:
     MtbEffector();
     ~MtbEffector();
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);
     void WriteOutputMessages(uint64_t CurrentClock);

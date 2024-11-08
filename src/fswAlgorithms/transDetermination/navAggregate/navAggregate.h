@@ -43,7 +43,7 @@ typedef struct {
 /*! @brief Top level structure for the aggregated navigation message module.  */
 class NavAggregate : public SysModel {
 public:
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void Reset(uint64_t callTime) override;
 
     AggregateAttInput attMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */

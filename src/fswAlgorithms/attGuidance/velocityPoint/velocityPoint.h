@@ -37,7 +37,7 @@
 class VelocityPoint : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void computeVelocityPointingReference(double r_BN_N[3],
                                           double v_BN_N[3],
                                           double celBdyPositonVector[3],

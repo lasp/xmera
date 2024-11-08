@@ -147,13 +147,13 @@ void Spacecraft::readOptionalRefMsg()
 }
 
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
-void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
+void Spacecraft::updateState(uint64_t CurrentSimNanos)
 {
     // - Convert current time to seconds
     double newTime = CurrentSimNanos*NANO2SEC;
 
     // - Get access to the spice bodies
-    this->gravField.UpdateState(CurrentSimNanos);
+    this->gravField.updateState(CurrentSimNanos);
 
     // - Integrate the state forward in time
     this->integrateState(newTime);

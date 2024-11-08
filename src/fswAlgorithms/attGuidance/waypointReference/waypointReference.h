@@ -33,7 +33,7 @@ public:
     WaypointReference();
     ~WaypointReference(); 
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
 
 
 public:

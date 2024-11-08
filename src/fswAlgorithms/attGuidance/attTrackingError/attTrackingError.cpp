@@ -72,7 +72,7 @@ void AttTrackingError::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void AttTrackingError::UpdateState(uint64_t callTime)
+void AttTrackingError::updateState(uint64_t callTime)
 {
     AttRefMsgPayload ref;                      /* reference guidance message */
     NavAttMsgPayload nav;                      /* navigation message */

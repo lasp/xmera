@@ -34,7 +34,7 @@ public:
     ~Encoder();
 
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
     void encode(uint64_t CurrentSimNanos);

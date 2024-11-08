@@ -85,7 +85,7 @@ void MrpFeedback::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MrpFeedback::UpdateState(uint64_t callTime)
+void MrpFeedback::updateState(uint64_t callTime)
 {
     AttGuidMsgPayload      guidCmd;            /* attitude tracking error message */
     RWSpeedMsgPayload      wheelSpeeds;        /* Reaction wheel speed message */

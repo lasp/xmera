@@ -37,7 +37,7 @@ void EphemNavConverter::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void EphemNavConverter::UpdateState(uint64_t callTime)
+void EphemNavConverter::updateState(uint64_t callTime)
 {
     NavTransMsgPayload tmpOutputState = {};
 

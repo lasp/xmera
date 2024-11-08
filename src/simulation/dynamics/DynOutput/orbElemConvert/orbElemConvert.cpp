@@ -158,7 +158,7 @@ void OrbElemConvert::ReadInputs()
  @return void
  @param CurrentSimNanos The current simulation time for system
  */
-void OrbElemConvert::UpdateState(uint64_t CurrentSimNanos)
+void OrbElemConvert::updateState(uint64_t CurrentSimNanos)
 {
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();

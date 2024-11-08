@@ -41,7 +41,7 @@ public:
     SpiceInterface();
     ~SpiceInterface();
     
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
 	std::string getCurrentTimeString();         //!< class method

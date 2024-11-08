@@ -66,7 +66,7 @@ void SunSafePoint::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void SunSafePoint::UpdateState(uint64_t callTime)
+void SunSafePoint::updateState(uint64_t callTime)
 {
     NavAttMsgPayload navMsg;
     double ctSNormalized;

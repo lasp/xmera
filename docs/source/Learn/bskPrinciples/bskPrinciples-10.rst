@@ -34,7 +34,7 @@ The unique name must be set on the "Wrap" object. Finally, the module is added t
 using both the "Wrap" and "Config" objects in the ``scSim.AddModelToTask`` method.
 
 The need for separate "Config" and "Wrap" objects arises from the lack of classes in the C programming language. 
-The "Config" objects, as well as the relevant ``UpdateState``, ``Reset``, and ``SelfInit`` methods, 
+The "Config" objects, as well as the relevant ``updateState``, ``Reset``, and ``SelfInit`` methods,
 are written in pure C for C modules. However, the simulation framework is written in C++ and it expects
 the modules to be C++ classes. The "Wrap" object is this C++ class, which holds references to
 the "Config" object and the relevant methods so that they can be accesses from C++ as a single class.

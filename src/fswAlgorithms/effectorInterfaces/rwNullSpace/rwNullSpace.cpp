@@ -82,7 +82,7 @@ void RwNullSpace::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RwNullSpace::UpdateState(uint64_t callTime)
+void RwNullSpace::updateState(uint64_t callTime)
 {
     ArrayMotorTorqueMsgPayload cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
     RWSpeedMsgPayload rwSpeeds;                    /* [r/s] array of RW speeds */

@@ -35,7 +35,7 @@
 class RwNullSpace : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorTorqueInMsg;       //!< [-] The name of the Input message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;                     //!< [-] The name of the input RW speeds
     ReadFunctor<RWSpeedMsgPayload> rwDesiredSpeedsInMsg;              //!< [-] (optional) The name of the desired RW speeds

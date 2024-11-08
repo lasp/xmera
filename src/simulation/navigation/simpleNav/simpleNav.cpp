@@ -245,7 +245,7 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
     @return void
     @param CurrentSimNanos The clock time associated with the model call
 */
-void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
+void SimpleNav::updateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->computeTrueOutput(CurrentSimNanos);

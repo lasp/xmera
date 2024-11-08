@@ -133,7 +133,7 @@ void RelODuKF::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RelODuKF::UpdateState(uint64_t callTime)
+void RelODuKF::updateState(uint64_t callTime)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
     double yBar[3], tempYVec[3];

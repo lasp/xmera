@@ -115,7 +115,7 @@ void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
  @return void
  @param CurrentSimNanos The current clock time for the simulation
  */
-void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
+void PlanetEphemeris::updateState(uint64_t CurrentSimNanos)
 {
     std::vector<std::string>::iterator it;
     double time;                            // [s] time since epoch

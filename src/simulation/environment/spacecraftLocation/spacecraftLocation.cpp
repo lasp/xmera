@@ -223,7 +223,7 @@ void SpacecraftLocation::computeAccess()
  update module 
  @param CurrentSimNanos
  */
-void SpacecraftLocation::UpdateState(uint64_t CurrentSimNanos)
+void SpacecraftLocation::updateState(uint64_t CurrentSimNanos)
 {
     this->ReadMessages();
     this->computeAccess();

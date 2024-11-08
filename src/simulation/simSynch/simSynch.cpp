@@ -61,7 +61,7 @@ void ClockSynch::Reset(uint64_t currentSimNanos)
     @return void
     @param currentSimNanos The clock time associated with the model call
 */
-void ClockSynch::UpdateState(uint64_t currentSimNanos)
+void ClockSynch::updateState(uint64_t currentSimNanos)
 {
 	std::chrono::high_resolution_clock::time_point currentTime;     // current time variable
 	int64_t sleepAmountNano;                    // [ns] time for module to sleep

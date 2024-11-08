@@ -48,7 +48,7 @@ public:
     CielimInterface();
     ~CielimInterface();
     void Reset(uint64_t currentSimNanos) override;
-    void UpdateState(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
     void readBskMessages();
     void writeProtobuffer(uint64_t currentSimNanos);
     void addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg);

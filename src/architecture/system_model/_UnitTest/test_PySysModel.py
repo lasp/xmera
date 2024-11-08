@@ -69,7 +69,7 @@ def test_PySysModel():
 
     if mod4.CallCounts != 2:
         testResults += 1
-        testMessage.append("TestPythonModule::UpdateState was not called")
+        testMessage.append("TestPythonModule::updateState was not called")
 
     if mod2MsgRecorder.dataVector[1,1] == 0:
         testResults += 1
@@ -92,7 +92,7 @@ class PythonModule(sysModel.SysModel):
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
         self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, CurrentSimNanos):
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = self.dataOutMsg.read().dataVector + np.array([0,1,0])
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)

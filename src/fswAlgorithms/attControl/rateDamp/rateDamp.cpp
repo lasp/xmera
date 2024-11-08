@@ -32,7 +32,7 @@ void RateDamp::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The current simulation time for system
  */
-void RateDamp::UpdateState(uint64_t CurrentSimNanos)
+void RateDamp::updateState(uint64_t CurrentSimNanos)
 {
     /*! Read input attitude navigation msg */
     NavAttMsgPayload attNavInBuffer = this->attNavInMsg();

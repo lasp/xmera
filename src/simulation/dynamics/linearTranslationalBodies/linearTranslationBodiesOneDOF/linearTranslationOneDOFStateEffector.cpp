@@ -257,7 +257,7 @@ void linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
     this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * rDot_FcB_B;
 }
 
-void linearTranslationOneDOFStateEffector::UpdateState(uint64_t currentSimNanos)
+void linearTranslationOneDOFStateEffector::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
     this->computeTranslatingBodyInertialStates();

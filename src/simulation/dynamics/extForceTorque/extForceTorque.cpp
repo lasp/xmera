@@ -122,7 +122,7 @@ void ExtForceTorque::computeForceTorque(double integTime, double timeStep)
     return;
 }
 
-void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos)
+void ExtForceTorque::updateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
 }

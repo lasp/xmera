@@ -33,7 +33,7 @@ Let us assume the module is to be called ``SomeModule``.  The input and output m
         ~SomeModule();
 
         void Reset(uint64_t CurrentSimNanos);
-        void UpdateState(uint64_t CurrentSimNanos);
+        void updateState(uint64_t CurrentSimNanos);
 
     public:
 
@@ -69,7 +69,7 @@ Be sure to add descriptions to both the module and to the class variables used.
 
 Required Module Methods
 -----------------------
-Each module should define the ``Reset()`` method that is called when initializing the BSK simulation, and the ``UpdateState()`` method which is called every time the task to which the module is added is updated.
+Each module should define the ``Reset()`` method that is called when initializing the BSK simulation, and the ``updateState()`` method which is called every time the task to which the module is added is updated.
 
 Module Variables
 ----------------

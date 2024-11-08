@@ -285,7 +285,7 @@ public:
     FuelTank();
     ~FuelTank();
     void writeOutputMessages(uint64_t currentClock);
-    void UpdateState(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
     void setTankModel(FuelTankModel *model);
     void pushFuelSloshParticle(FuelSlosh *particle);  //!< -- Attach fuel slosh particle
     void registerStates(DynParamManager &states) override;  //!< -- Register mass state with state manager

@@ -37,7 +37,7 @@ public:
     ~ClockSynch();
    
     void Reset(uint64_t currentSimNanos);
-    void UpdateState(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     
 public:
 	double accelFactor;          //!< [-] Factor used to accelerate sim-time relative to clock

@@ -60,7 +60,7 @@ void SunSafePointCpp::Reset(uint64_t callTime) {
  @return void
  @param callTime [ns] Time the method is called
 */
-void SunSafePointCpp::UpdateState(uint64_t callTime) {
+void SunSafePointCpp::updateState(uint64_t callTime) {
     // Zero the attitude guidance output buffer message
     this->attGuidanceOutBuffer = AttGuidMsgPayload();
 

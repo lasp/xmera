@@ -33,7 +33,7 @@
 /*! @brief Top level structure for the sub-module routines. */
 class RateMsgConverter : public SysModel {
 public:
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void Reset(uint64_t callTime) override;
 
     /* declare module IO interfaces */

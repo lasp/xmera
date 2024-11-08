@@ -137,7 +137,7 @@ void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
     @return void
     @param CurrentSimNanos The clock time associated with the model call
 */
-void MotorVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
+void MotorVoltageInterface::updateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     computeMotorTorque();

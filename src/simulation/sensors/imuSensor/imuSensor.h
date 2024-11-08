@@ -43,7 +43,7 @@ public:
     ~ImuSensor();
     
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
     void setBodyToPlatformDCM(double yaw, double pitch, double roll);

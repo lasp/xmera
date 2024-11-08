@@ -40,7 +40,7 @@
 class ThrustRWDesat : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg; /*!< (-) The name of the input RW speeds message*/
     ReadFunctor<RWConstellationMsgPayload> rwConfigInMsg; /*!< [-] The name of the RWA configuration message*/
     ReadFunctor<THRArrayConfigMsgPayload> thrConfigInMsg; /*!< [-] The name of the thruster configuration message*/

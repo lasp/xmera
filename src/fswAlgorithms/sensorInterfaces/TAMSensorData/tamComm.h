@@ -31,7 +31,7 @@
 /*! module configuration message definition */
 class TamComm : public SysModel {
 public:
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void Reset(uint64_t callTime) override;
 
     double dcm_BS[9];                           //!< [T] Row - Sensor to Body DCM

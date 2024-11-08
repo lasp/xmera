@@ -65,7 +65,7 @@ public:
     const Eigen::MRPd getSigma_MB() const;                                          //!< Getter method for sigma_MB
 
     void Reset(uint64_t callTime) override;                                         //!< Reset method
-    void UpdateState(uint64_t callTime) override;                                   //!< Method for updating the effector's states
+    void updateState(uint64_t callTime) override;                                   //!< Method for updating the effector's states
     void computeDerivatives(double callTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,

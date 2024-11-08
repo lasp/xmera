@@ -44,7 +44,7 @@ motor actuation in time.
  @return void
  @param callTime [ns] Time the method is called
 */
-void StepperMotorController::UpdateState(uint64_t callTime) {
+void StepperMotorController::updateState(uint64_t callTime) {
     // Create the buffer messages
     HingedRigidBodyMsgPayload motorRefAngleIn;
     MotorStepCommandMsgPayload motorStepCommandOut;

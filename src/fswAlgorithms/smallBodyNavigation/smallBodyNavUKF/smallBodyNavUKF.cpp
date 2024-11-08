@@ -275,7 +275,7 @@ void SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos){
 /*! This is the main method that gets called every time the module is updated.
     @return void
 */
-void SmallBodyNavUKF::UpdateState(uint64_t CurrentSimNanos)
+void SmallBodyNavUKF::updateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
     this->processUT(CurrentSimNanos);

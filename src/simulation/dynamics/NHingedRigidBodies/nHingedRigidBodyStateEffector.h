@@ -96,7 +96,7 @@ public:
     ~NHingedRigidBodyStateEffector();  //!< -- Destructor
     double HeaviFunc(double cond); //!< -- Heaviside function used for matrix contributions
     void WriteOutputMessages(uint64_t CurrentClock);
-	void UpdateState(uint64_t CurrentSimNanos);
+	void updateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
     void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions

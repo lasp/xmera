@@ -34,7 +34,7 @@
 class RwConfig : public SysModel  {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override {/* Not Implemented */}
+    void updateState(uint64_t callTime) override {/* Not Implemented */}
 
     /* declare module IO interfaces */
     ReadFunctor<RWConstellationMsgPayload> rwConstellationInMsg;          /*!< RW array input message */

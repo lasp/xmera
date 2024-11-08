@@ -39,7 +39,7 @@ public:
     SmallBodyNavUKF();
 
     void Reset(uint64_t CurrentSimNanos);  //!< Resets module
-    void UpdateState(uint64_t CurrentSimNanos);  //!< Updates state
+    void updateState(uint64_t CurrentSimNanos);  //!< Updates state
 
 private:
     void readMessages();  //!< Reads input messages

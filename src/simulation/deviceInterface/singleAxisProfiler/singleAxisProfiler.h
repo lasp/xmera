@@ -31,7 +31,7 @@
 class SingleAxisProfiler: public SysModel {
 public:
     void Reset(uint64_t CurrentSimNanos) override;                     //!< Reset member function
-    void UpdateState(uint64_t CurrentSimNanos) override;               //!< Update member function
+    void updateState(uint64_t CurrentSimNanos) override;               //!< Update member function
     void setRotHat_M(const Eigen::Vector3d &rotHat_M);                 //!< Setter for the spinning body rotation axis
     const Eigen::Vector3d &getRotHat_M() const;                        //!< Getter for the spinning body rotation axis
 

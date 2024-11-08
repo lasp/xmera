@@ -133,7 +133,7 @@ My current understanding of these corruptions tells me they could be grouped lik
 \section{Sensor Discussion}
 The IMU has most of the desired corruptions and I am familiar with it, so I will start with the IMU.
 \subsection{Error}
-The IMU has all three types of error from above. The IMU runs the code below when UpdateState() is called:\\\\
+The IMU has all three types of error from above. The IMU runs the code below when updateState() is called:\\\\
 \verb|/* Compute true data */|\\
 \verb|computePlatformDR();|\\
 \verb|computePlatformDV(CurrentSimNanos);|\\

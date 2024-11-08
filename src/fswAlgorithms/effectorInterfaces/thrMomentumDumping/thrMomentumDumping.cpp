@@ -88,7 +88,7 @@ void ThrMomentumDumping::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrMomentumDumping::UpdateState(uint64_t callTime)
+void ThrMomentumDumping::updateState(uint64_t callTime)
 {
     double              dt;                             /* [s]    control update period */
     double              *Delta_P_input;                 /* []     pointer to vector of requested net thruster impulses */

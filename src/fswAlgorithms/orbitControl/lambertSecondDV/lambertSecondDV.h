@@ -38,7 +38,7 @@ public:
     ~LambertSecondDV();
 
     void Reset(uint64_t currentSimNanos) override;
-    void UpdateState(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
     ReadFunctor<LambertSolutionMsgPayload> lambertSolutionInMsg;            //!< lambert solution input message
     ReadFunctor<DesiredVelocityMsgPayload> desiredVelocityInMsg;            //!< desired velocity input message

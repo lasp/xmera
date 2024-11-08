@@ -95,7 +95,7 @@ void SunlineSEKF::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SunlineSEKF::UpdateState(uint64_t callTime)
+void SunlineSEKF::updateState(uint64_t callTime)
 {
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];

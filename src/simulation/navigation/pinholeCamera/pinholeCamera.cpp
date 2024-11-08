@@ -269,7 +269,7 @@ void PinholeCamera::writeOutputMessages(uint64_t CurrentClock)
  Update module
  @param CurrentSimNanos
  */
-void PinholeCamera::UpdateState(uint64_t CurrentSimNanos)
+void PinholeCamera::updateState(uint64_t CurrentSimNanos)
 {
     /* Read messages */
     this->readInputMessages();

@@ -46,7 +46,7 @@ public:
     OpticalFlow();
     ~OpticalFlow();
     
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
     void makeMask(cv::Mat const & inputBWImage, cv::Mat & mask) const;
 

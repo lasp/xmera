@@ -51,7 +51,7 @@ void SimpleDeadband::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SimpleDeadband::UpdateState(uint64_t callTime)
+void SimpleDeadband::updateState(uint64_t callTime)
 {
     /*! - Read the input message and set it as the output by default */
     this->attGuidOut = this->guidInMsg();

@@ -36,7 +36,7 @@
 class OpNavPoint : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     Message<AttGuidMsgPayload> attGuidanceOutMsg;                 /*!< The name of the output message*/
     ReadFunctor<OpNavMsgPayload> opnavDataInMsg;                      /*!< The name of the Input message*/
     ReadFunctor<NavAttMsgPayload> imuInMsg;                           /*!< The name of the incoming IMU message*/

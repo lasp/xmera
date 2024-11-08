@@ -112,7 +112,7 @@ double TimeClosestApproach::computeTcaStandardDeviation() const
  @return void
  @param CurrentSimNanos The current simulation time for system
  */
-void TimeClosestApproach::UpdateState(uint64_t CurrentSimNanos)
+void TimeClosestApproach::updateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
     this->computeGeometry();

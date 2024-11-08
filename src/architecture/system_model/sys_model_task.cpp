@@ -68,7 +68,7 @@ void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
     (ModelPair != this->TaskModels.end() && this->taskActive);
     ModelPair++) {
         SysModel* NonIt = (ModelPair->ModelPtr);
-        NonIt->UpdateState(CurrentSimNanos);
+        NonIt->updateState(CurrentSimNanos);
         NonIt->CallCounts += 1;
     }
     //! - NextStartTime is set to allow the scheduler to fit the next call in

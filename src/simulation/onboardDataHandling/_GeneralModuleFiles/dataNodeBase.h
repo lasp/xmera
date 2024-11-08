@@ -38,7 +38,7 @@ public:
     ~DataNodeBase();
     void Reset(uint64_t CurrentSimNanos);
     void computeDataStatus(double currentTime);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t CurrentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);

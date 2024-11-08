@@ -36,7 +36,7 @@
 class HeadingSuKF : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     Message<OpNavMsgPayload> opnavDataOutMsg;             /*!< output message */
     Message<HeadingFilterMsgPayload> filtDataOutMsg;      /*!< output message */

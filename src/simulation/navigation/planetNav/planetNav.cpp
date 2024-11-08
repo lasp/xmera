@@ -139,7 +139,7 @@ void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
     @return void
     @param CurrentSimNanos The clock time associated with the model call
 */
-void PlanetNav::UpdateState(uint64_t CurrentSimNanos)
+void PlanetNav::updateState(uint64_t CurrentSimNanos)
 {
     /* zero the output msg buffer */
     this->noisePlanetState = this->ephemerisOutMsg.zeroMsgPayload;

@@ -107,7 +107,7 @@ void OneAxisSolarArrayPoint::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void OneAxisSolarArrayPoint::UpdateState(uint64_t callTime)
+void OneAxisSolarArrayPoint::updateState(uint64_t callTime)
 {
     /*! create and zero the output message */
     AttRefMsgPayload attRefOut = {};

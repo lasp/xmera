@@ -155,7 +155,7 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
  @return void
  @param currentSimNanos The current simulation time in nanoseconds
  */
-void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
+void PowerStorageBase::updateState(uint64_t currentSimNanos)
 {
     //! - update net power information
     if(this->readMessages())

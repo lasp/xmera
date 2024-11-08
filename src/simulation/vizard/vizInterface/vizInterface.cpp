@@ -1109,7 +1109,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 /*! Update this module at the task rate
  @param CurrentSimNanos The current sim time
  */
-void VizInterface::UpdateState(uint64_t CurrentSimNanos)
+void VizInterface::updateState(uint64_t CurrentSimNanos)
 {
 
     this->FrameNumber+=1;

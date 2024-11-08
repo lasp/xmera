@@ -34,7 +34,7 @@
 class ThrMomentumManagementCpp: public SysModel {
 public:
     void Reset(uint64_t currentSimNanos) override;              //!< Reset function
-    void UpdateState(uint64_t currentSimNanos) override;        //!< Update function
+    void updateState(uint64_t currentSimNanos) override;        //!< Update function
 
     double hs_min = 0;                                      //!< [Nms]  minimum RW cluster momentum for dumping
     Eigen::Vector3d hd_B;

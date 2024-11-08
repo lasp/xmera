@@ -38,7 +38,7 @@ typedef struct{
 /*! @brief Container holding ephemDifference module variables */
 class EphemDifference : public SysModel {
 public:
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void Reset(uint64_t callTime) override;
 
     ReadFunctor<EphemerisMsgPayload> ephBaseInMsg; //!< base ephemeris input message name

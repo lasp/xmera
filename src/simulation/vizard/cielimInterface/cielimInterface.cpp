@@ -1016,7 +1016,7 @@ vizProtobufferMessage::VizMessage::VizSettingsPb*  CielimInterface::collectVizSe
 /*! Update this module at the task rate
  @param currentSimNanos The current sim time
  */
-void CielimInterface::UpdateState(uint64_t currentSimNanos) {
+void CielimInterface::updateState(uint64_t currentSimNanos) {
     this->frameNumber += 1;
     this->readBskMessages();
     if (currentSimNanos > 0) {

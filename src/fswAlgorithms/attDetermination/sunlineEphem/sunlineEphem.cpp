@@ -26,7 +26,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SunlineEphem::UpdateState(uint64_t callTime)
+void SunlineEphem::updateState(uint64_t callTime)
 {
     double r_SB_N[3];               /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
     double r_SB_N_hat[3];           /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */

@@ -33,7 +33,7 @@
 class ImuComm : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     double dcm_BP[9];    /*!< Row major platform 2 bdy DCM*/
     ReadFunctor<IMUSensorMsgPayload> imuComInMsg;             /*!< imu input message*/

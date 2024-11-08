@@ -557,7 +557,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void ReactionWheelStateEffector::updateState(uint64_t CurrentSimNanos)
 {
 	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics
 	ReadInputs();

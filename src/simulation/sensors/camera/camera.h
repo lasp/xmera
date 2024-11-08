@@ -45,7 +45,7 @@ public:
     Camera();
     ~Camera();
 
-    void UpdateState(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
     void Reset(uint64_t currentSimNanos) override;
     void hsvAdjust(const cv::Mat&, cv::Mat &mDst);
     void bgrAdjustPercent(const cv::Mat&, cv::Mat &mDst);

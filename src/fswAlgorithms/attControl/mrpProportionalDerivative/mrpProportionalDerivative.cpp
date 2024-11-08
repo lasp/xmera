@@ -49,7 +49,7 @@ the reference frame angular rates and acceleration, and computes the required co
  @return void
  @param callTime [ns] Time the method is called
 */
-void MrpProportionalDerivative::UpdateState(uint64_t callTime)
+void MrpProportionalDerivative::updateState(uint64_t callTime)
 {
     // Create the buffer messages
     CmdTorqueBodyMsgPayload torqueCmdMsgPayload;  // Control output request msg

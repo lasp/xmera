@@ -38,7 +38,7 @@ states. The prescribed rotational states are then written to the output message.
  @return void
  @param callTime [ns] Time the method is called
 */
-void SingleAxisProfiler::UpdateState(uint64_t callTime) {
+void SingleAxisProfiler::updateState(uint64_t callTime) {
     // Read the input message
     StepperMotorMsgPayload stepperMotorIn;
     if (this->stepperMotorInMsg.isWritten()) {

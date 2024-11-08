@@ -146,7 +146,7 @@ void GravityGradientEffector::computeForceTorque(double integTime, double timeSt
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void GravityGradientEffector::UpdateState(uint64_t CurrentSimNanos)
+void GravityGradientEffector::updateState(uint64_t CurrentSimNanos)
 {
 	this->WriteOutputMessages(CurrentSimNanos);
 	return;

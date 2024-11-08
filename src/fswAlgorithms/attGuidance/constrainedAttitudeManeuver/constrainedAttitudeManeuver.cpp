@@ -249,7 +249,7 @@ trajectory and writes the output message.
  @return void
  @param CurrentSimNanos The current simulation time for system
  */
-void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
+void ConstrainedAttitudeManeuver::updateState(uint64_t CurrentSimNanos)
 {
 	double t = CurrentSimNanos * 1e-9;
 	double sigma_RN[3], sigmaDot_RN[3], sigmaDDot_RN[3], omega_RN_R[3], omegaDot_RN_R[3];

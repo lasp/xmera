@@ -748,7 +748,7 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void VSCMGStateEffector::updateState(uint64_t CurrentSimNanos)
 {
 	//! - Read the inputs and then call ConfigureVSCMGRequests to set up dynamics
 	ReadInputs();

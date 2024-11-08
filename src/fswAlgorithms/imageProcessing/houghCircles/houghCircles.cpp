@@ -70,7 +70,7 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
+void HoughCircles::updateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;

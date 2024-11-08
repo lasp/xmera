@@ -48,7 +48,7 @@ void MrpSteering::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MrpSteering::UpdateState(uint64_t callTime)
+void MrpSteering::updateState(uint64_t callTime)
 {
     AttGuidMsgPayload guidCmd;              /* Guidance Message */
     RateCmdMsgPayload outMsg = {};          /* copy of output message */

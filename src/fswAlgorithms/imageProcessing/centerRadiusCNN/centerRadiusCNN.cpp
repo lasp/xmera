@@ -76,7 +76,7 @@ void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
+void CenterRadiusCNN::updateState(uint64_t CurrentSimNanos)
 {
     std::string filenamePre;
     CameraImageMsgPayload imageBuffer;

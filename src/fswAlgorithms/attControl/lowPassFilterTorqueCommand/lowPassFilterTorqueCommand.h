@@ -37,7 +37,7 @@
 class LowPassFilterTorqueCommand : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* declare module private variables */
     double   h;                                     /*!< [s]      filter time step (assumed to be fixed */

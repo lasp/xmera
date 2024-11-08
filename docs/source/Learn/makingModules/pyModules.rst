@@ -14,7 +14,7 @@ are much slower than C or C++ modules, which will significantly slow down your s
 
 Python modules are implemented by subclassing ``SysModel`` from ``Basilisk.architecture.sysModel``. 
 Then, one can implement the ``__init__``,
-``Reset``, and ``UpdateState`` methods in the same way that one would
+``Reset``, and ``updateState`` methods in the same way that one would
 implement these methods in C++. Remember to always call ``__init__`` of
 the parent class ``SysModel`` if you are implementing your own ``__init__``.
 
@@ -55,7 +55,7 @@ Running the above code prints:
     [5. 2. 0.]]
 
 Note how the Python module made use of ``bskLogger``, the ``Reset``
-and ``UpdateState`` were called, how the priority of the Python
+and ``updateState`` were called, how the priority of the Python
 module was respected, and how messaging happened between a C++
 and Python module.
 

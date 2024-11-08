@@ -33,7 +33,7 @@
 class FlybyPoint: public SysModel {
 public:
     void Reset(uint64_t CurrentSimNanos) override;
-    void UpdateState(uint64_t CurrentSimNanos) override;
+    void updateState(uint64_t CurrentSimNanos) override;
 
     std::tuple<Eigen::Vector3d, Eigen::Vector3d> readRelativeState();
     bool checkValidity(Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N) const;

@@ -60,7 +60,7 @@ public:
     Albedo();
     ~Albedo();
 
-    void UpdateState(uint64_t CurrentSimNanos);               //!< @brief updates the state
+    void updateState(uint64_t CurrentSimNanos);               //!< @brief updates the state
     void Reset(uint64_t CurrentSimNanos);                     //!< @brief resets the module
 
     void addInstrumentConfig(instConfig_t configMsg);  //!< @brief adds instrument configuration (overloaded function)

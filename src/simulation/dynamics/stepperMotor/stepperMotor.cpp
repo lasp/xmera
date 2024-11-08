@@ -52,7 +52,7 @@ The motor states are then written to the output messages.
  @return void
  @param callTime [ns] Time the method is called
 */
-void StepperMotor::UpdateState(uint64_t callTime) {
+void StepperMotor::updateState(uint64_t callTime) {
     // Create the buffer messages
     MotorStepCommandMsgPayload motorStepCommandIn;
     StepperMotorMsgPayload stepperMotorOut;

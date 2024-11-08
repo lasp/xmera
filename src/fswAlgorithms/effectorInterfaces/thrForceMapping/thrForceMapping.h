@@ -36,7 +36,7 @@
 class ThrForceMapping : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void findMinimumNormForce(double D[3][MAX_EFF_CNT],
                               double Lr_B[3],
                               uint32_t numForces,

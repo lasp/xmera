@@ -149,7 +149,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     delete [] name;
 
     // - Call Update state so that the spice bodies are inputted into the messaging system on reset
-    this->UpdateState(CurrenSimNanos);
+    this->updateState(CurrenSimNanos);
 }
 
 
@@ -260,7 +260,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
  @return void
  @param CurrentSimNanos The current clock time for the simulation
  */
-void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
+void SpiceInterface::updateState(uint64_t CurrentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;

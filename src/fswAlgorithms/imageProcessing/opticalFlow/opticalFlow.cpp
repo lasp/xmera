@@ -48,7 +48,7 @@ void OpticalFlow::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void OpticalFlow::UpdateState(uint64_t CurrentSimNanos)
+void OpticalFlow::updateState(uint64_t CurrentSimNanos)
 {
     CameraImageMsgPayload imageBuffer;
     PairedKeyPointsMsgPayload featurePayload;

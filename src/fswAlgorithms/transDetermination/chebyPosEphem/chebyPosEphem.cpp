@@ -73,7 +73,7 @@ void ChebyPosEphem::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ChebyPosEphem::UpdateState(uint64_t callTime)
+void ChebyPosEphem::updateState(uint64_t callTime)
 {
 
     double currentEphTime;

@@ -134,7 +134,7 @@ void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 /*!
     update module states
  */
-void StarTracker::UpdateState(uint64_t CurrentSimNanos)
+void StarTracker::updateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->computeSensorErrors();

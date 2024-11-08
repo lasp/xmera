@@ -259,7 +259,7 @@ void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetStat
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
+void MagneticFieldBase::updateState(uint64_t CurrentSimNanos)
 {
     //! - clear the output buffer
     std::vector<MagneticFieldMsgPayload>::iterator it;

@@ -39,7 +39,7 @@
 class HillPoint : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* declare module IO interfaces */
     Message<AttRefMsgPayload> attRefOutMsg;               //!<        The name of the output message

@@ -294,7 +294,7 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void HingedRigidBodyStateEffector::updateState(uint64_t CurrentSimNanos)
 {
     //! - Zero the command buffer and read the incoming command array
     if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {

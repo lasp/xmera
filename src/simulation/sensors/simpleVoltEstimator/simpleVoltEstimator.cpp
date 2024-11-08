@@ -115,7 +115,7 @@ void SimpleVoltEstimator::computeErrors()
     @return void
     @param CurrentSimNanos The clock time associated with the model call
 */
-void SimpleVoltEstimator::UpdateState(uint64_t CurrentSimNanos)
+void SimpleVoltEstimator::updateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->computeErrors();

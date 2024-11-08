@@ -65,7 +65,7 @@ void CobConverter::Reset(uint64_t CurrentSimNanos)
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CobConverter::UpdateState(uint64_t CurrentSimNanos)
+void CobConverter::updateState(uint64_t CurrentSimNanos)
 {
     CameraConfigMsgPayload cameraSpecs = this->cameraConfigInMsg();
     OpNavCOBMsgPayload cobMsgBuffer = this->opnavCOBInMsg();

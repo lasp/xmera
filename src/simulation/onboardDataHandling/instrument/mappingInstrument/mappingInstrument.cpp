@@ -52,7 +52,7 @@ void MappingInstrument::Reset(uint64_t CurrentSimNanos)
  @param CurrentSimNanos
  @return void
  */
-void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
+void MappingInstrument::updateState(uint64_t CurrentSimNanos)
 {
     /* Loop through each access message */
     for (long unsigned int c=0; c< this->accessInMsgs.size(); c++) {

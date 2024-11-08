@@ -39,7 +39,7 @@ public:
     EphemDifferenceWithUncertainty();
     ~EphemDifferenceWithUncertainty();
 
-    void UpdateState(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
     void Reset(uint64_t currentSimNanos) override;
 
     void setCovarianceBase(const Eigen::MatrixXd stateCovariance);

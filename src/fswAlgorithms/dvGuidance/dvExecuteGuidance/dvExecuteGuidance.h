@@ -36,7 +36,7 @@
 class DvExecuteGuidance : public SysModel {
 public:
     void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     ReadFunctor<NavTransMsgPayload> navDataInMsg; /*!< [-] navigation input message that includes dv accumulation info */
     ReadFunctor<DvBurnCmdMsgPayload> burnDataInMsg;/*!< [-] commanded burn input message */
     Message<THRArrayOnTimeCmdMsgPayload> thrCmdOutMsg; /*!< [-] thruster command on time output message */

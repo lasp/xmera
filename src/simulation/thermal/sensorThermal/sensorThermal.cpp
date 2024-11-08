@@ -103,7 +103,7 @@ void SensorThermal::readMessages()
 /*! Provides logic for running the read / compute / write operation that is the module's function.
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
+void SensorThermal::updateState(uint64_t CurrentSimNanos)
 {
 
     //! - Read in messages
