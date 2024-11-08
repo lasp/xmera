@@ -90,10 +90,10 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 
 /*! This method governs the calculation and checking for eclipse
  conditions.
- @param CurrentSimNanos The current clock time for the simulation
+ @param currentSimNanos The current clock time for the simulation
  @return void
  */
-void Eclipse::updateState(uint64_t CurrentSimNanos)
+void Eclipse::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
     
@@ -181,7 +181,7 @@ void Eclipse::updateState(uint64_t CurrentSimNanos)
         this->eclipseShadowFactors.at(scIdx) = tmpShadowFactor;
         scIdx++;
     }
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! This method computes the fraction of sunlight given an eclipse.

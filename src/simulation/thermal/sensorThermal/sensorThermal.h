@@ -41,7 +41,7 @@ public:
     SensorThermal();
     ~SensorThermal();
     void reset(uint64_t CurrentClock);
-    void updateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 private:
     void evaluateThermalModel(uint64_t CurrentSimSeconds);

@@ -49,7 +49,7 @@ HingedRigidBodyMotorSensor::~HingedRigidBodyMotorSensor()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void HingedRigidBodyMotorSensor::reset(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotorSensor::reset(uint64_t currentSimNanos)
 {
     //!< check that required input messages are connected
     if (!this->hingedRigidBodyMotorSensorInMsg.isLinked()) {
@@ -69,7 +69,7 @@ void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
 /*! This is the main method that gets called every time the module is updated.  Adds Gaussian noise and bias and diescretizes output.
     @return void
 */
-void HingedRigidBodyMotorSensor::updateState(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotorSensor::updateState(uint64_t currentSimNanos)
 {
     //! variables for  calculations
     double trueTheta;               //! [rad] actual planel angle
@@ -134,5 +134,5 @@ void HingedRigidBodyMotorSensor::updateState(uint64_t CurrentSimNanos)
     //! write to the output messages
     hingedRigidBodyMotorSensorOutMsgBuffer.theta = sensedTheta;
     hingedRigidBodyMotorSensorOutMsgBuffer.thetaDot = sensedThetaDot;
-    this->hingedRigidBodyMotorSensorOutMsg.write(&hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->hingedRigidBodyMotorSensorOutMsg.write(&hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, currentSimNanos);
 }

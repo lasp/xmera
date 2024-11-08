@@ -48,7 +48,7 @@ SimpleVoltEstimator::~SimpleVoltEstimator()
      - Voltage error [0]
  @return void
  */
-void SimpleVoltEstimator::reset(uint64_t CurrentSimNanos)
+void SimpleVoltEstimator::reset(uint64_t currentSimNanos)
 {
     // check if input message has not been included
     if (!this->voltInMsg.isLinked()) {
@@ -113,12 +113,12 @@ void SimpleVoltEstimator::computeErrors()
 
 /*! This method calls all of the run-time operations for the simpleVoltEstimator module.
     @return void
-    @param CurrentSimNanos The clock time associated with the model call
+    @param currentSimNanos The clock time associated with the model call
 */
-void SimpleVoltEstimator::updateState(uint64_t CurrentSimNanos)
+void SimpleVoltEstimator::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
     this->computeErrors();
     this->applyErrors();
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }

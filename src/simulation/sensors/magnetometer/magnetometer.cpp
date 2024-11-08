@@ -55,9 +55,9 @@ Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, doubl
 
 
 /*! This method is used to reset the module.
- @param CurrentSimNanos The current simulation time from the architecture
+ @param currentSimNanos The current simulation time from the architecture
  @return void */
-void Magnetometer::reset(uint64_t CurrentSimNanos)
+void Magnetometer::reset(uint64_t currentSimNanos)
 {
     if (!this->magInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Magnetic field interface message name (magInMsg) is empty.");
@@ -159,8 +159,8 @@ void Magnetometer::writeOutputMessages(uint64_t Clock)
 /*! This method is called at a specified rate by the architecture.  It makes the
  calls to compute the current magnetic field information and write the output message for
  the rest of the model.
- @param CurrentSimNanos The current simulation time from the architecture */
-void Magnetometer::updateState(uint64_t CurrentSimNanos)
+ @param currentSimNanos The current simulation time from the architecture */
+void Magnetometer::updateState(uint64_t currentSimNanos)
 {
     //! - Read the inputs
     this->readInputMessages();
@@ -173,5 +173,5 @@ void Magnetometer::updateState(uint64_t CurrentSimNanos)
     //! - Apply saturation
     this->applySaturation();
     //! - Write output data
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }

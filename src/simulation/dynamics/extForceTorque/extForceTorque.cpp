@@ -44,7 +44,7 @@ ExtForceTorque::~ExtForceTorque()
 /*! This method is used to reset the module. 
  @return void
  */
-void ExtForceTorque::reset(uint64_t CurrentSimNanos)
+void ExtForceTorque::reset(uint64_t currentSimNanos)
 {
     /* zero the input messages */
     this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg.zeroMsgPayload;
@@ -122,7 +122,7 @@ void ExtForceTorque::computeForceTorque(double integTime, double timeStep)
     return;
 }
 
-void ExtForceTorque::updateState(uint64_t CurrentSimNanos)
+void ExtForceTorque::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
 }

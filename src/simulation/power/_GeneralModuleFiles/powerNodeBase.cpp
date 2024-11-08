@@ -43,10 +43,10 @@ PowerNodeBase::~PowerNodeBase()
 /*! This method is used to reset the module. In general, no functionality must be reset.
  @return void
  */
-void PowerNodeBase::reset(uint64_t CurrentSimNanos)
+void PowerNodeBase::reset(uint64_t currentSimNanos)
 {
     //! - call the custom environment module reset method
-    customreset(CurrentSimNanos);
+    customreset(currentSimNanos);
 
     return;
 }
@@ -110,21 +110,21 @@ void PowerNodeBase::computePowerStatus(double currentTime)
 }
 
 /*! Provides logic for running the read / compute / write operation that is the module's function.
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void PowerNodeBase::updateState(uint64_t CurrentSimNanos)
+void PowerNodeBase::updateState(uint64_t currentSimNanos)
 {
 
     //! - Only update the power status if we were able to read in messages.
     if(this->readMessages())
     {
-        this->computePowerStatus(CurrentSimNanos*NANO2SEC);
+        this->computePowerStatus(currentSimNanos*NANO2SEC);
     } else {
         /* if the read was not successful then zero the output message */
         this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload;
     }
 
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 
     return;
 }

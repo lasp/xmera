@@ -33,8 +33,8 @@ public:
     PrescribedLinearTranslation() = default;                                    //!< Constructor
     ~PrescribedLinearTranslation() = default;                                   //!< Destructor
 
-    void reset(uint64_t CurrentSimNanos) override;                              //!< Reset member function
-    void updateState(uint64_t CurrentSimNanos) override;                        //!< Update member function
+    void reset(uint64_t currentSimNanos) override;                              //!< Reset member function
+    void updateState(uint64_t currentSimNanos) override;                        //!< Update member function
     void setCoastOptionBangDuration(const double bangDuration);                 //!< Setter method for the coast option bang duration
     void setSmoothingDuration(const double smoothingDuration);                  //!< Setter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value
     void setTransAccelMax(const double transAccelMax);                          //!< Setter method for the bang segment scalar linear acceleration
@@ -77,7 +77,7 @@ private:
     void computeCoastSegment(double time);                                      //!< Method for computing the coast segment scalar translational states
     void computeTranslationComplete();                                          //!< Method for computing the scalar translational states when the translation is complete
 
-    void writeOutputMessages(uint64_t CurrentSimNanos);                         //!< Method for writing the module output messages and computing the output message data
+    void writeOutputMessages(uint64_t currentSimNanos);                         //!< Method for writing the module output messages and computing the output message data
 
     /* User-configurable variables */
     double coastOptionBangDuration;                                             //!< [s] Time used for the coast option bang segment

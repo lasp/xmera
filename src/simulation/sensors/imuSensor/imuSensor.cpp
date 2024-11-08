@@ -94,9 +94,9 @@ ImuSensor::~ImuSensor()
 
 /*! Reset the module
  @return void
- @param CurrentSimNanos current time (ns)
+ @param currentSimNanos current time (ns)
  */
-void ImuSensor::reset(uint64_t CurrentSimNanos)
+void ImuSensor::reset(uint64_t currentSimNanos)
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -385,9 +385,9 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 
 /*!
     update module states
-    @param CurrentSimNanos current time (ns)
+    @param currentSimNanos current time (ns)
  */
-void ImuSensor::updateState(uint64_t CurrentSimNanos)
+void ImuSensor::updateState(uint64_t currentSimNanos)
 {
     readInputMessages();
 
@@ -395,22 +395,22 @@ void ImuSensor::updateState(uint64_t CurrentSimNanos)
     {
         /* Compute true data */
         this->computePlatformDR();
-        this->computePlatformDV(CurrentSimNanos);
+        this->computePlatformDV(currentSimNanos);
         /* Compute sensed data */
 		this->computeSensorErrors();
-        this->applySensorErrors(CurrentSimNanos);
+        this->applySensorErrors(currentSimNanos);
         this->scaleTruth();
-        this->applySensorDiscretization(CurrentSimNanos);
-		this->applySensorSaturation(CurrentSimNanos);
+        this->applySensorDiscretization(currentSimNanos);
+		this->applySensorSaturation(currentSimNanos);
         /* Output sensed data */
-        this->writeOutputMessages(CurrentSimNanos);
+        this->writeOutputMessages(currentSimNanos);
     }
 
     //record data from the current spacecraft message which is needed for the next IMU call
     this->previous_sigma_BN = this->current_sigma_BN;
     this->previous_omega_BN_B = this->current_omega_BN_B;
     this->previous_TotalAccumDV_BN_B = this->current_TotalAccumDV_BN_B;
-    this->PreviousTime = CurrentSimNanos;
+    this->PreviousTime = currentSimNanos;
 
     this->NominalReady = true;
 

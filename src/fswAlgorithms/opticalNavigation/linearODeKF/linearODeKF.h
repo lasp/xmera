@@ -47,7 +47,7 @@ public:
 private:
     void customreset() final;
     void readFilterMeasurements() final;
-    void writeOutputMessages(uint64_t CurrentSimNanos) final;
+    void writeOutputMessages(uint64_t currentSimNanos) final;
     static Eigen::MatrixXd measurementMatrix(const FilterStateVector &state);
 
 public:

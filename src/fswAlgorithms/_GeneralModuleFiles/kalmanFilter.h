@@ -70,7 +70,7 @@ protected:
      * Their information must be added to the Measurement container class, and added to the measurements vector.
      * Each measurement must be paired with a measurement model provided in the measurementModels.h */
     virtual void readFilterMeasurements(){/* virtual */};
-    virtual void writeOutputMessages(uint64_t CurrentSimNanos){/* virtual */};
+    virtual void writeOutputMessages(uint64_t currentSimNanos){/* virtual */};
 
     virtual void timeUpdate(double updateTime)=0;
     virtual void measurementUpdate(const MeasurementModel &measurement)=0;

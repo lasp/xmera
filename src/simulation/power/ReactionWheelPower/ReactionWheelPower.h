@@ -36,7 +36,7 @@ class ReactionWheelPower: public PowerNodeBase {
 public:
     ReactionWheelPower();
     ~ReactionWheelPower();
-    void customreset(uint64_t CurrentSimNanos); //!< Custom reset method
+    void customreset(uint64_t currentSimNanos); //!< Custom reset method
     bool customReadMessages();          //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
 private:

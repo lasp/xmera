@@ -24,7 +24,7 @@
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void
  */
-void SolarFlux::reset(uint64_t CurrentSimNanos)
+void SolarFlux::reset(uint64_t currentSimNanos)
 {
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {
@@ -40,7 +40,7 @@ void SolarFlux::reset(uint64_t CurrentSimNanos)
 /*! Read Messages and scale the solar flux then write it out
  @return void
  */
-void SolarFlux::updateState(uint64_t CurrentSimNanos)
+void SolarFlux::updateState(uint64_t currentSimNanos)
 {
     this->readMessages();
 
@@ -53,7 +53,7 @@ void SolarFlux::updateState(uint64_t CurrentSimNanos)
     /*! - compute the local solar flux value */
     this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2) * this->eclipseFactor;
 
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 }
 
 /*! This method is used to  read messages and save values to member attributes
@@ -83,7 +83,7 @@ void SolarFlux::readMessages()
 /*! This method is used to write the output flux message
  @return void
  */
-void SolarFlux::writeMessages(uint64_t CurrentSimNanos) {
+void SolarFlux::writeMessages(uint64_t currentSimNanos) {
     SolarFluxMsgPayload fluxMsgOutData = {this->fluxAtSpacecraft};
-    this->solarFluxOutMsg.write(&fluxMsgOutData, this->moduleID, CurrentSimNanos);
+    this->solarFluxOutMsg.write(&fluxMsgOutData, this->moduleID, currentSimNanos);
 }

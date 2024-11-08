@@ -30,10 +30,10 @@ DentonFluxModel::DentonFluxModel() = default;
 DentonFluxModel::~DentonFluxModel() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @param CurrentSimNanos current simulation time in nano-seconds
+    @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void DentonFluxModel::reset(uint64_t CurrentSimNanos)
+void DentonFluxModel::reset(uint64_t currentSimNanos)
 {
     // Check that required input messages are connected
     if (!this->scStateInMsg.isLinked())
@@ -126,10 +126,10 @@ void DentonFluxModel::reset(uint64_t CurrentSimNanos)
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-    @param CurrentSimNanos current simulation time in nano-seconds
+    @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void DentonFluxModel::updateState(uint64_t CurrentSimNanos)
+void DentonFluxModel::updateState(uint64_t currentSimNanos)
 {
     // Make local copies of messages
     SCStatesMsgPayload scStateInMsgBuffer;  //!< local copy of spacecraft states
@@ -257,7 +257,7 @@ void DentonFluxModel::updateState(uint64_t CurrentSimNanos)
     }
 
     // Write to the output message
-    this->fluxOutMsg.write(&fluxOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->fluxOutMsg.write(&fluxOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! method to calculate the local time of the spacecraft within the GEO belt

@@ -45,7 +45,7 @@ class ThrusterStateEffector: public StateEffector, public SysModel {
 public:
     ThrusterStateEffector();
     ~ThrusterStateEffector();
-    void reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     bool ReadInputs();
     void writeOutputStateMessages(uint64_t CurrentClock);
     void registerStates(DynParamManager& states);  //!< -- Method for the effector to register its states
@@ -54,7 +54,7 @@ public:
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);
     void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Method to pass the forces and torques onto the hub
     void updateEffectorMassProps(double integTime);
-    void updateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 
     void addThruster(THRSimConfig* newThruster); //!< -- Add a new thruster to the thruster set

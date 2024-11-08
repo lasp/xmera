@@ -216,7 +216,7 @@ void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *pl
 /*! Read Messages, calculate albedo then write it out
  @return void
  */
-void Albedo::updateState(uint64_t CurrentSimNanos)
+void Albedo::updateState(uint64_t currentSimNanos)
 {
     this->readMessages();
     this->albOutData.clear();
@@ -236,13 +236,13 @@ void Albedo::updateState(uint64_t CurrentSimNanos)
         }
         this->albOutData.push_back(cArray2EigenMatrixXd(tmpTot, 4, 1));
     }
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 }
 
 /*! This method resets the module
  @return void
  */
-void Albedo::reset(uint64_t CurrentSimNanos)
+void Albedo::reset(uint64_t currentSimNanos)
 {
     if (this->modelNames.empty()) {
         bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Albedo model was not set.");
@@ -297,7 +297,7 @@ void Albedo::readMessages() {
 /*! This method writes the output albedo messages
  @return void
  */
-void Albedo::writeMessages(uint64_t CurrentSimNanos) {
+void Albedo::writeMessages(uint64_t currentSimNanos) {
     AlbedoMsgPayload localMessage;
     memset(&localMessage, 0x0, sizeof(localMessage));
 
@@ -307,7 +307,7 @@ void Albedo::writeMessages(uint64_t CurrentSimNanos) {
         localMessage.albedoAtInstrument = this->albOutData.at(idx)[1];
         localMessage.AfluxAtInstrumentMax = this->albOutData.at(idx)[2];
         localMessage.AfluxAtInstrument = this->albOutData.at(idx)[3];
-        this->albOutMsgs.at(idx)->write(&localMessage, this->moduleID, CurrentSimNanos);
+        this->albOutMsgs.at(idx)->write(&localMessage, this->moduleID, currentSimNanos);
     }
 }
 

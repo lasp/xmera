@@ -38,8 +38,8 @@ class StarTracker: public SysModel {
 public:
     StarTracker();
     ~StarTracker();
-    
-    void updateState(uint64_t CurrentSimNanos);
+
+    void updateState(uint64_t currentSimNanos);
     void reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
@@ -47,9 +47,9 @@ public:
     void applySensorErrors();
     void computeTrueOutput();
     void computeQuaternion(double *sigma, STSensorMsgPayload *sensorValue);
-    
+
 public:
-    
+
     uint64_t sensorTimeTag;            //!< [ns] Current time tag for sensor out
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;    //!< [-] sc input state message
     Message<STSensorMsgPayload> sensorOutMsg;   //!< [-] sensor output state message

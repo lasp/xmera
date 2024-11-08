@@ -24,7 +24,7 @@
 /*! This method is used to reset the module.
  @return void
  */
-void SunSearch::reset(uint64_t CurrentSimNanos)
+void SunSearch::reset(uint64_t currentSimNanos)
 {
     if (!this->attNavInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
@@ -43,15 +43,15 @@ void SunSearch::reset(uint64_t CurrentSimNanos)
         this->computeKinematicProperties(index);
     }
 
-    this->resetTime = CurrentSimNanos;
+    this->resetTime = currentSimNanos;
 }
 
 
 /*! This method is the main carrier for the computation of the guidance message
  @return void
- @param CurrentSimNanos The current simulation time for system
+ @param currentSimNanos The current simulation time for system
  */
-void SunSearch::updateState(uint64_t CurrentSimNanos)
+void SunSearch::updateState(uint64_t currentSimNanos)
 {
     /*! create and zero the output message */
     AttGuidMsgPayload attGuidOut = this->attGuidOutMsg.zeroMsgPayload;
@@ -64,13 +64,13 @@ void SunSearch::updateState(uint64_t CurrentSimNanos)
     double omega_RN_B[3] = {0, 0, 0};
     double domega_RN_B[3] = {0, 0, 0};
 
-    double CurrentSimSeconds = (CurrentSimNanos - this->resetTime) * NANO2SEC;
+    double CurrentSimSeconds = (currentSimNanos - this->resetTime) * NANO2SEC;
 
     double timeInf = 0;
     double timeSup = this->slewProperties[0].slewTotalTime;
     for (int index=0; index<3; ++index) {
         if (CurrentSimSeconds >= timeInf && CurrentSimSeconds < timeSup) {
-            this->computeReferenceMotion(CurrentSimNanos, index, &omega_RN_B[0], &domega_RN_B[0]);
+            this->computeReferenceMotion(currentSimNanos, index, &omega_RN_B[0], &domega_RN_B[0]);
             break;
         }
         else if (CurrentSimSeconds >= timeSup && index != 2) {
@@ -86,7 +86,7 @@ void SunSearch::updateState(uint64_t CurrentSimNanos)
     }
 
     /*! Write the output messages */
-    this->attGuidOutMsg.write(&attGuidOut, this->moduleID, CurrentSimNanos);
+    this->attGuidOutMsg.write(&attGuidOut, this->moduleID, currentSimNanos);
 }
 
 

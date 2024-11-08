@@ -39,7 +39,7 @@ TempMeasurement::~TempMeasurement() = default;
 /*! This method is used to reset the module and checks that required input messages are connected.
     @return void
 */
-void TempMeasurement::reset(uint64_t CurrentSimNanos)
+void TempMeasurement::reset(uint64_t currentSimNanos)
 {
     if (!this->tempInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "TempMeasurement.tempInMsg was not linked.");
@@ -103,7 +103,7 @@ void TempMeasurement::applySensorErrors()
 /*! This is the main method that gets called every time the module is updated.
     @return void
 */
-void TempMeasurement::updateState(uint64_t CurrentSimNanos)
+void TempMeasurement::updateState(uint64_t currentSimNanos)
 {
     TemperatureMsgPayload tempInMsgBuffer;  //!< local copy of message buffer
     TemperatureMsgPayload tempOutMsgBuffer;  //!< local copy of message buffer
@@ -120,6 +120,6 @@ void TempMeasurement::updateState(uint64_t CurrentSimNanos)
     tempOutMsgBuffer.temperature = this->sensedTemperature;
 
     // write to the output messages
-    this->tempOutMsg.write(&tempOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->tempOutMsg.write(&tempOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 

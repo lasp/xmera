@@ -275,20 +275,20 @@ public:
     //! -- cross initialization
     void integratedInit(){};
     //! -- Read and record the message
-    void updateState(uint64_t CurrentSimNanos){
-        if (CurrentSimNanos >= this->nextUpdateTime) {
-            this->msgRecordTimes.push_back(CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos){
+        if (currentSimNanos >= this->nextUpdateTime) {
+            this->msgRecordTimes.push_back(currentSimNanos);
             this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
             this->msgRecord.push_back(this->readMessage());
             this->nextUpdateTime += this->timeInterval;
         }
     };
     //! Reset method
-    void reset(uint64_t CurrentSimNanos){
+    void reset(uint64_t currentSimNanos){
         this->msgRecord.clear();    //!< -- Can only reset to 0 for now
         this->msgRecordTimes.clear();
         this->msgWrittenTimes.clear();
-        this->nextUpdateTime = CurrentSimNanos;
+        this->nextUpdateTime = currentSimNanos;
     };
     //! time recorded method
     std::vector<uint64_t>& times(){return this->msgRecordTimes;}

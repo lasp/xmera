@@ -42,9 +42,9 @@ class DataStorageUnitBase: public SysModel {
 public:
     DataStorageUnitBase();
     ~DataStorageUnitBase();
-    void reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg); //!< Adds dataNode to the storageUnit
-    void updateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void setDataBuffer(std::string partitionName, int64_t data); //!< Adds/removes the data from the partitionName partition once
 
 protected:

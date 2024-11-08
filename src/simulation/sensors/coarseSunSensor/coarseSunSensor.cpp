@@ -113,9 +113,9 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
 
 
 /*! This method is used to reset the module.
- @param CurrentSimNanos The current simulation time from the architecture
+ @param currentSimNanos The current simulation time from the architecture
  @return void */
-void CoarseSunSensor::reset(uint64_t CurrentSimNanos)
+void CoarseSunSensor::reset(uint64_t currentSimNanos)
 {
     //! - If either messages is not valid, send a warning message
     if(!this->sunInMsg.isLinked()) {
@@ -388,8 +388,8 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 /*! This method is called at a specified rate by the architecture.  It makes the
  calls to compute the current sun information and write the output message for
  the rest of the model.
- @param CurrentSimNanos The current simulation time from the architecture*/
-void CoarseSunSensor::updateState(uint64_t CurrentSimNanos)
+ @param currentSimNanos The current simulation time from the architecture*/
+void CoarseSunSensor::updateState(uint64_t currentSimNanos)
 {
     //! - Read the inputs
     this->readInputMessages();
@@ -404,7 +404,7 @@ void CoarseSunSensor::updateState(uint64_t CurrentSimNanos)
     //! - Apply Saturation (floor and ceiling values)
     this->applySaturation();
     //! - Write output data
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! The default constructor for the constellation really just clears the
@@ -422,9 +422,9 @@ CSSConstellation::~CSSConstellation()
 
 
 /*! This method is used to reset the module.
- @param CurrentSimNanos The current simulation time from the architecture
+ @param currentSimNanos The current simulation time from the architecture
  @return void */
-void CSSConstellation::reset(uint64_t CurrentSimNanos)
+void CSSConstellation::reset(uint64_t currentSimNanos)
 {
     std::vector<CoarseSunSensor*>::iterator itp;
     CoarseSunSensor *it;
@@ -433,14 +433,14 @@ void CSSConstellation::reset(uint64_t CurrentSimNanos)
     for(itp=this->sensorList.begin(); itp!= this->sensorList.end(); itp++)
     {
         it = *itp;
-        it->reset(CurrentSimNanos);
+        it->reset(currentSimNanos);
     }
 
     this->outputBuffer = this->constellationOutMsg.zeroMsgPayload;
 
 }
 
-void CSSConstellation::updateState(uint64_t CurrentSimNanos)
+void CSSConstellation::updateState(uint64_t currentSimNanos)
 {
     std::vector<CoarseSunSensor*>::iterator itp;
     CoarseSunSensor* it;
@@ -455,13 +455,13 @@ void CSSConstellation::updateState(uint64_t CurrentSimNanos)
         it->applySensorErrors();
         it->scaleSensorValues();
         it->applySaturation();
-        it->writeOutputMessages(CurrentSimNanos);
+        it->writeOutputMessages(currentSimNanos);
 
         this->outputBuffer.CosValue[itp - this->sensorList.begin()] = it->sensedValue;
 
     }
-    this->outputBuffer.timeTag = (double) (CurrentSimNanos * NANO2SEC);
-    this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, CurrentSimNanos);
+    this->outputBuffer.timeTag = (double) (currentSimNanos * NANO2SEC);
+    this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, currentSimNanos);
 }
 
 void CSSConstellation::appendCSS(CoarseSunSensor* newSensor) {

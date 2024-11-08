@@ -52,21 +52,21 @@ Spacecraft::~Spacecraft()
 /*! This method is used to reset the module.
  @return void
  */
-void Spacecraft::reset(uint64_t CurrentSimNanos)
+void Spacecraft::reset(uint64_t currentSimNanos)
 {
-    this->gravField.reset(CurrentSimNanos);
+    this->gravField.reset(currentSimNanos);
     // - Call method for initializing the dynamics of spacecraft
     this->initializeDynamics();
 
     // compute initial spacecraft states relative to inertial frame, taking into account initial sc states might be defined relative to a planet
     this->gravField.updateInertialPosAndVel(this->hubR_N->getState(), this->hubV_N->getState());
-    this->writeOutputStateMessages(CurrentSimNanos);
+    this->writeOutputStateMessages(currentSimNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages and write initial state output messages
     std::vector<StateEffector*>::iterator it;
     for(it = this->states.begin(); it != this->states.end(); it++)
     {
         // - Call writeOutputStateMessages for stateEffectors
-        (*it)->writeOutputStateMessages(CurrentSimNanos);
+        (*it)->writeOutputStateMessages(currentSimNanos);
     }
 }
 
@@ -147,13 +147,13 @@ void Spacecraft::readOptionalRefMsg()
 }
 
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
-void Spacecraft::updateState(uint64_t CurrentSimNanos)
+void Spacecraft::updateState(uint64_t currentSimNanos)
 {
     // - Convert current time to seconds
-    double newTime = CurrentSimNanos*NANO2SEC;
+    double newTime = currentSimNanos*NANO2SEC;
 
     // - Get access to the spice bodies
-    this->gravField.updateState(CurrentSimNanos);
+    this->gravField.updateState(currentSimNanos);
 
     // - Integrate the state forward in time
     this->integrateState(newTime);
@@ -166,15 +166,15 @@ void Spacecraft::updateState(uint64_t CurrentSimNanos)
     this->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
 
     // - Write the state of the vehicle into messages
-    this->writeOutputStateMessages(CurrentSimNanos);
+    this->writeOutputStateMessages(currentSimNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages
     std::vector<StateEffector*>::iterator it;
     for(it = this->states.begin(); it != this->states.end(); it++)
     {
         // - Call writeOutputStateMessages for stateEffectors
-        (*it)->writeOutputStateMessages(CurrentSimNanos);
+        (*it)->writeOutputStateMessages(currentSimNanos);
     }
-    this->simTimePrevious = CurrentSimNanos;
+    this->simTimePrevious = currentSimNanos;
 }
 
 /*! This method allows the spacecraft to have access to the current state of the hub for MRP switching, writing

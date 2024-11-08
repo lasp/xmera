@@ -50,8 +50,8 @@ public:
     RadiationPressure();
     ~RadiationPressure();
 
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void readInputMessages();
     void computeForceTorque(double integTime, double timeStep);

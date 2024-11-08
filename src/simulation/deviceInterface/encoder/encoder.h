@@ -33,11 +33,11 @@ public:
     Encoder();
     ~Encoder();
 
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
-    void encode(uint64_t CurrentSimNanos);
+    void encode(uint64_t currentSimNanos);
 
 public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;       //!< [rad/s] reaction wheel speed output message

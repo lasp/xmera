@@ -32,8 +32,8 @@ Let us assume the module is to be called ``SomeModule``.  The input and output m
         SomeModule();
         ~SomeModule();
 
-        void reset(uint64_t CurrentSimNanos);
-        void updateState(uint64_t CurrentSimNanos);
+        void reset(uint64_t currentSimNanos);
+        void updateState(uint64_t currentSimNanos);
 
     public:
 

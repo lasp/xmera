@@ -82,9 +82,9 @@ public:
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
     void updateSCMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B);  //!< -- This method computes the force and torque from the stateEffectors
-    void reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
 	void writeOutputStateMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
-    void updateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
+    void updateState(uint64_t currentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
     void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system

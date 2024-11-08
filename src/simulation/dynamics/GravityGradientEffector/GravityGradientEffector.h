@@ -42,8 +42,8 @@ public:
     ~GravityGradientEffector();
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     void addPlanetName(std::string planetName);
 

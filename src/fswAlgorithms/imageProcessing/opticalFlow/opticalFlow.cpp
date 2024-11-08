@@ -27,9 +27,9 @@ OpticalFlow::~OpticalFlow() = default;
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
  * between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void OpticalFlow::reset(uint64_t CurrentSimNanos)
+void OpticalFlow::reset(uint64_t currentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
@@ -46,9 +46,9 @@ void OpticalFlow::reset(uint64_t CurrentSimNanos)
  * If an image was previously saved and a second image arrives, perform the feature matching
  * Return the features and clear the memory of both previous images
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void OpticalFlow::updateState(uint64_t CurrentSimNanos)
+void OpticalFlow::updateState(uint64_t currentSimNanos)
 {
     CameraImageMsgPayload imageBuffer;
     PairedKeyPointsMsgPayload featurePayload;
@@ -62,11 +62,11 @@ void OpticalFlow::updateState(uint64_t CurrentSimNanos)
     this->sensorTimeTag = 0;
     /*! - Read option which reads images from files*/
     if (!this->directoryName.empty()){
-        std::string filename = this->directoryName + std::to_string(CurrentSimNanos*1E-9) + this->imageFileExtension;
+        std::string filename = this->directoryName + std::to_string(currentSimNanos*1E-9) + this->imageFileExtension;
         std::ifstream imageFile(filename);
         if (imageFile.good()){
             this->secondImage = cv::imread(filename, cv::IMREAD_GRAYSCALE);
-            this->sensorTimeTag = CurrentSimNanos;
+            this->sensorTimeTag = currentSimNanos;
             this->secondImagePresent = true;
             imageBuffer.cameraID = 1;
         }
@@ -124,7 +124,7 @@ void OpticalFlow::updateState(uint64_t CurrentSimNanos)
             featurePayload.keyPointsFound = (int)this->secondFeatures.size();
             featurePayload.valid = true;
 
-            this->keyPointsMsg.write(&featurePayload, this->moduleID, CurrentSimNanos);
+            this->keyPointsMsg.write(&featurePayload, this->moduleID, currentSimNanos);
 
             this->secondImagePresent = false;
             /*! Then reset values for next pair of images depending on to the sliding window setting */
@@ -180,12 +180,12 @@ void OpticalFlow::updateState(uint64_t CurrentSimNanos)
         }
         /*! -Write a zero message if only one image was processed*/
         featurePayload.valid = false;
-        this->keyPointsMsg.write(&featurePayload, this->moduleID, CurrentSimNanos);
+        this->keyPointsMsg.write(&featurePayload, this->moduleID, currentSimNanos);
     }
     /*! - If no second image is present, write zeros in message and set valid to false*/
     else{
         featurePayload.valid = false;
-        this->keyPointsMsg.write(&featurePayload, this->moduleID, CurrentSimNanos);
+        this->keyPointsMsg.write(&featurePayload, this->moduleID, currentSimNanos);
         }
 
 }

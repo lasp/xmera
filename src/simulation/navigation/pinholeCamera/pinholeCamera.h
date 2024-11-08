@@ -37,8 +37,8 @@ class PinholeCamera:  public SysModel {
 public:
     PinholeCamera();
     ~PinholeCamera();
-    void updateState(uint64_t CurrentSimNanos);
-    void reset(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
     

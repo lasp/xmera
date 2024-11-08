@@ -59,9 +59,9 @@ VizInterface::~VizInterface()
 
 
 /*! A Reset method to put the module back into a clean state
- @param CurrentSimNanos The current sim time in nanoseconds
+ @param currentSimNanos The current sim time in nanoseconds
  */
-void VizInterface::reset(uint64_t CurrentSimNanos)
+void VizInterface::reset(uint64_t currentSimNanos)
 {
     if (this->opNavMode > 0 || this->liveStream){
         /* setup zeroMQ */
@@ -435,9 +435,9 @@ void VizInterface::ReadBSKMessages()
 }
 
 /*! The method in which the vizInterface writes a protobuffer with the information from the simulation.
- @param CurrentSimNanos The current sim time in nanoseconds
+ @param currentSimNanos The current sim time in nanoseconds
  */
-void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
+void VizInterface::WriteProtobuffer(uint64_t currentSimNanos)
 {
     vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
 
@@ -713,7 +713,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;
     time->set_framenumber(this->FrameNumber);
-    time->set_simtimeelapsed((double) CurrentSimNanos);
+    time->set_simtimeelapsed((double) currentSimNanos);
     message->set_allocated_currenttime(time);
 
     /*! write epoch msg */
@@ -1033,7 +1033,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         bool opNavModeStatus = false;
         if (this->opNavMode == 2) {
             for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
-                if ((CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 && this->cameraConfigBuffers[camCounter].isOn == 1) ||this->firstPass < 11) {
+                if ((currentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 && this->cameraConfigBuffers[camCounter].isOn == 1) ||this->firstPass < 11) {
                     opNavModeStatus = true;
                 }
             }
@@ -1078,10 +1078,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
                 /*! - If the camera is requesting periodic images, request them */
                 if (this->opNavMode > 0 &&
-                    CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                    currentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
                     this->cameraConfigBuffers[camCounter].isOn == 1)
                 {
-                    this->requestImage(camCounter, CurrentSimNanos);
+                    this->requestImage(camCounter, currentSimNanos);
                 }
             }
             if (opNavModeStatus) {
@@ -1107,15 +1107,15 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 }
 
 /*! Update this module at the task rate
- @param CurrentSimNanos The current sim time
+ @param currentSimNanos The current sim time
  */
-void VizInterface::updateState(uint64_t CurrentSimNanos)
+void VizInterface::updateState(uint64_t currentSimNanos)
 {
 
     this->FrameNumber+=1;
     ReadBSKMessages();
-    if(CurrentSimNanos > 0) {
-        WriteProtobuffer(CurrentSimNanos);
+    if(currentSimNanos > 0) {
+        WriteProtobuffer(currentSimNanos);
     }
 
 }
@@ -1151,7 +1151,7 @@ void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
 
 /*! Requests an image from Vizard and stores it in the image output message
  */
-void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
+void VizInterface::requestImage(size_t camCounter, uint64_t currentSimNanos)
 {
     char buffer[10];
     zmq_recv(this->requester_socket, buffer, 10, 0);
@@ -1191,14 +1191,14 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
 
     /*! -- Write out the image information to the Image message */
     CameraImageMsgPayload imageData = {};
-    imageData.timeTag = CurrentSimNanos;
+    imageData.timeTag = currentSimNanos;
     imageData.valid = 0;
     imageData.imagePointer = this->bskImagePtrs[camCounter];
     imageData.imageBufferLength = imageBufferLength;
     imageData.cameraID = this->cameraConfigBuffers[camCounter].cameraID;
     imageData.imageType = 4;
     if (imageBufferLength>0){imageData.valid = 1;}
-    this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, CurrentSimNanos);
+    this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, currentSimNanos);
 
     /*! -- Clean the messages to avoid memory leaks */
     zmq_msg_close(&length);

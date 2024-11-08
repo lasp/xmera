@@ -38,8 +38,8 @@ public:
     ~MotorVoltageInterface();
    
     void computeMotorTorque();
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
     void setGains(Eigen::VectorXd gains); //!< --     Takes in an array of gains to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT

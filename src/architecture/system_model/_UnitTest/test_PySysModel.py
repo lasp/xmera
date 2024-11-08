@@ -86,17 +86,17 @@ class PythonModule(sysModel.SysModel):
         super().__init__(*args)
         self.dataOutMsg = messaging.CModuleTemplateMsg()
 
-    def reset(self, CurrentSimNanos):
+    def reset(self, currentSimNanos):
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = np.array([0,0,0])
-        self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
+        self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
         self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
 
-    def updateState(self, CurrentSimNanos):
+    def updateState(self, currentSimNanos):
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = self.dataOutMsg.read().dataVector + np.array([0,1,0])
-        self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
-        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s")
+        self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
+        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {currentSimNanos*1e-9}s")
 
 if __name__ == "__main__":
     test_PySysModel()

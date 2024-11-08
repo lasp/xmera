@@ -98,10 +98,10 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
 /*! This method is used to reset the module.
  @return void
  */
-void AtmosphereBase::reset(uint64_t CurrentSimNanos)
+void AtmosphereBase::reset(uint64_t currentSimNanos)
 {
     //! - call the custom environment module reset method
-    customreset(CurrentSimNanos);
+    customreset(currentSimNanos);
 
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
@@ -270,9 +270,9 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime)
 
 /*! Computes the current local magnetic field for each spacecraft and writes their respective messages.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void AtmosphereBase::updateState(uint64_t CurrentSimNanos)
+void AtmosphereBase::updateState(uint64_t currentSimNanos)
 {
     //! - clear the output buffer
     std::vector<AtmoPropsMsgPayload>::iterator it;
@@ -282,11 +282,11 @@ void AtmosphereBase::updateState(uint64_t CurrentSimNanos)
     //! - update local neutral density information
     if(this->readMessages())
     {
-        this->updateLocalAtmosphere(CurrentSimNanos*NANO2SEC);
+        this->updateLocalAtmosphere(currentSimNanos*NANO2SEC);
     }
 
     //! - write out neutral density message
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 
     return;
 }

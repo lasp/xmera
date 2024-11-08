@@ -378,14 +378,14 @@ class attachedBodyModule(sysModel.SysModel):
         self.dcm_BF = dcm_BF
         self.r_FB_B = r_FB_B
 
-    def updateState(self, CurrentSimNanos):
+    def updateState(self, currentSimNanos):
         # Read input message
         self.scMsgBuffer = self.scInMsg()
 
         # Write output message
-        self.writeOutputMsg(CurrentSimNanos)
+        self.writeOutputMsg(currentSimNanos)
 
-    def writeOutputMsg(self, CurrentSimNanos):
+    def writeOutputMsg(self, currentSimNanos):
         # Create output message buffer
         bodyOutMsgBuffer = messaging.SCStatesMsgPayload()
 
@@ -406,7 +406,7 @@ class attachedBodyModule(sysModel.SysModel):
         bodyOutMsgBuffer.sigma_BN = sigma_FN
         bodyOutMsgBuffer.omega_BN_B = omega_FB_F
         bodyOutMsgBuffer.r_BN_N = r_FN_N
-        self.bodyOutMsg.write(bodyOutMsgBuffer, CurrentSimNanos, self.moduleID)
+        self.bodyOutMsg.write(bodyOutMsgBuffer, currentSimNanos, self.moduleID)
 
 
 if __name__ == "__main__":

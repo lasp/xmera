@@ -140,7 +140,7 @@ private:
     void reset(uint64_t CurrentClock) override;
 	void registerStates(DynParamManager& states) override;
 	void linkInStates(DynParamManager& states) override;
-    void writeOutputStateMessages(uint64_t CurrentSimNanos) override;
+    void writeOutputStateMessages(uint64_t currentSimNanos) override;
     void updateEffectorMassProps(double integTime) override;
     void updateContributions(double integTime,
                              BackSubMatrices & backSubContr,
@@ -151,7 +151,7 @@ private:
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN) override;
-    void updateState(uint64_t CurrentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
     void computeTranslatingBodyInertialStates();
     void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g);

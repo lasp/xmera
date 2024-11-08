@@ -42,7 +42,7 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void SmallBodyWaypointFeedback::reset(uint64_t CurrentSimNanos)
+void SmallBodyWaypointFeedback::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
@@ -74,7 +74,7 @@ void SmallBodyWaypointFeedback::readMessages(){
 /*! This method computes the control using a Lyapunov feedback law
     @return void
 */
-void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
+void SmallBodyWaypointFeedback::computeControl(uint64_t currentSimNanos){
     /* Get the orbital elements of the asteroid, we assume the uncertainty on the pos. and vel. of the body are low
      * enough to consider them known apriori */
     rv2elem(mu_sun, asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, &oe_ast);
@@ -140,18 +140,18 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
 */
-void SmallBodyWaypointFeedback::updateState(uint64_t CurrentSimNanos)
+void SmallBodyWaypointFeedback::updateState(uint64_t currentSimNanos)
 {
     this->readMessages();
-    this->computeControl(CurrentSimNanos);
-    this->writeMessages(CurrentSimNanos);
-    prevTime = CurrentSimNanos;
+    this->computeControl(currentSimNanos);
+    this->writeMessages(currentSimNanos);
+    prevTime = currentSimNanos;
 }
 
 /*! This method reads the input messages each call of updateState
     @return void
 */
-void SmallBodyWaypointFeedback::writeMessages(uint64_t CurrentSimNanos){
+void SmallBodyWaypointFeedback::writeMessages(uint64_t currentSimNanos){
     /* Create the output message buffer */
     CmdForceBodyMsgPayload forceOutMsgBuffer;
 
@@ -162,5 +162,5 @@ void SmallBodyWaypointFeedback::writeMessages(uint64_t CurrentSimNanos){
     eigenVector3d2CArray(thrust_B, forceOutMsgBuffer.forceRequestBody);
 
     /* Write the message */
-    this->forceOutMsg.write(&forceOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->forceOutMsg.write(&forceOutMsgBuffer, this->moduleID, currentSimNanos);
 }

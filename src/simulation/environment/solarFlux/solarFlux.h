@@ -35,10 +35,10 @@ class SolarFlux: public SysModel {
 public:
     SolarFlux(){};
     ~SolarFlux(){};
-    
-    void reset(uint64_t CurrentSimNanos) override;
-    void updateState(uint64_t CurrentSimNanos) override;
-    void writeMessages(uint64_t CurrentSimNanos);
+
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
+    void writeMessages(uint64_t currentSimNanos);
     void readMessages();
 
 public:

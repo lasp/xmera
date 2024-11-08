@@ -36,9 +36,9 @@ class DataNodeBase: public SysModel {
 public:
     DataNodeBase();
     ~DataNodeBase();
-    void reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void computeDataStatus(double currentTime);
-    void updateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);

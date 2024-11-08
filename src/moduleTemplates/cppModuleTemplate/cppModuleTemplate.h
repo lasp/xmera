@@ -31,8 +31,8 @@ public:
     CppModuleTemplate();
     ~CppModuleTemplate();
 
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 public:
 

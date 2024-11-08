@@ -26,9 +26,9 @@ PositionODuKF::~PositionODuKF() = default;
 /*! Reset the position-based OD filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void PositionODuKF::reset(uint64_t CurrentSimNanos)
+void PositionODuKF::reset(uint64_t currentSimNanos)
 {
     /*! - Check if the required message has not been connected */
     if (!this->cameraPosMsg.isLinked()) {
@@ -45,7 +45,7 @@ void PositionODuKF::reset(uint64_t CurrentSimNanos)
     this->measurementNoise.resize(this->obs.size(), this->obs.size());
     this->processNoise.resize(this->state.size(), this->state.size());
 
-    this->previousFilterTimeTag = (double) CurrentSimNanos*NANO2SEC;
+    this->previousFilterTimeTag = (double) currentSimNanos*NANO2SEC;
     this->numberSigmaPoints = this->state.size()*2+1;
     this->dt = 0;
 
@@ -79,9 +79,9 @@ void PositionODuKF::reset(uint64_t CurrentSimNanos)
 /*! Take the relative position measurements and outputs an estimate of the
  spacecraft states in the inertial frame.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void PositionODuKF::updateState(uint64_t CurrentSimNanos)
+void PositionODuKF::updateState(uint64_t currentSimNanos)
 {
     this->readFilterMeasurements();
     /*! - If the time tag from the measured data is new compared to previous step,
@@ -94,12 +94,12 @@ void PositionODuKF::updateState(uint64_t CurrentSimNanos)
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    if((double) CurrentSimNanos*NANO2SEC >= this->previousFilterTimeTag)
+    if((double) currentSimNanos*NANO2SEC >= this->previousFilterTimeTag)
     {
-        this->timeUpdate((double) CurrentSimNanos * NANO2SEC);
+        this->timeUpdate((double) currentSimNanos * NANO2SEC);
     }
 
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! Perform the time update for the position OD kalman filter.
@@ -166,7 +166,7 @@ void PositionODuKF::timeUpdate(double updateTime)
  * It updates class variables relating to measurement data including validity and time tags.
  @return void
  */
-void PositionODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
+void PositionODuKF::writeOutputMessages(uint64_t currentSimNanos) {
     this->opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
     this->opNavResidualMsgBuffer = this->opNavResidualMsg.zeroMsgPayload;
     this->navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
@@ -188,9 +188,9 @@ void PositionODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
         this->opNavResidualMsgBuffer.sizeOfObservations = 3;
     }
 
-    this->navTransOutMsg.write(&this->navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->opNavFilterMsg.write(&this->opNavFilterMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->opNavResidualMsg.write(&this->opNavResidualMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->navTransOutMsg.write(&this->navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavFilterMsg.write(&this->opNavFilterMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavResidualMsg.write(&this->opNavResidualMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Read the message containing the measurement data.

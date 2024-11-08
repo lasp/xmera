@@ -50,9 +50,9 @@ PlanetNav::~PlanetNav()
 
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
-    @param CurrentSimNanos The clock time associated with the module call
+    @param currentSimNanos The clock time associated with the module call
 */
-void PlanetNav::reset(uint64_t CurrentSimNanos)
+void PlanetNav::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->ephemerisInMsg.isLinked()) {
@@ -90,12 +90,12 @@ void PlanetNav::readInputMessages()
 
 /*! This method writes the aggregate nav information into the output state message.
  @return void
- @param CurrentSimNanos The clock time associated with the model call
+ @param currentSimNanos The clock time associated with the model call
  */
-void PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
+void PlanetNav::writeOutputMessages(uint64_t currentSimNanos)
 {
-    this->noisePlanetState.timeTag = (double) CurrentSimNanos * NANO2SEC;
-    this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, CurrentSimNanos);
+    this->noisePlanetState.timeTag = (double) currentSimNanos * NANO2SEC;
+    this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, currentSimNanos);
 }
 
 /*! This method applies the errors to the truePlanetState
@@ -113,14 +113,14 @@ void PlanetNav::applyErrors()
 /*! This method sets the propagation matrix and requests new random errors from
  its GaussMarkov model.
  @return void
- @param CurrentSimNanos The clock time associated with the model call
+ @param currentSimNanos The clock time associated with the model call
  */
-void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
+void PlanetNav::computeErrors(uint64_t currentSimNanos)
 {
     double timeStep;
     Eigen::MatrixXd localProp = this->AMatrix;
     //! - Compute timestep since the last call
-    timeStep = (CurrentSimNanos - this->prevTime)*1.0E-9;
+    timeStep = (currentSimNanos - this->prevTime)*1.0E-9;
 
     localProp(0,3) *= timeStep; //postion/velocity cross correlation terms
     localProp(1,4) *= timeStep; //postion/velocity cross correlation terms
@@ -137,17 +137,17 @@ void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
-    @param CurrentSimNanos The clock time associated with the model call
+    @param currentSimNanos The clock time associated with the model call
 */
-void PlanetNav::updateState(uint64_t CurrentSimNanos)
+void PlanetNav::updateState(uint64_t currentSimNanos)
 {
     /* zero the output msg buffer */
     this->noisePlanetState = this->ephemerisOutMsg.zeroMsgPayload;
 
     this->readInputMessages();
-    this->computeErrors(CurrentSimNanos);
+    this->computeErrors(currentSimNanos);
     this->applyErrors();
-    this->writeOutputMessages(CurrentSimNanos);
-    this->prevTime = CurrentSimNanos;
+    this->writeOutputMessages(currentSimNanos);
+    this->prevTime = currentSimNanos;
 }
 

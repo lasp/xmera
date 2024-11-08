@@ -746,14 +746,14 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void VSCMGStateEffector::updateState(uint64_t CurrentSimNanos)
+void VSCMGStateEffector::updateState(uint64_t currentSimNanos)
 {
 	//! - Read the inputs and then call ConfigureVSCMGRequests to set up dynamics
 	ReadInputs();
-	ConfigureVSCMGRequests(CurrentSimNanos*NANO2SEC);
-	WriteOutputMessages(CurrentSimNanos);
+	ConfigureVSCMGRequests(currentSimNanos*NANO2SEC);
+	WriteOutputMessages(currentSimNanos);
 }
 
 /*!

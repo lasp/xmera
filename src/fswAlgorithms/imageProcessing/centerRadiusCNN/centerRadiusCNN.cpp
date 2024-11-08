@@ -50,9 +50,9 @@ CenterRadiusCNN::~CenterRadiusCNN()
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CenterRadiusCNN::reset(uint64_t CurrentSimNanos)
+void CenterRadiusCNN::reset(uint64_t currentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
@@ -74,15 +74,15 @@ void CenterRadiusCNN::reset(uint64_t CurrentSimNanos)
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CenterRadiusCNN::updateState(uint64_t CurrentSimNanos)
+void CenterRadiusCNN::updateState(uint64_t currentSimNanos)
 {
     std::string filenamePre;
     CameraImageMsgPayload imageBuffer;
     OpNavCirclesMsgPayload circleBuffer;
     cv::Mat imageCV, blurred;
-    filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+    filenamePre = "PreprocessedImage_" + std::to_string(currentSimNanos*1E-9) + ".jpg";
 
     /*! - Load in the trained CNN model*/
 
@@ -98,7 +98,7 @@ void CenterRadiusCNN::updateState(uint64_t CurrentSimNanos)
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
     }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
+    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
@@ -108,7 +108,7 @@ void CenterRadiusCNN::updateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
+        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
         return;
     }
     /*!-  evaluate CNN on image */
@@ -133,7 +133,7 @@ void CenterRadiusCNN::updateState(uint64_t CurrentSimNanos)
         }
     }
 
-    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
+    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
 
     return;
 }

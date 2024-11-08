@@ -35,7 +35,7 @@ The following sample code assumes that the class variable ``value`` should be re
     /*! Reset the module.
      @return void
      */
-    void SomeModule::reset(uint64_t CurrentSimNanos)
+    void SomeModule::reset(uint64_t currentSimNanos)
     {
         this->value = 0.0;
 
@@ -50,7 +50,7 @@ The ``updateState()`` is the method that is called each time the Basilisk simula
 
 .. code:: cpp
 
-    void CppModuleTemplate::updateState(uint64_t CurrentSimNanos)
+    void CppModuleTemplate::updateState(uint64_t currentSimNanos)
     {
         SomeMsgPayload outMsgBuffer;       /*!< local output message copy */
         SomeMsgPayload inMsgBuffer;        /*!< local copy of input message */
@@ -65,7 +65,7 @@ The ``updateState()`` is the method that is called each time the Basilisk simula
         v3Copy(inMsgBuffer.dataVector, outMsgBuffer.dataVector);
 
         /*! - write the module output message */
-        this->dataOutMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
+        this->dataOutMsg.write(&outMsgBuffer, this->moduleID, currentSimNanos);
     }
 
 .. warning::

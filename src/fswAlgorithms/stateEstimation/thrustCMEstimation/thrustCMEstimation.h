@@ -44,8 +44,8 @@
 
 class ThrustCMEstimation: public SysModel {
 public:
-    void reset(uint64_t CurrentSimNanos) override;
-    void updateState(uint64_t CurrentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
     /*! declare these user-defined quantities */
     double attitudeTol;

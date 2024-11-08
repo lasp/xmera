@@ -38,9 +38,9 @@ class AtmosphereBase: public SysModel  {
 public:
     AtmosphereBase();
     ~AtmosphereBase();
-    void reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
-    void updateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);

@@ -317,17 +317,17 @@ class PythonMRPPD(sysModel.SysModel):
         # Output body torque message name
         self.cmdTorqueOutMsg = messaging.CmdTorqueBodyMsg()
 
-    def reset(self, CurrentSimNanos):
+    def reset(self, currentSimNanos):
         """
         The Reset method is used to clear out any persistent variables that need to get changed
         when a task is restarted.  This method is typically only called once after selfInit/crossInit,
         but it should be written to allow the user to call it multiple times if necessary.
-        :param CurrentSimNanos: current simulation time in nano-seconds
+        :param currentSimNanos: current simulation time in nano-seconds
         :return: none
         """
         return
 
-    def updateState(self, CurrentSimNanos):
+    def updateState(self, currentSimNanos):
         """
         The updateState method is the cyclical worker method for a given Basilisk class.  It
         will get called periodically at the rate specified in the task that the model is
@@ -335,7 +335,7 @@ class PythonMRPPD(sysModel.SysModel):
         requirements though, be careful about how much processing you put into a Python updateState
         method.  You could easily detonate your sim's ability to run in realtime.
 
-        :param CurrentSimNanos: current simulation time in nano-seconds
+        :param currentSimNanos: current simulation time in nano-seconds
         :return: none
         """
         # read input message
@@ -348,14 +348,14 @@ class PythonMRPPD(sysModel.SysModel):
         lrCmd = np.array(guidMsgBuffer.sigma_BR) * self.K + np.array(guidMsgBuffer.omega_BR_B) * self.P
         torqueOutMsgBuffer.torqueRequestBody = (-lrCmd).tolist()
 
-        self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, CurrentSimNanos, self.moduleID)
+        self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, currentSimNanos, self.moduleID)
 
         # All Python SysModels have self.bskLogger available
         # The logger level flags (i.e. BSK_INFORMATION) may be
         # accessed from sysModel
         if False:
             """Sample Python module method"""
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"Time: {CurrentSimNanos * 1.0E-9} s")
+            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"Time: {currentSimNanos * 1.0E-9} s")
             self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
             self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}")
             self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")

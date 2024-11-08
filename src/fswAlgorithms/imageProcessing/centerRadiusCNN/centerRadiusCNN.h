@@ -41,16 +41,16 @@ class CenterRadiusCNN: public SysModel {
 public:
     CenterRadiusCNN();
     ~CenterRadiusCNN();
-    
-    void updateState(uint64_t CurrentSimNanos);
-    void reset(uint64_t CurrentSimNanos);
-    
+
+    void updateState(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos);
+
 public:
     std::string filename;                //!< Filename for module to read an image directly
     Message<OpNavCirclesMsgPayload> opnavCirclesOutMsg;  //!< The name of the OpNavCirclesMsg output message
-    
+
     ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
-    
+
     std::string pathToNetwork;                  //!< Path to the trained CNN
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
@@ -64,4 +64,3 @@ private:
 
 
 #endif
-

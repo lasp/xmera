@@ -36,8 +36,8 @@ class FormationBarycenter: public SysModel {
 public:
     FormationBarycenter();
 
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void ReadInputMessages();
     void addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg, Message<VehicleConfigMsgPayload>* tmpScPayloadMsg);
     void computeBaricenter();

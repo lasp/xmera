@@ -22,7 +22,7 @@
 /*! This method is used to reset the module.
  @return void
  */
-void RateDamp::reset(uint64_t CurrentSimNanos)
+void RateDamp::reset(uint64_t currentSimNanos)
 {
     assert(this->attNavInMsg.isLinked());
 }
@@ -30,9 +30,9 @@ void RateDamp::reset(uint64_t CurrentSimNanos)
 
 /*! This method is the main carrier for the computation of the control torque.
  @return void
- @param CurrentSimNanos The current simulation time for system
+ @param currentSimNanos The current simulation time for system
  */
-void RateDamp::updateState(uint64_t CurrentSimNanos)
+void RateDamp::updateState(uint64_t currentSimNanos)
 {
     /*! Read input attitude navigation msg */
     NavAttMsgPayload attNavInBuffer = this->attNavInMsg();
@@ -44,7 +44,7 @@ void RateDamp::updateState(uint64_t CurrentSimNanos)
     }
 
     /*! Write output messages */
-    this->cmdTorqueOutMsg.write(&cmdTorqueOutBuffer, this->moduleID, CurrentSimNanos);
+    this->cmdTorqueOutMsg.write(&cmdTorqueOutBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Set the module rate feedback gain

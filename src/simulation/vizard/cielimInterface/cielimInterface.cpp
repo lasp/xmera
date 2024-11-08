@@ -37,9 +37,9 @@ CielimInterface::~CielimInterface() {
 }
 
 /*! A Reset method to put the module back into a clean state
- @param CurrentSimNanos The current sim time in nanoseconds
+ @param currentSimNanos The current sim time in nanoseconds
 */
-void CielimInterface::reset(uint64_t CurrentSimNanos) {
+void CielimInterface::reset(uint64_t currentSimNanos) {
     if (this->opNavMode != ClosedLoopMode::OPEN_LOOP || this->liveStream) {
         for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
             this->bskImagePtrs[camCounter] = nullptr;
@@ -344,9 +344,9 @@ void CielimInterface::readBskMessages() {
 }
 
 /*! The method in which the vizInterface writes a protobuffer with the information from the simulation.
- @param CurrentSimNanos The current sim time in nanoseconds
+ @param currentSimNanos The current sim time in nanoseconds
  */
-void CielimInterface::writeProtobuffer(uint64_t CurrentSimNanos) {
+void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
     auto *visPayload = new vizProtobufferMessage::VizMessage;
 
     /*! Send the Vizard settings once */
@@ -363,7 +363,7 @@ void CielimInterface::writeProtobuffer(uint64_t CurrentSimNanos) {
     /*! Write timestamp output msg */
     auto *time = new vizProtobufferMessage::VizMessage::TimeStamp;
     time->set_framenumber(this->frameNumber);
-    time->set_simtimeelapsed((double) CurrentSimNanos);
+    time->set_simtimeelapsed((double) currentSimNanos);
     visPayload->set_allocated_currenttime(time);
 
     /*! write epoch msg */
@@ -664,19 +664,19 @@ void CielimInterface::writeProtobuffer(uint64_t CurrentSimNanos) {
     /*!--OpNavMode set to REQUESTED_FRAMES is a faster mode in which the viz only steps forward to the BSK time step
      * if an image is requested. This is a faster run but nothing can be visualized post-run */
     if (this->opNavMode == ClosedLoopMode::ALL_FRAMES ||
-        (this->opNavMode == ClosedLoopMode::REQUESTED_FRAMES && this->shouldRequestACameraImage(CurrentSimNanos)) ||
+        (this->opNavMode == ClosedLoopMode::REQUESTED_FRAMES && this->shouldRequestACameraImage(currentSimNanos)) ||
         this->liveStream) {
         this->connector.send(*visPayload);
 
         for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
             /*! - If the camera is requesting periodic images, request them */
             if (this->opNavMode != ClosedLoopMode::OPEN_LOOP &&
-                CurrentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                currentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
                 this->cameraConfigBuffers[camCounter].isOn == 1) {
-                this->requestImage(camCounter, CurrentSimNanos);
+                this->requestImage(camCounter, currentSimNanos);
             }
         }
-        if (this->shouldRequestACameraImage(CurrentSimNanos)) {
+        if (this->shouldRequestACameraImage(currentSimNanos)) {
             this->connector.ping();
         }
     }
@@ -689,9 +689,9 @@ void CielimInterface::writeProtobuffer(uint64_t CurrentSimNanos) {
     google::protobuf::ShutdownProtobufLibrary();
 }
 
-bool CielimInterface::shouldRequestACameraImage(uint64_t CurrentSimNanos) const{
+bool CielimInterface::shouldRequestACameraImage(uint64_t currentSimNanos) const{
     for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
-        if (CurrentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+        if (currentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
             this->cameraConfigBuffers[camCounter].isOn == 1 /*|| this->firstPass < 11*/) {
             return true;
         }

@@ -36,8 +36,8 @@ public:
     MrpProportionalDerivative() = default;                            //!< Constructor
     ~MrpProportionalDerivative() = default;                           //!< Destructor
 
-    void reset(uint64_t CurrentSimNanos) override;                    //!< Reset member function
-    void updateState(uint64_t CurrentSimNanos) override;              //!< Update member function
+    void reset(uint64_t currentSimNanos) override;                    //!< Reset member function
+    void updateState(uint64_t currentSimNanos) override;              //!< Update member function
     double getDerivativeGainP();                                      //!< Getter method for derivative gain P
     const Eigen::Vector3d &getKnownTorquePntB_B() const;              //!< Getter method for the known external torque about point B
     double getProportionalGainK();                                    //!< Getter method for proportional gain K

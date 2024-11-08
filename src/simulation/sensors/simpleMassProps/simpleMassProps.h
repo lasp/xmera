@@ -32,11 +32,11 @@ public:
     SimpleMassProps();
     ~SimpleMassProps();
 
-    void reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
     void computeMassProperties();
-    void updateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 
 public:

@@ -39,9 +39,9 @@ class PowerNodeBase: public SysModel  {
 public:
     PowerNodeBase();
     ~PowerNodeBase();
-    void reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void computePowerStatus(double currentTime);
-    void updateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);

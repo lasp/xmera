@@ -43,7 +43,7 @@ public:
     virtual void updateState(uint64_t currentSimNanos){};
 
     /** Called at simulation initialization, resets module to specified time */
-    virtual void reset(uint64_t CurrentSimNanos){};
+    virtual void reset(uint64_t currentSimNanos){};
 
     std::string modelTag = "";     //!< -- name for the algorithm to base off of
     uint64_t CallCounts = 0;       //!< -- Counts on the model being called

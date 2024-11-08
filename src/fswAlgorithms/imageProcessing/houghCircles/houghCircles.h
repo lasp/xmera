@@ -43,10 +43,10 @@ class HoughCircles: public SysModel {
 public:
     HoughCircles();
     ~HoughCircles();
-    
-    void updateState(uint64_t CurrentSimNanos);
-    void reset(uint64_t CurrentSimNanos);
-    
+
+    void updateState(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos);
+
 public:
     std::string filename;                //!< Filename for module to read an image directly
     Message<OpNavCirclesMsgPayload> opnavCirclesOutMsg;  //!< The name of the OpNavCirclesMsg output message
@@ -69,4 +69,3 @@ public:
 
 
 #endif
-

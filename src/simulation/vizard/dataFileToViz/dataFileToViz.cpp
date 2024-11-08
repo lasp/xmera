@@ -55,9 +55,9 @@ DataFileToViz::~DataFileToViz()
 
 
 /*! A Reset method to put the module back into a clean state
- @param CurrentSimNanos The current sim time in nanoseconds
+ @param currentSimNanos The current sim time in nanoseconds
  */
-void DataFileToViz::reset(uint64_t CurrentSimNanos)
+void DataFileToViz::reset(uint64_t currentSimNanos)
 {
     if (this->dataFileName.length() == 0) {
         bskLogger.bskLog(BSK_ERROR, "DataFileToViz: dataFileName must be an non-empty string.");
@@ -255,9 +255,9 @@ void DataFileToViz::appendRwDir(double dir_B[3])
 
 
 /*! Update this module at the task rate
- @param CurrentSimNanos The current sim time
+ @param currentSimNanos The current sim time
  */
-void DataFileToViz::updateState(uint64_t CurrentSimNanos)
+void DataFileToViz::updateState(uint64_t currentSimNanos)
 {
     /* ensure that a file was opened */
     if (this->fileHandle.is_open()) {
@@ -316,7 +316,7 @@ void DataFileToViz::updateState(uint64_t CurrentSimNanos)
                 pullVector(&iss, scMsg.omega_BN_B);
 
                 /* write spacecraft state message */
-                this->scStateOutMsgs.at(scCounter)->write(&scMsg, this->moduleID, CurrentSimNanos);
+                this->scStateOutMsgs.at(scCounter)->write(&scMsg, this->moduleID, currentSimNanos);
 
                 /* check if thruster states are provided */
                 if (this->thrMsgDataSC.size() > 0) {
@@ -335,7 +335,7 @@ void DataFileToViz::updateState(uint64_t CurrentSimNanos)
                                 eigenVector3d2CArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
                                 eigenVector3d2CArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
 
-                                this->thrScOutMsgs[scCounter].at(thrCounter)->write(&thrMsg, this->moduleID, CurrentSimNanos);
+                                this->thrScOutMsgs[scCounter].at(thrCounter)->write(&thrMsg, this->moduleID, currentSimNanos);
                                 thrCounter++;
                             }
                             thrClusterCounter++;
@@ -359,7 +359,7 @@ void DataFileToViz::updateState(uint64_t CurrentSimNanos)
                             eigenVector3d2CArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
                             eigenVector3d2CArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
 
-                            this->rwScOutMsgs[scCounter].at(rwCounter)->write(&rwOutMsg, this->moduleID, CurrentSimNanos);
+                            this->rwScOutMsgs[scCounter].at(rwCounter)->write(&rwOutMsg, this->moduleID, currentSimNanos);
 
                         }
                     }

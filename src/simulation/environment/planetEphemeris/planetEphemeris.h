@@ -36,8 +36,8 @@ public:
     PlanetEphemeris();
     ~PlanetEphemeris();
 
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
     void setPlanetNames(std::vector<std::string> planetNames);
 

@@ -59,7 +59,7 @@ void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tm
 /*! This method is used to reset the module.
  @return void
  */
-void PowerStorageBase::reset(uint64_t CurrentSimNanos)
+void PowerStorageBase::reset(uint64_t currentSimNanos)
 {
     this->previousTime = 0;
     if (this->storedCharge_Init >= 0.0) {
@@ -69,7 +69,7 @@ void PowerStorageBase::reset(uint64_t CurrentSimNanos)
     }
 
     //! - call the custom environment module reset method
-    customreset(CurrentSimNanos);
+    customreset(currentSimNanos);
 
     return;
 }

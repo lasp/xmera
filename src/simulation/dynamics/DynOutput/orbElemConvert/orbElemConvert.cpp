@@ -36,7 +36,7 @@ OrbElemConvert::~OrbElemConvert()
 /*! This method is used to reset the module.
  @return void
  */
-void OrbElemConvert::reset(uint64_t CurrentSimNanos)
+void OrbElemConvert::reset(uint64_t currentSimNanos)
 {
     int numInputs = 0;      //!< number of input messages connected
     int numOutputs = 0;     //!< number of output messages connected
@@ -156,9 +156,9 @@ void OrbElemConvert::ReadInputs()
  that it needs to re-init (direction change maybe) it will re-init itself.
  The it either converts elements to cartesian or cartesian to elements.
  @return void
- @param CurrentSimNanos The current simulation time for system
+ @param currentSimNanos The current simulation time for system
  */
-void OrbElemConvert::updateState(uint64_t CurrentSimNanos)
+void OrbElemConvert::updateState(uint64_t currentSimNanos)
 {
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();
@@ -172,5 +172,5 @@ void OrbElemConvert::updateState(uint64_t CurrentSimNanos)
     }
 
     //! Write out the current output for current time
-    WriteOutputMessages(CurrentSimNanos);
+    WriteOutputMessages(currentSimNanos);
 }

@@ -41,7 +41,7 @@ FacetDragDynamicEffector::~FacetDragDynamicEffector()
 
 
 
-void FacetDragDynamicEffector::reset(uint64_t CurrentSimNanos)
+void FacetDragDynamicEffector::reset(uint64_t currentSimNanos)
 {
 	// check if input message has not been included
 	if (!this->atmoDensInMsg.isLinked()) {
@@ -155,9 +155,9 @@ void FacetDragDynamicEffector::computeForceTorque(double integTime, double timeS
 /*! This method is called to update the local atmospheric conditions at each timestep.
 Naturally, this means that conditions are held piecewise-constant over an integration step.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void FacetDragDynamicEffector::updateState(uint64_t CurrentSimNanos)
+void FacetDragDynamicEffector::updateState(uint64_t currentSimNanos)
 {
 	ReadInputs();
 	return;

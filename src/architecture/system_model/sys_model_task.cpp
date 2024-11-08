@@ -60,15 +60,15 @@ void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 /*! This method executes all of the models on the Task during runtime.
  Then, it sets its NextStartTime appropriately.
  @return void
- @param CurrentSimNanos The current simulation time in [ns]
+ @param currentSimNanos The current simulation time in [ns]
  */
-void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
+void SysModelTask::ExecuteTaskList(uint64_t currentSimNanos)
 {
     for(auto ModelPair = this->TaskModels.begin();
     (ModelPair != this->TaskModels.end() && this->taskActive);
     ModelPair++) {
         SysModel* NonIt = (ModelPair->ModelPtr);
-        NonIt->updateState(CurrentSimNanos);
+        NonIt->updateState(currentSimNanos);
         NonIt->CallCounts += 1;
     }
     //! - NextStartTime is set to allow the scheduler to fit the next call in

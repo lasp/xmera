@@ -48,10 +48,10 @@ class VizInterface : public SysModel {
 public:
     VizInterface();
     ~VizInterface();
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void ReadBSKMessages();
-    void WriteProtobuffer(uint64_t CurrentSimNanos);
+    void WriteProtobuffer(uint64_t currentSimNanos);
     void addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg);
 
 public:
@@ -96,7 +96,7 @@ private:
     std::vector<MsgCurrStatus>spiceInMsgStatus;             //!< [-] status of the incoming planets' spice data messages
     std::vector <SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies
     std::ofstream *outputStream;                            //!< [-] Output file stream opened in reset
-    void requestImage(size_t camCounter, uint64_t CurrentSimNanos);  //!<   request image from Vizard and store it in output img msg
+    void requestImage(size_t camCounter, uint64_t currentSimNanos);  //!<   request image from Vizard and store it in output img msg
 
 };
 

@@ -512,11 +512,11 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
 }
 /*! This method is used so that the simulation will ask HRB to update messages.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void NHingedRigidBodyStateEffector::updateState(uint64_t CurrentSimNanos)
+void NHingedRigidBodyStateEffector::updateState(uint64_t currentSimNanos)
 {
-    WriteOutputMessages(CurrentSimNanos);
+    WriteOutputMessages(currentSimNanos);
 
     return;
 }

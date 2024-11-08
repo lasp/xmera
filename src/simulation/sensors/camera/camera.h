@@ -138,7 +138,7 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    uint64_t localCurrentSimNanos{};
+    uint64_t localcurrentSimNanos{};
     void* pointImageOut{nullptr};      //!< void pointer for image memory passing
 };
 

@@ -44,15 +44,15 @@ class PositionODuKF: public SysModel {
 public:
     PositionODuKF();
     ~PositionODuKF() override;
-    void reset(uint64_t CurrentSimNanos) override;
-    void updateState(uint64_t CurrentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
 private:
     void timeUpdate(const double updateTime);
     void measurementUpdate();
     void measurementModel();
     void readFilterMeasurements();
-    void writeOutputMessages(uint64_t CurrentSimNanos);
+    void writeOutputMessages(uint64_t currentSimNanos);
     void computePostFitResiduals();
     Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd& input) const;
     Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd& input,

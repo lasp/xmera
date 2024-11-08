@@ -39,8 +39,8 @@ public:
     OrbElemConvert();
     ~OrbElemConvert();
 
-    void reset(uint64_t CurrentSimNanos);
-    void updateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     void Elements2Cartesian();
     void Cartesian2Elements();

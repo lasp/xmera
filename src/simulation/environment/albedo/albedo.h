@@ -60,8 +60,8 @@ public:
     Albedo();
     ~Albedo();
 
-    void updateState(uint64_t CurrentSimNanos);               //!< @brief updates the state
-    void reset(uint64_t CurrentSimNanos);                     //!< @brief resets the module
+    void updateState(uint64_t currentSimNanos);               //!< @brief updates the state
+    void reset(uint64_t currentSimNanos);                     //!< @brief resets the module
 
     void addInstrumentConfig(instConfig_t configMsg);  //!< @brief adds instrument configuration (overloaded function)
     void addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B);  //!< @brief adds instrument configuration (overloaded function)
@@ -72,7 +72,7 @@ public:
 
 private:
     void readMessages();                                      //!< reads the inpt messages
-    void writeMessages(uint64_t CurrentSimNanos);             //!< writes the outpus messages
+    void writeMessages(uint64_t currentSimNanos);             //!< writes the outpus messages
     void getPlanetRadius(std::string planetSpiceName);        //!< gets the planet's radius
     void evaluateAlbedoModel(int idx);                        //!< evaluates the ALB model
     void computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload planetMsg, bool AlbArray, double outData[]); //!< computes the albedo at instrument's location

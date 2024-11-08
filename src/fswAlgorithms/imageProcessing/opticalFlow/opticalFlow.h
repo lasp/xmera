@@ -45,9 +45,9 @@ class OpticalFlow: public SysModel {
 public:
     OpticalFlow();
     ~OpticalFlow();
-    
-    void updateState(uint64_t CurrentSimNanos);
-    void reset(uint64_t CurrentSimNanos);
+
+    void updateState(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void makeMask(cv::Mat const & inputBWImage, cv::Mat & mask) const;
 
 private:

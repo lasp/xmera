@@ -74,9 +74,9 @@ void SpacecraftUnit::SelfInitSC(int64_t moduleID)
 /*! This method is used to reset the module.
  @return void
  */
-void SpacecraftUnit::ResetSC(uint64_t CurrentSimNanos)
+void SpacecraftUnit::ResetSC(uint64_t currentSimNanos)
 {
-    this->gravField.reset(CurrentSimNanos);
+    this->gravField.reset(currentSimNanos);
 }
 
 void SpacecraftUnit::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
@@ -324,22 +324,22 @@ void SpacecraftSystem::attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, 
 /*! This method is used to reset the module.
  @return void
  */
-void SpacecraftSystem::reset(uint64_t CurrentSimNanos)
+void SpacecraftSystem::reset(uint64_t currentSimNanos)
 {
-    this->primaryCentralSpacecraft.ResetSC(CurrentSimNanos);
+    this->primaryCentralSpacecraft.ResetSC(currentSimNanos);
 
     // - Call this for all of the connected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
-        (*spacecraftConnectedIt)->ResetSC(CurrentSimNanos);
+        (*spacecraftConnectedIt)->ResetSC(currentSimNanos);
     }
 
     // - Call this for all of the unconnected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
-        (*spacecraftUnConnectedIt)->ResetSC(CurrentSimNanos);
+        (*spacecraftUnConnectedIt)->ResetSC(currentSimNanos);
     }
 
     // - Call method for initializing the dynamics of spacecraft
@@ -370,26 +370,26 @@ void SpacecraftSystem::writeOutputMessages(uint64_t clockTime)
 }
 
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
-void SpacecraftSystem::updateState(uint64_t CurrentSimNanos)
+void SpacecraftSystem::updateState(uint64_t currentSimNanos)
 {
     // - Convert current time to seconds
-    double newTime = CurrentSimNanos*NANO2SEC;
+    double newTime = currentSimNanos*NANO2SEC;
 
     // - Get access to the spice bodies
-    this->primaryCentralSpacecraft.gravField.updateState(CurrentSimNanos);
+    this->primaryCentralSpacecraft.gravField.updateState(currentSimNanos);
 
     // - Call this for all of the connected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
-        (*spacecraftConnectedIt)->gravField.updateState(CurrentSimNanos);
+        (*spacecraftConnectedIt)->gravField.updateState(currentSimNanos);
     }
 
     // - Call this for all of the unconnected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
-        (*spacecraftUnConnectedIt)->gravField.updateState(CurrentSimNanos);
+        (*spacecraftUnConnectedIt)->gravField.updateState(currentSimNanos);
     }
 
     // - Integrate the state forward in time
@@ -417,8 +417,8 @@ void SpacecraftSystem::updateState(uint64_t CurrentSimNanos)
     }
 
     // - Write the state of the vehicle into messages
-    this->writeOutputMessages(CurrentSimNanos);
-    this->simTimePrevious = CurrentSimNanos;
+    this->writeOutputMessages(currentSimNanos);
+    this->simTimePrevious = currentSimNanos;
 
     return;
 }

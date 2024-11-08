@@ -89,7 +89,7 @@ void DragDynamicEffector::computeForceTorque(double integTime, double timeStep){
 /*! This method is called to update the local atmospheric conditions at each timestep.
 Naturally, this means that atmospheric conditions are held piecewise-constant over an integration step.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
 void DragDynamicEffector::updateState(uint64_t currentSimNanos)
 {

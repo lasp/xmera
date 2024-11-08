@@ -114,7 +114,7 @@ public:
     void addDockingPort(DockingData *newDockingPort);  //!< -- Attaches a dynamicEffector
 
     void SelfInitSC(int64_t moduleID);                     //!< -- Lets spacecraft plus create its own msgs
-    void ResetSC(uint64_t CurrentSimNanos);
+    void ResetSC(uint64_t currentSimNanos);
 
     void writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID); //!< -- Method to write all of the class output messages
     void linkInStatesSC(DynParamManager& statesIn);  //!< Method to get access to the hub's states
@@ -165,9 +165,9 @@ public:
     void updateSpacecraftMassProps(double time, SpacecraftUnit& spacecraft);  //!< -- This method computes the total mass properties of the s/c
     void updateSystemMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void initializeSCPosVelocity(SpacecraftUnit& spacecraft); //!< class method
-    void reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
-    void updateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
+    void updateState(uint64_t currentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSC(double integTimeSeconds, double timeStep, SpacecraftUnit& spacecraft);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSystem(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system

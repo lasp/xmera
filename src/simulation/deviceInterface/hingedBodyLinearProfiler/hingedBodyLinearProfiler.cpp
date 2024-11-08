@@ -41,7 +41,7 @@ HingedBodyLinearProfiler::~HingedBodyLinearProfiler()
 /*! This method is used to reset the module and checks that required input messages are connected.
     @return void
 */
-void HingedBodyLinearProfiler::reset(uint64_t CurrentSimNanos)
+void HingedBodyLinearProfiler::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if(this->endTime-this->startTime > 0){
@@ -56,7 +56,7 @@ void HingedBodyLinearProfiler::reset(uint64_t CurrentSimNanos)
     relative to the start and stop times for the linear deployment.
     @return void
 */
-void HingedBodyLinearProfiler::updateState(uint64_t CurrentSimNanos)
+void HingedBodyLinearProfiler::updateState(uint64_t currentSimNanos)
 {
     double refTheta;
     double refThetaDot;
@@ -65,12 +65,12 @@ void HingedBodyLinearProfiler::updateState(uint64_t CurrentSimNanos)
     //!< always zero the output message buffers before assigning values
     hingedRigidBodyReferenceOutMsgBuffer = this->hingedRigidBodyReferenceOutMsg.zeroMsgPayload;
 
-    if(CurrentSimNanos < this->startTime) { //!< if deployment has not started
+    if(currentSimNanos < this->startTime) { //!< if deployment has not started
         refTheta = this->startTheta;
         refThetaDot = 0.0;
-    } else if (CurrentSimNanos <= this->endTime){ //!< if deployment is in progress
+    } else if (currentSimNanos <= this->endTime){ //!< if deployment is in progress
         refThetaDot = this->deploymentSlope;
-        refTheta = this->startTheta + ((CurrentSimNanos-this->startTime) * NANO2SEC) * refThetaDot;
+        refTheta = this->startTheta + ((currentSimNanos-this->startTime) * NANO2SEC) * refThetaDot;
 
     } else { //!< if deployment is over
         refTheta = this->endTheta;
@@ -82,5 +82,5 @@ void HingedBodyLinearProfiler::updateState(uint64_t CurrentSimNanos)
 
 
     //!<  write to the output messages
-    this->hingedRigidBodyReferenceOutMsg.write(&hingedRigidBodyReferenceOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->hingedRigidBodyReferenceOutMsg.write(&hingedRigidBodyReferenceOutMsgBuffer, this->moduleID, currentSimNanos);
 }

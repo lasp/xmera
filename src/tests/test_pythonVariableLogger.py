@@ -10,7 +10,7 @@ from Basilisk.utilities.tests.TickerModule import TickerModule
 def test_constructor():
 
     logger = PythonVariableLogger({
-        "ticks": lambda CurrentSimNanos : CurrentSimNanos
+        "ticks": lambda currentSimNanos : currentSimNanos
     }, 1)
 
     assert logger.min_log_period is 1, "Failed to set min_log_period"
@@ -20,7 +20,7 @@ def test_constructor():
 
 def test_reset():
     logger = PythonVariableLogger({
-        "ticks": lambda CurrentSimNanos : CurrentSimNanos
+        "ticks": lambda currentSimNanos : currentSimNanos
     }, 1)
 
 
