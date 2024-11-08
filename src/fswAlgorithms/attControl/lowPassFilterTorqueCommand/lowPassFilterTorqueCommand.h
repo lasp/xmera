@@ -47,7 +47,7 @@ public:
     double   b[NUM_LPF];                            /*!<          filter coefficients for input */
     double   Lr[NUM_LPF][3];                        /*!< [Nm]     prior torque command */
     double   LrF[NUM_LPF][3];                       /*!< [Nm]     prior filtered torque command */
-    int      reset;                                 /*!<          flag indicating the filter being started up */
+    int      shouldBeReset;                         /*!<          flag indicating the filter being started up */
 
     /* declare module IO interfaces */
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;             //!< commanded torque output message

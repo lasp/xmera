@@ -71,7 +71,7 @@ def subModuleTestFunction(show_plots):
     #   Initialize the test module configuration data
     module.wc = 0.1*math.pi*2                 #   [rad/s] continous time critical filter frequency
     module.h = 0.5                            #   [s]     filter time step
-    module.reset = 1                          #           flag to initialize module states on first run
+    module.shouldBeReset = 1                  #           flag to initialize module states on first run
 
 
     #   Create input message and size it because the regular creator of that message
