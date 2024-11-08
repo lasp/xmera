@@ -39,7 +39,7 @@ public:
     Eclipse();
     ~Eclipse();
     
-    void Reset(uint64_t CurrenSimNanos);
+    void reset(uint64_t CurrenSimNanos);
     void updateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);

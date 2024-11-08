@@ -40,7 +40,7 @@ public:
     LambertSurfaceRelativeVelocity();
     ~LambertSurfaceRelativeVelocity();
 
-    void Reset(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
     ReadFunctor<LambertProblemMsgPayload> lambertProblemInMsg;          //!< lambert problem input message

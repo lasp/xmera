@@ -28,7 +28,7 @@ CenterOfBrightness::~CenterOfBrightness() = default;
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CenterOfBrightness::Reset(uint64_t CurrentSimNanos)
+void CenterOfBrightness::reset(uint64_t CurrentSimNanos)
 {
     if (!this->imageInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "CenterOfBrightness.imageInMsg wasn't connected.");

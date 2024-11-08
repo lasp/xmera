@@ -25,7 +25,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void TorqueScheduler::Reset(uint64_t callTime)
+void TorqueScheduler::reset(uint64_t callTime)
 {
     if (!this->motorTorque1InMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "torqueScheduler.motorTorque1InMsg wasn't connected.");

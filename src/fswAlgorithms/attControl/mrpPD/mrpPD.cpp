@@ -31,7 +31,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void MrpPD::Reset(uint64_t callTime)
+void MrpPD::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->guidInMsg.isLinked()) {

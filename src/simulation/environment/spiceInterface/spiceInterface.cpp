@@ -90,7 +90,7 @@ void SpiceInterface::clearKeeper()
 /*! Reset the module to origina configuration values.
  @return void
  */
-void SpiceInterface::Reset(uint64_t CurrenSimNanos)
+void SpiceInterface::reset(uint64_t CurrenSimNanos)
 {
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")

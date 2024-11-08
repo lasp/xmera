@@ -317,7 +317,7 @@ class PythonMRPPD(sysModel.SysModel):
         # Output body torque message name
         self.cmdTorqueOutMsg = messaging.CmdTorqueBodyMsg()
 
-    def Reset(self, CurrentSimNanos):
+    def reset(self, CurrentSimNanos):
         """
         The Reset method is used to clear out any persistent variables that need to get changed
         when a task is restarted.  This method is typically only called once after selfInit/crossInit,

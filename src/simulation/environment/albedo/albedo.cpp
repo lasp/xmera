@@ -158,7 +158,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
     this->dataPaths.push_back("");
     this->numLats.push_back(-1);
     this->numLons.push_back(-1);
-    double ALB_avg = -1;    // value will be set in Reset() when we can determine the planet name
+    double ALB_avg = -1;    // value will be set in reset() when we can determine the planet name
     this->ALB_avgs.push_back(ALB_avg);
     this->albArray.push_back(false);
 
@@ -242,7 +242,7 @@ void Albedo::updateState(uint64_t CurrentSimNanos)
 /*! This method resets the module
  @return void
  */
-void Albedo::Reset(uint64_t CurrentSimNanos)
+void Albedo::reset(uint64_t CurrentSimNanos)
 {
     if (this->modelNames.empty()) {
         bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Albedo model was not set.");

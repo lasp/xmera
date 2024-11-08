@@ -35,7 +35,7 @@ PointCloudTriangulation::~PointCloudTriangulation() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void PointCloudTriangulation::Reset(uint64_t currentSimNanos)
+void PointCloudTriangulation::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->directionOfMotionInMsg.isLinked()) {

@@ -88,10 +88,10 @@ Finally, the thruster on times are checked to be greater than the thruster minim
 \subsection{Module Messages}
 The module has a single output message of type {\tt THRArrayOnTimeCmdMsgPayload} which contains the desired thruster burn times for the next control cycle.
 
-There are 3 required input messages.  The message of type {\tt THRArrayConfigMsgPayload} is read in during the {\tt Reset()} method and provides the thruster configuration states.  The message of type {\tt THRArrayCmdForceMsgPayload} provides the currently requested thruster impulse values and is read in during the {\tt Update()} method.  The message of type {\tt CmdTorqueBodyMsgPayload} is used to pull the time stamp of the currently requested $\Delta {\bm H}$ command.  It is read in during both reset and update methods.  
+There are 3 required input messages.  The message of type {\tt THRArrayConfigMsgPayload} is read in during the {\tt reset()} method and provides the thruster configuration states.  The message of type {\tt THRArrayCmdForceMsgPayload} provides the currently requested thruster impulse values and is read in during the {\tt Update()} method.  The message of type {\tt CmdTorqueBodyMsgPayload} is used to pull the time stamp of the currently requested $\Delta {\bm H}$ command.  It is read in during both reset and update methods.
 
-\subsection{{\tt Reset()} Method}
-The {\tt Reset()} method reads in the thruster message, and then resets dumping counter flag.  The stored thruster on time remainders and the request thruster impulse arrays are reset to zero.  Further, the $\Delta\bm H$ request input message is red to see if an old message exists.  If yes, then the module variable tracking the time tag of the last impulse request is reset to this current message time tag. This avoids an old message being used after a reset.  If the input message has never been written, then the prior message time tag is set to zero.
+\subsection{{\tt reset()} Method}
+The {\tt reset()} method reads in the thruster message, and then resets dumping counter flag.  The stored thruster on time remainders and the request thruster impulse arrays are reset to zero.  Further, the $\Delta\bm H$ request input message is red to see if an old message exists.  If yes, then the module variable tracking the time tag of the last impulse request is reset to this current message time tag. This avoids an old message being used after a reset.  If the input message has never been written, then the prior message time tag is set to zero.
 
 
 

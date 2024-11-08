@@ -31,7 +31,7 @@
 /*! @brief Module configuration message.  */
 class StComm : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     double dcm_BP[9];                /*!< Row major platform 2 body DCM*/

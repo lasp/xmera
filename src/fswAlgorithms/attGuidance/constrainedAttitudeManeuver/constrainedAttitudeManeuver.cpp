@@ -215,7 +215,7 @@ void ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], dou
 
 /*! This method is used to reset the module. The input messages are read here,
 the grid is generated and the graph search is performed. */
-void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
+void ConstrainedAttitudeManeuver::reset(uint64_t CurrentSimNanos)
 {
 	ReadInputs();
 

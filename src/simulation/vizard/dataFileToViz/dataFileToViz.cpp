@@ -57,7 +57,7 @@ DataFileToViz::~DataFileToViz()
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void DataFileToViz::Reset(uint64_t CurrentSimNanos)
+void DataFileToViz::reset(uint64_t CurrentSimNanos)
 {
     if (this->dataFileName.length() == 0) {
         bskLogger.bskLog(BSK_ERROR, "DataFileToViz: dataFileName must be an non-empty string.");

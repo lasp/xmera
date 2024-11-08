@@ -36,7 +36,7 @@ public:
     SolarFlux(){};
     ~SolarFlux(){};
     
-    void Reset(uint64_t CurrentSimNanos) override;
+    void reset(uint64_t CurrentSimNanos) override;
     void updateState(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);
     void readMessages();

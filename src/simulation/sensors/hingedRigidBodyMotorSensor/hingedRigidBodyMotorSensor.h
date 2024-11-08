@@ -35,7 +35,7 @@ public:
     HingedRigidBodyMotorSensor();
     ~HingedRigidBodyMotorSensor();
 
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
     
     void setRNGSeed(unsigned int newSeed); //!< for setting the seed

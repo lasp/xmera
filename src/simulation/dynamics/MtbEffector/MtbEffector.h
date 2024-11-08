@@ -40,7 +40,7 @@ class MtbEffector: public SysModel, public DynamicEffector {
 public:
     MtbEffector();
     ~MtbEffector();
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);

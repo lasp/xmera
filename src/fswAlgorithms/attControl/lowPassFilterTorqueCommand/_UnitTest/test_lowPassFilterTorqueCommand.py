@@ -94,7 +94,7 @@ def subModuleTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))    # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()

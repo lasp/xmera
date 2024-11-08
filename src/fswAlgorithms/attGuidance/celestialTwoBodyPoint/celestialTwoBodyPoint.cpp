@@ -25,7 +25,7 @@
 
 
 
-void CelestialTwoBodyPoint::Reset(uint64_t callTime)
+void CelestialTwoBodyPoint::reset(uint64_t callTime)
 {
     this->secCelBodyIsLinked = this->secCelBodyInMsg.isLinked();
 

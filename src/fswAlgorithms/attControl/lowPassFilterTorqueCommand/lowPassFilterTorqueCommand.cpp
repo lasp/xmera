@@ -33,7 +33,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void LowPassFilterTorqueCommand::Reset(uint64_t callTime)
+void LowPassFilterTorqueCommand::reset(uint64_t callTime)
 {
     int i;
 

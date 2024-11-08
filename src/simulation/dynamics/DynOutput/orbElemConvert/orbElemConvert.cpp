@@ -36,7 +36,7 @@ OrbElemConvert::~OrbElemConvert()
 /*! This method is used to reset the module.
  @return void
  */
-void OrbElemConvert::Reset(uint64_t CurrentSimNanos)
+void OrbElemConvert::reset(uint64_t CurrentSimNanos)
 {
     int numInputs = 0;      //!< number of input messages connected
     int numOutputs = 0;     //!< number of output messages connected

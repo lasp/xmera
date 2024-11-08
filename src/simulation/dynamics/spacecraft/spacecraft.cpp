@@ -52,9 +52,9 @@ Spacecraft::~Spacecraft()
 /*! This method is used to reset the module.
  @return void
  */
-void Spacecraft::Reset(uint64_t CurrentSimNanos)
+void Spacecraft::reset(uint64_t CurrentSimNanos)
 {
-    this->gravField.Reset(CurrentSimNanos);
+    this->gravField.reset(CurrentSimNanos);
     // - Call method for initializing the dynamics of spacecraft
     this->initializeDynamics();
 

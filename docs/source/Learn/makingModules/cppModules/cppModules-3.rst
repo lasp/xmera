@@ -22,20 +22,20 @@ The module destructor should ensure the module is closed down properly. It might
 
 Reset Method
 ------------
-The ``Reset()`` method should be used to
+The ``reset()`` method should be used to
 
 - restore module variables if needed. For example, the integral feedback gain variable might be reset to 0.
-- perform one-time message reads such as reading in the reaction wheel or spacecraft configuration message. etc.  Whenever ``Reset()`` is called the module should read in these messages again to use the latest values.
-- check that required input messages are connected.  If a required input message is not connected when ``Reset()`` is called, then log a BSK error message.
+- perform one-time message reads such as reading in the reaction wheel or spacecraft configuration message. etc.  Whenever ``reset()`` is called the module should read in these messages again to use the latest values.
+- check that required input messages are connected.  If a required input message is not connected when ``reset()`` is called, then log a BSK error message.
 
-The following sample code assumes that the class variable ``value`` should be re-set to 0 on ``Reset()``, and that ``someInMsg`` is a required input message:L
+The following sample code assumes that the class variable ``value`` should be re-set to 0 on ``reset()``, and that ``someInMsg`` is a required input message:L
 
 .. code:: cpp
 
     /*! Reset the module.
      @return void
      */
-    void SomeModule::Reset(uint64_t CurrentSimNanos)
+    void SomeModule::reset(uint64_t CurrentSimNanos)
     {
         this->value = 0.0;
 

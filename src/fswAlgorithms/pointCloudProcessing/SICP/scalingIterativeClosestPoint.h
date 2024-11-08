@@ -40,7 +40,7 @@ public:
     ~ScalingIterativeClosestPoint();
     
     void updateState(uint64_t CurrentSimNanos) override;
-    void Reset(uint64_t CurrentSimNanos) override;
+    void reset(uint64_t CurrentSimNanos) override;
 
     Message<PointCloudMsgPayload> outputPointCloud;  //!< The output fitted point cloud
     Message<SICPMsgPayload> outputSICPData;  //!< The output algorithm data

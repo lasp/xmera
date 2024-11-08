@@ -25,7 +25,7 @@
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void SunlineSRuKF::customReset() {
+void SunlineSRuKF::customreset() {
     this->setFilterDynamics(SunlineSRuKF::stateDerivative);
     /*! - Check if the required messages have been connected */
     assert(this->cssDataInMsg.isLinked());

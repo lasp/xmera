@@ -190,7 +190,7 @@ def mtbMomentumManagementModuleTestFunction():
 
 
     # reset the module to test this functionality
-    module.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
 
     # each test method requires a single assert method to be called

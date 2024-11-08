@@ -39,7 +39,7 @@ typedef struct{
 class EphemDifference : public SysModel {
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     ReadFunctor<EphemerisMsgPayload> ephBaseInMsg; //!< base ephemeris input message name
     EphemChangeConfig changeBodies[MAX_NUM_CHANGE_BODIES]; //!< [-] The list of bodies to change out

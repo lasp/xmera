@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedLinearTranslation::Reset(uint64_t callTime) {
+void PrescribedLinearTranslation::reset(uint64_t callTime) {
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
         this->bskLogger->bskLog(BSK_ERROR, "prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
     }

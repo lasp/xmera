@@ -3,7 +3,7 @@
 Advanced: Using ``DynamicObject`` Basilisk Modules
 ==================================================
 Basilisk modules such as :ref:`spacecraft` and :ref:`spacecraftSystem` are members of
-the ``DynamicObject`` class.  This means they still have the regular Basilisk ``Reset()`` and
+the ``DynamicObject`` class.  This means they still have the regular Basilisk ``reset()`` and
 ``updateState()`` methods, but they also have a state machine and integrator build in as these
 modules have to integrate internal ordinate differential equations (ODEs).
 

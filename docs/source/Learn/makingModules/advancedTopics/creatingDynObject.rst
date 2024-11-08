@@ -4,7 +4,7 @@ Creating ``DynamicObject`` Basilisk Modules
 ===========================================
 
 Basilisk modules that inherit from the class :ref:`dynamicObject` are still regular Basilisk modules
-that have the typical ``SelfInit()``, ``Reset()`` and ``updateState()`` methods.  However, they also contain
+that have the typical ``SelfInit()``, ``reset()`` and ``updateState()`` methods.  However, they also contain
 a state engine called ``dynManager`` of the class ``DynParamManager``, as well as an integrator
 pointer called ``integrator`` of class ``StateVecIntegrator``.  :ref:`spacecraft` is an example of
 a Basilisk module that is also inheriting from the ``DynamicObject`` class.

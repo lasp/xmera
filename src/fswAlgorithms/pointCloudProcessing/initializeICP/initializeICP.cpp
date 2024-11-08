@@ -28,7 +28,7 @@ InitializeICP::~InitializeICP() = default;
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void InitializeICP::Reset(uint64_t CurrentSimNanos)
+void InitializeICP::reset(uint64_t CurrentSimNanos)
 {
     if (!this->inputMeasuredPointCloud.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");

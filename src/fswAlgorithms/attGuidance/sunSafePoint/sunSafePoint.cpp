@@ -27,7 +27,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SunSafePoint::Reset(uint64_t callTime)
+void SunSafePoint::reset(uint64_t callTime)
 {
     double v1[3];
 

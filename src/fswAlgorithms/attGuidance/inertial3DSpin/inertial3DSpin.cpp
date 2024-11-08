@@ -42,7 +42,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Inertial3DSpin::Reset(uint64_t callTime)
+void Inertial3DSpin::reset(uint64_t callTime)
 {
 
     this->priorTime = 0;              /* reset the prior time flag state.  If set

@@ -38,7 +38,7 @@ class SmallBodyWaypointFeedback: public SysModel {
 public:
     SmallBodyWaypointFeedback();
 
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
     void readMessages();
     void computeControl(uint64_t CurrentSimNanos);

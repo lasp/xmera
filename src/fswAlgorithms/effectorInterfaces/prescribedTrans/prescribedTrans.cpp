@@ -31,7 +31,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedTrans::Reset(uint64_t callTime)
+void PrescribedTrans::reset(uint64_t callTime)
 {
     // Check if the input message is connected
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {

@@ -38,7 +38,7 @@
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void RwConfig::Reset(uint64_t callTime)
+void RwConfig::reset(uint64_t callTime)
 {
     int i;
     RWConstellationMsgPayload rwConstellation = {}; /*!< struct to populate input RW config parameters in structural S frame */

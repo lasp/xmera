@@ -28,7 +28,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OkeefeEKF::Reset(uint64_t callTime)
+void OkeefeEKF::reset(uint64_t callTime)
 {
 
     CSSConfigMsgPayload cssConfigInBuffer;

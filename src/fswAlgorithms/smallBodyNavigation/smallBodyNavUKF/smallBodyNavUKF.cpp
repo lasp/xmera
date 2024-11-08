@@ -54,7 +54,7 @@ SmallBodyNavUKF::SmallBodyNavUKF()
 /*! This method is used to reset the module, check that required input messages are connect and compute weigths.
     @return void
 */
-void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos)
+void SmallBodyNavUKF::reset(uint64_t CurrentSimNanos)
 {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {

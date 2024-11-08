@@ -26,7 +26,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void StepperMotorController::Reset(uint64_t callTime) {
+void StepperMotorController::reset(uint64_t callTime) {
     if (!this->motorRefAngleInMsg.isLinked()) {
         this->bskLogger->bskLog(BSK_ERROR, "stepperMotorController.motorRefAngleInMsg wasn't connected.");
     }

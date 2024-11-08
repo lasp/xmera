@@ -58,7 +58,7 @@ HoughCircles::~HoughCircles()
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void HoughCircles::Reset(uint64_t CurrentSimNanos)
+void HoughCircles::reset(uint64_t CurrentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {

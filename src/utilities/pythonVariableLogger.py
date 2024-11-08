@@ -61,9 +61,9 @@ class PythonVariableLogger(sysModel.SysModel):
         """Retrieve the times when the data was logged"""
         return np.array(self._times)
 
-    def Reset(self, CurrentSimNanos):
+    def reset(self, CurrentSimNanos):
         self.clear()
-        return super().Reset(CurrentSimNanos)
+        return super().reset(CurrentSimNanos)
 
     def updateState(self, CurrentSimNanos):
         if CurrentSimNanos >= self._next_update_time:

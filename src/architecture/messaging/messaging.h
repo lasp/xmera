@@ -284,7 +284,7 @@ public:
         }
     };
     //! Reset method
-    void Reset(uint64_t CurrentSimNanos){
+    void reset(uint64_t CurrentSimNanos){
         this->msgRecord.clear();    //!< -- Can only reset to 0 for now
         this->msgRecordTimes.clear();
         this->msgWrittenTimes.clear();

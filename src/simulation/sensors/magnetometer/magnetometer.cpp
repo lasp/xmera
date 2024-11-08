@@ -57,7 +57,7 @@ Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, doubl
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
  @return void */
-void Magnetometer::Reset(uint64_t CurrentSimNanos)
+void Magnetometer::reset(uint64_t CurrentSimNanos)
 {
     if (!this->magInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Magnetic field interface message name (magInMsg) is empty.");

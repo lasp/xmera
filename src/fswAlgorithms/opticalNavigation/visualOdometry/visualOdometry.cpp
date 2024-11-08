@@ -28,7 +28,7 @@ VisualOdometry::~VisualOdometry() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void VisualOdometry::Reset(uint64_t currentSimNanos)
+void VisualOdometry::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->keyPointPairInMsg.isLinked()) {

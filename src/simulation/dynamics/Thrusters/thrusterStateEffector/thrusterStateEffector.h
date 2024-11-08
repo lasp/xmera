@@ -45,7 +45,7 @@ class ThrusterStateEffector: public StateEffector, public SysModel {
 public:
     ThrusterStateEffector();
     ~ThrusterStateEffector();
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     bool ReadInputs();
     void writeOutputStateMessages(uint64_t CurrentClock);
     void registerStates(DynParamManager& states);  //!< -- Method for the effector to register its states

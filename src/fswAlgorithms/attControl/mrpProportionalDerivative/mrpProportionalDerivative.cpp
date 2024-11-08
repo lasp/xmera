@@ -26,7 +26,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void MrpProportionalDerivative::Reset(uint64_t callTime)
+void MrpProportionalDerivative::reset(uint64_t callTime)
 {
     // Check if the required input messages are linked
     if (!this->guidInMsg.isLinked()) {

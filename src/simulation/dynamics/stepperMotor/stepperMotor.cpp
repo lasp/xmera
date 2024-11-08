@@ -25,7 +25,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void StepperMotor::Reset(uint64_t callTime) {
+void StepperMotor::reset(uint64_t callTime) {
     if (!this->motorStepCommandInMsg.isLinked()) {
         _bskLog(this->bskLogger, BSK_ERROR, "Error: stepperMotor.motorStepCommandInMsg wasn't connected.");
     }

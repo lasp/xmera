@@ -92,7 +92,7 @@ public:
     ConstrainedAttitudeManeuver();
     ConstrainedAttitudeManeuver(int N);
 
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
     void ReadInputs();
     void GenerateGrid(Node startNode, Node goalNode);

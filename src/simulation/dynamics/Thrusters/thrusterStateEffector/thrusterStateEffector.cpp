@@ -72,7 +72,7 @@ ThrusterStateEffector::~ThrusterStateEffector()
 /*! This method is used to reset the module.
  @return void
  */
-void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
+void ThrusterStateEffector::reset(uint64_t CurrentSimNanos)
 {
     // Clear out any currently firing thrusters and re-init cmd array
     this->NewThrustCmds.clear();

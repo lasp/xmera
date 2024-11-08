@@ -210,7 +210,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    module.Reset(0)
+    module.reset(0)
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The

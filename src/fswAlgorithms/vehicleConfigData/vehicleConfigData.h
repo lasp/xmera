@@ -27,7 +27,7 @@
 
 class VehicleConfigData : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     double ISCPntB_B[9];          /*!< [kg m^2] Spacecraft Inertia */
     double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/

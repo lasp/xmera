@@ -30,7 +30,7 @@
 /*! @brief Top level structure for the sub-module routines. */
 class HingedRigidBodyPIDMotor : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     /*! declare these user-defined input parameters */

@@ -35,7 +35,7 @@ class DataFileToViz : public SysModel {
 public:
     DataFileToViz();
     ~DataFileToViz();
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
     void appendThrPos(double pos_B[3]);
     void appendThrDir(double dir_B[3]);

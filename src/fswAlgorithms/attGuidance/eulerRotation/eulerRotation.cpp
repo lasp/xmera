@@ -66,7 +66,7 @@ static void computeEuler321_Binv_derivative(double angleSet[3], double angleRate
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void EulerRotation::Reset(uint64_t callTime)
+void EulerRotation::reset(uint64_t callTime)
 {
     // check if the required input message is included
     if (!this->attRefInMsg.isLinked()) {

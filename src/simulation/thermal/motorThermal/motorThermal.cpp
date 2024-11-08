@@ -41,7 +41,7 @@ MotorThermal::~MotorThermal()
 /*! This method is used to reset the module.
  @return void
  */
-void MotorThermal::Reset(uint64_t CurrentSimNanos)
+void MotorThermal::reset(uint64_t CurrentSimNanos)
 {
     // check if input message is linked
     if (!this->rwStateInMsg.isLinked())

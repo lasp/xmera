@@ -48,7 +48,7 @@ public:
     ~CobConverter();
 
     void updateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
 
     void setRadius(const double radius);
     double getRadius() const;

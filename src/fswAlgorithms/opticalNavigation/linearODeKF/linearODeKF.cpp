@@ -24,7 +24,7 @@
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LinearODeKF::customReset() {
+void LinearODeKF::customreset() {
     /*! - Check if the required message has not been connected */
     assert(this->opNavHeadingMsg.isLinked());
     if (this->constantVelocityInitial) {

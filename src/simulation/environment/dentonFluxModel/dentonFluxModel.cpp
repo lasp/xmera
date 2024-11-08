@@ -33,7 +33,7 @@ DentonFluxModel::~DentonFluxModel() = default;
     @param CurrentSimNanos current simulation time in nano-seconds
     @return void
 */
-void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
+void DentonFluxModel::reset(uint64_t CurrentSimNanos)
 {
     // Check that required input messages are connected
     if (!this->scStateInMsg.isLinked())

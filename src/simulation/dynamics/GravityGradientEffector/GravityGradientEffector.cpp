@@ -37,7 +37,7 @@ GravityGradientEffector::~GravityGradientEffector()
 /*! This method is used to set the effector, and check same module variables
 @return void
 */
-void GravityGradientEffector::Reset(uint64_t CurrentSimNanos)
+void GravityGradientEffector::reset(uint64_t CurrentSimNanos)
 {
     /* zero the effector output forces and torques */
     this->forceExternal_B.fill(0.0);

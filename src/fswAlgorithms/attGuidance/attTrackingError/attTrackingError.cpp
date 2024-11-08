@@ -55,7 +55,7 @@ void computeAttitudeError(double sigma_R0R[3],
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void AttTrackingError::Reset(uint64_t callTime)
+void AttTrackingError::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->attRefInMsg.isLinked()) {

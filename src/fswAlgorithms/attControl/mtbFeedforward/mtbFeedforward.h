@@ -32,7 +32,7 @@
 /*! @brief Top level structure for the sub-module routines. */
 class MtbFeedforward : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     /* Inputs. */

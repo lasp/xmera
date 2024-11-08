@@ -147,7 +147,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     if resetCheck:
         # reset the module to test this functionality
-        module.Reset(macros.sec2nano(finalTime))  # this module reset function needs a time input (in NanoSeconds)
+        module.reset(macros.sec2nano(finalTime))  # this module reset function needs a time input (in NanoSeconds)
 
         # run the module again for an additional 2.5 seconds
         unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))  # seconds to stop simulation

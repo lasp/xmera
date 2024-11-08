@@ -13,5 +13,5 @@ class TickerModule(sysModel.SysModel):
     def GetTicker(self):
         return self._ticker
 
-    def Reset(self, current_sim_nanos):
+    def reset(self, current_sim_nanos):
         pass

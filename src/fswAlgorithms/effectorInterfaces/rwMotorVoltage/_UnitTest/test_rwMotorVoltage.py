@@ -165,7 +165,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     unitTestSim.ExecuteSimulation()
 
     # reset the module to test this functionality
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     # run the module again for an additional 1.0 seconds
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation

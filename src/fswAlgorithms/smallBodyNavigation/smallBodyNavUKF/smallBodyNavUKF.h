@@ -38,7 +38,7 @@ class SmallBodyNavUKF: public SysModel {
 public:
     SmallBodyNavUKF();
 
-    void Reset(uint64_t CurrentSimNanos);  //!< Resets module
+    void reset(uint64_t CurrentSimNanos);  //!< Resets module
     void updateState(uint64_t CurrentSimNanos);  //!< Updates state
 
 private:

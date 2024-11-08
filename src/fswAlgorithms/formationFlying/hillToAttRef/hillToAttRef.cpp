@@ -28,7 +28,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HillToAttRef::Reset(uint64_t callTime)
+void HillToAttRef::reset(uint64_t callTime)
 {
     if (!this->hillStateInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: hillToAttRef.hillStateInMsg wasn't connected.");

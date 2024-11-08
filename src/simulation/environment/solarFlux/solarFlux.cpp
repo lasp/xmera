@@ -24,7 +24,7 @@
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void
  */
-void SolarFlux::Reset(uint64_t CurrentSimNanos)
+void SolarFlux::reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {

@@ -309,7 +309,7 @@ class moduleGenerator:
         headerFile += '    ' + self._className + '();\n'
         headerFile += '    ~' + self._className + '();\n'
         headerFile += '\n'
-        headerFile += '    void Reset(uint64_t CurrentSimNanos);\n'
+        headerFile += '    void reset(uint64_t CurrentSimNanos);\n'
         headerFile += '    void updateState(uint64_t CurrentSimNanos);\n'
         headerFile += '\n'
         headerFile += 'public:\n'
@@ -356,7 +356,7 @@ class moduleGenerator:
         defFile += '/*! This method is used to reset the module and checks that required input messages are connect.\n'
         defFile += '    @return void\n'
         defFile += '*/\n'
-        defFile += 'void ' + self._className + '::Reset(uint64_t CurrentSimNanos)\n'
+        defFile += 'void ' + self._className + '::reset(uint64_t CurrentSimNanos)\n'
         defFile += '{\n'
         defFile += '    // check that required input messages are connected\n'
         for msg in inMsgList:

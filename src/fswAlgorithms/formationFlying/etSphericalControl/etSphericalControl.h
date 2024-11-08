@@ -34,7 +34,7 @@
 /*! @brief Top level structure for the sub-module routines. */
 class EtSphericalControl : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void calcRelativeMotionControl(NavTransMsgPayload servicerTransInMsgBuffer,
                                     NavTransMsgPayload debrisTransInMsgBuffer, NavAttMsgPayload servicerAttInMsgBuffer,

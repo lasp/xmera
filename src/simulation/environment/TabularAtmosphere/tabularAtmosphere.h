@@ -41,7 +41,7 @@ class TabularAtmosphere:  public AtmosphereBase {
         int rhoList_length;     // length of list of density values extracted from the atmosphere table
         int tempList_length;    // length of list of temperature values extracted from the atmosphere table
 
-        virtual void customReset(uint64_t CurrentClock);        // reset if error thrown
+        virtual void customreset(uint64_t CurrentClock);        // reset if error thrown
 
     public:
          TabularAtmosphere();

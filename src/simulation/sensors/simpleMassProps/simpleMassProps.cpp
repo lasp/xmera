@@ -36,7 +36,7 @@ SimpleMassProps::~SimpleMassProps()
 /*! This method is used to reset the module.
     @return void
  */
-void SimpleMassProps::Reset(uint64_t CurrentSimNanos)
+void SimpleMassProps::reset(uint64_t CurrentSimNanos)
 {
     // check if input message is linked
     if (!this->scMassPropsInMsg.isLinked())

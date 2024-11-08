@@ -12,7 +12,7 @@ Module Input and Output
 
 The module input and output messages are illustrated in Figure~\ref{fig:moduleImg}.  The module has a single output message of type {\tt CmdTorqueBodyIntMsg} which contains the desired momentum change $\leftexp{B}{\Delta}\bm H$.
 
-There are 2 required input messages.  The message of type {\tt RWArrayConfigMsg} is read in during the {\tt Reset()} method and provides the RW configuration states.  The message of type {\tt RWSpeedMsg} provides the current RW speeds and is read in during the {\tt Update()} method.
+There are 2 required input messages.  The message of type {\tt RWArrayConfigMsg} is read in during the {\tt reset()} method and provides the RW configuration states.  The message of type {\tt RWSpeedMsg} provides the current RW speeds and is read in during the {\tt Update()} method.
 
 Table `1 <#tab:inputRWSpeedTable>`__ shows the input message with the reaction wheel speed information.
 
@@ -103,12 +103,12 @@ If a specified momentum bias :math:`\boldsymbol{h}_d` is required instead of low
     {}^{\mathcal{B}}{\Delta}\boldsymbol H = {}^{\mathcal{B}}\boldsymbol{h}_d - {}^{\mathcal{B}}\boldsymbol{h}_s
   \end{equation}
 
-This strategy requires a thruster firing solution which creates this desired :math:`{}^{\mathcal{B}}{\Delta}\boldsymbol H` over the duration of the momentum dumping.  The goal of the RW momentum management module is to simply compute if a :math:`{}^{\mathcal{B}}{\Delta}\boldsymbol H` is required, or set it equal to zero if the RW momentum is too small.  Note that this module will only compute :math:`{}^{\mathcal{B}}{\Delta}\boldsymbol H` once.  Either it is zero or non-zero. To reuse this momentum management module, the Reset() function must be called.
+This strategy requires a thruster firing solution which creates this desired :math:`{}^{\mathcal{B}}{\Delta}\boldsymbol H` over the duration of the momentum dumping.  The goal of the RW momentum management module is to simply compute if a :math:`{}^{\mathcal{B}}{\Delta}\boldsymbol H` is required, or set it equal to zero if the RW momentum is too small.  Note that this module will only compute :math:`{}^{\mathcal{B}}{\Delta}\boldsymbol H` once.  Either it is zero or non-zero. To reuse this momentum management module, the reset() function must be called.
 
 The Reset Method
 ================
 
-The ``Reset()`` method reads in the RW configuration message and then resets the flag to do the angular momentum checking.  The goal here is to do this momentum checking only once after the reset function is called, rather than doing this checking autonomously.
+The ``reset()`` method reads in the RW configuration message and then resets the flag to do the angular momentum checking.  The goal here is to do this momentum checking only once after the reset function is called, rather than doing this checking autonomously.
 
 Message Connection Descriptions
 -------------------------------

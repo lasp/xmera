@@ -49,12 +49,12 @@ DataStorageUnitBase::~DataStorageUnitBase(){
  @param CurrentSimNanos
  @return void
  */
-void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
+void DataStorageUnitBase::reset(uint64_t CurrentSimNanos)
 {
     this->previousTime = 0;
 
     //! - call the custom environment module reset method
-    customReset(CurrentSimNanos);
+    customreset(CurrentSimNanos);
 
     return;
 }
@@ -224,10 +224,10 @@ int64_t DataStorageUnitBase::sumAllData(){
     return dataSum;
 }
 
-/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+/*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void DataStorageUnitBase::customReset(uint64_t CurrentClock)
+void DataStorageUnitBase::customreset(uint64_t CurrentClock)
 {
     return;
 }

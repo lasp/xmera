@@ -37,7 +37,7 @@ static double adjust_range(double lower, double upper, double angle);
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MeanOEFeedback::Reset(uint64_t callTime) {
+void MeanOEFeedback::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->chiefTransInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");

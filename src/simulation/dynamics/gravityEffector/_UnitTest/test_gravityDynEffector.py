@@ -487,7 +487,7 @@ def multiBodyGravity(show_plots):
     allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1])
     allGrav.linkInStates(newManager)
     allGrav.registerProperties(newManager)
-    allGrav.Reset(0)
+    allGrav.reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav)
     posVelSig = [[0.], [0.], [0.]]
     allGrav.computeGravityField(posVelSig, posVelSig) #compute acceleration only considering the first body.
@@ -512,7 +512,7 @@ def multiBodyGravity(show_plots):
     allGrav2.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2])
     allGrav2.linkInStates(newManager)
     allGrav2.registerProperties(newManager)
-    allGrav2.Reset(0)
+    allGrav2.reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav2)
     allGrav2.computeGravityField(posVelSig, posVelSig) #compute acceleration considering the first and second bodies.
     step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
@@ -531,7 +531,7 @@ def multiBodyGravity(show_plots):
     allGrav3.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2, gravBody3])
     allGrav3.linkInStates(newManager)
     allGrav3.registerProperties(newManager)
-    allGrav3.Reset(0)
+    allGrav3.reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav3)
     allGrav3.computeGravityField(posVelSig, posVelSig) #comput acceleration considering all three bodies
     step3 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame

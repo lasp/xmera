@@ -96,7 +96,7 @@ ImuSensor::~ImuSensor()
  @return void
  @param CurrentSimNanos current time (ns)
  */
-void ImuSensor::Reset(uint64_t CurrentSimNanos)
+void ImuSensor::reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {

@@ -28,7 +28,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void MtbMomentumManagementSimple::Reset(uint64_t callTime)
+void MtbMomentumManagementSimple::reset(uint64_t callTime)
 {
     /*
      * Check if the required input messages are connected.

@@ -25,7 +25,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void PixelLineConverter::Reset(uint64_t callTime)
+void PixelLineConverter::reset(uint64_t callTime)
 {
     // check that the required message has not been connected
     if (!this->cameraConfigInMsg.isLinked()) {

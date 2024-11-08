@@ -48,7 +48,7 @@ SimpleVoltEstimator::~SimpleVoltEstimator()
      - Voltage error [0]
  @return void
  */
-void SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos)
+void SimpleVoltEstimator::reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->voltInMsg.isLinked()) {

@@ -67,7 +67,7 @@ SmallBodyNavEKF::SmallBodyNavEKF()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::reset(uint64_t CurrentSimNanos)
 {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {

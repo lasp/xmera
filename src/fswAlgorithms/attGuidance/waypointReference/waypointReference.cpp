@@ -53,7 +53,7 @@ WaypointReference::~WaypointReference()
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void WaypointReference::Reset(uint64_t CurrentSimNanos)
+void WaypointReference::reset(uint64_t CurrentSimNanos)
 {
     if (this->dataFileName.length() == 0) {
         bskLogger.bskLog(BSK_ERROR, "WaypointReference: dataFileName must be an non-empty string.");

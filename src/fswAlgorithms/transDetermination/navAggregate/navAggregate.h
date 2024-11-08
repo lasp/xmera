@@ -44,7 +44,7 @@ typedef struct {
 class NavAggregate : public SysModel {
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     AggregateAttInput attMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
     AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */

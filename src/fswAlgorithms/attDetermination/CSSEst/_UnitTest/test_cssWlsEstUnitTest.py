@@ -235,7 +235,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Initialize test and then step through all of the test vectors in a loop
     unitTestSim.InitializeSimulation()
-    CSSWlsEstFSW.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    CSSWlsEstFSW.reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
     stepCount = 0
     logLengthPrev = 0
@@ -493,7 +493,7 @@ def cssRateTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
 
     # test the module reset function
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(1)     # this module reset function needs a time input (in NanoSeconds)
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))
     unitTestSim.ExecuteSimulation()
     cssDataMsg.CosValue = createCosList([1.0, 0.0, 0.0], CSSOrientationList)

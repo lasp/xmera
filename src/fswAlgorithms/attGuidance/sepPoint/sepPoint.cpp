@@ -26,7 +26,7 @@ const double epsilon = 1e-12;                           // module tolerance for 
 /*! This method is used to reset the module.
  @return void
  */
-void SepPoint::Reset(uint64_t CurrentSimNanos)
+void SepPoint::reset(uint64_t CurrentSimNanos)
 {
     if (!this->attNavInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");

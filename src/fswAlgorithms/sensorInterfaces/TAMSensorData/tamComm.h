@@ -32,7 +32,7 @@
 class TamComm : public SysModel {
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     double dcm_BS[9];                           //!< [T] Row - Sensor to Body DCM
     ReadFunctor<TAMSensorMsgPayload> tamInMsg;                    //!< [-] TAM interface input message

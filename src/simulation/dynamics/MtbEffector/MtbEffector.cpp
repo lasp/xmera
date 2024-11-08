@@ -38,7 +38,7 @@ MtbEffector::~MtbEffector()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void MtbEffector::Reset(uint64_t CurrentSimNanos)
+void MtbEffector::reset(uint64_t CurrentSimNanos)
 {
     /*
      * Check that required input messages are connected.

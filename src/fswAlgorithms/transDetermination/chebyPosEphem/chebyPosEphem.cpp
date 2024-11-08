@@ -31,7 +31,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ChebyPosEphem::Reset(uint64_t callTime)
+void ChebyPosEphem::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->clockCorrInMsg.isLinked()) {

@@ -35,7 +35,7 @@ public:
     HillPointCpp() = default;                                   //!< Constructor
     ~HillPointCpp() override = default;                         //!< Destructor
 
-    void Reset(uint64_t currentSimNanos) override;              //!< Reset function
+    void reset(uint64_t currentSimNanos) override;              //!< Reset function
     void updateState(uint64_t currentSimNanos) override;        //!< Update function
 
     ReadFunctor<NavTransMsgPayload> transNavInMsg;                     //!< The name of the incoming attitude command

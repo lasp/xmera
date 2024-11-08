@@ -53,7 +53,7 @@ def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwA
         The unit test for this module tests a set of gains :math:`K`, :math:`K_i`, :math:`P` on a rigid body
         with no external torques, and with a fixed input reference attitude message. The torque requested
         by the controller is evaluated against python computed torques at 0s, 0.5s, 1s, 1.5s and 2s to
-        within a tolerance of :math:`10^{-8}`. After 1s the simulation is stopped and the ``Reset()``
+        within a tolerance of :math:`10^{-8}`. After 1s the simulation is stopped and the ``reset()``
         function is called to check that integral feedback related variables are properly reset.
         The following permutations are run:
 
@@ -205,7 +205,7 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()

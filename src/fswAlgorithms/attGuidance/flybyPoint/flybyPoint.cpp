@@ -25,7 +25,7 @@
 /*! This method is used to reset the module.
  @return void
  */
-void FlybyPoint::Reset(uint64_t currentSimNanos)
+void FlybyPoint::reset(uint64_t currentSimNanos)
 {
     this->lastFilterReadTime = 0;
     this->firstRead = true;

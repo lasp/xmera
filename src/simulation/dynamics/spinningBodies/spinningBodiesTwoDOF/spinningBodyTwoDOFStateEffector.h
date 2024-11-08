@@ -73,7 +73,7 @@ public:
 
     SpinningBodyTwoDOFStateEffector();      //!< -- Contructor
     ~SpinningBodyTwoDOFStateEffector();     //!< -- Destructor
-    void Reset(uint64_t CurrentClock);      //!< -- Method for reset
+    void reset(uint64_t CurrentClock);      //!< -- Method for reset
     void writeOutputStateMessages(uint64_t CurrentClock);   //!< -- Method for writing the output messages
     void updateState(uint64_t CurrentSimNanos);             //!< -- Method for updating information
     void registerStates(DynParamManager& statesIn);         //!< -- Method for registering the SB states

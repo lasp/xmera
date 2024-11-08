@@ -61,7 +61,7 @@ VizInterface::~VizInterface()
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void VizInterface::Reset(uint64_t CurrentSimNanos)
+void VizInterface::reset(uint64_t CurrentSimNanos)
 {
     if (this->opNavMode > 0 || this->liveStream){
         /* setup zeroMQ */

@@ -33,7 +33,7 @@
 /*! @brief A class to perform EMA SEP pointing */
 class SepPoint: public SysModel {
 public:
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
 
     AlignmentPriority alignmentPriority;                           //!< flag to indicate which flyby model is being used

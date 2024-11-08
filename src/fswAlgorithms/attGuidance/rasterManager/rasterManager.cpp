@@ -30,7 +30,7 @@
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
 
-void RasterManager::Reset(uint64_t callTime)
+void RasterManager::reset(uint64_t callTime)
 {
     this->mnvrActive = 0;
     this->scanSelector = 0;

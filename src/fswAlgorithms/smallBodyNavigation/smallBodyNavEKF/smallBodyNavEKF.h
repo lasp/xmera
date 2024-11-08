@@ -39,7 +39,7 @@ class SmallBodyNavEKF: public SysModel {
 public:
     SmallBodyNavEKF();
 
-    void Reset(uint64_t CurrentSimNanos);  //!< Resets module
+    void reset(uint64_t CurrentSimNanos);  //!< Resets module
     void updateState(uint64_t CurrentSimNanos);  //!< Updates state
     void addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg);  //!< Adds thruster message
 

@@ -68,7 +68,7 @@ SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector()
 }
 
 /*! This method is used to reset the module. */
-void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock)
+void SpinningBodyTwoDOFStateEffector::reset(uint64_t CurrentClock)
 {
     // Normalize both sHat vectors
     if (this->s1Hat_S1.norm() > 0.01) {

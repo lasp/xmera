@@ -29,7 +29,7 @@ OpticalFlow::~OpticalFlow() = default;
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void OpticalFlow::Reset(uint64_t CurrentSimNanos)
+void OpticalFlow::reset(uint64_t CurrentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {

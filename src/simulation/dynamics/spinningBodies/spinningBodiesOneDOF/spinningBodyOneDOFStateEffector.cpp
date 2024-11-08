@@ -59,7 +59,7 @@ SpinningBodyOneDOFStateEffector::~SpinningBodyOneDOFStateEffector()
 }
 
 /*! This method is used to reset the module. */
-void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock)
+void SpinningBodyOneDOFStateEffector::reset(uint64_t CurrentClock)
 {
     // Normalize the sHat vector
     if (this->sHat_S.norm() > 0.01) {

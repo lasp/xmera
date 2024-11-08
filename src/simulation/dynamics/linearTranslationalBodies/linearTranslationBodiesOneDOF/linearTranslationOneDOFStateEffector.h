@@ -137,7 +137,7 @@ private:
     Eigen::Vector3d sigma_FN = Eigen::Vector3d::Zero();           //!< MRP attitude of frame F relative to inertial frame
     Eigen::Vector3d omega_FN_F = Eigen::Vector3d::Zero();         //!< [rad/s] inertial translating body frame angular velocity vector
 
-    void Reset(uint64_t CurrentClock) override;
+    void reset(uint64_t CurrentClock) override;
 	void registerStates(DynParamManager& states) override;
 	void linkInStates(DynParamManager& states) override;
     void writeOutputStateMessages(uint64_t CurrentSimNanos) override;

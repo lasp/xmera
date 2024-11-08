@@ -244,7 +244,7 @@ def test_albedo_invalid_file(tmp_path):
     albModule.addPlanetandAlbedoDataModel(planetInMsg, str(tmp_path), "does_not_exit.file")
     
     # this call would previously segfault
-    albModule.Reset(0)
+    albModule.reset(0)
 
     # the fact that we got here without segfaulting means the test
     # passed

@@ -49,7 +49,7 @@ public:
     ~FacetSRPDynamicEffector();                                                          //!< The module destructor
     void linkInStates(DynParamManager& states) override;                                 //!< Method for giving the effector access to the hub states
     void computeForceTorque(double callTime, double timeStep) override;                  //!< Method for computing the SRP force and torque about point B
-    void Reset(uint64_t currentSimNanos) override;                                       //!< Reset method
+    void reset(uint64_t currentSimNanos) override;                                       //!< Reset method
     void addFacet(double area,
                   double specCoeff,
                   double diffCoeff,

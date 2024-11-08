@@ -24,7 +24,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void EphemDifference::Reset(uint64_t callTime)
+void EphemDifference::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->ephBaseInMsg.isLinked()) {

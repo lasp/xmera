@@ -26,7 +26,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void ThrusterPlatformState::Reset(uint64_t callTime)
+void ThrusterPlatformState::reset(uint64_t callTime)
 {
     if (!this->thrusterConfigFInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformState.thrusterConfigFInMsg wasn't connected.");

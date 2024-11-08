@@ -39,7 +39,7 @@ TempMeasurement::~TempMeasurement() = default;
 /*! This method is used to reset the module and checks that required input messages are connected.
     @return void
 */
-void TempMeasurement::Reset(uint64_t CurrentSimNanos)
+void TempMeasurement::reset(uint64_t CurrentSimNanos)
 {
     if (!this->tempInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "TempMeasurement.tempInMsg was not linked.");

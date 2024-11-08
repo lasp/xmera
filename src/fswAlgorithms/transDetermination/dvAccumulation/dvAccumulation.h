@@ -31,7 +31,7 @@
 class DVAccumulation : public SysModel {
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     Message<NavTransMsgPayload> dvAcumOutMsg; //!< accumulated DV output message
     ReadFunctor<AccDataMsgPayload> accPktInMsg; //!< [-] input accelerometer message

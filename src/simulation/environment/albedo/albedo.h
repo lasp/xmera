@@ -61,7 +61,7 @@ public:
     ~Albedo();
 
     void updateState(uint64_t CurrentSimNanos);               //!< @brief updates the state
-    void Reset(uint64_t CurrentSimNanos);                     //!< @brief resets the module
+    void reset(uint64_t CurrentSimNanos);                     //!< @brief resets the module
 
     void addInstrumentConfig(instConfig_t configMsg);  //!< @brief adds instrument configuration (overloaded function)
     void addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B);  //!< @brief adds instrument configuration (overloaded function)

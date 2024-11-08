@@ -39,7 +39,7 @@ The simulation layout is
 shown in the following illustration.  Note that here the ``spiceInterface`` module
 must be executed prior to :ref:`spacecraft` as the
 :ref:`transRefMsgPayload` input message must be properly setup before initializing
-the spacecraft module which reads this in during ``Reset()``.
+the spacecraft module which reads this in during ``reset()``.
 
 .. image:: /_images/static/test_scenarioSpiceSpacecraft.svg
    :align: center

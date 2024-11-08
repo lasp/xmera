@@ -38,7 +38,7 @@
  Used to estimate the sun state in the vehicle body frame. */
 class SunlineUKF : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     Message<NavAttMsgPayload> navStateOutMsg;                     /*!< The name of the output message*/

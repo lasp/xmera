@@ -22,7 +22,7 @@
 /*! This method is used to reset the module.
  @return void
  */
-void RateDamp::Reset(uint64_t CurrentSimNanos)
+void RateDamp::reset(uint64_t CurrentSimNanos)
 {
     assert(this->attNavInMsg.isLinked());
 }

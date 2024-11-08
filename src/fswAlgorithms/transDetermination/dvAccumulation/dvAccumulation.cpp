@@ -91,7 +91,7 @@ void dvAccumulation_QuickSort (AccPktDataMsgPayload *A, int start, int end)
 }
 /* Experimenting QuickSort END */
 
-void DVAccumulation::Reset(uint64_t callTime)
+void DVAccumulation::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->accPktInMsg.isLinked()) {

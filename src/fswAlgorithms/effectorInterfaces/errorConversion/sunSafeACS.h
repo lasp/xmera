@@ -36,7 +36,7 @@
 /*! @brief module configuration message */
 class SunSafeACS : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     ThrustGroupData thrData;  /*!< Collection of thruster configuration data*/

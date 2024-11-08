@@ -26,7 +26,7 @@
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void ScanningInstrumentController::Reset(uint64_t callTime)
+void ScanningInstrumentController::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->accessInMsg.isLinked()) {

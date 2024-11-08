@@ -39,7 +39,7 @@ CielimInterface::~CielimInterface() {
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
 */
-void CielimInterface::Reset(uint64_t CurrentSimNanos) {
+void CielimInterface::reset(uint64_t CurrentSimNanos) {
     if (this->opNavMode != ClosedLoopMode::OPEN_LOOP || this->liveStream) {
         for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
             this->bskImagePtrs[camCounter] = nullptr;

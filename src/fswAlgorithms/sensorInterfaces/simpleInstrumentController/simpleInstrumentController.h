@@ -34,7 +34,7 @@
 class SimpleInstrumentController : public SysModel{
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     /* User configurable variables */
     double attErrTolerance; //!< Normalized MRP attitude error tolerance

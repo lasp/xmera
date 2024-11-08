@@ -37,7 +37,7 @@
  */
 class ThrMomentumDumping : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     /* declare module private variables */
     int32_t     thrDumpingCounter;                      //!<        counter to specify after how many contro period a thruster firing should occur.

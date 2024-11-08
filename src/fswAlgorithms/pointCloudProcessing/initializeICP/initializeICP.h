@@ -42,7 +42,7 @@ public:
     ~InitializeICP();
     
     void updateState(uint64_t CurrentSimNanos) override;
-    void Reset(uint64_t CurrentSimNanos) override;
+    void reset(uint64_t CurrentSimNanos) override;
 
     ReadFunctor<SICPMsgPayload> inputSICPData;  //!< The output algorithm data
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg; //!< ephemeris input message

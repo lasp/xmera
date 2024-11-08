@@ -40,7 +40,7 @@ linearTranslationOneDOFStateEffector::~linearTranslationOneDOFStateEffector()
     linearTranslationOneDOFStateEffector::effectorID = 1;
 }
 
-void linearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock) {
+void linearTranslationOneDOFStateEffector::reset(uint64_t CurrentClock) {
 }
 
 void linearTranslationOneDOFStateEffector::setMass(double mass) {

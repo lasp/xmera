@@ -45,7 +45,7 @@ MsmForceTorque::~MsmForceTorque()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
+void MsmForceTorque::reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     for (long unsigned int c=0; c < this->scStateInMsgs.size(); c++ ){

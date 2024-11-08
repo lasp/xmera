@@ -56,7 +56,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
 
 
 
-void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
+void PlanetEphemeris::reset(uint64_t CurrenSimNanos)
 {
     this->epochTime = CurrenSimNanos*NANO2SEC;
 

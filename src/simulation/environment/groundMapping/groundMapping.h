@@ -45,7 +45,7 @@ public:
     ~GroundMapping();
 
     void addPointToModel(Eigen::Vector3d& r_LP_P_init);
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
 
 private:

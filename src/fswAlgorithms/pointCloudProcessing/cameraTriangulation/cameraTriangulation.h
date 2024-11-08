@@ -41,7 +41,7 @@ public:
     CameraTriangulation();
     ~CameraTriangulation();
 
-    void Reset(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
     ReadFunctor<PointCloudMsgPayload> pointCloudInMsg; //!< point cloud input message

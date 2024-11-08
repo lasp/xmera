@@ -21,7 +21,7 @@
 
 #include "kalmanFilter.h"
 
-void KalmanFilter::Reset(uint64_t currentSimNanos) {
+void KalmanFilter::reset(uint64_t currentSimNanos) {
     assert(this->stateInitial.size() == this->covarInitial.rows() &&
            this->stateInitial.size() == this->covarInitial.cols());
 

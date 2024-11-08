@@ -43,10 +43,10 @@ MagneticFieldWMM::~MagneticFieldWMM()
     }
 }
 
-/*! Custom Reset() method.  This loads the WMM coefficient file and gets the model setup.
+/*! Custom reset() method.  This loads the WMM coefficient file and gets the model setup.
  @return void
  */
-void MagneticFieldWMM::customReset(uint64_t CurrentClock)
+void MagneticFieldWMM::customreset(uint64_t CurrentClock)
 {
     if (this->magneticModels[0] != nullptr) {
         /* clean up the prior initialization */

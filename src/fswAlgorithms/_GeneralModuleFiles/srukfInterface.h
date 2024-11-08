@@ -38,7 +38,7 @@ class SRukfInterface: public KalmanFilter {
 public:
     SRukfInterface() = default;
     ~SRukfInterface() = default;
-    void Reset(uint64_t CurrentSimNanos) final;
+    void reset(uint64_t CurrentSimNanos) final;
 
     void setAlpha(double alpha);
     double getAlpha() const;

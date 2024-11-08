@@ -35,7 +35,7 @@ EphemerisConverter::~EphemerisConverter()
 /*! Reset the module to origina configuration values.
  @return void
  */
-void EphemerisConverter::Reset(uint64_t CurrenSimNanos)
+void EphemerisConverter::reset(uint64_t CurrenSimNanos)
 {
     // check if the spiceInMsgs is empty or not
     if (this->spiceInMsgs.size() == 0) {

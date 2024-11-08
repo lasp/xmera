@@ -58,7 +58,7 @@ const double epsilon = 1e-12;                           // module tolerance for 
  @return void
  @param callTime [ns] time the method is called
 */
-void OneAxisSolarArrayPoint::Reset(uint64_t callTime)
+void OneAxisSolarArrayPoint::reset(uint64_t callTime)
 {
     if (!this->attNavInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, " oneAxisSolarArrayPoint.attNavInMsg wasn't connected.");

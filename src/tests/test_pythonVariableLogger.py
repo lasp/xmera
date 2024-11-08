@@ -18,7 +18,7 @@ def test_constructor():
 
 
 
-def test_Reset():
+def test_reset():
     logger = PythonVariableLogger({
         "ticks": lambda CurrentSimNanos : CurrentSimNanos
     }, 1)
@@ -27,7 +27,7 @@ def test_Reset():
     # arbitrarily set times
     logger._times = [0, 1, 2, 3, 4, 5]
 
-    logger.Reset(5)
+    logger.reset(5)
 
     assert len(logger._times) is 0, "Reset failed to clear times"
 

@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void SimpleInstrumentController::Reset(uint64_t callTime)
+void SimpleInstrumentController::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->locationAccessInMsg.isLinked()) {

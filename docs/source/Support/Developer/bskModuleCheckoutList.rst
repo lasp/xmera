@@ -40,7 +40,7 @@ Module Programming
       messages
    -  The ``CrossInit()`` routine should subscribe to the module input
       messages
-   -  The ``Reset()`` in the FSW modules should reset all the default
+   -  The ``reset()`` in the FSW modules should reset all the default
       module configuration parameters.
 - Is the module using the :ref:`bskLogging` Basilisk logging function?
 

@@ -32,7 +32,7 @@ class WaypointReference: public SysModel {
 public:
     WaypointReference();
     ~WaypointReference(); 
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
 
 

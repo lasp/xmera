@@ -40,7 +40,7 @@ public:
     SimpleSolarPanel();
     ~SimpleSolarPanel();
     bool customReadMessages();
-    void customReset(uint64_t CurrentClock);
+    void customreset(uint64_t CurrentClock);
     void setPanelParameters(Eigen::Vector3d nHat_B, double panelArea, double panelEfficiency);
 
 private:

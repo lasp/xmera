@@ -40,7 +40,7 @@ CobConverter::~CobConverter() = default;
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CobConverter::Reset(uint64_t CurrentSimNanos)
+void CobConverter::reset(uint64_t CurrentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->opnavCOBInMsg.isLinked()) {

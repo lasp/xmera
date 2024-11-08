@@ -26,7 +26,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void NavAggregate::Reset(uint64_t callTime)
+void NavAggregate::reset(uint64_t callTime)
 {
 
     /*! - ensure incoming message counters are not larger than MAX_AGG_NAV_MSG */

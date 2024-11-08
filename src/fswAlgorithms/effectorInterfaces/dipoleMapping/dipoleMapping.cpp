@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void DipoleMapping::Reset(uint64_t callTime)
+void DipoleMapping::reset(uint64_t callTime)
 {
     /*
      * Check if the required input messages are connected.

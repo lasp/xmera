@@ -22,7 +22,7 @@
 
 
 /*! This method performs the module reset capability. */
-void HillPointCpp::Reset(uint64_t currentSimNanos){
+void HillPointCpp::reset(uint64_t currentSimNanos){
     // Check if the required input messages are linked
     if (!this->transNavInMsg.isLinked()) {
         this->bskLogger->bskLog(BSK_ERROR, "hillPoint.transNavInMsg wasn't connected.");

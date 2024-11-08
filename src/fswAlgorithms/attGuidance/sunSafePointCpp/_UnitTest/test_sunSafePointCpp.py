@@ -116,7 +116,7 @@ def test_SunSafePointTestFunction(show_plots, case):
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(mc.sec2nano(1.))
-    module.Reset(0)
+    module.reset(0)
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.

@@ -33,7 +33,7 @@
 /*! @brief Module configuration message definition. */
 class ThrMomentumManagementCpp: public SysModel {
 public:
-    void Reset(uint64_t currentSimNanos) override;              //!< Reset function
+    void reset(uint64_t currentSimNanos) override;              //!< Reset function
     void updateState(uint64_t currentSimNanos) override;        //!< Update function
 
     double hs_min = 0;                                      //!< [Nms]  minimum RW cluster momentum for dumping

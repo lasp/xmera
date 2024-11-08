@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void SingleAxisProfiler::Reset(uint64_t callTime) {
+void SingleAxisProfiler::reset(uint64_t callTime) {
     if (!this->stepperMotorInMsg.isLinked()) {
         _bskLog(this->bskLogger, BSK_ERROR, "singleAxisProfiler.stepperMotorInMsg wasn't connected.");
     }

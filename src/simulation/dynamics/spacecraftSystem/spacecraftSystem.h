@@ -165,7 +165,7 @@ public:
     void updateSpacecraftMassProps(double time, SpacecraftUnit& spacecraft);  //!< -- This method computes the total mass properties of the s/c
     void updateSystemMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void initializeSCPosVelocity(SpacecraftUnit& spacecraft); //!< class method
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void updateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system

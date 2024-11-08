@@ -31,7 +31,7 @@
  @return void
  @param callTime Sim time in nanos
  */
-void RwMotorVoltage::Reset(uint64_t callTime)
+void RwMotorVoltage::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->rwParamsInMsg.isLinked()) {

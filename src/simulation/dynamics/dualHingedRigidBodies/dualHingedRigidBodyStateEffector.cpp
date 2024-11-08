@@ -92,7 +92,7 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 /*! This method is used to reset the module.
  @return void
  */
-void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos)
+void DualHingedRigidBodyStateEffector::reset(uint64_t CurrentSimNanos)
 {
 
     return;

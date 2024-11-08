@@ -34,7 +34,7 @@ public:
     ~SimpleBattery();
 
 private:
-    void customReset(uint64_t CurrentClock);
+    void customreset(uint64_t CurrentClock);
     void evaluateBatteryModel(PowerStorageStatusMsgPayload *msg);
 
 public:

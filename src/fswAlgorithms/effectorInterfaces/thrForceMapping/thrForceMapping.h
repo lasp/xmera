@@ -35,7 +35,7 @@
 /*!@brief Data structure for module to map a command torque onto thruster forces. */
 class ThrForceMapping : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void findMinimumNormForce(double D[3][MAX_EFF_CNT],
                               double Lr_B[3],

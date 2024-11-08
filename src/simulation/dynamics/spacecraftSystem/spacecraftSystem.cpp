@@ -76,7 +76,7 @@ void SpacecraftUnit::SelfInitSC(int64_t moduleID)
  */
 void SpacecraftUnit::ResetSC(uint64_t CurrentSimNanos)
 {
-    this->gravField.Reset(CurrentSimNanos);
+    this->gravField.reset(CurrentSimNanos);
 }
 
 void SpacecraftUnit::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
@@ -324,7 +324,7 @@ void SpacecraftSystem::attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, 
 /*! This method is used to reset the module.
  @return void
  */
-void SpacecraftSystem::Reset(uint64_t CurrentSimNanos)
+void SpacecraftSystem::reset(uint64_t CurrentSimNanos)
 {
     this->primaryCentralSpacecraft.ResetSC(CurrentSimNanos);
 

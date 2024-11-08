@@ -24,7 +24,7 @@ InertialAttitudeUkf::InertialAttitudeUkf(AttitudeFilterMethod method){
     this->measurementAcceptanceMethod = method;
 }
 
-void InertialAttitudeUkf::customReset(){
+void InertialAttitudeUkf::customreset(){
     /*! No custom reset for this module */
     std::function<FilterStateVector(double, const FilterStateVector)> attitudeDynamics = [this](double t, const FilterStateVector &state){
         Eigen::Vector3d mrp(state.getPositionStates());

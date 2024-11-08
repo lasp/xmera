@@ -38,7 +38,7 @@ MappingInstrument::~MappingInstrument()
  @param CurrentSimNanos
  @return void
  */
-void MappingInstrument::Reset(uint64_t CurrentSimNanos)
+void MappingInstrument::reset(uint64_t CurrentSimNanos)
 {
     // check that the baud rate is set
     if (this->nodeBaudRate < 0.0){

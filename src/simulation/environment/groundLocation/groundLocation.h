@@ -42,7 +42,7 @@ public:
     GroundLocation();
     ~GroundLocation();
     void updateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     bool ReadMessages();
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);

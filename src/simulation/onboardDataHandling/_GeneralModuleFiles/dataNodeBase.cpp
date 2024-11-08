@@ -45,10 +45,10 @@ DataNodeBase::~DataNodeBase()
  @param CurrentSimNanos
  @return void
  */
-void DataNodeBase::Reset(uint64_t CurrentSimNanos)
+void DataNodeBase::reset(uint64_t CurrentSimNanos)
 {
     //! - call the custom environment module reset method
-    customReset(CurrentSimNanos);
+    customreset(CurrentSimNanos);
 
     return;
 }
@@ -125,10 +125,10 @@ void DataNodeBase::updateState(uint64_t CurrentSimNanos)
 }
 
 
-/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+/*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void DataNodeBase::customReset(uint64_t CurrentClock)
+void DataNodeBase::customreset(uint64_t CurrentClock)
 {
     return;
 }

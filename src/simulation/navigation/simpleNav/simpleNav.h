@@ -41,7 +41,7 @@ public:
     SimpleNav();
     ~SimpleNav();
 
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
     void computeTrueOutput(uint64_t Clock);
     void computeErrors(uint64_t CurrentSimNanos);

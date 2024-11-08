@@ -46,7 +46,7 @@ public:
     ~Camera();
 
     void updateState(uint64_t currentSimNanos) override;
-    void Reset(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
     void hsvAdjust(const cv::Mat&, cv::Mat &mDst);
     void bgrAdjustPercent(const cv::Mat&, cv::Mat &mDst);
     void addGaussianNoise(const cv::Mat&, cv::Mat &mDst, double, double);

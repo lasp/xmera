@@ -145,7 +145,7 @@ def sunlineEphemTestFunction(show_plots):
         estVector[i] = dataLog.vehSunPntBdy[-1]
 
         # reset the module to test this functionality
-        sunlineEphemObj.Reset(1)
+        sunlineEphemObj.reset(1)
 
 
     # set the filtered output truth states

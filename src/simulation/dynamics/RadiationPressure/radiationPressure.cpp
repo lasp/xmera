@@ -51,7 +51,7 @@ RadiationPressure::~RadiationPressure()
 /*! Reset the module to origina configuration values.
  @return void
  */
-void RadiationPressure::Reset(uint64_t CurrenSimNanos)
+void RadiationPressure::reset(uint64_t CurrenSimNanos)
 {
     if(!this->sunEphmInMsg.isLinked())
     {

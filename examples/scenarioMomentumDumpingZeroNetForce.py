@@ -418,7 +418,7 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # reset thrDesat module after 10 seconds because momentum cannot be dumped at t = 0
-    thrDesatControl.Reset(macros.sec2nano(10.0))
+    thrDesatControl.reset(macros.sec2nano(10.0))
 
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

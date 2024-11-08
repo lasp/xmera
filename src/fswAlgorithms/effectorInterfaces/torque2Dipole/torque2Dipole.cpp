@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void Torque2Dipole::Reset(uint64_t callTime)
+void Torque2Dipole::reset(uint64_t callTime)
 {
     /*
      * Check if the required input messages are connected.

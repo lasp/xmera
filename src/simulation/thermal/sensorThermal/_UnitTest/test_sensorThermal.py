@@ -171,7 +171,7 @@ def sensorThermalTest(show_plots, accuracy):
 
     # sensorThermalModel the test conditions
     sensorThermalModel.T_0 = 97.961
-    sensorThermalModel.Reset(simulationTime)
+    sensorThermalModel.reset(simulationTime)
 
     # run the second test (hot case)
     unitTestSim.ConfigureStopTime(2*simulationTime)
@@ -180,7 +180,7 @@ def sensorThermalTest(show_plots, accuracy):
 
     # change the test conditions
     sensorThermalModel.T_0 = -74.8505
-    sensorThermalModel.Reset(2*simulationTime)
+    sensorThermalModel.reset(2*simulationTime)
 
     # run the second test (cold case)
     unitTestSim.ConfigureStopTime(3*simulationTime)

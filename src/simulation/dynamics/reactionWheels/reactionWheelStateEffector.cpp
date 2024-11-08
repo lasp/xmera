@@ -373,7 +373,7 @@ void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
 /*! Reset the module to origina configuration values.
  @return void
  */
-void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
+void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos)
 {
     RWCmdMsgPayload RWCmdInitializer;
     RWCmdInitializer.u_cmd = 0.0;

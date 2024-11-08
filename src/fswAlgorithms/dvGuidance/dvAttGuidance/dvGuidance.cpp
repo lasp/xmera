@@ -26,7 +26,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvGuidance::Reset(uint64_t callTime)
+void DvGuidance::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->burnDataInMsg.isLinked()) {

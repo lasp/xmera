@@ -45,7 +45,7 @@ public:
     ~HoughCircles();
     
     void updateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     
 public:
     std::string filename;                //!< Filename for module to read an image directly

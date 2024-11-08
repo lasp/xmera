@@ -176,7 +176,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
     unitTestSim.ExecuteSimulation()
 
     # reset the module to test this functionality
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     # run the module again for an additional 1.0 seconds
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation

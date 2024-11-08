@@ -43,7 +43,7 @@ MotorVoltageInterface::~MotorVoltageInterface()
 /*! Reset the module to original configuration values.
  @return void
  */
-void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
+void MotorVoltageInterface::reset(uint64_t CurrenSimNanos)
 {
     if(!this->motorVoltageInMsg.isLinked())
     {

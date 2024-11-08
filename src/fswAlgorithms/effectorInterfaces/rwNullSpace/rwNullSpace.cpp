@@ -25,7 +25,7 @@
     @return void
     @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RwNullSpace::Reset(uint64_t callTime)
+void RwNullSpace::reset(uint64_t callTime)
 {
     double GsMatrix[3*MAX_EFF_CNT];                 /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
     double GsTranspose[3 * MAX_EFF_CNT];            /* [-]  [Gs]^T */

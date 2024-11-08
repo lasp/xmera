@@ -25,7 +25,7 @@
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
+void ThrustCMEstimation::reset(uint64_t CurrentSimNanos)
 {
     /*! - Check if the required message has not been connected */
     if (!this->thrusterConfigBInMsg.isLinked()) {

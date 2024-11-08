@@ -21,7 +21,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
 
-void ThrMomentumManagementCpp::Reset(uint64_t currentSimNanos)
+void ThrMomentumManagementCpp::reset(uint64_t currentSimNanos)
 {
     // Check if the required input messages are included
     if (!this->rwConfigDataInMsg.isLinked()) {

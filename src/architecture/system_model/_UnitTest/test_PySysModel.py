@@ -86,7 +86,7 @@ class PythonModule(sysModel.SysModel):
         super().__init__(*args)
         self.dataOutMsg = messaging.CModuleTemplateMsg()
 
-    def Reset(self, CurrentSimNanos):
+    def reset(self, CurrentSimNanos):
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = np.array([0,0,0])
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)

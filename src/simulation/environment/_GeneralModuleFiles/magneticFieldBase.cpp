@@ -91,10 +91,10 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScM
 /*! This method is used to reset the module.
  @return void
  */
-void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
+void MagneticFieldBase::reset(uint64_t CurrentSimNanos)
 {
     //! - call the custom environment module reset method
-    customReset(CurrentSimNanos);
+    customreset(CurrentSimNanos);
 
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
@@ -115,10 +115,10 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 }
 
 
-/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+/*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void MagneticFieldBase::customReset(uint64_t CurrentClock)
+void MagneticFieldBase::customreset(uint64_t CurrentClock)
 {
     return;
 }

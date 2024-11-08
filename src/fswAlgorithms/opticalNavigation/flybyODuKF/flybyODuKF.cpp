@@ -25,7 +25,7 @@
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void FlybyODuKF::customReset() {
+void FlybyODuKF::customreset() {
     /*! - Check if the required message has not been connected */
     assert(this->opNavHeadingMsg.isLinked());
     /*! - Initialize filter parameters and change units to km and s */

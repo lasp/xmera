@@ -47,7 +47,7 @@ class CielimInterface : public SysModel {
 public:
     CielimInterface();
     ~CielimInterface();
-    void Reset(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
     void readBskMessages();
     void writeProtobuffer(uint64_t currentSimNanos);

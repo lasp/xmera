@@ -35,7 +35,7 @@ static void sunlineUKFMeasModel(SunlineUKF *configData);
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SunlineUKF::Reset(uint64_t callTime)
+void SunlineUKF::reset(uint64_t callTime)
 {
 
     CSSConfigMsgPayload cssConfigInBuffer;

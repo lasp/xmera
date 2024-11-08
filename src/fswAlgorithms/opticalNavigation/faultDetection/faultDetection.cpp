@@ -25,7 +25,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void FaultDetection::Reset(uint64_t callTime)
+void FaultDetection::reset(uint64_t callTime)
 {
     // check that the opnave messages are linked
     if (!this->navMeasPrimaryInMsg.isLinked()) {

@@ -49,7 +49,7 @@ typedef struct {
 class ChebyPosEphem : public SysModel {
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     Message<EphemerisMsgPayload> posFitOutMsg; /*!< [-] output navigation message for pos/vel*/
     ReadFunctor<TDBVehicleClockCorrelationMsgPayload> clockCorrInMsg; /*!< clock correlation input message*/

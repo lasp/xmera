@@ -43,10 +43,10 @@ PowerNodeBase::~PowerNodeBase()
 /*! This method is used to reset the module. In general, no functionality must be reset.
  @return void
  */
-void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
+void PowerNodeBase::reset(uint64_t CurrentSimNanos)
 {
     //! - call the custom environment module reset method
-    customReset(CurrentSimNanos);
+    customreset(CurrentSimNanos);
 
     return;
 }
@@ -131,10 +131,10 @@ void PowerNodeBase::updateState(uint64_t CurrentSimNanos)
 
 
 
-/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+/*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void PowerNodeBase::customReset(uint64_t CurrentClock)
+void PowerNodeBase::customreset(uint64_t CurrentClock)
 {
     return;
 }

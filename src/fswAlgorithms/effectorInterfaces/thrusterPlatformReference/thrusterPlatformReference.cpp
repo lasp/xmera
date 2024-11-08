@@ -38,7 +38,7 @@ const double epsilon = 1e-12;                           // module tolerance for 
  @return void
  @param callTime [ns] time the method is called
 */
-void ThrusterPlatformReference::Reset(uint64_t callTime)
+void ThrusterPlatformReference::reset(uint64_t callTime)
 {
     if (!this->vehConfigInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformReference.vehConfigInMsg wasn't connected.");

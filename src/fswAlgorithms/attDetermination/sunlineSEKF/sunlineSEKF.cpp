@@ -29,7 +29,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SunlineSEKF::Reset(uint64_t callTime)
+void SunlineSEKF::reset(uint64_t callTime)
 {
     CSSConfigMsgPayload cssConfigInBuffer;
 

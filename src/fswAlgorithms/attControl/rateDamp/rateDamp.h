@@ -32,7 +32,7 @@
 /*! @brief A class to compute rate damping control */
 class RateDamp: public SysModel {
 public:
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
 
     ReadFunctor<NavAttMsgPayload>          attNavInMsg;           //!< input msg measured attitude

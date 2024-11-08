@@ -49,7 +49,7 @@ Camera::~Camera() = default;
  @return void
  @param currentSimNanos current time (ns)
  */
-void Camera::Reset(uint64_t currentSimNanos)
+void Camera::reset(uint64_t currentSimNanos)
 {
 }
 

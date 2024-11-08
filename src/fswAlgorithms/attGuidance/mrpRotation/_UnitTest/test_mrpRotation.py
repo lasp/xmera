@@ -143,7 +143,7 @@ def run(show_plots, cmdStateFlag, testReset):
     unitTestSim.ExecuteSimulation()
 
     if testReset:
-        module.Reset(1)
+        module.reset(1)
         unitTestSim.ConfigureStopTime(mc.sec2nano(totalTestSimTime+1.0))        # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
 

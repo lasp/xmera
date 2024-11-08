@@ -41,7 +41,7 @@ public:
     ~DentonFluxModel();
 
     // Methods
-    void Reset(uint64_t CurrentSimNanos) override;
+    void reset(uint64_t CurrentSimNanos) override;
     void updateState(uint64_t CurrentSimNanos) override;
     
     /* public variables */

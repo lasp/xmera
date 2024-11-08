@@ -93,7 +93,7 @@ static void computeHillPointingReference(double r_BN_N[3],
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HillPoint::Reset(uint64_t callTime)
+void HillPoint::reset(uint64_t callTime)
 {
     // check if the required input message is included
     if (!this->transNavInMsg.isLinked()) {

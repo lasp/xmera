@@ -36,7 +36,7 @@
  */
 class LocationPointing : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     /* user configurable variables */

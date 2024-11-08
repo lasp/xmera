@@ -30,7 +30,7 @@ void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig, double
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void CssWlsEst::Reset(uint64_t callTime)
+void CssWlsEst::reset(uint64_t callTime)
 {
 
     // check that required messages have been included

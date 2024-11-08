@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void HillStateConverter::Reset(uint64_t callTime)
+void HillStateConverter::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->chiefStateInMsg.isLinked()) {

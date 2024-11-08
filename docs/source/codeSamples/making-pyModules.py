@@ -87,7 +87,7 @@ class TestPythonModule(sysModel.SysModel):
         self.dataInMsg = messaging.CModuleTemplateMsgReader()
         self.dataOutMsg = messaging.CModuleTemplateMsg()
 
-    def Reset(self, CurrentSimNanos):
+    def reset(self, CurrentSimNanos):
         # Ensure that self.dataInMsg is linked
         if not self.dataInMsg.isLinked():
             self.bskLogger.bskLog(

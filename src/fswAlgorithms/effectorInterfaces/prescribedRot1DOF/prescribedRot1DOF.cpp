@@ -31,7 +31,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot1DOF::Reset(uint64_t callTime)
+void PrescribedRot1DOF::reset(uint64_t callTime)
 {
     // Check if the required input message is linked
     if (!this->spinningBodyInMsg.isLinked())

@@ -35,7 +35,7 @@ public:
     PlanetNav();
     ~PlanetNav();
 
-    void Reset(uint64_t CurrentSimNanos);  //!< -- Reset function
+    void reset(uint64_t CurrentSimNanos);  //!< -- Reset function
     void updateState(uint64_t CurrentSimNanos);  //!< -- updateState
     void computeErrors(uint64_t CurrentSimNanos);  //!< -- Compute the errors to add to the truth
     void applyErrors();  //!< -- Add the errors to the truth

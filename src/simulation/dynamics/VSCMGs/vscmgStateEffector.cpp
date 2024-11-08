@@ -487,7 +487,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
 /*! Reset the module to origina configuration values.
  @return void
  */
-void VSCMGStateEffector::Reset(uint64_t CurrenSimNanos)
+void VSCMGStateEffector::reset(uint64_t CurrenSimNanos)
 {
     VSCMGCmdMsgPayload VSCMGCmdInitializer;
     VSCMGCmdInitializer.u_s_cmd = 0.0;

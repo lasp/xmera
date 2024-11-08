@@ -28,7 +28,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void AttRefCorrection::Reset(uint64_t callTime)
+void AttRefCorrection::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->attRefInMsg.isLinked()) {

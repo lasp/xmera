@@ -32,7 +32,7 @@ public:
     MotorThermal();
     ~MotorThermal();
 
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);

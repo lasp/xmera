@@ -38,7 +38,7 @@ class KalmanFilter: public SysModel  {
 public:
     KalmanFilter() = default;
     ~KalmanFilter() = default;
-    void Reset(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) final;
 
     void setInitialPosition(const Eigen::VectorXd &initialPositionInput);
@@ -63,7 +63,7 @@ public:
     void setFilterDynamics(const std::function<const FilterStateVector(double, const FilterStateVector&)> &dynamicsPropagator);
 
 protected:
-    virtual void customReset(){/* virtual */};
+    virtual void customreset(){/* virtual */};
     virtual void customInitializeUpdate(){/* virtual */};
     virtual void customFinalizeUpdate(){/* virtual */};
     /*! Read method neads to read incoming messages containing the measurements for the filter.

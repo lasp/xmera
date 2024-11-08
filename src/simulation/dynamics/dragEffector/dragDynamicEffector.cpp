@@ -24,7 +24,7 @@
 /*! This method is used to reset the module.
  @return void
  */
-void DragDynamicEffector::Reset(uint64_t currentSimNanos)
+void DragDynamicEffector::reset(uint64_t currentSimNanos)
 {
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");

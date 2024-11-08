@@ -69,7 +69,7 @@ Basilisk module code.  You can
 - specify the copyright holder of the module
 - provide lists of input and output messages including their message type, variable name, description, etc.
 
-The script will create the basic draft module support code that will compile and run.  The ``Reset()`` method
+The script will create the basic draft module support code that will compile and run.  The ``reset()`` method
 already checks if the input messages are connected (assuming they are all required), and ``Update()`` method
 provides sample code the creates buffer variables for the input and output messages, reads in the input messages,
 and write to the output messages.  The unit test already loads up the module, creates blank input message copies

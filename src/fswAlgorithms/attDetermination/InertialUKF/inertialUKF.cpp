@@ -30,7 +30,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void InertialUKF::Reset(uint64_t callTime)
+void InertialUKF::reset(uint64_t callTime)
 {
     size_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */

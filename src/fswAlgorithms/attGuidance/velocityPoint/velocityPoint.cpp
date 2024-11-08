@@ -36,7 +36,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void VelocityPoint::Reset(uint64_t callTime)
+void VelocityPoint::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->transNavInMsg.isLinked()) {

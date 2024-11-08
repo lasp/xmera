@@ -32,7 +32,7 @@
 /*! @brief A class to perform flyby pointing */
 class FlybyPoint: public SysModel {
 public:
-    void Reset(uint64_t CurrentSimNanos) override;
+    void reset(uint64_t CurrentSimNanos) override;
     void updateState(uint64_t CurrentSimNanos) override;
 
     std::tuple<Eigen::Vector3d, Eigen::Vector3d> readRelativeState();

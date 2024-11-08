@@ -39,7 +39,7 @@ class SunlineSRuKF: public SRukfInterface {
 public:
 
 private:
-    void customReset() final;
+    void customreset() final;
     void readCssMeasurements();
     void readGyroMeasurements();
     void readFilterMeasurements() final;

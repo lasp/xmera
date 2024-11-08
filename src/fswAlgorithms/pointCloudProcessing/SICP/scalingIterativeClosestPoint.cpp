@@ -28,7 +28,7 @@ ScalingIterativeClosestPoint::~ScalingIterativeClosestPoint() = default;
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ScalingIterativeClosestPoint::Reset(uint64_t CurrentSimNanos)
+void ScalingIterativeClosestPoint::reset(uint64_t CurrentSimNanos)
 {
     if (!this->measuredPointCloud.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");

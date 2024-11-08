@@ -30,7 +30,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void LocationPointing::Reset(uint64_t callTime)
+void LocationPointing::reset(uint64_t callTime)
 {
 
     // check if the required message has not been connected

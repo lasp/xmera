@@ -46,7 +46,7 @@ static void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, do
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RelODuKF::Reset(uint64_t callTime)
+void RelODuKF::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->opNavInMsg.isLinked()) {

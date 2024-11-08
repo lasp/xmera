@@ -38,7 +38,7 @@ class Magnetometer : public SysModel {
 public:
     Magnetometer();
     ~Magnetometer();
-    void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
+    void reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void updateState(uint64_t CurrentSimNanos); //!< Method to update state for runtime
     void readInputMessages();                   //!< Method to read the input messages
     void computeTrueOutput();                   //!< Method to compute the true magnetic field vector

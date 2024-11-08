@@ -32,7 +32,7 @@ LambertSolver::~LambertSolver() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSolver::Reset(uint64_t currentSimNanos)
+void LambertSolver::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {

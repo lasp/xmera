@@ -51,7 +51,7 @@ void SysModelTask::SelfInitTaskList() const
 void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 {
 	for (auto const& modelPair : this->TaskModels) {
-		modelPair.ModelPtr->Reset(CurrentSimTime);
+		modelPair.ModelPtr->reset(CurrentSimTime);
 	}
 	this->NextStartTime = CurrentSimTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;

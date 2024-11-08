@@ -52,7 +52,7 @@ PlanetNav::~PlanetNav()
     @return void
     @param CurrentSimNanos The clock time associated with the module call
 */
-void PlanetNav::Reset(uint64_t CurrentSimNanos)
+void PlanetNav::reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->ephemerisInMsg.isLinked()) {

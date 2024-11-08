@@ -44,7 +44,7 @@ TabularAtmosphere::~TabularAtmosphere()
 /*! Reset method checks that the data lists for altitude, density, and temperature have been defined with equal nonzero lengths.
 * @return void
 */
-void TabularAtmosphere::customReset(uint64_t CurrentClock)
+void TabularAtmosphere::customreset(uint64_t CurrentClock)
 {
     this->altList_length = (int) this->altList.size();
     this->rhoList_length = (int) this->rhoList.size();

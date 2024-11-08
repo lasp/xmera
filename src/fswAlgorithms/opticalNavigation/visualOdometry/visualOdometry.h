@@ -41,7 +41,7 @@ public:
     VisualOdometry();
     ~VisualOdometry();
 
-    void Reset(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
     ReadFunctor<PairedKeyPointsMsgPayload> keyPointPairInMsg;                      //!< translational navigation input message

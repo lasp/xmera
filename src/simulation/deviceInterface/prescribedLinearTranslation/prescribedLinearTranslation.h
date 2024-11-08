@@ -33,7 +33,7 @@ public:
     PrescribedLinearTranslation() = default;                                    //!< Constructor
     ~PrescribedLinearTranslation() = default;                                   //!< Destructor
 
-    void Reset(uint64_t CurrentSimNanos) override;                              //!< Reset member function
+    void reset(uint64_t CurrentSimNanos) override;                              //!< Reset member function
     void updateState(uint64_t CurrentSimNanos) override;                        //!< Update member function
     void setCoastOptionBangDuration(const double bangDuration);                 //!< Setter method for the coast option bang duration
     void setSmoothingDuration(const double smoothingDuration);                  //!< Setter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value

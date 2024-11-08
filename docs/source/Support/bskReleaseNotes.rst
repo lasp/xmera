@@ -548,7 +548,7 @@ Version 2.0.5
 - updated :ref:`celestialTwoBodyPoint` to account for a case where the celestial objects are in opposite directions
 - replaced ``acos()`` and ``asin()`` with ``safeAcos()`` and ``safeAsin()`` which ensure that arguments are
   clipped to be within and including -1 and 1
-- updated :ref:`dataFileToViz` to allow the ``Reset()`` method to be called multiple times.  If a data file
+- updated :ref:`dataFileToViz` to allow the ``reset()`` method to be called multiple times.  If a data file
   was already opened, then it is closed before the next data file is opened.
 - updated :ref:`groundLocation` to also output SEZ coordinates, as well as range, azimuth, elevation, south, east
   and zenith coordinate rates.  These coordinates are always computed regardless if a spacecraft is visible to the
@@ -569,7 +569,7 @@ Version 2.0.5
 
 Version 2.0.4
 -------------
-- updated :ref:`spacecraft` ``Reset()`` method to write all spacecraft and effector state output messages
+- updated :ref:`spacecraft` ``reset()`` method to write all spacecraft and effector state output messages
   with their initial values.  This way these output messages are correct as already as calling the
   ``InitializeSimulation()`` method.
 - fixed an issue that could prevent ``.subscribeTo`` from a C++ to C wrapped message object to not function

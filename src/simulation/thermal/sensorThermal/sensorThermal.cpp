@@ -35,7 +35,7 @@ SensorThermal::~SensorThermal(){
 
 /*! Thermal sensor reset function
  */
-void SensorThermal::Reset(uint64_t CurrentClock) {
+void SensorThermal::reset(uint64_t CurrentClock) {
 
     this->shadowFactor = 1.0;
 

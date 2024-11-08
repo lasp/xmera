@@ -35,7 +35,7 @@
 /*! @brief Top level structure for the SuKF heading module data */
 class HeadingSuKF : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     Message<OpNavMsgPayload> opnavDataOutMsg;             /*!< output message */

@@ -55,7 +55,7 @@ typedef struct {
 class OEStateEphem : public SysModel {
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     Message<EphemerisMsgPayload> stateFitOutMsg; //!< [-] output navigation message for pos/vel
     ReadFunctor<TDBVehicleClockCorrelationMsgPayload> clockCorrInMsg; //!< clock correlation input message

@@ -31,7 +31,7 @@ CameraTriangulation::~CameraTriangulation() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void CameraTriangulation::Reset(uint64_t currentSimNanos)
+void CameraTriangulation::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->pointCloudInMsg.isLinked()) {

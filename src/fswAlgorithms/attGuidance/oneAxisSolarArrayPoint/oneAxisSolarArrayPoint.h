@@ -60,7 +60,7 @@ typedef enum refFrameSolution{
 /*! @brief Top level structure for the sub-module routines. */
 class OneAxisSolarArrayPoint : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     /*! declare these quantities that always must be specified as flight software parameters */

@@ -36,7 +36,7 @@ public:
     ClockSynch();
     ~ClockSynch();
    
-    void Reset(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
     
 public:

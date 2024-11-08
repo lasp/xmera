@@ -31,7 +31,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrMomentumDumping::Reset(uint64_t callTime)
+void ThrMomentumDumping::reset(uint64_t callTime)
 {
     THRArrayConfigMsgPayload    localThrusterData;     /* local copy of the thruster data message */
     CmdTorqueBodyMsgPayload     DeltaHInMsg;

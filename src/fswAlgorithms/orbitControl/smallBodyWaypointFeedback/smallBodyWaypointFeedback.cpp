@@ -42,7 +42,7 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos)
+void SmallBodyWaypointFeedback::reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {

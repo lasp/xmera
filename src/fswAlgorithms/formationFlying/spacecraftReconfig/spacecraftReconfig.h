@@ -37,7 +37,7 @@
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 class SpacecraftReconfig : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
                          NavTransMsgPayload deputyTransMsgBuffer,

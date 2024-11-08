@@ -29,9 +29,9 @@ EkfInterface::EkfInterface(FilterType type){
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void EkfInterface::Reset(uint64_t currentSimNanos)
+void EkfInterface::reset(uint64_t currentSimNanos)
 {
-    KalmanFilter::Reset(currentSimNanos);
+    KalmanFilter::reset(currentSimNanos);
     this->stateError = Eigen::VectorXd ::Zero(this->state.size());
     this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());
     if (this->stateInitial.hasVelocity()) {
@@ -41,7 +41,7 @@ void EkfInterface::Reset(uint64_t currentSimNanos)
         this->processNoise.resize(this->state.getPositionStates().size(), this->state.getPositionStates().size());
     }
     this->minCovarNorm = this->minCovarNorm*this->unitConversion*this->unitConversion;
-    this->customReset();
+    this->customreset();
 }
 
 

@@ -145,8 +145,8 @@ def sunSafePointTestFunction(show_plots, case):
     # simulation end time.
     unitTestSim.ConfigureStopTime(mc.sec2nano(1.))  # seconds to stop simulation
 
-    # run the Reset() routine
-    module.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    # run the reset() routine
+    module.reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()

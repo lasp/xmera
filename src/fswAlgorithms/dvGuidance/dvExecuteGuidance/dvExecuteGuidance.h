@@ -35,7 +35,7 @@
 /*! @brief Top level structure for the execution of a Delta-V maneuver */
 class DvExecuteGuidance : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     ReadFunctor<NavTransMsgPayload> navDataInMsg; /*!< [-] navigation input message that includes dv accumulation info */
     ReadFunctor<DvBurnCmdMsgPayload> burnDataInMsg;/*!< [-] commanded burn input message */

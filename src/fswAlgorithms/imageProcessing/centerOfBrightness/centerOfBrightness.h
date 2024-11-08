@@ -39,7 +39,7 @@ public:
     ~CenterOfBrightness();
 
     void updateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
 
     void setWindowCenter(const Eigen::VectorXi& center);
     Eigen::VectorXi getWindowCenter() const;

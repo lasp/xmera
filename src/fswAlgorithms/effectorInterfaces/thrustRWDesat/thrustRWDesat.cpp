@@ -22,7 +22,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string.h>
 
-void ThrustRWDesat::Reset(uint64_t callTime)
+void ThrustRWDesat::reset(uint64_t callTime)
 {
     RWConstellationMsgPayload localRWData;
     THRArrayConfigMsgPayload localThrustData;

@@ -30,7 +30,7 @@
 class EphemNavConverter : public SysModel {
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     Message<NavTransMsgPayload> stateOutMsg; //!< [-] output navigation message for pos/vel
     ReadFunctor<EphemerisMsgPayload> ephInMsg; //!< ephemeris input message

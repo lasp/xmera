@@ -112,7 +112,7 @@ class GravityEffector : public SysModel
 {
 public:
     /** Initializes every `GravBodyData` associated with this `GravityEffector` */
-    void Reset(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos);
 
     /** Updates the central body, loads the ephemeris data for every `GravBodyData`,
      * and writes the output messages. */

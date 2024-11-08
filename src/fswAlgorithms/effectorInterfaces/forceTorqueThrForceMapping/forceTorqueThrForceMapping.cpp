@@ -28,7 +28,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void ForceTorqueThrForceMapping::Reset(uint64_t callTime)
+void ForceTorqueThrForceMapping::reset(uint64_t callTime)
 {
     if (!this->thrConfigInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: forceTorqueThrForceMapping.thrConfigInMsg was not connected.");

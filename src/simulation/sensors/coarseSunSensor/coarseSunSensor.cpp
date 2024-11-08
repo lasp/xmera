@@ -115,7 +115,7 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
  @return void */
-void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
+void CoarseSunSensor::reset(uint64_t CurrentSimNanos)
 {
     //! - If either messages is not valid, send a warning message
     if(!this->sunInMsg.isLinked()) {
@@ -424,7 +424,7 @@ CSSConstellation::~CSSConstellation()
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
  @return void */
-void CSSConstellation::Reset(uint64_t CurrentSimNanos)
+void CSSConstellation::reset(uint64_t CurrentSimNanos)
 {
     std::vector<CoarseSunSensor*>::iterator itp;
     CoarseSunSensor *it;
@@ -433,7 +433,7 @@ void CSSConstellation::Reset(uint64_t CurrentSimNanos)
     for(itp=this->sensorList.begin(); itp!= this->sensorList.end(); itp++)
     {
         it = *itp;
-        it->Reset(CurrentSimNanos);
+        it->reset(CurrentSimNanos);
     }
 
     this->outputBuffer = this->constellationOutMsg.zeroMsgPayload;

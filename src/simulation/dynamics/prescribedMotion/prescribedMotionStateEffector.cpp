@@ -73,7 +73,7 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::Reset(uint64_t callTime)
+void PrescribedMotionStateEffector::reset(uint64_t callTime)
 {
 }
 

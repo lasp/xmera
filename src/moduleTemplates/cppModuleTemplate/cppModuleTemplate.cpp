@@ -36,7 +36,7 @@ CppModuleTemplate::~CppModuleTemplate()
 /*! This method is used to reset the module.
     @return void
  */
-void CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
+void CppModuleTemplate::reset(uint64_t CurrentSimNanos)
 {
     /*! - reset any required variables */
     this->dummy = 0.0;

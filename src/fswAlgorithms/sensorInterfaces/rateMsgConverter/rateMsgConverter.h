@@ -34,7 +34,7 @@
 class RateMsgConverter : public SysModel {
 public:
     void updateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     /* declare module IO interfaces */
     Message<NavAttMsgPayload> navRateOutMsg;                        //!< attitude output message*/

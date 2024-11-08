@@ -12,16 +12,16 @@ This guide discusses the main functions that a Basilisk module must perform duri
 
 ``SelfInit()``:  With the C-modules this method acts as the constructor that connects the output messages to write to their own payload (i.e. message data).  This step is not required with C++ modules.
 
-``Reset()``:  This method should reset the module variables to desired default states.  For example, this is where the integral feedback gain might be reset to 0, where module parameters like the spacecraft, reaction wheel or thruster configuration messages are read it, etc.  This method typically also does some sanity checks that the module is configured properly, and that required input messages are connected, etc.
+``reset()``:  This method should reset the module variables to desired default states.  For example, this is where the integral feedback gain might be reset to 0, where module parameters like the spacecraft, reaction wheel or thruster configuration messages are read it, etc.  This method typically also does some sanity checks that the module is configured properly, and that required input messages are connected, etc.
 
 ``Update()``:  This is the primary module routine that is called every time the simulation advanced one time step.  This routine shoudl controll all the functions that this module is to perform.
 
-The function ``scSim.InitializeSimulation()`` calls ``SelfInit()`` and ``Reset()`` for each module.  The ``Update()`` mehtod is called each task time step when the simulation is executed.
+The function ``scSim.InitializeSimulation()`` calls ``SelfInit()`` and ``reset()`` for each module.  The ``Update()`` mehtod is called each task time step when the simulation is executed.
 
 .. image:: ../../_images/static/qs-bsk-2a.svg
    :align: center
 
-The sample script below creates a single Basilisk module as illustrated above.  The module variable ``dummy`` is set to a non-zero value after the module is created.  The ``InitializeSimulation()`` method calls ``Reset()`` which sets this ``dummy`` variable equal to zero.
+The sample script below creates a single Basilisk module as illustrated above.  The module variable ``dummy`` is set to a non-zero value after the module is created.  The ``InitializeSimulation()`` method calls ``reset()`` which sets this ``dummy`` variable equal to zero.
 
 .. literalinclude:: ../../codeSamples/bsk-2a.py
    :language: python

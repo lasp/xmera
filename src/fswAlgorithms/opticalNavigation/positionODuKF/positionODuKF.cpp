@@ -28,7 +28,7 @@ PositionODuKF::~PositionODuKF() = default;
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void PositionODuKF::Reset(uint64_t CurrentSimNanos)
+void PositionODuKF::reset(uint64_t CurrentSimNanos)
 {
     /*! - Check if the required message has not been connected */
     if (!this->cameraPosMsg.isLinked()) {

@@ -55,7 +55,7 @@ public:
     ~FacetDragDynamicEffector();
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);
-    void Reset(uint64_t CurrentSimNanos);               //!< class method
+    void reset(uint64_t CurrentSimNanos);               //!< class method
     void updateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();

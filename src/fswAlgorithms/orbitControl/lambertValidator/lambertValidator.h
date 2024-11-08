@@ -43,7 +43,7 @@ public:
     LambertValidator();
     ~LambertValidator();
 
-    void Reset(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
     ReadFunctor<NavTransMsgPayload> navTransInMsg;                          //!< translational navigation input message

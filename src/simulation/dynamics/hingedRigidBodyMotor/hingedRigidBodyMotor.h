@@ -35,7 +35,7 @@ public:
     HingedRigidBodyMotor();
     ~HingedRigidBodyMotor();
 
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentSimNanos);
     void updateState(uint64_t CurrentSimNanos);
 
 public:

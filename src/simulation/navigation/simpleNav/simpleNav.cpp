@@ -63,7 +63,7 @@ SimpleNav::~SimpleNav()
      - Accumulated DV errors [15-17]
  @return void
  */
-void SimpleNav::Reset(uint64_t CurrentSimNanos)
+void SimpleNav::reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {

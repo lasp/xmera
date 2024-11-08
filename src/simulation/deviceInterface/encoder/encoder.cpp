@@ -40,7 +40,7 @@ Encoder::~Encoder()
 /*! This method is used to reset the module.
  @return void
  */
-void Encoder::Reset(uint64_t CurrentSimNanos)
+void Encoder::reset(uint64_t CurrentSimNanos)
 {
     // check if input message is linked
     if (!this->rwSpeedInMsg.isLinked())

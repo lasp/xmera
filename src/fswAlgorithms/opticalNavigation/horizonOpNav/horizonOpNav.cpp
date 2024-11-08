@@ -99,7 +99,7 @@ void BackSub(double *R, double *inVec, int32_t nRow, double *n)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HorizonOpNav::Reset(uint64_t callTime)
+void HorizonOpNav::reset(uint64_t callTime)
 {
     // check that the required message has not been connected
     if (!this->cameraConfigInMsg.isLinked()) {

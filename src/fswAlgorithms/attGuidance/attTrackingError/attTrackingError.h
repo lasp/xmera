@@ -35,7 +35,7 @@
  */
 class AttTrackingError : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     double sigma_R0R[3];                        //!< MRP from corrected reference frame to original reference frame R0. This is the same as [BcB] going from primary body frame B to the corrected body frame Bc
