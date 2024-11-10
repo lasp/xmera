@@ -21,6 +21,7 @@
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <iostream>
 
 /*! This method is used to reset the module.
  @return void
@@ -46,6 +47,8 @@ void FlybyPoint::UpdateState(uint64_t currentSimNanos)
         /*! If this is the first read, seed the algorithm with the solution  */
         auto [r_BN_N, v_BN_N] = this->readRelativeState();
         if (this->firstRead){
+            this->previousFilterPosition = r_BN_N;
+            this->previousFilterVelocity = v_BN_N;
             this->computeFlybyParameters(r_BN_N, v_BN_N);
             this->computeRN(r_BN_N, v_BN_N);
             this->firstRead = false;
@@ -58,6 +61,8 @@ void FlybyPoint::UpdateState(uint64_t currentSimNanos)
 
             /*! update lastFilterReadTime to current time and dt to zero */
             this->lastFilterReadTime = currentSimNanos;
+            this->previousFilterPosition = r_BN_N;
+            this->previousFilterVelocity = v_BN_N;
             this->dt = 0;
         }
     }
@@ -108,6 +113,10 @@ bool FlybyPoint::checkValidity(Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N)
     }
     double maxPredictedAcceleration = 3*std::sqrt(3)/8*pow(v_BN_N.norm()/distanceClosestApproach, 2)*180/M_PI;
     if (maxPredictedAcceleration > this->maxAcceleration && this->maxAcceleration > 0) {
+        valid = false;
+    }
+    double deltaPositionNorm = (r_BN_N - (this->previousFilterPosition + this->dt*this->previousFilterVelocity)).norm();
+    if (deltaPositionNorm > this->positionKnowledgeSigma && this->positionKnowledgeSigma > 0) {
         valid = false;
     }
 
@@ -231,4 +240,32 @@ double FlybyPoint::getMaximumRateThreshold() const {
  */
 void FlybyPoint::setMaximumRateThreshold(double maxRateThreshold) {
     this->maxRate = maxRateThreshold;
+}
+
+/*! Get the ground based positional knowledge standard deviation
+ @return sigma
+ */
+double FlybyPoint::getPositionKnowledgeSigma() const {
+    return this->positionKnowledgeSigma;
+}
+
+/*! Set the ground based positional knowledge sigma
+ @param sigma
+ */
+void FlybyPoint::setPositionKnowledgeSigma(double positionKnowledgeStd) {
+    this->positionKnowledgeSigma = positionKnowledgeStd;
+}
+
+/*! Get the ground based velocity knowledge standard deviation
+ @return sigma
+ */
+double FlybyPoint::getVelocityKnowledgeSigma() const {
+    return this->velocityKnowledgeSigma;
+}
+
+/*! Set the ground based velocity knowledge sigma
+ @param sigma
+ */
+void FlybyPoint::setVelocityKnowledgeSigma(double velocityKnowledgeStd) {
+    this->velocityKnowledgeSigma = velocityKnowledgeStd;
 }

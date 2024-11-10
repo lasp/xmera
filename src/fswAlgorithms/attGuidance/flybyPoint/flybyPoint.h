@@ -55,8 +55,12 @@ public:
     void setMaximumAccelerationThreshold(double maxAccelerationThreshold);
     double getMaximumRateThreshold() const;
     void setMaximumRateThreshold(double maxRateThreshold);
+    double getPositionKnowledgeSigma() const;
+    void setPositionKnowledgeSigma(double positionKnowledgeStd);
+    double getVelocityKnowledgeSigma() const;
+    void setVelocityKnowledgeSigma(double velocityKnowledgeStd);
 
-    ReadFunctor<NavTransMsgPayload>  filterInMsg;               //!< input msg relative position w.r.t. asteroid
+    ReadFunctor<NavTransMsgPayload> filterInMsg;               //!< input msg relative position w.r.t. asteroid
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;    //!< input asteroid ephemeris msg
     Message<AttRefMsgPayload> attRefOutMsg;                     //!< Attitude reference output message
 
@@ -74,6 +78,10 @@ private:
     double gamma0 = 0;              //!< flight path angle of the spacecraft at time of read [rad]
     uint64_t lastFilterReadTime = 0;  //!< time of last filter read
     Eigen::Matrix3d R0N;           //!< inertial-to-reference DCM at time of read
+    Eigen::Vector3d previousFilterPosition{};           //!< Last position used to create profile
+    Eigen::Vector3d previousFilterVelocity{};           //!< Last velocity used to create profile
+    double positionKnowledgeSigma = 0;           //!< Last position used to create profile
+    double velocityKnowledgeSigma = 0;           //!< Last velocity used to create profile
 
 };
 
