@@ -34,7 +34,7 @@ void ZmqConnector::connect() {
 
 bool ZmqConnector::isConnected() const {
     if (this->requesterSocket) {
-        return this->requesterSocket->connected();
+        return (this->requesterSocket->handle() != nullptr);
     }
     return false;
 }
