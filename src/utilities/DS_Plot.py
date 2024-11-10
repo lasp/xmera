@@ -35,7 +35,7 @@ class DS_Plot():
         self.macro_x = macro_x
         self.macro_y = macro_y
         self.plotObjType = plotObjType
-        self.cmap = itertools.cycle(cmap)
+        self.cmap = cmap
         self.labels = labels
         self.plotFcn = plotFcn
 
@@ -67,7 +67,7 @@ class DS_Plot():
                 curves.append(curve)
                 count += 1
 
-            if self.data[i].dropna().empty:
+            if self.data[i].dropna(how='all').empty:
                 missingData.append(True)
         # Label each curve with a unique identifier
         curves = {i: curves[i] for i in range(len(curves))}
