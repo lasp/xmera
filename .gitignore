@@ -51,3 +51,5 @@ supportData/EphemerisData/de430.bsp
 venv/
 .venv/
 examples/MonteCarloExamples/scenario_AttFeedbackMC/
+
+CMakeUserPresets.json

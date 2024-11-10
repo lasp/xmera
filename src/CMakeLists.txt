@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.24)
+
+set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG RELEASE)
 
 project("basilisk")
 
@@ -8,24 +10,7 @@ if(NOT CMAKE_BUILD_TYPE)
       CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/conan")
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
-
-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
-
 include(bskTargetExcludeBuildOptions)
-
-# This was set because when executing on a github runner the runner
-# has 4 compiler versions on it and conan finds version 9 and Cmake find 11.3.
-# I didn't manage to find a robust way of accommodating this dynamically setting
-# the conan compiler to the same as what Cmake finds. But I did find
-# some discussion on this setting and it seems that if we are not looking to
-# support a wide range of versions of then the compiler needs of our conan
-# dependencies will often be met with the compiler that CMake ends up finding.
-set(CONAN_DISABLE_CHECK_COMPILER TRUE CACHE BOOL "" FORCE )
 
 # ! create_symlinks : create symlinks to support files in source rather than keeping them in dist The function takes one
 # required argument and N optional arguments. \argn: a list of supporting file paths
@@ -143,7 +128,7 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
     target_link_libraries(${LIB_NAME} PRIVATE Python3::Module)
-    target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
+    target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen)
 
     # define build location, IDE generation specifications
     set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
@@ -366,20 +351,7 @@ endif ()
 
 # TODO: Remove the global link-libraries call
 find_package(Eigen3 CONFIG REQUIRED)
-# The following lines are necessary to prevent Xcode from issuing a warning about Eigen not being within the search
-# path. Related to Eigen being a header only library.
-if(DEFINED Eigen3_INCLUDE_DIRS_DEBUG)
-  set(DIRECTORIES
-      "$<$<CONFIG:Debug>:${Eigen3_INCLUDE_DIRS_DEBUG}>" "$<$<CONFIG:Release>:${Eigen3_INCLUDE_DIRS_DEBUG}>"
-      "$<$<CONFIG:RelWithDebInfo>:${Eigen3_INCLUDE_DIRS_DEBUG}>" "$<$<CONFIG:MinSizeRel>:${Eigen3_INCLUDE_DIRS_DEBUG}>")
-else()
-  set(DIRECTORIES
-      "$<$<CONFIG:Debug>:${Eigen3_INCLUDE_DIRS_RELEASE}>" "$<$<CONFIG:Release>:${Eigen3_INCLUDE_DIRS_RELEASE}>"
-      "$<$<CONFIG:RelWithDebInfo>:${Eigen3_INCLUDE_DIRS_RELEASE}>"
-      "$<$<CONFIG:MinSizeRel>:${Eigen3_INCLUDE_DIRS_RELEASE}>")
-endif()
-set_property(TARGET Eigen3::Eigen3 PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${DIRECTORIES})
-link_libraries(Eigen3::Eigen3)
+link_libraries(Eigen3::Eigen)
 
 # Add general compiler flags
 set(CMAKE_MACOSX_RPATH 1)

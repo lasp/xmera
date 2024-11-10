@@ -2,7 +2,7 @@ if(NOT BUILD_VIZINTERFACE)
   return()
 endif()
 
-find_package(protobuf CONFIG REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
 
 message(STATUS "Scanning ${CMAKE_CURRENT_SOURCE_DIR} for protobuf interface definitions")
 
@@ -40,7 +40,7 @@ foreach(PROTO_DEF ${PROTO_DEFS})
 
   target_link_libraries(${PROTO_TARGET}
     PUBLIC
-      protobuf::protobuf
+      protobuf::libprotobuf
   )
 
   set_target_properties(${PROTO_TARGET} PROPERTIES
