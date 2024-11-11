@@ -36,7 +36,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos) override;
 
     std::tuple<Eigen::Vector3d, Eigen::Vector3d> readRelativeState();
-    bool checkValidity(Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N) const;
+    bool checkValidity(uint64_t currentSimNanos, Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N) const;
     void computeFlybyParameters(Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N);
     void computeRN(Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N);
     std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d> computeGuidanceSolution() const;
@@ -66,6 +66,7 @@ public:
 
 private:
     double dt = 0; //!< current time step between last two updates
+    double timeOfFirstRead = 0;  //!< time of first nav solution read
     double timeBetweenFilterData = 0;       //!< time between two subsequent reads of the filter information
     double toleranceForCollinearity = 0;            //!< tolerance for singular conditions when position and velocity are collinear
     int signOfOrbitNormalFrameVector = 1;  //!< Sign of orbit normal vector to complete reference frame
@@ -78,8 +79,8 @@ private:
     double gamma0 = 0;              //!< flight path angle of the spacecraft at time of read [rad]
     uint64_t lastFilterReadTime = 0;  //!< time of last filter read
     Eigen::Matrix3d R0N;           //!< inertial-to-reference DCM at time of read
-    Eigen::Vector3d previousFilterPosition{};           //!< Last position used to create profile
-    Eigen::Vector3d previousFilterVelocity{};           //!< Last velocity used to create profile
+    Eigen::Vector3d firstNavPosition{};           //!< Last position used to create profile
+    Eigen::Vector3d firstNavVelocity{};           //!< Last velocity used to create profile
     double positionKnowledgeSigma = 0;           //!< Last position used to create profile
     double velocityKnowledgeSigma = 0;           //!< Last velocity used to create profile
 
