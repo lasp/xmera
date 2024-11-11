@@ -67,6 +67,7 @@ class DS_Plot():
                 curves.append(curve)
                 count += 1
 
+            self.numRunsAllNans = (self.data[i].isna().sum(axis=0) == self.data[i].shape[0]).sum()
             if self.data[i].dropna(how='all').empty:
                 missingData.append(True)
         # Label each curve with a unique identifier
@@ -109,5 +110,11 @@ class DS_Plot():
             color_key = [(name, color) for name, color in zip(self.labels, self.cmap)]
             legend = hv.NdOverlay({n: hv.Points([np.nan, np.nan], label=str(n)).opts(color=c) for n, c in color_key})
             image = image*legend
+
+        # This currently is only accurate for single component plots.
+        if self.numRunsAllNans > 0:
+            text = hv.Text(0.0, 0.0, "{} runs with NaNs only".format(str(self.numRunsAllNans)),
+                           halign='left', valign='bottom')
+            image=image*text
 
         return image, self.title
