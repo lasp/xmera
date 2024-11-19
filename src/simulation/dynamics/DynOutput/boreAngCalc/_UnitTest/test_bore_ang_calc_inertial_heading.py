@@ -88,7 +88,7 @@ def bore_ang_calc_inertial_heading_func(show_plots, inertialHeading, eulerLoc):
 
     # Execute simulation
     TotalSim.InitializeSimulation()
-    TotalSim.TotalSim.SingleStepProcesses()
+    TotalSim.TotalSim.singleStepProcesses()
 
     # Configure the tests
 

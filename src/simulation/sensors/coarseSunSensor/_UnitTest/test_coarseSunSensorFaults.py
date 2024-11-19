@@ -130,10 +130,10 @@ def run(cssFault):
     unitTestSim.InitializeSimulation()
 
     # Execute the simulation for one time step
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
     CSS.faultState = cssFaultValue
     for i in range(3):
-        unitTestSim.TotalSim.SingleStepProcesses()
+        unitTestSim.TotalSim.singleStepProcesses()
 
     cssOutput = cssRecoder.OutputData[-1]
     print(cssOutput)

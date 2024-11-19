@@ -30,7 +30,7 @@ The sample script below creates a single Basilisk module as illustrated above.  
 
 To execute the code, this script doesn't run the simulation for a period of time.  Rather, the simulation is executed for a single time step.  This is convenient in particular when testing the module input-output behavior.  The command to execute Basilisk for one time step is::
 
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
 
 After the single process step execution the module ``dummy`` variable is printed out again to illustrate that an ``Update()`` call has occured.  Looking at the module source code you see that this variable is zero'd on reset and incremented by +1 on each ``Update()`` call.
 

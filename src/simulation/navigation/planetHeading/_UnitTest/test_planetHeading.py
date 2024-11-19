@@ -65,7 +65,7 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
     sim.AddModelToTask(task.Name, dataLog)
 
     sim.InitializeSimulation()
-    sim.TotalSim.SingleStepProcesses()
+    sim.TotalSim.singleStepProcesses()
     headingOut = dataLog.rHat_XB_B[-1]
 
     assert headingOut == pytest.approx([0., 0., -1.], rel=relTol)

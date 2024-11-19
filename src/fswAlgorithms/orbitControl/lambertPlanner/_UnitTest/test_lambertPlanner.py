@@ -155,7 +155,7 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
     unitTestSim.AddModelToTask(unitTaskName, lambertProblemOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # pull module data
     solverMethod = lambertProblemOutMsgRec.solverMethod[0]

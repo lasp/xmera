@@ -163,7 +163,7 @@ def cameraColorTest(image, HSV, BGR):
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     corruptedPath = module.saveDir + '0.000000.png'
 

@@ -140,7 +140,7 @@ void SimThreadExecution::StepUntilStop()
     int64_t inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
     while(this->threadValid() && (this->NextTaskTime < stopThreadNanos || (this->NextTaskTime == stopThreadNanos &&
                                                this->nextProcPriority >= stopThreadPriority))) {
-        this->SingleStepProcesses(inPri);
+        this->singleStepProcesses(inPri);
         inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
     }
 }
@@ -362,7 +362,7 @@ void SimModel::resetInitSimulation() const
     @return void
 */
 
-void SimModel::SingleStepProcesses(int64_t stopPri)
+void SimModel::singleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~((uint64_t) 0);
     auto it = this->processList.begin();

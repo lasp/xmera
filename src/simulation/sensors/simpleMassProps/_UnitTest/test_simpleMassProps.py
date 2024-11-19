@@ -124,7 +124,7 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
     unitTestSim.InitializeSimulation()
 
     # Run for one time step
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # Change the mass, inertia and center of mass properties
     scMassPropsData.massSC = 500
@@ -136,7 +136,7 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
     scMassPropsModule.scMassPropsInMsg.subscribeTo(scMassPropsMsg)
 
     # Run for another time step
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # set the filtered output truth states
     trueMass = [100, 500]

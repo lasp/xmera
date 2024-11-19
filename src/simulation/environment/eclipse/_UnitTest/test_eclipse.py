@@ -249,7 +249,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     unitTestSim.InitializeSimulation()
 
     # Execute the simulation for one time step
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     eclipseData_0 = dataLog.shadowFactor
     # Obtain body position vectors to check with MATLAB
@@ -386,7 +386,7 @@ def unitEclipseCustom(show_plots):
     unitTestSim.InitializeSimulation()
 
     # Execute the simulation for one time step
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     eclipseData_0 = dataLog.shadowFactor
     # Obtain body position vectors to check with MATLAB

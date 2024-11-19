@@ -122,7 +122,7 @@ def odometryTest(show_plots, dx = 5, dy = -3,
     unitTestSim.AddModelToTask(unitTaskName, dirMotionRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # pull module data
     v_hat_camera = dirMotionRec.v_C_hat[0]

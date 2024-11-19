@@ -162,7 +162,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     # Initialize and run simulation one step at a time
     unitTestSim.InitializeSimulation()
     # Execute the simulation for one time step
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
     # This pulls the actual data log from the simulation run.
     dataAlb0 = dataLog.albedoAtInstrument
     errTol = 1E-12

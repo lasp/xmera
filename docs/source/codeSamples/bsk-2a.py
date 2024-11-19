@@ -47,7 +47,7 @@ def run():
     print(mod1.dummy)
 
     # perform a single Update on all modules
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
     print(mod1.dummy)
 
     return

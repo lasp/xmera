@@ -105,7 +105,7 @@ def run(show_plots, accuracy):
     CSS2.stateInMsg.subscribeTo(scMsg)
 
     scSim.InitializeSimulation()
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
 
     # pull logged data
     dataCSS1pos = dataLog1.r_B

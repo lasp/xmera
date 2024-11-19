@@ -120,7 +120,7 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
     module.voltInMsgs[2].subscribeTo(volt2InMsg)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # set truth force and torque values
     fTruth = [

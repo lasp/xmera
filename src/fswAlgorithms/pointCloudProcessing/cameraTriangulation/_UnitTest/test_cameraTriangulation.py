@@ -172,7 +172,7 @@ def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, p4_noise
     unitTestSim.AddModelToTask(unitTaskName, cameraLocationOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # pull module data
     cameraLocation = cameraLocationOutMsgRec.cameraPos_N[0]

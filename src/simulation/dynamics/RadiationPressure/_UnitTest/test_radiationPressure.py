@@ -157,7 +157,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     unitTestSim.ExecuteSimulation()
     srpDynEffector.computeForceTorque(unitTestSim.TotalSim.getCurrentNanos(), testTaskRate)
     srpDynEffector2.computeForceTorque(unitTestSim.TotalSim.getCurrentNanos(), testTaskRate)
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     srpDataForce_B = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_B)
     srpDataForce_N = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_N)
