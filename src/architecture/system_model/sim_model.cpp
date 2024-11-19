@@ -398,7 +398,7 @@ void SimModel::singleStepProcesses(int64_t stopPri)
  * it does not clear all message buffers and does not reset individual models.
  @return void
  */
-void SimModel::ResetSimulation()
+void SimModel::resetSimulation()
 {
     for(auto const& process : this->processList) {
         process->reInitialize();

@@ -456,7 +456,7 @@ class SimBaseClass:
         if(self.simulationInitialized):
             self.TotalSim.resetThreads(self.TotalSim.getThreadCount())
         self.TotalSim.assignRemainingProcs()
-        self.TotalSim.ResetSimulation()
+        self.TotalSim.resetSimulation()
         self.TotalSim.selfInitSimulation()
         self.TotalSim.resetInitSimulation()
         self.simulationInitialized = True

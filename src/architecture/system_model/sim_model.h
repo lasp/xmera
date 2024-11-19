@@ -99,7 +99,7 @@ public:
     void singleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void addNewProcess(SysProcess *newProc);
     void addProcessToThread(SysProcess *newProc, uint64_t threadSel);
-    void ResetSimulation();  //!< Reset simulation back to zero
+    void resetSimulation();  //!< Reset simulation back to zero
     void clearProcsFromThreads() const;
     void resetThreads(uint64_t threadCount);
     void deleteThreads();
