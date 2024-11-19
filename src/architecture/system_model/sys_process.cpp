@@ -31,11 +31,11 @@ SysProcess::SysProcess(std::string name) : SysProcess()
     this->processName = std::move(name);
 }
 
-/*! This method sets the nextTaskTime = 0 and calls SelfInitTaskList() for
+/*! This method sets the nextTaskTime = 0 and calls selfInitTaskList() for
  * all process tasks.
  @return void
  */
-void SysProcess::selfInitProcess()
+void SysProcess::selfInitialize()
 {
     this->nextTaskTime = 0;
     for(auto const& process : this->processTasks) {
@@ -49,7 +49,7 @@ void SysProcess::selfInitProcess()
     @return void
     @param currentTime Current simulation time in ns that reset is occurring at
 */
-void SysProcess::resetProcess(uint64_t currentTime)
+void SysProcess::reset(uint64_t currentTime)
 {
     for(auto const& process : this->processTasks) {
         SysModelTask *localTask = process.TaskPtr;
@@ -63,7 +63,7 @@ void SysProcess::resetProcess(uint64_t currentTime)
  *  and then adds everything back into the process with the correct priority.
     @return void
 */
-void SysProcess::reInitProcess()
+void SysProcess::reInitialize()
 {
     for(auto const& task : this->processTasks) {
         SysModelTask *localTask = task.TaskPtr;
@@ -131,7 +131,7 @@ void SysProcess::addTask(SysModelTask *newTask, int32_t taskPriority)
     localEntry.taskPriority = taskPriority;
     this->scheduleTask(localEntry);
     newTask->updateParentProc(processName);
-    this->enableProcess();
+    this->enable();
 }
 
 /*! This method is used to place the task from the caller into the correct

@@ -188,7 +188,7 @@ void SimThreadExecution::postInit() {
  */
 void SimThreadExecution::selfInitProcesses() const {
     for(auto const& process : this->processList) {
-        process->selfInitProcess();
+        process->selfInitialize();
     }
 }
 
@@ -213,7 +213,7 @@ void SimThreadExecution::resetProcesses() {
     this->CurrentNanos = 0;
     this->NextTaskTime = 0;
     for(auto const& process : this->processList) {
-        process->resetProcess(this->currentThreadNanos);
+        process->reset(this->currentThreadNanos);
     }
 }
 
@@ -401,7 +401,7 @@ void SimModel::singleStepProcesses(int64_t stopPri)
 void SimModel::ResetSimulation()
 {
     for(auto const& process : this->processList) {
-        process->reInitProcess();
+        process->reInitialize();
     }
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
