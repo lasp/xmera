@@ -492,7 +492,7 @@ class SimBaseClass:
                 nextPriority = -1
             if self.terminate:
                 break
-            self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
+            self.TotalSim.stepUntilStop(nextStopTime, nextPriority)
             progressBar.update(self.TotalSim.getNextTaskTime())
             nextPriority = -1
             nextStopTime = self.StopTime

@@ -276,7 +276,7 @@ SimModel::~SimModel()
  @param stopPri The priority level below which the sim won't go
  @return void
  */
-void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
+void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
     std::cout << std::flush;
     for(auto const* simThread : this->threadList) {
