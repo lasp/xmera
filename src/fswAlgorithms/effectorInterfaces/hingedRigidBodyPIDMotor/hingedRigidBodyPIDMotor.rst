@@ -26,12 +26,12 @@ provides information on what this message is used for.
       - Input Spinning Body Message Message.
     * - hingedRigidBodyRefInMsg
       - :ref:`HingedRigidBodyMsgPayload`
-      - Input Spinning Body Reference Message Message. 
+      - Input Spinning Body Reference Message Message.
 
 
 Module Assumptions and Limitations
 ----------------------------------
-This module is very simple and does not make any assumptions. The only limitations are those inherent to a PID type of control law, here implemented. The type of response (underdamped, 
+This module is very simple and does not make any assumptions. The only limitations are those inherent to a PID type of control law, here implemented. The type of response (underdamped,
 overdamped, or critically damped) depends on the choice of gains provided as inputs to the module.
 
 
@@ -54,7 +54,7 @@ The required module configuration is::
     motor.P = P
     motor.P = I
     unitTestSim.AddModelToTask(unitTaskName, motor)
-	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters

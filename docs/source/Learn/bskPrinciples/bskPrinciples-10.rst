@@ -1,6 +1,6 @@
 .. _bskPrinciples-10:
 
-.. warning:: 
+.. warning::
 
     This section refers to a deprecated way of operating with C modules. Refer to previous documentation pages for the updated way.
 
@@ -8,7 +8,7 @@ Deprecated: Using old-style C modules
 =====================================
 In more recent Basilisk scripts, whether a module is implemented in C++ or C should not make
 any difference on how this module is used in Python scripts. However, this has not always been
-the case, and you might encounter some code that uses the older syntax. This documentation 
+the case, and you might encounter some code that uses the older syntax. This documentation
 summarizes how to use this older syntax.
 
 Previous documentation pages have taught us that C++ modules (and new-syntax C modules) are
@@ -27,13 +27,13 @@ In order to perform the same operations on an old-syntax C module, one would do:
     moduleWrap.modelTag = "someModuleName"
     scSim.AddModelToTask("taskName", moduleWrap, moduleConfig, priority)
 
-Note that in this case, we created a "Config" object ``someModule.someModuleConfig``. Connecting 
+Note that in this case, we created a "Config" object ``someModule.someModuleConfig``. Connecting
 messages and setting parameters of the module is done through this object. Then, the ``setModelDataWrap``
 method of the simulation object is called on the "Config" object, which generates the "Wrap" object.
 The unique name must be set on the "Wrap" object. Finally, the module is added to the simulation by
 using both the "Wrap" and "Config" objects in the ``scSim.AddModelToTask`` method.
 
-The need for separate "Config" and "Wrap" objects arises from the lack of classes in the C programming language. 
+The need for separate "Config" and "Wrap" objects arises from the lack of classes in the C programming language.
 The "Config" objects, as well as the relevant ``updateState``, ``Reset``, and ``SelfInit`` methods,
 are written in pure C for C modules. However, the simulation framework is written in C++ and it expects
 the modules to be C++ classes. The "Wrap" object is this C++ class, which holds references to

@@ -44,7 +44,7 @@ For this module to operate, the user needs to provide two unit directions as inp
 - :math:`{}^\mathcal{B}\boldsymbol{\hat{a}}_1`: direction of the solar array drive, about which the rotation happens;
 - :math:`{}^\mathcal{B}\boldsymbol{\hat{a}}_2`: direction perpendicular to the solar array surface, with the array at a zero rotation.
 
-To compute the reference rotation :math:`\theta_R`, the module computes the unit vector :math:`{}^\mathcal{R}\boldsymbol{\hat{a}}_2`, which is coplanar with 
+To compute the reference rotation :math:`\theta_R`, the module computes the unit vector :math:`{}^\mathcal{R}\boldsymbol{\hat{a}}_2`, which is coplanar with
 :math:`{}^\mathcal{B}\boldsymbol{\hat{a}}_1` and the Sun direction :math:`{}^\mathcal{R}\boldsymbol{\hat{r}}_S`. This is obtained as:
 
 .. math::
@@ -72,7 +72,7 @@ The required module configuration is::
     solarArray.a2Hat_B = [0, 0, 1]
     solarArray.attitudeFrame = 0
     unitTestSim.AddModelToTask(unitTaskName, solarArray)
-	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters

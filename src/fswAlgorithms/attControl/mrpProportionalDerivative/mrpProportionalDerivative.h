@@ -48,7 +48,7 @@ public:
     ReadFunctor<AttGuidMsgPayload> guidInMsg;                         //!< Attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;              //!< Vehicle configuration input message
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;                 //!< Commanded torque output message
-    
+
     BSKLogger *bskLogger;                                             //!< BSK Logging
 
 private:

@@ -387,5 +387,3 @@ if __name__ == "__main__":
         300,       # Timestep (seconds)
         True    # Show plots
     )
-
-

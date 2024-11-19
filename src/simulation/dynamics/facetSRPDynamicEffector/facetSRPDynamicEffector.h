@@ -73,4 +73,4 @@ private:
     bool facetAngleMsgRead;                                                              //!< Boolean variable signaling that the facet articulation messages are read
 };
 
-#endif 
+#endif

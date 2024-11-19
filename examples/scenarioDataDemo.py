@@ -18,7 +18,7 @@
 Overview
 --------
 
-This is an illustration of how to use onboard data management modules to perform analysis of onboard data generated 
+This is an illustration of how to use onboard data management modules to perform analysis of onboard data generated
 by instruments, stored by computers, and downlinked by transmittters.
 
 This scenario is intended to provide both an overview and a concrete demonstration of the features and interface of the

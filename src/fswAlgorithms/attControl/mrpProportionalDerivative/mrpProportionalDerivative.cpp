@@ -75,10 +75,10 @@ void MrpProportionalDerivative::updateState(uint64_t callTime)
 
     // Compute P*delta_omega
     Eigen::Vector3d v3_temp2 = this->P * omega_BR_B;
-    
+
     // Compute omega_r x [I]omega
     Eigen::Vector3d v3_temp3 = omega_RN_B.cross(this->ISCPntB_B * omega_BN_B);
-    
+
     // Compute [I](d(omega_r)/dt - omega x omega_r)
     Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(guidanceMsgPayload.domega_RN_B);
     Eigen::Vector3d v3_temp4 = this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B));

@@ -44,7 +44,7 @@ demonstrate the data stored, generated, and downlinked.
 
 .. image:: /_images/Scenarios/scenarioGroundPassPolar.svg
    :align: center
-   
+
 .. image:: /_images/Scenarios/scenarioGroundPassRange.svg
    :align: center
 

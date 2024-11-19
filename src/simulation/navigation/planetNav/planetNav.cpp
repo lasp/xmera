@@ -150,4 +150,3 @@ void PlanetNav::updateState(uint64_t currentSimNanos)
     this->writeOutputMessages(currentSimNanos);
     this->prevTime = currentSimNanos;
 }
-

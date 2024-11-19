@@ -39,7 +39,7 @@ public:
     void updateState(uint64_t currentSimNanos);
 
 public:
-    
+
     double K;  //!< gain on theta
     double P; //!< gain on theta dot
 

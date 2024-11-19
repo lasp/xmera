@@ -147,4 +147,3 @@ if __name__ == "__main__":
         -10.0 * macros.D2R,   # [rad] rotAxis_MAngle
         1e-12  # accuracy
     )
-    

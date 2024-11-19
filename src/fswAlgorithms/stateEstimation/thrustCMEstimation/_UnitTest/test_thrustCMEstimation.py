@@ -152,7 +152,7 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
     sigma = cmEstimateLog.covariance
     preFit = cmEstimateLog.preFitRes
     postFit = cmEstimateLog.postFitRes
-    
+
     # check that post-fit residuals are smaller in magnitude that pre-fit residuals at each measurement
     for i in range(len(r_TB_B)):
         np.testing.assert_array_less(np.linalg.norm(postFit[i]), np.linalg.norm(preFit[i]) + accuracy, verbose=True)

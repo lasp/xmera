@@ -441,7 +441,7 @@ class gravBodyFactory:
             raise ValueError(
                 "'time' argument must be provided and a valid SPICE time string"
             )
-        
+
         if spiceKernalFileNames is not None:
             spiceKernelFileNames = spiceKernalFileNames
             deprecationWarn(

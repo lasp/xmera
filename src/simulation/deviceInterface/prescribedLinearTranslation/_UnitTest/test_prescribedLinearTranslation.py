@@ -287,4 +287,3 @@ if __name__ == "__main__":
         0.01,  # [m/s^2] transAccelMax
         1e-8  # accuracy
     )
-    

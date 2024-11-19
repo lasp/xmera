@@ -19,7 +19,7 @@
 import numpy as np
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk, simIncludeRW)
 from Basilisk.simulation import (spacecraft, simpleNav, simpleMassProps, reactionWheelStateEffector,
-                                 ReactionWheelPower, boreAngCalc, spinningBodyOneDOFStateEffector, 
+                                 ReactionWheelPower, boreAngCalc, spinningBodyOneDOFStateEffector,
                                  spinningBodyTwoDOFStateEffector, thrusterStateEffector, facetSRPDynamicEffector)
 from Basilisk.architecture import messaging
 
@@ -168,8 +168,8 @@ class BSKDynamicModels:
         self.RSAList[0].r_SB_B = [0.5 * 1.53, 0.0, 0.44]
         self.RSAList[0].r_ScS_S = [-0.036, 2.827, -0.469]
         self.RSAList[0].sHat_S = [0, 1, 0]
-        self.RSAList[0].dcm_S0B = [[0, 0, -1], 
-                                   [1, 0, 0], 
+        self.RSAList[0].dcm_S0B = [[0, 0, -1],
+                                   [1, 0, 0],
                                    [0, -1, 0]]
         self.RSAList[0].IPntSc_S = [[319.0, 0.0, 0.0],
                                     [0.0, 185.0, 0.0],
@@ -310,7 +310,7 @@ class BSKDynamicModels:
         self.SEPThruster1.kappaInit = messaging.DoubleVector([0.0])
         self.SEPThruster1.modelTag = "SEPThruster1"
         self.scObject.addStateEffector(self.SEPThruster1)
-        
+
         self.SEPThruster2.addThruster(thruster, self.platform2.spinningBodyConfigLogOutMsgs[1])
         self.SEPThruster2.kappaInit = messaging.DoubleVector([0.0])
         self.SEPThruster2.modelTag = "SEPThruster2"
@@ -387,4 +387,3 @@ class BSKDynamicModels:
         self.SetInertialBoresight2(SimBase)
         self.SetSEPTrusterStateEffectors()
         self.SetFacetSRPDynamicEffector(SimBase)
-

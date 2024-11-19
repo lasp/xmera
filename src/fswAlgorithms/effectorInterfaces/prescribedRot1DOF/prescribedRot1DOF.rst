@@ -25,9 +25,9 @@ The corresponding angle the prescribed body moves through during the rotation is
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -53,12 +53,12 @@ Detailed Module Description
 ---------------------------
 This 1 DOF rotational motion kinematic profiler module is written to profile spinning body motion with respect to a
 body-fixed mount frame. The inputs to the profiler are the scalar maximum angular acceleration for the rotation
-:math:`\alpha_{\text{max}}`, the prescribed body's initial attitude with respect to the mount frame as the Principal 
+:math:`\alpha_{\text{max}}`, the prescribed body's initial attitude with respect to the mount frame as the Principal
 Rotation Vector ``prv_F0M`` :math:`(\Phi_0, \hat{\textbf{{e}}}_0)`, and the prescribed body's reference attitude with
 respect to the mount frame as the Principal Rotation Vector ``prv_F1M`` :math:`(\Phi_1, \hat{\textbf{{e}}}_1)`.
 The prescribed body is assumed to be non-rotating at the beginning of the rotation.
-    
-Subtracting the initial principal rotation vector from the reference principal rotation vector gives the required 
+
+Subtracting the initial principal rotation vector from the reference principal rotation vector gives the required
 rotation angle and axis for the rotation:
 
 .. math::
@@ -68,23 +68,23 @@ rotation angle and axis for the rotation:
     \hat{\textbf{{e}}} = \frac{\cos \frac{\Phi_0}{2} \sin \frac{\Phi_1}{2} \hat{\textbf{{e}}}_1 - \cos \frac{\Phi_1}{2} \sin \frac{\Phi_0}{2} \hat{\textbf{{e}}}_0 + \sin \frac{\Phi_1}{2} \sin \frac{\Phi_0}{2} \hat{\textbf{{e}}}_1 \times \hat{\textbf{{e}}}_0 }{\sin \frac{\Phi_{\text{ref}}}{2}}
 
 During the first half of the rotation, the prescribed body is constantly accelerated with the given maximum
-angular acceleration. The prescribed body's angular velocity increases linearly during the acceleration phase and 
+angular acceleration. The prescribed body's angular velocity increases linearly during the acceleration phase and
 reaches a maximum magnitude halfway through the rotation. The switch time :math:`t_s` is the simulation time
 halfway through the rotation:
-    
+
 .. math::
     t_s = t_0 + \frac{\Delta t}{2}
 
 where the time required for the rotation :math:`\Delta t` is determined using the inputs to the profiler:
-    
+
 .. math::
     \Delta t = t_f - t_0 = 2 \sqrt{ \Phi_{\text{ref}} / \ddot{\Phi}_{\text{max}}}
 
 The resulting trajectory of the angle :math:`\Phi` swept during the first half of the rotation is parabolic. The profiled
-motion is concave upwards if the reference angle :math:`\Phi_{\text{ref}}` is greater than zero. If the converse is true, 
+motion is concave upwards if the reference angle :math:`\Phi_{\text{ref}}` is greater than zero. If the converse is true,
 the profiled motion is instead concave downwards. The described motion during the first half of the rotation
 is characterized by the expressions:
- 
+
 .. math::
     \omega_{\mathcal{F} / \mathcal{M}}(t) = \alpha_{\text{max}}
 
@@ -94,17 +94,17 @@ is characterized by the expressions:
 .. math::
     \Phi(t) = c_1 (t - t_0)^2
 
-where 
+where
 
 .. math::
     c_1 = \frac{\Phi_{\text{ref}}}{2(t_s - t_0)^2}
 
 Similarly, the second half of the rotation decelerates the prescribed body constantly until it reaches a
-non-rotating state. The prescribed body angular velocity decreases linearly from its maximum magnitude back to zero. 
+non-rotating state. The prescribed body angular velocity decreases linearly from its maximum magnitude back to zero.
 The trajectory swept during the second half of the rotation is quadratic and concave downwards if the reference angle
 :math:`\Phi_{\text{ref}}` is positive. If :math:`\Phi_{\text{ref}}` is negative, the profiled motion is instead
 concave upwards. The described motion during the second half of the rotation is characterized by the expressions:
-    
+
 .. math::
     \ddot{\Phi}(t) = -\alpha_{\text{max}}
 
@@ -114,7 +114,7 @@ concave upwards. The described motion during the second half of the rotation is 
 .. math::
     \Phi(t) = c_2 (t - t_f)^2  + \Phi_{\text{ref}}
 
- where 
+ where
 
 .. math::
     c_2 = \frac{\Phi_{\text{ref}}}{2(t_s - t_f)^2}
@@ -169,4 +169,3 @@ The user is required to set the above configuration data parameters, as they are
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, PrescribedRot1DOF)
-

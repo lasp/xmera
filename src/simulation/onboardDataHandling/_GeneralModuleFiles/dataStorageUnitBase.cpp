@@ -272,7 +272,7 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
             if ((this->storedData[(size_t) index].dataInstanceSum + data) >= 0) {
                 this->storedData[(size_t) index].dataInstanceSum += data;
             }
-            
+
         }
         //! - if a dataNode does not exist in storedData, add it to storedData, and add amount
         else if (strcmp(partitionName.c_str(), "") != 0) {

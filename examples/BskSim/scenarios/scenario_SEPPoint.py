@@ -102,7 +102,7 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
             else:
                 scBodyList.append([self.DynModels[i].platform1.modelTag, self.DynModels[i].platform1.spinningBodyConfigLogOutMsgs[1]])
                 for j in range(self.DynModels[i].numRSA):
-                    scBodyList.append([self.DynModels[i].RSAList[j].modelTag, self.DynModels[i].RSAList[j].spinningBodyConfigLogOutMsg])                    
+                    scBodyList.append([self.DynModels[i].RSAList[j].modelTag, self.DynModels[i].RSAList[j].spinningBodyConfigLogOutMsg])
 
         # Enable Vizard
         viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, scBodyList, saveFile=__file__)
@@ -267,7 +267,7 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
                     self.AddModelToTask(DynModels[sc].taskName, self.platformRefAngleLogs[0])
                     self.platformRefAngleLogs.append(FswModels[sc].platform2ReferenceData.hingedRigidBodyRef2OutMsg.recorder(self.samplingTime))
                     self.AddModelToTask(DynModels[sc].taskName, self.platformRefAngleLogs[1])
-            
+
             if thrusterFlag == 1:
                 # log platform torques
                 if not self.prescribed:
@@ -395,7 +395,7 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
         T_F = [0, 0, 0.1]
         for i in range(len(dataCMLocation)):
             r_CM_B = r_BM_B + dataCMLocation[i]
-            
+
             if not self.prescribed:
                 theta1 = dataPlatformAngle[0][i]
                 theta2 = dataPlatformAngle[1][i]

@@ -105,4 +105,3 @@ To define a vector of output messages, we define a vector of message pointer usi
 
     public:
         std::vector<Message<SomeMsgPayload>*> moreOutMsgs;      //!< variable description
-

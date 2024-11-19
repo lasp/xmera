@@ -49,7 +49,7 @@ public:
     VoltMsgPayload trueVoltState;    //!< -- voltage state without errors
     VoltMsgPayload estVoltState;     //!< -- voltage state including errors
     BSKLogger bskLogger;              //!< -- BSK Logging
-    
+
     ReadFunctor<VoltMsgPayload> voltInMsg;          //!< voltage input msg
 
 private:

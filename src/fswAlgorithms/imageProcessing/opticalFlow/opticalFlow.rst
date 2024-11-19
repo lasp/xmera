@@ -101,4 +101,3 @@ feature tracking. For example::
     module.imageInMsg.subscribeTo(imageInMsg)
     module.attitudeMsg.subscribeTo(attInMsg)
     module.ephemerisMsg.subscribeTo(ephemInMsg)
-

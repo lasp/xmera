@@ -96,7 +96,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 void Eclipse::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
-    
+
     // A lot of different vectors here. The below letters denote frames
     // P: planet frame
     // B: spacecraft body frame
@@ -111,18 +111,18 @@ void Eclipse::updateState(uint64_t currentSimNanos)
     std::vector<SCStatesMsgPayload>::iterator scIt;
     std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
 
-    
+
     // Index to assign the shadowFactor for each body position (S/C)
     // being tracked
     int scIdx = 0;
-    
+
     for(scIt = this->scStateBuffer.begin(); scIt != this->scStateBuffer.end(); scIt++)
     {
         double tmpShadowFactor = 1.0; // 1.0 means 100% illumination (no eclipse)
         double eclipsePlanetDistance = 0.0;
         int64_t eclipsePlanetKey = -1;
         r_BN_N = cArray2EigenVector3d(scIt->r_BN_N);
-        
+
         // Find the closest planet if there is one
         int idx = 0;
         for(planetIt = this->planetBuffer.begin(); planetIt != this->planetBuffer.end(); planetIt++)
@@ -137,7 +137,7 @@ void Eclipse::updateState(uint64_t currentSimNanos)
             if (r_HB_N.norm() < s_HP_N.norm()) {
                 idx++;
                 continue;
-            } 
+            }
             else{
                 // Find the closest planet and save its distance and vector index slot
                 if (s_BP_N.norm() < eclipsePlanetDistance || eclipsePlanetKey < 0) {
@@ -147,7 +147,7 @@ void Eclipse::updateState(uint64_t currentSimNanos)
                 idx++;
             }
         }
-        
+
         // If planetkey is not -1 then we have a planet for which
         // we compute the eclipse conditions
         if (eclipsePlanetKey >= 0) {
@@ -155,7 +155,7 @@ void Eclipse::updateState(uint64_t currentSimNanos)
             s_BP_N = r_BN_N - r_PN_N;
             r_HB_N = r_HN_N - r_BN_N;
             s_HP_N = r_HN_N - r_PN_N;
-            
+
             double s = s_BP_N.norm();
             std::string plName(this->planetBuffer[eclipsePlanetKey].PlanetName);
             double planetRadius = this->getPlanetEquatorialRadius(plName);
@@ -167,7 +167,7 @@ void Eclipse::updateState(uint64_t currentSimNanos)
             double l = safeSqrt(s*s - s_0*s_0);
             double l_1 = c_1*tan(f_1);
             double l_2 = c_2*tan(f_2);
-            
+
             if (fabs(l) < fabs(l_2)) {
                 if (c_2 < 0) { // total eclipse
                     tmpShadowFactor = this->computePercentShadow(planetRadius, r_HB_N, s_BP_N);
@@ -199,7 +199,7 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     double a = safeAsin(REQ_SUN*1000/normR_HB_N); // apparent radius of sun
     double b = safeAsin(planetRadius/normS_BP_N); // apparent radius of occulting body
     double c = safeAcos((-s_BP_N.dot(r_HB_N))/(normS_BP_N*normR_HB_N));
-    
+
     // The order of these conditionals is important.
     // In particular (c < a + b) must check last to avoid testing
     // with implausible a, b and c values

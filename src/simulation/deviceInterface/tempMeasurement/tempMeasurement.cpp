@@ -82,12 +82,12 @@ void TempMeasurement::applySensorErrors()
         sensorError = this->senBias + sensorNoise;
     }
     this->sensedTemperature = this->trueTemperature + sensorError;
-    
+
     // apply fault conditions
     if(this->faultState == TEMP_FAULT_STUCK_VALUE){ // stuck at specified value
         this->sensedTemperature = this->stuckValue;
     } else if (this->faultState == TEMP_FAULT_STUCK_CURRENT){ // stuck at last value before flag turned on
-        this->sensedTemperature = this->pastValue; 
+        this->sensedTemperature = this->pastValue;
     } else if (this->faultState == TEMP_FAULT_SPIKING){ // spiking periodically with specified probability
         // have to make a new distribution every time because SWIG can't parse putting this in the H file....?
         std::uniform_real_distribution<double> spikeProbabilityDistribution(0.0,1.0);
@@ -96,7 +96,7 @@ void TempMeasurement::applySensorErrors()
             this->sensedTemperature = this->sensedTemperature*this->spikeAmount;
         }
     }
-    
+
     this->pastValue = this->sensedTemperature; // update past value
 }
 
@@ -122,4 +122,3 @@ void TempMeasurement::updateState(uint64_t currentSimNanos)
     // write to the output messages
     this->tempOutMsg.write(&tempOutMsgBuffer, this->moduleID, currentSimNanos);
 }
-

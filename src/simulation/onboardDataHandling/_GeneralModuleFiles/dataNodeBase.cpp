@@ -148,5 +148,3 @@ bool DataNodeBase::customReadMessages()
 {
     return true;
 }
-
-

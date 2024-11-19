@@ -110,4 +110,3 @@ Note that with the ``new`` call above the memory associated with this output mes
             delete this->moreOutMsgs.at(c);
         }
     }
-

@@ -2,7 +2,7 @@
 
 .. _bskPrinciples-11:
 
-.. warning:: 
+.. warning::
 
     This section refers to a deprecated way of logging variables. Refer to previous documentation pages for the updated way.
 

@@ -1,12 +1,12 @@
 /*
  ISC License
- 
+
  Copyright (c) 2024, University of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,7 +14,7 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
+
  */
 
 #include "positionODuKF.h"
@@ -256,7 +256,7 @@ void PositionODuKF::measurementUpdate()
 {
     /*! - Compute the valid observations and the measurement model for all observations*/
     this->measurementModel();
-    
+
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
      time update section of the reference document*/
     Eigen::VectorXd yBar;
@@ -265,7 +265,7 @@ void PositionODuKF::measurementUpdate()
     {
         yBar += this->wM(i) * this->yMeas.col(i);
     }
-    
+
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement
      update section of the code.  This is based on the difference between the yBar
      parameter and the calculated measurement models.  Equation 24. */

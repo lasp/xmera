@@ -59,7 +59,7 @@ The required module configuration is::
     attGuid.beta = beta
     attGuid.alignmentPriority = alignmentPriority
     attGuid.modelTag = "sepPoint"
-	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters

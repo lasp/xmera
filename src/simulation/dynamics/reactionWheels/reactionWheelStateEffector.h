@@ -62,7 +62,7 @@ public:
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
-    
+
 public:
 	std::vector<RWConfigMsgPayload *> ReactionWheelData;          //!< -- RW information
 

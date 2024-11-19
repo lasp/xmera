@@ -60,16 +60,16 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    
+
     # Create test thread
     testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)

@@ -137,7 +137,7 @@ private:
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
-    
+
 };
 
 

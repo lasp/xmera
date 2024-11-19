@@ -214,7 +214,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
 
 def test_albedo_invalid_file(tmp_path):
     """Verify that Albedo model returns gracefully when file cannot be loaded.
-    
+
     Regression test for BSK-428 where model would segfault when invalid file
     was specified.
 
@@ -242,7 +242,7 @@ def test_albedo_invalid_file(tmp_path):
     albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
 
     albModule.addPlanetandAlbedoDataModel(planetInMsg, str(tmp_path), "does_not_exit.file")
-    
+
     # this call would previously segfault
     albModule.reset(0)
 

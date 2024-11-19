@@ -316,5 +316,3 @@ if __name__ == "__main__":
     run(
         True    # Show plots
     )
-
-
