@@ -182,18 +182,18 @@ class BSKFswModels:
         SimBase.AddModelToTask("lambertGuidanceSecondDV", self.lambertSecondDvObject, None, 9)
 
         # Create events to be called for triggering GN&C maneuvers
-        SimBase.fswProc.disableAllTasks()
+        SimBase.fswProc.disableTasks()
 
         SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'standby'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.setAllButCurrentEventActivity('initiateStandby', True)"
                                 ])
 
         SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'inertial3D'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('inertial3DPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
@@ -202,7 +202,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateAttitudeGuidanceDirect", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'directInertial3D'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('inertial3DPointTask')",
                                 "self.enableTask('mrpFeedbackTask')",
@@ -211,7 +211,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'hillPoint'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('hillPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
@@ -220,7 +220,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateSunSafePoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'sunSafePoint'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('sunSafePointTask')",
                                 "self.enableTask('mrpSteeringRWsTask')",
@@ -229,7 +229,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateVelocityPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'velocityPoint'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('velocityPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
@@ -237,7 +237,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateSteeringRW", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'steeringRW'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('hillPointTask')",
                                 "self.enableTask('mrpSteeringRWsTask')",
@@ -245,7 +245,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateLambertGuidanceFirstDV", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'lambertFirstDV'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('hillPointTask')",
                                 "self.enableTask('mrpSteeringRWsTask')",
@@ -254,7 +254,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateLambertGuidanceSecondDV", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'lambertSecondDV'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('hillPointTask')",
                                 "self.enableTask('mrpSteeringRWsTask')",
@@ -263,7 +263,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateDvPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'dvPoint'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.enableTask('dvPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
                                 "self.setAllButCurrentEventActivity('initiateDvPoint', True)"
@@ -271,7 +271,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateDvBurn", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'dvBurn'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "from Basilisk.architecture import messaging",
                                 "self.FSWModels.cmdRwMotorMsg.write(messaging.ArrayMotorTorqueMsgPayload())",
                                 "self.enableTask('dvPointTask')",

@@ -359,21 +359,21 @@ def run(show_plots, rFirst, rSecond):
     # Create tje attitude events (three different reference attitudes are required for the sim)
     scSim.createNewEvent("firstBurnEvent", simulationTimeStep, True,
                          ["self.modeRequest == 'firstBurn'"],
-                         ["self.fswProcess.disableAllTasks()",
+                         ["self.fswProcess.disableTasks()",
                           "self.enableTask('firstBurnTask')",
                           "self.enableTask('fswTask')",
                           "self.setAllButCurrentEventActivity('firstBurnEvent', True, useIndex=True)"])
 
     scSim.createNewEvent("secondBurnEvent", simulationTimeStep, True,
                          ["self.modeRequest == 'secondBurn'"],
-                         ["self.fswProcess.disableAllTasks()",
+                         ["self.fswProcess.disableTasks()",
                           "self.enableTask('secondBurnTask')",
                           "self.enableTask('fswTask')",
                           "self.setAllButCurrentEventActivity('secondBurnEvent', True, useIndex=True)"])
 
     scSim.createNewEvent("hillPointEvent", simulationTimeStep, True,
                          ["self.modeRequest == 'hillPoint'"],
-                         ["self.fswProcess.disableAllTasks()",
+                         ["self.fswProcess.disableTasks()",
                           "self.enableTask('hillPointTask')",
                           "self.enableTask('fswTask')",
                           "self.setAllButCurrentEventActivity('hillPointEvent', True, useIndex=True)"])

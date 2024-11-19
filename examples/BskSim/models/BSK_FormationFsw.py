@@ -116,17 +116,17 @@ class BSKFswModels():
         SimBase.AddModelToTask("spacecraftPointingTask", self.trackingError2, 7)
 
         # Create events to be called for triggering GN&C maneuvers
-        SimBase.fswProc.disableAllTasks()
+        SimBase.fswProc.disableTasks()
 
         SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'standby'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()"
                                 ])
 
         SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'inertial3D'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('inertial3DPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
@@ -135,7 +135,7 @@ class BSKFswModels():
 
         SimBase.createNewEvent("initiateSpacecraftPointing", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'spacecraftPointing'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('spacecraftPointingTask')",
                                 "self.enableTask('mrpFeedbackTask')"])

@@ -106,20 +106,20 @@ class BSKFswModels:
         SimBase.AddModelToTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.rwMotorTorque, 6)
 
         # Create events to be called for triggering GN&C maneuvers
-        SimBase.fswProc[spacecraftIndex].disableAllTasks()
+        SimBase.fswProc[spacecraftIndex].disableTasks()
 
         # The standby event should not be active while the station keeping mode is also active. Standby mode disables
         # attitude control and therefore the attitude cannot be corrected for orbital correction burns.
         SimBase.createNewEvent("initiateStandby_" + str(spacecraftIndex), self.processTasksTimeStep, True,
                                ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'standby'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
+                               ["self.fswProc[" + str(spacecraftIndex) + "].disableTasks()",
                                 "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
                                 "self.setAllButCurrentEventActivity('initiateStandby_" + str(spacecraftIndex) +
                                 "', True, useIndex=True)"])
 
         SimBase.createNewEvent("initiateInertialPointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
                                ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'inertialPointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
+                               ["self.fswProc[" + str(spacecraftIndex) + "].disableTasks()",
                                 "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
                                 "self.enableTask('inertialPointTask" + str(spacecraftIndex) + "')",
                                 "self.enableTask('trackingErrorTask" + str(spacecraftIndex) + "')",
@@ -129,7 +129,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateSunPointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
                                ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'sunPointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
+                               ["self.fswProc[" + str(spacecraftIndex) + "].disableTasks()",
                                 "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
                                 "self.enableTask('sunPointTask" + str(spacecraftIndex) + "')",
                                 "self.enableTask('trackingErrorTask" + str(spacecraftIndex) + "')",
@@ -139,7 +139,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateLocationPointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
                                ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'locationPointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
+                               ["self.fswProc[" + str(spacecraftIndex) + "].disableTasks()",
                                 "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
                                 "self.enableTask('locPointTask" + str(spacecraftIndex) + "')",
                                 "self.enableTask('trackingErrorTask" + str(spacecraftIndex) + "')",

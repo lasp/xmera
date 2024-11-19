@@ -162,7 +162,7 @@ void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
     and you are really only turning one on at a time.
     @return void
 */
-void SysProcess::disableAllTasks() const
+void SysProcess::disableTasks() const
 {
     for(auto const& scheduleEntry : this->processTasks) {
         scheduleEntry.TaskPtr->disableTask();

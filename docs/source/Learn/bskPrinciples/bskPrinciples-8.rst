@@ -23,7 +23,7 @@ The sample script below sets up a single process which contains 2 tasks called `
 
 After performing the typical module initialization the script executes a single simulation step.  The terminal output below shows that both the C and C++ modules have been executed, meaning both ``cTask`` and ``cppTask`` are enabled.
 
-To disable all tasks within a process, the command ``disableAllTasks()`` can be called on the process variable.  A single simulation step is executed with print statements before and after to illustrate not no tasks are being executed, as expected.
+To disable all tasks within a process, the command ``disableTasks()`` can be called on the process variable.  A single simulation step is executed with print statements before and after to illustrate not no tasks are being executed, as expected.
 
 Next, the :ref:`SimulationBaseClass` command ``enableTask(name)`` is used to turn on the ``cTask``. The string argument is the name of the task being enabled.  After executing another simulation step the terminal output illustrates that the C module is again executed.  This is repeated for enabling ``cppTask``.
 

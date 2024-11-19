@@ -305,7 +305,7 @@ def run(show_plots):
     # After reading the Delta-V command, the state managers velocity is updated through
     velRef.setState(unitTestSupport.np2EigenVectorXd(vm_N + dv_N))
     # disable flight software after maneuver
-    fswProcess.disableAllTasks()
+    fswProcess.disableTasks()
 
     # To start up the simulation again, note that the total simulation time must be provided,
     # not just the next incremental simulation time.

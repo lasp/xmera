@@ -38,8 +38,8 @@ class ProcessBaseClass(object):
     def discoverAllMessages(self):
         self.processData.discoverAllMessages()
 
-    def disableAllTasks(self):
-        self.processData.disableAllTasks()
+    def disableTasks(self):
+        self.processData.disableTasks()
 
     def enableAllTasks(self):
         self.processData.enableAllTasks()

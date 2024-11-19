@@ -194,11 +194,11 @@ class BSKFswModels:
         SimBase.AddModelToTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.rwMotorTorqueWrap, self.rwMotorTorqueData, 2)
 
         # Create events to be called for triggering GN&C maneuvers
-        SimBase.fswProc[spacecraftIndex].disableAllTasks()
+        SimBase.fswProc[spacecraftIndex].disableTasks()
 
         SimBase.createNewEvent("initiateEarthPointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
                                ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'earthPointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
+                               ["self.fswProc[" + str(spacecraftIndex) + "].disableTasks()",
                                 "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
                                 "self.enableTask('thrusterPlatformReferenceTask" + str(spacecraftIndex) + "')",
                                 "self.enableTask('thrusterPlatformTask" + str(spacecraftIndex) + "')",
@@ -210,7 +210,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateSEPPointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
                                ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'sepPointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
+                               ["self.fswProc[" + str(spacecraftIndex) + "].disableTasks()",
                                 "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
                                 "self.enableTask('cmEstimationTask" + str(spacecraftIndex) + "')",
                                 "self.enableTask('thrusterPlatformReferenceTask" + str(spacecraftIndex) + "')",
@@ -223,7 +223,7 @@ class BSKFswModels:
 
         SimBase.createNewEvent("initiateCruisePointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
                                ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'cruisePointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
+                               ["self.fswProc[" + str(spacecraftIndex) + "].disableTasks()",
                                 "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
                                 "self.enableTask('thrusterPlatformReferenceTask" + str(spacecraftIndex) + "')",
                                 "self.enableTask('thrusterPlatformTask" + str(spacecraftIndex) + "')",

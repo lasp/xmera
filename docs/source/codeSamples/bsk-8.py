@@ -47,7 +47,7 @@ def run():
     # execute BSK for a single step
     scSim.TotalSim.singleStepProcesses()
 
-    dynProcess.disableAllTasks()
+    dynProcess.disableTasks()
     print("all tasks disabled")
     scSim.TotalSim.singleStepProcesses()
     print("BSK executed a single simulation step")

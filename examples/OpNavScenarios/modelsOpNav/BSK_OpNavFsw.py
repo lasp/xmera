@@ -213,24 +213,24 @@ class BSKFswModels():
             SimBase.AddModelToTask("cnnFaultDet", self.relativeOD, 9)
 
         # Create events to be called for triggering GN&C maneuvers
-        SimBase.fswProc.disableAllTasks()
+        SimBase.fswProc.disableTasks()
 
         SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'standby'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()"
                                 ])
 
         SimBase.createNewEvent("prepOpNav", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'prepOpNav'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavPointTaskCheat')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("imageGen", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'imageGen'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('imageProcTask')",
                                 "self.enableTask('opNavPointTaskCheat')",
@@ -238,28 +238,28 @@ class BSKFswModels():
 
         SimBase.createNewEvent("pointOpNav", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'pointOpNav'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("pointHead", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'pointHead'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('headingPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("pointLimb", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'pointLimb'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavPointLimbTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("OpNavOD", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'OpNavOD'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavPointTaskCheat')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
@@ -267,7 +267,7 @@ class BSKFswModels():
 
         SimBase.createNewEvent("OpNavODLimb", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'OpNavODLimb'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavPointTaskCheat')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
@@ -275,7 +275,7 @@ class BSKFswModels():
 
         SimBase.createNewEvent("OpNavODB", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'OpNavODB'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavPointTaskCheat')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
@@ -283,35 +283,35 @@ class BSKFswModels():
 
         SimBase.createNewEvent("OpNavAttOD", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'OpNavAttOD'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavAttODTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("OpNavAttODLimb", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'OpNavAttODLimb'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavAttODLimbTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("CNNAttOD", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'CNNAttOD'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('cnnAttODTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("FaultDet", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'FaultDet'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('attODFaultDet')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("ODFaultDet", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'ODFaultDet'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('opNavPointTaskCheat')",
                                 "self.enableTask('mrpFeedbackRWsTask')",
@@ -319,7 +319,7 @@ class BSKFswModels():
 
         SimBase.createNewEvent("FaultDetCNN", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'FaultDetCNN'"],
-                               ["self.fswProc.disableAllTasks()",
+                               ["self.fswProc.disableTasks()",
                                 "self.FSWModels.zeroGateWayMsgs()",
                                 "self.enableTask('cnnFaultDet')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
