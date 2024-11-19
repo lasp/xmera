@@ -122,7 +122,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
  @param newTask The new task that we are adding to the list
  @param taskPriority The selected priority of the task being added
  */
-void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
+void SysProcess::addTask(SysModelTask *newTask, int32_t taskPriority)
 {
     ModelScheduleEntry localEntry;
     localEntry.TaskPtr = newTask;

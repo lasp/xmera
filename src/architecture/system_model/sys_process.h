@@ -41,12 +41,12 @@ public:
     SysProcess()=default;
     explicit SysProcess(std::string name); //!< class method
     ~SysProcess()=default;
-    void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1); //!< class method
     void selfInitProcess(); //!< class method
     void resetProcess(uint64_t currentTime); //!< class method
     void reInitProcess(); //!< class method
     void enableProcess() {this->processActive = true;} //!< class method
     void disableProcess() {this->processActive = false;} //!< class method
+    void addTask(SysModelTask *newTask, int32_t taskPriority = -1); //!< class method
     void scheduleTask(const ModelScheduleEntry& taskCall); //!< class method
     void setProcessName(std::string const& newName){this->processName = newName;} //!< class method
     std::string getProcessName() const { return this->processName;} //!< class method

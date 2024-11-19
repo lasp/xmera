@@ -30,7 +30,7 @@ class ProcessBaseClass(object):
         self.processData.processPriority = procPriority
 
     def addTask(self, newTask, taskPriority=-1):
-        self.processData.addNewTask(newTask.TaskData, taskPriority)
+        self.processData.addTask(newTask.TaskData, taskPriority)
 
     def addInterfaceRef(self, newInt):
         self.processData.addInterfaceRef(newInt)
