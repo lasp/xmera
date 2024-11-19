@@ -52,7 +52,7 @@ public:
     std::string getProcessName() const { return this->processName;} //!< class method
 
     void singleStepNextTask(uint64_t currentNanos); //!< class method
-    bool processEnabled() const {return this->processActive;} //!< class method
+    bool isEnabled() const {return this->processActive;} //!< class method
 	void changeTaskPeriod(const std::string& taskName, uint64_t newPeriod); //!< class method
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
     void disableTasks() const; //!< class method

@@ -106,7 +106,7 @@ void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
     auto it = this->processList.begin();
     this->CurrentNanos = this->NextTaskTime;
     while(it!= this->processList.end() && this->threadValid()) {
-        if(SysProcess *localProc = (*it); localProc->processEnabled()) {
+        if(SysProcess *localProc = (*it); localProc->isEnabled()) {
             while(localProc->getNextTaskTime() < this->CurrentNanos ||
                   (localProc->getNextTaskTime() == this->CurrentNanos &&
                    localProc->processPriority >= stopPri)) {
@@ -369,7 +369,7 @@ void SimModel::singleStepProcesses(int64_t stopPri)
     this->CurrentNanos = this->NextTaskTime;
     while(it!= this->processList.end())
     {
-        if(SysProcess *localProc = (*it); localProc->processEnabled())
+        if(SysProcess *localProc = (*it); localProc->isEnabled())
         {
             while(localProc->getNextTaskTime() < this->CurrentNanos ||
                 (localProc->getNextTaskTime() == this->CurrentNanos &&
