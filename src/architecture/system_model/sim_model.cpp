@@ -100,7 +100,7 @@ void SimThreadExecution::unlockParent() {
     @param stopPri The priority level below which the sim won't go
     @return void
 */
-void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
+void SimThreadExecution::singleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~((uint64_t) 0);
     auto it = this->processList.begin();

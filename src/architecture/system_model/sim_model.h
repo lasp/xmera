@@ -54,8 +54,8 @@ public:
     void unlockThread();
     void lockParent();
     void unlockParent();
-    void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next task in the simulation
     void stepUntilStop();  //!< Step simulation until stop time reached
+    void singleStepProcesses(int64_t stopPri=-1); //!< Step only the next task in the simulation
     void moveProcessMessages() const;
     uint64_t getCurrentNanos() const;
     void setCurrentNanos(uint64_t currentNanos);
