@@ -41,8 +41,8 @@ class ProcessBaseClass(object):
     def disableTasks(self):
         self.processData.disableTasks()
 
-    def enableAllTasks(self):
-        self.processData.enableAllTasks()
+    def enableTasks(self):
+        self.processData.enableTasks()
 
     def selectProcess(self):
         pass

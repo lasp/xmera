@@ -173,7 +173,7 @@ void SysProcess::disableTasks() const
  inhibited but you want to turn it all on at once.
  @return void
  */
-void SysProcess::enableAllTasks() const
+void SysProcess::enableTasks() const
 {
     for(auto const& scheduleEntry : this->processTasks) {
         scheduleEntry.TaskPtr->enableTask();

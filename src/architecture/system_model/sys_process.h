@@ -55,8 +55,8 @@ public:
     bool processEnabled() const {return this->processActive;} //!< class method
 	void changeTaskPeriod(const std::string& taskName, uint64_t newPeriod); //!< class method
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
-    void enableAllTasks() const; //!< class method
     void disableTasks() const; //!< class method
+    void enableTasks() const; //!< class method
     bool getProcessControlStatus() const {return this->processOnThread;} //!< Allows caller to see if this process is parented by a thread
     void setProcessControlStatus(bool processTaken) {processOnThread = processTaken;} //!< Provides a mechanism to say that this process is allocated to a thread
     uint64_t getNextTaskTime() const { return(this->nextTaskTime);}
