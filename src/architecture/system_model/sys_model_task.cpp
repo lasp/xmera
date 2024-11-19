@@ -81,7 +81,7 @@ void SysModelTask::ExecuteTaskList(uint64_t currentSimNanos)
  @param NewModel The new model that we are adding to the Task
  @param Priority The selected priority of the model being added (highest goes first)
  */
-void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
+void SysModelTask::addModel(SysModel *NewModel, int32_t Priority)
 {
     ModelPriorityPair LocalPair;
 

@@ -296,7 +296,7 @@ class SimBaseClass:
 
         for Task in self.TaskList:
             if Task.Name == TaskName:
-                Task.TaskData.AddNewObject(NewModel, ModelPriority)
+                Task.TaskData.addModel(NewModel, ModelPriority)
                 self.allModels.append((NewModel, ModelData, Task) )
                 if ModelData is not None:
                     try:
