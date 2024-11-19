@@ -444,10 +444,10 @@ class SimBaseClass:
 
         self.multiProcessVariableLoggers[VarName] = logger
 
-    def ResetTask(self, taskName):
+    def reset(self, taskName):
         for Task in self.TaskList:
             if Task.Name == taskName:
-                Task.resetTask(self.TotalSim.getCurrentNanos())
+                Task.reset(self.TotalSim.getCurrentNanos())
 
     def InitializeSimulation(self):
         """

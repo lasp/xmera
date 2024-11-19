@@ -59,10 +59,10 @@ class TaskBaseClass(object):
         self.TaskModels = []
 
     def disable(self):
-        self.TaskData.disableTask()
+        self.TaskData.disable()
 
     def enable(self):
-        self.TaskData.enableTask()
+        self.TaskData.enable()
 
-    def resetTask(self, callTime):
-        self.TaskData.ResetTaskList(callTime)
+    def reset(self, callTime):
+        self.TaskData.resetModels(callTime)

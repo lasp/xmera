@@ -34,7 +34,7 @@ SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime) :
 /*! This method self-initializes all of the models that have been added to the Task.
  @return void
  */
-void SysModelTask::SelfInitTaskList() const
+void SysModelTask::selfInitTaskList() const
 {
     for(auto const& modelPair : this->TaskModels) {
         SysModel* NonIt = modelPair.ModelPtr;
@@ -44,11 +44,11 @@ void SysModelTask::SelfInitTaskList() const
 
 
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
- * See sys_model_task.h for related method ResetTask()
+ * See sys_model_task.h for related method reset()
  @return void
  @param CurrentSimTime The time to start at after reset
 */
-void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
+void SysModelTask::resetModels(uint64_t CurrentSimTime)
 {
 	for (auto const& modelPair : this->TaskModels) {
 		modelPair.ModelPtr->reset(CurrentSimTime);
@@ -62,7 +62,7 @@ void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
  @return void
  @param currentSimNanos The current simulation time in [ns]
  */
-void SysModelTask::ExecuteTaskList(uint64_t currentSimNanos)
+void SysModelTask::executeModels(uint64_t currentSimNanos)
 {
     for(auto ModelPair = this->TaskModels.begin();
     (ModelPair != this->TaskModels.end() && this->taskActive);
@@ -108,7 +108,7 @@ void SysModelTask::addModel(SysModel *NewModel, int32_t Priority)
  @return void
  @param newPeriod The period that the task should run at going forward
  */
-void SysModelTask::updatePeriod(uint64_t newPeriod)
+void SysModelTask::setPeriod(uint64_t newPeriod)
 {
     //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
     if(this->NextStartTime > this->TaskPeriod) {

@@ -40,7 +40,7 @@ void SysProcess::selfInitialize()
     this->nextTaskTime = 0;
     for(auto const& process : this->processTasks) {
         SysModelTask *localTask = process.TaskPtr;
-        localTask->SelfInitTaskList();
+        localTask->selfInitTaskList();
     }
 }
 
@@ -53,7 +53,7 @@ void SysProcess::reset(uint64_t currentTime)
 {
     for(auto const& process : this->processTasks) {
         SysModelTask *localTask = process.TaskPtr;
-        localTask->ResetTaskList(currentTime);
+        localTask->resetModels(currentTime);
     }
     this->nextTaskTime = currentTime;
 }
@@ -67,12 +67,12 @@ void SysProcess::reInitialize()
 {
     for(auto const& task : this->processTasks) {
         SysModelTask *localTask = task.TaskPtr;
-        localTask->ResetTask();
+        localTask->reset();
     }
     std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
     this->processTasks.clear();
     for(auto const& task : taskPtrs) {
-        this->addNewTask(task.TaskPtr, task.taskPriority);
+        this->addTask(task.TaskPtr, task.taskPriority);
     }
 }
 
@@ -101,7 +101,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     }
     //! - Call the next scheduled model, and set the time to its start
     SysModelTask *localTask = fireIt->TaskPtr;
-    localTask->ExecuteTaskList(currentNanos);
+    localTask->executeModels(currentNanos);
     fireIt->NextTaskStart = localTask->getNextStartTime();
 
     //! - Figure out when we are going to be called next for scheduling purposes
@@ -130,7 +130,7 @@ void SysProcess::addTask(SysModelTask *newTask, int32_t taskPriority)
     localEntry.NextTaskStart = newTask->getNextStartTime();
     localEntry.taskPriority = taskPriority;
     this->scheduleTask(localEntry);
-    newTask->updateParentProc(processName);
+    newTask->setParentProc(processName);
     this->enable();
 }
 
@@ -165,7 +165,7 @@ void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
 void SysProcess::disableTasks() const
 {
     for(auto const& scheduleEntry : this->processTasks) {
-        scheduleEntry.TaskPtr->disableTask();
+        scheduleEntry.TaskPtr->disable();
     }
 }
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
@@ -176,7 +176,7 @@ void SysProcess::disableTasks() const
 void SysProcess::enableTasks() const
 {
     for(auto const& scheduleEntry : this->processTasks) {
-        scheduleEntry.TaskPtr->enableTask();
+        scheduleEntry.TaskPtr->enable();
     }
 }
 
@@ -191,7 +191,7 @@ void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPerio
 	//! - Iteratre through all of the task models to disable them
 	for (ModelScheduleEntry &scheduleEntry : this->processTasks) {
 		if (scheduleEntry.TaskPtr->TaskName == taskName) {
-			scheduleEntry.TaskPtr->updatePeriod(newPeriod);
+			scheduleEntry.TaskPtr->setPeriod(newPeriod);
 			scheduleEntry.NextTaskStart = scheduleEntry.TaskPtr->getNextStartTime();
 			scheduleEntry.TaskUpdatePeriod = scheduleEntry.TaskPtr->getTaskPeriod();
 			return;
