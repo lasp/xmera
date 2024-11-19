@@ -42,7 +42,7 @@ void activateNewThread(void *threadData)
             theThread->resetNow = false;
         }
         else{
-            theThread->StepUntilStop();
+            theThread->stepUntilStop();
         }
         //std::cout << "Stepping thread"<<std::endl;
         theThread->unlockParent();
@@ -130,7 +130,7 @@ void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
  stop priority have been reached.
  @return void
  */
-void SimThreadExecution::StepUntilStop()
+void SimThreadExecution::stepUntilStop()
 {
     /*! - Note that we have to step until both the time is greater and the next
      Task's start time is in the future. If the NextTaskTime is less than
