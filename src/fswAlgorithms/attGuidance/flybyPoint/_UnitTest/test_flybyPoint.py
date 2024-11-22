@@ -43,8 +43,9 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 @pytest.mark.parametrize("orbit_normal_sign", [1, -1])
 @pytest.mark.parametrize("max_rate", [0, 0.01])
 @pytest.mark.parametrize("max_acceleration", [0, 1E-7])
+@pytest.mark.parametrize("pos_knowledge", [0, 1E5])
 def test_flybyPoint(show_plots, initial_position, initial_velocity, filter_dt, orbit_normal_sign, max_rate,
-                    max_acceleration):
+                    max_acceleration, pos_knowledge):
     r"""
     **Validation Test Description**
 
@@ -76,11 +77,11 @@ def test_flybyPoint(show_plots, initial_position, initial_velocity, filter_dt, o
     """
     # each test method requires a single assert method to be called
     flybyPointTestFunction(show_plots, initial_position, initial_velocity, filter_dt, orbit_normal_sign,
-                           max_rate, max_acceleration)
+                           max_rate, max_acceleration, pos_knowledge)
 
 
 def flybyPointTestFunction(show_plots, initial_position, initial_velocity, filter_dt, orbit_normal_sign,
-                           max_rate, max_acceleration):
+                           max_rate, max_acceleration, pos_knowledge):
     # setup simulation environment
     sim_dt = 10
     unit_test_sim = SimulationBaseClass.SimBaseClass()
@@ -96,6 +97,7 @@ def flybyPointTestFunction(show_plots, initial_position, initial_velocity, filte
     flyby_guidance.setSignOfOrbitNormalFrameVector(orbit_normal_sign)
     flyby_guidance.setMaximumRateThreshold(max_rate)
     flyby_guidance.setMaximumAccelerationThreshold(max_acceleration)
+    flyby_guidance.setPositionKnowledgeSigma(pos_knowledge)
     unit_test_sim.AddModelToTask("unit_task", flyby_guidance)
 
     input_data = messaging.NavTransMsgPayload()
