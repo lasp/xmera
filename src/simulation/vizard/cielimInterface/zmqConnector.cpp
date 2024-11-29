@@ -128,4 +128,3 @@ void ZmqConnector::ping() {
 void ZmqConnector::setComPortNumber(std::string &portNumber) {
     this->comPortNumber = portNumber;
 }
-
