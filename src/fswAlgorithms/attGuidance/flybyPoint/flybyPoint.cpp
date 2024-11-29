@@ -254,4 +254,3 @@ double FlybyPoint::getPositionKnowledgeSigma() const {
 void FlybyPoint::setPositionKnowledgeSigma(double positionKnowledgeStd) {
     this->positionKnowledgeSigma = positionKnowledgeStd;
 }
-
