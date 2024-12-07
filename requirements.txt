@@ -4,6 +4,8 @@ datashader==0.16.3
 delimited-protobuf==1.0.0
 holoviews==1.19.1
 hvplot==0.10.0
+matplotlib
+numpy<2.0.0
 opencv-contrib-python
 opencv-python
 pandas
@@ -14,5 +16,4 @@ protobuf==3.19.1
 pytest
 pytest-html
 pytest-xdist
-matplotlib
-numpy<2.0.0
+tqdm
