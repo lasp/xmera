@@ -1,6 +1,5 @@
 from tqdm import tqdm
 
-
 class SimulationProgressBar:
     """
     Class to generate a BSK progress bar in the terminal window
@@ -33,4 +32,3 @@ class SimulationProgressBar:
 
     def close(self):
         self.p.close()
-
