@@ -1,4 +1,3 @@
-from colorama import Fore
 from tqdm import tqdm
 
 
@@ -17,7 +16,7 @@ class SimulationProgressBar:
             total=self.max_value,
             desc='Progress: ',
             disable=not self.enable,
-            bar_format="%s{l_bar}{bar}|%s" % (Fore.YELLOW, Fore.RESET))
+            bar_format="\x1B[33m{l_bar}{bar}|\x1B[39m")
 
     def update(self, update_value):
         if update_value < self.max_value:
