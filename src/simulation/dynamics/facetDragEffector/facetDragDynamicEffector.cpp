@@ -33,14 +33,6 @@ FacetDragDynamicEffector::FacetDragDynamicEffector()
 	return;
 }
 
-/*! The destructor.*/
-FacetDragDynamicEffector::~FacetDragDynamicEffector()
-{
-	return;
-}
-
-
-
 void FacetDragDynamicEffector::reset(uint64_t currentSimNanos)
 {
 	// check if input message has not been included

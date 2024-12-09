@@ -46,7 +46,6 @@ typedef struct {
 class FacetDragDynamicEffector: public SysModel, public DynamicEffector {
 public:
     FacetDragDynamicEffector();
-    ~FacetDragDynamicEffector();
     void linkInStates(DynParamManager& states) override;
     void computeForceTorque(double integTime, double timeStep) override;
     void reset(uint64_t currentSimNanos) override;
