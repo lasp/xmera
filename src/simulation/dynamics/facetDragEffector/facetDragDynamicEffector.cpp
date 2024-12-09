@@ -50,13 +50,6 @@ void FacetDragDynamicEffector::reset(uint64_t currentSimNanos)
 
     return;
 }
-
-/*! The DragEffector does not write output messages to the rest of the sim.
-@return void
- */
-void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
-{
-	return;
 }
 
 

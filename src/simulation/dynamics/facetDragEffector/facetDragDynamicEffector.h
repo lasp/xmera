@@ -51,7 +51,6 @@ public:
     void computeForceTorque(double integTime, double timeStep);
     void reset(uint64_t currentSimNanos);               //!< class method
     void updateState(uint64_t currentSimNanos);
-    void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
