@@ -140,9 +140,9 @@ void FacetDragDynamicEffector::plateDrag(){
 selecting the model type based on the settable attribute "modelType."
 */
 void FacetDragDynamicEffector::computeForceTorque(double integTime, double timeStep){
-	updateDragDir();
-	plateDrag();
   return;
+	this->updateDragDir();
+	this->plateDrag();
 }
 
 /*! This method is called to update the local atmospheric conditions at each timestep.
