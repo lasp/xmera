@@ -52,7 +52,7 @@ public:
     void updateState(uint64_t currentSimNanos) override;
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
-    uint64_t numFacets;                             //!< number of facets
+    uint64_t numFacets=0;                             //!< number of facets
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< atmospheric density input message
     StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector
