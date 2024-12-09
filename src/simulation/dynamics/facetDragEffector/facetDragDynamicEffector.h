@@ -33,10 +33,6 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
 
-
-
-
-
 /*! @brief spacecraft geometry data */
 typedef struct {
   std::vector<double> facetAreas;                   //!< vector of facet areas
@@ -49,8 +45,6 @@ typedef struct {
 /*! @brief faceted atmospheric drag dynamic effector */
 class FacetDragDynamicEffector: public SysModel, public DynamicEffector {
 public:
-
-
     FacetDragDynamicEffector();
     ~FacetDragDynamicEffector();
     void linkInStates(DynParamManager& states);
@@ -61,11 +55,6 @@ public:
     bool ReadInputs();
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
-private:
-
-    void plateDrag();
-    void updateDragDir();
-public:
     uint64_t numFacets;                             //!< number of facets
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< atmospheric density input message
     StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
@@ -75,9 +64,11 @@ public:
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
 private:
+    void plateDrag();
+    void updateDragDir();
+
     AtmoPropsMsgPayload atmoInData;
     SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
-
 };
 
 #endif
