@@ -1,13 +1,18 @@
 exclude: '.*\.(tls|bsp|tpc|bc)$'
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v5.0.0
     hooks:
-      -   id: trailing-whitespace
-      -   id: end-of-file-fixer
-      -   id: check-yaml
       -   id: check-added-large-files
           args: ['--maxkb=10000']
       -   id: check-case-conflict
       -   id: check-merge-conflict
+      -   id: check-yaml
       -   id: debug-statements
+      -   id: end-of-file-fixer
+      -   id: trailing-whitespace
+-   repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+      -   id: clang-format
+          args: [-i, -style=file]
