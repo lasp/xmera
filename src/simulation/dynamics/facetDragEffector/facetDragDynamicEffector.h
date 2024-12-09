@@ -47,10 +47,10 @@ class FacetDragDynamicEffector: public SysModel, public DynamicEffector {
 public:
     FacetDragDynamicEffector();
     ~FacetDragDynamicEffector();
-    void linkInStates(DynParamManager& states);
-    void computeForceTorque(double integTime, double timeStep);
-    void reset(uint64_t currentSimNanos);               //!< class method
-    void updateState(uint64_t currentSimNanos);
+    void linkInStates(DynParamManager& states) override;
+    void computeForceTorque(double integTime, double timeStep) override;
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
     uint64_t numFacets;                             //!< number of facets
