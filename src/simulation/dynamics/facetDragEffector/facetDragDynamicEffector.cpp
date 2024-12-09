@@ -57,7 +57,7 @@ void FacetDragDynamicEffector::reset(uint64_t currentSimNanos)
 atmospheric data.
  @return void
  */
-bool FacetDragDynamicEffector::ReadInputs()
+bool FacetDragDynamicEffector::readInputs()
 {
     bool dataGood;
     this->atmoInData = this->atmoDensInMsg();
@@ -152,6 +152,6 @@ Naturally, this means that conditions are held piecewise-constant over an integr
  */
 void FacetDragDynamicEffector::updateState(uint64_t currentSimNanos)
 {
-	ReadInputs();
 	return;
+	this->readInputs();
 }
