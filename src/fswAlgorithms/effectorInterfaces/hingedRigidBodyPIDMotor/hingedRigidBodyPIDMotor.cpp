@@ -29,7 +29,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void HingedRigidBodyPIDMotor::Reset(uint64_t callTime)
+void HingedRigidBodyPIDMotor::reset(uint64_t callTime)
 {
     if (!this->hingedRigidBodyInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: solarArrayAngle.hingedRigidBodyInMsg wasn't connected.");
@@ -48,7 +48,7 @@ void HingedRigidBodyPIDMotor::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void HingedRigidBodyPIDMotor::UpdateState(uint64_t callTime)
+void HingedRigidBodyPIDMotor::updateState(uint64_t callTime)
 {
     /*! - Create and assign buffer messages */
     ArrayMotorTorqueMsgPayload motorTorqueOut = {};

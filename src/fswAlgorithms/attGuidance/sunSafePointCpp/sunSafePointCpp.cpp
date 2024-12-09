@@ -28,7 +28,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void SunSafePointCpp::Reset(uint64_t callTime) {
+void SunSafePointCpp::reset(uint64_t callTime) {
     // Check if the required input messages are linked
     if (!this->sunDirectionInMsg.isLinked()) {
         _bskLog(this->bskLogger, BSK_ERROR, "sunSafePointCpp.sunDirectionInMsg wasn't connected.");
@@ -60,7 +60,7 @@ void SunSafePointCpp::Reset(uint64_t callTime) {
  @return void
  @param callTime [ns] Time the method is called
 */
-void SunSafePointCpp::UpdateState(uint64_t callTime) {
+void SunSafePointCpp::updateState(uint64_t callTime) {
     // Zero the attitude guidance output buffer message
     this->attGuidanceOutBuffer = AttGuidMsgPayload();
 

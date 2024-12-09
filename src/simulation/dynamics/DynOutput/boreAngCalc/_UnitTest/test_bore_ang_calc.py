@@ -127,7 +127,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     # Initialize the spice modules that we are using.
     BACObject = boreAngCalc.BoreAngCalc()
-    BACObject.ModelTag = "solarArrayBoresight"
+    BACObject.modelTag = "solarArrayBoresight"
     BACObject.boreVec_B = boresightLoc  # boresight in body frame
     BACObject.scStateInMsg.subscribeTo(scMsg)
     BACObject.celBodyInMsg.subscribeTo(sunMsg)

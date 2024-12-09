@@ -153,7 +153,7 @@ def run(show_plots, maneuverCase):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)

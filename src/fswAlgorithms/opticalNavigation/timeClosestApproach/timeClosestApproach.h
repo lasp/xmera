@@ -35,7 +35,7 @@ class TimeClosestApproach: public SysModel {
 public:
     TimeClosestApproach();
     ~TimeClosestApproach() override;
-    void UpdateState(uint64_t CurrentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
     ReadFunctor<FilterMsgPayload>  filterInMsg;  //!< relative state and covariance input msg
     ReadFunctor<NavTransMsgPayload> navFilterMsg;
@@ -46,7 +46,7 @@ private:
     void computeGeometry();
     double computeTca() const;
     double computeTcaStandardDeviation() const;
-    void writeMessages(double tCA, double sigmaTca, uint64_t CurrentSimNanos);
+    void writeMessages(double tCA, double sigmaTca, uint64_t currentSimNanos);
 
     Eigen::Vector3d     v_BN_N;  //!< spacecraft velocity estimate in inertial coordinates
     Eigen::Vector3d     r_BN_N;  //!< spacecraft position estimate in inertial coordinates

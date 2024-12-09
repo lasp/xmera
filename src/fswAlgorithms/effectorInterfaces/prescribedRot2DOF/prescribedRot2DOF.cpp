@@ -32,7 +32,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot2DOF::Reset(uint64_t callTime)
+void PrescribedRot2DOF::reset(uint64_t callTime)
 {
     // Check if the required input messages are linked */
     if (!this->spinningBodyRef1InMsg.isLinked()) {
@@ -73,7 +73,7 @@ are updated in this routine as a function of time and written to the prescribedM
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot2DOF::UpdateState(uint64_t callTime)
+void PrescribedRot2DOF::updateState(uint64_t callTime)
 {
     // Create buffer messages
     HingedRigidBodyMsgPayload spinningBodyRef1In = {};

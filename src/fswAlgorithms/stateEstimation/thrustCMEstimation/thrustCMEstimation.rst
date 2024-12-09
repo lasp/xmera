@@ -77,13 +77,13 @@ User Guide
 The required module configuration is::
 
     cmEstimation = thrustCMEstimation.ThrustCMEstimation()
-    cmEstimation.ModelTag = "cmEstimator"
+    cmEstimation.modelTag = "cmEstimator"
     cmEstimation.attitudeTol = 1e-4
     cmEstimation.r_CB_B = [0.01, -0.025, 0.04]
     cmEstimation.P0 = [0.0025, 0.0025, 0.0025]
     cmEstimation.R0 = [1e-9, 1e-9, 1e-9]
     unitTestSim.AddModelToTask(unitTaskName, cmEstimation)
-	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters
@@ -105,4 +105,3 @@ The module is configurable with the following parameters:
    * - ``R0``
      - [0, 0, 0]
      - diagonal elements of the measurement noise covariance
-

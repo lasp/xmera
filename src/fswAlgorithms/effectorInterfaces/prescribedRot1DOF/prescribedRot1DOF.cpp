@@ -31,7 +31,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot1DOF::Reset(uint64_t callTime)
+void PrescribedRot1DOF::reset(uint64_t callTime)
 {
     // Check if the required input message is linked
     if (!this->spinningBodyInMsg.isLinked())
@@ -52,7 +52,7 @@ The prescribed states are then written to the output message.
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot1DOF::UpdateState(uint64_t callTime)
+void PrescribedRot1DOF::updateState(uint64_t callTime)
 {
     // Create the buffer messages
     HingedRigidBodyMsgPayload spinningBodyIn = {};

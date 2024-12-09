@@ -95,7 +95,7 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
 
     # setup module to be tested
     module = dentonFluxModel.DentonFluxModel()
-    module.ModelTag = "dentonFluxModule"
+    module.modelTag = "dentonFluxModule"
     module.kpIndex = param1_Kp
     module.numOutputEnergies = 6
     module.dataPath = bskPath + '/supportData/DentonGEO/'
@@ -137,7 +137,7 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
 
     # run simulation
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # pull module data
     energyData = fluxOutMsgRec.energies[0]

@@ -44,7 +44,7 @@ class EkfInterface: public KalmanFilter {
 public:
     EkfInterface(FilterType type);
     ~EkfInterface() = default;
-    void Reset(uint64_t CurrentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
 
     void setFilterDynamicsMatrix(const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>&
         dynamicsMatrixCalculator);

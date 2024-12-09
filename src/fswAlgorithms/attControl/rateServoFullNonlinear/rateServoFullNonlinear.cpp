@@ -37,7 +37,7 @@
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void RateServoFullNonlinear::Reset(uint64_t callTime)
+void RateServoFullNonlinear::reset(uint64_t callTime)
 {
     /*! - Read the input messages */
     int i;
@@ -90,7 +90,7 @@ void RateServoFullNonlinear::Reset(uint64_t callTime)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void RateServoFullNonlinear::UpdateState(uint64_t callTime)
+void RateServoFullNonlinear::updateState(uint64_t callTime)
 {
     AttGuidMsgPayload   guidCmd;                    /*!< Guidance input Message */
     RWSpeedMsgPayload   wheelSpeeds = {};           /*!< Reaction wheel speed estimates input message */

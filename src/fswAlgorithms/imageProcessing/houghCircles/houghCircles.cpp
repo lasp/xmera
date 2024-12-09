@@ -56,9 +56,9 @@ HoughCircles::~HoughCircles()
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void HoughCircles::Reset(uint64_t CurrentSimNanos)
+void HoughCircles::reset(uint64_t currentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
@@ -68,9 +68,9 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
+void HoughCircles::updateState(uint64_t currentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;
@@ -82,9 +82,9 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     cv::Mat imageCV, blurred;
     int circlesFound=0;
     if (this->saveDir != ""){
-        dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+        dirName = this->saveDir + std::to_string(currentSimNanos*1E-9) + ".jpg";
     }
-    else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
+    else{dirName = "./"+ std::to_string(currentSimNanos*1E-9) + ".jpg";}
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())
     {
@@ -95,7 +95,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     if (!this->filename.empty()){
         imageCV = cv::imread(this->filename, cv::IMREAD_COLOR);
     }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
+    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
@@ -107,7 +107,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
+        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
         return;
     }
 
@@ -137,7 +137,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.planetIds[0] = 2;
     }
 
-    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
+    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
 
 //    free(imageBuffer.imagePointer);
     return;

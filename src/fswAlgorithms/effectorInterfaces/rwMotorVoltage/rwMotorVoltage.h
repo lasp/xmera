@@ -39,8 +39,8 @@
 
 class RwMotorVoltage : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     /* declare module private variables */
     double VMin;                                    /*!< [V]    minimum voltage below which the torque is zero */
     double VMax;                                    /*!< [V]    maximum output voltage */

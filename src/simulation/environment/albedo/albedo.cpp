@@ -76,7 +76,7 @@ Config::Config() {
     this->nHat_B.fill(0.0);
     this->r_IB_B.fill(0.0);
     return;
-}    
+}
 
 Config::~Config() {
     return;
@@ -95,7 +95,7 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
     if (configMsg.fov < 0.0) {
         this->fovs.push_back(this->fov_default);
         bskLogger.bskLog(BSK_WARNING, "Albedo Module (addInstrumentConfig): For the instrument (%lu)'s half field of view angle (fov), the default value is used.", (int) this->albOutMsgs.size()-1);
-    } 
+    }
     else {
         this->fovs.push_back(configMsg.fov);
     }
@@ -143,7 +143,7 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
         this->nHat_Bs.push_back(nHat_B_default);
         bskLogger.bskLog(BSK_WARNING, "Albedo Module (addInstrumentConfig): Instrument (%lu)'s unit normal vector (nHat_B) cannot be composed of all zeros, the default vector is used instead.", this->albOutMsgs.size()-1);
     }
-    
+
     return;
 }
 
@@ -158,7 +158,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
     this->dataPaths.push_back("");
     this->numLats.push_back(-1);
     this->numLons.push_back(-1);
-    double ALB_avg = -1;    // value will be set in Reset() when we can determine the planet name
+    double ALB_avg = -1;    // value will be set in reset() when we can determine the planet name
     this->ALB_avgs.push_back(ALB_avg);
     this->albArray.push_back(false);
 
@@ -216,7 +216,7 @@ void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *pl
 /*! Read Messages, calculate albedo then write it out
  @return void
  */
-void Albedo::UpdateState(uint64_t CurrentSimNanos)
+void Albedo::updateState(uint64_t currentSimNanos)
 {
     this->readMessages();
     this->albOutData.clear();
@@ -236,13 +236,13 @@ void Albedo::UpdateState(uint64_t CurrentSimNanos)
         }
         this->albOutData.push_back(cArray2EigenMatrixXd(tmpTot, 4, 1));
     }
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 }
 
 /*! This method resets the module
  @return void
  */
-void Albedo::Reset(uint64_t CurrentSimNanos)
+void Albedo::reset(uint64_t currentSimNanos)
 {
     if (this->modelNames.empty()) {
         bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Albedo model was not set.");
@@ -297,7 +297,7 @@ void Albedo::readMessages() {
 /*! This method writes the output albedo messages
  @return void
  */
-void Albedo::writeMessages(uint64_t CurrentSimNanos) {
+void Albedo::writeMessages(uint64_t currentSimNanos) {
     AlbedoMsgPayload localMessage;
     memset(&localMessage, 0x0, sizeof(localMessage));
 
@@ -307,7 +307,7 @@ void Albedo::writeMessages(uint64_t CurrentSimNanos) {
         localMessage.albedoAtInstrument = this->albOutData.at(idx)[1];
         localMessage.AfluxAtInstrumentMax = this->albOutData.at(idx)[2];
         localMessage.AfluxAtInstrument = this->albOutData.at(idx)[3];
-        this->albOutMsgs.at(idx)->write(&localMessage, this->moduleID, CurrentSimNanos);
+        this->albOutMsgs.at(idx)->write(&localMessage, this->moduleID, currentSimNanos);
     }
 }
 
@@ -407,7 +407,7 @@ void Albedo::evaluateAlbedoModel(int idx)
     auto dataPath = this->dataPaths.at(idx);
     auto numLat = this->numLats.at(idx);
     auto numLon = this->numLons.at(idx);
-    //! - Obtain the parameters of the specified model    
+    //! - Obtain the parameters of the specified model
     if (modelName == "ALBEDO_AVG") {
         //! - Albedo model based on an average value
         if (numLat < 0.0) { numLat = this->defaultNumLat; }
@@ -507,7 +507,7 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
     //! - B: spacecraft body frame
     //! - N: inertial frame
     //! - S: sun (helio) frame
-    //! - I: instrument body frame    
+    //! - I: instrument body frame
     auto fov = this->fovs[instIdx];                                         //! - [rad] instrument's field of view half angle
     auto nHat_B = this->nHat_Bs[instIdx];                                   //! - [-] unit normal vector of the instrument (spacecraft body)
     auto r_IB_B = this->r_IB_Bs[instIdx];                                   //! - [m] instrument's misalignment vector wrt spacecraft's body frame
@@ -585,7 +585,7 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
                 r_dAP_N = LLA2PCI(gdlla, planetMsg.J20002Pfix, RA_planet); //! - Assumes that the planet is a sphere.
                 r_SdA_N = r_SP_N - r_dAP_N;            //! - [m] position vector from dA to Sun (inertial)
                 r_IdA_N = r_IP_N - r_dAP_N;            //! - [m] position vector from dA to instrument (inertial)
-                rHat_dAP_N = r_dAP_N / r_dAP_N.norm(); //! - [-] -assuming- dA normal vector (inertial) 
+                rHat_dAP_N = r_dAP_N / r_dAP_N.norm(); //! - [-] -assuming- dA normal vector (inertial)
                 sHat_SdA_N = r_SdA_N / r_SdA_N.norm(); //! - [-] sun direction vector from dA (inertial)
                 rHat_IdA_N = r_IdA_N / r_IdA_N.norm(); //! - [-] dA to instrument direction vector (inertial)
                 //! - Portions of the planet

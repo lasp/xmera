@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void DipoleMapping::Reset(uint64_t callTime)
+void DipoleMapping::reset(uint64_t callTime)
 {
     /*
      * Check if the required input messages are connected.
@@ -50,7 +50,7 @@ void DipoleMapping::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void DipoleMapping::UpdateState(uint64_t callTime)
+void DipoleMapping::updateState(uint64_t callTime)
 {
     /*
      * Initialize local variables.

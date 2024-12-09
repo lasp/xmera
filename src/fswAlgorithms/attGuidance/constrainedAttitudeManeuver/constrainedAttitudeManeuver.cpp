@@ -215,7 +215,7 @@ void ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], dou
 
 /*! This method is used to reset the module. The input messages are read here,
 the grid is generated and the graph search is performed. */
-void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
+void ConstrainedAttitudeManeuver::reset(uint64_t currentSimNanos)
 {
 	ReadInputs();
 
@@ -247,11 +247,11 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 /*! This method is the state update. It reads the information from the interpolated
 trajectory and writes the output message.
  @return void
- @param CurrentSimNanos The current simulation time for system
+ @param currentSimNanos The current simulation time for system
  */
-void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
+void ConstrainedAttitudeManeuver::updateState(uint64_t currentSimNanos)
 {
-	double t = CurrentSimNanos * 1e-9;
+	double t = currentSimNanos * 1e-9;
 	double sigma_RN[3], sigmaDot_RN[3], sigmaDDot_RN[3], omega_RN_R[3], omegaDot_RN_R[3];
 	this->Output.getData(t, sigma_RN, sigmaDot_RN, sigmaDDot_RN);
 
@@ -272,7 +272,7 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 	v3tMultM33(omegaDot_RN_R, RN, attMsgBuffer.domega_RN_N);
 
 	// write output attitude reference message
-    this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, currentSimNanos);
 
 	return;
 }

@@ -74,9 +74,9 @@ void SpacecraftUnit::SelfInitSC(int64_t moduleID)
 /*! This method is used to reset the module.
  @return void
  */
-void SpacecraftUnit::ResetSC(uint64_t CurrentSimNanos)
+void SpacecraftUnit::ResetSC(uint64_t currentSimNanos)
 {
-    this->gravField.Reset(CurrentSimNanos);
+    this->gravField.reset(currentSimNanos);
 }
 
 void SpacecraftUnit::writeOutputMessagesSC(uint64_t clockTime, int64_t moduleID)
@@ -324,22 +324,22 @@ void SpacecraftSystem::attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, 
 /*! This method is used to reset the module.
  @return void
  */
-void SpacecraftSystem::Reset(uint64_t CurrentSimNanos)
+void SpacecraftSystem::reset(uint64_t currentSimNanos)
 {
-    this->primaryCentralSpacecraft.ResetSC(CurrentSimNanos);
+    this->primaryCentralSpacecraft.ResetSC(currentSimNanos);
 
     // - Call this for all of the connected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
-        (*spacecraftConnectedIt)->ResetSC(CurrentSimNanos);
+        (*spacecraftConnectedIt)->ResetSC(currentSimNanos);
     }
 
     // - Call this for all of the unconnected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
-        (*spacecraftUnConnectedIt)->ResetSC(CurrentSimNanos);
+        (*spacecraftUnConnectedIt)->ResetSC(currentSimNanos);
     }
 
     // - Call method for initializing the dynamics of spacecraft
@@ -370,26 +370,26 @@ void SpacecraftSystem::writeOutputMessages(uint64_t clockTime)
 }
 
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
-void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
+void SpacecraftSystem::updateState(uint64_t currentSimNanos)
 {
     // - Convert current time to seconds
-    double newTime = CurrentSimNanos*NANO2SEC;
+    double newTime = currentSimNanos*NANO2SEC;
 
     // - Get access to the spice bodies
-    this->primaryCentralSpacecraft.gravField.UpdateState(CurrentSimNanos);
+    this->primaryCentralSpacecraft.gravField.updateState(currentSimNanos);
 
     // - Call this for all of the connected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
-        (*spacecraftConnectedIt)->gravField.UpdateState(CurrentSimNanos);
+        (*spacecraftConnectedIt)->gravField.updateState(currentSimNanos);
     }
 
     // - Call this for all of the unconnected spacecraft
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
     {
-        (*spacecraftUnConnectedIt)->gravField.UpdateState(CurrentSimNanos);
+        (*spacecraftUnConnectedIt)->gravField.updateState(currentSimNanos);
     }
 
     // - Integrate the state forward in time
@@ -417,8 +417,8 @@ void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // - Write the state of the vehicle into messages
-    this->writeOutputMessages(CurrentSimNanos);
-    this->simTimePrevious = CurrentSimNanos;
+    this->writeOutputMessages(currentSimNanos);
+    this->simTimePrevious = currentSimNanos;
 
     return;
 }
@@ -619,9 +619,9 @@ void SpacecraftSystem::initializeSCPosVelocity(SpacecraftUnit &spacecraft)
     return;
 }
 
-/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of 
- the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
- in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
+/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of
+ the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled
+ in this method. At the end of this method all of the states will have their corresponding state derivatives set in the
  dynParam Manager thus solving for Xdot*/
 void SpacecraftSystem::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
@@ -1012,7 +1012,7 @@ void SpacecraftSystem::calculateDeltaVandAcceleration(SpacecraftUnit &spacecraft
 }
 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
- total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used 
+ total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used
  for validation purposes. */
 void SpacecraftSystem::computeEnergyMomentum(double time)
 {
@@ -1206,7 +1206,7 @@ void SpacecraftSystem::computeEnergyMomentumSystem(double time)
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -(*this->primaryCentralSpacecraft.m_SC)(0,0)*(Eigen::Vector3d (*this->primaryCentralSpacecraft.c_B)).cross(cDotLocal_B);
     this->primaryCentralSpacecraft.totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
-    
+
     return;
 }
 
@@ -1308,4 +1308,3 @@ void SpacecraftSystem::postIntegration(double integrateToThisTime) {
     this->computeEnergyMomentum(integrateToThisTime);
 
 }
-

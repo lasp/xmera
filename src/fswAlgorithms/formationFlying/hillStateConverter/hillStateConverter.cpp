@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void HillStateConverter::Reset(uint64_t callTime)
+void HillStateConverter::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->chiefStateInMsg.isLinked()) {
@@ -42,7 +42,7 @@ void HillStateConverter::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void HillStateConverter::UpdateState(uint64_t callTime)
+void HillStateConverter::updateState(uint64_t callTime)
 {
     /*! - Read the input messages */
     NavTransMsgPayload chiefStateIn;

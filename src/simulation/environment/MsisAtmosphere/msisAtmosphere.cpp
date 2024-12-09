@@ -96,7 +96,7 @@ MsisAtmosphere::~MsisAtmosphere()
 /*! This method is used to reset the module.
  @return void
  */
-void MsisAtmosphere::customReset(uint64_t CurrentSimNanos)
+void MsisAtmosphere::customreset(uint64_t currentSimNanos)
 {
     for(int ind = 0; ind < 23; ind++) {
         if (!this->swDataInMsgs[ind].isLinked()) {

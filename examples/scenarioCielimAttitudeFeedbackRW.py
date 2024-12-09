@@ -150,7 +150,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -203,16 +203,16 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
 
-    # add RW object array to the simulation process.  This is required for the UpdateState() method
+    # add RW object array to the simulation process.  This is required for the updateState() method
     # to be called which logs the RW states
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 
     if useRWVoltageIO:
         rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
-        rwVoltageIO.ModelTag = "rwVoltageInterface"
+        rwVoltageIO.modelTag = "rwVoltageInterface"
 
         # set module parameters(s)
         rwVoltageIO.setGains(np.array([0.2 / 10.] * 3))  # [Nm/V] conversion gain
@@ -223,7 +223,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -233,20 +233,20 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # setup inertial3D guidance module
     inertial3DConfig = inertial3D.inertial3DConfig()
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
-    inertial3DWrap.ModelTag = "inertial3D"
+    inertial3DWrap.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
     inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.AttTrackingError()
     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
-    attErrorWrap.ModelTag = "attErrorInertial3D"
+    attErrorWrap.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
 
     # setup the MRP Feedback control module
     mrpControlConfig = mrpFeedback.MrpFeedback()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
-    mrpControlWrap.ModelTag = "mrpFeedback"
+    mrpControlWrap.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
     mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
@@ -256,7 +256,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueConfig = rwMotorTorque.RwMotorTorque()
     rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
-    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+    rwMotorTorqueWrap.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
 
     # Make the RW control all three body axes
@@ -268,7 +268,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     if useRWVoltageIO:
         fswRWVoltageConfig = rwMotorVoltage.rwMotorVoltageConfig()
         fswRWVoltageWrap = scSim.setModelDataWrap(fswRWVoltageConfig)
-        fswRWVoltageWrap.ModelTag = "rwMotorVoltage"
+        fswRWVoltageWrap.modelTag = "rwMotorVoltage"
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)

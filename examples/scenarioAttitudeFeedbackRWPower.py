@@ -175,7 +175,7 @@ def run(show_plots, useRwPowerGeneration):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -224,7 +224,7 @@ def run(show_plots, useRwPowerGeneration):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
@@ -232,7 +232,7 @@ def run(show_plots, useRwPowerGeneration):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
@@ -240,7 +240,7 @@ def run(show_plots, useRwPowerGeneration):
     rwPowerList = []
     for c in range(numRW):
         powerRW = ReactionWheelPower.ReactionWheelPower()
-        powerRW.ModelTag = scObject.ModelTag + "RWPower" + str(c)
+        powerRW.modelTag = scObject.modelTag + "RWPower" + str(c)
         powerRW.basePowerNeed = 5.   # baseline power draw, Watts
         powerRW.rwStateInMsg.subscribeTo(rwStateEffector.rwOutMsgs[c])
         if useRwPowerGeneration:
@@ -250,7 +250,7 @@ def run(show_plots, useRwPowerGeneration):
 
     # create battery module
     battery = simpleBattery.SimpleBattery()
-    battery.ModelTag = scObject.ModelTag
+    battery.modelTag = scObject.modelTag
     battery.storageCapacity = 300000  # W-s
     battery.storedCharge_Init = battery.storageCapacity * 0.8  # 20% depletion
     scSim.AddModelToTask(simTaskName, battery)
@@ -272,20 +272,20 @@ def run(show_plots, useRwPowerGeneration):
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
@@ -298,7 +298,7 @@ def run(show_plots, useRwPowerGeneration):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
     # Initialize the test module msg names
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)

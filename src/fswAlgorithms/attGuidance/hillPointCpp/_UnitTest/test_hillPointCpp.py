@@ -39,7 +39,7 @@ def test_hillPointCpp(show_plots, celMsgSet):
     testProc.addTask(sim.CreateNewTask(taskName, testProcessRate))
 
     module = hillPointCpp.HillPointCpp()
-    module.ModelTag = "hillPointCpp"
+    module.modelTag = "hillPointCpp"
 
     # Add test module to runtime call list
     sim.AddModelToTask(taskName, module)

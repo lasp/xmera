@@ -41,9 +41,9 @@ StarTracker::~StarTracker()
 
 
 /*! This method is used to reset the module.
- @param CurrentSimNanos The current simulation time from the architecture
+ @param currentSimNanos The current simulation time from the architecture
  @return void */
-void StarTracker::Reset(uint64_t CurrentSimNanos)
+void StarTracker::reset(uint64_t currentSimNanos)
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -126,19 +126,19 @@ void StarTracker::computeTrueOutput()
 /*!
     write output messages
  */
-void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
+void StarTracker::writeOutputMessages(uint64_t currentSimNanos)
 {
-    this->sensorOutMsg.write(&this->sensedValues, this->moduleID, CurrentSimNanos);
+    this->sensorOutMsg.write(&this->sensedValues, this->moduleID, currentSimNanos);
 }
 
 /*!
     update module states
  */
-void StarTracker::UpdateState(uint64_t CurrentSimNanos)
+void StarTracker::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
     this->computeSensorErrors();
     this->computeTrueOutput();
     this->applySensorErrors();
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }

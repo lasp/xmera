@@ -170,7 +170,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -185,7 +185,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     # use the input flag to determine which external torque should be applied
     # Note that all variables are initialized to zero.  Thus, not setting this
     # vector would leave it's components all zero for the simulation.
@@ -197,7 +197,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -206,18 +206,18 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.K = 3.5
     if useIntGain:

@@ -42,7 +42,7 @@ The module is first initialized as follows:
 .. code-block:: python
 
     module = lambertSecondDV.LambertSecondDV()
-    module.ModelTag = "lambertSecondDV"
+    module.modelTag = "lambertSecondDV"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
 The input messages are then connected:

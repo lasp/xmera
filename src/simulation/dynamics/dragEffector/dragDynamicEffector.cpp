@@ -24,7 +24,7 @@
 /*! This method is used to reset the module.
  @return void
  */
-void DragDynamicEffector::Reset(uint64_t currentSimNanos)
+void DragDynamicEffector::reset(uint64_t currentSimNanos)
 {
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");
@@ -89,9 +89,9 @@ void DragDynamicEffector::computeForceTorque(double integTime, double timeStep){
 /*! This method is called to update the local atmospheric conditions at each timestep.
 Naturally, this means that atmospheric conditions are held piecewise-constant over an integration step.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void DragDynamicEffector::UpdateState(uint64_t currentSimNanos)
+void DragDynamicEffector::updateState(uint64_t currentSimNanos)
 {
 	this->readMessages();
 }

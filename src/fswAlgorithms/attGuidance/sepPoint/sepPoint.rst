@@ -58,8 +58,8 @@ The required module configuration is::
     attGuid.a2Hat_B = a2Hat_B
     attGuid.beta = beta
     attGuid.alignmentPriority = alignmentPriority
-    attGuid.ModelTag = "sepPoint"
-	
+    attGuid.modelTag = "sepPoint"
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters

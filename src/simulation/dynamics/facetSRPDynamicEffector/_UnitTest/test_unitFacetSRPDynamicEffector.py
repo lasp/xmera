@@ -66,7 +66,7 @@ def test_facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
         facetRotAngle1 (double): [rad] Articulation angle for facets 7 and 8 (solar panel 1)
         facetRotAngle2 (double): [rad] Articulation angle for facets 9 and 10 (solar panel 2)
     """
-    
+
     [testResults, testMessage] = facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2)
 
     assert testResults < 1, testMessage
@@ -98,7 +98,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "scObject"
+    scObject.modelTag = "scObject"
 
     oe = orbitalMotion.ClassicElements()
     oe.a = 149597870700.0  # [m]
@@ -121,7 +121,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     facetRotAngle1MessageData.theta = facetRotAngle1
     facetRotAngle1MessageData.thetaDot = 0.0
     facetRotAngle1Message = messaging.HingedRigidBodyMsg().write(facetRotAngle1MessageData)
-    
+
     facetRotAngle2MessageData = messaging.HingedRigidBodyMsgPayload()
     facetRotAngle2MessageData.theta = facetRotAngle2
     facetRotAngle2MessageData.thetaDot = 0.0
@@ -129,7 +129,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
 
     # Create an instance of the facetSRPDynamicEffector module to be tested
     srpEffector = facetSRPDynamicEffector.FacetSRPDynamicEffector()
-    srpEffector.ModelTag = "srpEffector"
+    srpEffector.modelTag = "srpEffector"
     numFacets = 10  # Total number of spacecraft facets
     numArticulatedFacets = 4  # Number of articulated facets
     srpEffector.numFacets = numFacets

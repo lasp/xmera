@@ -29,8 +29,8 @@
 /*! @brief Stepper Motor Controller Class */
 class StepperMotorController: public SysModel{
 public:
-    void Reset(uint64_t currentSimNanos) override;                         //!< Reset member function
-    void UpdateState(uint64_t currentSimNanos) override;                   //!< Update member function
+    void reset(uint64_t currentSimNanos) override;                         //!< Reset member function
+    void updateState(uint64_t currentSimNanos) override;                   //!< Update member function
     double getThetaInit() const;                                           //!< Getter method for the initial motor angle
     double getStepAngle() const;                                           //!< Getter method for the motor step angle
     double getStepTime() const;                                            //!< Getter method for the motor step time

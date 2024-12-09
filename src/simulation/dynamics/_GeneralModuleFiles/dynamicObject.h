@@ -45,7 +45,7 @@ class DynamicObject : public SysModel {
     virtual ~DynamicObject() = default;
 
     /** Hooks the dyn-object into Basilisk architecture */
-    virtual void UpdateState(uint64_t callTime) = 0;
+    virtual void updateState(uint64_t callTime) = 0;
 
     /** Computes F = Xdot(X,t) */
     virtual void equationsOfMotion(double t, double timeStep) = 0;

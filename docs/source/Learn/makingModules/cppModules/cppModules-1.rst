@@ -5,7 +5,7 @@ Module Header File
 
 Parent Class
 ------------
-Every Basilisk module is a sub-class of :ref:`sys_model`.  This parent class provides common modules variables such as ``ModelTag`` and ``moduleID``.
+Every Basilisk module is a sub-class of :ref:`sys_model`.  This parent class provides common modules variables such as ``modelTag`` and ``moduleID``.
 
 Module Class Name
 -----------------
@@ -32,8 +32,8 @@ Let us assume the module is to be called ``SomeModule``.  The input and output m
         SomeModule();
         ~SomeModule();
 
-        void Reset(uint64_t CurrentSimNanos);
-        void UpdateState(uint64_t CurrentSimNanos);
+        void reset(uint64_t currentSimNanos);
+        void updateState(uint64_t currentSimNanos);
 
     public:
 
@@ -69,7 +69,7 @@ Be sure to add descriptions to both the module and to the class variables used.
 
 Required Module Methods
 -----------------------
-Each module should define the ``Reset()`` method that is called when initializing the BSK simulation, and the ``UpdateState()`` method which is called every time the task to which the module is added is updated.
+Each module should define the ``reset()`` method that is called when initializing the BSK simulation, and the ``updateState()`` method which is called every time the task to which the module is added is updated.
 
 Module Variables
 ----------------
@@ -105,4 +105,3 @@ To define a vector of output messages, we define a vector of message pointer usi
 
     public:
         std::vector<Message<SomeMsgPayload>*> moreOutMsgs;      //!< variable description
-

@@ -140,7 +140,7 @@ from Basilisk.utilities import vizSupport
 def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     """
     The scenarios can be run with the following setups parameters:
-    
+
     Args:
         show_plots (bool): Determines if the script should display plots
         orbitCase (str):  Specify the type of orbit to be simulated {'elliptical','circular'}
@@ -148,7 +148,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
         useBias2 (bool): Flag to use a sensor bias on TAM 2
         useBounds1 (bool): Flag to use TAM 1 sensor bounds
         useBounds2 (bool): Flag to use TAM 2 sensor bounds
-    
+
     """
 
     # Create simulation variable names
@@ -171,7 +171,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -190,7 +190,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     # create the centered dipole magnetic field
     #
     magModule1 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
-    magModule1.ModelTag = "CenteredDipole"
+    magModule1.modelTag = "CenteredDipole"
     simSetPlanetEnvironment.centeredDipoleMagField(magModule1, 'earth')
 
     if orbitCase == 'elliptical':
@@ -201,7 +201,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
         # same spacecraft state message as the first magnetic field model.
 
         magModule2 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
-        magModule2.ModelTag = "CenteredDipole2"
+        magModule2.modelTag = "CenteredDipole2"
         magModule2.addSpacecraftToModel(scObject.scStateOutMsg)
         # set the 2nd magnetic field through custom dipole settings
         magModule2.g10 = -30926.00 / 1e9 * 0.5  # Tesla
@@ -218,7 +218,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     #
 
     magModule3 = magneticFieldWMM.MagneticFieldWMM()
-    magModule3.ModelTag = "WMM"
+    magModule3.modelTag = "WMM"
     magModule3.dataPath = bskPath + '/supportData/MagneticField/'
     # set epoch date/time message
     epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
@@ -239,8 +239,8 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     # create the minimal TAM modules
     TAM1 = magnetometer.Magnetometer()
     TAM2 = magnetometer.Magnetometer()
-    TAM1.ModelTag = "TAM1_sensor"
-    TAM2.ModelTag = "TAM2_sensor"
+    TAM1.modelTag = "TAM1_sensor"
+    TAM2.modelTag = "TAM2_sensor"
     # specify the optional TAM variables
     TAM1.scaleFactor = 1.0
     TAM2.scaleFactor = 1.0
@@ -249,7 +249,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
 
     if orbitCase == 'elliptical':
         TAM3 = magnetometer.Magnetometer()  # TAM3 is a dummy TAM used to plot Dipole Magnetic Model 2
-        TAM3.ModelTag = "TAM3_sensor"
+        TAM3.modelTag = "TAM3_sensor"
         TAM3.scaleFactor = 1.0
         TAM3.senNoiseStd = [100e-9, 100e-9, 100e-9]
 
@@ -466,4 +466,3 @@ if __name__ == "__main__":
         True,   #Use sensor bounds 1 (True,False)
         False   #Use sensor bounds 2 (True,False)
     )
-

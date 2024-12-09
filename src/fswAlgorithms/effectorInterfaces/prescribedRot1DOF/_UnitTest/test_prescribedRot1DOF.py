@@ -95,7 +95,7 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
 
     # Create an instance of the prescribedRot1DOF module to be tested
     PrescribedRot1DOF = prescribedRot1DOF.PrescribedRot1DOF()
-    PrescribedRot1DOF.ModelTag = "prescribedRot1DOF"
+    PrescribedRot1DOF.modelTag = "prescribedRot1DOF"
 
     # Add the prescribedRot1DOF test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, PrescribedRot1DOF)
@@ -177,12 +177,12 @@ def prescribedRot1DOFTestFunction(show_plots, thetaInit, thetaRef, thetaDDotMax,
     # Check to ensure the initial angle rate converged to the reference angle rate
     if not unitTestSupport.isDoubleEqual(thetaDot_Final, thetaDotRef, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "thetaDot_Final and thetaDotRef do not match")
+        testMessages.append("FAILED: " + PrescribedRot1DOF.modelTag + "thetaDot_Final and thetaDotRef do not match")
 
     # Check to ensure the initial angle converged to the reference angle
     if not unitTestSupport.isDoubleEqual(theta_FM_Final, thetaRef, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "theta_FM_Final and thetaRef do not match")
+        testMessages.append("FAILED: " + PrescribedRot1DOF.modelTag + "theta_FM_Final and thetaRef do not match")
     return [testFailCount, ''.join(testMessages)]
 
 

@@ -27,7 +27,7 @@
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void ImuComm::Reset(uint64_t callTime)
+void ImuComm::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->imuComInMsg.isLinked()) {
@@ -42,7 +42,7 @@ void ImuComm::Reset(uint64_t callTime)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void ImuComm::UpdateState(uint64_t callTime)
+void ImuComm::updateState(uint64_t callTime)
 {
     // read imu com msg
     IMUSensorMsgPayload LocalInput = this->imuComInMsg();

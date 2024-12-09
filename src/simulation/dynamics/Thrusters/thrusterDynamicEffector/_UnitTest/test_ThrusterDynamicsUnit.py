@@ -156,7 +156,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
 
     #  Create thrusters
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
-    thrusterSet.ModelTag = "ACSThrusterDynamics"
+    thrusterSet.modelTag = "ACSThrusterDynamics"
 
     # Configure blow down coefficients
     if blowDown == "ON":
@@ -210,7 +210,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
     testProc.addTask(TotalSim.CreateNewTask(unitTaskName, testRate))
     TotalSim.AddModelToTask(unitTaskName, thrusterSet)
     TotalSim.scObject = spacecraft.Spacecraft()
-    TotalSim.scObject.ModelTag = "spacecraftBody"
+    TotalSim.scObject.modelTag = "spacecraftBody"
 
     #  Create a task manager
     TotalSim.newManager = stateArchitecture.DynParamManager()

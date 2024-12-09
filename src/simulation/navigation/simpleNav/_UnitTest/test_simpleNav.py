@@ -88,7 +88,7 @@ def simple_nav_sim(show_plots, noise=False, number_steps=1, sigma_test=3):
     sun_state_message = messaging.SpicePlanetStateMsg().write(spice_message)
     simple_nav_object.sunStateInMsg.subscribeTo(sun_state_message)
 
-    simple_nav_object.ModelTag = "SimpleNavigation"
+    simple_nav_object.modelTag = "SimpleNavigation"
 
     # Set bounds for noise parameters
     position_bounds = 1000.0

@@ -118,13 +118,13 @@ def run(show_plots, orbitCase, planetCase):
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     atmoTaskName = "atmosphere"
-    newAtmo.ModelTag = "ExpAtmo"
+    newAtmo.modelTag = "ExpAtmo"
 
     projArea = 10.0  # Set drag area in m^2
     dragCoeff = 2.2  # Set drag ceofficient
 
     dragEffector = dragDynamicEffector.DragDynamicEffector()
-    dragEffector.ModelTag = "DragEff"
+    dragEffector.modelTag = "DragEff"
 
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
@@ -141,7 +141,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     simpleNavObj = simpleNav.SimpleNav()
@@ -362,9 +362,9 @@ def run(show_plots, orbitCase, planetCase):
         plt.close("all")
 
     if testFailCount == 0:
-        print("PASSED: " + dragEffector.ModelTag)
+        print("PASSED: " + dragEffector.modelTag)
     else:
-        print("Failed: " + dragEffector.ModelTag)
+        print("Failed: " + dragEffector.modelTag)
 
     return testFailCount, testMessages
 

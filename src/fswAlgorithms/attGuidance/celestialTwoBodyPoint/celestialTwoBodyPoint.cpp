@@ -25,7 +25,7 @@
 
 
 
-void CelestialTwoBodyPoint::Reset(uint64_t callTime)
+void CelestialTwoBodyPoint::reset(uint64_t callTime)
 {
     this->secCelBodyIsLinked = this->secCelBodyInMsg.isLinked();
 
@@ -47,7 +47,7 @@ void CelestialTwoBodyPoint::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void CelestialTwoBodyPoint::UpdateState(uint64_t callTime)
+void CelestialTwoBodyPoint::updateState(uint64_t callTime)
 {
     /*! - Parse the input messages */
     this->parseInputMessages();

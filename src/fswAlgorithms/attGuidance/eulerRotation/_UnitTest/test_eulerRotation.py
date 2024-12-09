@@ -68,7 +68,7 @@ def run(show_plots):
 
     # Construct algorithm and associated C++ container
     module = eulerRotation.EulerRotation()
-    module.ModelTag = "eulerRotation"
+    module.modelTag = "eulerRotation"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -198,7 +198,7 @@ def run2(show_plots):
 
     # Construct algorithm and associated C++ container
     module = eulerRotation.EulerRotation()
-    module.ModelTag = "eulerRotation"
+    module.modelTag = "eulerRotation"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

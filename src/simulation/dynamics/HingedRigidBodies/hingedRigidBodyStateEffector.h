@@ -99,7 +99,7 @@ public:
     HingedRigidBodyStateEffector();  //!< -- Contructor
     ~HingedRigidBodyStateEffector();  //!< -- Destructor
     void writeOutputStateMessages(uint64_t CurrentClock);
-	void UpdateState(uint64_t CurrentSimNanos);
+	void updateState(uint64_t currentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
     void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Method for back-sub contributions

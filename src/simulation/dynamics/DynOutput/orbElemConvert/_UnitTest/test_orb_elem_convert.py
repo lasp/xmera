@@ -177,7 +177,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
 
     # Initialize the modules that we are using.
     orb_elemObject = orbElemConvert.OrbElemConvert()
-    orb_elemObject.ModelTag = "OrbElemConvertData"
+    orb_elemObject.modelTag = "OrbElemConvertData"
 
     # Add Model To Task
     TotalSim.AddModelToTask(unitTaskName, orb_elemObject)
@@ -322,7 +322,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
 
         # Initialize the modules that we are using.
         orb_elemObject = orbElemConvert.OrbElemConvert()
-        orb_elemObject.ModelTag = "OrbElemConvertData"
+        orb_elemObject.modelTag = "OrbElemConvertData"
 
         # Add Model To Task
         TotalSim.AddModelToTask(unitTaskName, orb_elemObject)

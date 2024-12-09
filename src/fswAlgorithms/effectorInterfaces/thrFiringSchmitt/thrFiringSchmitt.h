@@ -38,8 +38,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 class ThrFiringSchmitt : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     /* declare module public variables */
     double              level_on;                               //!< [-] ON duty cycle fraction
     double              level_off;                              //!< [-] OFF duty cycle fraction

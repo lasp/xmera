@@ -70,7 +70,7 @@ def checkDefault():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     testModule = simpleInstrument.SimpleInstrument()
-    testModule.ModelTag = "instrument1"
+    testModule.modelTag = "instrument1"
     testModule.nodeBaudRate = 9600. # baud
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
@@ -119,7 +119,7 @@ def checkStatus():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     testModule = simpleInstrument.SimpleInstrument()
-    testModule.ModelTag = "instrument1"
+    testModule.modelTag = "instrument1"
     testModule.nodeBaudRate = 9600. # baud
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 

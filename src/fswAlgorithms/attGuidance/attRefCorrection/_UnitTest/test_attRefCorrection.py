@@ -62,7 +62,7 @@ def attRefCorrectionTestFunction(show_plots, accuracy):
 
     # setup module to be tested
     module = attRefCorrection.AttRefCorrection()
-    module.ModelTag = "attRefCorrectionTag"
+    module.modelTag = "attRefCorrectionTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
     module.sigma_BcB = [math.tan(math.pi/4), 0.0, 0.0]
 
@@ -93,12 +93,12 @@ def attRefCorrectionTestFunction(show_plots, accuracy):
         # check a vector values
         if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
                                 str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

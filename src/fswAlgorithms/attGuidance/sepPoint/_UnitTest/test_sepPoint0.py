@@ -141,7 +141,7 @@ def test_(show_plots, alpha, delta, alignmentPriority, accuracy):
     attGuid = sepPoint.SepPoint()
     attGuid.a1Hat_B = a1Hat_B
     attGuid.alignmentPriority = alignmentPriority
-    attGuid.ModelTag = "sepPoint"
+    attGuid.modelTag = "sepPoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, attGuid)

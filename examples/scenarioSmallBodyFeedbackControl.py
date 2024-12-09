@@ -246,7 +246,7 @@ def run(show_plots):
 
     # Setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.modelTag = 'planetEphemeris'
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
 
     # specify orbits of gravitational bodies
@@ -288,7 +288,7 @@ def run(show_plots):
 
     # create SC object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
     gravFactory.addBodiesTo(scObject)
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame origin
@@ -326,8 +326,8 @@ def run(show_plots):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
     rwConfigMsg = rwFactory.getConfigMessage()
 
     # Create an SRP model
@@ -339,12 +339,12 @@ def run(show_plots):
 
     # Create an ephemeris converter
     ephemConverter = ephemerisConverter.EphemerisConverter()
-    ephemConverter.ModelTag = "ephemConverter"
+    ephemConverter.modelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(gravBodyEphem.planetOutMsgs[0])
 
     # Set up simpleNav for s/c "measurements"
     simpleNavMeas = simpleNav.SimpleNav()
-    simpleNavMeas.ModelTag = 'SimpleNav'
+    simpleNavMeas.modelTag = 'SimpleNav'
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     pos_sigma_sc = 30.0
     vel_sigma_sc = 0.01
@@ -400,12 +400,12 @@ def run(show_plots):
 
     # Inertial pointing
     inertialPoint = inertial3D.Inertial3D()
-    inertialPoint.ModelTag = "inertialPoint"
+    inertialPoint.modelTag = "inertialPoint"
     inertialPoint.sigma_R0N = [0.1, 0.0, 0.0]
 
     # Attitude error configuration
     trackingError = attTrackingError.AttTrackingError()
-    trackingError.ModelTag = "trackingError"
+    trackingError.modelTag = "trackingError"
     trackingError.attRefInMsg.subscribeTo(inertialPoint.attRefOutMsg)
 
     # Specify the vehicle configuration message to tell things what the vehicle inertia is
@@ -416,7 +416,7 @@ def run(show_plots):
 
     # Attitude controller configuration
     mrpFeedbackControl = mrpFeedback.MrpFeedback()
-    mrpFeedbackControl.ModelTag = "mrpFeedbackControl"
+    mrpFeedbackControl.modelTag = "mrpFeedbackControl"
     mrpFeedbackControl.guidInMsg.subscribeTo(trackingError.attGuidOutMsg)
     mrpFeedbackControl.vehConfigInMsg.subscribeTo(vcConfigMsg)
     mrpFeedbackControl.K = 7.0
@@ -426,7 +426,7 @@ def run(show_plots):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(rwConfigMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpFeedbackControl.cmdTorqueOutMsg)

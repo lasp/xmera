@@ -164,7 +164,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
 
     # setup basic spacecraft module
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskTestSat"
+    scObject.modelTag = "bskTestSat"
     IIC = [[500., 0., 0.]
            , [0., 800., 0.]
            , [0., 0., 350.]]
@@ -182,7 +182,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
 
     # add gravity gradient effector
     ggEff = GravityGradientEffector.GravityGradientEffector()
-    ggEff.ModelTag = scObject.ModelTag
+    ggEff.modelTag = scObject.modelTag
     ggEff.addPlanetName(earth.planetName)
     if planetCase >= 2:
         ggEff.addPlanetName(venus.planetName)

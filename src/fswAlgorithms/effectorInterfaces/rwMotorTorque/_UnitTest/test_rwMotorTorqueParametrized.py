@@ -81,7 +81,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
 
     # Construct algorithm and associated C++ container
     module = rwMotorTorque.RwMotorTorque()
-    module.ModelTag = "rwMotorTorque"
+    module.modelTag = "rwMotorTorque"
 
 
     # Initialize module variables
@@ -210,7 +210,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    module.Reset(0)
+    module.reset(0)
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
@@ -270,11 +270,11 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
     snippentName = "passFail_"+str(numControlAxes) + str(numWheels) + RWAvailMsg
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

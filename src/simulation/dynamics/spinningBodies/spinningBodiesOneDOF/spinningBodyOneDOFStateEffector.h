@@ -58,9 +58,9 @@ public:
 
     SpinningBodyOneDOFStateEffector();  //!< -- Contructor
     ~SpinningBodyOneDOFStateEffector() override; //!< -- Destructor
-    void Reset(uint64_t CurrentClock) override;  //!< -- Method for reset
+    void reset(uint64_t CurrentClock) override;  //!< -- Method for reset
     void writeOutputStateMessages(uint64_t CurrentClock) override;   //!< -- Method for writing the output messages
-    void UpdateState(uint64_t CurrentSimNanos) override;             //!< -- Method for updating information
+    void updateState(uint64_t currentSimNanos) override;             //!< -- Method for updating information
     void registerStates(DynParamManager& statesIn) override;         //!< -- Method for registering the SB states
     void linkInStates(DynParamManager& states) override;             //!< -- Method for getting access to other states
     void updateContributions(double integTime,

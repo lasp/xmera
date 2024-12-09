@@ -32,18 +32,18 @@ public:
     SimpleMassProps();
     ~SimpleMassProps();
 
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
     void computeMassProperties();
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 
 public:
 
     ReadFunctor<SCMassPropsMsgPayload> scMassPropsInMsg;        //!< sc mass properties input msg
     Message<VehicleConfigMsgPayload> vehicleConfigOutMsg;       //!< vehicle configuration output msg
-    
+
 
     BSKLogger bskLogger;              //!< -- BSK Logging
 

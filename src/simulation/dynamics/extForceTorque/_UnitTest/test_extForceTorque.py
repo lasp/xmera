@@ -78,7 +78,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     dynProcess.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
 
     if torqueInput==1 or torqueInput==3:
         extFTObject.extTorquePntB_B = [[-1], [1],[ -1]]
@@ -124,7 +124,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     scSim.ExecuteSimulation()
 
     extFTObject.computeForceTorque(scSim.TotalSim.getCurrentNanos(), macros.sec2nano(0.1))
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
 
     # log the data
     dataForceN = [extFTObjectLog.forceExternal_N[-1]]

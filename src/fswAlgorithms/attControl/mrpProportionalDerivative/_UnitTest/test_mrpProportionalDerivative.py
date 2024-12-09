@@ -75,7 +75,7 @@ def test_mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
 
     # Construct algorithm and associated C++ container
     module = mrpProportionalDerivative.MrpProportionalDerivative()
-    module.ModelTag = "mrpPD"
+    module.modelTag = "mrpPD"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

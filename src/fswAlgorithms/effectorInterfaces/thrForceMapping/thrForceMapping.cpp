@@ -40,7 +40,7 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT],
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrForceMapping::Reset(uint64_t callTime)
+void ThrForceMapping::reset(uint64_t callTime)
 {
     double             *pAxis;                  /* pointer to the current control axis */
     uint32_t                 i;
@@ -98,7 +98,7 @@ void ThrForceMapping::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrForceMapping::UpdateState(uint64_t callTime)
+void ThrForceMapping::updateState(uint64_t callTime)
 {
     int         counterPosForces;             /* []      counter for number of positive thruster forces */
     double      F[MAX_EFF_CNT];               /* [N]     vector of commanded thruster forces */

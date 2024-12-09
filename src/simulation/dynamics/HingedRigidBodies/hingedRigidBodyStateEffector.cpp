@@ -292,9 +292,9 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
 }
 /*! This method is used so that the simulation will ask HRB to update messages.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void HingedRigidBodyStateEffector::updateState(uint64_t currentSimNanos)
 {
     //! - Zero the command buffer and read the incoming command array
     if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {
@@ -312,7 +312,7 @@ void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
     /* compute panel inertial states */
     this->computePanelInertialStates();
 
-    this->writeOutputStateMessages(CurrentSimNanos);
+    this->writeOutputStateMessages(currentSimNanos);
 
     return;
 }

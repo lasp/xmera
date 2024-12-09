@@ -75,7 +75,7 @@ def bore_ang_calc_inertial_heading_func(show_plots, inertialHeading, eulerLoc):
 
     # Initialize the bac module
     BACObject = boreAngCalc.BoreAngCalc()
-    BACObject.ModelTag = "solarArrayBoresight"
+    BACObject.modelTag = "solarArrayBoresight"
     boreVec_B = [1.0, 0.0, 0.0]
     BACObject.boreVec_B = boreVec_B  # boresight in body frame
     BACObject.scStateInMsg.subscribeTo(scMsg)
@@ -88,7 +88,7 @@ def bore_ang_calc_inertial_heading_func(show_plots, inertialHeading, eulerLoc):
 
     # Execute simulation
     TotalSim.InitializeSimulation()
-    TotalSim.TotalSim.SingleStepProcesses()
+    TotalSim.TotalSim.singleStepProcesses()
 
     # Configure the tests
 

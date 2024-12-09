@@ -38,7 +38,7 @@ HingedRigidBodyMotor::~HingedRigidBodyMotor()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotor::reset(uint64_t currentSimNanos)
 {
     //! check that required input messages are connected
     if (!this->hingedBodyStateSensedInMsg.isLinked()) {
@@ -57,7 +57,7 @@ void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
 /*! This is the main method that gets called every time the module is updated.  It calculates a motor torque on a hinged rigid body using a simple PD control law.
     @return void
 */
-void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotor::updateState(uint64_t currentSimNanos)
 {
     //! local variables
     double sensedTheta;
@@ -88,5 +88,5 @@ void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
     motorTorqueOutMsgBuffer.motorTorque[0] = torque;
 
     //! write to the output messages
-    this->motorTorqueOutMsg.write(&motorTorqueOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->motorTorqueOutMsg.write(&motorTorqueOutMsgBuffer, this->moduleID, currentSimNanos);
 }

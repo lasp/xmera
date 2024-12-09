@@ -126,7 +126,7 @@ def motorThermalTest(show_plots, accuracy):
 
     # create the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     #
     # add RW devices
@@ -153,8 +153,8 @@ def motorThermalTest(show_plots, accuracy):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "ReactionWheel"
-    rwFactory.addToSpacecraft(rwStateEffector.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "ReactionWheel"
+    rwFactory.addToSpacecraft(rwStateEffector.modelTag, rwStateEffector, scObject)
 
     # set RW torque command
     cmdArray = messaging.ArrayMotorTorqueMsgPayload()
@@ -167,7 +167,7 @@ def motorThermalTest(show_plots, accuracy):
     #
 
     thermalModel = motorThermal.MotorThermal()
-    thermalModel.ModelTag = 'rwThermals'
+    thermalModel.modelTag = 'rwThermals'
     thermalModel.currentTemperature = 0  # [ºC]
     thermalModel.efficiency = 0.5
     thermalModel.ambientThermalResistance = 10

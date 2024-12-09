@@ -41,7 +41,7 @@ def test_thrMomentumManagement(show_plots, hsMinCheck):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     module = thrMomentumManagementCpp.ThrMomentumManagementCpp()
-    module.ModelTag = "thrMomentumManagement"
+    module.modelTag = "thrMomentumManagement"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     if hsMinCheck:
@@ -93,7 +93,7 @@ def test_momentumBias(show_plots):
 
     # Construct algorithm and associated C++ container
     module = thrMomentumManagementCpp.ThrMomentumManagementCpp()
-    module.ModelTag = "thrMomentumManagement"
+    module.modelTag = "thrMomentumManagement"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

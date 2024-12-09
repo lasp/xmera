@@ -78,7 +78,7 @@ def dipoleMappingModuleTestFunction():
     # Initialize module under test's config message and add module to runtime call list
     module = dipoleMapping.DipoleMapping()
     module.steeringMatrix = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
-    module.ModelTag = "dipoleMapping"           # update python name of test module
+    module.modelTag = "dipoleMapping"           # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize DipoleRequestBodyMsg

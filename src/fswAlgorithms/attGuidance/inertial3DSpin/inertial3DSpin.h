@@ -31,8 +31,8 @@
  */
 class Inertial3DSpin : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void computeReference_inertial3DSpin(double omega_R0N_N[3],
                                          double domega_R0N_N[3],
                                          double dt);

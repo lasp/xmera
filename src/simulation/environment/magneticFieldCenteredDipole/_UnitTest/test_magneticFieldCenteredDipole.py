@@ -81,7 +81,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     # Construct algorithm and associated C++ container
     testModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
-    testModule.ModelTag = "CenteredDipole"
+    testModule.modelTag = "CenteredDipole"
 
     if useDefault:
         refg10 = 0.0     # Tesla
@@ -213,11 +213,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + testModule.ModelTag)
+        print("Failed: " + testModule.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

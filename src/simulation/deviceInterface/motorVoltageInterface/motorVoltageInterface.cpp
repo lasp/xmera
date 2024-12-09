@@ -43,7 +43,7 @@ MotorVoltageInterface::~MotorVoltageInterface()
 /*! Reset the module to original configuration values.
  @return void
  */
-void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
+void MotorVoltageInterface::reset(uint64_t CurrenSimNanos)
 {
     if(!this->motorVoltageInMsg.isLinked())
     {
@@ -135,15 +135,15 @@ void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 
 /*! This method calls all of the run-time operations for the motor voltage interface module.
     @return void
-    @param CurrentSimNanos The clock time associated with the model call
+    @param currentSimNanos The clock time associated with the model call
 */
-void MotorVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
+void MotorVoltageInterface::updateState(uint64_t currentSimNanos)
 {
     readInputMessages();
     computeMotorTorque();
-    writeOutputMessages(CurrentSimNanos);
+    writeOutputMessages(currentSimNanos);
 
-    this->prevTime = CurrentSimNanos;
+    this->prevTime = currentSimNanos;
 
     return;
 }

@@ -309,7 +309,7 @@ def run(show_plots):
 
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'vestaEphemeris'
+    gravBodyEphem.modelTag = 'vestaEphemeris'
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["vesta"]))
 
     # specify small body o.e. and rotational state January 21st, 2022
@@ -349,12 +349,12 @@ def run(show_plots):
 
     # create an ephemeris converter
     ephemConverter = ephemerisConverter.EphemerisConverter()
-    ephemConverter.ModelTag = "ephemConverter"
+    ephemConverter.modelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(gravBodyEphem.planetOutMsgs[0])
 
     # create SC object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
     gravFactory.addBodiesTo(scObject)
 
     # setup orbit initial conditions of the sc
@@ -373,7 +373,7 @@ def run(show_plots):
 
     # set up simpleNav for s/c "measurements"
     simpleNavMeas = simpleNav.SimpleNav()
-    simpleNavMeas.ModelTag = 'SimpleNav'
+    simpleNavMeas.modelTag = 'SimpleNav'
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     pos_sigma_sc = 10.0
     vel_sigma_sc = 0.1
@@ -430,7 +430,7 @@ def run(show_plots):
 
     # set up the UKF
     smallBodyNav = smallBodyNavUKF.SmallBodyNavUKF()
-    smallBodyNav.ModelTag = "smallBodyNavUKF"
+    smallBodyNav.modelTag = "smallBodyNavUKF"
 
     # set the filter parameters (sc area, mass, gravitational constants, etc.)
     smallBodyNav.mu_ast = mu  # Gravitational constant of the asteroid

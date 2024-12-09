@@ -30,7 +30,7 @@ SimpleSolarPanel::~SimpleSolarPanel(){
 
 /*! custom solar panel reset function
  */
-void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
+void SimpleSolarPanel::customreset(uint64_t CurrentClock) {
 
     this->shadowFactor = 1.0;
 

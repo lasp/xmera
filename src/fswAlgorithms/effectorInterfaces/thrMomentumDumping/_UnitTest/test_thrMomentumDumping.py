@@ -77,7 +77,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     # Construct algorithm and associated C++ container
     module = thrMomentumDumping.ThrMomentumDumping()
-    module.ModelTag = "thrMomentumDumping"
+    module.modelTag = "thrMomentumDumping"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -156,7 +156,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     if resetCheck:
         # reset the module to test this functionality
-        module.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
+        module.reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
 
         # run the module again for an additional 1.0 seconds
         unitTestSim.ConfigureStopTime(macros.sec2nano(3.5))        # seconds to stop simulation
@@ -218,11 +218,11 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     snippentName = "passFail" + str(resetCheck) + str(largeMinFireTime)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

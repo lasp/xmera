@@ -49,7 +49,7 @@ def test_momentumBiasIntegrated(show_plots):
 
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "scObject"
+    scObject.modelTag = "scObject"
     scSim.AddModelToTask(dynTask, scObject)
     I = np.array([[1700, 0., 0.],
                   [0., 1700, 0.],
@@ -77,35 +77,35 @@ def test_momentumBiasIntegrated(show_plots):
 
     # Create RW object container for attitude control
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
     scSim.AddModelToTask(dynTask, rwStateEffector)
 
     # Set up extForceTorque module for desaturation torque
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(dynTask, extFTObject)
 
     # Add the navigation module
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(dynTask, sNavObject)
 
     # Set up the attitude inertial guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(fswTask, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]
 
     # Set up the attitude tracking error module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(fswTask, attError)
 
     # Set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTask, mrpControl)
     decayTime = 10.0
     xi = 1.0
@@ -116,13 +116,13 @@ def test_momentumBiasIntegrated(show_plots):
 
     # Add the module that maps the control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(fswTask, rwMotorTorqueObj)
     rwMotorTorqueObj.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
 
     # Construct the desaturation momentum algorithm
     thrDesatControl = thrMomentumManagementCpp.ThrMomentumManagementCpp()
-    thrDesatControl.ModelTag = "thrMomentumManagement"
+    thrDesatControl.modelTag = "thrMomentumManagement"
     scSim.AddModelToTask(fswTask, thrDesatControl)
     hd_B = np.array([110, 50, -10])  # Nms
     thrDesatControl.hd_B = hd_B

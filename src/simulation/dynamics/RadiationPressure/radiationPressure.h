@@ -50,8 +50,8 @@ public:
     RadiationPressure();
     ~RadiationPressure();
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void readInputMessages();
     void computeForceTorque(double integTime, double timeStep);
@@ -60,7 +60,7 @@ public:
     void addForceLookupBEntry(Eigen::Vector3d vec);
     void addTorqueLookupBEntry(Eigen::Vector3d vec);
     void addSHatLookupBEntry(Eigen::Vector3d vec);
-    
+
 private:
     void computeCannonballModel(Eigen::Vector3d rSunB_B);
     void computeLookupModel(Eigen::Vector3d rSunB_B);

@@ -139,15 +139,15 @@ def run(show_plots, attType):
     # create SC dummy objects to setup basic Vizard settings.  Only one has to have the Grav Bodies attached
     # to show up in Vizard
     scObject1 = spacecraft.Spacecraft()
-    scObject1.ModelTag = "servicer"
+    scObject1.modelTag = "servicer"
     gravFactory.addBodiesTo(scObject1)
     scObject2 = spacecraft.Spacecraft()
-    scObject2.ModelTag = "target"
+    scObject2.modelTag = "target"
     scList = [scObject1, scObject2]
 
     #   setup the module to read in the simulation data
     dataModule = dataFileToViz.DataFileToViz()
-    dataModule.ModelTag = "testModule"
+    dataModule.modelTag = "testModule"
     dataModule.setNumOfSatellites(2)
     # load the data path from the same folder where this python script is
     dataModule.attitudeType = attType
@@ -178,13 +178,13 @@ def run(show_plots, attType):
         vizSupport.createCustomModel(viz,
                                      modelPath=os.path.join(path, "dataForExamples", "Aura_27.obj"),
                                      shader=1,
-                                     simBodiesToModify=[scList[1].ModelTag],
+                                     simBodiesToModify=[scList[1].modelTag],
                                      rotation=[180. * macros.D2R, 0.0 * macros.D2R, -90. * macros.D2R],
                                      scale=[1, 1, 1])
         # load CAD for servicer spacecraft
         vizSupport.createCustomModel(viz,
                                      modelPath=os.path.join(path, "dataForExamples", "Loral-1300Com-main.obj"),
-                                     simBodiesToModify=[scList[0].ModelTag],
+                                     simBodiesToModify=[scList[0].modelTag],
                                      rotation=[0. * macros.D2R, -90.0 * macros.D2R, 0. * macros.D2R],
                                      scale=[0.09, 0.09, 0.09])
 
@@ -193,7 +193,7 @@ def run(show_plots, attType):
         viz.scData.clear()
         for c in range(len(scList)):
             scData = vizInterface.VizSpacecraftData()
-            scData.spacecraftName = scList[c].ModelTag
+            scData.spacecraftName = scList[c].modelTag
             scData.scStateInMsg.subscribeTo(dataModule.scStateOutMsgs[c])
 
             viz.scData.push_back(scData)

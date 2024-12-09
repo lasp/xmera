@@ -122,7 +122,7 @@ def run(show_plots):
     # Create a spacecraft around Earth
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -173,7 +173,7 @@ def run(show_plots):
 
     # Create a solar panel
     solarPanel = simpleSolarPanel.SimpleSolarPanel()
-    solarPanel.ModelTag = "solarPanel"
+    solarPanel.modelTag = "solarPanel"
     solarPanel.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     solarPanel.sunEclipseInMsg.subscribeTo(eclipseObject.eclipseOutMsgs[0])
     solarPanel.sunInMsg.subscribeTo(sunMsg)
@@ -182,13 +182,13 @@ def run(show_plots):
 
     #   Create a simple power sink
     powerSink = simplePowerSink.SimplePowerSink()
-    powerSink.ModelTag = "powerSink2"
+    powerSink.modelTag = "powerSink2"
     powerSink.nodePowerOut = -3.  # Watts
     scenarioSim.AddModelToTask(taskName, powerSink)
 
     # Create a simpleBattery and attach the sources/sinks to it
     powerMonitor = simpleBattery.SimpleBattery()
-    powerMonitor.ModelTag = "powerMonitor"
+    powerMonitor.modelTag = "powerMonitor"
     powerMonitor.storageCapacity = 10.0 * 3600.0  # Convert from W-hr to Joules
     powerMonitor.storedCharge_Init = 10.0 * 3600.0  # Convert from W-Hr to Joules
     powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsg)

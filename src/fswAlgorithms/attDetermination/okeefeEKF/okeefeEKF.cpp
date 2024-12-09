@@ -28,7 +28,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OkeefeEKF::Reset(uint64_t callTime)
+void OkeefeEKF::reset(uint64_t callTime)
 {
 
     CSSConfigMsgPayload cssConfigInBuffer;
@@ -92,7 +92,7 @@ void OkeefeEKF::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OkeefeEKF::UpdateState(uint64_t callTime)
+void OkeefeEKF::updateState(uint64_t callTime)
 {
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];

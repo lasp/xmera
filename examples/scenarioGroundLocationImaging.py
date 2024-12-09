@@ -209,7 +209,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
@@ -254,7 +254,7 @@ def run(show_plots):
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     # use the input flag to determine which external torque should be applied
     # Note that all variables are initialized to zero.  Thus, not setting this
     # vector would leave it's components all zero for the simulation.
@@ -264,13 +264,13 @@ def run(show_plots):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject, ModelPriority=100)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Create the initial imaging target
     imagingTarget = groundLocation.GroundLocation()
-    imagingTarget.ModelTag = "ImagingTarget"
+    imagingTarget.modelTag = "ImagingTarget"
     imagingTarget.planetRadius = astroFunctions.E_radius * 1e3
     imagingTarget.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
     imagingTarget.minimumElevation = np.radians(10.0)
@@ -280,7 +280,7 @@ def run(show_plots):
 
     # Create a ground station in Singapore
     singaporeStation = groundLocation.GroundLocation()
-    singaporeStation.ModelTag = "SingaporeStation"
+    singaporeStation.modelTag = "SingaporeStation"
     singaporeStation.planetRadius = astroFunctions.E_radius * 1e3
     singaporeStation.specifyLocation(np.radians(1.3521), np.radians(103.8198), 15)
     singaporeStation.minimumElevation = np.radians(5.0)
@@ -290,7 +290,7 @@ def run(show_plots):
 
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
-    transmitter.ModelTag = "transmitter"
+    transmitter.modelTag = "transmitter"
     transmitter.nodeBaudRate = -1e5  # baud
     transmitter.packetSize = -8e6  # bits
     transmitter.numBuffers = 2
@@ -299,7 +299,7 @@ def run(show_plots):
 
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
-    instrument.ModelTag = "instrument1"
+    instrument.modelTag = "instrument1"
     instrument.nodeBaudRate = (
         8e6  # baud, assumes the instantaneous writing of a single image
     )
@@ -308,7 +308,7 @@ def run(show_plots):
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
-    dataMonitor.ModelTag = "dataMonitor"
+    dataMonitor.modelTag = "dataMonitor"
     dataMonitor.storageCapacity = 0.25 * 8e7  # bits
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
@@ -323,7 +323,7 @@ def run(show_plots):
 
     # setup Boulder pointing guidance module
     locPoint = locationPointing.LocationPointing()
-    locPoint.ModelTag = "locPoint"
+    locPoint.modelTag = "locPoint"
     scSim.AddModelToTask(simTaskName, locPoint, 99)
     locPoint.pHat_B = [0, 0, 1]
     locPoint.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -332,7 +332,7 @@ def run(show_plots):
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl, ModelPriority=98)
     mrpControl.guidInMsg.subscribeTo(locPoint.attGuidOutMsg)
     mrpControl.K = 5.5
@@ -346,7 +346,7 @@ def run(show_plots):
     # setup the simpleInstrumentController module
     simpleInsControl = simpleInstrumentController.SimpleInstrumentController()
     simpleInsControl.attErrTolerance = 0.1
-    simpleInsControl.ModelTag = "instrumentController"
+    simpleInsControl.modelTag = "instrumentController"
     simpleInsControl.attGuidInMsg.subscribeTo(locPoint.attGuidOutMsg)
     simpleInsControl.locationAccessInMsg.subscribeTo(imagingTarget.accessOutMsgs[-1])
     scSim.AddModelToTask(simTaskName, simpleInsControl, ModelPriority=97)

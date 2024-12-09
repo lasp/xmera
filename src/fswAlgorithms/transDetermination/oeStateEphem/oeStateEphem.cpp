@@ -27,7 +27,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OEStateEphem::Reset(uint64_t callTime)
+void OEStateEphem::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->clockCorrInMsg.isLinked()) {
@@ -41,7 +41,7 @@ void OEStateEphem::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OEStateEphem::UpdateState(uint64_t callTime)
+void OEStateEphem::updateState(uint64_t callTime)
 {
     double currentScaledValue;              /* [s] scaled time value to within [-1,1] */
     double currentEphTime;                  /* [s] current ephemeris time */

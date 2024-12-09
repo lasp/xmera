@@ -44,7 +44,7 @@ given priority and can run before C++/C modules.
 Similarly to C++ modules, creating an instance of the Python module is done with the code::
 
     pyMRPPD = PythonMRPPD()
-    pyMRPPD.ModelTag = "pyMRP_PD"
+    pyMRPPD.modelTag = "pyMRP_PD"
     pyMRPPD.K = 3.5
     pyMRPPD.P = 30.0
     scSim.AddModelToTask(simTaskName, pyMRPPD)
@@ -144,7 +144,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -161,14 +161,14 @@ def run(show_plots):
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -177,18 +177,18 @@ def run(show_plots):
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
 
     # setup Python MRP PD control module
     pyMRPPD = PythonMRPPD()
-    pyMRPPD.ModelTag = "pyMRP_PD"
+    pyMRPPD.modelTag = "pyMRP_PD"
     pyMRPPD.K = 3.5
     pyMRPPD.P = 30.0
     scSim.AddModelToTask(simTaskName, pyMRPPD)
@@ -291,7 +291,7 @@ class PythonMRPPD(sysModel.SysModel):
 
     #. ``Reset``: The method that will initialize any persistent data in your model to a common
        "ready to run" state (e.g. filter states, integral control sums, etc).
-    #. ``UpdateState``: The method that will be called at the rate specified
+    #. ``updateState``: The method that will be called at the rate specified
        in the PythonTask that was created in the input file.
 
     Additionally, your class should ensure that in the ``__init__`` method, your call the super
@@ -317,25 +317,25 @@ class PythonMRPPD(sysModel.SysModel):
         # Output body torque message name
         self.cmdTorqueOutMsg = messaging.CmdTorqueBodyMsg()
 
-    def Reset(self, CurrentSimNanos):
+    def reset(self, currentSimNanos):
         """
         The Reset method is used to clear out any persistent variables that need to get changed
         when a task is restarted.  This method is typically only called once after selfInit/crossInit,
         but it should be written to allow the user to call it multiple times if necessary.
-        :param CurrentSimNanos: current simulation time in nano-seconds
+        :param currentSimNanos: current simulation time in nano-seconds
         :return: none
         """
         return
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, currentSimNanos):
         """
         The updateState method is the cyclical worker method for a given Basilisk class.  It
         will get called periodically at the rate specified in the task that the model is
         attached to.  It persists and anything can be done inside of it.  If you have realtime
-        requirements though, be careful about how much processing you put into a Python UpdateState
+        requirements though, be careful about how much processing you put into a Python updateState
         method.  You could easily detonate your sim's ability to run in realtime.
 
-        :param CurrentSimNanos: current simulation time in nano-seconds
+        :param currentSimNanos: current simulation time in nano-seconds
         :return: none
         """
         # read input message
@@ -348,14 +348,14 @@ class PythonMRPPD(sysModel.SysModel):
         lrCmd = np.array(guidMsgBuffer.sigma_BR) * self.K + np.array(guidMsgBuffer.omega_BR_B) * self.P
         torqueOutMsgBuffer.torqueRequestBody = (-lrCmd).tolist()
 
-        self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, CurrentSimNanos, self.moduleID)
+        self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, currentSimNanos, self.moduleID)
 
         # All Python SysModels have self.bskLogger available
         # The logger level flags (i.e. BSK_INFORMATION) may be
         # accessed from sysModel
         if False:
             """Sample Python module method"""
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"Time: {CurrentSimNanos * 1.0E-9} s")
+            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"Time: {currentSimNanos * 1.0E-9} s")
             self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
             self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}")
             self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")

@@ -37,7 +37,7 @@ GravityGradientEffector::~GravityGradientEffector()
 /*! This method is used to set the effector, and check same module variables
 @return void
 */
-void GravityGradientEffector::Reset(uint64_t CurrentSimNanos)
+void GravityGradientEffector::reset(uint64_t currentSimNanos)
 {
     /* zero the effector output forces and torques */
     this->forceExternal_B.fill(0.0);
@@ -144,10 +144,10 @@ void GravityGradientEffector::computeForceTorque(double integTime, double timeSt
 /*! This method is called once per BSK update cycle.  It writes out a msg of the
     evaluated gravity gradient torque.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void GravityGradientEffector::UpdateState(uint64_t CurrentSimNanos)
+void GravityGradientEffector::updateState(uint64_t currentSimNanos)
 {
-	this->WriteOutputMessages(CurrentSimNanos);
+	this->WriteOutputMessages(currentSimNanos);
 	return;
 }

@@ -36,8 +36,8 @@
  */
 class CelestialTwoBodyPoint : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void parseInputMessages();
     void computeCelestialTwoBodyPoint(uint64_t callTime);
     /* Declare module private variables */

@@ -214,7 +214,7 @@ class moduleGenerator:
         else:
             self.log(failColor + "ERROR: " + endColor + "Wrong module type provided to test file method.")
             exit(0)
-        testFile += '    module.ModelTag = "' + self.moduleName + 'Tag"\n'
+        testFile += '    module.modelTag = "' + self.moduleName + 'Tag"\n'
         testFile += '    unitTestSim.AddModelToTask(unitTaskName, module)\n'
         testFile += '\n'
         testFile += '    # Configure blank module input messages\n'
@@ -238,7 +238,7 @@ class moduleGenerator:
         testFile += '    # pull module data and make sure it is correct\n'
         testFile += '\n'
         testFile += '    if testFailCount == 0:\n'
-        testFile += '        print("PASSED: " + module.ModelTag)\n'
+        testFile += '        print("PASSED: " + module.modelTag)\n'
         testFile += '    else:\n'
         testFile += '        print(testMessages)\n'
         testFile += '\n'
@@ -309,8 +309,8 @@ class moduleGenerator:
         headerFile += '    ' + self._className + '();\n'
         headerFile += '    ~' + self._className + '();\n'
         headerFile += '\n'
-        headerFile += '    void Reset(uint64_t CurrentSimNanos);\n'
-        headerFile += '    void UpdateState(uint64_t CurrentSimNanos);\n'
+        headerFile += '    void reset(uint64_t currentSimNanos);\n'
+        headerFile += '    void updateState(uint64_t currentSimNanos);\n'
         headerFile += '\n'
         headerFile += 'public:\n'
         for msg in inMsgList:
@@ -356,7 +356,7 @@ class moduleGenerator:
         defFile += '/*! This method is used to reset the module and checks that required input messages are connect.\n'
         defFile += '    @return void\n'
         defFile += '*/\n'
-        defFile += 'void ' + self._className + '::Reset(uint64_t CurrentSimNanos)\n'
+        defFile += 'void ' + self._className + '::reset(uint64_t currentSimNanos)\n'
         defFile += '{\n'
         defFile += '    // check that required input messages are connected\n'
         for msg in inMsgList:
@@ -371,7 +371,7 @@ class moduleGenerator:
                    'Provide an appropriate description.\n'
         defFile += '    @return void\n'
         defFile += '*/\n'
-        defFile += 'void ' + self._className + '::UpdateState(uint64_t CurrentSimNanos)\n'
+        defFile += 'void ' + self._className + '::updateState(uint64_t currentSimNanos)\n'
         defFile += '{\n'
         for msg in inMsgList + outMsgList:
             defFile += '    ' + msg['type'] + 'Payload ' + msg['var'] + 'Buffer;  //!< local copy of message buffer\n'
@@ -388,7 +388,7 @@ class moduleGenerator:
         defFile += '\n'
         defFile += '    // write to the output messages\n'
         for msg in outMsgList:
-            defFile += '    this->' + msg['var'] + '.write(&' + msg['var'] + 'Buffer, this->moduleID, CurrentSimNanos);\n'
+            defFile += '    this->' + msg['var'] + '.write(&' + msg['var'] + 'Buffer, this->moduleID, currentSimNanos);\n'
         defFile += '}\n'
         defFile += '\n'
 

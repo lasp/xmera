@@ -40,7 +40,7 @@ linearTranslationOneDOFStateEffector::~linearTranslationOneDOFStateEffector()
     linearTranslationOneDOFStateEffector::effectorID = 1;
 }
 
-void linearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock) {
+void linearTranslationOneDOFStateEffector::reset(uint64_t CurrentClock) {
 }
 
 void linearTranslationOneDOFStateEffector::setMass(double mass) {
@@ -127,7 +127,7 @@ void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
         translatingBodyBuffer.rhoDot = this->rhoDot;
         this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, currentSimNanos);
     }
-    
+
     if (this->translatingBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->translatingBodyConfigLogOutMsg.zeroMsgPayload;
@@ -194,10 +194,10 @@ void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
         this->aRho.setZero();
         this->bRho.setZero();
         this->cRho = 0.0;
-        
+
         return;
     }
-    
+
     this->aRho = - this->fHat_B.transpose();
     this->bRho = this->fHat_B.transpose() * this->rTilde_FcB_B;
     this->cRho = 1.0 / this->mass * (this->motorForce - this->k * (this->rho - this->rhoRef)
@@ -257,7 +257,7 @@ void linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
     this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * rDot_FcB_B;
 }
 
-void linearTranslationOneDOFStateEffector::UpdateState(uint64_t currentSimNanos)
+void linearTranslationOneDOFStateEffector::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
     this->computeTranslatingBodyInertialStates();

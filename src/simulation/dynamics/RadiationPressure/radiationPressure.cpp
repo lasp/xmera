@@ -51,7 +51,7 @@ RadiationPressure::~RadiationPressure()
 /*! Reset the module to origina configuration values.
  @return void
  */
-void RadiationPressure::Reset(uint64_t CurrenSimNanos)
+void RadiationPressure::reset(uint64_t CurrenSimNanos)
 {
     if(!this->sunEphmInMsg.isLinked())
     {
@@ -123,9 +123,9 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep)
 
 /*! Update model state by reading in new message data
  @return void
- @param CurrentSimNanos current simulation time in nanoseconds
+ @param currentSimNanos current simulation time in nanoseconds
  */
-void RadiationPressure::UpdateState(uint64_t CurrentSimNanos)
+void RadiationPressure::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
 }

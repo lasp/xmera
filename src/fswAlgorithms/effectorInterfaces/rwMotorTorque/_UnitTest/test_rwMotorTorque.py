@@ -62,7 +62,7 @@ def rwMotorTorqueTest(show_plots):
 
     # Construct algorithm and associated C++ container
     module = rwMotorTorque.RwMotorTorque()
-    module.ModelTag = "rwMotorTorque"
+    module.modelTag = "rwMotorTorque"
 
     # Initialize module variables
     controlAxes_B = [
@@ -113,7 +113,7 @@ def rwMotorTorqueTest(show_plots):
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    module.Reset(0)
+    module.reset(0)
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
@@ -143,13 +143,13 @@ def rwMotorTorqueTest(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], rwConfigParams.numRW, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed motorTorque unit test at t=" +
+            testMessages.append("FAILED: " + module.modelTag + " Module failed motorTorque unit test at t=" +
                                 str(dataLog.times()[i]*macros.NANO2SEC) +
                                 "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

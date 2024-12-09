@@ -38,8 +38,8 @@ public:
     ExtForceTorque();
     ~ExtForceTorque();
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);         //!< class method
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);         //!< class method
     void linkInStates(DynParamManager& statesIn);       //!< class method
     void writeOutputMessages(uint64_t currentClock);    //!< class method
     void readInputMessages();

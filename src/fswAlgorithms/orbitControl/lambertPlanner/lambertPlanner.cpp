@@ -36,7 +36,7 @@ LambertPlanner::~LambertPlanner() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertPlanner::Reset(uint64_t currentSimNanos)
+void LambertPlanner::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
@@ -57,7 +57,7 @@ void LambertPlanner::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertPlanner::UpdateState(uint64_t currentSimNanos)
+void LambertPlanner::updateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();

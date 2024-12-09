@@ -166,7 +166,7 @@ def run(show_plots):
 
     # create SC object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
 
     oeSC = orbitalMotion.ClassicElements()
     oeSC.a = 10000. * 1e3
@@ -196,7 +196,7 @@ def run(show_plots):
 
     # Set up simpleNav for s/c "measurements"
     simpleNavMeas = simpleNav.SimpleNav()
-    simpleNavMeas.ModelTag = 'SimpleNav'
+    simpleNavMeas.modelTag = 'SimpleNav'
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     pos_sigma_sc = 1.
     vel_sigma_sc = 0.01
@@ -221,7 +221,7 @@ def run(show_plots):
 
     # set up Lambert planner
     lamPlanner = lambertPlanner.LambertPlanner()
-    lamPlanner.ModelTag = "lambertPlanner"
+    lamPlanner.modelTag = "lambertPlanner"
     lamPlanner.r_TN_N = r_TN_N
     lamPlanner.finalTime = tf
     lamPlanner.maneuverTime = tm
@@ -231,12 +231,12 @@ def run(show_plots):
 
     # set up Lambert Solver
     lamSolver = lambertSolver.LambertSolver()
-    lamSolver.ModelTag = "lambertSolver"
+    lamSolver.modelTag = "lambertSolver"
     lamSolver.lambertProblemInMsg.subscribeTo(lamPlanner.lambertProblemOutMsg)
 
     # set up Lambert Validator
     lamValidator = lambertValidator.LambertValidator()
-    lamValidator.ModelTag = "lambertValidator"
+    lamValidator.modelTag = "lambertValidator"
     lamValidator.finalTime = tf
     lamValidator.maneuverTime = tm
     lamValidator.maxDistanceTarget = maxDistanceTarget
@@ -305,7 +305,7 @@ def run(show_plots):
     # After reading the Delta-V command, the state managers velocity is updated through
     velRef.setState(unitTestSupport.np2EigenVectorXd(vm_N + dv_N))
     # disable flight software after maneuver
-    fswProcess.disableAllTasks()
+    fswProcess.disableTasks()
 
     # To start up the simulation again, note that the total simulation time must be provided,
     # not just the next incremental simulation time.

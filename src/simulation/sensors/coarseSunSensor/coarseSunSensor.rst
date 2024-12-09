@@ -18,7 +18,7 @@ The corruption types are outlined in this
 It is possible to define an asymmetrical field of view for the CSS. This is useful when trying to simulate baffles that partially limit the field of view of the sensor in a certain direction, usually to avoid reflected sunlight fo enter the view of the CSS. This requires not only the definition of the CSS boresight vector :math:`\boldsymbol{\hat{n}}`, but also two additional unit vectors :math:`\boldsymbol{\hat{l}}` and :math:`\boldsymbol{\hat{m}}` that define a full CSS frame. This custom field of view is modeled as the combination of two pseudo-ellipses in the :math:`(l,m)` plane. The resulting planar, closed curve is projected onto the unit sphere surface in the positive :math:`\boldsymbol{\hat{n}}` direction. The custom field of view can be set up as follows::
 
     CSS = coarseSunSensor.CoarseSunSensor()
-    CSS.ModelTag = "coarseSunSensor"
+    CSS.modelTag = "coarseSunSensor"
     CSS.scaleFactor = 1
     CSS.lHat_B = lHat_B
     CSS.mHat_B = mHat_B

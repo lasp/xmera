@@ -39,16 +39,16 @@ public:
     SysModelTask()=default;
     explicit SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime=0); //!< class method
     ~SysModelTask()=default;
-    void AddNewObject(SysModel *NewModel, int32_t Priority = -1);
-    void SelfInitTaskList() const;
+    void addModel(SysModel *NewModel, int32_t Priority = -1);
+    void selfInitTaskList() const;
     //void CrossInitTaskList();
-    void ExecuteTaskList(uint64_t CurrentSimTime);
-	void ResetTaskList(uint64_t CurrentSimTime);
-    void ResetTask() {this->NextStartTime = this->FirstTaskTime;} //!< Resets the task
-	void enableTask() {this->taskActive = true;} //!< Enables the task.  Great comment huh?
-	void disableTask() {this->taskActive = false;} //!< Disables the task.  I know.
-    void updatePeriod(uint64_t newPeriod);
-    void updateParentProc(std::string const& parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
+    void executeModels(uint64_t CurrentSimTime);
+	void resetModels(uint64_t CurrentSimTime);
+    void reset() {this->NextStartTime = this->FirstTaskTime;} //!< Resets the task
+	void enable() {this->taskActive = true;} //!< Enables the task.  Great comment huh?
+	void disable() {this->taskActive = false;} //!< Disables the task.  I know.
+    void setPeriod(uint64_t newPeriod);
+    void setParentProc(std::string const& parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
     uint64_t getNextStartTime() const;
     uint64_t getNextPickupTime() const;
     uint64_t getTaskPeriod() const;

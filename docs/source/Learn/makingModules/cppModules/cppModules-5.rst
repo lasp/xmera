@@ -34,7 +34,7 @@ includes the C message structure definition.
 In the Basilisk module class definition, we will need to add the `SelfInit` method which is required
 to self-initialized the C wrapped output message::
 
-    void SelfInit();
+    void selfInit();
 
 Next, add the C-wrapped output message variable as a public variable::
 
@@ -51,12 +51,12 @@ message name with ``C``.
 
 Changes in the Module Definition File
 -------------------------------------
-First, we need to define the module ``SelfInit()`` method to initialize the C-wrapped output message:
+First, we need to define the module ``selfInit()`` method to initialize the C-wrapped output message:
 
 .. code-block:: cpp
     :linenos:
 
-    void ModuleClass::SelfInit()
+    void ModuleClass::selfInit()
     {
         SomeMsg_C_init(&this->someOutMsgC);
     }

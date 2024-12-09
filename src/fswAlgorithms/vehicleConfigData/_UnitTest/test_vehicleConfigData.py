@@ -44,7 +44,7 @@ def vehicleConfigDataTestFunction():
     mass = 300.
     module.massSC = mass
 
-    module.ModelTag = "vehicleConfigData"
+    module.modelTag = "vehicleConfigData"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -78,7 +78,7 @@ def vehicleConfigDataTestFunction():
                                                                  testFailCount, testMessages)
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

@@ -26,7 +26,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void StepperMotorController::Reset(uint64_t callTime) {
+void StepperMotorController::reset(uint64_t callTime) {
     if (!this->motorRefAngleInMsg.isLinked()) {
         this->bskLogger->bskLog(BSK_ERROR, "stepperMotorController.motorRefAngleInMsg wasn't connected.");
     }
@@ -44,7 +44,7 @@ motor actuation in time.
  @return void
  @param callTime [ns] Time the method is called
 */
-void StepperMotorController::UpdateState(uint64_t callTime) {
+void StepperMotorController::updateState(uint64_t callTime) {
     // Create the buffer messages
     HingedRigidBodyMsgPayload motorRefAngleIn;
     MotorStepCommandMsgPayload motorStepCommandOut;

@@ -69,7 +69,7 @@ def test_SunSafePointTestFunction(show_plots, case):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     module = sunSafePointCpp.SunSafePointCpp()
-    module.ModelTag = "sunSafePoint"
+    module.modelTag = "sunSafePoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -116,7 +116,7 @@ def test_SunSafePointTestFunction(show_plots, case):
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(mc.sec2nano(1.))
-    module.Reset(0)
+    module.reset(0)
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.

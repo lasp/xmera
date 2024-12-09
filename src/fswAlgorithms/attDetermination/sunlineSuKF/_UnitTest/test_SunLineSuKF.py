@@ -243,7 +243,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     # Construct algorithm and associated C++ container
     module = sunlineSuKF.SunlineSuKF()
-    module.ModelTag = "sunlineSuKF"
+    module.modelTag = "sunlineSuKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -384,7 +384,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state update")
+        print("PASSED: " + module.modelTag + " state update")
     else:
         print(testMessages)
 
@@ -414,7 +414,7 @@ def StatePropSunLine(show_plots):
 
     # Construct algorithm and associated C++ container
     module = sunlineSuKF.SunlineSuKF()
-    module.ModelTag = "sunlineSuKF"
+    module.modelTag = "sunlineSuKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -452,7 +452,7 @@ def StatePropSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state propagation")
+        print("PASSED: " + module.modelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

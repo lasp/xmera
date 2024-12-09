@@ -41,7 +41,7 @@ BoreAngCalc::~BoreAngCalc() = default;
 /*! This method is used to reset the module.
  @return void
  */
-void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
+void BoreAngCalc::reset(uint64_t currentSimNanos)
 {
     // check if required input messages have not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -163,9 +163,9 @@ void BoreAngCalc::computeInertialOutputData()
  that it needs to re-init (direction change maybe) it will re-init itself.
  Then it will compute the angles away that the boresight is from the celestial target.
  @return void
- @param CurrentSimNanos The current simulation time for system
+ @param currentSimNanos The current simulation time for system
  */
-void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
+void BoreAngCalc::updateState(uint64_t currentSimNanos)
 {
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();
@@ -183,5 +183,5 @@ void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
     }
 
     //! Write out the current output for current time
-    WriteOutputMessages(CurrentSimNanos);
+    WriteOutputMessages(currentSimNanos);
 }

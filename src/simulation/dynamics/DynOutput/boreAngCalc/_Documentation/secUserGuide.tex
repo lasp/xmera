@@ -6,7 +6,7 @@ A common setup for both cases contains:
 
 \begin{itemize}
   \item[-]      \texttt{BACObject = boreAngCalc.BoreAngCalc()}: Construct the boreAngCalc module
-  \item[-]   \texttt{BACObject.ModelTag = "solarArrayBoresight"}: Set the model tag
+  \item[-]   \texttt{BACObject.modelTag = "solarArrayBoresight"}: Set the model tag
   \item[-]   \texttt{BACObject.boreVec\_B = boreVec\_B}: Set the body frame boresight vector assuming it is assigned to variable \texttt{boreVec\_B}
   \item[-]   \texttt{BACObject.scStateInMsg.subscribeTo(scMsg)}: Attach the spacecraft's state message from \texttt{scMsg}
   \item[-]   \texttt{TotalSim.AddModelToTask(unitTaskName, BACObject)}: Attach the module to a task

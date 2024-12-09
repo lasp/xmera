@@ -42,7 +42,7 @@ void activateNewThread(void *threadData)
             theThread->resetNow = false;
         }
         else{
-            theThread->StepUntilStop();
+            theThread->stepUntilStop();
         }
         //std::cout << "Stepping thread"<<std::endl;
         theThread->unlockParent();
@@ -100,13 +100,13 @@ void SimThreadExecution::unlockParent() {
     @param stopPri The priority level below which the sim won't go
     @return void
 */
-void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
+void SimThreadExecution::singleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~((uint64_t) 0);
     auto it = this->processList.begin();
     this->CurrentNanos = this->NextTaskTime;
     while(it!= this->processList.end() && this->threadValid()) {
-        if(SysProcess *localProc = (*it); localProc->processEnabled()) {
+        if(SysProcess *localProc = (*it); localProc->isEnabled()) {
             while(localProc->getNextTaskTime() < this->CurrentNanos ||
                   (localProc->getNextTaskTime() == this->CurrentNanos &&
                    localProc->processPriority >= stopPri)) {
@@ -130,7 +130,7 @@ void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
  stop priority have been reached.
  @return void
  */
-void SimThreadExecution::StepUntilStop()
+void SimThreadExecution::stepUntilStop()
 {
     /*! - Note that we have to step until both the time is greater and the next
      Task's start time is in the future. If the NextTaskTime is less than
@@ -140,7 +140,7 @@ void SimThreadExecution::StepUntilStop()
     int64_t inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
     while(this->threadValid() && (this->NextTaskTime < stopThreadNanos || (this->NextTaskTime == stopThreadNanos &&
                                                this->nextProcPriority >= stopThreadPriority))) {
-        this->SingleStepProcesses(inPri);
+        this->singleStepProcesses(inPri);
         inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
     }
 }
@@ -188,7 +188,7 @@ void SimThreadExecution::postInit() {
  */
 void SimThreadExecution::selfInitProcesses() const {
     for(auto const& process : this->processList) {
-        process->selfInitProcess();
+        process->selfInitialize();
     }
 }
 
@@ -213,7 +213,7 @@ void SimThreadExecution::resetProcesses() {
     this->CurrentNanos = 0;
     this->NextTaskTime = 0;
     for(auto const& process : this->processList) {
-        process->resetProcess(this->currentThreadNanos);
+        process->reset(this->currentThreadNanos);
     }
 }
 
@@ -276,7 +276,7 @@ SimModel::~SimModel()
  @param stopPri The priority level below which the sim won't go
  @return void
  */
-void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
+void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
     std::cout << std::flush;
     for(auto const* simThread : this->threadList) {
@@ -362,14 +362,14 @@ void SimModel::resetInitSimulation() const
     @return void
 */
 
-void SimModel::SingleStepProcesses(int64_t stopPri)
+void SimModel::singleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~((uint64_t) 0);
     auto it = this->processList.begin();
     this->CurrentNanos = this->NextTaskTime;
     while(it!= this->processList.end())
     {
-        if(SysProcess *localProc = (*it); localProc->processEnabled())
+        if(SysProcess *localProc = (*it); localProc->isEnabled())
         {
             while(localProc->getNextTaskTime() < this->CurrentNanos ||
                 (localProc->getNextTaskTime() == this->CurrentNanos &&
@@ -398,10 +398,10 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
  * it does not clear all message buffers and does not reset individual models.
  @return void
  */
-void SimModel::ResetSimulation()
+void SimModel::resetSimulation()
 {
     for(auto const& process : this->processList) {
-        process->reInitProcess();
+        process->reInitialize();
     }
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;

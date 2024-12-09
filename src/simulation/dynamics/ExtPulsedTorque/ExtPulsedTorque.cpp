@@ -89,7 +89,7 @@ void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep)
 
 /*! Module update method
  */
-void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos)
+void ExtPulsedTorque::updateState(uint64_t currentSimNanos)
 {
     return;
 }

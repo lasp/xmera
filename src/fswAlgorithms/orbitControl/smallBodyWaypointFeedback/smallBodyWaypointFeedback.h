@@ -38,11 +38,11 @@ class SmallBodyWaypointFeedback: public SysModel {
 public:
     SmallBodyWaypointFeedback();
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void readMessages();
-    void computeControl(uint64_t CurrentSimNanos);
-    void writeMessages(uint64_t CurrentSimNanos);
+    void computeControl(uint64_t currentSimNanos);
+    void writeMessages(uint64_t currentSimNanos);
 
 public:
     ReadFunctor<NavTransMsgPayload> navTransInMsg;  //!< translational navigation input message

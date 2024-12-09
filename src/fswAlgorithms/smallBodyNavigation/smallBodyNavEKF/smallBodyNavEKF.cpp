@@ -67,7 +67,7 @@ SmallBodyNavEKF::SmallBodyNavEKF()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::reset(uint64_t currentSimNanos)
 {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
@@ -94,12 +94,12 @@ void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrus
 }
 
 /*! This method is used to read the input messages.
-    @param CurrentSimNanos
+    @param currentSimNanos
     @return void
 */
-void SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos){
+void SmallBodyNavEKF::readMessages(uint64_t currentSimNanos){
     /* Read in the input messages */
-    if ((this->navTransInMsg.timeWritten() + this->navAttInMsg.timeWritten() + this->asteroidEphemerisInMsg.timeWritten() - 3*CurrentSimNanos) == 0){
+    if ((this->navTransInMsg.timeWritten() + this->navAttInMsg.timeWritten() + this->asteroidEphemerisInMsg.timeWritten() - 3*currentSimNanos) == 0){
         this->newMeasurements = true;
     } else {
         this->newMeasurements = false;
@@ -131,10 +131,10 @@ void SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos){
 }
 
 /*! This method performs the KF prediction step
-    @param CurrentSimNanos
+    @param currentSimNanos
     @return void
 */
-void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
+void SmallBodyNavEKF::predict(uint64_t currentSimNanos){
     /* Get the orbital elements of the asteroid, we assume the uncertainty on the pos. and vel. of the body are low
      * enough to consider them known apriori */
     rv2elem(mu_sun, asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, &oe_ast);
@@ -168,36 +168,36 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
     }
 
     /* Compute aprior state estimate */
-    aprioriState(CurrentSimNanos);
+    aprioriState(currentSimNanos);
 
     /* Compute apriori covariance */
-    aprioriCovar(CurrentSimNanos);
+    aprioriCovar(currentSimNanos);
 }
 
 /*! This method computes the apriori state estimate using RK4 integration
-    @param CurrentSimNanos
+    @param currentSimNanos
     @return void
 */
-void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
+void SmallBodyNavEKF::aprioriState(uint64_t currentSimNanos){
     /* First RK4 step */
     computeEquationsOfMotion(x_hat_k, Phi_k);
-    k1 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
-    k1_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+    k1 = (currentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
+    k1_phi = (currentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
 
     /* Second RK4 step */
     computeEquationsOfMotion(x_hat_k + k1/2, Phi_k + k1_phi/2);
-    k2 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
-    k2_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+    k2 = (currentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
+    k2_phi = (currentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
 
     /* Third RK4 step */
     computeEquationsOfMotion(x_hat_k + k2/2, Phi_k + k2_phi/2);
-    k3 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
-    k3_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+    k3 = (currentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
+    k3_phi = (currentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
 
     /* Fourth RK4 step */
     computeEquationsOfMotion(x_hat_k + k3, Phi_k + k3_phi);
-    k4 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
-    k4_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+    k4 = (currentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
+    k4_phi = (currentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
 
     /* Perform the RK4 integration on the dynamics and STM */
     x_hat_k1_ = x_hat_k + (k1 + 2*k2 + 2*k3 + k4)/6;
@@ -251,10 +251,10 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
 }
 
 /*! This method compute the apriori estimation error covariance through euler integration
-    @param CurrentSimNanos
+    @param currentSimNanos
     @return void
 */
-void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
+void SmallBodyNavEKF::aprioriCovar(uint64_t currentSimNanos){
     /* Compute the apriori covariance */
     P_k1_ = Phi_k*P_k*Phi_k.transpose() + L*Q*L.transpose();
 }
@@ -380,10 +380,10 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
 /*! This is the main method that gets called every time the module is updated.
     @return void
 */
-void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::updateState(uint64_t currentSimNanos)
 {
-    this->readMessages(CurrentSimNanos);
-    this->predict(CurrentSimNanos);
+    this->readMessages(currentSimNanos);
+    this->predict(currentSimNanos);
     this->checkMRPSwitching();
     if (this->newMeasurements){
         /* Run the measurement update */
@@ -393,14 +393,14 @@ void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
         /* Assign the apriori state estimate and covariance to k for the next iteration */
         x_hat_k = x_hat_k1_;
     }
-    this->writeMessages(CurrentSimNanos);
-    prevTime = CurrentSimNanos;
+    this->writeMessages(currentSimNanos);
+    prevTime = currentSimNanos;
 }
 
 /*! This method writes the output messages
     @return void
 */
-void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
+void SmallBodyNavEKF::writeMessages(uint64_t currentSimNanos){
     /* Create output msg buffers */
     NavTransMsgPayload navTransOutMsgBuffer;
     SmallBodyNavMsgPayload smallBodyNavOutMsgBuffer;
@@ -433,7 +433,7 @@ void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
     }
 
     /* Write to the C++-wrapped output messages */
-    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->smallBodyNavOutMsg.write(&smallBodyNavOutMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->asteroidEphemerisOutMsg.write(&asteroidEphemerisOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->smallBodyNavOutMsg.write(&smallBodyNavOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->asteroidEphemerisOutMsg.write(&asteroidEphemerisOutMsgBuffer, this->moduleID, currentSimNanos);
 }

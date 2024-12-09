@@ -93,7 +93,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
 
     # Albedo A1
     albModule = albedo.Albedo()
-    albModule.ModelTag = "Albedo_0"
+    albModule.modelTag = "Albedo_0"
     if modelType == 'ALBEDO_DATA':
         dataPath = os.path.abspath(bskPath + "/supportData/AlbedoData/")
         if planetCase == 'earth':
@@ -162,7 +162,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     # Initialize and run simulation one step at a time
     unitTestSim.InitializeSimulation()
     # Execute the simulation for one time step
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
     # This pulls the actual data log from the simulation run.
     dataAlb0 = dataLog.albedoAtInstrument
     errTol = 1E-12
@@ -205,16 +205,16 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
         testFailCount += 1
     #   print out success or failure message
     if testFailCount == 0:
-            print("PASSED: " + albModule.ModelTag)
+            print("PASSED: " + albModule.modelTag)
     else:
-            print("Failed: " + albModule.ModelTag)
+            print("Failed: " + albModule.modelTag)
     print("This test uses a relative accuracy value of " + str(errTol * 100) + " percent")
 
     return [testFailCount, ''.join(testMessages)]
 
 def test_albedo_invalid_file(tmp_path):
     """Verify that Albedo model returns gracefully when file cannot be loaded.
-    
+
     Regression test for BSK-428 where model would segfault when invalid file
     was specified.
 
@@ -242,9 +242,9 @@ def test_albedo_invalid_file(tmp_path):
     albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
 
     albModule.addPlanetandAlbedoDataModel(planetInMsg, str(tmp_path), "does_not_exit.file")
-    
+
     # this call would previously segfault
-    albModule.Reset(0)
+    albModule.reset(0)
 
     # the fact that we got here without segfaulting means the test
     # passed

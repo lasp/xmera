@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,7 +14,7 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
+#
 #
 import itertools
 
@@ -102,7 +102,7 @@ def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p
 
     # setup module to be tested
     module = lambertSurfaceRelativeVelocity.LambertSurfaceRelativeVelocity()
-    module.ModelTag = "lambertSurfaceRelativeVelocity"
+    module.modelTag = "lambertSurfaceRelativeVelocity"
     module.vRelativeDesired_S = vRelativeDesired_S
     module.time = tm
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -126,7 +126,7 @@ def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p
     unitTestSim.AddModelToTask(unitTaskName, desiredVelocityOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # pull module data
     vDesired = desiredVelocityOutMsgRec.vDesired_N[0]

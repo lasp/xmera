@@ -30,7 +30,7 @@ void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig, double
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void CssWlsEst::Reset(uint64_t callTime)
+void CssWlsEst::reset(uint64_t callTime)
 {
 
     // check that required messages have been included
@@ -69,7 +69,7 @@ void CssWlsEst::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void CssWlsEst::UpdateState(uint64_t callTime)
+void CssWlsEst::updateState(uint64_t callTime)
 {
     CSSArraySensorMsgPayload InputBuffer;        /* CSS measurements */
     double H[MAX_NUM_CSS_SENSORS*3];             /* The predicted pointing vector for each measurement */

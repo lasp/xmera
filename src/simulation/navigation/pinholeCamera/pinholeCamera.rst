@@ -4,7 +4,7 @@ Executive Summary
 This module simulates a camera pinhole model that computes landmark pixels as seen by a spacecraft.
 It reads the planet's ephemeris and spacecraft state messages as inputs. It outputs a vector of landmark messages.
 
-The module can also account for Sun's lighting constraint by setting a mask angle. 
+The module can also account for Sun's lighting constraint by setting a mask angle.
 
 
 
@@ -95,7 +95,7 @@ An instance of pinholeCamera, alongside necessary user-supplied parameters, can 
 .. code-block:: python
 
     camera = pinholeCamera.PinholeCamera()
-    camera.ModelTag = "camera"
+    camera.modelTag = "camera"
     camera.nxPixel = 2048 # Sets number of horizontal pixels
     camera.nyPixel = 1536 # Sets number of vertical pixels
     camera.wPixel = (17.3*1e-3)/2048 # Sets pixel width

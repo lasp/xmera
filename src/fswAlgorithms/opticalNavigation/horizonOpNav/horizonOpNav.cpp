@@ -99,7 +99,7 @@ void BackSub(double *R, double *inVec, int32_t nRow, double *n)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HorizonOpNav::Reset(uint64_t callTime)
+void HorizonOpNav::reset(uint64_t callTime)
 {
     // check that the required message has not been connected
     if (!this->cameraConfigInMsg.isLinked()) {
@@ -118,7 +118,7 @@ void HorizonOpNav::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HorizonOpNav::UpdateState(uint64_t callTime)
+void HorizonOpNav::updateState(uint64_t callTime)
 {
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3], Q[3][3], B[3][3];
     double planetRad_Eq;

@@ -35,8 +35,8 @@
  CSS interface*/
 class CSSComm : public SysModel {
 public:
-    void UpdateState(uint64_t callTime) override;
-    void Reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
 
     uint32_t  numSensors;   //!< The number of sensors we are processing
     ReadFunctor<CSSArraySensorMsgPayload> sensorListInMsg; //!< input message that contains CSS data

@@ -65,7 +65,7 @@ def cssCommTestFunction(numSensors, sensorData):
     module.chebyCount = len(ChebyList)
     module.kellyCheby = ChebyList
 
-    module.ModelTag = "cssComm"
+    module.modelTag = "cssComm"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -115,11 +115,11 @@ def cssCommTestFunction(numSensors, sensorData):
     snippentName = "passFail_"+str(numSensors)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

@@ -36,15 +36,15 @@ class DataNodeBase: public SysModel {
 public:
     DataNodeBase();
     ~DataNodeBase();
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void computeDataStatus(double currentTime);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     virtual void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime)=0; //!< Virtual void method used to compute module-wise data usage/generation.
-    virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
+    virtual void customreset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock);//!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
 

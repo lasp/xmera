@@ -373,7 +373,7 @@ void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
 /*! Reset the module to origina configuration values.
  @return void
  */
-void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
+void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos)
 {
     RWCmdMsgPayload RWCmdInitializer;
     RWCmdInitializer.u_cmd = 0.0;
@@ -555,13 +555,13 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void ReactionWheelStateEffector::updateState(uint64_t currentSimNanos)
 {
 	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics
 	ReadInputs();
-    ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
-    WriteOutputMessages(CurrentSimNanos);
+    ConfigureRWRequests(currentSimNanos*NANO2SEC);
+    WriteOutputMessages(currentSimNanos);
 //
 }

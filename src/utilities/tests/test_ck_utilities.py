@@ -31,7 +31,7 @@ def test_ck_read_write(show_plots):
     process.addTask(simulation.CreateNewTask(taskName, dynTaskRate))
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraft"
+    scObject.modelTag = "spacecraft"
     simulation.AddModelToTask(taskName, scObject)
 
     scObject.hub.mHub = 750.0

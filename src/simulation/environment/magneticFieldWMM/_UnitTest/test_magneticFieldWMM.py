@@ -99,7 +99,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
 
     # Construct algorithm and associated C++ container
     testModule = magneticFieldWMM.MagneticFieldWMM()
-    testModule.ModelTag = "WMM"
+    testModule.modelTag = "WMM"
     testModule.dataPath = bskPath + '/supportData/MagneticField/'
 
     if not useDefault:
@@ -172,7 +172,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # This pulls the actual data log from the simulation run and converts to nano-Tesla
     mag0Data = dataLog0.magField_N*1e9
@@ -214,11 +214,11 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + testModule.ModelTag)
+        print("Failed: " + testModule.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

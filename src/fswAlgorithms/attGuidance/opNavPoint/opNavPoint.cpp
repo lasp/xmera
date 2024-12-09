@@ -28,7 +28,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OpNavPoint::Reset(uint64_t callTime)
+void OpNavPoint::reset(uint64_t callTime)
 {
     double v1[3];
 
@@ -71,7 +71,7 @@ void OpNavPoint::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OpNavPoint::UpdateState(uint64_t callTime)
+void OpNavPoint::updateState(uint64_t callTime)
 {
     OpNavMsgPayload opNavMsg;
     double cthNormalized;

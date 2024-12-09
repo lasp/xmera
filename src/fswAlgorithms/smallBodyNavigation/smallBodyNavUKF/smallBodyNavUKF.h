@@ -38,13 +38,13 @@ class SmallBodyNavUKF: public SysModel {
 public:
     SmallBodyNavUKF();
 
-    void Reset(uint64_t CurrentSimNanos);  //!< Resets module
-    void UpdateState(uint64_t CurrentSimNanos);  //!< Updates state
+    void reset(uint64_t currentSimNanos);  //!< Resets module
+    void updateState(uint64_t currentSimNanos);  //!< Updates state
 
 private:
     void readMessages();  //!< Reads input messages
-    void writeMessages(uint64_t CurrentSimNanos);  //!< Writes output messages
-    void processUT(uint64_t CurrentSimNanos);  //!< Process unscented transform
+    void writeMessages(uint64_t currentSimNanos);  //!< Writes output messages
+    void processUT(uint64_t currentSimNanos);  //!< Process unscented transform
     void measurementUT();  //!< Measurements unscented transform
     void kalmanUpdate();  //!< Computes the state and covariance update
 

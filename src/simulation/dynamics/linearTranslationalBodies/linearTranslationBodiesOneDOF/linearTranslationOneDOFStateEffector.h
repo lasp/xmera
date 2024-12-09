@@ -51,7 +51,7 @@ public:
     /** setter for `k` property */
     void setK(double k);
     /** setter for `c` property */
-    void setC(double c);                
+    void setC(double c);
     /** setter for `rhoInit` property */
     void setRhoInit(double rhoInit) {this->rhoInit = rhoInit;};
     /** setter for `rhoDotInit` property */
@@ -137,10 +137,10 @@ private:
     Eigen::Vector3d sigma_FN = Eigen::Vector3d::Zero();           //!< MRP attitude of frame F relative to inertial frame
     Eigen::Vector3d omega_FN_F = Eigen::Vector3d::Zero();         //!< [rad/s] inertial translating body frame angular velocity vector
 
-    void Reset(uint64_t CurrentClock) override;
+    void reset(uint64_t CurrentClock) override;
 	void registerStates(DynParamManager& states) override;
 	void linkInStates(DynParamManager& states) override;
-    void writeOutputStateMessages(uint64_t CurrentSimNanos) override;
+    void writeOutputStateMessages(uint64_t currentSimNanos) override;
     void updateEffectorMassProps(double integTime) override;
     void updateContributions(double integTime,
                              BackSubMatrices & backSubContr,
@@ -151,7 +151,7 @@ private:
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN) override;
-    void UpdateState(uint64_t CurrentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
     void computeTranslatingBodyInertialStates();
     void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g);

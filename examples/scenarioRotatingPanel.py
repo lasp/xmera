@@ -136,7 +136,7 @@ def run(show_plots):
 
     # create the spacecraft hub
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
     scObject.hub.mHub = 750.0
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
@@ -206,14 +206,14 @@ def run(show_plots):
     # setup CSS sensors attached to rotating solar panel
     #
     CSS1 = coarseSunSensor.CoarseSunSensor()
-    CSS1.ModelTag = "CSS1_sensor"
+    CSS1.modelTag = "CSS1_sensor"
     CSS1.fov = 45. * macros.D2R
     CSS1.scaleFactor = 1.0
     CSS1.sunInMsg.subscribeTo(sunStateMsg)
     CSS1.nHat_B = [1, 0, 0]
     CSS1.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)  # states relative to panel states
     CSS2 = coarseSunSensor.CoarseSunSensor()
-    CSS2.ModelTag = "CSS2_sensor"
+    CSS2.modelTag = "CSS2_sensor"
     CSS2.fov = 45. * macros.D2R
     CSS2.scaleFactor = 1.0
     CSS2.sunInMsg.subscribeTo(sunStateMsg)

@@ -35,8 +35,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 class RwMotorTorque : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     /* declare module private variables */
     double   controlAxes_B[3*3];        //!< [-] array of the control unit axes
     uint32_t numControlAxes;            //!< [-] counter indicating how many orthogonal axes are controlled

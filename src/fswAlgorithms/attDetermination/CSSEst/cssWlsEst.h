@@ -38,8 +38,8 @@
  Used to estimate the sun state in the vehicle body frame*/
 class CssWlsEst : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     ReadFunctor<CSSArraySensorMsgPayload> cssDataInMsg;                   //!< The name of the CSS sensor input message
     ReadFunctor<CSSConfigMsgPayload> cssConfigInMsg;                      //!< The name of the CSS configuration input message

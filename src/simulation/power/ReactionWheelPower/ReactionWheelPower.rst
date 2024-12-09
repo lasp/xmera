@@ -127,7 +127,7 @@ The following code illustrates the minimum module setup within Python assuming t
 connected to the first RW (thus the ``0`` label)::
 
     testModule = PowerRW.PowerRW()
-    testModule.ModelTag = "bskSat"
+    testModule.modelTag = "bskSat"
     testModule.basePowerNeed = 10.   # baseline power draw, Watts
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 

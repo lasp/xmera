@@ -51,9 +51,9 @@ WaypointReference::~WaypointReference()
 
 
 /*! A Reset method to put the module back into a clean state
- @param CurrentSimNanos The current sim time in nanoseconds
+ @param currentSimNanos The current sim time in nanoseconds
  */
-void WaypointReference::Reset(uint64_t CurrentSimNanos)
+void WaypointReference::reset(uint64_t currentSimNanos)
 {
     if (this->dataFileName.length() == 0) {
         bskLogger.bskLog(BSK_ERROR, "WaypointReference: dataFileName must be an non-empty string.");
@@ -85,9 +85,9 @@ void WaypointReference::Reset(uint64_t CurrentSimNanos)
 
 
 /*! Update this module at the task rate
- @param CurrentSimNanos The current sim time
+ @param currentSimNanos The current sim time
  */
-void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
+void WaypointReference::updateState(uint64_t currentSimNanos)
 {
     /* ensure that a file was opened */
     if (this->fileHandle->is_open()) {
@@ -101,7 +101,7 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
         attMsgBuffer = this->attRefOutMsg.zeroMsgPayload;
 
 		/* current time */
-		uint64_t t =  CurrentSimNanos;
+		uint64_t t =  currentSimNanos;
 
 		/* for CurrentTime < t_0 hold initial attitude with zero angular rates and accelerations */
 		if (t < this->t_a) {
@@ -140,7 +140,7 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 		}
 
 		/* write output attitude reference message */
-        this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, CurrentSimNanos);
+        this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, currentSimNanos);
 
     }
     return;

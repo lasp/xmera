@@ -36,9 +36,9 @@ set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what the message is used for.
 
 .. list-table:: Module I/O Messages
@@ -460,7 +460,7 @@ This section is to outline the steps needed to set up the prescribed rotational 
 
 #. Define all of the configuration data associated with the module. For example, to configure the smoothed bang-coast-bang option::
 
-    prescribedRot1DOF.ModelTag = "prescribedRotation1DOF"
+    prescribedRot1DOF.modelTag = "prescribedRotation1DOF"
     prescribedRot1DOF.setRotHat_M(np.array([0.0, 1.0, 0.0]))
     prescribedRot1DOF.setThetaDDotMax(macros.D2R * 1.0)  # [rad/s^2]
     prescribedRot1DOF.setThetaInit(macros.D2R * 10.0)  # [rad]

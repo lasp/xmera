@@ -37,7 +37,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SimpleDeadband::Reset(uint64_t callTime)
+void SimpleDeadband::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->guidInMsg.isLinked()) {
@@ -51,7 +51,7 @@ void SimpleDeadband::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SimpleDeadband::UpdateState(uint64_t callTime)
+void SimpleDeadband::updateState(uint64_t callTime)
 {
     /*! - Read the input message and set it as the output by default */
     this->attGuidOut = this->guidInMsg();

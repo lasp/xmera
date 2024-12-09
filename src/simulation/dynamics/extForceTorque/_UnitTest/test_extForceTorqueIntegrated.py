@@ -51,7 +51,7 @@ def extForceBodyAndTorque():
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -86,7 +86,7 @@ def extForceBodyAndTorque():
     unitTestSim.InitializeSimulation()
 
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
     extFTObject.extForce_B = [[1], [2], [3]]
     scObject.addDynamicEffector(extFTObject)
@@ -144,7 +144,7 @@ def extForceInertialAndTorque():
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -179,7 +179,7 @@ def extForceInertialAndTorque():
     unitTestSim.InitializeSimulation()
 
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
     extFTObject.extForce_N = [[-1], [-0.5], [0.5]]
     scObject.addDynamicEffector(extFTObject)

@@ -32,7 +32,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void PrvSteering::Reset(uint64_t callTime)
+void PrvSteering::reset(uint64_t callTime)
 {
     if (!this->guidInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: prvSteering.guidInMsg wasn't connected.");
@@ -46,7 +46,7 @@ void PrvSteering::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void PrvSteering::UpdateState(uint64_t callTime)
+void PrvSteering::updateState(uint64_t callTime)
 {
     AttGuidMsgPayload   guidCmd;            /*!< Guidance Message */
     RateCmdMsgPayload   outMsgBuffer = {};  /*!< -- copy of output message */

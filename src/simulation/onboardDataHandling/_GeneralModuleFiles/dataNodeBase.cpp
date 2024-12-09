@@ -42,13 +42,13 @@ DataNodeBase::~DataNodeBase()
 
 
 /*! This method is used to reset the module. In general, no functionality is reset.
- @param CurrentSimNanos
+ @param currentSimNanos
  @return void
  */
-void DataNodeBase::Reset(uint64_t CurrentSimNanos)
+void DataNodeBase::reset(uint64_t currentSimNanos)
 {
     //! - call the custom environment module reset method
-    customReset(CurrentSimNanos);
+    customreset(currentSimNanos);
 
     return;
 }
@@ -106,29 +106,29 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
 }
 
 /*! This method updates the state by reading messages, calling computeDataStatus, and writing messages
- @param CurrentSimNanos
+ @param currentSimNanos
  @return void
  */
-void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
+void DataNodeBase::updateState(uint64_t currentSimNanos)
 {
     //! - Only update the data status if we were able to read in messages.
     if(this->readMessages())
     {
-        this->computeDataStatus(CurrentSimNanos*NANO2SEC);
+        this->computeDataStatus(currentSimNanos*NANO2SEC);
     } else {
         //! - If the read was not successful then zero the output message
         this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
     }
 
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
     return;
 }
 
 
-/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+/*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void DataNodeBase::customReset(uint64_t CurrentClock)
+void DataNodeBase::customreset(uint64_t CurrentClock)
 {
     return;
 }
@@ -148,5 +148,3 @@ bool DataNodeBase::customReadMessages()
 {
     return true;
 }
-
-

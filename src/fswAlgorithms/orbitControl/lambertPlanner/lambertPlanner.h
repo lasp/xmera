@@ -37,8 +37,8 @@ public:
     LambertPlanner();
     ~LambertPlanner();
 
-    void Reset(uint64_t currentSimNanos) override;
-    void UpdateState(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
     void useSolverIzzoMethod();
     void useSolverGoodingMethod();

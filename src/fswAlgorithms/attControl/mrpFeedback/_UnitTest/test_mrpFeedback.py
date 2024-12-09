@@ -53,7 +53,7 @@ def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwA
         The unit test for this module tests a set of gains :math:`K`, :math:`K_i`, :math:`P` on a rigid body
         with no external torques, and with a fixed input reference attitude message. The torque requested
         by the controller is evaluated against python computed torques at 0s, 0.5s, 1s, 1.5s and 2s to
-        within a tolerance of :math:`10^{-8}`. After 1s the simulation is stopped and the ``Reset()``
+        within a tolerance of :math:`10^{-8}`. After 1s the simulation is stopped and the ``reset()``
         function is called to check that integral feedback related variables are properly reset.
         The following permutations are run:
 
@@ -105,7 +105,7 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
 
     #   Construct algorithm and associated C++ container
     module = mrpFeedback.MrpFeedback()
-    module.ModelTag = "mrpFeedback"
+    module.modelTag = "mrpFeedback"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -205,7 +205,7 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
@@ -216,14 +216,14 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
         # check vector values
         if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], LrTrue[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed mrpFeedback unit test at t="
+            testMessages.append("FAILED: " + module.modelTag + " Module failed mrpFeedback unit test at t="
                                 + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

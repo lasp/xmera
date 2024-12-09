@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void Torque2Dipole::Reset(uint64_t callTime)
+void Torque2Dipole::reset(uint64_t callTime)
 {
     /*
      * Check if the required input messages are connected.
@@ -45,7 +45,7 @@ void Torque2Dipole::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void Torque2Dipole::UpdateState(uint64_t callTime)
+void Torque2Dipole::updateState(uint64_t callTime)
 {
     /*
      * Initialize local variables.

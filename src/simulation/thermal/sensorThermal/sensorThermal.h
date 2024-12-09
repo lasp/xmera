@@ -40,8 +40,8 @@ class SensorThermal: public SysModel {
 public:
     SensorThermal();
     ~SensorThermal();
-    void Reset(uint64_t CurrentClock);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t CurrentClock);
+    void updateState(uint64_t currentSimNanos);
 
 private:
     void evaluateThermalModel(uint64_t CurrentSimSeconds);

@@ -31,8 +31,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 class PrescribedRot2DOF : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     /* User configurable variables */
     double phiDDotMax;                                         //!< [rad/s^2] Maximum angular acceleration of the spinning body
     double rotAxis1_M[3];                                      //!< M frame rotation axis for the first rotation

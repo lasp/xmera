@@ -63,7 +63,7 @@ def subModuleTestFunction(show_plots):
 
     #   Construct algorithm and associated C++ container
     module = lowPassFilterTorqueCommand.LowPassFilterTorqueCommand()
-    module.ModelTag = "lowPassFilterTorqueCommand"      # python name of test module.
+    module.modelTag = "lowPassFilterTorqueCommand"      # python name of test module.
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -71,7 +71,7 @@ def subModuleTestFunction(show_plots):
     #   Initialize the test module configuration data
     module.wc = 0.1*math.pi*2                 #   [rad/s] continous time critical filter frequency
     module.h = 0.5                            #   [s]     filter time step
-    module.reset = 1                          #           flag to initialize module states on first run
+    module.shouldBeReset = 1                  #           flag to initialize module states on first run
 
 
     #   Create input message and size it because the regular creator of that message
@@ -94,7 +94,7 @@ def subModuleTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))    # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
@@ -114,7 +114,7 @@ def subModuleTestFunction(show_plots):
     for i in range(0,len(LrFtrue)):
         if not unitTestSupport.isArrayEqual(LrF[i], LrFtrue[i], 3, 1e-12):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed LrFtrue unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: " + module.modelTag + " Module failed LrFtrue unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 
@@ -126,7 +126,7 @@ def subModuleTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
 
 
     # each test method requires a single assert method to be called

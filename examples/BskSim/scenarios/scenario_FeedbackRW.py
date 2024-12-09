@@ -93,7 +93,7 @@ Finally, the :ref:`inertial3D` mode call in :ref:`scenario_FeedbackRW` needs to 
 
      SimBase.createNewEvent("initiateInertial3D", self.processTasksTimeStep, True,
                    ["self.modeRequest == 'inertial3D'"],
-                   ["self.fswProc.disableAllTasks()",
+                   ["self.fswProc.disableTasks()",
                     "self.FSWModels.zeroGateWayMsgs()",
                     "self.enableTask('inertial3DPointTask')",
                     "self.enableTask('mrpFeedbackRWsTask')"])

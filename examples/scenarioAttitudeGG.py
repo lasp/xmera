@@ -131,7 +131,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -173,7 +173,7 @@ def run(show_plots):
 
     # add gravity gradient effector
     ggEff = GravityGradientEffector.GravityGradientEffector()
-    ggEff.ModelTag = scObject.ModelTag
+    ggEff.modelTag = scObject.modelTag
     ggEff.addPlanetName(earth.planetName)
     scObject.addDynamicEffector(ggEff)
     scSim.AddModelToTask(simTaskName, ggEff)
@@ -181,7 +181,7 @@ def run(show_plots):
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     # use the input flag to determine which external torque should be applied
     # Note that all variables are initialized to zero.  Thus, not setting this
     # vector would leave it's components all zero for the simulation.
@@ -191,7 +191,7 @@ def run(show_plots):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
@@ -200,19 +200,19 @@ def run(show_plots):
 
     # setup hillPoint guidance module
     attGuidance = hillPoint.HillPoint()
-    attGuidance.ModelTag = "hillPoint"
+    attGuidance.modelTag = "hillPoint"
     scSim.AddModelToTask(simTaskName, attGuidance)
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
 
     attError.sigma_R0R = [0, 0.2, 0]
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.K = 3.5
     mrpControl.Ki = -1.0  # make value negative to turn off integral feedback

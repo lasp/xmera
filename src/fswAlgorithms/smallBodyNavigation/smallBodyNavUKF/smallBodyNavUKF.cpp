@@ -54,7 +54,7 @@ SmallBodyNavUKF::SmallBodyNavUKF()
 /*! This method is used to reset the module, check that required input messages are connect and compute weigths.
     @return void
 */
-void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos)
+void SmallBodyNavUKF::reset(uint64_t currentSimNanos)
 {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
@@ -86,10 +86,10 @@ void SmallBodyNavUKF::readMessages(){
 }
 
 /*! This method does the UT to the initial distribution to compute the a-priori state
-    @param CurrentSimNanos
+    @param currentSimNanos
     @return void
 */
-void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
+void SmallBodyNavUKF::processUT(uint64_t currentSimNanos){
     /* Read angular velocity of the small body fixed frame */
     this->omega_AN_A = cArray2EigenVector3d(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
 
@@ -141,7 +141,7 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
                                      + a_sigma_k;
 
         /* Use Euler integration to propagate */
-        this->X_sigma_k1_.col(i) = x_sigma_k + x_sigma_dot_k*(CurrentSimNanos-prevTime)*NANO2SEC;
+        this->X_sigma_k1_.col(i) = x_sigma_k + x_sigma_dot_k*(currentSimNanos-prevTime)*NANO2SEC;
 
         /* Compute average */
         this->x_hat_k1_ = this->x_hat_k1_ + this->wm_sigma(i)*this->X_sigma_k1_.col(i);
@@ -257,7 +257,7 @@ void SmallBodyNavUKF::kalmanUpdate(){
 /*! This method writes the output messages
     @return void
 */
-void SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos){
+void SmallBodyNavUKF::writeMessages(uint64_t currentSimNanos){
     /* Create output msg buffers */
     SmallBodyNavUKFMsgPayload smallBodyNavUKFOutMsgBuffer;
 
@@ -269,18 +269,18 @@ void SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos){
     eigenMatrixXd2CArray(this->P_k1, *smallBodyNavUKFOutMsgBuffer.covar);
 
     /* Write to the C++-wrapped output messages */
-    this->smallBodyNavUKFOutMsg.write(&smallBodyNavUKFOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->smallBodyNavUKFOutMsg.write(&smallBodyNavUKFOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This is the main method that gets called every time the module is updated.
     @return void
 */
-void SmallBodyNavUKF::UpdateState(uint64_t CurrentSimNanos)
+void SmallBodyNavUKF::updateState(uint64_t currentSimNanos)
 {
     this->readMessages();
-    this->processUT(CurrentSimNanos);
+    this->processUT(currentSimNanos);
     this->measurementUT();
     this->kalmanUpdate();
-    this->writeMessages(CurrentSimNanos);
-    this->prevTime = CurrentSimNanos;
+    this->writeMessages(currentSimNanos);
+    this->prevTime = currentSimNanos;
 }

@@ -33,7 +33,7 @@
  */
 class Inertial3D : public SysModel {
 public:
-    void UpdateState(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     double sigma_R0N[3];                            //!<  MRP from inertial frame N to corrected reference frame R
     Message<AttRefMsgPayload> attRefOutMsg;                    //!< reference attitude output message
     BSKLogger bskLogger={};                             //!< BSK Logging

@@ -91,7 +91,7 @@ class BSKEnvironmentModel:
         """
 
         # self.epochMsg = self.gravFactory.epochMsg
-        self.ephemObject.ModelTag = 'EphemData'
+        self.ephemObject.modelTag = 'EphemData'
         self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
         self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.mercury])
 
@@ -99,7 +99,7 @@ class BSKEnvironmentModel:
         """
         Specify what celestial object is causing an eclipse message.
         """
-        self.eclipseObject.ModelTag = "eclipseObject"
+        self.eclipseObject.modelTag = "eclipseObject"
         self.eclipseObject.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
         # add all celestial objects in spiceObjects except for the sun (0th object)
         for item in range(1, len(self.gravFactory.spiceObject.planetStateOutMsgs)):
@@ -109,7 +109,7 @@ class BSKEnvironmentModel:
         """
         Specify which ground locations are of interest.
         """
-        self.groundStation.ModelTag = "GroundStation"
+        self.groundStation.modelTag = "GroundStation"
         self.groundStation.planetRadius = self.planetRadius
         self.groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
         self.groundStation.minimumElevation = np.radians(10.)

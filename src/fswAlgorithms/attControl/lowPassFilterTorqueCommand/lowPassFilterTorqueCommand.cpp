@@ -33,11 +33,11 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void LowPassFilterTorqueCommand::Reset(uint64_t callTime)
+void LowPassFilterTorqueCommand::reset(uint64_t callTime)
 {
     int i;
 
-    this->reset  = BOOL_TRUE;         /* reset the first run flag */
+    this->shouldBeReset  = BOOL_TRUE;         /* reset the first run flag */
 
     // check if the required input message is included
     if (!this->cmdTorqueInMsg.isLinked()) {
@@ -55,7 +55,7 @@ void LowPassFilterTorqueCommand::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void LowPassFilterTorqueCommand::UpdateState(uint64_t callTime)
+void LowPassFilterTorqueCommand::updateState(uint64_t callTime)
 {
     double      v3[3];                      /*!<      3d vector sub-result */
     int         i;
@@ -68,7 +68,7 @@ void LowPassFilterTorqueCommand::UpdateState(uint64_t callTime)
     /*
         check if the filter states must be reset
      */
-    if (this->reset) {
+    if (this->shouldBeReset) {
         /* populate the filter history with 1st input */
         for (i=1;i<NUM_LPF;i++) {
             v3Copy(this->Lr[0], this->Lr[i]);
@@ -89,7 +89,7 @@ void LowPassFilterTorqueCommand::UpdateState(uint64_t callTime)
         this->b[1] = this->hw;
 
         /* turn off first run flag */
-        this->reset = BOOL_FALSE;
+        this->shouldBeReset = BOOL_FALSE;
 
     }
 

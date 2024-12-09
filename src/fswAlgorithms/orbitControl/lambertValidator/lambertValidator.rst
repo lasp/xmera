@@ -86,7 +86,7 @@ The module is first initialized as follows:
 .. code-block:: python
 
     module = lambertValidator.LambertValidator()
-    module.ModelTag = "lambertValidator"
+    module.modelTag = "lambertValidator"
     module.finalTime = 2000.
     module.maneuverTime = 1000.
     module.maxDistanceTarget = 3000.

@@ -68,7 +68,7 @@ The gravity effector setup follows the standard process of creating the effector
 spacecraft as well as adding it to the task list::
 
     ggEff = GravityGradientEffector.GravityGradientEffector()
-    ggEff.ModelTag = scObject.ModelTag
+    ggEff.modelTag = scObject.modelTag
     scObject.addDynamicEffector(ggEff)
     scSim.AddModelToTask(simTaskName, ggEff)
 
@@ -97,4 +97,3 @@ Module Output Message Name
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 The effector write an output message with the current gravity gradient torque information at each ``update`` cycle.
 The output message is ``gravityGradientOutMsg``.
-

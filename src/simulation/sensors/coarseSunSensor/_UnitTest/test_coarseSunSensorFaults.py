@@ -46,11 +46,11 @@ path = os.path.dirname(os.path.abspath(__file__))
 @pytest.mark.parametrize(
     "cssFault",
     [
-        "CSSFAULT_OFF",                           
-        "CSSFAULT_STUCK_CURRENT", 
-        "CSSFAULT_STUCK_MAX",     
-        "CSSFAULT_STUCK_RAND",    
-        "CSSFAULT_RAND",          
+        "CSSFAULT_OFF",
+        "CSSFAULT_STUCK_CURRENT",
+        "CSSFAULT_STUCK_MAX",
+        "CSSFAULT_STUCK_RAND",
+        "CSSFAULT_RAND",
     ])
 # provide a unique test method name, starting with test_
 def test_coarseSunSensor(cssFault):
@@ -73,7 +73,7 @@ def run(cssFault):
     # Create a simulation container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     # unitTestSim.RNGSeed = 10
-    
+
     # Ensure simulation is empty
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
@@ -100,7 +100,7 @@ def run(cssFault):
     CSS.nHat_B = np.array([1., 0., 0.])
     CSS.sunInMsg.subscribeTo(sunMsg)
     CSS.stateInMsg.subscribeTo(scMsg)
-    CSS.ModelTag = "CSS"
+    CSS.modelTag = "CSS"
     CSS.RNGSeed = 123
     unitTestSim.AddModelToTask(testTaskName, CSS)
 
@@ -130,15 +130,15 @@ def run(cssFault):
     unitTestSim.InitializeSimulation()
 
     # Execute the simulation for one time step
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
     CSS.faultState = cssFaultValue
     for i in range(3):
-        unitTestSim.TotalSim.SingleStepProcesses()
+        unitTestSim.TotalSim.singleStepProcesses()
 
     cssOutput = cssRecoder.OutputData[-1]
     print(cssOutput)
     print(truthValue)
-    
+
     if cssFault == "CSSFAULT_OFF":
         if not truthValue == cssOutput:
             testFailCount += 1

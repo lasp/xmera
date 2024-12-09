@@ -37,7 +37,7 @@ def run():
 
     # create modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
-    mod1.ModelTag = "module1"
+    mod1.modelTag = "module1"
     scSim.AddModelToTask("dynamicsTask", mod1)
     mod1.dummy = -10
     print(mod1.dummy)
@@ -47,7 +47,7 @@ def run():
     print(mod1.dummy)
 
     # perform a single Update on all modules
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
     print(mod1.dummy)
 
     return

@@ -28,7 +28,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void MtbFeedforward::Reset(uint64_t callTime)
+void MtbFeedforward::reset(uint64_t callTime)
 {
     /*
      * Check if the required input messages are connected.
@@ -56,7 +56,7 @@ void MtbFeedforward::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MtbFeedforward::UpdateState(uint64_t callTime)
+void MtbFeedforward::updateState(uint64_t callTime)
 {
 
     /*

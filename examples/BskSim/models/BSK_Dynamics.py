@@ -99,7 +99,7 @@ class BSKDynamicModels():
         """
         Specify the spacecraft hub parameters.
         """
-        self.scObject.ModelTag = "bskSat"
+        self.scObject.modelTag = "bskSat"
         # -- Crate a new variable for the sim sc inertia I_sc. Note: this is currently accessed from FSWClass
         self.I_sc = [900., 0., 0.,
                      0., 800., 0.,
@@ -133,7 +133,7 @@ class BSKDynamicModels():
         """
         Specify what celestial object is causing an eclipse message.
         """
-        self.eclipseObject.ModelTag = "eclipseObject"
+        self.eclipseObject.modelTag = "eclipseObject"
         self.eclipseObject.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
         # add all celestial objects in spiceObjects except for the sun (0th object)
         for c in range(1, len(self.gravFactory.spiceObject.planetStateOutMsgs)):
@@ -142,12 +142,12 @@ class BSKDynamicModels():
 
     def SetExternalForceTorqueObject(self):
         """Set the external force and torque object."""
-        self.extForceTorqueObject.ModelTag = "externalDisturbance"
+        self.extForceTorqueObject.modelTag = "externalDisturbance"
         self.scObject.addDynamicEffector(self.extForceTorqueObject)
 
     def SetSimpleNavObject(self):
         """Set the navigation sensor object."""
-        self.simpleNavObject.ModelTag = "SimpleNavigation"
+        self.simpleNavObject.modelTag = "SimpleNavigation"
         self.simpleNavObject.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
 
     def SetReactionWheelDynEffector(self):
@@ -260,7 +260,7 @@ class BSKDynamicModels():
 
     def SetCSSConstellation(self):
         """Set the 8 CSS sensors"""
-        self.CSSConstellationObject.ModelTag = "cssConstellation"
+        self.CSSConstellationObject.modelTag = "cssConstellation"
 
         def setupCSS(cssDevice):
             cssDevice.fov = 80. * mc.D2R         # half-angle field of view value
@@ -288,7 +288,7 @@ class BSKDynamicModels():
         for nHat_B, i in zip(nHat_B_List, list(range(1,numCSS+1))):
             CSS = coarseSunSensor.CoarseSunSensor()
             setupCSS(CSS)
-            CSS.ModelTag = "CSS" + str(i)
+            CSS.modelTag = "CSS" + str(i)
             CSS.nHat_B = np.array(nHat_B)
             cssList.append(CSS)
 

@@ -32,11 +32,11 @@ public:
     MotorThermal();
     ~MotorThermal();
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t CurrentClock);
-    void computeTemperature(uint64_t CurrentSimNanos);
+    void computeTemperature(uint64_t currentSimNanos);
 
 public:
     Message<TemperatureMsgPayload> temperatureOutMsg;   //!< [Celsius] temperature output message

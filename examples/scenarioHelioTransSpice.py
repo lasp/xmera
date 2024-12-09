@@ -115,7 +115,7 @@ def run():
 
     # Configure the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spiceSat"  # Name of the spacecraft
+    scObject.modelTag = "spiceSat"  # Name of the spacecraft
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()

@@ -136,7 +136,7 @@ def run(show_plots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "Max-SC"
+    scObject.modelTag = "Max-SC"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(dynTask, scObject, 1)
@@ -221,8 +221,8 @@ def run(show_plots):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(dynTask, rwStateEffector, 2)
@@ -265,12 +265,12 @@ def run(show_plots):
     numTh = thFactory.getNumOfDevices()
 
     # create thruster object container and tie to spacecraft object
-    thrModelTag = "ACSThrusterDynamics"
-    thFactory.addToSpacecraft(thrModelTag, thrusterSet, scObject)
+    thrmodelTag = "ACSThrusterDynamics"
+    thFactory.addToSpacecraft(thrmodelTag, thrusterSet, scObject)
 
     # add the simple Navigation sensor module
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(dynTask, sNavObject)
 
     # set up the FSW thruster configuration message.
@@ -282,18 +282,18 @@ def run(show_plots):
 
     # set up inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
+    inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(fswTask, inertial3DObj)
     inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
 
     # set up the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(fswTask, attError)
 
     # set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTask, mrpControl)
     decayTime = 10.0
     xi = 1.0
@@ -306,25 +306,25 @@ def run(show_plots):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(fswTask, rwMotorTorqueObj)
     # Make the RW control all three body axes
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     # Momentum dumping configuration
     thrDesatControl = thrMomentumManagement.ThrMomentumManagement()
-    thrDesatControl.ModelTag = "thrMomentumManagement"
+    thrDesatControl.modelTag = "thrMomentumManagement"
     scSim.AddModelToTask(fswTask, thrDesatControl)
     thrDesatControl.hs_min = 80   # Nms  :  maximum wheel momentum
 
     # set up the thruster force mapping module
     forceTorqueThrForceMappingObj = forceTorqueThrForceMapping.ForceTorqueThrForceMapping()
-    forceTorqueThrForceMappingObj.ModelTag = "forceTorqueThrForceMapping"
+    forceTorqueThrForceMappingObj.modelTag = "forceTorqueThrForceMapping"
     scSim.AddModelToTask(fswTask, forceTorqueThrForceMappingObj)
 
     # set up the thruster momentum dumping module
     thrDump = thrMomentumDumping.ThrMomentumDumping()
-    thrDump.ModelTag = "thrDump"
+    thrDump.modelTag = "thrDump"
     scSim.AddModelToTask(fswTask, thrDump)
     thrDump.maxCounterValue = 100  # number of control periods (simulationTimeStepFsw) between two subsequent on-times
     thrDump.thrMinFireTime = 0.02  # thruster firing resolution
@@ -418,7 +418,7 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # reset thrDesat module after 10 seconds because momentum cannot be dumped at t = 0
-    thrDesatControl.Reset(macros.sec2nano(10.0))
+    thrDesatControl.reset(macros.sec2nano(10.0))
 
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()

@@ -60,16 +60,16 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
-    
+    scObject.modelTag = "spacecraftBody"
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    
+
     # Create test thread
     testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -79,7 +79,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     unitTestSim.panel2 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.ModelTag = "panel1"
+    unitTestSim.panel1.modelTag = "panel1"
     unitTestSim.panel1.mass1 = 50.0
     unitTestSim.panel1.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel1.d1 = 0.75
@@ -99,7 +99,7 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     unitTestSim.panel1.theta2DotInit = 0.0
 
     # Define Variables for panel 2
-    unitTestSim.panel2.ModelTag = "panel2"
+    unitTestSim.panel2.modelTag = "panel2"
     unitTestSim.panel2.mass1 = 50.0
     unitTestSim.panel2.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel2.d1 = 0.75
@@ -277,11 +277,11 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     if useScPlus:
         scObject = spacecraft.Spacecraft()
-        scObject.ModelTag = "spacecraftBody"
+        scObject.modelTag = "spacecraftBody"
     else:
         scObject = spacecraftSystem.SpacecraftSystem()
-        scObject.ModelTag = "spacecraftBody"
-        scObject.primaryCentralSpacecraft.spacecraftName = scObject.ModelTag
+        scObject.modelTag = "spacecraftBody"
+        scObject.primaryCentralSpacecraft.spacecraftName = scObject.modelTag
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -298,7 +298,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    unitTestSim.panel1.ModelTag = "panel1"
+    unitTestSim.panel1.modelTag = "panel1"
     unitTestSim.panel1.mass1 = 50.0
     unitTestSim.panel1.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel1.d1 = 0.75
@@ -324,7 +324,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel1.motorTorqueInMsg.subscribeTo(motorMsg)
 
     # Define Variables for panel 2
-    unitTestSim.panel2.ModelTag = "panel2"
+    unitTestSim.panel2.modelTag = "panel2"
     unitTestSim.panel2.mass1 = 50.0
     unitTestSim.panel2.IPntS1_S1 = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
     unitTestSim.panel2.d1 = 0.75

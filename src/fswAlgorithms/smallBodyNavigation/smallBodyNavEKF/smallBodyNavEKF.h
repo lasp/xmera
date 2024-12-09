@@ -39,16 +39,16 @@ class SmallBodyNavEKF: public SysModel {
 public:
     SmallBodyNavEKF();
 
-    void Reset(uint64_t CurrentSimNanos);  //!< Resets module
-    void UpdateState(uint64_t CurrentSimNanos);  //!< Updates state
+    void reset(uint64_t currentSimNanos);  //!< Resets module
+    void updateState(uint64_t currentSimNanos);  //!< Updates state
     void addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg);  //!< Adds thruster message
 
 private:
-    void readMessages(uint64_t CurrentSimNanos);  //!< Reads input messages
-    void writeMessages(uint64_t CurrentSimNanos);  //!< Writes output messages
-    void predict(uint64_t CurrentSimNanos);  //!< Prediction step of Kalman filter
-    void aprioriState(uint64_t CurrentSimNanos);  //!< Computes the apriori state
-    void aprioriCovar(uint64_t CurrentSimNanos);  //!< Computes the apriori covariance
+    void readMessages(uint64_t currentSimNanos);  //!< Reads input messages
+    void writeMessages(uint64_t currentSimNanos);  //!< Writes output messages
+    void predict(uint64_t currentSimNanos);  //!< Prediction step of Kalman filter
+    void aprioriState(uint64_t currentSimNanos);  //!< Computes the apriori state
+    void aprioriCovar(uint64_t currentSimNanos);  //!< Computes the apriori covariance
     void checkMRPSwitching();  //!< Checks the MRPs for switching
     void computeDynamicsMatrix(Eigen::VectorXd x_hat);  //!< Computes the new dynamics matrix, A_k
     void measurementUpdate();  //!< Computes the measurement update for the EKF

@@ -87,7 +87,7 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
 
     # Create an instance of the stepperMotor module to be tested
     StepperMotor = stepperMotor.StepperMotor()
-    StepperMotor.ModelTag = "StepperMotor"
+    StepperMotor.modelTag = "StepperMotor"
     StepperMotor.setThetaInit(initialMotorAngle)
     StepperMotor.setStepAngle(stepAngle)
     StepperMotor.setStepTime(stepTime)

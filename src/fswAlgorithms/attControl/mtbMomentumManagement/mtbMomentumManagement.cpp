@@ -28,7 +28,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void MtbMomentumManagement::Reset(uint64_t callTime)
+void MtbMomentumManagement::reset(uint64_t callTime)
 {
     /*
      * Check if the required input messages are linked.
@@ -61,7 +61,7 @@ void MtbMomentumManagement::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MtbMomentumManagement::UpdateState(uint64_t callTime)
+void MtbMomentumManagement::updateState(uint64_t callTime)
 {
     /*
      * Declare and initialize local variables.

@@ -34,18 +34,18 @@ public:
     virtual ~SysModel(){};
 
     /** Initializes the module, create messages */
-    virtual void SelfInit(){};
+    virtual void selfInit(){};
 
     /** ??? */
-    virtual void IntegratedInit(){};
+    virtual void integratedInit(){};
 
     /** Reads incoming messages, performs module actions, writes output messages */
-    virtual void UpdateState(uint64_t CurrentSimNanos){};
+    virtual void updateState(uint64_t currentSimNanos){};
 
     /** Called at simulation initialization, resets module to specified time */
-    virtual void Reset(uint64_t CurrentSimNanos){};
+    virtual void reset(uint64_t currentSimNanos){};
 
-    std::string ModelTag = "";     //!< -- name for the algorithm to base off of
+    std::string modelTag = "";     //!< -- name for the algorithm to base off of
     uint64_t CallCounts = 0;       //!< -- Counts on the model being called
     uint32_t RNGSeed = 0x1badcad1; //!< -- Giving everyone a random seed for ease of MC
     int64_t moduleID;              //!< -- Module ID for this module  (handed out by module_id_generator)

@@ -258,7 +258,7 @@ Updating a C++ Module
 
          #include "architecture/messaging/messaging.h"
 
-    - Remove both the ``SelfInit()`` and ``CrossInit()`` methods, they are longer used.  If you initialized any code in these functions, move that code to the module ``Reset()`` method.
+    - Remove both the ``selfInit()`` and ``CrossInit()`` methods, they are longer used.  If you initialized any code in these functions, move that code to the module ``reset()`` method.
 
     - For output messages, replace the ``std::string`` message name variable
       ``moduleOutMsgName`` and associated
@@ -305,9 +305,9 @@ Updating a C++ Module
                                                                              "ModuleSimMsg", this->moduleID);
 
       The new message object is automatically created through the above process in the ``module.h`` file.
-      In fact, deleted the ``SelfInit()`` method as it is no longer needed with C++ modules.  The output
+      In fact, deleted the ``selfInit()`` method as it is no longer needed with C++ modules.  The output
       message object automatically connect to themselves in their constructors.  Any other code in
-      the ``SelfInit()`` method should be moved to the ``Reset()`` method.
+      the ``selfInit()`` method should be moved to the ``reset()`` method.
 
     - If a ``std::vector`` of output message pointers of type ``SomeMsgPayload`` was created in the module ``*.h`` file
       then these message objects must be created dynamically in the ``*.cpp`` code using
@@ -355,7 +355,7 @@ Updating a C++ Module
                                                                                 sizeof(ModuleFswMsg), moduleID);
 
       Remove the ``CrossInit()`` method, it is longer used.  If you initialized any code in this method,
-      move that code to the module ``Reset()`` method.
+      move that code to the module ``reset()`` method.
 
     - To read an input message, replace old code such as:
 

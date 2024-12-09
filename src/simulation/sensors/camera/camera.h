@@ -45,8 +45,8 @@ public:
     Camera();
     ~Camera();
 
-    void UpdateState(uint64_t currentSimNanos) override;
-    void Reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
     void hsvAdjust(const cv::Mat&, cv::Mat &mDst);
     void bgrAdjustPercent(const cv::Mat&, cv::Mat &mDst);
     void addGaussianNoise(const cv::Mat&, cv::Mat &mDst, double, double);
@@ -138,7 +138,7 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    uint64_t localCurrentSimNanos{};
+    uint64_t localcurrentSimNanos{};
     void* pointImageOut{nullptr};      //!< void pointer for image memory passing
 };
 

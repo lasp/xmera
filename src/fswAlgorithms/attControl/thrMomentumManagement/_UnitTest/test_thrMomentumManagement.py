@@ -83,7 +83,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # Construct algorithm and associated C++ container
     module = thrMomentumManagement.ThrMomentumManagement()
-    module.ModelTag = "thrMomentumManagement"
+    module.modelTag = "thrMomentumManagement"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -151,11 +151,11 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     snippetName = "passFail" + str(hsMinCheck)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 

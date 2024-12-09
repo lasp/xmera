@@ -31,7 +31,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void MrpPD::Reset(uint64_t callTime)
+void MrpPD::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->guidInMsg.isLinked()) {
@@ -53,7 +53,7 @@ void MrpPD::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MrpPD::UpdateState(uint64_t callTime)
+void MrpPD::updateState(uint64_t callTime)
 {
     double              Lr[3];                  /*!< required control torque vector [Nm] */
     double              omega_BN_B[3];          /*!< Inertial angular body vector in body B-frame components */

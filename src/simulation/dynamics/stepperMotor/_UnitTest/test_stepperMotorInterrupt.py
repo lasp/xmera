@@ -89,7 +89,7 @@ def test_stepperMotorInterrupt(show_plots, stepAngle, stepTime, initialMotorAngl
 
     # Create the stepper motor controller module
     StepperMotorController = stepperMotorController.StepperMotorController()
-    StepperMotorController.ModelTag = "stepperMotorController"
+    StepperMotorController.modelTag = "stepperMotorController"
     StepperMotorController.setStepAngle(stepAngle)
     StepperMotorController.setStepTime(stepTime)
     StepperMotorController.setThetaInit(initialMotorAngle)
@@ -105,7 +105,7 @@ def test_stepperMotorInterrupt(show_plots, stepAngle, stepTime, initialMotorAngl
 
     # Create an instance of the stepperMotor module to be tested
     StepperMotor = stepperMotor.StepperMotor()
-    StepperMotor.ModelTag = "StepperMotor"
+    StepperMotor.modelTag = "StepperMotor"
     StepperMotor.setThetaInit(initialMotorAngle)
     StepperMotor.setStepAngle(stepAngle)
     StepperMotor.setStepTime(stepTime)

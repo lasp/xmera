@@ -106,7 +106,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
 
     # Create an instance of the =module that is being tested
     prescribedRot2DOFObj = prescribedRot2DOF.PrescribedRot2DOF()
-    prescribedRot2DOFObj.ModelTag = "PrescribedRot2DOF"
+    prescribedRot2DOFObj.modelTag = "PrescribedRot2DOF"
 
     # Initialize the test module configuration data
     rotAxis1_M = np.array([0.0, 1.0, 0.0])                                      # Rotation axis for the first reference rotation angle, thetaRef1a
@@ -271,7 +271,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     # Compare the reference and simulated data and output failure messages as necessary
     if not unitTestSupport.isDoubleEqual(thetaDot_Final, thetaDot_Ref, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " thetaDot_Final and thetaDot_Ref do not match")
+        testMessages.append("FAILED: " + prescribedRot2DOFObj.modelTag + " thetaDot_Final and thetaDot_Ref do not match")
         print("thetaDot_Final: ")
         print(thetaDot_Final)
         print("thetaDot_Ref: ")
@@ -279,7 +279,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
 
     if not unitTestSupport.isArrayEqual(sigma_FM_Final1, sigma_FM_Ref1, 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " MRPs sigma_FM_Final1 and sigma_FM_Ref1 do not match")
+        testMessages.append("FAILED: " + prescribedRot2DOFObj.modelTag + " MRPs sigma_FM_Final1 and sigma_FM_Ref1 do not match")
         print("sigma_FM_Final1: ")
         print(sigma_FM_Final1)
         print("sigma_FM_Ref1: ")
@@ -287,7 +287,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
 
     if not unitTestSupport.isArrayEqual(sigma_FM_Final2, sigma_FM_Ref2, 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " MRPs sigma_FM_Final2 and sigma_FM_Ref2 do not match")
+        testMessages.append("FAILED: " + prescribedRot2DOFObj.modelTag + " MRPs sigma_FM_Final2 and sigma_FM_Ref2 do not match")
         print("sigma_FM_Final2: ")
         print(sigma_FM_Final2)
         print("sigma_FM_Ref2: ")

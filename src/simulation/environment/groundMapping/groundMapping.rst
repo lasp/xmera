@@ -11,9 +11,9 @@ also assumes the spacecraft instrument has a spherical field-of-view (FOV).
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -66,7 +66,7 @@ To use this module, the user must first instantiate the module
 .. code-block:: python
 
     groundMap = groundMapping.GroundMapping()
-    groundMap.ModelTag = "groundMapping"
+    groundMap.modelTag = "groundMapping"
 
 The user must then set several variables within the module. First, the minimum elevation and maximum range should be
 set. The minimum elevation is the minimum required elevation of the spacecraft with respect to the mapping points. The

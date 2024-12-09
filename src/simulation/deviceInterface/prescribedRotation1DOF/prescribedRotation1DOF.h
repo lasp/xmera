@@ -33,8 +33,8 @@ public:
     PrescribedRotation1DOF() = default;                                    //!< Constructor
     ~PrescribedRotation1DOF() = default;                                   //!< Destructor
 
-    void Reset(uint64_t CurrentSimNanos) override;                         //!< Reset member function
-    void UpdateState(uint64_t CurrentSimNanos) override;                   //!< Update member function
+    void reset(uint64_t currentSimNanos) override;                         //!< Reset member function
+    void updateState(uint64_t currentSimNanos) override;                   //!< Update member function
     void setCoastOptionBangDuration(const double bangDuration);            //!< Setter for the coast option bang duration
     void setRotHat_M(const Eigen::Vector3d &rotHat_M);                     //!< Setter for the spinning body rotation axis
     void setSmoothingDuration(const double smoothingDuration);             //!< Setter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value
@@ -78,7 +78,7 @@ private:
     void computeCoastSegment(double time);                                 //!< Method for computing the coast segment scalar rotational states
     void computeRotationComplete();                                        //!< Method for computing the scalar rotational states when the rotation is complete
 
-    void writeOutputMessages(uint64_t CurrentSimNanos);                    //!< Method for writing the module output messages and computing the output message data
+    void writeOutputMessages(uint64_t currentSimNanos);                    //!< Method for writing the module output messages and computing the output message data
     Eigen::Vector3d computeSigma_FM();                                     //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_FM
 
     /* User-configurable variables */

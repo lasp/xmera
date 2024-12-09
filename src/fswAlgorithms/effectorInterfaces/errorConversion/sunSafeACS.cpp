@@ -25,7 +25,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SunSafeACS::Reset(uint64_t callTime)
+void SunSafeACS::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->cmdTorqueBodyInMsg.isLinked()) {
@@ -39,7 +39,7 @@ void SunSafeACS::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SunSafeACS::UpdateState(uint64_t callTime)
+void SunSafeACS::updateState(uint64_t callTime)
 {
     CmdTorqueBodyMsgPayload cntrRequest;
 

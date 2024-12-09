@@ -31,7 +31,7 @@
  @return void
  @param callTime Sim time in nanos
  */
-void RwMotorVoltage::Reset(uint64_t callTime)
+void RwMotorVoltage::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->rwParamsInMsg.isLinked()) {
@@ -54,7 +54,7 @@ void RwMotorVoltage::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RwMotorVoltage::UpdateState(uint64_t callTime)
+void RwMotorVoltage::updateState(uint64_t callTime)
 {
     /* - Read the input messages */
 //    double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */

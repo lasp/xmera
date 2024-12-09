@@ -85,14 +85,14 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraft"
+    scObject.modelTag = "spacecraft"
     unitTestSim.AddModelToTask(testTaskName, scObject)
 
 
     srpDynEffector = radiationPressure.RadiationPressure()
-    srpDynEffector.ModelTag = "RadiationPressure"
+    srpDynEffector.modelTag = "RadiationPressure"
     srpDynEffector2 = radiationPressure.RadiationPressure()
-    srpDynEffector2.ModelTag = "RadiationPressure2"
+    srpDynEffector2.modelTag = "RadiationPressure2"
     scObject.addDynamicEffector(srpDynEffector)
     scObject.addDynamicEffector(srpDynEffector2)
 
@@ -157,7 +157,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     unitTestSim.ExecuteSimulation()
     srpDynEffector.computeForceTorque(unitTestSim.TotalSim.getCurrentNanos(), testTaskRate)
     srpDynEffector2.computeForceTorque(unitTestSim.TotalSim.getCurrentNanos(), testTaskRate)
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     srpDataForce_B = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_B)
     srpDataForce_N = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_N)

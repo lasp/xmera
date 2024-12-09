@@ -22,7 +22,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string.h>
 
-void ThrustRWDesat::Reset(uint64_t callTime)
+void ThrustRWDesat::reset(uint64_t callTime)
 {
     RWConstellationMsgPayload localRWData;
     THRArrayConfigMsgPayload localThrustData;
@@ -77,7 +77,7 @@ void ThrustRWDesat::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrustRWDesat::UpdateState(uint64_t callTime)
+void ThrustRWDesat::updateState(uint64_t callTime)
 {
     int32_t i;
 	int32_t selectedThruster;     /* Thruster index to fire */

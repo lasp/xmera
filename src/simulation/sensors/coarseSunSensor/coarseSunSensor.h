@@ -53,8 +53,8 @@ public:
     CoarseSunSensor();
     ~CoarseSunSensor();
 
-    void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
-    void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
+    void reset(uint64_t CurrentClock);          //!< Method for reseting the module
+    void updateState(uint64_t currentSimNanos); //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
     void setBodyToPlatformDCM(double yaw, double pitch, double roll); //!< @brief utility method to configure the platform DCM
     void readInputMessages(); //!< @brief method to read the input messages
@@ -125,8 +125,8 @@ class CSSConstellation: public SysModel {
  public:
     CSSConstellation();                         //!< @brief [-] Default constructor
     ~CSSConstellation();                        //!< @brief [-] Default Destructor
-    void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
-    void UpdateState(uint64_t CurrentSimNanos); //!< @brief [-] Main update method for CSS constellation
+    void reset(uint64_t CurrentClock);          //!< Method for reseting the module
+    void updateState(uint64_t currentSimNanos); //!< @brief [-] Main update method for CSS constellation
     void appendCSS(CoarseSunSensor *newSensor); //!< @brief [-] Method for adding sensor to list
 
  public:

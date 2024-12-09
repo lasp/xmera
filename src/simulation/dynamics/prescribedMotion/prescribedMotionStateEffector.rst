@@ -111,7 +111,7 @@ This section outlines the steps needed to set up the prescribed motion state eff
     prescribed_motion_body.setOmega_MB_M([0.0, 0.0, 0.0])  # [rad/s]
     prescribed_motion_body.setOmegaPrime_MB_B([0.0, 0.0, 0.0])  # [rad/s^2]
     prescribed_motion_body.setSigma_MB([0.0, 0.0, 0.0])
-    prescribed_motion_body.ModelTag = "prescribedMotionBody"
+    prescribed_motion_body.modelTag = "prescribedMotionBody"
 
 Note that if these parameters are not set by the user, the vector quantities are set to zero and the matrix and scalar
 quantities are set to identity by default.

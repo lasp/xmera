@@ -22,9 +22,9 @@
 
 /*! Reset the flyby OD filter to an initial state and initializes the internal estimation matrices.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LinearODeKF::customReset() {
+void LinearODeKF::customreset() {
     /*! - Check if the required message has not been connected */
     assert(this->opNavHeadingMsg.isLinked());
     if (this->constantVelocityInitial) {
@@ -72,9 +72,9 @@ void LinearODeKF::customReset() {
 
 /*! Write the output data to appropriate messages given the state components
  @return void
- @param uint64_t CurrentSimNanos
+ @param uint64_t currentSimNanos
  */
-void LinearODeKF::writeOutputMessages(uint64_t CurrentSimNanos) {
+void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
     NavTransMsgPayload navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
     FilterMsgPayload opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
     FilterResidualsMsgPayload residualsBuffer = this->opNavResidualMsg.zeroMsgPayload;
@@ -107,9 +107,9 @@ void LinearODeKF::writeOutputMessages(uint64_t CurrentSimNanos) {
         eigenMatrixXd2CArray(measurement.getPreFitResiduals(), &residualsBuffer.preFits[0]);
         this->measurements[0].reset();
     }
-    this->opNavResidualMsg.write(&residualsBuffer, this->moduleID, CurrentSimNanos);
-    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->opNavFilterMsg.write(&opNavFilterMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->opNavResidualMsg.write(&residualsBuffer, this->moduleID, currentSimNanos);
+    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavFilterMsg.write(&opNavFilterMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Read the message containing the measurement data.

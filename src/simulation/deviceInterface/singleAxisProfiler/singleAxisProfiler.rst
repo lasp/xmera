@@ -16,9 +16,9 @@ the spinning body rotation axis expressed as a unit vector in Mount frame compon
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what the message is used for.
 
 .. list-table:: Module I/O Messages
@@ -85,7 +85,7 @@ single axis profiler module in python using Basilisk.
 
 #. Define all of the configuration data associated with the module::
 
-    singleAxisRotProfiler.ModelTag = "singleAxisProfiler"
+    singleAxisRotProfiler.modelTag = "singleAxisProfiler"
     singleAxisRotProfiler.setRotHat_M([1.0, 0.0, 0.0])
 
 #. Connect the :ref:`StepperMotorMsgPayload` input message to the module that tracks the stepper motor states in time. For example, the user can create a stand-alone message to specify a non-rotating spinning body::

@@ -27,7 +27,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void TamComm::Reset(uint64_t callTime)
+void TamComm::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->tamInMsg.isLinked()) {
@@ -46,7 +46,7 @@ void TamComm::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void TamComm::UpdateState(uint64_t callTime)
+void TamComm::updateState(uint64_t callTime)
 {
     // read input msg
     TAMSensorMsgPayload localInput = this->tamInMsg();

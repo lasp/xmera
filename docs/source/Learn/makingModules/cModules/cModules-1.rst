@@ -7,7 +7,7 @@ Basic C Module Setup
 --------------------
 This page describes how to create the C module functions.  Because C is not an object oriented language it is necessary to recreate some concepts from C++ such as data encapsulation.  Thus, while a C++ module has its variables defined within the class, with a C module we need to create a module configuration structure which contains all the module variables.   The module config structure name should be the module name ending with ``....Config``.
 
-When a C module is setup in python, the module data is created first by making an instance of the module configuration data structure, and then wrapping this with module specific code to make a functioning Basilisk module.  The module wrapped is a sub-class of :ref:`sys_model` and thus has the usual ``ModelTag`` and ``moduleID`` variables, as well as the ability to respond to ``Reset()`` and ``UpdateState()`` requests.
+When a C module is setup in python, the module data is created first by making an instance of the module configuration data structure, and then wrapping this with module specific code to make a functioning Basilisk module.  The module wrapped is a sub-class of :ref:`sys_model` and thus has the usual ``modelTag`` and ``moduleID`` variables, as well as the ability to respond to ``reset()`` and ``updateState()`` requests.
 
 
 Sample Code
@@ -83,4 +83,3 @@ For example, assume the module needs an array of input messages of type ``SomeMs
 The module needs to implement separate logic to determine how many messages have been set.  For example, the reset function could loop over this array and up to what slot the associate message object has been linked.
 
 As the C wrapped message object can act as either input or output messages, the above example can readily be converted to an outpout message example by renaming the array variable ``moreOutMsgs``.
-

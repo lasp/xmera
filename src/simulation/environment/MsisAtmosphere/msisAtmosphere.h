@@ -47,7 +47,7 @@ public:
 private:
     void customWriteMessages(uint64_t CurrentClock);
     bool customReadMessages();
-    void customReset(uint64_t CurrentClock);
+    void customreset(uint64_t CurrentClock);
     bool ReadInputs();
     void updateInputParams();
     void updateSwIndices();

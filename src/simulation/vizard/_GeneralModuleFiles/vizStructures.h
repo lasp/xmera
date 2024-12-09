@@ -43,7 +43,7 @@ typedef struct
 ThrClusterMap
 //@endcond
 {
-    std::string thrTag;   //!< [-] ModelTag associated with the thruster grouping
+    std::string thrTag;   //!< [-] modelTag associated with the thruster grouping
     int color[4] = {-1};  //!< [-] RGBA thruster plume color for all thrusters in this group
 }ThrClusterMap;
 
@@ -324,9 +324,9 @@ VizSpacecraftData
     std::vector<GenericSensor *> genericSensorList;             //!< [-] (Optional) Vector of generic sensor configuration info
 
     std::vector<Transceiver *> transceiverList;                 //!< [-] (Optional) Vector of transceiver configuration info
-    
+
     std::vector<GenericStorage *> genericStorageList;           //!< [-] (Optional) Vector of generic storage configuration info
-    
+
     std::vector<Light *> lightList;                             //!<[-] (Optional) Vector of spacecraft light devices
 
     std::string spacecraftSprite = "";                          //!< Set sprite for this spacecraft only through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape

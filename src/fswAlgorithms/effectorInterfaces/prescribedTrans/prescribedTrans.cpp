@@ -31,7 +31,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedTrans::Reset(uint64_t callTime)
+void PrescribedTrans::reset(uint64_t callTime)
 {
     // Check if the input message is connected
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
@@ -51,7 +51,7 @@ motion output message.
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedTrans::UpdateState(uint64_t callTime)
+void PrescribedTrans::updateState(uint64_t callTime)
 {
     // Create the buffer messages
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn = {};

@@ -46,7 +46,7 @@ def test_TimeClosestApproach(show_plots, position, velocity, filter_covariance):
 
     # setup TimeClosestApproach guidance module
     tca_module = timeClosestApproach.TimeClosestApproach()
-    tca_module.ModelTag = "TimeClosestApproach"
+    tca_module.modelTag = "TimeClosestApproach"
     unit_test_sim.AddModelToTask(unit_task_name, tca_module)
 
     state_vector = np.zeros(6)

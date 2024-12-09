@@ -63,7 +63,7 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # create new task
     # Construct algorithm and associated C++ container
     module = meanOEFeedback.MeanOEFeedback()
-    module.ModelTag = "meanOEFeedback"  # update python name of test meanOEFeedback
+    module.modelTag = "meanOEFeedback"  # update python name of test meanOEFeedback
     module.targetDiffOeMean = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
     module.req = orbitalMotion.REQ_EARTH * 1e3  # [m]
@@ -156,13 +156,13 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
         # check a vector values
         if not unitTestSupport.isArrayEqual(forceOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed "
+            testMessages.append("FAILED: " + module.modelTag + " Module failed "
                                 + ".forceRequestInertial" + " unit test at t="
                                 + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         print("This test uses an accuracy value of " + str(accuracy))
 
     # each test method requires a single assert method to be called

@@ -32,8 +32,8 @@
 /*! @brief A class to compute rate damping control */
 class RateDamp: public SysModel {
 public:
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
     ReadFunctor<NavAttMsgPayload>          attNavInMsg;           //!< input msg measured attitude
     Message<CmdTorqueBodyMsgPayload>       cmdTorqueOutMsg;       //!< commanded torque output message

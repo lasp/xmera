@@ -101,7 +101,7 @@ def cnnTest(show_plots, image, saveImage):
 
     # Construct algorithm and associated C++ container
     module = centerRadiusCNN.CenterRadiusCNN()
-    module.ModelTag = "cnn"
+    module.modelTag = "cnn"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

@@ -8,7 +8,7 @@ First, the planet magnetic field model must be imported and initialized:
 \begin{verbatim}
      from Basilisk.simulation import magneticFieldWMM
      magModule = magneticFieldWMM.MagneticFieldWMM()
-     magModule.ModelTag = "WMM"
+     magModule.modelTag = "WMM"
      magModule.dataPath = splitPath[0] + 'Basilisk/supportData/MagneticField/'
 \end{verbatim}
 By default the model assumes the BSK epoch date and time.  To set a common epoch time across various BSK modules, then the {\tt EpochMsgPayload} must be created and written.
@@ -24,13 +24,13 @@ By default the model assumes the BSK epoch date and time.  To set a common epoch
      epMsg = messaging.EpochMsg().write(epochMsgData)
      magModule.epochInMsg.subscribeTo(epMsg)
 \end{verbatim}
-If the user wants to set the WMM epoch directly, this is done by defining the {\tt epochDate} variable in terms of a decimal year format required by WMM. 
+If the user wants to set the WMM epoch directly, this is done by defining the {\tt epochDate} variable in terms of a decimal year format required by WMM.
 \begin{verbatim}
 	magModule.epochDate = decimalYear
 \end{verbatim}
-Not that the epoch message, if available, over-writes the information of setting {\tt epochDate}.  
+Not that the epoch message, if available, over-writes the information of setting {\tt epochDate}.
 
-The model can  be added to a task like other simModels. 
+The model can  be added to a task like other simModels.
 \begin{verbatim}
 unitTestSim.AddModelToTask(unitTaskName, testModule)
 \end{verbatim}
@@ -39,7 +39,7 @@ Each {\tt MagneticField} module calculates the magnetic field based on the outpu
 To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
 \begin{verbatim}
 scObject = spacecraft.Spacecraft()
-scObject.ModelTag = "spacecraftBody"
+scObject.modelTag = "spacecraftBody"
 magModule.addSpacecraftToModel(scObject.scStateOutMsg)
 \end{verbatim}
 
@@ -52,5 +52,3 @@ If SPICE is not being used, the planet is assumed to reside at the origin and $\
 
 \subsection{Setting the Model Reach}
 By default the model doesn't perform any checks on the altitude to see if the specified magnetic field model should be used.  This is set through the parameters {\tt envMinReach} and {\tt envMaxReach}.  Their default values are -1.  If these are set to positive values, then if the spacecraft orbit radius is smaller than {\tt envMinReach} or larger than {\tt envMaxReach}, the magnetic field vector is set to zero.
-
-

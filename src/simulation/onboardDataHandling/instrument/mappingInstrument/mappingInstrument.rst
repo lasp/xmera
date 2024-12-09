@@ -11,9 +11,9 @@ are not accessible.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -37,7 +37,7 @@ To use this module, the user must first instantiate the module
 .. code-block:: python
 
     mapInstrument = mappingInstrument.mappingInstrument()
-    mapInstrument.ModelTag = "mapInstrument"
+    mapInstrument.modelTag = "mapInstrument"
 
 The user must then set the nodeBaudRate, in bits/second, within the module. This is a required parameter.
 

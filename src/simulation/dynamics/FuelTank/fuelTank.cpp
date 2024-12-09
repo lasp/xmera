@@ -218,8 +218,8 @@ void FuelTank::writeOutputMessages(uint64_t currentClock) {
 
 /*! Fuel tank writes out its messages
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void FuelTank::UpdateState(uint64_t currentSimNanos) {
+void FuelTank::updateState(uint64_t currentSimNanos) {
     this->writeOutputMessages(currentSimNanos);
 }

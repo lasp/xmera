@@ -50,7 +50,7 @@ The module assumes the data file is in plain text form and the following format:
 The required module configuration is::
 
     testModule = dataFileToViz.DataFileToViz()
-    testModule.ModelTag = "testModule"
+    testModule.modelTag = "testModule"
     testModule.setNumOfSatellites(2)
     testModule.dataFileName = "dataFile.dat"
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -134,4 +134,3 @@ Next, the RW position, spin axis direction, the wheel speed and the maximum moto
     testModule.appendUMax(0.5)
 
 Repeat the above steps for each wheel.
-

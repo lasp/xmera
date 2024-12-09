@@ -441,7 +441,7 @@ class gravBodyFactory:
             raise ValueError(
                 "'time' argument must be provided and a valid SPICE time string"
             )
-        
+
         if spiceKernalFileNames is not None:
             spiceKernelFileNames = spiceKernalFileNames
             deprecationWarn(
@@ -459,7 +459,7 @@ class gravBodyFactory:
             self.spicePlanetFrames = list(spicePlanetFrames)
 
         self.spiceObject = spiceInterface.SpiceInterface()
-        self.spiceObject.ModelTag = "SpiceInterfaceData"
+        self.spiceObject.modelTag = "SpiceInterfaceData"
         self.spiceObject.SPICEDataPath = path
         self.spiceObject.addPlanetNames(self.spicePlanetNames)
         self.spiceObject.UTCCalInit = time

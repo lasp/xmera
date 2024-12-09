@@ -1,12 +1,12 @@
 /*
  ISC License
- 
+
  Copyright (c) 2024, University of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,7 +14,7 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
+
  */
 
 #include "positionODuKF.h"
@@ -26,9 +26,9 @@ PositionODuKF::~PositionODuKF() = default;
 /*! Reset the position-based OD filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void PositionODuKF::Reset(uint64_t CurrentSimNanos)
+void PositionODuKF::reset(uint64_t currentSimNanos)
 {
     /*! - Check if the required message has not been connected */
     if (!this->cameraPosMsg.isLinked()) {
@@ -45,7 +45,7 @@ void PositionODuKF::Reset(uint64_t CurrentSimNanos)
     this->measurementNoise.resize(this->obs.size(), this->obs.size());
     this->processNoise.resize(this->state.size(), this->state.size());
 
-    this->previousFilterTimeTag = (double) CurrentSimNanos*NANO2SEC;
+    this->previousFilterTimeTag = (double) currentSimNanos*NANO2SEC;
     this->numberSigmaPoints = this->state.size()*2+1;
     this->dt = 0;
 
@@ -79,9 +79,9 @@ void PositionODuKF::Reset(uint64_t CurrentSimNanos)
 /*! Take the relative position measurements and outputs an estimate of the
  spacecraft states in the inertial frame.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void PositionODuKF::UpdateState(uint64_t CurrentSimNanos)
+void PositionODuKF::updateState(uint64_t currentSimNanos)
 {
     this->readFilterMeasurements();
     /*! - If the time tag from the measured data is new compared to previous step,
@@ -94,12 +94,12 @@ void PositionODuKF::UpdateState(uint64_t CurrentSimNanos)
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    if((double) CurrentSimNanos*NANO2SEC >= this->previousFilterTimeTag)
+    if((double) currentSimNanos*NANO2SEC >= this->previousFilterTimeTag)
     {
-        this->timeUpdate((double) CurrentSimNanos * NANO2SEC);
+        this->timeUpdate((double) currentSimNanos * NANO2SEC);
     }
 
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! Perform the time update for the position OD kalman filter.
@@ -166,7 +166,7 @@ void PositionODuKF::timeUpdate(double updateTime)
  * It updates class variables relating to measurement data including validity and time tags.
  @return void
  */
-void PositionODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
+void PositionODuKF::writeOutputMessages(uint64_t currentSimNanos) {
     this->opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
     this->opNavResidualMsgBuffer = this->opNavResidualMsg.zeroMsgPayload;
     this->navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
@@ -188,9 +188,9 @@ void PositionODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
         this->opNavResidualMsgBuffer.sizeOfObservations = 3;
     }
 
-    this->navTransOutMsg.write(&this->navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->opNavFilterMsg.write(&this->opNavFilterMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->opNavResidualMsg.write(&this->opNavResidualMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->navTransOutMsg.write(&this->navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavFilterMsg.write(&this->opNavFilterMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavResidualMsg.write(&this->opNavResidualMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Read the message containing the measurement data.
@@ -256,7 +256,7 @@ void PositionODuKF::measurementUpdate()
 {
     /*! - Compute the valid observations and the measurement model for all observations*/
     this->measurementModel();
-    
+
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
      time update section of the reference document*/
     Eigen::VectorXd yBar;
@@ -265,7 +265,7 @@ void PositionODuKF::measurementUpdate()
     {
         yBar += this->wM(i) * this->yMeas.col(i);
     }
-    
+
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement
      update section of the code.  This is based on the difference between the yBar
      parameter and the calculated measurement models.  Equation 24. */

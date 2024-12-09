@@ -52,7 +52,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
     ephemDiff = ephemDifference.EphemDifference()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    ephemDiff.ModelTag = "ephemDifference"
+    ephemDiff.modelTag = "ephemDifference"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, ephemDiff)
@@ -148,11 +148,11 @@ def ephemDifferenceTestFunction(ephBdyCount):
     snippentName = "passFail" + str(ephBdyCount)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + ephemDiff.ModelTag)
+        print("PASSED: " + ephemDiff.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + ephemDiff.ModelTag)
+        print("Failed: " + ephemDiff.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

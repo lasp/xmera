@@ -44,7 +44,7 @@ PartitionedStorageUnit::~PartitionedStorageUnit(){
  @param currentClock
  @return void
  */
-void PartitionedStorageUnit::customReset(uint64_t currentClock){
+void PartitionedStorageUnit::customreset(uint64_t currentClock){
     if (this->storageCapacity <= 0) {
         bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
     }

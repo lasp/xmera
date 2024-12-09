@@ -227,7 +227,7 @@ def run(show_plots):
 
     # initialize servicer spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "Servicer"
+    scObject.modelTag = "Servicer"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -237,7 +237,7 @@ def run(show_plots):
 
     # create the debris object states
     scObject2 = spacecraft.Spacecraft()
-    scObject2.ModelTag = "Debris"
+    scObject2.modelTag = "Debris"
     I2 = [600., 0., 0.,
           0., 650., 0.,
           0., 0, 450.]
@@ -256,7 +256,7 @@ def run(show_plots):
 
     # make another debris object */
     scObject3 = spacecraft.Spacecraft()
-    scObject3.ModelTag = "DebrisSat"
+    scObject3.modelTag = "DebrisSat"
     I3 = [600., 0., 0.,
           0., 650., 0.,
           0., 0, 450.]
@@ -324,7 +324,7 @@ def run(show_plots):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, sNavObject)
 
@@ -334,13 +334,13 @@ def run(show_plots):
 
     # setup hillPoint guidance module
     attGuidance = hillPoint.HillPoint()
-    attGuidance.ModelTag = "hillPoint"
+    attGuidance.modelTag = "hillPoint"
     attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     scSim.AddModelToTask(simTaskName, attGuidance)
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     attError.sigma_R0R = [0.414214, 0.0, 0.0]     # point the 3rd body axis in the along-track direction
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
@@ -356,7 +356,7 @@ def run(show_plots):
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
@@ -369,7 +369,7 @@ def run(show_plots):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
     # Initialize the test module msg names
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -457,7 +457,7 @@ def run(show_plots):
                                                   # , saveFile=fileName,
                                                   )
         # setup one-way instrument camera by having frameRate be 0
-        vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
+        vizSupport.createCameraConfigMsg(viz, parentName=scObject.modelTag,
                                          cameraID=1, fieldOfView=40 * macros.D2R,
                                          resolution=[1024, 1024], renderRate=0.,
                                          cameraPos_B=[0., 0., 2.0], sigma_CB=[0., 0., 0.]

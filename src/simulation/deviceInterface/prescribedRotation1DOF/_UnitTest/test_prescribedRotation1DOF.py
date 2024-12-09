@@ -108,7 +108,7 @@ def test_prescribedRotation1DOF(show_plots,
     # Create an instance of the prescribedRotation1DOF module to be tested
     rotAxis_M = np.array([1.0, 0.0, 0.0])  # Spinning body rotation axis
     prescribedRot1DOF = prescribedRotation1DOF.PrescribedRotation1DOF()
-    prescribedRot1DOF.ModelTag = "prescribedRotation1DOF"
+    prescribedRot1DOF.modelTag = "prescribedRotation1DOF"
     prescribedRot1DOF.setCoastOptionBangDuration(coastOptionBangDuration)
     prescribedRot1DOF.setRotHat_M(rotAxis_M)
     prescribedRot1DOF.setSmoothingDuration(smoothingDuration)

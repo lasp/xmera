@@ -6,9 +6,9 @@ measured state.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -44,7 +44,7 @@ The interface module is created in python using:
     :linenos:
 
     testModule = hingedRigidBodyMotorSensor.HingedRigidBodyMotorSensor()
-    testModule.ModelTag = "motorSensor"
+    testModule.modelTag = "motorSensor"
 
 The sensor adds an optional noise (defined by a standard deviation), bias, and discretization to ``theta`` and ``thetaDot``.
 If no noise is specified then the default behavior is for the actual panel states to be passed along as the

@@ -28,7 +28,7 @@ The following simulation creates a single process called ``dynamicsProcess`` and
 The resulting demonstration code is shown above. Let us create some module ``someModule.someModule`` and give it a unique name.  This is done as::
 
     module = someModule.someModule()
-    module.ModelTag = "someModuleName"
+    module.modelTag = "someModuleName"
 
 With BSK C-modules the module name is repeated.  With C++ modules the first variable is the module name, the second
 variable is the module class name which begins with a capital letter.  See the above script for examples of each.
@@ -73,6 +73,6 @@ If you execute this python code you should see the following terminal output:
     BSK_INFORMATION: C Module ID 1 ran Update at 5.000000s
 
 
-:ref:`cModuleTemplate` and :ref:`cppModuleTemplate` log in the ``Reset()`` method that a variable has been set to 0.  As we have three such modules, notice that this reset statement is seen three times.  This reset step occurs when we run ``scSim.InitializeSimulation()``.
+:ref:`cModuleTemplate` and :ref:`cppModuleTemplate` log in the ``reset()`` method that a variable has been set to 0.  As we have three such modules, notice that this reset statement is seen three times.  This reset step occurs when we run ``scSim.InitializeSimulation()``.
 
 After the initialization, Basilisk starts the time loop evaluating the modules at the specified rate.  The ``Update()`` routine in both :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` print out the module ID and the simulation time where the module is called.  Note that thanks to the module evaluation priorities we set, the desired module execution order is achieved.

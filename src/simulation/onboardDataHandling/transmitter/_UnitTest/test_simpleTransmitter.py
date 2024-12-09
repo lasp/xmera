@@ -70,7 +70,7 @@ def checkDefault():
 
     # Create the test module
     testModule = simpleTransmitter.SimpleTransmitter()
-    testModule.ModelTag = "transmitter"
+    testModule.modelTag = "transmitter"
     testModule.nodeBaudRate = 9600.  # baud
     testModule.packetSize = -9600  # bits
     testModule.numBuffers = 1
@@ -78,14 +78,14 @@ def checkDefault():
 
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
-    instrument.ModelTag = "instrument1"
+    instrument.modelTag = "instrument1"
     instrument.nodeBaudRate = 9600.  # baud
     instrument.nodeDataName = "Instrument 1" # baud
     unitTestSim.AddModelToTask(unitTaskName, instrument)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
-    dataMonitor.ModelTag = "dataMonitor"
+    dataMonitor.modelTag = "dataMonitor"
     dataMonitor.storageCapacity = 8E9  # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsg)
@@ -141,7 +141,7 @@ def checkStatus():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     testModule = simpleTransmitter.SimpleTransmitter()
-    testModule.ModelTag = "transmitter"
+    testModule.modelTag = "transmitter"
     testModule.nodeBaudRate = 9600. # baud
     testModule.packetSize = -9600 # bits
     testModule.numBuffers = 1
@@ -150,14 +150,14 @@ def checkStatus():
 
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
-    instrument.ModelTag = "instrument1"
+    instrument.modelTag = "instrument1"
     instrument.nodeBaudRate = 1200. # baud
     instrument.nodeDataName = "Instrument 1" # baud
     unitTestSim.AddModelToTask(unitTaskName, instrument)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
-    dataMonitor.ModelTag = "dataMonitor"
+    dataMonitor.modelTag = "dataMonitor"
     dataMonitor.storageCapacity = 8E9 # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsg)

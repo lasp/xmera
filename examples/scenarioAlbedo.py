@@ -58,7 +58,7 @@ Both method can be used for the same purpose. Note that this commands can be rep
 for different instruments.
 
 Every time an instrument is added to the albedo module, an automated output message is created.
-For ``albModule`` is "AlbedoModule_0_data" as the ModelTag string is ``AlbedoModule`` and the instrument number is 0.
+For ``albModule`` is "AlbedoModule_0_data" as the modelTag string is ``AlbedoModule`` and the instrument number is 0.
 This output is added to the ``albOutMsgs`` module vector within the  ``addInstrumentConfig()`` function.
 
 Multiple planets can be added to the albedo module through::
@@ -216,7 +216,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     #
     oe = om.ClassicElements()
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     rLEO = req1 + 500 * 1000  # m
     # Define the simulation inertia
     I = [900., 0., 0.,
@@ -259,7 +259,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     # Albedo Module
     #
     albModule = albedo.Albedo()
-    albModule.ModelTag = "AlbedoModule"
+    albModule.modelTag = "AlbedoModule"
     albModule.spacecraftStateInMsg.subscribeTo(scObject.scStateOutMsg)
     albModule.sunPositionInMsg.subscribeTo(sunMsg)
 
@@ -284,7 +284,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     # CSS-1
     #
     CSS1 = coarseSunSensor.CoarseSunSensor()
-    CSS1.ModelTag = "CSS1"
+    CSS1.modelTag = "CSS1"
     setupCSS(CSS1)
 
     if albedoData:
@@ -312,14 +312,14 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     if multipleInstrument:
         # CSS-2
         CSS2 = coarseSunSensor.CoarseSunSensor()
-        CSS2.ModelTag = "CSS2"
+        CSS2.modelTag = "CSS2"
         setupCSS(CSS2)
         CSS2.nHat_B = np.array([-1., 0., 0.])
         albModule.addInstrumentConfig(CSS2.fov, CSS2.nHat_B, CSS2.r_PB_B)
         CSS2.albedoInMsg.subscribeTo(albModule.albOutMsgs[1])
         # CSS-3
         CSS3 = coarseSunSensor.CoarseSunSensor()
-        CSS3.ModelTag = "CSS3"
+        CSS3.modelTag = "CSS3"
         setupCSS(CSS3)
         CSS3.nHat_B = np.array([0., -1., 0.])
         albModule.addInstrumentConfig(CSS3.fov, CSS3.nHat_B, CSS3.r_PB_B)

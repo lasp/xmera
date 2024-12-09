@@ -28,7 +28,7 @@ VisualOdometry::~VisualOdometry() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void VisualOdometry::Reset(uint64_t currentSimNanos)
+void VisualOdometry::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->keyPointPairInMsg.isLinked()) {
@@ -44,7 +44,7 @@ void VisualOdometry::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void VisualOdometry::UpdateState(uint64_t currentSimNanos) {
+void VisualOdometry::updateState(uint64_t currentSimNanos) {
     Eigen::Vector3d sPrime;
     Eigen::Matrix3d covar;
     int sign = 1;

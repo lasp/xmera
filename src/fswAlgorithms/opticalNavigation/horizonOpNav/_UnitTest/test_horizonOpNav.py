@@ -169,7 +169,7 @@ def horizonOpNav_update():
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, update, and reset
-    opNav.ModelTag = "limbNav"
+    opNav.modelTag = "limbNav"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, opNav)
@@ -388,11 +388,11 @@ def horizonOpNav_update():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + opNav.ModelTag)
+        print("PASSED: " + opNav.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + opNav.ModelTag)
+        print("Failed: " + opNav.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
         print(testMessages)
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)

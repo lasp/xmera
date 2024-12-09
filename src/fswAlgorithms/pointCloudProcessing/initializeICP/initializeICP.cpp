@@ -26,9 +26,9 @@ InitializeICP::~InitializeICP() = default;
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
  * between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void InitializeICP::Reset(uint64_t CurrentSimNanos)
+void InitializeICP::reset(uint64_t currentSimNanos)
 {
     if (!this->inputMeasuredPointCloud.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
@@ -81,7 +81,7 @@ void InitializeICP::normalizePointCloud()
  * depending on the initialPhase status
  @return void
  */
-void InitializeICP::setInitialConditions(uint64_t CurrentSimNanos){
+void InitializeICP::setInitialConditions(uint64_t currentSimNanos){
     CameraConfigMsgPayload cameraBuffer = this->cameraConfigInMsg();
     SICPMsgPayload sicpBuffer = this->inputSICPData();
 
@@ -103,7 +103,7 @@ void InitializeICP::setInitialConditions(uint64_t CurrentSimNanos){
         this->initialPhase = false;
         this->previousTimeTag = sicpBuffer.timeTag;
     }
-    double timeSinceICPSolution = (double)(CurrentSimNanos - this->previousTimeTag)*1E-9;
+    double timeSinceICPSolution = (double)(currentSimNanos - this->previousTimeTag)*1E-9;
     //! - If the current point cloud is valid check if there is a recent ICP solution to use. If there isn't use
     //! ephemeris information
     if (this->normalizedCloudBuffer.valid) {
@@ -140,26 +140,26 @@ void InitializeICP::setInitialConditions(uint64_t CurrentSimNanos){
 
 /*! Write out the messages with the transformed data
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void InitializeICP::writeOutputMessages(uint64_t CurrentSimNanos){
+void InitializeICP::writeOutputMessages(uint64_t currentSimNanos){
     //! - Write the algorithm output data with zeros are results
-    this->measuredPointCloud.write(&this->normalizedCloudBuffer, this->moduleID, CurrentSimNanos);
-    this->initializeSICPMsg.write(&this->outputIcpBuffer, this->moduleID, CurrentSimNanos);
+    this->measuredPointCloud.write(&this->normalizedCloudBuffer, this->moduleID, currentSimNanos);
+    this->initializeSICPMsg.write(&this->outputIcpBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This module reads a point cloud and performs an normalization on the points, it then reads the last messages
  * containing attitude and position information to seed the ICP algorithm that follows, or uses the
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void InitializeICP::UpdateState(uint64_t CurrentSimNanos)
+void InitializeICP::updateState(uint64_t currentSimNanos)
 {
     //! - Normalize the measured point cloud if it is valid
     this->normalizePointCloud();
     //! - Use previous ICP solution (if previous solution was valid) or spacecraft ephemeris otherwise
-    this->setInitialConditions(CurrentSimNanos);
+    this->setInitialConditions(currentSimNanos);
     //! - Write output messages
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 
 }

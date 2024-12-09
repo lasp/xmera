@@ -26,9 +26,9 @@ ScalingIterativeClosestPoint::~ScalingIterativeClosestPoint() = default;
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
  * between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ScalingIterativeClosestPoint::Reset(uint64_t CurrentSimNanos)
+void ScalingIterativeClosestPoint::reset(uint64_t currentSimNanos)
 {
     if (!this->measuredPointCloud.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
@@ -189,9 +189,9 @@ Eigen::MatrixXd ScalingIterativeClosestPoint::computeTk(const double s_k, const 
 
 /*! This module reads the data and checks for validity. If new information is present it
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ScalingIterativeClosestPoint::UpdateState(uint64_t CurrentSimNanos)
+void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos)
 {
     //! - Read input messages and zero output messages
     this->outputCloudBuffer = this->outputPointCloud.zeroMsgPayload;
@@ -224,8 +224,8 @@ void ScalingIterativeClosestPoint::UpdateState(uint64_t CurrentSimNanos)
     //! - Check for data validity
     if (!this->measuredCloudBuffer.valid) {
         //! - Write the algorithm output data with zeros are results
-        this->outputSICPData.write(&this->sicpBuffer, this->moduleID, CurrentSimNanos);
-        this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, CurrentSimNanos);
+        this->outputSICPData.write(&this->sicpBuffer, this->moduleID, currentSimNanos);
+        this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, currentSimNanos);
     }
     else {
         Eigen::MatrixXd measuredPoints = cArray2EigenMatrixXd(this->measuredCloudBuffer.points,
@@ -291,16 +291,16 @@ void ScalingIterativeClosestPoint::UpdateState(uint64_t CurrentSimNanos)
         //! - Save the algorithm output data if the measurement was valid
         this->outputCloudBuffer.valid = true;
         this->sicpBuffer.valid = true;
-        this->sicpBuffer.timeTag = CurrentSimNanos;
+        this->sicpBuffer.timeTag = currentSimNanos;
         Eigen::MatrixXd newPoints = Eigen::MatrixXd::Zero(measuredPoints.rows(), measuredPoints.cols());
         for (int i = 0; i < this->Np; i++) {
             newPoints.col(i) = s_k * (R_k * measuredPoints.col(i)) + t_k;
         }
         eigenMatrixXd2CArray(newPoints.transpose(), this->outputCloudBuffer.points);
         this->outputCloudBuffer.numberOfPoints = this->Np;
-        this->outputCloudBuffer.timeTag = CurrentSimNanos;
+        this->outputCloudBuffer.timeTag = currentSimNanos;
         //! - Write the algorithm output data with zeros are results
-        this->outputSICPData.write(&this->sicpBuffer, this->moduleID, CurrentSimNanos);
-        this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, CurrentSimNanos);
+        this->outputSICPData.write(&this->sicpBuffer, this->moduleID, currentSimNanos);
+        this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, currentSimNanos);
     }
 }

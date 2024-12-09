@@ -96,20 +96,20 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
             rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
 
             if prescribed:
-                scBodyList.append([self.DynModels[i].platform1.ModelTag, self.DynModels[i].platform.prescribedMotionConfigLogOutMsg])
+                scBodyList.append([self.DynModels[i].platform1.modelTag, self.DynModels[i].platform.prescribedMotionConfigLogOutMsg])
                 for j in range(self.DynModels[i].numRSA):
-                    scBodyList.append([self.DynModels[i].RSAList[j].ModelTag, self.DynModels[i].RSAList[j].prescribedMotionConfigLogOutMsg])
+                    scBodyList.append([self.DynModels[i].RSAList[j].modelTag, self.DynModels[i].RSAList[j].prescribedMotionConfigLogOutMsg])
             else:
-                scBodyList.append([self.DynModels[i].platform1.ModelTag, self.DynModels[i].platform1.spinningBodyConfigLogOutMsgs[1]])
+                scBodyList.append([self.DynModels[i].platform1.modelTag, self.DynModels[i].platform1.spinningBodyConfigLogOutMsgs[1]])
                 for j in range(self.DynModels[i].numRSA):
-                    scBodyList.append([self.DynModels[i].RSAList[j].ModelTag, self.DynModels[i].RSAList[j].spinningBodyConfigLogOutMsg])                    
+                    scBodyList.append([self.DynModels[i].RSAList[j].modelTag, self.DynModels[i].RSAList[j].spinningBodyConfigLogOutMsg])
 
         # Enable Vizard
         viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, scBodyList, saveFile=__file__)
 
         # Change how the spacecraft looks
         vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[scBodyList[0].ModelTag]
+                                     , simBodiesToModify=[scBodyList[0].modelTag]
                                      , modelPath=path + "/Textures/bus.obj"
                                      , rotation=[0, 0, -np.pi / 2]
                                      , offset=[0, 0, -1.5]
@@ -131,8 +131,8 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
                                      )
 
         # Add heading lines to visually check pointing performance
-        vizSupport.createPointLine(viz, fromBodyName=self.DynModels[0].RSAList[0].ModelTag, toBodyName='sun', lineColor='yellow')
-        vizSupport.createPointLine(viz, fromBodyName=self.DynModels[0].RSAList[1].ModelTag, toBodyName='sun', lineColor='yellow')
+        vizSupport.createPointLine(viz, fromBodyName=self.DynModels[0].RSAList[0].modelTag, toBodyName='sun', lineColor='yellow')
+        vizSupport.createPointLine(viz, fromBodyName=self.DynModels[0].RSAList[1].modelTag, toBodyName='sun', lineColor='yellow')
 
         # Additional Vizard settings
         viz.settings.orbitLinesOn = -1
@@ -239,9 +239,9 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
 
             # log platform angles
             if self.prescribed:
-                self.AddVariableForLogging(FswModels[sc].platformProfilerSEPWrap.ModelTag + ".phi", self.samplingTime, 0, 0, 'double')
-                self.AddVariableForLogging(FswModels[sc].platformProfilerSEPWrap.ModelTag + ".phiRef", self.samplingTime, 0, 0, 'double')
-                self.AddVariableForLogging(FswModels[sc].platformProfilerSEPWrap.ModelTag + ".phiAccum", self.samplingTime, 0, 0, 'double')
+                self.AddVariableForLogging(FswModels[sc].platformProfilerSEPWrap.modelTag + ".phi", self.samplingTime, 0, 0, 'double')
+                self.AddVariableForLogging(FswModels[sc].platformProfilerSEPWrap.modelTag + ".phiRef", self.samplingTime, 0, 0, 'double')
+                self.AddVariableForLogging(FswModels[sc].platformProfilerSEPWrap.modelTag + ".phiAccum", self.samplingTime, 0, 0, 'double')
                 self.prescribedMotionLog.append(FswModels[sc].prescribedMotionMsg.recorder(self.samplingTime))
                 self.AddModelToTask(DynModels[sc].taskName, self.prescribedMotionLog[0])
             else:
@@ -267,7 +267,7 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
                     self.AddModelToTask(DynModels[sc].taskName, self.platformRefAngleLogs[0])
                     self.platformRefAngleLogs.append(FswModels[sc].platform2ReferenceData.hingedRigidBodyRef2OutMsg.recorder(self.samplingTime))
                     self.AddModelToTask(DynModels[sc].taskName, self.platformRefAngleLogs[1])
-            
+
             if thrusterFlag == 1:
                 # log platform torques
                 if not self.prescribed:
@@ -306,7 +306,7 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
                 self.AddModelToTask(DynModels[sc].taskName, self.thrusterLog[sc])
 
             # log the SRP torque
-            self.AddVariableForLogging(DynModels[sc].newSRP.ModelTag + ".torqueExternalPntB_B", self.samplingTime, 0, 2)
+            self.AddVariableForLogging(DynModels[sc].newSRP.modelTag + ".torqueExternalPntB_B", self.samplingTime, 0, 2)
 
 
     def pull_outputs(self, show_plots, spacecraftIndex):
@@ -362,9 +362,9 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
         dataPlatformAngle = []
         dataPlatformRefAngle = []
         if self.prescribed:
-            phi = self.GetLogVariableData(FswModels[spacecraftIndex].platformProfilerSEPWrap.ModelTag + ".phi")
-            phiRef = self.GetLogVariableData(FswModels[spacecraftIndex].platformProfilerSEPWrap.ModelTag + ".phiRef")
-            phiAccum = self.GetLogVariableData(FswModels[spacecraftIndex].platformProfilerSEPWrap.ModelTag + ".phiAccum")
+            phi = self.GetLogVariableData(FswModels[spacecraftIndex].platformProfilerSEPWrap.modelTag + ".phi")
+            phiRef = self.GetLogVariableData(FswModels[spacecraftIndex].platformProfilerSEPWrap.modelTag + ".phiRef")
+            phiAccum = self.GetLogVariableData(FswModels[spacecraftIndex].platformProfilerSEPWrap.modelTag + ".phiAccum")
             dataPlatformAngle.append(np.delete(phi, 0, axis=1))
             dataPlatformRefAngle.append(np.delete(phiRef, 0, axis=1))
             dataSigmaFM = self.prescribedMotionLog[spacecraftIndex].sigma_FM
@@ -395,7 +395,7 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
         T_F = [0, 0, 0.1]
         for i in range(len(dataCMLocation)):
             r_CM_B = r_BM_B + dataCMLocation[i]
-            
+
             if not self.prescribed:
                 theta1 = dataPlatformAngle[0][i]
                 theta2 = dataPlatformAngle[1][i]
@@ -413,7 +413,7 @@ class scenario_SEPPoint(BSKSim, BSKScenario):
 
         # SRP torque in B-frame components
         dataSRP = []
-        L_SRP = self.GetLogVariableData(DynModels[spacecraftIndex].newSRP.ModelTag + ".torqueExternalPntB_B")
+        L_SRP = self.GetLogVariableData(DynModels[spacecraftIndex].newSRP.modelTag + ".torqueExternalPntB_B")
         dataSRP = np.delete(L_SRP, 0, axis=1)
 
         # Swirl torque

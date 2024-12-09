@@ -82,7 +82,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
 
     # configure module
     StarTracker = starTracker.StarTracker()
-    StarTracker.ModelTag = "StarTracker"
+    StarTracker.modelTag = "StarTracker"
     setRandomWalk(StarTracker)
 
     # configure module input message
@@ -177,7 +177,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
 
     if testFail:
         testFailCount += 1
-        testMessages.append("FAILED: " + StarTracker.ModelTag + " Module failed unit test")
+        testMessages.append("FAILED: " + StarTracker.modelTag + " Module failed unit test")
 
     np.set_printoptions(precision=16)
 

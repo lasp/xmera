@@ -33,8 +33,8 @@
 /*! @brief A class to perform EMA SEP pointing */
 class SepPoint: public SysModel {
 public:
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
     AlignmentPriority alignmentPriority;                           //!< flag to indicate which flyby model is being used
     double            a1Hat_B[3];                                  //!< solar array drive axis in B-frame coordinates

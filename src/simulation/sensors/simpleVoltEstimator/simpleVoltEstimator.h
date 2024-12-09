@@ -34,8 +34,8 @@ public:
     SimpleVoltEstimator();
     ~SimpleVoltEstimator();
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void computeErrors();
     void applyErrors();
     void readInputMessages();
@@ -49,7 +49,7 @@ public:
     VoltMsgPayload trueVoltState;    //!< -- voltage state without errors
     VoltMsgPayload estVoltState;     //!< -- voltage state including errors
     BSKLogger bskLogger;              //!< -- BSK Logging
-    
+
     ReadFunctor<VoltMsgPayload> voltInMsg;          //!< voltage input msg
 
 private:

@@ -33,11 +33,9 @@ public:
     void setDataBuffer(int64_t data); //!< Method to add/remove data from the storage unit once
 
 private:
-    void customReset(uint64_t CurrentClock); //!< Custom Reset method
+    void customreset(uint64_t CurrentClock); //!< Custom Reset method
     void integrateDataStatus(double currentTime); //!< Overwrites the integrateDataStatus method to create a single partition in the storage unit ("STORED DATA")
 
 };
 
 #endif //BASILISK_SIMPLESTORAGEUNIT_H
-
-

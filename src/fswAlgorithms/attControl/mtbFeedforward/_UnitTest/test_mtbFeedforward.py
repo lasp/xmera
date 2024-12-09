@@ -78,7 +78,7 @@ def mtbFeedforwardModuleTestFunction():
 
     # Initialize module under test's config message and add module to runtime call list
     module = mtbFeedforward.MtbFeedforward()
-    module.ModelTag = "mrpFeedback"           # update python name of test module
+    module.modelTag = "mrpFeedback"           # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize CmdTorqueBodyMsg

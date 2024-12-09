@@ -44,7 +44,7 @@ demonstrate the data stored, generated, and downlinked.
 
 .. image:: /_images/Scenarios/scenarioGroundPassPolar.svg
    :align: center
-   
+
 .. image:: /_images/Scenarios/scenarioGroundPassRange.svg
    :align: center
 
@@ -98,7 +98,7 @@ def run(show_plots):
     # Create a spacecraft around Earth
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -139,7 +139,7 @@ def run(show_plots):
 
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
-    groundStation.ModelTag = "BoulderGroundStation"
+    groundStation.modelTag = "BoulderGroundStation"
     groundStation.planetRadius = astroFunctions.E_radius*1e3
     groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
     groundStation.planetInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
@@ -150,21 +150,21 @@ def run(show_plots):
 
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
-    instrument.ModelTag = "instrument1"
+    instrument.modelTag = "instrument1"
     instrument.nodeBaudRate = 2400. # baud
     instrument.nodeDataName = "Instrument 1" # baud
     scenarioSim.AddModelToTask(taskName, instrument)
 
     # Create another instrument
     instrument2 = simpleInstrument.SimpleInstrument()
-    instrument2.ModelTag = "instrument2"
+    instrument2.modelTag = "instrument2"
     instrument2.nodeBaudRate = 2400. # baud
     instrument2.nodeDataName = "Instrument 2"  # baud
     scenarioSim.AddModelToTask(taskName, instrument2)
 
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
-    transmitter.ModelTag = "transmitter"
+    transmitter.modelTag = "transmitter"
     transmitter.nodeBaudRate = -9600.   # baud
     transmitter.packetSize = -1E6   # bits
     transmitter.numBuffers = 2
@@ -173,7 +173,7 @@ def run(show_plots):
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
-    dataMonitor.ModelTag = "dataMonitor"
+    dataMonitor.modelTag = "dataMonitor"
     dataMonitor.storageCapacity = 8E9   # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(instrument2.nodeDataOutMsg)
@@ -186,7 +186,7 @@ def run(show_plots):
 
     # Create a simpleStorageUnit and attach the instrument to it
     dataMonitor2 = simpleStorageUnit.SimpleStorageUnit()
-    dataMonitor2.ModelTag = "dataMonitor2"
+    dataMonitor2.modelTag = "dataMonitor2"
     dataMonitor2.storageCapacity = 1E5  # bits
     dataMonitor2.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor2.addDataNodeToModel(instrument2.nodeDataOutMsg)

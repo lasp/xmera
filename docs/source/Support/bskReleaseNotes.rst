@@ -43,8 +43,8 @@ Version 2.3.0 (April 5, 2024)
 - Fixed a python version checking bug that prevented Basilisk from compiling on Windows
 - Created a new example scenario :ref:`scenarioHaloOrbit` demonstrating a near-Halo orbit simulation
 - Updated versioning to better follow the `semantic versioning <https://semver.org>`_ standard, in the format
-  ``MAJOR.MINOR.PATCH``. Releases will increment the minor version number, while pull requests into develop will 
-  automatically increment the patch number. This allows users to reference/require specific versions of Basilisk 
+  ``MAJOR.MINOR.PATCH``. Releases will increment the minor version number, while pull requests into develop will
+  automatically increment the patch number. This allows users to reference/require specific versions of Basilisk
   outside of the release cycle.
   Online documentation is only built for the ``MAJOR.MINOR.0`` releases
 - updated plotting of ``opNav`` example scenarios to work again with latest version of ``matplotlib``
@@ -164,7 +164,7 @@ Version 2.2.1 (Dec. 22, 2023)
 - Added a new method ``setDataBuffer()`` to :ref:`simpleStorageUnit` and :ref:`partitionedStorageUnit` to add or remove data from specified partitions.
 - Refactored ``simIncludeGravBody``. The most notable change for users is that the commonly used line
   ``scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))``
-  can be replaced by ``gravFactory.addBodiesTo(scObject)`` (where ``scObject`` is a ``spacecraft.Spacecraft`` 
+  can be replaced by ``gravFactory.addBodiesTo(scObject)`` (where ``scObject`` is a ``spacecraft.Spacecraft``
   or  ``spacecraftSystem.SpacecraftSystem``, and ``gravFactory`` is a ``simIncludeGravBody.gravBodyFactory``)
 - Added condition in :ref:`thrustCMEstimation` to avoid measurement updates when input ``attGuidInMsg`` has not been written.
 - Added :ref:`scenarioSepMomentumManagement` to show how to use a dual-gimbaled electric thruster to perform contunuous
@@ -218,7 +218,7 @@ Version 2.2.0 (June 28, 2023)
 - Refactored the :ref:`prescribedMotionStateEffector` dynamics module to vary the prescribed states across the dynamics
   integration time step.
 - The encryption build option for the project's conan zmq dependency is disabled because it is uneeded.
-- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to 
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to
   match the functionality of the corresponding data and power modules
 - Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
 - Reworked how integrators are implemented. New Runge-Kutta integrators may
@@ -376,7 +376,7 @@ Version 2.1.4 (Oct. 1, 2022)
 - added new attitude pointing scenario :ref:`scenarioAttitudeFeedback2T_stateEffTH` that uses
   the new :ref:`thrusterStateEffector`
 - added ability to simulate faults within :ref:`coarseSunSensor` module
-- created a 1-DoF rotating rigid body class ``SpinningBodyStateEffector``. It is built in a general way to simulate 
+- created a 1-DoF rotating rigid body class ``SpinningBodyStateEffector``. It is built in a general way to simulate
   any effector with a single spinning axis.
 
 
@@ -456,7 +456,7 @@ Version 2.1.1 (Dec. 15, 2021)
 
 Version 2.1.0 (Nov. 13, 2021)
 -----------------------------
-- added BSpline function to ``utilities`` and related UnitTest. 
+- added BSpline function to ``utilities`` and related UnitTest.
 - added kinematic relations between angular accelerations and second derivative of MRP set to
   :ref:`rigidBodyKinematicsutilities` library
 - updated the installation script to function with the latest ``conan`` program and the recent
@@ -473,7 +473,7 @@ Version 2.1.0 (Nov. 13, 2021)
 - added new scenario :ref:`scenarioVariableTimeStepIntegrators`
 - updated :ref:`scenarioIntegrators` to include the ``rkf45`` and ``rkf78`` options
 - changed the way :ref:`spacecraftReconfig` gets the deputy's mass properties. It now receives that information
-  through a message of the type ``VehicleConfigMsgPayload`` instead of an internal variable. Relevant example 
+  through a message of the type ``VehicleConfigMsgPayload`` instead of an internal variable. Relevant example
   scripts have been updated.
 - new tutorial example scenario script :ref:`scenarioTAMcomparison`
 - new mass sensor that converts a ``simulation`` mass properties message to a ``FSW`` vehicle configuration message :ref:`simpleMassProps`
@@ -518,13 +518,13 @@ Version 2.0.6
   using the above new MTB related modules to change the momentum, as well as drive the nominal momentum to
   a desired value using :ref:`rwNullSpace`.
 - created a new architecture based on ``BskSim`` called ``MultiSatBskSim``. It exploits the new messaging system to create a simulation
-  with any number of spacecraft in a highly modular way. It allows for the addition of homogeneous or heterogeneous satellites without 
+  with any number of spacecraft in a highly modular way. It allows for the addition of homogeneous or heterogeneous satellites without
   having to hard code their properties into a single dynamics or FSW script. It will be a foundation to test the upcoming multithreading
   capabilities of Basilisk.
-- added three example scenarios that showcase this new architecture. See :ref:`scenario_BasicOrbitMultiSat`, :ref:`scenario_AttGuidMultiSat` 
+- added three example scenarios that showcase this new architecture. See :ref:`scenario_BasicOrbitMultiSat`, :ref:`scenario_AttGuidMultiSat`
   and :ref:`scenario_StationKeepingMultiSat`.
 - added a new FSW module :ref:`formationBarycenter`. It computes the barycenter's position and velocity of a swarm of satellites. This barycenter
-  can be either computed with cartesian coordinates (usual mass-weighted average), or using orbital elements weighted average. Will be useful 
+  can be either computed with cartesian coordinates (usual mass-weighted average), or using orbital elements weighted average. Will be useful
   for spacecraft formations defined around the barycenter of the swarm and not a chief spacecraft.
 - enhanced :ref:`locationPointing` to support the target input msg being either a location message or an
   ephemeris message
@@ -548,7 +548,7 @@ Version 2.0.5
 - updated :ref:`celestialTwoBodyPoint` to account for a case where the celestial objects are in opposite directions
 - replaced ``acos()`` and ``asin()`` with ``safeAcos()`` and ``safeAsin()`` which ensure that arguments are
   clipped to be within and including -1 and 1
-- updated :ref:`dataFileToViz` to allow the ``Reset()`` method to be called multiple times.  If a data file
+- updated :ref:`dataFileToViz` to allow the ``reset()`` method to be called multiple times.  If a data file
   was already opened, then it is closed before the next data file is opened.
 - updated :ref:`groundLocation` to also output SEZ coordinates, as well as range, azimuth, elevation, south, east
   and zenith coordinate rates.  These coordinates are always computed regardless if a spacecraft is visible to the
@@ -558,7 +558,7 @@ Version 2.0.5
   two modules are connected
 - updated :ref:`gravityEffector` documentation to properly pull in the RST documentation and link to the
   PDF describing the gravity models
-- updated ``setAllButCurrentEventActivity`` method in :ref:`SimulationBaseClass` to work with multiple satellites. We can now add an index at the 
+- updated ``setAllButCurrentEventActivity`` method in :ref:`SimulationBaseClass` to work with multiple satellites. We can now add an index at the
   end of each event name that guarantees only events with the same index are affected. The ``useIndex`` flag must be set to ``True``.
 - added new magnetic torque bar effector in :ref:`MtbEffector`
 - added new FSW module to control the RW momentum using MTBs in :ref:`mtbMomentumManagement`
@@ -569,7 +569,7 @@ Version 2.0.5
 
 Version 2.0.4
 -------------
-- updated :ref:`spacecraft` ``Reset()`` method to write all spacecraft and effector state output messages
+- updated :ref:`spacecraft` ``reset()`` method to write all spacecraft and effector state output messages
   with their initial values.  This way these output messages are correct as already as calling the
   ``InitializeSimulation()`` method.
 - fixed an issue that could prevent ``.subscribeTo`` from a C++ to C wrapped message object to not function
@@ -764,7 +764,7 @@ Version 2.0.0
 - updated ``spacecraftPlus`` to allow the attitude motion to be prescribed through
   an optional input message of type ``attRefMsg``.
 - fixed sign issue in :ref:`simpleSolarPanel`
-- support Vizard 1.6.0 scripting  
+- support Vizard 1.6.0 scripting
 
 
 
@@ -862,7 +862,7 @@ Version 2.0.0
   BSK messages.  For example, this allows :ref:`vizInterface` store the simulation data into a Vizard compatible manner.
 - Updated :ref:`spiceInterface` to allow for optional overriding the IAU planet frame with custom values
 - Updated :ref:`vizInterface` to allow setting ``show24hrClock`` and ``showDataRateDisplay`` flags for Vizard files
-  supported in Vizard v1.3.0 
+  supported in Vizard v1.3.0
 
 Version 1.7.4
 
@@ -963,7 +963,7 @@ Version 1.7.4
 - Updated documentation for :ref:`eclipse` module with new RST format
 - Updated :ref:`cModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
 - Updated :ref:`reactionWheelStateEffector` and :ref:`vscmgStateEffector` such that max speed and max torque are consistently initialized to -1.  A negative value was supposed to turn of speed and torque saturation, but this wasn't consistenly applied.
-- Updated :ref:`reactionWheelStateEffector` such that the RW state output message was not hard-coded and un-changeable.  Otherwise a BSK process could never have multiple spacecraft being simulated.  Now, the rw effector ``ModelTag`` is added to the beginning of the output message.  This auto-generate method of message output names is avoided if the user sets the vector of output names from Python during the simulation setup.  **Note:** Any prior BSK script that was logging the old auto-generated RW state messages will need to update the msg name now to work again.  See :ref:`bskKnownIssues` for more information.
+- Updated :ref:`reactionWheelStateEffector` such that the RW state output message was not hard-coded and un-changeable.  Otherwise a BSK process could never have multiple spacecraft being simulated.  Now, the rw effector ``modelTag`` is added to the beginning of the output message.  This auto-generate method of message output names is avoided if the user sets the vector of output names from Python during the simulation setup.  **Note:** Any prior BSK script that was logging the old auto-generated RW state messages will need to update the msg name now to work again.  See :ref:`bskKnownIssues` for more information.
 - Major enhancement to :ref:`vizInterface` where now multiple spacecraft can be added.  You can create a list of spacecraft where :ref:`vizInterface` relies on common naming rules to find the right messages, or specify the messages for each spacecraft directly.  This is demonstrated in :ref:`scenarioFormationBasic`.  For now multiple craft with RW actuators are supported.  Multi craft with thrusters will need to be added later.
 - New spacecraft formation flying scenario :ref:`scenarioFormationBasic` where 3 satellites are flying 10m apart in a lead-follower configuration.  Each has a different number of RWs.  This scenario is a nice script to demonstrate the new multi-spacecraft support in :ref:`vizard`.
 
@@ -1143,7 +1143,7 @@ simple and robust solution.
 
 -  added new tutorial on calling Python Spice functions within a Monte Carlo BSK simulation
 -  Added Keplerian Orbit utility class which is swig'd. This first implementation takes in elliptical orbit elements and can produce a range of related outputs like position, velocity, orbital period, etc.  This makes it easier to create Keplerian orbits within python.
--  Added a LimbFinding module for OpNav: limbFinding. This module performs a Canny transform to find the end of the planet and saves away the non-zero pixels for pose-estimation. 
+-  Added a LimbFinding module for OpNav: limbFinding. This module performs a Canny transform to find the end of the planet and saves away the non-zero pixels for pose-estimation.
 - made BSK compatible with both swig version 3 and 4
 
 .. raw:: html

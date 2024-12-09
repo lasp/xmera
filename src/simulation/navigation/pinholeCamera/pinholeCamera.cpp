@@ -50,7 +50,7 @@ PinholeCamera::~PinholeCamera()
 
 
 /*! Resets the module.*/
-void PinholeCamera::Reset(uint64_t CurrentSimNanos)
+void PinholeCamera::reset(uint64_t currentSimNanos)
 {
     /* Get number of landmarks */
     this->n = int(this->r_LP_P.size());
@@ -267,9 +267,9 @@ void PinholeCamera::writeOutputMessages(uint64_t CurrentClock)
 
 /*!
  Update module
- @param CurrentSimNanos
+ @param currentSimNanos
  */
-void PinholeCamera::UpdateState(uint64_t CurrentSimNanos)
+void PinholeCamera::updateState(uint64_t currentSimNanos)
 {
     /* Read messages */
     this->readInputMessages();
@@ -282,7 +282,7 @@ void PinholeCamera::UpdateState(uint64_t CurrentSimNanos)
     this->loopLandmarks();
 
     /* Write message */
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! Process a batch of inputs: spacecraft positions, orientation and unit-vector from planet to Sun.

@@ -41,22 +41,22 @@ public:
     SysProcess()=default;
     explicit SysProcess(std::string name); //!< class method
     ~SysProcess()=default;
-    void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1); //!< class method
-    void selfInitProcess(); //!< class method
-    void resetProcess(uint64_t currentTime); //!< class method
-    void reInitProcess(); //!< class method
-    void enableProcess() {this->processActive = true;} //!< class method
-    void disableProcess() {this->processActive = false;} //!< class method
+    void addTask(SysModelTask *newTask, int32_t taskPriority = -1); //!< class method
+    void selfInitialize(); //!< class method
+    void reset(uint64_t currentTime); //!< class method
+    void reInitialize(); //!< class method
+    void enable() {this->processActive = true;} //!< class method
+    void disable() {this->processActive = false;} //!< class method
     void scheduleTask(const ModelScheduleEntry& taskCall); //!< class method
-    void setProcessName(std::string const& newName){this->processName = newName;} //!< class method
-    std::string getProcessName() const { return this->processName;} //!< class method
+    void setName(std::string const& newName){this->processName = newName;} //!< class method
+    std::string getName() const { return this->processName;} //!< class method
 
     void singleStepNextTask(uint64_t currentNanos); //!< class method
-    bool processEnabled() const {return this->processActive;} //!< class method
+    bool isEnabled() const {return this->processActive;} //!< class method
 	void changeTaskPeriod(const std::string& taskName, uint64_t newPeriod); //!< class method
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
-    void disableAllTasks() const; //!< class method
-    void enableAllTasks() const; //!< class method
+    void disableTasks() const; //!< class method
+    void enableTasks() const; //!< class method
     bool getProcessControlStatus() const {return this->processOnThread;} //!< Allows caller to see if this process is parented by a thread
     void setProcessControlStatus(bool processTaken) {processOnThread = processTaken;} //!< Provides a mechanism to say that this process is allocated to a thread
     uint64_t getNextTaskTime() const { return(this->nextTaskTime);}

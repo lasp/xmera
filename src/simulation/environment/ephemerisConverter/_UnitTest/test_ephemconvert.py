@@ -66,7 +66,7 @@ def unitephemeris_converter(show_plots):
 
     # Initialize the spice module
     spiceObject = spiceInterface.SpiceInterface()
-    spiceObject.ModelTag = "SpiceInterfaceData"
+    spiceObject.modelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     spiceObject.addPlanetNames(spiceInterface.StringVector(planets))
     spiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
@@ -74,7 +74,7 @@ def unitephemeris_converter(show_plots):
 
     # Initialize the ephemeris module
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = 'EphemData'
+    ephemObject.modelTag = 'EphemData'
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0])  # earth
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[1])  # mars
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[2])  # sun

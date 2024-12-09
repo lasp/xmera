@@ -96,7 +96,7 @@ def run(show_plots, orbitCase, setEpoch):
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = msisAtmosphere.MsisAtmosphere()
     atmoTaskName = "atmosphere"
-    newAtmo.ModelTag = "MsisAtmo"
+    newAtmo.modelTag = "MsisAtmo"
 
     if setEpoch == "Msg":
         epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
@@ -113,7 +113,7 @@ def run(show_plots, orbitCase, setEpoch):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
@@ -234,11 +234,11 @@ def run(show_plots, orbitCase, setEpoch):
     snippentName = "unitTestPassFail" + str(orbitCase) + str(setEpoch)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + newAtmo.ModelTag)
+        print("PASSED: " + newAtmo.modelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + newAtmo.ModelTag)
+        print("Failed: " + newAtmo.modelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
         print(testMessages)
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)

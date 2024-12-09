@@ -70,7 +70,7 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
         this->dualHingedRigidBodyConfigLogOutMsgs.push_back(scMsg);
     }
 
-    this->ModelTag = "";
+    this->modelTag = "";
 
     return;
 }
@@ -92,7 +92,7 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 /*! This method is used to reset the module.
  @return void
  */
-void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos)
+void DualHingedRigidBodyStateEffector::reset(uint64_t currentSimNanos)
 {
 
     return;
@@ -391,9 +391,9 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
 
 /*! This method is used so that the simulation will ask DHRB to update messages.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void DualHingedRigidBodyStateEffector::updateState(uint64_t currentSimNanos)
 {
     //! - Zero the command buffer and read the incoming command array
     if (this->motorTorqueInMsg.isLinked()) {
@@ -406,7 +406,7 @@ void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
     /* compute panel inertial states */
     this->computePanelInertialStates();
 
-    this->writeOutputStateMessages(CurrentSimNanos);
+    this->writeOutputStateMessages(currentSimNanos);
 
     return;
 }

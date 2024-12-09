@@ -117,7 +117,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
 
     # create the rw power test module
     testModule = ReactionWheelPower.ReactionWheelPower()
-    testModule.ModelTag = "bskSat"
+    testModule.modelTag = "bskSat"
     testModule.basePowerNeed = 10.   # baseline power draw, Watts
     rwMsg = messaging.RWConfigLogMsg()
     testModule.rwStateInMsg.subscribeTo(rwMsg)
@@ -183,7 +183,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
     else:
         print(testMessages)
 

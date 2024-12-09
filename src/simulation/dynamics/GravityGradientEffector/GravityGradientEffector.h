@@ -42,14 +42,14 @@ public:
     ~GravityGradientEffector();
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     void addPlanetName(std::string planetName);
 
 
 public:
-    Message<GravityGradientMsgPayload> gravityGradientOutMsg; //!< output message containing the gravity gradient 
+    Message<GravityGradientMsgPayload> gravityGradientOutMsg; //!< output message containing the gravity gradient
     StateData *hubSigma;                            //!< Hub/Inertial attitude represented by MRP
     StateData *r_BN_N;                              //!< Hub/Inertial position vector in inertial frame components
     Eigen::MatrixXd *ISCPntB_B;                     //!< [kg m^2] current spacecraft inertia about point B, B-frame components

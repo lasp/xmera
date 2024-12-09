@@ -114,7 +114,7 @@ def filterMethods():
     accuracy = 1E-10
     # Construct algorithm and associated C++ container
     module = inertialUKF.InertialUKF()
-    module.ModelTag = "inertialUKF"
+    module.modelTag = "inertialUKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -232,7 +232,7 @@ def stateUpdateInertialAttitude(show_plots):
 
     # Construct algorithm and associated C++ container
     module = inertialUKF.InertialUKF()
-    module.ModelTag = "InertialUKF"
+    module.modelTag = "InertialUKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -381,7 +381,7 @@ def statePropInertialAttitude(show_plots):
 
     # Construct algorithm and associated C++ container
     module = inertialUKF.InertialUKF()
-    module.ModelTag = "InertialUKF"
+    module.modelTag = "InertialUKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -437,7 +437,7 @@ def statePropInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state propagation")
+        print("PASSED: " + module.modelTag + " state propagation")
     else:
         print('Failed: test_StatePropInertialAttitude')
         print(testMessages)
@@ -472,7 +472,7 @@ def stateUpdateRWInertialAttitude(show_plots):
 
     # Construct algorithm and associated C++ container
     module = inertialUKF.InertialUKF()
-    module.ModelTag = "InertialUKF"
+    module.modelTag = "InertialUKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -597,7 +597,7 @@ def stateUpdateRWInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state update with RW")
+        print("PASSED: " + module.modelTag + " state update with RW")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -630,7 +630,7 @@ def statePropRateInertialAttitude(show_plots):
 
     # Construct algorithm and associated C++ container
     module = inertialUKF.InertialUKF()
-    module.ModelTag = "InertialUKF"
+    module.modelTag = "InertialUKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -726,7 +726,7 @@ def statePropRateInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state rate propagation")
+        print("PASSED: " + module.modelTag + " state rate propagation")
     else:
         print("Failed: " + testMessages[0])
 

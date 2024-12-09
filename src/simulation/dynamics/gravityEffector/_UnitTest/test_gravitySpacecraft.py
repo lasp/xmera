@@ -72,7 +72,7 @@ def singleGravityBody(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
@@ -199,7 +199,7 @@ def multiBodyGravity(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
@@ -350,7 +350,7 @@ def polyGravityBody(show_plots):
 
     # setup celestial object ephemeris module
     polyBodyEphem = planetEphemeris.PlanetEphemeris()
-    polyBodyEphem.ModelTag = 'erosEphemeris'
+    polyBodyEphem.modelTag = 'erosEphemeris'
     polyBodyEphem.setPlanetNames(planetEphemeris.StringVector(["eros"]))
 
     # specify celestial objects orbit
@@ -372,12 +372,12 @@ def polyGravityBody(show_plots):
 
     # create an ephemeris converter
     polyBodyEphemConverter = ephemerisConverter.EphemerisConverter()
-    polyBodyEphemConverter.ModelTag = "erosEphemConverter"
+    polyBodyEphemConverter.modelTag = "erosEphemConverter"
     polyBodyEphemConverter.addSpiceInputMsg(polyBodyEphem.planetOutMsgs[0])
 
     # create spacecraft and attach polyhedral body
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraft"
+    scObject.modelTag = "spacecraft"
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # set initial conditions for spacecraft

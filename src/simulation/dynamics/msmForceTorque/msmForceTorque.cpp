@@ -45,7 +45,7 @@ MsmForceTorque::~MsmForceTorque()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
+void MsmForceTorque::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     for (long unsigned int c=0; c < this->scStateInMsgs.size(); c++ ){
@@ -142,7 +142,7 @@ void MsmForceTorque::readMessages()
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
 */
-void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
+void MsmForceTorque::updateState(uint64_t currentSimNanos)
 {
     // read the input messages
     this->readMessages();
@@ -253,13 +253,13 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
 
         // store net force and torque acting on body
         eigenVector3d2CArray(netForce_N, forceMsgBuffer.forceRequestInertial);
-        this->eForceOutMsgs.at(c)->write(&forceMsgBuffer, this->moduleID, CurrentSimNanos);
+        this->eForceOutMsgs.at(c)->write(&forceMsgBuffer, this->moduleID, currentSimNanos);
         eigenVector3d2CArray(netTorque_B, torqueMsgBuffer.torqueRequestBody);
-        this->eTorqueOutMsgs.at(c)->write(&torqueMsgBuffer, this->moduleID, CurrentSimNanos);
+        this->eTorqueOutMsgs.at(c)->write(&torqueMsgBuffer, this->moduleID, currentSimNanos);
 
         // store MSM charges to output message
         chargeMsmMsgBuffer.q = q.segment(i0, i1-i0);
-        this->chargeMsmOutMsgs.at(c)->write(&chargeMsmMsgBuffer, this->moduleID, CurrentSimNanos);
+        this->chargeMsmOutMsgs.at(c)->write(&chargeMsmMsgBuffer, this->moduleID, currentSimNanos);
 
         // set the body sphere start counter
         i0 = i1;

@@ -4,12 +4,12 @@ Creating ``DynamicObject`` Basilisk Modules
 ===========================================
 
 Basilisk modules that inherit from the class :ref:`dynamicObject` are still regular Basilisk modules
-that have the typical ``SelfInit()``, ``Reset()`` and ``UpdateState()`` methods.  However, they also contain
+that have the typical ``selfInit()``, ``reset()`` and ``updateState()`` methods.  However, they also contain
 a state engine called ``dynManager`` of the class ``DynParamManager``, as well as an integrator
 pointer called ``integrator`` of class ``StateVecIntegrator``.  :ref:`spacecraft` is an example of
 a Basilisk module that is also inheriting from the ``DynamicObject`` class.
 
-In the spacecraft ``UpdateState()`` method the ``DynamicObject::integrateState()`` method is called.
+In the spacecraft ``updateState()`` method the ``DynamicObject::integrateState()`` method is called.
 This call integrates all the registered spacecraft states, as well as all the connect state
 and dynamic effectors, to the next time step using the connected integrator type.  See
 :ref:`scenarioIntegrators` for an example how how to set the integrator on a dynamic object.
@@ -35,4 +35,3 @@ scenarios as with the spacecraft example.  See the discussion in :ref:`bskPrinci
 Basilisk modules that inherit from the ``DynamicObject`` class can be linked.  If linked,
 then the associated module ordinate differential equations (ODEs) are integrated
 simultaneously.
-

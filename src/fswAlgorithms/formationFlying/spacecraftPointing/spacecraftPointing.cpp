@@ -28,7 +28,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SpacecraftPointing::Reset(uint64_t callTime)
+void SpacecraftPointing::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->chiefPositionInMsg.isLinked()) {
@@ -75,7 +75,7 @@ void SpacecraftPointing::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SpacecraftPointing::UpdateState(uint64_t callTime)
+void SpacecraftPointing::updateState(uint64_t callTime)
 {
     NavTransMsgPayload chiefTransMsg;                   /*!< ---  Input message that consists of the position and velocity of the chief */
     NavTransMsgPayload deputyTransMsg;                  /*!< ---  Input message that consists of the position and velocity of the deputy */

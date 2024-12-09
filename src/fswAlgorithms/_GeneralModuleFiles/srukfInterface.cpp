@@ -25,9 +25,9 @@
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void SRukfInterface::Reset(uint64_t currentSimNanos)
+void SRukfInterface::reset(uint64_t currentSimNanos)
 {
-    KalmanFilter::Reset(currentSimNanos);
+    KalmanFilter::reset(currentSimNanos);
 
     this->sBar = this->unitConversion*this->unitConversion * this->covarInitial;
     this->sBar.resize(this->state.size(), this->state.size());
@@ -60,7 +60,7 @@ void SRukfInterface::Reset(uint64_t currentSimNanos)
     this->cholProcessNoise = SRukfInterface::choleskyDecomposition(this->unitConversion*this->unitConversion*
             this->processNoise);
 
-    this->customReset();
+    this->customreset();
 }
 
 /*! Perform the time update for kalman filter.

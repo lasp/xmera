@@ -80,7 +80,7 @@ evaluated for different spacecraft.
 
 Every time a spacecraft is added to the magnetic field module,
 an automated output message name is created.
-For `magModule` is "CenteredDipole_0_data" as the ModelTag string is
+For `magModule` is "CenteredDipole_0_data" as the modelTag string is
 ``CenteredDipole`` and the spacecraft number is 0.
 This output name is created in the  ``addSpacecraftToModel()`` function.
 However, if the default output name is used for the second planetary
@@ -204,7 +204,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -226,7 +226,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # create the magnetic field
     magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
-    magModule.ModelTag = "CenteredDipole"
+    magModule.modelTag = "CenteredDipole"
     magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
 
     if planetCase == 'Jupiter':
@@ -245,7 +245,7 @@ def run(show_plots, orbitCase, planetCase):
         # same spacecraft state message as the first magnetic field model.
 
         magModule2 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
-        magModule2.ModelTag = "CenteredDipole2"
+        magModule2.modelTag = "CenteredDipole2"
         magModule2.addSpacecraftToModel(scObject.scStateOutMsg)
         # set the 2nd magnetic field through custom dipole settings
         magModule2.g10 = -30926.00 / 1e9 * 0.5  # Tesla

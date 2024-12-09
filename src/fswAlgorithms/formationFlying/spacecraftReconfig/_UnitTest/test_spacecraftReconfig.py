@@ -64,7 +64,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # create new task
     # Construct algorithm and associated C++ container
     module = spacecraftReconfig.SpacecraftReconfig()
-    module.ModelTag = "spacecraftReconfig"  # update python name of test spacecraftReconfig
+    module.modelTag = "spacecraftReconfig"  # update python name of test spacecraftReconfig
     module.targetClassicOED = [0.0000, 0.0000, 0.0000, 0.0001, 0.0002, 0.0003]
     module.attControlTime = 400  # [s]
     module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
@@ -173,15 +173,15 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
         # check a vector values
         if not unitTestSupport.isArrayEqual(attOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN" + " unit test at t="
+            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN" + " unit test at t="
                                 + str(attOutput[i, 0]*macros.NANO2SEC) + "sec\n")
 
     if (not unitTestSupport.isDoubleEqualRelative(resetPeriod[0,1], trueResetPeriod, accuracy)):
         testFailCount += 1
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed " + "resetPeriod")
+        testMessages.append("FAILED: " + module.modelTag + " Module failed " + "resetPeriod")
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         print("This test uses an accuracy value of " + str(accuracy))
 
     # each test method requires a single assert method to be called

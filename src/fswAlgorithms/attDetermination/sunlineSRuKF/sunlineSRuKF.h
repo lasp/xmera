@@ -39,12 +39,12 @@ class SunlineSRuKF: public SRukfInterface {
 public:
 
 private:
-    void customReset() final;
+    void customreset() final;
     void readCssMeasurements();
     void readGyroMeasurements();
     void readFilterMeasurements() final;
     void customFinalizeUpdate() final;
-    void writeOutputMessages(uint64_t CurrentSimNanos) final;
+    void writeOutputMessages(uint64_t currentSimNanos) final;
     static FilterStateVector stateDerivative(double t, const FilterStateVector &state);
 
     int filterMeasurement = 0;   //!< [-] Number of measurements of different types being read

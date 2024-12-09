@@ -44,7 +44,7 @@ def thrustRWDesatTestFunction():
     module.maxFiring = 5 # Maximum time to fire a jet for [s]
 
     # This calls the algContain to setup the selfInit, update, and reset
-    module.ModelTag = "thrustRWDesat"
+    module.modelTag = "thrustRWDesat"
 
     # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, module)

@@ -56,7 +56,7 @@ def smallBodyNavEKFTestFunction(show_plots):
 
     # setup module to be tested
     module = smallBodyNavEKF.SmallBodyNavEKF()
-    module.ModelTag = "smallBodyNavEKFTag"
+    module.modelTag = "smallBodyNavEKFTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Set the filter parameters (sc area, mass, gravitational constants, etc.)
@@ -178,7 +178,7 @@ def smallBodyNavEKFTestFunction(show_plots):
         plt.show()
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
         print(testMessages)
 

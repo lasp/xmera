@@ -16,7 +16,7 @@ The following table lists all the class methods and their function
       - Method Function
       - Protected or Private
       - Virtual or not
-    * - UpdateState
+    * - updateState
       - Loop through measurements and update filter states according to time
       - public
       - final

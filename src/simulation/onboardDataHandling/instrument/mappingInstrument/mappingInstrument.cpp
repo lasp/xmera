@@ -35,10 +35,10 @@ MappingInstrument::~MappingInstrument()
 }
 
 /*! This method is used to reset the module. The nodeBaudRate is checked for a non-zero value.
- @param CurrentSimNanos
+ @param currentSimNanos
  @return void
  */
-void MappingInstrument::Reset(uint64_t CurrentSimNanos)
+void MappingInstrument::reset(uint64_t currentSimNanos)
 {
     // check that the baud rate is set
     if (this->nodeBaudRate < 0.0){
@@ -49,10 +49,10 @@ void MappingInstrument::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method updates the state by reading messages, calling computeDataStatus, and writing messages
- @param CurrentSimNanos
+ @param currentSimNanos
  @return void
  */
-void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
+void MappingInstrument::updateState(uint64_t currentSimNanos)
 {
     /* Loop through each access message */
     for (long unsigned int c=0; c< this->accessInMsgs.size(); c++) {
@@ -73,7 +73,7 @@ void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
         strcpy(dataNodeOutMsgBuffer.at(c).dataName, mappingPoints[c].c_str());
 
         /* Write the output message */
-        this->dataNodeOutMsgs.at(c)->write(&this->dataNodeOutMsgBuffer.at(c), this->moduleID, CurrentSimNanos);
+        this->dataNodeOutMsgs.at(c)->write(&this->dataNodeOutMsgBuffer.at(c), this->moduleID, currentSimNanos);
     }
 
     return;

@@ -51,9 +51,9 @@ LimbFinding::~LimbFinding()
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LimbFinding::Reset(uint64_t CurrentSimNanos)
+void LimbFinding::reset(uint64_t currentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
@@ -63,9 +63,9 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
 
 /*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It performs a greyscale, and blur on the image to facilitate edge-detection.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
+void LimbFinding::updateState(uint64_t currentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;
@@ -76,9 +76,9 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 
     cv::Mat imageCV, blurred, edgeImage;
     if (this->saveDir != ""){
-        dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+        dirName = this->saveDir + std::to_string(currentSimNanos*1E-9) + ".jpg";
     }
-    else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
+    else{dirName = "./"+ std::to_string(currentSimNanos*1E-9) + ".jpg";}
 
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())
@@ -90,7 +90,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
     }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
+    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
@@ -100,7 +100,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);
+        this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, currentSimNanos);
         return;}
     /*! - Greyscale the image */
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
@@ -126,7 +126,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     limbMsg.timeTag = (double) this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
 
-    this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);
+    this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, currentSimNanos);
 
     return;
 }

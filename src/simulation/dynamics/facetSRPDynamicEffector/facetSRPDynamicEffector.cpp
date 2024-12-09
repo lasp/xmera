@@ -43,7 +43,7 @@ FacetSRPDynamicEffector::~FacetSRPDynamicEffector() {
  @return void
  @param currentSimNanos  [ns] Time the method is called
 */
-void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
+void FacetSRPDynamicEffector::reset(uint64_t currentSimNanos) {
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "FacetSRPDynamicEffector.sunInMsg was not linked.");
     }

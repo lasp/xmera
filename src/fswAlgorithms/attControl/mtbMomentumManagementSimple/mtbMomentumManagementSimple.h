@@ -33,8 +33,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 class MtbMomentumManagementSimple : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* Configs.*/
     double Kp;                                  //!<[1/s]  momentum feedback gain

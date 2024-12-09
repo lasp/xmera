@@ -136,7 +136,7 @@ The temperature module is created in python using:
     :linenos:
 
     sensorThermalModel = sensorThermal.SensorThermal()
-    sensorThermalModel.ModelTag = 'sensorThermalModel'
+    sensorThermalModel.modelTag = 'sensorThermalModel'
 
 A sample setup is done using:
 

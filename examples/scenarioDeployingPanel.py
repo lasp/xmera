@@ -30,7 +30,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioDeployingPanel.py
 
-The simulation includes two deploying panels that start undeployed. The first panel deploys fully, 
+The simulation includes two deploying panels that start undeployed. The first panel deploys fully,
 but the second panel deploys off-nominally (to 80%), leading to a reduced power output.
 
 
@@ -120,7 +120,7 @@ def run(show_plots):
 
     # create the spacecraft hub
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
     scObject.hub.mHub = 750.0
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
@@ -160,24 +160,24 @@ def run(show_plots):
 
     # configure panels
     panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    panel1.ModelTag = "panel1"
+    panel1.modelTag = "panel1"
     panel1.mass = 100.0
     panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    panel1.d = 1.5  
+    panel1.d = 1.5
     panel1.k = 200.
-    panel1.c = 20.  
+    panel1.c = 20.
     panel1.r_HB_B = [[-.5], [0.0], [-1.0]]
     panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     panel1.thetaInit = -np.pi
     panel1.thetaDotInit = 0
 
     panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    panel2.ModelTag = "panel2"
+    panel2.modelTag = "panel2"
     panel2.mass = 100.0
     panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    panel2.d = 1.5  
+    panel2.d = 1.5
     panel2.k = 200.
-    panel2.c = 20.  
+    panel2.c = 20.
     panel2.r_HB_B = [[.5], [0.0], [-1.0]]
     panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     panel2.thetaInit = -np.pi
@@ -185,14 +185,14 @@ def run(show_plots):
 
     # profilers
     profiler1 = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
-    profiler1.ModelTag = "deploymentProfiler"
+    profiler1.modelTag = "deploymentProfiler"
     profiler1.startTime = macros.sec2nano(5)  # [ns] start the deployment
     profiler1.endTime = macros.sec2nano(85)  # [ns]
     profiler1.startTheta = -np.pi  # [rad] starting angle in radians
     profiler1.endTheta = -np.pi / 2  # [rad]
 
     profiler2 = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
-    profiler2.ModelTag = "deploymentProfiler2"
+    profiler2.modelTag = "deploymentProfiler2"
     profiler2.startTime = macros.sec2nano(100)  # [ns] start the deployment
     profiler2.endTime = macros.sec2nano(164)  # [ns]
     profiler2.startTheta = -np.pi  # [rad] starting angle in radians
@@ -203,12 +203,12 @@ def run(show_plots):
 
     # motors
     motor1 = hingedRigidBodyMotor.HingedRigidBodyMotor()
-    motor1.ModelTag = "hingedRigidBodyMotor"
+    motor1.modelTag = "hingedRigidBodyMotor"
     motor1.K = 20  # proportional gain constant
     motor1.P = 10  # derivative gain constant
 
     motor2 = hingedRigidBodyMotor.HingedRigidBodyMotor()
-    motor2.ModelTag = "hingedRigidBodyMotor2"
+    motor2.modelTag = "hingedRigidBodyMotor2"
     motor2.K = 20  # proportional gain constant
     motor2.P = 10  # derivative gain constant
 
@@ -227,16 +227,16 @@ def run(show_plots):
     # power
 
     solarPanel1 = simpleSolarPanel.SimpleSolarPanel()
-    solarPanel1.ModelTag = "pwr1"
-    solarPanel1.nHat_B = [0, 0, 1]  
+    solarPanel1.modelTag = "pwr1"
+    solarPanel1.nHat_B = [0, 0, 1]
     solarPanel1.panelArea = 2.0  # m^2
     solarPanel1.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel1.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)
     solarPanel1.sunInMsg.subscribeTo(spiceObject.planetStateOutMsgs[sun])
 
     solarPanel2 = simpleSolarPanel.SimpleSolarPanel()
-    solarPanel2.ModelTag = "pwr2"
-    solarPanel2.nHat_B = [0, 0, 1] 
+    solarPanel2.modelTag = "pwr2"
+    solarPanel2.nHat_B = [0, 0, 1]
     solarPanel2.panelArea = 2.0  # m^2
     solarPanel2.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel2.stateInMsg.subscribeTo(panel2.hingedRigidBodyConfigLogOutMsg)
@@ -282,19 +282,19 @@ def run(show_plots):
     if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName,
                                                   [scObject
-                                                      , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
-                                                      , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
+                                                      , [panel1.modelTag, panel1.hingedRigidBodyConfigLogOutMsg]
+                                                      , [panel2.modelTag, panel2.hingedRigidBodyConfigLogOutMsg]
                                                    ]
                                                   # , saveFile=__file__
                                                   )
 
         vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[panel1.ModelTag]
+                                     , simBodiesToModify=[panel1.modelTag]
                                      , modelPath="CUBE"
                                      , scale=[3, 1, 0.1]
                                      , color=vizSupport.toRGBA255("blue"))
         vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[panel2.ModelTag]
+                                     , simBodiesToModify=[panel2.modelTag]
                                      , modelPath="CUBE"
                                      , scale=[3, 1, 0.1]
                                      , color=vizSupport.toRGBA255("blue"))
@@ -316,9 +316,9 @@ def run(show_plots):
 
     np.set_printoptions(precision=16)
 
-    figureList = plotOrbits(dataLog.times(), dataSigmaBN, dataOmegaBN_B, 
+    figureList = plotOrbits(dataLog.times(), dataSigmaBN, dataOmegaBN_B,
                             panel1thetaLog, panel1thetaDotLog,
-                            panel2thetaLog, panel2thetaDotLog, 
+                            panel2thetaLog, panel2thetaDotLog,
                             pwrLog1, pwrLog2)
 
     if show_plots:

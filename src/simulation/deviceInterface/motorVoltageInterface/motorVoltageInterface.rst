@@ -67,7 +67,7 @@ The interface module is created in python using:
     :linenos:
 
     testModule = motorVoltageInterface.MotorVoltageInterface()
-    testModule.ModelTag = "motorVoltageInterface"
+    testModule.modelTag = "motorVoltageInterface"
 
 If you have :math:`N` motors being modeled, the module parameters are set as `N`-dimensional lists of values.  The only parameter that must be set is the voltage to torque conversion gain :math:`\gamma` called ``voltage2TorqueGain``.  The scale factor :math:`SF` is called ``scaleFactor`` and defaults to 1.  The bias :math:`b_i` is called ``bias`` and defaults to zero.
 

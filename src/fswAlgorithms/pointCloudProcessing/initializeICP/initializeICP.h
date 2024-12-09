@@ -40,9 +40,9 @@ class InitializeICP: public SysModel {
 public:
     InitializeICP();
     ~InitializeICP();
-    
-    void UpdateState(uint64_t CurrentSimNanos) override;
-    void Reset(uint64_t CurrentSimNanos) override;
+
+    void updateState(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
 
     ReadFunctor<SICPMsgPayload> inputSICPData;  //!< The output algorithm data
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg; //!< ephemeris input message
@@ -58,8 +58,8 @@ public:
 
 private:
     void normalizePointCloud();
-    void setInitialConditions(uint64_t CurrentSimNanos);
-    void writeOutputMessages(uint64_t CurrentSimNanos);
+    void setInitialConditions(uint64_t currentSimNanos);
+    void writeOutputMessages(uint64_t currentSimNanos);
 
     PointCloudMsgPayload normalizedCloudBuffer;
     SICPMsgPayload outputIcpBuffer;

@@ -58,10 +58,10 @@ GroundLocation::~GroundLocation()
 }
 
 /*! Resets the internal position to the specified initial position.*/
-void GroundLocation::Reset(uint64_t CurrentSimNanos)
+void GroundLocation::reset(uint64_t currentSimNanos)
 {
     this->r_LP_P = this->r_LP_P_Init;
-    
+
     if (this->planetRadius < 0) {
         bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have planetRadius set.");
     }
@@ -200,14 +200,14 @@ void GroundLocation::computeAccess()
         double cos_az = -r_BL_L[0]/(sqrt(pow(r_BL_L[0],2) + pow(r_BL_L[1],2)));
         double sin_az = r_BL_L[1]/(sqrt(pow(r_BL_L[0],2) + pow(r_BL_L[1],2)));
         accessMsgIt->azimuth = atan2(sin_az, cos_az);
-        
+
         Eigen::Vector3d v_BL_L = this->dcm_LP * this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
         eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
         double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
         accessMsgIt->az_dot = (-r_BL_L[0]*v_BL_L[1] + r_BL_L[1]*v_BL_L[0])/pow(xy_norm,2);
         accessMsgIt->el_dot = (v_BL_L[2]/xy_norm - r_BL_L[2]*(r_BL_L[0]*v_BL_L[0] + r_BL_L[1]*v_BL_L[1])/pow(xy_norm,3))/(1+pow(r_BL_L[2]/xy_norm,2));
-        
+
         if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)){
             accessMsgIt->hasAccess = 1;
         }
@@ -219,13 +219,13 @@ void GroundLocation::computeAccess()
 }
 
 /*!
- update module 
- @param CurrentSimNanos
+ update module
+ @param currentSimNanos
  */
-void GroundLocation::UpdateState(uint64_t CurrentSimNanos)
+void GroundLocation::updateState(uint64_t currentSimNanos)
 {
     this->ReadMessages();
     this->computeAccess();
-    this->WriteMessages(CurrentSimNanos);
+    this->WriteMessages(currentSimNanos);
 
 }

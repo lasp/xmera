@@ -54,8 +54,8 @@ public:
     void unlockThread();
     void lockParent();
     void unlockParent();
-    void StepUntilStop();  //!< Step simulation until stop time reached
-    void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next task in the simulation
+    void stepUntilStop();  //!< Step simulation until stop time reached
+    void singleStepProcesses(int64_t stopPri=-1); //!< Step only the next task in the simulation
     void moveProcessMessages() const;
     uint64_t getCurrentNanos() const;
     void setCurrentNanos(uint64_t currentNanos);
@@ -95,11 +95,11 @@ public:
 
     void selfInitSimulation();  //!< Method to initialize all added Tasks
     void resetInitSimulation() const;  //!< Method to reset all added tasks
-    void StepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
-    void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
+    void stepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
+    void singleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void addNewProcess(SysProcess *newProc);
     void addProcessToThread(SysProcess *newProc, uint64_t threadSel);
-    void ResetSimulation();  //!< Reset simulation back to zero
+    void resetSimulation();  //!< Reset simulation back to zero
     void clearProcsFromThreads() const;
     void resetThreads(uint64_t threadCount);
     void deleteThreads();

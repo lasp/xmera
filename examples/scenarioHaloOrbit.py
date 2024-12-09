@@ -104,7 +104,7 @@ def run(showPlots=True):
 
     # Setup the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "HaloSat"
+    scObject.modelTag = "HaloSat"
 
     # Add spacecraft object to the simulation process
     # Make this model a lower priority than the SPICE object task
@@ -316,5 +316,3 @@ if __name__ == "__main__":
     run(
         True    # Show plots
     )
-
-

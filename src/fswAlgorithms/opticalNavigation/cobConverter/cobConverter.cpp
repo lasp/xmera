@@ -38,9 +38,9 @@ CobConverter::~CobConverter() = default;
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
  * between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CobConverter::Reset(uint64_t CurrentSimNanos)
+void CobConverter::reset(uint64_t currentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->opnavCOBInMsg.isLinked()) {
@@ -63,9 +63,9 @@ void CobConverter::Reset(uint64_t CurrentSimNanos)
 /*! During an update, this module transforms pixel values for the center of brightness into a unit vector
  * direction in several frames (inertial, Camera, and Body).
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CobConverter::UpdateState(uint64_t CurrentSimNanos)
+void CobConverter::updateState(uint64_t currentSimNanos)
 {
     CameraConfigMsgPayload cameraSpecs = this->cameraConfigInMsg();
     OpNavCOBMsgPayload cobMsgBuffer = this->opnavCOBInMsg();
@@ -239,9 +239,9 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
         comMsgBuffer.valid = validCOM;
     }
 
-    this->opnavUnitVecCOBOutMsg.write(&uVecCOBMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->opnavUnitVecCOMOutMsg.write(&uVecCOMMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->opnavCOMOutMsg.write(&comMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->opnavUnitVecCOBOutMsg.write(&uVecCOBMsgBuffer, this->moduleID, currentSimNanos);
+    this->opnavUnitVecCOMOutMsg.write(&uVecCOMMsgBuffer, this->moduleID, currentSimNanos);
+    this->opnavCOMOutMsg.write(&comMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Compute the total COB covariance matrix in pixel units (given unit vector covariances)

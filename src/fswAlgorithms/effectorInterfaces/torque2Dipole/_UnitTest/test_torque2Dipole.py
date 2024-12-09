@@ -77,7 +77,7 @@ def torque2DipoleModuleTestFunction():
 
     # Initialize module under test's config message and add module to runtime call list
     module = torque2Dipole.Torque2Dipole()
-    module.ModelTag = "mtbMomentumManagement"           # update python name of test module
+    module.modelTag = "mtbMomentumManagement"           # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize TAMSensorBodyMsg

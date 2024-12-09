@@ -52,7 +52,7 @@ User Guide
 The required module configuration is::
 
     scheduler = torqueScheduler.TorqueScheduler()
-    scheduler.ModelTag = "torqueScheduler"
+    scheduler.modelTag = "torqueScheduler"
     scheduler.lockFlag = lockFlag
     scheduler.tSwitch = tSwitch
     unitTestSim.AddModelToTask(unitTaskName, scheduler)

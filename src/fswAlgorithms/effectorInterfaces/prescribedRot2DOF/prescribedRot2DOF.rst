@@ -27,9 +27,9 @@ The corresponding angle the prescribed body moves through during the rotation is
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -169,7 +169,7 @@ This section is to outline the steps needed to setup a prescribed 2 DOF rotation
 #. Create an instantiation of a prescribed rotational 2 DOF C module and the associated C++ container::
 
     PrescribedRot2DOF = prescribedRot2DOF.prescribedRot2DOF()
-    PrescribedRot2DOF.ModelTag = "PrescribedRot2DOF"
+    PrescribedRot2DOF.modelTag = "PrescribedRot2DOF"
 
 #. Define all of the configuration data associated with the module. For example::
 
@@ -189,4 +189,3 @@ The user is required to set the above configuration data parameters, as they are
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, PrescribedRot2DOF)
-

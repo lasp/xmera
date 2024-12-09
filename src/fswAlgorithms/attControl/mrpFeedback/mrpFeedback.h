@@ -35,8 +35,8 @@
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 class MrpFeedback : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     double K;                           //!< [rad/sec] Proportional gain applied to MRP errors
     double P;                           //!< [N*m*s]   Rate error feedback gain applied

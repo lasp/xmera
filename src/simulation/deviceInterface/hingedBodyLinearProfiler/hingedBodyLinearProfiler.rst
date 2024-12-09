@@ -37,7 +37,7 @@ The interface module is created in python using:
     :linenos:
 
     testModule = hingedBodyLinearProfiler.HingedBodyLinearProfiler()
-    testModule.ModelTag = "deploymentProfiler"
+    testModule.modelTag = "deploymentProfiler"
 
 The deployment is defined by four parameters, the starting and ending times and angles. An error will occur if the delta between start and end time is not positive.
 
@@ -53,4 +53,3 @@ A sample setup is done using:
     testModule.endTime = macros.sec2nano(330) # [ns] continue deploying for 300 seconds
     testModule.startTheta = 0 # [rad] starting angle in radians
     testModule.endTheta = 10*pi/180 # [rad] ending angle is 10 degrees in the positive direction as defined by hinged rigid body frame
-

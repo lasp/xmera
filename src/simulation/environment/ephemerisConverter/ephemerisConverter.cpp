@@ -35,7 +35,7 @@ EphemerisConverter::~EphemerisConverter()
 /*! Reset the module to origina configuration values.
  @return void
  */
-void EphemerisConverter::Reset(uint64_t CurrenSimNanos)
+void EphemerisConverter::reset(uint64_t CurrenSimNanos)
 {
     // check if the spiceInMsgs is empty or not
     if (this->spiceInMsgs.size() == 0) {
@@ -111,23 +111,23 @@ void EphemerisConverter::readInputMessages()
 
 /*!
     write output message
-    @param CurrentSimNanos time in nano-seconds
+    @param currentSimNanos time in nano-seconds
  */
-void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
+void EphemerisConverter::writeOutputMessages(uint64_t currentSimNanos)
 {
     for (long unsigned int c=0; c < this->ephemOutMsgs.size(); c++) {
-        this->ephemOutMsgs.at(c)->write(&this->ephemOutBuffers.at(c), this->moduleID, CurrentSimNanos);
+        this->ephemOutMsgs.at(c)->write(&this->ephemOutBuffers.at(c), this->moduleID, currentSimNanos);
     }
 }
 
 
 /*!
     update module states
-    @param CurrentSimNanos time in nano-seconds
+    @param currentSimNanos time in nano-seconds
  */
-void EphemerisConverter::UpdateState(uint64_t CurrentSimNanos)
+void EphemerisConverter::updateState(uint64_t currentSimNanos)
 {
     readInputMessages();
-    convertEphemData(CurrentSimNanos);
-    writeOutputMessages(CurrentSimNanos);
+    convertEphemData(currentSimNanos);
+    writeOutputMessages(currentSimNanos);
 }

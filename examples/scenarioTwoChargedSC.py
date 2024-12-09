@@ -115,11 +115,11 @@ def run(show_plots):
 
     # initialize leader spacecraft object and set properties
     scObjectLeader = spacecraft.Spacecraft()
-    scObjectLeader.ModelTag = "Leader"
+    scObjectLeader.modelTag = "Leader"
 
     # initialize follower spacecraft object and set properties
     scObjectFollower = spacecraft.Spacecraft()
-    scObjectFollower.ModelTag = "Follower"
+    scObjectFollower.modelTag = "Follower"
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(dynTaskName, scObjectLeader)
@@ -139,7 +139,7 @@ def run(show_plots):
 
     # setup MSM module
     MSMmodule = msmForceTorque.MsmForceTorque()
-    MSMmodule.ModelTag = "msmForceTorqueTag"
+    MSMmodule.modelTag = "msmForceTorqueTag"
     scSim.AddModelToTask(dynTaskName, MSMmodule)
 
     # define electric potentials
@@ -174,8 +174,8 @@ def run(show_plots):
     rListLeader = radii  # radius of each sphere in the leader spacecraft
     spPosListFollower_H = spherelocation  # The location of each sphere for the follower spacecraft
     rListFollower = radii  # radius of each sphere in the follower spacecraft
-            
-            
+
+
 #    If you would like to simulate each spacecraft by a single sphere, uncomment this section (line186 - line189) of
     #    code and comment out the previous section lines (162-181)
 #     create a list of sphere body-fixed locations and associated radii using one sphere for each spacecraft
@@ -197,7 +197,7 @@ def run(show_plots):
     # setup extForceTorque module for Leader
     # the electrostatic force from the MSM module is read in through the messaging system
     extFTObjectLeader = extForceTorque.ExtForceTorque()
-    extFTObjectLeader.ModelTag = "eForceLeader"
+    extFTObjectLeader.modelTag = "eForceLeader"
     extFTObjectLeader.cmdForceInertialInMsg.subscribeTo(MSMmodule.eForceOutMsgs[0])
     scObjectLeader.addDynamicEffector(extFTObjectLeader)
     scSim.AddModelToTask(dynTaskName, extFTObjectLeader)
@@ -205,7 +205,7 @@ def run(show_plots):
     # setup extForceTorque module for Follower
     # the electrostatic force from the MSM module is read in through the messaging system
     extFTObjectFollower = extForceTorque.ExtForceTorque()
-    extFTObjectFollower.ModelTag = "eForceDebris"
+    extFTObjectFollower.modelTag = "eForceDebris"
     extFTObjectFollower.cmdForceInertialInMsg.subscribeTo(MSMmodule.eForceOutMsgs[1])
     scObjectFollower.addDynamicEffector(extFTObjectFollower)
     scSim.AddModelToTask(dynTaskName, extFTObjectFollower)
@@ -242,7 +242,7 @@ def run(show_plots):
     samplingTime = simulationTime // (numDataPoints - 1)
     dataRecL = scObjectLeader.scStateOutMsg.recorder()
     dataRecF = scObjectFollower.scStateOutMsg.recorder()
-    
+
     # Add recorders to the Task
     scSim.AddModelToTask(dynTaskName, dataRecL)
     scSim.AddModelToTask(dynTaskName, dataRecF)
@@ -276,7 +276,7 @@ def run(show_plots):
 
     attDataL_N = dataRecL.sigma_BN
     attDataF_N = dataRecF.sigma_BN
-    
+
     # Calculate relative position vector and magnitude in the inertial frame
     relPosData_N = posDataL_N[:, 0:3] - posDataF_N[:, 0:3]
     relPosMagn = np.linalg.norm(relPosData_N, axis=1)
@@ -317,7 +317,7 @@ def run(show_plots):
     plt.close("all")
 
     return figureList
-    
+
 
 def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attDataF_N, P, spPosListLeader_H, rListLeader,
                LeaderSpCharges, spPosListFollower_H, rListFollower, FollowerSpCharges, relXPosData_H, relYPosData_H,

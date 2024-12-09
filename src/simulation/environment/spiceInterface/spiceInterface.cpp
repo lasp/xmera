@@ -90,7 +90,7 @@ void SpiceInterface::clearKeeper()
 /*! Reset the module to origina configuration values.
  @return void
  */
-void SpiceInterface::Reset(uint64_t CurrenSimNanos)
+void SpiceInterface::reset(uint64_t CurrenSimNanos)
 {
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
@@ -149,7 +149,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     delete [] name;
 
     // - Call Update state so that the spice bodies are inputted into the messaging system on reset
-    this->UpdateState(CurrenSimNanos);
+    this->updateState(CurrenSimNanos);
 }
 
 
@@ -258,12 +258,12 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
  the SPICE interface at runtime.  It calls all of the necessary lower level
  methods.
  @return void
- @param CurrentSimNanos The current clock time for the simulation
+ @param currentSimNanos The current clock time for the simulation
  */
-void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
+void SpiceInterface::updateState(uint64_t currentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
-    this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
+    this->J2000Current = this->J2000ETInit + currentSimNanos*NANO2SEC;
 
     //! - Compute the current Julian Date string and cast it over to the double
     et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>
@@ -274,7 +274,7 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     this->computeGPSData();
     this->pullSpiceData(&this->planetData);
     this->pullSpiceData(&this->scData);
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! take a vector of planet name strings and create the vector of

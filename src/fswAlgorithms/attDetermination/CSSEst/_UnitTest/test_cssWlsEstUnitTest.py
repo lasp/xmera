@@ -172,7 +172,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     CSSWlsEstFSW = cssWlsEst.CssWlsEst()
-    CSSWlsEstFSW.ModelTag = "CSSWlsEst"
+    CSSWlsEstFSW.modelTag = "CSSWlsEst"
 
     # Add module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, CSSWlsEstFSW)
@@ -235,7 +235,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Initialize test and then step through all of the test vectors in a loop
     unitTestSim.InitializeSimulation()
-    CSSWlsEstFSW.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    CSSWlsEstFSW.reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
     stepCount = 0
     logLengthPrev = 0
@@ -369,7 +369,7 @@ def cssWlsEstTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(sHatEstZeroUse[i], trueVector[i], 3, 1e-12):
             testFailCount += 1
-            testMessages.append("FAILED: " + CSSWlsEstFSW.ModelTag + " Module failed  unit test at t=" +
+            testMessages.append("FAILED: " + CSSWlsEstFSW.modelTag + " Module failed  unit test at t=" +
                                 str(navData.times()[i] * macros.NANO2SEC) + "sec\n")
 
 
@@ -410,7 +410,7 @@ def cssWlsEstTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + CSSWlsEstFSW.ModelTag)
+        print("PASSED: " + CSSWlsEstFSW.modelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -433,7 +433,7 @@ def cssRateTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     module = cssWlsEst.CssWlsEst()
-    module.ModelTag = "CSSWlsEst"
+    module.modelTag = "CSSWlsEst"
 
     # Add module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -493,7 +493,7 @@ def cssRateTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
 
     # test the module reset function
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(1)     # this module reset function needs a time input (in NanoSeconds)
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))
     unitTestSim.ExecuteSimulation()
     cssDataMsg.CosValue = createCosList([1.0, 0.0, 0.0], CSSOrientationList)
@@ -519,11 +519,11 @@ def cssRateTestFunction(show_plots):
     snippentName = "passFailRate"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

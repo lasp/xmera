@@ -141,7 +141,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #   Single CSS Setup
     #   Sets up a single CSS with inputs from the pytest parameterization
     singleCss = coarseSunSensor.CoarseSunSensor()
-    singleCss.ModelTag = "singleCss"
+    singleCss.modelTag = "singleCss"
     setupCSS(singleCss)
     unitTestSim.AddModelToTask(testTaskName, singleCss)
 
@@ -150,28 +150,28 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #   Sets up two identical constellations (P1 and P2) but uses different methods to establish nHat_B for the sensors.
     if useConstellation:
         cssP11 = coarseSunSensor.CoarseSunSensor()
-        cssP11.ModelTag = "cssP11"
+        cssP11.modelTag = "cssP11"
         setupCSS(cssP11)
         cssP12 = coarseSunSensor.CoarseSunSensor()
-        cssP12.ModelTag = "cssP12"
+        cssP12.modelTag = "cssP12"
         setupCSS(cssP12)
         cssP13 = coarseSunSensor.CoarseSunSensor()
-        cssP13.ModelTag = "cssP13"
+        cssP13.modelTag = "cssP13"
         setupCSS(cssP13)
         cssP14 = coarseSunSensor.CoarseSunSensor()
-        cssP14.ModelTag = "cssP14"
+        cssP14.modelTag = "cssP14"
         setupCSS(cssP14)
         cssP21 = coarseSunSensor.CoarseSunSensor()
-        cssP21.ModelTag = "cssP21"
+        cssP21.modelTag = "cssP21"
         setupCSS(cssP21)
         cssP22 = coarseSunSensor.CoarseSunSensor()
-        cssP22.ModelTag = "cssP22"
+        cssP22.modelTag = "cssP22"
         setupCSS(cssP22)
         cssP23 = coarseSunSensor.CoarseSunSensor()
-        cssP23.ModelTag = "cssP23"
+        cssP23.modelTag = "cssP23"
         setupCSS(cssP23)
         cssP24 = coarseSunSensor.CoarseSunSensor()
-        cssP24.ModelTag = "cssP24"
+        cssP24.modelTag = "cssP24"
         setupCSS(cssP24)
 
         # all sensors on a 45 degree, four sided pyramid mount
@@ -204,14 +204,14 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
                                cssP14]  # P1 is second platform, numbers following P2 are sensor numbers
 
         constellationP1 = coarseSunSensor.CSSConstellation()
-        constellationP1.ModelTag = "constellationP1"
+        constellationP1.modelTag = "constellationP1"
         for item in constellationP1List:
             constellationP1.appendCSS(item)
         unitTestSim.AddModelToTask(testTaskName, constellationP1)
 
         constellationP2List = [cssP21, cssP22, cssP23, cssP24]  # P2 is second platform, numbers following P2 are sensor numbers
         constellationP2 = coarseSunSensor.CSSConstellation()
-        constellationP2.ModelTag = "constellationP2"
+        constellationP2.modelTag = "constellationP2"
         for item in constellationP2List:
             constellationP2.appendCSS(item)
         unitTestSim.AddModelToTask(testTaskName, constellationP2)
@@ -254,7 +254,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     for i in range(len(sigmas)):
         satelliteStateMsg.sigma_BN = [0.0, 0.0, sigmas[i]]
         scMsg.write(satelliteStateMsg, unitTestSim.TotalSim.getCurrentNanos() + testTaskRate)
-        unitTestSim.TotalSim.SingleStepProcesses()
+        unitTestSim.TotalSim.singleStepProcesses()
 
     #
     #   Constellation Outputs and plots

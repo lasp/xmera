@@ -33,7 +33,7 @@ static int CompareTime(const void * n1, const void * n2);
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SpacecraftReconfig::Reset(uint64_t callTime)
+void SpacecraftReconfig::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->chiefTransInMsg.isLinked()) {
@@ -65,7 +65,7 @@ void SpacecraftReconfig::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SpacecraftReconfig::UpdateState(uint64_t callTime)
+void SpacecraftReconfig::updateState(uint64_t callTime)
 {
     // in
     NavTransMsgPayload chiefTransMsgBuffer;
@@ -251,7 +251,7 @@ void SpacecraftReconfig::UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
 
     // at the end of one orbital period, reset this module
     if(this->tCurrent > this->resetPeriod){
-        this->Reset(callTime);
+        this->reset(callTime);
     }
 
     return;

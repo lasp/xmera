@@ -26,9 +26,9 @@ CenterOfBrightness::~CenterOfBrightness() = default;
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
  * between function calls are reset to their default values.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CenterOfBrightness::Reset(uint64_t CurrentSimNanos)
+void CenterOfBrightness::reset(uint64_t currentSimNanos)
 {
     if (!this->imageInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "CenterOfBrightness.imageInMsg wasn't connected.");
@@ -40,9 +40,9 @@ void CenterOfBrightness::Reset(uint64_t CurrentSimNanos)
  * total detected intensity. This provides the center of brightness measurement (as well as the total number of
  * bright pixels)
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
+void CenterOfBrightness::updateState(uint64_t currentSimNanos)
 {
     CameraImageMsgPayload imageBuffer = this->imageInMsg.zeroMsgPayload;
 
@@ -61,21 +61,21 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
     if (!this->filename.empty()){
         imageCV = cv::imread(this->filename, cv::IMREAD_COLOR);
     }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
+    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
     }
     else{
         /*! - If no image is present, write zeros in message */
-        this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
+        this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
         return;
     }
 
     std::string dirName;
     /*! - Save image to prescribed path if requested */
     if (this->saveImages) {
-        dirName = this->saveDir + std::to_string((double) CurrentSimNanos * NANO2SEC) + ".png";
+        dirName = this->saveDir + std::to_string((double) currentSimNanos * NANO2SEC) + ".png";
         if (!cv::imwrite(dirName, imageCV)) {
             bskLogger.bskLog(BSK_WARNING, "CenterOfBrightness: wasn't able to save images.");
         }
@@ -117,7 +117,7 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
         cobBuffer.rollingAverageBrightness = averageBrightnessNew;
     }
 
-    this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
+    this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
 
 }
 

@@ -33,7 +33,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MrpRotation::Reset(uint64_t callTime)
+void MrpRotation::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->attRefInMsg.isLinked()) {
@@ -52,7 +52,7 @@ void MrpRotation::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MrpRotation::UpdateState(uint64_t callTime)
+void MrpRotation::updateState(uint64_t callTime)
 {
     /* - Read input messages */
     AttRefMsgPayload inputRef;                                /* [-] read in the [R_0N] input reference message */

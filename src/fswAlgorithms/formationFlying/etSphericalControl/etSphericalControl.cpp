@@ -41,7 +41,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void EtSphericalControl::Reset(uint64_t callTime)
+void EtSphericalControl::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->servicerTransInMsg.isLinked()) {
@@ -97,7 +97,7 @@ void EtSphericalControl::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void EtSphericalControl::UpdateState(uint64_t callTime)
+void EtSphericalControl::updateState(uint64_t callTime)
 {
     // in
     NavTransMsgPayload servicerTransInMsgBuffer;

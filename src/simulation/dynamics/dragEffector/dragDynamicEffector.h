@@ -47,8 +47,8 @@ class DragDynamicEffector: public SysModel, public DynamicEffector {
 public:
     void linkInStates(DynParamManager& states) override;
     void computeForceTorque(double integTime, double timeStep) override;
-    void Reset(uint64_t currentSimNanos) override;
-    void UpdateState(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
     void readMessages();
     void cannonballDrag();
     void updateDragDir();

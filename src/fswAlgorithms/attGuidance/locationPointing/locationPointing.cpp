@@ -30,7 +30,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void LocationPointing::Reset(uint64_t callTime)
+void LocationPointing::reset(uint64_t callTime)
 {
 
     // check if the required message has not been connected
@@ -80,7 +80,7 @@ void LocationPointing::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void LocationPointing::UpdateState(uint64_t callTime)
+void LocationPointing::updateState(uint64_t callTime)
 {
     /* Local copies*/
     NavAttMsgPayload scAttInMsgBuffer;  //!< local copy of input message buffer

@@ -143,7 +143,7 @@ def run(show_plots, useAltBodyFrame):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
@@ -185,7 +185,7 @@ def run(show_plots, useAltBodyFrame):
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
@@ -195,7 +195,7 @@ def run(show_plots, useAltBodyFrame):
 
     # setup hillPoint guidance module
     attGuidance = hillPoint.HillPoint()
-    attGuidance.ModelTag = "hillPoint"
+    attGuidance.modelTag = "hillPoint"
     attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     # if you want to connect attGuidance.celBodyInMsg, then you need a planet ephemeris message of
     # type EphemerisMsgPayload.  In this simulation the input message is not connected to create an empty planet
@@ -205,7 +205,7 @@ def run(show_plots, useAltBodyFrame):
     # connect torque command to external torque effector
     if useAltBodyFrame:
         attRefCor = attRefCorrection.AttRefCorrection()
-        attRefCor.ModelTag = "attRefCor"
+        attRefCor.modelTag = "attRefCor"
         scSim.AddModelToTask(simTaskName, attRefCor)
         attRefCor.sigma_BcB = [0.0, 0.0, math.tan(math.pi/8)]
         attRefCor.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)

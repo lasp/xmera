@@ -31,7 +31,7 @@ PlanetHeading::PlanetHeading()
 /*! This method reads messages, calculates the planet heading, and writes out the heading message
  @return void
  */
-void PlanetHeading::UpdateState(uint64_t CurrentSimNanos)
+void PlanetHeading::updateState(uint64_t currentSimNanos)
 {
     this->readMessages();
 
@@ -40,7 +40,7 @@ void PlanetHeading::UpdateState(uint64_t CurrentSimNanos)
     /*! - normalize and convert to body frame */
     this->rHat_PB_B = (this->sigma_BN.toRotationMatrix().transpose() * r_PB_N).normalized();
 
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 }
 
 /*! Read input messages and save data to member variables
@@ -62,19 +62,19 @@ void PlanetHeading::readMessages() {
 /*! This method is used to write out the planet heading message
  @return void
  */
-void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
+void PlanetHeading::writeMessages(uint64_t currentSimNanos) {
     BodyHeadingMsgPayload planetHeadingOutMsgData;
     planetHeadingOutMsgData = this->planetHeadingOutMsg.zeroMsgPayload;
     eigenVector3d2CArray(this->rHat_PB_B, planetHeadingOutMsgData.rHat_XB_B);
 
     /*! - write the output message */
-    this->planetHeadingOutMsg.write(&planetHeadingOutMsgData, this->moduleID, CurrentSimNanos);
+    this->planetHeadingOutMsg.write(&planetHeadingOutMsgData, this->moduleID, currentSimNanos);
 }
 
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void
  */
-void PlanetHeading::Reset(uint64_t CurrentSimNanos)
+void PlanetHeading::reset(uint64_t currentSimNanos)
 {
 
     // check if input message has not been included

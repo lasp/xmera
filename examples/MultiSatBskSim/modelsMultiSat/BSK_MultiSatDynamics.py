@@ -87,7 +87,7 @@ class BSKDynamicModels:
         """
         Defines the spacecraft object properties.
         """
-        self.scObject.ModelTag = "sat-" + str(self.spacecraftIndex)
+        self.scObject.modelTag = "sat-" + str(self.spacecraftIndex)
         self.I_sc = [900., 0., 0.,
                      0., 800., 0.,
                      0., 0., 600.]
@@ -118,14 +118,14 @@ class BSKDynamicModels:
         """
         Defines the navigation module.
         """
-        self.simpleNavObject.ModelTag = "SimpleNavigation" + str(self.spacecraftIndex)
+        self.simpleNavObject.modelTag = "SimpleNavigation" + str(self.spacecraftIndex)
         self.simpleNavObject.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
 
     def SetSimpleMassPropsObject(self):
         """
         Defines the navigation module.
         """
-        self.simpleMassPropsObject.ModelTag = "SimpleMassProperties" + str(self.spacecraftIndex)
+        self.simpleMassPropsObject.modelTag = "SimpleMassProperties" + str(self.spacecraftIndex)
         self.simpleMassPropsObject.scMassPropsInMsg.subscribeTo(self.scObject.scMassOutMsg)
 
     def SetReactionWheelDynEffector(self):
@@ -183,7 +183,7 @@ class BSKDynamicModels:
         self.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
         self.tankModel.radiusTankInit = 1
         self.tankModel.lengthTank = 1
-        
+
         # Add the tank and connect the thrusters
         self.scObject.addStateEffector(self.fuelTankStateEffector)
         self.fuelTankStateEffector.addThrusterSet(self.thrusterDynamicEffector)
@@ -191,14 +191,14 @@ class BSKDynamicModels:
     def SetReactionWheelPower(self):
         """Sets the reaction wheel power parameters"""
         for item in range(self.numRW):
-            self.rwPowerList[item].ModelTag = self.scObject.ModelTag + "RWPower" + str(item)
+            self.rwPowerList[item].modelTag = self.scObject.modelTag + "RWPower" + str(item)
             self.rwPowerList[item].basePowerNeed = 5.  # baseline power draw, Watt
             self.rwPowerList[item].rwStateInMsg.subscribeTo(self.rwStateEffector.rwOutMsgs[item])
             self.rwPowerList[item].mechToElecEfficiency = 0.5
 
     def SetSolarPanel(self, SimBase):
         """Sets the solar panel"""
-        self.solarPanel.ModelTag = "solarPanel"
+        self.solarPanel.modelTag = "solarPanel"
         self.solarPanel.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.solarPanel.sunEclipseInMsg.subscribeTo(SimBase.EnvModel.eclipseObject.eclipseOutMsgs[0])  # choose the earth message
         self.solarPanel.sunInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.sun])
@@ -209,12 +209,12 @@ class BSKDynamicModels:
 
     def SetPowerSink(self):
         """Defines the energy sink parameters"""
-        self.powerSink.ModelTag = "powerSink"
+        self.powerSink.modelTag = "powerSink"
         self.powerSink.nodePowerOut = -2.  # Watt
 
     def SetBattery(self):
         """Sets up the battery with all the power components"""
-        self.powerMonitor.ModelTag = "powerMonitor"
+        self.powerMonitor.modelTag = "powerMonitor"
         self.powerMonitor.storageCapacity = 2 * 60.0 * 3600.0  # Convert from W-hr to Joule
         self.powerMonitor.storedCharge_Init = self.powerMonitor.storageCapacity * 0.6  # 40% depletion
 

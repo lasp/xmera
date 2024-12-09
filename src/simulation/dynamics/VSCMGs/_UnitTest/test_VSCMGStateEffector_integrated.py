@@ -128,7 +128,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -196,7 +196,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     # create VSCMG object container and tie to spacecraft object
     rwStateEffector = vscmgStateEffector.VSCMGStateEffector()
-    rwStateEffector.ModelTag = "VSCMGs"
+    rwStateEffector.modelTag = "VSCMGs"
     for item in VSCMGs:
         rwStateEffector.AddVSCMG(item)
     scObject.addStateEffector(rwStateEffector)

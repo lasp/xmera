@@ -38,9 +38,9 @@ class ScalingIterativeClosestPoint: public SysModel {
 public:
     ScalingIterativeClosestPoint();
     ~ScalingIterativeClosestPoint();
-    
-    void UpdateState(uint64_t CurrentSimNanos) override;
-    void Reset(uint64_t CurrentSimNanos) override;
+
+    void updateState(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
 
     Message<PointCloudMsgPayload> outputPointCloud;  //!< The output fitted point cloud
     Message<SICPMsgPayload> outputSICPData;  //!< The output algorithm data

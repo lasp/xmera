@@ -23,9 +23,9 @@
 /*! Reset the sunline filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void SunlineSRuKF::customReset() {
+void SunlineSRuKF::customreset() {
     this->setFilterDynamics(SunlineSRuKF::stateDerivative);
     /*! - Check if the required messages have been connected */
     assert(this->cssDataInMsg.isLinked());
@@ -38,7 +38,7 @@ void SunlineSRuKF::customReset() {
 
 /*! Normalize the updated sunline estimate
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void SunlineSRuKF::customFinalizeUpdate() {
     PositionState heading;
@@ -50,7 +50,7 @@ void SunlineSRuKF::customFinalizeUpdate() {
  It updates class variables relating to measurement data including validity and time tags.
  @return void
  */
-void SunlineSRuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
+void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
     NavAttMsgPayload navAttOutMsgBuffer = this->navAttOutMsg.zeroMsgPayload;
     FilterMsgPayload filterMsgBuffer = this->filterOutMsg.zeroMsgPayload;
     FilterResidualsMsgPayload filterGyroResMsgBuffer = this->filterGyroResOutMsg.zeroMsgPayload;
@@ -93,10 +93,10 @@ void SunlineSRuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
     }
 
 
-    this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->filterOutMsg.write(&filterMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->filterCssResOutMsg.write(&filterCssResMsgBuffer, this->moduleID, CurrentSimNanos);
-    this->filterGyroResOutMsg.write(&filterGyroResMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->filterOutMsg.write(&filterMsgBuffer, this->moduleID, currentSimNanos);
+    this->filterCssResOutMsg.write(&filterCssResMsgBuffer, this->moduleID, currentSimNanos);
+    this->filterGyroResOutMsg.write(&filterGyroResMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Read the rate gyro input message

@@ -43,8 +43,8 @@ struct SlewProperties {
 /*! @brief A class to perform EMA SEP pointing */
 class SunSearch: public SysModel {
 public:
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
     void setSlewTime(double const t1, const double t2, const double t3);
     void setSlewAngle(double const theta1, double const theta2, double const theta3);

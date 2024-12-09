@@ -40,7 +40,7 @@ def test_flexiblePaneTestFunction(show_plots, frequency):
     dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
 
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "scObject"
+    scObject.modelTag = "scObject"
     scObject.hub.mHub = 1e18
     scObject.hub.IHubPntBc_B = np.array([[1e18, 0.0, 0.0], [0.0, 1.5e18, 0.0], [0.0, 0.0, 2e18]])
     scObject.hub.r_BcB_B = np.array([0.0, 0.0, 0.0])
@@ -50,7 +50,7 @@ def test_flexiblePaneTestFunction(show_plots, frequency):
     scObject.hub.omega_BN_BInit = np.array([0.0, 0.0, 0.0])
 
     stateSpace = stateSpaceStateEffector.StateSpaceStateEffector(7)
-    stateSpace.ModelTag = "stateSpace"
+    stateSpace.modelTag = "stateSpace"
 
     mass1 = 50
     mass2 = 30

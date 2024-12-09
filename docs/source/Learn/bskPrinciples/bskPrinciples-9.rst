@@ -3,8 +3,8 @@
 Advanced: Using ``DynamicObject`` Basilisk Modules
 ==================================================
 Basilisk modules such as :ref:`spacecraft` and :ref:`spacecraftSystem` are members of
-the ``DynamicObject`` class.  This means they still have the regular Basilisk ``Reset()`` and
-``UpdateState()`` methods, but they also have a state machine and integrator build in as these
+the ``DynamicObject`` class.  This means they still have the regular Basilisk ``reset()`` and
+``updateState()`` methods, but they also have a state machine and integrator build in as these
 modules have to integrate internal ordinate differential equations (ODEs).
 
 The ``DynamicObject`` class has the ability to integrate not just the ODEs of the one Basilisk module,
@@ -19,7 +19,7 @@ This steps ties the integration of ``scObject2`` to the integration of ``scObjec
 ``scObject`` is setup in a Basilisk task running 10Hz using the RK4 integrator, and ``scObject2`` is
 in a 1Hz task and specifies an RK2 integrator, the ODE integration of the primary object overrides
 the setup of the sync'd ``DynamicObjects``.  As a result both objects would be integrated using
-the RK4 integrator at 10Hz.  The ``UpdateState()`` method of ``scObjects2`` would still be called
+the RK4 integrator at 10Hz.  The ``updateState()`` method of ``scObjects2`` would still be called
 at 1Hz as this method is called at the task update period.
 
 .. note::

@@ -37,8 +37,8 @@ enum attitudeFrame{
 /*! @brief Top level structure for the sub-module routines. */
 class SolarArrayReference : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* declare these user-defined quantities */
     double a1Hat_B[3];              //!< solar array drive axis in body frame coordinates

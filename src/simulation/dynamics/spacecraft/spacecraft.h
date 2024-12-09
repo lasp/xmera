@@ -58,7 +58,7 @@ public:
     Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
     Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
-    
+
     Eigen::Vector3d dvAccum_CN_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_CN_N;        //!< [m/s] accumulated delta-v of center of mass relative to inertial frame in inertial frame coordinates
@@ -82,9 +82,9 @@ public:
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
     void updateSCMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B);  //!< -- This method computes the force and torque from the stateEffectors
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
 	void writeOutputStateMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
-    void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
+    void updateState(uint64_t currentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< -- This method computes the equations of motion for the whole system
     void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system

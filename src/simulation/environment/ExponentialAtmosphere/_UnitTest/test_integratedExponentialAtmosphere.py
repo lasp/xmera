@@ -43,7 +43,7 @@ def test_unitExponentialAtmosphere():
     # each test method requires a single assert method to be called
 
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-    newAtmo.ModelTag = "ExpAtmo"
+    newAtmo.modelTag = "ExpAtmo"
 
     testResults = []
     testMessage = []
@@ -78,10 +78,10 @@ def AddSpacecraftToModel(atmoModel):
 
     # create the dynamics task and specify the integration update time
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     scObject2 = spacecraft.Spacecraft()
-    scObject2.ModelTag = "spacecraftBody"
+    scObject2.modelTag = "spacecraftBody"
     # add spacecraft object to the simulation process
     atmoModel.addSpacecraftToModel(scObject.scStateOutMsg)
     atmoModel.addSpacecraftToModel(scObject2.scStateOutMsg)
@@ -124,7 +124,7 @@ def TestExponentialAtmosphere():
 
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-    newAtmo.ModelTag = "ExpAtmo"
+    newAtmo.modelTag = "ExpAtmo"
 
     #
     #   setup the simulation tasks/objects
@@ -132,7 +132,7 @@ def TestExponentialAtmosphere():
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()

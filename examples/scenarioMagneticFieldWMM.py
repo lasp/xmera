@@ -77,7 +77,7 @@ specified, the message information is used instead of the
 
 Every time a spacecraft is added to the magnetic field module, an
 extra output message is autmatically created. For `magModule` is "WMM_0_data"
-as the ModelTag string is ``WMM`` and the spacecraft number is 0.
+as the modelTag string is ``WMM`` and the spacecraft number is 0.
 This output name is created in the  ``addSpacecraftToModel()``
 function.  However, if the default output name is used for the second
 planetary magnetic field model, then both module share  the same
@@ -180,7 +180,7 @@ def run(show_plots, orbitCase):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -197,7 +197,7 @@ def run(show_plots, orbitCase):
 
     # create the magnetic field
     magModule = magneticFieldWMM.MagneticFieldWMM()
-    magModule.ModelTag = "WMM"
+    magModule.modelTag = "WMM"
     magModule.dataPath = bskPath + '/supportData/MagneticField/'
 
     # set the minReach and maxReach values if on an elliptic orbit

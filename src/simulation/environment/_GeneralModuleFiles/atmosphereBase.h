@@ -38,9 +38,9 @@ class AtmosphereBase: public SysModel  {
 public:
     AtmosphereBase();
     ~AtmosphereBase();
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
 
 protected:
     void writeMessages(uint64_t CurrentClock);
@@ -48,7 +48,7 @@ protected:
     void updateLocalAtmosphere(double currentTime);
     void updateRelativePos(SpicePlanetStateMsgPayload  *planetState, SCStatesMsgPayload *scState);
     virtual void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime) = 0;     //!< class method
-    virtual void customReset(uint64_t CurrentClock);
+    virtual void customreset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();
     virtual void customSetEpochFromVariable();

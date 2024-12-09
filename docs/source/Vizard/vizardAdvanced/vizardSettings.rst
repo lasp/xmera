@@ -32,7 +32,7 @@ for a multi-satellite simulation:
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject1, scObject2, scObject3]
 	                                          , saveFile=fileName)
 
-The spacecraft names are pulled from ``scObject.ModelTag``.
+The spacecraft names are pulled from ``scObject.modelTag``.
 If a setting is not provided, then the Vizard
 defaults are used. This allows the user to specify just a few or a lot
 of settings, as is appropriate.
@@ -416,14 +416,14 @@ cones can be setup in Vizard, but can also be scripted from Basilisk
 using the helper function ``createConeInOut``:
 
 .. code-block::
-	
+
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal',
                                normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True,
                                coneHeight=5.0, coneName=‘sensorCone’)
 	vizSupport.createConeInOut(viz,toBodyName='earth', coneColor='blue', normalVector_B=[0, 1, 0],
                                incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
-	
+
 The following table illustrates the
 arguments for the ``createConeInOut`` method:
 
@@ -1713,8 +1713,8 @@ be instances of :ref:`hingedRigidBodyStateEffector` which are attached to spacec
 all three components can be visualized using::
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject
-                                                                    , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
-                                                                    , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
+                                                                    , [panel1.modelTag, panel1.hingedRigidBodyConfigLogOutMsg]
+                                                                    , [panel2.modelTag, panel2.hingedRigidBodyConfigLogOutMsg]
                                                                    ]
                                               , saveFile=fileName
                                               )
@@ -1829,5 +1829,3 @@ the MSM radii are stored in the list ``rListDebris``.  The sample code is::
                                               , saveFile=fileName
                                               , msmInfoList=[msmInfoDebris]
                                               )
-
-

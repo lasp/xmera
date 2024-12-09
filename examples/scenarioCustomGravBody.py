@@ -125,7 +125,7 @@ def run(show_plots):
 
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.modelTag = 'planetEphemeris'
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["Itokawa", "earth"]))
 
@@ -172,7 +172,7 @@ def run(show_plots):
 
     # create SC object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
     gravFactory.addBodiesTo(scObject)
     scSim.AddModelToTask(simTaskName, scObject)
 

@@ -38,26 +38,26 @@ def run():
 
     # create modules
     mod2 = cppModuleTemplate.CppModuleTemplate()
-    mod2.ModelTag = "cppModule2"
+    mod2.modelTag = "cppModule2"
     scSim.AddModelToTask("cppTask", mod2)
 
     #  initialize Simulation:
     scSim.InitializeSimulation()
 
     # execute BSK for a single step
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
 
-    dynProcess.disableAllTasks()
+    dynProcess.disableTasks()
     print("all tasks disabled")
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
     print("BSK executed a single simulation step")
 
     scSim.enableTask("cppTask")
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
     print("BSK executed a single simulation step")
 
     scSim.disableTask("cppTask")
-    scSim.TotalSim.SingleStepProcesses()
+    scSim.TotalSim.singleStepProcesses()
     print("BSK executed a single simulation step")
 
     return

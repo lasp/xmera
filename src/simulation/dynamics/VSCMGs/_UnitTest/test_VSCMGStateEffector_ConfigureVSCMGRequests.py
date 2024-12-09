@@ -109,7 +109,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     # configure module
     VSCMG = vscmgStateEffector.VSCMGStateEffector()
-    VSCMG.ModelTag = "VSCMG"
+    VSCMG.modelTag = "VSCMG"
 
     numVSCMG = 2
 
@@ -193,7 +193,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     if testFail:
         testFailCount += 1
-        testMessages.append("FAILED: " + VSCMG.ModelTag + " Module failed " +
+        testMessages.append("FAILED: " + VSCMG.modelTag + " Module failed " +
                             outputName + " unit test")
 
     np.set_printoptions(precision=16)

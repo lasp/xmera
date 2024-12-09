@@ -27,7 +27,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedLinearTranslation::Reset(uint64_t callTime) {
+void PrescribedLinearTranslation::reset(uint64_t callTime) {
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
         this->bskLogger->bskLog(BSK_ERROR, "prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
     }
@@ -45,7 +45,7 @@ The prescribed translational states are then written to the output message.
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
+void PrescribedLinearTranslation::updateState(uint64_t callTime) {
     // Read the input message
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
     if (this->linearTranslationRigidBodyInMsg.isWritten()) {

@@ -30,7 +30,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RwMotorTorque::Reset(uint64_t callTime)
+void RwMotorTorque::reset(uint64_t callTime)
 {
     double *pAxis;                 /* pointer to the current control axis */
     int i;
@@ -71,7 +71,7 @@ void RwMotorTorque::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RwMotorTorque::UpdateState(uint64_t callTime)
+void RwMotorTorque::updateState(uint64_t callTime)
 {
     RWAvailabilityMsgPayload wheelsAvailability = {};    /*!< Msg containing RW availability */
     CmdTorqueBodyMsgPayload LrInputMsg;             /*!< Msg containing Lr control torque */

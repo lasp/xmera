@@ -34,7 +34,7 @@ LambertSecondDV::~LambertSecondDV() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSecondDV::Reset(uint64_t currentSimNanos)
+void LambertSecondDV::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertSolutionInMsg.isLinked()) {
@@ -49,7 +49,7 @@ void LambertSecondDV::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSecondDV::UpdateState(uint64_t currentSimNanos)
+void LambertSecondDV::updateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();

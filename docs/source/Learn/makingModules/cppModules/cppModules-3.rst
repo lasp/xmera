@@ -22,20 +22,20 @@ The module destructor should ensure the module is closed down properly. It might
 
 Reset Method
 ------------
-The ``Reset()`` method should be used to
+The ``reset()`` method should be used to
 
 - restore module variables if needed. For example, the integral feedback gain variable might be reset to 0.
-- perform one-time message reads such as reading in the reaction wheel or spacecraft configuration message. etc.  Whenever ``Reset()`` is called the module should read in these messages again to use the latest values.
-- check that required input messages are connected.  If a required input message is not connected when ``Reset()`` is called, then log a BSK error message.
+- perform one-time message reads such as reading in the reaction wheel or spacecraft configuration message. etc.  Whenever ``reset()`` is called the module should read in these messages again to use the latest values.
+- check that required input messages are connected.  If a required input message is not connected when ``reset()`` is called, then log a BSK error message.
 
-The following sample code assumes that the class variable ``value`` should be re-set to 0 on ``Reset()``, and that ``someInMsg`` is a required input message:L
+The following sample code assumes that the class variable ``value`` should be re-set to 0 on ``reset()``, and that ``someInMsg`` is a required input message:L
 
 .. code:: cpp
 
     /*! Reset the module.
      @return void
      */
-    void SomeModule::Reset(uint64_t CurrentSimNanos)
+    void SomeModule::reset(uint64_t currentSimNanos)
     {
         this->value = 0.0;
 
@@ -46,11 +46,11 @@ The following sample code assumes that the class variable ``value`` should be re
 
 Update Method
 -------------
-The ``UpdateState()`` is the method that is called each time the Basilisk simulation runs the module.  This method needs to perform all the required BSK module function, including reading in input messages and writing to output messages.  In the sample code below the message reading and writing, as well as the module function is done directly within this ``UpdateState()`` method.  Some modules also create additional class method to separate out the various functions.  This is left up to the module developer as a code design choice.
+The ``updateState()`` is the method that is called each time the Basilisk simulation runs the module.  This method needs to perform all the required BSK module function, including reading in input messages and writing to output messages.  In the sample code below the message reading and writing, as well as the module function is done directly within this ``updateState()`` method.  Some modules also create additional class method to separate out the various functions.  This is left up to the module developer as a code design choice.
 
 .. code:: cpp
 
-    void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
+    void CppModuleTemplate::updateState(uint64_t currentSimNanos)
     {
         SomeMsgPayload outMsgBuffer;       /*!< local output message copy */
         SomeMsgPayload inMsgBuffer;        /*!< local copy of input message */
@@ -65,7 +65,7 @@ The ``UpdateState()`` is the method that is called each time the Basilisk simula
         v3Copy(inMsgBuffer.dataVector, outMsgBuffer.dataVector);
 
         /*! - write the module output message */
-        this->dataOutMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
+        this->dataOutMsg.write(&outMsgBuffer, this->moduleID, currentSimNanos);
     }
 
 .. warning::
@@ -110,4 +110,3 @@ Note that with the ``new`` call above the memory associated with this output mes
             delete this->moreOutMsgs.at(c);
         }
     }
-

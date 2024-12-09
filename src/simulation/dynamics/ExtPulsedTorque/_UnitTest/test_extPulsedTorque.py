@@ -67,7 +67,7 @@ def run(show_plots, offCount):
     dynProcess.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
     testObject = ExtPulsedTorque.ExtPulsedTorque()
-    testObject.ModelTag = "externalPulsedTorque"
+    testObject.modelTag = "externalPulsedTorque"
 
     # These don't do anything. They are here to confirm they don't do anything
     testObject.readInputMessages()
@@ -99,7 +99,7 @@ def run(show_plots, offCount):
         scSim.ConfigureStopTime(macros.sec2nano(tStop*DT))
         scSim.ExecuteSimulation()
         testObject.computeForceTorque(scSim.TotalSim.getCurrentNanos(), testProcessRate)
-        scSim.TotalSim.SingleStepProcesses()
+        scSim.TotalSim.singleStepProcesses()
 
     # log the data
     dataTorque = testObjectLog.torqueExternalPntB_B[1:,:]

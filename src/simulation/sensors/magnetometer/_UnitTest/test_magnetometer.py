@@ -101,7 +101,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
 
     # Construct algorithm and associated C++ container
     testModule = magnetometer.Magnetometer()
-    testModule.ModelTag = "TAM_sensor"
+    testModule.modelTag = "TAM_sensor"
     NoiseStd = [3e-9, 3e-9, 3e-9]  # Tesla
     bias = [1e-6, 1e-6, 1e-5]  # Tesla
     minOut = -1e-4  # Tesla
@@ -166,7 +166,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.TotalSim.SingleStepProcesses()
+    unitTestSim.TotalSim.singleStepProcesses()
 
     # This pulls the actual data log from the simulation run.
     tamData = dataLog.tam_S
@@ -178,9 +178,9 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
 
     #   print out success or failure message
     if testFailCount == 0:
-        print("PASSED: " + testModule.ModelTag)
+        print("PASSED: " + testModule.modelTag)
     else:
-        print("Failed: " + testModule.ModelTag)
+        print("Failed: " + testModule.modelTag)
     print("This test uses a relative accuracy value of " + str(errTol*100) + " percent")
 
     return [testFailCount, ''.join(testMessages)]

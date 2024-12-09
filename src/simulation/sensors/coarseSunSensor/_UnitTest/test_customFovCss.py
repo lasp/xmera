@@ -58,7 +58,7 @@ def test_customFovCss(show_plots, xi, eta, zeta, sunLocation, accuracy):
 
     # Construct algorithm and associated C++ container
     CSS = coarseSunSensor.CoarseSunSensor()
-    CSS.ModelTag = "coarseSunSensor"
+    CSS.modelTag = "coarseSunSensor"
     CSS.scaleFactor = 1
     CSS.lHat_B = lHat_B
     CSS.mHat_B = mHat_B

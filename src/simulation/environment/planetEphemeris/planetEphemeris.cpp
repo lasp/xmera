@@ -56,7 +56,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
 
 
 
-void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
+void PlanetEphemeris::reset(uint64_t CurrenSimNanos)
 {
     this->epochTime = CurrenSimNanos*NANO2SEC;
 
@@ -113,9 +113,9 @@ void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
  and velocity vectors at the current time. If the planet orientation information is provided,
  then this is computed as well.  The default orientation information is a zero orientation.
  @return void
- @param CurrentSimNanos The current clock time for the simulation
+ @param currentSimNanos The current clock time for the simulation
  */
-void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
+void PlanetEphemeris::updateState(uint64_t currentSimNanos)
 {
     std::vector<std::string>::iterator it;
     double time;                            // [s] time since epoch
@@ -133,7 +133,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
 
 
     //! - set time in units of seconds
-    time = CurrentSimNanos*NANO2SEC;
+    time = currentSimNanos*NANO2SEC;
 
     //! - set sun gravity constant
     mu = MU_SUN*pow(1000.,3);
@@ -180,7 +180,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
         }
 
         //! - write output message
-        this->planetOutMsgs.at(c)->write(&newPlanet, this->moduleID, CurrentSimNanos);
+        this->planetOutMsgs.at(c)->write(&newPlanet, this->moduleID, currentSimNanos);
 
     }
     return;

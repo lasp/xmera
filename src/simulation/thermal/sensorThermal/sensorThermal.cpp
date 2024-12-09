@@ -35,7 +35,7 @@ SensorThermal::~SensorThermal(){
 
 /*! Thermal sensor reset function
  */
-void SensorThermal::Reset(uint64_t CurrentClock) {
+void SensorThermal::reset(uint64_t CurrentClock) {
 
     this->shadowFactor = 1.0;
 
@@ -101,19 +101,19 @@ void SensorThermal::readMessages()
 }
 
 /*! Provides logic for running the read / compute / write operation that is the module's function.
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
+void SensorThermal::updateState(uint64_t currentSimNanos)
 {
 
     //! - Read in messages
     this->readMessages();
 
     //! - Evaluate model
-    this->evaluateThermalModel(CurrentSimNanos*NANO2SEC);
+    this->evaluateThermalModel(currentSimNanos*NANO2SEC);
 
     //! - Write output
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 
 }
 

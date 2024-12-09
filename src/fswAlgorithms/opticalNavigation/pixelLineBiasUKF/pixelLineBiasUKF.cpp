@@ -47,7 +47,7 @@ static void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double 
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void PixelLineBiasUKF::Reset(uint64_t callTime)
+void PixelLineBiasUKF::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->circlesInMsg.isLinked()) {
@@ -135,7 +135,7 @@ void PixelLineBiasUKF::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void PixelLineBiasUKF::UpdateState(uint64_t callTime)
+void PixelLineBiasUKF::updateState(uint64_t callTime)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
     double yBar[PIXLINE_N_MEAS], tempYVec[PIXLINE_N_MEAS];

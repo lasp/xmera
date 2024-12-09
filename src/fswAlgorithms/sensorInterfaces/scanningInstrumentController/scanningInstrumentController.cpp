@@ -26,7 +26,7 @@
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void ScanningInstrumentController::Reset(uint64_t callTime)
+void ScanningInstrumentController::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->accessInMsg.isLinked()) {
@@ -42,7 +42,7 @@ error and attitude rate are within the tolerance. If so, the instrument is turne
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void ScanningInstrumentController::UpdateState(uint64_t callTime)
+void ScanningInstrumentController::updateState(uint64_t callTime)
 {
     double sigma_BR_norm; //!< Norm of sigma_BR
     double omega_BR_norm; //!< Norm of omega_BR

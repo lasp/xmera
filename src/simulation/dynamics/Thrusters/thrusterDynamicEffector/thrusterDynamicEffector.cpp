@@ -54,7 +54,7 @@ ThrusterDynamicEffector::~ThrusterDynamicEffector()
 /*! This method is used to reset the module.
  @return void
  */
-void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
+void ThrusterDynamicEffector::reset(uint64_t currentSimNanos)
 {
     //! - Clear out any currently firing thrusters and re-init cmd array
     NewThrustCmds.clear();
@@ -171,7 +171,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 }
 
 /*! This method is used to update the location and orientation of the thrusters
-* at every UpdateState call when the thrusters are attached to a body other than
+* at every updateState call when the thrusters are attached to a body other than
 * the hub.
  @return void
  */
@@ -612,9 +612,9 @@ double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData,
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+void ThrusterDynamicEffector::updateState(uint64_t currentSimNanos)
 {
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if(this->ReadInputs())
@@ -622,5 +622,5 @@ void ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
         this->ConfigureThrustRequests(this->prevCommandTime*1.0E-9);
     }
     this->UpdateThrusterProperties();
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }

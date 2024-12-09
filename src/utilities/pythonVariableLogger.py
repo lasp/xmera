@@ -16,8 +16,8 @@ class PythonVariableLogger(sysModel.SysModel):
     this dictionary::
 
         log = VariableLogger({
-            "a": lambda CurrentSimNanos: CurrentSimNanos**2,
-            "b": lambda CurrentSimNanos: CurrentSimNanos**3,
+            "a": lambda currentSimNanos: currentSimNanos**2,
+            "b": lambda currentSimNanos: currentSimNanos**3,
         })
 
         # Run simulation
@@ -61,26 +61,26 @@ class PythonVariableLogger(sysModel.SysModel):
         """Retrieve the times when the data was logged"""
         return np.array(self._times)
 
-    def Reset(self, CurrentSimNanos):
+    def reset(self, currentSimNanos):
         self.clear()
-        return super().Reset(CurrentSimNanos)
+        return super().reset(currentSimNanos)
 
-    def UpdateState(self, CurrentSimNanos):
-        if CurrentSimNanos >= self._next_update_time:
-            self._times.append(CurrentSimNanos)
+    def updateState(self, currentSimNanos):
+        if currentSimNanos >= self._next_update_time:
+            self._times.append(currentSimNanos)
             for variable_name, logging_function in self.logging_functions.items():
                 try:
-                    val = logging_function(CurrentSimNanos)
+                    val = logging_function(currentSimNanos)
                 except Exception as ex:
                     self.bskLogger.bskLog(sysModel.BSK_ERROR,
                                         f"Error while logging '{variable_name}'"
-                                        f" in logger '{self.ModelTag}': {ex}")
+                                        f" in logger '{self.modelTag}': {ex}")
                     val = None
                 val = np.array(val).squeeze()
                 self._variables[variable_name].append(val)
 
             self._next_update_time += self.min_log_period
-        return super().UpdateState(CurrentSimNanos)
+        return super().updateState(currentSimNanos)
 
     def GetData(self, name:str):
         """

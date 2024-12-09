@@ -190,7 +190,7 @@ def StateUpdateRelOD(show_plots):
 
     # Construct algorithm
     module = relativeODuKF.RelODuKF()
-    module.ModelTag = "relodSuKF"
+    module.modelTag = "relodSuKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -282,7 +282,7 @@ def StateUpdateRelOD(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state update")
+        print("PASSED: " + module.modelTag + " state update")
     else:
         print(testMessages)
 
@@ -313,7 +313,7 @@ def StatePropRelOD(show_plots, dt):
 
     # Construct algorithm and associated C++ container
     module = relativeODuKF.RelODuKF()
-    module.ModelTag = "relodSuKF"
+    module.modelTag = "relodSuKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -366,7 +366,7 @@ def StatePropRelOD(show_plots, dt):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag + " state propagation")
+        print("PASSED: " + module.modelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

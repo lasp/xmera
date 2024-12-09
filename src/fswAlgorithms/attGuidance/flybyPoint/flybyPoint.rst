@@ -68,7 +68,7 @@ User Guide
 The required module configuration is::
 
     flybyGuid = flybyPoint.FlybyPoint()
-    flybyWrap.ModelTag = "flybyPoint"
+    flybyWrap.modelTag = "flybyPoint"
     flybyGuid.dtFilterData = 60
     flybyGuid.signOfOrbitNormalFrameVector = 1
     unitTestSim.AddModelToTask(unitTaskName, flybyGuid)

@@ -35,7 +35,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RateMsgConverter::Reset(uint64_t callTime)
+void RateMsgConverter::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
     if (!this->imuRateInMsg.isLinked()) {
@@ -47,7 +47,7 @@ void RateMsgConverter::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RateMsgConverter::UpdateState(uint64_t callTime)
+void RateMsgConverter::updateState(uint64_t callTime)
 {
     /*! - read in the message of type IMUSensorBodyMsgPayload */
     IMUSensorBodyMsgPayload inMsg = this->imuRateInMsg();

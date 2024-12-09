@@ -27,7 +27,7 @@ EphemDifferenceWithUncertainty::~EphemDifferenceWithUncertainty() = default;
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void EphemDifferenceWithUncertainty::Reset(uint64_t currentSimNanos)
+void EphemDifferenceWithUncertainty::reset(uint64_t currentSimNanos)
 {
     if (!this->ephemBaseInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR,
@@ -43,7 +43,7 @@ void EphemDifferenceWithUncertainty::Reset(uint64_t currentSimNanos)
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void EphemDifferenceWithUncertainty::UpdateState(uint64_t currentSimNanos)
+void EphemDifferenceWithUncertainty::updateState(uint64_t currentSimNanos)
 {
     EphemerisMsgPayload ephemBaseInBuffer = this->ephemBaseInMsg();
     EphemerisMsgPayload ephemSecondaryInBuffer = this->ephemSecondaryInMsg();

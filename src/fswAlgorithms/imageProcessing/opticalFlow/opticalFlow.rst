@@ -45,7 +45,7 @@ provides information on what this message is used for.
 Module Description
 -------------------------------
 
-The logic of the module flows as such: as UpdateState is called and messages are processed, it checks
+The logic of the module flows as such: as updateState is called and messages are processed, it checks
 for when a newImage is processed. If no image was processed prior, it finds features in the image,
 and stores this data as the old image.
 When a second image comes through the module, it is now the new image of a pair. A bool is raised that
@@ -79,7 +79,7 @@ This section is to outline the steps needed to setup a OpticalFlow in Python.
 #. Define general parameters. The minTimeBetweenPairs forces a minimum number of seconds between two images for
 feature tracking. For example::
 
-    module.ModelTag = "opticalFlow"
+    module.modelTag = "opticalFlow"
     module.minTimeBetweenPairs = 5
 
 #. Define parameters for the goodFeaturesToTrack method::
@@ -101,4 +101,3 @@ feature tracking. For example::
     module.imageInMsg.subscribeTo(imageInMsg)
     module.attitudeMsg.subscribeTo(attInMsg)
     module.ephemerisMsg.subscribeTo(ephemInMsg)
-

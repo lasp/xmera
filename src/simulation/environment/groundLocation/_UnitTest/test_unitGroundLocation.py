@@ -60,7 +60,7 @@ def test_range(show_plots):
 
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
-    groundTarget.ModelTag = "groundTarget"
+    groundTarget.modelTag = "groundTarget"
     groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
     groundTarget.maximumRange = 100e3 # meters
     groundTarget.minimumElevation = np.radians(80.)
@@ -153,7 +153,7 @@ def test_rotation(show_plots):
 
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
-    groundTarget.ModelTag = "groundTarget"
+    groundTarget.modelTag = "groundTarget"
     groundTarget.planetRadius = orbitalMotion.REQ_EARTH * 1000.
     groundTarget.maximumRange = 200e3 # meters
     groundTarget.minimumElevation = np.radians(10.)

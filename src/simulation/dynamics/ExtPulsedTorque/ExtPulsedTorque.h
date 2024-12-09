@@ -31,7 +31,7 @@ public:
     ExtPulsedTorque();
     ~ExtPulsedTorque();
 
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void writeOutputMessages(uint64_t currentClock);
     void readInputMessages();

@@ -135,7 +135,7 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bskSat"
+    scObject.modelTag = "bskSat"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)

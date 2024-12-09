@@ -307,7 +307,7 @@ def singleGravityBody(show_plots):
     # Initialize the modules that we are using.
     SpiceObject = spiceInterface.SpiceInterface()
 
-    SpiceObject.ModelTag = "SpiceInterfaceData"
+    SpiceObject.modelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     SpiceObject.addPlanetNames(spiceInterface.StringVector(["earth", "mars barycenter", "sun"]))
     SpiceObject.UTCCalInit = DateSpice
@@ -344,7 +344,7 @@ def singleGravityBody(show_plots):
     gravBody1.initBody(0)
     newManager = stateArchitecture.DynParamManager()
     gravBody1.registerProperties(newManager)
-    SpiceObject.UpdateState(0)
+    SpiceObject.updateState(0)
 
     for i in range(2*3600):
         stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
@@ -358,7 +358,7 @@ def singleGravityBody(show_plots):
         normVec.append(np.linalg.norm(stateOut[0:3]))
 
         stateOut*=1000.0
-        SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
+        SpiceObject.J2000Current = etCurr;SpiceObject.updateState(0)
         gravBody1.loadEphemeris()
         gravOut = gravBody1.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
         gravErrNorm.append(np.linalg.norm(gravVec*1000.0 - np.array(gravOut).reshape(3))/
@@ -487,7 +487,7 @@ def multiBodyGravity(show_plots):
     allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1])
     allGrav.linkInStates(newManager)
     allGrav.registerProperties(newManager)
-    allGrav.Reset(0)
+    allGrav.reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav)
     posVelSig = [[0.], [0.], [0.]]
     allGrav.computeGravityField(posVelSig, posVelSig) #compute acceleration only considering the first body.
@@ -512,7 +512,7 @@ def multiBodyGravity(show_plots):
     allGrav2.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2])
     allGrav2.linkInStates(newManager)
     allGrav2.registerProperties(newManager)
-    allGrav2.Reset(0)
+    allGrav2.reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav2)
     allGrav2.computeGravityField(posVelSig, posVelSig) #compute acceleration considering the first and second bodies.
     step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
@@ -531,7 +531,7 @@ def multiBodyGravity(show_plots):
     allGrav3.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2, gravBody3])
     allGrav3.linkInStates(newManager)
     allGrav3.registerProperties(newManager)
-    allGrav3.Reset(0)
+    allGrav3.reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav3)
     allGrav3.computeGravityField(posVelSig, posVelSig) #comput acceleration considering all three bodies
     step3 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame

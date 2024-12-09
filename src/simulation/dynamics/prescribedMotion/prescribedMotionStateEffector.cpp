@@ -73,7 +73,7 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::Reset(uint64_t callTime)
+void PrescribedMotionStateEffector::reset(uint64_t callTime)
 {
 }
 
@@ -321,7 +321,7 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::UpdateState(uint64_t callTime)
+void PrescribedMotionStateEffector::updateState(uint64_t callTime)
 {
     // Store the current simulation time
     this->currentSimTimeSec = callTime * NANO2SEC;

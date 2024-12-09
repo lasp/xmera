@@ -28,7 +28,7 @@ void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvAttEffect::Reset(uint64_t callTime)
+void DvAttEffect::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->cmdTorqueBodyInMsg.isLinked()) {
@@ -48,7 +48,7 @@ void DvAttEffect::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvAttEffect::UpdateState(uint64_t callTime)
+void DvAttEffect::updateState(uint64_t callTime)
 {
     uint32_t i;
     CmdTorqueBodyMsgPayload cntrRequest;

@@ -30,7 +30,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrFiringSchmitt::Reset(uint64_t callTime)
+void ThrFiringSchmitt::reset(uint64_t callTime)
 {
 	THRArrayConfigMsgPayload   localThrusterData;     /* local copy of the thruster data message */
 	int 				i;
@@ -62,7 +62,7 @@ void ThrFiringSchmitt::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrFiringSchmitt::UpdateState(uint64_t callTime)
+void ThrFiringSchmitt::updateState(uint64_t callTime)
 {
 	int 				i;
 	double 				level;					/* [-] duty cycle fraction */

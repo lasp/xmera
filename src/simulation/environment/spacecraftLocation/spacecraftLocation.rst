@@ -117,7 +117,7 @@ A new instance of ``spacecraftLocation``, alongside necessary user-supplied para
 .. code-block:: python
 
     location = spacecraftLocation.SpacecraftLocation()
-    location.ModelTag = "scLocation"
+    location.modelTag = "scLocation"
     location.rEquator = orbitalMotion.REQ_EARTH * 1000.
     location.rPolar = orbitalMotion.RP_EARTH * 1000.  # optional, include to account for oblateness
     location.maximumRange = 100e3 # optinal, sets maximum range for visibility in meters

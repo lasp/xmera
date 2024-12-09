@@ -39,8 +39,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 class RasterManager : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     /* Declare module private variables */
     double scanningAngles[3 * MAX_RASTER_SET];      /*!< array of scanning angles */
     double scanningRates[3 * MAX_RASTER_SET];       /*!< array of scanning rates */

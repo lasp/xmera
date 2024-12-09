@@ -32,7 +32,7 @@ FormationBarycenter::FormationBarycenter() {
 
 /*! This method is used to reset the module and checks that required input messages are connected.
 */
-void FormationBarycenter::Reset(uint64_t CurrentSimNanos) {
+void FormationBarycenter::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (this->scNavInMsgs.size() == 0 || this->scPayloadInMsgs.size() == 0) {
         bskLogger.bskLog(BSK_ERROR, "FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");
@@ -153,10 +153,10 @@ void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
 
 /*! This is the main method that gets called every time the module is updated.
 */
-void FormationBarycenter::UpdateState(uint64_t CurrentSimNanos)
+void FormationBarycenter::updateState(uint64_t currentSimNanos)
 {
     this->ReadInputMessages();
     this->transOutBuffer = this->transOutMsg.zeroMsgPayload; // zero the output message buffer
     this->computeBaricenter();
-    this->WriteOutputMessage(CurrentSimNanos);
+    this->WriteOutputMessage(currentSimNanos);
 }

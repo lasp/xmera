@@ -24,10 +24,10 @@ message definitions.
 C/C++ File
 ----------
 In the C-module the script generates the required ``init`` calls for each output message.  In C++
-there is typically no need for writing a ``SelfInit()`` function as the C++ wrapped output messages
+there is typically no need for writing a ``selfInit()`` function as the C++ wrapped output messages
 are connected to themselves on construction.
 
-Next, the ``Reset()`` method is setup to check all input messages are connected.  This assumes that all
+Next, the ``reset()`` method is setup to check all input messages are connected.  This assumes that all
 input messages are required. If this is not the case, simply delete the associate message connection
 checking.
 

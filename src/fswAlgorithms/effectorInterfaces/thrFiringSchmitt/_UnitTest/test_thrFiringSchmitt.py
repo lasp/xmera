@@ -87,7 +87,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     # Construct algorithm and associated C++ container
     module = thrFiringSchmitt.ThrFiringSchmitt()
-    module.ModelTag = "thrFiringSchmitt"
+    module.modelTag = "thrFiringSchmitt"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -185,7 +185,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     if resetCheck:
         # reset the module to test this functionality
-        module.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
+        module.reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
 
         # run the module again for an additional 1.0 seconds
         unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))        # seconds to stop simulation
@@ -253,7 +253,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
         # else:
         #     testFailCount+=1
-        #     testMessages.append("FAILED: " + module.ModelTag + " Module failed with unsupported input parameters")
+        #     testMessages.append("FAILED: " + module.modelTag + " Module failed with unsupported input parameters")
 
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -265,11 +265,11 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     snippentName = "passFail" + str(resetCheck) + str(dvOn)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

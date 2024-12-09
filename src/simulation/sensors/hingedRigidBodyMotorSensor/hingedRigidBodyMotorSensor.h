@@ -35,9 +35,9 @@ public:
     HingedRigidBodyMotorSensor();
     ~HingedRigidBodyMotorSensor();
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
-    
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
+
     void setRNGSeed(unsigned int newSeed); //!< for setting the seed
 
 public:
@@ -48,7 +48,7 @@ public:
     double thetaDotBias;        //!< [rad/s] bias added to true theta dot
     double thetaLSB;            //!< [rad] discretization for theta
     double thetaDotLSB;         //!< [rad/s] discretization for theta dot
-    
+
     ReadFunctor<HingedRigidBodyMsgPayload> hingedRigidBodyMotorSensorInMsg;  //!< input message for true rigid body state (theta, theta dot)
 
     Message<HingedRigidBodyMsgPayload> hingedRigidBodyMotorSensorOutMsg;  //!< output message for sensed rigid body state

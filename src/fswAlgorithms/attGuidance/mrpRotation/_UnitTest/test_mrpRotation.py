@@ -86,7 +86,7 @@ def run(show_plots, cmdStateFlag, testReset):
 
     # Construct algorithm and associated C++ container
     module = mrpRotation.MrpRotation()
-    module.ModelTag = "mrpRotation"
+    module.modelTag = "mrpRotation"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -143,7 +143,7 @@ def run(show_plots, cmdStateFlag, testReset):
     unitTestSim.ExecuteSimulation()
 
     if testReset:
-        module.Reset(1)
+        module.reset(1)
         unitTestSim.ConfigureStopTime(mc.sec2nano(totalTestSimTime+1.0))        # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
 
@@ -179,11 +179,11 @@ def run(show_plots, cmdStateFlag, testReset):
     snippentName = "passFail" + str(cmdStateFlag) + str(testReset)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

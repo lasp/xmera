@@ -62,7 +62,7 @@ def velocityPointTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     module = velocityPoint.VelocityPoint()
-    module.ModelTag = "velocityPoint"
+    module.modelTag = "velocityPoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

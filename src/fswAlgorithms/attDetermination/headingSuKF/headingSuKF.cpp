@@ -30,7 +30,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HeadingSuKF::Reset(uint64_t callTime)
+void HeadingSuKF::reset(uint64_t callTime)
 {
 
     int32_t i;
@@ -114,7 +114,7 @@ void HeadingSuKF::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void HeadingSuKF::UpdateState(uint64_t callTime)
+void HeadingSuKF::updateState(uint64_t callTime)
 {
     double newTimeTag;
     double yBar[OPNAV_MEAS];

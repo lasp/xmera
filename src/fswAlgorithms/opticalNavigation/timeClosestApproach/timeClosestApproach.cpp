@@ -44,10 +44,10 @@ void TimeClosestApproach::readMessages()
 * @return void
 * @param tCA time Closest Approach
 * @param sigmaTca standard deviation of Time closest approach
-* @param CurrentSimNanos Current sim nano
+* @param currentSimNanos Current sim nano
 
 */
-void TimeClosestApproach::writeMessages(const double tCA, const double sigmaTca, const uint64_t CurrentSimNanos)
+void TimeClosestApproach::writeMessages(const double tCA, const double sigmaTca, const uint64_t currentSimNanos)
 {
     /*! create and zero the output message */
     auto tcaMsgBuffer = this->tcaOutMsg.zeroMsgPayload;
@@ -55,7 +55,7 @@ void TimeClosestApproach::writeMessages(const double tCA, const double sigmaTca,
     tcaMsgBuffer.standardDeviation = sigmaTca;
 
     /*! Write the output messages */
-    this->tcaOutMsg.write(&tcaMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->tcaOutMsg.write(&tcaMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Compute flyby geometry variables f0 & gamma0.
@@ -110,13 +110,13 @@ double TimeClosestApproach::computeTcaStandardDeviation() const
 
 /*! This method is the main carrier for the time of closest approach calculation
  @return void
- @param CurrentSimNanos The current simulation time for system
+ @param currentSimNanos The current simulation time for system
  */
-void TimeClosestApproach::UpdateState(uint64_t CurrentSimNanos)
+void TimeClosestApproach::updateState(uint64_t currentSimNanos)
 {
     this->readMessages();
     this->computeGeometry();
     const double tCA = this->computeTca();
     const double sigmaTca = this->computeTcaStandardDeviation();
-    this->writeMessages(tCA, sigmaTca, CurrentSimNanos);
+    this->writeMessages(tCA, sigmaTca, currentSimNanos);
 }

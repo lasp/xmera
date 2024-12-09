@@ -267,7 +267,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # initialize spacecraft object and set properties
     # The dynamics simulation is setup using a Spacecraft() module.
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)

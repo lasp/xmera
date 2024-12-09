@@ -59,7 +59,7 @@ User Guide
 The required module configuration is::
 
     tca_module = timeClosestApproach.TimeClosestApproach()
-    tca_module.ModelTag = "TimeClosestApproach"
+    tca_module.modelTag = "TimeClosestApproach"
     unitTestSim.AddModelToTask(unitTaskName, tca_module)
 
 The module is configurable with the following parameters:

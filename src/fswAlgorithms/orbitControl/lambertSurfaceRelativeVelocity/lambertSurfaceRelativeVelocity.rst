@@ -56,7 +56,7 @@ The module is first initialized as follows:
 .. code-block:: python
 
     module = lambertSurfaceRelativeVelocity.LambertSurfaceRelativeVelocity()
-    module.ModelTag = "lambertSurfaceRelativeVelocity"
+    module.modelTag = "lambertSurfaceRelativeVelocity"
     module.vRelativeDesired_S = np.array([0., 0., 10.])  # in surface frame (East-North-Up)
     module.time = 1000.
     unitTestSim.AddModelToTask(unitTaskName, module)

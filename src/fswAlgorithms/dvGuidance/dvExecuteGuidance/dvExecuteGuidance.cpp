@@ -27,7 +27,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvExecuteGuidance::Reset(uint64_t callTime)
+void DvExecuteGuidance::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->navDataInMsg.isLinked()) {
@@ -54,7 +54,7 @@ void DvExecuteGuidance::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvExecuteGuidance::UpdateState(uint64_t callTime)
+void DvExecuteGuidance::updateState(uint64_t callTime)
 {
     double burnAccum[3];
     double dvExecuteMag;

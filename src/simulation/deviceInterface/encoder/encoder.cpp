@@ -40,7 +40,7 @@ Encoder::~Encoder()
 /*! This method is used to reset the module.
  @return void
  */
-void Encoder::Reset(uint64_t CurrentSimNanos)
+void Encoder::reset(uint64_t currentSimNanos)
 {
     // check if input message is linked
     if (!this->rwSpeedInMsg.isLinked())
@@ -61,7 +61,7 @@ void Encoder::Reset(uint64_t CurrentSimNanos)
     }
 
     // reset the previous time
-    this->prevTime = CurrentSimNanos;
+    this->prevTime = currentSimNanos;
 
     // zero the RW wheel output message buffer //
     this->rwSpeedConverted = this->rwSpeedOutMsg.zeroMsgPayload;
@@ -101,7 +101,7 @@ void Encoder::writeOutputMessages(uint64_t CurrentClock)
 
 /*! This method applies an encoder to the reaction wheel speeds.
 */
-void Encoder::encode(uint64_t CurrentSimNanos)
+void Encoder::encode(uint64_t currentSimNanos)
 {
     double timeStep;
     double numberClicks;
@@ -112,7 +112,7 @@ void Encoder::encode(uint64_t CurrentSimNanos)
     clicksPerRadian = this->clicksPerRotation / (2 * M_PI);
 
     // set the time step
-    timeStep = (CurrentSimNanos - this->prevTime) * NANO2SEC;
+    timeStep = (currentSimNanos - this->prevTime) * NANO2SEC;
 
     // at the beginning of the simulation, the encoder simply outputs the true RW speeds
     if (timeStep == 0.0)
@@ -159,13 +159,13 @@ void Encoder::encode(uint64_t CurrentSimNanos)
 
 /*! This method runs the encoder module in the sim.
 */
-void Encoder::UpdateState(uint64_t CurrentSimNanos)
+void Encoder::updateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
-    this->encode(CurrentSimNanos);
-    this->writeOutputMessages(CurrentSimNanos);
+    this->encode(currentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 
-    this->prevTime = CurrentSimNanos;
+    this->prevTime = currentSimNanos;
 
     return;
 }

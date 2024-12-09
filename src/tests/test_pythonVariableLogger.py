@@ -10,7 +10,7 @@ from Basilisk.utilities.tests.TickerModule import TickerModule
 def test_constructor():
 
     logger = PythonVariableLogger({
-        "ticks": lambda CurrentSimNanos : CurrentSimNanos
+        "ticks": lambda currentSimNanos : currentSimNanos
     }, 1)
 
     assert logger.min_log_period is 1, "Failed to set min_log_period"
@@ -18,16 +18,16 @@ def test_constructor():
 
 
 
-def test_Reset():
+def test_reset():
     logger = PythonVariableLogger({
-        "ticks": lambda CurrentSimNanos : CurrentSimNanos
+        "ticks": lambda currentSimNanos : currentSimNanos
     }, 1)
 
 
     # arbitrarily set times
     logger._times = [0, 1, 2, 3, 4, 5]
 
-    logger.Reset(5)
+    logger.reset(5)
 
     assert len(logger._times) is 0, "Reset failed to clear times"
 
@@ -51,7 +51,7 @@ def test_logging():
     process.addTask(simulation.CreateNewTask(task1Name, macros.sec2nano(1.0)))
 
     testModule = TickerModule()
-    testModule.ModelTag = "helloworldModule"
+    testModule.modelTag = "helloworldModule"
     simulation.AddModelToTask(task1Name, testModule)
 
     testLogger = PythonVariableLogger({"ticker": lambda _: testModule.GetTicker()})

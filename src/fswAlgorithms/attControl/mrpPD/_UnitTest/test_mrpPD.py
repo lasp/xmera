@@ -88,7 +88,7 @@ def mrp_PD_tracking(show_plots, setExtTorque):
 
     # Construct algorithm and associated C++ container
     module = mrpPD.MrpPD()
-    module.ModelTag = "mrpPD"
+    module.modelTag = "mrpPD"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -144,11 +144,11 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     snippentName = "passFail" + str(setExtTorque)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
 
     # return fail count and join into a single string all messages in the list

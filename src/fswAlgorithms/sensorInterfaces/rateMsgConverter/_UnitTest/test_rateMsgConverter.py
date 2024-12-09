@@ -69,7 +69,7 @@ def rateMsgConvertFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     module = rateMsgConverter.RateMsgConverter()
-    module.ModelTag = "rateMsgConverter"
+    module.modelTag = "rateMsgConverter"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -139,9 +139,9 @@ def rateMsgConvertFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
     else:
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

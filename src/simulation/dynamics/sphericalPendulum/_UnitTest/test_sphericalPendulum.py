@@ -76,7 +76,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 
     #  create spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     scSim.AddModelToTask(simTaskName, scObject)
 

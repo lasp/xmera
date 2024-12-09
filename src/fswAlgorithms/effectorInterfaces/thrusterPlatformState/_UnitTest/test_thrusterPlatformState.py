@@ -93,7 +93,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
 
     # Construct algorithm and associated C++ container
     platform = thrusterPlatformState.ThrusterPlatformState()
-    platform.ModelTag = "platformReference"
+    platform.modelTag = "platformReference"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, platform)

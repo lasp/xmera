@@ -125,7 +125,7 @@ void GravBodyData::registerProperties(DynParamManager& statesIn)
                                 c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot));
 }
 
-void GravityEffector::Reset(uint64_t currentSimNanos)
+void GravityEffector::reset(uint64_t currentSimNanos)
 {
     // Initializes the bodies
     for (auto&& body : this->gravBodies) {
@@ -133,7 +133,7 @@ void GravityEffector::Reset(uint64_t currentSimNanos)
     }
 }
 
-void GravityEffector::UpdateState(uint64_t currentSimNanos)
+void GravityEffector::updateState(uint64_t currentSimNanos)
 {
     // Updates the central body
     this->centralBody.reset();

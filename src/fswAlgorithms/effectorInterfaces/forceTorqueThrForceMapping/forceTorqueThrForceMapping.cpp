@@ -28,7 +28,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void ForceTorqueThrForceMapping::Reset(uint64_t callTime)
+void ForceTorqueThrForceMapping::reset(uint64_t callTime)
 {
     if (!this->thrConfigInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: forceTorqueThrForceMapping.thrConfigInMsg was not connected.");
@@ -67,7 +67,7 @@ void ForceTorqueThrForceMapping::Reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void ForceTorqueThrForceMapping::UpdateState(uint64_t callTime)
+void ForceTorqueThrForceMapping::updateState(uint64_t callTime)
 {
     CmdTorqueBodyMsgPayload cmdTorqueInMsgBuffer = {};  //!< local copy of message buffer
     CmdForceBodyMsgPayload cmdForceInMsgBuffer = {};  //!< local copy of message buffer

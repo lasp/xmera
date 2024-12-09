@@ -33,8 +33,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 class RwConfig : public SysModel  {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override {/* Not Implemented */}
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override {/* Not Implemented */}
 
     /* declare module IO interfaces */
     ReadFunctor<RWConstellationMsgPayload> rwConstellationInMsg;          /*!< RW array input message */

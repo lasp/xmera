@@ -40,12 +40,12 @@ class SpiceInterface: public SysModel {
 public:
     SpiceInterface();
     ~SpiceInterface();
-    
-    void UpdateState(uint64_t CurrentSimNanos);
+
+    void updateState(uint64_t currentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
 	std::string getCurrentTimeString();         //!< class method
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void initTimeData();
     void computeGPSData();
     void pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData);
@@ -72,7 +72,7 @@ public:
     std::string UTCCalInit;     //!< -- UTC time string for init time
 
     std::vector<std::string>planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
-    
+
     bool timeDataInit;          //!< -- Flag indicating whether time has been init
     double J2000ETInit;         //!< s Seconds elapsed since J2000 at init
     double J2000Current;        //!< s Current J2000 elapsed time

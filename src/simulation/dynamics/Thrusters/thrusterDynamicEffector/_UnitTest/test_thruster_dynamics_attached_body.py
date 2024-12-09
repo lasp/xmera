@@ -89,7 +89,7 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scObject.modelTag = "spacecraftBody"
 
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 750.0
@@ -106,7 +106,7 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
     #  Create the thrusters
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
-    thrusterSet.ModelTag = "ACSThrusterDynamics"
+    thrusterSet.modelTag = "ACSThrusterDynamics"
 
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust) for thruster 1
     long_angle_deg = long_angle  # Parametrized angle of thrust
@@ -129,7 +129,7 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
     # Create the module
     pyModule = attachedBodyModule(dcm_BF, r_FB_B, True, 100)
-    pyModule.ModelTag = "attachedBody"
+    pyModule.modelTag = "attachedBody"
     TotalSim.AddModelToTask(unitTaskName3, pyModule)
 
     # Attach messages
@@ -237,14 +237,14 @@ class attachedBodyModule(sysModel.SysModel):
         self.dcm_BF = dcm_BF
         self.r_FB_B = r_FB_B
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, currentSimNanos):
         # Read input message
         self.scMsgBuffer = self.scInMsg()
 
         # Write output message
-        self.writeOutputMsg(CurrentSimNanos)
+        self.writeOutputMsg(currentSimNanos)
 
-    def writeOutputMsg(self, CurrentSimNanos):
+    def writeOutputMsg(self, currentSimNanos):
         # Create output message buffer
         bodyOutMsgBuffer = messaging.SCStatesMsgPayload()
 
@@ -265,7 +265,7 @@ class attachedBodyModule(sysModel.SysModel):
         bodyOutMsgBuffer.sigma_BN = sigma_FN
         bodyOutMsgBuffer.omega_BN_B = omega_FB_F
         bodyOutMsgBuffer.r_BN_N = r_FN_N
-        self.bodyOutMsg.write(bodyOutMsgBuffer, CurrentSimNanos, self.moduleID)
+        self.bodyOutMsg.write(bodyOutMsgBuffer, currentSimNanos, self.moduleID)
 
 
 if __name__ == "__main__":

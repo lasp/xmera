@@ -46,15 +46,15 @@ DataStorageUnitBase::~DataStorageUnitBase(){
 
 
 /*! This method is used to reset the module.
- @param CurrentSimNanos
+ @param currentSimNanos
  @return void
  */
-void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
+void DataStorageUnitBase::reset(uint64_t currentSimNanos)
 {
     this->previousTime = 0;
 
     //! - call the custom environment module reset method
-    customReset(CurrentSimNanos);
+    customreset(currentSimNanos);
 
     return;
 }
@@ -71,22 +71,22 @@ void DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload> *t
 }
 
 /*! Reads messages, adds new data to the storage unit, and writes out the storage unit status
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  @return void
  */
-void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
+void DataStorageUnitBase::updateState(uint64_t currentSimNanos)
 {
     //! - update data information
     if(this->readMessages())
     {
-        this->integrateDataStatus(CurrentSimNanos*NANO2SEC);
+        this->integrateDataStatus(currentSimNanos*NANO2SEC);
     } else {
         //! - Zero the output message if no input messages were received.
         this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload;
     }
 
     //! - write out the storage unit's data status
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 
     return;
 }
@@ -224,10 +224,10 @@ int64_t DataStorageUnitBase::sumAllData(){
     return dataSum;
 }
 
-/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+/*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void DataStorageUnitBase::customReset(uint64_t CurrentClock)
+void DataStorageUnitBase::customreset(uint64_t CurrentClock)
 {
     return;
 }
@@ -272,7 +272,7 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
             if ((this->storedData[(size_t) index].dataInstanceSum + data) >= 0) {
                 this->storedData[(size_t) index].dataInstanceSum += data;
             }
-            
+
         }
         //! - if a dataNode does not exist in storedData, add it to storedData, and add amount
         else if (strcmp(partitionName.c_str(), "") != 0) {

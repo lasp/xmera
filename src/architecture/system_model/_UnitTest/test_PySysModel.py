@@ -38,16 +38,16 @@ def test_PySysModel():
 
     # create copies of the Basilisk modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
-    mod1.ModelTag = "module1"
+    mod1.modelTag = "module1"
 
     mod2 = cppModuleTemplate.CppModuleTemplate()
-    mod2.ModelTag = "module2"
+    mod2.modelTag = "module2"
 
     mod3 = cppModuleTemplate.CppModuleTemplate()
-    mod3.ModelTag = "module3"
+    mod3.modelTag = "module3"
 
     mod4 = PythonModule()
-    mod4.ModelTag = "pythonModule4"
+    mod4.modelTag = "pythonModule4"
 
     mod2.dataInMsg.subscribeTo(mod4.dataOutMsg)
 
@@ -69,7 +69,7 @@ def test_PySysModel():
 
     if mod4.CallCounts != 2:
         testResults += 1
-        testMessage.append("TestPythonModule::UpdateState was not called")
+        testMessage.append("TestPythonModule::updateState was not called")
 
     if mod2MsgRecorder.dataVector[1,1] == 0:
         testResults += 1
@@ -86,17 +86,17 @@ class PythonModule(sysModel.SysModel):
         super().__init__(*args)
         self.dataOutMsg = messaging.CModuleTemplateMsg()
 
-    def Reset(self, CurrentSimNanos):
+    def reset(self, currentSimNanos):
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = np.array([0,0,0])
-        self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
+        self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
         self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
 
-    def UpdateState(self, CurrentSimNanos):
+    def updateState(self, currentSimNanos):
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = self.dataOutMsg.read().dataVector + np.array([0,1,0])
-        self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
-        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s")
+        self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
+        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {currentSimNanos*1e-9}s")
 
 if __name__ == "__main__":
     test_PySysModel()

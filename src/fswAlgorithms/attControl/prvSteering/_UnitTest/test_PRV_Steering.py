@@ -64,10 +64,10 @@ def subModuleTestFunction(show_plots, simCase):
 
     #   Construct algorithm and associated C++ container
     module = prvSteering.PrvSteering()
-    module.ModelTag = "prvSteering"
+    module.modelTag = "prvSteering"
 
     servo = rateServoFullNonlinear.RateServoFullNonlinear()
-    servo.ModelTag = "rate_servo"
+    servo.modelTag = "rate_servo"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -165,7 +165,7 @@ def subModuleTestFunction(show_plots, simCase):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    servo.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    servo.reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
@@ -195,7 +195,7 @@ def subModuleTestFunction(show_plots, simCase):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed torqueRequestBody unit test at t="
+            testMessages.append("FAILED: " + module.modelTag + " Module failed torqueRequestBody unit test at t="
                                 + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
 
 
@@ -210,7 +210,7 @@ def subModuleTestFunction(show_plots, simCase):
           plt.show()
 
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

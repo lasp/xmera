@@ -9,16 +9,16 @@ Making Python Modules
 
 Python modules are a good alternative to C and C++ modules for quick prototyping.
 They are defined entirely in a Python script, which means that there is no need
-for a header (``.h``), definition (``.cpp``), or SWIG interface file (``.i``). However, they 
+for a header (``.h``), definition (``.cpp``), or SWIG interface file (``.i``). However, they
 are much slower than C or C++ modules, which will significantly slow down your simulation.
 
-Python modules are implemented by subclassing ``SysModel`` from ``Basilisk.architecture.sysModel``. 
+Python modules are implemented by subclassing ``SysModel`` from ``Basilisk.architecture.sysModel``.
 Then, one can implement the ``__init__``,
-``Reset``, and ``UpdateState`` methods in the same way that one would
+``Reset``, and ``updateState`` methods in the same way that one would
 implement these methods in C++. Remember to always call ``__init__`` of
 the parent class ``SysModel`` if you are implementing your own ``__init__``.
 
-The ``ModelTag`` value of these python BSK modules will be a unique positive number,
+The ``modelTag`` value of these python BSK modules will be a unique positive number,
 same as with C/C++ BSK modules.
 
 All Python modules have a logger stored in ``bskLogger`` (although it will
@@ -55,7 +55,7 @@ Running the above code prints:
     [5. 2. 0.]]
 
 Note how the Python module made use of ``bskLogger``, the ``Reset``
-and ``UpdateState`` were called, how the priority of the Python
+and ``updateState`` were called, how the priority of the Python
 module was respected, and how messaging happened between a C++
 and Python module.
 

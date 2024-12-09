@@ -81,7 +81,7 @@ def mtbMomentumManagementModuleTestFunction():
     module = mtbMomentumManagement.MtbMomentumManagement()
     module.cGain = 0.005
     module.wheelSpeedBiases = [0., 0., 0, 0.]
-    module.ModelTag = "mtbMomentumManagement"           # update python name of test module
+    module.modelTag = "mtbMomentumManagement"           # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # wheelConfigData message (array is ordered c11, c22, c33, c44, ...)
@@ -190,7 +190,7 @@ def mtbMomentumManagementModuleTestFunction():
 
 
     # reset the module to test this functionality
-    module.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    module.reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
 
     # each test method requires a single assert method to be called

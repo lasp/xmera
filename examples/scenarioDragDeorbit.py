@@ -168,11 +168,11 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     # Initialize atmosphere model and add to sim
     if model == "exponential":
         atmo = exponentialAtmosphere.ExponentialAtmosphere()
-        atmo.ModelTag = "ExpAtmo"
+        atmo.modelTag = "ExpAtmo"
         simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
     elif model == "msis":
         atmo = msisAtmosphere.MsisAtmosphere()
-        atmo.ModelTag = "MsisAtmo"
+        atmo.modelTag = "MsisAtmo"
 
         ap = 8
         f107 = 110
@@ -199,7 +199,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     projArea = 10.0  # drag area in m^2
     dragCoeff = 2.2  # drag coefficient
     dragEffector = dragDynamicEffector.DragDynamicEffector()
-    dragEffector.ModelTag = "DragEff"
+    dragEffector.modelTag = "DragEff"
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
@@ -208,7 +208,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
 
     # Set up the spacecraft
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     scSim.AddModelToTask(simTaskName, scObject)
     scSim.spacecraft = scObject
 

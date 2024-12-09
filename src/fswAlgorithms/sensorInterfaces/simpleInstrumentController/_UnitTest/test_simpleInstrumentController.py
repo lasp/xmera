@@ -101,7 +101,7 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
 
     # Construct algorithm and associated C++ container
     module = simpleInstrumentController.SimpleInstrumentController()
-    module.ModelTag = "simpleInstrumentController"           # update python name of test module
+    module.modelTag = "simpleInstrumentController"           # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
@@ -164,7 +164,7 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
 
     if not unitTestSupport.isArrayEqual(dataLog.deviceCmd, expected_result, len(expected_result), 1e-12):
         testFailCount += 1
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed dataVector" + " unit test at t=" + str(dataLog.times()[0]*macros.NANO2SEC) + "sec\n")
+        testMessages.append("FAILED: " + module.modelTag + " Module failed dataVector" + " unit test at t=" + str(dataLog.times()[0]*macros.NANO2SEC) + "sec\n")
 
     # Plots
     plt.close("all")  # close all prior figures so we start with a clean slate

@@ -283,7 +283,7 @@ def run(show_plots, useBatch):
 
     # Setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'erosEphemeris'
+    gravBodyEphem.modelTag = 'erosEphemeris'
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["eros"]))
 
     # Specify asteroid orbit elements and rotational state January 21st, 2022
@@ -315,12 +315,12 @@ def run(show_plots, useBatch):
 
     # Create an ephemeris converter
     ephemConverter = ephemerisConverter.EphemerisConverter()
-    ephemConverter.ModelTag = "ephemConverter"
+    ephemConverter.modelTag = "ephemConverter"
     ephemConverter.addSpiceInputMsg(gravBodyEphem.planetOutMsgs[0])
 
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.modelTag = "bsk-Sat"
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
@@ -350,31 +350,31 @@ def run(show_plots, useBatch):
     # Set extForceTorque module
     # The control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
-    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.modelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
 
     # Add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Set hillPoint guidance module
     attGuidance = hillPoint.HillPoint()
-    attGuidance.ModelTag = "hillPoint"
+    attGuidance.modelTag = "hillPoint"
     attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg)
     attGuidance.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[0])
 
     # Set the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
+    attError.modelTag = "attErrorInertial3D"
     attError.sigma_R0R = [0, 1, 0]
     attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # Set the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.K = 3.5
     mrpControl.Ki = -1.0  # make value negative to turn off integral feedback

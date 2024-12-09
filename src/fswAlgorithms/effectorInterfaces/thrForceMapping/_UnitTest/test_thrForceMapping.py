@@ -89,7 +89,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     # Construct algorithm and associated C++ container
     module = thrForceMapping.ThrForceMapping()
-    module.ModelTag = "thrForceMapping"
+    module.modelTag = "thrForceMapping"
 
 
     # Add test module to runtime call list
@@ -361,13 +361,13 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     if testFailCount > 0:
         unitTestSupport.writeTeXSnippet(directory+"Failed/"+snippetName, snippetTex, path)
-        print("FAILED: " + module.ModelTag)
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed  unit test at t=" +
+        print("FAILED: " + module.modelTag)
+        testMessages.append("FAILED: " + module.modelTag + " Module failed  unit test at t=" +
                             str(dataLog.times()[0] * macros.NANO2SEC) +
                             "sec\n")
     else:
         unitTestSupport.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
 
 
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
@@ -376,11 +376,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
+        print("PASSED: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print("Failed: " + module.ModelTag)
+        print("Failed: " + module.modelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

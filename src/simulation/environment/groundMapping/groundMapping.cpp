@@ -56,7 +56,7 @@ GroundMapping::~GroundMapping()
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void GroundMapping::Reset(uint64_t CurrentSimNanos)
+void GroundMapping::reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->scStateInMsg.isLinked()) {
@@ -217,7 +217,7 @@ void GroundMapping::WriteMessages(uint64_t CurrentClock)
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @return void
 */
-void GroundMapping::UpdateState(uint64_t CurrentSimNanos)
+void GroundMapping::updateState(uint64_t currentSimNanos)
 {
     // Read messages
     this->ReadMessages();
@@ -231,5 +231,5 @@ void GroundMapping::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // Write output messages
-    this->WriteMessages(CurrentSimNanos);
+    this->WriteMessages(currentSimNanos);
 }

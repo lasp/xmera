@@ -91,10 +91,10 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScM
 /*! This method is used to reset the module.
  @return void
  */
-void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
+void MagneticFieldBase::reset(uint64_t currentSimNanos)
 {
     //! - call the custom environment module reset method
-    customReset(CurrentSimNanos);
+    customreset(currentSimNanos);
 
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
@@ -115,10 +115,10 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 }
 
 
-/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+/*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void MagneticFieldBase::customReset(uint64_t CurrentClock)
+void MagneticFieldBase::customreset(uint64_t CurrentClock)
 {
     return;
 }
@@ -257,9 +257,9 @@ void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetStat
 
 /*! Computes the current local magnetic field for each spacecraft and writes their respective messages.
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
+void MagneticFieldBase::updateState(uint64_t currentSimNanos)
 {
     //! - clear the output buffer
     std::vector<MagneticFieldMsgPayload>::iterator it;
@@ -270,11 +270,11 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
     //! - update local neutral density information
     if(this->readMessages())
     {
-        updateLocalMagField(CurrentSimNanos*NANO2SEC);
+        updateLocalMagField(currentSimNanos*NANO2SEC);
     }
 
     //! - write out neutral density message
-    this->writeMessages(CurrentSimNanos);
+    this->writeMessages(currentSimNanos);
 
     return;
 }

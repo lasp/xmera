@@ -30,8 +30,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 class PrescribedRot1DOF : public SysModel {
 public:
-    void Reset(uint64_t callTime) override;
-    void UpdateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
     /* User configurable variables */
     double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body

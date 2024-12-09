@@ -48,10 +48,10 @@ public:
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);
     void computeStateContribution(double integTime);
-    void Reset(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
     void addThruster(THRSimConfig* newThruster);  //! Add a new thruster to the thruster set
     void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
-    void UpdateState(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);

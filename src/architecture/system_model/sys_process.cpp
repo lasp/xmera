@@ -31,16 +31,16 @@ SysProcess::SysProcess(std::string name) : SysProcess()
     this->processName = std::move(name);
 }
 
-/*! This method sets the nextTaskTime = 0 and calls SelfInitTaskList() for
+/*! This method sets the nextTaskTime = 0 and calls selfInitTaskList() for
  * all process tasks.
  @return void
  */
-void SysProcess::selfInitProcess()
+void SysProcess::selfInitialize()
 {
     this->nextTaskTime = 0;
     for(auto const& process : this->processTasks) {
         SysModelTask *localTask = process.TaskPtr;
-        localTask->SelfInitTaskList();
+        localTask->selfInitTaskList();
     }
 }
 
@@ -49,11 +49,11 @@ void SysProcess::selfInitProcess()
     @return void
     @param currentTime Current simulation time in ns that reset is occurring at
 */
-void SysProcess::resetProcess(uint64_t currentTime)
+void SysProcess::reset(uint64_t currentTime)
 {
     for(auto const& process : this->processTasks) {
         SysModelTask *localTask = process.TaskPtr;
-        localTask->ResetTaskList(currentTime);
+        localTask->resetModels(currentTime);
     }
     this->nextTaskTime = currentTime;
 }
@@ -63,16 +63,16 @@ void SysProcess::resetProcess(uint64_t currentTime)
  *  and then adds everything back into the process with the correct priority.
     @return void
 */
-void SysProcess::reInitProcess()
+void SysProcess::reInitialize()
 {
     for(auto const& task : this->processTasks) {
         SysModelTask *localTask = task.TaskPtr;
-        localTask->ResetTask();
+        localTask->reset();
     }
     std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
     this->processTasks.clear();
     for(auto const& task : taskPtrs) {
-        this->addNewTask(task.TaskPtr, task.taskPriority);
+        this->addTask(task.TaskPtr, task.taskPriority);
     }
 }
 
@@ -101,7 +101,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     }
     //! - Call the next scheduled model, and set the time to its start
     SysModelTask *localTask = fireIt->TaskPtr;
-    localTask->ExecuteTaskList(currentNanos);
+    localTask->executeModels(currentNanos);
     fireIt->NextTaskStart = localTask->getNextStartTime();
 
     //! - Figure out when we are going to be called next for scheduling purposes
@@ -122,7 +122,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
  @param newTask The new task that we are adding to the list
  @param taskPriority The selected priority of the task being added
  */
-void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
+void SysProcess::addTask(SysModelTask *newTask, int32_t taskPriority)
 {
     ModelScheduleEntry localEntry;
     localEntry.TaskPtr = newTask;
@@ -130,8 +130,8 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
     localEntry.NextTaskStart = newTask->getNextStartTime();
     localEntry.taskPriority = taskPriority;
     this->scheduleTask(localEntry);
-    newTask->updateParentProc(processName);
-    this->enableProcess();
+    newTask->setParentProc(processName);
+    this->enable();
 }
 
 /*! This method is used to place the task from the caller into the correct
@@ -162,10 +162,10 @@ void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
     and you are really only turning one on at a time.
     @return void
 */
-void SysProcess::disableAllTasks() const
+void SysProcess::disableTasks() const
 {
     for(auto const& scheduleEntry : this->processTasks) {
-        scheduleEntry.TaskPtr->disableTask();
+        scheduleEntry.TaskPtr->disable();
     }
 }
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
@@ -173,10 +173,10 @@ void SysProcess::disableAllTasks() const
  inhibited but you want to turn it all on at once.
  @return void
  */
-void SysProcess::enableAllTasks() const
+void SysProcess::enableTasks() const
 {
     for(auto const& scheduleEntry : this->processTasks) {
-        scheduleEntry.TaskPtr->enableTask();
+        scheduleEntry.TaskPtr->enable();
     }
 }
 
@@ -191,7 +191,7 @@ void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPerio
 	//! - Iteratre through all of the task models to disable them
 	for (ModelScheduleEntry &scheduleEntry : this->processTasks) {
 		if (scheduleEntry.TaskPtr->TaskName == taskName) {
-			scheduleEntry.TaskPtr->updatePeriod(newPeriod);
+			scheduleEntry.TaskPtr->setPeriod(newPeriod);
 			scheduleEntry.NextTaskStart = scheduleEntry.TaskPtr->getNextStartTime();
 			scheduleEntry.TaskUpdatePeriod = scheduleEntry.TaskPtr->getTaskPeriod();
 			return;

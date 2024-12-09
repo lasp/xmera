@@ -155,7 +155,7 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "Spacecraft"
+    scObject.modelTag = "Spacecraft"
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(dynTask, scObject, 1)
@@ -237,8 +237,8 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+    rwStateEffector.modelTag = "RW_cluster"
+    rwFactory.addToSpacecraft(scObject.modelTag, rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(dynTask, rwStateEffector, 2)
@@ -248,7 +248,7 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # add the simple Navigation sensor module
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
+    sNavObject.modelTag = "SimpleNavigation"
     scSim.AddModelToTask(dynTask, sNavObject)
 
     # Set up the simple mass props object
@@ -273,7 +273,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[0].c = 0
     RSAList[0].thetaInit = 0
     RSAList[0].thetaDotInit = 0
-    RSAList[0].ModelTag = "solarArray1"
+    RSAList[0].modelTag = "solarArray1"
     scObject.addStateEffector(RSAList[0])
     # 2nd solar array
     RSAList.append(spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector())
@@ -290,7 +290,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[1].c = 0
     RSAList[1].thetaInit = 0
     RSAList[1].thetaDotInit = 0
-    RSAList[1].ModelTag = "solarArray2"
+    RSAList[1].modelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
 
     # Set up the dual-gimbaled platform
@@ -314,7 +314,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     platform.IS2PntSc2_S2 = [[2, 0, 0], [0, 3, 0], [0, 0, 4]]
     platform.dcm_S10B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     platform.dcm_S20S1 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-    platform.ModelTag = "platform1"
+    platform.modelTag = "platform1"
     scObject.addStateEffector(platform)
 
     # Set up the SEP thruster
@@ -331,7 +331,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     thruster.cutoffFrequency = 5
     sepThruster.addThruster(thruster, platform.spinningBodyConfigLogOutMsgs[1])
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
-    sepThruster.ModelTag = "sepThruster"
+    sepThruster.modelTag = "sepThruster"
     scObject.addStateEffector(sepThruster)
 
     # Write THR Config Msg
@@ -402,7 +402,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     for i in range(len(facetAreas)):
         SRP.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], normals_B[i], locationsPntB_B[i], rotAxes_B[i])
 
-    SRP.ModelTag = "FacetSRP"
+    SRP.modelTag = "FacetSRP"
     SRP.addArticulatedFacet(RSAList[0].spinningBodyOutMsg)
     SRP.addArticulatedFacet(RSAList[0].spinningBodyOutMsg)
     SRP.addArticulatedFacet(RSAList[1].spinningBodyOutMsg)
@@ -415,7 +415,7 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Set up thruster platform state module
     pltState = thrusterPlatformState.ThrusterPlatformState()
-    pltState.ModelTag = "thrusterPlatformState"
+    pltState.modelTag = "thrusterPlatformState"
     pltState.sigma_MB = np.array([0, 0, 0])
     pltState.r_BM_M = [0, 0, 0]
     pltState.r_FM_F = [0, 0, 0]
@@ -424,7 +424,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     # Set up the CM estimator module
     r_CB_B_0 = [0.04, -0.05, 1.25]
     cmEstimator = thrustCMEstimation.ThrustCMEstimation()
-    cmEstimator.ModelTag = "cmEstimator"
+    cmEstimator.modelTag = "cmEstimator"
     cmEstimator.attitudeTol = 1e-6
     cmEstimator.r_CB_B = r_CB_B_0 # Real CoM_B location = [0.113244, 0.025605, 1.239834]
     cmEstimator.P0 = [0.0025, 0.0025, 0.0025]
@@ -444,7 +444,7 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Set up platform reference module
     pltReference = thrusterPlatformReference.ThrusterPlatformReference()
-    pltReference.ModelTag = 'thrusterPlatformReference'
+    pltReference.modelTag = 'thrusterPlatformReference'
     pltReference.sigma_MB = pltState.sigma_MB
     pltReference.r_BM_M = pltState.r_BM_M
     pltReference.r_FM_F = pltState.r_FM_F
@@ -461,21 +461,21 @@ def run(momentumManagement, cmEstimation, showPlots):
     pltController = []
     for item in range(2):
         pltController.append(hingedRigidBodyPIDMotor.HingedRigidBodyPIDMotor())
-        pltController[item].ModelTag = "PltMototorGimbal"+str(item+1)
+        pltController[item].modelTag = "PltMototorGimbal"+str(item+1)
         pltController[item].K = 0.5
         pltController[item].P = 3
         scSim.AddModelToTask(fswTask, pltController[item], 27)
 
     # Set up the torque scheduler module
     pltTorqueScheduler = torqueScheduler.TorqueScheduler()
-    pltTorqueScheduler.ModelTag = "TorqueScheduler"
+    pltTorqueScheduler.modelTag = "TorqueScheduler"
     pltTorqueScheduler.tSwitch = 60
     pltTorqueScheduler.lockFlag = 0
     scSim.AddModelToTask(fswTask, pltTorqueScheduler, 26)
 
     # Set up attitude guidance module
     sepPoint = oneAxisSolarArrayPoint.OneAxisSolarArrayPoint()
-    sepPoint.ModelTag = "sepPointGuidance"
+    sepPoint.modelTag = "sepPointGuidance"
     sepPoint.a1Hat_B = [1, 0, 0]          # solar array drive axis
     sepPoint.a2Hat_B = [0, 1, 0]          # antiparallel direction to the sensitive surface
     sepPoint.hHat_N = [1, 0, 0]           # random inertial thrust direction
@@ -485,7 +485,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     saReference = []
     for item in range(numRSA):
         saReference.append(solarArrayReference.SolarArrayReference())
-        saReference[item].ModelTag = "SolarArrayReference"+str(item+1)
+        saReference[item].modelTag = "SolarArrayReference"+str(item+1)
         saReference[item].a1Hat_B = [(-1)**item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
         scSim.AddModelToTask(fswTask, saReference[item], 24)
@@ -494,7 +494,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     saController = []
     for item in range(numRSA):
         saController.append(hingedRigidBodyPIDMotor.HingedRigidBodyPIDMotor())
-        saController[item].ModelTag = "SolarArrayMotor"+str(item+1)
+        saController[item].modelTag = "SolarArrayMotor"+str(item+1)
         saController[item].K = 1.25
         saController[item].P = 50
         saController[item].I = 3e-3
@@ -502,12 +502,12 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Set up attitude tracking error
     attError = attTrackingError.AttTrackingError()
-    attError.ModelTag = "AttitudeTrackingError"
+    attError.modelTag = "AttitudeTrackingError"
     scSim.AddModelToTask(fswTask, attError, 22)
 
     # Set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
+    mrpControl.modelTag = "mrpFeedback"
     mrpControl.Ki = 1e-5
     mrpControl.P = 275
     mrpControl.K = 9
@@ -517,7 +517,7 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    rwMotorTorqueObj.modelTag = "rwMotorTorque"
     rwMotorTorqueObj.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     scSim.AddModelToTask(fswTask, rwMotorTorqueObj, 20)
 

@@ -67,7 +67,7 @@ def defaultPowerSink():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     testModule = simplePowerSink.SimplePowerSink()
-    testModule.ModelTag = "powerSink"
+    testModule.modelTag = "powerSink"
     testModule.nodePowerOut = 10.  # Watts
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
@@ -117,7 +117,7 @@ def statusPowerSink():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     testModule = simplePowerSink.SimplePowerSink()
-    testModule.ModelTag = "powerSink"
+    testModule.modelTag = "powerSink"
     testModule.nodePowerOut = 10.  # Watts
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 

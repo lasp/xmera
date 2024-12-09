@@ -169,11 +169,11 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
 
     # Setup the spacecraft object
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "lagrangeSat"
+    scObject.modelTag = "lagrangeSat"
 
     # Setup the orbital element converter for planet position message output
     oeObject = orbElemConvert.OrbElemConvert()
-    oeObject.ModelTag = "planetObj"
+    oeObject.modelTag = "planetObj"
 
     # Add spacecraft object to the simulation process
     # Make this model a lower priority than the SPICE object task
@@ -387,5 +387,3 @@ if __name__ == "__main__":
         300,       # Timestep (seconds)
         True    # Show plots
     )
-
-

@@ -41,14 +41,14 @@ class GroundLocation:  public SysModel {
 public:
     GroundLocation();
     ~GroundLocation();
-    void UpdateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
+    void updateState(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos);
     bool ReadMessages();
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void specifyLocation(double lat, double longitude, double alt);
     void specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc);
-    
+
 private:
     void updateInertialPositions();
     void computeAccess();

@@ -40,13 +40,13 @@ public:
     MsmForceTorque();
     ~MsmForceTorque();
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg, std::vector<double> radii, std::vector<Eigen::Vector3d> r_SB_B);
 
 private:
     void readMessages();
-    
+
 public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
     std::vector<ReadFunctor<VoltMsgPayload>> voltInMsgs;     //!< vector of voltage input messages

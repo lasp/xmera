@@ -30,7 +30,7 @@ class ProcessBaseClass(object):
         self.processData.processPriority = procPriority
 
     def addTask(self, newTask, taskPriority=-1):
-        self.processData.addNewTask(newTask.TaskData, taskPriority)
+        self.processData.addTask(newTask.TaskData, taskPriority)
 
     def addInterfaceRef(self, newInt):
         self.processData.addInterfaceRef(newInt)
@@ -38,11 +38,11 @@ class ProcessBaseClass(object):
     def discoverAllMessages(self):
         self.processData.discoverAllMessages()
 
-    def disableAllTasks(self):
-        self.processData.disableAllTasks()
+    def disableTasks(self):
+        self.processData.disableTasks()
 
-    def enableAllTasks(self):
-        self.processData.enableAllTasks()
+    def enableTasks(self):
+        self.processData.enableTasks()
 
     def selectProcess(self):
         pass
@@ -59,10 +59,10 @@ class TaskBaseClass(object):
         self.TaskModels = []
 
     def disable(self):
-        self.TaskData.disableTask()
+        self.TaskData.disable()
 
     def enable(self):
-        self.TaskData.enableTask()
+        self.TaskData.enable()
 
-    def resetTask(self, callTime):
-        self.TaskData.ResetTaskList(callTime)
+    def reset(self, callTime):
+        self.TaskData.resetModels(callTime)

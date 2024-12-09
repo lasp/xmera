@@ -23,9 +23,9 @@
 /*! Reset the flyby OD filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
+void ThrustCMEstimation::reset(uint64_t currentSimNanos)
 {
     /*! - Check if the required message has not been connected */
     if (!this->thrusterConfigBInMsg.isLinked()) {
@@ -59,9 +59,9 @@ void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
 /*! Take the relative position measurements and outputs an estimate of the
  spacecraft states in the inertial frame.
  @return void
- @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
+void ThrustCMEstimation::updateState(uint64_t currentSimNanos)
 {
     /*! create output message buffers */
     VehicleConfigMsgPayload vehConfigOutBuffer = {};
@@ -142,10 +142,10 @@ void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
     }
     eigenVector3d2CArray(r_CB_error, cmEstDataBuffer.stateError);
     /*! write output msg */
-    this->cmEstDataOutMsg.write(&cmEstDataBuffer, this->moduleID, CurrentSimNanos);
+    this->cmEstDataOutMsg.write(&cmEstDataBuffer, this->moduleID, currentSimNanos);
 
     /*! write CM location to vehicle config buffer msg */
     eigenVector3d2CArray(this->r_CB_est, vehConfigOutBuffer.CoM_B);
     /*! write output msg */
-    this->vehConfigOutMsg.write(&vehConfigOutBuffer, this->moduleID, CurrentSimNanos);
+    this->vehConfigOutMsg.write(&vehConfigOutBuffer, this->moduleID, currentSimNanos);
 }

@@ -24,7 +24,7 @@ InertialAttitudeUkf::InertialAttitudeUkf(AttitudeFilterMethod method){
     this->measurementAcceptanceMethod = method;
 }
 
-void InertialAttitudeUkf::customReset(){
+void InertialAttitudeUkf::customreset(){
     /*! No custom reset for this module */
     std::function<FilterStateVector(double, const FilterStateVector)> attitudeDynamics = [this](double t, const FilterStateVector &state){
         Eigen::Vector3d mrp(state.getPositionStates());
@@ -73,7 +73,7 @@ void InertialAttitudeUkf::customFinalizeUpdate(){
  * It updates class variables relating to measurement data including validity and time tags.
  @return void
  */
-void InertialAttitudeUkf::writeOutputMessages(uint64_t CurrentSimNanos) {
+void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
     NavAttMsgPayload navAttPayload = this->navAttitudeOutputMsg.zeroMsgPayload;
     FilterMsgPayload filterPayload = this->inertialFilterOutputMsg.zeroMsgPayload;
     FilterResidualsMsgPayload starTrackerPayload = this->starTrackerResidualMsg.zeroMsgPayload;
@@ -112,11 +112,11 @@ void InertialAttitudeUkf::writeOutputMessages(uint64_t CurrentSimNanos) {
             this->measurements[index].reset();
         }
     }
-    this->starTrackerResidualMsg.write(&starTrackerPayload, this->moduleID, CurrentSimNanos);
-    this->gyroResidualMsg.write(&gyroPayload, this->moduleID, CurrentSimNanos);
+    this->starTrackerResidualMsg.write(&starTrackerPayload, this->moduleID, currentSimNanos);
+    this->gyroResidualMsg.write(&gyroPayload, this->moduleID, currentSimNanos);
 
-    this->navAttitudeOutputMsg.write(&navAttPayload, this->moduleID, CurrentSimNanos);
-    this->inertialFilterOutputMsg.write(&filterPayload, this->moduleID, CurrentSimNanos);
+    this->navAttitudeOutputMsg.write(&navAttPayload, this->moduleID, currentSimNanos);
+    this->inertialFilterOutputMsg.write(&filterPayload, this->moduleID, currentSimNanos);
 }
 
 /*! Read current RW speends and populate the accelerations in order to propagate

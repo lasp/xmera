@@ -34,24 +34,24 @@ SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime) :
 /*! This method self-initializes all of the models that have been added to the Task.
  @return void
  */
-void SysModelTask::SelfInitTaskList() const
+void SysModelTask::selfInitTaskList() const
 {
     for(auto const& modelPair : this->TaskModels) {
         SysModel* NonIt = modelPair.ModelPtr;
-        NonIt->SelfInit();
+        NonIt->selfInit();
     }
 }
 
 
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
- * See sys_model_task.h for related method ResetTask()
+ * See sys_model_task.h for related method reset()
  @return void
  @param CurrentSimTime The time to start at after reset
 */
-void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
+void SysModelTask::resetModels(uint64_t CurrentSimTime)
 {
 	for (auto const& modelPair : this->TaskModels) {
-		modelPair.ModelPtr->Reset(CurrentSimTime);
+		modelPair.ModelPtr->reset(CurrentSimTime);
 	}
 	this->NextStartTime = CurrentSimTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
@@ -60,15 +60,15 @@ void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 /*! This method executes all of the models on the Task during runtime.
  Then, it sets its NextStartTime appropriately.
  @return void
- @param CurrentSimNanos The current simulation time in [ns]
+ @param currentSimNanos The current simulation time in [ns]
  */
-void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
+void SysModelTask::executeModels(uint64_t currentSimNanos)
 {
     for(auto ModelPair = this->TaskModels.begin();
     (ModelPair != this->TaskModels.end() && this->taskActive);
     ModelPair++) {
         SysModel* NonIt = (ModelPair->ModelPtr);
-        NonIt->UpdateState(CurrentSimNanos);
+        NonIt->updateState(currentSimNanos);
         NonIt->CallCounts += 1;
     }
     //! - NextStartTime is set to allow the scheduler to fit the next call in
@@ -81,7 +81,7 @@ void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
  @param NewModel The new model that we are adding to the Task
  @param Priority The selected priority of the model being added (highest goes first)
  */
-void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
+void SysModelTask::addModel(SysModel *NewModel, int32_t Priority)
 {
     ModelPriorityPair LocalPair;
 
@@ -108,7 +108,7 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
  @return void
  @param newPeriod The period that the task should run at going forward
  */
-void SysModelTask::updatePeriod(uint64_t newPeriod)
+void SysModelTask::setPeriod(uint64_t newPeriod)
 {
     //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
     if(this->NextStartTime > this->TaskPeriod) {

@@ -26,7 +26,7 @@ const double epsilon = 1e-12;                           // module tolerance for 
 /*! This method is used to reset the module.
  @return void
  */
-void SepPoint::Reset(uint64_t CurrentSimNanos)
+void SepPoint::reset(uint64_t currentSimNanos)
 {
     if (!this->attNavInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
@@ -45,9 +45,9 @@ void SepPoint::Reset(uint64_t CurrentSimNanos)
  that it needs to re-init (direction change maybe) it will re-init itself.
  Then it will compute the angles away that the boresight is from the celestial target.
  @return void
- @param CurrentSimNanos The current simulation time for system
+ @param currentSimNanos The current simulation time for system
  */
-void SepPoint::UpdateState(uint64_t CurrentSimNanos)
+void SepPoint::updateState(uint64_t currentSimNanos)
 {
     /*! create and zero the output message */
     AttRefMsgPayload attRefOut = this->attRefOutMsg.zeroMsgPayload;
@@ -97,7 +97,7 @@ void SepPoint::UpdateState(uint64_t CurrentSimNanos)
     finiteDifferencesRatesAndAcc(sigma_RN,
                                  this->sigma_RN_1,
                                  this->sigma_RN_2,
-                                 &CurrentSimNanos,
+                                 &currentSimNanos,
                                  &this->T1NanoSeconds,
                                  &this->T2NanoSeconds,
                                  &this->callCount,
@@ -109,5 +109,5 @@ void SepPoint::UpdateState(uint64_t CurrentSimNanos)
     m33tMultV3(RN, omegaDot_RN_R, attRefOut.domega_RN_N);
 
     /*! Write the output messages */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, CurrentSimNanos);
+    this->attRefOutMsg.write(&attRefOut, this->moduleID, currentSimNanos);
 }
