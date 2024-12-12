@@ -69,8 +69,8 @@ def compute_camera_calibration_matrix(input_camera):
     alpha = 0.
     resX = input_camera.resolution[0]
     resY = input_camera.resolution[1]
-    pX = 2. * np.tan(input_camera.fieldOfView / 2.0)
-    pY = 2. * np.tan(input_camera.fieldOfView * resY / resX / 2.0)
+    pX = 2. * np.tan(input_camera.fieldOfView[0] / 2.0)
+    pY = 2. * np.tan(input_camera.fieldOfView[0] * resY / resX / 2.0)
     dX = resX / pX
     dY = resY / pY
     up = resX / 2.
@@ -145,18 +145,18 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     sigma_CB = rbk.C2MRP(dcm_CB)
 
     # Create the input messages.
-    inputCamera = messaging.CameraConfigMsgPayload()
+    inputCamera = messaging.CameraModelMsgPayload()
     inputCob = messaging.OpNavCOBMsgPayload()
     inputFilter = messaging.FilterMsgPayload()
     inputAtt = messaging.NavAttMsgPayload()
     inputEphem = messaging.EphemerisMsgPayload()
 
     # Set camera parameters
-    inputCamera.fieldOfView = np.deg2rad(20.0)
+    inputCamera.fieldOfView = [np.deg2rad(20.0), np.deg2rad(20.0)]
     inputCamera.resolution = cameraResolution
-    inputCamera.sigma_CB = sigma_CB
-    inputCamera.ppFocalLength = 0.10
-    camInMsg = messaging.CameraConfigMsg().write(inputCamera)
+    inputCamera.bodyToCameraMrp = sigma_CB
+    inputCamera.focalLength = 0.10
+    camInMsg = messaging.CameraModelMsg().write(inputCamera)
     module.cameraConfigInMsg.subscribeTo(camInMsg)
 
     # Set center of brightness
@@ -211,7 +211,7 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
         goodPixels = 0
     cob_true = [inputCob.centerOfBrightness[0], inputCob.centerOfBrightness[1]]
     num_pixels = inputCob.pixelsFound
-    dcm_CB = rbk.MRP2C(inputCamera.sigma_CB)
+    dcm_CB = rbk.MRP2C(inputCamera.bodyToCameraMrp)
     dcm_BN = rbk.MRP2C(inputAtt.sigma_BN)
     dcm_NC = np.dot(dcm_CB, dcm_BN).T
 
@@ -238,8 +238,8 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     phi = np.arctan2(shat_C[1], shat_C[0])  # sun direction in image plane
     K = compute_camera_calibration_matrix(inputCamera)
     dX = K[0, 0]
-    Kx = dX / inputCamera.ppFocalLength
-    Rc = R_object * Kx * inputCamera.ppFocalLength / np.linalg.norm(r_BdyZero_N)  # object radius in pixels
+    Kx = dX / inputCamera.focalLength
+    Rc = R_object * Kx * inputCamera.focalLength / np.linalg.norm(r_BdyZero_N)  # object radius in pixels
     com_true = [None] * 2  # COM location in image
     com_true[0] = cob_true[0] - gamma * Rc * np.cos(phi) * goodPixels
     com_true[1] = cob_true[1] - gamma * Rc * np.sin(phi) * goodPixels
