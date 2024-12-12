@@ -27,7 +27,7 @@
 typedef struct {
     int cameraId;
     double cosmicRayStdDeviation;
-    bool enableStrayLight;
+    double strayLight;
     bool starField;
     char rendering[MAX_STRING_LENGTH];
     bool smear;
