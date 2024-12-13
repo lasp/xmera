@@ -39,16 +39,16 @@ bool ZmqConnector::isConnected() const {
     return false;
 }
 
-void ZmqConnector::send(const cielimMessage::CielimMessage& message) {
+void ZmqConnector::send(const cielimMessage::CielimMessage &message) {
     /*! - The viz needs 10 images before placing the planets, wait for 11 protobuffers to
      * have been created before attempting to go into opNavMode 2 */
-    if (this->firstPass < 11){
+    if (this->firstPass < 11) {
         this->firstPass++;
     }
 
     /*! - send protobuffer raw over zmq_socket */
     size_t byteCount = message.ByteSizeLong();
-    void* serialized_message = malloc(byteCount);
+    void *serialized_message = malloc(byteCount);
     message.SerializeToArray(serialized_message, (int)byteCount);
     auto payload = zmq::message_t(serialized_message, byteCount, ZmqConnector::message_buffer_deallocate, nullptr);
 
@@ -68,17 +68,13 @@ void ZmqConnector::send(const cielimMessage::CielimMessage& message) {
     static_cast<void>(this->requesterSocket->recv(pong, zmq::recv_flags::none));
 }
 
-void ZmqConnector::message_buffer_deallocate(void *data, void *hint)
-{
-    free(data);
-}
+void ZmqConnector::message_buffer_deallocate(void *data, void *hint) { free(data); }
 
 ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
     auto cameraIdAsString = std::to_string(cameraId);
     zmq::message_t msgCameraId(cameraIdAsString);
     zmq::message_t msgShouldReturnImage(std::to_string(shouldReturnImage).c_str(), sizeof(char));
-    auto res = this->requesterSocket->send(zmq::str_buffer("REQUEST_IMAGE"),
-                                           zmq::send_flags::sndmore);
+    this->requesterSocket->send(zmq::str_buffer("REQUEST_IMAGE"), zmq::send_flags::sndmore);
     this->requesterSocket->send(msgCameraId, zmq::send_flags::sndmore);
     this->requesterSocket->send(msgShouldReturnImage, zmq::send_flags::none);
 
@@ -98,22 +94,22 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
     const int32_t *lengthPoint = imageLengthMessage.data<int32_t>();
     const void *imagePoint = imageMessage.data();
     int32_t imageBufferLength = *lengthPoint;
-    void* image = malloc(imageBufferLength*sizeof(char));
-    memcpy(image, imagePoint, imageBufferLength*sizeof(char));
+    void *image = malloc(imageBufferLength * sizeof(char));
+    memcpy(image, imagePoint, imageBufferLength * sizeof(char));
 
     auto returnData = ImageData();
     returnData.imageBuffer = image;
+
     returnData.imageBufferLength = imageBufferLength;
     returnData.centerOfBrightness = std::nullopt;
 
-    if (cobXMsgSize.has_value()) {
-        returnData.centerOfBrightness = Eigen::Vector2d(*centerOfBrightnessX.data<double>(),
-                *centerOfBrightnessY.data<double>());
+    if (cobXMsgSize.has_value() && cobYMsgSize.has_value()) {
+        returnData.centerOfBrightness =
+            Eigen::Vector2d(*centerOfBrightnessX.data<double>(), *centerOfBrightnessY.data<double>());
     }
 
-    return  returnData;
+    return returnData;
 }
-
 
 void ZmqConnector::ping() {
     this->requesterSocket->send(zmq::message_t("PING", 4), zmq::send_flags::none);
@@ -125,6 +121,4 @@ void ZmqConnector::ping() {
     static_cast<void>(this->requesterSocket->recv(message, zmq::recv_flags::none));
 }
 
-void ZmqConnector::setComPortNumber(std::string &portNumber) {
-    this->comPortNumber = portNumber;
-}
+void ZmqConnector::setComPortNumber(std::string &portNumber) { this->comPortNumber = portNumber; }
