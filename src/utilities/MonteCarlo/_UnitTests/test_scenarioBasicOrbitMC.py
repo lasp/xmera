@@ -17,6 +17,7 @@
 #
 import inspect  # Don't worry about this, standard stuff plus file discovery
 import os
+import tempfile
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -141,91 +142,88 @@ def myDataCallback(monteCarloData, retentionPolicy):
 @pytest.mark.slowtest
 def test_MonteCarloSimulation(show_plots):
     # Test a montecarlo simulation
-    dirName = os.path.abspath(os.path.dirname(__file__)) + "/tmp_montecarlo_test"
-    monteCarlo = Controller()
-    monteCarlo.setShouldDisperseSeeds(True)
-    monteCarlo.setExecutionFunction(myExecutionFunction)
-    monteCarlo.setSimulationFunction(myCreationFunction)
-    monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
-    monteCarlo.setThreadCount(PROCESSES)
-    monteCarlo.setVerbose(True)
-    monteCarlo.setArchiveDir(dirName)
+    with tempfile.TemporaryDirectory() as tempDirectory:
+        monteCarlo = Controller()
+        monteCarlo.setShouldDisperseSeeds(True)
+        monteCarlo.setExecutionFunction(myExecutionFunction)
+        monteCarlo.setSimulationFunction(myCreationFunction)
+        monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
+        monteCarlo.setThreadCount(PROCESSES)
+        monteCarlo.setVerbose(True)
+        monteCarlo.setArchiveDir(tempDirectory)
 
-    # Add some dispersions
-    disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
-    disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
-    disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
-    disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    disp5Name = 'TaskList[0].TaskModels[0].hub.r_CN_NInit'
-    disp6Name = 'TaskList[0].TaskModels[0].hub.v_CN_NInit'
-    dispDict = {}
-    dispDict["mu"] = 0.3986004415E+15
-    dispDict["a"] = ["normal", 42000 * 1E3, 2000 * 1E3]
-    dispDict["e"] = ["uniform", 0, 0.5]
-    dispDict["i"] = ["uniform", -80, 80]
-    dispDict["Omega"] = None
-    dispDict["omega"] = ["uniform", 80, 90]
-    dispDict["f"] = ["uniform", 0, 359]
-    monteCarlo.addDispersion(OrbitalElementDispersion(disp5Name, disp6Name, dispDict))
-    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
-    monteCarlo.addDispersion(
-        NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+        # Add some dispersions
+        disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
+        disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
+        disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
+        disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+        disp5Name = 'TaskList[0].TaskModels[0].hub.r_CN_NInit'
+        disp6Name = 'TaskList[0].TaskModels[0].hub.v_CN_NInit'
+        dispDict = {}
+        dispDict["mu"] = 0.3986004415E+15
+        dispDict["a"] = ["normal", 42000 * 1E3, 2000 * 1E3]
+        dispDict["e"] = ["uniform", 0, 0.5]
+        dispDict["i"] = ["uniform", -80, 80]
+        dispDict["Omega"] = None
+        dispDict["omega"] = ["uniform", 80, 90]
+        dispDict["f"] = ["uniform", 0, 359]
+        monteCarlo.addDispersion(OrbitalElementDispersion(disp5Name, disp6Name, dispDict))
+        monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
+        monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
+        monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
+        monteCarlo.addDispersion(
+            NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
 
-    # Add retention policy
-    retentionPolicy = RetentionPolicy()
-    retentionPolicy.addMessageLog(retainedMessageName, [var1, var2])
-    retentionPolicy.addVariableLog("helloworldModule.GetTicker()")
-    retentionPolicy.addVariableLog("bskSat.totOrbEnergy")
-    retentionPolicy.setDataCallback(myDataCallback)
-    monteCarlo.addRetentionPolicy(retentionPolicy)
+        # Add retention policy
+        retentionPolicy = RetentionPolicy()
+        retentionPolicy.addMessageLog(retainedMessageName, [var1, var2])
+        retentionPolicy.addVariableLog("helloworldModule.GetTicker()")
+        retentionPolicy.addVariableLog("bskSat.totOrbEnergy")
+        retentionPolicy.setDataCallback(myDataCallback)
+        monteCarlo.addRetentionPolicy(retentionPolicy)
 
-    failures = monteCarlo.executeSimulations()
+        failures = monteCarlo.executeSimulations()
 
-    assert len(failures) == 0, "No runs should fail"
+        assert len(failures) == 0, "No runs should fail"
 
-    # Test loading data from runs from disk
-    monteCarloLoaded = Controller.load(dirName)
+        # Test loading data from runs from disk
+        monteCarloLoaded = Controller.load(tempDirectory)
 
-    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-    assert retainedData is not None, "Retained data should be available after execution"
+        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        assert retainedData is not None, "Retained data should be available after execution"
 
-    assert "messages" in retainedData, "Retained data should retain messages"
-    assert retainedMessageName + ".r_BN_N" in retainedData["messages"], "Retained messages should exist"
-    assert retainedMessageName + ".v_BN_N" in retainedData["messages"], "Retained messages should exist"
+        assert "messages" in retainedData, "Retained data should retain messages"
+        assert retainedMessageName + ".r_BN_N" in retainedData["messages"], "Retained messages should exist"
+        assert retainedMessageName + ".v_BN_N" in retainedData["messages"], "Retained messages should exist"
 
-    assert "variables" in retainedData, "Retained data should retain variables"
-    assert retainedVariableName + ".GetTicker()" in retainedData["variables"], "Retained variables should exist"
+        assert "variables" in retainedData, "Retained data should retain variables"
+        assert retainedVariableName + ".GetTicker()" in retainedData["variables"], "Retained variables should exist"
 
-    # rerun the case and it should be the same, because we dispersed random seeds
-    oldOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
+        # rerun the case and it should be the same, because we dispersed random seeds
+        oldOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
 
-    failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
-    assert len(failed) == 0, "Should rerun case successfully"
+        failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+        assert len(failed) == 0, "Should rerun case successfully"
 
-    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-    newOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
-    for k1, v1 in enumerate(oldOutput):
-        for k2, v2 in enumerate(v1):
-            assert np.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
-            "Outputs shouldn't change on runs if random seeds are same"
+        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        newOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
+        for k1, v1 in enumerate(oldOutput):
+            for k2, v2 in enumerate(v1):
+                assert np.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+                "Outputs shouldn't change on runs if random seeds are same"
 
-    # test the initial parameters were saved from runs, and they differ between runs
-    params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
-    params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
-    assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
-    for dispName in [disp1Name, disp2Name, disp3Name, disp4Name]:
-        assert dispName in params1, "dispersion should be applied"
-        # assert two different runs had different parameters.
-        assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+        # test the initial parameters were saved from runs, and they differ between runs
+        params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+        params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+        assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+        for dispName in [disp1Name, disp2Name, disp3Name, disp4Name]:
+            assert dispName in params1, "dispersion should be applied"
+            # assert two different runs had different parameters.
+            assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
-    monteCarloLoaded.executeCallbacks()
-    if show_plots:
-        plt.show()
-
-    shutil.rmtree(dirName)
-    assert not os.path.exists(dirName), "No leftover data should exist after the test"
+        monteCarloLoaded.executeCallbacks()
+        if show_plots:
+            plt.show()
 
 
 if __name__ == "__main__":

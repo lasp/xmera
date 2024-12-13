@@ -13,13 +13,19 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+import os
+import tempfile
 
 import numpy as np
-
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import SimulationBaseClass, macros, pyswice_ck_utilities, simIncludeGravBody, RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
 from Basilisk.topLevelModules import pyswice
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    pyswice_ck_utilities,
+    simIncludeGravBody,
+    RigidBodyKinematics as rbk
+)
 
 
 def test_ck_read_write(show_plots):
@@ -60,23 +66,26 @@ def test_ck_read_write(show_plots):
     timeWrite = scObjectLogger.times()
     sigmaWrite = scObjectLogger.sigma_BN
     omegaWrite = scObjectLogger.omega_BN_B
-    pyswice_ck_utilities.ckWrite("test.bc", timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
 
-    # Read the same CK file to check if the values are identical
-    pyswice_ck_utilities.ckInitialize("test.bc")
-    sigmaRead = np.empty_like(sigmaWrite)
-    omegaRead = np.empty_like(omegaWrite)
-    for idx in range(len(timeWrite)):
-        # Change the time string to account for increasing time
-        timeString = timeInit[:19] + f"{int(timeWrite[idx] * macros.NANO2SEC):02}" + timeInit[21:]
-        _, kernQuat, kernOmega = pyswice_ck_utilities.ckRead(timeString, spacecraft_id=-202)
+    with tempfile.TemporaryDirectory() as tempDirectory:
+        tempFileName = os.path.join(tempDirectory, "test.bc")
+        pyswice_ck_utilities.ckWrite(tempFileName, timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
 
-        sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
-        omegaRead[idx, :] = kernOmega
+        # Read the same CK file to check if the values are identical
+        pyswice_ck_utilities.ckInitialize(tempFileName)
+        sigmaRead = np.empty_like(sigmaWrite)
+        omegaRead = np.empty_like(omegaWrite)
+        for idx in range(len(timeWrite)):
+            # Change the time string to account for increasing time
+            timeString = timeInit[:19] + f"{int(timeWrite[idx] * macros.NANO2SEC):02}" + timeInit[21:]
+            _, kernQuat, kernOmega = pyswice_ck_utilities.ckRead(timeString, spacecraft_id=-202)
 
-    # Compare the read and write data
-    np.testing.assert_allclose(sigmaRead, sigmaWrite)
-    np.testing.assert_allclose(omegaRead, omegaWrite)
+            sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
+            omegaRead[idx, :] = kernOmega
+
+        # Compare the read and write data
+        np.testing.assert_allclose(sigmaRead, sigmaWrite)
+        np.testing.assert_allclose(omegaRead, omegaWrite)
 
 
 if __name__ == "__main__":
