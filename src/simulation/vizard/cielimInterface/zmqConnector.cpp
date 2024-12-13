@@ -103,10 +103,11 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
 
     auto returnData = ImageData();
     returnData.imageBuffer = image;
+
     returnData.imageBufferLength = imageBufferLength;
     returnData.centerOfBrightness = std::nullopt;
 
-    if (cobXMsgSize.has_value()) {
+    if (cobXMsgSize.has_value() && cobYMsgSize.has_value()) {
         returnData.centerOfBrightness = Eigen::Vector2d(*centerOfBrightnessX.data<double>(),
                 *centerOfBrightnessY.data<double>());
     }
