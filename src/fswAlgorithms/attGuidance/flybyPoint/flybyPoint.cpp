@@ -46,12 +46,15 @@ void FlybyPoint::updateState(uint64_t currentSimNanos)
         /*! If this is the first read, seed the algorithm with the solution  */
         auto [r_BN_N, v_BN_N] = this->readRelativeState();
         if (this->firstRead){
+            this->timeOfFirstRead = currentSimNanos*NANO2SEC;
+            this->firstNavPosition = r_BN_N;
+            this->firstNavVelocity = v_BN_N;
             this->computeFlybyParameters(r_BN_N, v_BN_N);
             this->computeRN(r_BN_N, v_BN_N);
             this->firstRead = false;
         }
         /*! Protect against bad new solutions by checking validity */
-        if (this->checkValidity(r_BN_N, v_BN_N)) {
+        else if (this->checkValidity(currentSimNanos, r_BN_N, v_BN_N)) {
             /*! update flyby parameters and guidance frame */
             this->computeFlybyParameters(r_BN_N, v_BN_N);
             this->computeRN(r_BN_N, v_BN_N);
@@ -89,7 +92,7 @@ void FlybyPoint::computeFlybyParameters(Eigen::Vector3d &r_BN_N, Eigen::Vector3d
     this->gamma0 = std::atan(v_BN_N.dot(ur_N) / v_BN_N.dot(ut_N));
 }
 
-bool FlybyPoint::checkValidity(Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N) const{
+bool FlybyPoint::checkValidity(uint64_t currentSimNanos, Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N) const{
     bool valid = true;
     Eigen::Vector3d ur_N = r_BN_N.normalized();
     Eigen::Vector3d uv_N = v_BN_N.normalized();
@@ -108,6 +111,11 @@ bool FlybyPoint::checkValidity(Eigen::Vector3d &r_BN_N, Eigen::Vector3d &v_BN_N)
     }
     double maxPredictedAcceleration = 3*std::sqrt(3)/8*pow(v_BN_N.norm()/distanceClosestApproach, 2)*180/M_PI;
     if (maxPredictedAcceleration > this->maxAcceleration && this->maxAcceleration > 0) {
+        valid = false;
+    }
+    double deltaT = currentSimNanos*NANO2SEC - this->timeOfFirstRead;
+    double deltaPositionNorm = (r_BN_N - (this->firstNavPosition + deltaT*this->firstNavVelocity)).norm();
+    if (deltaPositionNorm > this->positionKnowledgeSigma && this->positionKnowledgeSigma > 0) {
         valid = false;
     }
 
@@ -231,4 +239,18 @@ double FlybyPoint::getMaximumRateThreshold() const {
  */
 void FlybyPoint::setMaximumRateThreshold(double maxRateThreshold) {
     this->maxRate = maxRateThreshold;
+}
+
+/*! Get the ground based positional knowledge standard deviation
+ @return sigma
+ */
+double FlybyPoint::getPositionKnowledgeSigma() const {
+    return this->positionKnowledgeSigma;
+}
+
+/*! Set the ground based positional knowledge sigma
+ @param sigma
+ */
+void FlybyPoint::setPositionKnowledgeSigma(double positionKnowledgeStd) {
+    this->positionKnowledgeSigma = positionKnowledgeStd;
 }
