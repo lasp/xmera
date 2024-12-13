@@ -77,7 +77,7 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
     auto cameraIdAsString = std::to_string(cameraId);
     zmq::message_t msgCameraId(cameraIdAsString);
     zmq::message_t msgShouldReturnImage(std::to_string(shouldReturnImage).c_str(), sizeof(char));
-    auto res = this->requesterSocket->send(zmq::str_buffer("REQUEST_IMAGE"),
+    this->requesterSocket->send(zmq::str_buffer("REQUEST_IMAGE"),
                                            zmq::send_flags::sndmore);
     this->requesterSocket->send(msgCameraId, zmq::send_flags::sndmore);
     this->requesterSocket->send(msgShouldReturnImage, zmq::send_flags::none);
