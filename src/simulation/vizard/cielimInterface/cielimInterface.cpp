@@ -50,12 +50,11 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
         this->celestialParametersMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     }
 
-        /*! Check asteroid parameter information messages */
+    /*! Check asteroid parameter information messages */
     if (this->epochMessage.isLinked()) {
         this->epochMessageStatus.dataFresh = false;
         this->epochMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     }
-
 
     this->epochMessageStatus.dataFresh = false;
 
@@ -64,11 +63,11 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     spiceStatus.dataFresh = true;
     spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     this->spiceBodyMessageStatus.clear();
-    for (int c = 0; c<this->celestialBodiesList.size(); ++c) {
+    for (int c = 0; c < this->celestialBodiesList.size(); ++c) {
         /*! set default zero translation and rotation states */
         SpicePlanetStateMsgPayload logMsg = {};
-        for(int i = 0; i < 3; ++i) {
-            for(int j = 0; j < 3; ++j) {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
                 logMsg.J20002Pfix[i][j] = (i == j) ? 1.0 : 0.0;
             }
         }
@@ -78,10 +77,10 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     }
 
     this->frameNumber = -1;
-    if (this->saveFile){
+    if (this->saveFile) {
         std::string temporaryFilename = this->protoFilename;
-        for (int i=1; i<1000; ++i){
-            if (!std::filesystem::exists(temporaryFilename)){
+        for (int i = 1; i < 1000; ++i) {
+            if (!std::filesystem::exists(temporaryFilename)) {
                 this->protoFilename = temporaryFilename;
                 break;
             }
@@ -98,7 +97,8 @@ void CielimInterface::readBskMessages() {
     /*! Read spacecraft state msg */
     if (this->spacecraftMessage.isLinked()) {
         SCStatesMsgPayload localSCStateArray = this->spacecraftMessage();
-        if (this->spacecraftMessage.isWritten() && this->spacecraftMessage.timeWritten() != this->spacecraftMessageStatus.lastTimeTag) {
+        if (this->spacecraftMessage.isWritten() &&
+            this->spacecraftMessage.timeWritten() != this->spacecraftMessageStatus.lastTimeTag) {
             this->spacecraftMessageStatus.lastTimeTag = this->spacecraftMessage.timeWritten();
             this->spacecraftMessageStatus.dataFresh = true;
         }
@@ -109,7 +109,7 @@ void CielimInterface::readBskMessages() {
     if (this->cameraModelMessage.isLinked()) {
         CameraModelMsgPayload localCameraConfigArray = this->cameraModelMessage();
         if (this->cameraModelMessage.isWritten() &&
-                this->cameraModelMessage.timeWritten() != this->cameraModelMessageStatus.lastTimeTag) {
+            this->cameraModelMessage.timeWritten() != this->cameraModelMessageStatus.lastTimeTag) {
             this->cameraModelMessageStatus.lastTimeTag = this->cameraModelMessage.timeWritten();
             this->cameraModelMessageStatus.dataFresh = true;
         }
@@ -120,7 +120,7 @@ void CielimInterface::readBskMessages() {
     if (this->cameraRenderingMessage.isLinked()) {
         CameraRenderingMsgPayload cameraRenderingArray = this->cameraRenderingMessage();
         if (this->cameraRenderingMessage.isWritten() &&
-                this->cameraRenderingMessage.timeWritten() != this->cameraRenderingMessageStatus.lastTimeTag) {
+            this->cameraRenderingMessage.timeWritten() != this->cameraRenderingMessageStatus.lastTimeTag) {
             this->cameraRenderingMessageStatus.lastTimeTag = this->cameraRenderingMessage.timeWritten();
             this->cameraRenderingMessageStatus.dataFresh = true;
         }
@@ -131,7 +131,7 @@ void CielimInterface::readBskMessages() {
     if (this->celestialParametersMessage.isLinked()) {
         CelestialBodyParametersMsgPayload celestialParamArray = this->celestialParametersMessage();
         if (this->celestialParametersMessage.isWritten() &&
-                this->celestialParametersMessage.timeWritten() != this->celestialParametersMessageStatus.lastTimeTag) {
+            this->celestialParametersMessage.timeWritten() != this->celestialParametersMessageStatus.lastTimeTag) {
             this->celestialParametersMessageStatus.lastTimeTag = this->celestialParametersMessage.timeWritten();
             this->celestialParametersMessageStatus.dataFresh = true;
         }
@@ -140,8 +140,9 @@ void CielimInterface::readBskMessages() {
 
     /*! Read sim epoch msg */
     if (this->epochMessage.isLinked()) {
-        EpochMsgPayload epochMessageBuffer  = this->epochMessage();
-        if (this->epochMessage.isWritten() && this->epochMessage.timeWritten() != this->epochMessageStatus.lastTimeTag) {
+        EpochMsgPayload epochMessageBuffer = this->epochMessage();
+        if (this->epochMessage.isWritten() &&
+            this->epochMessage.timeWritten() != this->epochMessageStatus.lastTimeTag) {
             this->epochMessageStatus.lastTimeTag = this->epochMessage.timeWritten();
             this->epochMessageStatus.dataFresh = true;
         }
@@ -154,14 +155,15 @@ void CielimInterface::readBskMessages() {
             // If the spice msg is not linked then the default zero planet ephemeris is used
             SpicePlanetStateMsgPayload localSpiceArray = this->celestialBodiesList.at(i).spiceStateMessage();
             if (this->celestialBodiesList.at(i).spiceStateMessage.isWritten() &&
-            this->celestialBodiesList.at(i).spiceStateMessage.timeWritten() != this->spiceBodyMessageStatus[i].lastTimeTag) {
-                this->spiceBodyMessageStatus[i].lastTimeTag = this->celestialBodiesList.at(i).spiceStateMessage.timeWritten();
+                this->celestialBodiesList.at(i).spiceStateMessage.timeWritten() !=
+                    this->spiceBodyMessageStatus[i].lastTimeTag) {
+                this->spiceBodyMessageStatus[i].lastTimeTag =
+                    this->celestialBodiesList.at(i).spiceStateMessage.timeWritten();
                 this->spiceBodyMessageStatus[i].dataFresh = true;
                 this->celestialBodiesList.at(i).spiceStatePayload = localSpiceArray;
             }
         }
     }
-
 }
 
 /*! Write a protobuffer with the information from the simulation .
@@ -171,14 +173,14 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
     auto visPayload = cielimMessage::CielimMessage();
 
     /*! Write timestamp output msg */
-    auto* time = new cielimMessage::TimeStamp();
+    auto *time = new cielimMessage::TimeStamp();
     time->set_framenumber(this->frameNumber);
-    time->set_simtimeelapsed((double) currentSimNanos);
+    time->set_simtimeelapsed((double)currentSimNanos);
     visPayload.set_allocated_currenttime(time);
 
     /*! write epoch msg */
     if (this->epochMessageStatus.dataFresh) {
-        auto * epoch =  new cielimMessage::EpochDateTime();
+        auto *epoch = new cielimMessage::EpochDateTime();
         epoch->set_year(this->epochPayload.year);
         epoch->set_month(this->epochPayload.month);
         epoch->set_day(this->epochPayload.day);
@@ -204,8 +206,8 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
             }
             spice->set_centralbody(this->celestialBodiesList.at(k).isCentralBody);
             std::string parameterBodyName = this->celestialParametersPayload.bodyName;
-            if (this->celestialParametersMessage.isLinked() && this->celestialParametersMessageStatus.dataFresh
-            && !parameterBodyName.compare(this->celestialBodiesList.at(k).name)) {
+            if (this->celestialParametersMessage.isLinked() && this->celestialParametersMessageStatus.dataFresh &&
+                !parameterBodyName.compare(this->celestialBodiesList.at(k).name)) {
                 auto *celestialParameters = new cielimMessage::MeshModel();
                 std::string brdfModelName = this->celestialParametersPayload.brdf;
                 celestialParameters->set_brdfmodel(brdfModelName);
@@ -213,23 +215,23 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                 celestialParameters->set_perlinnoisestddeviation(this->celestialParametersPayload.perlinNoise);
                 for (int i = 0; i < 3; ++i) {
                     celestialParameters->add_principalaxisdistortion(
-                            this->celestialParametersPayload.principalAxisDistortion[i]);
-                    celestialParameters->add_inertialtobodymrp(
-                            this->celestialParametersPayload.sigma_BN[i]);
+                        this->celestialParametersPayload.principalAxisDistortion[i]);
+                    celestialParameters->add_inertialtobodymrp(this->celestialParametersPayload.sigma_BN[i]);
                 }
                 celestialParameters->set_proceduralrocks(this->celestialParametersPayload.proceduralRocks);
                 for (int i = 0; i < MAX_PARAMETER_LENGTH; ++i) {
-                    celestialParameters->add_reflectanceparameters(this->celestialParametersPayload.reflectanceParameters[i]);
+                    celestialParameters->add_reflectanceparameters(
+                        this->celestialParametersPayload.reflectanceParameters[i]);
                 }
                 celestialParameters->set_shapemodel(this->celestialParametersPayload.shapeModel);
                 spice->set_allocated_model(celestialParameters);
-        }
+            }
         }
     }
 
     /*! Write spacecraft state output msg */
     if (this->spacecraftMessage.isLinked() && this->spacecraftMessageStatus.dataFresh) {
-        auto * spacecraft =  new cielimMessage::Spacecraft();
+        auto *spacecraft = new cielimMessage::Spacecraft();
         spacecraft->set_spacecraftname("cielim_sat");
         for (int i = 0; i < 3; i++) {
             spacecraft->add_position(this->spacecraftPayload.r_BN_N[i]);
@@ -239,12 +241,12 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         visPayload.set_allocated_spacecraft(spacecraft);
     }
     /*! Write camera output msg */
-    if ((this->cameraModelMessage.isLinked() && this->cameraModelMessageStatus.dataFresh)
-        || this->cameraModelPayload.cameraId >= 0) {
+    if ((this->cameraModelMessage.isLinked() && this->cameraModelMessageStatus.dataFresh) ||
+        this->cameraModelPayload.cameraId >= 0) {
         /*! This corrective attitude allows UE to place the camera as is expected by the python setting.
          * UE5 has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame:
          * z point, x horizontal, y vertical (down) */
-        auto * camera = new cielimMessage::CameraModel();
+        auto *camera = new cielimMessage::CameraModel();
         for (int j = 0; j < 2; j++) {
             camera->add_resolution(this->cameraModelPayload.resolution[j]);
             camera->add_fieldofview(this->cameraModelPayload.fieldOfView[j]);
@@ -262,9 +264,9 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         camera->set_readnoise(this->cameraModelPayload.readNoise);
         camera->set_systemgain(this->cameraModelPayload.systemGain);
 
-        if (this->cameraRenderingMessage.isLinked() && this->cameraRenderingMessageStatus.dataFresh
-            && this->cameraRenderingPayload.cameraId == this->cameraModelPayload.cameraId){
-            auto * rendering = new cielimMessage::RenderingModel();
+        if (this->cameraRenderingMessage.isLinked() && this->cameraRenderingMessageStatus.dataFresh &&
+            this->cameraRenderingPayload.cameraId == this->cameraModelPayload.cameraId) {
+            auto *rendering = new cielimMessage::RenderingModel();
             rendering->set_cosmicraystddeviation(this->cameraRenderingPayload.cosmicRayStdDeviation);
             rendering->set_straylight(this->cameraRenderingPayload.strayLight);
             rendering->set_starfield(this->cameraRenderingPayload.starField);
@@ -287,10 +289,8 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
 
         /*! - If the camera is requesting periodic images, request them */
         if (this->opNavMode != ClosedLoopMode::OPEN_LOOP &&
-            currentSimNanos % this->cameraModelPayload.renderRate == 0 &&
-            this->cameraModelPayload.renderRate > 0) {
+            currentSimNanos % this->cameraModelPayload.renderRate == 0 && this->cameraModelPayload.renderRate > 0) {
             this->requestImage(currentSimNanos);
-
         }
         if (this->shouldRequestACameraImage(currentSimNanos)) {
             this->connector.ping();
@@ -317,9 +317,8 @@ void CielimInterface::updateState(uint64_t currentSimNanos) {
 /*! Determine if the module should request and image
  @param currentSimNanos The current sim time
  * */
-bool CielimInterface::shouldRequestACameraImage(uint64_t currentSimNanos) const{
-    if (currentSimNanos % this->cameraModelPayload.renderRate == 0 &&
-        this->cameraModelPayload.renderRate > 0) {
+bool CielimInterface::shouldRequestACameraImage(uint64_t currentSimNanos) const {
+    if (currentSimNanos % this->cameraModelPayload.renderRate == 0 && this->cameraModelPayload.renderRate > 0) {
         return true;
     }
     return false;
@@ -339,7 +338,9 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
     imagePayload.imageBufferLength = imageData.imageBufferLength;
     imagePayload.cameraID = this->cameraModelPayload.cameraId;
     imagePayload.imageType = 3;
-    if (imageData.imageBufferLength > 0) { imagePayload.valid = 1; }
+    if (imageData.imageBufferLength > 0) {
+        imagePayload.valid = 1;
+    }
     this->imageOutMessage.write(&imagePayload, this->moduleID, currentSimNanos);
 
     OpNavCOBMsgPayload centerOfBrightnessPayload = {};
@@ -355,36 +356,27 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
 
 /*! Get the communication mode
 @return ClosedLoopMode enum containing the mode definitions
-
 */
-ClosedLoopMode CielimInterface::getOpNavMode() const {
-    return this->opNavMode;
-}
+ClosedLoopMode CielimInterface::getOpNavMode() const { return this->opNavMode; }
 
 /*! Set the communication mode
  * @param ClosedLoopMode enum containing the mode definitions
-*/
-void CielimInterface::setOpNavMode(ClosedLoopMode mode) {
-    this->opNavMode = mode;
-}
+ */
+void CielimInterface::setOpNavMode(ClosedLoopMode mode) { this->opNavMode = mode; }
 
 /*! Set the tcp port number
  * @param std::string port number
-*/
-void CielimInterface::setPortNumber(std::string port) {
-    this->connector.setComPortNumber(port);
-}
+ */
+void CielimInterface::setPortNumber(std::string port) { this->connector.setComPortNumber(port); }
 
 /*! Get the frame number
  * @return int64_t frame
-*/
-int64_t CielimInterface::getFrameNumber() const {
-    return this->frameNumber;
-}
+ */
+int64_t CielimInterface::getFrameNumber() const { return this->frameNumber; }
 
 /*! Set the save file path
  * @param std::string path and name to data destination
-*/
+ */
 void CielimInterface::setSaveFile(const std::string &saveProtobufferFile) {
     assert(saveProtobufferFile != "");
     this->protoFilename = saveProtobufferFile;
@@ -393,42 +385,32 @@ void CielimInterface::setSaveFile(const std::string &saveProtobufferFile) {
 
 /*! Get the save file path
  * @return std::string path and name to data destination
-*/
-std::string CielimInterface::getSaveFilename() const {
-    return this->protoFilename;
-}
+ */
+std::string CielimInterface::getSaveFilename() const { return this->protoFilename; }
 
 /*! Manually close the save file for read/write control
-*/
-void CielimInterface::closeProtobufFile() {
-    this->outputStream.close();
-}
+ */
+void CielimInterface::closeProtobufFile() { this->outputStream.close(); }
 
 /*! Toggle live streaming on or off
 @param bool on/off
 */
-void CielimInterface::setLiveStream(bool liveStreaming){
-    this->liveStream = liveStreaming;
-}
+void CielimInterface::setLiveStream(bool liveStreaming) { this->liveStream = liveStreaming; }
 
 /*! Add a celestial body to the interface
 @param SpiceBody class containing celestial body information
 */
-void CielimInterface::addCelestialBody(const SpiceBody &celestialBodyNames){
+void CielimInterface::addCelestialBody(const SpiceBody &celestialBodyNames) {
     this->celestialBodiesList.push_back(celestialBodyNames);
 }
 
 /*! Get all celestial body added to the interface
 @return std::vector<SpiceBody> list of bodies
 */
-std::vector<SpiceBody> CielimInterface::getCelestialBodies() const{
-    return this->celestialBodiesList;
-}
+std::vector<SpiceBody> CielimInterface::getCelestialBodies() const { return this->celestialBodiesList; }
 
 /*! A cleaning method to ensure the message buffers are wiped clean.
  @param data The current sim time in nanoseconds
  @param hint
  */
-void message_buffer_deallocate(void *data, void *hint) {
-    free(data);
-}
+void message_buffer_deallocate(void *data, void *hint) { free(data); }
