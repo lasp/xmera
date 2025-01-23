@@ -338,11 +338,16 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 enable_testing()
 
-# Check if the large Spice files are present.  If not, download from JPL site directly
+# Download spice file if not present
+set(URL_SPICE_KERNEL
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp"
+        CACHE
+        STRING
+        "URL from which to download spice kernel de430.bsp dependency")
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp")
-  message(STATUS "File de430.bsp not found, downloading file:")
+  message(STATUS "File de430.bsp not found, downloading file from ${URL_SPICE_KERNEL}:")
   file(DOWNLOAD
-          "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp"
+          "${URL_SPICE_KERNEL}"
           # Download it to the build directory (in case the download gets interrupted).
           "${CMAKE_BINARY_DIR}/data/de430.bsp"
        SHOW_PROGRESS
@@ -351,7 +356,7 @@ if(NOT EXISTS "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp")
   list(GET DOWNLOAD_RESULT 1 RESULT_MESSAGE)
   list(GET DOWNLOAD_RESULT 0 RESULT_CODE)
   if(NOT RESULT_CODE EQUAL 0)
-    message(FATAL_ERROR "Failed downloading de430.bsp with error code: ${RESULT_CODE} : ${RESULT_MESSAGE}.")
+    message(WARNING "Failed downloading de430.bsp with error code: ${RESULT_CODE} : ${RESULT_MESSAGE}.")
   endif()
   # Move the SPICE file into the appropriate directory.
   file(RENAME "${CMAKE_BINARY_DIR}/data/de430.bsp" "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp")

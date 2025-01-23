@@ -43,7 +43,8 @@ bskModuleOptionsBool = {
 }
 bskModuleOptionsString = {
     "autoKey": "",
-    "pathToExternalModules": ""
+    "pathToExternalModules": "",
+    "url_spice_kernel": ""
 }
 bskModuleOptionsFlag = {
     "clean": False,
@@ -251,6 +252,7 @@ class BasiliskConan(ConanFile):
             cmake.definitions["CONAN_LINK_RUNTIME_MULTI"] = cmake.definitions["CONAN_LINK_RUNTIME"]
             cmake.definitions["CONAN_LINK_RUNTIME"] = False
         cmake.definitions["BUILD_OPNAV"] = self.options.opNav
+        if self.options.url_spice_kernel: cmake.definitions["URL_SPICE_KERNEL"] = self.options.url_spice_kernel
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
         cmake.definitions["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}"
