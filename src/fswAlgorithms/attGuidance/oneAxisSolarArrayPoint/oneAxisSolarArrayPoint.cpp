@@ -64,7 +64,7 @@ void OneAxisSolarArrayPoint::reset(uint64_t callTime) {
     // check how the input body heading is provided
     if (this->bodyHeadingInMsg.isLinked()) {
         this->bodyAxisInput = inputBodyHeadingMsg;
-    } else if (v3Norm(this->h1Hat_B) > epsilon) {
+    } else if (v3Norm(this->h1Hat_BInput) > epsilon) {
         this->bodyAxisInput = inputBodyHeadingParameter;
     } else {
         this->bskLogger.bskLog(
@@ -90,7 +90,7 @@ void OneAxisSolarArrayPoint::reset(uint64_t callTime) {
             this->inertialAxisInput = inputEphemerisMsg;
         }
     } else {
-        if (v3Norm(this->hHat_N) > epsilon) {
+        if (v3Norm(this->hHat_NInput) > epsilon) {
             this->inertialAxisInput = inputInertialHeadingParameter;
         } else {
             this->bskLogger.bskLog(
@@ -115,7 +115,7 @@ void OneAxisSolarArrayPoint::updateState(uint64_t callTime) {
     /*! get requested heading in inertial frame */
     double hReqHat_N[3];
     if (this->inertialAxisInput == inputInertialHeadingParameter) {
-        v3Normalize(this->hHat_N, hReqHat_N);
+        v3Normalize(this->hHat_NInput, hReqHat_N);
     } else if (this->inertialAxisInput == inputInertialHeadingMsg) {
         InertialHeadingMsgPayload inertialHeadingIn = this->inertialHeadingInMsg();
         v3Normalize(inertialHeadingIn.rHat_XN_N, hReqHat_N);
@@ -129,7 +129,7 @@ void OneAxisSolarArrayPoint::updateState(uint64_t callTime) {
     /*! get body frame heading */
     double hRefHat_B[3];
     if (this->bodyAxisInput == inputBodyHeadingParameter) {
-        v3Normalize(this->h1Hat_B, hRefHat_B);
+        v3Normalize(this->h1Hat_BInput, hRefHat_B);
     } else if (this->bodyAxisInput == inputBodyHeadingMsg) {
         BodyHeadingMsgPayload bodyHeadingIn = this->bodyHeadingInMsg();
         v3Normalize(bodyHeadingIn.rHat_XB_B, hRefHat_B);
@@ -141,12 +141,12 @@ void OneAxisSolarArrayPoint::updateState(uint64_t callTime) {
 
     /*! get the solar array drive direction in body frame coordinates */
     double a1Hat_B[3];
-    v3Normalize(this->a1Hat_B, a1Hat_B);
+    v3Normalize(this->a1Hat_BInput, a1Hat_B);
 
     /*! get the second body frame direction */
     double a2Hat_B[3];
-    if (v3Norm(this->a2Hat_B) > epsilon) {
-        v3Normalize(this->a2Hat_B, a2Hat_B);
+    if (v3Norm(this->a2Hat_BInput) > epsilon) {
+        v3Normalize(this->a2Hat_BInput, a2Hat_B);
     } else {
         v3SetZero(a2Hat_B);
     }
@@ -174,13 +174,13 @@ void OneAxisSolarArrayPoint::updateState(uint64_t callTime) {
     double sigma_RN[3];
     C2MRP(RN, sigma_RN);
 
-    if (v3Norm(this->h2Hat_B) > epsilon) {
+    if (v3Norm(this->h2Hat_BInput) > epsilon) {
         // compute second reference frame
         oasapComputeFinalRotation(this->celestialBodyInput,
                                   this->alignmentPriority,
                                   BN,
                                   rHat_SB_B,
-                                  this->h2Hat_B,
+                                  this->h2Hat_BInput,
                                   hReqHat_B,
                                   a1Hat_B,
                                   a2Hat_B,
