@@ -66,11 +66,6 @@ class OneAxisSolarArrayPoint : public SysModel {
     /*! declare these internal variables that are used by the module and should not be declared by the user */
     BodyAxisInput bodyAxisInput;                //!< flag variable to determine how the body axis input is specified
     InertialAxisInput inertialAxisInput;        //!< flag variable to determine how the inertial axis input is specified
-    int updateCallCount;                        //!< count variable used in the finite difference logic
-    uint64_t T1NanoSeconds;                     //!< callTime one update step prior
-    uint64_t T2NanoSeconds;                     //!< callTime two update steps prior
-    double sigma_RN_1[3];                       //!< reference attitude one update step prior
-    double sigma_RN_2[3];                       //!< reference attitude two update steps prior
     ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< input msg measured attitude
     ReadFunctor<BodyHeadingMsgPayload> bodyHeadingInMsg;          //!< input body heading msg
     ReadFunctor<InertialHeadingMsgPayload> inertialHeadingInMsg;  //!< input inertial heading msg
