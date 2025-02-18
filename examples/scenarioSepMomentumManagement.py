@@ -476,9 +476,9 @@ def run(momentumManagement, cmEstimation, showPlots):
     # Set up attitude guidance module
     sepPoint = oneAxisSolarArrayPoint.OneAxisSolarArrayPoint()
     sepPoint.modelTag = "sepPointGuidance"
-    sepPoint.a1Hat_B = [1, 0, 0]          # solar array drive axis
-    sepPoint.a2Hat_B = [0, 1, 0]          # antiparallel direction to the sensitive surface
-    sepPoint.hHat_N = [1, 0, 0]           # random inertial thrust direction
+    sepPoint.a1Hat_BInput = [1, 0, 0]          # solar array drive axis
+    sepPoint.a2Hat_BInput = [0, 1, 0]          # antiparallel direction to the sensitive surface
+    sepPoint.hHat_NInput = [1, 0, 0]           # random inertial thrust direction
     scSim.AddModelToTask(fswTask, sepPoint, 25)
 
     # Set up the solar array reference modules

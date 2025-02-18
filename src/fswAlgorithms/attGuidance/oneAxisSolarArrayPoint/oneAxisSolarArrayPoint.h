@@ -21,76 +21,59 @@
 #define _ONE_AXIS_SOLAR_ARRAY_POINT_
 
 #include <stdint.h>
-#include "architecture/utilities/bskLogging.h"
+
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDefC/BodyHeadingMsgPayload.h"
-#include "architecture/msgPayloadDefC/InertialHeadingMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDefC/InertialHeadingMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 
-typedef enum celestialBody{
-    notSun = 0,
-    Sun = 1
-} CelestialBody;
+typedef enum celestialBody { notSun = 0, Sun = 1 } CelestialBody;
 
-typedef enum alignmentPriority{
-    prioritizeAxisAlignment = 0,
-    prioritizeSolarArrayAlignment = 1
-} AlignmentPriority;
+typedef enum alignmentPriority { prioritizeAxisAlignment = 0, prioritizeSolarArrayAlignment = 1 } AlignmentPriority;
 
-typedef enum bodyAxisInput{
-    inputBodyHeadingParameter = 0,
-    inputBodyHeadingMsg = 1
-} BodyAxisInput;
+typedef enum bodyAxisInput { inputBodyHeadingParameter = 0, inputBodyHeadingMsg = 1 } BodyAxisInput;
 
-typedef enum inertialAxisInput{
+typedef enum inertialAxisInput {
     inputInertialHeadingParameter = 0,
     inputInertialHeadingMsg = 1,
     inputEphemerisMsg = 2
 } InertialAxisInput;
 
-typedef enum refFrameSolution{
-    determinate = 0,
-    indeterminate = 1
-} RefFrameSolution;
+typedef enum refFrameSolution { determinate = 0, indeterminate = 1 } RefFrameSolution;
 
 /*! @brief Top level structure for the sub-module routines. */
 class OneAxisSolarArrayPoint : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     /*! declare these quantities that always must be specified as flight software parameters */
-    double a1Hat_B[3];                           //!< arrays axis direction in B frame
-    AlignmentPriority  alignmentPriority;        //!< flag to indicate which constraint must be prioritized
+    double a1Hat_BInput[3];               //!< arrays axis direction in B frame
+    AlignmentPriority alignmentPriority;  //!< flag to indicate which constraint must be prioritized
 
     /*! declare these optional quantities */
-    double h1Hat_B[3];                           //!< main heading in B frame coordinates
-    double h2Hat_B[3];                           //!< secondary heading in B frame coordinates
-    double hHat_N[3];                            //!< main heading in N frame coordinates
-    double a2Hat_B[3];                           //!< body frame heading that should remain as close as possible to Sun heading
+    double h1Hat_BInput[3];  //!< main heading in B frame coordinates
+    double h2Hat_BInput[3];  //!< secondary heading in B frame coordinates
+    double hHat_NInput[3];   //!< main heading in N frame coordinates
+    double a2Hat_BInput[3];  //!< body frame heading that should remain as close as possible to Sun heading
     CelestialBody celestialBodyInput;
 
     /*! declare these internal variables that are used by the module and should not be declared by the user */
-    BodyAxisInput      bodyAxisInput;            //!< flag variable to determine how the body axis input is specified
-    InertialAxisInput  inertialAxisInput;        //!< flag variable to determine how the inertial axis input is specified
-    int      updateCallCount;                    //!< count variable used in the finite difference logic
-    uint64_t T1NanoSeconds;                      //!< callTime one update step prior
-    uint64_t T2NanoSeconds;                      //!< callTime two update steps prior
-    double   sigma_RN_1[3];                      //!< reference attitude one update step prior
-    double   sigma_RN_2[3];                      //!< reference attitude two update steps prior
-    ReadFunctor<NavAttMsgPayload>          attNavInMsg;             //!< input msg measured attitude
-    ReadFunctor<BodyHeadingMsgPayload>     bodyHeadingInMsg;        //!< input body heading msg
-    ReadFunctor<InertialHeadingMsgPayload> inertialHeadingInMsg;    //!< input inertial heading msg
-    ReadFunctor<NavTransMsgPayload>        transNavInMsg;           //!< input msg measured position
-    ReadFunctor<EphemerisMsgPayload>       ephemerisInMsg;          //!< input ephemeris msg
-    Message<AttRefMsgPayload>          attRefOutMsg;            //!< output attitude reference message
+    BodyAxisInput bodyAxisInput;                //!< flag variable to determine how the body axis input is specified
+    InertialAxisInput inertialAxisInput;        //!< flag variable to determine how the inertial axis input is specified
+    ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< input msg measured attitude
+    ReadFunctor<BodyHeadingMsgPayload> bodyHeadingInMsg;          //!< input body heading msg
+    ReadFunctor<InertialHeadingMsgPayload> inertialHeadingInMsg;  //!< input inertial heading msg
+    ReadFunctor<NavTransMsgPayload> transNavInMsg;                //!< input msg measured position
+    ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;              //!< input ephemeris msg
+    Message<AttRefMsgPayload> attRefOutMsg;                       //!< output attitude reference message
 
-    BSKLogger bskLogger{};                         //!< BSK Logging
-
+    BSKLogger bskLogger{};  //!< BSK Logging
 };
 
 #endif

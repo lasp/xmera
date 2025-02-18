@@ -168,7 +168,7 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
 
     # Initialize the test module configuration data
     # These will eventually become input messages
-    attReferenceCongfig.a1Hat_B = a1Hat_B
+    attReferenceCongfig.a1Hat_BInput = a1Hat_B
     attReferenceCongfig.alignmentPriority = alignmentPriority
 
     # Create input navigation message
@@ -182,7 +182,7 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
     attReferenceCongfig.attNavInMsg.subscribeTo(NavAttMsg)
 
     if bodyAxisInput == 0:
-        attReferenceCongfig.h1Hat_B = hHat_B
+        attReferenceCongfig.h1Hat_BInput = hHat_B
     else:
         # Create input bodyHeadingMsg
         bodyHeadingData = messaging.BodyHeadingMsgPayload()
@@ -191,7 +191,7 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
         attReferenceCongfig.bodyHeadingInMsg.subscribeTo(bodyHeadingMsg)
 
     if inertialAxisInput == 0:
-        attReferenceCongfig.hHat_N = hHat_N
+        attReferenceCongfig.hHat_NInput = hHat_N
     elif inertialAxisInput == 1:
         # Create input inertialHeadingMsg
         inertialHeadingData = messaging.InertialHeadingMsgPayload()
