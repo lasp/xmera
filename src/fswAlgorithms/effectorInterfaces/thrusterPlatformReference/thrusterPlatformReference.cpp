@@ -109,7 +109,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
             v3Add(hs_B, vec3, hs_B);
         }
         double hs_M[3];
-        m33tMultV3(MB, hs_B, hs_M);
+        m33MultV3(MB, hs_B, hs_M);
 
         /*! update integral term */
         double DeltaHsInt_M[3];
