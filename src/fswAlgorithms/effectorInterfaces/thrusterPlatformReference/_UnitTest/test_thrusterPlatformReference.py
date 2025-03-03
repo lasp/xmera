@@ -91,7 +91,8 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
 
     random.seed(seed)
 
-    sigma_MB = np.array([0., 0., 0.])
+    euler_angles_123 = np.array([5.0 * macros.D2R, 10.0 * macros.D2R, 0.0])
+    sigma_MB = np.array(rbk.euler1232MRP(euler_angles_123))
     r_BM_M = np.array([0.0, 0.1, 1.4])
     r_FM_F = np.array([0.0, 0.0, -0.1])
     r_TF_F = np.array([-0.01, 0.03, 0.02])
