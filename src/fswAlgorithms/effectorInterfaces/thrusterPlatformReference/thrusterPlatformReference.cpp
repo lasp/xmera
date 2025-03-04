@@ -18,28 +18,30 @@
  */
 
 #include "thrusterPlatformReference.h"
+
 #include <math.h>
 
+#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
-
 
 void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3]);
-void tprComputeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3], double T_F_hat[3], double FF1[3][3]);
+void tprComputeSecondRotation(double r_CM_F[3],
+                              double r_TM_F[3],
+                              double r_CT_F[3],
+                              double T_F_hat[3],
+                              double FF1[3][3]);
 void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3]);
 void tprComputeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3]);
 
-
-const double epsilon = 1e-12;                           // module tolerance for zero
+const double epsilon = 1e-12;  // module tolerance for zero
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime [ns] time the method is called
 */
-void ThrusterPlatformReference::reset(uint64_t callTime)
-{
+void ThrusterPlatformReference::reset(uint64_t callTime) {
     if (!this->vehConfigInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformReference.vehConfigInMsg wasn't connected.");
     }
@@ -51,8 +53,7 @@ void ThrusterPlatformReference::reset(uint64_t callTime)
 
         /*! - read in the RW configuration message */
         this->rwConfigParams = this->rwConfigDataInMsg();
-    }
-    else {
+    } else {
         this->momentumDumping = No;
     }
 
@@ -62,33 +63,31 @@ void ThrusterPlatformReference::reset(uint64_t callTime)
     this->priorTime = callTime;
 }
 
-
 /*! This method updates the platformAngles message based on the updated information about the system center of mass
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void ThrusterPlatformReference::updateState(uint64_t callTime)
-{
+void ThrusterPlatformReference::updateState(uint64_t callTime) {
     /*! - Create and assign message buffers */
-    VehicleConfigMsgPayload    vehConfigMsgIn = this->vehConfigInMsg();
-    THRConfigMsgPayload        thrusterConfigFIn = this->thrusterConfigFInMsg();
-    HingedRigidBodyMsgPayload  hingedRigidBodyRef1Out = {};
-    HingedRigidBodyMsgPayload  hingedRigidBodyRef2Out = {};
-    BodyHeadingMsgPayload      bodyHeadingOut = {};
-    CmdTorqueBodyMsgPayload    thrusterTorqueOut = {};
-    THRConfigMsgPayload        thrusterConfigOut = {};
+    VehicleConfigMsgPayload vehConfigMsgIn = this->vehConfigInMsg();
+    THRConfigMsgPayload thrusterConfigFIn = this->thrusterConfigFInMsg();
+    HingedRigidBodyMsgPayload hingedRigidBodyRef1Out = {};
+    HingedRigidBodyMsgPayload hingedRigidBodyRef2Out = {};
+    BodyHeadingMsgPayload bodyHeadingOut = {};
+    CmdTorqueBodyMsgPayload thrusterTorqueOut = {};
+    THRConfigMsgPayload thrusterConfigOut = {};
 
     /*! compute CM position w.r.t. M frame origin, in M coordinates */
     double MB[3][3];
-    MRP2C(this->sigma_MB, MB);                         // B to M DCM
+    MRP2C(this->sigma_MB, MB);  // B to M DCM
     double r_CB_B[3];
-    v3Copy(vehConfigMsgIn.CoM_B, r_CB_B);                    // position of C w.r.t. B in B-frame coordinates
+    v3Copy(vehConfigMsgIn.CoM_B, r_CB_B);  // position of C w.r.t. B in B-frame coordinates
     double r_CB_M[3];
-    m33MultV3(MB, r_CB_B, r_CB_M);                           // position of C w.r.t. B in M-frame coordinates
+    m33MultV3(MB, r_CB_B, r_CB_M);  // position of C w.r.t. B in M-frame coordinates
     double r_CM_M[3];
-    v3Add(r_CB_M, this->r_BM_M, r_CM_M);               // position of C w.r.t. M in M-frame coordinates
+    v3Add(r_CB_M, this->r_BM_M, r_CM_M);  // position of C w.r.t. M in M-frame coordinates
     double r_TM_F[3];
-    v3Add(this->r_FM_F, thrusterConfigFIn.rThrust_B, r_TM_F);   // position of T w.r.t. M in F-frame coordinates
+    v3Add(this->r_FM_F, thrusterConfigFIn.rThrust_B, r_TM_F);  // position of T w.r.t. M in F-frame coordinates
     double T_F[3];
     v3Copy(thrusterConfigFIn.tHatThrust_B, T_F);
     v3Scale(thrusterConfigFIn.maxThrust, T_F, T_F);
@@ -105,17 +104,18 @@ void ThrusterPlatformReference::updateState(uint64_t callTime)
         v3SetZero(hs_B);
         for (int i = 0; i < this->rwConfigParams.numRW; i++) {
             v3Scale(this->rwConfigParams.JsList[i] * rwSpeedMsgIn.wheelSpeeds[i],
-                    &this->rwConfigParams.GsMatrix_B[i * 3], vec3);
+                    &this->rwConfigParams.GsMatrix_B[i * 3],
+                    vec3);
             v3Add(hs_B, vec3, hs_B);
         }
         double hs_M[3];
-        m33tMultV3(MB, hs_B, hs_M);
+        m33MultV3(MB, hs_B, hs_M);
 
         /*! update integral term */
         double DeltaHsInt_M[3];
         v3Add(this->priorHs_M, hs_M, DeltaHsInt_M);
         double dt = (callTime - this->priorTime) * NANO2SEC;
-        v3Scale(0.5*dt, DeltaHsInt_M, DeltaHsInt_M);
+        v3Scale(0.5 * dt, DeltaHsInt_M, DeltaHsInt_M);
         v3Add(this->hsInt_M, DeltaHsInt_M, this->hsInt_M);
         v3Copy(hs_M, this->priorHs_M);
         this->priorTime = callTime;
@@ -132,7 +132,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime)
         }
         double d_M[3];
         v3Cross(T_M, H, d_M);
-        v3Scale(-1/v3Dot(T_M, T_M), d_M, d_M);
+        v3Scale(-1 / v3Dot(T_M, T_M), d_M, d_M);
 
         /*! recompute thrust direction and FM matrix based on offset */
         double r_CMd_M[3];
@@ -146,14 +146,12 @@ void ThrusterPlatformReference::updateState(uint64_t callTime)
     /*! bound reference angles between limits */
     if ((this->theta1Max > epsilon) && (theta1 > this->theta1Max)) {
         theta1 = this->theta1Max;
-    }
-    else if ((this->theta1Max > epsilon) && (theta1 < -this->theta1Max)) {
+    } else if ((this->theta1Max > epsilon) && (theta1 < -this->theta1Max)) {
         theta1 = -this->theta1Max;
     }
     if ((this->theta2Max > epsilon) && (theta2 > this->theta2Max)) {
         theta2 = this->theta2Max;
-    }
-    else if ((this->theta2Max > epsilon) && (theta2 < -this->theta2Max)) {
+    } else if ((this->theta2Max > epsilon) && (theta2 < -this->theta2Max)) {
         theta2 = -this->theta2Max;
     }
 
@@ -188,7 +186,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime)
     double r_TC_F[3];
     v3Subtract(r_TM_F, r_CM_F, r_TC_F);
     double Torque_F[3];
-    v3Cross(T_F, r_TC_F, Torque_F);    // compute the opposite of torque to compensate with the RWs
+    v3Cross(T_F, r_TC_F, Torque_F);  // compute the opposite of torque to compensate with the RWs
     m33tMultV3(FB, Torque_F, thrusterTorqueOut.torqueRequestBody);
 
     /*! write output commanded torque message */
@@ -206,34 +204,30 @@ void ThrusterPlatformReference::updateState(uint64_t callTime)
     this->thrusterConfigBOutMsg.write(&thrusterConfigOut, this->moduleID, callTime);
 }
 
-void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3])
-{
+void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3]) {
     // compute principal rotation angle phi
-    double phi = acos( fmin( fmax( v3Dot(THat_F, rHat_CM_F), -1 ), 1 ) );
+    double phi = acos(fmin(fmax(v3Dot(THat_F, rHat_CM_F), -1), 1));
 
     // compute principal rotation vector e_phi
     double e_phi[3];
     v3Cross(THat_F, rHat_CM_F, e_phi);
     // If phi = PI, e_phi can be any vector perpendicular to F_current_B
-    if (fabs(phi-MPI) < epsilon) {
+    if (fabs(phi - MPI) < epsilon) {
         phi = MPI;
         if (fabs(THat_F[0]) > epsilon) {
-            e_phi[0] = -(THat_F[1]+THat_F[2]) / THat_F[0];
+            e_phi[0] = -(THat_F[1] + THat_F[2]) / THat_F[0];
             e_phi[1] = 1;
             e_phi[2] = 1;
-        }
-        else if (fabs(THat_F[1]) > epsilon) {
+        } else if (fabs(THat_F[1]) > epsilon) {
             e_phi[0] = 1;
-            e_phi[1] = -(THat_F[0]+THat_F[2]) / THat_F[1];
+            e_phi[1] = -(THat_F[0] + THat_F[2]) / THat_F[1];
             e_phi[2] = 1;
-        }
-        else {
+        } else {
             e_phi[0] = 1;
             e_phi[1] = 1;
-            e_phi[2] = -(THat_F[0]+THat_F[1]) / THat_F[2];
+            e_phi[2] = -(THat_F[0] + THat_F[1]) / THat_F[2];
         }
-    }
-    else if (fabs(phi) < epsilon) {
+    } else if (fabs(phi) < epsilon) {
         phi = 0;
     }
     // normalize e_phi
@@ -245,8 +239,11 @@ void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3
     PRV2C(PRV_phi, F1M);
 }
 
-void tprComputeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3], double THat_F[3], double F2F1[3][3])
-{
+void tprComputeSecondRotation(double r_CM_F[3],
+                              double r_TM_F[3],
+                              double r_CT_F[3],
+                              double THat_F[3],
+                              double F2F1[3][3]) {
     // define offset vector aVec
     double aVec[3];
     v3Copy(r_TM_F, aVec);
@@ -263,17 +260,16 @@ void tprComputeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[
     if (fabs(a) < epsilon) {
         // if offset a = 0, second rotation is null
         psi = 0;
-    }
-    else {
-        double beta = acos( -fmin( fmax( v3Dot(aVec, THat_F) / a, -1 ), 1 ) );
-        double nu = acos( -fmin( fmax( v3Dot(aVec, r_CT_F) / (a*c1), -1 ), 1 ) );
+    } else {
+        double beta = acos(-fmin(fmax(v3Dot(aVec, THat_F) / a, -1), 1));
+        double nu = acos(-fmin(fmax(v3Dot(aVec, r_CT_F) / (a * c1), -1), 1));
 
-        double c2 = a*cos(beta) + sqrt(b*b - a*a*sin(beta)*sin(beta));
+        double c2 = a * cos(beta) + sqrt(b * b - a * a * sin(beta) * sin(beta));
 
-        double cosGamma1 = (a*a + b*b - c1*c1) / (2*a*b);
-        double cosGamma2 = (a*a + b*b - c2*c2) / (2*a*b);
+        double cosGamma1 = (a * a + b * b - c1 * c1) / (2 * a * b);
+        double cosGamma2 = (a * a + b * b - c2 * c2) / (2 * a * b);
 
-        psi = asin( fmin( fmax( (c1*sin(nu)*cosGamma2 - c2*sin(beta)*cosGamma1)/b, -1 ), 1 ) );
+        psi = asin(fmin(fmax((c1 * sin(nu) * cosGamma2 - c2 * sin(beta) * cosGamma1) / b, -1), 1));
     }
 
     double e_psi[3];
@@ -286,16 +282,15 @@ void tprComputeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[
     PRV2C(PRV_psi, F2F1);
 }
 
-void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3])
-{
+void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3]) {
     double e1 = e_theta[0];
     double e2 = e_theta[1];
     double e3 = e_theta[2];
 
-    double A = 2 * (F2M[1][0]*e2*e2 + F2M[0][0]*e1*e2 + F2M[2][0]*e2*e3) - F2M[1][0];
-    double B = 2 * (F2M[2][0]*e1 - F2M[0][0]*e3);
+    double A = 2 * (F2M[1][0] * e2 * e2 + F2M[0][0] * e1 * e2 + F2M[2][0] * e2 * e3) - F2M[1][0];
+    double B = 2 * (F2M[2][0] * e1 - F2M[0][0] * e3);
     double C = F2M[1][0];
-    double Delta = B*B - 4*A*C;
+    double Delta = B * B - 4 * A * C;
 
     /* compute exact solution or best solution depending on Delta */
     double t, t1, t2, y, y1, y2, theta;
@@ -304,26 +299,23 @@ void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3]
             // zero-th order equation has no solution
             // the solution of the minimum problem is theta = MPI
             theta = MPI;
-        }
-        else {
+        } else {
             // first order equation
-            t = - C / B;
-            theta = 2*atan(t);
+            t = -C / B;
+            theta = 2 * atan(t);
         }
-    }
-    else {
+    } else {
         if (Delta < 0) {
             // second order equation has no solution
             // the solution of the minimum problem is found
             if (fabs(B) < epsilon) {
                 t = 0.0;
-            }
-            else {
-                double q = (A-C) / B;
-                t1 = (q + sqrt(q*q + 1));
-                t2 = (q - sqrt(q*q + 1));
-                y1 = (A*t1*t1 + B*t1 + C) / (1 + t1*t1);
-                y2 = (A*t2*t2 + B*t2 + C) / (1 + t2*t2);
+            } else {
+                double q = (A - C) / B;
+                t1 = (q + sqrt(q * q + 1));
+                t2 = (q - sqrt(q * q + 1));
+                y1 = (A * t1 * t1 + B * t1 + C) / (1 + t1 * t1);
+                y2 = (A * t2 * t2 + B * t2 + C) / (1 + t2 * t2);
 
                 // choose which returns a smaller fcn value between t1 and t2
                 t = t1;
@@ -331,22 +323,21 @@ void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3]
                     t = t2;
                 }
             }
-            theta = 2*atan(t);
-            y = (A*t*t + B*t + C) / (1 + t*t);
+            theta = 2 * atan(t);
+            y = (A * t * t + B * t + C) / (1 + t * t);
             // check if the absolute fcn minimum is for theta = MPI
             if (fabs(A) < fabs(y)) {
                 theta = MPI;
             }
-        }
-        else {
-            t1 = (-B + sqrt(Delta)) / (2*A);
-            t2 = (-B - sqrt(Delta)) / (2*A);
+        } else {
+            t1 = (-B + sqrt(Delta)) / (2 * A);
+            t2 = (-B - sqrt(Delta)) / (2 * A);
             t = t1;
             if (fabs(t2) < fabs(t1)) {
                 t = t2;
             }
 
-            theta = 2*atan(t);
+            theta = 2 * atan(t);
         }
     }
 
@@ -356,15 +347,14 @@ void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3]
     PRV2C(PRV_theta, F3F2);
 }
 
-void tprComputeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3])
-{
+void tprComputeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3]) {
     /*! define unit vectors of CM direction in M coordinates and thrust direction in F coordinates */
     double rHat_CM_M[3];
     v3Normalize(r_CM_M, rHat_CM_M);
     double THat_F[3];
     v3Normalize(T_F, THat_F);
     double rHat_CM_F[3];
-    v3Copy(rHat_CM_M, rHat_CM_F);        // assume zero initial rotation between F and M
+    v3Copy(rHat_CM_M, rHat_CM_F);  // assume zero initial rotation between F and M
 
     /*! compute first rotation to make T_F parallel to r_CM */
     double F1M[3][3];
