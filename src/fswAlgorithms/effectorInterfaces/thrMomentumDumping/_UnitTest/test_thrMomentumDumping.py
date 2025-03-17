@@ -25,6 +25,7 @@
 
 import inspect
 import os
+import numpy as np
 
 import pytest
 
@@ -56,13 +57,6 @@ from Basilisk.architecture import messaging
 def test_thrMomentumDumping(show_plots, resetCheck, largeMinFireTime):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime)
-    assert testResults < 1, testMessage
-
-
-def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -209,27 +203,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
                        ]
 
     # compare the module results to the truth values
-    accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
-                                                               "OnTimeRequest", testFailCount, testMessages)
-
-    snippentName = "passFail" + str(resetCheck) + str(largeMinFireTime)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
+    np.testing.assert_allclose(moduleOutput, trueVector, rtol=0, atol=1e-12, verbose=True)
 
 #
 # This statement below ensures that the unitTestScript can be run as a
