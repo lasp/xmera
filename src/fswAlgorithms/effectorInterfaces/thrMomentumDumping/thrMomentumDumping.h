@@ -50,6 +50,7 @@ class ThrMomentumDumping : public SysModel {
     int maxCounterValue;  //!<        this variable must be set to a non-zero value, indicating how many control periods
                           //!<        to wait until the thrusters fire again to dump RW momentum
     double thrMinFireTime;  //!< [s]    smallest thruster firing time
+    int maxNumOfDtFiringTimes = 1;
 
     /* declare module IO interfaces */
     Message<THRArrayOnTimeCmdMsgPayload> thrusterOnTimeOutMsg;     //!< thruster on time output message name

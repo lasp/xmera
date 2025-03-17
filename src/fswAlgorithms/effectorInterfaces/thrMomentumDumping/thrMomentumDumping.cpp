@@ -80,6 +80,10 @@ void ThrMomentumDumping::reset(uint64_t callTime) {
     if (this->maxCounterValue < 1) {
         this->bskLogger.bskLog(BSK_WARNING, "The maxCounterValue flag must be set to a positive value.");
     }
+    /*! - perform sanity check that the module maxCounterValue value is set to a correct value */
+    if (this->maxCounterValue < this->maxNumOfDtFiringTimes) {
+        this->bskLogger.bskLog(BSK_ERROR, "The maxCounterValue must be greater than maxNumOfDtFiringTimes.");
+    }
 }
 
 /*! This method reads in the requested thruster impulse message.  If it is a new message then a fresh
@@ -120,7 +124,8 @@ void ThrMomentumDumping::updateState(uint64_t callTime) {
         timeOfDeltaHMsg = this->deltaHInMsg.timeWritten();
         if (this->lastDeltaHInMsgTime == timeOfDeltaHMsg) {
             /* identical net thruster impulse request case, continue with existing RW momentum dumping */
-            if (this->thrDumpingCounter <= 0) {
+            if (this->thrDumpingCounter <= 0 ||
+                this->thrDumpingCounter > (this->maxCounterValue - this->maxNumOfDtFiringTimes + 1)) {
                 /* time to fire thrusters again */
                 mCopy(this->thrOnTimeRemaining, 1, this->numThrusters, tOnOut);
                 /* subtract next control period from remaining impulse time */
@@ -130,7 +135,11 @@ void ThrMomentumDumping::updateState(uint64_t callTime) {
                     }
                 }
                 /* reset the dumping counter */
-                this->thrDumpingCounter = this->maxCounterValue;
+                if (this->thrDumpingCounter <= 0) {
+                    this->thrDumpingCounter = this->maxCounterValue;
+                } else {
+                    this->thrDumpingCounter -= 1;
+                }
             } else {
                 /* no thrusters are firing, giving RWs time to settle attitude */
                 this->thrDumpingCounter -= 1;
@@ -147,7 +156,7 @@ void ThrMomentumDumping::updateState(uint64_t callTime) {
             /* set thruster on time to requested impulse time */
             mCopy(this->thrOnTimeRemaining, 1, this->numThrusters, tOnOut);
             /* reset the dumping counter */
-            this->thrDumpingCounter = this->maxCounterValue;
+            this->thrDumpingCounter = maxCounterValue;
             /* subtract next control period from remaining impulse time */
             for (i = 0; i < this->numThrusters; i++) {
                 this->thrOnTimeRemaining[i] -= dt;
@@ -165,8 +174,8 @@ void ThrMomentumDumping::updateState(uint64_t callTime) {
                 this->thrOnTimeRemaining[i] = 0.0;
             }
             /* if the thruster on time is larger than the control period, set it equal to control period */
-            if (tOnOut[i] > dt) {
-                tOnOut[i] = dt;
+            if (tOnOut[i] > maxNumOfDtFiringTimes * dt) {
+                tOnOut[i] = maxNumOfDtFiringTimes * dt;
             }
         }
     }
