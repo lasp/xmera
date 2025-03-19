@@ -197,6 +197,18 @@ class Controller:
         """
         self.simParams.verbose = verbose
 
+
+    def setJobNumber(self, job_number):
+        """
+        Set the job number of the simulation.
+        Used in AWS work to modify the seed used in dispersion.
+        Should be set to $AWS_BATCH_JOB_ARRAY_INDEX
+
+        :param job_number:
+        :return:
+        """
+        self.simParams.job_number = job_number
+
     def setDispMagnitudeFile(self, magnitudes):
         """
         Save .txt with the magnitude of each dispersion in % or sigma away from mean
@@ -712,7 +724,7 @@ class SimulationParameters():
     def __init__(self, creationFunction, executionFunction, configureFunction,
                  retentionPolicies, dispersions, shouldDisperseSeeds,
                  shouldArchiveParameters, filename, icfilename, index=None, verbose=False, modifications={},
-                 showProgressBar=False):
+                 showProgressBar=False, job_number=1):
         self.index = index
         self.creationFunction = creationFunction
         self.executionFunction = executionFunction
@@ -728,7 +740,7 @@ class SimulationParameters():
         self.dispersionMag = {}
         self.saveDispMag = False
         self.showProgressBar = showProgressBar
-
+        self.job_number = job_number
 
 
 class SimulationExecutor:
@@ -764,9 +776,11 @@ class SimulationExecutor:
         try:
             signal.signal(signal.SIGINT, signal.SIG_IGN)  # On ctrl-c ignore the signal... let the parent deal with it.
 
-            # must make new random seed on each new thread.
-            np.random.seed(simParams.index * 10)
-            random.seed(simParams.index * 10)
+
+            # must make new random seed on each new thread and job number
+            dispersion_seed = (simParams.job_number << 32) + (simParams.index * 10)
+            np.random.seed(dispersion_seed)
+            random.seed(dispersion_seed)
 
             # create the users sim by calling their supplied creationFunction
             simInstance = simParams.creationFunction()
