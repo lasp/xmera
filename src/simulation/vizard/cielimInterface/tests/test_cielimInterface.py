@@ -79,15 +79,15 @@ def read_write_test():
 
     # Create asteroid parameter message
     asteroid_parameter_payload = messaging.CelestialBodyParametersMsgPayload()
-    asteroid_parameter_payload.bodyName = "asteroid_b612"
-    asteroid_parameter_payload.shapeModel = "Bennu"
+    asteroid_parameter_payload.bodyName = "itokawa"
+    asteroid_parameter_payload.shapeModel = "itokawa_normalized"
     asteroid_parameter_payload.perlinNoise = 0.5
     asteroid_parameter_payload.proceduralRocks = 1.5
     asteroid_parameter_payload.brdf = "Lambertian"
     asteroid_parameter_payload.reflectanceParameters = [0.5]
     asteroid_parameter_payload.meanRadius = 10000
-    asteroid_parameter_payload.principalAxisDistortion = [10, 5, 10]
-    asteroid_parameter_payload.sigma_BN = [0, 1, 0]
+    asteroid_parameter_payload.principalAxisDistortion = [1, 0.9, 1.1]
+    asteroid_parameter_payload.sigma_BN = [0, 0, 0.5]
     asteroid_parameter_message = messaging.CelestialBodyParametersMsg().write(asteroid_parameter_payload)
     module.celestialParametersMessage.subscribeTo(asteroid_parameter_message)
 
@@ -111,7 +111,7 @@ def read_write_test():
 
     # Create spacecraft message
     spacecraft_payload = messaging.SCStatesMsgPayload()
-    spacecraft_payload.r_BN_N = [0,0,-2E5]
+    spacecraft_payload.r_BN_N = [0,0,-5E5]
     spacecraft_payload.v_BN_N = [4, 5, 6]
     spacecraft_payload.sigma_BN = [np.sqrt(2)/2, 0, -np.sqrt(2)/2]
     spacecraft_message = messaging.SCStatesMsg().write(spacecraft_payload)
@@ -126,7 +126,7 @@ def read_write_test():
     grav_bodies = []
     bodies_message_list = []
     sun = GravBodies()
-    sun.planetName = "sun_planet_data"
+    sun.planetName = "sun"
     sun_data = messaging.SpicePlanetStateMsgPayload()
     sun_data.PositionVector = [10E10,0,0]
     sun_data.VelocityVector = [4, 5, 6]
