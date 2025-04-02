@@ -25,6 +25,7 @@
 
 import inspect
 import os
+import numpy as np
 
 import pytest
 
@@ -46,23 +47,17 @@ from Basilisk.architecture import messaging
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("resetCheck, largeMinFireTime", [
-    (False, False)
-    ,(True, False)
-    ,(False, True)
+@pytest.mark.parametrize("resetCheck, largeMinFireTime, maxNumOfDtFiringTimes", [
+    (False, False, False)
+    ,(True, False, False)
+    ,(False, True, False)
+    ,(False, False, True)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_thrMomentumDumping(show_plots, resetCheck, largeMinFireTime):
+def test_thrMomentumDumping(show_plots, resetCheck, largeMinFireTime, maxNumOfDtFiringTimes):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime)
-    assert testResults < 1, testMessage
-
-
-def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -70,7 +65,12 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    if maxNumOfDtFiringTimes:
+        testProcessRate = macros.sec2nano(0.1)     # update process rate update times
+        simTime = 2.0
+    else:
+        testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+        simTime = 3.0
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -83,7 +83,12 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.maxCounterValue = 2
+    if maxNumOfDtFiringTimes:
+        module.maxCounterValue = 5
+        module.maxNumOfDtFiringTimes = 3
+    else:
+        module.maxCounterValue = 2
+
     if largeMinFireTime:
         module.thrMinFireTime = 0.200         # seconds
     else:
@@ -149,7 +154,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     # write the input Delta_H message
     deltaHInMsg.write(DeltaHInMsgData, macros.sec2nano(0.5))
 
-    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -197,7 +202,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
                 [0.0, 0.0, 0.0, 0.3, 0.0, 0.0, 0.3, 0.0],
                 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             ]
-        else:
+        elif not largeMinFireTime and not maxNumOfDtFiringTimes:
             trueVector = [
                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -207,29 +212,33 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
                        [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0],
                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
                        ]
+        else:
+            trueVector = [
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.3, 0.1, 0.0, 0.3, 0.3, 0.1, 0.3, 0.0],
+                [0.3, 0.0, 0.0, 0.3, 0.3, 0.0, 0.3, 0.0],
+                [0.3, 0.0, 0.0, 0.3, 0.3, 0.0, 0.3, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.3, 0.0, 0.0, 0.3, 0.3, 0.0, 0.3, 0.0],
+                [0.2, 0.0, 0.0, 0.3, 0.2, 0.0, 0.3, 0.0],
+                [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.2, 0.0, 0.0, 0.2, 0.0],
+                [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.1, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            ]
 
     # compare the module results to the truth values
-    accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
-                                                               "OnTimeRequest", testFailCount, testMessages)
-
-    snippentName = "passFail" + str(resetCheck) + str(largeMinFireTime)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
+    np.testing.assert_allclose(moduleOutput, trueVector, rtol=0, atol=1e-12, verbose=True)
 
 #
 # This statement below ensures that the unitTestScript can be run as a
@@ -239,5 +248,6 @@ if __name__ == "__main__":
     test_thrMomentumDumping(              # update "module" in function name
                  True,
                  False,             # resetCheck
-                 False              # largeMinFireTime
+                 False,              # largeMinFireTime
+        True
                )
