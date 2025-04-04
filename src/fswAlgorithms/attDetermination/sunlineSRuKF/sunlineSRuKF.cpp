@@ -44,6 +44,22 @@ void SunlineSRuKF::customFinalizeUpdate() {
     PositionState heading;
     heading.setValues(this->state.getPositionStates().normalized());
     this->state.setPosition(heading);
+
+    if (state.hasBias()) {
+        BiasState bias;
+        if (state.getBiasStates().value() < this->biasLowerBound) {
+            Eigen::VectorXd lowerSaturateBias(1);
+            lowerSaturateBias(0) = this->biasLowerBound;
+            bias.setValues(lowerSaturateBias);
+            this->state.setBias(bias);
+        }
+        else if (state.getBiasStates().value() > this->biasUpperBound) {
+            Eigen::VectorXd upperSaturateBias(1);
+            upperSaturateBias(0) = this->biasUpperBound;
+            bias.setValues(upperSaturateBias);
+            this->state.setBias(bias);
+        }
+    }
 }
 
 /*! Read the message containing the measurement data.
@@ -164,6 +180,9 @@ void SunlineSRuKF::readCssMeasurements() {
 
     std::function<const Eigen::VectorXd(const FilterStateVector)> linearModel = [hMatrix](const FilterStateVector &state) {
         Eigen::VectorXd observed = hMatrix * state.getPositionStates();
+        if (state.hasBias()) {
+            observed = observed*state.getBiasStates().value();
+        }
         return observed;
     };
 
@@ -211,6 +230,12 @@ FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStat
 
     XDot.setPosition(xDotPosition);
     XDot.setVelocity(xDotVelocity);
+
+    if (state.hasBias()) {
+        BiasState xDotBias;
+        xDotBias.setValues(Eigen::VectorXd::Zero(1));
+        XDot.setBias(xDotBias);
+    }
 
     return XDot;
 };
