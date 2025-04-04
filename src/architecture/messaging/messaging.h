@@ -63,7 +63,7 @@ public:
     };
 
     //! check if this msg has been connected to
-    bool isLinked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
+    bool isLinked() const {return this->initialized;};
 
     //! check if the message has been ever written to
     bool isWritten(){
@@ -170,10 +170,10 @@ public:
     messageType zeroMsgPayload = {};    //!< zero'd copy of the message payload structure
 
     //! check if this msg has been connected to
-    bool isLinked(){return this->header.isLinked;};
+    bool isLinked() const {return this->header.isLinked;};
 
     //! Return the memory size of the payload, be careful about dynamically sized things
-    uint64_t getPayloadSize() {return sizeof(messageType);};
+    uint64_t getPayloadSize() const {return sizeof(messageType);};
 };
 
 
@@ -267,7 +267,7 @@ public:
     std::vector<messageType>& record(){return this->msgRecord;};
 
     //! determine message name
-    std::string findMsgName(std::string msgName) {
+    std::string findMsgName(std::string msgName) const {
         size_t locMsg = msgName.find("Payload");
         if (locMsg != std::string::npos) {
             msgName.erase(locMsg, std::string::npos);
