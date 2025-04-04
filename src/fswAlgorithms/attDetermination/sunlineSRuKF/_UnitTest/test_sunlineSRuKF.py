@@ -43,7 +43,12 @@ def rk4(f, t, x0, normalizeState=False, mrpShadow=False):
         k4 = h * f(t[i] + h, x[i, 1:] + k3)
         x[i + 1, 1:] = x[i, 1:] + (k1 + 2. * k2 + 2. * k3 + k4) / 6.
         if normalizeState:
+            # Normalize the states and bound the bias state to the default values
             x[i + 1, 1:4] = x[i + 1, 1:4] / np.linalg.norm(x[i + 1, 1:4])
+            if x[i + 1, 7] < 0.5:
+                x[i + 1, 7] = 0.5
+            if x[i + 1, 7] > 1.5:
+                x[i + 1, 7] = 1.5
         if mrpShadow:
             s = np.linalg.norm(x[i + 1, 1:4])**2
             if s > 1:
@@ -54,16 +59,16 @@ def rk4(f, t, x0, normalizeState=False, mrpShadow=False):
 
 def sunline_dynamics(t, x):
     dxdt = np.zeros(np.shape(x))
-    dxdt[0:3] = np.cross(x[:3], x[3:])
-    dxdt[3:] = np.zeros(3)
+    dxdt[0:3] = np.cross(x[:3], x[3:6])
+    dxdt[3:7] = np.zeros(4)
     return dxdt
 
 
 def mrp_integration(t, x):
     dxdt = np.zeros(np.shape(x))
     B = rbk.BmatMRP(x[0:3])
-    dxdt[:3] = 0.25 * np.matmul(B, x[3:])
-    dxdt[3:] = np.zeros(3)
+    dxdt[:3] = 0.25 * np.matmul(B, x[3:6])
+    dxdt[3:6] = np.zeros(3)
     return dxdt
 
 
@@ -73,22 +78,27 @@ def setup_filter_data(filter_object):
 
     filter_object.setInitialPosition([0.0, 0.0, 1.0])
     filter_object.setInitialVelocity([0.02, -0.005, 0.01])
-    filter_object.setInitialCovariance([[0.0001, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                        [0.0, 0.0001, 0.0, 0.0, 0.0, 0.0],
-                                        [0.0, 0.0, 0.0001, 0.0, 0.0, 0.0],
-                                        [0.0, 0.0, 0.0, 0.0001, 0.0, 0.0],
-                                        [0.0, 0.0, 0.0, 0.0, 0.0001, 0.0],
-                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]])
+    filter_object.setInitialBias([0.6])
+    filter_object.setInitialCovariance([[0.0001, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0001, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0001, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0001, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0001, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0001, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1]])
+
     filter_object.setCssMeasurementNoiseStd(0.01)
     filter_object.setGyroMeasurementNoiseStd(0.001)
-    sigmaSun = (1E-12) ** 2
-    sigmaRate = (1E-14) ** 2
-    filter_object.setProcessNoise([[sigmaSun, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                   [0.0, sigmaSun, 0.0, 0.0, 0.0, 0.0],
-                                   [0.0, 0.0, sigmaSun, 0.0, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0, sigmaRate, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0, 0.0, sigmaRate, 0.0],
-                                   [0.0, 0.0, 0.0, 0.0, 0.0, sigmaRate]])
+    sigmaSun = (1E-6) ** 2
+    sigmaRate = (1E-8) ** 2
+    sigmaBias = (1E-5) ** 2
+    filter_object.setProcessNoise([[sigmaSun, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, sigmaSun, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, sigmaSun, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, sigmaRate, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, sigmaRate, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, 0.0, sigmaRate, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, sigmaBias]])
 
 def setup_css_config_msg(CSSOrientationList, cssConfigDataInMsg):
     numCSS = len(CSSOrientationList)
@@ -111,7 +121,7 @@ def test_propagation_kf(show_plots):
 
 @pytest.mark.parametrize("initial_error", [False, True])
 def test_measurements_kf(show_plots, initial_error):
-    state_update_flyby(initial_error, show_plots)
+    state_update_flyby(initial_error, True)
 
 
 def state_propagation_flyby(show_plots=False):
@@ -137,11 +147,12 @@ def state_propagation_flyby(show_plots=False):
     unit_test_sim.AddModelToTask(unit_task_name, sun_heading_data_log)
 
     simpleNavMsgData = messaging.NavAttMsgPayload()
-    initState = np.zeros(6)
+    initState = np.zeros(7)
     initState[:3] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
-    initState[3:] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
+    initState[3:6] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
+    initState[6] = sunHeadingFilter.getInitialBias()[0][0]
     simpleNavMsgData.timeTag = 0
-    simpleNavMsgData.omega_BN_B = initState[3:]
+    simpleNavMsgData.omega_BN_B = initState[3:6]
     simpleNavMsg = messaging.NavAttMsg().write(simpleNavMsgData)
     sunHeadingFilter.navAttInMsg.subscribeTo(simpleNavMsg)
 
@@ -168,16 +179,17 @@ def state_propagation_flyby(show_plots=False):
 
     sim_time = 50
     time = np.linspace(0, sim_time, sim_time+1)
-    expected = np.zeros([len(time), 7])
+    expected = np.zeros([len(time), 8])
     expected[0, 1:4] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
     expected[0, 4:7] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
+    expected[0, 7] = sunHeadingFilter.getInitialBias()[0][0]
     expected = rk4(sunline_dynamics, time, expected[0, 1:], normalizeState=True)
 
     unit_test_sim.InitializeSimulation()
     unit_test_sim.ConfigureStopTime(macros.sec2nano(sim_time))
     unit_test_sim.ExecuteSimulation()
 
-    num_states = 6
+    num_states = 7
     state_data_log = add_time_column(sun_heading_data_log.times(), sun_heading_data_log.state[:, :num_states])
     covariance_data_log = add_time_column(sun_heading_data_log.times(), sun_heading_data_log.covar[:, :num_states**2])
 
@@ -228,11 +240,13 @@ def state_update_flyby(initial_error, show_plots=False):
     unit_test_sim.AddModelToTask(unit_task_name, nav_att_data_log)
 
     simpleNavMsgData = messaging.NavAttMsgPayload()
-    initState = np.zeros(6)
+    initState = np.zeros(7)
     initState[:3] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
-    initState[3:] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
+    initState[3:6] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
+    initState[6] = sunHeadingFilter.getInitialBias()[0][0]
+
     simpleNavMsgData.timeTag = -1
-    simpleNavMsgData.omega_BN_B = initState[3:]
+    simpleNavMsgData.omega_BN_B = initState[3:6]
     simpleNavMsg = messaging.NavAttMsg().write(simpleNavMsgData)
     sunHeadingFilter.navAttInMsg.subscribeTo(simpleNavMsg)
 
@@ -251,20 +265,29 @@ def state_update_flyby(initial_error, show_plots=False):
     setup_css_config_msg(CSSOrientationList, cssConfigMsg)
     sunHeadingFilter.cssConfigInMsg.subscribeTo(cssConfigMsg)
 
-    sim_time = 1000
+    sim_time = 2000
     time = np.linspace(0, sim_time, sim_time+1)
-    expected = np.zeros([len(time), 7])
+    expected = np.zeros([len(time), 8])
     expected[0, 1:4] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
     expected[0, 4:7] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
+    expected[0, 7] = sunHeadingFilter.getInitialBias()[0][0]
     expected = rk4(sunline_dynamics, time, expected[0, 1:], normalizeState=True)
 
-    bodyFrame = np.zeros([len(time), 7])
-    bodyFrame[0, 1:] = np.array([0.0, 0.0, 0.0, expected[0, 4], expected[0, 5], expected[0, 6]])
+    bodyFrame = np.zeros([len(time), 8])
+    bodyFrame[0, 1:] = np.array([0.0, 0.0, 0.0, expected[0, 4], expected[0, 5], expected[0, 6], expected[0, 7]])
     bodyFrame = rk4(mrp_integration, time, bodyFrame[0, 1:], mrpShadow=True)
 
     if initial_error:
         sunHeadingFilter.setInitialPosition([1.0, 0.0, 0.0])
         sunHeadingFilter.setInitialVelocity([-0.02, 0.005, -0.01])
+        sunHeadingFilter.setInitialBias([1])
+        sunHeadingFilter.setInitialCovariance([[0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.001, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.001, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.001, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5]])
 
     cssDataMsg = messaging.CSSArraySensorMsgPayload()
     cssMsg = messaging.CSSArraySensorMsg()
@@ -279,9 +302,9 @@ def state_update_flyby(initial_error, show_plots=False):
         for j in range(len(CSSOrientationList)):
             cosList.append((np.dot(CSSOrientationList[j], np.matmul(BN, [0, 0, 1]))
                             + np.random.normal(0, cssSigma, 1))[0])
-        cssDataMsg.CosValue = np.array(cosList)
+        cssDataMsg.CosValue = np.array(cosList)*expected[i, 7]
         cssDataMsg.timeTag = time[i]
-        omega = expected[0, 4:] + np.random.normal(0, gyroSigma, 3)
+        omega = expected[0, 4:7] + np.random.normal(0, gyroSigma, 3)
         simpleNavMsgData.timeTag = time[i]
         simpleNavMsgData.omega_BN_B = omega
         if i % 2 == 0:
@@ -290,7 +313,7 @@ def state_update_flyby(initial_error, show_plots=False):
         unit_test_sim.ConfigureStopTime(macros.sec2nano(time[i+1]))
         unit_test_sim.ExecuteSimulation()
 
-    num_states = 6
+    num_states = 7
     state_data_log = add_time_column(sun_heading_data_log.times(), sun_heading_data_log.state[:, :num_states])
     covariance_data_log = add_time_column(sun_heading_data_log.times(), sun_heading_data_log.covar[:, :num_states**2])
 
@@ -332,20 +355,24 @@ def state_update_flyby(initial_error, show_plots=False):
     # testing that Sun Heading vector estimate is correct within 5 sigma
     np.testing.assert_allclose(state_data_log[half_time:, 1:4],
                                expected[half_time:, 1:4],
-                                rtol=1E-9,
                                 atol=5*cssSigma,
                                 err_msg='heading estimation error',
                                 verbose=True)
     # testing that rate estimate is correct within 5 sigma
-    np.testing.assert_allclose(state_data_log[half_time:, 4:],
-                                expected[half_time:, 4:],
-                               rtol=1E-9,
+    np.testing.assert_allclose(state_data_log[half_time:, 4:7],
+                                expected[half_time:, 4:7],
                                atol=5*gyroSigma,
                                err_msg='rate estimation error',
                                verbose=True)
+    # testing that rate estimate is correct within 5 sigma
+    np.testing.assert_allclose(state_data_log[half_time:, 7],
+                                expected[half_time:, 7],
+                               atol=0.2,
+                               err_msg='bias estimation error',
+                               verbose=True)
     # testing that covariance is shrinking
-    np.testing.assert_array_less(np.diag(covariance_data_log[half_time, 1:].reshape([6, 6])),
-                                np.diag(covariance_data_log[0, 1:].reshape([6, 6])),
+    np.testing.assert_array_less(np.diag(covariance_data_log[half_time, 1:7*7+1].reshape([7, 7])),
+                                np.diag(covariance_data_log[0, 1:7*7+1].reshape([7, 7])),
                                 err_msg='covariance error',
                                 verbose=True)
 
