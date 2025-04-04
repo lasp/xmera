@@ -84,7 +84,7 @@ class PythonModule(sysModel.SysModel):
 
     def __init__(self, *args):
         super().__init__(*args)
-        self.dataOutMsg = messaging.CModuleTemplateMsg()
+        self.dataOutMsg = messaging.ModuleTemplateMsg()
 
     def reset(self, currentSimNanos):
         payload = self.dataOutMsg.zeroMsgPayload

@@ -50,8 +50,7 @@ void CppModuleTemplate::reset(uint64_t currentSimNanos)
 void CppModuleTemplate::updateState(uint64_t currentSimNanos)
 {
     double Lr[3];                                   /*!< [unit] variable description */
-    CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
-    CModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
+    ModuleTemplateMsgPayload outMsgBuffer{};       /*!< local output message copy */
     double  inputVector[3];
 
     // always zero the output buffer first
@@ -60,7 +59,7 @@ void CppModuleTemplate::updateState(uint64_t currentSimNanos)
 
     /*! - Read the optional input messages */
     if (this->dataInMsg.isLinked()) {
-        inMsgBuffer = this->dataInMsg();
+        ModuleTemplateMsgPayload inMsgBuffer = this->dataInMsg();
         v3Copy(inMsgBuffer.dataVector, inputVector);
     }
 
