@@ -101,39 +101,12 @@ public:
         return this->headerPointer->moduleID;
     };
 
-    //! subscribe to a C message
-    void subscribeToC(void* source){
-        // this method works by knowing that the first member of a C message is the header.
-        this->headerPointer = (MsgHeader*) source;
-
-        // advance the address to connect to C-wrapped message payload
-        // this assumes the header memory is aligned with 0 additional padding
-        MsgHeader* pt = this->headerPointer;
-        this->payloadPointer = (messageType *) (++pt);
-
-
-        // set flag that this input message is connected to another message
-        this->initialized = true;           // set input message as linked
-        this->headerPointer->isLinked = 1;  // set source output message as linked
-    };
-
     //! Subscribe to a C++ message
     void subscribeTo(Message<messageType> *source){
         *this = source->addSubscriber();
         this->initialized = true;
     };
 
-
-    //! Check if self has been subscribed to a C message
-    uint8_t isSubscribedToC(void *source){
-
-        int8_t firstCheck = (this->headerPointer == (MsgHeader*) source);
-        MsgHeader* pt = this->headerPointer;
-        int8_t secondCheck = (this->payloadPointer == (messageType *) (++pt));
-
-        return (this->initialized && firstCheck && secondCheck);
-
-    };
     //! Check if self has been subscribed to a Cpp message
     uint8_t isSubscribedTo(Message<messageType> *source){
 

@@ -34,38 +34,19 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {
-        %pythoncode %{
-            def subscribeTo(self, source):
-                if type(source) == messageType:
-                    self.__subscribe_to(source)
-                    return
-                
-                try:
-                    from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
-                    if type(source) == messageType ## _C:
-                        self.__subscribe_to_C(source)
-                        return
-                except ImportError:
-                    pass
-    
-                raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type'
-                                + str(type(source)))
+    %pythoncode %{
+        def subscribeTo(self, source):
+            if type(source) == messageType:
+                self.__subscribe_to(source)
+                return
 
+            raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type'
+                            + str(type(source)))
 
-            def isSubscribedTo(self, source):
-                if type(source) == messageType:
-                    return self.__is_subscribed_to(source)
-                
-                try:
-                    from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
-                except ImportError:
-                    return 0
-                
-                if type(source) == messageType ## _C:
-                    return self.__is_subscribed_to_C(source)
-                else:
-                    return 0
-        %}
+        def isSubscribedTo(self, source):
+            if type(source) == messageType:
+                return self.__is_subscribed_to(source)
+    %}
 };
 
 %template(messageType ## Writer) WriteFunctor<messageTypePayload>;
