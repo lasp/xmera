@@ -139,7 +139,6 @@ public:
         this->headerPointer->isWritten = 1;
         this->headerPointer->timeWritten = callTime;
         this->headerPointer->moduleID = moduleID;
-        return;
     }
 };
 
