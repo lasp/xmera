@@ -91,7 +91,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                         for el, k in zip(attr, range(len(attr))):
                             self.explore_and_find_subattr(el, attr_name + "[" + str(k) + "]", content)
                     else:
-                        # The attribute is a list of common types 
+                        # The attribute is a list of common types
                         content[attr_name] = attr
             elif "Basilisk" in str(type(attr)):
                 # The attribute is a swigged BSK object

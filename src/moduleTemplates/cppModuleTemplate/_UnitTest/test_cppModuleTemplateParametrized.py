@@ -16,14 +16,6 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-
-#
-#   Unit Test Script
-#   Module Name:        cppModuleTemplateParametrized
-#   Author:             (First Name) (Last Name)
-#   Creation Date:      Month Day, Year
-#
-
 import inspect
 import os
 
@@ -34,12 +26,6 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
-
-
-
-
-
-
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
