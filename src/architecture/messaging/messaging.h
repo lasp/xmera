@@ -142,9 +142,6 @@ public:
     }
 };
 
-template<typename messageType>
-class Recorder;
-
 /*!
  * base class template for bsk messages
  */
