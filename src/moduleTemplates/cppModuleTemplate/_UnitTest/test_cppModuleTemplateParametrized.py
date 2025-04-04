@@ -150,9 +150,9 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging.CModuleTemplateMsgPayload() # Create a structure for the input message
+    inputMessageData = messaging.ModuleTemplateMsgPayload() # Create a structure for the input message
     inputMessageData.dataVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
-    inputMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
+    inputMsg = messaging.ModuleTemplateMsg().write(inputMessageData)
     module.dataInMsg.subscribeTo(inputMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
