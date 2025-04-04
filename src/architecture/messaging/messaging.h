@@ -109,10 +109,8 @@ public:
 
     //! Check if self has been subscribed to a Cpp message
     uint8_t isSubscribedTo(Message<messageType> *source){
-
-        MsgHeader *dummyMsgPtr;
-        int8_t firstCheck = (this->payloadPointer == source->getMsgPointers(&(dummyMsgPtr)));
-        int8_t secondCheck = (this->headerPointer == dummyMsgPtr);
+        int8_t firstCheck = (this->payloadPointer == source->getMsgPayloadPointer());
+        int8_t secondCheck = (this->headerPointer == source->getMsgHeaderPointer());
 
         return (this->initialized && firstCheck && secondCheck );
 
@@ -162,7 +160,8 @@ public:
     messageType* subscribeRaw(MsgHeader **msgPtr);
 
     //! for plain ole c modules
-    messageType* getMsgPointers(MsgHeader **msgPtr);
+    messageType* getMsgPayloadPointer();
+    MsgHeader* getMsgHeaderPointer();
 
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
@@ -196,9 +195,13 @@ messageType* Message<messageType>::subscribeRaw(MsgHeader **msgPtr){
 }
 
 template<typename messageType>
-messageType* Message<messageType>::getMsgPointers(MsgHeader **msgPtr){
-    *msgPtr = &this->header;
+messageType* Message<messageType>::getMsgPayloadPointer(){
     return &this->payload;
+}
+
+template<typename messageType>
+MsgHeader* Message<messageType>::getMsgHeaderPointer(){
+    return &this->header;
 }
 
 /*! Keep a time history of messages accessible to users from python */
