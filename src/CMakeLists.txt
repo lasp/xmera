@@ -12,6 +12,21 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 include(bskTargetExcludeBuildOptions)
 
+# ! python_development_install : pip install the project in "editable" mode. When installed as editable, a project can
+# be edited in-place without reinstallation. The function takes no arguments.
+#
+function(python_development_install)
+  set(command "${Python3_EXECUTABLE}" -m pip install -e ..)
+  execute_process(
+    COMMAND ${command}
+    RESULT_VARIABLE result
+    ERROR_VARIABLE output)
+
+  if(NOT ${result} EQUAL 0)
+    message(FATAL_ERROR "Failed while trying pip install ${CMAKE_PROJECT_NAME} in editable mode: ${output}")
+  endif()
+endfunction(python_development_install)
+
 # ! create_symlinks : create symlinks to support files in source rather than keeping them in dist The function takes one
 # required argument and N optional arguments. \argn: a list of supporting file paths
 #
@@ -630,3 +645,5 @@ create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 
 # Tests targets
 add_subdirectory("architecture/utilities/tests")
+
+python_development_install()
