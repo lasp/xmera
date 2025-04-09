@@ -18,13 +18,15 @@
  */
 
 #include "facetSRPDynamicEffector.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/avsEigenSupport.h"
+
 #include <cmath>
 
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+
 const double speedLight = 299792458.0;  // [m/s] Speed of light
-const double AstU = 149597870700.0;  // [m] Astronomical unit
-const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
+const double AstU = 149597870700.0;     // [m] Astronomical unit
+const double solarRadFlux = 1368.0;     // [W/m^2] Solar radiation flux at 1 AU
 
 /*! The constructor */
 FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
@@ -36,8 +38,7 @@ FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
 }
 
 /*! The destructor */
-FacetSRPDynamicEffector::~FacetSRPDynamicEffector() {
-}
+FacetSRPDynamicEffector::~FacetSRPDynamicEffector() {}
 
 /*! The reset method
  @return void
@@ -77,7 +78,7 @@ articulatedFacetDataInMsgs input message
  @return void
  @param tmpMsg  hingedRigidBody input message containing facet articulation angle data
 */
-void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
+void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayload>* tmpMsg) {
     this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
 }
 
@@ -95,8 +96,7 @@ void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
 the articulation angle messages are also read
  @return void
 */
-void FacetSRPDynamicEffector::ReadMessages()
-{
+void FacetSRPDynamicEffector::ReadMessages() {
     // Read the Sun state input message
     if (this->sunInMsg.isLinked() && this->sunInMsg.isWritten()) {
         SpicePlanetStateMsgPayload sunMsgBuffer;
@@ -111,10 +111,10 @@ void FacetSRPDynamicEffector::ReadMessages()
         this->facetArticulationAngleList.clear();
         for (int i = 0; i < this->numArticulatedFacets; i++) {
             if (this->articulatedFacetDataInMsgs[i].isLinked() && this->articulatedFacetDataInMsgs[i].isWritten()) {
-                    facetAngleMsg = this->articulatedFacetDataInMsgs[i]();
-                    this->facetArticulationAngleList.push_back(facetAngleMsg.theta);
-                    this->facetAngleMsgRead = true;
-                } else {
+                facetAngleMsg = this->articulatedFacetDataInMsgs[i]();
+                this->facetArticulationAngleList.push_back(facetAngleMsg.theta);
+                this->facetAngleMsgRead = true;
+            } else {
                 this->facetAngleMsgRead = false;
             }
         }
@@ -192,11 +192,11 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
 
         // Compute the SRP force and torque acting on the facet only if the facet is in view of the Sun
         if (projectedArea > 0.0) {
-            facetSRPForcePntB_B = -SRPPressure * projectedArea
-                                  * ((1 - this->scGeometry.facetSpecCoeffs[i])
-                                  * sHat + 2 * ((this->scGeometry.facetDiffCoeffs[i] / 3)
-                                  + this->scGeometry.facetSpecCoeffs[i] * cosTheta)
-                                  * this->scGeometry.facetNormals_B[i]);
+            facetSRPForcePntB_B =
+                -SRPPressure * projectedArea *
+                ((1 - this->scGeometry.facetSpecCoeffs[i]) * sHat +
+                 2 * ((this->scGeometry.facetDiffCoeffs[i] / 3) + this->scGeometry.facetSpecCoeffs[i] * cosTheta) *
+                     this->scGeometry.facetNormals_B[i]);
             facetSRPTorquePntB_B = this->scGeometry.facetLocationsPntB_B[i].cross(facetSRPForcePntB_B);
 
             // Add the facet contribution to the total SRP force and torque acting on the spacecraft
