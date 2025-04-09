@@ -48,7 +48,7 @@ required to rotate the given facet normal vector through the current facet artic
 principal rotation vector (PRV) transformation where:
 
 .. math::
-    [\mathcal{B}_0\mathcal{B}] = \text{PRV2C}(\phi, \boldsymbol{\hat{a}})
+    [\mathcal{B}\mathcal{B}_0] = \text{PRV2C}(-\phi, \boldsymbol{\hat{a}})
 
 and
 

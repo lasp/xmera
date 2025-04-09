@@ -291,11 +291,11 @@ def checkFacetSRPForce(index, facetRotAngle1, facetRotAngle2, area, specCoeff, d
 
     # Rotate the articulated facet normal vectors
     if (index == 6 or index == 7):
-        prv_BB0 = facetRotAngle1 * facetRotAxis
+        prv_BB0 = -facetRotAngle1 * facetRotAxis
         dcm_BB0 = rbk.PRV2C(prv_BB0)
         facetNormal = np.matmul(dcm_BB0, facetNormal)
     if (index == 8 or index == 9):
-        prv_BB0 = facetRotAngle2 * facetRotAxis
+        prv_BB0 = -facetRotAngle2 * facetRotAxis
         dcm_BB0 = rbk.PRV2C(prv_BB0)
         facetNormal = np.matmul(dcm_BB0, facetNormal)
 
