@@ -17,14 +17,15 @@
 
  */
 #include "simulation/sensors/starTracker/starTracker.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+
+#include <iostream>
+
+#include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <iostream>
-#include "architecture/utilities/gauss_markov.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
-StarTracker::StarTracker()
-{
+StarTracker::StarTracker() {
     this->sensorTimeTag = 0;
     m33SetIdentity(RECAST3X3 this->dcm_CB);
     this->errorModel = GaussMarkov(3, this->RNGSeed);
@@ -34,17 +35,12 @@ StarTracker::StarTracker()
     return;
 }
 
-StarTracker::~StarTracker()
-{
-    return;
-}
-
+StarTracker::~StarTracker() { return; }
 
 /*! This method is used to reset the module.
  @param currentSimNanos The current simulation time from the architecture
  @return void */
-void StarTracker::reset(uint64_t currentSimNanos)
-{
+void StarTracker::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "starTracker.scStateInMsg was not linked.");
@@ -55,12 +51,11 @@ void StarTracker::reset(uint64_t currentSimNanos)
     this->AMatrix.setIdentity(numStates, numStates);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if(this->PMatrix.size() != numStates*numStates)
-    {
+    if (this->PMatrix.size() != numStates * numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
         return;
     }
-    if(this->walkBounds.size() != numStates){
+    if (this->walkBounds.size() != numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your walkbounds is not size 3. Quitting");
         return;
     }
@@ -72,8 +67,7 @@ void StarTracker::reset(uint64_t currentSimNanos)
 /*!
     read input messages
  */
-void StarTracker::readInputMessages()
-{
+void StarTracker::readInputMessages() {
     this->scState = this->scStateInMsg();
     this->sensorTimeTag = this->scStateInMsg.timeWritten();
 }
@@ -81,8 +75,7 @@ void StarTracker::readInputMessages()
 /*!
    compute sensor errors
  */
-void StarTracker::computeSensorErrors()
-{
+void StarTracker::computeSensorErrors() {
     this->errorModel.setPropMatrix(this->AMatrix);
     this->errorModel.computeNextState();
     this->navErrors = this->errorModel.getCurrentState();
@@ -91,8 +84,7 @@ void StarTracker::computeSensorErrors()
 /*!
    apply sensor errors
  */
-void StarTracker::applySensorErrors()
-{
+void StarTracker::applySensorErrors() {
     double sigmaSensed[3];
     PRV2MRP(&(this->navErrors.data()[0]), this->mrpErrors);
     addMRP(this->scState.sigma_BN, this->mrpErrors, sigmaSensed);
@@ -105,10 +97,9 @@ void StarTracker::applySensorErrors()
     @param sigma
     @param sensorValues
  */
-void StarTracker::computeQuaternion(double *sigma, STSensorMsgPayload *sensorValues)
-{
-    double dcm_BN[3][3];            /* dcm, inertial to body frame */
-    double dcm_CN[3][3];            /* dcm, inertial to case frame */
+void StarTracker::computeQuaternion(double *sigma, STSensorMsgPayload *sensorValues) {
+    double dcm_BN[3][3]; /* dcm, inertial to body frame */
+    double dcm_CN[3][3]; /* dcm, inertial to case frame */
     MRP2C(sigma, dcm_BN);
     m33MultM33(RECAST3X3 this->dcm_CB, dcm_BN, dcm_CN);
     C2EP(dcm_CN, sensorValues->qInrtl2Case);
@@ -117,8 +108,7 @@ void StarTracker::computeQuaternion(double *sigma, STSensorMsgPayload *sensorVal
 /*!
     compute true output values
  */
-void StarTracker::computeTrueOutput()
-{
+void StarTracker::computeTrueOutput() {
     this->trueValues.timeTag = this->sensorTimeTag;
     this->computeQuaternion(this->scState.sigma_BN, &this->trueValues);
 }
@@ -126,16 +116,14 @@ void StarTracker::computeTrueOutput()
 /*!
     write output messages
  */
-void StarTracker::writeOutputMessages(uint64_t currentSimNanos)
-{
+void StarTracker::writeOutputMessages(uint64_t currentSimNanos) {
     this->sensorOutMsg.write(&this->sensedValues, this->moduleID, currentSimNanos);
 }
 
 /*!
     update module states
  */
-void StarTracker::updateState(uint64_t currentSimNanos)
-{
+void StarTracker::updateState(uint64_t currentSimNanos) {
     this->readInputMessages();
     this->computeSensorErrors();
     this->computeTrueOutput();

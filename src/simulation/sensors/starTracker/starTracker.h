@@ -20,27 +20,25 @@
 #ifndef STAR_TRACKER_H
 #define STAR_TRACKER_H
 
+#include <Eigen/Dense>
 #include <vector>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/gauss_markov.h"
 
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/STSensorMsgPayload.h"
-#include "architecture/messaging/messaging.h"
-
-#include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
-
+#include "architecture/utilities/gauss_markov.h"
 
 /*! @brief star tracker class */
-class StarTracker: public SysModel {
-public:
+class StarTracker : public SysModel {
+   public:
     StarTracker();
     ~StarTracker();
 
     void updateState(uint64_t currentSimNanos);
-    void reset(uint64_t CurrentClock);          //!< Method for reseting the module
+    void reset(uint64_t CurrentClock);  //!< Method for reseting the module
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
     void computeSensorErrors();
@@ -48,30 +46,26 @@ public:
     void computeTrueOutput();
     void computeQuaternion(double *sigma, STSensorMsgPayload *sensorValue);
 
-public:
+   public:
+    uint64_t sensorTimeTag;                        //!< [ns] Current time tag for sensor out
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!< [-] sc input state message
+    Message<STSensorMsgPayload> sensorOutMsg;      //!< [-] sensor output state message
 
-    uint64_t sensorTimeTag;            //!< [ns] Current time tag for sensor out
-    ReadFunctor<SCStatesMsgPayload> scStateInMsg;    //!< [-] sc input state message
-    Message<STSensorMsgPayload> sensorOutMsg;   //!< [-] sensor output state message
+    Eigen::Matrix3d
+        PMatrix;  //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
+    Eigen::Vector3d walkBounds;  //!< [-] "3-sigma" errors to permit for states
+    Eigen::Vector3d navErrors;   //!< [-] Current navigation errors applied to truth
 
-    Eigen::Matrix3d PMatrix;      //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::Vector3d walkBounds;   //!< [-] "3-sigma" errors to permit for states
-    Eigen::Vector3d navErrors;    //!< [-] Current navigation errors applied to truth
-
-    double dcm_CB[3][3];                 //!< [-] Transformation matrix from body to case
-    STSensorMsgPayload trueValues;  //!< [-] total measurement without perturbations
-    STSensorMsgPayload sensedValues;//!< [-] total measurement including perturbations
+    double dcm_CB[3][3];              //!< [-] Transformation matrix from body to case
+    STSensorMsgPayload trueValues;    //!< [-] total measurement without perturbations
+    STSensorMsgPayload sensedValues;  //!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
-    SCStatesMsgPayload scState;      //!< [-] Module variable where the input State Data message is stored
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    SCStatesMsgPayload scState;       //!< [-] Module variable where the input State Data message is stored
+    BSKLogger bskLogger;              //!< -- BSK Logging
 
-
-
-
-private:
-    Eigen::Matrix3d AMatrix;      //!< [-] AMatrix that we use for error propagation
-    GaussMarkov errorModel;           //!< [-] Gauss-markov error states
+   private:
+    Eigen::Matrix3d AMatrix;  //!< [-] AMatrix that we use for error propagation
+    GaussMarkov errorModel;   //!< [-] Gauss-markov error states
 };
-
 
 #endif
