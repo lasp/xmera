@@ -126,6 +126,14 @@ in order to save an unnecessary conversion between types.
 Eigen::Vector3d cArray2EigenVector3d(double *inArray) { return Eigen::Map<Eigen::Vector3d>(inArray, 3, 1); }
 
 /*! This function performs the conversion between an input C array
+4-vector and an output Eigen vector4d. This function is provided
+in order to save an unnecessary conversion between types.
+@return Eigen::Vector4d
+@param inArray The input array (row-major)
+*/
+Eigen::Vector4d cArray2EigenVector4d(double *inArray) { return Eigen::Map<Eigen::Vector4d>(inArray, 4, 1); }
+
+/*! This function performs the conversion between an input C array
 3-vector and an output Eigen MRPd. This function is provided
 in order to save an unnecessary conversion between types.
 @return Eigen::MRPd

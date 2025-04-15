@@ -39,6 +39,8 @@ void eigenMatrix3d2CArray(Eigen::Matrix3d &inMat, double *outArray);
 Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols);
 //!@brief Specific conversion between a C array and an Eigen 3-vector
 Eigen::Vector3d cArray2EigenVector3d(double *inArray);
+//!@brief Specific conversion between a C array and an Eigen 4-vector
+Eigen::Vector4d cArray2EigenVector4d(double *inArray);
 //!@brief Specific conversion between a C array and an Eigen MRPs
 Eigen::MRPd cArray2EigenMRPd(double *inArray);
 //!@brief Specfici conversion between a C array and an Eigen 3x3 matrix
