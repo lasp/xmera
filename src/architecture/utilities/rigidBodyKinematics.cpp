@@ -664,7 +664,13 @@ Eigen::Vector4d prvToEp(const Eigen::Vector3d& prv) {
  * @param prv
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d prvToMrp(const Eigen::Vector3d& prv) { return prv / prv.norm() * tan(prv.norm() / 4.); }
+Eigen::Vector3d prvToMrp(const Eigen::Vector3d& prv) {
+    const double norm = prv.norm();
+    if (norm > 1e-12) {
+        return prv.normalized() * std::tan(norm / 4.);
+    }
+    return Eigen::Vector3d::Zero();
+}
 
 /**
  * Translate a principal rotation vector into a 321 Euler angle vector.
