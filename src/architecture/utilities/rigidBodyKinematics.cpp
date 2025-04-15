@@ -18,6 +18,7 @@
  */
 
 #include "rigidBodyKinematics.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -31,7 +32,7 @@ constexpr double eps = std::numeric_limits<double>::epsilon();
  * @param ep2 Eigen::Vector4d
  * @return Eigen::Vector4d
  */
-Eigen::Vector4d addEp(const Eigen::Vector4d& ep1, const Eigen::Vector4d& ep2){
+Eigen::Vector4d addEp(const Eigen::Vector4d& ep1, const Eigen::Vector4d& ep2) {
     Eigen::Vector4d ep;
 
     ep(0) = ep2(0) * ep1(0) - ep2(1) * ep1(1) - ep2(2) * ep1(2) - ep2(3) * ep1(3);
@@ -48,20 +49,20 @@ Eigen::Vector4d addEp(const Eigen::Vector4d& ep1, const Eigen::Vector4d& ep2){
  * @param mrp2 Eigen::Vector3d
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d addMrp(const Eigen::Vector3d& mrp1, const Eigen::Vector3d& mrp2){
+Eigen::Vector3d addMrp(const Eigen::Vector3d& mrp1, const Eigen::Vector3d& mrp2) {
     Eigen::Vector3d sigma1(mrp1);
     double denominator;
-    denominator = 1 + mrp1.dot(mrp1)*mrp2.dot(mrp2) - 2 * mrp1.dot(mrp2);
+    denominator = 1 + mrp1.dot(mrp1) * mrp2.dot(mrp2) - 2 * mrp1.dot(mrp2);
     if (std::abs(denominator) < 0.1) {
-        sigma1 = mrpShadow(mrp1); // Shadow set
+        sigma1 = mrpShadow(mrp1);  // Shadow set
         denominator = (1 + sigma1.dot(sigma1) * mrp2.dot(mrp2) - 2 * sigma1.dot(mrp2));
     }
 
     assert(std::abs(denominator) > eps);
     Eigen::Vector3d numerator;
-    numerator << (1 - sigma1.dot(sigma1))*mrp2 + (1 - mrp2.dot(mrp2))*sigma1 - 2*mrp2.cross(sigma1);
+    numerator << (1 - sigma1.dot(sigma1)) * mrp2 + (1 - mrp2.dot(mrp2)) * sigma1 - 2 * mrp2.cross(sigma1);
 
-    Eigen::Vector3d mrp(numerator/denominator);
+    Eigen::Vector3d mrp(numerator / denominator);
     /* map mrp to inner set */
     mrp = mrpSwitch(mrp, 1);
 
@@ -74,26 +75,30 @@ Eigen::Vector3d addMrp(const Eigen::Vector3d& mrp1, const Eigen::Vector3d& mrp2)
  * @param prv2 Eigen::Vector3d
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d addPrv(const Eigen::Vector3d& prv1, const Eigen::Vector3d& prv2){
-
-    if(prv1.norm() < 1.0E-7 || prv2.norm() < 1.0E-7){return prv1 + prv2;}
+Eigen::Vector3d addPrv(const Eigen::Vector3d& prv1, const Eigen::Vector3d& prv2) {
+    if (prv1.norm() < 1.0E-7 || prv2.norm() < 1.0E-7) {
+        return prv1 + prv2;
+    }
 
     double cosPhi1 = std::cos(prv1.norm() / 2.);
     double cosPhi2 = std::cos(prv2.norm() / 2.);
     double sinPhi1 = std::sin(prv1.norm() / 2.);
     double sinPhi2 = std::sin(prv2.norm() / 2.);
 
-    Eigen::Vector3d unitVector1(prv1/prv1.norm());
-    Eigen::Vector3d unitVector2(prv2/prv2.norm());
+    Eigen::Vector3d unitVector1(prv1 / prv1.norm());
+    Eigen::Vector3d unitVector2(prv2 / prv2.norm());
     assert(std::abs(cosPhi1 * cosPhi2 - sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2)) < 1);
 
     double angle;
     angle = 2 * std::acos(cosPhi1 * cosPhi2 - sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2));
 
     Eigen::Vector3d prv;
-    if(std::abs(angle) < 1.0E-13){return prv.setZero();}
-    prv << cosPhi1*sinPhi2*unitVector2 + cosPhi2*sinPhi1*unitVector1 + sinPhi1*sinPhi2*unitVector1.cross(unitVector2);
-    return prv*angle/std::sin(angle/2);
+    if (std::abs(angle) < 1.0E-13) {
+        return prv.setZero();
+    }
+    prv << cosPhi1 * sinPhi2 * unitVector2 + cosPhi2 * sinPhi1 * unitVector1 +
+               sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
+    return prv * angle / std::sin(angle / 2);
 }
 
 /**
@@ -102,8 +107,8 @@ Eigen::Vector3d addPrv(const Eigen::Vector3d& prv1, const Eigen::Vector3d& prv2)
  * @param euler3212 Eigen::Vector3d
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d addEulerAngles321(const Eigen::Vector3d& euler3211, const Eigen::Vector3d& euler3212){
-    return dcmToEulerAngles321(eulerAngles321ToDcm(euler3212)*eulerAngles321ToDcm(euler3211));
+Eigen::Vector3d addEulerAngles321(const Eigen::Vector3d& euler3211, const Eigen::Vector3d& euler3212) {
+    return dcmToEulerAngles321(eulerAngles321ToDcm(euler3212) * eulerAngles321ToDcm(euler3211));
 }
 
 /**
@@ -112,12 +117,10 @@ Eigen::Vector3d addEulerAngles321(const Eigen::Vector3d& euler3211, const Eigen:
  * @param ep const Eigen::Vector4
  * @return Eigen::Matrix<double, 3, 4>
  */
-Eigen::Matrix<double, 3, 4> binvEp(const Eigen::Vector4d& ep){
+Eigen::Matrix<double, 3, 4> binvEp(const Eigen::Vector4d& ep) {
     Eigen::Matrix<double, 3, 4> Binv;
 
-    Binv << -ep(1), ep(0), ep(3), -ep(2),
-    -ep(2), -ep(3), ep(0), ep(1),
-    -ep(3), ep(2), -ep(1), ep(0);
+    Binv << -ep(1), ep(0), ep(3), -ep(2), -ep(2), -ep(3), ep(0), ep(1), -ep(3), ep(2), -ep(1), ep(0);
 
     return Binv;
 }
@@ -128,8 +131,7 @@ Eigen::Matrix<double, 3, 4> binvEp(const Eigen::Vector4d& ep){
  * @param mrp Eigen::Vector3d
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d binvMrp(const Eigen::Vector3d& mrp){
-
+Eigen::Matrix3d binvMrp(const Eigen::Vector3d& mrp) {
     Eigen::Matrix3d Binv;
 
     Binv(0, 0) = 1 - mrp.dot(mrp) + 2 * mrp(0) * mrp(0);
@@ -142,7 +144,7 @@ Eigen::Matrix3d binvMrp(const Eigen::Vector3d& mrp){
     Binv(2, 1) = 2 * (mrp(2) * mrp(1) - mrp(0));
     Binv(2, 2) = 1 - mrp.dot(mrp) + 2 * mrp(2) * mrp(2);
 
-    return Binv/ (1 + mrp.dot(mrp)) / (1 + mrp.dot(mrp));
+    return Binv / (1 + mrp.dot(mrp)) / (1 + mrp.dot(mrp));
 }
 
 /**
@@ -151,7 +153,7 @@ Eigen::Matrix3d binvMrp(const Eigen::Vector3d& mrp){
  * @param prv Eigen::Vector3
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d binvPrv(const Eigen::Vector3d& prv){
+Eigen::Matrix3d binvPrv(const Eigen::Vector3d& prv) {
     double c1 = (1 - std::cos(prv.norm())) / std::pow(prv.norm(), 2);
     double c2 = (prv.norm() - std::sin(prv.norm())) / std::pow(prv.norm(), 3);
 
@@ -175,16 +177,14 @@ Eigen::Matrix3d binvPrv(const Eigen::Vector3d& prv){
  * @param euler321 Eigen::Vector3d
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d binvEulerAngles321(const Eigen::Vector3d& euler321){
+Eigen::Matrix3d binvEulerAngles321(const Eigen::Vector3d& euler321) {
     double sin2 = std::sin(euler321(1));
     double cos2 = std::cos(euler321(1));
     double sin3 = std::sin(euler321(2));
     double cos3 = std::cos(euler321(2));
 
     Eigen::Matrix3d Binv;
-    Binv << -sin2, 0, 1,
-    cos2*sin3, cos3, 0,
-    cos2*cos3, - sin3, 0;
+    Binv << -sin2, 0, 1, cos2 * sin3, cos3, 0, cos2 * cos3, -sin3, 0;
 
     return Binv;
 }
@@ -195,7 +195,7 @@ Eigen::Matrix3d binvEulerAngles321(const Eigen::Vector3d& euler321){
  * @param ep Eigen::Vector4d
  * @return Eigen::Matrix<double, 4, 3>
  */
-Eigen::Matrix<double, 4, 3> bmatEp(const Eigen::Vector4d& ep){
+Eigen::Matrix<double, 4, 3> bmatEp(const Eigen::Vector4d& ep) {
     Eigen::Matrix<double, 4, 3> B;
 
     B(0, 0) = -ep(1);
@@ -220,7 +220,7 @@ Eigen::Matrix<double, 4, 3> bmatEp(const Eigen::Vector4d& ep){
  * @param mrp
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d bmatMrp(const Eigen::Vector3d& mrp){
+Eigen::Matrix3d bmatMrp(const Eigen::Vector3d& mrp) {
     Eigen::Matrix3d B;
 
     B(0, 0) = 1 - mrp.dot(mrp) + 2 * mrp(0) * mrp(0);
@@ -244,18 +244,18 @@ Eigen::Matrix3d bmatMrp(const Eigen::Vector3d& mrp){
  * @param dmrp
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d bmatDotMrp(const Eigen::Vector3d& mrp, const Eigen::Vector3d& dmrp){
+Eigen::Matrix3d bmatDotMrp(const Eigen::Vector3d& mrp, const Eigen::Vector3d& dmrp) {
     Eigen::Matrix3d B;
 
-    B(0, 0) = -2*mrp.dot(dmrp) + 4 * ( mrp(0) * dmrp(0));
+    B(0, 0) = -2 * mrp.dot(dmrp) + 4 * (mrp(0) * dmrp(0));
     B(0, 1) = 2 * (-dmrp(2) + mrp(0) * dmrp(1) + dmrp(0) * mrp(1));
-    B(0, 2) = 2 * ( dmrp(1) + mrp(0) * dmrp(2) + dmrp(0) * mrp(2));
-    B(1, 0) = 2 * ( dmrp(2) + mrp(0) * dmrp(1) + dmrp(0) * mrp(1));
-    B(1, 1) = -2*mrp.dot(dmrp) + 4 * ( mrp(1) * dmrp(1));
+    B(0, 2) = 2 * (dmrp(1) + mrp(0) * dmrp(2) + dmrp(0) * mrp(2));
+    B(1, 0) = 2 * (dmrp(2) + mrp(0) * dmrp(1) + dmrp(0) * mrp(1));
+    B(1, 1) = -2 * mrp.dot(dmrp) + 4 * (mrp(1) * dmrp(1));
     B(1, 2) = 2 * (-dmrp(0) + mrp(1) * dmrp(2) + dmrp(1) * mrp(2));
     B(2, 0) = 2 * (-dmrp(1) + mrp(0) * dmrp(2) + dmrp(0) * mrp(2));
-    B(2, 1) = 2 * ( dmrp(0) + mrp(1) * dmrp(2) + dmrp(1) * mrp(2));
-    B(2, 2) = -2*mrp.dot(dmrp) + 4 * ( mrp(2) * dmrp(2));
+    B(2, 1) = 2 * (dmrp(0) + mrp(1) * dmrp(2) + dmrp(1) * mrp(2));
+    B(2, 2) = -2 * mrp.dot(dmrp) + 4 * (mrp(2) * dmrp(2));
 
     return B;
 }
@@ -266,7 +266,7 @@ Eigen::Matrix3d bmatDotMrp(const Eigen::Vector3d& mrp, const Eigen::Vector3d& dm
  * @param prv
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d bmatPrv(const Eigen::Vector3d& prv){
+Eigen::Matrix3d bmatPrv(const Eigen::Vector3d& prv) {
     double c = 1. / prv.norm() / prv.norm() * (1. - prv.norm() / 2. / std::tan(prv.norm() / 2.));
 
     Eigen::Matrix3d B;
@@ -289,18 +289,16 @@ Eigen::Matrix3d bmatPrv(const Eigen::Vector3d& prv){
  * @param euler321
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d bmatEulerAngles321(const Eigen::Vector3d& euler321){
+Eigen::Matrix3d bmatEulerAngles321(const Eigen::Vector3d& euler321) {
     double sin2 = sin(euler321(1));
     double cos2 = cos(euler321(1));
     double sin3 = sin(euler321(2));
     double cos3 = cos(euler321(2));
 
     Eigen::Matrix3d B;
-    B << 0, sin3, cos3,
-    0, cos2*cos3, -cos2*sin3,
-    cos2, sin2*sin3, sin2*cos3;
+    B << 0, sin3, cos3, 0, cos2 * cos3, -cos2 * sin3, cos2, sin2 * sin3, sin2 * cos3;
 
-    return B/cos2;
+    return B / cos2;
 }
 
 /**
@@ -310,7 +308,7 @@ Eigen::Matrix3d bmatEulerAngles321(const Eigen::Vector3d& euler321){
  * @param dcm
  * @return Eigen::Vector4d
  */
-Eigen::Vector4d dcmToEp(const Eigen::Matrix3d& dcm){
+Eigen::Vector4d dcmToEp(const Eigen::Matrix3d& dcm) {
     Eigen::Vector4d ep;
 
     ep(0) = (1 + dcm.trace()) / 4.;
@@ -321,42 +319,39 @@ Eigen::Vector4d dcmToEp(const Eigen::Matrix3d& dcm){
     std::vector<double> epVector(ep.data(), ep.data() + ep.size());
     double maxVal = *std::max_element(epVector.begin(), epVector.end());
 
-    if (maxVal == ep(0)){
+    if (maxVal == ep(0)) {
         ep(0) = std::sqrt(ep(0));
         ep(1) = (dcm(1, 2) - dcm(2, 1)) / 4 / ep(0);
         ep(2) = (dcm(2, 0) - dcm(0, 2)) / 4 / ep(0);
         ep(3) = (dcm(0, 1) - dcm(1, 0)) / 4 / ep(0);
-        }
-    else if (maxVal == ep(1)){
+    } else if (maxVal == ep(1)) {
         ep(1) = std::sqrt(ep(1));
         ep(0) = (dcm(1, 2) - dcm(2, 1)) / 4 / ep(1);
-        if(ep(0) < 0) {
+        if (ep(0) < 0) {
             ep(1) = -ep(1);
             ep(0) = -ep(0);
         }
         ep(2) = (dcm(0, 1) + dcm(1, 0)) / 4 / ep(1);
         ep(3) = (dcm(2, 0) + dcm(0, 2)) / 4 / ep(1);
-        }
-    else if (maxVal == ep(2)){
+    } else if (maxVal == ep(2)) {
         ep(2) = std::sqrt(ep(2));
         ep(0) = (dcm(2, 0) - dcm(0, 2)) / 4 / ep(2);
-        if(ep(0) < 0) {
+        if (ep(0) < 0) {
             ep(2) = -ep(2);
             ep(0) = -ep(0);
         }
         ep(1) = (dcm(0, 1) + dcm(1, 0)) / 4 / ep(2);
         ep(3) = (dcm(1, 2) + dcm(2, 1)) / 4 / ep(2);
-        }
-    else if (maxVal == ep(3)){
+    } else if (maxVal == ep(3)) {
         ep(3) = std::sqrt(ep(3));
         ep(0) = (dcm(0, 1) - dcm(1, 0)) / 4 / ep(3);
-        if(ep(0) < 0) {
+        if (ep(0) < 0) {
             ep(3) = -ep(3);
             ep(0) = -ep(0);
         }
         ep(1) = (dcm(2, 0) + dcm(0, 2)) / 4 / ep(3);
         ep(2) = (dcm(1, 2) + dcm(2, 1)) / 4 / ep(3);
-        }
+    }
 
     return ep;
 }
@@ -367,9 +362,9 @@ Eigen::Vector4d dcmToEp(const Eigen::Matrix3d& dcm){
  * @param dcm
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d dcmToMrp(const Eigen::Matrix3d& dcm){
+Eigen::Vector3d dcmToMrp(const Eigen::Matrix3d& dcm) {
     Eigen::Vector4d ep(dcmToEp(dcm));
-    return ep.tail(3)/(1 + ep(0));
+    return ep.tail(3) / (1 + ep(0));
 }
 
 /**
@@ -378,21 +373,19 @@ Eigen::Vector3d dcmToMrp(const Eigen::Matrix3d& dcm){
  * @param dcm
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d dcmToPrv(const Eigen::Matrix3d& dcm){
-    return epToPrv(dcmToEp(dcm));
-}
+Eigen::Vector3d dcmToPrv(const Eigen::Matrix3d& dcm) { return epToPrv(dcmToEp(dcm)); }
 
 /**
  * Translate a direction cosine matrix into the corresponding 321 Euler angle set.
  * @param dcm
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d dcmToEulerAngles321(const Eigen::Matrix3d& dcm){
+Eigen::Vector3d dcmToEulerAngles321(const Eigen::Matrix3d& dcm) {
     Eigen::Vector3d euler321;
 
-    euler321[0] = std::atan2(dcm(0,1), dcm(0,0));
-    euler321[1] = std::asin(-dcm(0,2));
-    euler321[2] = std::atan2(dcm(1,2), dcm(2,2));
+    euler321[0] = std::atan2(dcm(0, 1), dcm(0, 0));
+    euler321[1] = std::asin(-dcm(0, 2));
+    euler321[2] = std::atan2(dcm(1, 2), dcm(2, 2));
 
     return euler321;
 }
@@ -404,16 +397,16 @@ Eigen::Vector3d dcmToEulerAngles321(const Eigen::Matrix3d& dcm){
  * @param omega
  * @return Eigen::Vector4d
  */
-Eigen::Vector4d dep(const Eigen::Vector4d& ep, const Eigen::Vector3d& omega){
+Eigen::Vector4d dep(const Eigen::Vector4d& ep, const Eigen::Vector3d& omega) {
     Eigen::Matrix<double, 4, 3> B(bmatEp(ep));
-    Eigen::Vector4d dep(B*omega);
-    for(int i = 0; i < 4; i++) {
+    Eigen::Vector4d dep(B * omega);
+    for (int i = 0; i < 4; i++) {
         dep(i) = 0.;
-        for(int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             dep(i) += B(i, j) * omega(j);
         }
     }
-    return dep/2;
+    return dep / 2;
 }
 
 /**
@@ -423,9 +416,9 @@ Eigen::Vector4d dep(const Eigen::Vector4d& ep, const Eigen::Vector3d& omega){
  * @param omega
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d dmrp(const Eigen::Vector3d& mrp, const Eigen::Vector3d& omega){
+Eigen::Vector3d dmrp(const Eigen::Vector3d& mrp, const Eigen::Vector3d& omega) {
     Eigen::Matrix3d B(bmatMrp(mrp));
-    return B*omega/4;
+    return B * omega / 4;
 }
 
 /**
@@ -435,9 +428,9 @@ Eigen::Vector3d dmrp(const Eigen::Vector3d& mrp, const Eigen::Vector3d& omega){
  * @param dmrp
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d dmrpToOmega(const Eigen::Vector3d& mrp, const Eigen::Vector3d& dmrp){
+Eigen::Vector3d dmrpToOmega(const Eigen::Vector3d& mrp, const Eigen::Vector3d& dmrp) {
     Eigen::Matrix3d Binv(binvMrp(mrp));
-    return 4*Binv*dmrp;
+    return 4 * Binv * dmrp;
 }
 
 /**
@@ -453,11 +446,11 @@ Eigen::Vector3d dmrpToOmega(const Eigen::Vector3d& mrp, const Eigen::Vector3d& d
 Eigen::Vector3d ddmrp(const Eigen::Vector3d& mrp,
                       const Eigen::Vector3d& dmrp,
                       const Eigen::Vector3d& omega,
-                      const Eigen::Vector3d& domega){
+                      const Eigen::Vector3d& domega) {
     Eigen::Matrix3d B(bmatMrp(mrp));
     Eigen::Matrix3d Bdot(bmatDotMrp(mrp, dmrp));
 
-    return (B*domega + Bdot*omega)/4;
+    return (B * domega + Bdot * omega) / 4;
 }
 
 /**
@@ -468,11 +461,11 @@ Eigen::Vector3d ddmrp(const Eigen::Vector3d& mrp,
  * @param ddmrp
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d ddmrpTodOmega(const Eigen::Vector3d& mrp, const Eigen::Vector3d& dmrp, const Eigen::Vector3d& ddmrp){
+Eigen::Vector3d ddmrpTodOmega(const Eigen::Vector3d& mrp, const Eigen::Vector3d& dmrp, const Eigen::Vector3d& ddmrp) {
     Eigen::Matrix3d Binv(binvMrp(mrp));
     Eigen::Matrix3d Bdot(bmatDotMrp(mrp, dmrp));
-    Eigen::Vector3d diff(ddmrp - Bdot*Binv*dmrp);
-    return 4*Binv*diff;
+    Eigen::Vector3d diff(ddmrp - Bdot * Binv * dmrp);
+    return 4 * Binv * diff;
 }
 
 /**Return the PRV derivative for a given PRV vector and body angular velocity vector.
@@ -481,9 +474,7 @@ Eigen::Vector3d ddmrpTodOmega(const Eigen::Vector3d& mrp, const Eigen::Vector3d&
  * @param omega
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d dprv(const Eigen::Vector3d& prv, const Eigen::Vector3d& omega){
-    return bmatPrv(prv)*omega;
-}
+Eigen::Vector3d dprv(const Eigen::Vector3d& prv, const Eigen::Vector3d& omega) { return bmatPrv(prv) * omega; }
 
 /**
  * Return the 321 Euler angle derivative vector for a given 321 Euler angle vector and body
@@ -493,8 +484,8 @@ Eigen::Vector3d dprv(const Eigen::Vector3d& prv, const Eigen::Vector3d& omega){
  * @param omega
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d deuler321(const Eigen::Vector3d& euler321, const Eigen::Vector3d& omega){
-    return bmatEulerAngles321(euler321)*omega;
+Eigen::Vector3d deuler321(const Eigen::Vector3d& euler321, const Eigen::Vector3d& omega) {
+    return bmatEulerAngles321(euler321) * omega;
 }
 
 /**
@@ -503,7 +494,7 @@ Eigen::Vector3d deuler321(const Eigen::Vector3d& euler321, const Eigen::Vector3d
  * @param ep
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d epToDcm(const Eigen::Vector4d& ep){
+Eigen::Matrix3d epToDcm(const Eigen::Vector4d& ep) {
     Eigen::Matrix3d dcm;
 
     dcm(0, 0) = ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3);
@@ -524,11 +515,11 @@ Eigen::Matrix3d epToDcm(const Eigen::Vector4d& ep){
  * @param ep
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d epToMrp(const Eigen::Vector4d& ep){
-    if (ep(0) >= 0){
-        return ep.tail(3)/(1 + ep(0));
+Eigen::Vector3d epToMrp(const Eigen::Vector4d& ep) {
+    if (ep(0) >= 0) {
+        return ep.tail(3) / (1 + ep(0));
     } else {
-        return -ep.tail(3)/(1 - ep(0));
+        return -ep.tail(3) / (1 - ep(0));
     }
 }
 
@@ -537,10 +528,12 @@ Eigen::Vector3d epToMrp(const Eigen::Vector4d& ep){
  * @param ep
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d epToPrv(const Eigen::Vector4d& ep){
+Eigen::Vector3d epToPrv(const Eigen::Vector4d& ep) {
     Eigen::Vector3d prv;
-    if (std::abs(std::sin(std::acos(ep(0)))) < eps){return prv.setZero();}
-    prv = ep.tail(3)/ std::sin(std::acos(ep(0))) * 2 * std::acos(ep(0));
+    if (std::abs(std::sin(std::acos(ep(0)))) < eps) {
+        return prv.setZero();
+    }
+    prv = ep.tail(3) / std::sin(std::acos(ep(0))) * 2 * std::acos(ep(0));
     return prv;
 }
 
@@ -549,14 +542,14 @@ Eigen::Vector3d epToPrv(const Eigen::Vector4d& ep){
  * @param ep
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d epToEulerAngles321(const Eigen::Vector4d& ep){
+Eigen::Vector3d epToEulerAngles321(const Eigen::Vector4d& ep) {
     Eigen::Vector3d euler321;
 
-    euler321(0) = std::atan2(2 * (ep(1) * ep(2) + ep(0) * ep(3)),
-                             ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3));
+    euler321(0) =
+        std::atan2(2 * (ep(1) * ep(2) + ep(0) * ep(3)), ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3));
     euler321(1) = std::asin(-2 * (ep(1) * ep(3) - ep(0) * ep(2)));
-    euler321(2) = std::atan2(2 * (ep(2) * ep(3) + ep(0) * ep(1)),
-                             ep(0) * ep(0) - ep(1) * ep(1) - ep(2) * ep(2) + ep(3) * ep(3));
+    euler321(2) =
+        std::atan2(2 * (ep(2) * ep(3) + ep(0) * ep(1)), ep(0) * ep(0) - ep(1) * ep(1) - ep(2) * ep(2) + ep(3) * ep(3));
 
     return euler321;
 }
@@ -566,10 +559,10 @@ Eigen::Vector3d epToEulerAngles321(const Eigen::Vector4d& ep){
  * @param mrp
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d mrpToDcm(const Eigen::Vector3d& mrp){
+Eigen::Matrix3d mrpToDcm(const Eigen::Vector3d& mrp) {
     Eigen::Matrix3d dcm;
-    dcm << 8 * tildeMatrix(mrp) * tildeMatrix(mrp) - 4*(1 - mrp.dot(mrp))* tildeMatrix(mrp);
-    dcm << dcm/(1 + mrp.dot(mrp))/(1 + mrp.dot(mrp));
+    dcm << 8 * tildeMatrix(mrp) * tildeMatrix(mrp) - 4 * (1 - mrp.dot(mrp)) * tildeMatrix(mrp);
+    dcm << dcm / (1 + mrp.dot(mrp)) / (1 + mrp.dot(mrp));
     return dcm + Eigen::Matrix3d::Identity();
 }
 
@@ -578,11 +571,11 @@ Eigen::Matrix3d mrpToDcm(const Eigen::Vector3d& mrp){
  * @param mrp
  * @return Eigen::Vector4d
  */
-Eigen::Vector4d mrpToEp(const Eigen::Vector3d& mrp){
+Eigen::Vector4d mrpToEp(const Eigen::Vector3d& mrp) {
     Eigen::Vector4d ep;
     ep(0) = 1 - mrp.dot(mrp);
     ep.tail(3) << 2 * mrp;
-    return ep/ (1 + mrp.dot(mrp));
+    return ep / (1 + mrp.dot(mrp));
 }
 
 /**
@@ -590,10 +583,12 @@ Eigen::Vector4d mrpToEp(const Eigen::Vector3d& mrp){
  * @param mrp
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d mrpToPrv(const Eigen::Vector3d& mrp){
+Eigen::Vector3d mrpToPrv(const Eigen::Vector3d& mrp) {
     Eigen::Vector3d prv;
-    if(mrp.norm() < eps){return prv.setZero();}
-    return mrp/mrp.norm() * 4 * std::atan(mrp.norm());
+    if (mrp.norm() < eps) {
+        return prv.setZero();
+    }
+    return mrp / mrp.norm() * 4 * std::atan(mrp.norm());
 }
 
 /**
@@ -601,9 +596,7 @@ Eigen::Vector3d mrpToPrv(const Eigen::Vector3d& mrp){
  * @param mrp
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d mrpToEulerAngles321(const Eigen::Vector3d& mrp){
-    return epToEulerAngles321(mrpToEp(mrp));
-}
+Eigen::Vector3d mrpToEulerAngles321(const Eigen::Vector3d& mrp) { return epToEulerAngles321(mrpToEp(mrp)); }
 
 /**
  * Check if mrp norm is larger than s. If so, map mrp to its shadow set.
@@ -611,8 +604,8 @@ Eigen::Vector3d mrpToEulerAngles321(const Eigen::Vector3d& mrp){
  * @param s
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d mrpSwitch(const Eigen::Vector3d& mrp, const double s){
-    if(mrp.dot(mrp) > s*s) {
+Eigen::Vector3d mrpSwitch(const Eigen::Vector3d& mrp, const double s) {
+    if (mrp.dot(mrp) > s * s) {
         return mrpShadow(mrp);
     } else {
         return mrp;
@@ -624,18 +617,18 @@ Eigen::Vector3d mrpSwitch(const Eigen::Vector3d& mrp, const double s){
  * @param mrp
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d mrpShadow(const Eigen::Vector3d& mrp){
-    return - mrp/mrp.dot(mrp);
-}
+Eigen::Vector3d mrpShadow(const Eigen::Vector3d& mrp) { return -mrp / mrp.dot(mrp); }
 
 /**
  * Return the direction cosine matrix corresponding to a principal rotation vector
  * @param prv
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d prvToDcm(const Eigen::Vector3d& prv){
-    Eigen::Vector3d unitVector(prv/prv.norm());
-    if(prv.norm() < eps){return  Eigen::Matrix3d::Identity();}
+Eigen::Matrix3d prvToDcm(const Eigen::Vector3d& prv) {
+    Eigen::Vector3d unitVector(prv / prv.norm());
+    if (prv.norm() < eps) {
+        return Eigen::Matrix3d::Identity();
+    }
 
     Eigen::Matrix3d dcm;
     dcm(0, 0) = unitVector(0) * unitVector(0) * (1 - cos(prv.norm())) + cos(prv.norm());
@@ -656,12 +649,12 @@ Eigen::Matrix3d prvToDcm(const Eigen::Vector3d& prv){
  * @param prv
  * @return Eigen::Vector4d
  */
-Eigen::Vector4d prvToEp(const Eigen::Vector3d& prv){
-    Eigen::Vector3d unitVector(prv/prv.norm());
+Eigen::Vector4d prvToEp(const Eigen::Vector3d& prv) {
+    Eigen::Vector3d unitVector(prv / prv.norm());
 
     Eigen::Vector4d ep;
     ep(0) = cos(prv.norm() / 2);
-    ep.tail(3) = unitVector *  sin(prv.norm() / 2);
+    ep.tail(3) = unitVector * sin(prv.norm() / 2);
 
     return ep;
 }
@@ -671,36 +664,31 @@ Eigen::Vector4d prvToEp(const Eigen::Vector3d& prv){
  * @param prv
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d prvToMrp(const Eigen::Vector3d& prv){
-    return prv/prv.norm() * tan(prv.norm() / 4.);
-}
+Eigen::Vector3d prvToMrp(const Eigen::Vector3d& prv) { return prv / prv.norm() * tan(prv.norm() / 4.); }
 
 /**
  * Translate a principal rotation vector into a 321 Euler angle vector.
  * @param prv
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d prvToEulerAngles321(const Eigen::Vector3d& prv){
-    return epToEulerAngles321(prvToEp(prv));
-}
+Eigen::Vector3d prvToEulerAngles321(const Eigen::Vector3d& prv) { return epToEulerAngles321(prvToEp(prv)); }
 
 /**
  * Return the direction cosine matrix corresponding to a 321 Euler angle rotation.
  * @param euler321
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d eulerAngles321ToDcm(const Eigen::Vector3d& euler321){
+Eigen::Matrix3d eulerAngles321ToDcm(const Eigen::Vector3d& euler321) {
     double sin1 = std::sin(euler321(0));
     double sin2 = std::sin(euler321(1));
     double sin3 = std::sin(euler321(2));
     double cos1 = std::cos(euler321(0));
     double cos2 = std::cos(euler321(1));
-    double cos3  = std::cos(euler321(2));
+    double cos3 = std::cos(euler321(2));
 
     Eigen::Matrix3d dcm;
-    dcm << cos2 * cos1, cos2 * sin1, - sin2,
-    sin3 * sin2 * cos1 - cos3 * sin1, sin3 * sin2 * sin1 + cos3 * cos1, sin3 * cos2,
-    cos3 * sin2 * cos1 + sin3 * sin1, cos3 * sin2 * sin1 - sin3 * cos1, cos3 * cos2;
+    dcm << cos2 * cos1, cos2 * sin1, -sin2, sin3 * sin2 * cos1 - cos3 * sin1, sin3 * sin2 * sin1 + cos3 * cos1,
+        sin3 * cos2, cos3 * sin2 * cos1 + sin3 * sin1, cos3 * sin2 * sin1 - sin3 * cos1, cos3 * cos2;
 
     return dcm;
 }
@@ -710,7 +698,7 @@ Eigen::Matrix3d eulerAngles321ToDcm(const Eigen::Vector3d& euler321){
  * @param euler321
  * @return Eigen::Vector4d
  */
-Eigen::Vector4d eulerAngles321ToEp(const Eigen::Vector3d& euler321){
+Eigen::Vector4d eulerAngles321ToEp(const Eigen::Vector3d& euler321) {
     double cos1 = std::cos(euler321(0) / 2);
     double cos2 = std::cos(euler321(1) / 2);
     double cos3 = std::cos(euler321(2) / 2);
@@ -732,18 +720,14 @@ Eigen::Vector4d eulerAngles321ToEp(const Eigen::Vector3d& euler321){
  * @param euler321
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d eulerAngles321ToMrp(const Eigen::Vector3d& euler321){
-    return epToMrp(eulerAngles321ToEp(euler321));
-}
+Eigen::Vector3d eulerAngles321ToMrp(const Eigen::Vector3d& euler321) { return epToMrp(eulerAngles321ToEp(euler321)); }
 
 /**
  * Translate a 321 Euler angle vector into a principal rotation vector.
  * @param euler321
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d eulerAngles321ToPrv(const Eigen::Vector3d& euler321){
-    return epToPrv(eulerAngles321ToEp(euler321));
-}
+Eigen::Vector3d eulerAngles321ToPrv(const Eigen::Vector3d& euler321) { return epToPrv(eulerAngles321ToEp(euler321)); }
 
 /**
  * Provide the Euler parameter vector which corresponds to relative rotation from B2 to B1.
@@ -751,7 +735,7 @@ Eigen::Vector3d eulerAngles321ToPrv(const Eigen::Vector3d& euler321){
  * @param ep2
  * @return Eigen::Vector4d
  */
-Eigen::Vector4d subEp(const Eigen::Vector4d& ep1, const Eigen::Vector4d& ep2){
+Eigen::Vector4d subEp(const Eigen::Vector4d& ep1, const Eigen::Vector4d& ep2) {
     Eigen::Vector4d ep;
 
     ep(0) = ep2(0) * ep1(0) + ep2(1) * ep1(1) + ep2(2) * ep1(2) + ep2(3) * ep1(3);
@@ -768,17 +752,18 @@ Eigen::Vector4d subEp(const Eigen::Vector4d& ep1, const Eigen::Vector4d& ep2){
  * @param mrp2
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d subMrp(const Eigen::Vector3d& mrp1, const Eigen::Vector3d& mrp2){
+Eigen::Vector3d subMrp(const Eigen::Vector3d& mrp1, const Eigen::Vector3d& mrp2) {
     Eigen::Vector3d mrp1Shadow(mrp1);
-    double denominator = 1 + mrp2.dot(mrp2)*mrp1.dot(mrp1) + 2 * mrp2.dot(mrp1);
+    double denominator = 1 + mrp2.dot(mrp2) * mrp1.dot(mrp1) + 2 * mrp2.dot(mrp1);
     if (std::abs(denominator) < 0.1) {
-        mrp1Shadow = mrpShadow(mrp1); // Shadow set
+        mrp1Shadow = mrpShadow(mrp1);  // Shadow set
         denominator = (1 + mrp2.dot(mrp2) * mrp1Shadow.dot(mrp1Shadow) + 2 * mrp2.dot(mrp1Shadow));
     }
     assert(std::abs(denominator) > eps);
     Eigen::Vector3d numerator;
-    numerator << (1. - mrp2.dot(mrp2))*mrp1Shadow - (1. - mrp1Shadow.dot(mrp1Shadow))*mrp2 + 2*mrp1Shadow.cross(mrp2);
-    Eigen::Vector3d mrp(numerator/denominator);
+    numerator << (1. - mrp2.dot(mrp2)) * mrp1Shadow - (1. - mrp1Shadow.dot(mrp1Shadow)) * mrp2 +
+                     2 * mrp1Shadow.cross(mrp2);
+    Eigen::Vector3d mrp(numerator / denominator);
     /* map mrp to inner set */
     mrp = mrpSwitch(mrp, 1);
 
@@ -792,25 +777,29 @@ Eigen::Vector3d subMrp(const Eigen::Vector3d& mrp1, const Eigen::Vector3d& mrp2)
  * @param prv2
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d subPrv(const Eigen::Vector3d& prv1, const Eigen::Vector3d& prv2){
-    if(prv1.norm() < 1.0E-7 || prv2.norm() < 1.0E-7){return prv1 - prv2;}
+Eigen::Vector3d subPrv(const Eigen::Vector3d& prv1, const Eigen::Vector3d& prv2) {
+    if (prv1.norm() < 1.0E-7 || prv2.norm() < 1.0E-7) {
+        return prv1 - prv2;
+    }
 
     double cosPhi1 = std::cos(prv1.norm() / 2.);
     double cosPhi2 = std::cos(prv2.norm() / 2.);
     double sinPhi1 = std::sin(prv1.norm() / 2.);
     double sinPhi2 = std::sin(prv2.norm() / 2.);
 
-    Eigen::Vector3d unitVector1(prv1/prv1.norm());
-    Eigen::Vector3d unitVector2(prv2/prv2.norm());
+    Eigen::Vector3d unitVector1(prv1 / prv1.norm());
+    Eigen::Vector3d unitVector2(prv2 / prv2.norm());
 
     assert(std::abs(cosPhi1 * cosPhi2 + sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2)) < 1);
     double angle = 2 * std::acos(cosPhi1 * cosPhi2 + sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2));
 
     Eigen::Vector3d prv;
-    if(std::abs(angle) < 1.0E-13){return prv.setZero();}
+    if (std::abs(angle) < 1.0E-13) {
+        return prv.setZero();
+    }
     prv << cosPhi2 * sinPhi1 * unitVector1 - cosPhi1 * sinPhi2 * unitVector2 +
-            sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
-    return prv*angle/std::sin(angle/2);
+               sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
+    return prv * angle / std::sin(angle / 2);
 }
 
 /**
@@ -819,8 +808,8 @@ Eigen::Vector3d subPrv(const Eigen::Vector3d& prv1, const Eigen::Vector3d& prv2)
  * @param euler3212
  * @return Eigen::Vector3d
  */
-Eigen::Vector3d subEulerAngles321(const Eigen::Vector3d& euler3211, const Eigen::Vector3d& euler3212){
-    return dcmToEulerAngles321(eulerAngles321ToDcm(euler3211)*eulerAngles321ToDcm(euler3212).transpose());
+Eigen::Vector3d subEulerAngles321(const Eigen::Vector3d& euler3211, const Eigen::Vector3d& euler3212) {
+    return dcmToEulerAngles321(eulerAngles321ToDcm(euler3211) * eulerAngles321ToDcm(euler3212).transpose());
 }
 
 /**
@@ -829,23 +818,15 @@ Eigen::Vector3d subEulerAngles321(const Eigen::Vector3d& euler3211, const Eigen:
  * @param axis_number
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d rotationMatrix(const double angle, const int axis_number){
+Eigen::Matrix3d rotationMatrix(const double angle, const int axis_number) {
     assert(axis_number > 0 && axis_number < 4);
     Eigen::Matrix3d dcm;
-    if (axis_number == 1){
-        dcm << 1, 0, 0,
-            0, std::cos(angle), std::sin(angle),
-            0, -std::sin(angle), std::cos(angle);
-    }
-    else if (axis_number == 2){
-        dcm << std::cos(angle), 0, -std::sin(angle),
-            0, 1, 0,
-            std::sin(angle), 0, std::cos(angle);
-    }
-    else if (axis_number == 3){
-        dcm << std::cos(angle), std::sin(angle), 0,
-            -std::sin(angle), std::cos(angle), 0,
-            0, 0, 1;
+    if (axis_number == 1) {
+        dcm << 1, 0, 0, 0, std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle);
+    } else if (axis_number == 2) {
+        dcm << std::cos(angle), 0, -std::sin(angle), 0, 1, 0, std::sin(angle), 0, std::cos(angle);
+    } else if (axis_number == 3) {
+        dcm << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1;
     }
     return dcm;
 }
@@ -855,10 +836,8 @@ Eigen::Matrix3d rotationMatrix(const double angle, const int axis_number){
  * @param vector
  * @return Eigen::Matrix3d
  */
-Eigen::Matrix3d tildeMatrix(const Eigen::Vector3d& vector){
+Eigen::Matrix3d tildeMatrix(const Eigen::Vector3d& vector) {
     Eigen::Matrix3d tilde;
-    tilde << 0, -vector(2), vector(1),
-            vector(2), 0, -vector(0),
-            -vector(1), vector(0), 0;
+    tilde << 0, -vector(2), vector(1), vector(2), 0, -vector(0), -vector(1), vector(0), 0;
     return tilde;
 }
