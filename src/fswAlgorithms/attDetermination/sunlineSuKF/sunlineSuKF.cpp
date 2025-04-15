@@ -20,7 +20,6 @@
 #include "fswAlgorithms/attDetermination/sunlineSuKF/sunlineSuKF.h"
 #include "architecture/utilities/ukfUtilities.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
