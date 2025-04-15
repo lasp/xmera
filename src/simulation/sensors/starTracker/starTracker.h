@@ -44,7 +44,7 @@ class StarTracker : public SysModel {
     void computeSensorErrors();
     void applySensorErrors();
     void computeTrueOutput();
-    void computeQuaternion(double *sigma, STSensorMsgPayload *sensorValue);
+    void computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValue);
 
    public:
     uint64_t sensorTimeTag;                        //!< [ns] Current time tag for sensor out
@@ -56,10 +56,10 @@ class StarTracker : public SysModel {
     Eigen::Vector3d walkBounds;  //!< [-] "3-sigma" errors to permit for states
     Eigen::Vector3d navErrors;   //!< [-] Current navigation errors applied to truth
 
-    double dcm_CB[3][3];              //!< [-] Transformation matrix from body to case
+    Eigen::Matrix3d dcm_CB;           //!< [-] Transformation matrix from body to case
     STSensorMsgPayload trueValues;    //!< [-] total measurement without perturbations
     STSensorMsgPayload sensedValues;  //!< [-] total measurement including perturbations
-    double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
+    Eigen::Vector3d mrpErrors;        //!< [-] Errors to be applied to the input MRP set indicating whether
     SCStatesMsgPayload scState;       //!< [-] Module variable where the input State Data message is stored
     BSKLogger bskLogger;              //!< -- BSK Logging
 

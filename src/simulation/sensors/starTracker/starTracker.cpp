@@ -20,14 +20,15 @@
 
 #include <iostream>
 
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 StarTracker::StarTracker() {
     this->sensorTimeTag = 0;
-    m33SetIdentity(RECAST3X3 this->dcm_CB);
+    this->dcm_CB.setIdentity();
     this->errorModel = GaussMarkov(3, this->RNGSeed);
     this->PMatrix.fill(0.0);
     this->AMatrix.fill(0.0);
@@ -85,10 +86,12 @@ void StarTracker::computeSensorErrors() {
    apply sensor errors
  */
 void StarTracker::applySensorErrors() {
-    double sigmaSensed[3];
-    PRV2MRP(&(this->navErrors.data()[0]), this->mrpErrors);
-    addMRP(this->scState.sigma_BN, this->mrpErrors, sigmaSensed);
-    this->computeQuaternion(sigmaSensed, &this->sensedValues);
+    this->mrpErrors = prvToMrp(this->navErrors);
+
+    Eigen::Vector3d sigmaSensed;
+    sigmaSensed = addMrp(cArray2EigenVector3d(this->scState.sigma_BN), this->mrpErrors);
+
+    this->computeQuaternion(&sigmaSensed, &this->sensedValues);
     this->sensedValues.timeTag = this->sensorTimeTag;
 }
 
@@ -97,12 +100,15 @@ void StarTracker::applySensorErrors() {
     @param sigma
     @param sensorValues
  */
-void StarTracker::computeQuaternion(double *sigma, STSensorMsgPayload *sensorValues) {
-    double dcm_BN[3][3]; /* dcm, inertial to body frame */
-    double dcm_CN[3][3]; /* dcm, inertial to case frame */
-    MRP2C(sigma, dcm_BN);
-    m33MultM33(RECAST3X3 this->dcm_CB, dcm_BN, dcm_CN);
-    C2EP(dcm_CN, sensorValues->qInrtl2Case);
+void StarTracker::computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValues) {
+    Eigen::Matrix3d dcm_BN; /* dcm, inertial to body frame */
+    Eigen::Matrix3d dcm_CN; /* dcm, inertial to case frame */
+
+    dcm_BN = mrpToDcm(*sigma);
+    dcm_CN = this->dcm_CB * dcm_BN;
+
+    Eigen::Vector4d beta_CN = dcmToEp(dcm_CN);
+    eigenVector4d2CArray(beta_CN, sensorValues->qInrtl2Case);
 }
 
 /*!
@@ -110,7 +116,8 @@ void StarTracker::computeQuaternion(double *sigma, STSensorMsgPayload *sensorVal
  */
 void StarTracker::computeTrueOutput() {
     this->trueValues.timeTag = this->sensorTimeTag;
-    this->computeQuaternion(this->scState.sigma_BN, &this->trueValues);
+    Eigen::Vector3d sigma_BN = cArray2EigenVector3d(this->scState.sigma_BN);
+    this->computeQuaternion(&sigma_BN, &this->trueValues);
 }
 
 /*!
