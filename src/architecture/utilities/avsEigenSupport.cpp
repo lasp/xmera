@@ -69,6 +69,17 @@ void eigenVector3d2CArray(Eigen::Vector3d &inMat, double *outArray) {
     memcpy(outArray, inMat.data(), 3 * sizeof(double));
 }
 
+/*! This function provides a direct conversion between a 4-vector and an
+output C array. We are providing this function to save on the  inline conversion
+and the transpose that would have been performed by the general case.
+@return void
+@param inMat The source Eigen matrix that we are converting
+@param outArray The destination array we copy into
+*/
+void eigenVector4d2CArray(Eigen::Vector4d &inMat, double *outArray) {
+    memcpy(outArray, inMat.data(), 4 * sizeof(double));
+}
+
 /*! This function provides a direct conversion between an MRP and an
 output C array. We are providing this function to save on the inline conversion
 and the transpose that would have been performed by the general case.

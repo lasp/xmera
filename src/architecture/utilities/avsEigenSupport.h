@@ -29,6 +29,8 @@ void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray);
 void eigenMatrixXi2CArray(Eigen::MatrixXi inMat, int *outArray);
 //!@brief Rapid conversion between 3-vector and output array
 void eigenVector3d2CArray(Eigen::Vector3d &inMat, double *outArray);
+//!@brief Rapid conversion between 4-vector and output array
+void eigenVector4d2CArray(Eigen::Vector4d &inMat, double *outArray);
 //!@brief Rapid conversion between MRP and output array
 void eigenMRPd2CArray(Eigen::Vector3d &inMat, double *outArray);
 //!@brief Rapid conversion between 3x3 matrix and output array
