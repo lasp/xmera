@@ -54,6 +54,9 @@ private:
     double gyroMeasNoiseStd = 0; //!< [rad/s] rate gyro measurement noise std
     CSSConfigMsgPayload cssConfigInputBuffer;
 
+    double biasLowerBound = 0.5;
+    double biasUpperBound = 1.5;
+
 public:
     ReadFunctor<NavAttMsgPayload>         navAttInMsg;
     ReadFunctor<CSSArraySensorMsgPayload> cssDataInMsg;
@@ -69,6 +72,11 @@ public:
     double getGyroMeasurementNoiseStd() const;
     void setSensorThreshold(double threshold);
     double getSensorThreshold() const;
+
+    void setBiasUpperBound(double biasUpperBound);
+    double getBiasUpperBound() const;
+    void setBiasLowerBound(double biasLowerBound);
+    double getBiasLowerBound() const;
 
 };
 

@@ -261,3 +261,31 @@ void SunlineSRuKF::setSensorThreshold(double threshold){
 double SunlineSRuKF::getSensorThreshold() const{
     return this->sensorUseThresh;
 }
+
+/*! Set the bias upper bound value it is not allowed to exceed
+    @param double biasUpperBound
+    */
+void SunlineSRuKF::setBiasUpperBound(double biasUpperBound) {
+    this->biasUpperBound = biasUpperBound;
+}
+
+/*! Get the bias upper bound value it is not allowed to exceed
+    @return double biasUpperBound
+    */
+double SunlineSRuKF::getBiasUpperBound() const {
+    return this->biasUpperBound;
+}
+
+/*! Set the bias lower bound value it is not allowed to subceed
+    @param double biasUpperBound
+    */
+void SunlineSRuKF::setBiasLowerBound(double biasLowerBound) {
+    this->biasLowerBound = biasLowerBound;
+}
+
+/*! Get the bias lower bound value it is not allowed to subceed
+    @return double biasUpperBound
+    */
+double SunlineSRuKF::getBiasLowerBound() const {
+    return this->biasLowerBound;
+}
