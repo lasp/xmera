@@ -52,8 +52,7 @@ void SunlineSRuKF::customFinalizeUpdate() {
             lowerSaturateBias(0) = this->biasLowerBound;
             bias.setValues(lowerSaturateBias);
             this->state.setBias(bias);
-        }
-        else if (state.getBiasStates().value() > this->biasUpperBound) {
+        } else if (state.getBiasStates().value() > this->biasUpperBound) {
             Eigen::VectorXd upperSaturateBias(1);
             upperSaturateBias(0) = this->biasUpperBound;
             bias.setValues(upperSaturateBias);
@@ -83,7 +82,7 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
     filterMsgBuffer.numberOfStates = this->state.size();
 
     int i = 0;
-    for(auto optionalMeasurement : this->measurements){
+    for (auto optionalMeasurement : this->measurements) {
         if (optionalMeasurement.has_value() && optionalMeasurement->getMeasurementName() == "gyro") {
             auto measurement = MeasurementModel();
             measurement = optionalMeasurement.value();
@@ -93,8 +92,7 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
             eigenMatrixXd2CArray(measurement.getObservation(), &filterGyroResMsgBuffer.observation[0]);
             eigenMatrixXd2CArray(measurement.getPostFitResiduals(), &filterGyroResMsgBuffer.postFits[0]);
             eigenMatrixXd2CArray(measurement.getPreFitResiduals(), &filterGyroResMsgBuffer.preFits[0]);
-        }
-        else if (optionalMeasurement.has_value() && optionalMeasurement->getMeasurementName() == "css") {
+        } else if (optionalMeasurement.has_value() && optionalMeasurement->getMeasurementName() == "css") {
             auto measurement = MeasurementModel();
             measurement = optionalMeasurement.value();
             filterCssResMsgBuffer.valid = true;
@@ -107,7 +105,6 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
         this->measurements[i].reset();
         i += 1;
     }
-
 
     this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, currentSimNanos);
     this->filterOutMsg.write(&filterMsgBuffer, this->moduleID, currentSimNanos);
@@ -122,7 +119,7 @@ void SunlineSRuKF::readGyroMeasurements() {
     /*! Read rate gyro measurements */
     NavAttMsgPayload navAttInputBuffer = this->navAttInMsg();
 
-    if (navAttInputBuffer.timeTag >= this->previousFilterTimeTag){
+    if (navAttInputBuffer.timeTag >= this->previousFilterTimeTag) {
         auto gyroMeasurements = MeasurementModel();
         gyroMeasurements.setValidity(true);
         gyroMeasurements.setMeasurementName("gyro");
@@ -161,32 +158,31 @@ void SunlineSRuKF::readCssMeasurements() {
     /*! -# Set inverse noise matrix */
     /*! -# increase the number of valid observations */
     /*! -# Otherwise just continue */
-    for(uint32_t i=0; i<this->cssConfigInputBuffer.nCSS; ++i)
-    {
-        if (cssInputBuffer.CosValue[i] > this->sensorUseThresh)
-        {
+    for (uint32_t i = 0; i < this->cssConfigInputBuffer.nCSS; ++i) {
+        if (cssInputBuffer.CosValue[i] > this->sensorUseThresh) {
             cssMeasurements.setValidity(true);
-            cssObservation.conservativeResize(this->numActiveCss+1);
+            cssObservation.conservativeResize(this->numActiveCss + 1);
             cssObservation(this->numActiveCss) = cssInputBuffer.CosValue[i];
-            hMatrix.conservativeResize(this->numActiveCss+1, 3);
-            for (int j=0; j<3; ++j) {
-                hMatrix(this->numActiveCss,j) = this->cssConfigInputBuffer.cssVals[i].CBias *
-                        this->cssConfigInputBuffer.cssVals[i].nHat_B[j];
+            hMatrix.conservativeResize(this->numActiveCss + 1, 3);
+            for (int j = 0; j < 3; ++j) {
+                hMatrix(this->numActiveCss, j) =
+                    this->cssConfigInputBuffer.cssVals[i].CBias * this->cssConfigInputBuffer.cssVals[i].nHat_B[j];
             }
             cssMeasurements.setTimeTag(cssInputBuffer.timeTag);
             this->numActiveCss += 1;
         }
     }
 
-    std::function<const Eigen::VectorXd(const FilterStateVector)> linearModel = [hMatrix](const FilterStateVector &state) {
-        Eigen::VectorXd observed = hMatrix * state.getPositionStates();
-        if (state.hasBias()) {
-            observed = observed*state.getBiasStates().value();
-        }
-        return observed;
-    };
+    std::function<const Eigen::VectorXd(const FilterStateVector)> linearModel =
+        [hMatrix](const FilterStateVector &state) {
+            Eigen::VectorXd observed = hMatrix * state.getPositionStates();
+            if (state.hasBias()) {
+                observed = observed * state.getBiasStates().value();
+            }
+            return observed;
+        };
 
-    if (cssMeasurements.getValidity() && cssMeasurements.getTimeTag() >= this->previousFilterTimeTag){
+    if (cssMeasurements.getValidity() && cssMeasurements.getTimeTag() >= this->previousFilterTimeTag) {
         /*! - Read measurement and cholesky decomposition its noise*/
         Eigen::MatrixXd I(this->numActiveCss, this->numActiveCss);
         I.setIdentity();
@@ -216,10 +212,10 @@ void SunlineSRuKF::readFilterMeasurements() {
     @return FilterStateVector inputState
     @return FilterStateVector outputState
     */
-FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStateVector &state){
+FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStateVector &state) {
     FilterStateVector XDot;
     /*! Implement propagation with rate derivatives set to zero */
-    Eigen::Vector3d sHat  = state.getPositionStates();
+    Eigen::Vector3d sHat = state.getPositionStates();
     Eigen::Vector3d omega = state.getVelocityStates();
 
     PositionState xDotPosition;
@@ -260,57 +256,41 @@ void SunlineSRuKF::setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseS
     @param double cssMeasurementNoise
     @return void
     */
-double SunlineSRuKF::getCssMeasurementNoiseStd() const {
-    return this->cssMeasNoiseStd;
-}
+double SunlineSRuKF::getCssMeasurementNoiseStd() const { return this->cssMeasNoiseStd; }
 
 /*! Get the gyro measurement noise
     @param double gyroMeasurementNoise
     @return void
     */
-double SunlineSRuKF::getGyroMeasurementNoiseStd() const {
-    return this->gyroMeasNoiseStd;
-}
+double SunlineSRuKF::getGyroMeasurementNoiseStd() const { return this->gyroMeasNoiseStd; }
 
 /*! Set the threshold value to accept a css measurement
     @param double threshold
     @return void
     */
-void SunlineSRuKF::setSensorThreshold(double threshold){
-    this->sensorUseThresh = threshold;
-}
+void SunlineSRuKF::setSensorThreshold(double threshold) { this->sensorUseThresh = threshold; }
 
 /*! Get the threshold value to accept a css measurement
     @return double threshold
     */
-double SunlineSRuKF::getSensorThreshold() const{
-    return this->sensorUseThresh;
-}
+double SunlineSRuKF::getSensorThreshold() const { return this->sensorUseThresh; }
 
 /*! Set the bias upper bound value it is not allowed to exceed
     @param double biasUpperBound
     */
-void SunlineSRuKF::setBiasUpperBound(double biasUpperBound) {
-    this->biasUpperBound = biasUpperBound;
-}
+void SunlineSRuKF::setBiasUpperBound(double biasUpperBound) { this->biasUpperBound = biasUpperBound; }
 
 /*! Get the bias upper bound value it is not allowed to exceed
     @return double biasUpperBound
     */
-double SunlineSRuKF::getBiasUpperBound() const {
-    return this->biasUpperBound;
-}
+double SunlineSRuKF::getBiasUpperBound() const { return this->biasUpperBound; }
 
 /*! Set the bias lower bound value it is not allowed to subceed
     @param double biasUpperBound
     */
-void SunlineSRuKF::setBiasLowerBound(double biasLowerBound) {
-    this->biasLowerBound = biasLowerBound;
-}
+void SunlineSRuKF::setBiasLowerBound(double biasLowerBound) { this->biasLowerBound = biasLowerBound; }
 
 /*! Get the bias lower bound value it is not allowed to subceed
     @return double biasUpperBound
     */
-double SunlineSRuKF::getBiasLowerBound() const {
-    return this->biasLowerBound;
-}
+double SunlineSRuKF::getBiasLowerBound() const { return this->biasLowerBound; }
