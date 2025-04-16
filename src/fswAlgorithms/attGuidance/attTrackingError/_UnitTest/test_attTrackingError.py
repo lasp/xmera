@@ -23,7 +23,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
 
-def test_attTrackingError(show_plots):
+def test_attTrackingError():
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -98,4 +98,4 @@ def test_attTrackingError(show_plots):
 
 
 if __name__ == "__main__":
-    test_attTrackingError(False)
+    test_attTrackingError()
