@@ -44,6 +44,7 @@ provides information on what this message is used for.
 Detailed Module Description
 ---------------------------
 The estimated state of the filter is a 6-dimensional vector combining the sun heading vector in body-frame coordinates and body-frame rates also in body frame coordinates:
+The optional bias state models the varying solar intensity which scales the measurements.
 
 .. math::
     \boldsymbol{s} = \left\{ \begin{matrix} {}^\mathcal{B}\boldsymbol{\hat{s}} \\ {}^\mathcal{B}\boldsymbol{\omega} \end{matrix} \right\}.
@@ -51,6 +52,7 @@ The estimated state of the filter is a 6-dimensional vector combining the sun he
 Dynamics model
 +++++++++++++++++++++++++++
 The sun heading is fixed in inertial coordinates, it only changes in body-frame coordinates due to the motion of the spacecraft. Therefore, the dynamics of the sun heading is only given by the body-frame derivative of the sun heading unit-direction vector. For simplicity, the derivative of the angular rate vector is set to zero in this module. This gives:
+If the bias state is present, it has no dynamics.
 
 .. math::
     \boldsymbol{\dot{s}} = \left\{ \begin{matrix} {}^\mathcal{B}\boldsymbol{\hat{s}} \times {}^\mathcal{B}\boldsymbol{\omega} \\ \boldsymbol{0} \end{matrix} \right\}.
@@ -64,29 +66,36 @@ For the CSS measurement, the measurement model is constituted by the :math:`n \t
 .. math::
     [\boldsymbol{H}] = \left[ \begin{matrix} {}^\mathcal{B}\boldsymbol{\hat{n}}_1 \\ \vdots \\ {}^\mathcal{B}\boldsymbol{\hat{n}}_n \end{matrix} \right].
 
+If a bias state is present and named :math:`b`, and the current state is :math:`\hat{\boldsymbol{s}}`, the predicted measurements will be given by:
+
+.. math::
+    yMeas = b[\boldsymbol{H}] \hat{\boldsymbol{s}}
+
 
 User Guide
 ----------
 The required module configuration is::
 
-    filter_object = sunlineSRuKF.SunlineSRuKF()
-    filter_object.setAlpha(0.02)
-    filter_object.setBeta(2.0)
-    states = [0.0, 0.0, 1.0, 0.02, -0.005, 0.01]
-    filter_object.setInitialState([[s] for s in states])
-    filter_object.setInitialCovariance([[0.0001, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                        [0.0, 0.0001, 0.0, 0.0, 0.0, 0.0],
-                                        [0.0, 0.0, 0.0001, 0.0, 0.0, 0.0],
-                                        [0.0, 0.0, 0.0, 0.0001, 0.0, 0.0],
-                                        [0.0, 0.0, 0.0, 0.0, 0.0001, 0.0],
-                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]])
+    filter_object.setInitialPosition([0.0, 0.0, 1.0])
+    filter_object.setInitialVelocity([0.02, -0.005, 0.01])
+    filter_object.setInitialBias([0.6])
+    filter_object.setInitialCovariance([[0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.001, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.001, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.001, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5]])
     filter_object.setCssMeasurementNoiseStd(0.01)
     filter_object.setGyroMeasurementNoiseStd(0.001)
-    sigmaSun = (1E-12) ** 2
-    sigmaRate = (1E-14) ** 2
-    filter_object.setProcessNoise([[sigmaSun, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                   [0.0, sigmaSun, 0.0, 0.0, 0.0, 0.0],
-                                   [0.0, 0.0, sigmaSun, 0.0, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0, sigmaRate, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0, 0.0, sigmaRate, 0.0],
-                                   [0.0, 0.0, 0.0, 0.0, 0.0, sigmaRate]])
+    filter_object.setBiasLowerBound(1)
+    sigmaSun = (1E-6) ** 2
+    sigmaRate = (1E-8) ** 2
+    sigmaBias = (1E-5) ** 2
+    filter_object.setProcessNoise([[sigmaSun, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, sigmaSun, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, sigmaSun, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, sigmaRate, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, sigmaRate, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, 0.0, sigmaRate, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, sigmaBias]])
