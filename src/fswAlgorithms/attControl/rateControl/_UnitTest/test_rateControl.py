@@ -106,28 +106,22 @@ def test_rateControl(show_plots, setExtTorque):
                                verbose=True)
 
 def findTrueTorques(rateCntrl, attGuidanceMessageData, vehicleConfigOut, knownTorquePntB_B):
+    P = rateCntrl.getDerivativeGainP()
     sigma_BR = np.array(attGuidanceMessageData.sigma_BR)
     omega_BR_B = np.array(attGuidanceMessageData.omega_BR_B)
     omega_RN_B = np.array(attGuidanceMessageData.omega_RN_B)
     domega_RN_B = np.array(attGuidanceMessageData.domega_RN_B)
+    omega_BN_B = omega_BR_B + omega_RN_B
 
     ISCPntB_B = np.identity(3)
     ISCPntB_B[0][0] = vehicleConfigOut.ISCPntB_B[0]
     ISCPntB_B[1][1] = vehicleConfigOut.ISCPntB_B[4]
     ISCPntB_B[2][2] = vehicleConfigOut.ISCPntB_B[8]
 
-    P = rateCntrl.getDerivativeGainP()
-
-    omega_BN_B = omega_BR_B + omega_RN_B
-    temp1 = np.dot(ISCPntB_B, omega_BN_B)
-    temp2 = domega_RN_B - np.cross(omega_BN_B, omega_RN_B)
-
-    # Compute truth control torque
-    cmdTorqueTruth = P * omega_BR_B - np.cross(omega_RN_B, temp1) - np.dot(ISCPntB_B, temp2)
-    cmdTorqueTruth += knownTorquePntB_B
-    cmdTorqueTruth *= -1.0
-
-    return cmdTorqueTruth
+    return (- P * omega_BR_B
+            + np.cross(omega_RN_B, np.dot(ISCPntB_B, omega_BN_B))
+            + np.dot(ISCPntB_B, domega_RN_B - np.cross(omega_BN_B, omega_RN_B))
+            - knownTorquePntB_B)
 
 if __name__ == "__main__":
     test_rateControl(False, False)
