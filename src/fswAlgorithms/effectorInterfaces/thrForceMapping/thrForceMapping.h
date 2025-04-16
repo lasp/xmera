@@ -31,21 +31,22 @@
 
 #include "architecture/utilities/bskLogging.h"
 
+#include <Eigen/Dense>
+
+typedef Eigen::Vector<double, MAX_EFF_CNT> Vector36d;
 
 /*!@brief Data structure for module to map a command torque onto thruster forces. */
 class ThrForceMapping : public SysModel {
 public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    void findMinimumNormForce(double D[3][MAX_EFF_CNT],
-                              double Lr_B[3],
-                              uint32_t numForces,
-                              double F[MAX_EFF_CNT]);
+    Vector36d findMinimumNormForce(const Eigen::Matrix<double,3,MAX_EFF_CNT>& D,
+                                   const Eigen::Vector3d& Lr_B,
+                                   uint32_t numForces);
 
     /* declare module public variables */
-    double   controlAxes_B[3*3];                    //!< []      array of the control unit axes
-    double   rThruster_B[MAX_EFF_CNT][3];           //!< [m]     local copy of the thruster locations
-    double   gtThruster_B[MAX_EFF_CNT][3];          //!< []      local copy of the thruster force unit direction vectors
+    Eigen::Matrix3d controlAxes_B; //!< [] array of the control unit axes
+    Vector36d thrForceMag; //!< vector of thruster force magnitudes
     int32_t  thrForceSign;                          //!< []      Flag indicating if pos (+1) or negative (-1) thruster solutions are found
     double angErrThresh;                            //!< [r]     Angular error at which thruster forces are scaled to not be super-saturated
     double   epsilon;                               //!<         variable specifying what is considered a small number
@@ -55,8 +56,6 @@ public:
     uint32_t numControlAxes;                        //!< []      counter indicating how many orthogonal axes are controlled
     uint32_t numThrusters;                          //!< []      The number of thrusters available on vehicle
     double outTorqAngErr;                           //!< [r]     Angular error of effector torque
-    double thrForcMag[MAX_EFF_CNT];                 //!<         vector of thruster force magnitudes
-
     /* declare module IO interfaces */
     Message<THRArrayCmdForceMsgPayload> thrForceCmdOutMsg;        //!< The name of the output thruster force message
     ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;              //!< The name of the vehicle control (Lr) Input message
@@ -66,6 +65,8 @@ public:
 
     BSKLogger bskLogger={};                             //!< BSK Logging
 
+    Eigen::Matrix<double, MAX_EFF_CNT, 3> rThruster_B; //!< [m] local copy of the thruster locations
+    Eigen::Matrix<double, MAX_EFF_CNT, 3> gtThruster_B; //!< [] local copy of the thruster force unit direction vectors
 };
 
 
