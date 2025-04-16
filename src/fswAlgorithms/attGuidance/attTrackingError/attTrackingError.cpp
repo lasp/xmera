@@ -16,8 +16,10 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <string.h>
 #include "fswAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
+
+#include <string.h>
+
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
@@ -31,32 +33,34 @@
 void computeAttitudeError(double sigma_R0R[3],
                           NavAttMsgPayload nav,
                           AttRefMsgPayload ref,
-                          AttGuidMsgPayload *attGuidOut){
-    double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
-    double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
-    double      dcm_BN[3][3];               /* DCM from inertial to body frame */
+                          AttGuidMsgPayload *attGuidOut) {
+    double sigma_RR0[3]; /* MRP from the original reference frame R0 to the corrected reference frame R */
+    double sigma_RN[3];  /* MRP from inertial to updated reference frame */
+    double dcm_BN[3][3]; /* DCM from inertial to body frame */
 
     /*! - compute the initial reference frame orientation that takes the corrected body frame into account */
     v3Scale(-1.0, sigma_R0R, sigma_RR0);
     addMRP(ref.sigma_RN, sigma_RR0, sigma_RN);
 
-    subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR);               /*! - compute attitude error */
+    subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR); /*! - compute attitude error */
 
-    MRP2C(nav.sigma_BN, dcm_BN);                                /* [BN] */
-    m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B);              /*! - compute reference omega in body frame components */
+    MRP2C(nav.sigma_BN, dcm_BN);                               /* [BN] */
+    m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B); /*! - compute reference omega in body frame components */
 
-    v3Subtract(nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
+    v3Subtract(
+        nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B); /*! - delta_omega = omega_B - [BR].omega.r */
 
-    m33MultV3(dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
-
+    m33MultV3(dcm_BN,
+              ref.domega_RN_N,
+              attGuidOut->domega_RN_B); /*! - compute reference d(omega)/dt in body frame components */
 }
 
-/*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
+/*! This method performs a complete reset of the module. Local module variables that retain time varying states between
+ function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void AttTrackingError::reset(uint64_t callTime)
-{
+void AttTrackingError::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->attRefInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: attTrackingError.attRefInMsg wasn't connected.");
@@ -68,15 +72,16 @@ void AttTrackingError::reset(uint64_t callTime)
     return;
 }
 
-/*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the Reference message (containing the desired attitude). It computes the attitude error and writes it in the Guidance message.
+/*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the
+ Reference message (containing the desired attitude). It computes the attitude error and writes it in the Guidance
+ message.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void AttTrackingError::updateState(uint64_t callTime)
-{
-    AttRefMsgPayload ref;                      /* reference guidance message */
-    NavAttMsgPayload nav;                      /* navigation message */
-    AttGuidMsgPayload attGuidOut = {};              /* Guidance message */
+void AttTrackingError::updateState(uint64_t callTime) {
+    AttRefMsgPayload ref;              /* reference guidance message */
+    NavAttMsgPayload nav;              /* navigation message */
+    AttGuidMsgPayload attGuidOut = {}; /* Guidance message */
 
     ref = this->attRefInMsg();
     nav = this->attNavInMsg();
