@@ -20,6 +20,7 @@
 
 #include <string.h>
 
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
