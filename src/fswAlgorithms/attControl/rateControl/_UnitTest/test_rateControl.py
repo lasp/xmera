@@ -30,44 +30,34 @@ def test_rateControl(show_plots, setExtTorque):
     r"""
     **Validation Test Description**
 
-    The unit test  for this module is kept as there are no branching code segments to account for different cases.
-    The spacecraft inertia tensor message is setup, as well as a guidance message.  The module is then run for a
-    few time steps and the control torque output message compared to a known answer.  The simulation only variable
-    is if the known external torque is specified, or if the zero default vector is used.
+    This test confirms the functionality of the rateControl fsw algorithm. The spacecraft inertia tensor message is set,
+    as well as a guidance message. An external torque can be toggled on or off. The module is then run for a few time
+    steps and the determined control torque output is compared to the computed truth value.
 
     **Test Parameters**
 
-    The unit test verifies that the module output torque message vector matches expected values.  The test
+    The unit test verifies that the module output torque message vector matches expected values. The test
     method parameters include the following.
 
     :param show_plots: flag to show the test run plots
     :param setExtTorque: flag to set the knownTorquePntB_B variable
     :return: void
-
-
     """
 
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_ProportionalDerivative_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
+    # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Construct algorithm and associated C++ container
+    # Create an instance of the rateControl module
     module = rateControl.RateControl()
     module.modelTag = "rateControl"
-
-    # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
@@ -77,9 +67,7 @@ def test_rateControl(show_plots, setExtTorque):
         knownTorquePntB_B = np.array([0.1, 0.2, 0.3])
         module.setKnownTorquePntB_B(knownTorquePntB_B)
 
-    #   Create input message and size it because the regular creator of that message
-    #   is not part of the test.
-    #   attGuidOut Message:
+    # Create the attitude guidance input message
     guidCmdData = messaging.AttGuidMsgPayload()
     guidCmdData.sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -87,31 +75,30 @@ def test_rateControl(show_plots, setExtTorque):
     guidCmdData.domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
-    # vehicleConfig FSW Message:
+    # Create the vehicleConfig fsw message
     vehicleConfigIn = messaging.VehicleConfigMsgPayload()
     vehicleConfigIn.ISCPntB_B = [1000., 0., 0.,
                                   0., 800., 0.,
                                   0., 0., 800.]
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigIn)
 
-    # Setup logging on the test module output message so that we get all the writes to it
+    # Set up data logging
     dataLog = module.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    # connect messages
+    # Connect messages
     module.vehConfigInMsg.subscribeTo(vcInMsg)
     module.guidInMsg.subscribeTo(guidInMsg)
 
-    # Need to call the self-init and cross-init methods
+    # Execute the simulation
     unitTestSim.InitializeSimulation()
-
-    # Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
     unitTestSim.ExecuteSimulation()
 
+    # Extract logged data for test check
     trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn, knownTorquePntB_B)]*3
 
-    # Compare the module results to the truth values
+    # Compare the module results to the computed truth value
     accuracy = 1e-12
     np.testing.assert_allclose(trueVector,
                                dataLog.torqueRequestBody,
@@ -132,11 +119,11 @@ def findTrueTorques(module, guidCmdData, vehicleConfigOut, knownTorquePntB_B):
     P = module.getDerivativeGainP()
     L = knownTorquePntB_B
 
-    # Begin Method
     omega_BN_B = omega_BR_B + omega_RN_B
     temp1 = np.dot(I, omega_BN_B)
     temp2 = domega_RN_B - np.cross(omega_BN_B, omega_RN_B)
 
+    # Compute truth control torque
     Lr = P * omega_BR_B - np.cross(omega_RN_B, temp1) - np.dot(I, temp2)
     Lr += L
     Lr *= -1.0
