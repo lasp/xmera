@@ -73,46 +73,27 @@ def test_attTrackingError(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.3))
     unitTestSim.ExecuteSimulation()
 
-    # Check sigma_BR
+    # Extract logged data
     sigma_BR = attGuidOutMsgLog.sigma_BR[0]
+    omega_BR_B = attGuidOutMsgLog.omega_BR_B[0]
+    omega_RN_B = attGuidOutMsgLog.omega_RN_B[0]
+    domega_RN_B = attGuidOutMsgLog.domega_RN_B[0]
 
+    # Compute truth values for test check
     sigma_RN2 = rbk.addMRP(np.array(sigma_RN), -np.array(sigma_R0R))
     dcm_RN = rbk.MRP2C(sigma_RN2)
     dcm_BN = rbk.MRP2C(np.array(sigma_BN))
     dcm_BR = np.dot(dcm_BN, dcm_RN.T)
-
-    # Set the filtered output truth states
     sigma_BRTruth = rbk.C2MRP(dcm_BR)
-
-    # Compare the attitudeTrackingError results to the truth values
-    accuracy = 1e-12
-    np.testing.assert_allclose(sigma_BRTruth, sigma_BR, atol=accuracy, verbose=True)
-
-    # Check omega_BR_B
-    omega_BR_B = attGuidOutMsgLog.omega_BR_B[0]
-
-    # Set the filtered output truth states
     omega_BR_BTruth = np.array(omega_BN_B) - np.dot(dcm_BN, np.array(omega_RN_N))
-
-    # Compare the attitudeTrackingError results to the truth values
-    np.testing.assert_allclose(omega_BR_BTruth, omega_BR_B, atol=accuracy, verbose=True)
-
-    # Check omega_RN_B
-    omega_RN_B = attGuidOutMsgLog.omega_RN_B[0]
-
-    # Set the filtered output truth states
     omega_RN_BTruth = np.dot(dcm_BN, np.array(omega_RN_N))
-
-    # Compare the attitudeTrackingError results to the truth values
-    np.testing.assert_allclose(omega_RN_BTruth, omega_RN_B, atol=accuracy, verbose=True)
-
-    # Check domega_RN_B
-    domega_RN_B = attGuidOutMsgLog.domega_RN_B[0]
-
-    # Set the filtered output truth states
     domega_RN_BTruth = np.dot(dcm_BN, np.array(domega_RN_N))
 
-    # Compare the attitudeTrackingError results to the truth values
+    # Check truth values with module output
+    accuracy = 1e-12
+    np.testing.assert_allclose(sigma_BRTruth, sigma_BR, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(omega_BR_BTruth, omega_BR_B, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(omega_RN_BTruth, omega_RN_B, atol=accuracy, verbose=True)
     np.testing.assert_allclose(domega_RN_BTruth, domega_RN_B, atol=accuracy, verbose=True)
 
 
