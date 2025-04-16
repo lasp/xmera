@@ -15,34 +15,17 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-
-#
-#   Unit Test Script
-#   Module Name:        attTrackingError
-#   Author:             Hanspeter Schaub
-#   Creation Date:      January 15, 2016
-#
-
 import inspect
 import os
 
 import numpy as np
 
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
-
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-
-
-
-
-
-
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport              # general support file with common unit test functions
-from Basilisk.fswAlgorithms import attTrackingError                  # import the module that is to be tested
+from Basilisk.utilities import unitTestSupport
+from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
