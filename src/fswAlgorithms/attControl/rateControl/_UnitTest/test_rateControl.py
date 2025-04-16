@@ -26,7 +26,7 @@ from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("setExtTorque", [False, True])
 
-def test_rateControl(show_plots, setExtTorque):
+def test_rateControl(setExtTorque):
     r"""
     **Validation Test Description**
 
@@ -39,7 +39,6 @@ def test_rateControl(show_plots, setExtTorque):
     The unit test verifies that the module output torque message vector matches expected values. The test
     method parameters include the following.
 
-    :param show_plots: flag to show the test run plots
     :param setExtTorque: flag to set the knownTorquePntB_B variable
     :return: void
     """
@@ -124,4 +123,4 @@ def findTrueTorques(rateCntrl, attGuidanceMessageData, vehicleConfigOut, knownTo
             - knownTorquePntB_B)
 
 if __name__ == "__main__":
-    test_rateControl(False, False)
+    test_rateControl(False)
