@@ -31,29 +31,36 @@
  @param ref The reference attitude
  @param attGuidOut Output attitude guidance message
  */
-void computeAttitudeError(double sigma_R0R[3],
-                          NavAttMsgPayload nav,
-                          AttRefMsgPayload ref,
-                          AttGuidMsgPayload *attGuidOut) {
-    double sigma_RR0[3]; /* MRP from the original reference frame R0 to the corrected reference frame R */
-    double sigma_RN[3];  /* MRP from inertial to updated reference frame */
-    double dcm_BN[3][3]; /* DCM from inertial to body frame */
+void AttTrackingError::computeAttitudeError(Eigen::Vector3d sigma_R0R,
+                                            NavAttMsgPayload nav,
+                                            AttRefMsgPayload ref,
+                                            AttGuidMsgPayload *attGuidOut) {
+    Eigen::Vector3d sigma_RR0; /* MRP from the original reference frame R0 to the corrected reference frame R */
+    Eigen::Vector3d sigma_RN;  /* MRP from inertial to updated reference frame */
+    Eigen::Matrix3d dcm_BN;    /* DCM from inertial to body frame */
 
     /*! - compute the initial reference frame orientation that takes the corrected body frame into account */
-    v3Scale(-1.0, sigma_R0R, sigma_RR0);
-    addMRP(ref.sigma_RN, sigma_RR0, sigma_RN);
+    sigma_RR0 = -1 * sigma_R0R;
 
-    subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR); /*! - compute attitude error */
+    sigma_RN = cArray2EigenVector3d(ref.sigma_RN);
+    sigma_RN = addMrp(sigma_RN, sigma_RR0);
 
-    MRP2C(nav.sigma_BN, dcm_BN);                               /* [BN] */
-    m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B); /*! - compute reference omega in body frame components */
+    Eigen::Vector3d sigma_BN = cArray2EigenVector3d(nav.sigma_BN);
+    Eigen::Vector3d sigma_BR = subMrp(sigma_BN, sigma_RN); /*! - compute attitude error */
+    eigenVector3d2CArray(sigma_BR, attGuidOut->sigma_BR);
 
-    v3Subtract(
-        nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B); /*! - delta_omega = omega_B - [BR].omega.r */
+    dcm_BN = mrpToDcm(sigma_BN); /* [BN] */
+    Eigen::Vector3d omega_RN_N = cArray2EigenVector3d(ref.omega_RN_N);
+    Eigen::Vector3d omega_RN_B = dcm_BN * omega_RN_N; /*! - compute reference omega in body frame components */
+    eigenVector3d2CArray(omega_RN_B, attGuidOut->omega_RN_B);
 
-    m33MultV3(dcm_BN,
-              ref.domega_RN_N,
-              attGuidOut->domega_RN_B); /*! - compute reference d(omega)/dt in body frame components */
+    Eigen::Vector3d omega_BN_B = cArray2EigenVector3d(nav.omega_BN_B);
+    Eigen::Vector3d omega_BR_B = omega_BN_B - omega_RN_B; /*! - delta_omega = omega_B - [BR].omega.r */
+    eigenVector3d2CArray(omega_BR_B, attGuidOut->omega_BR_B);
+
+    Eigen::Vector3d domega_RN_N = cArray2EigenVector3d(ref.domega_RN_N);
+    Eigen::Vector3d domega_RN_B = dcm_BN * domega_RN_N; /*! - compute reference d(omega)/dt in body frame components */
+    eigenVector3d2CArray(domega_RN_B, attGuidOut->domega_RN_B);
 }
 
 /*! This method performs a complete reset of the module. Local module variables that retain time varying states between

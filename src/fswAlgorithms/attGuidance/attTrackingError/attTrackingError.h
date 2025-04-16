@@ -38,9 +38,13 @@ class AttTrackingError : public SysModel {
    public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
+    void computeAttitudeError(Eigen::Vector3d sigma_R0R,
+                              NavAttMsgPayload nav,
+                              AttRefMsgPayload ref,
+                              AttGuidMsgPayload *attGuidOut);
 
-    double sigma_R0R[3];  //!< MRP from corrected reference frame to original reference frame R0. This is the same as
-                          //!< [BcB] going from primary body frame B to the corrected body frame Bc
+    Eigen::Vector3d sigma_R0R;  //!< MRP from corrected reference frame to original reference frame R0. This is the same
+                                //!< as [BcB] going from primary body frame B to the corrected body frame Bc
     Message<AttGuidMsgPayload> attGuidOutMsg;   //!< output msg of attitude guidance
     ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< input msg measured attitude
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< input msg of reference attitude
