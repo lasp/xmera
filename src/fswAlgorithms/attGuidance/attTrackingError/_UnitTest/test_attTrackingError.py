@@ -36,11 +36,11 @@ def test_attTrackingError(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create instance of attTrackingError
-    module = attTrackingError.AttTrackingError()
-    module.modelTag = "attTrackingError"
-    unitTestSim.AddModelToTask(unitTaskName, module)
-    vector = [0.01, 0.05, -0.55]
-    module.sigma_R0R = vector
+    attitudeTrackingError = attTrackingError.AttTrackingError()
+    attitudeTrackingError.modelTag = "attTrackingError"
+    unitTestSim.AddModelToTask(unitTaskName, attitudeTrackingError)
+    sigma_R0R = [0.01, 0.05, -0.55]
+    attitudeTrackingError.sigma_R0R = sigma_R0R
 
     # Create navigation message
     NavStateOutData = messaging.NavAttMsgPayload()
@@ -61,12 +61,12 @@ def test_attTrackingError(show_plots):
     refInMsg = messaging.AttRefMsg().write(RefStateOutData)
 
     # Set up data logging
-    dataLog = module.attGuidOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    attGuidOutMsgLog = attitudeTrackingError.attGuidOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, attGuidOutMsgLog)
 
     # Connect messages
-    module.attNavInMsg.subscribeTo(navStateInMsg)
-    module.attRefInMsg.subscribeTo(refInMsg)
+    attitudeTrackingError.attNavInMsg.subscribeTo(navStateInMsg)
+    attitudeTrackingError.attRefInMsg.subscribeTo(refInMsg)
 
     # Run the simulation
     unitTestSim.InitializeSimulation()
@@ -74,46 +74,46 @@ def test_attTrackingError(show_plots):
     unitTestSim.ExecuteSimulation()
 
     # Check sigma_BR
-    moduleOutput = dataLog.sigma_BR[0]
+    sigma_BR = attGuidOutMsgLog.sigma_BR[0]
 
-    sigma_RN2 = rbk.addMRP(np.array(sigma_RN), -np.array(vector))
-    RN = rbk.MRP2C(sigma_RN2)
-    BN = rbk.MRP2C(np.array(sigma_BN))
-    BR = np.dot(BN, RN.T)
+    sigma_RN2 = rbk.addMRP(np.array(sigma_RN), -np.array(sigma_R0R))
+    dcm_RN = rbk.MRP2C(sigma_RN2)
+    dcm_BN = rbk.MRP2C(np.array(sigma_BN))
+    dcm_BR = np.dot(dcm_BN, dcm_RN.T)
 
     # Set the filtered output truth states
-    trueVector = rbk.C2MRP(BR)
+    sigma_BRTruth = rbk.C2MRP(dcm_BR)
 
-    # Compare the module results to the truth values
+    # Compare the attitudeTrackingError results to the truth values
     accuracy = 1e-12
-    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(sigma_BRTruth, sigma_BR, atol=accuracy, verbose=True)
 
     # Check omega_BR_B
-    moduleOutput = dataLog.omega_BR_B[0]
+    omega_BR_B = attGuidOutMsgLog.omega_BR_B[0]
 
     # Set the filtered output truth states
-    trueVector = np.array(omega_BN_B) - np.dot(BN, np.array(omega_RN_N))
+    omega_BR_BTruth = np.array(omega_BN_B) - np.dot(dcm_BN, np.array(omega_RN_N))
 
-    # Compare the module results to the truth values
-    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
+    # Compare the attitudeTrackingError results to the truth values
+    np.testing.assert_allclose(omega_BR_BTruth, omega_BR_B, atol=accuracy, verbose=True)
 
     # Check omega_RN_B
-    moduleOutput = dataLog.omega_RN_B[0]
+    omega_RN_B = attGuidOutMsgLog.omega_RN_B[0]
 
     # Set the filtered output truth states
-    trueVector = np.dot(BN, np.array(omega_RN_N))
+    omega_RN_BTruth = np.dot(dcm_BN, np.array(omega_RN_N))
 
-    # Compare the module results to the truth values
-    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
+    # Compare the attitudeTrackingError results to the truth values
+    np.testing.assert_allclose(omega_RN_BTruth, omega_RN_B, atol=accuracy, verbose=True)
 
     # Check domega_RN_B
-    moduleOutput = dataLog.domega_RN_B[0]
+    domega_RN_B = attGuidOutMsgLog.domega_RN_B[0]
 
     # Set the filtered output truth states
-    trueVector = np.dot(BN, np.array(domega_RN_N))
+    domega_RN_BTruth = np.dot(dcm_BN, np.array(domega_RN_N))
 
-    # Compare the module results to the truth values
-    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
+    # Compare the attitudeTrackingError results to the truth values
+    np.testing.assert_allclose(domega_RN_BTruth, domega_RN_B, atol=accuracy, verbose=True)
 
 
 if __name__ == "__main__":
