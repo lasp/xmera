@@ -18,7 +18,7 @@
  */
 %module thrForceMapping
 %{
-   #include "thrForceMapping.h"
+    #include "thrForceMapping.h"
 %}
 
 %pythoncode %{
@@ -26,8 +26,9 @@
 %}
 
 %include "sys_model.i"
+%include "swig_common_model.i"
 %include "swig_conly_data.i"
-
+EIGEN_MAT_WRAP(Vector36d, 157)
 %include "thrForceMapping.h"
 
 %include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
