@@ -22,7 +22,7 @@
 
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 /*! This method performs the attitude computations in order to extract the error.
  @return void
