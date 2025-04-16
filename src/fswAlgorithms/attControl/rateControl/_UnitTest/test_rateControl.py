@@ -56,24 +56,24 @@ def test_rateControl(show_plots, setExtTorque):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create an instance of the rateControl module
-    module = rateControl.RateControl()
-    module.modelTag = "rateControl"
-    unitTestSim.AddModelToTask(unitTaskName, module)
+    rateCntrl = rateControl.RateControl()
+    rateCntrl.setDerivativeGainP(150.0)
+    rateCntrl.modelTag = "rateControl"
+    unitTestSim.AddModelToTask(unitTaskName, rateCntrl)
 
-    # Initialize the test module configuration data
+    # Set the external torque
     knownTorquePntB_B = np.array([0.0, 0.0, 0.0])
-    module.setDerivativeGainP(150.0)
     if setExtTorque:
         knownTorquePntB_B = np.array([0.1, 0.2, 0.3])
-        module.setKnownTorquePntB_B(knownTorquePntB_B)
+        rateCntrl.setKnownTorquePntB_B(knownTorquePntB_B)
 
     # Create the attitude guidance input message
-    guidCmdData = messaging.AttGuidMsgPayload()
-    guidCmdData.sigma_BR = np.array([0.3, -0.5, 0.7])
-    guidCmdData.omega_BR_B = np.array([0.010, -0.020, 0.015])
-    guidCmdData.omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    guidCmdData.domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
+    attGuidanceMessageData = messaging.AttGuidMsgPayload()
+    attGuidanceMessageData.sigma_BR = np.array([0.3, -0.5, 0.7])
+    attGuidanceMessageData.omega_BR_B = np.array([0.010, -0.020, 0.015])
+    attGuidanceMessageData.omega_RN_B = np.array([-0.02, -0.01, 0.005])
+    attGuidanceMessageData.domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
+    attGuidanceMessage = messaging.AttGuidMsg().write(attGuidanceMessageData)
 
     # Create the vehicleConfig fsw message
     vehicleConfigIn = messaging.VehicleConfigMsgPayload()
@@ -83,12 +83,12 @@ def test_rateControl(show_plots, setExtTorque):
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigIn)
 
     # Set up data logging
-    dataLog = module.cmdTorqueOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    cmdTorqueOutMsgDataLog = rateCntrl.cmdTorqueOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, cmdTorqueOutMsgDataLog)
 
     # Connect messages
-    module.vehConfigInMsg.subscribeTo(vcInMsg)
-    module.guidInMsg.subscribeTo(guidInMsg)
+    rateCntrl.vehConfigInMsg.subscribeTo(vcInMsg)
+    rateCntrl.guidInMsg.subscribeTo(attGuidanceMessage)
 
     # Execute the simulation
     unitTestSim.InitializeSimulation()
@@ -96,39 +96,38 @@ def test_rateControl(show_plots, setExtTorque):
     unitTestSim.ExecuteSimulation()
 
     # Extract logged data for test check
-    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn, knownTorquePntB_B)]*3
+    cmdTorqueTruth = [findTrueTorques(rateCntrl, attGuidanceMessageData, vehicleConfigIn, knownTorquePntB_B)]*3
 
     # Compare the module results to the computed truth value
     accuracy = 1e-12
-    np.testing.assert_allclose(trueVector,
-                               dataLog.torqueRequestBody,
+    np.testing.assert_allclose(cmdTorqueTruth,
+                               cmdTorqueOutMsgDataLog.torqueRequestBody,
                                atol=accuracy,
                                verbose=True)
 
-def findTrueTorques(module, guidCmdData, vehicleConfigOut, knownTorquePntB_B):
-    sigma_BR = np.array(guidCmdData.sigma_BR)
-    omega_BR_B = np.array(guidCmdData.omega_BR_B)
-    omega_RN_B = np.array(guidCmdData.omega_RN_B)
-    domega_RN_B = np.array(guidCmdData.domega_RN_B)
+def findTrueTorques(rateCntrl, attGuidanceMessageData, vehicleConfigOut, knownTorquePntB_B):
+    sigma_BR = np.array(attGuidanceMessageData.sigma_BR)
+    omega_BR_B = np.array(attGuidanceMessageData.omega_BR_B)
+    omega_RN_B = np.array(attGuidanceMessageData.omega_RN_B)
+    domega_RN_B = np.array(attGuidanceMessageData.domega_RN_B)
 
-    I = np.identity(3)
-    I[0][0] = vehicleConfigOut.ISCPntB_B[0]
-    I[1][1] = vehicleConfigOut.ISCPntB_B[4]
-    I[2][2] = vehicleConfigOut.ISCPntB_B[8]
+    ISCPntB_B = np.identity(3)
+    ISCPntB_B[0][0] = vehicleConfigOut.ISCPntB_B[0]
+    ISCPntB_B[1][1] = vehicleConfigOut.ISCPntB_B[4]
+    ISCPntB_B[2][2] = vehicleConfigOut.ISCPntB_B[8]
 
-    P = module.getDerivativeGainP()
-    L = knownTorquePntB_B
+    P = rateCntrl.getDerivativeGainP()
 
     omega_BN_B = omega_BR_B + omega_RN_B
-    temp1 = np.dot(I, omega_BN_B)
+    temp1 = np.dot(ISCPntB_B, omega_BN_B)
     temp2 = domega_RN_B - np.cross(omega_BN_B, omega_RN_B)
 
     # Compute truth control torque
-    Lr = P * omega_BR_B - np.cross(omega_RN_B, temp1) - np.dot(I, temp2)
-    Lr += L
-    Lr *= -1.0
+    cmdTorqueTruth = P * omega_BR_B - np.cross(omega_RN_B, temp1) - np.dot(ISCPntB_B, temp2)
+    cmdTorqueTruth += knownTorquePntB_B
+    cmdTorqueTruth *= -1.0
 
-    return Lr
+    return cmdTorqueTruth
 
 if __name__ == "__main__":
     test_rateControl(False, False)
