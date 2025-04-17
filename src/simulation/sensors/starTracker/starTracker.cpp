@@ -103,9 +103,9 @@ void StarTracker::applySensorErrors() {
  */
 void StarTracker::computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValues) {
     Eigen::Matrix3d dcm_BN; /* dcm, inertial to body frame */
-    Eigen::Matrix3d dcm_CN; /* dcm, inertial to case frame */
-
     dcm_BN = mrpToDcm(*sigma);
+
+    Eigen::Matrix3d dcm_CN; /* dcm, inertial to case frame */
     dcm_CN = this->dcm_CB * dcm_BN;
 
     Eigen::Vector4d beta_CN = dcmToEp(dcm_CN);

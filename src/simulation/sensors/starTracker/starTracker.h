@@ -38,7 +38,7 @@ class StarTracker : public SysModel {
     ~StarTracker();
 
     void updateState(uint64_t currentSimNanos);
-    void reset(uint64_t CurrentClock);  //!< Method for reseting the module
+    void reset(uint64_t CurrentClock);
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
     void computeSensorErrors();
@@ -49,24 +49,24 @@ class StarTracker : public SysModel {
 
    public:
     uint64_t sensorTimeTag = 0;                    //!< [ns] Current time tag for sensor out
-    ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!< [-] sc input state message
-    Message<STSensorMsgPayload> sensorOutMsg;      //!< [-] sensor output state message
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!< Sc input state message
+    Message<STSensorMsgPayload> sensorOutMsg;      //!< Sensor output state message
 
     Eigen::Matrix3d
-        PMatrix;  //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::Vector3d walkBounds{0.0, 0.0, 0.0};  //!< [-] "3-sigma" errors to permit for states
-    Eigen::Vector3d navErrors{0.0, 0.0, 0.0};   //!< [-] Current navigation errors applied to truth
+        PMatrix;  //!< Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
+    Eigen::Vector3d walkBounds{0.0, 0.0, 0.0};  //!< "3-sigma" errors to permit for states
+    Eigen::Vector3d navErrors{0.0, 0.0, 0.0};   //!< Current navigation errors applied to truth
 
-    Eigen::Matrix3d dcm_CB;                    //!< [-] Transformation matrix from body to case
-    STSensorMsgPayload trueValues;             //!< [-] total measurement without perturbations
-    STSensorMsgPayload sensedValues;           //!< [-] total measurement including perturbations
-    Eigen::Vector3d mrpErrors{0.0, 0.0, 0.0};  //!< [-] Errors to be applied to the input MRP set indicating whether
-    SCStatesMsgPayload scState;                //!< [-] Module variable where the input State Data message is stored
-    BSKLogger bskLogger;                       //!< -- BSK Logging
+    Eigen::Matrix3d dcm_CB;                    //!< Transformation matrix from body to case
+    STSensorMsgPayload trueValues;             //!< Total measurement without perturbations
+    STSensorMsgPayload sensedValues;           //!< Total measurement including perturbations
+    Eigen::Vector3d mrpErrors{0.0, 0.0, 0.0};  //!< Errors to be applied to the input MRP set indicating whether
+    SCStatesMsgPayload scState;                //!< Module variable where the input State Data message is stored
+    BSKLogger bskLogger;                       //!< BSK Logging
 
    private:
-    Eigen::Matrix3d AMatrix;  //!< [-] AMatrix that we use for error propagation
-    GaussMarkov errorModel;   //!< [-] Gauss-markov error states
+    Eigen::Matrix3d AMatrix;  //!< AMatrix that we use for error propagation
+    GaussMarkov errorModel;   //!< Gauss-markov error states
 
     uint64_t previousSimTime = 0;  //!< [ns] Previous sim time
     Eigen::Vector4d betaPrevious_CN{1.0,
