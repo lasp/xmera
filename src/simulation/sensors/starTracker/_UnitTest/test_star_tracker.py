@@ -23,8 +23,6 @@ from Basilisk.simulation import starTracker
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
-
 
 def listStack(vec, simStopTime, unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
@@ -44,17 +42,7 @@ def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [[1e6],[1e6],[1e6]]):
     (False, 'noise'),
     (False, 'walk bounds')
 ])
-
-
-def test_unitSimStarTracker(show_plots, useFlag, testCase):
-    [testResults, testMessage] = unitSimStarTracker(show_plots, useFlag, testCase)
-    assert testResults < 1, testMessage
-
-
-def unitSimStarTracker(show_plots, useFlag, testCase):
-    testFail = False
-    testFailCount = 0
-    testMessages = []
+def test_starTracker(show_plots, useFlag, testCase):
     unitTaskName = "unitTask"
     unitProcName = "TestProcess"
 
@@ -129,52 +117,38 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     unitSim.ExecuteSimulation()
 
     # Extract logged data for test check
-    moduleOutput = dataLog.qInrtl2Case
+    beta_CN = dataLog.qInrtl2Case
 
     # Convert quaternion output to prv
-    moduleOutput2 = np.zeros([int(simStopTime/unitProcRate_s)+1, 3])
+    prv_CN = np.zeros([int(simStopTime/unitProcRate_s)+1, 3])
     for i in range(0, int(simStopTime/unitProcRate_s)+1):
-        moduleOutput2[i] = rbk.EP2PRV(moduleOutput[i])
-
-    if not 'accuracy' in vars():
-        accuracy = 1e-6
+        prv_CN[i] = rbk.EP2PRV(beta_CN[i])
 
     if testCase == 'noise':
+        boundArray = np.full((int(simStopTime/unitProcRate_s)+1), 0.01)
         for i in range(0, 3):
-            if np.abs(np.mean(moduleOutput2[:, i])) > 0.01 \
-                            or np.abs(np.std(moduleOutput2[:, i]) - trueVector['qInrtl2Case'][i]) > 0.01:
-                testFail = True
-                break
+            np.testing.assert_array_less(np.abs(np.mean(prv_CN[:, i])),
+                                         boundArray,
+                                         verbose=True)
 
+            np.testing.assert_array_less(np.abs(np.std(prv_CN[:, i]) - trueVector['qInrtl2Case'][i]),
+                                         boundArray,
+                                         verbose=True)
     elif testCase == 'walk bounds':
         for i in range(0, 3):
-            print(np.max(np.abs(np.asarray(moduleOutput2[i]))))
-            if np.max(np.abs(np.asarray(moduleOutput2[i]))) > trueVector['qInrtl2Case'][i]:
-                testFail = True
-                break
-
+            np.testing.assert_array_less(np.max(np.abs(np.asarray(prv_CN[i]))),
+                                         trueVector['qInrtl2Case'][i],
+                                         verbose=True)
     else:
-        for i in range(0,len(trueVector['qInrtl2Case'])):
-            if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector['qInrtl2Case'][i], 3, accuracy):
-                testFail = True
-                break
-
-    if testFail:
-        testFailCount += 1
-        testMessages.append("FAILED: " + StarTracker.modelTag + " Module failed unit test")
-
-    np.set_printoptions(precision=16)
-
-    if testFailCount == 0:
-        print("PASSED ")
-    else:
-        print(testMessages)
-
-    return [testFailCount, ''.join(testMessages)]
-
+        accuracy = 1e-6
+        for i in range(0, len(trueVector['qInrtl2Case'])):
+            np.testing.assert_allclose(beta_CN[i],
+                                       trueVector['qInrtl2Case'][i],
+                                       atol=accuracy,
+                                       verbose=True)
 
 if __name__ == "__main__":
-    test_unitSimStarTracker(
+    test_starTracker(
         False,  # show_plots
         False,  # useFlag
         'walk bounds'  # testCase
