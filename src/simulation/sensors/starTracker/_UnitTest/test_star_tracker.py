@@ -23,13 +23,12 @@ from Basilisk.simulation import starTracker
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport
 
 
-# methods
-def listStack(vec,simStopTime,unitProcRate):
+def listStack(vec, simStopTime, unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
-    return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
+    return [vec] * int(simStopTime / (float(unitProcRate) / float(macros.sec2nano(1))))
 
 def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [[1e6],[1e6],[1e6]]):
     # sets the module random walk variables
@@ -40,96 +39,88 @@ def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [[1e6],[1e6],[1e6]]):
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
 @pytest.mark.parametrize("useFlag, testCase", [
-    (False,'basic'),
-    (False,'noise'),
-    (False,'walk bounds')
+    (False, 'basic'),
+    (False, 'noise'),
+    (False, 'walk bounds')
 ])
 
-# provide a unique test method name, starting with test_
+
 def test_unitSimStarTracker(show_plots, useFlag, testCase):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
     [testResults, testMessage] = unitSimStarTracker(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage
 
 
 def unitSimStarTracker(show_plots, useFlag, testCase):
     testFail = False
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcName = "TestProcess"  # arbitrary name (don't change)
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
+    unitProcName = "TestProcess"
 
-    # initialize SimulationBaseClass
+    # Create a sim module as an empty container
     unitSim = SimulationBaseClass.SimBaseClass()
 
-    # create the task and specify the integration update time
     unitProcRate = macros.sec2nano(0.1)
     unitProcRate_s = macros.NANO2SEC*unitProcRate
     unitProc = unitSim.CreateNewProcess(unitProcName)
     unitProc.addTask(unitSim.CreateNewTask(unitTaskName, unitProcRate))
 
-    # configure module
+    # Configure the starTracker module
     StarTracker = starTracker.StarTracker()
     StarTracker.modelTag = "StarTracker"
     setRandomWalk(StarTracker)
+    unitSim.AddModelToTask(unitTaskName, StarTracker)
 
-    # configure module input message
+    # Configure starTracker SCState input message
     OutputStateData = messaging.SCStatesMsgPayload()
-    OutputStateData.r_BN_N = [0,0,0]
-    OutputStateData.v_BN_N = [0,0,0]
-    OutputStateData.sigma_BN = [0,0,0]
-    OutputStateData.omega_BN_B = [0,0,0]
-    OutputStateData.TotalAccumDVBdy = [0,0,0]
+    OutputStateData.r_BN_N = [0, 0, 0]
+    OutputStateData.v_BN_N = [0, 0, 0]
+    OutputStateData.sigma_BN = [0, 0, 0]
+    OutputStateData.omega_BN_B = [0, 0, 0]
+    OutputStateData.TotalAccumDVBdy = [0, 0, 0]
     OutputStateData.MRPSwitchCount = 0
 
     trueVector = dict()
-    print(testCase)
+
+    # This test verifies basic input and output
     if testCase == 'basic':
-        # this test verifies basic input and output
         simStopTime = 0.5
         sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
         OutputStateData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
-        trueVector['timeTag'] =  np.arange(0,0+simStopTime*1E9,unitProcRate_s*1E9)
+        trueVector['timeTag'] = np.arange(0, 0 + simStopTime*1E9, unitProcRate_s*1E9)
 
     elif testCase == 'noise':
         simStopTime = 1000.
         noiseStd = 0.1
-        stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
-        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[1.0e-13],[1.0e-13],[1.0e-13]])
-        sigma = np.array([0,0,0])
+        stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
+        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[1.0e-13], [1.0e-13], [1.0e-13]])
+        sigma = np.array([0, 0, 0])
         OutputStateData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = [noiseStd] * 3
-        trueVector['timeTag'] =  np.arange(0,0+simStopTime*1E9,unitProcRate_s*1E9)
+        trueVector['timeTag'] = np.arange(0, 0 + simStopTime*1E9, unitProcRate_s*1E9)
 
+    # This test checks the walk bounds of random walk
     elif testCase == 'walk bounds':
-        # this test checks the walk bounds of random walk
         simStopTime = 1000.
         noiseStd = 0.01
-        stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
+        stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
         walkBound = 0.1
-        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[walkBound],[walkBound],[walkBound]])
-        sigma = np.array([0,0,0])
+        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[walkBound], [walkBound], [walkBound]])
+        sigma = np.array([0, 0, 0])
         OutputStateData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = [walkBound + noiseStd*3] * 3
-        trueVector['timeTag'] =  np.arange(0,0+simStopTime*1E9,unitProcRate_s*1E9)
+        trueVector['timeTag'] = np.arange(0, 0+simStopTime*1E9, unitProcRate_s*1E9)
 
     else:
         raise Exception('invalid test case')
 
-    # add module to the task
-    unitSim.AddModelToTask(unitTaskName, StarTracker)
-
-    # log module output message
+    # Set up data logging
     dataLog = StarTracker.sensorOutMsg.recorder()
     unitSim.AddModelToTask(unitTaskName, dataLog)
 
-    # configure spacecraft state message
+    # Configure spacecraft state message
     scMsg = messaging.SCStatesMsg().write(OutputStateData)
     StarTracker.scStateInMsg.subscribeTo(scMsg)
 
@@ -137,10 +128,10 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     unitSim.ConfigureStopTime(macros.sec2nano(simStopTime))
     unitSim.ExecuteSimulation()
 
-    # pull message log data and assemble into dict
+    # Extract logged data for test check
     moduleOutput = dataLog.qInrtl2Case
 
-    # convert quaternion output to prv
+    # Convert quaternion output to prv
     moduleOutput2 = np.zeros([int(simStopTime/unitProcRate_s)+1, 3])
     for i in range(0, int(simStopTime/unitProcRate_s)+1):
         moduleOutput2[i] = rbk.EP2PRV(moduleOutput[i])
@@ -149,14 +140,14 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         accuracy = 1e-6
 
     if testCase == 'noise':
-        for i in range(0,3):
-            if np.abs(np.mean(moduleOutput2[:,i])) > 0.01 \
-                            or np.abs(np.std(moduleOutput2[:,i]) - trueVector['qInrtl2Case'][i]) > 0.01 :
+        for i in range(0, 3):
+            if np.abs(np.mean(moduleOutput2[:, i])) > 0.01 \
+                            or np.abs(np.std(moduleOutput2[:, i]) - trueVector['qInrtl2Case'][i]) > 0.01:
                 testFail = True
                 break
 
     elif testCase == 'walk bounds':
-        for i in range(0,3):
+        for i in range(0, 3):
             print(np.max(np.abs(np.asarray(moduleOutput2[i]))))
             if np.max(np.abs(np.asarray(moduleOutput2[i]))) > trueVector['qInrtl2Case'][i]:
                 testFail = True
@@ -174,22 +165,17 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
 
     np.set_printoptions(precision=16)
 
-    # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED ")
     else:
         print(testMessages)
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
 
-# This statement below ensures that the unit test script can be run as a
-# stand-along python script
 if __name__ == "__main__":
     test_unitSimStarTracker(
-        False, # show_plots
-        False, # useFlag
-        'walk bounds' # testCase
+        False,  # show_plots
+        False,  # useFlag
+        'walk bounds'  # testCase
     )
