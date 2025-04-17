@@ -27,12 +27,10 @@
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 
 StarTracker::StarTracker() {
-    this->sensorTimeTag = 0;
     this->dcm_CB.setIdentity();
     this->errorModel = GaussMarkov(3, this->RNGSeed);
     this->PMatrix.fill(0.0);
     this->AMatrix.fill(0.0);
-    this->walkBounds.fill(0.0);
     return;
 }
 

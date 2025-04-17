@@ -48,21 +48,21 @@ class StarTracker : public SysModel {
     void computeAngularVelocity(uint64_t currentSimNanos);
 
    public:
-    uint64_t sensorTimeTag;                        //!< [ns] Current time tag for sensor out
+    uint64_t sensorTimeTag = 0;                    //!< [ns] Current time tag for sensor out
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!< [-] sc input state message
     Message<STSensorMsgPayload> sensorOutMsg;      //!< [-] sensor output state message
 
     Eigen::Matrix3d
         PMatrix;  //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::Vector3d walkBounds;  //!< [-] "3-sigma" errors to permit for states
-    Eigen::Vector3d navErrors;   //!< [-] Current navigation errors applied to truth
+    Eigen::Vector3d walkBounds{0.0, 0.0, 0.0};  //!< [-] "3-sigma" errors to permit for states
+    Eigen::Vector3d navErrors{0.0, 0.0, 0.0};   //!< [-] Current navigation errors applied to truth
 
-    Eigen::Matrix3d dcm_CB;           //!< [-] Transformation matrix from body to case
-    STSensorMsgPayload trueValues;    //!< [-] total measurement without perturbations
-    STSensorMsgPayload sensedValues;  //!< [-] total measurement including perturbations
-    Eigen::Vector3d mrpErrors;        //!< [-] Errors to be applied to the input MRP set indicating whether
-    SCStatesMsgPayload scState;       //!< [-] Module variable where the input State Data message is stored
-    BSKLogger bskLogger;              //!< -- BSK Logging
+    Eigen::Matrix3d dcm_CB;                    //!< [-] Transformation matrix from body to case
+    STSensorMsgPayload trueValues;             //!< [-] total measurement without perturbations
+    STSensorMsgPayload sensedValues;           //!< [-] total measurement including perturbations
+    Eigen::Vector3d mrpErrors{0.0, 0.0, 0.0};  //!< [-] Errors to be applied to the input MRP set indicating whether
+    SCStatesMsgPayload scState;                //!< [-] Module variable where the input State Data message is stored
+    BSKLogger bskLogger;                       //!< -- BSK Logging
 
    private:
     Eigen::Matrix3d AMatrix;  //!< [-] AMatrix that we use for error propagation
