@@ -119,17 +119,12 @@ void ThrForceMapping::updateState(uint64_t callTime)
 
     Lr_B = Lr_B + Lr_offset;
 
-    /*! - copy the control axes into [C] */
-    for (uint32_t i=0;i<this->numControlAxes;i++) {
-        C.col(i) = this->controlAxes_B.col(i);
-    }
-
     /*! Map the control torque onto the control axes
      * Note: Lr_B_Bar is projected only onto the available control axes.
      * i.e. if using DV thrusters with only 1 control axis,
      * Lr_B_Bar = [#, 0, 0]
     */
-    Lr_B_Bar = C*Lr_B;
+    Eigen::Vector3d Lr_B_Bar = this->controlAxes_B*Lr_B; // [Nm] Control torque that we actually control
 
     // 1st iteration of finding a set of force vectors to implement the control torque
     Eigen::Vector<double, MAX_EFF_CNT> F = this->findMinimumNormForce(D, Lr_B_Bar, this->numThrusters); /* [N] vector of commanded thruster forces */
@@ -235,18 +230,10 @@ Eigen::Vector<double, MAX_EFF_CNT> ThrForceMapping::findMinimumNormForce(const E
                                                                          const Eigen::Vector3d& Lr_B_Bar,
                                                                          uint32_t numForces)
 {
-    // Copy the control axes into [C]
-    Eigen::Matrix3d C = Eigen::Matrix3d::Zero(); /* [m^2]  (C) matrix */
-    for (uint32_t i=0; i<this->numControlAxes; ++i) {
-        C.col(i) = this->controlAxes_B.col(i);
-    }
-
     /* find [D].[D]^T */
-    Eigen::Matrix<double, 3, MAX_EFF_CNT> CD; /* [m^2]  [C].[D] matrix -- Thrusters in body frame mapped on control axes */
-    Eigen::Matrix3d CDCDT = Eigen::Matrix3d::Identity(); /* [m^2]  [CD].[CD]^T matrix */
-    CD = C*D;
-    for(uint32_t i=0; i<this->numControlAxes; i++) {
-        for(uint32_t j=0; j<this->numControlAxes; j++) {
+    // [C].[D] matrix -- Thrusters in body frame mapped on control axes
+    Eigen::Matrix<double, 3, MAX_EFF_CNT> CD = this->controlAxes_B*D; // [m^2]
+    Eigen::Matrix3d CDCDT = Eigen::Matrix3d::Identity(); // [m^2]  [CD].[CD]^T matrix
             CDCDT(i, j) = 0.0;
             for (uint32_t k=0;k<numForces;k++) {
                 CDCDT(i,j) += CD(i,k) * CD(j,k); /* Part of Eq. 9 */
