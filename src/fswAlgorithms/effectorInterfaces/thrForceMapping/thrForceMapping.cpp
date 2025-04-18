@@ -172,9 +172,9 @@ void ThrForceMapping::updateState(uint64_t callTime)
         double maxFractUse = 0.0; // ratio of maximum requested thruster force relative to maximum thruster limit
         for(uint32_t i=0; i<this->numThrusters; i++)
         {
-            if(this->thrForceMag(i) > 0.0 && fabs(F(i))/this->thrForceMag(i) > maxFractUse) /* confirming that maxThrust > 0 */
+            if(this->thrForceMag(i) > 0.0 && std::fabs(F(i))/this->thrForceMag(i) > maxFractUse) /* confirming that maxThrust > 0 */
             {
-                maxFractUse = fabs(F(i))/this->thrForceMag(i);
+                maxFractUse = std::fabs(F(i))/this->thrForceMag(i);
             }
         }
         /* only scale the requested thruster force if one or more thrusters are saturated */
@@ -271,7 +271,7 @@ double computeTorqueAngErr(Eigen::Matrix<double, 3, MAX_EFF_CNT> D,
         {
             /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such we
              * check if FMag[i] is equal to zero in reset() */
-            double thrusterForce = fabs(F(i)) < FMag(i) ? F(i) : FMag(i)*fabs(F(i))/F(i); /* [N] saturation constrained thruster force */
+            double thrusterForce = std::fabs(F(i)) < FMag(i) ? F(i) : FMag(i)*std::fabs(F(i))/F(i); /* [N] saturation constrained thruster force */
             Eigen::Vector3d LrEffector_B = DT.row(i)*thrusterForce; // [Nm] torque of an individual thruster effector
             tauActual_B += LrEffector_B;
         }
