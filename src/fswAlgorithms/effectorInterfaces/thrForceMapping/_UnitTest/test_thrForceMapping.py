@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -27,19 +26,16 @@ from Basilisk.utilities import (macros, fswSetupThrusters, SimulationBaseClass)
 @pytest.mark.parametrize(["useCOMOffset","dropThruster", "use2ndLoop"],[
                          (False, 0, False),
                          (False, 1, True),
-                         (False, 2, True), # Any time we drop a thruster we should recompute the solution
-                         (True, 0, False)]) # We don't handle the case where there is a dropped thruster and and COM offset--see performance analysis.
+                         (False, 2, True), # Any time we drop a thruster, we should recompute the solution
+                         (True, 0, False)]) # We don't handle the case where there is a dropped thruster and COM offset--see performance analysis.
 @pytest.mark.parametrize("asymmetricDrop", [False])
 @pytest.mark.parametrize("numControlAxis", [1, 2, 3])
 @pytest.mark.parametrize("saturateThrusters", [0,1,2])
-@pytest.mark.parametrize("misconfigThruster", [False])
 def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis,
-                      saturateThrusters, misconfigThruster, use2ndLoop):
+                      saturateThrusters, use2ndLoop):
     if useDVThruster and numControlAxis == 3:
         pytest.skip(f"Skipping this combination {useDVThruster} and {numControlAxis}. Three control axes doesn't work "
                     f"for the dv thruster setup used in this test (only two axes controllable)")
-    if misconfigThruster:
-        pytest.skip("Test does not handle cases where a thruster is configured incorrectly.")
 
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
@@ -52,19 +48,16 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-
     # Construct algorithm and associated C++ container
     module = thrForceMapping.ThrForceMapping()
+    module.setEpsilon(0.0005)
+    module.setUse2ndLoop(use2ndLoop)
     module.modelTag = "thrForceMapping"
 
-
-    # Add test module to runtime call list
+    # Add test module to the runtime task
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    # Initialize the test module configuration data
-    module.setUse2ndLoop(use2ndLoop)
-
-    # write vehicle configuration message
+    # write a vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     if useCOMOffset == 1:
         CoM_B = [0.03,0.001,0.02]
@@ -73,7 +66,7 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     vehicleConfigOut.CoM_B = CoM_B
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
-    # Create input message and size it because the regular creator of that message
+    # Create an input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
@@ -87,12 +80,6 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
     cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
 
-    module.setEpsilon(0.0005)
-    fswSetupThrusters.clearSetup()
-    MAX_EFF_CNT = messaging.MAX_EFF_CNT
-    rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
-    rcsDirectionData = np.zeros((MAX_EFF_CNT, 3))
-
     controlAxes_B = np.array([
         [1, 0, 0],
         [0, 1, 0],
@@ -103,42 +90,44 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
         controlAxes_B[start_index:] = 0
     module.setControlAxesB(controlAxes_B)
 
+    rcsLocationData = np.zeros((messaging.MAX_EFF_CNT, 3))
+    rcsDirectionData = np.zeros((messaging.MAX_EFF_CNT, 3))
     if useDVThruster:
         # DV thruster setup
         module.setThrForceSign(-1)
         numThrusters = 6
-        rcsLocationData[0:6] = [ \
+        rcsLocationData[0:6] = [
             [0, 0.413, -0.1671],
             [0, -0.413, -0.1671],
             [0.35766849176297305, 0.20650000000000013, -0.1671],
             [0.3576684917629732, -0.20649999999999988, -0.1671],
             [-0.35766849176297333, 0.20649999999999968, -0.1671],
-            [-0.35766849176297305, -0.20650000000000018, -0.1671] \
-            ]
-        rcsDirectionData[0:6] = [ \
+            [-0.35766849176297305, -0.20650000000000018, -0.1671]
+        ]
+        rcsDirectionData[0:6] = [
             [0.0, 0.0, 1.0],
             [0.0, 0.0, 1.0],
             [0.0, 0.0, 1.0],
             [0.0, 0.0, 1.0],
             [0.0, 0.0, 1.0],
-            [0.0, 0.0, 1.0] \
-            ]
+            [0.0, 0.0, 1.0]
+        ]
     else:
         # RCS thruster setup
         module.setThrForceSign(1)
         numThrusters = 8
-        rcsLocationData[0:8] = [ \
-                [-0.86360, -0.82550, 1.79070],
+        rcsLocationData[0:8] = [
+            [-0.86360, -0.82550, 1.79070],
                 [-0.82550, -0.86360, 1.79070],
                 [0.82550, 0.86360, 1.79070],
                 [0.86360, 0.82550, 1.79070],
                 [-0.86360, -0.82550, -1.79070],
                 [-0.82550, -0.86360, -1.79070],
                 [0.82550, 0.86360, -1.79070],
-                [0.86360, 0.82550, -1.79070] \
-                ]
+                [0.86360, 0.82550, -1.79070]
+        ]
 
-        rcsDirectionData[0:8] = [ \
+        rcsDirectionData[0:8] = [
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0],
             [0.0, -1.0, 0.0],
@@ -146,9 +135,8 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0],
             [0.0, -1.0, 0.0],
-            [-1.0, 0.0, 0.0] \
-            ]
-
+            [-1.0, 0.0, 0.0]
+        ]
 
     if dropThruster > 0:
         if (dropThruster % 2==0) and asymmetricDrop: # Drop thrusters that don't share the same torque direction
@@ -180,17 +168,14 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
             offset = offset + 1
 
         numThrusters = numThrusters - dropThruster
+
     maxThrust = 0.95
     if useDVThruster:
         maxThrust = 10.0
 
-
+    fswSetupThrusters.clearSetup()
     for i in range(numThrusters):
-        if misconfigThruster and i == 0:
-            maxThrustConfig = 0.0
-        else:
-            maxThrustConfig = maxThrust
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrustConfig)
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
     thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -206,9 +191,8 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     unitTestSim.InitializeSimulation()
 
     # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
+    # NOTE: the total simulation time may be longer than this value. The simulation is stopped at the next logging
+    # event on or after the simulation end time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
 
     # Begin the simulation time run set above
@@ -231,7 +215,7 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
 
     F, DNew = results.results_thrForceMapping()
 
-    trueVector = np.zeros((2, MAX_EFF_CNT))
+    trueVector = np.zeros((2, messaging.MAX_EFF_CNT))
     trueVector[0,:] = F
     trueVector[1,:] = F
 
@@ -249,11 +233,7 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
 
     Lr_B = requestedTorque + Lr_offset
 
-    # This computes the requested torque direction and the received torque directions
-    Lr_Req_B_Unit = Lr_B / np.linalg.norm(Lr_B)
-    Lr_Rec_B_Unit = receivedTorque / np.linalg.norm(receivedTorque)
-
-    # This is the requested and recieved torque projected onto the control axes
+    # This is the requested and received torque projected onto the control axes
     Lr_Req_Bar_B = np.matmul(CT, np.matmul(C, Lr_B))
     Lr_Rec_Bar_B = np.matmul(CT, np.matmul(C, receivedTorque))
 
@@ -276,10 +256,6 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
         assert np.any(moduleOutput[0] >= 0), "A negative force exists in the C RCS solution. This is not allowed."
         assert np.any(F >= 0), "A negative force exists in the Python RCS solution. This is not allowed."
 
-    # Check that Torques are Sensible
-    print("\nRequested Lr_Bar [B]: " + str(Lr_Req_Bar_B_Unit))
-    print("Received Lr_Bar [B]: " + str(Lr_Rec_Bar_B_Unit))
-
     np.testing.assert_allclose(np.array([Lr_Rec_Bar_B_Unit]),
                                np.array([Lr_Req_Bar_B_Unit]),
                                rtol=0.0,
@@ -300,6 +276,5 @@ if __name__ == "__main__":
                            False,  # asymmetric drop
                            3,  # num control axis
                            2,  # saturateThrusters
-                           False,  # misconfigThruster
                            True  # Use 2nd loop
                            )
