@@ -26,6 +26,10 @@
 #include <math.h>
 #include "architecture/utilities/linearAlgebra.h"
 
+int8_t asInt(ThrForceSign value) {
+    return static_cast<int8_t>(value);
+}
+
 void substractMin(Eigen::Vector<double, MAX_EFF_CNT>& F, uint32_t size);
 
 double computeTorqueAngErr(Eigen::Matrix<double, 3, MAX_EFF_CNT> D,
@@ -55,9 +59,6 @@ void ThrForceMapping::reset(uint64_t callTime)
 
     if (this->numControlAxes==0) {
         this->bskLogger.bskLog(BSK_ERROR,"thrForceMapping() is not setup to control any axes!");
-    }
-    if (this->thrForceSign==0) {
-        this->bskLogger.bskLog(BSK_ERROR,"thrForceMapping() must have thrForceSign set to either +1 or -1");
     }
 
     // check if the required input messages are included
@@ -121,7 +122,8 @@ void ThrForceMapping::updateState(uint64_t callTime)
     {
         Eigen::Vector3d rCrossGt = rThrusterRelCOM_B.row(i).cross(this->gtThruster_B.row(i)); /* Eq. 6 */
         D.col(i) = rCrossGt;
-        if(this->thrForceSign < 0)  /* Handles the case where there is translational motion imparted during off-pulsing*/
+        /* Handles the case where there is translational motion imparted during off-pulsing*/
+        if(this->thrForceSign == ThrForceSign::NEGATIVE)
         {
             /* Computing local torques from each thruster -- Individual terms in Eq. 7*/
             Eigen::Vector3d LrLocal = rCrossGt*this->thrForceMag(i); /* [Nm] Torque provided by individual thruster */
@@ -147,12 +149,12 @@ void ThrForceMapping::updateState(uint64_t callTime)
     Eigen::Vector<double, MAX_EFF_CNT> F = this->findMinimumNormForce(D, Lr_B_Bar, this->numThrusters); /* [N] vector of commanded thruster forces */
 
     /*! - Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
-    if (this->thrForceSign>0)
+    if (this->thrForceSign == ThrForceSign::POSITIVE)
     {
         substractMin(F, this->numThrusters);
     }
 
-    if ((this->thrForceSign<0 && this->numControlAxes<3) || this->use2ndLoop)
+    if ((this->thrForceSign == ThrForceSign::NEGATIVE && this->numControlAxes<3) || this->use2ndLoop)
     {
         // Array of flags indicating if this thruster is used for the Lr_j
         Eigen::Vector<uint32_t, MAX_EFF_CNT> thrusterUsed = Eigen::Vector<uint32_t, MAX_EFF_CNT>::Zero();
@@ -160,7 +162,7 @@ void ThrForceMapping::updateState(uint64_t callTime)
         Eigen::Matrix<double, 3, MAX_EFF_CNT> Dbar = Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero(); // [m]
         int counterPosForces = 0; // counter for number of positive thruster forces
         for (uint32_t i=0; i<this->numThrusters; ++i) {
-            if (F(i)*this->thrForceSign > 0) {
+            if (F(i)*asInt(this->thrForceSign) > 0) {
                 thrusterUsed(i) = 1; /* Eq. 11 */
                 for (uint32_t j=0; j<3; ++j)
                 {
@@ -172,7 +174,7 @@ void ThrForceMapping::updateState(uint64_t callTime)
 
         // [N] vector of intermediate thruster forces
         Eigen::Vector<double, MAX_EFF_CNT> Fbar = this->findMinimumNormForce(Dbar, Lr_B_Bar, counterPosForces);
-        if (this->thrForceSign > 0)
+        if (this->thrForceSign == ThrForceSign::POSITIVE)
         {
             substractMin(Fbar, counterPosForces);
         }
@@ -344,13 +346,13 @@ void ThrForceMapping::setThrForceMag(const Vector36d& forceMag) { this->thrForce
  * @brief Get the sign of the thruster forces.
  * @return The sign of the thruster forces (POSITIVE or NEGATIVE).
  */
-int32_t ThrForceMapping::getThrForceSign() const { return this->thrForceSign; }
+ThrForceSign ThrForceMapping::getThrForceSign() const { return this->thrForceSign; }
 
 /**
  * @brief Set the sign of the thruster forces.
  * @param sign The sign of the thruster forces (POSITIVE or NEGATIVE).
  */
-void ThrForceMapping::setThrForceSign(int32_t sign) { this->thrForceSign = sign; }
+void ThrForceMapping::setThrForceSign(ThrForceSign sign) { this->thrForceSign = sign; }
 
 /**
  * @brief Get the angular error threshold.
