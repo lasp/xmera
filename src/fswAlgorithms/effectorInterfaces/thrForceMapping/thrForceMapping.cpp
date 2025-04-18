@@ -131,13 +131,13 @@ void ThrForceMapping::updateState(uint64_t callTime)
     if ((this->thrForceSign == ThrForceSign::NEGATIVE && this->numControlAxes<3) || this->use2ndLoop)
     {
         // Array of flags indicating if this thruster is used for the Lr_j
-        Eigen::Vector<uint32_t, MAX_EFF_CNT> thrusterUsed = Eigen::Vector<uint32_t, MAX_EFF_CNT>::Zero();
+        std::array<bool, MAX_EFF_CNT> thrusterUsed{};
         // Reduced mapping matrix
         Eigen::Matrix<double, 3, MAX_EFF_CNT> Dbar = Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero(); // [m]
         int counterPosForces = 0; // counter for number of positive thruster forces
         for (uint32_t i=0; i<this->numThrusters; ++i) {
             if (F(i)*asInt(this->thrForceSign) > 0) {
-                thrusterUsed(i) = 1; /* Eq. 11 */
+                thrusterUsed[i] = true; /* Eq. 11 */
                 for (uint32_t j=0; j<3; ++j)
                 {
                     Dbar(j, counterPosForces) = D(j, i); /* Eq. 12 */
@@ -154,7 +154,7 @@ void ThrForceMapping::updateState(uint64_t callTime)
         }
         uint32_t c = 0;
         for (uint32_t i=0;i<this->numThrusters;i++) {
-            if (thrusterUsed(i)) {
+            if (thrusterUsed[i]) {
                 F(i) = Fbar(c);
                 c++;
             } else {
