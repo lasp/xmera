@@ -35,6 +35,11 @@
 
 typedef Eigen::Vector<double, MAX_EFF_CNT> Vector36d;
 
+enum class ThrForceSign {
+    POSITIVE = +1,
+    NEGATIVE = -1
+};
+
 /*!@brief Data structure for module to map a command torque onto thruster forces. */
 class ThrForceMapping : public SysModel {
 public:
@@ -47,8 +52,8 @@ public:
     void setControlAxesB(const Eigen::Matrix3d& axes);
     Vector36d getThrForceMag() const;
     void setThrForceMag(const Vector36d& forceMag);
-    int32_t getThrForceSign() const;
-    void setThrForceSign(int32_t sign);
+    ThrForceSign getThrForceSign() const;
+    void setThrForceSign(ThrForceSign sign);
     double getAngErrThresh() const;
     void setAngErrThresh(double thresh);
     double getEpsilon() const;
