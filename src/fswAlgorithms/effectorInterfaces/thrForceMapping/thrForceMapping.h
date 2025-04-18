@@ -41,9 +41,7 @@ class ThrForceMapping : public SysModel {
    public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    Vector36d findMinimumNormForce(const Eigen::Matrix<double, 3, MAX_EFF_CNT>& D,
-                                   const Eigen::Vector3d& Lr_B,
-                                   uint32_t numForces);
+
     Eigen::Matrix3d getControlAxesB() const;
     void setControlAxesB(const Eigen::Matrix3d& axes);
     Vector36d getThrForceMag() const;
@@ -67,6 +65,10 @@ class ThrForceMapping : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 
    private:
+    Vector36d findMinimumNormForce(const Eigen::Matrix<double, 3, MAX_EFF_CNT>& D,
+                                   const Eigen::Vector3d& Lr_B,
+                                   uint32_t numForces) const;
+
     Eigen::Matrix3d controlAxes_B{};  //!< [] array of the control unit axes
     Vector36d thrForceMag{};          //!< vector of thruster force magnitudes
     ThrForceSign thrForceSign =

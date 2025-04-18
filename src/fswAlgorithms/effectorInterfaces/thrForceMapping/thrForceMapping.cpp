@@ -202,12 +202,17 @@ void substractMin(Eigen::Vector<double, MAX_EFF_CNT>& F, uint32_t size) {
 }
 
 /*!
- Use a least square inverse to determine the smallest set of thruster forces that yield the desired torque vector.  Note
- that this routine does not constrain yet the forces to be either positive or negative
+ * @brief Find the minimum norm solution to the least squares problem. Use a least square inverse to determine
+ * the smallest set of thruster forces that yield the desired torque vector. Note that this routine does not
+ * constrain yet the forces to be either positive or negative.
+ * @param D 3x32 matrix that maps the thruster forces F[i] to the spacecraft torque.
+ * @param Lr_B The vector representing the requested control torque.
+ * @param numForces The number of thrusters to include in the minimum norm computation
+ * @return A vector containing the thruster force solutions to the least squares problem.
  */
 Eigen::Vector<double, MAX_EFF_CNT> ThrForceMapping::findMinimumNormForce(const Eigen::Matrix<double, 3, MAX_EFF_CNT>& D,
                                                                          const Eigen::Vector3d& Lr_B_Bar,
-                                                                         uint32_t numForces) {
+                                                                         uint32_t numForces) const {
     /* find [D].[D]^T */
     // [C].[D] matrix -- Thrusters in body frame mapped on control axes
     Eigen::Matrix<double, 3, MAX_EFF_CNT> CD = this->controlAxes_B * D;  // [m^2]
@@ -235,7 +240,14 @@ Eigen::Vector<double, MAX_EFF_CNT> ThrForceMapping::findMinimumNormForce(const E
 }
 
 /*!
- Determine the angle between the desired torque vector and the actual torque vector.
+ * @brief  Determine the angle between the desired torque vector and the actual torque vector.
+ * @param D 3x32 matrix that maps the thruster forces F[i] to the spacecraft torque.
+ * @param BLr_B The vector representing the requested control torque.
+ * @param numForces The number of thrusters to include in the computation
+ * @param epsilon The threshold value for above which a vector norm is valid
+ * @param F The force vectors which implement the control torque
+ * @param FMag The force magnitudes of the thrusters
+ * @return A vector containing the thruster force solutions to the least squares problem.
  */
 double computeTorqueAngErr(Eigen::Matrix<double, 3, MAX_EFF_CNT> D,
                            const Eigen::Vector3d& BLr_B,
