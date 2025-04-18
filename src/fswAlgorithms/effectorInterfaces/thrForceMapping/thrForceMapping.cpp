@@ -63,9 +63,8 @@ void ThrForceMapping::reset(uint64_t callTime)
     this->sc = this->vehConfigInMsg();
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
-    this->numThrusters = (uint32_t) localThrusterData.numThrusters;
-    for(uint32_t i=0; i<this->numThrusters; i=i+1)
-    {
+    this->numThrusters = (uint32_t)localThrusterData.numThrusters;
+    for (uint32_t i = 0; i < this->numThrusters; ++i) {
         this->rThruster_B.row(i) = Eigen::Map<Eigen::Vector3d>(localThrusterData.thrusters[i].rThrust_B);
         this->gtThruster_B.row(i) = Eigen::Map<Eigen::Vector3d>(localThrusterData.thrusters[i].tHatThrust_B).transpose();
         if(localThrusterData.thrusters[i].maxThrust <= 0.0){
@@ -96,9 +95,9 @@ void ThrForceMapping::updateState(uint64_t callTime)
 
     /*! - compute general thruster force mapping matrix */
     Eigen::Vector3d Lr_offset = Eigen::Vector3d::Zero();
-    Eigen::Matrix<double, 3, MAX_EFF_CNT> D = Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero(); // [m] mapping matrix from thruster forces to body torque
-    for(uint32_t i=0; i<this->numThrusters; i=i+1)
-    {
+    Eigen::Matrix<double, 3, MAX_EFF_CNT> D =
+        Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero();  // [m] mapping matrix from thruster forces to body torque
+    for (uint32_t i = 0; i < this->numThrusters; ++i) {
         Eigen::Vector3d rCrossGt = rThrusterRelCOM_B.row(i).cross(this->gtThruster_B.row(i)); /* Eq. 6 */
         D.col(i) = rCrossGt;
         /* Handles the case where there is translational motion imparted during off-pulsing*/
@@ -153,7 +152,7 @@ void ThrForceMapping::updateState(uint64_t callTime)
             substractMin(Fbar, counterPosForces);
         }
         uint32_t c = 0;
-        for (uint32_t i=0;i<this->numThrusters;i++) {
+        for (uint32_t i=0; i<this->numThrusters; ++i) {
             if (thrusterUsed[i]) {
                 F(i) = Fbar(c);
                 c++;
@@ -170,7 +169,7 @@ void ThrForceMapping::updateState(uint64_t callTime)
     if(this->outTorqAngErr > this->angErrThresh)
     {
         double maxFractUse = 0.0; // ratio of maximum requested thruster force relative to maximum thruster limit
-        for(uint32_t i=0; i<this->numThrusters; i++)
+        for(uint32_t i=0; i<this->numThrusters; ++i)
         {
             if(this->thrForceMag(i) > 0.0 && std::fabs(F(i))/this->thrForceMag(i) > maxFractUse) /* confirming that maxThrust > 0 */
             {
@@ -229,8 +228,10 @@ Eigen::Vector<double, MAX_EFF_CNT> ThrForceMapping::findMinimumNormForce(const E
     // [C].[D] matrix -- Thrusters in body frame mapped on control axes
     Eigen::Matrix<double, 3, MAX_EFF_CNT> CD = this->controlAxes_B*D; // [m^2]
     Eigen::Matrix3d CDCDT = Eigen::Matrix3d::Identity(); // [m^2]  [CD].[CD]^T matrix
+    for(uint32_t i=0; i<this->numControlAxes; ++i) {
+        for(uint32_t j=0; j<this->numControlAxes; ++j) {
             CDCDT(i, j) = 0.0;
-            for (uint32_t k=0;k<numForces;k++) {
+            for (uint32_t k=0; k<numForces; ++k) {
                 CDCDT(i,j) += CD(i,k) * CD(j,k); /* Part of Eq. 9 */
             }
         }
@@ -267,7 +268,7 @@ double computeTorqueAngErr(Eigen::Matrix<double, 3, MAX_EFF_CNT> D,
         Eigen::Vector3d tauActual_B = Eigen::Vector3d::Zero(); // [Nm] control torque with current thruster solution
 
         /*! - loop over all thrusters and compute the actual torque to be applied */
-        for(uint32_t i=0; i<numForces; i++)
+        for(uint32_t i=0; i<numForces; ++i)
         {
             /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such we
              * check if FMag[i] is equal to zero in reset() */
