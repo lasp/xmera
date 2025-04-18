@@ -20,6 +20,7 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import (macros, fswSetupThrusters, SimulationBaseClass)
+from .Support.thruster_force_mapping_test_oracle import ThrForceMappingTestOracle
 
 
 @pytest.mark.parametrize("useDVThruster", [True, False])
@@ -201,19 +202,19 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     # This pulls the actual data log from the simulation run.
     moduleOutput = dataLog.thrForce
 
-    results = thrForceMapping.Results_thrForceMapping(requestedTorque,
-                                                      module.getControlAxesB(),
-                                                      vehicleConfigOut.CoM_B,
-                                                      rcsLocationData,
-                                                      rcsDirectionData,
-                                                      module.getThrForceSign(),
-                                                      module.getThrForceMag(),
-                                                      module.getAngErrThresh(),
-                                                      numThrusters,
-                                                      module.getEpsilon(),
-                                                      use2ndLoop)
+    test_oracle = ThrForceMappingTestOracle(requestedTorque,
+                                            module.getControlAxesB(),
+                                            vehicleConfigOut.CoM_B,
+                                            rcsLocationData,
+                                            rcsDirectionData,
+                                            module.getThrForceSign(),
+                                            module.getThrForceMag(),
+                                            module.getAngErrThresh(),
+                                            numThrusters,
+                                            module.getEpsilon(),
+                                            use2ndLoop)
 
-    F, DNew = results.results_thrForceMapping()
+    F, DNew = test_oracle.results_thrForceMapping()
 
     trueVector = np.zeros((2, messaging.MAX_EFF_CNT))
     trueVector[0,:] = F
