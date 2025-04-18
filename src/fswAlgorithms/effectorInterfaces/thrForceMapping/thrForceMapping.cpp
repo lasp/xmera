@@ -69,7 +69,7 @@ void ThrForceMapping::reset(uint64_t callTime)
         this->rThruster_B.row(i) = Eigen::Map<Eigen::Vector3d>(localThrusterData.thrusters[i].rThrust_B);
         this->gtThruster_B.row(i) = Eigen::Map<Eigen::Vector3d>(localThrusterData.thrusters[i].tHatThrust_B).transpose();
         if(localThrusterData.thrusters[i].maxThrust <= 0.0){
-            this->bskLogger.bskLog(BSK_ERROR, "A configured thruster has a non-sensible saturation limit of <= 0 N!");
+            assert("thruster has a non-sensible saturation limit of <= 0 N." && false);
         } else {
             this->thrForceMag(i) = localThrusterData.thrusters[i].maxThrust;
         }
