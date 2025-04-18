@@ -1,8 +1,11 @@
-''' '''
 import numpy as np
 
 
-class Results_thrForceMapping():
+class ThrForceMappingTestOracle:
+    """
+    This class is the test oracle (independent source of truth) used to verify the calculations
+    performed in the ThrForceMapping module.
+    """
     def __init__(self, Lr, COrig, COM, rData, gData, thrForceSign, thrForceMag, angErrThresh, numThrusters, epsilon, use2ndLoop):
         self.rData = np.array(rData)
         self.gData = np.array(gData)

@@ -40,5 +40,3 @@ EIGEN_MAT_WRAP(Vector36d, 157)
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
-%pythoncode "_UnitTest/Support/Results_thrForceMapping.py"
