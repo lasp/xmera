@@ -46,21 +46,7 @@ double computeTorqueAngErr(Eigen::Matrix<double, 3, MAX_EFF_CNT> D,
  */
 void ThrForceMapping::reset(uint64_t callTime)
 {
-    /*! - configure the number of axes that are controlled */
-    this->numControlAxes = 0;
-    for (uint32_t i=0;i<3;i++) {
-        if (this->controlAxes_B.col(i).norm() > this->epsilon) {
-            this->controlAxes_B.col(i).normalize();
-            this->numControlAxes++;
-        } else {
-            break;
-        }
-    }
-
-    if (this->numControlAxes==0) {
-        this->bskLogger.bskLog(BSK_ERROR,"thrForceMapping() is not setup to control any axes!");
-    }
-
+    assert(this->numControlAxes > 0);
     // check if the required input messages are included
     if (!this->thrConfigInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: thrForceMapping.thrConfigInMsg wasn't connected.");
@@ -328,7 +314,18 @@ Eigen::Matrix3d ThrForceMapping::getControlAxesB() const { return this->controlA
  * @brief Set the control axes in body frame.
  * @param axes A 3x3 matrix representing the control axes in body frame.
  */
-void ThrForceMapping::setControlAxesB(const Eigen::Matrix3d& axes) { this->controlAxes_B = axes; }
+void ThrForceMapping::setControlAxesB(const Eigen::Matrix3d& axes) {
+    this->controlAxes_B = axes;
+    this->numControlAxes = 0;
+    for (uint32_t i=0; i<3; ++i) {
+        if (this->controlAxes_B.col(i).norm() > this->epsilon) {
+            this->controlAxes_B.col(i).normalize();
+            this->numControlAxes++;
+        } else {
+            break;
+        }
+    }
+}
 
 /**
  * @brief Get the thruster force magnitudes.
