@@ -43,38 +43,44 @@ def states(x, testName):
         t[i] = x[i, 0] * 1E-9
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(321)
+    plt.subplot(331)
     plt.plot(t, x[:, 1], "b", label='Error Filter')
     plt.legend(loc='lower right')
     plt.title('First sHat component')
     plt.grid()
 
-    plt.subplot(322)
+    plt.subplot(332)
     plt.plot(t, x[:, 4], "b")
     plt.title('First rate component (rad/s)')
     plt.grid()
 
-    plt.subplot(323)
+    plt.subplot(333)
     plt.plot(t, x[:, 2], "b")
     plt.title('Second sHat component')
     plt.grid()
 
-    plt.subplot(324)
+    plt.subplot(334)
     plt.plot(t, x[:, 5], "b")
     plt.xlabel('t(s)')
     plt.title('Second rate component (rad/s)')
     plt.grid()
 
-    plt.subplot(325)
+    plt.subplot(335)
     plt.plot(t, x[:, 3], "b")
     plt.xlabel('t(s)')
     plt.title('Third sHat component')
     plt.grid()
 
-    plt.subplot(326)
+    plt.subplot(336)
     plt.plot(t, x[:, 6], "b")
     plt.xlabel('t(s)')
     plt.title('Third rate component (rad/s)')
+    plt.grid()
+
+    plt.subplot(337)
+    plt.plot(t, x[:, 7], "b")
+    plt.xlabel('t(s)')
+    plt.title('Bias state (-)')
     plt.grid()
 
     return plt
@@ -104,7 +110,7 @@ def state_covar(x, Pflat, testName):
         P[i, :, :] = Pflat[i, 1:(numStates * numStates + 1)].reshape([numStates, numStates])
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(321)
+    plt.subplot(331)
     plt.plot(t, x[:, 1], "b", label='Error Filter')
     plt.plot(t, x[:, 1] + 3 * np.sqrt(P[:, 0, 0]), 'r--', label='Covar Filter')
     plt.plot(t, x[:, 1] - 3 * np.sqrt(P[:, 0, 0]), 'r--')
@@ -112,21 +118,21 @@ def state_covar(x, Pflat, testName):
     plt.title('First pos component (m)')
     plt.grid()
 
-    plt.subplot(322)
+    plt.subplot(332)
     plt.plot(t, x[:, 4], "b")
     plt.plot(t, x[:, 4] + 3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.plot(t, x[:, 4] - 3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.title('Second rate component (m/s)')
     plt.grid()
 
-    plt.subplot(323)
+    plt.subplot(333)
     plt.plot(t, x[:, 2], "b")
     plt.plot(t, x[:, 2] + 3 * np.sqrt(P[:, 1, 1]), 'r--')
     plt.plot(t, x[:, 2] - 3 * np.sqrt(P[:, 1, 1]), 'r--')
     plt.title('Second pos component (m)')
     plt.grid()
 
-    plt.subplot(324)
+    plt.subplot(334)
     plt.plot(t, x[:, 5], "b")
     plt.plot(t, x[:, 5] + 3 * np.sqrt(P[:, 4, 4]), 'r--')
     plt.plot(t, x[:, 5] - 3 * np.sqrt(P[:, 4, 4]), 'r--')
@@ -134,7 +140,7 @@ def state_covar(x, Pflat, testName):
     plt.title('Third rate component (m/s)')
     plt.grid()
 
-    plt.subplot(325)
+    plt.subplot(335)
     plt.plot(t, x[:, 3], "b")
     plt.plot(t, x[:, 3] + 3 * np.sqrt(P[:, 2, 2]), 'r--')
     plt.plot(t, x[:, 3] - 3 * np.sqrt(P[:, 2, 2]), 'r--')
@@ -142,12 +148,20 @@ def state_covar(x, Pflat, testName):
     plt.title('Third pos component (m)')
     plt.grid()
 
-    plt.subplot(326)
+    plt.subplot(336)
     plt.plot(t, x[:, 6], "b")
     plt.plot(t, x[:, 6] + 3 * np.sqrt(P[:, 5, 5]), 'r--')
     plt.plot(t, x[:, 6] - 3 * np.sqrt(P[:, 5, 5]), 'r--')
     plt.xlabel('t(s)')
     plt.title('Third rate component (m/s)')
+    plt.grid()
+
+    plt.subplot(337)
+    plt.plot(t, x[:, 7], "b")
+    plt.plot(t, x[:, 7] + 3 * np.sqrt(P[:, 6, 6]), 'r--')
+    plt.plot(t, x[:, 7] - 3 * np.sqrt(P[:, 6, 6]), 'r--')
+    plt.xlabel('t(s)')
+    plt.title('Bias component (-)')
     plt.grid()
 
     return plt
