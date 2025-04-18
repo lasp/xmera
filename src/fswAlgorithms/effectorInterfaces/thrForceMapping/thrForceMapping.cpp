@@ -82,19 +82,12 @@ void ThrForceMapping::reset(uint64_t callTime)
  */
 void ThrForceMapping::updateState(uint64_t callTime)
 {
-    Eigen::Matrix<double, 3, MAX_EFF_CNT> D = Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero(); // [m] mapping matrix from thruster forces to body torque
-    Eigen::Matrix3d C = Eigen::Matrix3d::Zero(); // [m] control mapping matrix
-
-    CmdTorqueBodyMsgPayload LrInputMsg;
-    THRArrayCmdForceMsgPayload thrusterForceOut = {};
-
     /*! - Read the input messages */
-    LrInputMsg = this->cmdTorqueInMsg();
+    CmdTorqueBodyMsgPayload LrInputMsg = this->cmdTorqueInMsg();
     this->sc = this->vehConfigInMsg();
 
     /*! - copy the request 3D attitude control torque vector */
     Eigen::Vector3d Lr_B = Eigen::Map<Eigen::Vector3d>(LrInputMsg.torqueRequestBody); // [Nm] commanded control torque
-    Eigen::Vector3d Lr_B_Bar; // [Nm] Control torque that we actually control
 
     /*! - compute thruster locations relative to COM */
     /* Part 1 of Eq. 4 */
@@ -103,7 +96,7 @@ void ThrForceMapping::updateState(uint64_t callTime)
 
     /*! - compute general thruster force mapping matrix */
     Eigen::Vector3d Lr_offset = Eigen::Vector3d::Zero();
-
+    Eigen::Matrix<double, 3, MAX_EFF_CNT> D = Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero(); // [m] mapping matrix from thruster forces to body torque
     for(uint32_t i=0; i<this->numThrusters; i=i+1)
     {
         Eigen::Vector3d rCrossGt = rThrusterRelCOM_B.row(i).cross(this->gtThruster_B.row(i)); /* Eq. 6 */
@@ -198,11 +191,13 @@ void ThrForceMapping::updateState(uint64_t callTime)
     }
 
     /* store the output message */
+    THRArrayCmdForceMsgPayload thrusterForceOut{};
     for (int i = 0; i < F.size(); ++i) {
         thrusterForceOut.thrForce[i] = F(i);
     }
     this->thrForceCmdOutMsg.write(&thrusterForceOut, this->moduleID, callTime);
 }
+
 /*!
  Take a stack of force values find the smallest value, and subtract if from all force values.  Here the smallest values
  will become zero, while other forces increase.  This assumes that the thrusters are aligned such that if all
