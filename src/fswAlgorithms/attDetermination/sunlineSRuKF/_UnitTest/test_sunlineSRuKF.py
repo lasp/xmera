@@ -121,7 +121,7 @@ def test_propagation_kf(show_plots):
 
 @pytest.mark.parametrize("initial_error", [False, True])
 def test_measurements_kf(show_plots, initial_error):
-    state_update_flyby(initial_error, True)
+    state_update_flyby(initial_error, False)
 
 
 def state_propagation_flyby(show_plots=False):
