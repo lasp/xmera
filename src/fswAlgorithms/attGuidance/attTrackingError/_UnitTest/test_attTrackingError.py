@@ -15,36 +15,15 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import inspect
-import os
-
 import numpy as np
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(conditionstring)
-# provide a unique test method name, starting with test_
 def test_attTrackingError(show_plots):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = subModuleTestFunction(show_plots)
-    assert testResults < 1, testMessage
-
-
-def subModuleTestFunction(show_plots):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -123,12 +102,9 @@ def subModuleTestFunction(show_plots):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    if not unitTestSupport.isArrayEqual(moduleOutput, trueVector, 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_BR unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_sigBR", "FAILED", path)
-    else:
-        unitTestSupport.writeTeXSnippet("passFail_sigBR", "PASSED", path)
+    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
+
+
 
     #
     # check omega_BR_B
@@ -139,12 +115,7 @@ def subModuleTestFunction(show_plots):
     trueVector = np.array(omega_BN_B) - np.dot(BN, np.array(omega_RN_N))
 
     # compare the module results to the truth values
-    if not unitTestSupport.isArrayEqual(moduleOutput, trueVector, 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + module.modelTag + " Module failed omega_BR_B unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "FAILED", path)
-    else:
-        unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "PASSED", path)
+    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
 
     #
     # check omega_RN_B
@@ -155,12 +126,7 @@ def subModuleTestFunction(show_plots):
     trueVector = np.dot(BN, np.array(omega_RN_N))
 
     # compare the module results to the truth values
-    if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_N unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "FAILED", path)
-    else:
-        unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "PASSED", path)
+    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
 
     #
     # check domega_RN_B
@@ -171,26 +137,12 @@ def subModuleTestFunction(show_plots):
     trueVector = np.dot(BN, np.array(domega_RN_N))
 
     # compare the module results to the truth values
-    if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + module.modelTag + " Module failed domega_RN_B unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
-    else:
-        unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)
+    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
-
-    if testFailCount == 0:
-        print("PASSED: " + "attTrackingError test")
-    else:
-        print(testMessages)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
 
 
 #
