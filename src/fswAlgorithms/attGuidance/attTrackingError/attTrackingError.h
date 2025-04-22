@@ -44,6 +44,8 @@ class AttTrackingError : public SysModel {
                               NavAttMsgPayload nav,
                               AttRefMsgPayload ref,
                               AttGuidMsgPayload *attGuidOut);
+    void setSigma_R0R(const Eigen::Vector3d &sigma_R0R);
+    const Eigen::Vector3d &getSigma_R0R() const;
 
     Message<AttGuidMsgPayload> attGuidOutMsg;   //!< Output attitude guidance message
     ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< Input msg measured attitude

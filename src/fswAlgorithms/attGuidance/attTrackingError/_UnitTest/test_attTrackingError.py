@@ -40,7 +40,7 @@ def test_attTrackingError():
     attitudeTrackingError.modelTag = "attTrackingError"
     unitTestSim.AddModelToTask(unitTaskName, attitudeTrackingError)
     sigma_R0R = [0.01, 0.05, -0.55]
-    attitudeTrackingError.sigma_R0R = sigma_R0R
+    attitudeTrackingError.setSigma_R0R(sigma_R0R)
 
     # Create navigation message
     NavStateOutData = messaging.NavAttMsgPayload()
