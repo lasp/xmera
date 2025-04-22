@@ -182,8 +182,6 @@ class BasiliskConan(ConanFile):
             self.options['opencv'].with_openexr = False  # encode/decode image in EXR format
             self.options['opencv'].with_webp = False  # encode/decode image in WEBP format
             self.options['opencv'].with_quirc = False  # QR code lib
-            self.requires.add("zlib/1.2.13")
-            self.requires.add("xz_utils/5.4.0")
 
         if self.options.vizInterface or self.options.opNav:
             self.requires.add("protobuf/3.17.1#ffb2039b66b5a372f7a2a8a0b1ddfd13")
