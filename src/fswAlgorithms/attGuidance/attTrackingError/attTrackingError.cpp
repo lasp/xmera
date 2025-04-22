@@ -18,8 +18,6 @@
 
 #include "fswAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
 
-#include <string.h>
-
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
@@ -79,8 +77,6 @@ void AttTrackingError::reset(uint64_t callTime) {
     if (!this->attNavInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: attTrackingError.attNavInMsg wasn't connected.");
     }
-
-    return;
 }
 
 /*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the
@@ -97,6 +93,4 @@ void AttTrackingError::updateState(uint64_t callTime) {
     AttGuidMsgPayload attGuidOut{};  // Guidance message
     computeAttitudeError(this->sigma_R0R, nav, ref, &attGuidOut);
     this->attGuidOutMsg.write(&attGuidOut, this->moduleID, callTime);
-
-    return;
 }
