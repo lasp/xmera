@@ -28,7 +28,6 @@
  @param callTime [ns] Time the method is called
 */
 void RateControl::reset(uint64_t callTime) {
-    // Check if the required input messages are linked
     if (!this->guidInMsg.isLinked()) {
         _bskLog(this->bskLogger, BSK_ERROR, "rateControl.guidInMsg wasn't connected.");
     }
@@ -49,40 +48,23 @@ the reference frame angular rates and acceleration, and computes the required co
  @param callTime [ns] Time the method is called
 */
 void RateControl::updateState(uint64_t callTime) {
-    // Create the buffer messages
-    CmdTorqueBodyMsgPayload torqueCmdMsgPayload;  // Control output request msg
-    AttGuidMsgPayload guidanceMsgPayload;         // Guidance input message
-
-    // Zero the output message
-    torqueCmdMsgPayload = CmdTorqueBodyMsgPayload();
-
     // Read the guidance input message
-    guidanceMsgPayload = AttGuidMsgPayload();
+    auto guidanceMsgPayload = AttGuidMsgPayload();
     if (this->guidInMsg.isWritten()) {
         guidanceMsgPayload = this->guidInMsg();
     }
 
-    // Compute hub inertial angular velocity in B-frame components
+    // Compute required attitude control torque vector
     Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(guidanceMsgPayload.omega_BR_B);
     Eigen::Vector3d omega_RN_B = cArray2EigenVector3d(guidanceMsgPayload.omega_RN_B);
     Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
-
-    // Compute P*delta_omega
-    Eigen::Vector3d v3_temp1 = this->P * omega_BR_B;
-
-    // Compute omega_r x [I]omega
-    Eigen::Vector3d v3_temp2 = omega_RN_B.cross(this->ISCPntB_B * omega_BN_B);
-
-    // Compute [I](d(omega_r)/dt - omega x omega_r)
     Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(guidanceMsgPayload.domega_RN_B);
-    Eigen::Vector3d v3_temp3 = this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B));
+    Eigen::Vector3d Lr = -this->P * omega_BR_B + omega_RN_B.cross(this->ISCPntB_B * omega_BN_B) +
+                         this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B)) -
+                         this->knownTorquePntB_B;  // [Nm]
 
-    // Compute required attitude control torque vector
-    // Lr =  P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
-    Eigen::Vector3d Lr =
-        -v3_temp1 + v3_temp2 + v3_temp3 - this->knownTorquePntB_B;  // [Nm] Required control torque vector
-
-    // Write the output message
+    // Create and write the output message
+    auto torqueCmdMsgPayload = CmdTorqueBodyMsgPayload();
     eigenVector3d2CArray(Lr, torqueCmdMsgPayload.torqueRequestBody);
     this->cmdTorqueOutMsg.write(&torqueCmdMsgPayload, moduleID, callTime);
 }
