@@ -36,6 +36,8 @@
  */
 class AttTrackingError : public SysModel {
    public:
+    AttTrackingError() = default;   //!< Constructor
+    ~AttTrackingError() = default;  //!< Destructor
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void computeAttitudeError(Eigen::Vector3d sigma_R0R,
@@ -43,12 +45,14 @@ class AttTrackingError : public SysModel {
                               AttRefMsgPayload ref,
                               AttGuidMsgPayload *attGuidOut);
 
-    Eigen::Vector3d sigma_R0R;  //!< MRP from corrected reference frame to original reference frame R0. This is the same
-                                //!< as [BcB] going from primary body frame B to the corrected body frame Bc
-    Message<AttGuidMsgPayload> attGuidOutMsg;   //!< output msg of attitude guidance
-    ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< input msg measured attitude
-    ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< input msg of reference attitude
+    Message<AttGuidMsgPayload> attGuidOutMsg;   //!< Output attitude guidance message
+    ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< Input msg measured attitude
+    ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< Input msg of reference attitude
     BSKLogger bskLogger = {};                   //!< BSK Logging
+
+   private:
+    Eigen::Vector3d sigma_R0R{};  //!< MRP from corrected reference frame to original reference frame R0. This is the
+                                  //!< same as [BcB] going from primary body frame B to the corrected body frame Bc
 };
 
 #endif
