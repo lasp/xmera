@@ -266,6 +266,7 @@ def state_update_flyby(initial_error, show_plots=False):
     sunHeadingFilter.cssConfigInMsg.subscribeTo(cssConfigMsg)
 
     sim_time = 2000
+    np.random.seed(0)
     time = np.linspace(0, sim_time, sim_time+1)
     expected = np.zeros([len(time), 8])
     expected[0, 1:4] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
