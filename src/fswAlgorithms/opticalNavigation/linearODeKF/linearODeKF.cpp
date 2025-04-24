@@ -81,8 +81,8 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
     eigenMatrixXd2CArray(this->stateLogged.scale(1/this->unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
-    if (this->constantVelocity){
-        eigenMatrixXd2CArray(1/this->unitConversion*this->constantVelocity.value(), navTransOutMsgBuffer.v_BN_N);
+    if (this->constantVelocityInitial){
+        eigenMatrixXd2CArray(constantVelocityInitial.value(), navTransOutMsgBuffer.v_BN_N);
     }
     else{
         eigenMatrixXd2CArray(this->stateLogged.scale(1/this->unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
