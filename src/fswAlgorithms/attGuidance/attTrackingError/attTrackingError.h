@@ -20,29 +20,41 @@
 #ifndef _ATT_TRACKING_ERROR_
 #define _ATT_TRACKING_ERROR_
 
+#include <stdint.h>
+
+#include <Eigen/Dense>
+
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-
-#include <stdint.h>
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 
-
-
-/*!@brief Data structure for module to compute the attitude tracking error between the spacecraft attitude and the reference.
+/*!@brief Data structure for module to compute the attitude tracking error between the spacecraft attitude and the
+ * reference.
  */
 class AttTrackingError : public SysModel {
-public:
+   public:
+    AttTrackingError() = default;   //!< Constructor
+    ~AttTrackingError() = default;  //!< Destructor
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
+    void computeAttitudeError(Eigen::Vector3d sigma_R0R,
+                              NavAttMsgPayload nav,
+                              AttRefMsgPayload ref,
+                              AttGuidMsgPayload *attGuidOut);
+    void setSigma_R0R(const Eigen::Vector3d &sigma_R0R);
+    const Eigen::Vector3d &getSigma_R0R() const;
 
-    double sigma_R0R[3];                        //!< MRP from corrected reference frame to original reference frame R0. This is the same as [BcB] going from primary body frame B to the corrected body frame Bc
-    Message<AttGuidMsgPayload> attGuidOutMsg;              //!< output msg of attitude guidance
-    ReadFunctor<NavAttMsgPayload> attNavInMsg;                 //!< input msg measured attitude
-    ReadFunctor<AttRefMsgPayload> attRefInMsg;                 //!< input msg of reference attitude
-    BSKLogger bskLogger={};                       //!< BSK Logging
+    Message<AttGuidMsgPayload> attGuidOutMsg;   //!< Output attitude guidance message
+    ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< Input msg measured attitude
+    ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< Input msg of reference attitude
+    BSKLogger bskLogger = {};                   //!< BSK Logging
+
+   private:
+    Eigen::Vector3d sigma_R0R{};  //!< MRP from corrected reference frame to original reference frame R0. This is the
+                                  //!< same as [BcB] going from primary body frame B to the corrected body frame Bc
 };
 
 #endif

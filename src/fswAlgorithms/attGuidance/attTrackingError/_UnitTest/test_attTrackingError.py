@@ -15,89 +15,43 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-
-#
-#   Unit Test Script
-#   Module Name:        attTrackingError
-#   Author:             Hanspeter Schaub
-#   Creation Date:      January 15, 2016
-#
-
-import inspect
-import os
-
 import numpy as np
 
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
-
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
-
-
-
-
-
-
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport              # general support file with common unit test functions
-from Basilisk.fswAlgorithms import attTrackingError                  # import the module that is to be tested
+from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(conditionstring)
-# provide a unique test method name, starting with test_
-def test_attTrackingError(show_plots):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = subModuleTestFunction(show_plots)
-    assert testResults < 1, testMessage
-
-
-def subModuleTestFunction(show_plots):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+def test_attTrackingError():
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
+    # Create instance of attTrackingError
+    attitudeTrackingError = attTrackingError.AttTrackingError()
+    attitudeTrackingError.modelTag = "attTrackingError"
+    unitTestSim.AddModelToTask(unitTaskName, attitudeTrackingError)
+    sigma_R0R = [0.01, 0.05, -0.55]
+    attitudeTrackingError.setSigma_R0R(sigma_R0R)
 
-    # Construct algorithm and associated C++ container
-    module = attTrackingError.AttTrackingError()
-    module.modelTag = "attTrackingError"
-
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, module)
-
-    vector = [0.01, 0.05, -0.55]
-    module.sigma_R0R = vector
-
-    #
-    # Navigation Message
-    #
-    NavStateOutData = messaging.NavAttMsgPayload()  # Create a structure for the input message
+    # Create navigation message
+    NavStateOutData = messaging.NavAttMsgPayload()
     sigma_BN = [0.25, -0.45, 0.75]
     NavStateOutData.sigma_BN = sigma_BN
     omega_BN_B = [-0.015, -0.012, 0.005]
     NavStateOutData.omega_BN_B = omega_BN_B
     navStateInMsg = messaging.NavAttMsg().write(NavStateOutData)
 
-    #
-    # Reference Frame Message
-    #
-    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
+    # Create reference frame message
+    RefStateOutData = messaging.AttRefMsgPayload()
     sigma_RN = [0.35, -0.25, 0.15]
     RefStateOutData.sigma_RN = sigma_RN
     omega_RN_N = [0.018, -0.032, 0.015]
@@ -106,113 +60,42 @@ def subModuleTestFunction(show_plots):
     RefStateOutData.domega_RN_N = domega_RN_N
     refInMsg = messaging.AttRefMsg().write(RefStateOutData)
 
-    # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = module.attGuidOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    # Set up data logging
+    attGuidOutMsgLog = attitudeTrackingError.attGuidOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, attGuidOutMsgLog)
 
-    # connect messages
-    module.attNavInMsg.subscribeTo(navStateInMsg)
-    module.attRefInMsg.subscribeTo(refInMsg)
+    # Connect messages
+    attitudeTrackingError.attNavInMsg.subscribeTo(navStateInMsg)
+    attitudeTrackingError.attRefInMsg.subscribeTo(refInMsg)
 
-    # Need to call the self-init and cross-init methods
+    # Run the simulation
     unitTestSim.InitializeSimulation()
-
-    # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.3))        # seconds to stop simulation
-
-    # Begin the simulation time run set above
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.3))
     unitTestSim.ExecuteSimulation()
 
-    #
-    # check sigma_BR
-    #
-    moduleOutput = dataLog.sigma_BR[0]
+    # Extract logged data
+    sigma_BR = attGuidOutMsgLog.sigma_BR[0]
+    omega_BR_B = attGuidOutMsgLog.omega_BR_B[0]
+    omega_RN_B = attGuidOutMsgLog.omega_RN_B[0]
+    domega_RN_B = attGuidOutMsgLog.domega_RN_B[0]
 
-    sigma_RN2 = rbk.addMRP(np.array(sigma_RN), -np.array(vector))
-    RN = rbk.MRP2C(sigma_RN2)
-    BN = rbk.MRP2C(np.array(sigma_BN))
-    BR = np.dot(BN, RN.T)
-    # set the filtered output truth states
-    trueVector = rbk.C2MRP(BR)
+    # Compute truth values for test check
+    sigma_RN2 = rbk.addMRP(np.array(sigma_RN), -np.array(sigma_R0R))
+    dcm_RN = rbk.MRP2C(sigma_RN2)
+    dcm_BN = rbk.MRP2C(np.array(sigma_BN))
+    dcm_BR = np.dot(dcm_BN, dcm_RN.T)
+    sigma_BRTruth = rbk.C2MRP(dcm_BR)
+    omega_BR_BTruth = np.array(omega_BN_B) - np.dot(dcm_BN, np.array(omega_RN_N))
+    omega_RN_BTruth = np.dot(dcm_BN, np.array(omega_RN_N))
+    domega_RN_BTruth = np.dot(dcm_BN, np.array(domega_RN_N))
 
-    # compare the module results to the truth values
+    # Check truth values with module output
     accuracy = 1e-12
-    if not unitTestSupport.isArrayEqual(moduleOutput, trueVector, 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_BR unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_sigBR", "FAILED", path)
-    else:
-        unitTestSupport.writeTeXSnippet("passFail_sigBR", "PASSED", path)
-
-    #
-    # check omega_BR_B
-    #
-    moduleOutput = dataLog.omega_BR_B[0]
-
-    # set the filtered output truth states
-    trueVector = np.array(omega_BN_B) - np.dot(BN, np.array(omega_RN_N))
-
-    # compare the module results to the truth values
-    if not unitTestSupport.isArrayEqual(moduleOutput, trueVector, 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + module.modelTag + " Module failed omega_BR_B unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "FAILED", path)
-    else:
-        unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "PASSED", path)
-
-    #
-    # check omega_RN_B
-    #
-    moduleOutput = dataLog.omega_RN_B[0]
-
-    # set the filtered output truth states
-    trueVector = np.dot(BN, np.array(omega_RN_N))
-
-    # compare the module results to the truth values
-    if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + module.modelTag + " Module failed omega_RN_N unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "FAILED", path)
-    else:
-        unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "PASSED", path)
-
-    #
-    # check domega_RN_B
-    #
-    moduleOutput = dataLog.domega_RN_B[0]
-
-    # set the filtered output truth states
-    trueVector = np.dot(BN, np.array(domega_RN_N))
-
-    # compare the module results to the truth values
-    if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + module.modelTag + " Module failed domega_RN_B unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
-    else:
-        unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)
-
-    # Note that we can continue to step the simulation however we feel like.
-    # Just because we stop and query data does not mean everything has to stop for good
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
-    unitTestSim.ExecuteSimulation()
-
-    if testFailCount == 0:
-        print("PASSED: " + "attTrackingError test")
-    else:
-        print(testMessages)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    np.testing.assert_allclose(sigma_BRTruth, sigma_BR, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(omega_BR_BTruth, omega_BR_B, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(omega_RN_BTruth, omega_RN_B, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(domega_RN_BTruth, domega_RN_B, atol=accuracy, verbose=True)
 
 
-#
-# This statement below ensures that the unitTestScript can be run as a
-# stand-along python script
-#
 if __name__ == "__main__":
-    test_attTrackingError(False)
+    test_attTrackingError()

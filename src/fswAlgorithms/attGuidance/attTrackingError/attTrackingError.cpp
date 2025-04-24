@@ -16,10 +16,11 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <string.h>
 #include "fswAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
+
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 /*! This method performs the attitude computations in order to extract the error.
  @return void
@@ -28,35 +29,47 @@
  @param ref The reference attitude
  @param attGuidOut Output attitude guidance message
  */
-void computeAttitudeError(double sigma_R0R[3],
-                          NavAttMsgPayload nav,
-                          AttRefMsgPayload ref,
-                          AttGuidMsgPayload *attGuidOut){
-    double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
-    double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
-    double      dcm_BN[3][3];               /* DCM from inertial to body frame */
+void AttTrackingError::computeAttitudeError(Eigen::Vector3d sigma_R0R,
+                                            NavAttMsgPayload nav,
+                                            AttRefMsgPayload ref,
+                                            AttGuidMsgPayload *attGuidOut) {
+    // Compute MRP from the original reference frame R0 to the corrected reference frame R
+    Eigen::Vector3d sigma_RR0 = -1 * sigma_R0R;
 
-    /*! - compute the initial reference frame orientation that takes the corrected body frame into account */
-    v3Scale(-1.0, sigma_R0R, sigma_RR0);
-    addMRP(ref.sigma_RN, sigma_RR0, sigma_RN);
+    // Compute MRP from inertial to updated reference frame sigma_RN
+    Eigen::Vector3d sigma_RN = cArray2EigenVector3d(ref.sigma_RN);
+    sigma_RN = addMrp(sigma_RN, sigma_RR0);
 
-    subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR);               /*! - compute attitude error */
+    // Compute attitude error sigma_BR
+    Eigen::Vector3d sigma_BN = cArray2EigenVector3d(nav.sigma_BN);
+    Eigen::Vector3d sigma_BR = subMrp(sigma_BN, sigma_RN);
 
-    MRP2C(nav.sigma_BN, dcm_BN);                                /* [BN] */
-    m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B);              /*! - compute reference omega in body frame components */
+    // Compute angular velocity reference body frame components omega_RN_B
+    Eigen::Matrix3d dcm_BN = mrpToDcm(sigma_BN);
+    Eigen::Vector3d omega_RN_N = cArray2EigenVector3d(ref.omega_RN_N);
+    Eigen::Vector3d omega_RN_B = dcm_BN * omega_RN_N;
 
-    v3Subtract(nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
+    // Compute angular velocity error omega_BR
+    Eigen::Vector3d omega_BN_B = cArray2EigenVector3d(nav.omega_BN_B);
+    Eigen::Vector3d omega_BR_B = omega_BN_B - omega_RN_B;
 
-    m33MultV3(dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
+    // Compute reference angular velocity rate in body frame components domega_RN_B
+    Eigen::Vector3d domega_RN_N = cArray2EigenVector3d(ref.domega_RN_N);
+    Eigen::Vector3d domega_RN_B = dcm_BN * domega_RN_N;
 
+    // Write attitude guidance output message
+    eigenVector3d2CArray(omega_RN_B, attGuidOut->omega_RN_B);
+    eigenVector3d2CArray(omega_BR_B, attGuidOut->omega_BR_B);
+    eigenVector3d2CArray(sigma_BR, attGuidOut->sigma_BR);
+    eigenVector3d2CArray(domega_RN_B, attGuidOut->domega_RN_B);
 }
 
-/*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
+/*! This method performs a complete reset of the module. Local module variables that retain time varying states between
+ function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void AttTrackingError::reset(uint64_t callTime)
-{
+void AttTrackingError::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->attRefInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: attTrackingError.attRefInMsg wasn't connected.");
@@ -64,26 +77,31 @@ void AttTrackingError::reset(uint64_t callTime)
     if (!this->attNavInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: attTrackingError.attNavInMsg wasn't connected.");
     }
-
-    return;
 }
 
-/*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the Reference message (containing the desired attitude). It computes the attitude error and writes it in the Guidance message.
+/*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the
+ Reference message (containing the desired attitude). It computes the attitude error and writes it in the Guidance
+ message.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void AttTrackingError::updateState(uint64_t callTime)
-{
-    AttRefMsgPayload ref;                      /* reference guidance message */
-    NavAttMsgPayload nav;                      /* navigation message */
-    AttGuidMsgPayload attGuidOut = {};              /* Guidance message */
+void AttTrackingError::updateState(uint64_t callTime) {
+    AttRefMsgPayload ref = this->attRefInMsg();
 
-    ref = this->attRefInMsg();
-    nav = this->attNavInMsg();
+    NavAttMsgPayload nav = this->attNavInMsg();
 
+    AttGuidMsgPayload attGuidOut{};  // Guidance message
     computeAttitudeError(this->sigma_R0R, nav, ref, &attGuidOut);
-
     this->attGuidOutMsg.write(&attGuidOut, this->moduleID, callTime);
-
-    return;
 }
+
+/*! Setter method for sigma_R0R.
+ @return void
+ @param sigma_R0R
+*/
+void AttTrackingError::setSigma_R0R(const Eigen::Vector3d &sigma_R0R) { this->sigma_R0R = sigma_R0R; }
+
+/*! Getter method for sigma_R0R.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &AttTrackingError::getSigma_R0R() const { return this->sigma_R0R; }
