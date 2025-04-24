@@ -29,8 +29,8 @@ void KalmanFilter::reset(uint64_t currentSimNanos) {
     this->stateLogged = this->state;
     this->covar = this->unitConversion*this->unitConversion * this->covarInitial;
     this->covar.resize(this->state.size(), this->state.size());
-
     this->previousFilterTimeTag = (double) currentSimNanos*NANO2SEC;
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! Take the relative position measurements and output an estimate of the
