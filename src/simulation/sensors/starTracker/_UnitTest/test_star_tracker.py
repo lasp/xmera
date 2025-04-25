@@ -61,13 +61,13 @@ def test_starTracker(show_plots, useFlag, testCase):
     unitSim.AddModelToTask(unitTaskName, StarTracker)
 
     # Configure starTracker SCState input message
-    OutputStateData = messaging.SCStatesMsgPayload()
-    OutputStateData.r_BN_N = [0, 0, 0]
-    OutputStateData.v_BN_N = [0, 0, 0]
-    OutputStateData.sigma_BN = [0, 0, 0]
-    OutputStateData.omega_BN_B = [0, 0, 0]
-    OutputStateData.TotalAccumDVBdy = [0, 0, 0]
-    OutputStateData.MRPSwitchCount = 0
+    scStatesMessageData = messaging.SCStatesMsgPayload()
+    scStatesMessageData.r_BN_N = [0, 0, 0]
+    scStatesMessageData.v_BN_N = [0, 0, 0]
+    scStatesMessageData.sigma_BN = [0, 0, 0]
+    scStatesMessageData.omega_BN_B = [0, 0, 0]
+    scStatesMessageData.TotalAccumDVBdy = [0, 0, 0]
+    scStatesMessageData.MRPSwitchCount = 0
 
     trueVector = dict()
 
@@ -75,7 +75,7 @@ def test_starTracker(show_plots, useFlag, testCase):
     if testCase == 'basic':
         simStopTime = 0.5
         sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
-        OutputStateData.sigma_BN = sigma
+        scStatesMessageData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
         trueVector['timeTag'] = np.arange(0, 0 + simStopTime*1E9, unitProcRate_s*1E9)
 
@@ -85,7 +85,7 @@ def test_starTracker(show_plots, useFlag, testCase):
         stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
         setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[1.0e-13], [1.0e-13], [1.0e-13]])
         sigma = np.array([0, 0, 0])
-        OutputStateData.sigma_BN = sigma
+        scStatesMessageData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = [noiseStd] * 3
         trueVector['timeTag'] = np.arange(0, 0 + simStopTime*1E9, unitProcRate_s*1E9)
 
@@ -97,7 +97,7 @@ def test_starTracker(show_plots, useFlag, testCase):
         walkBound = 0.1
         setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[walkBound], [walkBound], [walkBound]])
         sigma = np.array([0, 0, 0])
-        OutputStateData.sigma_BN = sigma
+        scStatesMessageData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = [walkBound + noiseStd*3] * 3
         trueVector['timeTag'] = np.arange(0, 0+simStopTime*1E9, unitProcRate_s*1E9)
 
@@ -105,19 +105,19 @@ def test_starTracker(show_plots, useFlag, testCase):
         raise Exception('invalid test case')
 
     # Set up data logging
-    dataLog = StarTracker.sensorOutMsg.recorder()
-    unitSim.AddModelToTask(unitTaskName, dataLog)
+    starTrackerSensorMsgDataLog = StarTracker.sensorOutMsg.recorder()
+    unitSim.AddModelToTask(unitTaskName, starTrackerSensorMsgDataLog)
 
     # Configure spacecraft state message
-    scMsg = messaging.SCStatesMsg().write(OutputStateData)
-    StarTracker.scStateInMsg.subscribeTo(scMsg)
+    scStatesMessage = messaging.SCStatesMsg().write(scStatesMessageData)
+    StarTracker.scStateInMsg.subscribeTo(scStatesMessage)
 
     unitSim.InitializeSimulation()
     unitSim.ConfigureStopTime(macros.sec2nano(simStopTime))
     unitSim.ExecuteSimulation()
 
     # Extract logged data for test check
-    beta_CN = dataLog.qInrtl2Case
+    beta_CN = starTrackerSensorMsgDataLog.qInrtl2Case
 
     # Convert quaternion output to prv
     prv_CN = np.zeros([int(simStopTime/unitProcRate_s)+1, 3])
