@@ -28,45 +28,45 @@ void LinearODeKF::customreset() {
     /*! - Check if the required message has not been connected */
     assert(this->opNavHeadingMsg.isLinked());
     if (this->constantVelocityInitial) {
-        this->constantVelocity = this->constantVelocityInitial.value()*this->unitConversion;
+        this->constantVelocity = this->constantVelocityInitial.value() * this->unitConversion;
     }
     /*! - Set the dynamics matrix calculator*/
-    std::function<Eigen::MatrixXd(double, const FilterStateVector)> dynamicsMatrixCalculator= [this]
-            (double time, const FilterStateVector &state){
-        Eigen::VectorXd position = state.getPositionStates();
-        Eigen::MatrixXd dynamicsMatrix = Eigen::MatrixXd::Zero(state.size(), state.size());
-        if (!this->constantVelocity) {
-            dynamicsMatrix.block(0, position.size(), position.size(), position.size()) =
+    std::function<Eigen::MatrixXd(double, const FilterStateVector)> dynamicsMatrixCalculator =
+        [this](double time, const FilterStateVector &state) {
+            Eigen::VectorXd position = state.getPositionStates();
+            Eigen::MatrixXd dynamicsMatrix = Eigen::MatrixXd::Zero(state.size(), state.size());
+            if (!this->constantVelocity) {
+                dynamicsMatrix.block(0, position.size(), position.size(), position.size()) =
                     Eigen::MatrixXd::Identity(position.size(), position.size());
-        }
-        return dynamicsMatrix;
-    };
+            }
+            return dynamicsMatrix;
+        };
 
     this->dynamics.setDynamicsMatrix(dynamicsMatrixCalculator);
 
     /*! - Set the filter dynamics (linear) */
-    std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics = [this](double t, const FilterStateVector &state){
-        FilterStateVector XDot;
-        PositionState stateDerivative;
+    std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics =
+        [this](double t, const FilterStateVector &state) {
+            FilterStateVector XDot;
+            PositionState stateDerivative;
 
-        if (this->constantVelocity) {
-            stateDerivative.setValues(this->constantVelocity.value());
-        }
-        else {
-            stateDerivative.setValues(state.getVelocityStates());
-            VelocityState flybyVelocity;
-            flybyVelocity.setValues(Eigen::Vector3d::Zero());
-            XDot.setVelocity(flybyVelocity);
-        }
+            if (this->constantVelocity) {
+                stateDerivative.setValues(this->constantVelocity.value());
+            } else {
+                stateDerivative.setValues(state.getVelocityStates());
+                VelocityState flybyVelocity;
+                flybyVelocity.setValues(Eigen::Vector3d::Zero());
+                XDot.setVelocity(flybyVelocity);
+            }
 
-        XDot.setPosition(stateDerivative);
-        Eigen::MatrixXd stm = state.detachStm();
+            XDot.setPosition(stateDerivative);
+            Eigen::MatrixXd stm = state.detachStm();
 
-        Eigen::MatrixXd dynMatrix = this->dynamics.computeDynamicsMatrix(t, state);
-        XDot.attachStm(dynMatrix*stm);
+            Eigen::MatrixXd dynMatrix = this->dynamics.computeDynamicsMatrix(t, state);
+            XDot.attachStm(dynMatrix * stm);
 
-        return XDot;
-    };
+            return XDot;
+        };
     this->dynamics.setDynamics(twoBodyDynamics);
 }
 
@@ -80,19 +80,20 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
     FilterResidualsMsgPayload residualsBuffer = this->opNavResidualMsg.zeroMsgPayload;
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    eigenMatrixXd2CArray(this->stateLogged.scale(1/this->unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
-    if (this->constantVelocityInitial){
+    eigenMatrixXd2CArray(this->stateLogged.scale(1 / this->unitConversion).getPositionStates(),
+                         navTransOutMsgBuffer.r_BN_N);
+    if (this->constantVelocityInitial) {
         eigenMatrixXd2CArray(constantVelocityInitial.value(), navTransOutMsgBuffer.v_BN_N);
-    }
-    else{
-        eigenMatrixXd2CArray(this->stateLogged.scale(1/this->unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
+    } else {
+        eigenMatrixXd2CArray(this->stateLogged.scale(1 / this->unitConversion).getVelocityStates(),
+                             navTransOutMsgBuffer.v_BN_N);
     }
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXd2CArray(this->stateLogged.scale(1/this->unitConversion).returnValues(), opNavFilterMsgBuffer.state);
-    eigenMatrixXd2CArray(1/this->unitConversion*this->stateError, opNavFilterMsgBuffer.stateError);
-    eigenMatrixXd2CArray(1/this->unitConversion/this->unitConversion*this->covar, opNavFilterMsgBuffer.covar);
+    eigenMatrixXd2CArray(this->stateLogged.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.state);
+    eigenMatrixXd2CArray(1 / this->unitConversion * this->stateError, opNavFilterMsgBuffer.stateError);
+    eigenMatrixXd2CArray(1 / this->unitConversion / this->unitConversion * this->covar, opNavFilterMsgBuffer.covar);
     opNavFilterMsgBuffer.numberOfStates = this->state.size();
 
     auto optionalMeasurement = this->measurements[0];
@@ -123,13 +124,13 @@ void LinearODeKF::readFilterMeasurements() {
     headingMeasurement.setTimeTag(this->opNavHeadingBuffer.timeTag);
     headingMeasurement.setValidity(this->opNavHeadingBuffer.valid);
 
-    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->previousFilterTimeTag){
+    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->previousFilterTimeTag) {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArray2EigenVector3d(this->opNavHeadingBuffer.rhat_BN_N).normalized());
-        headingMeasurement.setMeasurementNoise(
-                this->measNoiseScaling * cArray2EigenMatrixXd(this->opNavHeadingBuffer.covar_N,
-                                                                   (int) headingMeasurement.size(),
-                                                                   (int) headingMeasurement.size()));
+        headingMeasurement.setMeasurementNoise(this->measNoiseScaling *
+                                               cArray2EigenMatrixXd(this->opNavHeadingBuffer.covar_N,
+                                                                    (int)headingMeasurement.size(),
+                                                                    (int)headingMeasurement.size()));
         headingMeasurement.setMeasurementModel(MeasurementModel::normalizedPositionStates);
         headingMeasurement.setMeasurementMatrix(LinearODeKF::measurementMatrix);
         this->measurements[0] = headingMeasurement;
@@ -140,13 +141,13 @@ void LinearODeKF::readFilterMeasurements() {
     @param FilterStateVector state
     @return Eigen::MatrixXd
 */
-Eigen::MatrixXd LinearODeKF::measurementMatrix(const FilterStateVector &state){
-
+Eigen::MatrixXd LinearODeKF::measurementMatrix(const FilterStateVector &state) {
     Eigen::Vector3d position = state.getPositionStates();
     Eigen::MatrixXd measurementMatrix = Eigen::MatrixXd::Zero(position.size(), state.size());
     measurementMatrix.block(0, 0, position.size(), position.size()) =
-            1/position.norm()*(Eigen::MatrixXd::Identity(position.size(), position.size())
-            - 1/pow(position.norm(), 2)*position*position.transpose());
+        1 / position.norm() *
+        (Eigen::MatrixXd::Identity(position.size(), position.size()) -
+         1 / pow(position.norm(), 2) * position * position.transpose());
 
     return measurementMatrix;
 }
@@ -154,7 +155,7 @@ Eigen::MatrixXd LinearODeKF::measurementMatrix(const FilterStateVector &state){
 /*! Set a constant velocity vector that will not be estimated. Assert that velocity is not part of the state
     @param Eigen::Vector3d velocity
     */
-void LinearODeKF::setConstantVelocity(const Eigen::Vector3d &velocity){
+void LinearODeKF::setConstantVelocity(const Eigen::Vector3d &velocity) {
     assert(this->state.hasVelocity() == false);
     this->constantVelocityInitial = velocity;
 }
@@ -162,6 +163,4 @@ void LinearODeKF::setConstantVelocity(const Eigen::Vector3d &velocity){
 /*! Get the constant velocity vector
     @return std::optional<Eigen::Vector3d> velocity
     */
-std::optional<Eigen::Vector3d> LinearODeKF::getConstantVelocity() const {
-    return this->constantVelocityInitial;
-}
+std::optional<Eigen::Vector3d> LinearODeKF::getConstantVelocity() const { return this->constantVelocityInitial; }
