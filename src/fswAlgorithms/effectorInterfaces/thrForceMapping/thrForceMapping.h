@@ -43,19 +43,19 @@ public:
     Vector36d findMinimumNormForce(const Eigen::Matrix<double,3,MAX_EFF_CNT>& D,
                                    const Eigen::Vector3d& Lr_B,
                                    uint32_t numForces);
+    Eigen::Matrix3d getControlAxesB() const;
+    void setControlAxesB(const Eigen::Matrix3d& axes);
+    Vector36d getThrForceMag() const;
+    void setThrForceMag(const Vector36d& forceMag);
+    int32_t getThrForceSign() const;
+    void setThrForceSign(int32_t sign);
+    double getAngErrThresh() const;
+    void setAngErrThresh(double thresh);
+    double getEpsilon() const;
+    void setEpsilon(double eps);
+    bool getUse2ndLoop() const;
+    void setUse2ndLoop(bool loopFlag);
 
-    /* declare module public variables */
-    Eigen::Matrix3d controlAxes_B; //!< [] array of the control unit axes
-    Vector36d thrForceMag; //!< vector of thruster force magnitudes
-    int32_t  thrForceSign;                          //!< []      Flag indicating if pos (+1) or negative (-1) thruster solutions are found
-    double angErrThresh;                            //!< [r]     Angular error at which thruster forces are scaled to not be super-saturated
-    double   epsilon;                               //!<         variable specifying what is considered a small number
-    uint32_t use2ndLoop;                            //!< []      flag indicating if the 2nd least squares fitting loop should be used (1) or not used (0 - default)
-
-    /* declare module private variables */
-    uint32_t numControlAxes;                        //!< []      counter indicating how many orthogonal axes are controlled
-    uint32_t numThrusters;                          //!< []      The number of thrusters available on vehicle
-    double outTorqAngErr;                           //!< [r]     Angular error of effector torque
     /* declare module IO interfaces */
     Message<THRArrayCmdForceMsgPayload> thrForceCmdOutMsg;        //!< The name of the output thruster force message
     ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;              //!< The name of the vehicle control (Lr) Input message
@@ -65,8 +65,19 @@ public:
 
     BSKLogger bskLogger={};                             //!< BSK Logging
 
-    Eigen::Matrix<double, MAX_EFF_CNT, 3> rThruster_B; //!< [m] local copy of the thruster locations
-    Eigen::Matrix<double, MAX_EFF_CNT, 3> gtThruster_B; //!< [] local copy of the thruster force unit direction vectors
+
+private:
+    Eigen::Matrix3d controlAxes_B{}; //!< [] array of the control unit axes
+    Vector36d thrForceMag{}; //!< vector of thruster force magnitudes
+    int32_t thrForceSign{}; //!< [] Flag indicating if positive or negative thruster solutions are found
+    double angErrThresh{}; //!< [r] Angular error at which thruster forces are scaled to not be super-saturated
+    double epsilon{}; //!< variable specifying what is considered a small number
+    bool use2ndLoop{}; //!< [] flag indicating if the 2nd least squares fitting loop should be used (1) or not used (0 - default)
+    uint32_t numControlAxes{}; //!< [] counter indicating how many orthogonal axes are controlled
+    uint32_t numThrusters{}; //!< [] The number of thrusters available on vehicle
+    double outTorqAngErr{}; //!< [r] Angular error of effector torque
+    Eigen::Matrix<double, MAX_EFF_CNT, 3> rThruster_B{}; //!< [m] local copy of the thruster locations
+    Eigen::Matrix<double, MAX_EFF_CNT, 3> gtThruster_B{}; //!< [] local copy of the thruster force unit direction vectors
 };
 
 
