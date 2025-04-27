@@ -58,7 +58,7 @@ void ThrForceMapping::reset(uint64_t callTime) {
     this->sc = this->vehConfigInMsg();
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
-    this->numThrusters = (uint32_t)localThrusterData.numThrusters;
+    this->numThrusters = localThrusterData.numThrusters;
     for (uint32_t i = 0; i < this->numThrusters; ++i) {
         this->rThruster_B.row(i) = Eigen::Map<Eigen::Vector3d>(localThrusterData.thrusters[i].rThrust_B);
         this->gtThruster_B.row(i) =
