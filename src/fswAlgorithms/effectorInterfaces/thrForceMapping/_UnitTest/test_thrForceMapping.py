@@ -62,7 +62,7 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.use2ndLoop = use2ndLoop
+    module.setUse2ndLoop(use2ndLoop)
 
     # write vehicle configuration message
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
@@ -80,14 +80,14 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     if saturateThrusters>0:        # default angErrThresh is 0, thus this should trigger scaling
         requestedTorque = [10.0, -5.0, 7.0]
     if saturateThrusters==2:        # angle is set and small enough to trigger scaling
-        module.angErrThresh = 10.0*macros.D2R
+        module.setAngErrThresh(10.0*macros.D2R)
     if saturateThrusters==3:        # angle is too large enough to trigger scaling
-        module.angErrThresh = 40.0*macros.D2R
+        module.setAngErrThresh(40.0*macros.D2R)
 
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
     cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
 
-    module.epsilon = 0.0005
+    module.setEpsilon(0.0005)
     fswSetupThrusters.clearSetup()
     MAX_EFF_CNT = messaging.MAX_EFF_CNT
     rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
@@ -101,11 +101,11 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     start_index = -controlAxes_B.shape[0] + numControlAxis
     if start_index != 0:
         controlAxes_B[start_index:] = 0
-    module.controlAxes_B = controlAxes_B
+    module.setControlAxesB(controlAxes_B)
 
     if useDVThruster:
         # DV thruster setup
-        module.thrForceSign = -1
+        module.setThrForceSign(-1)
         numThrusters = 6
         rcsLocationData[0:6] = [ \
             [0, 0.413, -0.1671],
@@ -125,7 +125,7 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
             ]
     else:
         # RCS thruster setup
-        module.thrForceSign = +1
+        module.setThrForceSign(1)
         numThrusters = 8
         rcsLocationData[0:8] = [ \
                 [-0.86360, -0.82550, 1.79070],
@@ -218,15 +218,15 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     moduleOutput = dataLog.thrForce
 
     results = thrForceMapping.Results_thrForceMapping(requestedTorque,
-                                                      module.controlAxes_B,
+                                                      module.getControlAxesB(),
                                                       vehicleConfigOut.CoM_B,
                                                       rcsLocationData,
                                                       rcsDirectionData,
-                                                      module.thrForceSign,
-                                                      module.thrForceMag,
-                                                      module.angErrThresh,
+                                                      module.getThrForceSign(),
+                                                      module.getThrForceMag(),
+                                                      module.getAngErrThresh(),
                                                       numThrusters,
-                                                      module.epsilon,
+                                                      module.getEpsilon(),
                                                       use2ndLoop)
 
     F, DNew = results.results_thrForceMapping()
@@ -244,8 +244,8 @@ def test_thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster
     Lr_offset = np.array([0.0, 0.0, 0.0])
     Lr_B = np.array([0.0, 0.0, 0.0])
     for i in range(0,numThrusters):
-        if module.thrForceSign < 0 and module.thrForceMag[i][0] >= 0:
-            Lr_offset -= module.thrForceMag[i][0]*np.cross(rcsLocationData[i,:]-CoM_B, rcsDirectionData[i,:]) # off pulsing
+        if module.getThrForceSign() < 0 and module.getThrForceMag()[i][0] >= 0:
+            Lr_offset -= module.getThrForceMag()[i][0]*np.cross(rcsLocationData[i,:]-CoM_B, rcsDirectionData[i,:]) # off pulsing
 
     Lr_B = requestedTorque + Lr_offset
 

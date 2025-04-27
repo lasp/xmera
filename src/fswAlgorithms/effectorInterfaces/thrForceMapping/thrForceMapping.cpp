@@ -315,3 +315,75 @@ double computeTorqueAngErr(Eigen::Matrix<double, 3, MAX_EFF_CNT> D,
     }
     return returnAngle;
 }
+
+/**
+ * @brief Get the control axes in the body frame.
+ * @return 3x3 matrix representing the control axes in the body frame.
+ */
+Eigen::Matrix3d ThrForceMapping::getControlAxesB() const { return this->controlAxes_B; }
+
+/**
+ * @brief Set the control axes in body frame.
+ * @param axes A 3x3 matrix representing the control axes in body frame.
+ */
+void ThrForceMapping::setControlAxesB(const Eigen::Matrix3d& axes) { this->controlAxes_B = axes; }
+
+/**
+ * @brief Get the thruster force magnitudes.
+ * @return A vector of thruster force magnitudes.
+ */
+Vector36d ThrForceMapping::getThrForceMag() const { return this->thrForceMag; }
+
+/**
+ * @brief Set the thruster force magnitudes.
+ * @param forceMag A vector of thruster force magnitudes.
+ */
+void ThrForceMapping::setThrForceMag(const Vector36d& forceMag) { this->thrForceMag = forceMag; }
+
+/**
+ * @brief Get the sign of the thruster forces.
+ * @return The sign of the thruster forces (POSITIVE or NEGATIVE).
+ */
+int32_t ThrForceMapping::getThrForceSign() const { return this->thrForceSign; }
+
+/**
+ * @brief Set the sign of the thruster forces.
+ * @param sign The sign of the thruster forces (POSITIVE or NEGATIVE).
+ */
+void ThrForceMapping::setThrForceSign(int32_t sign) { this->thrForceSign = sign; }
+
+/**
+ * @brief Get the angular error threshold.
+ * @return The angular error threshold.
+ */
+double ThrForceMapping::getAngErrThresh() const { return this->angErrThresh; }
+
+/**
+ * @brief Set the angular error threshold.
+ * @param The new angular error threshold.
+ */
+void ThrForceMapping::setAngErrThresh(double thresh) { this->angErrThresh = thresh; }
+
+/**
+ * @brief Get the epsilon value.
+ * @return The epsilon value.
+ */
+double ThrForceMapping::getEpsilon() const { return this->epsilon; }
+
+/**
+ * @brief Set the epsilon value.
+ * @param The new epsilon value.
+ */
+void ThrForceMapping::setEpsilon(double eps) { this->epsilon = eps; }
+
+/**
+ * @brief Check if the second least squares fitting loop should be used.
+ * @return True if the 2nd loop should be used, false otherwise.
+ */
+bool ThrForceMapping::getUse2ndLoop() const { return this->use2ndLoop; }
+
+/**
+ * @brief Set if the second least squares fitting loop should be used.
+ * @return True if the 2nd loop should be used, false otherwise.
+ */
+void ThrForceMapping::setUse2ndLoop(bool loopFlag) { this->use2ndLoop = loopFlag; }
