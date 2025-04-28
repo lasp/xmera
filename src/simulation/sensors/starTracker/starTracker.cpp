@@ -91,6 +91,9 @@ void StarTracker::applySensorErrors() {
     Eigen::Vector3d sigmaSensed;
     sigmaSensed = addMrp(cArray2EigenVector3d(this->scState.sigma_BN), this->mrpErrors);
 
+    // Save the previous sensed quaternion before computing the current sensed quaternion
+    this->betaPrevious_CN = cArray2EigenVector4d(this->sensedValues.qInrtl2Case);
+
     this->computeQuaternion(&sigmaSensed, &this->sensedValues);
     this->sensedValues.timeTag = this->sensorTimeTag;
 }
@@ -136,4 +139,5 @@ void StarTracker::updateState(uint64_t currentSimNanos) {
     this->computeTrueOutput();
     this->applySensorErrors();
     this->writeOutputMessages(currentSimNanos);
+    this->previousSimTime = currentSimNanos;
 }

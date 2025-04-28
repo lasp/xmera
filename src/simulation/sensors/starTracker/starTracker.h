@@ -66,6 +66,12 @@ class StarTracker : public SysModel {
    private:
     Eigen::Matrix3d AMatrix;  //!< [-] AMatrix that we use for error propagation
     GaussMarkov errorModel;   //!< [-] Gauss-markov error states
+
+    uint64_t previousSimTime = 0;  //!< [ns] Previous sim time
+    Eigen::Vector4d betaPrevious_CN{1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0};  //!< Previous sensed quaternion from inertial to platform case frame
 };
 
 #endif
