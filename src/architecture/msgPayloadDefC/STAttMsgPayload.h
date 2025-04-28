@@ -20,12 +20,11 @@
 #ifndef ST_ATTITUDE_MESSAGE_H
 #define ST_ATTITUDE_MESSAGE_H
 
-
 /*! @brief Output structure for ST attitude measurement in vehicle body frame*/
 typedef struct {
-    uint64_t timeTag;           //!< [ns] Vehicle time code associated with measurement
-    double MRP_BdyInrtl[3];     //!< [-] MRP estimate of inertial to body transformation
-}STAttMsgPayload;
-
+    uint64_t timeTag;        //!< [ns] Vehicle time code associated with measurement
+    double MRP_BdyInrtl[3];  //!< [-] MRP estimate of inertial to body transformation
+    double omega_BN_B[3];    //!< [rad/s] Platform inertial angular velocity
+} STAttMsgPayload;
 
 #endif
