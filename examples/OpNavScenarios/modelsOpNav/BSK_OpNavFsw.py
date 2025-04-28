@@ -373,8 +373,8 @@ class BSKFswModels():
         M_cam = rbk.MRP2C(SimBase.DynModels.cameraMRP_CB)
 
         MRP = rbk.C2MRP(np.dot(np.dot(M3, M2), M_cam)) # This assures that the s/c does not control to the hill frame, but to a rotated frame such that the camera is pointing to the planet
-        self.trackingErrorCam.sigma_R0R = MRP
-        # self.trackingErrorCamData.sigma_R0R = [1./3+0.1, 1./3-0.1, 0.1-1/3]
+        self.trackingErrorCam.setSigma_R0R(MRP)
+        # self.trackingErrorCamData.setSigma_R0R([1./3+0.1, 1./3-0.1, 0.1-1/3])
 
     def SetMRPFeedbackRWA(self, SimBase):
         self.mrpFeedbackRWs.K = 3.5

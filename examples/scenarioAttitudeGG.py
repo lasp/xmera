@@ -208,7 +208,7 @@ def run(show_plots):
     attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
 
-    attError.sigma_R0R = [0, 0.2, 0]
+    attError.setSigma_R0R([0, 0.2, 0])
 
     # setup the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()

@@ -100,7 +100,7 @@ the Earth.  Thus, we define the corrected body frame orientation as a 180 deg ro
 :math:`\hat b_2`.  This flips the orientation of the final first and third body axis.  This is achieved
 through::
 
-  attError.sigma_R0R = [0,1,0]
+  attError.setSigma_R0R([0,1,0])
 
 The DCM :math:`[R_0R]` is the same as the body to corrected body DCM :math:`[B_cB]`.
 The resulting attitude and control torque histories are shown below.  Note that the projections
@@ -337,7 +337,7 @@ def run(show_plots, useAltBodyFrame):
     attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
     if useAltBodyFrame:
-        attError.sigma_R0R = [0, 1, 0]
+        attError.setSigma_R0R([0, 1, 0])
     attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
