@@ -45,7 +45,7 @@ enum class PhaseAngleCorrectionMethod { NoCorrection, Lambertian, Binary };
 /*! @brief visual limb finding module */
 class CobConverter : public SysModel {
    public:
-    CobConverter(PhaseAngleCorrectionMethod method, double radiusObject);
+    CobConverter(PhaseAngleCorrectionMethod method, double radiusObject, double objectUncertaintyRadius);
     ~CobConverter();
 
     void updateState(uint64_t currentSimNanos);
@@ -53,6 +53,8 @@ class CobConverter : public SysModel {
 
     void setRadius(const double radius);
     double getRadius() const;
+    void setRadiusUncertainty(const double radiusUncertainty);
+    double getRadiusUncertainty() const;
     void setAttitudeCovariance(const Eigen::Matrix3d covAtt_BN_B);
     Eigen::Matrix3d getAttitudeCovariance() const;
     void setNumStandardDeviations(const double num);
@@ -89,6 +91,7 @@ class CobConverter : public SysModel {
    private:
     PhaseAngleCorrectionMethod phaseAngleCorrectionMethod;
     double objectRadius{};
+    double objectRadiusUncertainty{};
     Eigen::Matrix3d covarAtt_BN_B{};
     double numStandardDeviations = 3;
     double standardDeviation{};
