@@ -19,7 +19,6 @@
 
 #include "sunSafePointCpp.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <math.h>
 
@@ -77,7 +76,8 @@ void SunSafePointCpp::updateState(uint64_t callTime) {
     if (this->sunDirectionIsAvailable(sHatNorm)) {
         this->computeAttGuidanceStates(sHatNorm);
     } else {
-        v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+        Eigen::Vector3d sigma_BR = Eigen::Vector3d::Zero();
+        eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
     }
 
     // Compute the hub angular rate error omega_BR_B
@@ -97,11 +97,13 @@ void SunSafePointCpp::computeAttGuidanceStates(double sHatNorm) {
                                    / sHatNorm;
     dotProductNormalized = fabs(dotProductNormalized) > 1.0 ?
     dotProductNormalized/fabs(dotProductNormalized) : dotProductNormalized;
-    this->sunAngleErr = safeAcos(dotProductNormalized);
+    this->sunAngleErr = std::acos(std::max(-1.0, std::min(1.0, dotProductNormalized)));
 
     // Compute the heading error relative to the sun direction vector
     if (this->sunAngleErr < this->smallAngle) {  // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
-        v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+        Eigen::Vector3d sigma_BR;
+        sigma_BR.setZero();
+        eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
     } else {
          Eigen::Vector3d e_hat;  // Eigen Axis
         if (M_PI - this->sunAngleErr < this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
