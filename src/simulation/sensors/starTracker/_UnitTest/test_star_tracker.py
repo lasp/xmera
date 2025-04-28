@@ -31,8 +31,8 @@ def listStack(vec, simStopTime, unitProcRate):
 def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [[1e6],[1e6],[1e6]]):
     # sets the module random walk variables
     PMatrix = [[senNoiseStd, 0., 0.], [0., senNoiseStd, 0.], [0., 0., senNoiseStd]]
-    self.PMatrix = PMatrix
-    self.walkBounds = errorBounds
+    self.setPMatrix(PMatrix)
+    self.setWalkBounds(errorBounds)
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

@@ -99,7 +99,7 @@ void StarTracker::applySensorErrors() {
     @param sigma
     @param sensorValues
  */
-void StarTracker::computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValues) {
+void StarTracker::computeQuaternion(Eigen::Vector3d *sigma, STSensorMsgPayload *sensorValues) {
     Eigen::Matrix3d dcm_BN; /* dcm, inertial to body frame */
     dcm_BN = mrpToDcm(*sigma);
 
@@ -165,3 +165,25 @@ void StarTracker::updateState(uint64_t currentSimNanos) {
     this->writeOutputMessages(currentSimNanos);
     this->previousSimTime = currentSimNanos;
 }
+
+/*! Setter method for PMatrix.
+ @return void
+ @param PMatrix
+*/
+void StarTracker::setPMatrix(const Eigen::Matrix3d &PMatrix) { this->PMatrix = PMatrix; }
+
+/*! Setter method for walkBounds.
+ @return void
+ @param walkBounds
+*/
+void StarTracker::setWalkBounds(const Eigen::Vector3d &walkBounds) { this->walkBounds = walkBounds; }
+
+/*! Getter method for PMatrix.
+ @return const Eigen::Matrix3d
+*/
+const Eigen::Matrix3d &StarTracker::getPMatrix() const { return this->PMatrix; }
+
+/*! Getter method for walkBounds.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &StarTracker::getWalkBounds() const { return this->walkBounds; }
