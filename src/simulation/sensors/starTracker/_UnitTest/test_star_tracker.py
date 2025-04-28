@@ -75,9 +75,15 @@ def test_starTracker(show_plots, useFlag, testCase):
     # This test verifies basic input and output
     if testCase == 'basic':
         simStopTime = 0.5
-        sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
-        scStatesMessageData.sigma_BN = sigma
-        trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
+        prv_CB = [0.0, 0.0, 10.0 * macros.D2R]
+        dcm_CB = rbk.PRV2C(prv_CB)
+        StarTracker.setDcmCB(dcm_CB)
+        sigma_BN = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
+        sigma_CB = rbk.C2MRP(dcm_CB)
+        sigma_CN = rbk.addMRP(sigma_BN, sigma_CB)
+        beta_CN = rbk.MRP2EP(sigma_CN)
+        scStatesMessageData.sigma_BN = sigma_BN
+        trueVector['qInrtl2Case'] = listStack(beta_CN, simStopTime, unitProcRate)
         trueVector['timeTag'] = np.arange(0, 0 + simStopTime*1E9, unitProcRate_s*1E9)
 
     elif testCase == 'noise':
@@ -85,8 +91,8 @@ def test_starTracker(show_plots, useFlag, testCase):
         noiseStd = 0.1
         stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
         setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[1.0e-13], [1.0e-13], [1.0e-13]])
-        sigma = np.array([0, 0, 0])
-        scStatesMessageData.sigma_BN = sigma
+        sigma_BN = np.array([0, 0, 0])
+        scStatesMessageData.sigma_BN = sigma_BN
         trueVector['qInrtl2Case'] = [noiseStd] * 3
         trueVector['timeTag'] = np.arange(0, 0 + simStopTime*1E9, unitProcRate_s*1E9)
 
@@ -97,16 +103,19 @@ def test_starTracker(show_plots, useFlag, testCase):
         stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
         walkBound = 0.1
         setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[walkBound], [walkBound], [walkBound]])
-        sigma = np.array([0, 0, 0])
-        scStatesMessageData.sigma_BN = sigma
+        sigma_BN = np.array([0, 0, 0])
+        scStatesMessageData.sigma_BN = sigma_BN
         trueVector['qInrtl2Case'] = [walkBound + noiseStd*3] * 3
         trueVector['timeTag'] = np.arange(0, 0+simStopTime*1E9, unitProcRate_s*1E9)
 
     # This test checks the computed platform rate
     elif testCase == 'angular velocity check':
+        prv_CB = [0.0, 0.0, 10.0 * macros.D2R]
+        dcm_CB = rbk.PRV2C(prv_CB)
+        StarTracker.setDcmCB(dcm_CB)
         simStopTime = unitProcRate_s
-        sigma = np.array([0, 0, 0])
-        scStatesMessageData.sigma_BN = sigma
+        sigma_BN = np.array([0, 0, 0])
+        scStatesMessageData.sigma_BN = sigma_BN
 
     else:
         raise Exception('invalid test case')
