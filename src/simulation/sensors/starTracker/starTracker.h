@@ -45,6 +45,7 @@ class StarTracker : public SysModel {
     void applySensorErrors();
     void computeTrueOutput();
     void computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValue);
+    void computeAngularVelocity(uint64_t currentSimNanos);
 
    public:
     uint64_t sensorTimeTag;                        //!< [ns] Current time tag for sensor out
