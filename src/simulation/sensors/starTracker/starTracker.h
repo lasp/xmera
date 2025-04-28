@@ -46,8 +46,10 @@ class StarTracker : public SysModel {
     void computeTrueOutput();
     void computeQuaternion(Eigen::Vector3d *sigma, STSensorMsgPayload *sensorValue);
     void computeAngularVelocity(uint64_t currentSimNanos);
+    void setDcmCB(const Eigen::Matrix3d &dcm_CB);
     void setPMatrix(const Eigen::Matrix3d &PMatrix);
     void setWalkBounds(const Eigen::Vector3d &walkBounds);
+    const Eigen::Matrix3d &getDcmCB() const;
     const Eigen::Matrix3d &getPMatrix() const;
     const Eigen::Vector3d &getWalkBounds() const;
 

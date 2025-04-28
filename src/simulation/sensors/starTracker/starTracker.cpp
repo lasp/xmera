@@ -166,6 +166,12 @@ void StarTracker::updateState(uint64_t currentSimNanos) {
     this->previousSimTime = currentSimNanos;
 }
 
+/*! Setter method for dcm_CB.
+ @return void
+ @param dcm_CB
+*/
+void StarTracker::setDcmCB(const Eigen::Matrix3d &dcm_CB) { this->dcm_CB = dcm_CB; }
+
 /*! Setter method for PMatrix.
  @return void
  @param PMatrix
@@ -177,6 +183,11 @@ void StarTracker::setPMatrix(const Eigen::Matrix3d &PMatrix) { this->PMatrix = P
  @param walkBounds
 */
 void StarTracker::setWalkBounds(const Eigen::Vector3d &walkBounds) { this->walkBounds = walkBounds; }
+
+/*! Getter method for dcm_CB.
+ @return const Eigen::Matrix3d
+*/
+const Eigen::Matrix3d &StarTracker::getDcmCB() const { return this->dcm_CB; }
 
 /*! Getter method for PMatrix.
  @return const Eigen::Matrix3d
