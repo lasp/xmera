@@ -368,7 +368,7 @@ def run(show_plots, useBatch):
     # Set the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
     attError.modelTag = "attErrorInertial3D"
-    attError.sigma_R0R = [0, 1, 0]
+    attError.setSigma_R0R([0, 1, 0])
     attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 

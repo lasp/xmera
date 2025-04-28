@@ -341,7 +341,7 @@ def run(show_plots):
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
     attError.modelTag = "attErrorInertial3D"
-    attError.sigma_R0R = [0.414214, 0.0, 0.0]     # point the 3rd body axis in the along-track direction
+    attError.setSigma_R0R([0.414214, 0.0, 0.0]) # point the 3rd body axis in the along-track direction
     scSim.AddModelToTask(simTaskName, attError)
     attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)

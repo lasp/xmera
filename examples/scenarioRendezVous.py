@@ -461,15 +461,15 @@ def run(show_plots):
     # Set up flight modes
     def fswTargetPointing():
         attError.attRefInMsg.subscribeTo(scPointing.attRefOutMsg)
-        attError.sigma_R0R = [0, 0, 0]
+        attError.setSigma_R0R([0, 0, 0])
 
     def fswSunPointing():
         attError.attRefInMsg.subscribeTo(sunPointing.attRefOutMsg)
-        attError.sigma_R0R = [0, 0, 0]
+        attError.setSigma_R0R([0, 0, 0])
 
     def fswHillPointing():
         attError.attRefInMsg.subscribeTo(hillPointing.attRefOutMsg)
-        attError.sigma_R0R = [0.0, 0.0, -0.414214]
+        attError.setSigma_R0R([0.0, 0.0, -0.414214])
 
     def runSim(simTime):
         nonlocal simulationTime

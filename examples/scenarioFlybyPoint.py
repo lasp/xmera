@@ -202,7 +202,7 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
 
     # set up the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.AttTrackingError()
-    attErrorConfig.sigma_R0R = rbk.C2MRP(R0R)
+    attErrorConfig.setSigma_R0R(rbk.C2MRP(R0R))
     attErrorConfig.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attErrorConfig)
 
