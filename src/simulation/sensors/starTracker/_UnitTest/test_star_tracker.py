@@ -56,10 +56,10 @@ def test_starTracker(show_plots, useFlag, testCase):
     unitProc.addTask(unitSim.CreateNewTask(unitTaskName, unitProcRate))
 
     # Configure the starTracker module
-    StarTracker = starTracker.StarTracker()
-    StarTracker.modelTag = "StarTracker"
-    setRandomWalk(StarTracker)
-    unitSim.AddModelToTask(unitTaskName, StarTracker)
+    strTracker = starTracker.StarTracker()
+    strTracker.modelTag = "starTracker"
+    setRandomWalk(strTracker)
+    unitSim.AddModelToTask(unitTaskName, strTracker)
 
     # Configure starTracker SCState input message
     scStatesMessageData = messaging.SCStatesMsgPayload()
@@ -77,7 +77,7 @@ def test_starTracker(show_plots, useFlag, testCase):
         simStopTime = 0.5
         prv_CB = [0.0, 0.0, 10.0 * macros.D2R]
         dcm_CB = rbk.PRV2C(prv_CB)
-        StarTracker.setDcmCB(dcm_CB)
+        strTracker.setDcmCB(dcm_CB)
         sigma_BN = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
         sigma_CB = rbk.C2MRP(dcm_CB)
         sigma_CN = rbk.addMRP(sigma_BN, sigma_CB)
@@ -90,7 +90,7 @@ def test_starTracker(show_plots, useFlag, testCase):
         simStopTime = 1000.
         noiseStd = 0.1
         stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
-        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[1.0e-13], [1.0e-13], [1.0e-13]])
+        setRandomWalk(strTracker, noiseStd*stdCorrectionFactor, [[1.0e-13], [1.0e-13], [1.0e-13]])
         sigma_BN = np.array([0, 0, 0])
         scStatesMessageData.sigma_BN = sigma_BN
         trueVector['qInrtl2Case'] = [noiseStd] * 3
@@ -102,7 +102,7 @@ def test_starTracker(show_plots, useFlag, testCase):
         noiseStd = 0.01
         stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
         walkBound = 0.1
-        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[walkBound], [walkBound], [walkBound]])
+        setRandomWalk(strTracker, noiseStd*stdCorrectionFactor, [[walkBound], [walkBound], [walkBound]])
         sigma_BN = np.array([0, 0, 0])
         scStatesMessageData.sigma_BN = sigma_BN
         trueVector['qInrtl2Case'] = [walkBound + noiseStd*3] * 3
@@ -112,7 +112,7 @@ def test_starTracker(show_plots, useFlag, testCase):
     elif testCase == 'angular velocity check':
         prv_CB = [0.0, 0.0, 10.0 * macros.D2R]
         dcm_CB = rbk.PRV2C(prv_CB)
-        StarTracker.setDcmCB(dcm_CB)
+        strTracker.setDcmCB(dcm_CB)
         simStopTime = unitProcRate_s
         sigma_BN = np.array([0, 0, 0])
         scStatesMessageData.sigma_BN = sigma_BN
@@ -121,12 +121,12 @@ def test_starTracker(show_plots, useFlag, testCase):
         raise Exception('invalid test case')
 
     # Set up data logging
-    starTrackerSensorMsgDataLog = StarTracker.sensorOutMsg.recorder()
+    starTrackerSensorMsgDataLog = strTracker.sensorOutMsg.recorder()
     unitSim.AddModelToTask(unitTaskName, starTrackerSensorMsgDataLog)
 
     # Configure spacecraft state message
     scStatesMessage = messaging.SCStatesMsg().write(scStatesMessageData)
-    StarTracker.scStateInMsg.subscribeTo(scStatesMessage)
+    strTracker.scStateInMsg.subscribeTo(scStatesMessage)
 
     unitSim.InitializeSimulation()
     unitSim.ConfigureStopTime(macros.sec2nano(simStopTime))
@@ -153,7 +153,7 @@ def test_starTracker(show_plots, useFlag, testCase):
             scStatesMessageData.TotalAccumDVBdy = [0, 0, 0]
             scStatesMessageData.MRPSwitchCount = 0
             scStatesMessage = messaging.SCStatesMsg().write(scStatesMessageData)
-            StarTracker.scStateInMsg.subscribeTo(scStatesMessage)
+            strTracker.scStateInMsg.subscribeTo(scStatesMessage)
 
             # Execute simulation chunk for updated spacecraft attitude
             simStopTime = simStopTime + unitProcRate_s
