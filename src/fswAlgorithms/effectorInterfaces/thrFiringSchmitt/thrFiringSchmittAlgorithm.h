@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,28 +17,25 @@
 
  */
 
-#ifndef BASILISK_THRFIRINGSCHMITT_H
-#define BASILISK_THRFIRINGSCHMITT_H
+#ifndef _THR_FIRING_SCHMITT_ALGORITHM_H
+#define _THR_FIRING_SCHMITT_ALGORITHM_H
 
-#include "fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmittAlgorithm.h"
+#include <stdint.h>
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/bskLogging.h"
 
-#include <cstdint>
+#include <array>
 
-class ThrFiringSchmitt : public SysModel  {
+class ThrFiringSchmittAlgorithm{
 public:
-    ThrFiringSchmitt();
-
-    void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override;
+    void reset(uint64_t callTime, THRArrayConfigMsgPayload const & thrusterConfigPayload);
+    THRArrayOnTimeCmdMsgPayload update(uint64_t callTime,
+                                       THRArrayCmdForceMsgPayload& thrForceIn);
     double getLevelOn() const;
     void setLevelOn(double level);
     double getLevelOff() const;
@@ -48,16 +45,15 @@ public:
     int getBaseThrustState() const;
     void setBaseThrustState(int state);
 
-    /* declare module IO interfaces */
-    ReadFunctor<THRArrayCmdForceMsgPayload> thrForceInMsg; //!< The name of the Input message
-    Message<THRArrayOnTimeCmdMsgPayload> onTimeOutMsg;     //!< The name of the output message*, onTimeOutMsg
-    ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;	   //!< The name of the thruster cluster Input message
-
-    BSKLogger bskLogger={}; //!< BSK Logging
-
 private:
-    ThrFiringSchmittAlgorithm algorithm;
+    double              levelOn{};                               //!< [-] ON duty cycle fraction
+    double              levelOff{};                              //!< [-] OFF duty cycle fraction
+    double              thrMinFireTime{};                         //!< [s] Minimum ON time for thrusters
+    int                 baseThrustState{};                        //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
+	int                 numThrusters{};							//!< [-] The number of thrusters available on vehicle
+    double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
+	boolean_t			lastThrustState[MAX_EFF_CNT];			//!< [-] ON/OFF state of thrusters from previous call
+	uint64_t			prevCallTime{};							//!< callTime from previous function call
 };
 
-
-#endif //BASILISK_THRFIRINGSCHMITT_H
+#endif
