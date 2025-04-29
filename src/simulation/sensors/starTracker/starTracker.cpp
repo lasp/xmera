@@ -18,8 +18,6 @@
  */
 #include "simulation/sensors/starTracker/starTracker.h"
 
-#include <iostream>
-
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/linearAlgebra.h"

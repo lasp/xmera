@@ -16,13 +16,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-#
-#   Integrated Unit Test Script
-#   Purpose:  Run a test of the star tracker module
-#   Author:  John Alcorn
-#   Creation Date:  October 12, 2016
-#
-
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
