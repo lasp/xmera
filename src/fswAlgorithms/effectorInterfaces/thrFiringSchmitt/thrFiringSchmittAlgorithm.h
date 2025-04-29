@@ -46,13 +46,13 @@ public:
     void setBaseThrustState(int state);
 
 private:
-    double              levelOn{};                               //!< [-] ON duty cycle fraction
-    double              levelOff{};                              //!< [-] OFF duty cycle fraction
-    double              thrMinFireTime{};                         //!< [s] Minimum ON time for thrusters
-    int                 baseThrustState{};                        //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
+    double              levelOn{};                              //!< [-] ON duty cycle fraction
+    double              levelOff{};                             //!< [-] OFF duty cycle fraction
+    double              thrMinFireTime{};                       //!< [s] Minimum ON time for thrusters
+    int                 baseThrustState{};                      //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
 	int                 numThrusters{};							//!< [-] The number of thrusters available on vehicle
-    double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
-	boolean_t			lastThrustState[MAX_EFF_CNT];			//!< [-] ON/OFF state of thrusters from previous call
+    std::array<double, MAX_EFF_CNT> maxThrust{};				//!< [N] Max thrust
+	std::array<bool, MAX_EFF_CNT> lastThrustState{};			//!< [-] ON/OFF state of thrusters from previous call
 	uint64_t			prevCallTime{};							//!< callTime from previous function call
 };
 
