@@ -19,22 +19,18 @@
 
 #include "thrFiringSchmitt.h"
 
-
-ThrFiringSchmitt::ThrFiringSchmitt() {
-    this->algorithm = ThrFiringSchmittAlgorithm();
-}
+ThrFiringSchmitt::ThrFiringSchmitt() { this->algorithm = ThrFiringSchmittAlgorithm(); }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrFiringSchmitt::reset(uint64_t callTime)
-{
-	// check if the required input messages are included
-	if (!this->thrConfInMsg.isLinked()) {
-		this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringSchmitt.thrConfInMsg wasn't connected.");
-	}
+void ThrFiringSchmitt::reset(uint64_t callTime) {
+    // check if the required input messages are included
+    if (!this->thrConfInMsg.isLinked()) {
+        this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringSchmitt.thrConfInMsg wasn't connected.");
+    }
     if (!this->thrForceInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringSchmitt.thrForceInMsg wasn't connected.");
     }
@@ -46,8 +42,7 @@ void ThrFiringSchmitt::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrFiringSchmitt::updateState(uint64_t callTime)
-{
+void ThrFiringSchmitt::updateState(uint64_t callTime) {
     THRArrayCmdForceMsgPayload thrForceIn = this->thrForceInMsg();
     THRArrayOnTimeCmdMsgPayload thrOnTimeOut = this->algorithm.update(callTime, thrForceIn);
     this->onTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
@@ -57,49 +52,37 @@ void ThrFiringSchmitt::updateState(uint64_t callTime)
  * @brief Get the ON duty cycle fraction.
  * @return double The current ON duty cycle fraction.
  */
-double ThrFiringSchmitt::getLevelOn() const {
-    return this->algorithm.getLevelOn();
-}
+double ThrFiringSchmitt::getLevelOn() const { return this->algorithm.getLevelOn(); }
 
 /**
  * @brief Set the ON duty cycle fraction.
  * @param level The new ON duty cycle fraction to set.
  */
-void ThrFiringSchmitt::setLevelOn(double level) {
-    this->algorithm.setLevelOn(level);
-}
+void ThrFiringSchmitt::setLevelOn(double level) { this->algorithm.setLevelOn(level); }
 
 /**
  * @brief Get the OFF duty cycle fraction.
  * @return double The current OFF duty cycle fraction.
  */
-double ThrFiringSchmitt::getLevelOff() const {
-    return this->algorithm.getLevelOff();
-}
+double ThrFiringSchmitt::getLevelOff() const { return this->algorithm.getLevelOff(); }
 
 /**
  * @brief Set the OFF duty cycle fraction.
  * @param level The new OFF duty cycle fraction to set.
  */
-void ThrFiringSchmitt::setLevelOff(double level) {
-    this->algorithm.setLevelOff(level);
-}
+void ThrFiringSchmitt::setLevelOff(double level) { this->algorithm.setLevelOff(level); }
 
 /**
  * @brief Get the minimum ON time for thrusters.
  * @return double The current minimum ON time in seconds.
  */
-double ThrFiringSchmitt::getThrMinFireTime() const {
-    return this->algorithm.getThrMinFireTime();
-}
+double ThrFiringSchmitt::getThrMinFireTime() const { return this->algorithm.getThrMinFireTime(); }
 
 /**
  * @brief Set the minimum ON time for thrusters.
  * @param time The new minimum ON time in seconds to set.
  */
-void ThrFiringSchmitt::setThrMinFireTime(double time) {
-    this->algorithm.setThrMinFireTime(time);
-}
+void ThrFiringSchmitt::setThrMinFireTime(double time) { this->algorithm.setThrMinFireTime(time); }
 
 /**
  * @brief Get the base thrust state.

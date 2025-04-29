@@ -20,21 +20,19 @@
 #ifndef BASILISK_THRFIRINGSCHMITT_H
 #define BASILISK_THRFIRINGSCHMITT_H
 
-#include "fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmittAlgorithm.h"
+#include <cstdint>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
+#include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmittAlgorithm.h"
 
-#include <cstdint>
-
-class ThrFiringSchmitt : public SysModel  {
-public:
+class ThrFiringSchmitt : public SysModel {
+   public:
     ThrFiringSchmitt();
 
     void reset(uint64_t callTime) override;
@@ -49,15 +47,14 @@ public:
     void setBaseThrustState(uint32_t state);
 
     /* declare module IO interfaces */
-    ReadFunctor<THRArrayCmdForceMsgPayload> thrForceInMsg; //!< The name of the Input message
-    Message<THRArrayOnTimeCmdMsgPayload> onTimeOutMsg;     //!< The name of the output message*, onTimeOutMsg
-    ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;	   //!< The name of the thruster cluster Input message
+    ReadFunctor<THRArrayCmdForceMsgPayload> thrForceInMsg;  //!< The name of the Input message
+    Message<THRArrayOnTimeCmdMsgPayload> onTimeOutMsg;      //!< The name of the output message*, onTimeOutMsg
+    ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;     //!< The name of the thruster cluster Input message
 
-    BSKLogger bskLogger={}; //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 
-private:
+   private:
     ThrFiringSchmittAlgorithm algorithm;
 };
 
-
-#endif //BASILISK_THRFIRINGSCHMITT_H
+#endif  // BASILISK_THRFIRINGSCHMITT_H

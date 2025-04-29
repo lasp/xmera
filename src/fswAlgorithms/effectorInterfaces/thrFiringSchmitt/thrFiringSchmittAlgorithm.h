@@ -21,26 +21,21 @@
 #define _THR_FIRING_SCHMITT_ALGORITHM_H
 
 #include <stdint.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-
-#include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-
-#include "architecture/utilities/macroDefinitions.h"
 
 #include <array>
 
-enum class PulsingRegime {
-    ONPULSING = 0,
-    OFFPULSING = 1
-};
+#include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
+#include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
-class ThrFiringSchmittAlgorithm{
-public:
-    void reset(uint64_t callTime, THRArrayConfigMsgPayload const & thrusterConfigPayload);
-    THRArrayOnTimeCmdMsgPayload update(uint64_t callTime,
-                                       THRArrayCmdForceMsgPayload& thrForceIn);
+enum class PulsingRegime { ONPULSING = 0, OFFPULSING = 1 };
+
+class ThrFiringSchmittAlgorithm {
+   public:
+    void reset(uint64_t callTime, THRArrayConfigMsgPayload const& thrusterConfigPayload);
+    THRArrayOnTimeCmdMsgPayload update(uint64_t callTime, THRArrayCmdForceMsgPayload& thrForceIn);
     double getLevelOn() const;
     void setLevelOn(double level);
     double getLevelOff() const;
@@ -50,15 +45,15 @@ public:
     PulsingRegime getPulsingRegime() const;
     void setPulsingRegime(PulsingRegime state);
 
-private:
-    double              levelOn{};                              //!< [-] ON duty cycle fraction
-    double              levelOff{};                             //!< [-] OFF duty cycle fraction
-    double              thrMinFireTime{};                       //!< [s] Minimum ON time for thrusters
-    PulsingRegime       baseThrustState{};                      //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
-	uint32_t            numThrusters{};					        //!< [-] The number of thrusters available on vehicle
-    std::array<double, MAX_EFF_CNT> maxThrust{};				//!< [N] Max thrust
-	std::array<bool, MAX_EFF_CNT> lastThrustState{};			//!< [-] ON/OFF state of thrusters from previous call
-	uint64_t			prevCallTime{};							//!< callTime from previous function call
+   private:
+    double levelOn{};                                 //!< [-] ON duty cycle fraction
+    double levelOff{};                                //!< [-] OFF duty cycle fraction
+    double thrMinFireTime{};                          //!< [s] Minimum ON time for thrusters
+    PulsingRegime baseThrustState{};                  //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
+    uint32_t numThrusters{};                          //!< [-] The number of thrusters available on vehicle
+    std::array<double, MAX_EFF_CNT> maxThrust{};      //!< [N] Max thrust
+    std::array<bool, MAX_EFF_CNT> lastThrustState{};  //!< [-] ON/OFF state of thrusters from previous call
+    uint64_t prevCallTime{};                          //!< callTime from previous function call
 };
 
 #endif
