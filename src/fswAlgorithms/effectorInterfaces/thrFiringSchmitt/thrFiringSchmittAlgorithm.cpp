@@ -47,18 +47,14 @@ void ThrFiringSchmittAlgorithm::reset(uint64_t callTime,
 THRArrayOnTimeCmdMsgPayload ThrFiringSchmittAlgorithm::update(uint64_t callTime,
                                                               THRArrayCmdForceMsgPayload& thrForceIn)
 {
-	int 				i;
-	double 				level;					/* [-] duty cycle fraction */
-	double				controlPeriod;			/* [s] control period */
-	double				onTime[MAX_EFF_CNT];	/* [s] array of commanded on time for thrusters */
-    THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {};       /* -- copy of the thruster on-time output message */
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {}; /* -- thruster on-time output payload */
 
     /*! - the first time update() is called there is no information on the time step.  Here
      return either all thrusters off or on depending on the baseThrustState state */
 	if(this->prevCallTime == 0) {
 		this->prevCallTime = callTime;
 
-		for(i = 0; i < this->numThrusters; i++) {
+		for(uint32_t i = 0; i < this->numThrusters; i++) {
 			thrOnTimeOut.OnTimeRequest[i] = (double)(this->baseThrustState) * 2.0;
 		}
 
@@ -66,11 +62,12 @@ THRArrayOnTimeCmdMsgPayload ThrFiringSchmittAlgorithm::update(uint64_t callTime,
 	}
 
     /*! - compute control time period Delta_t */
-	controlPeriod = ((double)(callTime - this->prevCallTime)) * NANO2SEC;
+	double controlPeriod = ((double)(callTime - this->prevCallTime)) * NANO2SEC; /* [s] control period */
 	this->prevCallTime = callTime;
 
+    std::array<double, MAX_EFF_CNT> onTime{};	/* [s] array of commanded on time for thrusters */
     /*! - Loop through thrusters */
-	for(i = 0; i < this->numThrusters; i++) {
+	for(uint32_t i = 0; i < this->numThrusters; i++) {
 
         /*! - Correct for off-pulsing if necessary.  Here the requested force is negative, and the maximum thrust
          needs to be added.  If not control force is requested in off-pulsing mode, then the thruster force should
@@ -89,7 +86,7 @@ THRArrayOnTimeCmdMsgPayload ThrFiringSchmittAlgorithm::update(uint64_t callTime,
         /*! - Apply Schmitt trigger logic */
 		if (onTime[i] < this->thrMinFireTime) {
 			/*! - Request is less than minimum fire time */
-			level = onTime[i]/this->thrMinFireTime;
+            double level = onTime[i]/this->thrMinFireTime; /* [-] duty cycle fraction */
 			if (level >= this->levelOn) {
 				this->lastThrustState[i] = BOOL_TRUE;
 				onTime[i] = this->thrMinFireTime;
