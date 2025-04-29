@@ -17,34 +17,27 @@
 
  */
 #include "simulation/sensors/starTracker/starTracker.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <iostream>
-#include "architecture/utilities/gauss_markov.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
-StarTracker::StarTracker()
-{
-    this->sensorTimeTag = 0;
-    m33SetIdentity(RECAST3X3 this->dcm_CB);
+StarTracker::StarTracker() {
+    this->dcm_CB.setIdentity();
     this->errorModel = GaussMarkov(3, this->RNGSeed);
     this->PMatrix.fill(0.0);
     this->AMatrix.fill(0.0);
-    this->walkBounds.fill(0.0);
     return;
 }
 
-StarTracker::~StarTracker()
-{
-    return;
-}
-
+StarTracker::~StarTracker() { return; }
 
 /*! This method is used to reset the module.
  @param currentSimNanos The current simulation time from the architecture
  @return void */
-void StarTracker::reset(uint64_t currentSimNanos)
-{
+void StarTracker::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "starTracker.scStateInMsg was not linked.");
@@ -55,12 +48,11 @@ void StarTracker::reset(uint64_t currentSimNanos)
     this->AMatrix.setIdentity(numStates, numStates);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if(this->PMatrix.size() != numStates*numStates)
-    {
+    if (this->PMatrix.size() != numStates * numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
         return;
     }
-    if(this->walkBounds.size() != numStates){
+    if (this->walkBounds.size() != numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your walkbounds is not size 3. Quitting");
         return;
     }
@@ -72,8 +64,7 @@ void StarTracker::reset(uint64_t currentSimNanos)
 /*!
     read input messages
  */
-void StarTracker::readInputMessages()
-{
+void StarTracker::readInputMessages() {
     this->scState = this->scStateInMsg();
     this->sensorTimeTag = this->scStateInMsg.timeWritten();
 }
@@ -81,8 +72,7 @@ void StarTracker::readInputMessages()
 /*!
    compute sensor errors
  */
-void StarTracker::computeSensorErrors()
-{
+void StarTracker::computeSensorErrors() {
     this->errorModel.setPropMatrix(this->AMatrix);
     this->errorModel.computeNextState();
     this->navErrors = this->errorModel.getCurrentState();
@@ -91,12 +81,16 @@ void StarTracker::computeSensorErrors()
 /*!
    apply sensor errors
  */
-void StarTracker::applySensorErrors()
-{
-    double sigmaSensed[3];
-    PRV2MRP(&(this->navErrors.data()[0]), this->mrpErrors);
-    addMRP(this->scState.sigma_BN, this->mrpErrors, sigmaSensed);
-    this->computeQuaternion(sigmaSensed, &this->sensedValues);
+void StarTracker::applySensorErrors() {
+    this->mrpErrors = prvToMrp(this->navErrors);
+
+    Eigen::Vector3d sigmaSensed;
+    sigmaSensed = addMrp(cArray2EigenVector3d(this->scState.sigma_BN), this->mrpErrors);
+
+    // Save the previous sensed quaternion before computing the current sensed quaternion
+    this->betaPrevious_CN = cArray2EigenVector4d(this->sensedValues.qInrtl2Case);
+
+    this->computeQuaternion(&sigmaSensed, &this->sensedValues);
     this->sensedValues.timeTag = this->sensorTimeTag;
 }
 
@@ -105,40 +99,102 @@ void StarTracker::applySensorErrors()
     @param sigma
     @param sensorValues
  */
-void StarTracker::computeQuaternion(double *sigma, STSensorMsgPayload *sensorValues)
-{
-    double dcm_BN[3][3];            /* dcm, inertial to body frame */
-    double dcm_CN[3][3];            /* dcm, inertial to case frame */
-    MRP2C(sigma, dcm_BN);
-    m33MultM33(RECAST3X3 this->dcm_CB, dcm_BN, dcm_CN);
-    C2EP(dcm_CN, sensorValues->qInrtl2Case);
+void StarTracker::computeQuaternion(Eigen::Vector3d *sigma, STSensorMsgPayload *sensorValues) {
+    Eigen::Matrix3d dcm_BN; /* dcm, inertial to body frame */
+    dcm_BN = mrpToDcm(*sigma);
+
+    Eigen::Matrix3d dcm_CN; /* dcm, inertial to case frame */
+    dcm_CN = this->dcm_CB * dcm_BN;
+
+    Eigen::Vector4d beta_CN = dcmToEp(dcm_CN);
+    eigenVector4d2CArray(beta_CN, sensorValues->qInrtl2Case);
+}
+
+/*!
+    compute platform angular velocity from sensed quaternions
+ */
+void StarTracker::computeAngularVelocity(uint64_t currentSimNanos) {
+    // Group quaternion components without beta_0
+    Eigen::Vector3d epsilon_CN = {
+        this->sensedValues.qInrtl2Case[1], this->sensedValues.qInrtl2Case[2], this->sensedValues.qInrtl2Case[3]};
+    Eigen::Vector3d epsilonPrevious_CN = this->betaPrevious_CN.tail<3>();
+
+    // Determine CRPs (Gibbs Vector)
+    Eigen::Vector3d q_CN = (1 / this->sensedValues.qInrtl2Case[0]) * epsilon_CN;
+    Eigen::Vector3d qPrevious_CN = (1 / this->betaPrevious_CN[0]) * epsilonPrevious_CN;
+
+    // Determine qDot_CN
+    Eigen::Vector3d qDot_CN = Eigen::Vector3d::Zero();
+    if (currentSimNanos != this->previousSimTime) {
+        double dt = (currentSimNanos - this->previousSimTime) * NANO2SEC;
+        qDot_CN = (q_CN - qPrevious_CN) / dt;
+    }
+
+    // Solve for platform rate using Eq. 3.137 from Schaub and Junkins Pg 120
+    Eigen::Matrix3d qTilde_CN = eigenTilde(q_CN);
+    Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
+    Eigen::Vector3d omega_CN_C = (2.0 / (1.0 + q_CN.transpose() * q_CN)) * (I - qTilde_CN) * qDot_CN;
+    eigenVector3d2CArray(omega_CN_C, this->sensedValues.omega_CN_C);
 }
 
 /*!
     compute true output values
  */
-void StarTracker::computeTrueOutput()
-{
+void StarTracker::computeTrueOutput() {
     this->trueValues.timeTag = this->sensorTimeTag;
-    this->computeQuaternion(this->scState.sigma_BN, &this->trueValues);
+    Eigen::Vector3d sigma_BN = cArray2EigenVector3d(this->scState.sigma_BN);
+    this->computeQuaternion(&sigma_BN, &this->trueValues);
 }
 
 /*!
     write output messages
  */
-void StarTracker::writeOutputMessages(uint64_t currentSimNanos)
-{
+void StarTracker::writeOutputMessages(uint64_t currentSimNanos) {
     this->sensorOutMsg.write(&this->sensedValues, this->moduleID, currentSimNanos);
 }
 
 /*!
     update module states
  */
-void StarTracker::updateState(uint64_t currentSimNanos)
-{
+void StarTracker::updateState(uint64_t currentSimNanos) {
     this->readInputMessages();
     this->computeSensorErrors();
     this->computeTrueOutput();
     this->applySensorErrors();
+    this->computeAngularVelocity(currentSimNanos);
     this->writeOutputMessages(currentSimNanos);
+    this->previousSimTime = currentSimNanos;
 }
+
+/*! Setter method for dcm_CB.
+ @return void
+ @param dcm_CB
+*/
+void StarTracker::setDcmCB(const Eigen::Matrix3d &dcm_CB) { this->dcm_CB = dcm_CB; }
+
+/*! Setter method for PMatrix.
+ @return void
+ @param PMatrix
+*/
+void StarTracker::setPMatrix(const Eigen::Matrix3d &PMatrix) { this->PMatrix = PMatrix; }
+
+/*! Setter method for walkBounds.
+ @return void
+ @param walkBounds
+*/
+void StarTracker::setWalkBounds(const Eigen::Vector3d &walkBounds) { this->walkBounds = walkBounds; }
+
+/*! Getter method for dcm_CB.
+ @return const Eigen::Matrix3d
+*/
+const Eigen::Matrix3d &StarTracker::getDcmCB() const { return this->dcm_CB; }
+
+/*! Getter method for PMatrix.
+ @return const Eigen::Matrix3d
+*/
+const Eigen::Matrix3d &StarTracker::getPMatrix() const { return this->PMatrix; }
+
+/*! Getter method for walkBounds.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &StarTracker::getWalkBounds() const { return this->walkBounds; }

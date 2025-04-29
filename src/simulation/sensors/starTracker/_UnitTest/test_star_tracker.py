@@ -16,13 +16,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-#
-#   Integrated Unit Test Script
-#   Purpose:  Run a test of the star tracker module
-#   Author:  John Alcorn
-#   Creation Date:  October 12, 2016
-#
-
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
@@ -30,173 +23,221 @@ from Basilisk.simulation import starTracker
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
-
-# methods
-def listStack(vec,simStopTime,unitProcRate):
+def listStack(vec, simStopTime, unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
-    return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
+    return [vec] * int(simStopTime / (float(unitProcRate) / float(macros.sec2nano(1))))
 
 def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [[1e6],[1e6],[1e6]]):
     # sets the module random walk variables
     PMatrix = [[senNoiseStd, 0., 0.], [0., senNoiseStd, 0.], [0., 0., senNoiseStd]]
-    self.PMatrix = PMatrix
-    self.walkBounds = errorBounds
+    self.setPMatrix(PMatrix)
+    self.setWalkBounds(errorBounds)
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
 @pytest.mark.parametrize("useFlag, testCase", [
-    (False,'basic'),
-    (False,'noise'),
-    (False,'walk bounds')
+    (False, 'basic'),
+    (False, 'noise'),
+    (False, 'walk bounds'),
+    (False, 'angular velocity check')
 ])
+def test_starTracker(show_plots, useFlag, testCase):
+    unitTaskName = "unitTask"
+    unitProcName = "TestProcess"
 
-# provide a unique test method name, starting with test_
-def test_unitSimStarTracker(show_plots, useFlag, testCase):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimStarTracker(show_plots, useFlag, testCase)
-    assert testResults < 1, testMessage
-
-
-def unitSimStarTracker(show_plots, useFlag, testCase):
-    testFail = False
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcName = "TestProcess"  # arbitrary name (don't change)
-
-    # initialize SimulationBaseClass
+    # Create a sim module as an empty container
     unitSim = SimulationBaseClass.SimBaseClass()
 
-    # create the task and specify the integration update time
     unitProcRate = macros.sec2nano(0.1)
     unitProcRate_s = macros.NANO2SEC*unitProcRate
     unitProc = unitSim.CreateNewProcess(unitProcName)
     unitProc.addTask(unitSim.CreateNewTask(unitTaskName, unitProcRate))
 
-    # configure module
-    StarTracker = starTracker.StarTracker()
-    StarTracker.modelTag = "StarTracker"
-    setRandomWalk(StarTracker)
+    # Configure the starTracker module
+    strTracker = starTracker.StarTracker()
+    strTracker.modelTag = "starTracker"
+    setRandomWalk(strTracker)
+    unitSim.AddModelToTask(unitTaskName, strTracker)
 
-    # configure module input message
-    OutputStateData = messaging.SCStatesMsgPayload()
-    OutputStateData.r_BN_N = [0,0,0]
-    OutputStateData.v_BN_N = [0,0,0]
-    OutputStateData.sigma_BN = [0,0,0]
-    OutputStateData.omega_BN_B = [0,0,0]
-    OutputStateData.TotalAccumDVBdy = [0,0,0]
-    OutputStateData.MRPSwitchCount = 0
+    # Configure starTracker SCState input message
+    scStatesMessageData = messaging.SCStatesMsgPayload()
+    scStatesMessageData.r_BN_N = [0, 0, 0]
+    scStatesMessageData.v_BN_N = [0, 0, 0]
+    scStatesMessageData.sigma_BN = [0, 0, 0]
+    scStatesMessageData.omega_BN_B = [0, 0, 0]
+    scStatesMessageData.TotalAccumDVBdy = [0, 0, 0]
+    scStatesMessageData.MRPSwitchCount = 0
 
     trueVector = dict()
-    print(testCase)
+
+    # This test verifies basic input and output
     if testCase == 'basic':
-        # this test verifies basic input and output
         simStopTime = 0.5
-        sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
-        OutputStateData.sigma_BN = sigma
-        trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
-        trueVector['timeTag'] =  np.arange(0,0+simStopTime*1E9,unitProcRate_s*1E9)
+        prv_CB = [0.0, 0.0, 10.0 * macros.D2R]
+        dcm_CB = rbk.PRV2C(prv_CB)
+        strTracker.setDcmCB(dcm_CB)
+        sigma_BN = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
+        sigma_CB = rbk.C2MRP(dcm_CB)
+        sigma_CN = rbk.addMRP(sigma_BN, sigma_CB)
+        beta_CN = rbk.MRP2EP(sigma_CN)
+        scStatesMessageData.sigma_BN = sigma_BN
+        trueVector['qInrtl2Case'] = listStack(beta_CN, simStopTime, unitProcRate)
+        trueVector['timeTag'] = np.arange(0, 0 + simStopTime*1E9, unitProcRate_s*1E9)
 
     elif testCase == 'noise':
         simStopTime = 1000.
         noiseStd = 0.1
-        stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
-        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[1.0e-13],[1.0e-13],[1.0e-13]])
-        sigma = np.array([0,0,0])
-        OutputStateData.sigma_BN = sigma
+        stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
+        setRandomWalk(strTracker, noiseStd*stdCorrectionFactor, [[1.0e-13], [1.0e-13], [1.0e-13]])
+        sigma_BN = np.array([0, 0, 0])
+        scStatesMessageData.sigma_BN = sigma_BN
         trueVector['qInrtl2Case'] = [noiseStd] * 3
-        trueVector['timeTag'] =  np.arange(0,0+simStopTime*1E9,unitProcRate_s*1E9)
+        trueVector['timeTag'] = np.arange(0, 0 + simStopTime*1E9, unitProcRate_s*1E9)
 
+    # This test checks the walk bounds of random walk
     elif testCase == 'walk bounds':
-        # this test checks the walk bounds of random walk
         simStopTime = 1000.
         noiseStd = 0.01
-        stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
+        stdCorrectionFactor = 1.5  # This needs to be used because of the Gauss Markov module. need to fix the GM module
         walkBound = 0.1
-        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[walkBound],[walkBound],[walkBound]])
-        sigma = np.array([0,0,0])
-        OutputStateData.sigma_BN = sigma
+        setRandomWalk(strTracker, noiseStd*stdCorrectionFactor, [[walkBound], [walkBound], [walkBound]])
+        sigma_BN = np.array([0, 0, 0])
+        scStatesMessageData.sigma_BN = sigma_BN
         trueVector['qInrtl2Case'] = [walkBound + noiseStd*3] * 3
-        trueVector['timeTag'] =  np.arange(0,0+simStopTime*1E9,unitProcRate_s*1E9)
+        trueVector['timeTag'] = np.arange(0, 0+simStopTime*1E9, unitProcRate_s*1E9)
+
+    # This test checks the computed platform rate
+    elif testCase == 'angular velocity check':
+        prv_CB = [0.0, 0.0, 10.0 * macros.D2R]
+        dcm_CB = rbk.PRV2C(prv_CB)
+        strTracker.setDcmCB(dcm_CB)
+        simStopTime = unitProcRate_s
+        sigma_BN = np.array([0, 0, 0])
+        scStatesMessageData.sigma_BN = sigma_BN
 
     else:
         raise Exception('invalid test case')
 
-    # add module to the task
-    unitSim.AddModelToTask(unitTaskName, StarTracker)
+    # Set up data logging
+    starTrackerSensorMsgDataLog = strTracker.sensorOutMsg.recorder()
+    unitSim.AddModelToTask(unitTaskName, starTrackerSensorMsgDataLog)
 
-    # log module output message
-    dataLog = StarTracker.sensorOutMsg.recorder()
-    unitSim.AddModelToTask(unitTaskName, dataLog)
-
-    # configure spacecraft state message
-    scMsg = messaging.SCStatesMsg().write(OutputStateData)
-    StarTracker.scStateInMsg.subscribeTo(scMsg)
+    # Configure spacecraft state message
+    scStatesMessage = messaging.SCStatesMsg().write(scStatesMessageData)
+    strTracker.scStateInMsg.subscribeTo(scStatesMessage)
 
     unitSim.InitializeSimulation()
     unitSim.ConfigureStopTime(macros.sec2nano(simStopTime))
     unitSim.ExecuteSimulation()
 
-    # pull message log data and assemble into dict
-    moduleOutput = dataLog.qInrtl2Case
+    # Run additional simulation chunks for angular velocity test check
+    sigma_BNList = [np.array([0.0, 0.0, 0.0])]
+    if testCase == 'angular velocity check':
+        rotAxis_N = np.array([1.0, 0.0, 0.0])  # Hub rotation axis
+        prvAngleList = np.array([0.0, 0.25, 0.6, 1.0, 1.1])  # Truth hub attitudes
 
-    # convert quaternion output to prv
-    moduleOutput2 = np.zeros([int(simStopTime/unitProcRate_s)+1, 3])
+        for idx in range(1, len(prvAngleList)):
+            # Compute hub inertial attitude
+            prv_BN = prvAngleList[idx] * rotAxis_N
+            sigma_BN = np.array(rbk.PRV2MRP(prv_BN))
+            sigma_BNList.append(sigma_BN)
+
+            # Update and connect the sc state message to the star tracker module
+            scStatesMessageData = messaging.SCStatesMsgPayload()
+            scStatesMessageData.r_BN_N = [0, 0, 0]
+            scStatesMessageData.v_BN_N = [0, 0, 0]
+            scStatesMessageData.sigma_BN = sigma_BN
+            scStatesMessageData.omega_BN_B = [0, 0, 0]
+            scStatesMessageData.TotalAccumDVBdy = [0, 0, 0]
+            scStatesMessageData.MRPSwitchCount = 0
+            scStatesMessage = messaging.SCStatesMsg().write(scStatesMessageData)
+            strTracker.scStateInMsg.subscribeTo(scStatesMessage)
+
+            # Execute simulation chunk for updated spacecraft attitude
+            simStopTime = simStopTime + unitProcRate_s
+            unitSim.ConfigureStopTime(macros.sec2nano(simStopTime))
+            unitSim.ExecuteSimulation()
+
+        sigma_BNList = np.vstack(sigma_BNList)
+
+    # Extract logged data for test check
+    timespan = macros.NANO2SEC * starTrackerSensorMsgDataLog.times()  # [s]
+    beta_CN = starTrackerSensorMsgDataLog.qInrtl2Case
+    omega_CN_C = macros.R2D * starTrackerSensorMsgDataLog.omega_CN_C  # [rad/s]
+
+    # Convert quaternion output to prv
+    prv_CN = np.zeros([int(simStopTime/unitProcRate_s)+1, 3])
     for i in range(0, int(simStopTime/unitProcRate_s)+1):
-        moduleOutput2[i] = rbk.EP2PRV(moduleOutput[i])
+        if not np.allclose(beta_CN[i], [1.0, 0.0, 0.0, 0.0]):
+            prv_CN[i] = rbk.EP2PRV(beta_CN[i])
+        else:
+            prv_CN[i] = [0.0, 0.0, 0.0]
 
-    if not 'accuracy' in vars():
-        accuracy = 1e-6
-
+    accuracy = 1e-6
     if testCase == 'noise':
-        for i in range(0,3):
-            if np.abs(np.mean(moduleOutput2[:,i])) > 0.01 \
-                            or np.abs(np.std(moduleOutput2[:,i]) - trueVector['qInrtl2Case'][i]) > 0.01 :
-                testFail = True
-                break
+        boundArray = np.full((int(simStopTime/unitProcRate_s)+1), 0.01)
+        for i in range(0, 3):
+            np.testing.assert_array_less(np.abs(np.mean(prv_CN[:, i])),
+                                         boundArray,
+                                         verbose=True)
+
+            np.testing.assert_array_less(np.abs(np.std(prv_CN[:, i]) - trueVector['qInrtl2Case'][i]),
+                                         boundArray,
+                                         verbose=True)
 
     elif testCase == 'walk bounds':
-        for i in range(0,3):
-            print(np.max(np.abs(np.asarray(moduleOutput2[i]))))
-            if np.max(np.abs(np.asarray(moduleOutput2[i]))) > trueVector['qInrtl2Case'][i]:
-                testFail = True
-                break
+        for i in range(0, 3):
+            np.testing.assert_array_less(np.max(np.abs(np.asarray(prv_CN[i]))),
+                                         trueVector['qInrtl2Case'][i],
+                                         verbose=True)
+
+    elif testCase == 'angular velocity check':
+        # Check computed platform angular velocity
+        omega_CN_CTruth = [np.zeros((1, 3))]
+        previousSimTime = timespan[0]
+        currentSimTime = timespan[0]
+        for idx in range(1, len(timespan)):
+            # Group quaternion components without beta_0
+            epsilon_CN = np.array(beta_CN[idx, 1:]).reshape(3, 1)
+            epsilonPrevious_CN = np.array(beta_CN[idx-1, 1:]).reshape(3, 1)
+
+            # Determine CRPs (Gibbs Vector)
+            q_CN = epsilon_CN / beta_CN[idx, 0]
+            qPrevious_CN = epsilonPrevious_CN / beta_CN[idx-1, 0]
+
+            # Compute qDot_PN
+            previousSimTime = currentSimTime
+            currentSimTime = timespan[idx]
+            dt = currentSimTime - previousSimTime
+            qDot_CN = (q_CN - qPrevious_CN) / dt
+
+            # Solve for platform rate using Eq. 3.137 from Schaub and Junkins Pg 120
+            qTilde_CN = rbk.v3Tilde(q_CN.flatten())
+            qTilde_CN = np.array(qTilde_CN)
+            I = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+            omega_cn_c = (2.0 / (1.0 + np.dot(q_CN.flatten(), q_CN.flatten()))) * (I - qTilde_CN) @ qDot_CN
+            omega_cn_c = omega_cn_c.reshape(1, 3)
+            omega_CN_CTruth.append(macros.R2D * omega_cn_c)  # [deg]
+
+        omega_CN_CTruth = np.vstack(omega_CN_CTruth)
+
+        np.testing.assert_allclose(omega_CN_C,
+                                   omega_CN_CTruth,
+                                   atol=accuracy,
+                                   verbose=True)
 
     else:
-        for i in range(0,len(trueVector['qInrtl2Case'])):
-            if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector['qInrtl2Case'][i], 3, accuracy):
-                testFail = True
-                break
+        for i in range(0, len(trueVector['qInrtl2Case'])):
+            np.testing.assert_allclose(beta_CN[i],
+                                       trueVector['qInrtl2Case'][i],
+                                       atol=accuracy,
+                                       verbose=True)
 
-    if testFail:
-        testFailCount += 1
-        testMessages.append("FAILED: " + StarTracker.modelTag + " Module failed unit test")
-
-    np.set_printoptions(precision=16)
-
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED ")
-    else:
-        print(testMessages)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
-
-# This statement below ensures that the unit test script can be run as a
-# stand-along python script
 if __name__ == "__main__":
-    test_unitSimStarTracker(
-        False, # show_plots
-        False, # useFlag
-        'walk bounds' # testCase
+    test_starTracker(
+        False,  # show_plots
+        False,  # useFlag
+        'walk bounds'  # testCase
     )
