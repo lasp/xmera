@@ -31,6 +31,11 @@
 
 #include <array>
 
+enum class PulsingRegime {
+    ONPULSING = 0,
+    OFFPULSING = 1
+};
+
 class ThrFiringSchmittAlgorithm{
 public:
     void reset(uint64_t callTime, THRArrayConfigMsgPayload const & thrusterConfigPayload);
@@ -42,14 +47,14 @@ public:
     void setLevelOff(double level);
     double getThrMinFireTime() const;
     void setThrMinFireTime(double time);
-    int getBaseThrustState() const;
-    void setBaseThrustState(int state);
+    PulsingRegime getPulsingRegime() const;
+    void setPulsingRegime(PulsingRegime state);
 
 private:
     double              levelOn{};                              //!< [-] ON duty cycle fraction
     double              levelOff{};                             //!< [-] OFF duty cycle fraction
     double              thrMinFireTime{};                       //!< [s] Minimum ON time for thrusters
-    int                 baseThrustState{};                      //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
+    PulsingRegime       baseThrustState{};                      //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
 	uint32_t            numThrusters{};					        //!< [-] The number of thrusters available on vehicle
     std::array<double, MAX_EFF_CNT> maxThrust{};				//!< [N] Max thrust
 	std::array<bool, MAX_EFF_CNT> lastThrustState{};			//!< [-] ON/OFF state of thrusters from previous call

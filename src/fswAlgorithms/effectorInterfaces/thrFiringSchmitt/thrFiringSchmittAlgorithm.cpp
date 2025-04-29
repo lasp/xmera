@@ -71,7 +71,7 @@ THRArrayOnTimeCmdMsgPayload ThrFiringSchmittAlgorithm::update(uint64_t callTime,
         /*! - Correct for off-pulsing if necessary.  Here the requested force is negative, and the maximum thrust
          needs to be added.  If not control force is requested in off-pulsing mode, then the thruster force should
          be set to the maximum thrust value */
-		if (this->baseThrustState == 1) {
+		if (this->baseThrustState == PulsingRegime::OFFPULSING) {
 			thrForceIn.thrForce[i] += this->maxThrust[i];
 		}
 
@@ -165,7 +165,7 @@ void ThrFiringSchmittAlgorithm::setThrMinFireTime(double time) {
  * @brief Get the base thrust state.
  * @return int The current base thrust state (0 for off-pulsing, 1 for on-pulsing).
  */
-int ThrFiringSchmittAlgorithm::getBaseThrustState() const {
+PulsingRegime ThrFiringSchmittAlgorithm::getPulsingRegime() const {
     return this->baseThrustState;
 }
 
@@ -173,6 +173,6 @@ int ThrFiringSchmittAlgorithm::getBaseThrustState() const {
  * @brief Set the base thrust state.
  * @param state The new base thrust state to set (0 for off-pulsing, 1 for on-pulsing).
  */
-void ThrFiringSchmittAlgorithm::setBaseThrustState(int state) {
+void ThrFiringSchmittAlgorithm::setPulsingRegime(PulsingRegime state) {
     this->baseThrustState = state;
 }

@@ -45,8 +45,8 @@ public:
     void setLevelOff(double level);
     double getThrMinFireTime() const;
     void setThrMinFireTime(double time);
-    int getBaseThrustState() const;
-    void setBaseThrustState(int state);
+    uint32_t getBaseThrustState() const;
+    void setBaseThrustState(uint32_t state);
 
     /* declare module IO interfaces */
     ReadFunctor<THRArrayCmdForceMsgPayload> thrForceInMsg; //!< The name of the Input message
