@@ -40,26 +40,32 @@ class ThrFiringSchmitt : public SysModel {
 public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    /* declare module public variables */
-    double              level_on;                               //!< [-] ON duty cycle fraction
-    double              level_off;                              //!< [-] OFF duty cycle fraction
-    double              thrMinFireTime;                         //!< [s] Minimum ON time for thrusters
-    int                 baseThrustState;                        //!< [-] Indicates on-pulsing (0) or off-pusling (1)
-
-    /* declare module private variables */
-	int                 numThrusters;							//!< [-] The number of thrusters available on vehicle
-	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
-	boolean_t			lastThrustState[MAX_EFF_CNT];			//!< [-] ON/OFF state of thrusters from previous call
-
-	uint64_t			prevCallTime;							//!< callTime from previous function call
+    double getLevelOn() const;
+    void setLevelOn(double level);
+    double getLevelOff() const;
+    void setLevelOff(double level);
+    double getThrMinFireTime() const;
+    void setThrMinFireTime(double time);
+    int getBaseThrustState() const;
+    void setBaseThrustState(int state);
 
     /* declare module IO interfaces */
     ReadFunctor<THRArrayCmdForceMsgPayload> thrForceInMsg; //!< The name of the Input message
-    Message<THRArrayOnTimeCmdMsgPayload> onTimeOutMsg;  //!< The name of the output message*, onTimeOutMsg
-    ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;	//!< The name of the thruster cluster Input message
+    Message<THRArrayOnTimeCmdMsgPayload> onTimeOutMsg;     //!< The name of the output message*, onTimeOutMsg
+    ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;	   //!< The name of the thruster cluster Input message
 
-  BSKLogger bskLogger={};                             //!< BSK Logging
+    BSKLogger bskLogger={}; //!< BSK Logging
 
+private:
+    double              levelOn{};                               //!< [-] ON duty cycle fraction
+    double              levelOff{};                              //!< [-] OFF duty cycle fraction
+    double              thrMinFireTime{};                         //!< [s] Minimum ON time for thrusters
+    int                 baseThrustState{};                        //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
+	int                 numThrusters{};							//!< [-] The number of thrusters available on vehicle
+	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
+	boolean_t			lastThrustState[MAX_EFF_CNT];			//!< [-] ON/OFF state of thrusters from previous call
+
+	uint64_t			prevCallTime{};							//!< callTime from previous function call
 };
 
 #endif

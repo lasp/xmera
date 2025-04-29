@@ -112,10 +112,10 @@ void ThrFiringSchmitt::updateState(uint64_t callTime)
 		if (onTime[i] < this->thrMinFireTime) {
 			/*! - Request is less than minimum fire time */
 			level = onTime[i]/this->thrMinFireTime;
-			if (level >= this->level_on) {
+			if (level >= this->levelOn) {
 				this->lastThrustState[i] = BOOL_TRUE;
 				onTime[i] = this->thrMinFireTime;
-			} else if (level <= this->level_off) {
+			} else if (level <= this->levelOff) {
 				this->lastThrustState[i] = BOOL_FALSE;
 				onTime[i] = 0.0;
 			} else if (this->lastThrustState[i] == BOOL_TRUE) {
@@ -139,5 +139,66 @@ void ThrFiringSchmitt::updateState(uint64_t callTime)
     this->onTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
 
 	return;
+/**
+ * @brief Get the ON duty cycle fraction.
+ * @return double The current ON duty cycle fraction.
+ */
+double ThrFiringSchmitt::getLevelOn() const {
+    return this->levelOn;
+}
 
+/**
+ * @brief Set the ON duty cycle fraction.
+ * @param level The new ON duty cycle fraction to set.
+ */
+void ThrFiringSchmitt::setLevelOn(double level) {
+    this->levelOn = level;
+}
+
+/**
+ * @brief Get the OFF duty cycle fraction.
+ * @return double The current OFF duty cycle fraction.
+ */
+double ThrFiringSchmitt::getLevelOff() const {
+    return this->levelOff;
+}
+
+/**
+ * @brief Set the OFF duty cycle fraction.
+ * @param level The new OFF duty cycle fraction to set.
+ */
+void ThrFiringSchmitt::setLevelOff(double level) {
+    this->levelOff = level;
+}
+
+/**
+ * @brief Get the minimum ON time for thrusters.
+ * @return double The current minimum ON time in seconds.
+ */
+double ThrFiringSchmitt::getThrMinFireTime() const {
+    return this->thrMinFireTime;
+}
+
+/**
+ * @brief Set the minimum ON time for thrusters.
+ * @param time The new minimum ON time in seconds to set.
+ */
+void ThrFiringSchmitt::setThrMinFireTime(double time) {
+    this->thrMinFireTime = time;
+}
+
+/**
+ * @brief Get the base thrust state.
+ * @return int The current base thrust state (0 for off-pulsing, 1 for on-pulsing).
+ */
+int ThrFiringSchmitt::getBaseThrustState() const {
+    return this->baseThrustState;
+}
+
+/**
+ * @brief Set the base thrust state.
+ * @param state The new base thrust state to set (0 for off-pulsing, 1 for on-pulsing).
+ */
+void ThrFiringSchmitt::setBaseThrustState(int state) {
+    this->baseThrustState = state;
 }

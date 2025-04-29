@@ -93,14 +93,14 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.thrMinFireTime = 0.2
+    module.setThrMinFireTime(0.2)
     if dvOn == 1:
-        module.baseThrustState = 1
+        module.setBaseThrustState(1)
     else:
-        module.baseThrustState = 0
+        module.setBaseThrustState(0)
 
-    module.level_on = .75
-    module.level_off = .25
+    module.setLevelOn(.75)
+    module.setLevelOff(.25)
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
