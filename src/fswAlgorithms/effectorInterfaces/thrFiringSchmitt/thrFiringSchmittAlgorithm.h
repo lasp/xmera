@@ -50,7 +50,7 @@ private:
     double              levelOff{};                             //!< [-] OFF duty cycle fraction
     double              thrMinFireTime{};                       //!< [s] Minimum ON time for thrusters
     int                 baseThrustState{};                      //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
-	int                 numThrusters{};							//!< [-] The number of thrusters available on vehicle
+	uint32_t            numThrusters{};					        //!< [-] The number of thrusters available on vehicle
     std::array<double, MAX_EFF_CNT> maxThrust{};				//!< [N] Max thrust
 	std::array<bool, MAX_EFF_CNT> lastThrustState{};			//!< [-] ON/OFF state of thrusters from previous call
 	uint64_t			prevCallTime{};							//!< callTime from previous function call
