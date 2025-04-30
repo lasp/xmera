@@ -30,9 +30,8 @@ void EphemDifference::reset(uint64_t callTime) {
     }
 
     this->ephBdyCount = 0;
-    for(int i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
-    {
-        if (this->changeBodies[i].ephInMsg.isLinked()) {
+    for (const auto &cfg : this->changeBodies) {
+        if (cfg.ephInMsg.isLinked()) {
             this->ephBdyCount++;
         } else {
             break;
