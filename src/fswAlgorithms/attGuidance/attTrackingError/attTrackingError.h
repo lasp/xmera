@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _ATT_TRACKING_ERROR_
-#define _ATT_TRACKING_ERROR_
+#ifndef BASILISK_ATT_TRACKING_ERROR_H
+#define BASILISK_ATT_TRACKING_ERROR_H
 
 #include <stdint.h>
 
@@ -30,6 +30,7 @@
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
+#include "fswAlgorithms/attGuidance/attTrackingError/attTrackingErrorAlgorithm.h"
 
 /*!@brief Data structure for module to compute the attitude tracking error between the spacecraft attitude and the
  * reference.
@@ -40,10 +41,6 @@ class AttTrackingError : public SysModel {
     ~AttTrackingError() = default;  //!< Destructor
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    void computeAttitudeError(Eigen::Vector3d sigma_R0R,
-                              NavAttMsgPayload nav,
-                              AttRefMsgPayload ref,
-                              AttGuidMsgPayload *attGuidOut);
     void setSigma_R0R(const Eigen::Vector3d &sigma_R0R);
     const Eigen::Vector3d &getSigma_R0R() const;
 
@@ -53,8 +50,7 @@ class AttTrackingError : public SysModel {
     BSKLogger bskLogger = {};                   //!< BSK Logging
 
    private:
-    Eigen::Vector3d sigma_R0R{};  //!< MRP from corrected reference frame to original reference frame R0. This is the
-                                  //!< same as [BcB] going from primary body frame B to the corrected body frame Bc
+    AttTrackingErrorAlgorithm algorithm;
 };
 
 #endif
