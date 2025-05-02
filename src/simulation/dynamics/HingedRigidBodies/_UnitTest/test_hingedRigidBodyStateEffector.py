@@ -37,7 +37,6 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -69,7 +68,7 @@ def hingedRigidBodyGravity(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftSystem.SpacecraftSystem()
+    scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -112,19 +111,19 @@ def hingedRigidBodyGravity(show_plots):
     unitTestSim.panel2.modelTag = "Panel2"
 
     # Add panels to spaceCraft
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
-    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
-    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
-    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -136,20 +135,20 @@ def hingedRigidBodyGravity(show_plots):
     unitTestSim.earthGravBody.planetName = "earth_planet_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
-    scObject.primaryCentralSpacecraft.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
 
     # Log the spacecraft state message
-    datLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    datLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
     panel1Log = unitTestSim.panel1.logger("forceOnBody_B")
     panel2Log = unitTestSim.panel2.logger("forceOnBody_B")
     scLog = pythonVariableLogger.PythonVariableLogger({
-        "totOrbEnergy": lambda _: scObject.primaryCentralSpacecraft.totOrbEnergy,
-        "totOrbAngMomPntN_N": lambda _: scObject.primaryCentralSpacecraft.totOrbAngMomPntN_N,
-        "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N,
-        "totRotEnergy": lambda _: scObject.primaryCentralSpacecraft.totRotEnergy,
+        "totOrbEnergy": lambda _: scObject.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: scObject.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: scObject.totRotAngMomPntC_N,
+        "totRotEnergy": lambda _: scObject.totRotEnergy,
     })
     unitTestSim.AddModelToTask(unitTaskName, panel1Log)
     unitTestSim.AddModelToTask(unitTaskName, panel2Log)
@@ -299,7 +298,7 @@ def hingedRigidBodyNoGravity(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftSystem.SpacecraftSystem()
+    scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -339,33 +338,33 @@ def hingedRigidBodyNoGravity(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
-    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
-    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
-    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
+    scObject.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     scLog = pythonVariableLogger.PythonVariableLogger({
-        "totOrbEnergy": lambda _: scObject.primaryCentralSpacecraft.totOrbEnergy,
-        "totOrbAngMomPntN_N": lambda _: scObject.primaryCentralSpacecraft.totOrbAngMomPntN_N,
-        "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N,
-        "totRotEnergy": lambda _: scObject.primaryCentralSpacecraft.totRotEnergy,
+        "totOrbEnergy": lambda _: scObject.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: scObject.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: scObject.totRotAngMomPntC_N,
+        "totRotEnergy": lambda _: scObject.totRotEnergy,
     })
     unitTestSim.AddModelToTask(unitTaskName, scLog)
 
@@ -530,7 +529,7 @@ def hingedRigidBodyNoGravityDamping(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftSystem.SpacecraftSystem()
+    scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -570,32 +569,32 @@ def hingedRigidBodyNoGravityDamping(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
-    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
-    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
-    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
+    scObject.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     scLog = pythonVariableLogger.PythonVariableLogger({
-        "totOrbEnergy": lambda _: scObject.primaryCentralSpacecraft.totOrbEnergy,
-        "totOrbAngMomPntN_N": lambda _: scObject.primaryCentralSpacecraft.totOrbAngMomPntN_N,
-        "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N,
+        "totOrbEnergy": lambda _: scObject.totOrbEnergy,
+        "totOrbAngMomPntN_N": lambda _: scObject.totOrbAngMomPntN_N,
+        "totRotAngMomPntC_N": lambda _: scObject.totRotAngMomPntC_N,
     })
     unitTestSim.AddModelToTask(unitTaskName, scLog)
 
@@ -719,7 +718,7 @@ def hingedRigidBodyThetaSS(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftSystem.SpacecraftSystem()
+    scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -760,27 +759,27 @@ def hingedRigidBodyThetaSS(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.modelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extFTObject.extForce_B = [[0], [1], [0]]
-    scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)
+    scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
-    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -788,8 +787,8 @@ def hingedRigidBodyThetaSS(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta1').getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta2').getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
@@ -804,31 +803,31 @@ def hingedRigidBodyThetaSS(show_plots):
 
     # Developing the lagrangian result
     # Define initial values
-    spacecraft = spacecraftClass()
-    spacecraft.hub.mass = scObject.primaryCentralSpacecraft.hub.mHub
-    spacecraft.hub.Inertia = scObject.primaryCentralSpacecraft.hub.IHubPntBc_B[2][2]
+    spacecraftData = SpacecraftClass()
+    spacecraftData.hub.mass = scObject.hub.mHub
+    spacecraftData.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
-    spacecraft.panel1.mass = unitTestSim.panel1.mass
-    spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
-    spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
-    spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
-    spacecraft.panel1.thetaH = 0.0
-    spacecraft.panel1.d = unitTestSim.panel1.d
-    spacecraft.panel1.k = unitTestSim.panel1.k
-    spacecraft.panel1.c = unitTestSim.panel1.c
+    spacecraftData.panel1.mass = unitTestSim.panel1.mass
+    spacecraftData.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
+    spacecraftData.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
+    spacecraftData.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
+    spacecraftData.panel1.thetaH = 0.0
+    spacecraftData.panel1.d = unitTestSim.panel1.d
+    spacecraftData.panel1.k = unitTestSim.panel1.k
+    spacecraftData.panel1.c = unitTestSim.panel1.c
     # Define variables for panel2
-    spacecraft.panel2.mass = unitTestSim.panel2.mass
-    spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
-    spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
-    spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
-    spacecraft.panel2.thetaH = numpy.pi
-    spacecraft.panel2.d = unitTestSim.panel2.d
-    spacecraft.panel2.k = unitTestSim.panel2.k
-    spacecraft.panel2.c = unitTestSim.panel2.c
+    spacecraftData.panel2.mass = unitTestSim.panel2.mass
+    spacecraftData.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
+    spacecraftData.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
+    spacecraftData.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
+    spacecraftData.panel2.thetaH = numpy.pi
+    spacecraftData.panel2.d = unitTestSim.panel2.d
+    spacecraftData.panel2.k = unitTestSim.panel2.k
+    spacecraftData.panel2.c = unitTestSim.panel2.c
     # Define body force and torque
-    spacecraft.xThrust_B = 0.0
-    spacecraft.yThrust_B = extFTObject.extForce_B[1][0]
-    spacecraft.Torque = 0.0
+    spacecraftData.xThrust_B = 0.0
+    spacecraftData.yThrust_B = extFTObject.extForce_B[1][0]
+    spacecraftData.Torque = 0.0
 
     # Define initial conditions of the sim
     time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
@@ -839,15 +838,15 @@ def hingedRigidBodyThetaSS(show_plots):
     X = numpy.zeros((len(x0),len(time)))
     X[:,0] = x0
     for j in range (1,(len(time))):
-        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
+        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraftData)
 
     # Find steady state value
     variablesIn = boxAndWingParameters()
-    variablesIn.k = spacecraft.panel1.k
-    variablesIn.d = spacecraft.panel1.d
-    variablesIn.F = spacecraft.yThrust_B
-    variablesIn.mSC = spacecraft.hub.mass + spacecraft.panel1.mass + spacecraft.panel2.mass
-    variablesIn.mSP = spacecraft.panel1.mass
+    variablesIn.k = spacecraftData.panel1.k
+    variablesIn.d = spacecraftData.panel1.d
+    variablesIn.F = spacecraftData.yThrust_B
+    variablesIn.mSC = spacecraftData.hub.mass + spacecraftData.panel1.mass + spacecraftData.panel2.mass
+    variablesIn.mSP = spacecraftData.panel1.mass
     thetaSSGuess = -0.01
     tolerance = 1e-10
     thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
@@ -911,7 +910,7 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftSystem.SpacecraftSystem()
+    scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -952,8 +951,8 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
@@ -961,31 +960,31 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     force = 1
     extFTObject.extForce_B = [[0], [force], [0]]
-    scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)
+    scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
-    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta1').getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta2').getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
@@ -1010,27 +1009,27 @@ def hingedRigidBodyFrequencyAmp(show_plots):
 
     # Developing the lagrangian result
     # Define initial values
-    spacecraft = spacecraftClass()
-    spacecraft.hub.mass = scObject.primaryCentralSpacecraft.hub.mHub
-    spacecraft.hub.Inertia = scObject.primaryCentralSpacecraft.hub.IHubPntBc_B[2][2]
+    spacecraftData = SpacecraftClass()
+    spacecraftData.hub.mass = scObject.hub.mHub
+    spacecraftData.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
-    spacecraft.panel1.mass = unitTestSim.panel1.mass
-    spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
-    spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
-    spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
-    spacecraft.panel1.thetaH = 0.0
-    spacecraft.panel1.d = unitTestSim.panel1.d
-    spacecraft.panel1.k = unitTestSim.panel1.k
-    spacecraft.panel1.c = unitTestSim.panel1.c
+    spacecraftData.panel1.mass = unitTestSim.panel1.mass
+    spacecraftData.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
+    spacecraftData.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
+    spacecraftData.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
+    spacecraftData.panel1.thetaH = 0.0
+    spacecraftData.panel1.d = unitTestSim.panel1.d
+    spacecraftData.panel1.k = unitTestSim.panel1.k
+    spacecraftData.panel1.c = unitTestSim.panel1.c
     # Define variables for panel2
-    spacecraft.panel2.mass = unitTestSim.panel2.mass
-    spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
-    spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
-    spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
-    spacecraft.panel2.thetaH = numpy.pi
-    spacecraft.panel2.d = unitTestSim.panel2.d
-    spacecraft.panel2.k = unitTestSim.panel2.k
-    spacecraft.panel2.c = unitTestSim.panel2.c
+    spacecraftData.panel2.mass = unitTestSim.panel2.mass
+    spacecraftData.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
+    spacecraftData.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
+    spacecraftData.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
+    spacecraftData.panel2.thetaH = numpy.pi
+    spacecraftData.panel2.d = unitTestSim.panel2.d
+    spacecraftData.panel2.k = unitTestSim.panel2.k
+    spacecraftData.panel2.c = unitTestSim.panel2.c
     # Define body force and torque
 
     # Define initial conditions of the sim
@@ -1044,14 +1043,14 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     X[:,0] = x0
     for j in range (1,(len(time))):
         if time[j-1] < stopTime/2:
-            spacecraft.xThrust_B = 0.0
-            spacecraft.yThrust_B = force
-            spacecraft.Torque = 0.0
+            spacecraftData.xThrust_B = 0.0
+            spacecraftData.yThrust_B = force
+            spacecraftData.Torque = 0.0
         else:
-            spacecraft.xThrust_B = 0.0
-            spacecraft.yThrust_B = 0.0
-            spacecraft.Torque = 0.0
-        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
+            spacecraftData.xThrust_B = 0.0
+            spacecraftData.yThrust_B = 0.0
+            spacecraftData.Torque = 0.0
+        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraftData)
         if check == 0 and X[3,j] < X[3,j-1]:
             check = 1
         if check ==1 and X[3,j] > X[3,j-1]:
@@ -1076,25 +1075,25 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     freqHz = 1/((T1 + T2)/2)
     matrixM = numpy.zeros([6,6])
     matrixM[0,0] = 1.0
-    matrixM[1,1] = spacecraft.hub.mass + spacecraft.panel1.mass + spacecraft.panel2.mass
+    matrixM[1,1] = spacecraftData.hub.mass + spacecraftData.panel1.mass + spacecraftData.panel2.mass
     matrixM[2,2] = 1.0
-    matrixM[3,3] = spacecraft.panel1.Inertia + spacecraft.panel1.mass*spacecraft.panel1.d**2
+    matrixM[3,3] = spacecraftData.panel1.Inertia + spacecraftData.panel1.mass*spacecraftData.panel1.d**2
     matrixM[4,4] = 1.0
-    matrixM[5,5] = spacecraft.panel2.Inertia + spacecraft.panel2.mass*spacecraft.panel2.d**2
+    matrixM[5,5] = spacecraftData.panel2.Inertia + spacecraftData.panel2.mass*spacecraftData.panel2.d**2
     # Define off diagonal terms
-    matrixM[1,3] = spacecraft.panel1.mass*spacecraft.panel1.d
-    matrixM[1,5] = spacecraft.panel2.mass*spacecraft.panel2.d
-    matrixM[3,1] = spacecraft.panel1.mass*spacecraft.panel1.d
-    matrixM[5,1] = spacecraft.panel2.mass*spacecraft.panel2.d
+    matrixM[1,3] = spacecraftData.panel1.mass*spacecraftData.panel1.d
+    matrixM[1,5] = spacecraftData.panel2.mass*spacecraftData.panel2.d
+    matrixM[3,1] = spacecraftData.panel1.mass*spacecraftData.panel1.d
+    matrixM[5,1] = spacecraftData.panel2.mass*spacecraftData.panel2.d
     # Define A matrix
     matrixA = numpy.zeros([6,6])
     matrixA[0,1] = 1.0
     matrixA[2,3] = 1.0
     matrixA[4,5] = 1.0
-    matrixA[3,2] = -spacecraft.panel1.k
-    matrixA[3,3] = -spacecraft.panel1.c
-    matrixA[5,4] = -spacecraft.panel2.k
-    matrixA[5,5] = -spacecraft.panel2.c
+    matrixA[3,2] = -spacecraftData.panel1.k
+    matrixA[3,3] = -spacecraftData.panel1.c
+    matrixA[5,4] = -spacecraftData.panel2.k
+    matrixA[5,5] = -spacecraftData.panel2.c
     # Define Atilde
     matrixAtilde = numpy.dot(numpy.linalg.inv(matrixM),matrixA)
     eigenValues = numpy.linalg.eigvals(matrixAtilde)
@@ -1104,11 +1103,11 @@ def hingedRigidBodyFrequencyAmp(show_plots):
 
     # Find thetaMax - the max deflection while the force is being applied
     variablesIn = boxAndWingParameters()
-    variablesIn.k = spacecraft.panel1.k
-    variablesIn.d = spacecraft.panel1.d
+    variablesIn.k = spacecraftData.panel1.k
+    variablesIn.d = spacecraftData.panel1.d
     variablesIn.F = force
-    variablesIn.mSC = spacecraft.hub.mass + spacecraft.panel1.mass + spacecraft.panel2.mass
-    variablesIn.mSP = spacecraft.panel1.mass
+    variablesIn.mSC = spacecraftData.hub.mass + spacecraftData.panel1.mass + spacecraftData.panel2.mass
+    variablesIn.mSP = spacecraftData.panel1.mass
     thetaSSGuess = -0.01
     tolerance = 1e-14
     thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
@@ -1118,17 +1117,17 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     diffThetaMax = abs((thetaMax-thetaMaxSim)/thetaMax)
 
     # Find energy to find thetaMax2 - the max deflection while the force is not being applied
-    massTotal = spacecraft.hub.mass + 2.0*spacecraft.panel1.mass
+    massTotal = spacecraftData.hub.mass + 2.0*spacecraftData.panel1.mass
 
     yHubDotOff = X[6, int(stopTime/2/stepSize)]
     theta1Off = X[3, int(stopTime/2/stepSize)]
     theta1OffDot = X[8, int(stopTime/2/stepSize)]
-    Rsp1DotOff = numpy.array([-spacecraft.panel1.d*theta1OffDot*numpy.sin(theta1Off), yHubDotOff + spacecraft.panel1.d*theta1OffDot*numpy.cos(theta1Off)])
-    vYCMOff =  1.0/massTotal*(spacecraft.hub.mass*yHubDotOff + 2*spacecraft.panel1.mass*Rsp1DotOff[1])
-    EnergyOff = 0.5*spacecraft.hub.mass*yHubDotOff**2 + 2*(0.5*spacecraft.panel1.mass*numpy.dot(Rsp1DotOff,Rsp1DotOff) + 0.5*spacecraft.panel1.Inertia*theta1OffDot**2 + 0.5*spacecraft.panel1.k*theta1Off**2)
+    Rsp1DotOff = numpy.array([-spacecraftData.panel1.d*theta1OffDot*numpy.sin(theta1Off), yHubDotOff + spacecraftData.panel1.d*theta1OffDot*numpy.cos(theta1Off)])
+    vYCMOff =  1.0/massTotal*(spacecraftData.hub.mass*yHubDotOff + 2*spacecraftData.panel1.mass*Rsp1DotOff[1])
+    EnergyOff = 0.5*spacecraftData.hub.mass*yHubDotOff**2 + 2*(0.5*spacecraftData.panel1.mass*numpy.dot(Rsp1DotOff,Rsp1DotOff) + 0.5*spacecraftData.panel1.Inertia*theta1OffDot**2 + 0.5*spacecraftData.panel1.k*theta1Off**2)
     EnergyFinalWithoutSpring = 0.5*massTotal*vYCMOff**2
     EnergyInSpringFinal = EnergyOff - EnergyFinalWithoutSpring
-    thetaMax2 = numpy.sqrt(EnergyInSpringFinal/spacecraft.panel1.k)
+    thetaMax2 = numpy.sqrt(EnergyInSpringFinal/spacecraftData.panel1.k)
     # Pull thetaMax2 from the sim
     thetaMax2Sim = max(X[3,:])
     diffTheta2Max = abs((thetaMax2-thetaMax2Sim)/thetaMax2)
@@ -1193,13 +1192,9 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    if useScPlus:
-        scObject = spacecraft.Spacecraft()
-        scObject.modelTag = "spacecraftBody"
-    else:
-        scObject = spacecraftSystem.SpacecraftSystem()
-        scObject.modelTag = "spacecraftBody"
-        scObject.primaryCentralSpacecraft.spacecraftName = scObject.modelTag
+    scObject = spacecraft.Spacecraft()
+    scObject.modelTag = "spacecraftBody"
+    scObject.spacecraftName = scObject.modelTag
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -1247,8 +1242,6 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     # Add panels to spaceCraft
     scObjectPrimary = scObject
-    if not useScPlus:
-        scObjectPrimary = scObject.primaryCentralSpacecraft
 
     scObjectPrimary.addStateEffector(unitTestSim.panel1)
     scObjectPrimary.addStateEffector(unitTestSim.panel2)
@@ -1269,10 +1262,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    if not useScPlus:
-        scStateMsg = scObject.primaryCentralSpacecraft.scStateOutMsg
-    else:
-        scStateMsg = scObject.scStateOutMsg
+    scStateMsg = scObject.scStateOutMsg
     dataLog = scStateMsg.recorder()
     dataPanel1 = unitTestSim.panel1.hingedRigidBodyOutMsg.recorder()
     dataPanel2 = unitTestSim.panel2.hingedRigidBodyOutMsg.recorder()
@@ -1284,12 +1274,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, dataPanel1Log)
     unitTestSim.AddModelToTask(unitTaskName, dataPanel2Log)
 
-    if useScPlus:
-        scLog = scObject.logger("totRotAngMomPntC_N")
-    else:
-        scLog = pythonVariableLogger.PythonVariableLogger({
-            "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
-        })
+    scLog = scObject.logger("totRotAngMomPntC_N")
     unitTestSim.AddModelToTask(unitTaskName, scLog)
 
     unitTestSim.InitializeSimulation()
@@ -1433,7 +1418,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftSystem.SpacecraftSystem()
+    scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -1474,8 +1459,8 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define force and torque
     momentArm1_B = numpy.array([0.05, 0.0, 0.0])
@@ -1490,31 +1475,31 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     extFTObject.modelTag = "externalDisturbance"
     extFTObject.extForce_B = [[force1_B[0]], [force1_B[1]], [force1_B[2]]]
     extFTObject.extTorquePntB_B = [[torque1_B[0]], [torque1_B[1]], [torque1_B[2]]]
-    scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)
+    scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
-    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta1').getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta2').getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
@@ -1558,27 +1543,27 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     # Developing the lagrangian result
     # Define initial values
-    spacecraft = spacecraftClass()
-    spacecraft.hub.mass = scObject.primaryCentralSpacecraft.hub.mHub
-    spacecraft.hub.Inertia = scObject.primaryCentralSpacecraft.hub.IHubPntBc_B[2][2]
+    spacecraftData = SpacecraftClass()
+    spacecraftData.hub.mass = scObject.hub.mHub
+    spacecraftData.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
-    spacecraft.panel1.mass = unitTestSim.panel1.mass
-    spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
-    spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
-    spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
-    spacecraft.panel1.thetaH = 0.0
-    spacecraft.panel1.d = unitTestSim.panel1.d
-    spacecraft.panel1.k = unitTestSim.panel1.k
-    spacecraft.panel1.c = unitTestSim.panel1.c
+    spacecraftData.panel1.mass = unitTestSim.panel1.mass
+    spacecraftData.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
+    spacecraftData.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
+    spacecraftData.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
+    spacecraftData.panel1.thetaH = 0.0
+    spacecraftData.panel1.d = unitTestSim.panel1.d
+    spacecraftData.panel1.k = unitTestSim.panel1.k
+    spacecraftData.panel1.c = unitTestSim.panel1.c
     # Define variables for panel2
-    spacecraft.panel2.mass = unitTestSim.panel2.mass
-    spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
-    spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
-    spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
-    spacecraft.panel2.thetaH = numpy.pi
-    spacecraft.panel2.d = unitTestSim.panel2.d
-    spacecraft.panel2.k = unitTestSim.panel2.k
-    spacecraft.panel2.c = unitTestSim.panel2.c
+    spacecraftData.panel2.mass = unitTestSim.panel2.mass
+    spacecraftData.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
+    spacecraftData.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
+    spacecraftData.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
+    spacecraftData.panel2.thetaH = numpy.pi
+    spacecraftData.panel2.d = unitTestSim.panel2.d
+    spacecraftData.panel2.k = unitTestSim.panel2.k
+    spacecraftData.panel2.c = unitTestSim.panel2.c
 
     # Define initial conditions of the sim
     time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
@@ -1590,18 +1575,18 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     X[:,0] = x0
     for j in range (1,(len(time))):
         if time[j-1] < force1OffTime:
-            spacecraft.xThrust_B = force1_B[0]
-            spacecraft.yThrust_B = force1_B[1]
-            spacecraft.Torque = torque1_B[2]
+            spacecraftData.xThrust_B = force1_B[0]
+            spacecraftData.yThrust_B = force1_B[1]
+            spacecraftData.Torque = torque1_B[2]
         elif time[j-1] >= force2OnTime and time[j-1] < force2OffTime:
-            spacecraft.xThrust_B = force2_B[0]
-            spacecraft.yThrust_B = force2_B[1]
-            spacecraft.Torque = torque2_B[2]
+            spacecraftData.xThrust_B = force2_B[0]
+            spacecraftData.yThrust_B = force2_B[1]
+            spacecraftData.Torque = torque2_B[2]
         else:
-            spacecraft.xThrust_B = 0.0
-            spacecraft.yThrust_B = 0.0
-            spacecraft.Torque = 0.0
-        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
+            spacecraftData.xThrust_B = 0.0
+            spacecraftData.yThrust_B = 0.0
+            spacecraftData.Torque = 0.0
+        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraftData)
 
     plt.figure()
     plt.clf()
@@ -1831,7 +1816,7 @@ class hubClass:
     Inertia = 0.0
 
 
-class spacecraftClass:
+class SpacecraftClass:
     panel1 = solarPanel()
     panel2 = solarPanel()
     hub = hubClass()

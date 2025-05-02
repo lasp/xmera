@@ -34,7 +34,6 @@ from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
 from Basilisk.utilities import pythonVariableLogger
-from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("useFlag, testCase", [
@@ -275,13 +274,8 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    if useScPlus:
-        scObject = spacecraft.Spacecraft()
-        scObject.modelTag = "spacecraftBody"
-    else:
-        scObject = spacecraftSystem.SpacecraftSystem()
-        scObject.modelTag = "spacecraftBody"
-        scObject.primaryCentralSpacecraft.spacecraftName = scObject.modelTag
+    scObject = spacecraft.Spacecraft()
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -348,30 +342,26 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.theta2DotInit = 0.0
 
     # Add panels to spaceCraft
-    scObjectPrimary = scObject
-    if not useScPlus:
-        scObjectPrimary = scObject.primaryCentralSpacecraft
-
-    scObjectPrimary.addStateEffector(unitTestSim.panel1)
-    scObjectPrimary.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObjectPrimary.hub.mHub = 750.0
-    scObjectPrimary.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObjectPrimary.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObjectPrimary.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObjectPrimary.scStateOutMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     dataPanel10Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[0].recorder()
     dataPanel11Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[1].recorder()
     dataPanel20Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[0].recorder()
@@ -386,12 +376,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, data10Log)
     unitTestSim.AddModelToTask(unitTaskName, data21Log)
 
-    if useScPlus:
-        scLog = scObject.logger("totRotAngMomPntC_N")
-    else:
-        scLog = pythonVariableLogger.PythonVariableLogger({
-            "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
-        })
+    scLog = scObject.logger("totRotAngMomPntC_N")
     unitTestSim.AddModelToTask(unitTaskName, scLog)
 
     unitTestSim.InitializeSimulation()
