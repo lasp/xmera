@@ -259,6 +259,7 @@ def state_update_flyby(show_plots, filter_type, constant_velocity, errors):
                           0., noise_std**2/np.linalg.norm(expected[0, 1:4])**2, 0.,
                           0., 0., noise_std**2/np.linalg.norm(expected[0, 1:4])**2]
     noise[0, :] = np.diagonal(np.array(input_data.covar_N).reshape([3,3]))
+    np.random.seed(0)
     for i in range(t1):
         if i > 0 and i % 10 == 0:
             input_data.timeTag = (i) * dt
