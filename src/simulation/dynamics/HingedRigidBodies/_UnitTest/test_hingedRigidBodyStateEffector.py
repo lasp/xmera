@@ -20,13 +20,9 @@ import inspect
 import os
 
 import numpy
-import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
-
-
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -39,32 +35,8 @@ from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
 from Basilisk.architecture import messaging
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
 
-
-@pytest.mark.parametrize("function", ["hingedRigidBodyGravity", "hingedRigidBodyNoGravity"
-                                      , "hingedRigidBodyNoGravityDamping", "hingedRigidBodyThetaSS"
-                                      , "hingedRigidBodyFrequencyAmp"
-                                      , "hingedRigidBodyLagrangVsBasilisk"
-                                      ])
-def test_hingedRigidBody(show_plots, function):
-    """Module Unit Test"""
-    [testResults, testMessage] = eval(function + '(show_plots)')
-    assert testResults < 1, testMessage
-
-@pytest.mark.parametrize("useScPlus", [True, False])
-def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
-    """Module Unit Test"""
-    [testResults, testMessage] = hingedRigidBodyMotorTorque(show_plots, useScPlus)
-    assert testResults < 1, testMessage
-
-def hingedRigidBodyGravity(show_plots):
-    __tracebackhide__ = True
-
+def test_hingedRigidBodyGravity(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -245,56 +217,40 @@ def hingedRigidBodyGravity(show_plots):
     plt.close("all")
 
     accuracy = 1e-10
-    for i in range(0,len(trueSigma)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Hinged Rigid Body integrated test failed gravity attitude test")
+    numpy.testing.assert_allclose(numpy.array(trueSigma),
+                                  numpy.array(dataSigma),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed gravity attitude test")
 
     finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
     finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
     finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column
     finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
 
-    for i in range(0,len(initialOrbAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed gravity orbital angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(initialOrbAngMom_N),
+                                 numpy.array(finalOrbAngMom),
+                                 rtol=accuracy,
+                                 err_msg="Hinged Rigid Body integrated test failed gravity orbital angular momentum "
+                                         "unit test")
 
-    for i in range(0,len(initialRotAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed gravity rotational angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(initialRotAngMom_N),
+                                 numpy.array(finalRotAngMom),
+                                 rtol=accuracy,
+                                 err_msg="Hinged Rigid Body integrated test failed gravity rotational angular momentum "
+                                       "unit test")
 
-    for i in range(0,len(initialRotEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed gravity rotational energy unit test")
+    numpy.testing.assert_allclose(numpy.array(initialRotEnergy),
+                                 numpy.array(finalRotEnergy),
+                                 rtol=accuracy,
+                                 err_msg="Hinged Rigid Body integrated test failed gravity rotational energy unit test")
 
-    for i in range(0,len(initialOrbEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed gravity orbital energy unit test")
-
-    if testFailCount == 0:
-        print("PASSED: " + " Hinged Rigid Body gravity integrated test")
-
-    assert testFailCount < 1, testMessages
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    numpy.testing.assert_allclose(numpy.array(initialOrbEnergy),
+                                 numpy.array(finalOrbEnergy),
+                                 rtol=accuracy,
+                                 err_msg="Hinged Rigid Body integrated test failed gravity orbital energy unit test")
 
 
-def hingedRigidBodyNoGravity(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
+def test_hingedRigidBodyNoGravity(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -470,62 +426,46 @@ def hingedRigidBodyNoGravity(show_plots):
     plt.close("all")
 
     accuracy = 1e-10
-    for i in range(0,len(truePos)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
+    numpy.testing.assert_allclose(numpy.array(truePos),
+                                  numpy.array(dataPos),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed position test")
 
-    for i in range(0,len(trueSigma)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Hinged Rigid Body integrated test failed attitude test")
+    numpy.testing.assert_allclose(numpy.array(trueSigma),
+                                  numpy.array(dataSigma),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed attitude test")
 
     finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
     finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
     finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column
     finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
 
-    for i in range(0,len(initialOrbAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed orbital angular momentum unit test")
 
-    for i in range(0,len(initialRotAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(initialOrbAngMom_N),
+                                 numpy.array(finalOrbAngMom),
+                                 rtol=accuracy,
+                                 err_msg="Hinged Rigid Body integrated test failed orbital angular momentum unit "
+                                       "test")
 
-    for i in range(0,len(initialRotEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed rotational energy unit test")
+    numpy.testing.assert_allclose(numpy.array(initialRotAngMom_N),
+                                  numpy.array(finalRotAngMom),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed rotational angular momentum unit "
+                                          "test")
 
-    for i in range(0,len(initialOrbEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed orbital energy unit test")
+    numpy.testing.assert_allclose(numpy.array(initialRotEnergy),
+                                  numpy.array(finalRotEnergy),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed rotational energy unit test")
 
-    if testFailCount == 0:
-        print("PASSED: " + " Hinged Rigid Body integrated test")
-
-    assert testFailCount < 1, testMessages
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    numpy.testing.assert_allclose(numpy.array(initialOrbEnergy),
+                                  numpy.array(finalOrbEnergy),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed orbital energy unit test")
 
 
-def hingedRigidBodyNoGravityDamping(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
+def test_hingedRigidBodyNoGravityDamping(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -682,39 +622,23 @@ def hingedRigidBodyNoGravityDamping(show_plots):
     finalOrbEnergy = numpy.delete(finalOrbEnergy, 0, axis=1)  # remove time column
 
     accuracy = 1e-10
-    for i in range(0,len(initialOrbAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test with damping failed orbital angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(initialOrbAngMom_N),
+                                  numpy.array(finalOrbAngMom),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test with damping failed orbital angular momentum unit test")
 
-    for i in range(0,len(initialRotAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test with damping failed rotational angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(initialRotAngMom_N),
+                                  numpy.array(finalRotAngMom),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test with damping failed rotational angular momentum unit test")
 
-    for i in range(0,len(initialOrbEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test with damping failed orbital energy unit test")
-
-    if testFailCount == 0:
-        print("PASSED: " + " Hinged Rigid Body integrated test with damping")
-
-    assert testFailCount < 1, testMessages
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    numpy.testing.assert_allclose(numpy.array(initialOrbEnergy),
+                                  numpy.array(finalOrbEnergy),
+                                  rtol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test with damping failed orbital energy unit test")
 
 
-def hingedRigidBodyThetaSS(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
+def test_hingedRigidBodyThetaSS(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -884,29 +808,14 @@ def hingedRigidBodyThetaSS(show_plots):
 
 
     accuracy = 1e-6
-    if abs(theta1Out[-1,1] - thetaSS) > accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 1 comparison ")
+    assert abs(theta1Out[-1,1] - thetaSS) <= accuracy, ("Hinged Rigid Body integrated steady state test failed theta 1 "
+                                                        "comparison ")
 
-    if abs(theta2Out[-1,1] - thetaSS) > accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 2 comparison ")
-
-    if testFailCount == 0:
-        print("PASSED: " + " Hinged Rigid Body steady state Integrated test")
-
-    assert testFailCount < 1, testMessages
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    assert abs(theta2Out[-1,1] - thetaSS) <= accuracy, ("Hinged Rigid Body integrated steady state test failed theta 2 "
+                                                        "comparison ")
 
 
-def hingedRigidBodyFrequencyAmp(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
+def test_hingedRigidBodyFrequencyAmp(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -1162,36 +1071,17 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     plt.close("all")
 
     accuracy = 5e-3
-    if abs((freqHz - omegaAnalyticalHz)/omegaAnalyticalHz) > accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed frequency comparison ")
+    assert abs((freqHz - omegaAnalyticalHz)/omegaAnalyticalHz) <= accuracy, ("Hinged Rigid Body integrated theta max "
+                                                                             "test failed frequency comparison ")
 
-    if abs((thetaMax - thetaMaxSim)/thetaMax) > accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max comparison ")
+    assert abs((thetaMax - thetaMaxSim)/thetaMax) <= accuracy, ("Hinged Rigid Body integrated theta max test failed "
+                                                                "max comparison ")
 
-    if abs((thetaMax2 - thetaMax2Sim)/thetaMax2) > accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max 2 comparison ")
-
-    if testFailCount == 0:
-        print("PASSED: " + "Hinged Rigid Body Frequency and Amplitude Integrated test")
-
-    assert testFailCount < 1, testMessages
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    assert abs((thetaMax2 - thetaMax2Sim)/thetaMax2) <= accuracy, ("Hinged Rigid Body integrated theta max test failed "
+                                                                   "max 2 comparison ")
 
 
-def hingedRigidBodyMotorTorque(show_plots, useScPlus):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-
+def test_hingedRigidBodyMotorTorque(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
     scObject.spacecraftName = scObject.modelTag
@@ -1359,65 +1249,60 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     plt.close("all")
 
     accuracy = 1e-10
-    for i in range(0, len(truePos)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataPos[i], truePos[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
+    numpy.testing.assert_allclose(numpy.array(dataPos),
+                                  numpy.array(truePos),
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed position test")
 
     finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
-    for i in range(0, len(initialRotAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append(
-                "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(finalRotAngMom),
+                                  numpy.array(initialRotAngMom_N),
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed rotational angular momentum unit test")
 
     # check config log messages
-    if not unitTestSupport.isArrayEqual(rB1N, [2.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 r_BN_N config log test")
-    if not unitTestSupport.isArrayEqual(vB1N, [0.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 v_BN_N config log test")
-    if not unitTestSupport.isArrayEqual(sB1N, [0.0, 0, 1.0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 sigma_BN config log test")
-    if not unitTestSupport.isArrayEqual(oB1N, [0.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 omega_BN_B config log test")
-    if not unitTestSupport.isArrayEqual(rB2N, [-2.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 r_BN_N config log test")
-    if not unitTestSupport.isArrayEqual(vB2N, [0.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 v_BN_N config log test")
-    if not unitTestSupport.isArrayEqual(sB2N, [0.0, 0, 0.0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 sigma_BN config log test")
-    if not unitTestSupport.isArrayEqual(oB2N, [0.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test")
+    numpy.testing.assert_allclose(rB1N,
+                                  [2.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed panel 1 r_BN_N config log test")
+
+    numpy.testing.assert_allclose(vB1N,
+                                  [0.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed panel 1 v_BN_N config log test")
+
+    numpy.testing.assert_allclose(sB1N,
+                                  [0.0, 0, 1.0],
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed panel 1 sigma_BN config log test")
+
+    numpy.testing.assert_allclose(oB1N,
+                                  [0.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed panel 1 omega_BN_B config log test")
+
+    numpy.testing.assert_allclose(rB2N,
+                                  [-2.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed panel 2 r_BN_N config log test")
+
+    numpy.testing.assert_allclose(vB2N,
+                                  [0.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed panel 2 v_BN_N config log test")
+
+    numpy.testing.assert_allclose(sB2N,
+                                  [0.0, 0, 0.0],
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed panel 2 sigma_BN config log test")
+
+    numpy.testing.assert_allclose(oB2N,
+                                  [0.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test")
 
 
-    if testFailCount == 0:
-        print("PASSED: " + " Hinged Rigid Body integrated test with motor torques")
-
-    assert testFailCount < 1, testMessages
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
-
-def hingedRigidBodyLagrangVsBasilisk(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-
+def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
@@ -1661,31 +1546,18 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     timeList = [25, 75, 125, 175]
 
     for i in timeList:
-        if abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])) > accuracy:
-            print(abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])))
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed x position comparison ")
-        if abs(X[1,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) > accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed y position comparison ")
-        if abs(X[2,i] - thetaOut[i]) > accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta comparison ")
-        if abs(X[3,i] - theta1Out[i,1]) > accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta 1 comparison ")
-        if abs(-X[4,i] - theta2Out[i,1]) > accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta 2 comparison ")
-
-
-    if testFailCount == 0:
-        print("PASSED: " + " Hinged Rigid Body Transient Integrated test")
-
-    assert testFailCount < 1, testMessages
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+        assert abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])) <= accuracy, ("Hinged Rigid Body integrated test "
+                                                                          "Lagrangian vs. Basilisk failed x position "
+                                                                          "comparison ")
+        assert abs(X[1,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) <= accuracy, ("Hinged Rigid Body integrated test "
+                                                                          "Lagrangian vs. Basilisk failed y position "
+                                                                          "comparison ")
+        assert abs(X[2,i] - thetaOut[i]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed "
+                                                      "theta comparison ")
+        assert abs(X[3,i] - theta1Out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Basilisk "
+                                                         "failed theta 1 comparison ")
+        assert abs(-X[4,i] - theta2Out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Basilisk "
+                                                          "failed theta 2 comparison ")
 
 
 def planarFlexFunction(x, t, variables):
@@ -1863,4 +1735,4 @@ if __name__ == "__main__":
     # test_hingedRigidBodyThetaSS(True)
     # test_hingedRigidBodyFrequencyAmp(True)
     # test_hingedRigidBodyMotorTorque(True, True)
-    hingedRigidBodyLagrangVsBasilisk(True)
+    test_hingedRigidBodyLagrangVsBasilisk(True)
