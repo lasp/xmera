@@ -25,7 +25,6 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
@@ -33,34 +32,13 @@ from Basilisk.simulation import spacecraft
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
-from Basilisk.utilities import pythonVariableLogger
-from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False, 'NoGravity'),
     (False, 'Gravity')
 ])
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
 def test_dualHingedRigidBody(show_plots, useFlag, testCase):
-    """Module Unit Test"""
-    [testResults, testMessage] = dualHingedRigidBodyTest(show_plots, useFlag, testCase)
-    assert testResults < 1, testMessage
-
-def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
@@ -225,63 +203,32 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
         plt.close("all")
 
     accuracy = 1e-10
-    for i in range(0,len(initialOrbAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed orbital angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(initialOrbAngMom_N),
+                                  numpy.array(finalOrbAngMom),
+                                  rtol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body Integrated Test failed orbital angular momentum unit "
+                                       "test")
 
-    for i in range(0,len(initialRotAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed rotational angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(initialRotAngMom_N),
+                                  numpy.array(finalRotAngMom),
+                                  rtol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body Integrated Test failed rotational angular momentum "
+                                          "unit test")
 
-    for i in range(0,len(initialOrbEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed orbital energy unit test")
+    numpy.testing.assert_allclose(numpy.array(initialOrbEnergy),
+                                  numpy.array(finalOrbEnergy),
+                                  rtol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body Integrated Test failed orbital energy unit test")
 
-    for i in range(0,len(initialRotEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed rotational energy unit test")
-
-    if testFailCount == 0:
-        print("PASSED: " + " Dual Hinged Rigid Body Test")
-    else:
-        print("FAILED: Dual Hinged Rigid Body Test")
-        print(testMessages)
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    numpy.testing.assert_allclose(numpy.array(initialRotEnergy),
+                                  numpy.array(finalRotEnergy),
+                                  rtol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body Integrated Test failed rotational energy unit test")
 
 
-@pytest.mark.parametrize("useScPlus", [True, False])
-def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
-    """Module Unit Test"""
-    [testResults, testMessage] = dualHingedRigidBodyMotorTorque(show_plots, useScPlus)
-    assert testResults < 1, testMessage
-
-
-def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-
-    if useScPlus:
-        scObject = spacecraft.Spacecraft()
-        scObject.modelTag = "spacecraftBody"
-    else:
-        scObject = spacecraftSystem.SpacecraftSystem()
-        scObject.modelTag = "spacecraftBody"
-        scObject.primaryCentralSpacecraft.spacecraftName = scObject.modelTag
+def test_dualHingedRigidBodyMotorTorque(show_plots):
+    scObject = spacecraft.Spacecraft()
+    scObject.modelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -348,30 +295,26 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.theta2DotInit = 0.0
 
     # Add panels to spaceCraft
-    scObjectPrimary = scObject
-    if not useScPlus:
-        scObjectPrimary = scObject.primaryCentralSpacecraft
-
-    scObjectPrimary.addStateEffector(unitTestSim.panel1)
-    scObjectPrimary.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObjectPrimary.hub.mHub = 750.0
-    scObjectPrimary.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObjectPrimary.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObjectPrimary.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObjectPrimary.scStateOutMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     dataPanel10Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[0].recorder()
     dataPanel11Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[1].recorder()
     dataPanel20Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[0].recorder()
@@ -386,12 +329,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, data10Log)
     unitTestSim.AddModelToTask(unitTaskName, data21Log)
 
-    if useScPlus:
-        scLog = scObject.logger("totRotAngMomPntC_N")
-    else:
-        scLog = pythonVariableLogger.PythonVariableLogger({
-            "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
-        })
+    scLog = scObject.logger("totRotAngMomPntC_N")
     unitTestSim.AddModelToTask(unitTaskName, scLog)
 
     unitTestSim.InitializeSimulation()
@@ -482,55 +420,66 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     plt.close("all")
 
     accuracy = 1e-10
-    for i in range(0, len(truePos)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataPos[i], truePos[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
+    numpy.testing.assert_allclose(numpy.array(dataPos),
+                                  numpy.array(truePos),
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed position test")
 
-    for i in range(0, len(initialRotAngMom_N)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append(
-                "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
+    numpy.testing.assert_allclose(numpy.array(finalRotAngMom),
+                                  numpy.array(initialRotAngMom_N),
+                                  atol=accuracy,
+                                  err_msg="Hinged Rigid Body integrated test failed rotational angular momentum unit test")
 
     # check config log messages
-    if not unitTestSupport.isArrayEqual(rB1N, [1.25, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 1 r_S1N_N config log test")
-    if not unitTestSupport.isArrayEqual(vB1N, [0.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 1 v_S1N_N config log test")
-    if not unitTestSupport.isArrayEqual(sB1N, [0.0, 0, 1.0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 1 sigma_S1N config log test")
-    if not unitTestSupport.isArrayEqual(oB1N, [0.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 1 omega_S1N_B config log test")
-    if not unitTestSupport.isArrayEqual(rB2N, [-2.75, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 r_S2N_N config log test")
-    if not unitTestSupport.isArrayEqual(vB2N, [0.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 v_S2N_N config log test")
-    if not unitTestSupport.isArrayEqual(sB2N, [0.0, 0, 0.0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 sigma_S2N config log test")
-    if not unitTestSupport.isArrayEqual(oB2N, [0.0, 0, 0], 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  Dual Hinged Rigid Body integrated test failed panel 2 omega_S2N_B config log test")
+    numpy.testing.assert_allclose(rB1N,
+                                  [1.25, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body integrated test failed panel 1 r_S1N_N config log "
+                                          "test")
 
-    if testFailCount == 0:
-        print("PASSED: " + " Dual Hinged Rigid Body integrated test with motor torques")
+    numpy.testing.assert_allclose(vB1N,
+                                  [0.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body integrated test failed panel 1 v_S1N_N config log "
+                                          "test")
 
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    numpy.testing.assert_allclose(sB1N,
+                                  [0.0, 0, 1.0],
+                                  atol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body integrated test failed panel 1 sigma_S1N config log "
+                                          "test")
 
+    numpy.testing.assert_allclose(oB1N,
+                                  [0.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body integrated test failed panel 1 omega_S1N_B config log "
+                                          "test")
 
+    numpy.testing.assert_allclose(rB2N,
+                                  [-2.75, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body integrated test failed panel 2 r_S2N_N config log "
+                                          "test")
+
+    numpy.testing.assert_allclose(vB2N,
+                                  [0.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body integrated test failed panel 2 v_S2N_N config log "
+                                          "test")
+
+    numpy.testing.assert_allclose(sB2N,
+                                  [0.0, 0, 0.0],
+                                  atol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body integrated test failed panel 2 sigma_S2N config log "
+                                          "test")
+
+    numpy.testing.assert_allclose(oB2N,
+                                  [0.0, 0, 0],
+                                  atol=accuracy,
+                                  err_msg="Dual Hinged Rigid Body integrated test failed panel 2 omega_S2N_B config "
+                                          "log test")
 
 
 if __name__ == "__main__":
-    dualHingedRigidBodyTest(True, False, 'NoGravity')
+    test_dualHingedRigidBody(True, False, 'NoGravity')
     # dualHingedRigidBodyMotorTorque(True, True)
