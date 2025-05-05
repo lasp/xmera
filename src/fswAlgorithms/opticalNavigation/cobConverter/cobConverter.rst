@@ -82,18 +82,22 @@ The covariance of the COB error is found using the number of detected pixels and
 
 .. math::
 
-    P = \frac{\mathrm{numPixels}}{4 \pi \cdot ||\mathbf{\bar{u}}_{COB}||^2} \left( \begin{bmatrix} d_x^2 & 0 & 0 \\ 0 & d_y^2 & 0
-    \\ 0 & 0 & 1 \end{bmatrix}\right)
+    P = \frac{\mathrm{numPixels}}{4 \pi \cdot \left\| \mathbf{\bar{u}}_{COB} \right\|^2}
+    \left(
+    \left[
+    \begin{array}{ccc}
+    d_x^2 & 0 & 0 \\
+    0 & d_y^2 & 0 \\
+    0 & 0 & 1
+    \end{array}
+    \right]
+    \right)
+
 
 where :math:`d_x` and :math:`d_y` are the first and second diagonal elements of the camera calibration matrix
 :math:`[K]`. This covariance matrix is then transformed into the body frame and added to the covariance of the attitude
-error. Both individual covariance matrices, and thus the total covariance matrix, describe the measurement noise of a
-unit vector.
+error.
 
-By reading the camera orientation and the current body attitude in the inertial frame, the final step is to rotate
-the covariance and heading vector in all the relevant frames for modules downstream. This is done simply by
-converting MRPs to DCMs and performing the matrix multiplication.
-If the incoming image is not valid, the module writes empty messages.
 
 If a COM correction is to be performed, the offset factor :math:`\gamma` due to the Sun phase angle correction is
 obtained for a phase angle :math:`\alpha` using
@@ -132,6 +136,71 @@ Finally, similar to the COB unit vector, the COM unit vector is obtained by
     \mathbf{r}_{COM}^C &= [K]^{-1} \mathbf{\bar{u}}_{COM}
 
 where :math:`\mathbf{\bar{u}}_{COM} = [\mathrm{com}_x, \mathrm{com}_y, 1]^T`.
+
+
+The covariance of the COM error is found by firstly computing the total derivative of the angular error. Which can be
+found by calculating the partials of the Geometric model correction with respect to the flyby and asteroid states:
+
+.. math::
+
+    \frac{\partial \beta_G}{\partial \mathbf{r}} = -\frac{4R}{3\pi r}  \: \frac{(1 - \cos \alpha)}{1 +
+    \left( \frac{4R}{3\pi r} (1 - \cos \alpha) \right)^2}   \: \frac{    \mathbf{\hat{r}}  ^T}{r}
+
+
+
+    \frac{\partial \beta_G}{\partial R} = \frac{4}{3\pi r}   \: \frac{(1 - \cos \alpha)}{1 + \left( \frac{4R}{3\pi r}
+    (1 - \cos \alpha) \right)^2}
+
+
+
+    \frac{\partial \beta_G}{\partial \alpha} = \frac{4R}{3\pi r}   \:  \frac{\sin \alpha}{1 + \left( \frac{4R}{3\pi r}
+    (1 - \cos \alpha) \right)^2}
+
+
+The next equation shows the partial of the phase angle with respect to the flyby and asteroid states:
+
+.. math::
+
+    \frac{\partial \alpha}{\partial \mathbf{r}} = \frac{ -  \mathbf{\hat{s}}  ^T}{r \sin \alpha}
+    \left( \mathbf{I}  -  \mathbf{\hat{r}}     \mathbf{\hat{r}}  ^T \right)
+
+
+This leads to standard deviation equation which is done by gathering the partials in the following equation:
+
+.. math::
+
+    \sigma_{\beta}^2 = \left( \frac{\partial \beta}{\partial \mathbf{r}} + \frac{\partial \beta}{\partial \alpha}
+    \frac{\partial \alpha}{\partial \mathbf{r}} \right) [\mathbf{P}] \left( \frac{\partial \beta}{\partial \mathbf{r}} +
+    \frac{\partial \beta}{\partial \alpha} \frac{\partial \alpha}{\partial \mathbf{r}} \right)^T +
+    \left( \frac{\partial \beta}{\partial R}\right)^2 \sigma_{R}^2
+
+
+
+where :math:`[P]` is the filter position covariance matrix and :math:`\sigma_{R}^2` is the object's radius uncertainty. The
+Following equation was used to find the com covariance matrix:
+
+
+.. math::
+
+    W_{\text{correction}} = \left(
+    \left[
+    \begin{array}{ccc}
+    d_x^2 + \dfrac{\sigma_{\beta}^2}{\psi_{i,x}} \cos \phi & 0 & 0 \\
+    0 & d_y^2 + \dfrac{\sigma_{\beta}^2}{\psi_{i,y}} \sin \phi & 0 \\
+    0 & 0 & 1
+    \end{array}
+    \right]
+    \right)
+
+
+where :math:`\psi_{i,x}` and :math:`\psi_{i,y}` are the iFOV. This matrix is then transformed into the body frame and
+added to the covariance of the attitude error and COB error. All individual covariance matrices,and thus the total
+covariance matrix, describe the measurement noise of a unit vector.
+
+By reading the camera orientation and the current body attitude in the inertial frame, the final step is to rotate
+the covariance and heading vector in all the relevant frames for modules downstream. This is done simply by
+converting MRPs to DCMs and performing the matrix multiplication.
+If the incoming image is not valid, the module writes empty messages.
 
 An outlier detection may be performed for the COB. In this case, the filter message :ref:`FilterMsgPayload` is used to
 predict the location of the COB. If the location of the COB coming from the image is significantly different from the
