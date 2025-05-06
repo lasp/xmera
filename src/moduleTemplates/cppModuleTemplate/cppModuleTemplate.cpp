@@ -49,12 +49,8 @@ void CppModuleTemplate::reset(uint64_t currentSimNanos)
  */
 void CppModuleTemplate::updateState(uint64_t currentSimNanos)
 {
-    double Lr[3];                                   /*!< [unit] variable description */
     ModuleTemplateMsgPayload outMsgBuffer{};       /*!< local output message copy */
     double  inputVector[3];
-
-    // always zero the output buffer first
-    outMsgBuffer = this->dataOutMsg.zeroMsgPayload;
     v3SetZero(inputVector);
 
     /*! - Read the optional input messages */
@@ -64,6 +60,7 @@ void CppModuleTemplate::updateState(uint64_t currentSimNanos)
     }
 
     /*! - Add the module specific code */
+    double Lr[3]; /*!< [unit] variable description */
     v3Copy(inputVector, Lr);
     this->dummy += 1.0;
     Lr[0] += this->dummy;
@@ -76,6 +73,5 @@ void CppModuleTemplate::updateState(uint64_t currentSimNanos)
 
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
-    bskLogger.bskLog(BSK_INFORMATION, "C++ Module ID %lld ran Update at %fs", this->moduleID, (double) currentSimNanos/(1e9));
-
+    bskLogger.bskLog(BSK_INFORMATION, "Module ID %lld ran Update at %fs", this->moduleID, (double) currentSimNanos/(1e9));
 }
