@@ -18,10 +18,12 @@
  */
 
 #include "sunSafePointCpp.h"
+
+#include <math.h>
+
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -38,11 +40,15 @@ void SunSafePointCpp::reset(uint64_t callTime) {
     }
 
     // Compute an Eigen axis orthogonal to sHatBdyCmd
-    if (this->sHatBdyCmd.norm()  < 0.1) {
-      char info[MAX_LOGGING_LENGTH];
-      snprintf(info, sizeof(info), "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
-                this->sHatBdyCmd[0], this->sHatBdyCmd[1], this->sHatBdyCmd[2]);
-      _bskLog(this->bskLogger, BSK_ERROR, info);
+    if (this->sHatBdyCmd.norm() < 0.1) {
+        char info[MAX_LOGGING_LENGTH];
+        snprintf(info,
+                 sizeof(info),
+                 "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
+                 this->sHatBdyCmd[0],
+                 this->sHatBdyCmd[1],
+                 this->sHatBdyCmd[2]);
+        _bskLog(this->bskLogger, BSK_ERROR, info);
     } else {
         Eigen::Vector3d v1 = {1.0, 0.0, 0.0};
         this->sHatBdyCmd = this->sHatBdyCmd / this->sHatBdyCmd.norm();  // Ensure that this vector is a unit vector
@@ -77,7 +83,8 @@ void SunSafePointCpp::updateState(uint64_t callTime) {
     if (this->sunDirectionIsAvailable(sHatNorm)) {
         this->computeAttGuidanceStates(sHatNorm);
     } else {
-        v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+        Eigen::Vector3d sigma_BR = Eigen::Vector3d::Zero();
+        eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
     }
 
     // Compute the hub angular rate error omega_BR_B
@@ -88,23 +95,27 @@ void SunSafePointCpp::updateState(uint64_t callTime) {
     this->attGuidanceOutMsg.write(&this->attGuidanceOutBuffer, moduleID, callTime);
 }
 
-/*! Method for computing the attitude guidance states sigma_BR and omega_RN_B if a valid sun direction vector is available.
+/*! Method for computing the attitude guidance states sigma_BR and omega_RN_B if a valid sun direction vector is
+ available.
  @return void
  @param sHatNorm Norm of measured Sun-direction vector
 */
 void SunSafePointCpp::computeAttGuidanceStates(double sHatNorm) {
-    double dotProductNormalized = (this->sHatBdyCmd.dot(cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy)))
-                                   / sHatNorm;
-    dotProductNormalized = fabs(dotProductNormalized) > 1.0 ?
-    dotProductNormalized/fabs(dotProductNormalized) : dotProductNormalized;
+    double dotProductNormalized =
+        this->sHatBdyCmd.dot(cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy)) / sHatNorm;
+    dotProductNormalized =
+        fabs(dotProductNormalized) > 1.0 ? dotProductNormalized / fabs(dotProductNormalized) : dotProductNormalized;
     this->sunAngleErr = safeAcos(dotProductNormalized);
 
     // Compute the heading error relative to the sun direction vector
-    if (this->sunAngleErr < this->smallAngle) {  // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
-        v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+    if (this->sunAngleErr <
+        this->smallAngle) {  // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
+        Eigen::Vector3d sigma_BR = Eigen::Vector3d::Zero();
+        eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
     } else {
-         Eigen::Vector3d e_hat;  // Eigen Axis
-        if (M_PI - this->sunAngleErr < this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
+        Eigen::Vector3d e_hat;  // Eigen Axis
+        if (M_PI - this->sunAngleErr <
+            this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
             e_hat = this->eHat180_B;
         } else {  // Normal case where sun and commanded body vectors are not aligned
             e_hat = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
@@ -116,7 +127,8 @@ void SunSafePointCpp::computeAttGuidanceStates(double sHatNorm) {
     }
 
     // Rate tracking error is the body rate to bring spacecraft to rest
-    this->omega_RN_B = (this->sunAxisSpinRate / sHatNorm) * cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy);
+    this->omega_RN_B =
+        (this->sunAxisSpinRate / sHatNorm) * cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy);
 }
 
 /*! Method for computing the hub angular rate error omega_BR_B.
@@ -142,81 +154,59 @@ void SunSafePointCpp::computeHubAngularRateError() {
  @return bool
  @param sHatNorm Norm of measured Sun-direction vector
 */
-bool SunSafePointCpp::sunDirectionIsAvailable(double sHatNorm) const {
-    return sHatNorm > this->minUnitMag;
-}
+bool SunSafePointCpp::sunDirectionIsAvailable(double sHatNorm) const { return sHatNorm > this->minUnitMag; }
 
 /*! Getter method for the minimally accepted sun body vector norm.
  @return double
 */
-double SunSafePointCpp::getMinUnitMag() const {
-    return this->minUnitMag;
-}
+double SunSafePointCpp::getMinUnitMag() const { return this->minUnitMag; }
 
 /*! Getter method for the small alignment tolerance angle near 0 or 180 degrees.
  @return double
 */
-double SunSafePointCpp::getSmallAngle() const {
-    return this->smallAngle;
-}
+double SunSafePointCpp::getSmallAngle() const { return this->smallAngle; }
 
 /*! Getter method for the desired constant spin rate about sun heading vector.
  @return double
 */
-double SunSafePointCpp::getSunAxisSpinRate() const {
-    return this->sunAxisSpinRate;
-}
+double SunSafePointCpp::getSunAxisSpinRate() const { return this->sunAxisSpinRate; }
 
 /*! Getter method for the desired body rate vector if no sun direction is available.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &SunSafePointCpp::getOmega_RN_B() const {
-    return this->omega_RN_B;
-}
+const Eigen::Vector3d &SunSafePointCpp::getOmega_RN_B() const { return this->omega_RN_B; }
 
 /*! Getter method for the desired body vector to point at the sun.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &SunSafePointCpp::getSHatBdyCmd() const {
-    return this->sHatBdyCmd;
-}
+const Eigen::Vector3d &SunSafePointCpp::getSHatBdyCmd() const { return this->sHatBdyCmd; }
 
 /*! Setter method for the minimally accepted sun body vector norm.
  @return void
  @param minUnitMag The minimally acceptable norm of sun body vector
 */
-void SunSafePointCpp::setMinUnitMag(const double minUnitMag) {
-    this->minUnitMag = minUnitMag;
-}
+void SunSafePointCpp::setMinUnitMag(const double minUnitMag) { this->minUnitMag = minUnitMag; }
 
 /*! Setter method for the small alignment tolerance angle near 0 or 180 degrees.
  @return void
  @param smallAngle [rad] An angle value that specifies what is near 0 or 180 degrees
 */
-void SunSafePointCpp::setSmallAngle(const double smallAngle) {
-    this->smallAngle = smallAngle;
-}
+void SunSafePointCpp::setSmallAngle(const double smallAngle) { this->smallAngle = smallAngle; }
 
 /*! Setter method for the desired constant spin rate about sun heading vector.
  @return void
  @param sunAxisSpinRate [rad/s] Desired constant spin rate about sun heading vector
 */
-void SunSafePointCpp::setSunAxisSpinRate(const double sunAxisSpinRate) {
-    this->sunAxisSpinRate = sunAxisSpinRate;
-}
+void SunSafePointCpp::setSunAxisSpinRate(const double sunAxisSpinRate) { this->sunAxisSpinRate = sunAxisSpinRate; }
 
 /*! Setter method for the desired body rate vector if no sun direction is available.
  @return void
  @param omega_RN_B [rad/s] Desired body rate vector if no sun direction is available
 */
-void SunSafePointCpp::setOmega_RN_B(const Eigen::Vector3d &omega_RN_B) {
-    this->omega_RN_B = omega_RN_B;
-}
+void SunSafePointCpp::setOmega_RN_B(const Eigen::Vector3d &omega_RN_B) { this->omega_RN_B = omega_RN_B; }
 
 /*! Setter method for the desired body vector to point at the sun.
  @return void
  @param sHatBdyCmd Desired body vector to point at the sun
 */
-void SunSafePointCpp::setSHatBdyCmd(const Eigen::Vector3d &sHatBdyCmd) {
-    this->sHatBdyCmd = sHatBdyCmd;
-}
+void SunSafePointCpp::setSHatBdyCmd(const Eigen::Vector3d &sHatBdyCmd) { this->sHatBdyCmd = sHatBdyCmd; }
