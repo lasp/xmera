@@ -62,6 +62,15 @@ UKF      |        0.050
 SRuKF    |        0.164
 """
 
+#
+# Basilisk Scenario Script and Integrated Test
+#
+# Purpose:  Integrated test to compare the runtime of sunlineUKF (baseline) and sunlineSRuKF (new)
+#           adapted from scenarioCSSFilters.py
+# Author:   Chun-Wei Kong
+# Creation Date:  May. 6, 2025
+#
+
 
 def setup_ukf_data(filterObject):
     filterObject.alpha = 0.02
@@ -115,7 +124,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     Args:
         saveFigures (bool): flag to save off the figures
         show_plots (bool): Determines if the script should display plots
-        FilterType (str): {'uKF', 'EKF', 'OEKF', 'SEKF', 'SuKF'}
+        FilterType (str): {'uKF', 'SRuKF'}
         simTime (float): The length of the simulation time
 
     """

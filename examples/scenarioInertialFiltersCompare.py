@@ -263,16 +263,21 @@ the balanced RW case.  But there is a distinct numerical difference.
 .. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW301.svg
    :align: center
 
+Result is reported below:
+
+Filter               |  Runtime (s)
+-----------------------------------
+InertialUKF          |        1.157
+inertialAttitudeUKF  |        1.134
 """
 
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
-#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
-#           while using the RWs to do the attitude control actuation.
-# Author:   Hanspeter Schaub
-# Creation Date:  Jan. 7, 2017
+# Purpose:  Integrated test to compare the runtime of InertialUKF (baseline) and inertialAttitudeUKF (new)
+#           adapted from scenarioAttitudeFeedbackRW.py
+# Author:   Chun-Wei Kong
+# Creation Date:  May. 6, 2025
 #
 
 import os
