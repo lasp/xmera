@@ -45,6 +45,11 @@ def pytest_addoption(parser):
 def show_plots(request):
     return request.config.getoption("--show_plots")
 
+
+def pytest_make_parametrize_id(config, val, argname):
+    return f"{argname}={val}"
+
+
 # we don't want to reconfigure pytest per pytest-html unless we have it
 # for more on this, see the reportconf.py file.
 reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
@@ -56,4 +61,3 @@ if ('--report' in sys.argv) and ('pytest-html' not in installed_packages):
 
 if 'pytest-html' in installed_packages:
     exec(open(path + "/reportconf.py").read(), globals())
-

@@ -556,15 +556,20 @@ def run(show_plots, useDVThrusters):
     scSim.AddModelToTask(fswTaskName, thrForceMappingObj)
 
     if useDVThrusters:
-        controlAxes_B = [1, 0, 0,
-                         0, 1, 0]
-        thrForceMappingObj.thrForceSign = -1
+        controlAxes_B = np.array([
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 0]
+        ])
+        thrForceMappingObj.setThrForceSign(-1)
     else:
-        controlAxes_B = [1, 0, 0,
-                         0, 1, 0,
-                         0, 0, 1]
-        thrForceMappingObj.thrForceSign = +1
-    thrForceMappingObj.controlAxes_B = controlAxes_B
+        controlAxes_B = np.array([
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
+        ])
+        thrForceMappingObj.setThrForceSign(+1)
+    thrForceMappingObj.setControlAxesB(controlAxes_B)
 
     # setup the Schmitt trigger thruster firing logic module
     thrFiringSchmittObj = thrFiringSchmitt.ThrFiringSchmitt()

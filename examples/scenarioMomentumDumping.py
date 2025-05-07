@@ -312,9 +312,9 @@ def run(show_plots):
     thrForceMappingObj = thrForceMapping.ThrForceMapping()
     thrForceMappingObj.modelTag = "thrForceMapping"
     scSim.AddModelToTask(fswTask, thrForceMappingObj)
-    thrForceMappingObj.controlAxes_B = controlAxes_B
-    thrForceMappingObj.thrForceSign = 1
-    thrForceMappingObj.angErrThresh = 3.15    # this needs to be larger than pi (180 deg) for the module to work in the momentum dumping scenario
+    thrForceMappingObj.setControlAxesB(np.reshape(controlAxes_B, (3, 3), 'C'))
+    thrForceMappingObj.setThrForceSign(1)
+    thrForceMappingObj.setAngErrThresh(3.15)    # this needs to be larger than pi (180 deg) for the module to work in the momentum dumping scenario
 
     # setup the thruster momentum dumping module
     thrDump = thrMomentumDumping.ThrMomentumDumping()

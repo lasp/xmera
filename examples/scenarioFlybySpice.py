@@ -203,7 +203,7 @@ desired guidance configuration module::
         nonlocal simulationTime
         attError.attRefInMsg.subscribeTo(planetMsg)
         transceiverHUD.transceiverState = 0  # antenna off
-        attError.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
+        attError.setSigma_R0R([np.tan(90.*macros.D2R/4), 0, 0])
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -512,7 +512,7 @@ def run(planetCase):
         attError.attRefInMsg.subscribeTo(planetMsg)
         if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
-        attError.sigma_R0R = [np.tan(90.*macros.D2R/4), 0, 0]
+        attError.setSigma_R0R([np.tan(90.*macros.D2R/4), 0, 0])
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -522,7 +522,7 @@ def run(planetCase):
         attError.attRefInMsg.subscribeTo(earthPointGuidance.attRefOutMsg)
         if vizSupport.vizFound:
             transceiverHUD.transceiverState = 3  # antenna in send and receive mode
-        attError.sigma_R0R = [0, 0, 0]
+        attError.setSigma_R0R([0, 0, 0])
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -532,7 +532,7 @@ def run(planetCase):
         attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)
         if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
-        attError.sigma_R0R = [0, 0, 0]
+        attError.setSigma_R0R([0, 0, 0])
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -542,7 +542,7 @@ def run(planetCase):
         attError.attRefInMsg.subscribeTo(sciencePointGuidance.attRefOutMsg)
         if vizSupport.vizFound:
             transceiverHUD.transceiverState = 0  # antenna off
-        attError.sigma_R0R = [-1./3., 1./3., -1./3.]
+        attError.setSigma_R0R([-1./3., 1./3., -1./3.])
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()

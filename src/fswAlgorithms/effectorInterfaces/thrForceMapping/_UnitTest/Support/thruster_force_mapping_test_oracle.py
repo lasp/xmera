@@ -1,8 +1,11 @@
-''' '''
 import numpy as np
 
 
-class Results_thrForceMapping():
+class ThrForceMappingTestOracle:
+    """
+    This class is the test oracle (independent source of truth) used to verify the calculations
+    performed in the ThrForceMapping module.
+    """
     def __init__(self, Lr, COrig, COM, rData, gData, thrForceSign, thrForceMag, angErrThresh, numThrusters, epsilon, use2ndLoop):
         self.rData = np.array(rData)
         self.gData = np.array(gData)
@@ -15,8 +18,7 @@ class Results_thrForceMapping():
 
         self.numThrusters = numThrusters # number of explicitly configured thrusters
 
-        self.C = np.array(COrig) # Control "Frame" (could be 1, 2, or 3 axii controllable)
-        self.C = np.reshape(self.C, ((len(self.C)//3),3),'C')
+        self.C = COrig # Control "Frame" (could be 1, 2, or 3 axii controllable)
 
         self.epsilon = epsilon
         self.use2ndLoop = use2ndLoop
@@ -32,7 +34,7 @@ class Results_thrForceMapping():
         for i in range(len(self.rData)):
             D[:,i] = np.cross((self.rData[i,:] - self.COM), self.gData[i,:])
             if(self.thrForceSign < 0):
-                Lr_offset -= self.thrForceMag[i]*D[:,i]
+                Lr_offset -= self.thrForceMag[i][0]*D[:,i]
 
         self.Lr_B = self.Lr_B + Lr_offset
         Lr_Bar = np.dot(self.C, self.Lr_B)
@@ -72,8 +74,8 @@ class Results_thrForceMapping():
 
             maxFractUse = 0.0
             for i in range(0, self.numThrusters):
-                if self.thrForceMag[i] > 0 and abs(F[i])/self.thrForceMag[i] > maxFractUse:
-                    maxFractUse = abs(F[i])/self.thrForceMag[i]
+                if self.thrForceMag[i][0] > 0 and abs(F[i])/self.thrForceMag[i][0] > maxFractUse:
+                    maxFractUse = abs(F[i])/self.thrForceMag[i][0]
             if maxFractUse > 1.0:
                 F = F/maxFractUse
                 angleErr = self.results_computeAngErr(D, Lr_Bar, F)
@@ -88,10 +90,10 @@ class Results_thrForceMapping():
             tauActual_B = [0.0, 0.0, 0.0]
             BLr_B_hat = BLr_B / np.linalg.norm(BLr_B)
             for i in range(0, self.numThrusters):
-                if abs(F[i]) < self.thrForceMag[i]:
+                if abs(F[i]) < self.thrForceMag[i][0]:
                     thrForce = F[i]
                 else:
-                    thrForce = self.thrForceMag[i] * abs(F[i]) / F[i]
+                    thrForce = self.thrForceMag[i][0] * abs(F[i]) / F[i]
 
                 LrEffector_B = thrForce * DT[i, :]
                 tauActual_B += LrEffector_B
@@ -113,7 +115,7 @@ class Results_thrForceMapping():
     def mapToForce(self, D, Lr_Bar):
         numControlAxes = 0
         for i in range(0, len(self.C[0])):
-            if not np.array_equal(self.C[:, i], [0.0, 0.0, 0.0]):
+            if not np.array_equal(self.C[:][i], [0.0, 0.0, 0.0]):
                 numControlAxes = numControlAxes + 1
         numThr = 0
         for i in range(0, len(D[0])):

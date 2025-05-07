@@ -490,17 +490,22 @@ class BSKFswModels:
     def SetThrForceMapping(self):
         """Set the Thrust Force Mapping information"""
         if self.useDvThrusters:
-            controlAxes_B = [1, 0, 0,
-                             0, 1, 0]
+            controlAxes_B = np.array([
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 0]
+            ])
             thrForceSign = -1
         else:
-            controlAxes_B = [1, 0, 0,
-                             0, 1, 0,
-                             0, 0, 1]
+            controlAxes_B = np.array([
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1]
+            ])
             thrForceSign = +1
 
-        self.thrForceMapping.thrForceSign = thrForceSign
-        self.thrForceMapping.controlAxes_B = controlAxes_B
+        self.thrForceMapping.setThrForceSign(thrForceSign)
+        self.thrForceMapping.setControlAxesB(controlAxes_B)
 
         self.thrForceMapping.cmdTorqueInMsg.subscribeTo(self.cmdTorqueMsg)
         self.thrForceMapping.thrConfigInMsg.subscribeTo(self.fswThrConfigMsg)

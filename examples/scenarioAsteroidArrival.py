@@ -530,7 +530,7 @@ def run(show_plots):
             genericSensor.isHidden = 1
             thrusterMsgInfo.thrustForce = 0
             thrMsg.write(thrusterMsgInfo, simulationTime)
-        attError.sigma_R0R = [0, 0, 0]
+        attError.setSigma_R0R([0, 0, 0])
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -543,7 +543,7 @@ def run(show_plots):
             genericSensor.isHidden = 0
             thrusterMsgInfo.thrustForce = 0
             thrMsg.write(thrusterMsgInfo, simulationTime)
-        attError.sigma_R0R = [0, 0, 0]
+        attError.setSigma_R0R([0, 0, 0])
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -556,7 +556,7 @@ def run(show_plots):
             genericSensor.isHidden = 1
             thrusterMsgInfo.thrustForce = 0
             thrMsg.write(thrusterMsgInfo, simulationTime)
-        attError.sigma_R0R = [0, 0, 0]
+        attError.setSigma_R0R([0, 0, 0])
         simulationTime += macros.sec2nano(simTime)
         scSim.ConfigureStopTime(simulationTime)
         scSim.ExecuteSimulation()
@@ -568,9 +568,9 @@ def run(show_plots):
             transceiverHUD.transceiverState = 0  # antenna off
             genericSensor.isHidden = 1
         if burnSign > 0:
-            attError.sigma_R0R = [np.tan((np.pi/2)/4), 0, 0]
+            attError.setSigma_R0R([np.tan((np.pi/2)/4), 0, 0])
         else:
-            attError.sigma_R0R = [-np.tan((np.pi / 2) / 4), 0, 0]
+            attError.setSigma_R0R([-np.tan((np.pi / 2) / 4), 0, 0])
         minTime = 40 * 60
         if simTime < minTime:
             print("ERROR: runPosDvBurn must have simTime larger than " + str(minTime) + " min")

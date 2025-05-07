@@ -22,51 +22,67 @@
 
 #include <stdint.h>
 
+#include <Eigen/Dense>
+
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
-#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-
 #include "architecture/utilities/bskLogging.h"
 
+typedef Eigen::Vector<double, MAX_EFF_CNT> Vector36d;
+
+enum class ThrForceSign { POSITIVE = +1, NEGATIVE = -1 };
 
 /*!@brief Data structure for module to map a command torque onto thruster forces. */
 class ThrForceMapping : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    void findMinimumNormForce(double D[3][MAX_EFF_CNT],
-                              double Lr_B[3],
-                              uint32_t numForces,
-                              double F[MAX_EFF_CNT]);
 
-    /* declare module public variables */
-    double   controlAxes_B[3*3];                    //!< []      array of the control unit axes
-    double   rThruster_B[MAX_EFF_CNT][3];           //!< [m]     local copy of the thruster locations
-    double   gtThruster_B[MAX_EFF_CNT][3];          //!< []      local copy of the thruster force unit direction vectors
-    int32_t  thrForceSign;                          //!< []      Flag indicating if pos (+1) or negative (-1) thruster solutions are found
-    double angErrThresh;                            //!< [r]     Angular error at which thruster forces are scaled to not be super-saturated
-    double   epsilon;                               //!<         variable specifying what is considered a small number
-    uint32_t use2ndLoop;                            //!< []      flag indicating if the 2nd least squares fitting loop should be used (1) or not used (0 - default)
-
-    /* declare module private variables */
-    uint32_t numControlAxes;                        //!< []      counter indicating how many orthogonal axes are controlled
-    uint32_t numThrusters;                          //!< []      The number of thrusters available on vehicle
-    double outTorqAngErr;                           //!< [r]     Angular error of effector torque
-    double thrForcMag[MAX_EFF_CNT];                 //!<         vector of thruster force magnitudes
+    Eigen::Matrix3d getControlAxesB() const;
+    void setControlAxesB(const Eigen::Matrix3d& axes);
+    Vector36d getThrForceMag() const;
+    void setThrForceMag(const Vector36d& forceMag);
+    ThrForceSign getThrForceSign() const;
+    void setThrForceSign(ThrForceSign sign);
+    double getAngErrThresh() const;
+    void setAngErrThresh(double thresh);
+    double getEpsilon() const;
+    void setEpsilon(double eps);
+    bool getUse2ndLoop() const;
+    void setUse2ndLoop(bool loopFlag);
 
     /* declare module IO interfaces */
-    Message<THRArrayCmdForceMsgPayload> thrForceCmdOutMsg;        //!< The name of the output thruster force message
-    ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;              //!< The name of the vehicle control (Lr) Input message
-    ReadFunctor<THRArrayConfigMsgPayload> thrConfigInMsg;             //!< The name of the thruster cluster Input message
-    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;              //!< The name of the Input message
-    VehicleConfigMsgPayload   sc;                   //!< spacecraft configuration message
+    Message<THRArrayCmdForceMsgPayload> thrForceCmdOutMsg;  //!< The name of the output thruster force message
+    ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;    //!< The name of the vehicle control (Lr) Input message
+    ReadFunctor<THRArrayConfigMsgPayload> thrConfigInMsg;   //!< The name of the thruster cluster Input message
+    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;    //!< The name of the Input message
+    VehicleConfigMsgPayload sc;                             //!< spacecraft configuration message
 
-    BSKLogger bskLogger={};                             //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 
+   private:
+    Vector36d findMinimumNormForce(const Eigen::Matrix<double, 3, MAX_EFF_CNT>& D,
+                                   const Eigen::Vector3d& Lr_B,
+                                   uint32_t numForces) const;
+
+    Eigen::Matrix3d controlAxes_B{};  //!< [] array of the control unit axes
+    Vector36d thrForceMag{};          //!< vector of thruster force magnitudes
+    ThrForceSign thrForceSign =
+        ThrForceSign::POSITIVE;  //!< [] Flag indicating if positive or negative thruster solutions are found
+    double angErrThresh{};       //!< [r] Angular error at which thruster forces are scaled to not be super-saturated
+    double epsilon{};            //!< variable specifying what is considered a small number
+    bool use2ndLoop{};  //!< [] flag indicating if the 2nd least squares fitting loop should be used (1) or not used (0
+                        //!< - default)
+    uint32_t numControlAxes{};  //!< [] counter indicating how many orthogonal axes are controlled
+    uint32_t numThrusters{};    //!< [] The number of thrusters available on vehicle
+    double outTorqAngErr{};     //!< [r] Angular error of effector torque
+    Eigen::Matrix<double, MAX_EFF_CNT, 3> rThruster_B{};  //!< [m] local copy of the thruster locations
+    Eigen::Matrix<double, MAX_EFF_CNT, 3>
+        gtThruster_B{};  //!< [] local copy of the thruster force unit direction vectors
 };
-
 
 #endif

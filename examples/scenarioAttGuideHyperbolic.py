@@ -86,7 +86,7 @@ Here the control should not align the principal body frame :math:`\cal B` with :
 corrected body frame *Bc*.  For example, if a thruster is located on the :\math:`\hat b_1` face, and it
 is desired to point it along the negative V-bar, this is achieved through::
 
-  attError.sigma_R0R = [0,0,-1]
+  attError.setSigma_R0R([0,0,-1])
 
 This corrected body frame has an orientation which is rotated 180 degrees about :math:`\hat b_3`,
 to point the correct face of the spacecraft along the negative V-bar.
@@ -317,7 +317,7 @@ def run(show_plots, useAltBodyFrame):
     attError.modelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
     if useAltBodyFrame:
-        attError.sigma_R0R = [0, 0, -1]
+        attError.setSigma_R0R([0, 0, -1])
     attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
