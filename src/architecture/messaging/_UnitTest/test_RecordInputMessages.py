@@ -42,15 +42,15 @@ def test_RecordingInputMessages():
     scSim.AddModelToTask("dynamicsTask", mod1)
 
     # Write input data
-    inputData = messaging.CModuleTemplateMsgPayload()
+    inputData = messaging.ModuleTemplateMsgPayload()
     inputData.dataVector = [1, 2, 3]
-    inputDataMsg = messaging.CModuleTemplateMsg().write(inputData)
+    inputDataMsg = messaging.ModuleTemplateMsg().write(inputData)
 
     # Subscribe input message to stand-alone message
     mod1.dataInMsg.subscribeTo(inputDataMsg)
 
-    attGuidMsg = messaging.CModuleTemplateMsg()
-    attGuidMsgPayload = messaging.CModuleTemplateMsgPayload()
+    attGuidMsg = messaging.ModuleTemplateMsg()
+    attGuidMsgPayload = messaging.ModuleTemplateMsgPayload()
     attGuidMsg.write(attGuidMsgPayload)
     mod1.dataOutMsg = attGuidMsg
 

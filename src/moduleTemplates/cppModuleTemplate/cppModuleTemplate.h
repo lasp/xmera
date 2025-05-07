@@ -21,30 +21,27 @@
 #define CPP_MODULE_TEMPLATE_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/ModuleTemplateMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief basic Basilisk C++ module class */
-class CppModuleTemplate: public SysModel {
-public:
+class CppModuleTemplate : public SysModel {
+   public:
     CppModuleTemplate();
     ~CppModuleTemplate();
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
-public:
+   public:
+    double dummy;         //!< [units] sample module variable declaration
+    double dumVector[3];  //!< [units] sample vector variable
 
-    double dummy;                                   //!< [units] sample module variable declaration
-    double dumVector[3];                            //!< [units] sample vector variable
+    Message<ModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
+    ReadFunctor<ModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg
 
-    Message<CModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
-    ReadFunctor<CModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg
-
-    BSKLogger bskLogger;              //!< -- BSK Logging
-
+    BSKLogger bskLogger;  //!< -- BSK Logging
 };
-
 
 #endif

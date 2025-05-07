@@ -17,172 +17,146 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 */
 #ifndef MESSAGING_H
 #define MESSAGING_H
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include <vector>
-#include "architecture/messaging/msgHeader.h"
-#include "architecture/utilities/bskLogging.h"
-#include <typeinfo>
 #include <stdlib.h>
 
+#include <typeinfo>
+#include <vector>
+
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/msgHeader.h"
+#include "architecture/utilities/bskLogging.h"
+
 /*! forward-declare sim message for use by read functor */
-template<typename messageType>
+template <typename messageType>
 class Message;
 
-template<typename messageType>
+template <typename messageType>
 class Recorder;
 
 /*! Read functors have read-only access to messages*/
-template<typename messageType>
-class ReadFunctor{
-private:
-    messageType* payloadPointer;    //!< -- pointer to the incoming msg data
-    MsgHeader *headerPointer;      //!< -- pointer to the incoming msg header
-    bool initialized;               //!< -- flag indicating if the input message is connect to another message
+template <typename messageType>
+class ReadFunctor {
+   private:
+    messageType* payloadPointer;  //!< -- pointer to the incoming msg data
+    MsgHeader* headerPointer;     //!< -- pointer to the incoming msg header
+    bool initialized;             //!< -- flag indicating if the input message is connect to another message
 
-public:
+   public:
     //!< -- BSK Logging
-    BSKLogger bskLogger;            //!< -- bsk logging instance
-    messageType zeroMsgPayload ={}; //!< -- zero'd copy of the message payload type
-
-
-    //! constructor
-    ReadFunctor() : initialized(false) {};
+    BSKLogger bskLogger;              //!< -- bsk logging instance
+    messageType zeroMsgPayload = {};  //!< -- zero'd copy of the message payload type
 
     //! constructor
-    ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
+    ReadFunctor() : initialized(false){};
 
     //! constructor
-    const messageType& operator()(){
+    ReadFunctor(messageType* payloadPtr, MsgHeader* headerPtr)
+        : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
+
+    //! constructor
+    const messageType& operator()() {
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are trying to read an un-connected message of type %s\nThis program is about to self destruct.",  typeid(var).name());
+            bskLogger.bskLog(
+                BSK_ERROR,
+                "Tried to read an un-connected message of type %s\nThis program is about to self destruct.",
+                typeid(var).name());
             abort();
         }
         return *this->payloadPointer;
-
     };
 
     //! check if this msg has been connected to
-    bool isLinked(){return this->initialized;};  // something that can be checked so that uninitialized messages aren't read.
+    bool isLinked() const { return this->initialized; };
 
     //! check if the message has been ever written to
-    bool isWritten(){
+    bool isWritten() {
         if (this->initialized) {
             return this->headerPointer->isWritten;
         } else {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are checking if an unconnected msg of type %s is written.", typeid(var).name());
+            bskLogger.bskLog(BSK_ERROR, "Tried to check an unconnected msg of type %s is written.", typeid(var).name());
             return false;
         }
     };
 
     //! return the time at which the message was written
-    uint64_t timeWritten(){
+    uint64_t timeWritten() {
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting the write time of an unconnected msg of type %s.", typeid(var).name());
+            bskLogger.bskLog(
+                BSK_ERROR, "Tried to request the write time of an unconnected msg of type %s.", typeid(var).name());
             return 0;
         }
         return this->headerPointer->timeWritten;
     };
 
     //! return the moduleID of who wrote wrote the message
-    int64_t moduleID(){
+    int64_t moduleID() {
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unconnected msg of type %s.", typeid(var).name());
+            bskLogger.bskLog(
+                BSK_ERROR, "Tried to request the moduleID of an unconnected msg of type %s.", typeid(var).name());
             return 0;
         }
         if (!this->headerPointer->isWritten) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unwritten msg of type %s.", typeid(var).name());
+            bskLogger.bskLog(
+                BSK_ERROR, "Tried to request the moduleID of an unwritten msg of type %s.", typeid(var).name());
             return 0;
         }
         return this->headerPointer->moduleID;
     };
 
-    //! subscribe to a C message
-    void subscribeToC(void* source){
-        // this method works by knowing that the first member of a C message is the header.
-        this->headerPointer = (MsgHeader*) source;
-
-        // advance the address to connect to C-wrapped message payload
-        // this assumes the header memory is aligned with 0 additional padding
-        MsgHeader* pt = this->headerPointer;
-        this->payloadPointer = (messageType *) (++pt);
-
-
-        // set flag that this input message is connected to another message
-        this->initialized = true;           // set input message as linked
-        this->headerPointer->isLinked = 1;  // set source output message as linked
-    };
-
     //! Subscribe to a C++ message
-    void subscribeTo(Message<messageType> *source){
+    void subscribeTo(Message<messageType>* source) {
         *this = source->addSubscriber();
         this->initialized = true;
     };
 
-
-    //! Check if self has been subscribed to a C message
-    uint8_t isSubscribedToC(void *source){
-
-        int8_t firstCheck = (this->headerPointer == (MsgHeader*) source);
-        MsgHeader* pt = this->headerPointer;
-        int8_t secondCheck = (this->payloadPointer == (messageType *) (++pt));
+    //! Check if self has been subscribed to a Cpp message
+    uint8_t isSubscribedTo(Message<messageType>* source) {
+        int8_t firstCheck = (this->payloadPointer == source->getMsgPayloadPointer());
+        int8_t secondCheck = (this->headerPointer == source->getMsgHeaderPointer());
 
         return (this->initialized && firstCheck && secondCheck);
-
-    };
-    //! Check if self has been subscribed to a Cpp message
-    uint8_t isSubscribedTo(Message<messageType> *source){
-
-        MsgHeader *dummyMsgPtr;
-        int8_t firstCheck = (this->payloadPointer == source->getMsgPointers(&(dummyMsgPtr)));
-        int8_t secondCheck = (this->headerPointer == dummyMsgPtr);
-
-        return (this->initialized && firstCheck && secondCheck );
-
     };
 
     //! Recorder method description
-    Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
+    Recorder<messageType> recorder(uint64_t timeDiff = 0) { return Recorder<messageType>(this, timeDiff); }
 };
 
 /*! Write Functor */
-template<typename messageType>
-class WriteFunctor{
-private:
-    messageType* payloadPointer;    //!< pointer to the message payload
-    MsgHeader* headerPointer;       //!< pointer to the message header
-public:
+template <typename messageType>
+class WriteFunctor {
+   private:
+    messageType* payloadPointer;  //!< pointer to the message payload
+    MsgHeader* headerPointer;     //!< pointer to the message header
+   public:
     //! write functor constructor
     WriteFunctor(){};
     //! write functor constructor
-    WriteFunctor(messageType* payloadPointer, MsgHeader *headerPointer) : payloadPointer(payloadPointer), headerPointer(headerPointer){};
+    WriteFunctor(messageType* payloadPointer, MsgHeader* headerPointer)
+        : payloadPointer(payloadPointer), headerPointer(headerPointer){};
     //! write functor constructor
-    void operator()(messageType *payload, int64_t moduleID, uint64_t callTime){
+    void operator()(messageType* payload, int64_t moduleID, uint64_t callTime) {
         *this->payloadPointer = *payload;
         this->headerPointer->isWritten = 1;
         this->headerPointer->timeWritten = callTime;
         this->headerPointer->moduleID = moduleID;
-        return;
     }
 };
-
-template<typename messageType>
-class Recorder;
 
 /*!
  * base class template for bsk messages
  */
-template<typename messageType>
-class Message{
-private:
-    messageType payload = {};   //!< struct defining message payload, zero'd on creation
-    MsgHeader header = {};      //!< struct defining the message header, zero'd on creation
+template <typename messageType>
+class Message {
+   private:
+    messageType payload = {};  //!< struct defining message payload, zero'd on creation
+    MsgHeader header = {};     //!< struct defining the message header, zero'd on creation
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);  //!< read functor instance
-public:
+   public:
     //! write functor to this message
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
     //! -- request read rights. returns reference to class ``read`` variable
@@ -190,67 +164,71 @@ public:
     //! -- request write rights.
     WriteFunctor<messageType> addAuthor();
     //! for plain ole c modules
-    messageType* subscribeRaw(MsgHeader **msgPtr);
+    messageType* subscribeRaw(MsgHeader** msgPtr);
 
     //! for plain ole c modules
-    messageType* getMsgPointers(MsgHeader **msgPtr);
+    messageType* getMsgPayloadPointer();
+    MsgHeader* getMsgHeaderPointer();
 
     //! Recorder object
-    Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
+    Recorder<messageType> recorder(uint64_t timeDiff = 0) { return Recorder<messageType>(this, timeDiff); }
 
-    messageType zeroMsgPayload = {};    //!< zero'd copy of the message payload structure
+    messageType zeroMsgPayload = {};  //!< zero'd copy of the message payload structure
 
     //! check if this msg has been connected to
-    bool isLinked(){return this->header.isLinked;};
+    bool isLinked() const { return this->header.isLinked; };
 
     //! Return the memory size of the payload, be careful about dynamically sized things
-    uint64_t getPayloadSize() {return sizeof(messageType);};
+    uint64_t getPayloadSize() const { return sizeof(messageType); };
 };
 
-
-template<typename messageType>
-ReadFunctor<messageType> Message<messageType>::addSubscriber(){
+template <typename messageType>
+ReadFunctor<messageType> Message<messageType>::addSubscriber() {
     this->header.isLinked = 1;
     return this->read;
 }
 
-template<typename messageType>
-WriteFunctor<messageType> Message<messageType>::addAuthor(){
+template <typename messageType>
+WriteFunctor<messageType> Message<messageType>::addAuthor() {
     return this->write;
 }
 
-template<typename messageType>
-messageType* Message<messageType>::subscribeRaw(MsgHeader **msgPtr){
+template <typename messageType>
+messageType* Message<messageType>::subscribeRaw(MsgHeader** msgPtr) {
     *msgPtr = &this->header;
     this->header.isLinked = 1;
     return &this->payload;
 }
 
-template<typename messageType>
-messageType* Message<messageType>::getMsgPointers(MsgHeader **msgPtr){
-    *msgPtr = &this->header;
+template <typename messageType>
+messageType* Message<messageType>::getMsgPayloadPointer() {
     return &this->payload;
 }
 
+template <typename messageType>
+MsgHeader* Message<messageType>::getMsgHeaderPointer() {
+    return &this->header;
+}
+
 /*! Keep a time history of messages accessible to users from python */
-template<typename messageType>
-class Recorder : public SysModel{
-public:
+template <typename messageType>
+class Recorder : public SysModel {
+   public:
     Recorder(){};
     //! -- Use this to record cpp messages
-    Recorder(Message<messageType>* message, uint64_t timeDiff = 0){
+    Recorder(Message<messageType>* message, uint64_t timeDiff = 0) {
         this->timeInterval = timeDiff;
         this->readMessage = message->addSubscriber();
         this->modelTag = "Rec:" + findMsgName(std::string(typeid(*message).name()));
     }
     //! -- Use this to record C messages
-    Recorder(void* message, uint64_t timeDiff = 0){
+    Recorder(void* message, uint64_t timeDiff = 0) {
         this->timeInterval = timeDiff;
 
-        MsgHeader* msgPt = (MsgHeader *) message;
-        MsgHeader *pt = msgPt;
+        MsgHeader* msgPt = (MsgHeader*)message;
+        MsgHeader* pt = msgPt;
         messageType* payloadPointer;
-        payloadPointer = (messageType *) (++pt);
+        payloadPointer = (messageType*)(++pt);
 
         this->readMessage = ReadFunctor<messageType>(payloadPointer, msgPt);
         this->modelTag = "Rec:";
@@ -259,23 +237,25 @@ public:
         this->modelTag += findMsgName(msgName);
     }
     //! -- Use this to keep track of what someone is reading
-    Recorder(ReadFunctor<messageType>* messageReader, uint64_t timeDiff = 0){
+    Recorder(ReadFunctor<messageType>* messageReader, uint64_t timeDiff = 0) {
         this->timeInterval = timeDiff;
         this->readMessage = *messageReader;
         if (!messageReader->isLinked()) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting to record an un-connected input message of type %s.", typeid(var).name());
+            bskLogger.bskLog(BSK_ERROR,
+                             "Tried to request the recorder an un-connected input message of type %s.",
+                             typeid(var).name());
         }
         this->modelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
     }
     ~Recorder(){};
 
     //! -- self initialization
-    void selfInit(){};
+    void selfInit() {};
     //! -- cross initialization
-    void integratedInit(){};
+    void integratedInit() {};
     //! -- Read and record the message
-    void updateState(uint64_t currentSimNanos){
+    void updateState(uint64_t currentSimNanos) {
         if (currentSimNanos >= this->nextUpdateTime) {
             this->msgRecordTimes.push_back(currentSimNanos);
             this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
@@ -284,61 +264,59 @@ public:
         }
     };
     //! Reset method
-    void reset(uint64_t currentSimNanos){
-        this->msgRecord.clear();    //!< -- Can only reset to 0 for now
+    void reset(uint64_t currentSimNanos) {
+        this->msgRecord.clear();  //!< -- Can only reset to 0 for now
         this->msgRecordTimes.clear();
         this->msgWrittenTimes.clear();
         this->nextUpdateTime = currentSimNanos;
     };
     //! time recorded method
-    std::vector<uint64_t>& times(){return this->msgRecordTimes;}
+    std::vector<uint64_t>& times() { return this->msgRecordTimes; }
     //! time written method
-    std::vector<uint64_t>& timesWritten(){return this->msgWrittenTimes;}
+    std::vector<uint64_t>& timesWritten() { return this->msgWrittenTimes; }
     //! record method
-    std::vector<messageType>& record(){return this->msgRecord;};
+    std::vector<messageType>& record() { return this->msgRecord; };
 
     //! determine message name
-    std::string findMsgName(std::string msgName) {
+    std::string findMsgName(std::string msgName) const {
         size_t locMsg = msgName.find("Payload");
         if (locMsg != std::string::npos) {
             msgName.erase(locMsg, std::string::npos);
         }
         locMsg = msgName.find("Message");
         if (locMsg != std::string::npos) {
-           msgName.replace(locMsg, 7, "");
+            msgName.replace(locMsg, 7, "");
         }
-        for (int c = 0; c<10; c++) {
+        for (int c = 0; c < 10; c++) {
             locMsg = msgName.rfind(std::to_string(c));
             if (locMsg != std::string::npos) {
-                msgName.erase(0, locMsg+1);
+                msgName.erase(0, locMsg + 1);
             }
         }
         return msgName;
     };
 
     //! clear the recorded messages, i.e. purge the history
-    void clear(){
+    void clear() {
         this->msgRecord.clear();
         this->msgRecordTimes.clear();
         this->msgWrittenTimes.clear();
     };
 
-    BSKLogger bskLogger;                          //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
     //! method to update the minimum time interval before recording the next message
-    void updateTimeInterval(uint64_t timeDiff) {
-        this->timeInterval = timeDiff;
-    };
+    void updateTimeInterval(uint64_t timeDiff) { this->timeInterval = timeDiff; };
 
-private:
-    std::vector<messageType> msgRecord;           //!< vector of recorded messages
-    std::vector<uint64_t> msgRecordTimes;         //!< vector of times at which messages are recorded
-    std::vector<uint64_t> msgWrittenTimes;        //!< vector of times at which messages are written
-    uint64_t nextUpdateTime = 0;                  //!< [ns] earliest time at which the msg is recorded again
-    uint64_t timeInterval;                        //!< [ns] recording time intervale
+   private:
+    std::vector<messageType> msgRecord;     //!< vector of recorded messages
+    std::vector<uint64_t> msgRecordTimes;   //!< vector of times at which messages are recorded
+    std::vector<uint64_t> msgWrittenTimes;  //!< vector of times at which messages are written
+    uint64_t nextUpdateTime = 0;            //!< [ns] earliest time at which the msg is recorded again
+    uint64_t timeInterval;                  //!< [ns] recording time intervale
 
-private:
-    ReadFunctor<messageType> readMessage;   //!< method description
+   private:
+    ReadFunctor<messageType> readMessage;  //!< method description
 };
 
 #endif

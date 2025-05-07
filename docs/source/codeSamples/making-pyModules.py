@@ -84,8 +84,8 @@ def run():
 class TestPythonModule(sysModel.SysModel):
     def __init__(self, *args):
         super().__init__(*args)
-        self.dataInMsg = messaging.CModuleTemplateMsgReader()
-        self.dataOutMsg = messaging.CModuleTemplateMsg()
+        self.dataInMsg = messaging.ModuleTemplateMsgReader()
+        self.dataOutMsg = messaging.ModuleTemplateMsg()
 
     def reset(self, currentSimNanos):
         # Ensure that self.dataInMsg is linked

@@ -43,7 +43,7 @@ def run():
 
     # create stand-along message with a C++ interface and re-direct
     # the C++ module output message writing to this stand-alone message
-    cppMsg = messaging.CModuleTemplateMsg()
+    cppMsg = messaging.ModuleTemplateMsg()
     mod2.dataOutMsg = cppMsg
 
     #  initialize Simulation:
