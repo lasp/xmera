@@ -90,10 +90,6 @@ def setup_filter_data(filter_object):
                                    [0.0, 0.0, 0.0, 0.0, sigma_rate, 0.0],
                                    [0.0, 0.0, 0.0, 0.0, 0.0, sigma_rate]])
 
-    filter_object.setLowPassFilter(0.5, 15/(2*np.pi))
-
-    return
-
 @pytest.mark.parametrize("show_plots", [False])
 def test_propagation_kf(show_plots):
     """Module Unit Test"""
