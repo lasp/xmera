@@ -178,8 +178,11 @@ def test_propagation_kf(show_plots):
     accel_measurement = messaging.AccDataMsg().write(accel_data)
     miru_low_pass_filter_converter.imuAccelDataInMsg.subscribeTo(accel_measurement)
 
-    attitude_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
+    attitude_data_log = intertialAttitudeFilter.navAttitudeOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, attitude_data_log)
+
+    filter_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
 
     sim_time = 100
     time = np.linspace(0, sim_time, sim_time+1)
@@ -193,8 +196,9 @@ def test_propagation_kf(show_plots):
     unit_test_sim.ExecuteSimulation()
 
     num_states = 6
-    state_data_log = add_time_column(attitude_data_log.times(), attitude_data_log.state[:, :num_states])
-    covariance_data_log = add_time_column(attitude_data_log.times(), attitude_data_log.covar[:, :num_states**2])
+    nav_data_log = add_time_column(attitude_data_log.times(), attitude_data_log.sigma_BN)
+    state_data_log = add_time_column(filter_data_log.times(), filter_data_log.state[:, :num_states])
+    covariance_data_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
 
     diff = np.copy(state_data_log)
     diff[:, 1:] -= expected[:, 1:]
@@ -209,6 +213,11 @@ def test_propagation_kf(show_plots):
                                expected[:, 1:],
                                rtol=1E-10,
                                err_msg='state propagation error',
+                               verbose=True)
+    np.testing.assert_allclose(nav_data_log,
+                               state_data_log[:, :4],
+                               rtol=1E-10,
+                               err_msg='nav msg and state are identical',
                                verbose=True)
     return
 
