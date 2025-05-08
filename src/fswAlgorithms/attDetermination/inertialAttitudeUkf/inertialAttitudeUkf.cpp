@@ -149,8 +149,11 @@ void InertialAttitudeUkf::readStarTrackerData() {
             starTrackerMeasurement.setTimeTag(starTracker.timeTag);
             starTrackerMeasurement.setValidity(true);
 
+            /*! - Get the mapping from camera frame to inertial for the noise matrix */
+            Eigen::MatrixXd dcm_CB = cArray2EigenMatrix3d(starTracker.dcm_CB);
+
             starTrackerMeasurement.setMeasurementNoise(this->measNoiseScaling *
-                                                       this->starTrackerMessages[index].measurementNoise);
+                                                       dcm_CB.transpose()*this->starTrackerMessages[index].measurementNoise_C*dcm_CB);
             starTrackerMeasurement.setObservation(
                 mrpSwitch(Eigen::Map<Eigen::Vector3d>(starTracker.MRP_BdyInrtl), this->mrpSwitchThreshold));
             starTrackerMeasurement.setMeasurementModel(MeasurementModel::mrpStates);
@@ -242,5 +245,5 @@ void InertialAttitudeUkf::addStarTrackerInput(const StarTrackerMessage &starTrac
     */
 Eigen::Matrix3d InertialAttitudeUkf::getStarTrackerNoise(int starTrackerNumber) const {
     assert(starTrackerNumber < this->numberOfStarTackers);
-    return this->starTrackerMessages[starTrackerNumber].measurementNoise;
+    return this->starTrackerMessages[starTrackerNumber].measurementNoise_C;
 }
