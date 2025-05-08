@@ -181,7 +181,7 @@ void ImuSensor::writeOutputMessages(uint64_t Clock)
     eigenVector3d2CArray(this->DV_SN_P_out, localOutput.DVFramePlatform);
     eigenVector3d2CArray(this->omega_PN_P_out, localOutput.AngVelPlatform);
     eigenVector3d2CArray(this->prv_PN_out, localOutput.DRFramePlatform);
-
+    localOutput.timeTag = Clock*1E-9;
     this->sensorOutMsg.write(&localOutput, this->moduleID, Clock);
 
     return;

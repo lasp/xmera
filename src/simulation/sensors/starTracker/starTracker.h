@@ -30,6 +30,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/gauss_markov.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief star tracker class */
 class StarTracker : public SysModel {
