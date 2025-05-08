@@ -38,7 +38,7 @@ void InertialAttitudeUkf::customreset() {
             Eigen::Vector3d wheelTorque = Eigen::Vector3d::Zero();
             for (int i = 0; i < this->rwArrayConfigPayload.numRW; i++) {
                 Eigen::Vector3d gsMatrix = Eigen::Map<Eigen::Vector3d>(&this->rwArrayConfigPayload.GsMatrix_B[i * 3]);
-                wheelTorque -= this->wheelAccelerations[i] * this->rwArrayConfigPayload.JsList[i] * gsMatrix;
+                wheelTorque += this->wheelAccelerations[i] * this->rwArrayConfigPayload.JsList[i] * gsMatrix;
             }
 
             VelocityState omegaDot;
@@ -126,13 +126,17 @@ void InertialAttitudeUkf::readRWSpeedData() {
     RWSpeedMsgPayload rwSpeedPayload = this->rwSpeedMsg();
     uint64_t wheelSpeedTime = this->rwSpeedMsg.timeWritten();
     if (this->firstFilterPass) {
-        this->wheelAccelerations << 0, 0, 0, 0;
-        this->previousWheelSpeeds = Eigen::Map<Eigen::Matrix<double, 1, 4>>(rwSpeedPayload.wheelSpeeds);
+        this->wheelAccelerations = Eigen::VectorXd::Zero(this->rwArrayConfigPayload.numRW);
+		Eigen::MatrixXd wheelSpeed = cArray2EigenMatrixXd(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
+        this->previousWheelSpeeds = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
         this->previousWheelSpeedTime = wheelSpeedTime * NANO2SEC;
     } else {
         double dt = wheelSpeedTime * NANO2SEC - this->previousWheelSpeedTime;
-        this->wheelAccelerations =
-            (Eigen::Map<Eigen::Matrix<double, 1, 4>>(rwSpeedPayload.wheelSpeeds) - this->previousWheelSpeeds) / dt;
+		Eigen::MatrixXd wheelSpeed = cArray2EigenMatrixXd(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
+		Eigen::VectorXd currentWheelSpeed = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
+        this->wheelAccelerations = (currentWheelSpeed - this->previousWheelSpeeds) / dt;
+        this->previousWheelSpeeds = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
+        this->previousWheelSpeedTime = wheelSpeedTime * NANO2SEC;
     }
 }
 
@@ -150,10 +154,10 @@ void InertialAttitudeUkf::readStarTrackerData() {
             starTrackerMeasurement.setValidity(true);
 
             /*! - Get the mapping from camera frame to inertial for the noise matrix */
-            Eigen::MatrixXd dcm_CB = cArray2EigenMatrix3d(starTracker.dcm_CB);
+            Eigen::Matrix3d dcm_CB = cArray2EigenMatrix3d(starTracker.dcm_CB);
 
-            starTrackerMeasurement.setMeasurementNoise(this->measNoiseScaling *
-                                                       dcm_CB.transpose()*this->starTrackerMessages[index].measurementNoise_C*dcm_CB);
+            starTrackerMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
+                                                       this->starTrackerMessages[index].measurementNoise_C * dcm_CB);
             starTrackerMeasurement.setObservation(
                 mrpSwitch(Eigen::Map<Eigen::Vector3d>(starTracker.MRP_BdyInrtl), this->mrpSwitchThreshold));
             starTrackerMeasurement.setMeasurementModel(MeasurementModel::mrpStates);

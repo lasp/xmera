@@ -90,8 +90,8 @@ class InertialAttitudeUkf : public SRukfInterface {
     bool firstFilterPass = true;
     bool validStarTracker = false;
 
-    Eigen::Vector<double, 4> wheelAccelerations;
-    Eigen::Matrix<double, 1, 4> previousWheelSpeeds;
+    Eigen::VectorXd wheelAccelerations{};
+    Eigen::VectorXd previousWheelSpeeds{};
     Eigen::Matrix3d spacecraftInertia;
     Eigen::Matrix3d spacecraftInertiaInverse;
     double previousWheelSpeedTime = 0;
