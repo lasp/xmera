@@ -28,7 +28,7 @@
 #include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-
+#include "fswAlgorithms/effectorInterfaces/thrFiringRemainder/thrFiringRemainderAlgorithm.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/bskLogging.h"
 
@@ -37,16 +37,20 @@
 /*! @brief Top level structure for the sub-module routines. */
 class ThrFiringRemainder : public SysModel {
 public:
+    ThrFiringRemainder() = default;   //!< Constructor
+    ~ThrFiringRemainder() = default;  //!< Destructor
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-	double              pulseRemainder[MAX_EFF_CNT];            //!< [-] Unimplemented thrust pulses (number of minimum pulses)
-	double              thrMinFireTime;              			//!< [s] Minimum fire time
-	int      			numThrusters;							//!< [-] The number of thrusters available on vehicle
-	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
-	int					baseThrustState;						//!< [-] Indicates on-pulsing (0) or off-pulsing (1)
-	double              defaultControlPeriod;                   //!< [s] Default control period used for first call
 
-	uint64_t			prevCallTime;							//!< callTime from previous function call
+    void setThrMinFireTime(const double thrMinFireTime);                   //!< Setter for thrMinFireTime variable
+    const double& getThrMinFireTime() const;                               //!< Getter for thrMinFireTime variable
+
+    void setBaseThrustState(const int baseThrustState);                    //!< Setter for baseThrustState variable
+    const int& getBaseThrustState() const;                                 //!< Getter for baseThrustState variable
+
+    void setDefaultControlPeriod(const double defaultControlPeriod);       //!< Setter for defaultControlPeriod variable
+    const double& getDefaultControlPeriod() const;                        //!< Getter for defaultControlPeriod variable
+
 
 
 	/* declare module IO interfaces */
@@ -55,6 +59,8 @@ public:
     ReadFunctor<THRArrayConfigMsgPayload> thrConfInMsg;			                //!< The name of the thruster cluster Input message
 	BSKLogger bskLogger={};                             //!< BSK Logging
 
+    private:
+    ThrFiringRemainderAlgorithm algorithm;
 };
 
 #endif
