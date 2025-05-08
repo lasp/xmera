@@ -1,4 +1,4 @@
-
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder"
 import numpy as np
 import time
 
@@ -18,59 +18,17 @@ import SunLineKF_test_utilities as Fplot
 
 
 r"""
-Setup 1 - ukF
--------------
+This scenario is adapted from scenarioCSSFilters.py to compare the runtime of two filters:
+1. (baseline) sunlineUKF, and 2. (new) sunlineSRuKF.
+See _Documents within for more details of each filter.
 
-In the first run, we use an unscented Kalman Filter (:ref:`sunlineUKF`).
-This filter has the following states:
-
-================  =============
-States            notation
-================  =============
-Sunheading        ``d``
-Sunheading Rate|  ``d_dot``
-================  =============
-
-
-This filter estimates sunheading, and the sunheading's rate of change.
-As a unscented filter, it also has the the following parameters:
-
-=============  =============
-  Name         Value
-=============  =============
-  ``alpha``     0.02
-  ``beta``      2
-  ``kappa``     0
-=============  =============
-
-The covariance is then set, as well as the measurement noise:
-
-=============================================  ==================
-  Parameter                                         Value
-=============================================  ==================
-  covariance on  heading vector  components         0.2
-  covariance on heading rate  components            0.02
-  noise on heading measurements                     0.017 ** 2
-  noise on heading measurements                     0.0017 ** 2
-=============================================  ==================
-
-Result is reported below:
+Runtime results are reported below:
 
 Filter   |  Runtime (s)
 -----------------------
 UKF      |        0.050
 SRuKF    |        0.164
 """
-
-#
-# Basilisk Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test to compare the runtime of sunlineUKF (baseline) and sunlineSRuKF (new)
-#           adapted from scenarioCSSFilters.py
-# Author:   Chun-Wei Kong
-# Creation Date:  May. 6, 2025
-#
-
 
 def setup_ukf_data(filterObject):
     filterObject.alpha = 0.02
@@ -84,47 +42,47 @@ def setup_ukf_data(filterObject):
                           0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.0, 0.02]
-    q_noise_in = np.identity(6)
-    q_noise_in[0:3, 0:3] = q_noise_in[0:3, 0:3]*0.017*0.017
-    q_noise_in[3:6, 3:6] = q_noise_in[3:6, 3:6]*0.0017*0.0017
-    filterObject.qNoise = q_noise_in.reshape(36).tolist()
+    qNoise = np.identity(6)
+    qNoise[0:3, 0:3] = qNoise[0:3, 0:3]*0.017*0.017
+    qNoise[3:6, 3:6] = qNoise[3:6, 3:6]*0.0017*0.0017
+    filterObject.qNoise = qNoise.reshape(36).tolist()
     filterObject.qObsVal = 0.017**2
     filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
 
 
-def setup_srukf_data(filter_object):
-    filter_object.setAlpha(0.02)
-    filter_object.setBeta(2.0)
+def setup_srukf_data(filterObject):
+    filterObject.setAlpha(0.02)
+    filterObject.setBeta(2.0)
 
-    filter_object.setInitialPosition([1.0, 0.1, 0.0])
-    filter_object.setInitialVelocity([0.0, 0.01, 0.0])
-    filter_object.setInitialCovariance([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                        [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-                                        [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-                                        [0.0, 0.0, 0.0, 0.02, 0.0, 0.0],
-                                        [0.0, 0.0, 0.0, 0.0, 0.02, 0.0],
-                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.02]])
+    filterObject.setInitialPosition([1.0, 0.1, 0.0])
+    filterObject.setInitialVelocity([0.0, 0.01, 0.0])
+    filterObject.setInitialCovariance([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                       [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                                       [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+                                       [0.0, 0.0, 0.0, 0.02, 0.0, 0.0],
+                                       [0.0, 0.0, 0.0, 0.0, 0.02, 0.0],
+                                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.02]])
     sigmaSun = 0.017*0.017
     sigmaRate = 0.0017*0.0017
-    filter_object.setProcessNoise([[sigmaSun, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                   [0.0, sigmaSun, 0.0, 0.0, 0.0, 0.0],
-                                   [0.0, 0.0, sigmaSun, 0.0, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0, sigmaRate, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0, 0.0, sigmaRate, 0.0],
-                                   [0.0, 0.0, 0.0, 0.0, 0.0, sigmaRate]])
-    filter_object.cssMeasNoiseStd = 0.017
-    filter_object.setCssMeasurementNoiseStd(filter_object.cssMeasNoiseStd)
-    filter_object.setSensorThreshold((filter_object.cssMeasNoiseStd)*5)
+    filterObject.setProcessNoise([[sigmaSun, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                  [0.0, sigmaSun, 0.0, 0.0, 0.0, 0.0],
+                                  [0.0, 0.0, sigmaSun, 0.0, 0.0, 0.0],
+                                  [0.0, 0.0, 0.0, sigmaRate, 0.0, 0.0],
+                                  [0.0, 0.0, 0.0, 0.0, sigmaRate, 0.0],
+                                  [0.0, 0.0, 0.0, 0.0, 0.0, sigmaRate]])
+    filterObject.cssMeasNoiseStd = 0.017
+    filterObject.setCssMeasurementNoiseStd(filterObject.cssMeasNoiseStd)
+    filterObject.setSensorThreshold((filterObject.cssMeasNoiseStd) * 5)
 
 
-def run(saveFigures, show_plots, FilterType, simTime):
+def run(saveFigures, showPlots, filterType, simTime):
     """
     At the end of the python script you can specify the following example parameters.
 
     Args:
         saveFigures (bool): flag to save off the figures
-        show_plots (bool): Determines if the script should display plots
-        FilterType (str): {'uKF', 'SRuKF'}
+        showPlots (bool): Determines if the script should display plots
+        filterType (str): {'uKF', 'SRuKF'}
         simTime (float): The length of the simulation time
 
     """
@@ -230,9 +188,8 @@ def run(saveFigures, show_plots, FilterType, simTime):
     # Setup filter
     #
     numStates = 6
-    bVecLogger = None
 
-    if FilterType == 'uKF':
+    if filterType == 'uKF':
         module = sunlineUKF.SunlineUKF()
         module.modelTag = "SunlineUKF"
         setup_ukf_data(module)
@@ -243,7 +200,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         filtLog = module.filtDataOutMsg.recorder()
         css_measurement_noise_std = np.sqrt(module.qObsVal)
 
-    if FilterType == 'SRuKF':
+    if filterType == 'SRuKF':
         module = sunlineSRuKF.SunlineSRuKF()
         module.modelTag = "SunlineSRuKF"
         setup_srukf_data(module)
@@ -253,8 +210,8 @@ def run(saveFigures, show_plots, FilterType, simTime):
         module.navAttInMsg.subscribeTo(simpleNavMsg)
         navLog = module.navAttOutMsg.recorder()
         filtLog = module.filterOutMsg.recorder()
-        css_residual_data_log = module.filterCssResOutMsg.recorder()
-        scSim.AddModelToTask(simTaskName, css_residual_data_log)
+        cssResidualLog = module.filterCssResOutMsg.recorder()
+        scSim.AddModelToTask(simTaskName, cssResidualLog)
         css_measurement_noise_std = module.getCssMeasurementNoiseStd()
 
     module.cssDataInMsg.subscribeTo(cssConstelation.constellationOutMsg)
@@ -274,9 +231,9 @@ def run(saveFigures, show_plots, FilterType, simTime):
     scSim.ConfigureStopTime(simulationTime)
 
     # Time the runs for performance comparisons
-    start_time = time.time()
+    startTime = time.time()
     scSim.ExecuteSimulation()
-    end_time = time.time() - start_time
+    endTime = time.time() - startTime
 
     #
     #   retrieve the logged data
@@ -286,76 +243,70 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
     # Get messages that will make true data
     timeAxis = dataLog.times()
-    OutSunPos = addTimeColumn(timeAxis, sunLog.PositionVector)
-    Outr_BN_N = addTimeColumn(timeAxis, dataLog.r_BN_N)
-    OutSigma_BN = addTimeColumn(timeAxis, dataLog.sigma_BN)
-    Outomega_BN = addTimeColumn(timeAxis, dataLog.omega_BN_B)
+    outSunPos = addTimeColumn(timeAxis, sunLog.PositionVector)
+    outR_BN_N = addTimeColumn(timeAxis, dataLog.r_BN_N)
+    outSigma_BN = addTimeColumn(timeAxis, dataLog.sigma_BN)
+    outOmega_BN = addTimeColumn(timeAxis, dataLog.omega_BN_B)
 
     # Get the filter outputs through the messages
     stateLog = addTimeColumn(timeAxis, filtLog.state[:, range(numStates)])
-    if FilterType == 'uKF':
+    if filterType == 'uKF':
         postFitLog = addTimeColumn(timeAxis, filtLog.postFitRes[:, :8])
     else:
-        postFitLog = addTimeColumn(css_residual_data_log.times(), css_residual_data_log.postFits[:, :8])
-    covarLog = addTimeColumn(timeAxis, filtLog.covar[:, range(numStates*numStates)])
-    # obsLog = addTimeColumn(timeAxis, filtLog.numObs)
+        postFitLog = addTimeColumn(cssResidualLog.times(), cssResidualLog.postFits[:, :8])
+    covarLog = addTimeColumn(timeAxis, filtLog.covar[:, range(numStates**2)])
 
-    sHat_B = np.zeros(np.shape(OutSunPos))
-    sHatDot_B = np.zeros(np.shape(OutSunPos))
-    for i in range(len(OutSunPos[:,0])):
-        sHat_N = (OutSunPos[i,1:] - Outr_BN_N[i,1:])/np.linalg.norm(OutSunPos[i,1:] - Outr_BN_N[i,1:])
-        dcm_BN = rbk.MRP2C(OutSigma_BN[i,1:])
-        sHat_B[i,0] = sHatDot_B[i,0]= OutSunPos[i,0]
+    sHat_B = np.zeros(np.shape(outSunPos))
+    sHatDot_B = np.zeros(np.shape(outSunPos))
+    for i in range(len(outSunPos[:,0])):
+        sHat_N = (outSunPos[i,1:] - outR_BN_N[i, 1:]) / np.linalg.norm(outSunPos[i, 1:] - outR_BN_N[i, 1:])
+        dcm_BN = rbk.MRP2C(outSigma_BN[i, 1:])
+        sHat_B[i,0] = sHatDot_B[i,0]= outSunPos[i,0]
         sHat_B[i,1:] = np.dot(dcm_BN, sHat_N)
-        sHatDot_B[i,1:] = - np.cross(Outomega_BN[i,1:], sHat_B[i,1:] )
+        sHatDot_B[i,1:] = - np.cross(outOmega_BN[i,1:], sHat_B[i,1:] )
 
     expected = np.zeros(np.shape(stateLog))
     expected[:,0:4] = sHat_B
 
     #   plot the results
-    #
     errorVsTruth = np.copy(stateLog)
     errorVsTruth[:,1:] -= expected[:,1:]
 
-    Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, FilterType, show_plots, saveFigures)
-    Fplot.StatesVsExpected(stateLog, covarLog, expected, FilterType, show_plots, saveFigures)
-    Fplot.PostFitResiduals(postFitLog, css_measurement_noise_std, FilterType, show_plots, saveFigures)
-    # Fplot.numMeasurements(obsLog, FilterType, show_plots, saveFigures)
+    Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, filterType, showPlots, saveFigures)
+    Fplot.StatesVsExpected(stateLog, covarLog, expected, filterType, showPlots, saveFigures)
+    Fplot.PostFitResiduals(postFitLog, css_measurement_noise_std, filterType, showPlots, saveFigures)
 
-    if show_plots:
+    if showPlots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
+    return endTime
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return end_time
-
-def compare_runtime(show_plots=False):
-    runtime_sunline_ukf = run(False,       # save figures to file
-                              show_plots,      # show_plots
+def compare_runtime(showPlots=False):
+    runtimeSunlineUkf = run(False,
+                            showPlots,
                               'uKF',
-                               400
+                            400
                             )
 
-    runtime_sunline_srukf = run(False,       # save figures to file
-                                show_plots,      # show_plots
+    runtimeSunlineSRukf = run(False,
+                              showPlots,
                                 'SRuKF',
-                                400
-                            )
+                              400
+                              )
     # Header
     print(f"{'Filter':<8} | {'Runtime (s)':>12}")
     print("-" * 23)
 
     # Rows
-    print(f"{'UKF':<8} | {runtime_sunline_ukf:12.3f}")
-    print(f"{'SRuKF':<8} | {runtime_sunline_srukf:12.3f}")
+    print(f"{'UKF':<8} | {runtimeSunlineUkf:12.3f}")
+    print(f"{'SRuKF':<8} | {runtimeSunlineSRukf:12.3f}")
 
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    compare_runtime(show_plots=False)
+    compare_runtime(showPlots=True)
