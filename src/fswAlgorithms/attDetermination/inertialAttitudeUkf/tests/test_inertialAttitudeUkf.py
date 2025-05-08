@@ -317,7 +317,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     filter_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
 
-    attitude_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
+    attitude_data_log = intertialAttitudeFilter.navAttitudeOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, attitude_data_log)
 
     st_residual_data_log = intertialAttitudeFilter.starTrackerResidualMsg.recorder()
@@ -348,13 +348,13 @@ def test_measurements_kf(show_plots, initial_error, method):
         rw_speeds.write(rw_speeds_data, int((i+1)*1E9))
         if (i > 10*substeps and i< substeps*sim_time/4) or i > substeps*sim_time/2:
             if (time[i]-0.2).is_integer():
-                st_1_data.timeTag = int(time[i] * 1E9)
+                st_1_data.timeTag = time[i]
                 st_1_data.valid = True
                 st_1_data.MRP_BdyInrtl = expected[i, 1:4] + np.random.normal(0, 1e-4, 3)
                 st_1_msg.write(st_1_data, int(time[i]*1E9))
 
             if (time[i]-0.8).is_integer():
-                st_2_data.timeTag = int(time[i]*1e9)
+                st_2_data.timeTag = time[i]
                 st_2_data.valid = True
                 st_2_data.MRP_BdyInrtl = expected[i, 1:4] + np.random.normal(0, 1e-4, 3)
                 st_2_msg.write(st_2_data, int(time[i]*1e9))
