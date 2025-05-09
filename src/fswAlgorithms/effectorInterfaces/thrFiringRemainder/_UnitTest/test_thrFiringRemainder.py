@@ -82,12 +82,12 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.thrMinFireTime = 0.2
-    module.defaultControlPeriod = defaultControlPeriod
+    module.setThrMinFireTime(0.2)
+    module.setDefaultControlPeriod(defaultControlPeriod)
     if dvOn == 1:
-        module.baseThrustState = 1
+        module.setBaseThrustState(1)
     else:
-        module.baseThrustState = 0
+        module.setBaseThrustState(0)
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
@@ -176,10 +176,10 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
                 thrust += maxThrust
             thrust = max(thrust, 0.0)  # Do not allow thrust requests less than zero
             onTime = thrust / maxThrust * controlPeriod
-            onTime += pulseRemainder[thrIdx] * module.thrMinFireTime
+            onTime += pulseRemainder[thrIdx] * module.getThrMinFireTime()
             pulseRemainder[thrIdx] = 0.0
-            if onTime < module.thrMinFireTime:
-                pulseRemainder[thrIdx] = onTime / module.thrMinFireTime
+            if onTime < module.getThrMinFireTime():
+                pulseRemainder[thrIdx] = onTime / module.getThrMinFireTime()
                 onTime = 0.0
             elif onTime >= controlPeriod:
                 onTime = 1.1 * controlPeriod
