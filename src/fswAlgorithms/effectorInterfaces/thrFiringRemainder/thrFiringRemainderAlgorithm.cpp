@@ -16,131 +16,127 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
-    Thrust Firing Remainder
-
- */
 
 #include "fswAlgorithms/effectorInterfaces/thrFiringRemainder/thrFiringRemainderAlgorithm.h"
 #include "architecture/utilities/macroDefinitions.h"
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrFiringRemainderAlgorithm::reset(uint64_t callTime,THRArrayConfigMsgPayload thrConfigInMsgPayload)
-{
-    this-> prevCallTime= 0;
+void ThrFiringRemainderAlgorithm::reset(uint64_t callTime, THRArrayConfigMsgPayload thrConfigInMsgPayload) {
+    this->prevCallTime = 0;
     /*! - store the number of installed thrusters */
-	this->numThrusters = thrConfigInMsgPayload.numThrusters;
+    this->numThrusters = thrConfigInMsgPayload.numThrusters;
 
     /*! - loop over all thrusters and for each copy over maximum thrust, zero the impulse remainder */
-	for(int i=0; i<this->numThrusters; i++) {
-		this->maxThrust[i] = thrConfigInMsgPayload.thrusters[i].maxThrust;
-		this->pulseRemainder[i] = 0.0;
-	}
+    for (int i = 0; i < this->numThrusters; i++) {
+        this->maxThrust[i] = thrConfigInMsgPayload.thrusters[i].maxThrust;
+        this->pulseRemainder[i] = 0.0;
+    }
 
     /*! - use default value of 2 seconds for control period of first call if not specified.
      * Control period (FSW rate) is computed dynamically for any subsequent calls.
      */
-    this->defaultControlPeriod = (0.0 == this->defaultControlPeriod) ?
-                                        2.0 : this->defaultControlPeriod;
+    this->defaultControlPeriod = (0.0 == this->defaultControlPeriod) ? 2.0 : this->defaultControlPeriod;
 }
 
 /*! This method maps the input thruster command forces into thruster on times using a remainder tracking logic.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
- THRArrayOnTimeCmdMsgPayload ThrFiringRemainderAlgorithm::update(uint64_t callTime,THRArrayCmdForceMsgPayload& thrForceIn,THRArrayConfigMsgPayload& thrConfigInMsg)
-{
-	double				controlPeriod;			/* [s] control period */
-	double				onTime[MAX_EFF_CNT];	/* [s] array of commanded on time for thrusters */
-    THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {};       /* [-] copy of the thruster on-time output message */
+THRArrayOnTimeCmdMsgPayload ThrFiringRemainderAlgorithm::update(uint64_t callTime,
+                                                                THRArrayCmdForceMsgPayload& thrForceIn,
+                                                                THRArrayConfigMsgPayload& thrConfigInMsg) {
+    double controlPeriod;                          /* [s] control period */
+    double onTime[MAX_EFF_CNT];                    /* [s] array of commanded on time for thrusters */
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {}; /* [-] copy of the thruster on-time output message */
 
     /*! - The first time update() is called there is no information on the time step.
      *    Pick 2 seconds for the control period */
-	if(this->prevCallTime == 0) {
+    if (this->prevCallTime == 0) {
         controlPeriod = this->defaultControlPeriod;
-	} else {
+    } else {
         /*! - compute control time period Delta_t */
         controlPeriod = ((double)(callTime - this->prevCallTime)) * NANO2SEC;
     }
 
-	this->prevCallTime = callTime;
+    this->prevCallTime = callTime;
 
-
-	/*! - Loop through thrusters */
-	for(int i = 0; i < this->numThrusters; i++) {
-
-		/*! - Correct for off-pulsing if necessary.  Here the requested force is negative, and the maximum thrust
+    /*! - Loop through thrusters */
+    for (int i = 0; i < this->numThrusters; i++) {
+        /*! - Correct for off-pulsing if necessary.  Here the requested force is negative, and the maximum thrust
          needs to be added.  If not control force is requested in off-pulsing mode, then the thruster force should
          be set to the maximum thrust value */
-		if (this->baseThrustState == 1) {
-			thrForceIn.thrForce[i] += this->maxThrust[i];
-		}
+        if (this->baseThrustState == 1) {
+            thrForceIn.thrForce[i] += this->maxThrust[i];
+        }
 
-		/*! - Do not allow thrust requests less than zero */
-		if (thrForceIn.thrForce[i] < 0.0) {
-			thrForceIn.thrForce[i] = 0.0;
-		}
+        /*! - Do not allow thrust requests less than zero */
+        if (thrForceIn.thrForce[i] < 0.0) {
+            thrForceIn.thrForce[i] = 0.0;
+        }
 
-		/*! - Compute T_on from thrust request, max thrust, and control period */
-		onTime[i] = thrForceIn.thrForce[i]/this->maxThrust[i]*controlPeriod;
-		/*! - Add in remainder from the last control step */
-		onTime[i] += this->pulseRemainder[i]*this->thrMinFireTime;
-		/*! - Set pulse remainder to zero. Remainder now stored in onTime */
-		this->pulseRemainder[i] = 0.0;
+        /*! - Compute T_on from thrust request, max thrust, and control period */
+        onTime[i] = thrForceIn.thrForce[i] / this->maxThrust[i] * controlPeriod;
+        /*! - Add in remainder from the last control step */
+        onTime[i] += this->pulseRemainder[i] * this->thrMinFireTime;
+        /*! - Set pulse remainder to zero. Remainder now stored in onTime */
+        this->pulseRemainder[i] = 0.0;
 
-		/* Pulse remainder logic */
-		if(onTime[i] < this->thrMinFireTime) {
-			/*! - If request is less than minimum pulse time zero onTime an store remainder */
-			this->pulseRemainder[i] = onTime[i]/this->thrMinFireTime;
-			onTime[i] = 0.0;
-		} else if (onTime[i] >= controlPeriod) {
-			/*! - If request is greater than control period then oversaturate onTime */
-			onTime[i] = 1.1*controlPeriod;
-		}
+        /* Pulse remainder logic */
+        if (onTime[i] < this->thrMinFireTime) {
+            /*! - If request is less than minimum pulse time zero onTime an store remainder */
+            this->pulseRemainder[i] = onTime[i] / this->thrMinFireTime;
+            onTime[i] = 0.0;
+        } else if (onTime[i] >= controlPeriod) {
+            /*! - If request is greater than control period then oversaturate onTime */
+            onTime[i] = 1.1 * controlPeriod;
+        }
 
-		/*! - Set the output data for each thruster */
-		thrOnTimeOut.OnTimeRequest[i] = onTime[i];
+        /*! - Set the output data for each thruster */
+        thrOnTimeOut.OnTimeRequest[i] = onTime[i];
+    }
 
-	}
-
-	return thrOnTimeOut;
-
+    return thrOnTimeOut;
 }
 
 /*! Setter method for thrMinFireTime.
  @return void
  @param thrMinFireTime
 */
-void ThrFiringRemainderAlgorithm::setThrMinFireTime(const double thrMinFireTime){this->thrMinFireTime = thrMinFireTime;}
+void ThrFiringRemainderAlgorithm::setThrMinFireTime(const double thrMinFireTime) {
+    this->thrMinFireTime = thrMinFireTime;
+}
 
 /*! Getter method for thrMinFireTime.
  @return const double
 */
-const double& ThrFiringRemainderAlgorithm::getThrMinFireTime() const{return this->thrMinFireTime;}
+const double& ThrFiringRemainderAlgorithm::getThrMinFireTime() const { return this->thrMinFireTime; }
 
 /*! Setter method for baseThrustState.
  @return void
  @param baseThrustState
 */
-void ThrFiringRemainderAlgorithm::setBaseThrustState(const int baseThrustState){this-> baseThrustState = baseThrustState;}
+void ThrFiringRemainderAlgorithm::setBaseThrustState(const int baseThrustState) {
+    this->baseThrustState = baseThrustState;
+}
 
 /*! Getter method for baseThrustState.
  @return const int
 */
-const int& ThrFiringRemainderAlgorithm::getBaseThrustState() const{return this->baseThrustState;}
+const int& ThrFiringRemainderAlgorithm::getBaseThrustState() const { return this->baseThrustState; }
 
 /*! Setter method for defaultControlPeriod.
  @return void
  @param defaultControlPeriod
 */
-void ThrFiringRemainderAlgorithm::setDefaultControlPeriod(const double defaultControlPeriod){this->defaultControlPeriod=defaultControlPeriod;}
+void ThrFiringRemainderAlgorithm::setDefaultControlPeriod(const double defaultControlPeriod) {
+    this->defaultControlPeriod = defaultControlPeriod;
+}
 
 /*! Getter method for defaultControlPeriod.
  @return const double
 */
-const double& ThrFiringRemainderAlgorithm::getDefaultControlPeriod() const{return this->defaultControlPeriod;}
+const double& ThrFiringRemainderAlgorithm::getDefaultControlPeriod() const { return this->defaultControlPeriod; }
