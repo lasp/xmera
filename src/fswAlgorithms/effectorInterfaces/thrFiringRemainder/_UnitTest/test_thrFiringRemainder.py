@@ -16,33 +16,16 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import inspect
-import os
-
 import pytest
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
-
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import thrFiringRemainder            # import the module that is to be tested
+from Basilisk.fswAlgorithms import thrFiringRemainder
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.architecture import messaging
 
 import numpy as np
 
-
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
 @pytest.mark.parametrize("resetCheck, dvOn", [
     (False,False),
     (True,False),
@@ -50,17 +33,8 @@ import numpy as np
     (True,True)
 ])
 
-# update "module" in this function name to reflect the module name
 def test_thrFiringRemainder(show_plots, resetCheck, dvOn):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn)
-    assert testResults < 1, testMessage
 
-
-def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -188,25 +162,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
-                                                               "OnTimeRequest", testFailCount, testMessages)
-
-    snippentName = "passFail" + str(resetCheck) + str(dvOn)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
 
 
 #
