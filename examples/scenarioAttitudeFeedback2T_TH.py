@@ -575,11 +575,11 @@ def run(show_plots, useDVThrusters):
     thrFiringSchmittObj = thrFiringSchmitt.ThrFiringSchmitt()
     thrFiringSchmittObj.modelTag = "thrFiringSchmitt"
     scSim.AddModelToTask(fswTaskName, thrFiringSchmittObj)
-    thrFiringSchmittObj.thrMinFireTime = 0.002
-    thrFiringSchmittObj.level_on = .75
-    thrFiringSchmittObj.level_off = .25
+    thrFiringSchmittObj.setThrMinFireTime(0.002)
+    thrFiringSchmittObj.setLevelOn(0.75)
+    thrFiringSchmittObj.setLevelOff(0.25)
     if useDVThrusters:
-        thrFiringSchmittObj.baseThrustState = 1
+        thrFiringSchmittObj.setBaseThrustState(1)
 
     #
     #   Setup data logging before the simulation is initialized
