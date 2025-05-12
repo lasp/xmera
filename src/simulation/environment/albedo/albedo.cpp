@@ -19,6 +19,14 @@
 
 #include "albedo.h"
 
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/geodeticConversion.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/safeMath.h"
+
+#include <fstream>
+#include <sstream>
+
 /*! Albedo module constructor
  @return void
  */

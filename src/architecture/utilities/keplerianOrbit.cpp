@@ -20,6 +20,7 @@
 #include "keplerianOrbit.h"
 #include <architecture/utilities/avsEigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/safeMath.h>
 
 /*! This constructor initialized to an arbitrary orbit */
 KeplerianOrbit::KeplerianOrbit()

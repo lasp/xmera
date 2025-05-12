@@ -18,11 +18,11 @@
  */
 
 #include "linearAlgebra.h"
+#include "safeMath.h"
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
 #include <math.h>
-
 
 
 #define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double)*(dim)))
@@ -2633,26 +2633,4 @@ void cubicRoots(double a[3], double result[3])
         result[2] = result[1];
     }
 
-}
-
-double safeAcos (double x) {
-    if (x < -1.0)
-        return acos(-1);
-    else if (x > 1.0)
-        return acos(1) ;
-    return acos (x) ;
-}
-
-double safeAsin (double x) {
-    if (x < -1.0)
-        return asin(-1);
-    else if (x > 1.0)
-        return asin(1) ;
-    return asin (x) ;
-}
-
-double safeSqrt(double x) {
-    if (x < 0.0)
-        return 0.0;
-    return sqrt(x);
 }

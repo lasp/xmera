@@ -19,9 +19,11 @@
 
 #include "rigidBodyKinematics.h"
 
-#include <assert.h>
-#include "linearAlgebra.h"
 #include "astroConstants.h"
+#include "linearAlgebra.h"
+#include "safeMath.h"
+
+#include <assert.h>
 #include <string.h>
 
 #define nearZero 0.0000000000001

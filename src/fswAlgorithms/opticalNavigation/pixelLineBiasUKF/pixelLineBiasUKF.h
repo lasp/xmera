@@ -30,13 +30,7 @@
 #include "architecture/msgPayloadDefC/OpNavCirclesMsgPayload.h"
 #include "architecture/msgPayloadDefC/PixelLineFilterMsgPayload.h"
 
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/astroConstants.h"
-
-
 
 
 /*! @brief Top level structure for the relative OD unscented kalman filter.

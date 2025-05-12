@@ -21,16 +21,16 @@
 #ifndef PINHOLE_CAMERA_H
 #define PINHOLE_CAMERA_H
 
-#include <Eigen/Dense>
-#include <vector>
-#include <string>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/LandmarkMsgPayload.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/bskLogging.h"
+
+#include <Eigen/Dense>
+#include <vector>
+#include <string>
 
 /*! @brief Pinhole camera class */
 class PinholeCamera:  public SysModel {

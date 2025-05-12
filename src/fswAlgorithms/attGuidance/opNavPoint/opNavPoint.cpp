@@ -17,11 +17,12 @@
 
  */
 
-#include <string.h>
-#include <math.h>
 #include "fswAlgorithms/attGuidance/opNavPoint/opNavPoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/safeMath.h"
+
+#include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

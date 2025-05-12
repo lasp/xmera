@@ -17,13 +17,12 @@
 
  */
 
-
-#include <math.h>
 #include "fswAlgorithms/attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/safeMath.h"
 
-
+#include <math.h>
 
 void CelestialTwoBodyPoint::reset(uint64_t callTime)
 {

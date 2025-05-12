@@ -23,6 +23,7 @@
 
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/safeMath.h"
 
 int8_t asInt(ThrForceSign value) { return static_cast<int8_t>(value); }
 
