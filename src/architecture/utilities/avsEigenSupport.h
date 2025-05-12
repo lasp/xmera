@@ -19,9 +19,9 @@
 
 #ifndef _AVSEIGENSUPPORT_
 #define _AVSEIGENSUPPORT_
-#include <Eigen/Dense>
-
 #include "avsEigenMRP.h"
+
+#include <Eigen/Core>
 
 //!@brief General conversion between any Eigen matrix and output array
 void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray);
@@ -60,10 +60,5 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd vec);
 //!@brief maps the DCM to MRPs using Eigen variables
 Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
 
-//!@brief solves for the zero of the provided function
-double newtonRaphsonSolve(const double &initialEstimate,
-                          const double &accuracy,
-                          const std::function<double(double)> &f,
-                          const std::function<double(double)> &fPrime);
 
 #endif /* _AVSEIGENSUPPORT_ */

@@ -110,6 +110,28 @@ public:
 
     ~FuelTankModelEmptying() override = default;
 
+    /*! This function solves for the zero of the passed function using the Newton Raphson Method
+    @return double
+    @param initialEstimate The initial value to use for newton-raphson
+    @param accuracy The desired upper bound for the error
+    @param f Function to find the zero of
+    @param fPrime First derivative of the function
+    */
+    double newtonRaphsonSolve(const double &initialEstimate,
+                              const double &accuracy,
+                              const std::function<double(double)> &f,
+                              const std::function<double(double)> &fPrime) const {
+        double currentEstimate = initialEstimate;
+        for (int i = 0; i < 100; i++) {
+            if (std::abs(f(currentEstimate)) < accuracy) break;
+
+            double functionVal = f(currentEstimate);
+            double functionDeriv = fPrime(currentEstimate);
+            currentEstimate = currentEstimate - functionVal / functionDeriv;
+        }
+        return currentEstimate;
+    }
+
     void computeTankProps(double mFuel) override {
         this->rhoFuel = this->propMassInit / (4.0 / 3.0 * M_PI * this->radiusTankInit * this->radiusTankInit * this->radiusTankInit);
         double rtank = this->radiusTankInit;
