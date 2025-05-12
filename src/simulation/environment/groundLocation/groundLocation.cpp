@@ -18,9 +18,12 @@
  */
 
 #include "simulation/environment/groundLocation/groundLocation.h"
+
+#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/geodeticConversion.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include <iostream>
+#include "architecture/utilities/safeMath.h"
 
 /*! @brief Creates an instance of the GroundLocation class with a minimum elevation of 10 degrees,
  @return void

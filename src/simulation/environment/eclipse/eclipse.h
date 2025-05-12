@@ -20,18 +20,15 @@
 #ifndef Eclipse_H
 #define Eclipse_H
 
-#include <vector>
-#include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
-#include "architecture/messaging/messaging.h"
-
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/bskLogging.h"
 
+#include <Eigen/Dense>
+#include <vector>
 
 /*! @brief eclipse model class */
 class Eclipse: public SysModel {

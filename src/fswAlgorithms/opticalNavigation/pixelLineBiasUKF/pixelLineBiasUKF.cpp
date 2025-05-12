@@ -17,11 +17,17 @@
 
  */
 
-#include <string.h>
-#include <math.h>
 #include "pixelLineBiasUKF.h"
+
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/safeMath.h"
 #include "architecture/utilities/ukfUtilities.h"
 
+#include <string.h>
+#include <math.h>
 
 /*! Function for two body dynamics solvers in order to use in the RK4. Only two body dynamics is used currently, but SRP, Solar Gravity, spherical harmonics can be added here.
  @return double Next state

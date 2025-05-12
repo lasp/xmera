@@ -32,8 +32,6 @@
 #include <stdint.h>
 
 
-
-
 /*! @brief Top level structure for the CSS weighted least squares estimator.
  Used to estimate the sun state in the vehicle body frame*/
 class CssWlsEst : public SysModel {

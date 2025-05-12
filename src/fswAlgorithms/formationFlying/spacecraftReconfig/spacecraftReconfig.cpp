@@ -18,11 +18,13 @@
 */
 
 #include "spacecraftReconfig.h"
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
+
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/safeMath.h"
+
+#include <stdlib.h>
+#include <math.h>
 
 static double AdjustRange(double lower, double upper, double angle);
 static int CompareTime(const void * n1, const void * n2);

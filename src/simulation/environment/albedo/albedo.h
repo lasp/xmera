@@ -20,29 +20,19 @@
 #ifndef ALBEDO_H
 #define ALBEDO_H
 
-// General
-#include <Eigen/Dense>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <inttypes.h>
-#include <vector>
-#include <string>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-// Utilities
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/geodeticConversion.h"
-#include "architecture/utilities/linearAlgebra.h"
-// Sim Messages
+
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
-#include "architecture/messaging/messaging.h"
 
-#include "architecture/utilities/macroDefinitions.h"
+#include <Eigen/Core>
+#include <vector>
+#include <string>
+
 
 /*! albedo instrument configuration class */
 typedef class Config {

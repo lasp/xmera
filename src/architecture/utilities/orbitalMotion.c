@@ -19,12 +19,13 @@
 
 #include "orbitalMotion.h"
 
+#include "astroConstants.h"
+#include "safeMath.h"
+#include "linearAlgebra.h"
+
 #include <assert.h>
 #include <math.h>
 #include <stdarg.h>
-
-#include "linearAlgebra.h"
-#include "astroConstants.h"
 
 
 /*!

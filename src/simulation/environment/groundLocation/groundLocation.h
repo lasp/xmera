@@ -21,21 +21,19 @@
 #ifndef GROUND_LOCATION_H
 #define GROUND_LOCATION_H
 
-#include <Eigen/Dense>
-#include <vector>
-#include <string>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 #include "architecture/msgPayloadDefC/GroundStateMsgPayload.h"
-#include "architecture/messaging/messaging.h"
 
-#include "architecture/utilities/geodeticConversion.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/bskLogging.h"
 
+#include <Eigen/Dense>
+#include <vector>
+#include <string>
 /*! @brief ground location class */
 class GroundLocation:  public SysModel {
 public:
