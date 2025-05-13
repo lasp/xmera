@@ -18,27 +18,26 @@
  */
 
 #include "magneticFieldWMM.h"
+#include "EGM9615.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/safeMath.h"
-#include "EGM9615.h"
 
-/*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
+/*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by
+ default.
  @return void
  */
-MagneticFieldWMM::MagneticFieldWMM()
-{
+MagneticFieldWMM::MagneticFieldWMM() {
     //! - Set the default magnetic field properties
-    this->planetRadius = REQ_EARTH*1000.;   // must be the radius of Earth for WMM
-    this->magneticModels[0] = nullptr;      // a nullptr means no WMM coefficients have been loaded
-    this->epochDateFractionalYear = -1;     // negative value means this variable has not been set
+    this->planetRadius = REQ_EARTH * 1000.;  // must be the radius of Earth for WMM
+    this->magneticModels[0] = nullptr;       // a nullptr means no WMM coefficients have been loaded
+    this->epochDateFractionalYear = -1;      // negative value means this variable has not been set
 }
 
 /*! Clean up any memory allocations.
  @return void
  */
-MagneticFieldWMM::~MagneticFieldWMM()
-{
+MagneticFieldWMM::~MagneticFieldWMM() {
     if (this->magneticModels[0] != nullptr) {
         cleanupEarthMagFieldModel();
     }
@@ -47,8 +46,7 @@ MagneticFieldWMM::~MagneticFieldWMM()
 /*! Custom reset() method.  This loads the WMM coefficient file and gets the model setup.
  @return void
  */
-void MagneticFieldWMM::customreset(uint64_t CurrentClock)
-{
+void MagneticFieldWMM::customreset(uint64_t CurrentClock) {
     if (this->magneticModels[0] != nullptr) {
         /* clean up the prior initialization */
         cleanupEarthMagFieldModel();
@@ -56,7 +54,7 @@ void MagneticFieldWMM::customreset(uint64_t CurrentClock)
     }
 
     //! - Check that required module variables are set
-    if(this->dataPath == "") {
+    if (this->dataPath == "") {
         bskLogger.bskLog(BSK_ERROR, "WMM data path was not set.  No WMM.");
         return;
     }
@@ -65,12 +63,13 @@ void MagneticFieldWMM::customreset(uint64_t CurrentClock)
     initializeWmm();
 }
 
-/*! Custom customSetEpochFromVariable() method.  This allows specifying epochDateFractionYear directly from Python.  If an epoch message is set then this variable is not used.
+/*! Custom customSetEpochFromVariable() method.  This allows specifying epochDateFractionYear directly from Python.  If
+ an epoch message is set then this variable is not used.
  @return void
  */
-void MagneticFieldWMM::customSetEpochFromVariable()
-{
-    //! - only convert if the fraction year variable was set to a non-zero value.  Otherwise use the BSK epoch default setup by the base class.
+void MagneticFieldWMM::customSetEpochFromVariable() {
+    //! - only convert if the fraction year variable was set to a non-zero value.  Otherwise use the BSK epoch default
+    //! setup by the base class.
     if (this->epochDateFractionalYear > 0.0) {
         decimalYear2Gregorian(this->epochDateFractionalYear, &this->epochDateTime);
     }
@@ -79,8 +78,7 @@ void MagneticFieldWMM::customSetEpochFromVariable()
 /*! Convert a fraction year double value into a time structure with gregorian date/time information
  @return void
  */
-void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *gregorian)
-{
+void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *gregorian) {
     //! -Use the WMM routine to get the year, month and day information
     MAGtype_Date calendar;
     char Error[255];
@@ -93,21 +91,20 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *g
     //! - Find the unused remained of the fractional year and add to the gregorian calendar
     //! - determine number of days in this year
     double daysInYear = 365;
-    if((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0)
-        daysInYear = 366;
+    if ((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0) daysInYear = 366;
 
     //! - determine missing hours
     MAG_DateToYear(&calendar, Error);
     double diff = this->epochDateFractionalYear - calendar.DecimalYear;
-    this->epochDateTime.tm_hour = (int) round(diff * (24. * daysInYear));
-    diff -= this->epochDateTime.tm_hour / ( 24. * daysInYear);
+    this->epochDateTime.tm_hour = (int)round(diff * (24. * daysInYear));
+    diff -= this->epochDateTime.tm_hour / (24. * daysInYear);
 
     //! - determine missing minutes
-    this->epochDateTime.tm_min = (int) round(diff * (24. * 60 * daysInYear));
+    this->epochDateTime.tm_min = (int)round(diff * (24. * 60 * daysInYear));
     diff -= this->epochDateTime.tm_min / (24. * 60 * daysInYear);
 
     //! - determine missing seconds
-    this->epochDateTime.tm_sec = (int) round(diff * (24. * 60 * 60 * daysInYear));
+    this->epochDateTime.tm_sec = (int)round(diff * (24. * 60 * 60 * daysInYear));
 
     //! - ensure that daylight saving flag is off
     this->epochDateTime.tm_isdst = 0;
@@ -119,29 +116,27 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *g
 /*! Convert a time structure with gregorian date/time information into a fraction year value.
  @return double
  */
-double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
-{
-    double decimalYear;                 // [years]  fraction year date/time format
-    struct tm localDateTime{};            // []       date/time structure
+double MagneticFieldWMM::gregorian2DecimalYear(double currentTime) {
+    double decimalYear;          // [years] fraction year date/time format
+    struct tm localDateTime {};  // []      date/time structure
 
     //! - compute current decimalYear value
     MAGtype_Date calendar;
     char Error_Message[255];
     localDateTime = this->epochDateTime;
-    localDateTime.tm_sec += (int) round(currentTime);   // sets the current seconds
+    localDateTime.tm_sec += (int)round(currentTime);  // sets the current seconds
     mktime(&localDateTime);
 
     calendar.Year = localDateTime.tm_year + 1900;
     calendar.Month = localDateTime.tm_mon + 1;
     calendar.Day = localDateTime.tm_mday;
-    if (!MAG_DateToYear(&calendar, Error_Message)){
+    if (!MAG_DateToYear(&calendar, Error_Message)) {
         bskLogger.bskLog(BSK_ERROR, "Could not convert date to decimal year. \nError message: %s", Error_Message);
     }
 
     //! - determine number of days in this year
     double daysInYear = 365;
-    if((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0)
-        daysInYear = 366;
+    if ((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0) daysInYear = 366;
 
     decimalYear = calendar.DecimalYear;
     decimalYear += localDateTime.tm_hour / (24. * daysInYear);
@@ -156,17 +151,16 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
  @param currentTime current time (s)
  @return void
  */
-void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime)
-{
-    Eigen::Vector3d rHat_P;             // []    normalized position vector in E frame components
-    double phi;                         // [rad] latitude
-    double lambda;                      // [rad] longitude
-    double h;                           // [m]   height above geoid
-    double PM[3][3];                    // []    DCM from magnetic field frame to planet frame P
-    double NM[3][3];                    // []    DCM from magnetic field frame to inertial frame N
-    double B_M[3];                      // [T]   magnetic field in Magnetic field aligned frame
-    double M2[3][3];                    // []    2nd axis rotation DCM
-    double M3[3][3];                    // []    3rd axis rotation DCM
+void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime) {
+    Eigen::Vector3d rHat_P;  // []    normalized position vector in E frame components
+    double phi;              // [rad] latitude
+    double lambda;           // [rad] longitude
+    double h;                // [m]   height above geoid
+    double PM[3][3];         // []    DCM from magnetic field frame to planet frame P
+    double NM[3][3];         // []    DCM from magnetic field frame to inertial frame N
+    double B_M[3];           // [T]   magnetic field in Magnetic field aligned frame
+    double M2[3][3];         // []    2nd axis rotation DCM
+    double M3[3][3];         // []    3rd axis rotation DCM
 
     if (this->magneticModels[0] == nullptr) {
         // no magnetic field was setup, set field to zero and return
@@ -180,7 +174,7 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
     //! - compute spacecraft latitude and longitude
     phi = safeAsin(rHat_P[2]);
     lambda = atan2(rHat_P[1], rHat_P[0]);
-    h = (this->orbitRadius - this->planetRadius)/1000.; /* must be in km */
+    h = (this->orbitRadius - this->planetRadius) / 1000.; /* must be in km */
 
     //! - evaluate NED magnetic field
     computeWmmField(gregorian2DecimalYear(currentTime), phi, lambda, h, B_M);
@@ -196,23 +190,21 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
 /*! Performs memory cleanup necessary for magnetic field models
  @return void
  */
-void MagneticFieldWMM::cleanupEarthMagFieldModel()
-{
+void MagneticFieldWMM::cleanupEarthMagFieldModel() {
     MAG_FreeMagneticModelMemory(timedMagneticModel);
     MAG_FreeMagneticModelMemory(magneticModels[0]);
 }
 
-void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3])
-{
-    MAGtype_CoordSpherical      coordSpherical{};
-    MAGtype_CoordGeodetic       coordGeodetic{};
+void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3]) {
+    MAGtype_CoordSpherical coordSpherical{};
+    MAGtype_CoordGeodetic coordGeodetic{};
     MAGtype_GeoMagneticElements geoMagneticElements{};
     MAGtype_GeoMagneticElements errors{};
 
     this->userDate.DecimalYear = decimalYear;
 
     /* set the Geodetic coordinates of the satellite */
-    coordGeodetic.phi = phi * R2D; /* degrees North */
+    coordGeodetic.phi = phi * R2D;       /* degrees North */
     coordGeodetic.lambda = lambda * R2D; /* degrees East  */
     /* If height is given above WGS-84 */
     coordGeodetic.HeightAboveEllipsoid = h; /* km */
@@ -233,26 +225,23 @@ void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double la
     v3Scale(1e-9, B_M, B_M); /* convert nano-Tesla to Tesla */
 }
 
-void MagneticFieldWMM::initializeWmm()
-{
+void MagneticFieldWMM::initializeWmm() {
     int nMax = 0;
     int nTerms;
     auto fileName = this->dataPath + "WMM.COF";
 
-    if (!MAG_robustReadMagModels(const_cast<char*>(fileName.c_str()),
-                                 &(this->magneticModels),
-                                 1)) {
+    if (!MAG_robustReadMagModels(const_cast<char *>(fileName.c_str()), &(this->magneticModels), 1)) {
         bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", fileName.c_str());
         return;
     }
 
-    if(nMax < magneticModels[0]->nMax) {
+    if (nMax < magneticModels[0]->nMax) {
         nMax = magneticModels[0]->nMax;
     }
     nTerms = ((nMax + 1) * (nMax + 2) / 2);
     /* For storing the time modified WMM Model parameters */
     this->timedMagneticModel = MAG_AllocateModelMemory(nTerms);
-    if(this->magneticModels[0] == nullptr || this->timedMagneticModel == nullptr) {
+    if (this->magneticModels[0] == nullptr || this->timedMagneticModel == nullptr) {
         MAG_Error(2);
     }
     /* Set default values and constants */

@@ -23,12 +23,10 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/safeMath.h"
 
-
 /*! @brief Creates an instance of the SpacecraftLocation class
  @return void
  */
-SpacecraftLocation::SpacecraftLocation()
-{
+SpacecraftLocation::SpacecraftLocation() {
     this->rEquator = -1.0;
     this->rPolar = -1.0;
     this->maximumRange = -1.0;
@@ -41,25 +39,24 @@ SpacecraftLocation::SpacecraftLocation()
     this->planetState.J20002Pfix[0][0] = 1;
     this->planetState.J20002Pfix[1][1] = 1;
     this->planetState.J20002Pfix[2][2] = 1;
-
 }
 
 /*! Empty destructor method.
  @return void
  */
-SpacecraftLocation::~SpacecraftLocation()
-{
-    for (long unsigned int c=0; c<this->accessOutMsgs.size(); c++) {
+SpacecraftLocation::~SpacecraftLocation() {
+    for (long unsigned int c = 0; c < this->accessOutMsgs.size(); c++) {
         delete this->accessOutMsgs.at(c);
     }
     return;
 }
 
 /*! Resets the internal position to the specified initial position.*/
-void SpacecraftLocation::reset(uint64_t currentSimNanos)
-{
+void SpacecraftLocation::reset(uint64_t currentSimNanos) {
     if (this->scStateInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
     }
 
     if (!this->primaryScStateInMsg.isLinked()) {
@@ -70,12 +67,12 @@ void SpacecraftLocation::reset(uint64_t currentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation rEquator must be set to the planet equatorial radius");
     }
     /* if the polar radius is not specified, then it is set equal to the equatorial radius */
-    if (this->rEquator > 0.0 && this->rPolar<0.0) {
+    if (this->rEquator > 0.0 && this->rPolar < 0.0) {
         this->rPolar = rEquator;
     }
     this->zScale = this->rEquator / this->rPolar;
 
-    if (this->aHat_B.norm() > 0.1 ) {
+    if (this->aHat_B.norm() > 0.1) {
         if (this->theta < 0.0) {
             bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set theta if you specify aHat_B");
         }
@@ -83,11 +80,10 @@ void SpacecraftLocation::reset(uint64_t currentSimNanos)
     }
 }
 
-
-/*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message output name.
-*/
-void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
-{
+/*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message
+ * output name.
+ */
+void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
@@ -100,11 +96,9 @@ void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpSc
     this->accessMsgBuffer.push_back(accMsg);
 }
 
-
 /*! Read module messages
-*/
-bool SpacecraftLocation::ReadMessages()
-{
+ */
+bool SpacecraftLocation::ReadMessages() {
     SCStatesMsgPayload scMsg;
 
     /* clear out the vector of spacecraft states.  This is created freshly below. */
@@ -116,8 +110,7 @@ bool SpacecraftLocation::ReadMessages()
 
     // read in the spacecraft state messages
     bool scRead;
-    if(!this->scStateInMsgs.empty())
-    {
+    if (!this->scStateInMsgs.empty()) {
         scRead = true;
         for (long unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
             scMsg = this->scStateInMsgs.at(c)();
@@ -128,32 +121,30 @@ bool SpacecraftLocation::ReadMessages()
         bskLogger.bskLog(BSK_ERROR, "Spacecraft location has no other spacecraft to track.");
         scRead = false;
     }
-    //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and orientation is assumed
+    //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and
+    //! orientation is assumed
     bool planetRead = true;
-    if(this->planetInMsg.isLinked())
-    {
+    if (this->planetInMsg.isLinked()) {
         planetRead = this->planetInMsg.isWritten();
         this->planetState = this->planetInMsg();
     }
 
-    return(planetRead && scRead);
+    return (planetRead && scRead);
 }
 
 /*! write module messages
-*/
-void SpacecraftLocation::WriteMessages(uint64_t CurrentClock)
-{
+ */
+void SpacecraftLocation::WriteMessages(uint64_t CurrentClock) {
     //! - write access message for each spacecraft
-    for (long unsigned int c=0; c< this->accessMsgBuffer.size(); c++) {
+    for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
         this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
 }
 
 /*! compute the spacecraft to spacecraft access messages
  */
-void SpacecraftLocation::computeAccess()
-{
-    Eigen::Vector3d r_LP_P; //!< [m] spacecraft Location relative to planet origin vector
+void SpacecraftLocation::computeAccess() {
+    Eigen::Vector3d r_LP_P;  //!< [m] spacecraft Location relative to planet origin vector
 
     // get planet position and orientation relative to inertial frame
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
@@ -168,10 +159,10 @@ void SpacecraftLocation::computeAccess()
     r_LP_P[2] = r_LP_P[2] * this->zScale;
 
     // compute other spacecraft positions relative to planet
-    for (long unsigned int c=0; c < this->scStateInMsgs.size(); c++) {
-        Eigen::Vector3d r_SN_N;     // other satellite position relative to inertial
-        Eigen::Vector3d r_SP_P;     // other satellite position relative to planet
-        Eigen::Vector3d r_SL_P;     // other satellite position relative to primary spacecraft location L
+    for (long unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
+        Eigen::Vector3d r_SN_N;  // other satellite position relative to inertial
+        Eigen::Vector3d r_SP_P;  // other satellite position relative to planet
+        Eigen::Vector3d r_SL_P;  // other satellite position relative to primary spacecraft location L
 
         r_SN_N = cArray2EigenVector3d(this->scStatesBuffer.at(c).r_BN_N);
         r_SP_P = this->dcm_PN * (r_SN_N - this->r_PN_N);
@@ -182,13 +173,13 @@ void SpacecraftLocation::computeAccess()
         r_SL_P = r_SP_P - r_LP_P;
 
         // compute point of closest approach
-        double param;               // line scaling parameter
-        param = - r_LP_P.dot(r_SL_P)/r_SL_P.dot(r_SL_P);
+        double param;  // line scaling parameter
+        param = -r_LP_P.dot(r_SL_P) / r_SL_P.dot(r_SL_P);
         Eigen::Vector3d rClose = r_LP_P + param * r_SL_P;
 
         // check for out of bounds condition.
-        param = std::min(param, 1.0); // If param > 1, the closest point on segment is the other satellite
-        param = std::max(param, 0.0); // If param < 0, the closest point on segment is the primary satellite
+        param = std::min(param, 1.0);  // If param > 1, the closest point on segment is the other satellite
+        param = std::max(param, 0.0);  // If param < 0, the closest point on segment is the primary satellite
 
         // determine access output message
         this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
@@ -205,8 +196,8 @@ void SpacecraftLocation::computeAccess()
 
             // check if other spacecraft is within sensor/communication boresight axis
             if (this->theta > 0.0) {
-                Eigen::Vector3d aHat_P;     // sensor axis in planet frame components
-                double phi;                 // angle between relative positin vector and aHat
+                Eigen::Vector3d aHat_P;  // sensor axis in planet frame components
+                double phi;              // angle between relative positin vector and aHat
                 aHat_P = this->dcm_PN * dcm_NB * this->aHat_B;
                 phi = safeAcos(r_SL_P.dot(aHat_P) / range);
                 this->accessMsgBuffer.at(c).elevation = M_PI_2 - phi;
@@ -223,10 +214,8 @@ void SpacecraftLocation::computeAccess()
  update module
  @param currentSimNanos
  */
-void SpacecraftLocation::updateState(uint64_t currentSimNanos)
-{
+void SpacecraftLocation::updateState(uint64_t currentSimNanos) {
     this->ReadMessages();
     this->computeAccess();
     this->WriteMessages(currentSimNanos);
-
 }

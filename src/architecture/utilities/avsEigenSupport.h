@@ -60,5 +60,4 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd vec);
 //!@brief maps the DCM to MRPs using Eigen variables
 Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
 
-
 #endif /* _AVSEIGENSUPPORT_ */

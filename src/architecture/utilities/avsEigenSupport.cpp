@@ -24,7 +24,6 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "rigidBodyKinematics.h"
 
-
 /*! This function provides a general conversion between an Eigen matrix and
 an output C array. Note that this routine would convert an inbound type
 to a MatrixXd and then transpose the matrix which would be inefficient
