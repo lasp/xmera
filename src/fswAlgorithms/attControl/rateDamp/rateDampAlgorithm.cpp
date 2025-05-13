@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,40 +17,36 @@
 
  */
 
-#include "rateDamp.h"
-#include <cassert>
+#include "fswAlgorithms/attControl/rateDamp/rateDampAlgorithm.h"
 
 /*! This method is used to reset the module.
  @return void
  */
-void RateDamp::reset(uint64_t currentSimNanos) {
-    assert(this->attNavInMsg.isLinked());
-    this->algorithm.reset(currentSimNanos);
+void RateDampAlgorithm::reset(uint64_t currentSimNanos) {
+    // Reset the algorithm
 }
 
 /*! This method is the main carrier for the computation of the control torque.
  @return void
  @param currentSimNanos The current simulation time for system
  */
-void RateDamp::updateState(uint64_t currentSimNanos) {
-    /*! Read input attitude navigation msg */
-    NavAttMsgPayload attNavInBuffer = this->attNavInMsg();
-
+CmdTorqueBodyMsgPayload RateDampAlgorithm::update(uint64_t currentSimNanos, NavAttMsgPayload& attNavInMsg) {
     /*! Create and populate cmd torque buffer message */
-    CmdTorqueBodyMsgPayload cmdTorqueOutBuffer = this->algorithm.update(currentSimNanos, attNavInBuffer);
+    CmdTorqueBodyMsgPayload cmdTorqueOutBuffer{};
+    for (int i = 0; i < 3; ++i) {
+        cmdTorqueOutBuffer.torqueRequestBody[i] = -this->P * attNavInMsg.omega_BN_B[i];
+    }
 
-    /*! Write output messages */
-    this->cmdTorqueOutMsg.write(&cmdTorqueOutBuffer, this->moduleID, currentSimNanos);
+    return cmdTorqueOutBuffer;
 }
 
 /*! Set the module rate feedback gain
     @param double P
     @return void
     */
-void RateDamp::setRateGain(const double p) { this->algorithm.setRateGain(p); }
+void RateDampAlgorithm::setRateGain(const double p) { this->P = p; }
 
 /*! Get the module rate feedback gain
-    @param double measurementNoiseScale
-    @return void
+    @return double
     */
-double RateDamp::getRateGain() const { return this->algorithm.getRateGain(); }
+double RateDampAlgorithm::getRateGain() const { return this->P; }

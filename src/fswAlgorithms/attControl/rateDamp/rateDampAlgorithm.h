@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,30 +17,24 @@
 
  */
 
-#ifndef BASILISK_RATE_DAMP_H
-#define BASILISK_RATE_DAMP_H
+#ifndef _RATE_DAMP_ALGORITHM_H
+#define _RATE_DAMP_ALGORITHM_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/attControl/rateDamp/rateDampAlgorithm.h"
+#include <cstdint>
 
-/*! @brief A class to compute rate damping control */
-class RateDamp : public SysModel {
+class RateDampAlgorithm {
    public:
     void reset(uint64_t currentSimNanos);
-    void updateState(uint64_t currentSimNanos);
-
-    ReadFunctor<NavAttMsgPayload> attNavInMsg;         //!< input msg measured attitude
-    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;  //!< commanded torque output message
+    CmdTorqueBodyMsgPayload update(uint64_t currentSimNanos,
+                                   NavAttMsgPayload& attNavInMsg);  //!< Algorithm update method
 
     void setRateGain(double const p);
     double getRateGain() const;
 
    private:
-    RateDampAlgorithm algorithm;
+    double P;  //!< [N*m*s] Rate feedback gain
 };
 
 #endif
