@@ -23,11 +23,8 @@
 #ifndef EIGEN_MRP_H
 #define EIGEN_MRP_H
 
-//#include <Eigen/Core>
-//#include <Eigen/src/Core//util//DisableStupidWarnings.h>
-//#include <Eigen/SVD>
-//#include <Eigen/LU>
-//#include "Eigen/src/Geometry/Quaternion.h"
+#include <Eigen/Geometry>
+
 
 namespace Eigen {
     template<typename Scalar, int Options = AutoAlign> class MRP;
