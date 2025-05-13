@@ -22,24 +22,19 @@
 /*! This method is used to reset the module.
  @return void
  */
-void RateDamp::reset(uint64_t currentSimNanos)
-{
-    assert(this->attNavInMsg.isLinked());
-}
-
+void RateDamp::reset(uint64_t currentSimNanos) { assert(this->attNavInMsg.isLinked()); }
 
 /*! This method is the main carrier for the computation of the control torque.
  @return void
  @param currentSimNanos The current simulation time for system
  */
-void RateDamp::updateState(uint64_t currentSimNanos)
-{
+void RateDamp::updateState(uint64_t currentSimNanos) {
     /*! Read input attitude navigation msg */
     NavAttMsgPayload attNavInBuffer = this->attNavInMsg();
 
     /*! Create and populate cmd torque buffer message */
     CmdTorqueBodyMsgPayload cmdTorqueOutBuffer;
-    for (int i=0; i<3; ++i) {
+    for (int i = 0; i < 3; ++i) {
         cmdTorqueOutBuffer.torqueRequestBody[i] = -this->P * attNavInBuffer.omega_BN_B[i];
     }
 
@@ -51,14 +46,10 @@ void RateDamp::updateState(uint64_t currentSimNanos)
     @param double P
     @return void
     */
-void RateDamp::setRateGain(const double p) {
-    this->P = p;
-}
+void RateDamp::setRateGain(const double p) { this->P = p; }
 
 /*! Get the module rate feedback gain
     @param double measurementNoiseScale
     @return void
     */
-double RateDamp::getRateGain() const {
-    return this->P;
-}
+double RateDamp::getRateGain() const { return this->P; }
