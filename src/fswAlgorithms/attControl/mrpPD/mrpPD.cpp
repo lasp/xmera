@@ -35,12 +35,8 @@ void MrpPD::reset(uint64_t callTime) {
         _bskLog(this->bskLogger, BSK_ERROR, "mrpPD.vehConfigInMsg wasn't connected.");
     }
 
-    // Read the VehicleConfigMsgPayload input message
-    if (this->vehConfigInMsg.isWritten()) {
-        VehicleConfigMsgPayload vcInMsg;
-        vcInMsg = this->vehConfigInMsg();
-        this->ISCPntB_B = cArray2EigenMatrixXd(vcInMsg.ISCPntB_B, 3, 3);
-    }
+    VehicleConfigMsgPayload vcInMsg = this->vehConfigInMsg();
+    this->algorithm.reset(callTime, vcInMsg);
 }
 
 /*! This method takes the attitude and rate errors relative to the reference frame, as well as
@@ -49,77 +45,43 @@ the reference frame angular rates and acceleration, and computes the required co
  @param callTime [ns] Time the method is called
 */
 void MrpPD::updateState(uint64_t callTime) {
-    // Create the buffer messages
-    CmdTorqueBodyMsgPayload torqueCmdMsgPayload;  // Control output request msg
-    AttGuidMsgPayload guidanceMsgPayload;         // Guidance input message
+    AttGuidMsgPayload guidInMsg = this->guidInMsg();
 
-    // Zero the output message
-    torqueCmdMsgPayload = CmdTorqueBodyMsgPayload();
-
-    // Read the guidance input message
-    guidanceMsgPayload = AttGuidMsgPayload();
-    if (this->guidInMsg.isWritten()) {
-        guidanceMsgPayload = this->guidInMsg();
-    }
-
-    // Compute hub inertial angular velocity in B-frame components
-    Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(guidanceMsgPayload.omega_BR_B);
-    Eigen::Vector3d omega_RN_B = cArray2EigenVector3d(guidanceMsgPayload.omega_RN_B);
-    Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
-
-    // Compute K*sigma_BR
-    Eigen::Vector3d sigma_BR = cArray2EigenVector3d(guidanceMsgPayload.sigma_BR);
-    Eigen::Vector3d v3_temp1 = this->K * sigma_BR;
-
-    // Compute P*delta_omega
-    Eigen::Vector3d v3_temp2 = this->P * omega_BR_B;
-
-    // Compute omega_r x [I]omega
-    Eigen::Vector3d v3_temp3 = omega_RN_B.cross(this->ISCPntB_B * omega_BN_B);
-
-    // Compute [I](d(omega_r)/dt - omega x omega_r)
-    Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(guidanceMsgPayload.domega_RN_B);
-    Eigen::Vector3d v3_temp4 = this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B));
-
-    // Compute required attitude control torque vector
-    // Lr =  K*sigma_BR + P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
-    Eigen::Vector3d Lr =
-        -v3_temp1 - v3_temp2 + v3_temp3 + v3_temp4 - this->knownTorquePntB_B;  // [Nm] Required control torque vector
-
-    // Write the output message
-    eigenVector3d2CArray(Lr, torqueCmdMsgPayload.torqueRequestBody);
+    CmdTorqueBodyMsgPayload torqueCmdMsgPayload = this->algorithm.update(callTime, guidInMsg);
     this->cmdTorqueOutMsg.write(&torqueCmdMsgPayload, moduleID, callTime);
 }
 
 /*! Getter method for the derivative gain P.
  @return const double
 */
-double MrpPD::getDerivativeGainP() { return this->P; }
+double MrpPD::getDerivativeGainP() { return this->algorithm.getDerivativeGainP(); }
 
 /*! Getter method for the known torque about point B.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &MrpPD::getKnownTorquePntB_B() const { return this->knownTorquePntB_B; }
+const Eigen::Vector3d &MrpPD::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }
 
 /*! Getter method for the proportional gain K.
  @return const double
 */
-double MrpPD::getProportionalGainK() { return this->K; }
+double MrpPD::getProportionalGainK() { return this->algorithm.getProportionalGainK(); }
 
 /*! Setter method for the derivative gain P.
  @return void
  @param P [N*m*s] Rate error feedback gain applied
 */
-void MrpPD::setDerivativeGainP(double P) { this->P = P; }
+void MrpPD::setDerivativeGainP(double P) { this->algorithm.setDerivativeGainP(P); }
 
 /*! Setter method for the known external torque about point B.
  @return void
  @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
 */
-void MrpPD::setKnownTorquePntB_B(Eigen::Vector3d &knownTorquePntB_B) { this->knownTorquePntB_B = knownTorquePntB_B; }
+void MrpPD::setKnownTorquePntB_B(Eigen::Vector3d &knownTorquePntB_B) {
+    this->algorithm.setKnownTorquePntB_B(knownTorquePntB_B);
+}
 
 /*! Setter method for the proportional gain K.
  @return void
  @param K [rad/s] Proportional gain applied to MRP errors
 */
-void MrpPD::setProportionalGainK(double K) { this->K = K; }
+void MrpPD::setProportionalGainK(double K) { this->algorithm.setProportionalGainK(K); }
