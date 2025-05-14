@@ -35,6 +35,8 @@ void AttTrackingErrorAlgorithm::reset(uint64_t callTime) {
 /*! This method maps the input thruster command forces into thruster on times using a remainder tracking logic.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param attRefInMsg Attitude reference message
+ @param attNavInMsg Attitude navigation message
  */
 AttGuidMsgPayload AttTrackingErrorAlgorithm::update(uint64_t callTime,
                                                     AttRefMsgPayload& attRefInMsg,
