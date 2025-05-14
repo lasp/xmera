@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,27 +16,23 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module mrpProportionalDerivative
+%module mrpPD_C
 %{
-   #include "mrpProportionalDerivative.h"
+   #include "mrpPD_C.h"
 %}
 
 %pythoncode %{
-from Basilisk.architecture.swig_common_model import *
+    from Basilisk.architecture.swig_common_model import *
 %}
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
 
 %include "sys_model.i"
-%include "mrpProportionalDerivative.h"
+%include "swig_conly_data.i"
+
+%include "mrpPD_C.h"
 
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-struct AttGuidMsg_C;
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-struct VehicleConfigMsg_C;
 %include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-struct CmdTorqueBodyMsg_C;
 
 %pythoncode %{
 import sys

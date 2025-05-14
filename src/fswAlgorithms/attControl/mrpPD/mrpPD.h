@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,39 +17,45 @@
 
  */
 
-#ifndef _MRP_PD_CONTROL_H_
-#define _MRP_PD_CONTROL_H_
+#ifndef _MRP_PD_
+#define _MRP_PD_
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
+#include <Eigen/Dense>
 
-
-
-/*! @brief Module configuration message definition. */
+/*! @brief MRP PD control class. */
 class MrpPD : public SysModel {
-public:
-    void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override;
+   public:
+    MrpPD() = default;   //!< Constructor
+    ~MrpPD() = default;  //!< Destructor
 
-    /* declare public module variables */
-    double K;                           //!< [rad/sec] Proportional gain applied to MRP errors
-    double P;                           //!< [N*m*s]   Rate error feedback gain applied
-    double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
+    void reset(uint64_t currentSimNanos) override;        //!< Reset member function
+    void updateState(uint64_t currentSimNanos) override;  //!< Update member function
+    double getDerivativeGainP();                          //!< Getter method for derivative gain P
+    const Eigen::Vector3d &getKnownTorquePntB_B() const;  //!< Getter method for the known external torque about point B
+    double getProportionalGainK();                        //!< Getter method for proportional gain K
+    void setDerivativeGainP(double P);                    //!< Setter method for derivative gain P
+    void setKnownTorquePntB_B(
+        Eigen::Vector3d &knownTorquePntB_B);  //!< Getter method for the known external torque about point B
+    void setProportionalGainK(double K);      //!< Getter method for proportional gain K
 
-    /* declare private module variables */
-    double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
+    ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< Attitude guidance input message
+    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< Vehicle configuration input message
+    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< Commanded torque output message
 
-    /* declare module IO interfaces */
-    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;                 //!< commanded torque output message
-    ReadFunctor<AttGuidMsgPayload> guidInMsg;                             //!< attitude guidance input message
-    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;                  //!< vehicle configuration input message
+    BSKLogger *bskLogger;  //!< BSK Logging
 
-    BSKLogger bskLogger = {};                               //!< BSK Logging
-
+   private:
+    double K;                           //!< [rad/s] Proportional gain applied to MRP errors
+    double P;                           //!< [N*m*s] Rate error feedback gain applied
+    Eigen::Vector3d knownTorquePntB_B;  //!< [N*m] Known external torque expressed in body frame components
+    Eigen::Matrix3d ISCPntB_B;  //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
 };
 
 #endif
