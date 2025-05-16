@@ -30,6 +30,9 @@
 /*! @brief A class to compute rate damping control */
 class RateDamp : public SysModel {
    public:
+    RateDamp() = default;   //!< Constructor
+    ~RateDamp() = default;  //!< Destructor
+
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
