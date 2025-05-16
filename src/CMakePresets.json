@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "configurePresets": [
+    {
+      "name": "base",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/../dist3",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE":
+          "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_MODULE_PATH":
+          "${sourceDir}/cmake/",
+        "CMAKE_PREFIX_PATH":
+          "${sourceDir}/cmake/",
+        "CMAKE_BUILD_TYPE":
+          "Debug",
+        "BUILD_VIZINTERFACE":
+          "ON",
+        "BUILD_OPNAV":
+          "OFF"
+      }
+    },
+    {
+      "name": "full",
+      "inherits": "base",
+      "cacheVariables": {
+        "BUILD_OPNAV":
+          "ON"
+      }
+    },
+    {
+      "name": "ci-test",
+      "inherits": "full",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":
+          "Release"
+      }
+    }
+  ]
+}
