@@ -162,7 +162,6 @@ void ImuSensor::writeOutputMessages(uint64_t Clock) {
     eigenVector3d2CArray(this->prv_PN_out, localOutput.DRFramePlatform);
     localOutput.timeTag = Clock * NANO2SEC;
     this->sensorOutMsg.write(&localOutput, this->moduleID, Clock);
-
 }
 
 /*!
@@ -187,7 +186,6 @@ void ImuSensor::setCarryError(bool aCarry, bool oCarry) {
 void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound) {
     this->aDisc.setRoundDirection(aRound);
     this->oDisc.setRoundDirection(oRound);
-
 }
 
 /*!
@@ -208,7 +206,6 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime) {
         this->omega_PN_P_out = this->oDisc.discretize(this->omega_PN_P_out);
         this->prv_PN_out -= this->oDisc.getDiscretizationErrors() * dt;
     }
-
 }
 
 /*!
@@ -250,7 +247,6 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime) {
     AccelErrors = this->navErrorsAccel + this->senTransBias;
     this->accel_SN_P_out += AccelErrors;
     this->DV_SN_P_out += AccelErrors * dt;
-
 }
 
 /*!
@@ -263,7 +259,6 @@ void ImuSensor::computeSensorErrors() {
     this->errorModelGyro.setPropMatrix(this->AMatrixGyro);
     this->errorModelGyro.computeNextState();
     this->navErrorsGyro = this->errorModelGyro.getCurrentState();
-
 }
 
 /*!
@@ -309,7 +304,6 @@ void ImuSensor::computePlatformDR() {
 
     // calculate "instantaneous" angular rate
     this->omega_PN_P_out = this->dcm_PB * this->current_omega_BN_B;
-
 }
 
 /*!
@@ -338,7 +332,6 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime) {
                         ((dcm_NB_2 * this->current_TotalAccumDV_BN_B - dcm_NB_1 * this->previous_TotalAccumDV_BN_B) +
                          ((dcm_NB_2 * this->current_omega_BN_B).cross(dcm_NB_2 * this->sensorPos_B) -
                           (dcm_NB_1 * this->previous_omega_BN_B).cross(dcm_NB_1 * this->sensorPos_B)));
-
 }
 
 /*!
@@ -369,5 +362,4 @@ void ImuSensor::updateState(uint64_t currentSimNanos) {
     this->PreviousTime = currentSimNanos;
 
     this->NominalReady = true;
-
 }

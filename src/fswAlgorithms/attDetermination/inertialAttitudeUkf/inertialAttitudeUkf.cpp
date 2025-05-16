@@ -139,13 +139,15 @@ void InertialAttitudeUkf::readRWSpeedData() {
     uint64_t wheelSpeedTime = this->rwSpeedMsg.timeWritten();
     if (this->firstFilterPass) {
         this->wheelAccelerations = Eigen::VectorXd::Zero(this->rwArrayConfigPayload.numRW);
-		Eigen::MatrixXd wheelSpeed = cArray2EigenMatrixXd(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
+        Eigen::MatrixXd wheelSpeed =
+            cArray2EigenMatrixXd(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
         this->previousWheelSpeeds = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
         this->previousWheelSpeedTime = wheelSpeedTime * NANO2SEC;
     } else {
         double dt = wheelSpeedTime * NANO2SEC - this->previousWheelSpeedTime;
-		Eigen::MatrixXd wheelSpeed = cArray2EigenMatrixXd(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
-		Eigen::VectorXd currentWheelSpeed = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
+        Eigen::MatrixXd wheelSpeed =
+            cArray2EigenMatrixXd(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
+        Eigen::VectorXd currentWheelSpeed = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
         this->wheelAccelerations = (currentWheelSpeed - this->previousWheelSpeeds) / dt;
         this->previousWheelSpeeds = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
         this->previousWheelSpeedTime = wheelSpeedTime * NANO2SEC;
@@ -170,19 +172,22 @@ void InertialAttitudeUkf::readStarTrackerData() {
 
             starTrackerMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
                                                        this->starTrackerMessages[index].measurementNoise_C * dcm_CB);
-            starTrackerMeasurement.setObservation(mrpSwitch(Eigen::Map<Eigen::Vector3d>(starTracker.MRP_BdyInrtl), this->mrpSwitchThreshold));
+            starTrackerMeasurement.setObservation(
+                mrpSwitch(Eigen::Map<Eigen::Vector3d>(starTracker.MRP_BdyInrtl), this->mrpSwitchThreshold));
             starTrackerMeasurement.setMeasurementModel(MeasurementModel::positionStates);
 
-            std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)> mrpSub
-                = [](Eigen::VectorXd const& observed, const Eigen::VectorXd& predicted) {
-                     Eigen::VectorXd yMeas = observed - predicted;
-                     if (observed.norm() > 0.95 && predicted.norm() > 0.95) {
-                         const Eigen::VectorXd predictedShadow = mrpShadow(predicted);
-                         Eigen::VectorXd yMeasShadow = observed - predictedShadow;
-                         if (yMeasShadow.norm() < yMeas.norm()) {return yMeasShadow;}
-                     }
-                     return yMeas;
-            };
+            std::function<const Eigen::VectorXd(const Eigen::VectorXd &, const Eigen::VectorXd &)> mrpSub =
+                [](Eigen::VectorXd const &observed, const Eigen::VectorXd &predicted) {
+                    Eigen::VectorXd yMeas = observed - predicted;
+                    if (observed.norm() > 0.95 && predicted.norm() > 0.95) {
+                        const Eigen::VectorXd predictedShadow = mrpShadow(predicted);
+                        Eigen::VectorXd yMeasShadow = observed - predictedShadow;
+                        if (yMeasShadow.norm() < yMeas.norm()) {
+                            return yMeasShadow;
+                        }
+                    }
+                    return yMeas;
+                };
             starTrackerMeasurement.setMeasurementSubtraction(mrpSub);
 
             this->measurements[this->measurementIndex] = starTrackerMeasurement;

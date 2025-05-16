@@ -45,7 +45,7 @@
 class StarTrackerMessage {
    public:
     ReadFunctor<STAttMsgPayload> starTrackerMsg;  //!< star tracker input message
-    Eigen::Matrix3d measurementNoise_C;             //!< [-] Per axis noise on the ST
+    Eigen::Matrix3d measurementNoise_C;           //!< [-] Per axis noise on the ST
 };
 
 enum class AttitudeFilterMethod { StarOnly, GyroWhenDazzled, AllMeasurements };

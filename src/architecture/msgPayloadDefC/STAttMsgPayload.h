@@ -22,10 +22,10 @@
 
 /*! @brief Output structure for ST attitude measurement in vehicle body frame*/
 typedef struct {
-    double timeTag;        //!< [s] Vehicle time code associated with measurement
+    double timeTag;          //!< [s] Vehicle time code associated with measurement
     double MRP_BdyInrtl[3];  //!< [-] MRP estimate of inertial to body transformation
     double omega_BN_B[3];    //!< [rad/s] Platform inertial angular velocity
-    double dcm_CB[9];    //!< Star Tracker mount frame in the body frame
+    double dcm_CB[9];        //!< Star Tracker mount frame in the body frame
 } STAttMsgPayload;
 
 #endif

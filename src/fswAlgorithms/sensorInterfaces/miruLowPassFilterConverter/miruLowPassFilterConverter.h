@@ -17,8 +17,8 @@ class MiruLowPassFilterConverter : public SysModel {
     MiruLowPassFilterConverter() = default;   //!< Constructor
     ~MiruLowPassFilterConverter() = default;  //!< Destructor
 
-    void reset(uint64_t currentSimNanos) override;                        //!< Reset member function
-    void updateState(uint64_t currentSimNanos) override;                  //!< Update member function
+    void reset(uint64_t currentSimNanos) override;               //!< Reset member function
+    void updateState(uint64_t currentSimNanos) override;         //!< Update member function
     void setLowPassFilter(double step, double frequencyCutOff);  //!< Setter method for the low pass filter
 
     ReadFunctor<AccDataMsgPayload> imuAccelDataInMsg;  //!< Input msg for the imu data

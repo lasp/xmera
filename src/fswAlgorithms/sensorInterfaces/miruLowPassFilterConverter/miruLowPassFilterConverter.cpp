@@ -23,8 +23,8 @@ void MiruLowPassFilterConverter::updateState(uint64_t callTime) {
     double meanMeasurementTime = 0;
     AccDataMsgPayload gyrBuffer = this->imuAccelDataInMsg();
     for (int index = 0; index < MAX_ACC_BUF_PKT; index++) {
-        double gyroMeasuredTime = gyrBuffer.accPkts[index].measTime*NANO2SEC;
-        if (gyroMeasuredTime < firstFutureTime || firstFutureTime<0){
+        double gyroMeasuredTime = gyrBuffer.accPkts[index].measTime * NANO2SEC;
+        if (gyroMeasuredTime < firstFutureTime || firstFutureTime < 0) {
             smallestFutureIndex = index;
             firstFutureTime = gyroMeasuredTime;
         }
@@ -33,7 +33,7 @@ void MiruLowPassFilterConverter::updateState(uint64_t callTime) {
     }
     lowPass.setFilterCutoff(this->cutOffFrequency);
     lowPass.setFilterStep(this->hStep);
-    if (numberOfValidGyroMeasurements > 0){
+    if (numberOfValidGyroMeasurements > 0) {
         meanMeasurementTime /= numberOfValidGyroMeasurements;
         /*! - Loop through buffer for all future measurements since the previous time to filter omega_BN_B*/
         for (int index = 0; index < MAX_ACC_BUF_PKT; index++) {

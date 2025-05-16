@@ -24,14 +24,13 @@
  * @param FilterStateVector
  * @return Eigen::MatrixXd
  */
-Eigen::MatrixXd MeasurementModel::model(const FilterStateVector& state) const {
-    return this->measurementModel(state);
-}
+Eigen::MatrixXd MeasurementModel::model(const FilterStateVector& state) const { return this->measurementModel(state); }
 
 /*! Set function to represent measurement model which inputs a stateModel and outputs a matrix
  * @param std::function<const Eigen::MatrixXd(const FilterStateVector&)>
  */
-void MeasurementModel::setMeasurementModel(const std::function<const Eigen::MatrixXd(const FilterStateVector&)> &modelCalculator) {
+void MeasurementModel::setMeasurementModel(
+    const std::function<const Eigen::MatrixXd(const FilterStateVector&)>& modelCalculator) {
     this->measurementModel = modelCalculator;
 }
 
@@ -47,7 +46,8 @@ Eigen::MatrixXd MeasurementModel::computeMeasurementMatrix(const FilterStateVect
  * model with respect to state)
  * @param std::function<const Eigen::MatrixXd(const FilterStateVector&)>
  */
-void MeasurementModel::setMeasurementMatrix(const std::function<const Eigen::MatrixXd(const FilterStateVector&)> &hMatrixCalculator){
+void MeasurementModel::setMeasurementMatrix(
+    const std::function<const Eigen::MatrixXd(const FilterStateVector&)>& hMatrixCalculator) {
     this->measurementPartials = hMatrixCalculator;
 }
 
@@ -57,7 +57,8 @@ void MeasurementModel::setMeasurementMatrix(const std::function<const Eigen::Mat
  * @param Eigen::VectorXd measurementPredicted
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd MeasurementModel::subMeasurements(const Eigen::VectorXd& measurementObserved, const Eigen::VectorXd& measurementPredicted) const{
+Eigen::VectorXd MeasurementModel::subMeasurements(const Eigen::VectorXd& measurementObserved,
+                                                  const Eigen::VectorXd& measurementPredicted) const {
     return this->measurementSubtraction(measurementObserved, measurementPredicted);
 }
 
@@ -65,112 +66,89 @@ Eigen::VectorXd MeasurementModel::subMeasurements(const Eigen::VectorXd& measure
  * other functions depending on the measurement type
  * @param subFunction std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)>
  */
-void MeasurementModel::setMeasurementSubtraction(const std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)> &subFunction){
-    this->measurementSubtraction= subFunction;
+void MeasurementModel::setMeasurementSubtraction(
+    const std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)>& subFunction) {
+    this->measurementSubtraction = subFunction;
 }
 
 /*! Return the size of the observation
    @return size_t
 */
-size_t MeasurementModel::size() const {
-    return this->getObservation().size();
-}
+size_t MeasurementModel::size() const { return this->getObservation().size(); }
 
 /*! Get measurement name
  * @return std::string
  */
-std::string MeasurementModel::getMeasurementName() const {
-    return this->name;
-}
+std::string MeasurementModel::getMeasurementName() const { return this->name; }
 
 /*! Set measurement name
  * @param std::string
  */
-void MeasurementModel::setMeasurementName(std::string_view measurementName){
-    this->name = measurementName;
-}
+void MeasurementModel::setMeasurementName(std::string_view measurementName) { this->name = measurementName; }
 
 /*! Get measurement time tag
  * @return double
  */
-double MeasurementModel::getTimeTag() const {
-    return this->timeTag;
-}
+double MeasurementModel::getTimeTag() const { return this->timeTag; }
 
 /*! Set measurement time tag
  * @param double
  */
-void MeasurementModel::setTimeTag(const double measurementTimeTag){
-    this->timeTag = measurementTimeTag;
-}
+void MeasurementModel::setTimeTag(const double measurementTimeTag) { this->timeTag = measurementTimeTag; }
 
 /*! Get measurement validity
  * @return Eigen::VectorXd
  */
-bool MeasurementModel::getValidity() const {
-    return this->validity;
-}
+bool MeasurementModel::getValidity() const { return this->validity; }
 
 /*! Set measurement validity
  * @param bool
  */
-void MeasurementModel::setValidity(const bool measurementValidity){
-    this->validity = measurementValidity;
-}
+void MeasurementModel::setValidity(const bool measurementValidity) { this->validity = measurementValidity; }
 
 /*! Get measurement observation
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd MeasurementModel::getObservation() const {
-    return this->observation;
-}
+Eigen::VectorXd MeasurementModel::getObservation() const { return this->observation; }
 
 /*! Set measurement observation
  * @param Eigen::VectorXd
  */
-void MeasurementModel::setObservation(const Eigen::VectorXd& measurementObserved){
+void MeasurementModel::setObservation(const Eigen::VectorXd& measurementObserved) {
     this->observation = measurementObserved;
 }
 
 /*! Get measurement noise
  * @return Eigen::MatrixXd
  */
-Eigen::MatrixXd MeasurementModel::getMeasurementNoise() const {
-    return this->noise;
-}
+Eigen::MatrixXd MeasurementModel::getMeasurementNoise() const { return this->noise; }
 
 /*! Set measurement noise
  * @param Eigen::MatrixXd
  */
-void MeasurementModel::setMeasurementNoise(const Eigen::MatrixXd& measurementNoise){
-    this->noise = measurementNoise;
-}
+void MeasurementModel::setMeasurementNoise(const Eigen::MatrixXd& measurementNoise) { this->noise = measurementNoise; }
 
 /*! Get post fit residuals of observation
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd MeasurementModel::getPostFitResiduals() const {
-    return this->postFitResiduals;
-}
+Eigen::VectorXd MeasurementModel::getPostFitResiduals() const { return this->postFitResiduals; }
 
 /*! Set post fit residuals of observation
  * @param Eigen::VectorXd
  */
-void MeasurementModel::setPostFitResiduals(const Eigen::VectorXd& measurementPostFit){
+void MeasurementModel::setPostFitResiduals(const Eigen::VectorXd& measurementPostFit) {
     this->postFitResiduals = measurementPostFit;
 }
 
 /*! Get pre fit residuals of observation
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd MeasurementModel::getPreFitResiduals() const {
-    return this->preFitResiduals;
-}
+Eigen::VectorXd MeasurementModel::getPreFitResiduals() const { return this->preFitResiduals; }
 
 /*! Set pre fit residuals of observation
  * @param Eigen::VectorXd
  */
-void MeasurementModel::setPreFitResiduals(const Eigen::VectorXd& measurementPreFit){
+void MeasurementModel::setPreFitResiduals(const Eigen::VectorXd& measurementPreFit) {
     this->preFitResiduals = measurementPreFit;
 }
 
@@ -178,26 +156,21 @@ void MeasurementModel::setPreFitResiduals(const Eigen::VectorXd& measurementPreF
  * @param FilterStateVector state
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd MeasurementModel::positionStates(const FilterStateVector &state)
-{
-    return state.getPositionStates();
-}
+Eigen::VectorXd MeasurementModel::positionStates(const FilterStateVector& state) { return state.getPositionStates(); }
 
 /*! Measurement model that returns the unit vector of the position state
  * @param FilterStateVector state
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd MeasurementModel::normalizedPositionStates(const FilterStateVector &state)
-{
-    return state.getPositionStates()/state.getPositionStates().norm();
+Eigen::VectorXd MeasurementModel::normalizedPositionStates(const FilterStateVector& state) {
+    return state.getPositionStates() / state.getPositionStates().norm();
 }
 
 /*! Measurement model that returns the position component of the state, and performs a MRP shadow set check
  * @param FilterStateVector state
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd MeasurementModel::mrpStates(const FilterStateVector &state)
-{
+Eigen::VectorXd MeasurementModel::mrpStates(const FilterStateVector& state) {
     return mrpSwitch(state.getPositionStates(), 1);
 }
 
@@ -205,15 +178,10 @@ Eigen::VectorXd MeasurementModel::mrpStates(const FilterStateVector &state)
  * @param FilterStateVector state
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd MeasurementModel::velocityStates(const FilterStateVector &state)
-{
-    return state.getVelocityStates();
-}
+Eigen::VectorXd MeasurementModel::velocityStates(const FilterStateVector& state) { return state.getVelocityStates(); }
 
 /*! Measurement model that takes first 3 components of the state vector and interprets them as MRPs
  * @param Eigen::VectorXd state
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd mrpFirstThreeStates(Eigen::VectorXd state){
-    return mrpSwitch(state.head(3), 1);
-}
+Eigen::VectorXd mrpFirstThreeStates(Eigen::VectorXd state) { return mrpSwitch(state.head(3), 1); }

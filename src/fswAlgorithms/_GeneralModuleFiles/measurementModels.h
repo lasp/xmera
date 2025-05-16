@@ -18,31 +18,33 @@
 
  */
 
-#include <Eigen/Core>
-#include <string_view>
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include "fswAlgorithms/_GeneralModuleFiles/stateModels.h"
+#include <Eigen/Core>
+#include <string_view>
 
 #ifndef FILTER_MEAS_MODELS_H
 #define FILTER_MEAS_MODELS_H
 
 /*! @brief Container class for measurement data and models */
-class MeasurementModel{
-public:
+class MeasurementModel {
+   public:
     MeasurementModel() = default;
     ~MeasurementModel() = default;
 
-    static Eigen::VectorXd positionStates(const FilterStateVector &state);
-    static Eigen::VectorXd normalizedPositionStates(const FilterStateVector &state);
-    static Eigen::VectorXd mrpStates(const FilterStateVector &state);
-    static Eigen::VectorXd velocityStates(const FilterStateVector &state);
+    static Eigen::VectorXd positionStates(const FilterStateVector& state);
+    static Eigen::VectorXd normalizedPositionStates(const FilterStateVector& state);
+    static Eigen::VectorXd mrpStates(const FilterStateVector& state);
+    static Eigen::VectorXd velocityStates(const FilterStateVector& state);
 
     Eigen::MatrixXd model(const FilterStateVector& state) const;
     void setMeasurementModel(const std::function<const Eigen::MatrixXd(const FilterStateVector&)>& modelCalculator);
     Eigen::MatrixXd computeMeasurementMatrix(const FilterStateVector& state) const;
     void setMeasurementMatrix(const std::function<const Eigen::MatrixXd(const FilterStateVector&)>& hMatrixCalculator);
-    Eigen::VectorXd subMeasurements(const Eigen::VectorXd& measurementObserved, const Eigen::VectorXd& measurementPredicted) const;
-    void setMeasurementSubtraction(const std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)>& add);
+    Eigen::VectorXd subMeasurements(const Eigen::VectorXd& measurementObserved,
+                                    const Eigen::VectorXd& measurementPredicted) const;
+    void setMeasurementSubtraction(
+        const std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)>& add);
 
     size_t size() const;
     std::string getMeasurementName() const;
@@ -60,24 +62,24 @@ public:
     Eigen::VectorXd getPostFitResiduals() const;
     void setPostFitResiduals(const Eigen::VectorXd& measurementPostFit);
 
+   private:
+    std::string name{};                //!< [-] Name of measurement  type
+    double timeTag{};                  //!< [-] Observation time tag
+    bool validity = false;             //!< [-] Observation validity
+    Eigen::VectorXd observation;       //!< [-] Observation data vector
+    Eigen::MatrixXd noise;             //!< [-] Measurement Noise
+    Eigen::MatrixXd choleskyNoise;     //!< [-] Cholesky decomposition of measurement noise
+    Eigen::VectorXd postFitResiduals;  //!< [-] Observation post fit residuals
+    Eigen::VectorXd preFitResiduals;   //!< [-] Observation pre fit residuals
 
-private:
-    std::string name{}; //!< [-] Name of measurement  type
-    double timeTag{}; //!< [-] Observation time tag
-    bool validity = false; //!< [-] Observation validity
-    Eigen::VectorXd observation; //!< [-] Observation data vector
-    Eigen::MatrixXd noise; //!< [-] Measurement Noise
-    Eigen::MatrixXd choleskyNoise; //!< [-] Cholesky decomposition of measurement noise
-    Eigen::VectorXd postFitResiduals; //!< [-] Observation post fit residuals
-    Eigen::VectorXd preFitResiduals; //!< [-] Observation pre fit residuals
-
-    std::function<const Eigen::MatrixXd(const FilterStateVector&)> measurementModel; //!< [-] observation measurement model
-    std::function<const Eigen::MatrixXd(const FilterStateVector&)> measurementPartials; //!< [-] partial of measurement model wrt state
-    std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)> measurementSubtraction
-    = [](const Eigen::VectorXd& measurementObserved, const Eigen::VectorXd& measurementPredicted){
-        return measurementObserved - measurementPredicted;
-    };
-
+    std::function<const Eigen::MatrixXd(const FilterStateVector&)>
+        measurementModel;  //!< [-] observation measurement model
+    std::function<const Eigen::MatrixXd(const FilterStateVector&)>
+        measurementPartials;  //!< [-] partial of measurement model wrt state
+    std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)> measurementSubtraction =
+        [](const Eigen::VectorXd& measurementObserved, const Eigen::VectorXd& measurementPredicted) {
+            return measurementObserved - measurementPredicted;
+        };
 };
 
 #endif
