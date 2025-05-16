@@ -34,13 +34,14 @@
 #include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 /*! @brief IMU sensor class */
 class ImuSensor: public SysModel {
 public:
     ImuSensor();
-    ~ImuSensor();
+    ~ImuSensor() = default;
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
