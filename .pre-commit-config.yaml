@@ -1,4 +1,4 @@
-exclude: '.*\.(tls|bsp|tpc|bc)$'
+exclude: '.*\.(tls|bsp|tpc|bc|pb.cc|pb.h)$'
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
