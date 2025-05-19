@@ -33,14 +33,14 @@ def test_mrpPD(show_plots, setExtTorque):
     r"""
     **Validation Test Description**
 
-    The unit test  for this module is kept as there are no branching code segments to account for different cases.
-    The spacecraft inertia tensor message is setup, as well as a guidance message.  The module is then run for a
-    few time steps and the control torque output message compared to a known answer.  The simulation only variable
-    is if the known external torque is specified, or if the zero default vector is used.
+    The unit test for this module verifies that the module output control torque vector matches the expected value.
+    Given the spacecraft vehicle configuration input message containing the spacecraft inertia, an input attitude
+    guidance message, and an optional known external torque vector, the module-computed control torque command vector
+    is logged and compared with the computed truth value.
 
     **Test Parameters**
 
-    The unit test verifies that the module output torque message vector matches expected values.  The test
+    The unit test verifies that the module output control torque vector matches the expected value. The test
     method parameters include the following.
 
     :param show_plots: flag to show the test run plots
