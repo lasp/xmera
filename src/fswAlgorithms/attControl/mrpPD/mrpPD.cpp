@@ -52,19 +52,19 @@ void MrpPD::updateState(uint64_t callTime) {
 }
 
 /*! Getter method for the derivative gain P.
- @return const double
+ @return double
 */
-double MrpPD::getDerivativeGainP() { return this->algorithm.getDerivativeGainP(); }
+double MrpPD::getDerivativeGainP() const { return this->algorithm.getDerivativeGainP(); }
 
 /*! Getter method for the known torque about point B.
- @return const Eigen::Vector3d
+ @return const Eigen::Vector3d&
 */
-const Eigen::Vector3d &MrpPD::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }
+const Eigen::Vector3d& MrpPD::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }
 
 /*! Getter method for the proportional gain K.
- @return const double
+ @return double
 */
-double MrpPD::getProportionalGainK() { return this->algorithm.getProportionalGainK(); }
+double MrpPD::getProportionalGainK() const { return this->algorithm.getProportionalGainK(); }
 
 /*! Setter method for the derivative gain P.
  @return void
@@ -76,7 +76,7 @@ void MrpPD::setDerivativeGainP(double P) { this->algorithm.setDerivativeGainP(P)
  @return void
  @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
 */
-void MrpPD::setKnownTorquePntB_B(Eigen::Vector3d &knownTorquePntB_B) {
+void MrpPD::setKnownTorquePntB_B(Eigen::Vector3d& knownTorquePntB_B) {
     this->algorithm.setKnownTorquePntB_B(knownTorquePntB_B);
 }
 

@@ -35,13 +35,13 @@ class MrpPDAlgorithm {
     void reset(uint64_t currentSimNanos, VehicleConfigMsgPayload vehConfigInMsg);  //!< Reset member function
     CmdTorqueBodyMsgPayload update(uint64_t currentSimNanos,
                                    AttGuidMsgPayload guidInMsg);  //!< Update member function
-    double getDerivativeGainP();                                  //!< Getter method for derivative gain P
-    const Eigen::Vector3d &getKnownTorquePntB_B() const;  //!< Getter method for the known external torque about point B
-    double getProportionalGainK();                        //!< Getter method for proportional gain K
+    double getDerivativeGainP() const;                            //!< Getter method for derivative gain P
+    const Eigen::Vector3d& getKnownTorquePntB_B() const;  //!< Getter method for the known external torque about point B
+    double getProportionalGainK() const;                  //!< Getter method for proportional gain K
     void setDerivativeGainP(double P);                    //!< Setter method for derivative gain P
     void setKnownTorquePntB_B(
-        Eigen::Vector3d &knownTorquePntB_B);  //!< Getter method for the known external torque about point B
-    void setProportionalGainK(double K);      //!< Getter method for proportional gain K
+        Eigen::Vector3d& knownTorquePntB_B);  //!< Setter method for the known external torque about point B
+    void setProportionalGainK(double K);      //!< Setter method for proportional gain K
 
    private:
     double K;                           //!< [rad/s] Proportional gain applied to MRP errors

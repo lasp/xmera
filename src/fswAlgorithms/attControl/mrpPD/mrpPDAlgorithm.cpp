@@ -71,19 +71,19 @@ CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayl
 }
 
 /*! Getter method for the derivative gain P.
- @return const double
+ @return double
 */
-double MrpPDAlgorithm::getDerivativeGainP() { return this->P; }
+double MrpPDAlgorithm::getDerivativeGainP() const { return this->P; }
 
 /*! Getter method for the known torque about point B.
- @return const Eigen::Vector3d
+ @return const Eigen::Vector3d&
 */
-const Eigen::Vector3d &MrpPDAlgorithm::getKnownTorquePntB_B() const { return this->knownTorquePntB_B; }
+const Eigen::Vector3d& MrpPDAlgorithm::getKnownTorquePntB_B() const { return this->knownTorquePntB_B; }
 
 /*! Getter method for the proportional gain K.
- @return const double
+ @return double
 */
-double MrpPDAlgorithm::getProportionalGainK() { return this->K; }
+double MrpPDAlgorithm::getProportionalGainK() const { return this->K; }
 
 /*! Setter method for the derivative gain P.
  @return void
@@ -95,7 +95,7 @@ void MrpPDAlgorithm::setDerivativeGainP(double P) { this->P = P; }
  @return void
  @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
 */
-void MrpPDAlgorithm::setKnownTorquePntB_B(Eigen::Vector3d &knownTorquePntB_B) {
+void MrpPDAlgorithm::setKnownTorquePntB_B(Eigen::Vector3d& knownTorquePntB_B) {
     this->knownTorquePntB_B = knownTorquePntB_B;
 }
 
