@@ -36,34 +36,21 @@ void MrpPDAlgorithm::reset(uint64_t callTime, VehicleConfigMsgPayload vehConfigI
  @param callTime [ns] Time the method is called
 */
 CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayload guidInMsg) {
-    // Create the buffer messages
-    CmdTorqueBodyMsgPayload torqueCmdMsgPayload = CmdTorqueBodyMsgPayload();  // Control output request msg
-
     // Compute hub inertial angular velocity in B-frame components
     Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(guidInMsg.omega_BR_B);
     Eigen::Vector3d omega_RN_B = cArray2EigenVector3d(guidInMsg.omega_RN_B);
     Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
 
-    // Compute K*sigma_BR
     Eigen::Vector3d sigma_BR = cArray2EigenVector3d(guidInMsg.sigma_BR);
-    Eigen::Vector3d v3_temp1 = this->K * sigma_BR;
-
-    // Compute P*delta_omega
-    Eigen::Vector3d v3_temp2 = this->P * omega_BR_B;
-
-    // Compute omega_r x [I]omega
-    Eigen::Vector3d v3_temp3 = omega_RN_B.cross(this->ISCPntB_B * omega_BN_B);
-
-    // Compute [I](d(omega_r)/dt - omega x omega_r)
     Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(guidInMsg.domega_RN_B);
-    Eigen::Vector3d v3_temp4 = this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B));
 
     // Compute required attitude control torque vector
-    // Lr =  K*sigma_BR + P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
-    Eigen::Vector3d Lr =
-        -v3_temp1 - v3_temp2 + v3_temp3 + v3_temp4 - this->knownTorquePntB_B;  // [Nm] Required control torque vector
+    Eigen::Vector3d Lr = -this->K * sigma_BR - this->P * omega_BR_B + omega_RN_B.cross(this->ISCPntB_B * omega_BN_B) +
+                         this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B)) -
+                         this->knownTorquePntB_B;  // [Nm]
 
-    // Write the output message
+    // Create the output message
+    auto torqueCmdMsgPayload = CmdTorqueBodyMsgPayload();
     eigenVector3d2CArray(Lr, torqueCmdMsgPayload.torqueRequestBody);
 
     return torqueCmdMsgPayload;
