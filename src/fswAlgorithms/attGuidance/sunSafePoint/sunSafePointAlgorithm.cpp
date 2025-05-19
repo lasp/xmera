@@ -102,8 +102,8 @@ void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
             e_hat = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
         }
         Eigen::Vector3d sunMnvrVec = e_hat / e_hat.norm();
-        Eigen::Vector3d v2 = std::tan(sunAngleErr * 0.25) * sunMnvrVec;
-        eigenVector3d2CArray(v2, this->attGuidanceOutBuffer.sigma_BR);
+        Eigen::Vector3d sigma_BR = std::tan(sunAngleErr * 0.25) * sunMnvrVec;
+        eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
         MRPswitch(this->attGuidanceOutBuffer.sigma_BR, 1.0, this->attGuidanceOutBuffer.sigma_BR);
     }
 
