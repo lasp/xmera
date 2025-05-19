@@ -15,14 +15,6 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-#
-#   Unit Test Script
-#   Module Name:        sunSafePoint
-#   Author:             Hanspeter Schaub
-#   Creation Date:      April 25, 2018
-#   Updated:            March 14, 2024
-#
-
 import inspect
 import numpy as np
 import os
@@ -36,14 +28,6 @@ from Basilisk.fswAlgorithms import sunSafePoint
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-#@pytest.mark.xfail(conditionstring)
-# provide a unique test method name, starting with test_
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
 @pytest.mark.parametrize("case", [
      (1)        # sun is visible, vectors are not aligned
     ,(2)        # sun is not visible, vectors are not aligned
@@ -55,7 +39,6 @@ from Basilisk.utilities import macros as mc
 ])
 
 def test_SunSafePointTestFunction(show_plots, case):
-    """Module Unit Test"""
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
@@ -70,11 +53,10 @@ def test_SunSafePointTestFunction(show_plots, case):
 
     module = sunSafePoint.SunSafePoint()
     module.modelTag = "sunSafePoint"
-
-    # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
+    # Create the sunSafePoint module
 
-    # Initialize the test module configuration data
+    # Initialize sunSafePoint module configuration data
     sHat_Cmd_B = np.array([0.0, 0.0 ,1.0])
     if case == 5:
         sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
@@ -85,7 +67,7 @@ def test_SunSafePointTestFunction(show_plots, case):
         module.setOmega_RN_B(omega_RN_B_Search)
     module.setSmallAngle(0.01*mc.D2R)
 
-    # Create input messages
+    # Create sunSafePoint sun direction input messages
     inputSunVecData = messaging.NavAttMsgPayload()
     sunVec_B = np.array([1.0, 1.0, 0.0])
     if (case == 2 or case == 6):  # No sun visible, providing a near zero norm direction vector
@@ -97,7 +79,8 @@ def test_SunSafePointTestFunction(show_plots, case):
     inputSunVecData.vehSunPntBdy = sunVec_B
     sunInMsg = messaging.NavAttMsg().write(inputSunVecData)
 
-    inputIMUData = messaging.NavAttMsgPayload()  # Create a structure for the input message
+    # Create sunSafePoint IMU input message
+    inputIMUData = messaging.NavAttMsgPayload()
     omega_BN_B = np.array([0.01, 0.50, -0.2])
     inputIMUData.omega_BN_B = omega_BN_B
     imuInMsg = messaging.NavAttMsg().write(inputIMUData)
@@ -114,16 +97,13 @@ def test_SunSafePointTestFunction(show_plots, case):
     module.sunDirectionInMsg.subscribeTo(sunInMsg)
     module.imuInMsg.subscribeTo(imuInMsg)
 
+    # Run the simulation
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(mc.sec2nano(1.))
     module.reset(0)
     unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    #
     # Check sigma_BR
-    #
     # Set the filtered output truth states
     if (case == 1 or case == 7):
         eHat = np.cross(sunVec_B,sHat_Cmd_B)
@@ -183,6 +163,7 @@ def test_SunSafePointTestFunction(show_plots, case):
             (omega_BN_B - omega_RN_B_Search).tolist(),
             (omega_BN_B - omega_RN_B_Search).tolist()
         ]
+
     # Compare the module results to the truth values
     np.testing.assert_allclose(trueVector,
                                dataLog.omega_BR_B,
@@ -203,6 +184,7 @@ def test_SunSafePointTestFunction(show_plots, case):
             omega_RN_B_Search,
             omega_RN_B_Search
         ]
+
     # Compare the module results to the truth values
     np.testing.assert_allclose(trueVector,
                                dataLog.omega_RN_B,
@@ -223,9 +205,5 @@ def test_SunSafePointTestFunction(show_plots, case):
                                atol=accuracy,
                                verbose=True)
 
-#
-# This statement below ensures that the unitTestScript can be run as a
-# stand-along python script
-#
 if __name__ == "__main__":
     test_SunSafePointTestFunction(False, 1)
