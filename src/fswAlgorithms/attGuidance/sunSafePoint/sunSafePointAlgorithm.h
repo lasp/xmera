@@ -59,12 +59,12 @@ class SunSafePointAlgorithm {
     bool sunDirectionIsAvailable(
         const double sHatNorm) const;  //!< Method for determining if a valid sun direction vector is available
 
-    double minUnitMag;           //!< The minimally acceptable norm of sun body vector
-    double smallAngle;           //!< [rad] An angle value that specifies what is near 0 or 180 degrees
-    double sunAxisSpinRate;      //!< [rad/s] Desired constant spin rate about sun heading vector
-    Eigen::Vector3d omega_RN_B;  //!< [rad/s] Desired body rate vector if no sun direction is available
-    Eigen::Vector3d sHatBdyCmd;  //!< Desired body vector to point at the sun
-    Eigen::Vector3d eHat180_B;   //!< Eigen axis to use if commanded axis is 180 from sun axis
+    double minUnitMag{0.1};        //!< The minimally acceptable norm of sun body vector (Must be positive)
+    double smallAngle{};           //!< [rad] An angle value that specifies what is near 0 or 180 degrees (Must be >= 0)
+    double sunAxisSpinRate{};      //!< [rad/s] Desired constant spin rate about sun heading vector
+    Eigen::Vector3d omega_RN_B{};  //!< [rad/s] Desired body rate vector if no sun direction is available
+    Eigen::Vector3d sHatBdyCmd{0.0, 0.0, 1.0};  //!< Desired body vector to point at the sun
+    Eigen::Vector3d eHat180_B{1.0, 0.0, 0.0};   //!< Eigen axis to use if commanded axis is 180 from sun axis
 
     AttGuidMsgPayload attGuidanceOutBuffer;  //!< Attitude guidance output message buffer
     NavAttMsgPayload sunDirectionInBuffer;   //!< Sun attitude guidance input message buffer
