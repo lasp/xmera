@@ -19,7 +19,6 @@
 
 #include "fswAlgorithms/attControl/mrpPD/mrpPDAlgorithm.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
 
 /*! Reset method for the mrpPD control algorithm.
  @return void

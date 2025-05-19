@@ -19,7 +19,6 @@
 
 #include "mrpPD.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
 
 /*! Reset method for the BSK module adapter interface. This method also calls the algorithm reset method.
  @return void
