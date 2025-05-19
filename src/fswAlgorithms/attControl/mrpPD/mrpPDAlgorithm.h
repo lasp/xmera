@@ -44,10 +44,11 @@ class MrpPDAlgorithm {
     void setProportionalGainK(double K);      //!< Setter method for proportional gain K
 
    private:
-    double K;                           //!< [rad/s] Proportional gain applied to MRP errors
-    double P;                           //!< [N*m*s] Rate error feedback gain applied
-    Eigen::Vector3d knownTorquePntB_B;  //!< [N*m] Known external torque expressed in body frame components
-    Eigen::Matrix3d ISCPntB_B;  //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
+    double K{};                           //!< [rad/s] Proportional gain applied to MRP errors
+    double P{};                           //!< [N*m*s] Rate error feedback gain applied
+    Eigen::Vector3d knownTorquePntB_B{};  //!< [N*m] Known external torque expressed in body frame components
+    Eigen::Matrix3d ISCPntB_B =
+        Eigen::Matrix3d::Identity();  //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
 };
 
 #endif
