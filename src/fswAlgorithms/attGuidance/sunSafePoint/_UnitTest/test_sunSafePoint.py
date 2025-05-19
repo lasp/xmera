@@ -33,7 +33,7 @@ from Basilisk.utilities import macros as mc
     ,(7)        # sun is visible, vectors not aligned, nominal spin rate specified about sun heading vector
 ])
 
-def test_SunSafePointTestFunction(show_plots, case):
+def test_sunSafePoint(show_plots, case):
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
@@ -46,30 +46,30 @@ def test_SunSafePointTestFunction(show_plots, case):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    module = sunSafePoint.SunSafePoint()
-    module.modelTag = "sunSafePoint"
-    unitTestSim.AddModelToTask(unitTaskName, module)
     # Create the sunSafePoint module
+    sun_safe_point = sunSafePoint.SunSafePoint()
+    sun_safe_point.modelTag = "sunSafePoint"
+    unitTestSim.AddModelToTask(unitTaskName, sun_safe_point)
 
     # Initialize sunSafePoint module configuration data
-    sHat_Cmd_B = np.array([0.0, 0.0 ,1.0])
+    sHat_Cmd_B = np.array([0.0, 0.0, 1.0])
     if case == 5:
         sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
-    module.setSHatBdyCmd(sHat_Cmd_B)
-    module.setMinUnitMag(0.1)
+    sun_safe_point.setSHatBdyCmd(sHat_Cmd_B)
+    sun_safe_point.setMinUnitMag(0.1)
     if case == 2:
         omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
-        module.setOmega_RN_B(omega_RN_B_Search)
-    module.setSmallAngle(0.01*mc.D2R)
+        sun_safe_point.setOmega_RN_B(omega_RN_B_Search)
+    sun_safe_point.setSmallAngle(0.01 * mc.D2R)
 
     # Create sunSafePoint sun direction input messages
     inputSunVecData = messaging.NavAttMsgPayload()
     sunVec_B = np.array([1.0, 1.0, 0.0])
-    if (case == 2 or case == 6):  # No sun visible, providing a near zero norm direction vector
-        sunVec_B = [0.0, module.getMinUnitMag()/2, 0.0]
-    if (case == 3):
+    if case == 2 or case == 6:  # No sun visible, providing a near zero norm direction vector
+        sunVec_B = [0.0, sun_safe_point.getMinUnitMag() / 2, 0.0]
+    if case == 3:
         sunVec_B = sHat_Cmd_B
-    if (case == 4 or case == 5):
+    if case == 4 or case == 5:
         sunVec_B = -sHat_Cmd_B
     inputSunVecData.vehSunPntBdy = sunVec_B
     sunInMsg = messaging.NavAttMsg().write(inputSunVecData)
@@ -81,21 +81,21 @@ def test_SunSafePointTestFunction(show_plots, case):
     imuInMsg = messaging.NavAttMsg().write(inputIMUData)
 
     if case == 7:
-        module.setSunAxisSpinRate(1.5*mc.D2R)
-        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * module.getSunAxisSpinRate()
+        sun_safe_point.setSunAxisSpinRate(1.5*mc.D2R)
+        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * sun_safe_point.getSunAxisSpinRate()
 
     # Set up data logging
-    dataLog = module.attGuidanceOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    attGuidOutMsgDataLog = sun_safe_point.attGuidanceOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, attGuidOutMsgDataLog)
 
     # Connect messages
-    module.sunDirectionInMsg.subscribeTo(sunInMsg)
-    module.imuInMsg.subscribeTo(imuInMsg)
+    sun_safe_point.sunDirectionInMsg.subscribeTo(sunInMsg)
+    sun_safe_point.imuInMsg.subscribeTo(imuInMsg)
 
     # Run the simulation
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(mc.sec2nano(1.))
-    module.reset(0)
+    sun_safe_point.reset(0)
     unitTestSim.ExecuteSimulation()
 
     # Check sigma_BR
@@ -105,13 +105,13 @@ def test_SunSafePointTestFunction(show_plots, case):
         eHat = eHat / np.linalg.norm(eHat)
         Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
         sigmaTrue = eHat * np.tan(Phi/4.0)
-        trueVector = [
+        sigma_BRTruth = [
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist()
                    ]
     if (case == 2 or case == 3 or case == 6):
-        trueVector = [
+        sigma_BRTruth = [
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]
@@ -121,7 +121,7 @@ def test_SunSafePointTestFunction(show_plots, case):
         eHat = eHat / np.linalg.norm(eHat)
         Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
         sigmaTrue = eHat * np.tan(Phi/4.0)
-        trueVector = [
+        sigma_BRTruth = [
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist()
@@ -131,7 +131,7 @@ def test_SunSafePointTestFunction(show_plots, case):
         eHat = eHat / np.linalg.norm(eHat)
         Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B), sHat_Cmd_B))
         sigmaTrue = eHat * np.tan(Phi / 4.0)
-        trueVector = [
+        sigma_BRTruth = [
             sigmaTrue.tolist(),
             sigmaTrue.tolist(),
             sigmaTrue.tolist()
@@ -139,66 +139,66 @@ def test_SunSafePointTestFunction(show_plots, case):
 
     # Compare the module results to the truth values
     accuracy = 1e-12
-    np.testing.assert_allclose(trueVector,
-                               dataLog.sigma_BR,
+    np.testing.assert_allclose(sigma_BRTruth,
+                               attGuidOutMsgDataLog.sigma_BR,
                                atol=accuracy,
                                verbose=True)
 
     # Check omega_BR_B
     # Set the filtered output truth states
     if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
-        trueVector = [
+        omega_BR_BTruth = [
             omega_BN_B.tolist(),
             omega_BN_B.tolist(),
             omega_BN_B.tolist()
         ]
     if (case == 2 or case == 7):
-        trueVector = [
+        omega_BR_BTruth = [
             (omega_BN_B - omega_RN_B_Search).tolist(),
             (omega_BN_B - omega_RN_B_Search).tolist(),
             (omega_BN_B - omega_RN_B_Search).tolist()
         ]
 
     # Compare the module results to the truth values
-    np.testing.assert_allclose(trueVector,
-                               dataLog.omega_BR_B,
+    np.testing.assert_allclose(omega_BR_BTruth,
+                               attGuidOutMsgDataLog.omega_BR_B,
                                atol=accuracy,
                                verbose=True)
 
     # Check omega_RN_B
     # Set the filtered output truth states
     if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
-        trueVector = [
+        omega_RN_BTruth = [
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 0.0]
         ]
     if (case == 2 or case == 7):
-        trueVector = [
+        omega_RN_BTruth = [
             omega_RN_B_Search,
             omega_RN_B_Search,
             omega_RN_B_Search
         ]
 
     # Compare the module results to the truth values
-    np.testing.assert_allclose(trueVector,
-                               dataLog.omega_RN_B,
+    np.testing.assert_allclose(omega_RN_BTruth,
+                               attGuidOutMsgDataLog.omega_RN_B,
                                atol=accuracy,
                                verbose=True)
 
     # Check domega_RN_B
     # Set the filtered output truth states
-    trueVector = [
+    domega_RN_BTruth = [
                [0.0, 0.0, 0.0],
                [0.0, 0.0, 0.0],
                [0.0, 0.0, 0.0]
                ]
 
     # Compare the module results to the truth values
-    np.testing.assert_allclose(trueVector,
-                               dataLog.domega_RN_B,
+    np.testing.assert_allclose(domega_RN_BTruth,
+                               attGuidOutMsgDataLog.domega_RN_B,
                                atol=accuracy,
                                verbose=True)
 
 if __name__ == "__main__":
-    test_SunSafePointTestFunction(False, 1)
+    test_sunSafePoint(False, 1)
