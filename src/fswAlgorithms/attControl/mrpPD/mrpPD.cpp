@@ -21,13 +21,11 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! Reset method for the BSK module adapter interface. This method also calls the algorithm reset method.
  @return void
  @param callTime [ns] Time the method is called
 */
 void MrpPD::reset(uint64_t callTime) {
-    // Check if the required input messages are linked
     if (!this->guidInMsg.isLinked()) {
         _bskLog(this->bskLogger, BSK_ERROR, "mrpPD.guidInMsg wasn't connected.");
     }
@@ -35,19 +33,21 @@ void MrpPD::reset(uint64_t callTime) {
         _bskLog(this->bskLogger, BSK_ERROR, "mrpPD.vehConfigInMsg wasn't connected.");
     }
 
+    // Call the algorithm reset method
     VehicleConfigMsgPayload vcInMsg = this->vehConfigInMsg();
     this->algorithm.reset(callTime, vcInMsg);
 }
 
-/*! This method takes the attitude and rate errors relative to the reference frame, as well as
-the reference frame angular rates and acceleration, and computes the required control torque Lr.
+/*! Update method for the BSK module adapter interface. This method also calls the algorithm update method.
  @return void
  @param callTime [ns] Time the method is called
 */
 void MrpPD::updateState(uint64_t callTime) {
     AttGuidMsgPayload guidInMsg = this->guidInMsg();
 
+    // Call the algorithm update method
     CmdTorqueBodyMsgPayload torqueCmdMsgPayload = this->algorithm.update(callTime, guidInMsg);
+
     this->cmdTorqueOutMsg.write(&torqueCmdMsgPayload, moduleID, callTime);
 }
 

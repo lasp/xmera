@@ -21,8 +21,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! Reset method for the mrpPD control algorithm.
  @return void
  @param callTime [ns] Time the method is called
  @param vehConfigInMsg Vehicle configuration message
@@ -31,8 +30,9 @@ void MrpPDAlgorithm::reset(uint64_t callTime, VehicleConfigMsgPayload vehConfigI
     this->ISCPntB_B = cArray2EigenMatrixXd(vehConfigInMsg.ISCPntB_B, 3, 3);
 }
 
-/*! This method takes the attitude and rate errors relative to the reference frame, as well as
-the reference frame angular rates and acceleration, and computes the required control torque Lr.
+/*! Update method for mrpPD control algorithm. This method takes the attitude and rate errors relative to the
+ reference frame, as well as the reference frame angular rates and acceleration, and computes the required control
+ torque Lr.
  @return void
  @param callTime [ns] Time the method is called
 */

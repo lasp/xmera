@@ -26,7 +26,7 @@
 #include <stdint.h>
 #include <Eigen/Dense>
 
-/*! @brief MRP PD control class. */
+/*! @brief MRP PD control algorithm class. */
 class MrpPDAlgorithm {
    public:
     MrpPDAlgorithm() = default;   //!< Constructor

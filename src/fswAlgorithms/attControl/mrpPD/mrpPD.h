@@ -53,7 +53,7 @@ class MrpPD : public SysModel {
     BSKLogger* bskLogger;  //!< BSK Logging
 
    private:
-    MrpPDAlgorithm algorithm;
+    MrpPDAlgorithm algorithm;  //!< Algorithm for mrpPD control logic (BSK-agnostic)
 };
 
 #endif
