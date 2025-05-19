@@ -29,7 +29,7 @@ from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("setExtTorque", [False, True])
-def test_mrp_PD_tracking(show_plots, setExtTorque):
+def test_mrpPD(show_plots, setExtTorque):
     r"""
     **Validation Test Description**
 
@@ -60,15 +60,15 @@ def test_mrp_PD_tracking(show_plots, setExtTorque):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create the mrpPD module
-    module = mrpPD.MrpPD()
-    module.modelTag = "mrpPD"
-    module.setDerivativeGainP(150.0)
-    module.setProportionalGainK(0.15)
+    mrp_pd = mrpPD.MrpPD()
+    mrp_pd.modelTag = "mrpPD"
+    mrp_pd.setDerivativeGainP(150.0)
+    mrp_pd.setProportionalGainK(0.15)
     knownTorquePntB_B = np.array([0.0, 0.0, 0.0])
     if setExtTorque:
         knownTorquePntB_B = np.array([0.1, 0.2, 0.3])
-        module.setKnownTorquePntB_B(knownTorquePntB_B)
-    unitTestSim.AddModelToTask(unitTaskName, module)
+        mrp_pd.setKnownTorquePntB_B(knownTorquePntB_B)
+    unitTestSim.AddModelToTask(unitTaskName, mrp_pd)
 
     # Create the mrpPD module attitude guidance input message
     guidCmdData = messaging.AttGuidMsgPayload()
@@ -77,19 +77,18 @@ def test_mrp_PD_tracking(show_plots, setExtTorque):
     guidCmdData.omega_RN_B = np.array([-0.02, -0.01, 0.005])  # [rad/s]
     guidCmdData.domega_RN_B = np.array([0.0002, 0.0003, 0.0001])  # [rad/s^2]
     guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
-    module.guidInMsg.subscribeTo(guidInMsg)
+    mrp_pd.guidInMsg.subscribeTo(guidInMsg)
 
     # Create the mrpPD module vehicle configuration input FSW message:
+    ISCPntB_B = [1000., 0., 0., 0., 800., 0., 0., 0., 800.]  # [kg*m^2]
     vehicleConfigIn = messaging.VehicleConfigMsgPayload()
-    vehicleConfigIn.ISCPntB_B = [1000., 0., 0.,
-                                  0., 800., 0.,
-                                  0., 0., 800.]
+    vehicleConfigIn.ISCPntB_B = ISCPntB_B
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigIn)
-    module.vehConfigInMsg.subscribeTo(vcInMsg)
+    mrp_pd.vehConfigInMsg.subscribeTo(vcInMsg)
 
     # Set up data logging
-    dataLog = module.cmdTorqueOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    cmdTorqueDataLog = mrp_pd.cmdTorqueOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, cmdTorqueDataLog)
 
     # Run the simulation for 3*process rate, 4 total steps including zero
     unitTestSim.InitializeSimulation()
@@ -97,39 +96,31 @@ def test_mrp_PD_tracking(show_plots, setExtTorque):
     unitTestSim.ExecuteSimulation()
 
     # Compute the truth control torque vector
-    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn, knownTorquePntB_B)]*3
+    truthTorque = findTrueTorques(mrp_pd, guidCmdData, np.array(ISCPntB_B).reshape(3, 3), knownTorquePntB_B)  # [Nm]
 
-    # Compare the module result to the truth value
+    # Compare the module-computed command torque to the truth value
     accuracy = 1e-12
-    np.testing.assert_allclose(trueVector,
-                               dataLog.torqueRequestBody,
+    np.testing.assert_allclose(truthTorque,
+                               cmdTorqueDataLog.torqueRequestBody[-1],
                                atol=accuracy,
                                verbose=True)
 
-def findTrueTorques(module, guidCmdData, vehicleConfigOut, knownTorquePntB_B):
-    sigma_BR = np.array(guidCmdData.sigma_BR)
+def findTrueTorques(mrp_pd, guidCmdData, ISCPntB_B, knownTorquePntB_B):
+    # Compute hub inertial angular velocity in B-frame components
     omega_BR_B = np.array(guidCmdData.omega_BR_B)
     omega_RN_B = np.array(guidCmdData.omega_RN_B)
+    omega_BN_B = omega_BR_B + omega_RN_B
+
+    K = mrp_pd.getProportionalGainK()
+    P = mrp_pd.getDerivativeGainP()
+    sigma_BR = np.array(guidCmdData.sigma_BR)
     domega_RN_B = np.array(guidCmdData.domega_RN_B)
 
-    I = np.identity(3)
-    I[0][0] = vehicleConfigOut.ISCPntB_B[0]
-    I[1][1] = vehicleConfigOut.ISCPntB_B[4]
-    I[2][2] = vehicleConfigOut.ISCPntB_B[8]
-
-    K = module.getProportionalGainK()
-    P = module.getDerivativeGainP()
-    L = knownTorquePntB_B
-
-    omega_BN_B = omega_BR_B + omega_RN_B
-    temp1 = np.dot(I, omega_BN_B)
-    temp2 = domega_RN_B - np.cross(omega_BN_B, omega_RN_B)
-
-    Lr = K * sigma_BR + P * omega_BR_B - np.cross(omega_RN_B, temp1) - np.dot(I, temp2)
-    Lr += L
-    Lr *= -1.0
+    # Compute required attitude control torque
+    Lr = (- K * sigma_BR - P * omega_BR_B + np.cross(omega_RN_B, ISCPntB_B @ omega_BN_B)
+          + ISCPntB_B @ (domega_RN_B - np.cross(omega_BN_B, omega_RN_B)) - knownTorquePntB_B)  # [Nm]
 
     return Lr
 
 if __name__ == "__main__":
-    test_mrp_PD_tracking(False, False)
+    test_mrpPD(False, False)
