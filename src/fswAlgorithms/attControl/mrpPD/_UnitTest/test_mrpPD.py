@@ -24,18 +24,11 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import mrpPD  # import the module that is to be tested
+from Basilisk.fswAlgorithms import mrpPD
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
-
 @pytest.mark.parametrize("setExtTorque", [False, True])
-
 def test_mrp_PD_tracking(show_plots, setExtTorque):
     r"""
     **Validation Test Description**
@@ -53,76 +46,60 @@ def test_mrp_PD_tracking(show_plots, setExtTorque):
     :param show_plots: flag to show the test run plots
     :param setExtTorque: flag to set the knownTorquePntB_B variable
     :return: void
-
-
     """
 
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_PD_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
+    # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # Update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Construct algorithm and associated C++ container
+    # Create the mrpPD module
     module = mrpPD.MrpPD()
     module.modelTag = "mrpPD"
-
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, module)
-
-    # Initialize the test module configuration data
-    knownTorquePntB_B = np.array([0.0, 0.0, 0.0])
     module.setDerivativeGainP(150.0)
     module.setProportionalGainK(0.15)
+    knownTorquePntB_B = np.array([0.0, 0.0, 0.0])
     if setExtTorque:
         knownTorquePntB_B = np.array([0.1, 0.2, 0.3])
         module.setKnownTorquePntB_B(knownTorquePntB_B)
+    unitTestSim.AddModelToTask(unitTaskName, module)
 
-    #   Create input message and size it because the regular creator of that message
-    #   is not part of the test.
-    #   attGuidOut Message:
+    # Create the mrpPD module attitude guidance input message
     guidCmdData = messaging.AttGuidMsgPayload()
     guidCmdData.sigma_BR = np.array([0.3, -0.5, 0.7])
-    guidCmdData.omega_BR_B = np.array([0.010, -0.020, 0.015])
-    guidCmdData.omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    guidCmdData.domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
+    guidCmdData.omega_BR_B = np.array([0.010, -0.020, 0.015])  # [rad/s]
+    guidCmdData.omega_RN_B = np.array([-0.02, -0.01, 0.005])  # [rad/s]
+    guidCmdData.domega_RN_B = np.array([0.0002, 0.0003, 0.0001])  # [rad/s^2]
     guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
+    module.guidInMsg.subscribeTo(guidInMsg)
 
-    # vehicleConfig FSW Message:
+    # Create the mrpPD module vehicle configuration input FSW message:
     vehicleConfigIn = messaging.VehicleConfigMsgPayload()
     vehicleConfigIn.ISCPntB_B = [1000., 0., 0.,
                                   0., 800., 0.,
                                   0., 0., 800.]
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigIn)
+    module.vehConfigInMsg.subscribeTo(vcInMsg)
 
-    # Setup logging on the test module output message so that we get all the writes to it
+    # Set up data logging
     dataLog = module.cmdTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    # connect messages
-    module.vehConfigInMsg.subscribeTo(vcInMsg)
-    module.guidInMsg.subscribeTo(guidInMsg)
-
-    # Need to call the self-init and cross-init methods
+    # Run the simulation for 3*process rate, 4 total steps including zero
     unitTestSim.InitializeSimulation()
-
-    # Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
     unitTestSim.ExecuteSimulation()
 
+    # Compute the truth control torque vector
     trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn, knownTorquePntB_B)]*3
 
-    # Compare the module results to the truth values
+    # Compare the module result to the truth value
     accuracy = 1e-12
     np.testing.assert_allclose(trueVector,
                                dataLog.torqueRequestBody,
@@ -144,7 +121,6 @@ def findTrueTorques(module, guidCmdData, vehicleConfigOut, knownTorquePntB_B):
     P = module.getDerivativeGainP()
     L = knownTorquePntB_B
 
-    # Begin Method
     omega_BN_B = omega_BR_B + omega_RN_B
     temp1 = np.dot(I, omega_BN_B)
     temp2 = domega_RN_B - np.cross(omega_BN_B, omega_RN_B)
