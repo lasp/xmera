@@ -23,8 +23,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! Reset method for the sunSafePoint guidance algorithm.
  @return void
  @param callTime [ns] Time the method is called
 */
@@ -39,22 +38,24 @@ void SunSafePointAlgorithm::reset(uint64_t callTime) {
     this->eHat180_B.normalize();
 }
 
-/*! This method takes the estimated body-observed sun vector and computes the
- current attitude/attitude rate errors to pass on to control.
- @return void
+/*! Update method for the sunSafePoint guidance algorithm. This method takes the estimated body-observed sun vector
+ and computes the current attitude/attitude rate errors to pass on to control.
+ @return AttGuidMsgPayload Attitude guidance message
  @param callTime [ns] Time the method is called
+ @param imuInMsg IMU navigation message
+ @param sunDirectionInMsg  Sun direction navigation message
 */
 AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
                                                 NavAttMsgPayload imuInMsg,
                                                 NavAttMsgPayload sunDirectionInMsg) {
-    // Zero the attitude guidance output buffer message
-    this->attGuidanceOutBuffer = AttGuidMsgPayload();
-
     // Read the current sun body vector estimate input message
     this->sunDirectionInBuffer = sunDirectionInMsg;
 
     // Determine norm of measured Sun-direction vector
     double sHatNorm = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).norm();
+
+    // Zero the attitude guidance output buffer message
+    this->attGuidanceOutBuffer = AttGuidMsgPayload();
 
     // Computing the attitude guidance states sigma_BR and omega_RN_B
     if (this->sunDirectionIsAvailable(sHatNorm)) {
@@ -67,7 +68,7 @@ AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
     // Compute the hub angular rate error omega_BR_B
     this->computeHubAngularRateError(imuInMsg);
 
-    // Write the guidance output message
+    // Create the output guidance message
     eigenVector3d2CArray(this->omega_RN_B, this->attGuidanceOutBuffer.omega_RN_B);
 
     return this->attGuidanceOutBuffer;
@@ -113,11 +114,8 @@ void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
  @return void
 */
 void SunSafePointAlgorithm::computeHubAngularRateError(NavAttMsgPayload imuInMsg) {
-    // Create local copy of hub inertial angular velocity vector in B frame components
     Eigen::Vector3d omega_BN_B = cArray2EigenVector3d(imuInMsg.omega_BN_B);  // [rad/s]
-
-    // Create local copy of hub angular velocity error in B frame components
-    Eigen::Vector3d omega_BR_B = omega_BN_B - this->omega_RN_B;  // [rad/s]
+    Eigen::Vector3d omega_BR_B = omega_BN_B - this->omega_RN_B;              // [rad/s]
 
     eigenVector3d2CArray(omega_BR_B, this->attGuidanceOutBuffer.omega_BR_B);
 }

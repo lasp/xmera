@@ -21,13 +21,11 @@
 
 #include "architecture/utilities/avsEigenSupport.h"
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! Reset method for the BSK module adapter interface. This method also calls the algorithm reset method.
  @return void
  @param callTime [ns] Time the method is called
 */
 void SunSafePoint::reset(uint64_t callTime) {
-    // Check if the required input messages are linked
     if (!this->sunDirectionInMsg.isLinked()) {
         _bskLog(this->bskLogger, BSK_ERROR, "sunSafePoint.sunDirectionInMsg wasn't connected.");
     }
@@ -35,25 +33,25 @@ void SunSafePoint::reset(uint64_t callTime) {
         _bskLog(this->bskLogger, BSK_ERROR, "sunSafePoint.imuInMsg wasn't connected.");
     }
 
+    // Call the algorithm reset method
     this->algorithm.reset(callTime);
 }
 
-/*! This method takes the estimated body-observed sun vector and computes the
- current attitude/attitude rate errors to pass on to control.
+/*! Update method for the BSK module adapter interface. This method also calls the algorithm update method.
  @return void
  @param callTime [ns] Time the method is called
 */
 void SunSafePoint::updateState(uint64_t callTime) {
-    NavAttMsgPayload imuInMsg = NavAttMsgPayload();
+    auto imuInMsg = NavAttMsgPayload();
     if (this->imuInMsg.isWritten()) {
         imuInMsg = this->imuInMsg();
     }
-
-    NavAttMsgPayload sunDirectionInMsg = NavAttMsgPayload();
+    auto sunDirectionInMsg = NavAttMsgPayload();
     if (this->sunDirectionInMsg.isWritten()) {
         sunDirectionInMsg = this->sunDirectionInMsg();
     }
 
+    // Call the algorithm update method
     AttGuidMsgPayload attGuidanceOutBuffer = this->algorithm.update(callTime, imuInMsg, sunDirectionInMsg);
 
     this->attGuidanceOutMsg.write(&attGuidanceOutBuffer, moduleID, callTime);
