@@ -144,14 +144,14 @@ double SunSafePointAlgorithm::getSmallAngle() const { return this->smallAngle; }
 double SunSafePointAlgorithm::getSunAxisSpinRate() const { return this->sunAxisSpinRate; }
 
 /*! Getter method for the desired body rate vector if no sun direction is available.
- @return const Eigen::Vector3d
+ @return const Eigen::Vector3d&
 */
-const Eigen::Vector3d &SunSafePointAlgorithm::getOmega_RN_B() const { return this->omega_RN_B; }
+const Eigen::Vector3d& SunSafePointAlgorithm::getOmega_RN_B() const { return this->omega_RN_B; }
 
 /*! Getter method for the desired body vector to point at the sun.
- @return const Eigen::Vector3d
+ @return const Eigen::Vector3d&
 */
-const Eigen::Vector3d &SunSafePointAlgorithm::getSHatBdyCmd() const { return this->sHatBdyCmd; }
+const Eigen::Vector3d& SunSafePointAlgorithm::getSHatBdyCmd() const { return this->sHatBdyCmd; }
 
 /*! Setter method for the minimally accepted sun body vector norm.
  @return void
@@ -177,13 +177,13 @@ void SunSafePointAlgorithm::setSunAxisSpinRate(const double sunAxisSpinRate) {
  @return void
  @param omega_RN_B [rad/s] Desired body rate vector if no sun direction is available
 */
-void SunSafePointAlgorithm::setOmega_RN_B(const Eigen::Vector3d &omega_RN_B) { this->omega_RN_B = omega_RN_B; }
+void SunSafePointAlgorithm::setOmega_RN_B(const Eigen::Vector3d& omega_RN_B) { this->omega_RN_B = omega_RN_B; }
 
 /*! Setter method for the desired body vector to point at the sun.
  @return void
  @param sHatBdyCmd Desired body vector to point at the sun
 */
-void SunSafePointAlgorithm::setSHatBdyCmd(Eigen::Vector3d &sHatBdyCmd) {
+void SunSafePointAlgorithm::setSHatBdyCmd(Eigen::Vector3d& sHatBdyCmd) {
     assert(sHatBdyCmd.norm() > 1e-8);
     this->sHatBdyCmd = sHatBdyCmd.normalized();
 }
