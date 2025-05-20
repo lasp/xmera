@@ -15,22 +15,14 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-import inspect
-import os
 
 import numpy as np
 import pytest
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
-
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import rateDamp  # import the module that is to be tested
+from Basilisk.fswAlgorithms import rateDamp
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
-
 
 @pytest.mark.parametrize("P", [0.0, 2.0])
 @pytest.mark.parametrize("accuracy", [1e-12])
