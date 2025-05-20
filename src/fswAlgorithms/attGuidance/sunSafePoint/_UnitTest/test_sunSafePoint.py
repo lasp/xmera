@@ -100,36 +100,36 @@ def test_sunSafePoint(show_plots, case):
 
     # Check sigma_BR
     # Set the filtered output truth states
-    if (case == 1 or case == 7):
-        eHat = np.cross(sunVec_B,sHat_Cmd_B)
+    if case == 1 or case == 7:
+        eHat = np.cross(sunVec_B, sHat_Cmd_B)
         eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
-        sigmaTrue = eHat * np.tan(Phi/4.0)
+        Phi = np.arccos(np.dot(sunVec_B / np.linalg.norm(sunVec_B), sHat_Cmd_B))
+        sigmaTrue = eHat * np.tan(Phi / 4.0)
         sigma_BRTruth = [
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist()
                    ]
-    if (case == 2 or case == 3 or case == 6):
+    if case == 2 or case == 3 or case == 6:
         sigma_BRTruth = [
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]
         ]
-    if (case == 4):
-        eHat = np.cross(sHat_Cmd_B,np.array([1,0,0]))
+    if case == 4:
+        eHat = np.cross(sHat_Cmd_B, np.array([1, 0, 0]))
         eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
-        sigmaTrue = eHat * np.tan(Phi/4.0)
+        Phi = np.arccos(np.dot(sunVec_B / np.linalg.norm(sunVec_B), sHat_Cmd_B))
+        sigmaTrue = eHat * np.tan(Phi / 4.0)
         sigma_BRTruth = [
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist()
                ]
-    if (case == 5):
+    if case == 5:
         eHat = np.cross(sHat_Cmd_B, np.array([0, 1, 0]))
         eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B), sHat_Cmd_B))
+        Phi = np.arccos(np.dot(sunVec_B / np.linalg.norm(sunVec_B), sHat_Cmd_B))
         sigmaTrue = eHat * np.tan(Phi / 4.0)
         sigma_BRTruth = [
             sigmaTrue.tolist(),
@@ -146,13 +146,13 @@ def test_sunSafePoint(show_plots, case):
 
     # Check omega_BR_B
     # Set the filtered output truth states
-    if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
+    if case == 1 or case == 3 or case == 4 or case == 5 or case == 6:
         omega_BR_BTruth = [
             omega_BN_B.tolist(),
             omega_BN_B.tolist(),
             omega_BN_B.tolist()
         ]
-    if (case == 2 or case == 7):
+    if case == 2 or case == 7:
         omega_BR_BTruth = [
             (omega_BN_B - omega_RN_B_Search).tolist(),
             (omega_BN_B - omega_RN_B_Search).tolist(),
@@ -167,13 +167,13 @@ def test_sunSafePoint(show_plots, case):
 
     # Check omega_RN_B
     # Set the filtered output truth states
-    if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
+    if case == 1 or case == 3 or case == 4 or case == 5 or case == 6:
         omega_RN_BTruth = [
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 0.0]
         ]
-    if (case == 2 or case == 7):
+    if case == 2 or case == 7:
         omega_RN_BTruth = [
             omega_RN_B_Search,
             omega_RN_B_Search,
