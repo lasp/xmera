@@ -36,7 +36,10 @@ void RateDamp::reset(uint64_t currentSimNanos) {
  @param currentSimNanos [ns] Time the method is called
  */
 void RateDamp::updateState(uint64_t currentSimNanos) {
-    NavAttMsgPayload attNavInBuffer = this->attNavInMsg();
+    auto attNavInBuffer = NavAttMsgPayload();
+    if (this->attNavInMsg.isWritten()) {
+        attNavInBuffer = this->attNavInMsg();
+    }
 
     // Call the algorithm update method
     CmdTorqueBodyMsgPayload cmdTorqueOutBuffer = this->algorithm.update(currentSimNanos, attNavInBuffer);
