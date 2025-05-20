@@ -20,26 +20,27 @@
 #include "rateDamp.h"
 #include <cassert>
 
-/*! This method is used to reset the module.
+/*! Reset method for the BSK module adapter interface. This method also calls the algorithm reset method.
  @return void
+ @param currentSimNanos [ns] Time the method is called
  */
 void RateDamp::reset(uint64_t currentSimNanos) {
     assert(this->attNavInMsg.isLinked());
+
+    // Call the algorithm reset method
     this->algorithm.reset(currentSimNanos);
 }
 
-/*! This method is the main carrier for the computation of the control torque.
+/*! Update method for the BSK module adapter interface. This method also calls the algorithm update method.
  @return void
- @param currentSimNanos The current simulation time for system
+ @param currentSimNanos [ns] Time the method is called
  */
 void RateDamp::updateState(uint64_t currentSimNanos) {
-    /*! Read input attitude navigation msg */
     NavAttMsgPayload attNavInBuffer = this->attNavInMsg();
 
-    /*! Create and populate cmd torque buffer message */
+    // Call the algorithm update method
     CmdTorqueBodyMsgPayload cmdTorqueOutBuffer = this->algorithm.update(currentSimNanos, attNavInBuffer);
 
-    /*! Write output messages */
     this->cmdTorqueOutMsg.write(&cmdTorqueOutBuffer, this->moduleID, currentSimNanos);
 }
 

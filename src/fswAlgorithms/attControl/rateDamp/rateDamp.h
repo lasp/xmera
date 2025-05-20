@@ -27,23 +27,21 @@
 #include "architecture/utilities/bskLogging.h"
 #include "fswAlgorithms/attControl/rateDamp/rateDampAlgorithm.h"
 
-/*! @brief A class to compute rate damping control */
+/*! @brief Rate damp class */
 class RateDamp : public SysModel {
    public:
-    RateDamp() = default;   //!< Constructor
-    ~RateDamp() = default;  //!< Destructor
+    RateDamp() = default;                                 //!< Constructor
+    ~RateDamp() = default;                                //!< Destructor
+    void reset(uint64_t currentSimNanos) override;        //!< Reset method
+    void updateState(uint64_t currentSimNanos) override;  //!< Update method
+    void setRateGain(double const p);                     //!< Setter method for rate feedback gain
+    double getRateGain() const;                           //!< Getter method for rate feedback gain
 
-    void reset(uint64_t currentSimNanos) override;
-    void updateState(uint64_t currentSimNanos) override;
-
-    ReadFunctor<NavAttMsgPayload> attNavInMsg;         //!< input msg measured attitude
-    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;  //!< commanded torque output message
-
-    void setRateGain(double const p);
-    double getRateGain() const;
+    ReadFunctor<NavAttMsgPayload> attNavInMsg;         //!< Navigation input message
+    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;  //!< Command torque output message
 
    private:
-    RateDampAlgorithm algorithm;
+    RateDampAlgorithm algorithm;  //!< Algorithm for rateDamp control logic (BSK-agnostic)
 };
 
 #endif

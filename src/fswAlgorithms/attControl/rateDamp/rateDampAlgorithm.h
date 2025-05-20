@@ -24,14 +24,14 @@
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include <cstdint>
 
+/*! @brief Rate damp algorithm class */
 class RateDampAlgorithm {
    public:
-    void reset(uint64_t currentSimNanos);
+    void reset(uint64_t currentSimNanos);  //!< Algorithm reset method
     CmdTorqueBodyMsgPayload update(uint64_t currentSimNanos,
                                    NavAttMsgPayload& attNavInMsg);  //!< Algorithm update method
-
-    void setRateGain(double const p);
-    double getRateGain() const;
+    void setRateGain(double const p);                               //!< Setter method for rate feedback gain
+    double getRateGain() const;                                     //!< Getter method for rate feedback gain
 
    private:
     double P;  //!< [N*m*s] Rate feedback gain
