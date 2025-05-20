@@ -51,8 +51,8 @@ def test_rateDamp(show_plots, P):
     attControl.attNavInMsg.subscribeTo(NavAttMsg)
 
     # Set up data logging
-    dataLog = attControl.cmdTorqueOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    cmdTorqueDataLog = attControl.cmdTorqueOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, cmdTorqueDataLog)
 
     # Run the simulation
     unitTestSim.InitializeSimulation()
@@ -60,14 +60,14 @@ def test_rateDamp(show_plots, P):
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged data
-    moduleOutput = dataLog.torqueRequestBody[0]
+    cmdTorqueData = cmdTorqueDataLog.torqueRequestBody[0]
 
     # Compute the truth command torque
-    truth = -attControl.getRateGain() * omega_BN_B
+    truthCmdTorque = -attControl.getRateGain() * omega_BN_B
 
     # Check that the module-output command torque vector matches the computed truth value
     accuracy = 1e-12
-    np.testing.assert_allclose(moduleOutput, truth, rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(cmdTorqueData, truthCmdTorque, rtol=0, atol=accuracy, verbose=True)
 
 if __name__ == "__main__":
     test_rateDamp(False, 1)
