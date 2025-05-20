@@ -52,25 +52,49 @@ def test_sunSafePoint(show_plots, case):
     unitTestSim.AddModelToTask(unitTaskName, sun_safe_point)
 
     # Initialize sunSafePoint module configuration data
-    sHat_Cmd_B = np.array([0.0, 0.0, 1.0])
-    if case == 5:
-        sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
-    sun_safe_point.setSHatBdyCmd(sHat_Cmd_B)
     sun_safe_point.setMinUnitMag(0.1)
-    if case == 2:
+    sun_safe_point.setSmallAngle(0.01 * mc.D2R)
+
+    sHat_Cmd_B = []
+    sunVec_B = []
+    if case == 1:  # Sun visible, vectors not aligned
+        sHat_Cmd_B = np.array([0.0, 0.0, 1.0])
+        sunVec_B = np.array([1.0, 1.0, 0.0])
+
+    elif case == 2:  # Sun not visible, search rate specified
+        sHat_Cmd_B = np.array([0.0, 0.0, 1.0])
+        sunVec_B = np.array([0.0, sun_safe_point.getMinUnitMag() / 2, 0.0])
+
         omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
         sun_safe_point.setOmega_RN_B(omega_RN_B_Search)
-    sun_safe_point.setSmallAngle(0.01 * mc.D2R)
+
+    elif case == 3:  # Sun visible, vectors aligned
+        sHat_Cmd_B = np.array([0.0, 0.0, 1.0])
+        sunVec_B = sHat_Cmd_B
+
+    elif case == 4:  # Sun visible, vectors oppositely aligned
+        sHat_Cmd_B = np.array([0.0, 0.0, 1.0])
+        sunVec_B = -sHat_Cmd_B
+
+    elif case == 5:  # Sun visible, vectors oppositely aligned, sHatCmd is along b1
+        sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
+        sunVec_B = -sHat_Cmd_B
+
+    elif case == 6:  # Sun not visible, no search rate specified
+        sHat_Cmd_B = np.array([0.0, 0.0, 1.0])
+        sunVec_B = np.array([0.0, sun_safe_point.getMinUnitMag() / 2, 0.0])
+
+    else:  # Sun visible, spin rate about sun heading vector specified
+        sHat_Cmd_B = np.array([0.0, 0.0, 1.0])
+        sunVec_B = np.array([1.0, 1.0, 0.0])
+
+        sun_safe_point.setSunAxisSpinRate(1.5*mc.D2R)
+        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * sun_safe_point.getSunAxisSpinRate()
+
+    sun_safe_point.setSHatBdyCmd(sHat_Cmd_B)
 
     # Create sunSafePoint sun direction input messages
     inputSunVecData = messaging.NavAttMsgPayload()
-    sunVec_B = np.array([1.0, 1.0, 0.0])
-    if case == 2 or case == 6:  # No sun visible, providing a near zero norm direction vector
-        sunVec_B = [0.0, sun_safe_point.getMinUnitMag() / 2, 0.0]
-    if case == 3:
-        sunVec_B = sHat_Cmd_B
-    if case == 4 or case == 5:
-        sunVec_B = -sHat_Cmd_B
     inputSunVecData.vehSunPntBdy = sunVec_B
     sunInMsg = messaging.NavAttMsg().write(inputSunVecData)
 
@@ -79,10 +103,6 @@ def test_sunSafePoint(show_plots, case):
     omega_BN_B = np.array([0.01, 0.50, -0.2])
     inputIMUData.omega_BN_B = omega_BN_B
     imuInMsg = messaging.NavAttMsg().write(inputIMUData)
-
-    if case == 7:
-        sun_safe_point.setSunAxisSpinRate(1.5*mc.D2R)
-        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * sun_safe_point.getSunAxisSpinRate()
 
     # Set up data logging
     attGuidOutMsgDataLog = sun_safe_point.attGuidanceOutMsg.recorder()
