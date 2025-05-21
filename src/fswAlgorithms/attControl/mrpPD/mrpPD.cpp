@@ -25,15 +25,14 @@
  @param callTime [ns] Time the method is called
 */
 void MrpPD::reset(uint64_t callTime) {
-    if (!this->guidInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "mrpPD.guidInMsg wasn't connected.");
-    }
-    if (!this->vehConfigInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "mrpPD.vehConfigInMsg wasn't connected.");
+    assert(this->guidInMsg.isLinked() && this->vehConfigInMsg.isLinked());
+
+    auto vcInMsg = VehicleConfigMsgPayload();
+    if (this->vehConfigInMsg.isWritten()) {
+        vcInMsg = this->vehConfigInMsg();
     }
 
     // Call the algorithm reset method
-    VehicleConfigMsgPayload vcInMsg = this->vehConfigInMsg();
     this->algorithm.reset(callTime, vcInMsg);
 }
 
@@ -42,10 +41,13 @@ void MrpPD::reset(uint64_t callTime) {
  @param callTime [ns] Time the method is called
 */
 void MrpPD::updateState(uint64_t callTime) {
-    AttGuidMsgPayload guidInMsg = this->guidInMsg();
+    auto localGuidInMsg = AttGuidMsgPayload();
+    if (this->guidInMsg.isWritten()) {
+        localGuidInMsg = this->guidInMsg();
+    }
 
     // Call the algorithm update method
-    CmdTorqueBodyMsgPayload torqueCmdMsgPayload = this->algorithm.update(callTime, guidInMsg);
+    CmdTorqueBodyMsgPayload torqueCmdMsgPayload = this->algorithm.update(callTime, localGuidInMsg);
 
     this->cmdTorqueOutMsg.write(&torqueCmdMsgPayload, moduleID, callTime);
 }
