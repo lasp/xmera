@@ -35,6 +35,8 @@ enum class ThrForceSign { POSITIVE = +1, NEGATIVE = -1 };
 
 class ThrForceMappingAlgorithm {
    public:
+    ThrForceMappingAlgorithm() = default;   //!< Constructor
+    ~ThrForceMappingAlgorithm() = default;  //!< Destructor
     void reset(uint64_t callTime, THRArrayConfigMsgPayload& thrConfigInMsg);
     THRArrayCmdForceMsgPayload update(uint64_t callTime,
                                       CmdTorqueBodyMsgPayload& cmdTorqueInMsg,

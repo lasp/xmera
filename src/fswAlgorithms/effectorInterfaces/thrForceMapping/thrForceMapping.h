@@ -36,6 +36,8 @@
 /*!@brief Data structure for module to map a command torque onto thruster forces. */
 class ThrForceMapping : public SysModel {
    public:
+    ThrForceMapping() = default;   //!< Constructor
+    ~ThrForceMapping() = default;  //!< Destructor
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
