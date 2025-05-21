@@ -46,7 +46,7 @@ void RateDamp::updateState(uint64_t currentSimNanos) {
     @param double P
     @return void
     */
-void RateDamp::setRateGain(const double p) { this->algorithm.setRateGain(p); }
+void RateDamp::setRateGain(double p) { this->algorithm.setRateGain(p); }
 
 /*! Get the module rate feedback gain
     @param double measurementNoiseScale

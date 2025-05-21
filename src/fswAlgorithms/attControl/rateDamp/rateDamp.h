@@ -34,7 +34,7 @@ class RateDamp : public SysModel {
     ~RateDamp() = default;                                //!< Destructor
     void reset(uint64_t currentSimNanos) override;        //!< Reset method
     void updateState(uint64_t currentSimNanos) override;  //!< Update method
-    void setRateGain(double const p);                     //!< Setter method for rate feedback gain
+    void setRateGain(double p);                           //!< Setter method for rate feedback gain
     double getRateGain() const;                           //!< Getter method for rate feedback gain
 
     ReadFunctor<NavAttMsgPayload> attNavInMsg;         //!< Navigation input message
