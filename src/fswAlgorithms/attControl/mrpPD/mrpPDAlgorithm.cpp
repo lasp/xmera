@@ -19,6 +19,8 @@
 
 #include "fswAlgorithms/attControl/mrpPD/mrpPDAlgorithm.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include <cassert>
+#include <cmath>
 
 /*! Reset method for the mrpPD control algorithm.
  @return void
@@ -75,7 +77,10 @@ double MrpPDAlgorithm::getProportionalGainK() const { return this->K; }
  @return void
  @param P [N*m*s] Rate error feedback gain applied
 */
-void MrpPDAlgorithm::setDerivativeGainP(double P) { this->P = P; }
+void MrpPDAlgorithm::setDerivativeGainP(double P) {
+    assert(P >= 0.0);
+    this->P = std::abs(P);
+}
 
 /*! Setter method for the known external torque about point B.
  @return void
@@ -89,4 +94,7 @@ void MrpPDAlgorithm::setKnownTorquePntB_B(Eigen::Vector3d& knownTorquePntB_B) {
  @return void
  @param K [rad/s] Proportional gain applied to MRP errors
 */
-void MrpPDAlgorithm::setProportionalGainK(double K) { this->K = K; }
+void MrpPDAlgorithm::setProportionalGainK(double K) {
+    assert(K >= 0.0);
+    this->K = std::abs(K);
+}
