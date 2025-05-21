@@ -19,13 +19,11 @@
 
 #include "fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.h"
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! Reset method for the BSK module adapter interface. This method also calls the algorithm reset method.
  @return void
- @param callTime The clock time at which the function was called (nanoseconds)
+ @param callTime [ns] Time the method is called
  */
 void ThrForceMapping::reset(uint64_t callTime) {
-    // check if the required input messages are included
     assert(this->thrConfigInMsg.isLinked() && this->vehConfigInMsg.isLinked() && this->cmdTorqueInMsg.isLinked());
 
     auto localThrConfigInMsg = THRArrayConfigMsgPayload();
@@ -33,12 +31,13 @@ void ThrForceMapping::reset(uint64_t callTime) {
         localThrConfigInMsg = this->thrConfigInMsg();
     }
 
+    // Call the algorithm reset method
     this->algorithm.reset(callTime, localThrConfigInMsg);
 }
 
-/*! The module takes a body frame torque vector and projects it onto available RCS or DV thrusters.
+/*! Update method for the BSK module adapter interface. This method also calls the algorithm update method.
  @return void
- @param callTime The clock time at which the function was called (nanoseconds)
+ @param callTime [ns] Time the method is called
  */
 void ThrForceMapping::updateState(uint64_t callTime) {
     auto LrInputMsg = CmdTorqueBodyMsgPayload();
@@ -50,7 +49,9 @@ void ThrForceMapping::updateState(uint64_t callTime) {
         localVehConfigInMsg = this->vehConfigInMsg();
     }
 
+    // Call the algorithm update method
     THRArrayCmdForceMsgPayload thrusterForceOut = this->algorithm.update(callTime, LrInputMsg, localVehConfigInMsg);
+
     this->thrForceCmdOutMsg.write(&thrusterForceOut, this->moduleID, callTime);
 }
 

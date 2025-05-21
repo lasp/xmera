@@ -33,27 +33,29 @@ typedef Eigen::Vector<double, MAX_EFF_CNT> Vector36d;
 
 enum class ThrForceSign { POSITIVE = +1, NEGATIVE = -1 };
 
+/*!@brief Thruster force mapping algorithm class. */
 class ThrForceMappingAlgorithm {
    public:
-    ThrForceMappingAlgorithm() = default;   //!< Constructor
-    ~ThrForceMappingAlgorithm() = default;  //!< Destructor
-    void reset(uint64_t callTime, THRArrayConfigMsgPayload& thrConfigInMsg);
+    ThrForceMappingAlgorithm() = default;                                     //!< Constructor
+    ~ThrForceMappingAlgorithm() = default;                                    //!< Destructor
+    void reset(uint64_t callTime, THRArrayConfigMsgPayload& thrConfigInMsg);  //!< Reset method
     THRArrayCmdForceMsgPayload update(uint64_t callTime,
                                       CmdTorqueBodyMsgPayload& cmdTorqueInMsg,
-                                      VehicleConfigMsgPayload& vehConfigInMsg);
+                                      VehicleConfigMsgPayload& vehConfigInMsg);  //!< Update method
 
-    Eigen::Matrix3d getControlAxesB() const;
-    void setControlAxesB(const Eigen::Matrix3d& axes);
-    Vector36d getThrForceMag() const;
-    void setThrForceMag(const Vector36d& forceMag);
-    ThrForceSign getThrForceSign() const;
-    void setThrForceSign(ThrForceSign sign);
-    double getAngErrThresh() const;
-    void setAngErrThresh(double thresh);
-    double getEpsilon() const;
-    void setEpsilon(double eps);
-    bool getUse2ndLoop() const;
-    void setUse2ndLoop(bool loopFlag);
+    Eigen::Matrix3d getControlAxesB() const;            //!< Getter method for thruster control axes
+    void setControlAxesB(const Eigen::Matrix3d& axes);  //!< Setter method for thruster control axes
+    Vector36d getThrForceMag() const;                   //!< Getter method for the thruster force magnitude
+    void setThrForceMag(const Vector36d& forceMag);     //!< Setter method for the thruster force magnitude
+    ThrForceSign getThrForceSign() const;               //!< Getter method for the thruster force sign
+    void setThrForceSign(ThrForceSign sign);            //!< Setter method for the thruster force sign
+    double getAngErrThresh() const;                     //!< Getter method for the angular error threshold
+    void setAngErrThresh(double thresh);                //!< Setter method for the angular error threshold
+    double getEpsilon() const;                          //!< Getter method for the epsilon value
+    void setEpsilon(double eps);                        //!< Setter method for the epsilon value
+    bool getUse2ndLoop() const;  //!< Getter method for whether the second least squares fitting loop should be used
+    void setUse2ndLoop(
+        bool loopFlag);  //!< Getter method for whether the second least squares fitting loop should be used
 
    private:
     Vector36d findMinimumNormForce(const Eigen::Matrix<double, 3, MAX_EFF_CNT>& D,

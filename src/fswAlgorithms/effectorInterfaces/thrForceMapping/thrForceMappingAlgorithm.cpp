@@ -33,10 +33,9 @@ double computeTorqueAngErr(Eigen::Matrix<double, 3, MAX_EFF_CNT> D,
                            Eigen::Vector<double, MAX_EFF_CNT> F,
                            Eigen::Vector<double, MAX_EFF_CNT> FMag);
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! Reset method for the thrForceMapping algorithm.
  @return void
- @param callTime The clock time at which the function was called (nanoseconds)
+ @param callTime [ns] Time the method is called
  @param thrConfigInMsg Thruster configuration message
  */
 void ThrForceMappingAlgorithm::reset(uint64_t callTime, THRArrayConfigMsgPayload& thrConfigInMsg) {
@@ -58,9 +57,10 @@ void ThrForceMappingAlgorithm::reset(uint64_t callTime, THRArrayConfigMsgPayload
     }
 }
 
-/*! The module takes a body frame torque vector and projects it onto available RCS or DV thrusters.
- @return THRArrayCmdForceMsgPayload
- @param callTime The clock time at which the function was called (nanoseconds)
+/*! Update method for the thrForceMapping algorithm. The module takes a body frame torque vector and projects
+ it onto available RCS or DV thrusters.
+ @return THRArrayCmdForceMsgPayload Thruster array command force message
+ @param callTime [ns] Time the method is called
  @param cmdTorqueInMsg Command torque input message
  @param vehConfigInMsg Vehicle configuration input message
  */
