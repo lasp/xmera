@@ -28,7 +28,7 @@
  @param vehConfigInMsg Vehicle configuration message
 */
 void MrpPDAlgorithm::reset(uint64_t callTime, VehicleConfigMsgPayload vehConfigInMsg) {
-    this->ISCPntB_B = cArray2EigenMatrixXd(vehConfigInMsg.ISCPntB_B, 3, 3);
+    this->ISCPntB_B = cArray2EigenMatrix3d(vehConfigInMsg.ISCPntB_B);
 }
 
 /*! Update method for mrpPD control algorithm. This method takes the attitude and rate errors relative to the
