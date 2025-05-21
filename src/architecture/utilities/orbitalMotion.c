@@ -19,13 +19,13 @@
 
 #include "orbitalMotion.h"
 
+#include "astroConstants.h"
+#include "linearAlgebra.h"
+#include "safeMath.h"
+
 #include <assert.h>
 #include <math.h>
 #include <stdarg.h>
-
-#include "linearAlgebra.h"
-#include "astroConstants.h"
-
 
 /*!
  * Purpose: maps inertial position and velocity vectors in the Hill frame DCM HN
@@ -35,12 +35,11 @@
  * Outputs:
  *   HN: Hill frame DCM relative to inertial frame
  */
-void hillFrame(double *rc_N, double *vc_N, double HN[3][3])
-{
-    double ir_N[3];         /* orbit radial unit direction vector */
-    double itheta_N[3];     /* along-track unit direction vector */
-    double ih_N[3];         /* orbit plane normal unit direction vector */
-    double hVec_N[3];       /* orbit angular momentum vector */
+void hillFrame(double *rc_N, double *vc_N, double HN[3][3]) {
+    double ir_N[3];     /* orbit radial unit direction vector */
+    double itheta_N[3]; /* along-track unit direction vector */
+    double ih_N[3];     /* orbit plane normal unit direction vector */
+    double hVec_N[3];   /* orbit angular momentum vector */
 
     v3Normalize(rc_N, ir_N);
     v3Cross(rc_N, vc_N, hVec_N);
@@ -62,21 +61,20 @@ void hillFrame(double *rc_N, double *vc_N, double HN[3][3])
  *   rd_N: deputy inertial position vector
  *   vd_N: deputy inertial velocity vector
  */
-void  hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, double *rd_N, double *vd_N)
-{
-    double HN[3][3];        /* DCM of Hill frame relative to inertial */
-    double NH[3][3];        /* DCM of inertial frame relative to Hill */
-    double hVec_N[3];       /* orbit angular momentum vector */
-    double rc;              /* chief orbit radius */
-    double fDot;            /* chief true anomaly rate */
-    double omega_HN_H[3];   /* Hill frame angular velocity */
-    double rho_N[3];        /* deputy relative to chief vector in N frame components */
+void hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, double *rd_N, double *vd_N) {
+    double HN[3][3];      /* DCM of Hill frame relative to inertial */
+    double NH[3][3];      /* DCM of inertial frame relative to Hill */
+    double hVec_N[3];     /* orbit angular momentum vector */
+    double rc;            /* chief orbit radius */
+    double fDot;          /* chief true anomaly rate */
+    double omega_HN_H[3]; /* Hill frame angular velocity */
+    double rho_N[3];      /* deputy relative to chief vector in N frame components */
 
     hillFrame(rc_N, vc_N, HN);
     m33Transpose(HN, NH);
     v3Cross(rc_N, vc_N, hVec_N);
     rc = v3Norm(rc_N);
-    fDot = v3Norm(hVec_N)/rc/rc;
+    fDot = v3Norm(hVec_N) / rc / rc;
     v3Set(0, 0, fDot, omega_HN_H);
 
     /* compute inertial deputy position */
@@ -90,7 +88,6 @@ void  hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, dou
     v3Add(vd_N, vc_N, vd_N);
 }
 
-
 /*!
  * Purpose: maps inertial frame deputy states to Hill inertial position and velocity vectors
  * Inputs:
@@ -102,21 +99,20 @@ void  hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, dou
  *   rho_H: deputy Hill position vector
  *   rhoPrime_H: deputy Hill velocity vector
  */
-void rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H)
-{
-    double HN[3][3];        /* DCM of Hill frame relative to inertial */
-    double hVec_N[3];       /* orbit angular momentum vector */
-    double rc;              /* chief orbit radius */
-    double fDot;            /* chief true anomaly rate */
-    double omega_HN_H[3];   /* Hill frame angular velocity */
-    double rho_N[3];        /* deputy relative to chief vector in N frame components */
-    double rhoDot_N[3];     /* inertial derivative of deputy/chief vector */
-    double rhoDot_H[3];     /* inertial derivative of deputy/chief vector */
+void rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H) {
+    double HN[3][3];      /* DCM of Hill frame relative to inertial */
+    double hVec_N[3];     /* orbit angular momentum vector */
+    double rc;            /* chief orbit radius */
+    double fDot;          /* chief true anomaly rate */
+    double omega_HN_H[3]; /* Hill frame angular velocity */
+    double rho_N[3];      /* deputy relative to chief vector in N frame components */
+    double rhoDot_N[3];   /* inertial derivative of deputy/chief vector */
+    double rhoDot_H[3];   /* inertial derivative of deputy/chief vector */
 
     hillFrame(rc_N, vc_N, HN);
     v3Cross(rc_N, vc_N, hVec_N);
     rc = v3Norm(rc_N);
-    fDot = v3Norm(hVec_N)/rc/rc;
+    fDot = v3Norm(hVec_N) / rc / rc;
     v3Set(0, 0, fDot, omega_HN_H);
 
     /* compute Hill frame position */
@@ -130,7 +126,6 @@ void rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho
     v3Subtract(rhoDot_H, rhoPrime_H, rhoPrime_H);
 }
 
-
 /*!
  * Purpose: Maps eccentric anomaly angles into true anomaly angles.
  *   This function requires the orbit to be either circular or
@@ -141,8 +136,7 @@ void rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho
  * Outputs:
  *   f = true anomaly (rad)
  */
-double E2f(double Ecc, double e)
-{
+double E2f(double Ecc, double e) {
     assert(0 <= e && e < 1);
     return 2 * atan2(sqrt(1 + e) * sin(Ecc / 2), sqrt(1 - e) * cos(Ecc / 2));
 }
@@ -157,8 +151,7 @@ double E2f(double Ecc, double e)
  * Outputs:
  *   M = mean elliptic anomaly (rad)
  */
-double E2M(double Ecc, double e)
-{
+double E2M(double Ecc, double e) {
     assert(0 <= e && e < 1);
     return Ecc - e * sin(Ecc);
 }
@@ -173,8 +166,7 @@ double E2M(double Ecc, double e)
  * Outputs:
  *   Ecc = eccentric anomaly (rad)
  */
-double f2E(double f, double e)
-{
+double f2E(double f, double e) {
     assert(0 <= e && e < 1);
     return 2 * atan2(sqrt(1 - e) * sin(f / 2), sqrt(1 + e) * cos(f / 2));
 }
@@ -188,8 +180,7 @@ double f2E(double f, double e)
  * Outputs:
  *   H = hyperbolic anomaly (rad)
  */
-double f2H(double f, double e)
-{
+double f2H(double f, double e) {
     assert(1 < e);
     return 2 * atanh(sqrt((e - 1) / (e + 1)) * tan(f / 2));
 }
@@ -203,8 +194,7 @@ double f2H(double f, double e)
  * Outputs:
  *   f = true anomaly angle (rad)
  */
-double H2f(double H, double e)
-{
+double H2f(double H, double e) {
     assert(1 < e);
     return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(H / 2));
 }
@@ -218,8 +208,7 @@ double H2f(double H, double e)
  * Outputs:
  *   N = mean hyperbolic anomaly (rad)
  */
-double H2N(double H, double e)
-{
+double H2N(double H, double e) {
     assert(1 < e);
     return e * sinh(H) - H;
 }
@@ -234,13 +223,12 @@ double H2N(double H, double e)
  * Outputs:
  *   Ecc = eccentric anomaly (rad)
  */
-double M2E(double M, double e)
-{
+double M2E(double M, double e) {
     assert(0 <= e && e < 1);
     double small = 1e-13;
     double dE = 10 * small;
     double E1 = M;
-    int    maxIterations = 200;
+    int maxIterations = 200;
 
     for (int iterationCount = 0; iterationCount <= maxIterations; ++iterationCount) {
         if (fabs(dE) <= small) break;
@@ -260,15 +248,13 @@ double M2E(double M, double e)
  * Outputs:
  *   H = hyperbolic anomaly (rad)
  */
-double N2H(double N, double e)
-{
+double N2H(double N, double e) {
     double small = 1e-13;
     double dH = 10 * small;
     double H1 = N;
-    int    maxIterations = 200;
-    if(fabs(H1) > 7.0)
-    {
-        H1 = N/fabs(N)*7.0;
+    int maxIterations = 200;
+    if (fabs(H1) > 7.0) {
+        H1 = N / fabs(N) * 7.0;
     }
 
     assert(1 < e);
@@ -313,21 +299,20 @@ double N2H(double N, double e)
  *   rVec = position vector
  *   vVec = velocity vector
  */
-void elem2rv(double mu, ClassicElements *elements, double *rVec, double *vVec)
-{
-    double e;                   /* eccentricty */
-    double a;                   /* semi-major axis */
-    double f;                   /* true anomaly */
-    double r;                   /* orbit radius */
-    double v;                   /* orbit velocity magnitude */
-    double i;                   /* orbit inclination angle */
-    double p;                   /* the parameter or the semi-latus rectum */
-    double AP;                  /* argument of perigee */
-    double AN;                  /* argument of the ascending node */
-    double theta;               /* true latitude theta = omega + f */
-    double h;                   /* orbit angular momentum magnitude */
-    double ir[3];               /* orbit radius unit vector */
-    double eps;                 /* small numerical value parameter */
+void elem2rv(double mu, ClassicElements *elements, double *rVec, double *vVec) {
+    double e;     /* eccentricty */
+    double a;     /* semi-major axis */
+    double f;     /* true anomaly */
+    double r;     /* orbit radius */
+    double v;     /* orbit velocity magnitude */
+    double i;     /* orbit inclination angle */
+    double p;     /* the parameter or the semi-latus rectum */
+    double AP;    /* argument of perigee */
+    double AN;    /* argument of the ascending node */
+    double theta; /* true latitude theta = omega + f */
+    double h;     /* orbit angular momentum magnitude */
+    double ir[3]; /* orbit radius unit vector */
+    double eps;   /* small numerical value parameter */
 
     /* define what is a small numerical value */
     eps = 1e-12;
@@ -340,10 +325,10 @@ void elem2rv(double mu, ClassicElements *elements, double *rVec, double *vVec)
     AP = elements->omega;
     f = elements->f;
 
-    if((fabs(e-1.0) < eps) && (fabs(a) > eps)) { /* 1D rectilinear elliptic/hyperbolic orbit case */
+    if ((fabs(e - 1.0) < eps) && (fabs(a) > eps)) { /* 1D rectilinear elliptic/hyperbolic orbit case */
 
-        double angle;                 /* eccentric/hyperbolic anomaly */
-        angle = f;                    /* f is treated as ecc/hyp anomaly */
+        double angle; /* eccentric/hyperbolic anomaly */
+        angle = f;    /* f is treated as ecc/hyp anomaly */
         /* orbit radius  */
         if (elements->a > 0.0) {
             r = a * (1 - e * cos(angle));
@@ -355,35 +340,32 @@ void elem2rv(double mu, ClassicElements *elements, double *rVec, double *vVec)
         ir[1] = sin(AN) * cos(AP) + cos(AN) * sin(AP) * cos(i);
         ir[2] = sin(AP) * sin(i);
         v3Scale(r, ir, rVec);
-        if(sin(angle) > 0) {
+        if (sin(angle) > 0) {
             v3Scale(v, ir, vVec);
         } else {
             v3Scale(-v, ir, vVec);
         }
     } else { /* general 2D orbit case */
         /* evaluate semi-latus rectum */
-        if(fabs(a) > eps) {
-            p = a * (1 - e * e);        /* elliptic or hyperbolic */
+        if (fabs(a) > eps) {
+            p = a * (1 - e * e); /* elliptic or hyperbolic */
         } else {
-            p = 2 * elements->rPeriap;  /* parabolic */
+            p = 2 * elements->rPeriap; /* parabolic */
         }
 
-        r = p / (1 + e * cos(f));   /* orbit radius */
-        theta = AP + f;             /* true latitude angle */
-        h = sqrt(mu * p);           /* orbit ang. momentum mag. */
+        r = p / (1 + e * cos(f)); /* orbit radius */
+        theta = AP + f;           /* true latitude angle */
+        h = sqrt(mu * p);         /* orbit ang. momentum mag. */
 
         rVec[0] = r * (cos(AN) * cos(theta) - sin(AN) * sin(theta) * cos(i));
         rVec[1] = r * (sin(AN) * cos(theta) + cos(AN) * sin(theta) * cos(i));
         rVec[2] = r * (sin(theta) * sin(i));
 
-        vVec[0] = -mu / h * (cos(AN) * (sin(theta) + e * sin(AP)) + sin(AN) * (cos(
-                                 theta) + e * cos(AP)) * cos(i));
-        vVec[1] = -mu / h * (sin(AN) * (sin(theta) + e * sin(AP)) - cos(AN) * (cos(
-                                 theta) + e * cos(AP)) * cos(i));
+        vVec[0] = -mu / h * (cos(AN) * (sin(theta) + e * sin(AP)) + sin(AN) * (cos(theta) + e * cos(AP)) * cos(i));
+        vVec[1] = -mu / h * (sin(AN) * (sin(theta) + e * sin(AP)) - cos(AN) * (cos(theta) + e * cos(AP)) * cos(i));
         vVec[2] = -mu / h * (-(cos(theta) + e * cos(AP)) * sin(i));
     }
 }
-
 
 /*!
  * Purpose: Translates the orbit elements inertial Cartesian position
@@ -408,23 +390,22 @@ void elem2rv(double mu, ClassicElements *elements, double *rVec, double *vVec)
  * Outputs:
  *   elements = orbital elements
  */
-void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements)
-{
-    double hVec[3];             /* orbit angular momentum vector */
-    double ihHat[3];            /* normalized orbit angular momentum vector */
-    double h;                   /* orbit angular momentum magnitude */
-    double v3[3];               /* temp vector */
-    double n1Hat[3];            /* 1st inertial frame base vector */
-    double n3Hat[3];            /* 3rd inertial frame base vector */
-    double nVec[3];             /* line of nodes vector */
-    double inHat[3];            /* normalized line of nodes vector */
-    double irHat[3];            /* normalized position vector */
-    double r;                   /* current orbit radius */
-    double v;                   /* orbit velocity magnitude */
-    double eVec[3];             /* eccentricity vector */
-    double ieHat[3];            /* normalized eccentricity vector */
-    double p;                   /* the parameter, also called semi-latus rectum */
-    double eps;                 /* small numerical value parameter */
+void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements) {
+    double hVec[3];  /* orbit angular momentum vector */
+    double ihHat[3]; /* normalized orbit angular momentum vector */
+    double h;        /* orbit angular momentum magnitude */
+    double v3[3];    /* temp vector */
+    double n1Hat[3]; /* 1st inertial frame base vector */
+    double n3Hat[3]; /* 3rd inertial frame base vector */
+    double nVec[3];  /* line of nodes vector */
+    double inHat[3]; /* normalized line of nodes vector */
+    double irHat[3]; /* normalized position vector */
+    double r;        /* current orbit radius */
+    double v;        /* orbit velocity magnitude */
+    double eVec[3];  /* eccentricity vector */
+    double ieHat[3]; /* normalized eccentricity vector */
+    double p;        /* the parameter, also called semi-latus rectum */
+    double eps;      /* small numerical value parameter */
 
     /* define what is a small numerical value */
     eps = 1e-12;
@@ -443,7 +424,7 @@ void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements)
     v3Cross(rVec, vVec, hVec);
     h = v3Norm(hVec);
     v3Normalize(hVec, ihHat);
-	p = h*h / mu;
+    p = h * h / mu;
 
     /* Calculate the line of nodes */
     v3Cross(n3Hat, hVec, nVec);
@@ -459,7 +440,7 @@ void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements)
     v3Scale(v3Dot(rVec, vVec) / mu, vVec, v3);
     v3Subtract(eVec, v3, eVec);
     elements->e = v3Norm(eVec);
-	elements->rPeriap = p / (1.0 + elements->e);
+    elements->rPeriap = p / (1.0 + elements->e);
 
     /* Orbit eccentricity unit vector */
     if (elements->e > eps) {
@@ -470,8 +451,8 @@ void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements)
     }
 
     /* compute semi-major axis */
-    elements->alpha = 2.0 / r - v*v / mu;
-    if(fabs(elements->alpha) > eps) {
+    elements->alpha = 2.0 / r - v * v / mu;
+    if (fabs(elements->alpha) > eps) {
         /* elliptic or hyperbolic case */
         elements->a = 1.0 / elements->alpha;
         elements->rApoap = p / (1.0 - elements->e);
@@ -488,21 +469,21 @@ void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements)
     v3Cross(n1Hat, inHat, v3);
     elements->Omega = atan2(v3[2], inHat[0]);
     if (elements->Omega < 0.0) {
-        elements->Omega += 2*M_PI;
+        elements->Omega += 2 * M_PI;
     }
 
     /* Calculate Argument of Periapses omega */
     v3Cross(inHat, ieHat, v3);
-    elements->omega = atan2(v3Dot(ihHat,v3), v3Dot(inHat, ieHat));
+    elements->omega = atan2(v3Dot(ihHat, v3), v3Dot(inHat, ieHat));
     if (elements->omega < 0.0) {
-        elements->omega += 2*M_PI;
+        elements->omega += 2 * M_PI;
     }
 
     /* Calculate true anomaly angle f */
     v3Cross(ieHat, irHat, v3);
-    elements->f = atan2(v3Dot(ihHat,v3), v3Dot(ieHat, irHat));
+    elements->f = atan2(v3Dot(ihHat, v3), v3Dot(ieHat, irHat));
     if (elements->f < 0.0) {
-        elements->f += 2*M_PI;
+        elements->f += 2 * M_PI;
     }
 }
 
@@ -518,14 +499,13 @@ void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements)
  * Outputs:
  *   density = density at the given altitude in kg/m^3
  */
-double atmosphericDensity(double alt)
-{
+double atmosphericDensity(double alt) {
     double logdensity;
     double density;
     double val;
 
     /* Smooth exponential drop-off after 1000 km */
-    if(alt > 1000.) {
+    if (alt > 1000.) {
         logdensity = (-7e-05) * alt - 14.464;
         density = pow(10., logdensity);
         return density;
@@ -533,8 +513,8 @@ double atmosphericDensity(double alt)
 
     /* Calculating the density based on a scaled 6th order polynomial fit to the log of density */
     val = (alt - 526.8000) / 292.8563;
-    logdensity = 0.34047 * pow(val, 6) - 0.5889 * pow(val, 5) - 0.5269 * pow(val, 4)
-                 + 1.0036 * pow(val, 3) + 0.60713 * pow(val, 2) - 2.3024 * val - 12.575;
+    logdensity = 0.34047 * pow(val, 6) - 0.5889 * pow(val, 5) - 0.5269 * pow(val, 4) + 1.0036 * pow(val, 3) +
+                 0.60713 * pow(val, 2) - 2.3024 * val - 12.575;
 
     /* Calculating density by raising 10 to the log of density */
     density = pow(10., logdensity);
@@ -552,35 +532,30 @@ double atmosphericDensity(double alt)
  * Outputs:
  *   debye = debye length given in m
  */
-double debyeLength(double alt)
-{
+double debyeLength(double alt) {
     assert((200.0 <= alt) && (alt <= 35000.0));
-    double debyedist=0;
-    double a=0;
-    double X[N_DEBYE_PARAMETERS] = {200, 250, 300, 350, 400, 450, 500, 550,
-                                    600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150,
-                                    1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700,
-                                    1750, 1800, 1850, 1900, 1950, 2000
-                                   };
-    double Y[N_DEBYE_PARAMETERS] = {5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03,
-                                    4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03, 7.30E-03, 8.31E-03,
-                                    8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
-                                    1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02, 2.76E-02,
-                                    2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02,
-                                    3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02
-                                   };
+    double debyedist = 0;
+    double a = 0;
+    double X[N_DEBYE_PARAMETERS] = {200,  250,  300,  350,  400,  450,  500,  550,  600,  650,  700,  750,  800,
+                                    850,  900,  950,  1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450,
+                                    1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000};
+    double Y[N_DEBYE_PARAMETERS] = {5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03, 4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03,
+                                    6.55E-03, 7.30E-03, 8.31E-03, 8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02,
+                                    1.59E-02, 1.75E-02, 1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02,
+                                    2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02,
+                                    3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02};
 
     /* Flat debyeLength length for altitudes above 2000 km */
-    if((alt > 2000.0) && (alt <= 30000.0)) {
+    if ((alt > 2000.0) && (alt <= 30000.0)) {
         alt = 2000.0;
-    } else if((alt > 30000.0) && (alt <= 35000.0)) {
+    } else if ((alt > 30000.0) && (alt <= 35000.0)) {
         debyedist = 0.1 * alt - 2999.7;
         return debyedist;
     }
 
     /* Interpolation of data */
-    for(int i = 0; i < N_DEBYE_PARAMETERS - 1; ++i) {
-        if(X[i + 1] < alt) continue;
+    for (int i = 0; i < N_DEBYE_PARAMETERS - 1; ++i) {
+        if (X[i + 1] < alt) continue;
         a = (alt - X[i]) / (X[i + 1] - X[i]);
         debyedist = Y[i] + a * (Y[i + 1] - Y[i]);
         break;
@@ -605,9 +580,7 @@ double debyeLength(double alt)
  *   advec = The inertial acceleration vector due to atmospheric
  *             drag in km/sec^2
  */
-void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec,
-                     double *advec)
-{
+void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec, double *advec) {
     double r;
     double v;
     double alt;
@@ -645,8 +618,7 @@ void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec,
  *   ajtot = The total acceleration vector due to the J
  *             perturbations in km/sec^2 [accelx;accely;accelz]
  */
-void jPerturb(double *rvec, int num, double *ajtot, ...)
-{
+void jPerturb(double *rvec, int num, double *ajtot, ...) {
     double mu;
     double req;
     double J2, J3, J4, J5, J6;
@@ -660,16 +632,16 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
     CelestialObject_t planetID;
     va_list args;
     va_start(args, ajtot);
-    planetID = (CelestialObject_t) va_arg(args, int);
+    planetID = (CelestialObject_t)va_arg(args, int);
     va_end(args);
 
     v3SetZero(ajtot);
 
-    switch(planetID) {
+    switch (planetID) {
         case CELESTIAL_MERCURY:
-            mu  = MU_MERCURY;
+            mu = MU_MERCURY;
             req = REQ_MERCURY;
-            J2  = J2_MERCURY;
+            J2 = J2_MERCURY;
             J3 = 0.0;
             J4 = 0.0;
             J5 = 0.0;
@@ -677,9 +649,9 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             break;
 
         case CELESTIAL_VENUS:
-            mu  = MU_VENUS;
+            mu = MU_VENUS;
             req = REQ_VENUS;
-            J2  = J2_VENUS;
+            J2 = J2_VENUS;
             J3 = 0.0;
             J4 = 0.0;
             J5 = 0.0;
@@ -687,9 +659,9 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             break;
 
         case CELESTIAL_MOON:
-            mu  = MU_MOON;
+            mu = MU_MOON;
             req = REQ_MOON;
-            J2  = J2_MOON;
+            J2 = J2_MOON;
             J3 = 0.0;
             J4 = 0.0;
             J5 = 0.0;
@@ -697,9 +669,9 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             break;
 
         case CELESTIAL_MARS:
-            mu  = MU_MARS;
+            mu = MU_MARS;
             req = REQ_MARS;
-            J2  = J2_MARS;
+            J2 = J2_MARS;
             J3 = 0.0;
             J4 = 0.0;
             J5 = 0.0;
@@ -707,9 +679,9 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             break;
 
         case CELESTIAL_JUPITER:
-            mu  = MU_JUPITER;
+            mu = MU_JUPITER;
             req = REQ_JUPITER;
-            J2  = J2_JUPITER;
+            J2 = J2_JUPITER;
             J3 = 0.0;
             J4 = 0.0;
             J5 = 0.0;
@@ -717,9 +689,9 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             break;
 
         case CELESTIAL_URANUS:
-            mu  = MU_URANUS;
+            mu = MU_URANUS;
             req = REQ_URANUS;
-            J2  = J2_URANUS;
+            J2 = J2_URANUS;
             J3 = 0.0;
             J4 = 0.0;
             J5 = 0.0;
@@ -727,9 +699,9 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             break;
 
         case CELESTIAL_NEPTUNE:
-            mu  = MU_NEPTUNE;
+            mu = MU_NEPTUNE;
             req = REQ_NEPTUNE;
-            J2  = J2_NEPTUNE;
+            J2 = J2_NEPTUNE;
             J3 = 0.0;
             J4 = 0.0;
             J5 = 0.0;
@@ -741,16 +713,15 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             return;
 
         default:
-            mu  = MU_EARTH;
+            mu = MU_EARTH;
             req = REQ_EARTH;
-            J2  = J2_EARTH;
-            J3  = J3_EARTH;
-            J4  = J4_EARTH;
-            J5  = J5_EARTH;
-            J6  = J6_EARTH;
+            J2 = J2_EARTH;
+            J3 = J3_EARTH;
+            J4 = J4_EARTH;
+            J5 = J5_EARTH;
+            J6 = J6_EARTH;
             break;
     }
-
 
     /* Calculate the J perturbations */
     x = rvec[0];
@@ -762,38 +733,43 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
     assert(2 <= num && num <= 6);
 
     /* Calculating the total acceleration based on user input */
-    if(num >= 2) {
+    if (num >= 2) {
         v3Set((1.0 - 5.0 * pow(z / r, 2.0)) * (x / r),
               (1.0 - 5.0 * pow(z / r, 2.0)) * (y / r),
-              (3.0 - 5.0 * pow(z / r, 2.0)) * (z / r), ajtot);
-        v3Scale(-3.0 / 2.0 * J2 * (mu / pow(r, 2.0))*pow(req / r, 2.0), ajtot, ajtot);
+              (3.0 - 5.0 * pow(z / r, 2.0)) * (z / r),
+              ajtot);
+        v3Scale(-3.0 / 2.0 * J2 * (mu / pow(r, 2.0)) * pow(req / r, 2.0), ajtot, ajtot);
     }
-    if(num >= 3) {
+    if (num >= 3) {
         v3Set(5.0 * (7.0 * pow(z / r, 3.0) - 3.0 * (z / r)) * (x / r),
               5.0 * (7.0 * pow(z / r, 3.0) - 3.0 * (z / r)) * (y / r),
-              -3.0 * (10.0 * pow(z / r, 2.0) - (35.0 / 3.0)*pow(z / r, 4.0) - 1.0), temp);
-        v3Scale(1.0 / 2.0 * J3 * (mu / pow(r, 2.0))*pow(req / r, 3.0), temp, temp2);
+              -3.0 * (10.0 * pow(z / r, 2.0) - (35.0 / 3.0) * pow(z / r, 4.0) - 1.0),
+              temp);
+        v3Scale(1.0 / 2.0 * J3 * (mu / pow(r, 2.0)) * pow(req / r, 3.0), temp, temp2);
         v3Add(ajtot, temp2, ajtot);
     }
-    if(num >= 4) {
+    if (num >= 4) {
         v3Set((3.0 - 42.0 * pow(z / r, 2.0) + 63.0 * pow(z / r, 4.0)) * (x / r),
               (3.0 - 42.0 * pow(z / r, 2.0) + 63.0 * pow(z / r, 4.0)) * (y / r),
-              (15.0 - 70.0 * pow(z / r, 2) + 63.0 * pow(z / r, 4.0)) * (z / r), temp);
-        v3Scale(5.0 / 8.0 * J4 * (mu / pow(r, 2.0))*pow(req / r, 4.0), temp, temp2);
+              (15.0 - 70.0 * pow(z / r, 2) + 63.0 * pow(z / r, 4.0)) * (z / r),
+              temp);
+        v3Scale(5.0 / 8.0 * J4 * (mu / pow(r, 2.0)) * pow(req / r, 4.0), temp, temp2);
         v3Add(ajtot, temp2, ajtot);
     }
-    if(num >= 5) {
+    if (num >= 5) {
         v3Set(3.0 * (35.0 * (z / r) - 210.0 * pow(z / r, 3.0) + 231.0 * pow(z / r, 5.0)) * (x / r),
               3.0 * (35.0 * (z / r) - 210.0 * pow(z / r, 3.0) + 231.0 * pow(z / r, 5.0)) * (y / r),
-              -(15.0 - 315.0 * pow(z / r, 2.0) + 945.0 * pow(z / r, 4.0) - 693.0 * pow(z / r, 6.0)), temp);
-        v3Scale(1.0 / 8.0 * J5 * (mu / pow(r, 2.0))*pow(req / r, 5.0), temp, temp2);
+              -(15.0 - 315.0 * pow(z / r, 2.0) + 945.0 * pow(z / r, 4.0) - 693.0 * pow(z / r, 6.0)),
+              temp);
+        v3Scale(1.0 / 8.0 * J5 * (mu / pow(r, 2.0)) * pow(req / r, 5.0), temp, temp2);
         v3Add(ajtot, temp2, ajtot);
     }
-    if(num >= 6) {
+    if (num >= 6) {
         v3Set((35.0 - 945.0 * pow(z / r, 2) + 3465.0 * pow(z / r, 4.0) - 3003.0 * pow(z / r, 6.0)) * (x / r),
               (35.0 - 945.0 * pow(z / r, 2.0) + 3465.0 * pow(z / r, 4.0) - 3003.0 * pow(z / r, 6.0)) * (y / r),
-              -(3003.0 * pow(z / r, 6.0) - 4851.0 * pow(z / r, 4.0) + 2205.0 * pow(z / r, 2.0) - 245.0) * (z / r), temp);
-        v3Scale(-1.0 / 16.0 * J6 * (mu / pow(r, 2.0))*pow(req / r, 6.0), temp, temp2);
+              -(3003.0 * pow(z / r, 6.0) - 4851.0 * pow(z / r, 4.0) + 2205.0 * pow(z / r, 2.0) - 245.0) * (z / r),
+              temp);
+        v3Scale(-1.0 / 16.0 * J6 * (mu / pow(r, 2.0)) * pow(req / r, 6.0), temp, temp2);
         v3Add(ajtot, temp2, ajtot);
     }
 }
@@ -819,24 +795,23 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
  *       components of the output are the same as the vector
  *       components of the sunvec input vector.
  */
-void solarRad(double A, double m, double *sunvec, double *arvec)
-{
+void solarRad(double A, double m, double *sunvec, double *arvec) {
     double flux;
     double c;
     double Cr;
     double sundist;
 
     /* Solar Radiation Flux */
-    flux = 1372.5398;           /* Watts/m^2 */
+    flux = 1372.5398; /* Watts/m^2 */
 
     /* Speed of light */
-    c = 299792458.;             /* m/s */
+    c = 299792458.; /* m/s */
 
     /* Radiation pressure coefficient */
     Cr = 1.3;
 
     /* Magnitude of position vector */
-    sundist = v3Norm(sunvec);   /* AU */
+    sundist = v3Norm(sunvec); /* AU */
 
     /* Computing the acceleration vector */
     v3Scale((-Cr * A * flux) / (m * c * pow(sundist, 3)) / 1000., sunvec, arvec);
@@ -851,53 +826,81 @@ void clMeanOscMap(double req, double J2, ClassicElements *elements, ClassicEleme
     // Hanspeter Schaub, John L. Junkins, 4th edition.
     // [m] or [km] should be the same both for req and elements->a
 
-    double a     = elements->a;
-    double e     = elements->e;
-    double i     = elements->i;
+    double a = elements->a;
+    double e = elements->e;
+    double i = elements->i;
     double Omega = elements->Omega;
     double omega = elements->omega;
-    double f     = elements->f;
-    double E     = f2E(f, e);
-    double M     = E2M(E, e);
+    double f = elements->f;
+    double E = f2E(f, e);
+    double M = E2M(E, e);
 
     double gamma2 = sgn * J2 / 2.0 * pow((req / a), 2.0);  // (F.1),(F.2)
     double eta = sqrt(1.0 - pow(e, 2.0));
-    double gamma2p = gamma2 / pow(eta, 4.0);        // (F.3)
+    double gamma2p = gamma2 / pow(eta, 4.0);          // (F.3)
     double a_r = (1.0 + e * cos(f)) / pow(eta, 2.0);  // (F.6)
 
-    double ap = a + a * gamma2 * ((3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r, 3.0) - 1.0 / pow(eta, 3.0))
-              + 3.0 * (1.0 - pow(cos(i), 2.0)) * pow(a_r, 3.0) * cos(2.0 * omega + 2.0 * f));  // (F.7)
+    double ap = a + a * gamma2 *
+                        ((3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r, 3.0) - 1.0 / pow(eta, 3.0)) +
+                         3.0 * (1.0 - pow(cos(i), 2.0)) * pow(a_r, 3.0) * cos(2.0 * omega + 2.0 * f));  // (F.7)
 
-    double de1 = gamma2p / 8.0 * e * pow(eta, 2.0) * (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0)
-               / (1.0 - 5.0 * pow(cos(i), 2.0))) * cos(2.0 * omega);  // (F.8)
+    double de1 = gamma2p / 8.0 * e * pow(eta, 2.0) *
+                 (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
+                 cos(2.0 * omega);  // (F.8)
 
-    double de = de1 + pow(eta, 2.0) / 2.0 * (gamma2 * ((3.0 * pow(cos(i), 2.0) - 1.0) / pow(eta, 6.0) * (e * eta + e / (1.0 + eta) + 3.0 * cos(f)
-              + 3.0 * e * pow(cos(f), 2.0) + pow(e, 2.0) * pow(cos(f), 3.0)) + 3.0 * (1.0 - pow(cos(i), 2.0)) / pow(eta, 6.0) * (e + 3.0 * cos(f)
-              + 3 * e * pow(cos(f), 2) + pow(e, 2) * pow(cos(f), 3)) * cos(2 * omega + 2 * f))
-              - gamma2p * (1.0 - pow(cos(i), 2.0)) * (3.0 * cos(2.0 * omega + f) + cos(2.0 * omega + 3.0 * f)));  // (F.9)
+    double de = de1 + pow(eta, 2.0) / 2.0 *
+                          (gamma2 * ((3.0 * pow(cos(i), 2.0) - 1.0) / pow(eta, 6.0) *
+                                         (e * eta + e / (1.0 + eta) + 3.0 * cos(f) + 3.0 * e * pow(cos(f), 2.0) +
+                                          pow(e, 2.0) * pow(cos(f), 3.0)) +
+                                     3.0 * (1.0 - pow(cos(i), 2.0)) / pow(eta, 6.0) *
+                                         (e + 3.0 * cos(f) + 3 * e * pow(cos(f), 2) + pow(e, 2) * pow(cos(f), 3)) *
+                                         cos(2 * omega + 2 * f)) -
+                           gamma2p * (1.0 - pow(cos(i), 2.0)) *
+                               (3.0 * cos(2.0 * omega + f) + cos(2.0 * omega + 3.0 * f)));  // (F.9)
 
-    double di = -e * de1 / pow(eta, 2.0) / tan(i)
-              + gamma2p / 2.0 * cos(i) * sqrt(1.0 - pow(cos(i), 2.0)) * (3.0 * cos(2.0 * omega + 2.0 * f) + 3.0 * e * cos(2.0 * omega + f)
-              + e * cos(2.0 * omega + 3.0 * f));  // (F.10)
+    double di =
+        -e * de1 / pow(eta, 2.0) / tan(i) + gamma2p / 2.0 * cos(i) * sqrt(1.0 - pow(cos(i), 2.0)) *
+                                                (3.0 * cos(2.0 * omega + 2.0 * f) + 3.0 * e * cos(2.0 * omega + f) +
+                                                 e * cos(2.0 * omega + 3.0 * f));  // (F.10)
 
-    double MpopOp = M + omega + Omega + gamma2p / 8.0 * pow(eta, 3.0) * (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0)
-                  / (1.0 - 5.0 * pow(cos(i), 2.0))) * sin(2.0 * omega) - gamma2p / 16.0 * (2.0 + pow(e, 2.0) - 11.0 * (2.0 + 3.0 * pow(e, 2.0))
-                  * pow(cos(i), 2.0) - 40.0 * (2.0 + 5.0 * pow(e, 2.0)) * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) - 400.0 * pow(e, 2.0)
-                  * pow(cos(i), 6.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) * sin(2.0 * omega) + gamma2p / 4.0 * (-6.0 * (1.0 - 5.0 * pow(cos(i), 2.0))
-                  * (f - M + e * sin(f)) + (3.0 - 5.0 * pow(cos(i), 2.0)) * (3.0 * sin(2.0 * omega + 2.0 * f) + 3.0 * e * sin(2.0 * omega + f) + e
-                  * sin(2.0 * omega + 3.0 * f))) - gamma2p / 8.0 * pow(e, 2.0) * cos(i) * (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0))
-                  + 200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) * sin(2.0 * omega) - gamma2p / 2.0 * cos(i)
-                  * (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) - e * sin(2.0 * omega + 3.0 * f));  // (F.11)
+    double MpopOp =
+        M + omega + Omega +
+        gamma2p / 8.0 * pow(eta, 3.0) *
+            (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
+            sin(2.0 * omega) -
+        gamma2p / 16.0 *
+            (2.0 + pow(e, 2.0) - 11.0 * (2.0 + 3.0 * pow(e, 2.0)) * pow(cos(i), 2.0) -
+             40.0 * (2.0 + 5.0 * pow(e, 2.0)) * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) -
+             400.0 * pow(e, 2.0) * pow(cos(i), 6.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+            sin(2.0 * omega) +
+        gamma2p / 4.0 *
+            (-6.0 * (1.0 - 5.0 * pow(cos(i), 2.0)) * (f - M + e * sin(f)) +
+             (3.0 - 5.0 * pow(cos(i), 2.0)) *
+                 (3.0 * sin(2.0 * omega + 2.0 * f) + 3.0 * e * sin(2.0 * omega + f) + e * sin(2.0 * omega + 3.0 * f))) -
+        gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
+            (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
+             200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+            sin(2.0 * omega) -
+        gamma2p / 2.0 * cos(i) *
+            (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) -
+             e * sin(2.0 * omega + 3.0 * f));  // (F.11)
 
-    double edM = gamma2p / 8.0 * e * pow(eta, 3.0) * (1.0 - 11.0 * pow(cos(i), 2.0)
-               - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) * sin(2.0 * omega)
-               - gamma2p / 4.0 * pow(eta, 3.0) * (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f)
-               + 3.0 * (1.0 - pow(cos(i), 2.0)) * ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) + (pow(a_r * eta, 2.0) + a_r
-               + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f)));  // (F.12)
+    double edM = gamma2p / 8.0 * e * pow(eta, 3.0) *
+                     (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
+                     sin(2.0 * omega) -
+                 gamma2p / 4.0 * pow(eta, 3.0) *
+                     (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f) +
+                      3.0 * (1.0 - pow(cos(i), 2.0)) *
+                          ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) +
+                           (pow(a_r * eta, 2.0) + a_r + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f)));  // (F.12)
 
-    double dOmega = -gamma2p / 8.0 * pow(e, 2.0) * cos(i) * (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0))
-                  + 200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) * sin(2.0 * omega) - gamma2p / 2.0 * cos(i)
-                  * (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) - e * sin(2.0 * omega + 3.0 * f));  // (F.13)
+    double dOmega = -gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
+                        (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
+                         200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+                        sin(2.0 * omega) -
+                    gamma2p / 2.0 * cos(i) *
+                        (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) -
+                         3.0 * e * sin(2.0 * omega + f) - e * sin(2.0 * omega + 3.0 * f));  // (F.13)
 
     double d1 = (e + de) * sin(M) + edM * cos(M);  // (F.14)
     double d2 = (e + de) * cos(M) - edM * sin(M);  // (F.15)
@@ -908,9 +911,9 @@ void clMeanOscMap(double req, double J2, ClassicElements *elements, ClassicEleme
     double d3 = (sin(i / 2.0) + cos(i / 2.0) * di / 2.0) * sin(Omega) + sin(i / 2.0) * dOmega * cos(Omega);  // (F.18)
     double d4 = (sin(i / 2.0) + cos(i / 2.0) * di / 2.0) * cos(Omega) - sin(i / 2.0) * dOmega * sin(Omega);  // (F.19)
 
-    double Omegap = atan2(d3, d4);                  // (F.20)
+    double Omegap = atan2(d3, d4);                        // (F.20)
     double ip = 2.0 * safeAsin(sqrt(d3 * d3 + d4 * d4));  // (F.21)
-    double omegap = MpopOp - Mp - Omegap;           // (F.22)
+    double omegap = MpopOp - Mp - Omegap;                 // (F.22)
 
     double Ep = M2E(Mp, ep);
     double fp = E2f(Ep, ep);
@@ -928,13 +931,13 @@ void clElem2eqElem(ClassicElements *elements_cl, equinoctialElements *elements_e
     // conversion
     // from classical orbital elements (a,e,i,Omega,omega,f)
     // to equinoctial orbital elements (a,P1,P2,Q1,Q2,l,L)
-    elements_eq->a  = elements_cl->a;
+    elements_eq->a = elements_cl->a;
     elements_eq->P1 = elements_cl->e * sin(elements_cl->Omega + elements_cl->omega);
     elements_eq->P2 = elements_cl->e * cos(elements_cl->Omega + elements_cl->omega);
     elements_eq->Q1 = tan(elements_cl->i / 2.0) * sin(elements_cl->Omega);
     elements_eq->Q2 = tan(elements_cl->i / 2.0) * cos(elements_cl->Omega);
-    double E        = f2E(elements_cl->f, elements_cl->e);
-    double M        = E2M(E, elements_cl->e);
-    elements_eq->l  = elements_cl->Omega + elements_cl->omega + M;
-    elements_eq->L  = elements_cl->Omega + elements_cl->omega + elements_cl->f;
+    double E = f2E(elements_cl->f, elements_cl->e);
+    double M = E2M(E, elements_cl->e);
+    elements_eq->l = elements_cl->Omega + elements_cl->omega + M;
+    elements_eq->L = elements_cl->Omega + elements_cl->omega + elements_cl->f;
 }

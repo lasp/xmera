@@ -17,19 +17,19 @@
 
  */
 
-#include <string.h>
-#include <math.h>
 #include "fswAlgorithms/attGuidance/opNavPoint/opNavPoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/safeMath.h"
+
+#include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OpNavPoint::reset(uint64_t callTime)
-{
+void OpNavPoint::reset(uint64_t callTime) {
     double v1[3];
 
     // check if the required input messages are included
@@ -44,14 +44,18 @@ void OpNavPoint::reset(uint64_t callTime)
     }
 
     /* compute an Eigen axis orthogonal to alignAxis_C */
-    if (v3Norm(this->alignAxis_C)  < 0.1) {
+    if (v3Norm(this->alignAxis_C) < 0.1) {
         char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
-          this->alignAxis_C[0], this->alignAxis_C[1], this->alignAxis_C[2]);
+        snprintf(info,
+                 sizeof(info),
+                 "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
+                 this->alignAxis_C[0],
+                 this->alignAxis_C[1],
+                 this->alignAxis_C[2]);
         this->bskLogger.bskLog(BSK_ERROR, info);
     } else {
         v3Set(1., 0., 0., v1);
-        v3Normalize(this->alignAxis_C, this->alignAxis_C);    /* ensure that this vector is a unit vector */
+        v3Normalize(this->alignAxis_C, this->alignAxis_C); /* ensure that this vector is a unit vector */
         v3Cross(this->alignAxis_C, v1, this->eHat180_B);
         if (v3Norm(this->eHat180_B) < 0.1) {
             v3Set(0., 1., 0., v1);
@@ -71,16 +75,15 @@ void OpNavPoint::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OpNavPoint::updateState(uint64_t callTime)
-{
+void OpNavPoint::updateState(uint64_t callTime) {
     OpNavMsgPayload opNavMsg;
     double cthNormalized;
     double timeWithoutMeas;
     double currentHeading_C[3], alignAxis_B[3];
-    double hNorm;                   /* Norm of measured direction vector */
-    double e_hat[3];                /* Principal rotation Axis */
-    double omega_BN_B[3];           /* r/s inertial body angular velocity vector in B frame components */
-    double omega_RN_B[3];           /* r/s local copy of the desired reference frame rate */
+    double hNorm;         /* Norm of measured direction vector */
+    double e_hat[3];      /* Principal rotation Axis */
+    double omega_BN_B[3]; /* r/s inertial body angular velocity vector in B frame components */
+    double omega_RN_B[3]; /* r/s local copy of the desired reference frame rate */
     double dcm_BN[3][3], dcm_CB[3][3], dcm_CN[3][3];
     NavAttMsgPayload localImuDataInBuffer;
     CameraConfigMsgPayload cameraSpecs;
@@ -90,37 +93,36 @@ void OpNavPoint::updateState(uint64_t callTime)
     localImuDataInBuffer = this->imuInMsg();
     cameraSpecs = this->cameraConfigInMsg();
 
-    if (this->lastTime==0){
-        this->lastTime=callTime*1E-9;
+    if (this->lastTime == 0) {
+        this->lastTime = callTime * 1E-9;
         v3SetZero(this->currentHeading_N);
     }
-    timeWithoutMeas = callTime*1E-9 - this->lastTime;
+    timeWithoutMeas = callTime * 1E-9 - this->lastTime;
 
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
     MRP2C(localImuDataInBuffer.sigma_BN, dcm_BN);
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     m33MultM33(dcm_CB, dcm_BN, dcm_CN);
-    /*! Compute the current error vector if it is valid. This checks for a valid, non-stale, previous message, or a new fresh measurement.*/
-    if((opNavMsg.valid == 1 || v3IsZero(this->currentHeading_N, 1E-10) == 0) && (timeWithoutMeas < this->timeOut)){
+    /*! Compute the current error vector if it is valid. This checks for a valid, non-stale, previous message, or a new
+     * fresh measurement.*/
+    if ((opNavMsg.valid == 1 || v3IsZero(this->currentHeading_N, 1E-10) == 0) && (timeWithoutMeas < this->timeOut)) {
         /*! - If a valid image is in save the heading direction for future use*/
-        if (opNavMsg.valid == 1){
-            this->lastTime = callTime*1E-9;
+        if (opNavMsg.valid == 1) {
+            this->lastTime = callTime * 1E-9;
             v3Copy(opNavMsg.r_BN_C, currentHeading_C);
             m33tMultV3(dcm_CN, opNavMsg.r_BN_C, this->currentHeading_N);
             v3Scale(-1, currentHeading_C, currentHeading_C);
             hNorm = v3Norm(currentHeading_C);
-            v3Scale(1/hNorm, currentHeading_C, currentHeading_C);
-        }
-        else{
+            v3Scale(1 / hNorm, currentHeading_C, currentHeading_C);
+        } else {
             /*! - Else use the previous direction in order to continue guidance */
             m33MultV3(dcm_CN, this->currentHeading_N, currentHeading_C);
             v3Scale(-1, currentHeading_C, currentHeading_C);
             hNorm = v3Norm(currentHeading_C);
-            v3Scale(1/hNorm, currentHeading_C, currentHeading_C);
+            v3Scale(1 / hNorm, currentHeading_C, currentHeading_C);
         }
         cthNormalized = v3Dot(this->alignAxis_C, currentHeading_C);
-        cthNormalized = fabs(cthNormalized) > 1.0 ?
-        cthNormalized/fabs(cthNormalized) : cthNormalized;
+        cthNormalized = fabs(cthNormalized) > 1.0 ? cthNormalized / fabs(cthNormalized) : cthNormalized;
         this->opNavAngleErr = safeAcos(cthNormalized);
 
         /*
@@ -128,7 +130,7 @@ void OpNavPoint::updateState(uint64_t callTime)
          */
         if (this->opNavAngleErr < this->smallAngle) {
             /* opNav heading and desired camera axis are essentially aligned.  Set attitude error to zero. */
-             v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+            v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
         } else {
             if (M_PI - this->opNavAngleErr < this->smallAngle) {
                 /* the commanded camera vector nearly is opposite the opNav heading */
@@ -138,8 +140,7 @@ void OpNavPoint::updateState(uint64_t callTime)
                 v3Cross(currentHeading_C, this->alignAxis_C, e_hat);
             }
             v3Normalize(e_hat, this->opNavMnvrVec);
-            v3Scale(tan(this->opNavAngleErr*0.25), this->opNavMnvrVec,
-                    this->attGuidanceOutBuffer.sigma_BR);
+            v3Scale(tan(this->opNavAngleErr * 0.25), this->opNavMnvrVec, this->attGuidanceOutBuffer.sigma_BR);
             MRPswitch(this->attGuidanceOutBuffer.sigma_BR, 1.0, this->attGuidanceOutBuffer.sigma_BR);
         }
 
@@ -150,7 +151,7 @@ void OpNavPoint::updateState(uint64_t callTime)
         v3Copy(omega_RN_B, this->attGuidanceOutBuffer.omega_RN_B);
 
     } else {
-        this->lastTime=0;
+        this->lastTime = 0;
         /* no proper opNav direction vector is available */
         v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
 

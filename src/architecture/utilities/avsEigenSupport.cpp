@@ -21,16 +21,8 @@
 
 #include <math.h>
 
-#include <iostream>
-
 #include "architecture/utilities/macroDefinitions.h"
 #include "rigidBodyKinematics.h"
-
-/*
-
- Contains various support algorithms related to using the Eigen Library
-
- */
 
 /*! This function provides a general conversion between an Eigen matrix and
 an output C array. Note that this routine would convert an inbound type
@@ -277,26 +269,4 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd mrp) {
     vec3d[2] = mrp.z();
 
     return vec3d;
-}
-
-/*! This function solves for the zero of the passed function using the Newton Raphson Method
-@return double
-@param initialEstimate The initial value to use for newton-raphson
-@param accuracy The desired upper bound for the error
-@param f Function to find the zero of
-@param fPrime First derivative of the function
-*/
-double newtonRaphsonSolve(const double &initialEstimate,
-                          const double &accuracy,
-                          const std::function<double(double)> &f,
-                          const std::function<double(double)> &fPrime) {
-    double currentEstimate = initialEstimate;
-    for (int i = 0; i < 100; i++) {
-        if (std::abs(f(currentEstimate)) < accuracy) break;
-
-        double functionVal = f(currentEstimate);
-        double functionDeriv = fPrime(currentEstimate);
-        currentEstimate = currentEstimate - functionVal / functionDeriv;
-    }
-    return currentEstimate;
 }
