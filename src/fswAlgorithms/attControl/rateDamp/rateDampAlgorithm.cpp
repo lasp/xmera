@@ -18,6 +18,7 @@
  */
 
 #include "fswAlgorithms/attControl/rateDamp/rateDampAlgorithm.h"
+#include <cassert>
 #include <cmath>
 
 /*! Update method for the rateDamp control algorithm. This method computes the required control torque command.
@@ -39,7 +40,10 @@ CmdTorqueBodyMsgPayload RateDampAlgorithm::update(uint64_t currentSimNanos, NavA
     @param double P
     @return void
     */
-void RateDampAlgorithm::setRateGain(double p) { this->P = std::abs(p); }
+void RateDampAlgorithm::setRateGain(double p) {
+    assert(p > 0.0);
+    this->P = std::abs(p);
+}
 
 /*! Get the module rate feedback gain
     @return double
