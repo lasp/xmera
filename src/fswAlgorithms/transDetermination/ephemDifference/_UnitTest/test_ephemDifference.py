@@ -16,22 +16,22 @@
 
 import inspect
 import os
+
+import numpy as np
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.fswAlgorithms import ephemDifference
 from Basilisk.utilities import astroFunctions
 from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("ephBdyCount", [3, 0])
-
 def test_ephemDifference(ephBdyCount):
     """ Test ephemDifference. """
-    [testResults, testMessage] = ephemDifferenceTestFunction(ephBdyCount)
-    assert testResults < 1, testMessage
+    ephemDifferenceTestFunction(ephBdyCount)
 
 def ephemDifferenceTestFunction(ephBdyCount):
     """ Test the ephemDifference module. Setup a simulation, """
@@ -68,14 +68,12 @@ def ephemDifferenceTestFunction(ephBdyCount):
     ephemDiff.ephBaseInMsg.subscribeTo(ephBaseInMsg)
     functions = [astroFunctions.Mars_RV, astroFunctions.Jupiter_RV, astroFunctions.Saturn_RV]
 
-    changeBodyList = list()
     ephInMsgList = list()
+    dataLogList = list()
     if ephBdyCount == 3:
         for i in range(ephBdyCount):
             # Create the change body message
             changeBodyMsg = ephemDifference.EphemChangeConfig()
-
-            changeBodyList.append(changeBodyMsg)
 
             # Create the input message to the change body config
             inputMsg = messaging.EphemerisMsgPayload()
@@ -85,22 +83,18 @@ def ephemDifferenceTestFunction(ephBdyCount):
             inputMsg.timeTag = 321.0
 
             # Set this message
-            ephInMsgList.append(messaging.EphemerisMsg().write(inputMsg))
-            changeBodyMsg.ephInMsg.subscribeTo(ephInMsgList[-1])
+            msg = messaging.EphemerisMsg().write(inputMsg)
+            ephInMsgList.append(msg)
+            changeBodyMsg.ephInMsg.subscribeTo(msg)
+            ephemDiff.changeBodies[i].ephInMsg.subscribeTo(msg)
 
-    ephemDiff.changeBodies = changeBodyList
-
-    # the logging setup must occur on the actual ephemDiff.changeBodies[i].ephOutMsg as we are providing
-    # pointers to the message payload.  Logging changeBodyList.ephOutMsg won't work as this message has a
-    # different location.
-    dataLogList = list()
-    for i in range(ephBdyCount):
-        dataLogList.append(ephemDiff.changeBodies[i].ephOutMsg.recorder())
-        unitTestSim.AddModelToTask(unitTaskName, dataLogList[i])
+            # Hook up a recorder to the existing output message
+            rec = ephemDiff.changeBodies[i].ephOutMsg.recorder()
+            dataLogList.append(rec)
+            unitTestSim.AddModelToTask(unitTaskName, rec)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-
     # The result isn't going to change with more time. The module will continue to produce the same result
     unitTestSim.ConfigureStopTime(0)  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
@@ -114,49 +108,19 @@ def ephemDifferenceTestFunction(ephBdyCount):
                        [23.2531093,  -33.17628299,  -0.22550391],
                        [21.02793499, -25.86425597,  -0.38273815]]
 
-
-        posAcc = 1e1
-        velAcc = 1e-4
-        unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
-        unitTestSupport.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
-
         for i in range(ephBdyCount):
 
             outputData_R = dataLogList[i].r_BdyZero_N
             outputData_V = dataLogList[i].v_BdyZero_N
             timeTag = dataLogList[i].timeTag
-            # print(timeTag)
-            # print(outputData_R)
 
-            # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-            testFailCount, testMessages = unitTestSupport.compareArrayND([trueRVector[i]], outputData_R,
-                                                                         posAcc,
-                                                                         "ephemDifference position output body " + str(i),
-                                                                         2, testFailCount, testMessages)
-            testFailCount, testMessages = unitTestSupport.compareArrayND([trueVVector[i]], outputData_V,
-                                                                         velAcc,
-                                                                         "ephemDifference velocity output body " + str(i),
-                                                                         2, testFailCount, testMessages)
-            if timeTag[0] != 321.0:
-                testFailCount += 1
-                testMessages.append("ephemDifference timeTag output body " + str(i))
+            np.testing.assert_allclose(0, abs(trueRVector[i] - outputData_R), atol=10)
 
-    if ephemDiff.ephBdyCount is not ephBdyCount:
-        testFailCount += 1
-        testMessages.append("input/output message count is wrong.")
+            np.testing.assert_allclose(0, abs(trueVVector[i] - outputData_V), atol=1e-4)
 
-    snippentName = "passFail" + str(ephBdyCount)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + ephemDiff.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + ephemDiff.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+            np.testing.assert_equal(321.0, timeTag[0], err_msg="ephemDifference timeTag output body " + str(i))
 
-    return [testFailCount, ''.join(testMessages)]
+    np.testing.assert_equal(ephBdyCount, ephemDiff.ephBdyCount, err_msg="input/output message count is wrong.")
 
 
 if __name__ == '__main__':
