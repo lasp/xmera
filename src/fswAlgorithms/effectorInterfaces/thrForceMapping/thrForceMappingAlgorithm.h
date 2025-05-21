@@ -22,12 +22,12 @@
 
 #include <stdint.h>
 
-#include <Eigen/Dense>
-
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include <Eigen/Dense>
 
 typedef Eigen::Vector<double, MAX_EFF_CNT> Vector36d;
 

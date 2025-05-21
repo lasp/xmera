@@ -19,10 +19,8 @@
 
 #include "fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMappingAlgorithm.h"
 
+#include "architecture/utilities/safeMath.h"
 #include <math.h>
-
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 int8_t asInt(ThrForceSign value) { return static_cast<int8_t>(value); }
 
