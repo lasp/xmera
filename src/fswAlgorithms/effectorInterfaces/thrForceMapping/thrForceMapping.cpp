@@ -26,18 +26,14 @@
  */
 void ThrForceMapping::reset(uint64_t callTime) {
     // check if the required input messages are included
-    if (!this->thrConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrForceMapping.thrConfigInMsg wasn't connected.");
-    }
-    if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrForceMapping.vehConfigInMsg wasn't connected.");
-    }
-    if (!this->cmdTorqueInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: thrForceMapping.cmdTorqueInMsg wasn't connected.");
+    assert(this->thrConfigInMsg.isLinked() && this->vehConfigInMsg.isLinked() && this->cmdTorqueInMsg.isLinked());
+
+    auto localThrConfigInMsg = THRArrayConfigMsgPayload();
+    if (this->thrConfigInMsg.isWritten()) {
+        localThrConfigInMsg = this->thrConfigInMsg();
     }
 
-    THRArrayConfigMsgPayload thrConfigInMsg = this->thrConfigInMsg();
-    this->algorithm.reset(callTime, thrConfigInMsg);
+    this->algorithm.reset(callTime, localThrConfigInMsg);
 }
 
 /*! The module takes a body frame torque vector and projects it onto available RCS or DV thrusters.
@@ -45,12 +41,16 @@ void ThrForceMapping::reset(uint64_t callTime) {
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void ThrForceMapping::updateState(uint64_t callTime) {
-    /*! - Read the input messages */
-    CmdTorqueBodyMsgPayload LrInputMsg = this->cmdTorqueInMsg();
-    VehicleConfigMsgPayload vehConfigInMsg = this->vehConfigInMsg();
+    auto LrInputMsg = CmdTorqueBodyMsgPayload();
+    if (this->cmdTorqueInMsg.isWritten()) {
+        LrInputMsg = this->cmdTorqueInMsg();
+    }
+    auto localVehConfigInMsg = VehicleConfigMsgPayload();
+    if (this->vehConfigInMsg.isWritten()) {
+        localVehConfigInMsg = this->vehConfigInMsg();
+    }
 
-    /* store the output message */
-    THRArrayCmdForceMsgPayload thrusterForceOut = this->algorithm.update(callTime, LrInputMsg, vehConfigInMsg);
+    THRArrayCmdForceMsgPayload thrusterForceOut = this->algorithm.update(callTime, LrInputMsg, localVehConfigInMsg);
     this->thrForceCmdOutMsg.write(&thrusterForceOut, this->moduleID, callTime);
 }
 
