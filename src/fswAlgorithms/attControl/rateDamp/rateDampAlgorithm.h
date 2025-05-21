@@ -27,7 +27,6 @@
 /*! @brief Rate damp algorithm class */
 class RateDampAlgorithm {
    public:
-    void reset(uint64_t currentSimNanos);  //!< Algorithm reset method
     CmdTorqueBodyMsgPayload update(uint64_t currentSimNanos,
                                    NavAttMsgPayload& attNavInMsg);  //!< Algorithm update method
     void setRateGain(double const p);                               //!< Setter method for rate feedback gain

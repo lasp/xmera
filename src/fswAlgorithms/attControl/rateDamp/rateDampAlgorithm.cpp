@@ -19,14 +19,6 @@
 
 #include "fswAlgorithms/attControl/rateDamp/rateDampAlgorithm.h"
 
-/*! Reset method for the rateDamp control algorithm.
- @return void
- @param currentSimNanos [ns] Time the method is called
- */
-void RateDampAlgorithm::reset(uint64_t currentSimNanos) {
-    // Reset the algorithm
-}
-
 /*! Update method for the rateDamp control algorithm. This method computes the required control torque command.
  @return void
  @param currentSimNanos [ns] Time the method is called

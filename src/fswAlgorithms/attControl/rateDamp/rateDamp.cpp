@@ -20,16 +20,11 @@
 #include "rateDamp.h"
 #include <cassert>
 
-/*! Reset method for the BSK module adapter interface. This method also calls the algorithm reset method.
+/*! Reset method for the BSK module adapter interface.
  @return void
  @param currentSimNanos [ns] Time the method is called
  */
-void RateDamp::reset(uint64_t currentSimNanos) {
-    assert(this->attNavInMsg.isLinked());
-
-    // Call the algorithm reset method
-    this->algorithm.reset(currentSimNanos);
-}
+void RateDamp::reset(uint64_t currentSimNanos) { assert(this->attNavInMsg.isLinked()); }
 
 /*! Update method for the BSK module adapter interface. This method also calls the algorithm update method.
  @return void
