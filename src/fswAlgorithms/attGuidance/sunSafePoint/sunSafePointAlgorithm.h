@@ -42,9 +42,9 @@ class SunSafePointAlgorithm {
     const Eigen::Vector3d& getOmega_RN_B()
         const;  //!< Getter method for the desired body rate vector if no sun direction is available
     const Eigen::Vector3d& getSHatBdyCmd() const;  //!< Getter method for the desired body vector to point at the sun
-    void setMinUnitMag(const double minUnitMag);   //!< Setter method for the minimally accepted sun body vector norm
+    void setMinUnitMag(double minUnitMag);         //!< Setter method for the minimally accepted sun body vector norm
     void setSmallAngle(
-        const double smallAngle);  //!< Setter method for the small alignment tolerance angle near 0 or 180 degrees
+        double smallAngle);  //!< Setter method for the small alignment tolerance angle near 0 or 180 degrees
     void setSunAxisSpinRate(
         const double sunAxisSpinRate);  //!< Setter method for the desired constant spin rate about sun heading vector
     void setOmega_RN_B(const Eigen::Vector3d& omega_RN_B);  //!< Setter method for the desired body rate vector if no

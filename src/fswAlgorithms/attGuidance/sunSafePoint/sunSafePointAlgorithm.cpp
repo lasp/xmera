@@ -22,6 +22,8 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/safeMath.h"
+#include <cassert>
+#include <cmath>
 
 /*! Reset method for the sunSafePoint guidance algorithm.
  @return void
@@ -155,15 +157,21 @@ const Eigen::Vector3d& SunSafePointAlgorithm::getSHatBdyCmd() const { return thi
 
 /*! Setter method for the minimally accepted sun body vector norm.
  @return void
- @param minUnitMag The minimally acceptable norm of sun body vector
+ @param minUnitMag The minimally acceptable norm of sun body vector (Must be positive)
 */
-void SunSafePointAlgorithm::setMinUnitMag(const double minUnitMag) { this->minUnitMag = minUnitMag; }
+void SunSafePointAlgorithm::setMinUnitMag(double minUnitMag) {
+    assert(minUnitMag > 0.0);
+    this->minUnitMag = std::abs(minUnitMag);
+}
 
 /*! Setter method for the small alignment tolerance angle near 0 or 180 degrees.
  @return void
- @param smallAngle [rad] An angle value that specifies what is near 0 or 180 degrees
+ @param smallAngle [rad] An angle value that specifies what is near 0 or 180 degrees (Must be positive)
 */
-void SunSafePointAlgorithm::setSmallAngle(const double smallAngle) { this->smallAngle = smallAngle; }
+void SunSafePointAlgorithm::setSmallAngle(double smallAngle) {
+    assert(smallAngle >= 0.0);
+    this->smallAngle = std::abs(smallAngle);
+}
 
 /*! Setter method for the desired constant spin rate about sun heading vector.
  @return void
