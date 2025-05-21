@@ -33,7 +33,7 @@ class RateDampAlgorithm {
     double getRateGain() const;                                     //!< Getter method for rate feedback gain
 
    private:
-    double P;  //!< [N*m*s] Rate feedback gain
+    double P{};  //!< [N*m*s] Rate feedback gain
 };
 
 #endif
