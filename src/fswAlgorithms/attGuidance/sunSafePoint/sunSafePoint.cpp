@@ -41,25 +41,13 @@ void SunSafePoint::reset(uint64_t callTime) {
     }
 
     // Compute an Eigen axis orthogonal to sHatBdyCmd
-    if (this->sHatBdyCmd.norm() < 0.1) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info,
-                 sizeof(info),
-                 "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
-                 this->sHatBdyCmd[0],
-                 this->sHatBdyCmd[1],
-                 this->sHatBdyCmd[2]);
-        _bskLog(this->bskLogger, BSK_ERROR, info);
-    } else {
-        Eigen::Vector3d v1 = {1.0, 0.0, 0.0};
-        this->sHatBdyCmd = this->sHatBdyCmd / this->sHatBdyCmd.norm();  // Ensure that this vector is a unit vector
+    Eigen::Vector3d v1 = {1.0, 0.0, 0.0};
+    this->eHat180_B = this->sHatBdyCmd.cross(v1);
+    if (this->eHat180_B.norm() < 0.1) {
+        v1 = {0.0, 1.0, 0.0};
         this->eHat180_B = this->sHatBdyCmd.cross(v1);
-        if (this->eHat180_B.norm() < 0.1) {
-            v1 = {0.0, 1.0, 0.0};
-            this->eHat180_B = this->sHatBdyCmd.cross(v1);
-        }
-        this->eHat180_B = this->eHat180_B / this->eHat180_B.norm();
     }
+    this->eHat180_B = this->eHat180_B / this->eHat180_B.norm();
 }
 
 /*! This method takes the estimated body-observed sun vector and computes the
@@ -210,4 +198,7 @@ void SunSafePoint::setOmega_RN_B(const Eigen::Vector3d &omega_RN_B) { this->omeg
  @return void
  @param sHatBdyCmd Desired body vector to point at the sun
 */
-void SunSafePoint::setSHatBdyCmd(const Eigen::Vector3d &sHatBdyCmd) { this->sHatBdyCmd = sHatBdyCmd; }
+void SunSafePoint::setSHatBdyCmd(Eigen::Vector3d &sHatBdyCmd) {
+    assert(sHatBdyCmd.norm() > 1e-8);
+    this->sHatBdyCmd = sHatBdyCmd.normalized();
+}

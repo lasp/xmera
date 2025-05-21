@@ -50,8 +50,7 @@ class SunSafePoint : public SysModel {
         const double sunAxisSpinRate);  //!< Setter method for the desired constant spin rate about sun heading vector
     void setOmega_RN_B(const Eigen::Vector3d &omega_RN_B);  //!< Setter method for the desired body rate vector if no
                                                             //!< sun direction is available
-    void setSHatBdyCmd(
-        const Eigen::Vector3d &sHatBdyCmd);  //!< Setter method for the desired body vector to point at the sun
+    void setSHatBdyCmd(Eigen::Vector3d &sHatBdyCmd);  //!< Setter method for the desired body vector to point at the sun
 
     ReadFunctor<NavAttMsgPayload> imuInMsg;           //!< IMU attitude guidance input message
     ReadFunctor<NavAttMsgPayload> sunDirectionInMsg;  //!< Sun attitude guidance input message
