@@ -17,34 +17,31 @@
 
  */
 
-#ifndef _RATE_DAMP_
-#define _RATE_DAMP_
+#ifndef BASILISK_RATE_DAMP_H
+#define BASILISK_RATE_DAMP_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
+#include "fswAlgorithms/attControl/rateDamp/rateDampAlgorithm.h"
 
+/*! @brief Rate damp class */
+class RateDamp : public SysModel {
+   public:
+    RateDamp() = default;                                 //!< Constructor
+    ~RateDamp() = default;                                //!< Destructor
+    void reset(uint64_t currentSimNanos) override;        //!< Reset method
+    void updateState(uint64_t currentSimNanos) override;  //!< Update method
+    void setRateGain(double p);                           //!< Setter method for rate feedback gain
+    double getRateGain() const;                           //!< Getter method for rate feedback gain
 
-/*! @brief A class to compute rate damping control */
-class RateDamp: public SysModel {
-public:
-    void reset(uint64_t currentSimNanos);
-    void updateState(uint64_t currentSimNanos);
+    ReadFunctor<NavAttMsgPayload> attNavInMsg;         //!< Navigation input message
+    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;  //!< Command torque output message
 
-    ReadFunctor<NavAttMsgPayload>          attNavInMsg;           //!< input msg measured attitude
-    Message<CmdTorqueBodyMsgPayload>       cmdTorqueOutMsg;       //!< commanded torque output message
-
-    void setRateGain(double const p);
-    double getRateGain() const;
-
-private:
-    double P;       //!< [N*m*s] Rate feedback gain
-
+   private:
+    RateDampAlgorithm algorithm;  //!< Algorithm for rateDamp control logic (BSK-agnostic)
 };
-
 
 #endif

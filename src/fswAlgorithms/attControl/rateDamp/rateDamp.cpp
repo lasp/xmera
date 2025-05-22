@@ -18,32 +18,27 @@
  */
 
 #include "rateDamp.h"
+#include <cassert>
 
-/*! This method is used to reset the module.
+/*! Reset method for the BSK module adapter interface.
  @return void
+ @param currentSimNanos [ns] Time the method is called
  */
-void RateDamp::reset(uint64_t currentSimNanos)
-{
-    assert(this->attNavInMsg.isLinked());
-}
+void RateDamp::reset(uint64_t currentSimNanos) { assert(this->attNavInMsg.isLinked()); }
 
-
-/*! This method is the main carrier for the computation of the control torque.
+/*! Update method for the BSK module adapter interface. This method also calls the algorithm update method.
  @return void
- @param currentSimNanos The current simulation time for system
+ @param currentSimNanos [ns] Time the method is called
  */
-void RateDamp::updateState(uint64_t currentSimNanos)
-{
-    /*! Read input attitude navigation msg */
-    NavAttMsgPayload attNavInBuffer = this->attNavInMsg();
-
-    /*! Create and populate cmd torque buffer message */
-    CmdTorqueBodyMsgPayload cmdTorqueOutBuffer;
-    for (int i=0; i<3; ++i) {
-        cmdTorqueOutBuffer.torqueRequestBody[i] = -this->P * attNavInBuffer.omega_BN_B[i];
+void RateDamp::updateState(uint64_t currentSimNanos) {
+    auto attNavInBuffer = NavAttMsgPayload();
+    if (this->attNavInMsg.isWritten()) {
+        attNavInBuffer = this->attNavInMsg();
     }
 
-    /*! Write output messages */
+    // Call the algorithm update method
+    CmdTorqueBodyMsgPayload cmdTorqueOutBuffer = this->algorithm.update(currentSimNanos, attNavInBuffer);
+
     this->cmdTorqueOutMsg.write(&cmdTorqueOutBuffer, this->moduleID, currentSimNanos);
 }
 
@@ -51,14 +46,10 @@ void RateDamp::updateState(uint64_t currentSimNanos)
     @param double P
     @return void
     */
-void RateDamp::setRateGain(const double p) {
-    this->P = p;
-}
+void RateDamp::setRateGain(double p) { this->algorithm.setRateGain(p); }
 
 /*! Get the module rate feedback gain
     @param double measurementNoiseScale
     @return void
     */
-double RateDamp::getRateGain() const {
-    return this->P;
-}
+double RateDamp::getRateGain() const { return this->algorithm.getRateGain(); }
