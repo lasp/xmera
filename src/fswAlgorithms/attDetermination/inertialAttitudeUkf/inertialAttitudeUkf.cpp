@@ -54,19 +54,29 @@ void InertialAttitudeUkf::customreset() {
 /*! Before every update, check the MRP norm for a shadow set switch
  @return void
  */
-void InertialAttitudeUkf::customInitializeUpdate() {
-    PositionState mrp;
-    mrp.setValues(mrpSwitch(this->state.getPositionStates(), this->mrpSwitchThreshold));
-    this->state.setPosition(mrp);
-}
+void InertialAttitudeUkf::customInitializeUpdate() { this->switchStateCovariance(); }
 
 /*! After every update, check the MRP norm for a shadow set switch
  @return void
  */
-void InertialAttitudeUkf::customFinalizeUpdate() {
-    PositionState mrp;
-    mrp.setValues(mrpSwitch(this->state.getPositionStates(), this->mrpSwitchThreshold));
-    this->state.setPosition(mrp);
+void InertialAttitudeUkf::customFinalizeUpdate() { this->switchStateCovariance(); }
+
+/*! Check the norm of the mrp and switch both the position state of the state vector (the mrp) and the covariance
+ * if above the desired threshold
+ @return void
+ */
+void InertialAttitudeUkf::switchStateCovariance() {
+    Eigen::Vector3d sigma = this->state.getPositionStates();
+    if (sigma.norm() > this->mrpSwitchThreshold) {
+        PositionState mrp;
+        mrp.setValues(mrpSwitch(sigma, this->mrpSwitchThreshold));
+        this->state.setPosition(mrp);
+        Eigen::Matrix3d switchMatrix = 2 * std::pow(sigma.norm(), 4) * sigma * sigma.transpose() -
+                                       std::pow(sigma.norm(), 2) * Eigen::Matrix3d::Identity();
+        this->covar.block(0, 0, 3, 3) = switchMatrix * this->covar.block(0, 0, 3, 3) * switchMatrix.transpose();
+        this->covar.block(0, 3, 3, 3) = switchMatrix * this->covar.block(0, 3, 3, 3);
+        this->covar.block(3, 0, 3, 3) = this->covar.block(3, 0, 3, 3) * switchMatrix.transpose();
+    }
 }
 
 /*! Read the message containing the measurement data.

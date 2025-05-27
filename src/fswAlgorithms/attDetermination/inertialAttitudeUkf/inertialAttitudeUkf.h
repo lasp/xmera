@@ -67,6 +67,7 @@ class InertialAttitudeUkf : public SRukfInterface {
     void readRWSpeedData();
     void readStarTrackerData();
     void readGyroData();
+    void switchStateCovariance();
 
    public:
     ReadFunctor<RWArrayConfigMsgPayload> rwArrayConfigMsg;
