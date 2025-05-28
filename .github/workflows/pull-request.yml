@@ -61,7 +61,9 @@ jobs:
             pkg-config autoconf automake libtool \
             zip unzip \
             bison swig \
-            libx11-dev libxft-dev libxext-dev libgles2-mesa-dev \
+            libdrm-dev \
+            libx11-dev libxkbcommon-x11-dev libx11-xcb-dev \
+            libxft-dev libxext-dev libgles2-mesa-dev \
             libxi-dev libxtst-dev libxrandr-dev libltdl-dev \
             gtk2.0 libgtk2.0-dev \
             python3-setuptools python3-jinja2 python3-tk
