@@ -180,6 +180,19 @@ Eigen::VectorXd MeasurementModel::mrpStates(const FilterStateVector& state) {
  */
 Eigen::VectorXd MeasurementModel::velocityStates(const FilterStateVector& state) { return state.getVelocityStates(); }
 
+/*! Measurement model that returns the velocity component of the state with Bias
+ * @param FilterStateVector state
+ * @return Eigen::VectorXd
+ */
+Eigen::VectorXd MeasurementModel::velocityStatesWithBias(const FilterStateVector& state) {
+    Eigen::VectorXd observation = state.getVelocityStates();
+    if (state.hasBias()) {
+        assert(observation.size() == state.getBiasStates().size());
+        observation += state.getBiasStates();
+    }
+    return observation;
+}
+
 /*! Measurement model that takes first 3 components of the state vector and interprets them as MRPs
  * @param Eigen::VectorXd state
  * @return Eigen::VectorXd
