@@ -156,17 +156,93 @@ def state_covar(x, Pflat, testName, show_plots):
     plt.close()
 
 
+def state_covar_with_bias(x, Pflat, testName, show_plots):
+    numStates = len(x[0, :]) - 1
+
+    P = np.zeros([len(Pflat[:, 0]), numStates, numStates])
+    t = np.zeros(len(Pflat[:, 0]))
+    for i in range(len(Pflat[:, 0])):
+        t[i] = x[i, 0] * 1E-9
+        P[i, :, :] = Pflat[i, 1:(numStates * numStates + 1)].reshape([numStates, numStates])
+
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
+    plt.subplot(331)
+    plt.plot(t, x[:, 1], "b", label='Error Filter')
+    plt.plot(t, 3 * np.sqrt(P[:, 0, 0]), 'r--', label='Covar Filter')
+    plt.plot(t, -3 * np.sqrt(P[:, 0, 0]), 'r--')
+    plt.legend(loc='lower right')
+    plt.title('First pos component (m)')
+    plt.grid()
+
+    plt.subplot(332)
+    plt.plot(t, x[:, 2], "b")
+    plt.plot(t,  3 * np.sqrt(P[:, 1, 1]), 'r--')
+    plt.plot(t,  -3 * np.sqrt(P[:, 1, 1]), 'r--')
+    plt.title('Second pos component (m)')
+    plt.grid()
+
+    plt.subplot(333)
+    plt.plot(t, x[:, 3], "b")
+    plt.plot(t, 3 * np.sqrt(P[:, 2, 2]), 'r--')
+    plt.plot(t, -3 * np.sqrt(P[:, 2, 2]), 'r--')
+    plt.title('Third pos component (m)')
+    plt.grid()
+
+    plt.subplot(334)
+    plt.plot(t, x[:, 4], "b")
+    plt.plot(t, 3 * np.sqrt(P[:, 3, 3]), 'r--')
+    plt.plot(t, -3 * np.sqrt(P[:, 3, 3]), 'r--')
+    plt.xlabel('t(s)')
+    plt.title('First rate component (m/s)')
+    plt.grid()
+
+    plt.subplot(335)
+    plt.plot(t, x[:, 5], "b")
+    plt.plot(t, 3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.plot(t, -3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.xlabel('t(s)')
+    plt.title('Second rate component (m/s)')
+    plt.grid()
+
+    plt.subplot(336)
+    plt.plot(t, x[:, 6], "b")
+    plt.plot(t, 3 * np.sqrt(P[:, 5, 5]), 'r--')
+    plt.plot(t, -3 * np.sqrt(P[:, 5, 5]), 'r--')
+    plt.xlabel('t(s)')
+    plt.title('Third rate component (m/s)')
+    plt.grid()
+
+    plt.subplot(337)
+    plt.plot(t, x[:, 7], "b")
+    plt.plot(t, 3 * np.sqrt(P[:, 6, 6]), 'r--')
+    plt.plot(t, -3 * np.sqrt(P[:, 6, 6]), 'r--')
+    plt.title('First bias component (m/s)')
+    plt.grid()
+
+    plt.subplot(338)
+    plt.plot(t, x[:, 8], "b")
+    plt.plot(t, 3 * np.sqrt(P[:, 7, 7]), 'r--')
+    plt.plot(t, -3 * np.sqrt(P[:, 7, 7]), 'r--')
+    plt.title('Second bias component (m/s)')
+    plt.grid()
+
+    plt.subplot(339)
+    plt.plot(t, x[:, 9], "b")
+    plt.plot(t, 3 * np.sqrt(P[:, 8, 8]), 'r--')
+    plt.plot(t, -3 * np.sqrt(P[:, 8, 8]), 'r--')
+    plt.title('Third bias component (m/s)')
+    plt.grid()
+
+    if show_plots:
+        plt.show()
+    plt.close()
+
 def post_fit_residuals(Res, noise, testName, show_plots):
     MeasNoise = np.zeros(len(Res[:, 0]))
     t = np.zeros(len(Res[:, 0]))
     for i in range(len(Res[:, 0])):
         t[i] = Res[i, 0] * 1E-9
         MeasNoise[i] = 3 * noise
-        # Don't plot zero values, since they mean that no measurement is taken
-        for j in range(len(Res[0, :]) - 1):
-            if -1E-10 < Res[i, j + 1] < 1E-10:
-                Res[i, j + 1] = np.nan
-
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(311)
     plt.plot(t, Res[:, 1], "b.", label='Residual')
