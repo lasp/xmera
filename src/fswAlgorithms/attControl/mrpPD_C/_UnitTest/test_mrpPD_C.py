@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -16,15 +16,23 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 import inspect
-import numpy as np
 import os
+
+import numpy as np
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+
+
+
+
+
+
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import mrpProportionalDerivative  # import the module that is to be tested
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.fswAlgorithms import mrpPD_C  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
@@ -36,7 +44,7 @@ from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("setExtTorque", [False, True])
 
-def test_mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
+def test_mrp_PD_C_tracking(show_plots, setExtTorque):
     r"""
     **Validation Test Description**
 
@@ -54,14 +62,19 @@ def test_mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
     :param setExtTorque: flag to set the knownTorquePntB_B variable
     :return: void
 
-
     """
+    [testResults, testMessage] = mrp_PD_C_tracking(show_plots, setExtTorque)
+    assert testResults < 1, testMessage
 
+
+def mrp_PD_C_tracking(show_plots, setExtTorque):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_ProportionalDerivative_tracking() function will not be shown unless the
+    # the mrp_PD_C_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -74,28 +87,26 @@ def test_mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    module = mrpProportionalDerivative.MrpProportionalDerivative()
-    module.modelTag = "mrpPD"
+    module = mrpPD_C.MrpPD_C()
+    module.modelTag = "mrpPD_C"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    knownTorquePntB_B = np.array([0.0, 0.0, 0.0])
-    module.setDerivativeGainP(150.0)
-    module.setProportionalGainK(0.15)
+    module.K = 0.15
+    module.P = 150.0
     if setExtTorque:
-        knownTorquePntB_B = np.array([0.1, 0.2, 0.3])
-        module.setKnownTorquePntB_B(knownTorquePntB_B)
+        module.knownTorquePntB_B = [0.1, 0.2, 0.3]
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
     guidCmdData = messaging.AttGuidMsgPayload()
-    guidCmdData.sigma_BR = np.array([0.3, -0.5, 0.7])
-    guidCmdData.omega_BR_B = np.array([0.010, -0.020, 0.015])
-    guidCmdData.omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    guidCmdData.domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
+    guidCmdData.sigma_BR = [0.3, -0.5, 0.7]
+    guidCmdData.omega_BR_B = [0.010, -0.020, 0.015]
+    guidCmdData.omega_RN_B = [-0.02, -0.01, 0.005]
+    guidCmdData.domega_RN_B = [0.0002, 0.0003, 0.0001]
     guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
     # vehicleConfig FSW Message:
@@ -120,16 +131,32 @@ def test_mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn, knownTorquePntB_B)]*3
+    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn)]*3
+    # print trueVector
 
-    # Compare the module results to the truth values
+    # compare the module results to the truth values
     accuracy = 1e-12
-    np.testing.assert_allclose(trueVector,
-                               dataLog.torqueRequestBody,
-                               atol=accuracy,
-                               verbose=True)
+    print("accuracy = " + str(accuracy))
 
-def findTrueTorques(module, guidCmdData, vehicleConfigOut, knownTorquePntB_B):
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.torqueRequestBody, accuracy,
+                                                               "torqueRequestBody", testFailCount, testMessages)
+
+    snippentName = "passFail" + str(setExtTorque)
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print("PASSED: " + module.modelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print("Failed: " + module.modelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
+
+def findTrueTorques(module, guidCmdData, vehicleConfigOut):
     sigma_BR = np.array(guidCmdData.sigma_BR)
     omega_BR_B = np.array(guidCmdData.omega_BR_B)
     omega_RN_B = np.array(guidCmdData.omega_RN_B)
@@ -140,20 +167,21 @@ def findTrueTorques(module, guidCmdData, vehicleConfigOut, knownTorquePntB_B):
     I[1][1] = vehicleConfigOut.ISCPntB_B[4]
     I[2][2] = vehicleConfigOut.ISCPntB_B[8]
 
-    K = module.getProportionalGainK()
-    P = module.getDerivativeGainP()
-    L = knownTorquePntB_B
+    K = module.K
+    P = module.P
+    L = np.array(module.knownTorquePntB_B)
 
     # Begin Method
     omega_BN_B = omega_BR_B + omega_RN_B
     temp1 = np.dot(I, omega_BN_B)
     temp2 = domega_RN_B - np.cross(omega_BN_B, omega_RN_B)
-
     Lr = K * sigma_BR + P * omega_BR_B - np.cross(omega_RN_B, temp1) - np.dot(I, temp2)
     Lr += L
     Lr *= -1.0
 
     return Lr
 
+
+
 if __name__ == "__main__":
-    test_mrp_ProportionalDerivative_tracking(False, False)
+    test_mrp_PD_C_tracking(False, False)

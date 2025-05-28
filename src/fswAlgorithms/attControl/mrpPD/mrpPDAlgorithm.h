@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,28 +17,25 @@
 
  */
 
-#ifndef _BASILISK_MRP_PD_
-#define _BASILISK_MRP_PD_
+#ifndef _MRP_PD_ALGORITHM_H_
+#define _MRP_PD_ALGORITHM_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/attControl/mrpPD/mrpPDAlgorithm.h"
 #include <stdint.h>
 #include <Eigen/Dense>
 
-/*! @brief MRP PD control class. */
-class MrpPD : public SysModel {
+/*! @brief MRP PD control algorithm class. */
+class MrpPDAlgorithm {
    public:
-    MrpPD() = default;   //!< Constructor
-    ~MrpPD() = default;  //!< Destructor
+    MrpPDAlgorithm() = default;   //!< Constructor
+    ~MrpPDAlgorithm() = default;  //!< Destructor
 
-    void reset(uint64_t currentSimNanos) override;        //!< Reset member function
-    void updateState(uint64_t currentSimNanos) override;  //!< Update member function
-    double getDerivativeGainP() const;                    //!< Getter method for derivative gain P
+    void reset(uint64_t currentSimNanos, VehicleConfigMsgPayload vehConfigInMsg);  //!< Reset member function
+    CmdTorqueBodyMsgPayload update(uint64_t currentSimNanos,
+                                   AttGuidMsgPayload guidInMsg);  //!< Update member function
+    double getDerivativeGainP() const;                            //!< Getter method for derivative gain P
     const Eigen::Vector3d& getKnownTorquePntB_B() const;  //!< Getter method for the known external torque about point B
     double getProportionalGainK() const;                  //!< Getter method for proportional gain K
     void setDerivativeGainP(double P);                    //!< Setter method for derivative gain P
@@ -46,14 +43,12 @@ class MrpPD : public SysModel {
         Eigen::Vector3d& knownTorquePntB_B);  //!< Setter method for the known external torque about point B
     void setProportionalGainK(double K);      //!< Setter method for proportional gain K
 
-    ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< Attitude guidance input message
-    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< Vehicle configuration input message
-    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< Commanded torque output message
-
-    BSKLogger* bskLogger;  //!< BSK Logging
-
    private:
-    MrpPDAlgorithm algorithm;  //!< Algorithm for mrpPD control logic (BSK-agnostic)
+    double K{};                           //!< [rad/s] Proportional gain applied to MRP errors
+    double P{};                           //!< [N*m*s] Rate error feedback gain applied
+    Eigen::Vector3d knownTorquePntB_B{};  //!< [N*m] Known external torque expressed in body frame components
+    Eigen::Matrix3d ISCPntB_B =
+        Eigen::Matrix3d::Identity();  //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
 };
 
 #endif
