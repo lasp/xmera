@@ -168,9 +168,21 @@ void InertialAttitudeUkf::readStarTrackerData() {
 
             starTrackerMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
                                                        this->starTrackerMessages[index].measurementNoise_C * dcm_CB);
-            starTrackerMeasurement.setObservation(
-                mrpSwitch(Eigen::Map<Eigen::Vector3d>(starTracker.MRP_BdyInrtl), this->mrpSwitchThreshold));
-            starTrackerMeasurement.setMeasurementModel(MeasurementModel::mrpStates);
+            starTrackerMeasurement.setObservation(mrpSwitch(Eigen::Map<Eigen::Vector3d>(starTracker.MRP_BdyInrtl), this->mrpSwitchThreshold));
+            starTrackerMeasurement.setMeasurementModel(MeasurementModel::positionStates);
+
+            std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)> mrpSub
+                = [](Eigen::VectorXd const& observed, const Eigen::VectorXd& predicted) {
+                     Eigen::VectorXd yMeas = observed - predicted;
+                     if (observed.norm() > 0.95 && predicted.norm() > 0.95) {
+                         const Eigen::VectorXd predictedShadow = mrpShadow(predicted);
+                         Eigen::VectorXd yMeasShadow = observed - predictedShadow;
+                         if (yMeasShadow.norm() < yMeas.norm()) {return yMeasShadow;}
+                     }
+                     return yMeas;
+            };
+            starTrackerMeasurement.setMeasurementSubtraction(mrpSub);
+
             this->measurements[this->measurementIndex] = starTrackerMeasurement;
             this->measurementIndex += 1;
             this->validStarTracker = true;
