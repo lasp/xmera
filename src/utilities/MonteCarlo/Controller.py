@@ -197,18 +197,6 @@ class Controller:
         """
         self.simParams.verbose = verbose
 
-
-    def setJobNumber(self, job_number):
-        """
-        Set the job number of the simulation.
-        Used in AWS work to modify the seed used in dispersion.
-        Should be set to $AWS_BATCH_JOB_ARRAY_INDEX
-
-        :param job_number:
-        :return:
-        """
-        self.simParams.job_number = job_number
-
     def setDispMagnitudeFile(self, magnitudes):
         """
         Save .txt with the magnitude of each dispersion in % or sigma away from mean
@@ -724,7 +712,7 @@ class SimulationParameters():
     def __init__(self, creationFunction, executionFunction, configureFunction,
                  retentionPolicies, dispersions, shouldDisperseSeeds,
                  shouldArchiveParameters, filename, icfilename, index=None, verbose=False, modifications={},
-                 showProgressBar=False, job_number=1):
+                 showProgressBar=False):
         self.index = index
         self.creationFunction = creationFunction
         self.executionFunction = executionFunction
@@ -740,7 +728,19 @@ class SimulationParameters():
         self.dispersionMag = {}
         self.saveDispMag = False
         self.showProgressBar = showProgressBar
-        self.job_number = job_number
+
+        self.job_number = self.getJobNumber()
+
+    @staticmethod
+    def getJobNumber():
+        """
+        Get the job number of the simulation
+        Utilized in AWS Batch runs to modify the seed used in dispersion.
+
+        :return: Job Array Index, or 0 if not running in AWS Batch.
+        """
+        job_number = os.environ.get('AWS_BATCH_JOB_ARRAY_INDEX', 0)
+        return job_number
 
 
 class SimulationExecutor:
