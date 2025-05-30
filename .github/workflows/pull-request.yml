@@ -8,7 +8,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+  USERNAME: ${{github.repository_owner}}
+  FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{github.repository_owner}}/index.json,readwrite"
 
 jobs:
   pre-commit:
@@ -66,7 +68,8 @@ jobs:
             libxft-dev libxext-dev libgles2-mesa-dev \
             libxi-dev libxtst-dev libxrandr-dev libltdl-dev \
             gtk2.0 libgtk2.0-dev \
-            python3-setuptools python3-jinja2 python3-tk
+            python3-setuptools python3-jinja2 python3-tk \
+            mono-complete
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
         with:
@@ -78,6 +81,21 @@ jobs:
           vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
           vcpkgJsonGlob: "src/vcpkg.json"
           vcpkgConfigurationJsonGlob: "src/vcpkg-configuration.json"
+      - name: Add NuGet sources
+        shell: bash
+        env:
+          VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
+        run: |
+          mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
+            sources add \
+            -Source "${{ env.FEED_URL }}" \
+            -StorePasswordInClearText \
+            -Name GitHubPackages \
+            -UserName "${{ env.USERNAME }}" \
+            -Password "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}"
+          mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
+            setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
+            -Source "${{ env.FEED_URL }}"
       - name: "Create virtual Environment"
         run: |
           python${{ matrix.python-version }} -m venv .venv
@@ -86,6 +104,8 @@ jobs:
       - name: "Install required Python dependencies"
         run: source .venv/bin/activate && pip3 install -r requirements.txt
       - name: "Generate build recipes"
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
         run: source .venv/bin/activate && cd src/ && cmake --preset ci-test
       - name: "Build basilisk"
         run: source .venv/bin/activate && cd src/ && ninja -C ../dist3/
