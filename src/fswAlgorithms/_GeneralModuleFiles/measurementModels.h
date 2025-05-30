@@ -41,6 +41,8 @@ public:
     void setMeasurementModel(const std::function<const Eigen::MatrixXd(const FilterStateVector&)>& modelCalculator);
     Eigen::MatrixXd computeMeasurementMatrix(const FilterStateVector& state) const;
     void setMeasurementMatrix(const std::function<const Eigen::MatrixXd(const FilterStateVector&)>& hMatrixCalculator);
+    Eigen::VectorXd subMeasurements(const Eigen::VectorXd& measurementObserved, const Eigen::VectorXd& measurementPredicted) const;
+    void setMeasurementSubtraction(const std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)>& add);
 
     size_t size() const;
     std::string getMeasurementName() const;
@@ -71,6 +73,10 @@ private:
 
     std::function<const Eigen::MatrixXd(const FilterStateVector&)> measurementModel; //!< [-] observation measurement model
     std::function<const Eigen::MatrixXd(const FilterStateVector&)> measurementPartials; //!< [-] partial of measurement model wrt state
+    std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)> measurementSubtraction
+    = [](const Eigen::VectorXd& measurementObserved, const Eigen::VectorXd& measurementPredicted){
+        return measurementObserved - measurementPredicted;
+    };
 
 };
 

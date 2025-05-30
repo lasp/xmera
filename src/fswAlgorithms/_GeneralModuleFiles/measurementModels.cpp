@@ -51,6 +51,24 @@ void MeasurementModel::setMeasurementMatrix(const std::function<const Eigen::Mat
     this->measurementPartials = hMatrixCalculator;
 }
 
+/*! Subtract measurements. By default this is a linear subtraction, but could be subMrp or
+ * other functions depending on the measurement type
+ * @param Eigen::VectorXd measurementObserved
+ * @param Eigen::VectorXd measurementPredicted
+ * @return Eigen::VectorXd
+ */
+Eigen::VectorXd MeasurementModel::subMeasurements(const Eigen::VectorXd& measurementObserved, const Eigen::VectorXd& measurementPredicted) const{
+    return this->measurementSubtraction(measurementObserved, measurementPredicted);
+}
+
+/*! Set function to add measurements. By default this add function is an R^n subtraction, but could be subMrp or
+ * other functions depending on the measurement type
+ * @param subFunction std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)>
+ */
+void MeasurementModel::setMeasurementSubtraction(const std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)> &subFunction){
+    this->measurementSubtraction= subFunction;
+}
+
 /*! Return the size of the observation
    @return size_t
 */
