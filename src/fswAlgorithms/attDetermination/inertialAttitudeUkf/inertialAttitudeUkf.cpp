@@ -49,6 +49,8 @@ void InertialAttitudeUkf::customreset() {
             return stateDerivative;
         };
     this->dynamics.setDynamics(attitudeDynamics);
+
+    this->firstFilterPass = true;
 }
 
 /*! Before every update, check the MRP norm for a shadow set switch
