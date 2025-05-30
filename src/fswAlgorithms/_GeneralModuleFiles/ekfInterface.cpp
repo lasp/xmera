@@ -101,7 +101,7 @@ void EkfInterface::timeUpdate(const double updateTime)
 void EkfInterface::measurementUpdate(const MeasurementModel &measurement)
 {
     /*! - Compute the valid observations delta */
-    Eigen::VectorXd measurementDelta = measurement.getObservation() - measurement.model(this->state);
+    Eigen::VectorXd measurementDelta = measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state));
     /*! - Compute the measurement matrix at this state */
     Eigen::MatrixXd measurementMatrix = measurement.computeMeasurementMatrix(this->state);
 
@@ -113,7 +113,7 @@ void EkfInterface::measurementUpdate(const MeasurementModel &measurement)
     if ((this->covar.maxCoeff() > this->minCovarNorm && this->filterType == FilterType::Extended) ||
     this->filterType == FilterType::Classical){
         /*! - Compute the update with a CKF if the covariance is high at the time of the update to avoid divergence*/
-        EkfInterface::ckfUpdate(kalmanGain, measurementDelta, measurementMatrix);
+        EkfInterface::ckfUpdate(kalmanGain, EkfInterface::computeResiduals(measurement));
     }
     else{
         /*! - Compute the update with a EKF, the reference state is changed by the filter update */
@@ -154,15 +154,13 @@ void EkfInterface::updateCovariance(const Eigen::MatrixXd &measMat, const Eigen:
 
 /*! Classical Kalman Filter Update (the reference state is unchanged)
 @param Eigen::MatrixXd kalmanGain
-@param Eigen::VectorXd measurementDelta
-@param Eigen::MatrixXd measurementMatrix
+@param Eigen::VectorXd residual
 @return void
  */
 void EkfInterface::ckfUpdate(const Eigen::MatrixXd &kalmanGain,
-                             const Eigen::VectorXd &measurementDelta,
-                             const Eigen::MatrixXd &measurementMatrix){
+                             const Eigen::VectorXd &residual){
 
-    this->stateError = this->stateError + kalmanGain*(measurementDelta - measurementMatrix*this->stateError);
+    this->stateError = this->stateError + kalmanGain*residual;
     this->stateLogged = this->state.addVector(this->stateError);
 }
 
@@ -185,10 +183,10 @@ void EkfInterface::ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::Vec
  */
 Eigen::VectorXd EkfInterface::computeResiduals(const MeasurementModel &measurement)
 {
-    Eigen::VectorXd measurementDelta(measurement.getObservation() - measurement.model(this->state));
+    Eigen::VectorXd measurementDelta(measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state)));
     Eigen::MatrixXd measurementMatrix = measurement.computeMeasurementMatrix(this->state);
 
-    return measurementDelta - measurementMatrix*this->stateError;
+    return measurement.subMeasurements(measurementDelta, measurementMatrix*this->stateError);
 }
 
 /*! Get the filter dynamics matrix (A = df/dX evaluated at the reference)

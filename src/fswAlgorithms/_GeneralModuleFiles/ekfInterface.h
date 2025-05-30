@@ -61,7 +61,7 @@ private:
                                     const Eigen::MatrixXd &measurementMatrix,
                                     const Eigen::MatrixXd &measurementNoise) const;
     void updateCovariance(const Eigen::MatrixXd &measMat, const Eigen::MatrixXd &noise, const Eigen::MatrixXd &kalmanGain);
-    void ckfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &yMeas, const Eigen::MatrixXd &measurementMatrix);
+    void ckfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &residual);
     void ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &yMeas);
 
     Eigen::MatrixXd stateTransitionMatrix; //!< [-] State Transition Matrix

@@ -200,7 +200,7 @@ void SRukfInterface::measurementUpdate(const MeasurementModel &measurement)
     /*! - Difference the yBar and the observations to get the observed error and
      multiply by the Kalman Gain to get the state update.  Add the state update
      to the state to get the updated state value (equation 27).*/
-    this->state = this->xBar.addVector(kMat*(measurement.getObservation() - yBar));
+    this->state = this->xBar.addVector(kMat*measurement.subMeasurements(measurement.getObservation(), yBar));
 
     /*! - Compute the updated matrix U from equation 28 */
     Eigen::MatrixXd Umat;
@@ -239,7 +239,7 @@ Eigen::VectorXd SRukfInterface::computeResiduals(const MeasurementModel &measure
     for(size_t i=0; i<this->numberSigmaPoints; ++i){
         yBar += this->wM(i)*yMeas.col(i);
     }
-    return measurement.getObservation() - yBar;
+    return measurement.subMeasurements(measurement.getObservation(), yBar);
 }
 
 /*! Perform a QR decomposition using HouseholderQR from Eigen, but only returns the transpose of the
