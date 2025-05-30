@@ -161,7 +161,7 @@ def test_propagation_kf(show_plots):
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
     st_1_msg = messaging.STAttMsg().write(st_1_data)
     star_tracker1.starTrackerMsg.subscribeTo(st_1_msg)
-    star_tracker1.measurementNoise = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
+    star_tracker1.measurementNoise_C = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
 
     st_2_data = messaging.STAttMsgPayload()
@@ -171,7 +171,7 @@ def test_propagation_kf(show_plots):
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
     st_2_msg = messaging.STAttMsg().write(st_2_data)
     star_tracker2.starTrackerMsg.subscribeTo(st_2_msg)
-    star_tracker2.measurementNoise = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
+    star_tracker2.measurementNoise_C = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker2)
 
     accel_data = messaging.AccDataMsgPayload()
@@ -297,7 +297,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
     st_1_msg = messaging.STAttMsg().write(st_1_data)
     star_tracker1.starTrackerMsg.subscribeTo(st_1_msg)
-    star_tracker1.measurementNoise = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
+    star_tracker1.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
 
     st_2_data = messaging.STAttMsgPayload()
@@ -307,7 +307,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
     st_2_msg = messaging.STAttMsg().write(st_2_data)
     star_tracker2.starTrackerMsg.subscribeTo(st_2_msg)
-    star_tracker2.measurementNoise = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
+    star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker2)
 
     accel_data = messaging.AccDataMsgPayload()
@@ -338,7 +338,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     expected[int(len(time)/2):, :] = rk4(attitude_dynamics, time[int(len(time)/2):], initial_condition,
                                          np.array(I).reshape([3,3]))
 
-    st_sigma_2 = np.diag(intertialAttitudeFilter.getStarTrackerNoise(1)).mean()
+    st_sigma_2 = np.diag(intertialAttitudeFilter.getStarTrackerNoise(0)).mean()
     gyroSigma = np.diag(intertialAttitudeFilter.getGyroNoise()).mean()
 
     unit_test_sim.InitializeSimulation()
