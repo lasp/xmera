@@ -49,8 +49,8 @@ void eigenMatrixXi2CArray(Eigen::MatrixXi inMat, int *outArray) {
     memcpy(outArray, tempMat.data(), inMat.rows() * inMat.cols() * sizeof(int));
 }
 
-/*! This function provides a direct conversion between a 3-vector and an
-output C array. We are providing this function to save on the  inline conversion
+/*! This function provides a direct conversion between a 3-double-vector and an
+output C double array. We are providing this function to save on the  inline conversion
 and the transpose that would have been performed by the general case.
 @return void
 @param inMat The source Eigen matrix that we are converting
@@ -58,6 +58,18 @@ and the transpose that would have been performed by the general case.
 */
 void eigenVector3d2CArray(Eigen::Vector3d &inMat, double *outArray) {
     memcpy(outArray, inMat.data(), 3 * sizeof(double));
+}
+
+/*! This function provides a direct conversion between a 3-float-vector and an
+output C float array. We are providing this function to save on the inline conversion
+and the transpose that would have been performed by the general case.
+@return void
+@param inMat The source Eigen 3-float-vector
+@param outArray The destination array we copy into
+*/
+
+void eigenVector3f2CArray(Eigen::Vector3f &inMat, float *outArray) {
+    memcpy(outArray, inMat.data(), 3 * sizeof(float));
 }
 
 /*! This function provides a direct conversion between a 4-vector and an
@@ -115,6 +127,14 @@ in order to save an unnecessary conversion between types.
 @param inArray The input array (row-major)
 */
 Eigen::Vector3d cArray2EigenVector3d(double *inArray) { return Eigen::Map<Eigen::Vector3d>(inArray, 3, 1); }
+
+/*! This function performs the conversion between an input C array
+3-float-vector and an output Eigen vector3f. This function is provided
+in order to save an unnecessary conversion between types.
+@return Eigen::Vector3f
+@param inArray The input float array (row-major)
+*/
+Eigen::Vector3f cArray2EigenVector3f(float *inArray) { return Eigen::Map<Eigen::Vector3f>(inArray, 3, 1); }
 
 /*! This function performs the conversion between an input C array
 4-vector and an output Eigen vector4d. This function is provided
