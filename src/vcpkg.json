@@ -5,13 +5,17 @@
     "cppzmq",
     "eigen3",
     "gtest",
-    "opencv",
+    "opencv4",
     "protobuf"
   ],
   "overrides": [
     {
       "name": "protobuf",
       "version": "3.18.0"
+    },
+    {
+      "name": "opencv4",
+      "version": "4.5.5"
     }
   ]
 }
