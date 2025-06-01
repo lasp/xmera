@@ -171,11 +171,11 @@ Eigen::VectorXd MeasurementModel::normalizedPositionStates(const FilterStateVect
  * @return Eigen::VectorXd
  */
 Eigen::VectorXd MeasurementModel::mrpStates(const FilterStateVector& state) {
-    return mrpSwitch(state.getPositionStates(), 1);
+    return mrpSwitch(Eigen::Vector3d(state.getPositionStates()), 1.0);
 }
 
 /*! Measurement model that returns the velocity component of the state
- * @param FilterStateVector state
+ * @param state
  * @return Eigen::VectorXd
  */
 Eigen::VectorXd MeasurementModel::velocityStates(const FilterStateVector& state) { return state.getVelocityStates(); }
@@ -193,8 +193,8 @@ Eigen::VectorXd MeasurementModel::velocityStatesWithBias(const FilterStateVector
     return observation;
 }
 
-/*! Measurement model that takes first 3 components of the state vector and interprets them as MRPs
- * @param Eigen::VectorXd state
+/*! Measurement model that takes the first 3 components of the state vector and interprets them as MRPs
+ * @param state
  * @return Eigen::VectorXd
  */
-Eigen::VectorXd mrpFirstThreeStates(Eigen::VectorXd state) { return mrpSwitch(state.head(3), 1); }
+Eigen::VectorXd mrpFirstThreeStates(Eigen::VectorXd state) { return mrpSwitch(state.head<3>().eval(), 1.0); }
