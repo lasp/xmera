@@ -58,6 +58,6 @@ Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec);
 //!@brief converts MRPd to an Vector3d variable
 Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd vec);
 //!@brief maps the DCM to MRPs using Eigen variables
-Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
+Eigen::MRPd eigenC2MRP(const Eigen::Matrix3d dcm_Eigen);
 
 #endif /* _AVSEIGENSUPPORT_ */

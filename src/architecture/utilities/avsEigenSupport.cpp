@@ -21,8 +21,7 @@
 
 #include <math.h>
 
-#include "architecture/utilities/macroDefinitions.h"
-#include "rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 /*! This function provides a general conversion between an Eigen matrix and
 an output C array. Note that this routine would convert an inbound type
@@ -245,15 +244,9 @@ Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec) {
  @return Eigen::MRPd
  @param dcm_Eigen The input DCM
  */
-Eigen::MRPd eigenC2MRP(Eigen::Matrix3d dcm_Eigen) {
-    Eigen::MRPd sigma_Eigen;  // output Eigen MRP
-    double dcm_Array[9];      // C array DCM
-    double sigma_Array[3];    // C array MRP
-
-    eigenMatrix3d2CArray(dcm_Eigen, dcm_Array);
-    C2MRP(RECAST3X3 dcm_Array, sigma_Array);
-    sigma_Eigen = cArray2EigenVector3d(sigma_Array);
-
+Eigen::MRPd eigenC2MRP(const Eigen::Matrix3d dcm_Eigen) {
+    Eigen::MRPd sigma_Eigen;
+    sigma_Eigen = dcmToMrp(dcm_Eigen);
     return sigma_Eigen;
 }
 
