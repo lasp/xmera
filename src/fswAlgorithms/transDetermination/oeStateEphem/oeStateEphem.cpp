@@ -18,6 +18,8 @@
  */
 
 #include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphem.h"
+
+
 #include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/orbitalMotion.h"
@@ -30,9 +32,7 @@
 void OEStateEphem::reset(uint64_t callTime)
 {
     // check if the required message has not been connected
-    if (!this->clockCorrInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR, "Error: oeStateEphem.clockCorrInMsg wasn't connected.");
-    }
+    assert(!this->clockCorrInMsg.isLinked());
 }
 
 /*! This method takes the current time and computes the state of the object
