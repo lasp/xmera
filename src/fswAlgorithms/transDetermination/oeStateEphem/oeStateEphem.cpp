@@ -41,42 +41,34 @@ void OEStateEphem::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OEStateEphem::updateState(uint64_t callTime)
+void OEStateEphem::updateState(const uint64_t callTime)
 {
-    double currentScaledValue;              /* [s] scaled time value to within [-1,1] */
-    double currentEphTime;                  /* [s] current ephemeris time */
-    double smallestTimeDifference;          /* [s] smallest difference to the time interval mid-point */
-    double timeDifference;                  /* [s] time difference with respect to an interval mid-point */
-    double anomalyAngle;                    /* [r] general anomaly angle variable */
-    int i;
-
-    TDBVehicleClockCorrelationMsgPayload localCorr;
+    TDBVehicleClockCorrelationMsgPayload localTime = this->clockCorrInMsg();
     EphemerisMsgPayload tmpOutputState = EphemerisMsgPayload();
-    ClassicElements orbEl;
-
-    /*! - read in the input message */
-    localCorr = this->clockCorrInMsg();
+    ClassicElements orbEl{};
 
     /*! - compute time for fitting interval */
-    currentEphTime = callTime*NANO2SEC;
-    currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
+    double currentEphTime = callTime*NANO2SEC;
+    currentEphTime += localTime.ephemerisTime - localTime.vehicleClockTime;
 
     /*! - select the fitting coefficients for the nearest fit interval */
-    this->coeffSelector = 0;
-    smallestTimeDifference = fabs(currentEphTime - this->fitCoefficients[0].ephemerisTimeMiddle);
-    for(i=1; i<MAX_OE_RECORDS; i++)
+    signed int nearestArc = 0;
+    double smallestTimeDifference = fabs(currentEphTime - this->fitCoefficients[0].ephemerisTimeMiddle);
+    double timeDifference{};                  /* [s] time difference with respect to an interval mid-point */
+    for(int i=1; i<MAX_OE_RECORDS; i++)
     {
         timeDifference = fabs(currentEphTime - this->fitCoefficients[i].ephemerisTimeMiddle);
         if(timeDifference < smallestTimeDifference)
         {
-            this->coeffSelector = (uint32_t) i;
+            nearestArc = i;
             smallestTimeDifference = timeDifference;
         }
     }
 
     /*! - determine the scaled fitting time */
-    ChebyshevFitCoefficients currentArc = this->fitCoefficients[this->coeffSelector];
-    currentScaledValue = (currentEphTime - currentArc.ephemerisTimeMiddle)/currentArc.ephemerisTimeRadius;
+    ChebyshevFitCoefficients currentArc = this->fitCoefficients[nearestArc];
+    double currentScaledValue = (currentEphTime - currentArc.ephemerisTimeMiddle)/currentArc.ephemerisTimeRadius;
+    double anomalyAngle{};                    /* [r] general anomaly angle variable */
     if(fabs(currentScaledValue) > 1.0)
     {
         currentScaledValue = currentScaledValue/fabs(currentScaledValue);
