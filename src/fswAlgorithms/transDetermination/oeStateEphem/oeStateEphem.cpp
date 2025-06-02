@@ -118,8 +118,97 @@ void OEStateEphem::updateState(uint64_t callTime)
     }
 
     /*! - Determine position and velocity vectors */
-    elem2rv(this->muCentral, &orbEl, tmpOutputState.r_BdyZero_N, tmpOutputState.v_BdyZero_N);
+    elem2rv(this->gravitationalParameter, &orbEl, tmpOutputState.r_BdyZero_N, tmpOutputState.v_BdyZero_N);
 
     /*! - Write the output message */
     this->stateFitOutMsg.write(&tmpOutputState, moduleID, callTime);
 }
+
+void OEStateEphem::setCentralBodyGravitationalParameter(const double mu) {
+    this->gravitationalParameter = mu;
+};
+
+double OEStateEphem::getCentralBodyGravitationalParameter() const {
+    return this->gravitationalParameter;
+};
+
+void OEStateEphem::setArcNumberOfCoefficients(const signed int arcNumber, const signed int numberOfCoefficients) {
+    this->fitCoefficients[arcNumber].numberChebCoefficients = numberOfCoefficients;
+};
+
+
+signed int OEStateEphem::getArcNumberOfCoefficients(const signed int arcNumber) const {
+    return this->fitCoefficients[arcNumber].numberChebCoefficients;
+};
+
+void OEStateEphem::setArcMiddleTime(const signed int arcNumber, const double timeMiddle) {
+    this->fitCoefficients[arcNumber].ephemerisTimeMiddle = timeMiddle;
+};
+
+double OEStateEphem::getArcMiddleTime(const signed int arcNumber) const {
+    return this->fitCoefficients[arcNumber].ephemerisTimeMiddle;
+};
+
+void OEStateEphem::setArcRadiusTime(const signed int arcNumber, const double timeRadius) {
+    this->fitCoefficients[arcNumber].ephemerisTimeRadius = timeRadius;
+};
+
+double OEStateEphem::getArcRadiusTime(const signed int arcNumber) const {
+    return this->fitCoefficients[arcNumber].ephemerisTimeRadius;
+};
+
+void OEStateEphem::setArcAnomalyFlag(const signed int arcNumber, const signed int anomalyFlag) {
+    this->fitCoefficients[arcNumber].anomalyFlag = anomalyFlag;
+};
+
+signed int OEStateEphem::getArcAnomalyFlag(signed int arcNumber) const {
+    return this->fitCoefficients[arcNumber].anomalyFlag;
+};
+
+void OEStateEphem::setArcRadiusPeriapsisCoefficients(const signed int arcNumber, const std::array<double, MAX_OE_COEFF> &radiusPeriapsisCoefficients) {
+    this->fitCoefficients[arcNumber].radiusPeriapsisCoefficients = radiusPeriapsisCoefficients;
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRadiusPeriapsisCoefficients(const signed int arcNumber) {
+    return this->fitCoefficients[arcNumber].radiusPeriapsisCoefficients;
+};
+
+void OEStateEphem::setArcEccentricityCoefficients(const signed int arcNumber, const std::array<double, MAX_OE_COEFF> &eccentricityCoefficients) {
+    this->fitCoefficients[arcNumber].eccentricityCoefficients = eccentricityCoefficients;
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcEccentricityCoefficients(const signed int arcNumber) {
+    return this->fitCoefficients[arcNumber].eccentricityCoefficients;
+};
+
+void OEStateEphem::setArcInclinationCoefficients(const signed int arcNumber, const std::array<double, MAX_OE_COEFF> &inclinationCoefficients) {
+    this->fitCoefficients[arcNumber].inclinationCoefficients = inclinationCoefficients;
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcInclinationCoefficients(const signed int arcNumber) {
+    return this->fitCoefficients[arcNumber].inclinationCoefficients;
+};
+
+void OEStateEphem::setArcArgPeriapsisCoefficients(const signed int arcNumber, const std::array<double, MAX_OE_COEFF> &argPeriapsisCoefficients) {
+    this->fitCoefficients[arcNumber].argPeriapsisCoefficients = argPeriapsisCoefficients;
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcArgPeriapsisCoefficients(const signed int arcNumber) {
+    return this->fitCoefficients[arcNumber].argPeriapsisCoefficients;
+};
+
+void OEStateEphem::setArcRaanCoefficients(const signed int arcNumber, const std::array<double, MAX_OE_COEFF> &raanCoefficients) {
+    this->fitCoefficients[arcNumber].raanCoefficients = raanCoefficients;
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRaanCoefficients(const signed int arcNumber) {
+    return this->fitCoefficients[arcNumber].raanCoefficients;
+};
+
+void OEStateEphem::setArcTrueAnomalyCoefficients(const signed int arcNumber, const std::array<double, MAX_OE_COEFF> &trueAnomalyCoefficients) {
+    this->fitCoefficients[arcNumber].trueAnomalyCoefficients = trueAnomalyCoefficients;
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcTrueAnomalyCoefficients(const signed int arcNumber) {
+    return this->fitCoefficients[arcNumber].trueAnomalyCoefficients;
+};

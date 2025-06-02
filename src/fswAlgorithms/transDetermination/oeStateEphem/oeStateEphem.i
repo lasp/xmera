@@ -26,9 +26,8 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "sys_model.i"
-%include "swig_conly_data.i"
-
-STRUCTASLIST(ChebyOERecord)
+%include "std_array.i"
+%template(DoubleArray20) std::array<double, 20>;
 %include "oeStateEphem.h"
 
 %include "architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
