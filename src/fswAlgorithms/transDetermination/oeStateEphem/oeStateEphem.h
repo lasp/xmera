@@ -29,24 +29,23 @@
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20
 
-
-
 /*! @brief Structure that defines the layout of an Ephemeris "record."  This is
            basically the set of coefficients for the ephemeris elements and
            the time factors associated with those coefficients
 */
-typedef struct {
-    uint32_t nChebCoeff;                  //!< [-] Number chebyshev coefficients loaded into record
-    double ephemTimeMid;                  //!< [s] Ephemeris time (TDB) associated with the mid-point of the curve
-    double ephemTimeRad;                  //!< [s] "Radius" of time that curve is valid for (half of total range
-    double rPeriapCoeff[MAX_OE_COEFF];    //!< [-] Set of chebyshev coefficients for radius at periapses
-    double eccCoeff[MAX_OE_COEFF];        //!< [-] Set of chebyshev coefficients for eccentrity
-    double incCoeff[MAX_OE_COEFF];        //!< [-] Set of chebyshev coefficients for inclination
-    double argPerCoeff[MAX_OE_COEFF];     //!< [-] Set of chebyshev coefficients for argument of periapses
-    double RAANCoeff[MAX_OE_COEFF];       //!< [-] Set of chebyshev coefficients for right ascention of the ascending node
-    double anomCoeff[MAX_OE_COEFF];       //!< [-] Set of chebyshev coefficients for true anomaly angle
-    uint32_t anomalyFlag;                 //!< [-] Flag indicating if the anomaly angle is true (0), mean (1)
-}ChebyOERecord;
+class ChebyshevFitArc{
+public:
+    signed int numberChebCoefficients{};                  //!< [-] Number chebyshev coefficients loaded into record
+    double ephemerisTimeMiddle{};                  //!< [s] Ephemeris time (TDB) associated with the mid-point of the curve
+    double ephemerisTimeRadius{};                  //!< [s] "Radius" of time that curve is valid for (half of total range)
+    std::array<double, MAX_OE_COEFF> radiusPeriapsisCoefficients{};    //!< [-] Set of chebyshev coefficients for radius at periapses
+    std::array<double, MAX_OE_COEFF> eccentricityCoefficients{};        //!< [-] Set of chebyshev coefficients for eccentricity
+    std::array<double, MAX_OE_COEFF> inclinationCoefficients{};        //!< [-] Set of chebyshev coefficients for inclination
+    std::array<double, MAX_OE_COEFF> argPeriapsisCoefficients{};     //!< [-] Set of chebyshev coefficients for argument of periapses
+    std::array<double, MAX_OE_COEFF> raanCoefficients{};       //!< [-] Set of chebyshev coefficients for right ascention of the ascending node
+    std::array<double, MAX_OE_COEFF> trueAnomalyCoefficients{};       //!< [-] Set of chebyshev coefficients for true anomaly angle
+    signed int anomalyFlag{};                 //!< [-] Flag indicating if the anomaly angle is true (0), mean (1)
+};
 
 /*! @brief Top level structure for the Chebyshev position ephemeris
            fit system.  Allows the user to specify a set of chebyshev
@@ -62,7 +61,7 @@ public:
     ReadFunctor<TDBVehicleClockCorrelationMsgPayload> clockCorrInMsg; //!< clock correlation input message
 
     double muCentral;                             //!< [m3/s^2] Gravitational parameter for center of orbital elements
-    ChebyOERecord ephArray[MAX_OE_RECORDS];       //!< [-] Array of Chebyshev records for ephemeris
+    std::array<ChebyshevFitCoefficients, MAX_OE_RECORDS> fitCoefficients{};       //!< [-] Array of Chebyshev records for ephemeris
     uint32_t coeffSelector;                       //!< [-] Index in the ephArray that we are currently using
 };
 
