@@ -21,36 +21,30 @@
 
 #include "ekfInterface.h"
 
-EkfInterface::EkfInterface(FilterType type){
-    this->filterType = type;
-}
+EkfInterface::EkfInterface(FilterType type) { this->filterType = type; }
 
 /*! Reset all of the filter states, including the custom reset
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void EkfInterface::reset(uint64_t currentSimNanos)
-{
+void EkfInterface::reset(uint64_t currentSimNanos) {
     KalmanFilter::reset(currentSimNanos);
     this->stateError = Eigen::VectorXd ::Zero(this->state.size());
     this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());
     if (this->stateInitial.hasVelocity()) {
         this->processNoise.resize(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());
-    }
-    else {
+    } else {
         this->processNoise.resize(this->state.getPositionStates().size(), this->state.getPositionStates().size());
     }
-    this->minCovarNorm = this->minCovarNorm*this->unitConversion*this->unitConversion;
+    this->minCovarNorm = this->minCovarNorm * this->unitConversion * this->unitConversion;
     this->customreset();
 }
-
 
 /*! Perform the time update for kalman filter.
  @return void
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void EkfInterface::timeUpdate(const double updateTime)
-{
+void EkfInterface::timeUpdate(const double updateTime) {
     double dt = updateTime - this->previousFilterTimeTag;
     this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());
     std::array<double, 2> time = {0, dt};
@@ -71,56 +65,55 @@ void EkfInterface::timeUpdate(const double updateTime)
      * The process noise mapping will depend on the number of "rate" states */
     Eigen::MatrixXd processNoiseMapping;
     if (!this->state.hasVelocity()) {
-        processNoiseMapping = Eigen::MatrixXd::Identity(this->state.getPositionStates().size(),
-                                                        this->state.getPositionStates().size());
+        processNoiseMapping =
+            Eigen::MatrixXd::Identity(this->state.getPositionStates().size(), this->state.getPositionStates().size());
         processNoiseMapping *= pow(dt, 2) / 2;
-    }
-    else{
+    } else {
         processNoiseMapping.setZero(this->state.getPositionStates().size() + this->state.getVelocityStates().size(),
                                     this->state.getVelocityStates().size());
-        processNoiseMapping.block(0, 0, this->state.getPositionStates().size(),
-                                  this->state.getPositionStates().size()) =
-            pow(dt, 2) / 2 * Eigen::MatrixXd::Identity(this->state.getPositionStates().size(),
-                                  this->state.getPositionStates().size());
-        processNoiseMapping.block(this->state.getPositionStates().size(), 0, this->state.getVelocityStates().size(),
-                                                        this->state.getVelocityStates().size()) =
-            dt * Eigen::MatrixXd::Identity(this->state.getVelocityStates().size(),
-                                                        this->state.getVelocityStates().size());
+        processNoiseMapping.block(
+            0, 0, this->state.getPositionStates().size(), this->state.getPositionStates().size()) =
+            pow(dt, 2) / 2 *
+            Eigen::MatrixXd::Identity(this->state.getPositionStates().size(), this->state.getPositionStates().size());
+        processNoiseMapping.block(this->state.getPositionStates().size(),
+                                  0,
+                                  this->state.getVelocityStates().size(),
+                                  this->state.getVelocityStates().size()) =
+            dt *
+            Eigen::MatrixXd::Identity(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());
     }
-    this->covar = this->stateTransitionMatrix*this->covar*this->stateTransitionMatrix.transpose() +
-            processNoiseMapping*this->processNoise*processNoiseMapping.transpose();
+    this->covar = this->stateTransitionMatrix * this->covar * this->stateTransitionMatrix.transpose() +
+                  processNoiseMapping * this->processNoise * processNoiseMapping.transpose();
 
     this->previousFilterTimeTag = updateTime;
 }
-
 
 /*! Perform the measurement update for the kalman filter.
  @param Measurement
  @return void
  */
-void EkfInterface::measurementUpdate(const MeasurementModel &measurement)
-{
+void EkfInterface::measurementUpdate(const MeasurementModel &measurement) {
     /*! - Compute the valid observations delta */
-    Eigen::VectorXd measurementDelta = measurement.getObservation() - measurement.model(this->state);
+    Eigen::VectorXd measurementDelta =
+        measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state));
     /*! - Compute the measurement matrix at this state */
     Eigen::MatrixXd measurementMatrix = measurement.computeMeasurementMatrix(this->state);
 
     /*! - Compute the Kalman Gain */
-    Eigen::MatrixXd kalmanGain = EkfInterface::computeKalmanGain(this->covar, measurementMatrix, measurement.getMeasurementNoise());
+    Eigen::MatrixXd kalmanGain =
+        EkfInterface::computeKalmanGain(this->covar, measurementMatrix, measurement.getMeasurementNoise());
 
     /*! - Update the covariance */
     EkfInterface::updateCovariance(measurementMatrix, measurement.getMeasurementNoise(), kalmanGain);
     if ((this->covar.maxCoeff() > this->minCovarNorm && this->filterType == FilterType::Extended) ||
-    this->filterType == FilterType::Classical){
+        this->filterType == FilterType::Classical) {
         /*! - Compute the update with a CKF if the covariance is high at the time of the update to avoid divergence*/
-        EkfInterface::ckfUpdate(kalmanGain, measurementDelta, measurementMatrix);
-    }
-    else{
+        EkfInterface::ckfUpdate(kalmanGain, EkfInterface::computeResiduals(measurement));
+    } else {
         /*! - Compute the update with a EKF, the reference state is changed by the filter update */
         EkfInterface::ekfUpdate(kalmanGain, measurementDelta);
     }
 }
-
 
 /*! Compute the Kalman Gain
 @param Eigen::MatrixXd covar
@@ -132,11 +125,10 @@ Eigen::MatrixXd EkfInterface::computeKalmanGain(const Eigen::MatrixXd &covarianc
                                                 const Eigen::MatrixXd &measurementMatrix,
                                                 const Eigen::MatrixXd &measurementNoise) const {
     Eigen::MatrixXd kalmanGain(covariance.cols(), measurementNoise.cols());
-    kalmanGain = covariance*measurementMatrix.transpose();
-    kalmanGain *= (measurementMatrix*covariance*measurementMatrix.transpose() + measurementNoise).inverse();
+    kalmanGain = covariance * measurementMatrix.transpose();
+    kalmanGain *= (measurementMatrix * covariance * measurementMatrix.transpose() + measurementNoise).inverse();
     return kalmanGain;
 }
-
 
 /*! Update the covariance using the Joseph form of the update
 @param Eigen::MatrixXd measMat
@@ -144,25 +136,22 @@ Eigen::MatrixXd EkfInterface::computeKalmanGain(const Eigen::MatrixXd &covarianc
 @param Eigen::MatrixXd kalmanGain
 @return void
  */
-void EkfInterface::updateCovariance(const Eigen::MatrixXd &measMat, const Eigen::MatrixXd &noise, const Eigen::MatrixXd &kalmanGain){
+void EkfInterface::updateCovariance(const Eigen::MatrixXd &measMat,
+                                    const Eigen::MatrixXd &noise,
+                                    const Eigen::MatrixXd &kalmanGain) {
     Eigen::MatrixXd josephTransform(this->state.size(), this->state.size());
-    josephTransform = Eigen::MatrixXd::Identity(this->state.size(), this->state.size()) - kalmanGain*measMat;
-    this->covar = josephTransform*this->covar*josephTransform.transpose();
-    this->covar += kalmanGain*noise*kalmanGain.transpose();
+    josephTransform = Eigen::MatrixXd::Identity(this->state.size(), this->state.size()) - kalmanGain * measMat;
+    this->covar = josephTransform * this->covar * josephTransform.transpose();
+    this->covar += kalmanGain * noise * kalmanGain.transpose();
 }
-
 
 /*! Classical Kalman Filter Update (the reference state is unchanged)
 @param Eigen::MatrixXd kalmanGain
-@param Eigen::VectorXd measurementDelta
-@param Eigen::MatrixXd measurementMatrix
+@param Eigen::VectorXd residual
 @return void
  */
-void EkfInterface::ckfUpdate(const Eigen::MatrixXd &kalmanGain,
-                             const Eigen::VectorXd &measurementDelta,
-                             const Eigen::MatrixXd &measurementMatrix){
-
-    this->stateError = this->stateError + kalmanGain*(measurementDelta - measurementMatrix*this->stateError);
+void EkfInterface::ckfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &residual) {
+    this->stateError = this->stateError + kalmanGain * residual;
     this->stateLogged = this->state.addVector(this->stateError);
 }
 
@@ -171,9 +160,8 @@ void EkfInterface::ckfUpdate(const Eigen::MatrixXd &kalmanGain,
 @param Eigen::VectorXd measurementDelta
 @return void
  */
-void EkfInterface::ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &measurementDelta){
-
-    this->stateError = kalmanGain*measurementDelta;
+void EkfInterface::ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &measurementDelta) {
+    this->stateError = kalmanGain * measurementDelta;
 
     this->state = this->state.addVector(this->stateError);
     this->stateLogged = this->state;
@@ -183,19 +171,19 @@ void EkfInterface::ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::Vec
 @param Measurement
 @return Eigen::VectorXd
  */
-Eigen::VectorXd EkfInterface::computeResiduals(const MeasurementModel &measurement)
-{
-    Eigen::VectorXd measurementDelta(measurement.getObservation() - measurement.model(this->state));
+Eigen::VectorXd EkfInterface::computeResiduals(const MeasurementModel &measurement) {
+    Eigen::VectorXd measurementDelta(
+        measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state)));
     Eigen::MatrixXd measurementMatrix = measurement.computeMeasurementMatrix(this->state);
 
-    return measurementDelta - measurementMatrix*this->stateError;
+    return measurement.subMeasurements(measurementDelta, measurementMatrix * this->stateError);
 }
 
 /*! Get the filter dynamics matrix (A = df/dX evaluated at the reference)
     @return Eigen::VectorXd stateInitial
     */
-void EkfInterface::setFilterDynamicsMatrix(const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>&
-            dynamicsMatrixCalculator){
+void EkfInterface::setFilterDynamicsMatrix(
+    const std::function<const Eigen::MatrixXd(const double, const FilterStateVector &)> &dynamicsMatrixCalculator) {
     this->dynamics.setDynamicsMatrix(dynamicsMatrixCalculator);
 }
 
@@ -204,13 +192,11 @@ void EkfInterface::setFilterDynamicsMatrix(const std::function<const Eigen::Matr
     @param double infiniteNorm
     @return void
     */
-void EkfInterface::setMinimumCovarianceNormForEkf(const double infiniteNorm){
-    this->minCovarNorm = infiniteNorm;
-}
+void EkfInterface::setMinimumCovarianceNormForEkf(const double infiniteNorm) { this->minCovarNorm = infiniteNorm; }
 
 /*! Get the minimum value of the covariance before switching to Extended KF updates.
     @return double infiniteNorm
     */
 double EkfInterface::getMinimumCovarianceNormForEkf() const {
-    return this->minCovarNorm/this->unitConversion/this->unitConversion;
+    return this->minCovarNorm / this->unitConversion / this->unitConversion;
 }

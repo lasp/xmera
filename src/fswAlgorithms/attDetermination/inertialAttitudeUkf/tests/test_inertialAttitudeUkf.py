@@ -20,6 +20,7 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import inertialAttitudeUkf
+from Basilisk.fswAlgorithms import miruLowPassFilterConverter
 from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
@@ -89,10 +90,6 @@ def setup_filter_data(filter_object):
                                    [0.0, 0.0, 0.0, 0.0, sigma_rate, 0.0],
                                    [0.0, 0.0, 0.0, 0.0, 0.0, sigma_rate]])
 
-    filter_object.setLowPassFilter(0.5, 15/(2*np.pi))
-
-    return
-
 @pytest.mark.parametrize("show_plots", [False])
 def test_propagation_kf(show_plots):
     """Module Unit Test"""
@@ -107,9 +104,15 @@ def test_propagation_kf(show_plots):
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
     test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
+    # Create miruLowPassFilterConverter module
+    miru_low_pass_filter_converter = miruLowPassFilterConverter.MiruLowPassFilterConverter()
+    miru_low_pass_filter_converter.setLowPassFilter(0.5, 15/(2*np.pi))
+    unit_test_sim.AddModelToTask(unit_task_name, miru_low_pass_filter_converter)
+
     # Construct algorithm and associated C++ container
     allMeasurements = inertialAttitudeUkf.AttitudeFilterMethod_AllMeasurements
     intertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(allMeasurements)
+    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(miru_low_pass_filter_converter.imuSensorOutMsg)
     unit_test_sim.AddModelToTask(unit_task_name, intertialAttitudeFilter)
 
     # Add test module to runtime call list
@@ -158,7 +161,7 @@ def test_propagation_kf(show_plots):
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
     st_1_msg = messaging.STAttMsg().write(st_1_data)
     star_tracker1.starTrackerMsg.subscribeTo(st_1_msg)
-    star_tracker1.measurementNoise = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
+    star_tracker1.measurementNoise_C = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
 
     st_2_data = messaging.STAttMsgPayload()
@@ -168,15 +171,18 @@ def test_propagation_kf(show_plots):
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
     st_2_msg = messaging.STAttMsg().write(st_2_data)
     star_tracker2.starTrackerMsg.subscribeTo(st_2_msg)
-    star_tracker2.measurementNoise = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
+    star_tracker2.measurementNoise_C = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker2)
 
     accel_data = messaging.AccDataMsgPayload()
     accel_measurement = messaging.AccDataMsg().write(accel_data)
-    intertialAttitudeFilter.accelDataMsg.subscribeTo(accel_measurement)
+    miru_low_pass_filter_converter.imuAccelDataInMsg.subscribeTo(accel_measurement)
 
-    attitude_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
+    attitude_data_log = intertialAttitudeFilter.navAttitudeOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, attitude_data_log)
+
+    filter_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
 
     sim_time = 100
     time = np.linspace(0, sim_time, sim_time+1)
@@ -190,8 +196,9 @@ def test_propagation_kf(show_plots):
     unit_test_sim.ExecuteSimulation()
 
     num_states = 6
-    state_data_log = add_time_column(attitude_data_log.times(), attitude_data_log.state[:, :num_states])
-    covariance_data_log = add_time_column(attitude_data_log.times(), attitude_data_log.covar[:, :num_states**2])
+    nav_data_log = add_time_column(attitude_data_log.times(), attitude_data_log.sigma_BN)
+    state_data_log = add_time_column(filter_data_log.times(), filter_data_log.state[:, :num_states])
+    covariance_data_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
 
     diff = np.copy(state_data_log)
     diff[:, 1:] -= expected[:, 1:]
@@ -206,6 +213,11 @@ def test_propagation_kf(show_plots):
                                expected[:, 1:],
                                rtol=1E-10,
                                err_msg='state propagation error',
+                               verbose=True)
+    np.testing.assert_allclose(nav_data_log,
+                               state_data_log[:, :4],
+                               rtol=1E-10,
+                               err_msg='nav msg and state are identical',
                                verbose=True)
     return
 
@@ -226,7 +238,13 @@ def test_measurements_kf(show_plots, initial_error, method):
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
     test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
+    # Create miruLowPassFilterConverter module
+    miru_low_pass_filter_converter = miruLowPassFilterConverter.MiruLowPassFilterConverter()
+    miru_low_pass_filter_converter.setLowPassFilter(0.5, 15/(2*np.pi))
+    unit_test_sim.AddModelToTask(unit_task_name, miru_low_pass_filter_converter)
+
     intertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(method)
+    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(miru_low_pass_filter_converter.imuSensorOutMsg)
     unit_test_sim.AddModelToTask(unit_task_name, intertialAttitudeFilter)
 
     # Add test module to runtime call list
@@ -279,7 +297,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
     st_1_msg = messaging.STAttMsg().write(st_1_data)
     star_tracker1.starTrackerMsg.subscribeTo(st_1_msg)
-    star_tracker1.measurementNoise = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
+    star_tracker1.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
 
     st_2_data = messaging.STAttMsgPayload()
@@ -289,17 +307,17 @@ def test_measurements_kf(show_plots, initial_error, method):
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
     st_2_msg = messaging.STAttMsg().write(st_2_data)
     star_tracker2.starTrackerMsg.subscribeTo(st_2_msg)
-    star_tracker2.measurementNoise = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
+    star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker2)
 
     accel_data = messaging.AccDataMsgPayload()
     accel_measurement = messaging.AccDataMsg().write(accel_data)
-    intertialAttitudeFilter.accelDataMsg.subscribeTo(accel_measurement)
+    miru_low_pass_filter_converter.imuAccelDataInMsg.subscribeTo(accel_measurement)
 
     filter_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
 
-    attitude_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
+    attitude_data_log = intertialAttitudeFilter.navAttitudeOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, attitude_data_log)
 
     st_residual_data_log = intertialAttitudeFilter.starTrackerResidualMsg.recorder()
@@ -320,7 +338,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     expected[int(len(time)/2):, :] = rk4(attitude_dynamics, time[int(len(time)/2):], initial_condition,
                                          np.array(I).reshape([3,3]))
 
-    st_sigma_2 = np.diag(intertialAttitudeFilter.getStarTrackerNoise(1)).mean()
+    st_sigma_2 = np.diag(intertialAttitudeFilter.getStarTrackerNoise(0)).mean()
     gyroSigma = np.diag(intertialAttitudeFilter.getGyroNoise()).mean()
 
     unit_test_sim.InitializeSimulation()
@@ -330,13 +348,13 @@ def test_measurements_kf(show_plots, initial_error, method):
         rw_speeds.write(rw_speeds_data, int((i+1)*1E9))
         if (i > 10*substeps and i< substeps*sim_time/4) or i > substeps*sim_time/2:
             if (time[i]-0.2).is_integer():
-                st_1_data.timeTag = int(time[i] * 1E9)
+                st_1_data.timeTag = time[i]
                 st_1_data.valid = True
                 st_1_data.MRP_BdyInrtl = expected[i, 1:4] + np.random.normal(0, 1e-4, 3)
                 st_1_msg.write(st_1_data, int(time[i]*1E9))
 
             if (time[i]-0.8).is_integer():
-                st_2_data.timeTag = int(time[i]*1e9)
+                st_2_data.timeTag = time[i]
                 st_2_data.valid = True
                 st_2_data.MRP_BdyInrtl = expected[i, 1:4] + np.random.normal(0, 1e-4, 3)
                 st_2_msg.write(st_2_data, int(time[i]*1e9))
