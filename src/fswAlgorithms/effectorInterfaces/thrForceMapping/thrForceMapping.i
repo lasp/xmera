@@ -30,6 +30,7 @@
 %include "swig_conly_data.i"
 EIGEN_MAT_WRAP(Vector36d, 157)
 %include "thrForceMapping.h"
+%include "thrForceMappingAlgorithm.h"
 
 %include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
