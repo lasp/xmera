@@ -19,12 +19,6 @@
 
 #include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphem.h"
 
-
-#include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/orbitalMotion.h"
-#include <cmath>
-
 /*!
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
