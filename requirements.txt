@@ -15,4 +15,5 @@ protobuf==3.19.1
 pytest
 pytest-html
 pytest-xdist
+spiceypy
 tqdm
