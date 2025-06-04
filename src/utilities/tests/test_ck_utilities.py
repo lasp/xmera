@@ -18,7 +18,7 @@ import tempfile
 
 import numpy as np
 from Basilisk.simulation import spacecraft
-from Basilisk.topLevelModules import pyswice
+import spiceypy
 from Basilisk.utilities import (
     SimulationBaseClass,
     macros,
@@ -52,8 +52,8 @@ def test_ck_read_write(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     timeInit = 'FEB 01, 2021 12:00:00 (UTC)'
     spiceObject = gravFactory.createSpiceInterface(time=timeInit)
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'MVN_SCLKSCET.00000.tsc')  # spacecraft clock file
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'MVN_SCLKSCET.00000.tsc')  # spacecraft clock file
 
     scObjectLogger = scObject.scStateOutMsg.recorder(dynTaskRate)
     simulation.AddModelToTask(taskName, scObjectLogger)
