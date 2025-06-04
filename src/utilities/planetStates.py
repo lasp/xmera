@@ -18,8 +18,7 @@
 
 
 from Basilisk import __path__
-from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
+import spiceypy
 
 bskPath = __path__[0]
 
@@ -40,12 +39,13 @@ def planetPositionVelocity(planetName, time, ephemerisPath = '/supportData/Ephem
         position and velocity vector of planet in Solar System Barycenter inertial frame as lists [m], [m/s]
     """
 
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls') #load leap seconds
-    pyswice.furnsh_c(bskPath + ephemerisPath)
-    positionVelocity = spkRead(planetName, time, frame, observer)
-    position = positionVelocity[0:3] * 1000
-    velocity = positionVelocity[3:6] * 1000
-    pyswice.unload_c(bskPath + ephemerisPath)
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls') #load leap seconds
+    spiceypy.furnsh(bskPath + ephemerisPath)
+    et = spiceypy.str2et(time)
+    [state, _] = spiceypy.spkezr(planetName, et, frame, "NONE", observer)
+    position = state[0:3] * 1000
+    velocity = state[3:6] * 1000
+    spiceypy.unload(bskPath + ephemerisPath)
 
     return position, velocity # [m], [m/s]

@@ -23,14 +23,13 @@ import os
 import matplotlib.pyplot as plt
 import numpy
 import pytest
+import spiceypy
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import oeStateEphem
-from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -74,17 +73,16 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     centralBodyMu = 3.98574405096E14
 
     dateSpice = "2015 April 10, 00:00:00.0 TDB"
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    et = pyswice.new_doubleArray(1)
-    pyswice.str2et_c(dateSpice, et)
-    etStart = pyswice.doubleArray_getitem(et, 0)
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    et = spiceypy.str2et(dateSpice)
+    etStart = et
     etEnd = etStart + curveDurationSeconds
 
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
-    pyswice.furnsh_c(path + '/TDRSS.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/pck00010.tpc')
+    spiceypy.furnsh(path + '/TDRSS.bsp')
 
     tdrssPosList = []
     tdrssVelList = []
@@ -101,8 +99,8 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     anomCount = 0
 
     for timeVal in timeHistory:
-        stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
-        stateOut = spkRead('-221', stringCurrent, integFrame, zeroBase)
+        stringCurrent = spiceypy.et2utc(timeVal, 'C', 4, 1024)
+        [stateOut, _] = spiceypy.spkezr('-221', spiceypy.str2et(stringCurrent), integFrame, 'NONE', zeroBase)
         position = stateOut[0:3]*1000.0
         velocity = stateOut[3:6]*1000.0
         orbEl = orbitalMotion.rv2elem(centralBodyMu, position, velocity)

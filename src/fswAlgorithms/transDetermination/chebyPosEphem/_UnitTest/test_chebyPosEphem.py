@@ -22,6 +22,7 @@ import os
 
 import numpy
 import pytest
+import spiceypy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -31,8 +32,6 @@ bskPath = __path__[0]
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import chebyPosEphem
-from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 from Basilisk.architecture import messaging
 
@@ -74,11 +73,10 @@ def sineCosine(show_plots):
     sineValues = numpy.sin(angleSpace)*orbitRadius
     oopValues = numpy.sin(angleSpace) + orbitRadius
 
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    et = pyswice.new_doubleArray(1)
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
 
     timeStringMid = '2019 APR 1 12:12:12.0 (UTC)'
-    pyswice.str2et_c(timeStringMid, et)
+    et = spiceypy.str2et(timeStringMid)
 
     fitTimes = numpy.linspace(-1, 1, numCurvePoints)
 
@@ -106,7 +104,7 @@ def sineCosine(show_plots):
 
     chebyFitModel.ephArray[0].posChebyCoeff = totalList
     chebyFitModel.ephArray[0].nChebCoeff = degChebCoeff+1
-    chebyFitModel.ephArray[0].ephemTimeMid = pyswice.doubleArray_getitem(et, 0)
+    chebyFitModel.ephArray[0].ephemTimeMid = et
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationDays/2.0*86400.0
 
     clockCorrData = messaging.TDBVehicleClockCorrelationMsgPayload()
@@ -162,25 +160,24 @@ def earthOrbitFit(show_plots):
     zeroBase = "Earth"
 
     dateSpice = "2015 February 10, 00:00:00.0 TDB"
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    et = pyswice.new_doubleArray(1)
-    pyswice.str2et_c(dateSpice, et)
-    etStart = pyswice.doubleArray_getitem(et, 0)
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    et = spiceypy.str2et(dateSpice)
+    etStart = et
     etEnd = etStart + curveDurationSeconds
 
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
-    pyswice.furnsh_c(path + '/hst_edited.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/pck00010.tpc')
+    spiceypy.furnsh(path + '/hst_edited.bsp')
 
     hubblePosList = []
     hubbleVelList = []
     timeHistory = numpy.linspace(etStart, etEnd, numCurvePoints)
 
     for timeVal in timeHistory:
-        stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
-        stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, integFrame, zeroBase)
+        stringCurrent = spiceypy.et2utc(timeVal, 'C', 4, 1024)
+        [stateOut, _] = spiceypy.spkezr('HUBBLE SPACE TELESCOPE', spiceypy.str2et(stringCurrent), integFrame, 'NONE', zeroBase)
         hubblePosList.append(stateOut[0:3].tolist())
         hubbleVelList.append(stateOut[3:6].tolist())
 

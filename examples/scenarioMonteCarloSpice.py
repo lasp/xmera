@@ -54,7 +54,7 @@ The user should be careful to load the Spice or use within the Python code withi
 import inspect
 import os
 import shutil
-
+import spiceypy
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
@@ -66,8 +66,6 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
 from Basilisk.simulation import spacecraft
 
@@ -79,14 +77,14 @@ class MyController(Controller):
         Controller.__init__(self)
 
         # Uncomment the following block to cause this MC scenario to fail
-        # due to an incorrect usage of the pyswice module
+        # due to an incorrect usage of the spiceypy module
 
         # dataPath = bskPath + "/supportData/EphemerisData/"
-        # pyswice.furnsh_c(dataPath + 'naif0011.tls')
-        # pyswice.furnsh_c(dataPath + 'pck00010.tpc')
-        # pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
-        # pyswice.furnsh_c(dataPath + 'de430.bsp')
-        # pyswice.furnsh_c(dataPath + 'hst_edited.bsp')
+        # spiceypy.furnsh(dataPath + 'naif0011.tls')
+        # spiceypy.furnsh(dataPath + 'pck00010.tpc')
+        # spiceypy.furnsh(dataPath + 'de-403-masses.tpc')
+        # spiceypy.furnsh(dataPath + 'de430.bsp')
+        # spiceypy.furnsh(dataPath + 'hst_edited.bsp')
 
 
 class MySimulation(SimulationBaseClass.SimBaseClass):
@@ -107,14 +105,14 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         scObject.hub.v_CN_NInit = [0.0, 7500.0, 0.0]        # m/s - v_CN_N
 
 
-        # operate on pyswice
+        # operate on spiceypy
         dataPath = bskPath + "/supportData/EphemerisData/"
         self.scSpiceName = 'HUBBLE SPACE TELESCOPE'
-        pyswice.furnsh_c(dataPath + 'naif0011.tls')
-        pyswice.furnsh_c(dataPath + 'pck00010.tpc')
-        pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
-        pyswice.furnsh_c(dataPath + 'de430.bsp')
-        pyswice.furnsh_c(dataPath + 'hst_edited.bsp')
+        spiceypy.furnsh(dataPath + 'naif0011.tls')
+        spiceypy.furnsh(dataPath + 'pck00010.tpc')
+        spiceypy.furnsh(dataPath + 'de-403-masses.tpc')
+        spiceypy.furnsh(dataPath + 'de430.bsp')
+        spiceypy.furnsh(dataPath + 'hst_edited.bsp')
 
         self.accessSpiceKernel()
 
@@ -126,7 +124,7 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         startCalendarTime = '2012 APR 29 15:18:14.907 (UTC)'
         zeroBase = 'Sun'
         integFrame = 'j2000'
-        stateOut = spkRead(self.scSpiceName, startCalendarTime, integFrame, zeroBase)
+        [stateOut, _] = spiceypy.spkezr(self.scSpiceName, spiceypy.str2et(startCalendarTime), integFrame, 'NONE', zeroBase)
         print(stateOut)
 
 def run():
@@ -150,14 +148,13 @@ def run():
     # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
     #
     # dataPath = bskPath + "/supportData/EphemerisData/"
-    # pyswice.furnsh_c(dataPath + 'naif0011.tls')
-    # pyswice.furnsh_c(dataPath + 'pck00010.tpc')
-    # pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
-    # pyswice.furnsh_c(dataPath + 'de430.bsp')
+    # spiceypy.furnsh(dataPath + 'naif0011.tls')
+    # spiceypy.furnsh(dataPath + 'pck00010.tpc')
+    # spiceypy.furnsh(dataPath + 'de-403-masses.tpc')
+    # spiceypy.furnsh(dataPath + 'de430.bsp')
     #
     # startCalendarTime = '2012 AUG 05, 21:35:07.496 (UTC)'
-    # startTimeArray = sim_model.new_doubleArray(1)
-    # pyswice.str2et_c(startCalendarTime, startTimeArray)
+    # startTimeArray = spiceypy.str2et(startCalendarTime)
     # sim_model.delete_doubleArray(startTimeArray)
 
     # After the monteCarlo run is configured, it is executed.
@@ -176,10 +173,10 @@ def executeScenario(sim):
     # Here is another example where it is allowable to run the python spice routines within a MC simulation setup
     #
     # dataPath = bskPath + "/supportData/EphemerisData/"
-    # pyswice.furnsh_c(dataPath + 'naif0011.tls')
-    # pyswice.furnsh_c(dataPath + 'pck00010.tpc')
-    # pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
-    # pyswice.furnsh_c(dataPath + 'de430.bsp')
+    # spicecypy.furnsh(dataPath + 'naif0011.tls')
+    # spicecypy.furnsh(dataPath + 'pck00010.tpc')
+    # spicecypy.furnsh(dataPath + 'de-403-masses.tpc')
+    # spicecypy.furnsh(dataPath + 'de430.bsp')
 
     sim.ExecuteSimulation()
 

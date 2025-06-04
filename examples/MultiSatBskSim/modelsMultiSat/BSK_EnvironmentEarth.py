@@ -17,9 +17,10 @@
 #
 
 import numpy as np
+import spiceypy
+
 from Basilisk import __path__
 from Basilisk.simulation import ephemerisConverter, groundLocation, eclipse
-from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import macros as mc, simIncludeGravBody
 
 bskPath = __path__[0]
@@ -80,11 +81,11 @@ class BSKEnvironmentModel:
                                               epochInMsg=True)
         self.gravFactory.spiceObject.zeroBase = 'Earth'
 
-        # Add pyswice instances
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
+        # Load spice kernels
+        spiceypy.furnsh(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+        spiceypy.furnsh(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+        spiceypy.furnsh(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+        spiceypy.furnsh(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
 
     def SetEpochObject(self):
         """

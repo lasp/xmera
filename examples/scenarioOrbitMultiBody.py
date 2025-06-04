@@ -101,11 +101,10 @@ from datetime import timedelta
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import spiceypy
 from Basilisk import __path__
 # import simulation related support
 from Basilisk.simulation import spacecraft
-# Used to get the location of supporting data.
-from Basilisk.topLevelModules import pyswice
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import astroFunctions
@@ -115,7 +114,6 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
 bskPath = __path__[0]
 
@@ -232,19 +230,19 @@ def run(show_plots, scCase):
     else:  # default case
         scEphemerisFileName = 'hst_edited.bsp'
         scSpiceName = 'HUBBLE SPACE TELESCOPE'
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + scEphemerisFileName)  # Hubble Space Telescope data
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    spiceypy.furnsh(spiceObject.SPICEDataPath + scEphemerisFileName)  # Hubble Space Telescope data
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     #
     #   Setup spacecraft initial states
     #
     # The initial spacecraft position and velocity vector is obtained via the SPICE function call:
-    scInitialState = 1000 * spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
-    rN = scInitialState[0:3]  # meters
-    vN = scInitialState[3:6]  # m/s
+    [scInitialState, _] = spiceypy.spkezr(scSpiceName, spiceypy.str2et(timeInitString), 'J2000', 'NONE', 'EARTH')
+    rN = 1000 * scInitialState[0:3]  # meters
+    vN = 1000 * scInitialState[3:6]  # m/s
 
     # Note that these vectors are given here relative to the Earth frame.  When we set the spacecraft()
     # initial position and velocity vectors through before initialization
@@ -370,9 +368,13 @@ def run(show_plots, scCase):
             usec = (simTime - sec) * 1000000
             time = timeInit + timedelta(seconds=sec, microseconds=usec)
             timeString = time.strftime(spiceTimeStringFormat)
-            scState = 1000.0 * spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
-            rN = scState[0:3]  # meters
-            vN = scState[3:6]  # m/s
+            [scState, _] = spiceypy.spkezr(scSpiceName,
+                                           spiceypy.str2et(timeString),
+                                           'J2000',
+                                           'NONE',
+                                           'EARTH')
+            rN = 1000.0 * scState[0:3]  # meters
+            vN = 1000.0 * scState[3:6]  # m/s
             oeData = orbitalMotion.rv2elem(gravBodies['earth'].mu, rN, vN)
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - omega0)
@@ -391,11 +393,13 @@ def run(show_plots, scCase):
         figureList[pltName] = plt.figure(2)
 
     else:
-        scState = 1000.0 * spkRead(scSpiceName,
-                                   spiceObject.getCurrentTimeString(),
-                                   'J2000',
-                                   'EARTH')
-        rTrue = scState[0:3]
+        [scState, _] = spiceypy.spkezr(scSpiceName,
+                                       spiceypy.str2et(spiceObject.getCurrentTimeString()),
+                                       'J2000',
+                                       'NONE',
+                                       'EARTH')
+
+        rTrue = 1000.0 * scState[0:3]
 
     # plot the differences between BSK and SPICE position data
     plt.figure(3)
@@ -410,8 +414,12 @@ def run(show_plots, scCase):
         usec = (simTime - sec) * 1000000
         time = timeInit + timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
-        scState = 1000 * spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
-        posError.append(posData[idx] - np.array(scState[0:3]))  # meters
+        [scState, _] = spiceypy.spkezr(scSpiceName,
+                                       spiceypy.str2et(timeString),
+                                       'J2000',
+                                       'NONE',
+                                       'EARTH')
+        posError.append(posData[idx] - np.array(1000 * scState[0:3]))  # meters
     for idx in range(3):
         plt.plot(dataRec.times() * macros.NANO2MIN, np.array(posError)[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
@@ -432,11 +440,11 @@ def run(show_plots, scCase):
     #  unload the SPICE libraries that were loaded by the pyswice utility and the spiceObject earlier
     #
     gravFactory.unloadSpiceKernels()
-    pyswice.unload_c(scEphemerisFileName)
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    spiceypy.unload(scEphemerisFileName)
+    spiceypy.unload(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    spiceypy.unload(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+    spiceypy.unload(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    spiceypy.unload(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
