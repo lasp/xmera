@@ -29,6 +29,76 @@ void OEStateEphem::reset(uint64_t callTime)
     assert(!this->clockCorrInMsg.isLinked());
 }
 
+ChebyshevFitArc OEStateEphem::findCurrentArc(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload &localTime) {
+    /*! - compute time for fitting interval */
+    this->currentEphTime = callTime*NANO2SEC + localTime.ephemerisTime - localTime.vehicleClockTime;
+
+    /*! - select the fitting coefficients for the nearest fit interval */
+    signed int nearestArc = 0;
+    double smallestTimeDifference = fabs(this->currentEphTime - this->fitCoefficients[0].ephemerisTimeMiddle);
+    double timeDifference{};                  /* [s] time difference with respect to an interval mid-point */
+    for(int i=1; i<MAX_OE_RECORDS; i++)
+    {
+        timeDifference = fabs(this->currentEphTime - this->fitCoefficients[i].ephemerisTimeMiddle);
+        if(timeDifference < smallestTimeDifference)
+        {
+            nearestArc = i;
+            smallestTimeDifference = timeDifference;
+        }
+    }
+
+    /*! - determine the scaled fitting time */
+    return this->fitCoefficients[nearestArc];
+}
+
+double OEStateEphem::scaleEphemerisTime(const ChebyshevFitArc & arc) const {
+    double currentScaledValue = (this->currentEphTime - arc.ephemerisTimeMiddle)/arc.ephemerisTimeRadius;
+    if(fabs(currentScaledValue) > 1.0)
+    {
+        currentScaledValue = currentScaledValue/fabs(currentScaledValue);
+    }
+    return currentScaledValue;
+}
+
+ClassicElements OEStateEphem::evaluateCoefficients(const double currentScaledValue, const ChebyshevFitArc &arc) {
+/* - determine orbit elements from chebychev polynominals */
+    double anomalyAngle{};                    /* [r] general anomaly angle variable */
+    ClassicElements elements{};
+    elements.rPeriap = calculateChebyValue(arc.radiusPeriapsisCoefficients.data(), arc.numberChebCoefficients,
+                                  currentScaledValue);
+    elements.i = calculateChebyValue(arc.inclinationCoefficients.data(), arc.numberChebCoefficients,
+                                  currentScaledValue);
+    elements.e = calculateChebyValue(arc.eccentricityCoefficients.data(), arc.numberChebCoefficients,
+                                  currentScaledValue);
+    elements.omega = calculateChebyValue(arc.argPeriapsisCoefficients.data(), arc.numberChebCoefficients,
+                                  currentScaledValue);
+    elements.Omega = calculateChebyValue(arc.raanCoefficients.data(), arc.numberChebCoefficients,
+                                  currentScaledValue);
+    anomalyAngle = calculateChebyValue(arc.trueAnomalyCoefficients.data(), arc.numberChebCoefficients,
+                                   currentScaledValue);
+
+    /*! - determine the true anomaly angle */
+    if (arc.anomalyFlag == 0) {
+        elements.f = anomalyAngle;
+    } else if (elements.e < 1.0) {
+        /* input is mean elliptic anomaly angle */
+        elements.f = E2f(M2E(anomalyAngle, elements.e), elements.e);
+    } else {
+        /* input is mean hyperbolic anomaly angle */
+        elements.f = H2f(N2H(anomalyAngle, elements.e), elements.e);
+    }
+
+    /*! - determine semi-major axis */
+    if (fabs(elements.e - 1.0) > 1e-12) {
+        /* elliptic or hyperbolic case */
+        elements.a = elements.rPeriap/(1.0-elements.e);
+    } else {
+        /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
+        elements.a = 0.0;
+    }
+    return elements;
+}
+
 /*! This method takes the current time and computes the state of the object
     using that time and the stored Chebyshev coefficients.  If the time provided
     is outside the specified range, the position vectors rail high/low appropriately.
@@ -38,75 +108,17 @@ void OEStateEphem::reset(uint64_t callTime)
 void OEStateEphem::updateState(const uint64_t callTime)
 {
     TDBVehicleClockCorrelationMsgPayload localTime = this->clockCorrInMsg();
-    EphemerisMsgPayload tmpOutputState = EphemerisMsgPayload();
-    ClassicElements orbEl{};
+    auto tmpOutputState = EphemerisMsgPayload();
 
-    /*! - compute time for fitting interval */
-    double currentEphTime = callTime*NANO2SEC;
-    currentEphTime += localTime.ephemerisTime - localTime.vehicleClockTime;
-
-    /*! - select the fitting coefficients for the nearest fit interval */
-    signed int nearestArc = 0;
-    double smallestTimeDifference = fabs(currentEphTime - this->fitCoefficients[0].ephemerisTimeMiddle);
-    double timeDifference{};                  /* [s] time difference with respect to an interval mid-point */
-    for(int i=1; i<MAX_OE_RECORDS; i++)
-    {
-        timeDifference = fabs(currentEphTime - this->fitCoefficients[i].ephemerisTimeMiddle);
-        if(timeDifference < smallestTimeDifference)
-        {
-            nearestArc = i;
-            smallestTimeDifference = timeDifference;
-        }
-    }
-
-    /*! - determine the scaled fitting time */
-    ChebyshevFitCoefficients currentArc = this->fitCoefficients[nearestArc];
-    double currentScaledValue = (currentEphTime - currentArc.ephemerisTimeMiddle)/currentArc.ephemerisTimeRadius;
-    double anomalyAngle{};                    /* [r] general anomaly angle variable */
-    if(fabs(currentScaledValue) > 1.0)
-    {
-        currentScaledValue = currentScaledValue/fabs(currentScaledValue);
-    }
-
-    /* - determine orbit elements from chebychev polynominals */
-    tmpOutputState.timeTag = callTime*NANO2SEC;
-    orbEl.rPeriap = calculateChebyValue(currentArc.radiusPeriapsisCoefficients.data(), currentArc.numberChebCoefficients,
-                                  currentScaledValue);
-    orbEl.i = calculateChebyValue(currentArc.inclinationCoefficients.data(), currentArc.numberChebCoefficients,
-                                  currentScaledValue);
-    orbEl.e = calculateChebyValue(currentArc.eccentricityCoefficients.data(), currentArc.numberChebCoefficients,
-                                  currentScaledValue);
-    orbEl.omega = calculateChebyValue(currentArc.argPeriapsisCoefficients.data(), currentArc.numberChebCoefficients,
-                                  currentScaledValue);
-    orbEl.Omega = calculateChebyValue(currentArc.raanCoefficients.data(), currentArc.numberChebCoefficients,
-                                  currentScaledValue);
-    anomalyAngle = calculateChebyValue(currentArc.trueAnomalyCoefficients.data(), currentArc.numberChebCoefficients,
-                                   currentScaledValue);
-
-    /*! - determine the true anomaly angle */
-    if (currentArc.anomalyFlag == 0) {
-        orbEl.f = anomalyAngle;
-    } else if (orbEl.e < 1.0) {
-        /* input is mean elliptic anomaly angle */
-        orbEl.f = E2f(M2E(anomalyAngle, orbEl.e), orbEl.e);
-    } else {
-        /* input is mean hyperbolic anomaly angle */
-        orbEl.f = H2f(N2H(anomalyAngle, orbEl.e), orbEl.e);
-    }
-
-    /*! - determine semi-major axis */
-    if (fabs(orbEl.e - 1.0) > 1e-12) {
-        /* elliptic or hyperbolic case */
-        orbEl.a = orbEl.rPeriap/(1.0-orbEl.e);
-    } else {
-        /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
-        orbEl.a = 0.0;
-    }
+    auto currentArc  = this->findCurrentArc(callTime, localTime);
+    auto currentScaledValue = this->scaleEphemerisTime(currentArc);
+    auto orbitalElements = this->evaluateCoefficients(currentScaledValue, currentArc);
 
     /*! - Determine position and velocity vectors */
-    elem2rv(this->gravitationalParameter, &orbEl, tmpOutputState.r_BdyZero_N, tmpOutputState.v_BdyZero_N);
+    elem2rv(this->gravitationalParameter, &orbitalElements, tmpOutputState.r_BdyZero_N, tmpOutputState.v_BdyZero_N);
 
     /*! - Write the output message */
+    tmpOutputState.timeTag = callTime*NANO2SEC;
     this->stateFitOutMsg.write(&tmpOutputState, moduleID, callTime);
 }
 

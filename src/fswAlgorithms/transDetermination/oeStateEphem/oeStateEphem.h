@@ -94,8 +94,12 @@ public:
     std::array<double, MAX_OE_COEFF> getArcTrueAnomalyCoefficients(const signed int arcNumber);
 
 private:
+    ChebyshevFitArc findCurrentArc(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload &localTime);
+    double scaleEphemerisTime(const ChebyshevFitArc & arc) const;
+    static ClassicElements evaluateCoefficients(const double currentScaledValue, const ChebyshevFitArc &arc);
+    double currentEphTime{};
     double gravitationalParameter{};                             //!< [m3/s^2] Gravitational parameter for center of orbital elements
-    std::array<ChebyshevFitCoefficients, MAX_OE_RECORDS> fitCoefficients{};       //!< [-] Array of Chebyshev records for ephemeris
+    std::array<ChebyshevFitArc, MAX_OE_RECORDS> fitCoefficients{};       //!< [-] Array of Chebyshev records for ephemeris
 };
 
 #endif
