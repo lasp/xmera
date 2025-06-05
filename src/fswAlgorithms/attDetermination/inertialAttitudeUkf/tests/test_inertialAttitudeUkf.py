@@ -149,6 +149,7 @@ def test_propagation_kf(show_plots):
 
     st_1_data = messaging.STAttMsgPayload()
     st_1_data.MRP_BdyInrtl = initState[:3]
+    st_1_data.dcm_CB = np.eye(3).flatten()
     st_1_data.timeTag = 0
 
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
@@ -159,6 +160,7 @@ def test_propagation_kf(show_plots):
 
     st_2_data = messaging.STAttMsgPayload()
     st_2_data.MRP_BdyInrtl = initState[:3]
+    st_2_data.dcm_CB = np.eye(3).flatten()
     st_2_data.timeTag = 0
 
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
@@ -279,6 +281,7 @@ def test_measurements_kf(show_plots, initial_error, method):
 
     st_1_data = messaging.STAttMsgPayload()
     st_1_data.MRP_BdyInrtl = initial_condition[:3]
+    st_1_data.dcm_CB = np.eye(3).flatten()
     st_1_data.timeTag = 0
 
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
@@ -289,6 +292,7 @@ def test_measurements_kf(show_plots, initial_error, method):
 
     st_2_data = messaging.STAttMsgPayload()
     st_2_data.MRP_BdyInrtl = initial_condition[:3]
+    st_2_data.dcm_CB = np.eye(3).flatten()
     st_2_data.timeTag = 0
 
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
