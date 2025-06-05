@@ -217,7 +217,7 @@ void InertialAttitudeUkf::readGyroData() {
         gyroMeasurement.setValidity(true);
 
         gyroMeasurement.setMeasurementNoise(this->measNoiseScaling * this->gyroNoise /
-                                            std::sqrt(gyroBuffer.numberOfValidGyroMeasurements));
+                                            gyroBuffer.numberOfValidGyroMeasurements);
         gyroMeasurement.setObservation(cArray2EigenVector3d(gyroBuffer.AngVelPlatform));
         gyroMeasurement.setMeasurementModel(MeasurementModel::velocityStates);
         this->measurements[this->measurementIndex] = gyroMeasurement;
