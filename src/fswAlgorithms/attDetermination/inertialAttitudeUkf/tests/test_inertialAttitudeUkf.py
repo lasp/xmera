@@ -72,16 +72,16 @@ def setup_filter_data(filter_object):
     filter_object.setBeta(2.0)
 
     filter_object.setInitialPosition([0.05, 0.5, 0.1])
-    filter_object.setInitialVelocity([0.2, -0.05, 0.1])
+    filter_object.setInitialVelocity([0.02, -0.005, 0.01])
     filter_object.setInitialCovariance([[1, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 1, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 1, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 0.0, 0.01, 0.0, 0.0],
                                         [0.0, 0.0, 0.0, 0.0, 0.01, 0.0],
                                         [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]])
-    filter_object.setGyroNoise([[1e-3,0,0],[0.,1e-3,0],[0,0,1e-3]])
+    filter_object.setGyroNoise([[1e-6,0,0],[0.,1e-6,0],[0,0,1e-6]])
     sigma_mrp = (1E-2) ** 2
-    sigma_rate = (1E-2) ** 2
+    sigma_rate = (1E-3) ** 2
     filter_object.setProcessNoise([[sigma_mrp, 0.0, 0.0, 0.0, 0.0, 0.0],
                                    [0.0, sigma_mrp, 0.0, 0.0, 0.0, 0.0],
                                    [0.0, 0.0, sigma_mrp, 0.0, 0.0, 0.0],
@@ -155,7 +155,7 @@ def test_propagation_kf(show_plots):
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
     st_1_msg = messaging.STAttMsg().write(st_1_data)
     star_tracker1.starTrackerMsg.subscribeTo(st_1_msg)
-    star_tracker1.measurementNoise_C = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
+    star_tracker1.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
 
     st_2_data = messaging.STAttMsgPayload()
@@ -166,7 +166,7 @@ def test_propagation_kf(show_plots):
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
     st_2_msg = messaging.STAttMsg().write(st_2_data)
     star_tracker2.starTrackerMsg.subscribeTo(st_2_msg)
-    star_tracker2.measurementNoise_C = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
+    star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker2)
 
     imu_data = messaging.IMUSensorMsgPayload()
@@ -416,9 +416,11 @@ def test_measurements_kf(show_plots, initial_error, method):
 
     filter_plots.state_covar(diff, covariance_data_log, 'Update', show_plots)
     filter_plots.states(diff, 'Update', show_plots)
-    filter_plots.post_fit_residuals(st_pre_fit_log, st_sigma_2, 'Update ST PostFit', show_plots)
+    filter_plots.post_fit_residuals(st_pre_fit_log, np.sqrt(st_sigma_2), 'Update ST PreFit', show_plots)
+    filter_plots.post_fit_residuals(st_post_fit_log, np.sqrt(st_sigma_2), 'Update ST PostFit', show_plots)
     if np.max(gyro_size_obs)>0:
-        filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit', show_plots)
+        filter_plots.post_fit_residuals(gyro_pre_fit_log, np.sqrt(gyroSigma_2), 'Update Gyro PreFit', show_plots)
+        filter_plots.post_fit_residuals(gyro_post_fit_log, np.sqrt(gyroSigma_2), 'Update Gyro PostFit', show_plots)
 
 if __name__ == "__main__":
     test_measurements_kf(True, True, allMeasurements)
