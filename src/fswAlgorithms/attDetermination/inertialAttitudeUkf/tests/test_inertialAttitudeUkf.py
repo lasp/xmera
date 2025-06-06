@@ -223,7 +223,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     """Module Unit Test"""
     unit_task_name = "unitTask"  # arbitrary name (don't change)
     unit_process_name = "TestProcess"  # arbitrary name (don't change)
-
+    np.random.seed(1)
     #   Create a sim module as an empty container
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
