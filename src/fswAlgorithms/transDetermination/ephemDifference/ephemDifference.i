@@ -32,6 +32,9 @@ STRUCTASLIST(EphemChangeConfig)
 
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 
+%include <std_array.i>
+%template(EphemChangeConfigArray10) std::array<EphemChangeConfig,MAX_NUM_CHANGE_BODIES>;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
