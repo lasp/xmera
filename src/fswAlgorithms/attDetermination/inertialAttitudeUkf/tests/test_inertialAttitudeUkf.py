@@ -329,6 +329,8 @@ def test_measurements_kf(show_plots, initial_error, method):
 
     st_sigma_2 = np.diag(intertialAttitudeFilter.getStarTrackerNoise(0)).mean()
     gyroSigma_2 = np.diag(intertialAttitudeFilter.getGyroNoise()).mean()
+    if method == starOnly:
+        gyroSigma_2 = st_sigma_2
 
     unit_test_sim.InitializeSimulation()
     for i in range(len(time)-1):
