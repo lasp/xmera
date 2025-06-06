@@ -399,22 +399,27 @@ def test_measurements_kf(show_plots, initial_error, method):
 
     quarter_time = int(3* len(time) / 4)
     diff = np.copy(state_data_log)
+    for i in range(sim_time+1):
+        diff[i, 1:4] = rbk.subMRP(diff[i, 1:4], expected[i, 1:4])
+        diff[i, 4:] -= expected[i, 4:]
 
-    # testing that Sun Heading vector estimate is correct within 5 sigma
-    np.testing.assert_allclose(np.linalg.norm(diff[quarter_time:, 1:], axis=1),
+    # testing that mrp estimate is correct within 5 sigma
+    np.testing.assert_allclose(diff[quarter_time:, 1:4],
                                0,
-                                rtol=1e-4,
-                                atol=1e-2,
-                                err_msg='state propagation error',
+                                atol=np.sqrt(st_sigma_2)*5,
+                                err_msg='mrp estimation error',
+                                verbose=True)
+    # testing that rate vector estimate is correct within 5 sigma
+    np.testing.assert_allclose(diff[quarter_time:, 4:7],
+                               0,
+                                atol=np.sqrt(gyroSigma_2)*5,
+                                err_msg='rate estimation error',
                                 verbose=True)
     # testing that covariance is shrinking
     np.testing.assert_array_less(np.diag(covariance_data_log[quarter_time, 1:].reshape([6, 6])),
                                 np.diag(covariance_data_log[0, 1:].reshape([6, 6])),
                                 err_msg='covariance error',
                                 verbose=True)
-    for i in range(sim_time+1):
-        diff[i, 1:4] = rbk.subMRP(diff[i, 1:4], expected[i, 1:4])
-        diff[i, 4:] -= expected[i, 4:]
 
     filter_plots.state_covar(diff, covariance_data_log, 'Update', show_plots)
     filter_plots.states(diff, 'Update', show_plots)
