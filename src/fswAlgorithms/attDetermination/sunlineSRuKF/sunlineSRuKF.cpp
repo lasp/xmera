@@ -66,10 +66,10 @@ void SunlineSRuKF::customFinalizeUpdate() {
  @return void
  */
 void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
-    NavAttMsgPayload navAttOutMsgBuffer = this->navAttOutMsg.zeroMsgPayload;
-    FilterMsgPayload filterMsgBuffer = this->filterOutMsg.zeroMsgPayload;
-    FilterResidualsMsgPayload filterGyroResMsgBuffer = this->filterGyroResOutMsg.zeroMsgPayload;
-    FilterResidualsMsgPayload filterCssResMsgBuffer = this->filterCssResOutMsg.zeroMsgPayload;
+    NavAttMsgPayload navAttOutMsgBuffer{};
+    FilterMsgPayload filterMsgBuffer{};
+    FilterResidualsMsgPayload filterGyroResMsgBuffer{};
+    FilterResidualsMsgPayload filterCssResMsgBuffer{};
 
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
     eigenMatrixXd2CArray(this->state.getPositionStates(), navAttOutMsgBuffer.vehSunPntBdy);

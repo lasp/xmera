@@ -132,8 +132,7 @@ void LambertPlanner::readMessages()
 */
 void LambertPlanner::writeMessages(uint64_t currentSimNanos)
 {
-    LambertProblemMsgPayload lambertProblemOutMsgBuffer;
-    lambertProblemOutMsgBuffer = this->lambertProblemOutMsg.zeroMsgPayload;
+    LambertProblemMsgPayload lambertProblemOutMsgBuffer{};
 
     // Write message content
     lambertProblemOutMsgBuffer.solverMethod = this->solverMethod;

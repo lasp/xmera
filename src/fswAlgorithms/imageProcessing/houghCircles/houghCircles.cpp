@@ -73,11 +73,8 @@ void HoughCircles::reset(uint64_t currentSimNanos)
 void HoughCircles::updateState(uint64_t currentSimNanos)
 {
     std::string dirName;
-    CameraImageMsgPayload imageBuffer;
-    OpNavCirclesMsgPayload circleBuffer;
-
-    imageBuffer = this->imageInMsg.zeroMsgPayload;
-    circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload;
+    CameraImageMsgPayload imageBuffer{};
+    OpNavCirclesMsgPayload circleBuffer{};
 
     cv::Mat imageCV, blurred;
     int circlesFound=0;

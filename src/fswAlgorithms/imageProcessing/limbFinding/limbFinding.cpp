@@ -68,11 +68,8 @@ void LimbFinding::reset(uint64_t currentSimNanos)
 void LimbFinding::updateState(uint64_t currentSimNanos)
 {
     std::string dirName;
-    CameraImageMsgPayload imageBuffer;
-    OpNavLimbMsgPayload limbMsg;
-
-    imageBuffer = this->imageInMsg.zeroMsgPayload;
-    limbMsg = this->opnavLimbOutMsg.zeroMsgPayload;
+    CameraImageMsgPayload imageBuffer{};
+    OpNavLimbMsgPayload limbMsg{};
 
     cv::Mat imageCV, blurred, edgeImage;
     if (this->saveDir != ""){

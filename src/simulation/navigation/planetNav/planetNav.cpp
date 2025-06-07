@@ -33,8 +33,8 @@ PlanetNav::PlanetNav()
     this->crossTrans = false;
     this->crossAtt = false;
     this->prevTime = 0;
-    this->noisePlanetState = this->ephemerisOutMsg.zeroMsgPayload;
-    this->truePlanetState = this->ephemerisOutMsg.zeroMsgPayload;
+    this->noisePlanetState = EphemerisMsgPayload{};
+    this->truePlanetState = EphemerisMsgPayload{};
     this->PMatrix.resize(12,12);
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(12);
@@ -142,7 +142,7 @@ void PlanetNav::computeErrors(uint64_t currentSimNanos)
 void PlanetNav::updateState(uint64_t currentSimNanos)
 {
     /* zero the output msg buffer */
-    this->noisePlanetState = this->ephemerisOutMsg.zeroMsgPayload;
+    this->noisePlanetState = EphemerisMsgPayload{};
 
     this->readInputMessages();
     this->computeErrors(currentSimNanos);

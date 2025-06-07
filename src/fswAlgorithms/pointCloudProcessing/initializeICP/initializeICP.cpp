@@ -50,7 +50,7 @@ void InitializeICP::reset(uint64_t currentSimNanos)
 void InitializeICP::normalizePointCloud()
 {
     PointCloudMsgPayload measuredCloudBuffer = this->inputMeasuredPointCloud();
-    this->normalizedCloudBuffer = this->measuredPointCloud.zeroMsgPayload;
+    this->normalizedCloudBuffer = PointCloudMsgPayload{};
     Eigen::MatrixXd measuredPoints = cArray2EigenMatrixXd(measuredCloudBuffer.points,
                                                           POINT_DIM,
                                                           measuredCloudBuffer.numberOfPoints);
@@ -70,7 +70,7 @@ void InitializeICP::normalizePointCloud()
             eigenMatrixXd2CArray(measuredPoints.transpose(), this->normalizedCloudBuffer.points);
         }
     }else{
-        this->normalizedCloudBuffer = this->measuredPointCloud.zeroMsgPayload;
+        this->normalizedCloudBuffer = PointCloudMsgPayload{};
     }
 
     this->normalizedCloudBuffer.valid = measuredCloudBuffer.valid;
@@ -129,7 +129,7 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos){
         }
     }
     else{
-        this->outputIcpBuffer = this->initializeSICPMsg.zeroMsgPayload;
+        this->outputIcpBuffer = SICPMsgPayload{};
     }
 
     this->outputIcpBuffer.scaleFactor[0] = s_prev;

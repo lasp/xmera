@@ -59,8 +59,8 @@ void SimpleSolarPanel::customreset(uint64_t CurrentClock) {
 bool SimpleSolarPanel::customReadMessages()
 {
     //! - Zero ephemeris information
-    this->sunData = sunInMsg.zeroMsgPayload;
-    this->stateCurrent = stateInMsg.zeroMsgPayload;
+    this->sunData = SpicePlanetStateMsgPayload{};
+    this->stateCurrent = SCStatesMsgPayload{};
 
     //! - If we have a valid sun ID, read Sun ephemeris message
     if(this->sunInMsg.isLinked())

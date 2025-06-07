@@ -45,7 +45,7 @@ void SimpleMassProps::reset(uint64_t currentSimNanos)
     }
 
     // zero the incoming message buffer
-    this->scMassPropsMsgBuffer = this->scMassPropsInMsg.zeroMsgPayload;
+    this->scMassPropsMsgBuffer = SCMassPropsMsgPayload{};
 
     // call the updateState function. This make sure the vehicleConfig message is populated with the correct values upon the initialization of the simulation.
     // Some FSW modules like mrpFeedback require this, as they only set the necessary mas properties on Reset and not throughout the sim.

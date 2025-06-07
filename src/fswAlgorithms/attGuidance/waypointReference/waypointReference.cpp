@@ -95,12 +95,9 @@ void WaypointReference::updateState(uint64_t currentSimNanos)
         std::string line;
 
 	    /* create the attitude output message buffer */
-		AttRefMsgPayload attMsgBuffer;
+		AttRefMsgPayload attMsgBuffer{};
 
-		/* zero output message */
-        attMsgBuffer = this->attRefOutMsg.zeroMsgPayload;
-
-		/* current time */
+        /* current time */
 		uint64_t t =  currentSimNanos;
 
 		/* for CurrentTime < t_0 hold initial attitude with zero angular rates and accelerations */
@@ -157,7 +154,7 @@ void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
 	if (getline(*this->fileHandle, line)) {
 		std::istringstream iss(line);
 
-		*attRefMsg_t = this->attRefOutMsg.zeroMsgPayload;
+		*attRefMsg_t = AttRefMsgPayload{};
 
         /* pull time, this is not used in the BSK msg */
         *t = (uint64_t) (pullScalar(&iss) * SEC2NANO);

@@ -243,7 +243,7 @@ void PinholeCamera::writeOutputMessages(uint64_t CurrentClock) {
     /* Loop through landmarks */
     for (int i = 0; i < this->n; i++) {
         /* Zero the output message buffers */
-        this->landmarkMsgBuffer.at(i) = this->landmarkOutMsgs.at(i)->zeroMsgPayload;
+        this->landmarkMsgBuffer.at(i) = LandmarkMsgPayload{};
 
         /* Fill landmark output messages */
         this->landmarkMsgBuffer.at(i).isVisible = this->isvisibleLmk(i);

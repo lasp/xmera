@@ -87,7 +87,7 @@ void HingedRigidBodyMotorSensor::updateState(uint64_t currentSimNanos)
     HingedRigidBodyMsgPayload hingedRigidBodyMotorSensorOutMsgBuffer;  //! local copy of message buffer
 
     //! zero the output message buffers before assigning values
-    hingedRigidBodyMotorSensorOutMsgBuffer = this->hingedRigidBodyMotorSensorOutMsg.zeroMsgPayload;
+    hingedRigidBodyMotorSensorOutMsgBuffer = HingedRigidBodyMsgPayload{};
 
     //! read in the input messages
     hingedRigidBodyMotorSensorInMsgBuffer = this->hingedRigidBodyMotorSensorInMsg();

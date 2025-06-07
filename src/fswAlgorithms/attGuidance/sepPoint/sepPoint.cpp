@@ -50,7 +50,7 @@ void SepPoint::reset(uint64_t currentSimNanos)
 void SepPoint::updateState(uint64_t currentSimNanos)
 {
     /*! create and zero the output message */
-    AttRefMsgPayload attRefOut = this->attRefOutMsg.zeroMsgPayload;
+    AttRefMsgPayload attRefOut{};
 
     /*! read and allocate the input attitude navigation message */
     NavAttMsgPayload attNavIn = this->attNavInMsg();

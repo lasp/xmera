@@ -30,8 +30,8 @@ BoreAngCalc::BoreAngCalc() {
     this->inertialHeadingVec_N.setZero();
 
     // Zero the payloads
-    this->localPlanet = this->celBodyInMsg.zeroMsgPayload;
-    this->localState = this->scStateInMsg.zeroMsgPayload;
+    this->localPlanet = SpicePlanetStateMsgPayload{};
+    this->localState = SCStatesMsgPayload{};
 }
 
 //! The destructor.

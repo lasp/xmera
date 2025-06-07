@@ -87,8 +87,7 @@ void LambertSurfaceRelativeVelocity::readMessages(){
     @return void
 */
 void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos){
-    DesiredVelocityMsgPayload desiredVelocityOutMsgBuffer;
-    desiredVelocityOutMsgBuffer = this->desiredVelocityOutMsg.zeroMsgPayload;
+    DesiredVelocityMsgPayload desiredVelocityOutMsgBuffer{};
 
     eigenVector3d2CArray(this->v_BN_N, desiredVelocityOutMsgBuffer.vDesired_N);
     desiredVelocityOutMsgBuffer.maneuverTime = this->time;

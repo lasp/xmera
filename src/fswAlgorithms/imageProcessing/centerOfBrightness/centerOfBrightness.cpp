@@ -44,10 +44,9 @@ void CenterOfBrightness::reset(uint64_t currentSimNanos)
  */
 void CenterOfBrightness::updateState(uint64_t currentSimNanos)
 {
-    CameraImageMsgPayload imageBuffer = this->imageInMsg.zeroMsgPayload;
+    CameraImageMsgPayload imageBuffer{};
 
-    OpNavCOBMsgPayload cobBuffer;
-    cobBuffer = this->opnavCOBOutMsg.zeroMsgPayload;
+    OpNavCOBMsgPayload cobBuffer{};
 
     cv::Mat imageCV;
 

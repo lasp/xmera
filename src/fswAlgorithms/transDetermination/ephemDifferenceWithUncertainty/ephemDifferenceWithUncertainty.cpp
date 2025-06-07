@@ -69,10 +69,8 @@ void EphemDifferenceWithUncertainty::updateState(uint64_t currentSimNanos)
     covar_21_N = this->covarianceBase + this->covarianceSecondary;
 
     /*! - output messages */
-    NavTransMsgPayload navTransOutMsgBuffer;
-    navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
-    FilterMsgPayload filterOutMsgBuffer;
-    filterOutMsgBuffer = this->filterOutMsg.zeroMsgPayload;
+    NavTransMsgPayload navTransOutMsgBuffer{};
+    FilterMsgPayload filterOutMsgBuffer{};
 
     navTransOutMsgBuffer.timeTag = timeTag;
     eigenVector3d2CArray(r_21_N, navTransOutMsgBuffer.r_BN_N);

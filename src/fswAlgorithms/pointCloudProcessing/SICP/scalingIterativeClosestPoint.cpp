@@ -194,8 +194,8 @@ Eigen::MatrixXd ScalingIterativeClosestPoint::computeTk(const double s_k, const 
 void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos)
 {
     //! - Read input messages and zero output messages
-    this->outputCloudBuffer = this->outputPointCloud.zeroMsgPayload;
-    this->sicpBuffer = this->outputSICPData.zeroMsgPayload;
+    this->outputCloudBuffer = PointCloudMsgPayload{};
+    this->sicpBuffer = SICPMsgPayload{};
 
     this->measuredCloudBuffer = this->measuredPointCloud();
     this->referenceCloudBuffer = this->referencePointCloud();

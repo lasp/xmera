@@ -82,7 +82,7 @@ void DataStorageUnitBase::updateState(uint64_t currentSimNanos)
         this->integrateDataStatus(currentSimNanos*NANO2SEC);
     } else {
         //! - Zero the output message if no input messages were received.
-        this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload;
+        this->storageStatusMsg = DataStorageStatusMsgPayload{};
     }
 
     //! - write out the storage unit's data status
@@ -131,7 +131,7 @@ bool DataStorageUnitBase::readMessages()
  */
 void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
     //! zero output message to begin with
-    this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload;
+    this->storageStatusMsg = DataStorageStatusMsgPayload{};
 
     //! - Set first three message parameters
     this->storageStatusMsg.currentNetBaud = this->netBaud;

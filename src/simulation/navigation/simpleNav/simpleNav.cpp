@@ -31,12 +31,12 @@ SimpleNav::SimpleNav()
     this->crossTrans = false;
     this->crossAtt = false;
     this->prevTime = 0;
-    this->estAttState = this->attOutMsg.zeroMsgPayload;
-    this->trueAttState = this->attOutMsg.zeroMsgPayload;
-    this->estTransState = this->transOutMsg.zeroMsgPayload;
-    this->trueTransState = this->transOutMsg.zeroMsgPayload;
-    this->accelDataState = this->accelDataOutMsg.zeroMsgPayload;
-    this->spacecraftEphemerisState = this->scEphemOutMsg.zeroMsgPayload;
+    this->estAttState = NavAttMsgPayload{};
+    this->trueAttState = NavAttMsgPayload{};
+    this->estTransState = NavTransMsgPayload{};
+    this->trueTransState = NavTransMsgPayload{};
+    this->accelDataState = AccDataMsgPayload{};
+    this->spacecraftEphemerisState = EphemerisMsgPayload{};
     this->PMatrix.resize(18,18);
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(18);
@@ -100,7 +100,7 @@ void SimpleNav::readInputMessages()
 {
     this->inertialState = this->scStateInMsg();
 
-    this->sunState = this->sunStateInMsg.zeroMsgPayload;
+    this->sunState = SpicePlanetStateMsgPayload{};
     if(this->sunStateInMsg.isLinked())
     {
         this->sunState = this->sunStateInMsg();

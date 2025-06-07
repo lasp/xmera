@@ -54,7 +54,7 @@ void SunSearch::reset(uint64_t currentSimNanos)
 void SunSearch::updateState(uint64_t currentSimNanos)
 {
     /*! create and zero the output message */
-    AttGuidMsgPayload attGuidOut = this->attGuidOutMsg.zeroMsgPayload;
+    AttGuidMsgPayload attGuidOut{};
 
     /*! read vehicle configuration message */
     NavAttMsgPayload attNavIn = this->attNavInMsg();

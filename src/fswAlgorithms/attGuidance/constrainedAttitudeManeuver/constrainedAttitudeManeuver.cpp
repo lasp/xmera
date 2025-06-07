@@ -188,9 +188,9 @@ ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver()
 ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver(int N)
 {
     this->N = N;
-    this->scStateMsgBuffer        = this->scStateInMsg.zeroMsgPayload;
-	this->keepOutCelBodyMsgBuffer = this->keepOutCelBodyInMsg.zeroMsgPayload;
-	this->keepInCelBodyMsgBuffer  = this->keepInCelBodyInMsg.zeroMsgPayload;
+    this->scStateMsgBuffer        = SCStatesMsgPayload{};
+	this->keepOutCelBodyMsgBuffer = SpicePlanetStateMsgPayload{};
+	this->keepInCelBodyMsgBuffer  = SpicePlanetStateMsgPayload{};
 
     return;
 }
@@ -261,7 +261,7 @@ void ConstrainedAttitudeManeuver::updateState(uint64_t currentSimNanos)
 	// create the attitude output message buffer
 	AttRefMsgPayload attMsgBuffer;
 	// zero output message
-    attMsgBuffer = this->attRefOutMsg.zeroMsgPayload;
+    attMsgBuffer = AttRefMsgPayload{};
 
 	// compute direction cosine matrix [RN]
 	double RN[3][3];

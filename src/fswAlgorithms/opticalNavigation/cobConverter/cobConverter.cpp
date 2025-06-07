@@ -72,12 +72,9 @@ void CobConverter::updateState(uint64_t currentSimNanos)
     NavAttMsgPayload navAttBuffer = this->navAttInMsg();
     EphemerisMsgPayload ephemBuffer = this->ephemInMsg();
 
-    OpNavUnitVecMsgPayload uVecCOBMsgBuffer;
-    uVecCOBMsgBuffer = this->opnavUnitVecCOBOutMsg.zeroMsgPayload;
-    OpNavUnitVecMsgPayload uVecCOMMsgBuffer;
-    uVecCOMMsgBuffer = this->opnavUnitVecCOMOutMsg.zeroMsgPayload;
-    OpNavCOMMsgPayload comMsgBuffer;
-    comMsgBuffer = this->opnavCOMOutMsg.zeroMsgPayload;
+    OpNavUnitVecMsgPayload uVecCOBMsgBuffer{};
+    OpNavUnitVecMsgPayload uVecCOMMsgBuffer{};
+    OpNavCOMMsgPayload comMsgBuffer{};
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0){
         /*! - Extract rotations from relevant messages */

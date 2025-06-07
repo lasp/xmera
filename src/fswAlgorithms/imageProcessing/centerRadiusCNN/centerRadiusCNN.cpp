@@ -79,16 +79,13 @@ void CenterRadiusCNN::reset(uint64_t currentSimNanos)
 void CenterRadiusCNN::updateState(uint64_t currentSimNanos)
 {
     std::string filenamePre;
-    CameraImageMsgPayload imageBuffer;
-    OpNavCirclesMsgPayload circleBuffer;
+    CameraImageMsgPayload imageBuffer{};
+    OpNavCirclesMsgPayload circleBuffer{};
     cv::Mat imageCV, blurred;
     filenamePre = "PreprocessedImage_" + std::to_string(currentSimNanos*1E-9) + ".jpg";
 
     /*! - Load in the trained CNN model*/
-
     /*! - Read in the bitmap*/
-    imageBuffer = this->imageInMsg.zeroMsgPayload;
-    circleBuffer = this->opnavCirclesOutMsg.zeroMsgPayload;
     if (this->imageInMsg.isLinked())
     {
         imageBuffer = this->imageInMsg();

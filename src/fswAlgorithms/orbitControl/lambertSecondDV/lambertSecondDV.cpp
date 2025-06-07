@@ -95,8 +95,7 @@ void LambertSecondDV::readMessages()
 */
 void LambertSecondDV::writeMessages(uint64_t currentSimNanos)
 {
-    DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer;
-    dvBurnCmdOutMsgBuffer = this->dvBurnCmdOutMsg.zeroMsgPayload;
+    DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer{};
 
     // DV Rotation vector and rotation magnitude not used by this module. Set to arbitrary unit vector and zero.
     Eigen::Vector3d dvRotVecUnit;

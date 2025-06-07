@@ -75,8 +75,8 @@ void SensorThermal::reset(uint64_t CurrentClock) {
 void SensorThermal::readMessages()
 {
     //! - Zero ephemeris information
-    this->sunData = sunInMsg.zeroMsgPayload;
-    this->stateCurrent = stateInMsg.zeroMsgPayload;
+    this->sunData = SpicePlanetStateMsgPayload{};
+    this->stateCurrent = SCStatesMsgPayload{};
 
     //! Read Sun ephemeris message
     this->sunData = this->sunInMsg();

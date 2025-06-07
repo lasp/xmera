@@ -50,7 +50,7 @@ AtmosphereBase::AtmosphereBase()
     this->envMaxReach = -1;
 
     //! - zero the planet message, and set the DCM to an identity matrix
-    this->planetState = planetPosInMsg.zeroMsgPayload;
+    this->planetState = SpicePlanetStateMsgPayload{};
     m33SetIdentity(this->planetState.J20002Pfix);
 
     this->scStateInMsgs.clear();
@@ -254,7 +254,7 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime)
         this->updateRelativePos(&(this->planetState), &(*scIt));
 
         //! - zero the output message for each spacecraft by default
-        *envMsgIt = this->envOutMsgs[0]->zeroMsgPayload;
+        *envMsgIt = AtmoPropsMsgPayload{};
 
         //! - check if radius is in permissible range
         if(this->orbitAltitude > this->envMinReach &&
@@ -277,7 +277,7 @@ void AtmosphereBase::updateState(uint64_t currentSimNanos)
     //! - clear the output buffer
     std::vector<AtmoPropsMsgPayload>::iterator it;
     for(it = this->envOutBuffer.begin(); it!= this->envOutBuffer.end(); it++){
-        *it = this->envOutMsgs[0]->zeroMsgPayload;
+        *it = AtmoPropsMsgPayload{};
     }
     //! - update local neutral density information
     if(this->readMessages())

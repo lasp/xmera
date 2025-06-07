@@ -275,7 +275,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos)
                 SCStatesMsgPayload scMsg;
 
                 /* zero output message */
-                scMsg = this->scStateOutMsgs.at(scCounter)->zeroMsgPayload;
+                scMsg = SCStatesMsgPayload{};
 
                 /* get inertial position */
                 pullVector(&iss, scMsg.r_CN_N);
@@ -327,7 +327,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos)
                         for (thrSet = this->thrMsgDataSC[scCounter].begin(); thrSet!=this->thrMsgDataSC[scCounter].end(); thrSet++) {
                             for (uint32_t idx = 0; idx< (uint32_t)this->numThrPerCluster[scCounter][thrClusterCounter]; idx++) {
                                 THROutputMsgPayload thrMsg;
-                                thrMsg = this->thrScOutMsgs[scCounter].at(thrCounter)->zeroMsgPayload;
+                                thrMsg = THROutputMsgPayload{};
 
                                 /* fill out the thruster state message */
                                 thrMsg.maxThrust = this->thrForceMaxList[thrCounter];
@@ -349,7 +349,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos)
                         for (long unsigned int rwCounter = 0; rwCounter < this->rwScOutMsgs[scCounter].size(); rwCounter++) {
 
                             RWConfigLogMsgPayload rwOutMsg;
-                            rwOutMsg = this->rwScOutMsgs[scCounter].at(rwCounter)->zeroMsgPayload;
+                            rwOutMsg = RWConfigLogMsgPayload{};
 
                             /* create RW message */
                             rwOutMsg.Omega = pullScalar(&iss);

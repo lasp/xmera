@@ -178,10 +178,8 @@ void LambertValidator::readMessages()
 */
 void LambertValidator::writeMessages(uint64_t currentSimNanos)
 {
-    DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer;
-    dvBurnCmdOutMsgBuffer = this->dvBurnCmdOutMsg.zeroMsgPayload;
-    LambertValidatorMsgPayload lambertValidatorMsgBuffer;
-    lambertValidatorMsgBuffer = this->lambertValidatorOutMsg.zeroMsgPayload;
+    DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer{};
+    LambertValidatorMsgPayload lambertValidatorMsgBuffer{};
 
     // DV Rotation vector and rotation magnitude not used by this module. Set to arbitrary unit vector and zero.
     Eigen::Vector3d dvRotVecUnit;

@@ -77,7 +77,7 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
     // Write out the spinning body output messages
     if (this->spinningBodyOutMsg.isLinked()) {
         HingedRigidBodyMsgPayload spinningBodyBuffer;
-        spinningBodyBuffer = this->spinningBodyOutMsg.zeroMsgPayload;
+        spinningBodyBuffer = HingedRigidBodyMsgPayload{};
         spinningBodyBuffer.theta = this->theta;
         spinningBodyBuffer.thetaDot = this->thetaDot;
         this->spinningBodyOutMsg.write(&spinningBodyBuffer, this->moduleID, CurrentClock);
@@ -86,7 +86,7 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
     // Write out the spinning body state config log message
     if (this->spinningBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->spinningBodyConfigLogOutMsg.zeroMsgPayload;
+        configLogMsg = SCStatesMsgPayload{};
 
         // Logging the S frame is the body frame B of that object
         eigenVector3d2CArray(this->r_ScN_N, configLogMsg.r_BN_N);

@@ -78,7 +78,7 @@ void MotorThermal::reset(uint64_t currentSimNanos)
     this->prevTime = currentSimNanos;
 
     // zero the incoming message buffer
-    this->rwStateBuffer = this->rwStateInMsg.zeroMsgPayload;
+    this->rwStateBuffer = RWConfigLogMsgPayload{};
 
     return;
 }

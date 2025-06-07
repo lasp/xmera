@@ -143,7 +143,7 @@ void PlanetEphemeris::updateState(uint64_t currentSimNanos)
     {
         //! - Create new planet output message copy
         SpicePlanetStateMsgPayload newPlanet;
-        newPlanet = this->planetOutMsgs.at(c)->zeroMsgPayload;
+        newPlanet = SpicePlanetStateMsgPayload{};
         //! - specify planet name in output message
         strcpy(newPlanet.PlanetName, it->c_str());
 

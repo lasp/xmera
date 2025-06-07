@@ -109,7 +109,7 @@ void TempMeasurement::updateState(uint64_t currentSimNanos)
     TemperatureMsgPayload tempOutMsgBuffer;  //!< local copy of message buffer
 
     // always zero the output message buffers before assigning values
-    tempOutMsgBuffer = this->tempOutMsg.zeroMsgPayload;
+    tempOutMsgBuffer = TemperatureMsgPayload{};
 
     // read in the input messages
     tempInMsgBuffer = this->tempInMsg();

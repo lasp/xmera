@@ -99,11 +99,8 @@ void LambertSolver::readMessages(){
 */
 void LambertSolver::writeMessages(uint64_t currentSimNanos){
     // Make local copies of messages
-    LambertSolutionMsgPayload lambertSolutionOutMsgBuffer;
-    LambertPerformanceMsgPayload lambertPerformanceOutMsgBuffer;
-    // Always zero the output message buffers before assigning values
-    lambertSolutionOutMsgBuffer = this->lambertSolutionOutMsg.zeroMsgPayload;
-    lambertPerformanceOutMsgBuffer = this->lambertPerformanceOutMsg.zeroMsgPayload;
+    LambertSolutionMsgPayload lambertSolutionOutMsgBuffer{};
+    LambertPerformanceMsgPayload lambertPerformanceOutMsgBuffer{};
 
     if (this->noSolution || (this->numberOfRevolutions > 0 && !this->multiRevSolution)){
         /*  1. if the transfer angle is 180 degrees, the two position vectors do not define a plane, so an infinite

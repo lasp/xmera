@@ -55,9 +55,9 @@ void FlybyODuKF::customreset() {
  @return void
  */
 void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
-    NavTransMsgPayload navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
-    FilterMsgPayload opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
-    FilterResidualsMsgPayload residualsBuffer = this->opNavResidualMsg.zeroMsgPayload;
+    NavTransMsgPayload navTransOutMsgBuffer{};
+    FilterMsgPayload opNavFilterMsgBuffer{};
+    FilterResidualsMsgPayload residualsBuffer{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
     eigenMatrixXd2CArray(this->state.scale(1/this->unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);

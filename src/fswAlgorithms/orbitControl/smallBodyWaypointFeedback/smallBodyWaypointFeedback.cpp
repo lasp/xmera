@@ -153,10 +153,7 @@ void SmallBodyWaypointFeedback::updateState(uint64_t currentSimNanos)
 */
 void SmallBodyWaypointFeedback::writeMessages(uint64_t currentSimNanos){
     /* Create the output message buffer */
-    CmdForceBodyMsgPayload forceOutMsgBuffer;
-
-    /* Zero the output message buffer */
-    forceOutMsgBuffer = this->forceOutMsg.zeroMsgPayload;
+    CmdForceBodyMsgPayload forceOutMsgBuffer{};
 
     /* Assign the force */
     eigenVector3d2CArray(thrust_B, forceOutMsgBuffer.forceRequestBody);

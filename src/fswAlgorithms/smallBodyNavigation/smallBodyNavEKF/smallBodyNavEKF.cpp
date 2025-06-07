@@ -112,7 +112,7 @@ void SmallBodyNavEKF::readMessages(uint64_t currentSimNanos){
     if (this->cmdForceBodyInMsg.isLinked()){
         this->cmdForceBodyInMsgBuffer= this->cmdForceBodyInMsg();
     } else{
-        this->cmdForceBodyInMsgBuffer = this->cmdForceBodyInMsg.zeroMsgPayload;
+        this->cmdForceBodyInMsgBuffer = CmdForceBodyMsgPayload{};
     }
 
 
@@ -402,14 +402,9 @@ void SmallBodyNavEKF::updateState(uint64_t currentSimNanos)
 */
 void SmallBodyNavEKF::writeMessages(uint64_t currentSimNanos){
     /* Create output msg buffers */
-    NavTransMsgPayload navTransOutMsgBuffer;
-    SmallBodyNavMsgPayload smallBodyNavOutMsgBuffer;
-    EphemerisMsgPayload asteroidEphemerisOutMsgBuffer;
-
-    /* Zero the output message buffers before assigning values */
-    navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
-    smallBodyNavOutMsgBuffer = this->smallBodyNavOutMsg.zeroMsgPayload;
-    asteroidEphemerisOutMsgBuffer = this->asteroidEphemerisOutMsg.zeroMsgPayload;
+    NavTransMsgPayload navTransOutMsgBuffer{};
+    SmallBodyNavMsgPayload smallBodyNavOutMsgBuffer{};
+    EphemerisMsgPayload asteroidEphemerisOutMsgBuffer{};
 
     /* Assign values to the nav trans output message */
     navTransOutMsgBuffer.timeTag = navTransInMsgBuffer.timeTag;

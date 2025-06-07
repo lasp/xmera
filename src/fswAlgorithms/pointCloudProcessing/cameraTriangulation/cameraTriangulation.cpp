@@ -169,8 +169,7 @@ void CameraTriangulation::readMessages()
 */
 void CameraTriangulation::writeMessages(uint64_t currentSimNanos)
 {
-    CameraLocalizationMsgPayload cameraLocationOutMsgBuffer;
-    cameraLocationOutMsgBuffer = this->cameraLocationOutMsg.zeroMsgPayload;
+    CameraLocalizationMsgPayload cameraLocationOutMsgBuffer{};
 
     cameraLocationOutMsgBuffer.valid = this->validInputs;
     cameraLocationOutMsgBuffer.cameraID = this->cameraID;

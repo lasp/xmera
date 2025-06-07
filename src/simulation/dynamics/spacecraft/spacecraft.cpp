@@ -87,7 +87,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 {
     // - Populate state output message
     SCStatesMsgPayload stateOut;
-    stateOut = this->scStateOutMsg.zeroMsgPayload;
+    stateOut = SCStatesMsgPayload{};
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     Eigen::MRPd sigmaLocal_BN;
@@ -109,7 +109,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 
     // - Populate mass state output message
     SCMassPropsMsgPayload massStateOut;
-    massStateOut = this->scMassOutMsg.zeroMsgPayload;
+    massStateOut = SCMassPropsMsgPayload{};
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);

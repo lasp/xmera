@@ -57,7 +57,7 @@ void MappingInstrument::updateState(uint64_t currentSimNanos)
     /* Loop through each access message */
     for (long unsigned int c=0; c< this->accessInMsgs.size(); c++) {
         /* Zero the output message buffer */
-        this->dataNodeOutMsgBuffer.at(c) = this->dataNodeOutMsgs.at(c)->zeroMsgPayload;
+        this->dataNodeOutMsgBuffer.at(c) = DataNodeUsageMsgPayload{};
 
         /* Read the access message */
         AccessMsgPayload accessMsg;

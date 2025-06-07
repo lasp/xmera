@@ -57,7 +57,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->r_PB_B.fill(0.0);
     this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
-    this->sunVisibilityFactor = this->sunEclipseInMsg.zeroMsgPayload;
+    this->sunVisibilityFactor = EclipseMsgPayload{};
     this->sunVisibilityFactor.shadowFactor = 1.0;
     this->sunDistanceFactor = 1.0;
     this->dcm_PB.setIdentity(3,3);
@@ -175,8 +175,8 @@ void CoarseSunSensor::reset(uint64_t currentSimNanos)
 void CoarseSunSensor::readInputMessages()
 {
     //! - Zero ephemeris information
-    this->sunData = this->sunInMsg.zeroMsgPayload;
-    this->stateCurrent = this->stateInMsg.zeroMsgPayload;
+    this->sunData = SpicePlanetStateMsgPayload{};
+    this->stateCurrent = SCStatesMsgPayload{};
 
     //! - If we have a valid sun ID, read Sun ephemeris message
     if(this->sunInMsg.isLinked())
@@ -358,9 +358,7 @@ void CoarseSunSensor::applySaturation()
 void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
     if (this->cssDataOutMsg.isLinked()) {
-        CSSRawDataMsgPayload localMessage;
-        //! - Zero the output message
-        localMessage = this->cssDataOutMsg.zeroMsgPayload;
+        CSSRawDataMsgPayload localMessage{};
         //! - Set the outgoing data to the scaled computation
         localMessage.OutputData = this->sensedValue;
         //! - Write the outgoing message to the architecture
@@ -369,8 +367,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 
     // create CSS configuration log message
     if (this->cssConfigLogOutMsg.isLinked()) {
-        CSSConfigLogMsgPayload configMsg;
-        configMsg = this->cssConfigLogOutMsg.zeroMsgPayload;
+        CSSConfigLogMsgPayload configMsg{};
         configMsg.fov = this->fov;
         configMsg.signal = this->sensedValue;
         configMsg.minSignal = this->minOutput;
@@ -436,7 +433,7 @@ void CSSConstellation::reset(uint64_t currentSimNanos)
         it->reset(currentSimNanos);
     }
 
-    this->outputBuffer = this->constellationOutMsg.zeroMsgPayload;
+    this->outputBuffer = CSSArraySensorMsgPayload{};
 
 }
 

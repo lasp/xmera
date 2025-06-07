@@ -201,8 +201,7 @@ void PointCloudTriangulation::readMessages()
 */
 void PointCloudTriangulation::writeMessages(uint64_t currentSimNanos)
 {
-    PointCloudMsgPayload pointCloudOutMsgBuffer;
-    pointCloudOutMsgBuffer = this->pointCloudOutMsg.zeroMsgPayload;
+    PointCloudMsgPayload pointCloudOutMsgBuffer{};
 
     pointCloudOutMsgBuffer.timeTag = this->timeTag2;
     pointCloudOutMsgBuffer.valid = this->valid;

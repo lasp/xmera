@@ -63,7 +63,7 @@ void HingedBodyLinearProfiler::updateState(uint64_t currentSimNanos)
     HingedRigidBodyMsgPayload hingedRigidBodyReferenceOutMsgBuffer;  //!< local copy of message buffer
 
     //!< always zero the output message buffers before assigning values
-    hingedRigidBodyReferenceOutMsgBuffer = this->hingedRigidBodyReferenceOutMsg.zeroMsgPayload;
+    hingedRigidBodyReferenceOutMsgBuffer = HingedRigidBodyMsgPayload{};
 
     if(currentSimNanos < this->startTime) { //!< if deployment has not started
         refTheta = this->startTheta;

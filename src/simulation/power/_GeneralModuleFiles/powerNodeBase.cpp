@@ -27,7 +27,7 @@
 PowerNodeBase::PowerNodeBase()
 {
     this->powerStatus = 1; //! Node defaults to on unless overwritten.
-    this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload;  //! Power node message is zero by default.
+    this->nodePowerMsg = PowerNodeUsageMsgPayload{};  //! Power node message is zero by default.
     return;
 }
 
@@ -103,7 +103,7 @@ void PowerNodeBase::computePowerStatus(double currentTime)
     }
     else
     {
-        this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload;
+        this->nodePowerMsg = PowerNodeUsageMsgPayload{};
     }
 
     return;
@@ -121,7 +121,7 @@ void PowerNodeBase::updateState(uint64_t currentSimNanos)
         this->computePowerStatus(currentSimNanos*NANO2SEC);
     } else {
         /* if the read was not successful then zero the output message */
-        this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload;
+        this->nodePowerMsg = PowerNodeUsageMsgPayload{};
     }
 
     this->writeMessages(currentSimNanos);

@@ -86,10 +86,10 @@ void InertialAttitudeUkf::switchStateCovariance() {
  @return void
  */
 void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
-    NavAttMsgPayload navAttPayload = this->navAttitudeOutputMsg.zeroMsgPayload;
-    FilterMsgPayload filterPayload = this->inertialFilterOutputMsg.zeroMsgPayload;
-    FilterResidualsMsgPayload starTrackerPayload = this->starTrackerResidualMsg.zeroMsgPayload;
-    FilterResidualsMsgPayload gyroPayload = this->gyroResidualMsg.zeroMsgPayload;
+    NavAttMsgPayload navAttPayload{};
+    FilterMsgPayload filterPayload{};
+    FilterResidualsMsgPayload starTrackerPayload{};
+    FilterResidualsMsgPayload gyroPayload{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
     navAttPayload.timeTag = this->previousFilterTimeTag;

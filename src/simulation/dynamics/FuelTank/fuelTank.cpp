@@ -209,7 +209,7 @@ void FuelTank::updateEnergyMomContributions(double integTime,
  @param currentClock The current simulation time (used for time stamping)
  */
 void FuelTank::writeOutputMessages(uint64_t currentClock) {
-    this->fuelTankMassPropMsg = this->fuelTankOutMsg.zeroMsgPayload;
+    this->fuelTankMassPropMsg = FuelTankMsgPayload{};
     this->fuelTankMassPropMsg.fuelMass = this->effProps.mEff;
     this->fuelTankMassPropMsg.fuelMassDot = this->effProps.mEffDot;
     this->fuelTankMassPropMsg.maxFuelMass = this->fuelTankModel->maxFuelMass;

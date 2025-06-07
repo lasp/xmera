@@ -85,7 +85,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime)
 {
     // Write the prescribed translational motion output message if it is linked
     if (this->prescribedTranslationOutMsg.isLinked()) {
-        PrescribedTranslationMsgPayload prescribedTranslationBuffer = this->prescribedTranslationOutMsg.zeroMsgPayload;
+        PrescribedTranslationMsgPayload prescribedTranslationBuffer{};
         eigenVector3d2CArray(this->r_FM_M, prescribedTranslationBuffer.r_FM_M);
         eigenVector3d2CArray(this->rPrime_FM_M, prescribedTranslationBuffer.rPrime_FM_M);
         eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedTranslationBuffer.rPrimePrime_FM_M);
@@ -94,7 +94,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime)
 
     // Write the prescribed rotational motion output message if it is linked
     if (this->prescribedRotationOutMsg.isLinked()) {
-        PrescribedRotationMsgPayload prescribedRotationBuffer = this->prescribedRotationOutMsg.zeroMsgPayload;
+        PrescribedRotationMsgPayload prescribedRotationBuffer{};
         eigenVector3d2CArray(this->omega_FM_F, prescribedRotationBuffer.omega_FM_F);
         eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedRotationBuffer.omegaPrime_FM_F);
         Eigen::Vector3d sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
@@ -104,7 +104,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime)
 
     // Write the effector config log message if it is linked
     if (this->prescribedMotionConfigLogOutMsg.isLinked()) {
-        SCStatesMsgPayload configLogMsg = this->prescribedMotionConfigLogOutMsg.zeroMsgPayload;
+        SCStatesMsgPayload configLogMsg{};
 
         // Note that the configLogMsg B frame represents the prescribed motion effector body frame (F frame)
         eigenVector3d2CArray(this->r_FcN_N, configLogMsg.r_BN_N);

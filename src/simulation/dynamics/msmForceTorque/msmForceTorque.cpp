@@ -224,9 +224,9 @@ void MsmForceTorque::updateState(uint64_t currentSimNanos)
         i1 = i0 + this->radiiList.at(c).size();
 
         // zero output message buffer
-        forceMsgBuffer = this->eForceOutMsgs.at(c)->zeroMsgPayload;
-        torqueMsgBuffer = this->eTorqueOutMsgs.at(c)->zeroMsgPayload;
-        chargeMsmMsgBuffer = this->chargeMsmOutMsgs.at(c)->zeroMsgPayload;
+        forceMsgBuffer = CmdForceInertialMsgPayload{};
+        torqueMsgBuffer = CmdTorqueBodyMsgPayload{};
+        chargeMsmMsgBuffer = ChargeMsmMsgPayload{};
 
         // loop over current body spheres
         for (long unsigned int j=i0; j<i1; j++) {

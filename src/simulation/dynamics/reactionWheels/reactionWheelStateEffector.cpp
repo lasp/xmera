@@ -401,7 +401,7 @@ void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos)
     }
 
     /* zero the RW wheel output message buffer */
-    this->rwSpeedMsgBuffer = this->rwSpeedOutMsg.zeroMsgPayload;
+    this->rwSpeedMsgBuffer = RWSpeedMsgPayload{};
 }
 
 /*! This method is here to write the output message structure into the specified
@@ -424,7 +424,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         }
         it->Omega = this->OmegasState->getState()(itp - ReactionWheelData.begin(), 0);
 
-        tmpRW = this->rwOutMsgs[c]->zeroMsgPayload;
+        tmpRW = RWConfigLogMsgPayload{};
 		tmpRW.theta = it->theta;
 		tmpRW.u_current = it->u_current;
         tmpRW.frictionTorque = it->frictionTorque;
@@ -484,7 +484,7 @@ void ReactionWheelStateEffector::ReadInputs()
         this->incomingCmdBuffer = this->rwMotorCmdInMsg();
         this->prevCommandTime = this->rwMotorCmdInMsg.timeWritten();
     } else {
-        this->incomingCmdBuffer = this->rwMotorCmdInMsg.zeroMsgPayload;
+        this->incomingCmdBuffer = ArrayMotorTorqueMsgPayload{};
     }
 
 	//! - Set the NewRWCmds vector.  Using the data() method for raw speed

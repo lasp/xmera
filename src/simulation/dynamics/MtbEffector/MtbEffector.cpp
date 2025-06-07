@@ -164,7 +164,7 @@ void MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
      * Initialize output message buffer.
      */
     MTBMsgPayload mtbOutMsgBuffer;
-    mtbOutMsgBuffer = this->mtbOutMsg.zeroMsgPayload;
+    mtbOutMsgBuffer = MTBMsgPayload{};
 
     /*
      * Write output message

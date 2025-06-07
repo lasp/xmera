@@ -98,7 +98,7 @@ void GravBodyData::loadEphemeris()
     }
     else {
         // use default zero planet state information
-        this->localPlanet = this->planetBodyInMsg.zeroMsgPayload;
+        this->localPlanet = SpicePlanetStateMsgPayload{};
         this->timeWritten = 0;
     }
 }

@@ -47,9 +47,9 @@ ExtForceTorque::~ExtForceTorque()
 void ExtForceTorque::reset(uint64_t currentSimNanos)
 {
     /* zero the input messages */
-    this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg.zeroMsgPayload;
-    this->incomingCmdForceBodyBuffer = this->cmdForceBodyInMsg.zeroMsgPayload;
-    this->incomingCmdForceInertialBuffer = this->cmdForceInertialInMsg.zeroMsgPayload;
+    this->incomingCmdTorqueBuffer = CmdTorqueBodyMsgPayload{};
+    this->incomingCmdForceBodyBuffer = CmdForceBodyMsgPayload{};
+    this->incomingCmdForceInertialBuffer = CmdForceInertialMsgPayload{};
 }
 
 

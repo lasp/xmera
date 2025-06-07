@@ -31,8 +31,8 @@ ImuSensor::ImuSensor() {
     this->numStates = 3;
     this->setBodyToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
-    this->StatePrevious = this->scStateInMsg.zeroMsgPayload;
-    this->StateCurrent = this->scStateInMsg.zeroMsgPayload;
+    this->StatePrevious = SCStatesMsgPayload{};
+    this->StateCurrent = SCStatesMsgPayload{};
 
     this->errorModelGyro = GaussMarkov(this->numStates, this->RNGSeed);
     this->errorModelAccel = GaussMarkov(this->numStates, this->RNGSeed);
@@ -47,8 +47,8 @@ ImuSensor::ImuSensor() {
     this->NominalReady = false;
     this->senRotBias.fill(0.0);
     this->senTransBias.fill(0.0);
-    this->sensedValues = this->sensorOutMsg.zeroMsgPayload;
-    this->trueValues = this->sensorOutMsg.zeroMsgPayload;
+    this->sensedValues = IMUSensorMsgPayload{};
+    this->trueValues = IMUSensorMsgPayload{};
     this->senRotMax = 1e6;
     this->senTransMax = 1e6;
     this->PMatrixGyro.fill(0.0);
@@ -139,7 +139,7 @@ void ImuSensor::reset(uint64_t currentSimNanos) {
     read input messages
  */
 void ImuSensor::readInputMessages() {
-    this->StateCurrent = this->scStateInMsg.zeroMsgPayload;
+    this->StateCurrent = SCStatesMsgPayload{};
     if (this->scStateInMsg.isLinked()) {
         this->StateCurrent = this->scStateInMsg();
     }

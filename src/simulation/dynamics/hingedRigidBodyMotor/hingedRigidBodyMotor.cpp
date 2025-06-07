@@ -71,7 +71,7 @@ void HingedRigidBodyMotor::updateState(uint64_t currentSimNanos)
     ArrayMotorTorqueMsgPayload motorTorqueOutMsgBuffer;  //!< local copy of message buffer for motor torque
 
     //! zero the output message buffers before assigning values
-    motorTorqueOutMsgBuffer = this->motorTorqueOutMsg.zeroMsgPayload;
+    motorTorqueOutMsgBuffer = ArrayMotorTorqueMsgPayload{};
 
     //! read in the input messages
     hingedBodyStateSensedInMsgBuffer = this->hingedBodyStateSensedInMsg();

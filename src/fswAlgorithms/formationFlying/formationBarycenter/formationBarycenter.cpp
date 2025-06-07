@@ -156,7 +156,7 @@ void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
 void FormationBarycenter::updateState(uint64_t currentSimNanos)
 {
     this->ReadInputMessages();
-    this->transOutBuffer = this->transOutMsg.zeroMsgPayload; // zero the output message buffer
+    this->transOutBuffer = NavTransMsgPayload{}; // zero the output message buffer
     this->computeBaricenter();
     this->WriteOutputMessage(currentSimNanos);
 }

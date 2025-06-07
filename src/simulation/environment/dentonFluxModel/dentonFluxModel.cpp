@@ -138,7 +138,7 @@ void DentonFluxModel::updateState(uint64_t currentSimNanos)
     SpicePlanetStateMsgPayload earthSpiceInMsgBuffer;  //!< local copy of the earth state input message payload
 
     // Always zero the output message buffers before assigning values
-    fluxOutMsgBuffer = this->fluxOutMsg.zeroMsgPayload;
+    fluxOutMsgBuffer = PlasmaFluxMsgPayload{};
 
     // Read in the input messages
     scStateInMsgBuffer = this->scStateInMsg();

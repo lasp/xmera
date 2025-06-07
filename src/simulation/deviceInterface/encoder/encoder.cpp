@@ -64,7 +64,7 @@ void Encoder::reset(uint64_t currentSimNanos)
     this->prevTime = currentSimNanos;
 
     // zero the RW wheel output message buffer //
-    this->rwSpeedConverted = this->rwSpeedOutMsg.zeroMsgPayload;
+    this->rwSpeedConverted = RWSpeedMsgPayload{};
 
     // Loop through the RW to set some internal parameters to default
     for (int i = 0; i < MAX_EFF_CNT; i++)

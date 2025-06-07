@@ -173,7 +173,7 @@ void FlybyPoint::writeMessages(uint64_t currentSimNanos,
                    Eigen::Vector3d &omega_RN_N,
                    Eigen::Vector3d &omegaDot_RN_N){
 
-    AttRefMsgPayload attMsgBuffer = this->attRefOutMsg.zeroMsgPayload;
+    AttRefMsgPayload attMsgBuffer{};
 
     eigenVector3d2CArray(sigma_RN, attMsgBuffer.sigma_RN);
     eigenVector3d2CArray(omega_RN_N, attMsgBuffer.omega_RN_N);

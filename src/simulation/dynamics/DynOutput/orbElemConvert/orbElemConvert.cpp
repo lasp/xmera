@@ -84,14 +84,14 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
     }
     if (this->scStateOutMsg.isLinked() && this->inputsGood) {
         SCStatesMsgPayload scMsg;
-        scMsg = this->scStateOutMsg.zeroMsgPayload;
+        scMsg = SCStatesMsgPayload{};
         v3Copy(this->r_N, scMsg.r_BN_N);
         v3Copy(this->v_N, scMsg.v_BN_N);
         this->scStateOutMsg.write(&scMsg, this->moduleID, CurrentClock);
     }
     if (this->spiceStateOutMsg.isLinked() && this->inputsGood) {
         SpicePlanetStateMsgPayload spiceMsg;
-        spiceMsg = this->spiceStateOutMsg.zeroMsgPayload;
+        spiceMsg = SpicePlanetStateMsgPayload{};
         v3Copy(this->r_N, spiceMsg.PositionVector);
         v3Copy(this->v_N, spiceMsg.VelocityVector);
         this->spiceStateOutMsg.write(&spiceMsg, this->moduleID, CurrentClock);

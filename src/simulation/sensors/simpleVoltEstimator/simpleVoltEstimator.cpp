@@ -25,8 +25,8 @@
     values and initializes the various parts of the model */
 SimpleVoltEstimator::SimpleVoltEstimator()
 {
-    this->estVoltState = this->voltOutMsg.zeroMsgPayload;
-    this->trueVoltState = this->voltOutMsg.zeroMsgPayload;
+    this->estVoltState = VoltMsgPayload{};
+    this->trueVoltState = VoltMsgPayload{};
     this->PMatrix.resize(1,1);
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(1);

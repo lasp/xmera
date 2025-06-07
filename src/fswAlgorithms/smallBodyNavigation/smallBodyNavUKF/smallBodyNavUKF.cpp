@@ -259,10 +259,7 @@ void SmallBodyNavUKF::kalmanUpdate(){
 */
 void SmallBodyNavUKF::writeMessages(uint64_t currentSimNanos){
     /* Create output msg buffers */
-    SmallBodyNavUKFMsgPayload smallBodyNavUKFOutMsgBuffer;
-
-    /* Zero the output message buffers before assigning values */
-    smallBodyNavUKFOutMsgBuffer = this->smallBodyNavUKFOutMsg.zeroMsgPayload;
+    SmallBodyNavUKFMsgPayload smallBodyNavUKFOutMsgBuffer{};
 
     /* Assign values to the small body navigation output message */
     eigenMatrixXd2CArray(this->x_hat_k1, smallBodyNavUKFOutMsgBuffer.state);

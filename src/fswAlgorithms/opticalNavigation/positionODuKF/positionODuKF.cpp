@@ -167,9 +167,9 @@ void PositionODuKF::timeUpdate(double updateTime)
  @return void
  */
 void PositionODuKF::writeOutputMessages(uint64_t currentSimNanos) {
-    this->opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
-    this->opNavResidualMsgBuffer = this->opNavResidualMsg.zeroMsgPayload;
-    this->navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
+    this->opNavFilterMsgBuffer = FilterMsgPayload{};
+    this->opNavResidualMsgBuffer = FilterResidualsMsgPayload{};
+    this->navTransOutMsgBuffer = NavTransMsgPayload{};
 
     /*! - Write the position estimate into the copy of the navigation message structure*/
     eigenMatrixXd2CArray(1e3*this->state.head(3), this->navTransOutMsgBuffer.r_BN_N);

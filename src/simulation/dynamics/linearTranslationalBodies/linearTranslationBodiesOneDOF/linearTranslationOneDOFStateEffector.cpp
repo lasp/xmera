@@ -122,7 +122,7 @@ void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
 {
     if (this->translatingBodyOutMsg.isLinked()) {
         LinearTranslationRigidBodyMsgPayload translatingBodyBuffer;
-        translatingBodyBuffer = this->translatingBodyOutMsg.zeroMsgPayload;
+        translatingBodyBuffer = LinearTranslationRigidBodyMsgPayload{};
         translatingBodyBuffer.rho = this->rho;
         translatingBodyBuffer.rhoDot = this->rhoDot;
         this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, currentSimNanos);
@@ -130,7 +130,7 @@ void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
 
     if (this->translatingBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
-        configLogMsg = this->translatingBodyConfigLogOutMsg.zeroMsgPayload;
+        configLogMsg = SCStatesMsgPayload{};
 
         // Logging the P frame is the body frame B of that object
         eigenVector3d2CArray(this->r_FcN_N, configLogMsg.r_BN_N);

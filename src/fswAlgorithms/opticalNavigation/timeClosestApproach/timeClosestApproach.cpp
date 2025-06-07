@@ -50,7 +50,7 @@ void TimeClosestApproach::readMessages()
 void TimeClosestApproach::writeMessages(const double tCA, const double sigmaTca, const uint64_t currentSimNanos)
 {
     /*! create and zero the output message */
-    auto tcaMsgBuffer = this->tcaOutMsg.zeroMsgPayload;
+    TimeClosestApproachMsgPayload tcaMsgBuffer{};
     tcaMsgBuffer.timeClosestApproach = tCA;
     tcaMsgBuffer.standardDeviation = sigmaTca;
 

@@ -50,11 +50,8 @@ void OpticalFlow::reset(uint64_t currentSimNanos)
  */
 void OpticalFlow::updateState(uint64_t currentSimNanos)
 {
-    CameraImageMsgPayload imageBuffer;
-    PairedKeyPointsMsgPayload featurePayload;
-
-    imageBuffer = this->imageInMsg.zeroMsgPayload;
-    featurePayload = this->keyPointsMsg.zeroMsgPayload;
+    CameraImageMsgPayload imageBuffer{};
+    PairedKeyPointsMsgPayload featurePayload{};
 
     /*! - Read in the bitmap*/
     imageBuffer = this->imageInMsg();
