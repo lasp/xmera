@@ -41,7 +41,7 @@ class RateDamp : public SysModel {
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;  //!< Command torque output message
 
    private:
-    RateDampAlgorithm algorithm;  //!< Algorithm for rateDamp control logic (BSK-agnostic)
+    RateDampAlgorithm algorithm{};  //!< Algorithm for rateDamp control logic (BSK-agnostic)
 };
 
 #endif
