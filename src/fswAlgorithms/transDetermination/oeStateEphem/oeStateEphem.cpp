@@ -19,6 +19,8 @@
 
 #include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphem.h"
 
+#include "architecture/utilities/avsEigenSupport.h"
+
 /*!
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -60,41 +62,42 @@ double OEStateEphem::scaleEphemerisTime(const ChebyshevFitArc & arc) const {
     return currentScaledValue;
 }
 
-ClassicElements OEStateEphem::evaluateCoefficients(const double currentScaledValue, const ChebyshevFitArc &arc) {
+ClassicalElements OEStateEphem::evaluateCoefficients(const double currentScaledValue, const ChebyshevFitArc &arc) {
 /* - determine orbit elements from chebychev polynominals */
     double anomalyAngle{};                    /* [r] general anomaly angle variable */
-    ClassicElements elements{};
-    elements.rPeriap = calculateChebyValue(arc.radiusPeriapsisCoefficients.data(), arc.numberChebCoefficients,
+    ClassicalElements elements{};
+    elements.radiusPeriapsis = calculateChebyValue(arc.radiusPeriapsisCoefficients.data(), arc.numberChebCoefficients,
                                   currentScaledValue);
-    elements.i = calculateChebyValue(arc.inclinationCoefficients.data(), arc.numberChebCoefficients,
+    elements.inclination = calculateChebyValue(arc.inclinationCoefficients.data(), arc.numberChebCoefficients,
                                   currentScaledValue);
-    elements.e = calculateChebyValue(arc.eccentricityCoefficients.data(), arc.numberChebCoefficients,
+    elements.eccentricity = calculateChebyValue(arc.eccentricityCoefficients.data(), arc.numberChebCoefficients,
                                   currentScaledValue);
-    elements.omega = calculateChebyValue(arc.argPeriapsisCoefficients.data(), arc.numberChebCoefficients,
+    elements.argPeriapsis = calculateChebyValue(arc.argPeriapsisCoefficients.data(), arc.numberChebCoefficients,
                                   currentScaledValue);
-    elements.Omega = calculateChebyValue(arc.raanCoefficients.data(), arc.numberChebCoefficients,
+    elements.rightAscensionAscendingNode = calculateChebyValue(arc.raanCoefficients.data(), arc.numberChebCoefficients,
                                   currentScaledValue);
     anomalyAngle = calculateChebyValue(arc.trueAnomalyCoefficients.data(), arc.numberChebCoefficients,
                                    currentScaledValue);
 
     /*! - determine the true anomaly angle */
     if (arc.anomalyFlag == 0) {
-        elements.f = anomalyAngle;
-    } else if (elements.e < 1.0) {
+        elements.trueAnomaly = anomalyAngle;
+    } else if (elements.eccentricity < 1.0) {
         /* input is mean elliptic anomaly angle */
-        elements.f = E2f(M2E(anomalyAngle, elements.e), elements.e);
+        elements.trueAnomaly = OrbitalMotion::meanToTrueAnomaly(anomalyAngle, elements.eccentricity);
     } else {
         /* input is mean hyperbolic anomaly angle */
-        elements.f = H2f(N2H(anomalyAngle, elements.e), elements.e);
+        elements.trueAnomaly = OrbitalMotion::hyperbolicToTrueAnomaly(
+            OrbitalMotion::meanToHyperbolicAnomaly(anomalyAngle, elements.eccentricity), elements.eccentricity);
     }
 
     /*! - determine semi-major axis */
-    if (fabs(elements.e - 1.0) > 1e-12) {
+    if (fabs(elements.eccentricity - 1.0) > 1e-12) {
         /* elliptic or hyperbolic case */
-        elements.a = elements.rPeriap/(1.0-elements.e);
+        elements.semiMajorAxis = elements.radiusPeriapsis/(1.0-elements.eccentricity);
     } else {
         /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
-        elements.a = 0.0;
+        elements.semiMajorAxis = 0.0;
     }
     return elements;
 }
@@ -115,8 +118,9 @@ void OEStateEphem::updateState(const uint64_t callTime)
     auto orbitalElements = this->evaluateCoefficients(currentScaledValue, currentArc);
 
     /*! - Determine position and velocity vectors */
-    elem2rv(this->gravitationalParameter, &orbitalElements, tmpOutputState.r_BdyZero_N, tmpOutputState.v_BdyZero_N);
-
+    auto carteisianState = OrbitalMotion::elementsToCartesianState(this->gravitationalParameter, orbitalElements);
+    eigenVector3d2CArray(carteisianState.position, tmpOutputState.r_BdyZero_N);
+    eigenVector3d2CArray(carteisianState.velocity, tmpOutputState.v_BdyZero_N);
     /*! - Write the output message */
     tmpOutputState.timeTag = callTime*NANO2SEC;
     this->stateFitOutMsg.write(&tmpOutputState, moduleID, callTime);

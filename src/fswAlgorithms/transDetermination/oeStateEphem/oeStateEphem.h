@@ -26,7 +26,7 @@
 #include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/orbitalMotion.h"
+#include "architecture/utilities/orbitalMotion.hpp"
 #include <cmath>
 #include <assert.h>
 #include <array>
@@ -96,7 +96,7 @@ public:
 private:
     ChebyshevFitArc findCurrentArc(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload &localTime);
     double scaleEphemerisTime(const ChebyshevFitArc & arc) const;
-    static ClassicElements evaluateCoefficients(const double currentScaledValue, const ChebyshevFitArc &arc);
+    static ClassicalElements evaluateCoefficients(const double currentScaledValue, const ChebyshevFitArc &arc);
     double currentEphTime{};
     double gravitationalParameter{};                             //!< [m3/s^2] Gravitational parameter for center of orbital elements
     std::array<ChebyshevFitArc, MAX_OE_RECORDS> fitCoefficients{};       //!< [-] Array of Chebyshev records for ephemeris
