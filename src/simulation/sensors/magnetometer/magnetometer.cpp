@@ -18,47 +18,40 @@
  */
 
 #include "simulation/sensors/magnetometer/magnetometer.h"
+#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <math.h>
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/avsEigenMRP.h"
 
 /*! This is the constructor, setting variables to default values. */
-Magnetometer::Magnetometer()
-{
+Magnetometer::Magnetometer() {
     this->numStates = 3;
-    this->senBias.fill(0.0); // Tesla
-    this->senNoiseStd.fill(-1.0); // Tesla
+    this->senBias.fill(0.0);       // Tesla
+    this->senNoiseStd.fill(-1.0);  // Tesla
     this->walkBounds.fill(0.0);
     this->noiseModel = GaussMarkov(this->numStates);
     this->scaleFactor = 1.0;
-    this->maxOutput = 1e200; // Tesla
-    this->minOutput = -1e200; // Tesla
+    this->maxOutput = 1e200;   // Tesla
+    this->minOutput = -1e200;  // Tesla
     this->saturateUtility = Saturate(this->numStates);
     this->dcm_SB.setIdentity(3, 3);
     return;
 }
 
 /*! This is the destructor, nothing to report here. */
-Magnetometer::~Magnetometer()
-{
-    return;
-}
+Magnetometer::~Magnetometer() { return; }
 
 //! - This method composes the transformation matrix from Body to Sensor frame.
-Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, double roll)
-{
+Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, double roll) {
     this->dcm_SB = eigenM1(roll) * eigenM2(pitch) * eigenM3(yaw);
 
     return this->dcm_SB;
 }
 
-
 /*! This method is used to reset the module.
  @param currentSimNanos The current simulation time from the architecture
  @return void */
-void Magnetometer::reset(uint64_t currentSimNanos)
-{
+void Magnetometer::reset(uint64_t currentSimNanos) {
     if (!this->magInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Magnetic field interface message name (magInMsg) is empty.");
     }
@@ -84,8 +77,7 @@ void Magnetometer::reset(uint64_t currentSimNanos)
 }
 
 /*! This method reads necessary input messages. */
-void Magnetometer::readInputMessages()
-{
+void Magnetometer::readInputMessages() {
     //! - Read magnetic field model ephemeris message
     this->magData = this->magInMsg();
 
@@ -94,8 +86,7 @@ void Magnetometer::readInputMessages()
 }
 
 /*! This method computes the magnetic field vector information in the sensor frame.*/
-void Magnetometer::computeMagData()
-{
+void Magnetometer::computeMagData() {
     Eigen::Vector3d tam_N;
     Eigen::Matrix3d dcm_BN;
     Eigen::MRPd sigma_BN;
@@ -108,15 +99,11 @@ void Magnetometer::computeMagData()
 }
 
 /*! This method computes the true sensed values for the sensor. */
-void Magnetometer::computeTrueOutput()
-{
-    this->tamTrue_S = this->tam_S;
-}
+void Magnetometer::computeTrueOutput() { this->tamTrue_S = this->tam_S; }
 
 /*! This method takes the true values (tamTrue_S) and converts
  it over to an errored value.  It applies Gaussian noise, constant bias and scale factor to the truth. */
-void Magnetometer::applySensorErrors()
-{
+void Magnetometer::applySensorErrors() {
     //! - If any of the standard deviation vector elements is not positive, do not use noise error from RNG.
     bool anyNoiseComponentUninitialized = false;
     for (unsigned i = 0; i < this->senNoiseStd.size(); i++) {
@@ -140,14 +127,10 @@ void Magnetometer::applySensorErrors()
 }
 
 /*! This method applies saturation using the given bounds. */
-void Magnetometer::applySaturation()
-{
-    this->tamSensed_S = this->saturateUtility.saturate(this->tamSensed_S);
-}
+void Magnetometer::applySaturation() { this->tamSensed_S = this->saturateUtility.saturate(this->tamSensed_S); }
 
 /*! This method writes the output messages. */
-void Magnetometer::writeOutputMessages(uint64_t Clock)
-{
+void Magnetometer::writeOutputMessages(uint64_t Clock) {
     TAMSensorMsgPayload localMessage;
     //! - Zero the output message
     localMessage = TAMSensorMsgPayload{};
@@ -160,8 +143,7 @@ void Magnetometer::writeOutputMessages(uint64_t Clock)
  calls to compute the current magnetic field information and write the output message for
  the rest of the model.
  @param currentSimNanos The current simulation time from the architecture */
-void Magnetometer::updateState(uint64_t currentSimNanos)
-{
+void Magnetometer::updateState(uint64_t currentSimNanos) {
     //! - Read the inputs
     this->readInputMessages();
     //! - Get magnetic field vector

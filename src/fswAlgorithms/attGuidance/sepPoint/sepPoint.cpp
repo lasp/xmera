@@ -21,13 +21,12 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-const double epsilon = 1e-12;                           // module tolerance for zero
+const double epsilon = 1e-12;  // module tolerance for zero
 
 /*! This method is used to reset the module.
  @return void
  */
-void SepPoint::reset(uint64_t currentSimNanos)
-{
+void SepPoint::reset(uint64_t currentSimNanos) {
     if (!this->attNavInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
     }
@@ -40,15 +39,13 @@ void SepPoint::reset(uint64_t currentSimNanos)
     this->callCount = 0;
 }
 
-
 /*! This method is the main carrier for the boresight calculation routine.  If it detects
  that it needs to re-init (direction change maybe) it will re-init itself.
  Then it will compute the angles away that the boresight is from the celestial target.
  @return void
  @param currentSimNanos The current simulation time for system
  */
-void SepPoint::updateState(uint64_t currentSimNanos)
-{
+void SepPoint::updateState(uint64_t currentSimNanos) {
     /*! create and zero the output message */
     AttRefMsgPayload attRefOut{};
 
@@ -83,8 +80,8 @@ void SepPoint::updateState(uint64_t currentSimNanos)
 
     /*! compute reference frame RN */
     double RN[3][3];
-    computeReferenceFrame(hRefHat_B, hReqHat_N, rHat_SB_B, a1Hat_B, a2Hat_B, this->beta, BN,
-                          this->alignmentPriority, epsilon, RN);
+    computeReferenceFrame(
+        hRefHat_B, hReqHat_N, rHat_SB_B, a1Hat_B, a2Hat_B, this->beta, BN, this->alignmentPriority, epsilon, RN);
 
     /*! compute reference MRP */
     double sigma_RN[3];

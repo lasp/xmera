@@ -35,8 +35,7 @@
 #include <string.h>
 
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
-Camera::Camera()
-{
+Camera::Camera() {
     v3SetZero(this->cameraPos_B);
     v3SetZero(this->sigma_CB);
 }
@@ -49,9 +48,7 @@ Camera::~Camera() = default;
  @return void
  @param currentSimNanos current time (ns)
  */
-void Camera::reset(uint64_t currentSimNanos)
-{
-}
+void Camera::reset(uint64_t currentSimNanos) {}
 
 /*!
  * Adjusts the HSV values of each pixel.
@@ -60,7 +57,7 @@ void Camera::reset(uint64_t currentSimNanos)
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
+void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat& mDst) {
     cv::Mat localHsv;
     cvtColor(mSrc, localHsv, cv::COLOR_BGR2HSV);
 
@@ -71,20 +68,26 @@ void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
 
             // convert radians to degrees and multiply by 2
             // user assumes range hue range is 0-2pi and not 0-180
-            int input_degrees = (int) (this->hsv[0] * R2D);
+            int input_degrees = (int)(this->hsv[0] * R2D);
             int h_360 = (localHsv.at<cv::Vec3b>(j, i)[0] * 2) + input_degrees;
-            h_360 = (int) (h_360 -  360 * std::floor(h_360 * (1. / 360.)));
-            h_360 = h_360/2;
-            if(h_360 == 180){ h_360 = 0; }
-            localHsv.at<cv::Vec3b>(j, i)[0] = (unsigned char) h_360;
+            h_360 = (int)(h_360 - 360 * std::floor(h_360 * (1. / 360.)));
+            h_360 = h_360 / 2;
+            if (h_360 == 180) {
+                h_360 = 0;
+            }
+            localHsv.at<cv::Vec3b>(j, i)[0] = (unsigned char)h_360;
 
             int values[3];
-            for(int k = 1; k < 3; k++){
-                values[k] = (int) (localHsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k] / 100. + 1.));
+            for (int k = 1; k < 3; k++) {
+                values[k] = (int)(localHsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k] / 100. + 1.));
                 // saturate S and V values to [0,255]
-                if(values[k] < 0){ values[k] = 0; }
-                if(values[k] > 255){ values[k] = 255; }
-                localHsv.at<cv::Vec3b>(j, i)[k] = (unsigned char) values[k];
+                if (values[k] < 0) {
+                    values[k] = 0;
+                }
+                if (values[k] > 255) {
+                    values[k] = 255;
+                }
+                localHsv.at<cv::Vec3b>(j, i)[k] = (unsigned char)values[k];
             }
         }
     }
@@ -98,7 +101,7 @@ void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
+void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat& mDst) {
     cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mBGR, mSrc.type());
 
@@ -108,12 +111,16 @@ void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
     for (int j = 0; j < mSrc.rows; j++) {
         for (int i = 0; i < mSrc.cols; i++) {
             int values[3];
-            for(int k = 0; k < 3; k++){
-                values[k] = (int) (mBGR.at<cv::Vec3b>(j,i)[k] * (this->bgrPercent[k]/100. + 1.));
+            for (int k = 0; k < 3; k++) {
+                values[k] = (int)(mBGR.at<cv::Vec3b>(j, i)[k] * (this->bgrPercent[k] / 100. + 1.));
                 // deal with overflow
-                if(values[k] < 0){ values[k] = 0; }
-                if(values[k] > 255){ values[k] = 255; }
-                mBGR.at<cv::Vec3b>(j,i)[k] = (unsigned char) values[k];
+                if (values[k] < 0) {
+                    values[k] = 0;
+                }
+                if (values[k] > 255) {
+                    values[k] = 255;
+                }
+                mBGR.at<cv::Vec3b>(j, i)[k] = (unsigned char)values[k];
             }
         }
     }
@@ -129,10 +136,9 @@ void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
  * @param StdDev standard deviation of pixel value
  * @return void
  */
-void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, double StdDev)
-{
+void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat& mDst, double Mean, double StdDev) {
     cv::Mat mSrc_16SC;
-    //CV_16SC3 means signed 16 bit shorts three channels
+    // CV_16SC3 means signed 16 bit shorts three channels
     cv::Mat mGaussian_noise = cv::Mat(mSrc.size(), CV_16SC3);
     /*!  Generates random noise in a normal distribution.*/
     randn(mGaussian_noise, cv::Scalar::all(Mean), cv::Scalar::all(StdDev));
@@ -140,7 +146,7 @@ void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, d
     mSrc.convertTo(mSrc_16SC, CV_16SC3);
     /*!  Adds the noise layer to the image layer with a weighted add to prevent overflowing the pixels.*/
     addWeighted(mSrc_16SC, 1.0, mGaussian_noise, 1.0, 0.0, mSrc_16SC);
-    mSrc_16SC.convertTo(mDst,mSrc.type());
+    mSrc_16SC.convertTo(mDst, mSrc.type());
 }
 
 /*!
@@ -151,7 +157,7 @@ void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, d
  * @param pb probability of hot pixels
  * @return void
  */
-void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float pb){
+void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat& mDst, float pa, float pb) {
     /*! These lines will make the hot and dead pixels different every time.*/
     // uint64 initValue = time(0);
     // RNG rng(initValue);
@@ -160,8 +166,8 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
     cv::RNG rng;
 
     /*!  Determines the amount of hot/dead pixels based on the input probabilities.*/
-    int amount1 = (int) (mSrc.rows * mSrc.cols * pa);
-    int amount2 = (int) (mSrc.rows * mSrc.cols * pb);
+    int amount1 = (int)(mSrc.rows * mSrc.cols * pa);
+    int amount2 = (int)(mSrc.rows * mSrc.cols * pb);
 
     cv::Mat mSaltPepper = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mSaltPepper, mSrc.type());
@@ -177,14 +183,12 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
     white.val[2] = 255;
 
     /*!  Chooses random pixels to be stuck or dead in the amount calculated previously.*/
-    for(int counter = 0; counter < amount1; counter++){
-        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows),
-                                  rng.uniform(0, mSaltPepper.cols)) = black;
+    for (int counter = 0; counter < amount1; counter++) {
+        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows), rng.uniform(0, mSaltPepper.cols)) = black;
     }
 
-    for(int counter = 0; counter < amount2; counter++){
-        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows),
-                                  rng.uniform(0, mSaltPepper.cols)) = white;
+    for (int counter = 0; counter < amount2; counter++) {
+        mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows), rng.uniform(0, mSaltPepper.cols)) = white;
     }
 
     mSaltPepper.convertTo(mDst, mSrc.type());
@@ -199,12 +203,12 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
  * @param maxSize max length of cosmic ray
  * @return void
  */
-void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
+void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat& mDst, float probThreshhold, double randOffset, int maxSize) {
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = this->localcurrentSimNanos;
-    cv::RNG rng((uint64) (initValue + time(0) + randOffset));
+    cv::RNG rng((uint64)(initValue + time(0) + randOffset));
 
-    float prob = (float) (rng.uniform(0.0, 1.0));
+    float prob = (float)(rng.uniform(0.0, 1.0));
     if (prob > probThreshhold) {
         cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
         mSrc.convertTo(mCosmic, mSrc.type());
@@ -213,8 +217,8 @@ void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshho
          * in either direction.*/
         int x = rng.uniform(0, mCosmic.rows);
         int y = rng.uniform(0, mCosmic.cols);
-        int deltax = rng.uniform(-maxSize/2, maxSize/2);
-        int deltay = rng.uniform(-maxSize/2, maxSize/2);
+        int deltax = rng.uniform(-maxSize / 2, maxSize / 2);
+        int deltay = rng.uniform(-maxSize / 2, maxSize / 2);
 
         cv::Point p1 = cv::Point(x, y);
         cv::Point p2 = cv::Point(x + deltax, y + deltay);
@@ -232,17 +236,13 @@ void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshho
  * @param num number of cosmic rays to be added
  * @return void
  */
-void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
+void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat& mDst, double num) {
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
-    for(int i = 0; i < std::round(num); i++){
+    for (int i = 0; i < std::round(num); i++) {
         /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about
          * 5 rays per image. Currently length is limited to 50 pixels*/
-        this->addCosmicRay(mCosmic,
-                           mCosmic,
-                           (float) (1/(std::pow(num,2))),
-                           i+1,
-                           50);
+        this->addCosmicRay(mCosmic, mCosmic, (float)(1 / (std::pow(num, 2))), i + 1, 50);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }
@@ -255,25 +255,23 @@ void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
-
+void Camera::applyFilters(cv::Mat& mSource, cv::Mat& mDst) {
     cv::Mat mFilters(mSource.size(), mSource.type());
     mSource.convertTo(mFilters, mSource.type());
 
-    if (this->gaussian > 0){
+    if (this->gaussian > 0) {
         float scale = 2;
         this->addGaussianNoise(mFilters, mFilters, 0, this->gaussian * scale);
-        cv::threshold(mFilters, mFilters, this->gaussian*6, 255, cv::THRESH_TOZERO);
+        cv::threshold(mFilters, mFilters, this->gaussian * 6, 255, cv::THRESH_TOZERO);
     }
-    if(this->blurParam > 0){
-        int blurSize = (int) std::round(this->blurParam);
-        if (blurSize%2 == 0){ blurSize+=1; }
-        cv::blur(mFilters,
-                 mFilters,
-                 cv::Size(blurSize, blurSize),
-                 cv::Point(-1 , -1));
+    if (this->blurParam > 0) {
+        int blurSize = (int)std::round(this->blurParam);
+        if (blurSize % 2 == 0) {
+            blurSize += 1;
+        }
+        cv::blur(mFilters, mFilters, cv::Size(blurSize, blurSize), cv::Point(-1, -1));
     }
-    if(this->darkCurrent > 0){
+    if (this->darkCurrent > 0) {
         float scale = 15;
         this->addGaussianNoise(mFilters, mFilters, this->darkCurrent * scale, 0.0);
     }
@@ -283,14 +281,11 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
     if (this->bgrPercent.cwiseAbs().sum() != 0) {
         this->bgrAdjustPercent(mFilters, mFilters);
     }
-    if (this->saltPepper > 0){
+    if (this->saltPepper > 0) {
         float scale = 0.00002f;
-        this->addSaltPepper(mFilters,
-                            mFilters,
-                            (float) (this->saltPepper * scale),
-                            (float) (this->saltPepper * scale));
+        this->addSaltPepper(mFilters, mFilters, (float)(this->saltPepper * scale), (float)(this->saltPepper * scale));
     }
-    if(this->cosmicRays > 0){
+    if (this->cosmicRays > 0) {
         this->addCosmicRayBurst(mFilters, mFilters, std::round(this->cosmicRays));
     }
 
@@ -302,8 +297,7 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void Camera::updateState(uint64_t currentSimNanos)
-{
+void Camera::updateState(uint64_t currentSimNanos) {
     this->localcurrentSimNanos = currentSimNanos;
     std::string localPath;
     CameraImageMsgPayload imageBuffer = {};
@@ -358,35 +352,33 @@ void Camera::updateState(uint64_t currentSimNanos)
 
     cv::Mat imageCV;
     cv::Mat blurred;
-    if (this->saveDir != ""){
-        localPath = this->saveDir + std::to_string(currentSimNanos*1E-9) + ".png";
+    if (this->saveDir != "") {
+        localPath = this->saveDir + std::to_string(currentSimNanos * 1E-9) + ".png";
     }
     /*! - Read in the bitmap*/
-    if(this->imageInMsg.isLinked())
-    {
+    if (this->imageInMsg.isLinked()) {
         imageBuffer = this->imageInMsg();
         this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
-    if (!this->filename.empty()){
+    if (!this->filename.empty()) {
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
         this->applyFilters(imageCV, blurred);
-        if (this->saveImages == 1){
+        if (this->saveImages == 1) {
             if (!cv::imwrite(localPath, blurred)) {
-                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
+                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image");
             }
         }
-    }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos){
+    } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
                                                 (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
 
         this->applyFilters(imageCV, blurred);
-        if (this->saveImages == 1){
+        if (this->saveImages == 1) {
             if (!cv::imwrite(localPath, blurred)) {
-                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
+                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image");
             }
         }
         /*! If the permanent image buffer is not populated, it will be equal to null*/
@@ -405,13 +397,12 @@ void Camera::updateState(uint64_t currentSimNanos)
         imageOut.cameraID = imageBuffer.cameraID;
         imageOut.imageType = imageBuffer.imageType;
         imageOut.imageBufferLength = (int32_t)buf.size();
-        this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
-        memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
+        this->pointImageOut = malloc(imageOut.imageBufferLength * sizeof(char));
+        memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength * sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
 
         this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
-    }
-    else{
+    } else {
         /*! - If no image is present, write zeros in message */
         this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
     }
@@ -421,97 +412,71 @@ void Camera::updateState(uint64_t currentSimNanos)
     @param cameraParentName
     @return void
     */
-void Camera::setParentName(const std::string& cameraParentName) {
-    this->parentSpacecraftName = cameraParentName;
-}
+void Camera::setParentName(const std::string& cameraParentName) { this->parentSpacecraftName = cameraParentName; }
 
 /*! Get the name of the parent body to which the camera should be attached
     @return std::string parentSpacecraftName
     */
-std::string Camera::getParentName() const {
-    return this->parentSpacecraftName;
-}
+std::string Camera::getParentName() const { return this->parentSpacecraftName; }
 
 /*! Set the camera to on, allowing it to take images
     @return void
     */
-void Camera::setCameraOn() {
-    this->cameraIsImaging = true;
-}
+void Camera::setCameraOn() { this->cameraIsImaging = true; }
 
 /*! Set the camera to off, not allowing it to take images
     @return void
     */
-void Camera::setCameraOff() {
-    this->cameraIsImaging = false;
-}
+void Camera::setCameraOff() { this->cameraIsImaging = false; }
 
 /*! Get if the camera is currently taking images
     @return int cameraIsImaging
     */
-bool Camera::isCameraOn() const {
-    return this->cameraIsImaging;
-}
+bool Camera::isCameraOn() const { return this->cameraIsImaging; }
 
 /*! Set the camera Id
     @param cameraId int
     @return void
     */
-void Camera::setCameraId(const int cameraId) {
-    this->cameraIdentification = cameraId;
-}
+void Camera::setCameraId(const int cameraId) { this->cameraIdentification = cameraId; }
 
 /*! Get the camera Id
     @return int cameraIdentification
     */
-int Camera::getCameraId() const {
-    return this->cameraIdentification;
-}
+int Camera::getCameraId() const { return this->cameraIdentification; }
 
 /*! Set camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
     @param cameraResolution Eigen::Vector2i
     @return void
     */
-void Camera::setResolution(const Eigen::Vector2i& cameraResolution) {
-    this->resolution = cameraResolution;
-}
+void Camera::setResolution(const Eigen::Vector2i& cameraResolution) { this->resolution = cameraResolution; }
 
 /*! Get camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
     @return Eigen::Vector2i resolution
     */
-Eigen::Vector2i Camera::getResolution() const {
-    return this->resolution;
-}
+Eigen::Vector2i Camera::getResolution() const { return this->resolution; }
 
 /*! Set the frame time interval at which to capture images in units of nanosecond
     @param cameraImageCadence uint64_t
     @return void
     */
-void Camera::setImageCadence(const uint64_t& cameraImageCadence) {
-    this->imageCadence = cameraImageCadence;
-}
+void Camera::setImageCadence(const uint64_t& cameraImageCadence) { this->imageCadence = cameraImageCadence; }
 
 /*! Get the frame time interval at which to capture images in units of nanosecond
     @return uint64_t imageCadence
     */
-uint64_t Camera::getImageCadence() const {
-    return this->imageCadence;
-}
+uint64_t Camera::getImageCadence() const { return this->imageCadence; }
 
 /*! Set the camera y-axis field of view edge-to-edge
     @param fov Eigen::Vector2d
     @return void
     */
-void Camera::setFieldOfView(const Eigen::Vector2d& fov) {
-    this->cameraFieldOfView = fov;
-}
+void Camera::setFieldOfView(const Eigen::Vector2d& fov) { this->cameraFieldOfView = fov; }
 
 /*! Get the camera y-axis field of view edge-to-edge
     @return Eigen::Vector2d fieldOfView
     */
-Eigen::Vector2d Camera::getFieldOfView() const {
-    return this->cameraFieldOfView;
-}
+Eigen::Vector2d Camera::getFieldOfView() const { return this->cameraFieldOfView; }
 
 /*! Set the camera position in body frame
     @param cameraPosition_B Eigen::Vector3d
@@ -524,46 +489,35 @@ void Camera::setCameraBodyFramePosition(const Eigen::Vector3d& cameraPosition_B)
 /*! Get the camera position in body frame
     @return Eigen::Vector3d cameraPos_B
     */
-Eigen::Vector3d Camera::getCameraBodyFramePosition() const {
-    return this->cameraBodyFramePosition;
-}
+Eigen::Vector3d Camera::getCameraBodyFramePosition() const { return this->cameraBodyFramePosition; }
 
 /*! Set the orientation of the camera frame relative to the body frame
     @param cameraMrp_CB Eigen::Vector3d
     @return void
     */
-void Camera::setBodyToCameraMrp(const Eigen::Vector3d& cameraMrp_CB) {
-    this->bodyToCameraMrp = cameraMrp_CB;
-}
+void Camera::setBodyToCameraMrp(const Eigen::Vector3d& cameraMrp_CB) { this->bodyToCameraMrp = cameraMrp_CB; }
 
 /*! Get the orientation of the camera frame relative to the body frame
     @return Eigen::Vector3d sigma_CB
     */
-Eigen::Vector3d Camera::getBodyToCameraMrp() const {
-    return this->bodyToCameraMrp;
-}
+Eigen::Vector3d Camera::getBodyToCameraMrp() const { return this->bodyToCameraMrp; }
 
 /*! Set the camera focal length
     @param cameraFocalLength double
     @return void
     */
-void Camera::setFocalLength(const double cameraFocalLength) {
-    this->focalLength = cameraFocalLength;
-}
+void Camera::setFocalLength(const double cameraFocalLength) { this->focalLength = cameraFocalLength; }
 
 /*! Get the camera focal length
     @return double focalLength
     */
-double Camera::getFocalLength() const {
-    return this->focalLength;
-}
-
+double Camera::getFocalLength() const { return this->focalLength; }
 
 /*! Set the size of square Gaussian kernel to model point spread function
     @param cameraGaussianPointSpreadFunction int
     @return void
     */
-void Camera::setGaussianPointSpreadFunction(const int cameraGaussianPointSpreadFunction){
+void Camera::setGaussianPointSpreadFunction(const int cameraGaussianPointSpreadFunction) {
     // asserts the value of cameraGaussianPointSpreadFunction must be odd
     assert(cameraGaussianPointSpreadFunction % 2 == 1 && "Gaussian point spread function should be odd");
     this->gaussianPointSpreadFunction = cameraGaussianPointSpreadFunction;
@@ -572,57 +526,43 @@ void Camera::setGaussianPointSpreadFunction(const int cameraGaussianPointSpreadF
 /*! Get the size of square Gaussian kernel to model point spread function
     @return int gaussianPointSpreadFunction
     */
-int Camera::getGaussianPointSpreadFunction() const {
-    return this->gaussianPointSpreadFunction;
-}
+int Camera::getGaussianPointSpreadFunction() const { return this->gaussianPointSpreadFunction; }
 
 /*! Set the read noise standard deviation
     @param cameraReadNoise double
     @return void
     */
 
-void Camera::setReadNoise(const double cameraReadNoise) {
-    this->readNoise = cameraReadNoise;
-}
+void Camera::setReadNoise(const double cameraReadNoise) { this->readNoise = cameraReadNoise; }
 
 /*! Get the read noise standard deviation
     @return double readNoise
     */
 
-double Camera::getReadNoise() const {
-    return this->readNoise;
-}
+double Camera::getReadNoise() const { return this->readNoise; }
 
 /*! Set the mapping from current to pixel intensity
     @param cameraGain double
     @return void
     */
 
-void Camera::setSystemGain(const double cameraGain) {
-    this->systemGain = cameraGain;
-}
+void Camera::setSystemGain(const double cameraGain) { this->systemGain = cameraGain; }
 
 /*! Get the mapping from current to pixel intensity
     @return double systemGain
     */
 
-double Camera::getSystemGain() const {
-    return this->systemGain;
-}
+double Camera::getSystemGain() const { return this->systemGain; }
 
 /*! Set the camera epxosure time in seconds
     @param openExposureTime double
     @return void
     */
 
-void Camera::setExposureTime(const double openExposureTime) {
-    this->exposureTime = openExposureTime;
-}
+void Camera::setExposureTime(const double openExposureTime) { this->exposureTime = openExposureTime; }
 
 /*! Get the mapping from current to pixel intensity
     @return double exposureTime
     */
 
-double Camera::getExposureTime() const {
-    return this->exposureTime;
-}
+double Camera::getExposureTime() const { return this->exposureTime; }

@@ -43,7 +43,7 @@ class ReadFunctor {
 
    public:
     //!< -- BSK Logging
-    BSKLogger bskLogger;              //!< -- bsk logging instance
+    BSKLogger bskLogger;  //!< -- bsk logging instance
 
     //! constructor
     ReadFunctor() : initialized(false){};

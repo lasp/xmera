@@ -28,8 +28,7 @@ InitializeICP::~InitializeICP() = default;
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void InitializeICP::reset(uint64_t currentSimNanos)
-{
+void InitializeICP::reset(uint64_t currentSimNanos) {
     if (!this->inputMeasuredPointCloud.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
     }
@@ -47,13 +46,11 @@ void InitializeICP::reset(uint64_t currentSimNanos)
 /*! Normalize the point cloud with the average norm of all points.
  @return void
  */
-void InitializeICP::normalizePointCloud()
-{
+void InitializeICP::normalizePointCloud() {
     PointCloudMsgPayload measuredCloudBuffer = this->inputMeasuredPointCloud();
     this->normalizedCloudBuffer = PointCloudMsgPayload{};
-    Eigen::MatrixXd measuredPoints = cArray2EigenMatrixXd(measuredCloudBuffer.points,
-                                                          POINT_DIM,
-                                                          measuredCloudBuffer.numberOfPoints);
+    Eigen::MatrixXd measuredPoints =
+        cArray2EigenMatrixXd(measuredCloudBuffer.points, POINT_DIM, measuredCloudBuffer.numberOfPoints);
     Eigen::MatrixXd normalizedPoints = Eigen::MatrixXd::Zero(POINT_DIM, measuredCloudBuffer.numberOfPoints);
     //! If there is a valid point cloud present, average the point norms to normalize each point
     if (measuredCloudBuffer.valid && measuredCloudBuffer.numberOfPoints > 0) {
@@ -65,11 +62,10 @@ void InitializeICP::normalizePointCloud()
         if (this->normalizeMeasuredCloud) {
             normalizedPoints = measuredPoints / this->averageNorm;
             eigenMatrixXd2CArray(normalizedPoints.transpose(), this->normalizedCloudBuffer.points);
-        }
-        else{
+        } else {
             eigenMatrixXd2CArray(measuredPoints.transpose(), this->normalizedCloudBuffer.points);
         }
-    }else{
+    } else {
         this->normalizedCloudBuffer = PointCloudMsgPayload{};
     }
 
@@ -81,7 +77,7 @@ void InitializeICP::normalizePointCloud()
  * depending on the initialPhase status
  @return void
  */
-void InitializeICP::setInitialConditions(uint64_t currentSimNanos){
+void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
     CameraConfigMsgPayload cameraBuffer = this->cameraConfigInMsg();
     SICPMsgPayload sicpBuffer = this->inputSICPData();
 
@@ -92,18 +88,17 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos){
 
     //!< When a valid ICP solution has been computed, use that instead of ephemeris information as a priority
     if (sicpBuffer.valid) {
-        this->R_logged = cArray2EigenMatrixXd(
-                &sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * POINT_DIM * POINT_DIM],
-                POINT_DIM,
-                POINT_DIM);
-        this->t_logged = cArray2EigenMatrixXd(&sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * POINT_DIM],
-                                            1,
-                                            POINT_DIM);
+        this->R_logged =
+            cArray2EigenMatrixXd(&sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * POINT_DIM * POINT_DIM],
+                                 POINT_DIM,
+                                 POINT_DIM);
+        this->t_logged =
+            cArray2EigenMatrixXd(&sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * POINT_DIM], 1, POINT_DIM);
         this->s_logged = sicpBuffer.scaleFactor[sicpBuffer.numberOfIteration - 1];
         this->initialPhase = false;
         this->previousTimeTag = sicpBuffer.timeTag;
     }
-    double timeSinceICPSolution = (double)(currentSimNanos - this->previousTimeTag)*1E-9;
+    double timeSinceICPSolution = (double)(currentSimNanos - this->previousTimeTag) * 1E-9;
     //! - If the current point cloud is valid check if there is a recent ICP solution to use. If there isn't use
     //! ephemeris information
     if (this->normalizedCloudBuffer.valid) {
@@ -117,7 +112,7 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos){
             Eigen::MRPd sigma_BN = cArray2EigenMRPd(ephemerisInMsgBuffer.sigma_BN);
             Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
 
-            R_prev = (dcm_CB*dcm_BN);
+            R_prev = (dcm_CB * dcm_BN);
             t_prev = r_BN_N;
             s_prev = 1;
             this->outputIcpBuffer.valid = true;
@@ -127,8 +122,7 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos){
             s_prev = this->s_logged;
             this->outputIcpBuffer.valid = true;
         }
-    }
-    else{
+    } else {
         this->outputIcpBuffer = SICPMsgPayload{};
     }
 
@@ -142,7 +136,7 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos){
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void InitializeICP::writeOutputMessages(uint64_t currentSimNanos){
+void InitializeICP::writeOutputMessages(uint64_t currentSimNanos) {
     //! - Write the algorithm output data with zeros are results
     this->measuredPointCloud.write(&this->normalizedCloudBuffer, this->moduleID, currentSimNanos);
     this->initializeSICPMsg.write(&this->outputIcpBuffer, this->moduleID, currentSimNanos);
@@ -153,13 +147,11 @@ void InitializeICP::writeOutputMessages(uint64_t currentSimNanos){
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void InitializeICP::updateState(uint64_t currentSimNanos)
-{
+void InitializeICP::updateState(uint64_t currentSimNanos) {
     //! - Normalize the measured point cloud if it is valid
     this->normalizePointCloud();
     //! - Use previous ICP solution (if previous solution was valid) or spacecraft ephemeris otherwise
     this->setInitialConditions(currentSimNanos);
     //! - Write output messages
     this->writeOutputMessages(currentSimNanos);
-
 }

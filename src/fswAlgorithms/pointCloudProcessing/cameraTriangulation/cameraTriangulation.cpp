@@ -31,8 +31,7 @@ CameraTriangulation::~CameraTriangulation() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void CameraTriangulation::reset(uint64_t currentSimNanos)
-{
+void CameraTriangulation::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->pointCloudInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation.pointCloudInMsg was not linked.");
@@ -44,25 +43,23 @@ void CameraTriangulation::reset(uint64_t currentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "cameraTriangulation.cameraConfigInMsg was not linked.");
     }
 
-    this->Ru = pow(this->uncertaintyImageMeasurement,2) * Eigen::Matrix2d::Identity();
+    this->Ru = pow(this->uncertaintyImageMeasurement, 2) * Eigen::Matrix2d::Identity();
 }
 
 /*! This is the main method that gets called every time the module is updated.
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void CameraTriangulation::updateState(uint64_t currentSimNanos)
-{
+void CameraTriangulation::updateState(uint64_t currentSimNanos) {
     // read messages
     this->readMessages();
 
     if (this->validInputs == 1) {
-        std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulationResult = this->triangulation(
-                this->pointCloud,
-                this->keyPoints,
-                this->cameraCalibrationMatrixInverse,
-                std::vector<Eigen::Matrix3d>{this->dcm_CN}
-        );
+        std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulationResult =
+            this->triangulation(this->pointCloud,
+                                this->keyPoints,
+                                this->cameraCalibrationMatrixInverse,
+                                std::vector<Eigen::Matrix3d>{this->dcm_CN});
         this->estimatedCameraLocation = triangulationResult.first;
         this->triangulationCovariance = triangulationResult.second;
     }
@@ -75,8 +72,7 @@ void CameraTriangulation::updateState(uint64_t currentSimNanos)
     It also checks if the message contents are valid for this module.
     @return void
 */
-void CameraTriangulation::readMessages()
-{
+void CameraTriangulation::readMessages() {
     PointCloudMsgPayload pointCloudInMsgBuffer = this->pointCloudInMsg();
     PairedKeyPointsMsgPayload keyPointsInMsgBuffer = this->keyPointsInMsg();
     CameraConfigMsgPayload cameraConfigInMsgBuffer = this->cameraConfigInMsg();
@@ -92,13 +88,13 @@ void CameraTriangulation::readMessages()
     int numberKeyPoints = keyPointsInMsgBuffer.keyPointsFound;
     int cameraIDkeyPoints = keyPointsInMsgBuffer.cameraID;
     // stacked vector with all pixel locations of key points
-    Eigen::VectorXd keyPointsStacked(2*numberKeyPoints);
-    keyPointsStacked = cArray2EigenMatrixXd(keyPointsInMsgBuffer.keyPoints_secondImage, 2*numberKeyPoints, 1);
+    Eigen::VectorXd keyPointsStacked(2 * numberKeyPoints);
+    keyPointsStacked = cArray2EigenMatrixXd(keyPointsInMsgBuffer.keyPoints_secondImage, 2 * numberKeyPoints, 1);
     // convert to std vector that includes all key point pixel locations
     this->keyPoints.clear();
-    for (int c=0; c < numberKeyPoints; c++) {
+    for (int c = 0; c < numberKeyPoints; c++) {
         // 2D pixel location
-        this->keyPoints.emplace_back(keyPointsStacked.segment(2*c, 2));
+        this->keyPoints.emplace_back(keyPointsStacked.segment(2 * c, 2));
     }
     uint64_t timeTagKeyPoints = keyPointsInMsgBuffer.timeTag_secondImage;
     // dcm from inertial frame N to body frame B
@@ -115,25 +111,23 @@ void CameraTriangulation::readMessages()
     double fieldOfView = cameraConfigInMsgBuffer.fieldOfView;
     double resolutionX = cameraConfigInMsgBuffer.resolution[0];
     double resolutionY = cameraConfigInMsgBuffer.resolution[1];
-    double pX = 2.*tan(fieldOfView*resolutionX/resolutionY/2.0);
-    double pY = 2.*tan(fieldOfView/2.0);
-    double dX = resolutionX/pX;
-    double dY = resolutionY/pY;
-    double up = resolutionX/2;
-    double vp = resolutionY/2;
+    double pX = 2. * tan(fieldOfView * resolutionX / resolutionY / 2.0);
+    double pY = 2. * tan(fieldOfView / 2.0);
+    double dX = resolutionX / pX;
+    double dY = resolutionY / pY;
+    double up = resolutionX / 2;
+    double vp = resolutionY / 2;
     // build inverse K^-1 of camera calibration matrix K
     Eigen::Matrix3d Kinv;
-    Kinv << 1./dX, -alpha/(dX*dY), (alpha*vp - dY*up)/(dX*dY),
-                                            0., 1./dY, -vp/dY,
-                                            0., 0., 1.;
+    Kinv << 1. / dX, -alpha / (dX * dY), (alpha * vp - dY * up) / (dX * dY), 0., 1. / dY, -vp / dY, 0., 0., 1.;
     this->cameraCalibrationMatrixInverse = Kinv;
 
-    Eigen::MatrixXd S(2,3);
+    Eigen::MatrixXd S(2, 3);
     S << Eigen::Matrix2d::Identity(), Eigen::MatrixXd::Zero(2, 1);
-    this->Rx = Kinv*S.transpose()*this->Ru*S*Kinv.transpose();
+    this->Rx = Kinv * S.transpose() * this->Ru * S * Kinv.transpose();
 
     // dcm from inertial frame N to camera frame C
-    this->dcm_CN = dcm_CB*dcm_BN;
+    this->dcm_CN = dcm_CB * dcm_BN;
 
     this->validInputs = false;
     if (validPointCloud && validKeyPoints) {
@@ -143,22 +137,25 @@ void CameraTriangulation::readMessages()
     // check if cameraIDs, time tags, and number of features are equal
     if (cameraIDkeyPoints == cameraIDconfig) {
         this->cameraID = cameraIDkeyPoints;
-    } else if(this->validInputs) {
-        bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: camera IDs from keyPointsInMsg and "
-                                    "cameraConfigInMsg are different, but should be equal.");
+    } else if (this->validInputs) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "cameraTriangulation: camera IDs from keyPointsInMsg and "
+                         "cameraConfigInMsg are different, but should be equal.");
         this->validInputs = false;
     }
     if (timeTagPointCloud == timeTagKeyPoints) {
         this->timeTag = timeTagPointCloud;
-    }  else if(this->validInputs) {
-        bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: time tags from pointCloudInMsg and "
-                                    "keyPointsInMsg (timeTag_secondImage) are different, but should be equal.");
+    } else if (this->validInputs) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "cameraTriangulation: time tags from pointCloudInMsg and "
+                         "keyPointsInMsg (timeTag_secondImage) are different, but should be equal.");
         this->validInputs = false;
     }
     if (pointCloudSize != numberKeyPoints && this->validInputs) {
-        bskLogger.bskLog(BSK_ERROR, "cameraTriangulation: number of features from pointCloudInMsg "
-                                    "(pointCloudSize) and keyPointsInMsg (numberKeyPoints) are different, "
-                                    "but should be equal.");
+        bskLogger.bskLog(BSK_ERROR,
+                         "cameraTriangulation: number of features from pointCloudInMsg "
+                         "(pointCloudSize) and keyPointsInMsg (numberKeyPoints) are different, "
+                         "but should be equal.");
         this->validInputs = false;
     }
 }
@@ -167,8 +164,7 @@ void CameraTriangulation::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void CameraTriangulation::writeMessages(uint64_t currentSimNanos)
-{
+void CameraTriangulation::writeMessages(uint64_t currentSimNanos) {
     CameraLocalizationMsgPayload cameraLocationOutMsgBuffer{};
 
     cameraLocationOutMsgBuffer.valid = this->validInputs;
@@ -191,11 +187,10 @@ void CameraTriangulation::writeMessages(uint64_t currentSimNanos)
     @return std::pair<Eigen::Vector3d, Eigen::Matrix3d>
 */
 std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
-                                                                        Eigen::MatrixXd knownLocations,
-                                                                        std::vector<Eigen::Vector2d> imagePoints,
-                                                                        const Eigen::Matrix3d& cameraCalibrationInverse,
-                                                                        std::vector<Eigen::Matrix3d> dcmCamera) const
-{
+    Eigen::MatrixXd knownLocations,
+    std::vector<Eigen::Vector2d> imagePoints,
+    const Eigen::Matrix3d& cameraCalibrationInverse,
+    std::vector<Eigen::Matrix3d> dcmCamera) const {
     unsigned long numLocations = knownLocations.cols();
     unsigned long numImagePoints = imagePoints.size();
     unsigned long numDCM = dcmCamera.size();
@@ -204,11 +199,11 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
     // number of DCMs must be either 1 or also equal to number of image points
     assert(numLocations == numImagePoints && (numDCM == 1 || numDCM == numImagePoints));
 
-    Eigen::Matrix3d dcm_CF = dcmCamera.at(0); // dcm from frame of interest F to camera frame C
-    Eigen::Matrix3d dcm_FC = dcm_CF.transpose(); // dcm from camera frame C to frame of interest F
+    Eigen::Matrix3d dcm_CF = dcmCamera.at(0);     // dcm from frame of interest F to camera frame C
+    Eigen::Matrix3d dcm_FC = dcm_CF.transpose();  // dcm from camera frame C to frame of interest F
 
-    Eigen::MatrixXd A(3*numLocations, 3);
-    Eigen::VectorXd y(3*numLocations);
+    Eigen::MatrixXd A(3 * numLocations, 3);
+    Eigen::VectorXd y(3 * numLocations);
     Eigen::Matrix3d covarianceSumTerm = Eigen::Matrix3d::Zero();
 
     for (int c = 0; c < numLocations; ++c) {
@@ -222,15 +217,14 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
         Eigen::Vector2d u = imagePoints.at(c);
         // 3D pixel location
         Eigen::Vector3d uBar;
-        uBar << u,
-                1.;
+        uBar << u, 1.;
         // transform from pixel space to [m] space
-        Eigen::Vector3d xBar = cameraCalibrationInverse*uBar;
+        Eigen::Vector3d xBar = cameraCalibrationInverse * uBar;
         // known point
         Eigen::Vector3d p = knownLocations.col(c);
         // fill in A matrix and measurements y
-        A.block(3*c, 0, 3, 3) = eigenTilde(xBar)*dcm_CF;
-        y.segment(3*c, 3) = eigenTilde(xBar)*dcm_CF*p;
+        A.block(3 * c, 0, 3, 3) = eigenTilde(xBar) * dcm_CF;
+        y.segment(3 * c, 3) = eigenTilde(xBar) * dcm_CF * p;
 
         // covariance computation (perform only if image noise is non-zero for more efficiency)
         if (this->uncertaintyImageMeasurement != 0.) {
@@ -250,8 +244,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
             }
             Eigen::Vector2d uj = imagePoints.at(c2);
             Eigen::Vector3d ujBar;
-            ujBar << uj,
-                    1.;
+            ujBar << uj, 1.;
             Eigen::Vector3d pj = knownLocations.col(c2);
             Eigen::Vector3d d = pj - p;
             Eigen::Vector3d a = dcm_FC * cameraCalibrationInverse * uBar;
@@ -271,8 +264,8 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
     // compute corresponding covariance matrix
     Eigen::Matrix3d P = Eigen::Matrix3d::Zero();
     if (this->uncertaintyImageMeasurement != 0.) {
-        Eigen::Matrix3d AAinv = (A.transpose()*A).inverse();
-        P = -AAinv*covarianceSumTerm*AAinv;
+        Eigen::Matrix3d AAinv = (A.transpose() * A).inverse();
+        P = -AAinv * covarianceSumTerm * AAinv;
     }
 
     std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulationResult = {r, P};

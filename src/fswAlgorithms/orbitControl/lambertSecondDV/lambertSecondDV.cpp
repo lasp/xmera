@@ -34,8 +34,7 @@ LambertSecondDV::~LambertSecondDV() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSecondDV::reset(uint64_t currentSimNanos)
-{
+void LambertSecondDV::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->lambertSolutionInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "lambertSecondDV.lambertSolutionInMsg was not linked.");
@@ -49,8 +48,7 @@ void LambertSecondDV::reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSecondDV::updateState(uint64_t currentSimNanos)
-{
+void LambertSecondDV::updateState(uint64_t currentSimNanos) {
     // read messages
     this->readMessages();
 
@@ -65,17 +63,15 @@ void LambertSecondDV::updateState(uint64_t currentSimNanos)
     It also checks if the message contents are valid for this module.
     @return void
 */
-void LambertSecondDV::readMessages()
-{
+void LambertSecondDV::readMessages() {
     LambertSolutionMsgPayload lambertSolutionInMsgBuffer = this->lambertSolutionInMsg();
     DesiredVelocityMsgPayload desiredVelocityInMsgBuffer = this->desiredVelocityInMsg();
 
     // lambert solution content
-    if (this->lambertSolutionSpecifier == 1){
+    if (this->lambertSolutionSpecifier == 1) {
         this->vExpected_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v2);
         this->validLambert = lambertSolutionInMsgBuffer.valid;
-    }
-    else if (this->lambertSolutionSpecifier == 2){
+    } else if (this->lambertSolutionSpecifier == 2) {
         this->vExpected_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v2Sol2);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
     } else {
@@ -93,8 +89,7 @@ void LambertSecondDV::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSecondDV::writeMessages(uint64_t currentSimNanos)
-{
+void LambertSecondDV::writeMessages(uint64_t currentSimNanos) {
     DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer{};
 
     // DV Rotation vector and rotation magnitude not used by this module. Set to arbitrary unit vector and zero.

@@ -17,47 +17,39 @@
 
 */
 
-
 #include "simulation/deviceInterface/hingedBodyLinearProfiler/hingedBodyLinearProfiler.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-HingedBodyLinearProfiler::HingedBodyLinearProfiler()
-{
+HingedBodyLinearProfiler::HingedBodyLinearProfiler() {
     this->startTheta = 0.0;
     this->endTheta = 0.0;
     this->startTime = 0;
     this->endTime = 0;
-
 }
 
 /*! Module Destructor */
-HingedBodyLinearProfiler::~HingedBodyLinearProfiler()
-{
-}
+HingedBodyLinearProfiler::~HingedBodyLinearProfiler() {}
 
 /*! This method is used to reset the module and checks that required input messages are connected.
     @return void
 */
-void HingedBodyLinearProfiler::reset(uint64_t currentSimNanos)
-{
+void HingedBodyLinearProfiler::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
-    if(this->endTime-this->startTime > 0){
-        this->deploymentSlope = (this->endTheta-this->startTheta) / ((this->endTime-this->startTime) * NANO2SEC);
-    } else{
+    if (this->endTime - this->startTime > 0) {
+        this->deploymentSlope = (this->endTheta - this->startTheta) / ((this->endTime - this->startTime) * NANO2SEC);
+    } else {
         bskLogger.bskLog(BSK_ERROR, "Delta between end time and start time of deployment must exist and be positive.");
     }
 }
 
-
-/*! This is the main method that gets called every time the module is updated. Outputs a reference theta and theta dot based on the current simulation time
-    relative to the start and stop times for the linear deployment.
+/*! This is the main method that gets called every time the module is updated. Outputs a reference theta and theta dot
+   based on the current simulation time relative to the start and stop times for the linear deployment.
     @return void
 */
-void HingedBodyLinearProfiler::updateState(uint64_t currentSimNanos)
-{
+void HingedBodyLinearProfiler::updateState(uint64_t currentSimNanos) {
     double refTheta;
     double refThetaDot;
     HingedRigidBodyMsgPayload hingedRigidBodyReferenceOutMsgBuffer;  //!< local copy of message buffer
@@ -65,21 +57,20 @@ void HingedBodyLinearProfiler::updateState(uint64_t currentSimNanos)
     //!< always zero the output message buffers before assigning values
     hingedRigidBodyReferenceOutMsgBuffer = HingedRigidBodyMsgPayload{};
 
-    if(currentSimNanos < this->startTime) { //!< if deployment has not started
+    if (currentSimNanos < this->startTime) {  //!< if deployment has not started
         refTheta = this->startTheta;
         refThetaDot = 0.0;
-    } else if (currentSimNanos <= this->endTime){ //!< if deployment is in progress
+    } else if (currentSimNanos <= this->endTime) {  //!< if deployment is in progress
         refThetaDot = this->deploymentSlope;
-        refTheta = this->startTheta + ((currentSimNanos-this->startTime) * NANO2SEC) * refThetaDot;
+        refTheta = this->startTheta + ((currentSimNanos - this->startTime) * NANO2SEC) * refThetaDot;
 
-    } else { //!< if deployment is over
+    } else {  //!< if deployment is over
         refTheta = this->endTheta;
         refThetaDot = 0.0;
     }
 
     hingedRigidBodyReferenceOutMsgBuffer.theta = refTheta;
     hingedRigidBodyReferenceOutMsgBuffer.thetaDot = refThetaDot;
-
 
     //!<  write to the output messages
     this->hingedRigidBodyReferenceOutMsg.write(&hingedRigidBodyReferenceOutMsgBuffer, this->moduleID, currentSimNanos);

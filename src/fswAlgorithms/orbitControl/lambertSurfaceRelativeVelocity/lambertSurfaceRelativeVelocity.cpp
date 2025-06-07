@@ -32,8 +32,7 @@ LambertSurfaceRelativeVelocity::~LambertSurfaceRelativeVelocity() = default;
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSurfaceRelativeVelocity::reset(uint64_t currentSimNanos)
-{
+void LambertSurfaceRelativeVelocity::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "lambertSurfaceRelativeVelocity.lambertProblemInMsg was not linked.");
@@ -48,8 +47,7 @@ void LambertSurfaceRelativeVelocity::reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSurfaceRelativeVelocity::updateState(uint64_t currentSimNanos)
-{
+void LambertSurfaceRelativeVelocity::updateState(uint64_t currentSimNanos) {
     // read messages
     this->readMessages();
 
@@ -61,7 +59,7 @@ void LambertSurfaceRelativeVelocity::updateState(uint64_t currentSimNanos)
     Eigen::Matrix3d dcm_SN;
     dcm_SN << s1Hat_N.transpose(), s2Hat_N.transpose(), s3Hat_N.transpose();
 
-    this->v_BN_N = this->omega_PN_N.cross(this->r_BN_N) + dcm_SN.transpose()*this->vRelativeDesired_S;
+    this->v_BN_N = this->omega_PN_N.cross(this->r_BN_N) + dcm_SN.transpose() * this->vRelativeDesired_S;
 
     // write messages
     this->writeMessages(currentSimNanos);
@@ -70,7 +68,7 @@ void LambertSurfaceRelativeVelocity::updateState(uint64_t currentSimNanos)
 /*! This method reads the input messages each call of updateState.
     @return void
 */
-void LambertSurfaceRelativeVelocity::readMessages(){
+void LambertSurfaceRelativeVelocity::readMessages() {
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
     EphemerisMsgPayload ephemerisInMsgBuffer = this->ephemerisInMsg();
 
@@ -79,14 +77,14 @@ void LambertSurfaceRelativeVelocity::readMessages(){
     Eigen::MRPd sigma_PN = cArray2EigenMRPd(ephemerisInMsgBuffer.sigma_BN);
     this->dcm_PN = sigma_PN.toRotationMatrix().transpose();
     Eigen::Vector3d omega_PN_P = cArray2EigenVector3d(ephemerisInMsgBuffer.omega_BN_B);
-    this->omega_PN_N = this->dcm_PN.transpose()*omega_PN_P;
+    this->omega_PN_N = this->dcm_PN.transpose() * omega_PN_P;
 }
 
 /*! This method writes the output messages each call of updateState
     @param currentSimNanos current simulation time in nano-seconds
     @return void
 */
-void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos){
+void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos) {
     DesiredVelocityMsgPayload desiredVelocityOutMsgBuffer{};
 
     eigenVector3d2CArray(this->v_BN_N, desiredVelocityOutMsgBuffer.vDesired_N);

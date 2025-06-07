@@ -22,17 +22,12 @@
 #include "architecture/utilities/avsEigenSupport.h"
 
 /*! Customer constructor just sets the spacecraftSTateInMsg by default*/
-PlanetHeading::PlanetHeading()
-{
-
-}
-
+PlanetHeading::PlanetHeading() {}
 
 /*! This method reads messages, calculates the planet heading, and writes out the heading message
  @return void
  */
-void PlanetHeading::updateState(uint64_t currentSimNanos)
-{
+void PlanetHeading::updateState(uint64_t currentSimNanos) {
     this->readMessages();
 
     /*! - evaluate planet position relative to the s/c body in body frame components */
@@ -74,9 +69,7 @@ void PlanetHeading::writeMessages(uint64_t currentSimNanos) {
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void
  */
-void PlanetHeading::reset(uint64_t currentSimNanos)
-{
-
+void PlanetHeading::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->planetPositionInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "planetHeading.planetPositionInMsg was not linked.");

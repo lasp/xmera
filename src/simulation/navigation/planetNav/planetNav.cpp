@@ -17,43 +17,37 @@
 
 */
 
-
 #include "simulation/navigation/planetNav/planetNav.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <iostream>
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <cstring>
+#include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-PlanetNav::PlanetNav()
-{
+PlanetNav::PlanetNav() {
     this->crossTrans = false;
     this->crossAtt = false;
     this->prevTime = 0;
     this->noisePlanetState = EphemerisMsgPayload{};
     this->truePlanetState = EphemerisMsgPayload{};
-    this->PMatrix.resize(12,12);
+    this->PMatrix.resize(12, 12);
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(12);
     this->walkBounds.fill(0.0);
-    this->errorModel =  GaussMarkov(12, this->RNGSeed);
+    this->errorModel = GaussMarkov(12, this->RNGSeed);
 }
 
 /*! Module Destructor */
-PlanetNav::~PlanetNav()
-{
-    return;
-}
+PlanetNav::~PlanetNav() { return; }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
     @param currentSimNanos The clock time associated with the module call
 */
-void PlanetNav::reset(uint64_t currentSimNanos)
-{
+void PlanetNav::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (!this->ephemerisInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "PlanetNav.ephemerisInMsg was not linked.");
@@ -63,12 +57,14 @@ void PlanetNav::reset(uint64_t currentSimNanos)
 
     //! - Initialize the propagation matrix to default values for use in update
     this->AMatrix.setIdentity(numStates, numStates);
-    this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
-    this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
+    this->AMatrix(0, 3) = this->AMatrix(1, 4) = this->AMatrix(2, 5) = this->crossTrans ? 1.0 : 0.0;
+    this->AMatrix(6, 9) = this->AMatrix(7, 10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
-    if (this->PMatrix.size() != numStates*numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 12*12. Size is %ld.  Quitting", this->PMatrix.size());
+    if (this->PMatrix.size() != numStates * numStates) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "Your process noise matrix (PMatrix) is not 12*12. Size is %ld.  Quitting",
+                         this->PMatrix.size());
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
@@ -78,31 +74,25 @@ void PlanetNav::reset(uint64_t currentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 12 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
-
 }
 
 /*! This method reads the input messages associated with the planet state
  */
-void PlanetNav::readInputMessages()
-{
-    this->truePlanetState = this->ephemerisInMsg();
-}
+void PlanetNav::readInputMessages() { this->truePlanetState = this->ephemerisInMsg(); }
 
 /*! This method writes the aggregate nav information into the output state message.
  @return void
  @param currentSimNanos The clock time associated with the model call
  */
-void PlanetNav::writeOutputMessages(uint64_t currentSimNanos)
-{
-    this->noisePlanetState.timeTag = (double) currentSimNanos * NANO2SEC;
+void PlanetNav::writeOutputMessages(uint64_t currentSimNanos) {
+    this->noisePlanetState.timeTag = (double)currentSimNanos * NANO2SEC;
     this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, currentSimNanos);
 }
 
 /*! This method applies the errors to the truePlanetState
  @return void
  */
-void PlanetNav::applyErrors()
-{
+void PlanetNav::applyErrors() {
     //! - Add errors
     v3Add(this->truePlanetState.r_BdyZero_N, &(this->navErrors.data()[0]), this->noisePlanetState.r_BdyZero_N);
     v3Add(this->truePlanetState.v_BdyZero_N, &(this->navErrors.data()[3]), this->noisePlanetState.v_BdyZero_N);
@@ -115,19 +105,18 @@ void PlanetNav::applyErrors()
  @return void
  @param currentSimNanos The clock time associated with the model call
  */
-void PlanetNav::computeErrors(uint64_t currentSimNanos)
-{
+void PlanetNav::computeErrors(uint64_t currentSimNanos) {
     double timeStep;
     Eigen::MatrixXd localProp = this->AMatrix;
     //! - Compute timestep since the last call
-    timeStep = (currentSimNanos - this->prevTime)*1.0E-9;
+    timeStep = (currentSimNanos - this->prevTime) * 1.0E-9;
 
-    localProp(0,3) *= timeStep; //postion/velocity cross correlation terms
-    localProp(1,4) *= timeStep; //postion/velocity cross correlation terms
-    localProp(2,5) *= timeStep; //postion/velocity cross correlation terms
-    localProp(6,9) *= timeStep; //attitude/attitude rate cross correlation terms
-    localProp(7,10) *= timeStep; //attitude/attitude rate cross correlation terms
-    localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
+    localProp(0, 3) *= timeStep;   // postion/velocity cross correlation terms
+    localProp(1, 4) *= timeStep;   // postion/velocity cross correlation terms
+    localProp(2, 5) *= timeStep;   // postion/velocity cross correlation terms
+    localProp(6, 9) *= timeStep;   // attitude/attitude rate cross correlation terms
+    localProp(7, 10) *= timeStep;  // attitude/attitude rate cross correlation terms
+    localProp(8, 11) *= timeStep;  // attitude/attitude rate cross correlation terms
 
     //! - Set the GaussMarkov propagation matrix and compute errors
     this->errorModel.setPropMatrix(localProp);
@@ -139,8 +128,7 @@ void PlanetNav::computeErrors(uint64_t currentSimNanos)
     @return void
     @param currentSimNanos The clock time associated with the model call
 */
-void PlanetNav::updateState(uint64_t currentSimNanos)
-{
+void PlanetNav::updateState(uint64_t currentSimNanos) {
     /* zero the output msg buffer */
     this->noisePlanetState = EphemerisMsgPayload{};
 

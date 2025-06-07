@@ -17,11 +17,9 @@
 
 */
 
-
 #include "fswAlgorithms/formationFlying/formationBarycenter/formationBarycenter.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include <math.h>
-
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -31,31 +29,34 @@ FormationBarycenter::FormationBarycenter() {
 }
 
 /*! This method is used to reset the module and checks that required input messages are connected.
-*/
+ */
 void FormationBarycenter::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
     if (this->scNavInMsgs.size() == 0 || this->scPayloadInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");
     }
 
     // check if the gravitational parameter is set if using orbital elements averaging
     if (this->mu == 0 && this->useOrbitalElements) {
-        bskLogger.bskLog(BSK_ERROR, "FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
     }
-
 }
 
 /*! Adds a scNav and scPayload messages name to the vector of names to be subscribed to.
-*/
-void FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg, Message<VehicleConfigMsgPayload>* tmpScPayloadMsg) {
+ */
+void FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg,
+                                               Message<VehicleConfigMsgPayload>* tmpScPayloadMsg) {
     this->scNavInMsgs.push_back(tmpScNavMsg->addSubscriber());
     this->scPayloadInMsgs.push_back(tmpScPayloadMsg->addSubscriber());
 }
 
 /*! Reads the input messages
-*/
+ */
 void FormationBarycenter::ReadInputMessages() {
-
     NavTransMsgPayload scNavMsg;
     VehicleConfigMsgPayload scPayloadMsg;
 
@@ -70,16 +71,15 @@ void FormationBarycenter::ReadInputMessages() {
         this->scNavBuffer.push_back(scNavMsg);
         this->scPayloadBuffer.push_back(scPayloadMsg);
     }
-
 }
 
 /*! Does the barycenter calculations
-*/
+ */
 void FormationBarycenter::computeBaricenter() {
-    //create temporarary variables
-    double barycenter[] {0, 0, 0};
-    double barycenterVelocity[] {0, 0, 0};
-    double totalMass {0};
+    // create temporarary variables
+    double barycenter[]{0, 0, 0};
+    double barycenterVelocity[]{0, 0, 0};
+    double totalMass{0};
 
     // check which averaging to use
     if (!this->useOrbitalElements) {
@@ -97,7 +97,7 @@ void FormationBarycenter::computeBaricenter() {
             barycenterVelocity[n] /= totalMass;
         }
     } else {
-        ClassicElements orbitElements = {}; // zero the orbit elements first
+        ClassicElements orbitElements = {};  // zero the orbit elements first
         ClassicElements tempElements;
         double OmegaSineSum = 0;
         double OmegaCosineSum = 0;
@@ -123,7 +123,6 @@ void FormationBarycenter::computeBaricenter() {
             fCosineSum += this->scPayloadBuffer.at(c).massSC * cos(tempElements.f);
 
             totalMass += this->scPayloadBuffer.at(c).massSC;
-
         }
 
         orbitElements.a /= totalMass;
@@ -145,18 +144,17 @@ void FormationBarycenter::computeBaricenter() {
 }
 
 /*! writes the output messages
-*/
+ */
 void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
     // write C++ output message
     this->transOutMsg.write(&this->transOutBuffer, this->moduleID, CurrentClock);
 }
 
 /*! This is the main method that gets called every time the module is updated.
-*/
-void FormationBarycenter::updateState(uint64_t currentSimNanos)
-{
+ */
+void FormationBarycenter::updateState(uint64_t currentSimNanos) {
     this->ReadInputMessages();
-    this->transOutBuffer = NavTransMsgPayload{}; // zero the output message buffer
+    this->transOutBuffer = NavTransMsgPayload{};  // zero the output message buffer
     this->computeBaricenter();
     this->WriteOutputMessage(currentSimNanos);
 }

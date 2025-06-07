@@ -24,8 +24,7 @@
 /*! This method is used to reset the module.
  @return void
  */
-void SunSearch::reset(uint64_t currentSimNanos)
-{
+void SunSearch::reset(uint64_t currentSimNanos) {
     if (!this->attNavInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
     }
@@ -39,20 +38,18 @@ void SunSearch::reset(uint64_t currentSimNanos)
     this->principleInertias[1] = vehConfigIn.ISCPntB_B[4];
     this->principleInertias[2] = vehConfigIn.ISCPntB_B[8];
 
-    for (int index=0; index<3; index++) {
+    for (int index = 0; index < 3; index++) {
         this->computeKinematicProperties(index);
     }
 
     this->resetTime = currentSimNanos;
 }
 
-
 /*! This method is the main carrier for the computation of the guidance message
  @return void
  @param currentSimNanos The current simulation time for system
  */
-void SunSearch::updateState(uint64_t currentSimNanos)
-{
+void SunSearch::updateState(uint64_t currentSimNanos) {
     /*! create and zero the output message */
     AttGuidMsgPayload attGuidOut{};
 
@@ -68,18 +65,17 @@ void SunSearch::updateState(uint64_t currentSimNanos)
 
     double timeInf = 0;
     double timeSup = this->slewProperties[0].slewTotalTime;
-    for (int index=0; index<3; ++index) {
+    for (int index = 0; index < 3; ++index) {
         if (CurrentSimSeconds >= timeInf && CurrentSimSeconds < timeSup) {
             this->computeReferenceMotion(currentSimNanos, index, &omega_RN_B[0], &domega_RN_B[0]);
             break;
-        }
-        else if (CurrentSimSeconds >= timeSup && index != 2) {
+        } else if (CurrentSimSeconds >= timeSup && index != 2) {
             timeInf += this->slewProperties[index].slewTotalTime;
-            timeSup += this->slewProperties[index+1].slewTotalTime;
+            timeSup += this->slewProperties[index + 1].slewTotalTime;
         }
     }
 
-    for (int i=0; i<3; ++i) {
+    for (int i = 0; i < 3; ++i) {
         attGuidOut.omega_RN_B[i] = omega_RN_B[i];
         attGuidOut.omega_BR_B[i] = omega_BN_B[i] - omega_RN_B[i];
         attGuidOut.domega_RN_B[i] = domega_RN_B[i];
@@ -89,13 +85,11 @@ void SunSearch::updateState(uint64_t currentSimNanos)
     this->attGuidOutMsg.write(&attGuidOut, this->moduleID, currentSimNanos);
 }
 
-
 /*! Define this method to compute the kinematic properties of each slew
     @return void
     */
-void SunSearch::computeKinematicProperties(int const index)
-{
-    SlewProperties* SP = &this->slewProperties[index];
+void SunSearch::computeKinematicProperties(int const index) {
+    SlewProperties *SP = &this->slewProperties[index];
     int axis = SP->slewRotAxis - 1;
     double maxAcc = this->slewMaxTorque[axis] / this->principleInertias[axis];
 
@@ -120,20 +114,21 @@ void SunSearch::computeKinematicProperties(int const index)
         thrustTime = omegaMax / alpha;
     }
 
-    SP->slewAngAcc     = alpha;
-    SP->slewOmegaMax   = omegaMax;
-    SP->slewTotalTime  = totalTime;
+    SP->slewAngAcc = alpha;
+    SP->slewOmegaMax = omegaMax;
+    SP->slewTotalTime = totalTime;
     SP->slewThrustTime = thrustTime;
 }
-
 
 /*! Define this method to compute the rate and acceleration as function of time
     @return void
     */
-void SunSearch::computeReferenceMotion(uint64_t const currentSimNanos, int const index, double *omega_RN, double *domega_RN)
-{
+void SunSearch::computeReferenceMotion(uint64_t const currentSimNanos,
+                                       int const index,
+                                       double *omega_RN,
+                                       double *domega_RN) {
     double zeroTime = 0;
-    for (int i=0; i<index; ++i) {
+    for (int i = 0; i < index; ++i) {
         zeroTime += this->slewProperties[i].slewTotalTime;
     }
     double localSimSeconds = (currentSimNanos - this->resetTime) * NANO2SEC - zeroTime;
@@ -144,16 +139,13 @@ void SunSearch::computeReferenceMotion(uint64_t const currentSimNanos, int const
     if (localSimSeconds <= SP.slewThrustTime) {
         omega_RN[axis] = SP.slewOmegaMax * localSimSeconds / SP.slewThrustTime;
         domega_RN[axis] = SP.slewAngAcc;
-    }
-    else if (localSimSeconds > SP.slewThrustTime && localSimSeconds < SP.slewTotalTime - SP.slewThrustTime) {
+    } else if (localSimSeconds > SP.slewThrustTime && localSimSeconds < SP.slewTotalTime - SP.slewThrustTime) {
         omega_RN[axis] = SP.slewOmegaMax;
-    }
-    else if (localSimSeconds >= SP.slewTotalTime - SP.slewThrustTime && localSimSeconds <= SP.slewTotalTime) {
+    } else if (localSimSeconds >= SP.slewTotalTime - SP.slewThrustTime && localSimSeconds <= SP.slewTotalTime) {
         omega_RN[axis] = SP.slewOmegaMax * (SP.slewTotalTime - localSimSeconds) / SP.slewThrustTime;
         domega_RN[axis] = -SP.slewAngAcc;
     }
 }
-
 
 /*! Set the slew time
     @param double slewTime
