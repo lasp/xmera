@@ -61,7 +61,8 @@ void KalmanFilter::updateState(uint64_t currentSimNanos) {
             measurement.setPreFitResiduals(this->computeResiduals(measurement));
             /*! - measurement update and compute post-fit residuals  */
             this->measurementUpdate(measurement);
-            measurement.setPostFitResiduals(measurement.getObservation() - measurement.model(this->state));
+            measurement.setPostFitResiduals(
+                measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state)));
             this->measurements[index] = measurement;
         }
     }

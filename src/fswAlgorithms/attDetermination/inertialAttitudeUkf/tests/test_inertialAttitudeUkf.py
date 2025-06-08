@@ -20,7 +20,6 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import inertialAttitudeUkf
-from Basilisk.fswAlgorithms import miruLowPassFilterConverter
 from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
@@ -73,16 +72,16 @@ def setup_filter_data(filter_object):
     filter_object.setBeta(2.0)
 
     filter_object.setInitialPosition([0.05, 0.5, 0.1])
-    filter_object.setInitialVelocity([0.2, -0.05, 0.1])
+    filter_object.setInitialVelocity([0.02, -0.005, 0.01])
     filter_object.setInitialCovariance([[1, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 1, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 1, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 0.0, 0.01, 0.0, 0.0],
                                         [0.0, 0.0, 0.0, 0.0, 0.01, 0.0],
                                         [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]])
-    filter_object.setGyroNoise([[1e-3,0,0],[0.,1e-3,0],[0,0,1e-3]])
+    filter_object.setGyroNoise([[1e-6,0,0],[0.,1e-6,0],[0,0,1e-6]])
     sigma_mrp = (1E-2) ** 2
-    sigma_rate = (1E-2) ** 2
+    sigma_rate = (1E-3) ** 2
     filter_object.setProcessNoise([[sigma_mrp, 0.0, 0.0, 0.0, 0.0, 0.0],
                                    [0.0, sigma_mrp, 0.0, 0.0, 0.0, 0.0],
                                    [0.0, 0.0, sigma_mrp, 0.0, 0.0, 0.0],
@@ -104,15 +103,9 @@ def test_propagation_kf(show_plots):
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
     test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-    # Create miruLowPassFilterConverter module
-    miru_low_pass_filter_converter = miruLowPassFilterConverter.MiruLowPassFilterConverter()
-    miru_low_pass_filter_converter.setLowPassFilter(0.5, 15/(2*np.pi))
-    unit_test_sim.AddModelToTask(unit_task_name, miru_low_pass_filter_converter)
-
     # Construct algorithm and associated C++ container
     allMeasurements = inertialAttitudeUkf.AttitudeFilterMethod_AllMeasurements
     intertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(allMeasurements)
-    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(miru_low_pass_filter_converter.imuSensorOutMsg)
     unit_test_sim.AddModelToTask(unit_task_name, intertialAttitudeFilter)
 
     # Add test module to runtime call list
@@ -156,27 +149,29 @@ def test_propagation_kf(show_plots):
 
     st_1_data = messaging.STAttMsgPayload()
     st_1_data.MRP_BdyInrtl = initState[:3]
+    st_1_data.dcm_CB = np.eye(3).flatten()
     st_1_data.timeTag = 0
 
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
     st_1_msg = messaging.STAttMsg().write(st_1_data)
     star_tracker1.starTrackerMsg.subscribeTo(st_1_msg)
-    star_tracker1.measurementNoise_C = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
+    star_tracker1.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
 
     st_2_data = messaging.STAttMsgPayload()
     st_2_data.MRP_BdyInrtl = initState[:3]
+    st_2_data.dcm_CB = np.eye(3).flatten()
     st_2_data.timeTag = 0
 
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
     st_2_msg = messaging.STAttMsg().write(st_2_data)
     star_tracker2.starTrackerMsg.subscribeTo(st_2_msg)
-    star_tracker2.measurementNoise_C = [[1e-3, 0, 0], [0,1e-3,0], [0,0,1e-3]]
+    star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker2)
 
-    accel_data = messaging.AccDataMsgPayload()
-    accel_measurement = messaging.AccDataMsg().write(accel_data)
-    miru_low_pass_filter_converter.imuAccelDataInMsg.subscribeTo(accel_measurement)
+    imu_data = messaging.IMUSensorMsgPayload()
+    imu_measurement = messaging.IMUSensorMsg().write(imu_data)
+    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(imu_measurement)
 
     attitude_data_log = intertialAttitudeFilter.navAttitudeOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, attitude_data_log)
@@ -228,7 +223,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     """Module Unit Test"""
     unit_task_name = "unitTask"  # arbitrary name (don't change)
     unit_process_name = "TestProcess"  # arbitrary name (don't change)
-
+    np.random.seed(1)
     #   Create a sim module as an empty container
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
@@ -238,13 +233,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
     test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-    # Create miruLowPassFilterConverter module
-    miru_low_pass_filter_converter = miruLowPassFilterConverter.MiruLowPassFilterConverter()
-    miru_low_pass_filter_converter.setLowPassFilter(0.5, 15/(2*np.pi))
-    unit_test_sim.AddModelToTask(unit_task_name, miru_low_pass_filter_converter)
-
     intertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(method)
-    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(miru_low_pass_filter_converter.imuSensorOutMsg)
     unit_test_sim.AddModelToTask(unit_task_name, intertialAttitudeFilter)
 
     # Add test module to runtime call list
@@ -292,6 +281,7 @@ def test_measurements_kf(show_plots, initial_error, method):
 
     st_1_data = messaging.STAttMsgPayload()
     st_1_data.MRP_BdyInrtl = initial_condition[:3]
+    st_1_data.dcm_CB = np.eye(3).flatten()
     st_1_data.timeTag = 0
 
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
@@ -302,6 +292,7 @@ def test_measurements_kf(show_plots, initial_error, method):
 
     st_2_data = messaging.STAttMsgPayload()
     st_2_data.MRP_BdyInrtl = initial_condition[:3]
+    st_2_data.dcm_CB = np.eye(3).flatten()
     st_2_data.timeTag = 0
 
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
@@ -310,9 +301,9 @@ def test_measurements_kf(show_plots, initial_error, method):
     star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addStarTrackerInput(star_tracker2)
 
-    accel_data = messaging.AccDataMsgPayload()
-    accel_measurement = messaging.AccDataMsg().write(accel_data)
-    miru_low_pass_filter_converter.imuAccelDataInMsg.subscribeTo(accel_measurement)
+    imu_data = messaging.IMUSensorMsgPayload()
+    imu_measurement = messaging.IMUSensorMsg().write(imu_data)
+    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(imu_measurement)
 
     filter_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
@@ -326,48 +317,44 @@ def test_measurements_kf(show_plots, initial_error, method):
     gyro_residual_data_log = intertialAttitudeFilter.gyroResidualMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, gyro_residual_data_log)
 
-    sim_time = 200
-    max_buffer_len = 120
-    substeps = 50
-    time = np.linspace(0, sim_time, substeps*sim_time+1)
+    sim_time = 500
+    time = np.linspace(0, sim_time, sim_time+1)
     expected = np.zeros([len(time), 7])
     expected[:int(len(time)/2), :] = rk4(attitude_dynamics, time[:int(len(time)/2)], initial_condition,
                                          np.array(I).reshape([3,3]))
     kick = np.array([0.1, 0.01, -0.5, 1E-1, 1E-2, 1E-1])
-    initial_condition = expected[int(len(time)/2), 1:] + kick
+    initial_condition = expected[int(len(time)/2) -1, 1:] + kick
     expected[int(len(time)/2):, :] = rk4(attitude_dynamics, time[int(len(time)/2):], initial_condition,
                                          np.array(I).reshape([3,3]))
 
     st_sigma_2 = np.diag(intertialAttitudeFilter.getStarTrackerNoise(0)).mean()
-    gyroSigma = np.diag(intertialAttitudeFilter.getGyroNoise()).mean()
+    gyroSigma_2 = np.diag(intertialAttitudeFilter.getGyroNoise()).mean()
+    if method == starOnly:
+        gyroSigma_2 = st_sigma_2
 
     unit_test_sim.InitializeSimulation()
-    for i in range(len(time)-1 - substeps):
+    for i in range(len(time)-1):
         for k in range(rw_data_msg.numRW):
             rw_speeds_data.wheelSpeeds[k] = k%2*200
         rw_speeds.write(rw_speeds_data, int((i+1)*1E9))
-        if (i > 10*substeps and i< substeps*sim_time/4) or i > substeps*sim_time/2:
-            if (time[i]-0.2).is_integer():
-                st_1_data.timeTag = time[i]
+        if (10 < i < sim_time / 4) or (sim_time / 2 < i):
+            if time[i+1]%2 == 0:
+                st_1_data.timeTag = time[i+1]
                 st_1_data.valid = True
-                st_1_data.MRP_BdyInrtl = expected[i, 1:4] + np.random.normal(0, 1e-4, 3)
-                st_1_msg.write(st_1_data, int(time[i]*1E9))
+                st_1_data.MRP_BdyInrtl = expected[i+1, 1:4] + np.random.normal(0, np.sqrt(st_sigma_2), 3)
+                st_1_msg.write(st_1_data, int(time[i+1]*1E9))
 
-            if (time[i]-0.8).is_integer():
-                st_2_data.timeTag = time[i]
+            if time[i+1]%2 == 1 and i:
+                st_2_data.timeTag = time[i+1]
                 st_2_data.valid = True
-                st_2_data.MRP_BdyInrtl = expected[i, 1:4] + np.random.normal(0, 1e-4, 3)
-                st_2_msg.write(st_2_data, int(time[i]*1e9))
+                st_2_data.MRP_BdyInrtl = expected[i+1, 1:4] + np.random.normal(0, np.sqrt(st_sigma_2), 3)
+                st_2_msg.write(st_2_data, int(time[i+1]*1e9))
 
-        if i > substeps*sim_time/4 and i < len(time):
-            if (time[i]-0.5).is_integer():
-                accel_data = messaging.AccDataMsgPayload()
-                accel_data.valid = True
-                for k in range(max_buffer_len):
-                    accel_data.accPkts[(k)%max_buffer_len].measTime = int(time[i]*1e9)
-                    accel_data.accPkts[(k)%max_buffer_len].gyro_B = (expected[i, 4:7]
-                                                                     + np.random.normal(0, 1e-4, 3))
-                accel_measurement.write(accel_data, int(time[i]*1e9))
+        if sim_time/4 < i:
+            imu_data.numberOfValidGyroMeasurements = 1
+            imu_data.timeTag = time[i+1]
+            imu_data.AngVelPlatform = expected[i+1, 4:7] + np.random.normal(0, np.sqrt(gyroSigma_2), 3)
+            imu_measurement.write(imu_data, int(time[i+1]*1e9))
 
         unit_test_sim.ConfigureStopTime(macros.sec2nano((time[i+1])))
         unit_test_sim.ExecuteSimulation()
@@ -410,17 +397,23 @@ def test_measurements_kf(show_plots, initial_error, method):
             gyro_post_fit_log[i, 1:gyro_size_obs[i]+1] = gyro_post_fit_log_sparse[i, 1:gyro_size_obs[i]+1]
             gyro_pre_fit_log[i, 1:gyro_size_obs[i]+1] = gyro_pre_fit_log_sparse[i, 1:gyro_size_obs[i]+1]
 
-    quarter_time = int(3* len(time) / 4 / substeps)
+    quarter_time = int(3* len(time) / 4)
     diff = np.copy(state_data_log)
-    for i in range(sim_time):
-        diff[i, 1:] -= expected[i*substeps, 1:]
+    for i in range(sim_time+1):
+        diff[i, 1:4] = rbk.subMRP(diff[i, 1:4], expected[i, 1:4])
+        diff[i, 4:] -= expected[i, 4:]
 
-    # testing that Sun Heading vector estimate is correct within 5 sigma
-    np.testing.assert_allclose(np.linalg.norm(diff[quarter_time:, 1:], axis=1),
+    # testing that mrp estimate is correct within 5 sigma
+    np.testing.assert_allclose(diff[quarter_time:, 1:4],
                                0,
-                                rtol=1e-4,
-                                atol=1e-2,
-                                err_msg='state propagation error',
+                                atol=np.sqrt(st_sigma_2)*5,
+                                err_msg='mrp estimation error',
+                                verbose=True)
+    # testing that rate vector estimate is correct within 5 sigma
+    np.testing.assert_allclose(diff[quarter_time:, 4:7],
+                               0,
+                                atol=np.sqrt(gyroSigma_2)*5,
+                                err_msg='rate estimation error',
                                 verbose=True)
     # testing that covariance is shrinking
     np.testing.assert_array_less(np.diag(covariance_data_log[quarter_time, 1:].reshape([6, 6])),
@@ -430,9 +423,11 @@ def test_measurements_kf(show_plots, initial_error, method):
 
     filter_plots.state_covar(diff, covariance_data_log, 'Update', show_plots)
     filter_plots.states(diff, 'Update', show_plots)
-    filter_plots.post_fit_residuals(st_pre_fit_log, st_sigma_2, 'Update ST PostFit', show_plots)
+    filter_plots.post_fit_residuals(st_pre_fit_log, np.sqrt(st_sigma_2), 'Update ST PreFit', show_plots)
+    filter_plots.post_fit_residuals(st_post_fit_log, np.sqrt(st_sigma_2), 'Update ST PostFit', show_plots)
     if np.max(gyro_size_obs)>0:
-        filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit', show_plots)
+        filter_plots.post_fit_residuals(gyro_pre_fit_log, np.sqrt(gyroSigma_2), 'Update Gyro PreFit', show_plots)
+        filter_plots.post_fit_residuals(gyro_post_fit_log, np.sqrt(gyroSigma_2), 'Update Gyro PostFit', show_plots)
 
 if __name__ == "__main__":
     test_measurements_kf(True, True, allMeasurements)
