@@ -451,9 +451,6 @@ if(WIN32)
   set(CMAKE_MSVCIDE_RUN_PATH "${CMAKE_BINARY_DIR}/Basilisk")
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
   set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib)
-  # fix for opencv not finding conan gflags for opencv sfm lib on windows when the finding is fixed, the following line
-  # should be removed https://github.com/conan-community/community/issues/210
-  list(REMOVE_ITEM CONAN_LIBS opencv_sfm411d multiview)
 
 elseif(APPLE)
   if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64")
