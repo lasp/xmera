@@ -17,39 +17,34 @@
 
  */
 #include "simulation/navigation/simpleNav/simpleNav.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include <iostream>
-#include <cstring>
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include <cstring>
+#include <iostream>
 
 /*! This is the constructor for the simple nav model.  It sets default variable
     values and initializes the various parts of the model */
-SimpleNav::SimpleNav()
-{
+SimpleNav::SimpleNav() {
     this->crossTrans = false;
     this->crossAtt = false;
     this->prevTime = 0;
-    this->estAttState = this->attOutMsg.zeroMsgPayload;
-    this->trueAttState = this->attOutMsg.zeroMsgPayload;
-    this->estTransState = this->transOutMsg.zeroMsgPayload;
-    this->trueTransState = this->transOutMsg.zeroMsgPayload;
-    this->accelDataState = this->accelDataOutMsg.zeroMsgPayload;
-    this->spacecraftEphemerisState = this->scEphemOutMsg.zeroMsgPayload;
-    this->PMatrix.resize(18,18);
+    this->estAttState = NavAttMsgPayload{};
+    this->trueAttState = NavAttMsgPayload{};
+    this->estTransState = NavTransMsgPayload{};
+    this->trueTransState = NavTransMsgPayload{};
+    this->accelDataState = AccDataMsgPayload{};
+    this->spacecraftEphemerisState = EphemerisMsgPayload{};
+    this->PMatrix.resize(18, 18);
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(18);
     this->walkBounds.fill(0.0);
-    this->errorModel =  GaussMarkov(18, this->RNGSeed);
+    this->errorModel = GaussMarkov(18, this->RNGSeed);
 }
 
 /*! Destructor.  Nothing here. */
-SimpleNav::~SimpleNav()
-{
-    return;
-}
-
+SimpleNav::~SimpleNav() { return; }
 
 /*! This method is used to reset the module. It
  initializes the various containers used in the model as well as creates the
@@ -63,8 +58,7 @@ SimpleNav::~SimpleNav()
      - Accumulated DV errors [15-17]
  @return void
  */
-void SimpleNav::reset(uint64_t currentSimNanos)
-{
+void SimpleNav::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "SimpleNav.scStateInMsg was not linked.");
@@ -74,12 +68,14 @@ void SimpleNav::reset(uint64_t currentSimNanos)
 
     //! - Initialize the propagation matrix to default values for use in update
     this->AMatrix.setIdentity(numStates, numStates);
-    this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
-    this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
+    this->AMatrix(0, 3) = this->AMatrix(1, 4) = this->AMatrix(2, 5) = this->crossTrans ? 1.0 : 0.0;
+    this->AMatrix(6, 9) = this->AMatrix(7, 10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
-    if (this->PMatrix.size() != numStates*numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
+    if (this->PMatrix.size() != numStates * numStates) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting",
+                         this->PMatrix.size());
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
@@ -96,13 +92,11 @@ void SimpleNav::reset(uint64_t currentSimNanos)
 /*! This method reads the input messages associated with the vehicle state and
  the sun state
  */
-void SimpleNav::readInputMessages()
-{
+void SimpleNav::readInputMessages() {
     this->inertialState = this->scStateInMsg();
 
-    this->sunState = this->sunStateInMsg.zeroMsgPayload;
-    if(this->sunStateInMsg.isLinked())
-    {
+    this->sunState = SpicePlanetStateMsgPayload{};
+    if (this->sunStateInMsg.isLinked()) {
         this->sunState = this->sunStateInMsg();
     }
 }
@@ -111,12 +105,11 @@ void SimpleNav::readInputMessages()
  @return void
  @param Clock The clock time associated with the model call
  */
-void SimpleNav::writeOutputMessages(uint64_t Clock)
-{
+void SimpleNav::writeOutputMessages(uint64_t Clock) {
     /* time tage the output message */
-    this->estAttState.timeTag = (double) Clock * NANO2SEC;
-    this->estTransState.timeTag = (double) Clock * NANO2SEC;
-    this->spacecraftEphemerisState.timeTag = (double) Clock * NANO2SEC;
+    this->estAttState.timeTag = (double)Clock * NANO2SEC;
+    this->estTransState.timeTag = (double)Clock * NANO2SEC;
+    this->spacecraftEphemerisState.timeTag = (double)Clock * NANO2SEC;
 
     this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
     this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
@@ -124,34 +117,36 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
     this->accelDataOutMsg.write(&this->accelDataState, this->moduleID, Clock);
 }
 
-void SimpleNav::applyErrors()
-{
+void SimpleNav::applyErrors() {
     //! - Add errors to the simple cases (everything except sun-pointing)
     v3Add(this->trueTransState.r_BN_N, &(this->navErrors.data()[0]), this->estTransState.r_BN_N);
     v3Add(this->trueTransState.v_BN_N, &(this->navErrors.data()[3]), this->estTransState.v_BN_N);
     addMRP(this->trueAttState.sigma_BN, &(this->navErrors.data()[6]), this->estAttState.sigma_BN);
     v3Add(this->trueAttState.omega_BN_B, &(this->navErrors.data()[9]), this->estAttState.omega_BN_B);
-    v3Add(this->spacecraftEphemerisState.r_BdyZero_N, &(this->navErrors.data()[0]),
+    v3Add(this->spacecraftEphemerisState.r_BdyZero_N,
+          &(this->navErrors.data()[0]),
           this->spacecraftEphemerisState.r_BdyZero_N);
-    v3Add(this->spacecraftEphemerisState.v_BdyZero_N, &(this->navErrors.data()[3]),
+    v3Add(this->spacecraftEphemerisState.v_BdyZero_N,
+          &(this->navErrors.data()[3]),
           this->spacecraftEphemerisState.v_BdyZero_N);
-    addMRP(this->spacecraftEphemerisState.sigma_BN, &(this->navErrors.data()[6]),
-           this->spacecraftEphemerisState.sigma_BN);
-    v3Add(this->spacecraftEphemerisState.omega_BN_B, &(this->navErrors.data()[9]),
+    addMRP(
+        this->spacecraftEphemerisState.sigma_BN, &(this->navErrors.data()[6]), this->spacecraftEphemerisState.sigma_BN);
+    v3Add(this->spacecraftEphemerisState.omega_BN_B,
+          &(this->navErrors.data()[9]),
           this->spacecraftEphemerisState.omega_BN_B);
     v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
 
     //! - Apply accelerometer errors to truth data
-    for (int index=0; index<this->numberOfGyroBuffers; ++index){
+    for (int index = 0; index < this->numberOfGyroBuffers; ++index) {
         AccPktDataMsgPayload accelPacketPayload = this->accelDataState.accPkts[index];
-        v3Add(accelPacketPayload.gyro_B, &this->gyroErrors[3*index], accelPacketPayload.gyro_B);
-        v3Add(accelPacketPayload.accel_B, &this->accelErrors[3*index], accelPacketPayload.accel_B);
+        v3Add(accelPacketPayload.gyro_B, &this->gyroErrors[3 * index], accelPacketPayload.gyro_B);
+        v3Add(accelPacketPayload.accel_B, &this->accelErrors[3 * index], accelPacketPayload.accel_B);
         this->accelDataState.accPkts[index] = accelPacketPayload;
     }
 
     //! - Add errors to  sun-pointing
-    if(this->sunStateInMsg.isLinked()){
-        double dcm_OT[3][3];       /* dcm, body T to body O */
+    if (this->sunStateInMsg.isLinked()) {
+        double dcm_OT[3][3]; /* dcm, body T to body O */
         MRP2C(&(this->navErrors.data()[12]), dcm_OT);
         m33MultV3(dcm_OT, this->trueAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
         v3Normalize(this->estAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
@@ -160,14 +155,12 @@ void SimpleNav::applyErrors()
     }
 }
 
-
 /*! This method uses the input messages as well as the calculated model errors to
  compute what the output navigation state should be.
     @return void
     @param Clock The clock time associated with the model's update call
 */
-void SimpleNav::computeTrueOutput(uint64_t Clock)
-{
+void SimpleNav::computeTrueOutput(uint64_t Clock) {
     //! - Set output state to truth data
     v3Copy(this->inertialState.r_BN_N, this->trueTransState.r_BN_N);
     v3Copy(this->inertialState.v_BN_N, this->trueTransState.v_BN_N);
@@ -176,9 +169,9 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     v3Copy(this->inertialState.TotalAccumDVBdy, this->trueTransState.vehAccumDV);
 
     //! - Set accelerometer state to truth data
-    for (int index=0; index<this->numberOfGyroBuffers; ++index){
+    for (int index = 0; index < this->numberOfGyroBuffers; ++index) {
         AccPktDataMsgPayload accelPacketPayload;
-        uint64_t timeOffset = index*SEC2NANO/this->gyroFrequencyPerSecond;
+        uint64_t timeOffset = index * SEC2NANO / this->gyroFrequencyPerSecond;
         accelPacketPayload.measTime = Clock + timeOffset;
         v3Copy(this->inertialState.omega_BN_B, accelPacketPayload.gyro_B);
         v3Copy(this->inertialState.omegaDot_BN_B, accelPacketPayload.accel_B);
@@ -192,9 +185,9 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     v3Copy(this->inertialState.omega_BN_B, this->spacecraftEphemerisState.omega_BN_B);
 
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
-    if(this->sunStateInMsg.isLinked()){
+    if (this->sunStateInMsg.isLinked()) {
         double sc2SunInrtl[3];
-        double dcm_BN[3][3];        /* dcm, inertial to body */
+        double dcm_BN[3][3]; /* dcm, inertial to body */
         v3Subtract(this->sunState.PositionVector, this->inertialState.r_BN_N, sc2SunInrtl);
         v3Normalize(sc2SunInrtl, sc2SunInrtl);
         MRP2C(this->inertialState.sigma_BN, dcm_BN);
@@ -210,19 +203,18 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
  @return void
  @param currentSimNanos The clock time associated with the model call
  */
-void SimpleNav::computeErrors(uint64_t currentSimNanos)
-{
+void SimpleNav::computeErrors(uint64_t currentSimNanos) {
     double timeStep;
     Eigen::MatrixXd localProp = this->AMatrix;
     //! - Compute timestep since the last call
-    timeStep = (currentSimNanos - this->prevTime)*1.0E-9;
+    timeStep = (currentSimNanos - this->prevTime) * 1.0E-9;
 
-    localProp(0,3) *= timeStep; //postion/velocity cross correlation terms
-    localProp(1,4) *= timeStep; //postion/velocity cross correlation terms
-    localProp(2,5) *= timeStep; //postion/velocity cross correlation terms
-    localProp(6,9) *= timeStep; //attitude/attitude rate cross correlation terms
-    localProp(7,10) *= timeStep; //attitude/attitude rate cross correlation terms
-    localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
+    localProp(0, 3) *= timeStep;   // postion/velocity cross correlation terms
+    localProp(1, 4) *= timeStep;   // postion/velocity cross correlation terms
+    localProp(2, 5) *= timeStep;   // postion/velocity cross correlation terms
+    localProp(6, 9) *= timeStep;   // attitude/attitude rate cross correlation terms
+    localProp(7, 10) *= timeStep;  // attitude/attitude rate cross correlation terms
+    localProp(8, 11) *= timeStep;  // attitude/attitude rate cross correlation terms
 
     //! - Set the GaussMarkov propagation matrix and compute errors
     this->errorModel.setPropMatrix(localProp);
@@ -232,21 +224,19 @@ void SimpleNav::computeErrors(uint64_t currentSimNanos)
     //! - Compute accelerometer errors
     std::random_device rd;
     std::mt19937 generator(rd());
-    std::normal_distribution<double> gyroErrorDistribution(this->gyroBias,this->gyroStandardDeviation);
-    std::normal_distribution<double> accelErrorDistribution(this->accelBias,this->accelStandardDeviation);
-    for (int index=0; index<3*this->numberOfGyroBuffers; ++index){
+    std::normal_distribution<double> gyroErrorDistribution(this->gyroBias, this->gyroStandardDeviation);
+    std::normal_distribution<double> accelErrorDistribution(this->accelBias, this->accelStandardDeviation);
+    for (int index = 0; index < 3 * this->numberOfGyroBuffers; ++index) {
         this->gyroErrors[index] = gyroErrorDistribution(generator);
         this->accelErrors[index] = accelErrorDistribution(generator);
     }
-
 }
 
 /*! This method calls all of the run-time operations for the simple nav model.
     @return void
     @param currentSimNanos The clock time associated with the model call
 */
-void SimpleNav::updateState(uint64_t currentSimNanos)
-{
+void SimpleNav::updateState(uint64_t currentSimNanos) {
     this->readInputMessages();
     this->computeTrueOutput(currentSimNanos);
     this->computeErrors(currentSimNanos);

@@ -75,9 +75,9 @@ void LinearODeKF::customreset() {
  @param uint64_t currentSimNanos
  */
 void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
-    NavTransMsgPayload navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
-    FilterMsgPayload opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
-    FilterResidualsMsgPayload residualsBuffer = this->opNavResidualMsg.zeroMsgPayload;
+    NavTransMsgPayload navTransOutMsgBuffer{};
+    FilterMsgPayload opNavFilterMsgBuffer{};
+    FilterResidualsMsgPayload residualsBuffer{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
     eigenMatrixXd2CArray(this->stateLogged.scale(1 / this->unitConversion).getPositionStates(),

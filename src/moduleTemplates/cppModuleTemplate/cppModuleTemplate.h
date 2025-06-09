@@ -38,8 +38,8 @@ class CppModuleTemplate : public SysModel {
     double dummy;         //!< [units] sample module variable declaration
     double dumVector[3];  //!< [units] sample vector variable
 
-    Message<ModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
-    ReadFunctor<ModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg
+    Message<ModuleTemplateMsgPayload> dataOutMsg;
+    ReadFunctor<ModuleTemplateMsgPayload> dataInMsg;
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 };

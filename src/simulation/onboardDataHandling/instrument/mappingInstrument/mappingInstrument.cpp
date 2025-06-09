@@ -22,13 +22,10 @@
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-MappingInstrument::MappingInstrument()
-{
-}
+MappingInstrument::MappingInstrument() {}
 
 /*! Module Destructor */
-MappingInstrument::~MappingInstrument()
-{
+MappingInstrument::~MappingInstrument() {
     for (long unsigned int c = 0; c < this->dataNodeOutMsgs.size(); c++) {
         delete this->dataNodeOutMsgs.at(c);
     }
@@ -38,10 +35,9 @@ MappingInstrument::~MappingInstrument()
  @param currentSimNanos
  @return void
  */
-void MappingInstrument::reset(uint64_t currentSimNanos)
-{
+void MappingInstrument::reset(uint64_t currentSimNanos) {
     // check that the baud rate is set
-    if (this->nodeBaudRate < 0.0){
+    if (this->nodeBaudRate < 0.0) {
         bskLogger.bskLog(BSK_ERROR, "MappingInstrument.nodeBaudRate is not set to a positive value.");
     }
 
@@ -52,12 +48,11 @@ void MappingInstrument::reset(uint64_t currentSimNanos)
  @param currentSimNanos
  @return void
  */
-void MappingInstrument::updateState(uint64_t currentSimNanos)
-{
+void MappingInstrument::updateState(uint64_t currentSimNanos) {
     /* Loop through each access message */
-    for (long unsigned int c=0; c< this->accessInMsgs.size(); c++) {
+    for (long unsigned int c = 0; c < this->accessInMsgs.size(); c++) {
         /* Zero the output message buffer */
-        this->dataNodeOutMsgBuffer.at(c) = this->dataNodeOutMsgs.at(c)->zeroMsgPayload;
+        this->dataNodeOutMsgBuffer.at(c) = DataNodeUsageMsgPayload{};
 
         /* Read the access message */
         AccessMsgPayload accessMsg;
@@ -79,11 +74,10 @@ void MappingInstrument::updateState(uint64_t currentSimNanos)
     return;
 }
 
-
 /*! Adds a mapping point (access message and name) to the module
  * @return void
-*/
-void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName){
+ */
+void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName) {
     /* Add the name of the mapping point */
     this->mappingPoints.push_back(dataName);
 

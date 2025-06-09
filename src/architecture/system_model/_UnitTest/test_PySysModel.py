@@ -20,7 +20,7 @@ from Basilisk.utilities import macros
 from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.architecture import sysModel
 from Basilisk.architecture import bskLogging
-from Basilisk.architecture import messaging
+from Basilisk.architecture.messaging import ModuleTemplateMsg, ModuleTemplateMsgPayload
 
 import numpy as np
 
@@ -84,16 +84,16 @@ class PythonModule(sysModel.SysModel):
 
     def __init__(self, *args):
         super().__init__(*args)
-        self.dataOutMsg = messaging.ModuleTemplateMsg()
+        self.dataOutMsg = ModuleTemplateMsg()
 
     def reset(self, currentSimNanos):
-        payload = self.dataOutMsg.zeroMsgPayload
+        payload = ModuleTemplateMsgPayload()
         payload.dataVector = np.array([0,0,0])
         self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
         self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
 
     def updateState(self, currentSimNanos):
-        payload = self.dataOutMsg.zeroMsgPayload
+        payload = ModuleTemplateMsgPayload()
         payload.dataVector = self.dataOutMsg.read().dataVector + np.array([0,1,0])
         self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
         self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {currentSimNanos*1e-9}s")

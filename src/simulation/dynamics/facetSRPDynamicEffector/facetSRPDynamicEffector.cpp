@@ -100,7 +100,7 @@ void FacetSRPDynamicEffector::ReadMessages() {
     // Read the Sun state input message
     if (this->sunInMsg.isLinked() && this->sunInMsg.isWritten()) {
         SpicePlanetStateMsgPayload sunMsgBuffer;
-        sunMsgBuffer = sunInMsg.zeroMsgPayload;
+        sunMsgBuffer = SpicePlanetStateMsgPayload{};
         sunMsgBuffer = this->sunInMsg();
         this->r_SN_N = cArray2EigenVector3d(sunMsgBuffer.PositionVector);
     }

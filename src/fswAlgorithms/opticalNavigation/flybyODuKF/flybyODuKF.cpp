@@ -29,22 +29,24 @@ void FlybyODuKF::customreset() {
     /*! - Check if the required message has not been connected */
     assert(this->opNavHeadingMsg.isLinked());
     /*! - Initialize filter parameters and change units to km and s */
-    this->muCentral *= pow(this->unitConversion, 3); // mu is input in meters
+    this->muCentral *= pow(this->unitConversion, 3);  // mu is input in meters
     double centralBody = this->muCentral;
-    std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics = [centralBody](double t, const FilterStateVector &state){
-        FilterStateVector XDot;
-        /*! Implement propagation with rate derivatives set to zero */
-        /*! Implement point mass gravity for the propagation */
-        PositionState flybyPosition;
-        VelocityState flybyVelocity;
-        flybyPosition.setValues(state.getVelocityStates());
-        flybyVelocity.setValues(-centralBody/(pow(state.getPositionStates().norm(),3)) * state.getPositionStates());
+    std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics =
+        [centralBody](double t, const FilterStateVector &state) {
+            FilterStateVector XDot;
+            /*! Implement propagation with rate derivatives set to zero */
+            /*! Implement point mass gravity for the propagation */
+            PositionState flybyPosition;
+            VelocityState flybyVelocity;
+            flybyPosition.setValues(state.getVelocityStates());
+            flybyVelocity.setValues(-centralBody / pow(state.getPositionStates().norm(), 3) *
+                                    state.getPositionStates());
 
-        XDot.setPosition(flybyPosition);
-        XDot.setVelocity(flybyVelocity);
+            XDot.setPosition(flybyPosition);
+            XDot.setVelocity(flybyVelocity);
 
-        return XDot;
-    };
+            return XDot;
+        };
 
     /*! - Set the filter dynamics */
     this->dynamics.setDynamics(twoBodyDynamics);
@@ -55,19 +57,19 @@ void FlybyODuKF::customreset() {
  @return void
  */
 void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
-    NavTransMsgPayload navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
-    FilterMsgPayload opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
-    FilterResidualsMsgPayload residualsBuffer = this->opNavResidualMsg.zeroMsgPayload;
+    NavTransMsgPayload navTransOutMsgBuffer{};
+    FilterMsgPayload opNavFilterMsgBuffer{};
+    FilterResidualsMsgPayload residualsBuffer{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    eigenMatrixXd2CArray(this->state.scale(1/this->unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
-    eigenMatrixXd2CArray(this->state.scale(1/this->unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
+    eigenMatrixXd2CArray(this->state.scale(1 / this->unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
+    eigenMatrixXd2CArray(this->state.scale(1 / this->unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXd2CArray(this->state.scale(1/this->unitConversion).returnValues(), opNavFilterMsgBuffer.state);
-    eigenMatrixXd2CArray(this->xBar.scale(1/this->unitConversion).returnValues(), opNavFilterMsgBuffer.stateError);
-    eigenMatrixXd2CArray(1/this->unitConversion/this->unitConversion*this->covar, opNavFilterMsgBuffer.covar);
+    eigenMatrixXd2CArray(this->state.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.state);
+    eigenMatrixXd2CArray(this->xBar.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.stateError);
+    eigenMatrixXd2CArray(1 / this->unitConversion / this->unitConversion * this->covar, opNavFilterMsgBuffer.covar);
     opNavFilterMsgBuffer.numberOfStates = this->state.size();
 
     auto optionalMeasurement = this->measurements[0];
@@ -98,13 +100,14 @@ void FlybyODuKF::readFilterMeasurements() {
     headingMeasurement.setTimeTag(this->opNavHeadingBuffer.timeTag);
     headingMeasurement.setValidity(this->opNavHeadingBuffer.valid);
 
-    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->previousFilterTimeTag){
+    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->previousFilterTimeTag) {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArray2EigenVector3d(this->opNavHeadingBuffer.rhat_BN_N));
         headingMeasurement.getObservation().normalize();
-        headingMeasurement.setMeasurementNoise(this->measNoiseScaling * cArray2EigenMatrixXd(this->opNavHeadingBuffer.covar_N,
-                                                                               (int) headingMeasurement.size(),
-                                                                               (int) headingMeasurement.size()));
+        headingMeasurement.setMeasurementNoise(this->measNoiseScaling *
+                                               cArray2EigenMatrixXd(this->opNavHeadingBuffer.covar_N,
+                                                                    (int)headingMeasurement.size(),
+                                                                    (int)headingMeasurement.size()));
         headingMeasurement.setMeasurementModel(MeasurementModel::normalizedPositionStates);
         this->measurements[0] = headingMeasurement;
     }
@@ -114,13 +117,9 @@ void FlybyODuKF::readFilterMeasurements() {
     @param double muInput
     @return void
     */
-void FlybyODuKF::setCentralBodyGravitationParameter(const double muInput) {
-    this->muCentral = muInput;
-}
+void FlybyODuKF::setCentralBodyGravitationParameter(const double muInput) { this->muCentral = muInput; }
 
 /*! Get gravitational parameter used for orbit propagation
     @return double muCentral
     */
-double FlybyODuKF::getCentralBodyGravitationParameter() const {
-    return this->muCentral;
-}
+double FlybyODuKF::getCentralBodyGravitationParameter() const { return this->muCentral; }

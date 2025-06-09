@@ -17,29 +17,21 @@
 
  */
 #include "simulation/dynamics/DynOutput/orbElemConvert/orbElemConvert.h"
-#include <iostream>
 #include "architecture/utilities/linearAlgebra.h"
+#include <iostream>
 
 //! The constructor.  Note that you may want to overwrite the message names.
-OrbElemConvert::OrbElemConvert()
-{
-    return;
-}
+OrbElemConvert::OrbElemConvert() { return; }
 
 //! The destructor.  So tired of typing this.
-OrbElemConvert::~OrbElemConvert()
-{
-    return;
-}
-
+OrbElemConvert::~OrbElemConvert() { return; }
 
 /*! This method is used to reset the module.
  @return void
  */
-void OrbElemConvert::reset(uint64_t currentSimNanos)
-{
-    int numInputs = 0;      //!< number of input messages connected
-    int numOutputs = 0;     //!< number of output messages connected
+void OrbElemConvert::reset(uint64_t currentSimNanos) {
+    int numInputs = 0;   //!< number of input messages connected
+    int numOutputs = 0;  //!< number of output messages connected
 
     numInputs += this->scStateInMsg.isLinked();
     numInputs += this->spiceStateInMsg.isLinked();
@@ -66,8 +58,7 @@ void OrbElemConvert::reset(uint64_t currentSimNanos)
  @return void
  @param CurrentClock The current time in the system for output stamping
  */
-void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
-{
+void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock) {
     if (this->elemOutMsg.isLinked() && this->inputsGood) {
         auto payload = ClassicElementsMsgPayload();
         payload.a = this->CurrentElem.a;
@@ -84,14 +75,14 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
     }
     if (this->scStateOutMsg.isLinked() && this->inputsGood) {
         SCStatesMsgPayload scMsg;
-        scMsg = this->scStateOutMsg.zeroMsgPayload;
+        scMsg = SCStatesMsgPayload{};
         v3Copy(this->r_N, scMsg.r_BN_N);
         v3Copy(this->v_N, scMsg.v_BN_N);
         this->scStateOutMsg.write(&scMsg, this->moduleID, CurrentClock);
     }
     if (this->spiceStateOutMsg.isLinked() && this->inputsGood) {
         SpicePlanetStateMsgPayload spiceMsg;
-        spiceMsg = this->spiceStateOutMsg.zeroMsgPayload;
+        spiceMsg = SpicePlanetStateMsgPayload{};
         v3Copy(this->r_N, spiceMsg.PositionVector);
         v3Copy(this->v_N, spiceMsg.VelocityVector);
         this->spiceStateOutMsg.write(&spiceMsg, this->moduleID, CurrentClock);
@@ -101,25 +92,18 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 /*! The name kind of says it all right?  Converts CurrentElem to pos/vel.
  @return void
  */
-void OrbElemConvert::Elements2Cartesian()
-{
-    elem2rv(mu, &CurrentElem, r_N, v_N);
-}
+void OrbElemConvert::Elements2Cartesian() { elem2rv(mu, &CurrentElem, r_N, v_N); }
 
 /*! The name kind of says it all right?  Converts pos/vel to CurrentElem.
  @return void
  */
-void OrbElemConvert::Cartesian2Elements()
-{
-    rv2elem(mu, r_N, v_N, &CurrentElem);
-}
+void OrbElemConvert::Cartesian2Elements() { rv2elem(mu, r_N, v_N, &CurrentElem); }
 
 /*! This method reads the input message in from the system and sets the
  appropriate parameters based on which direction the module is running
  @return void
  */
-void OrbElemConvert::ReadInputs()
-{
+void OrbElemConvert::ReadInputs() {
     this->inputsGood = false;
     if (this->elemInMsg.isLinked()) {
         auto elements = ClassicElements();
@@ -158,16 +142,12 @@ void OrbElemConvert::ReadInputs()
  @return void
  @param currentSimNanos The current simulation time for system
  */
-void OrbElemConvert::updateState(uint64_t currentSimNanos)
-{
+void OrbElemConvert::updateState(uint64_t currentSimNanos) {
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();
-    if(this->elemInMsg.isLinked() && inputsGood)
-    {
+    if (this->elemInMsg.isLinked() && inputsGood) {
         Elements2Cartesian();
-    }
-    else if(inputsGood)
-    {
+    } else if (inputsGood) {
         Cartesian2Elements();
     }
 

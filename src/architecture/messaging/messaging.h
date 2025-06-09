@@ -43,8 +43,7 @@ class ReadFunctor {
 
    public:
     //!< -- BSK Logging
-    BSKLogger bskLogger;              //!< -- bsk logging instance
-    messageType zeroMsgPayload = {};  //!< -- zero'd copy of the message payload type
+    BSKLogger bskLogger;  //!< -- bsk logging instance
 
     //! constructor
     ReadFunctor() : initialized(false){};
@@ -172,8 +171,6 @@ class Message {
 
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0) { return Recorder<messageType>(this, timeDiff); }
-
-    messageType zeroMsgPayload = {};  //!< zero'd copy of the message payload structure
 
     //! check if this msg has been connected to
     bool isLinked() const { return this->header.isLinked; };

@@ -27,15 +27,12 @@ EphemDifferenceWithUncertainty::~EphemDifferenceWithUncertainty() = default;
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void EphemDifferenceWithUncertainty::reset(uint64_t currentSimNanos)
-{
+void EphemDifferenceWithUncertainty::reset(uint64_t currentSimNanos) {
     if (!this->ephemBaseInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "EphemDifferenceWithUncertainty.ephemBaseInMsg wasn't connected.");
+        bskLogger.bskLog(BSK_ERROR, "EphemDifferenceWithUncertainty.ephemBaseInMsg wasn't connected.");
     }
     if (!this->ephemSecondaryInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "EphemDifferenceWithUncertainty.ephemSecondaryInMsg wasn't connected.");
+        bskLogger.bskLog(BSK_ERROR, "EphemDifferenceWithUncertainty.ephemSecondaryInMsg wasn't connected.");
     }
 }
 
@@ -43,8 +40,7 @@ void EphemDifferenceWithUncertainty::reset(uint64_t currentSimNanos)
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void EphemDifferenceWithUncertainty::updateState(uint64_t currentSimNanos)
-{
+void EphemDifferenceWithUncertainty::updateState(uint64_t currentSimNanos) {
     EphemerisMsgPayload ephemBaseInBuffer = this->ephemBaseInMsg();
     EphemerisMsgPayload ephemSecondaryInBuffer = this->ephemSecondaryInMsg();
 
@@ -69,10 +65,8 @@ void EphemDifferenceWithUncertainty::updateState(uint64_t currentSimNanos)
     covar_21_N = this->covarianceBase + this->covarianceSecondary;
 
     /*! - output messages */
-    NavTransMsgPayload navTransOutMsgBuffer;
-    navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
-    FilterMsgPayload filterOutMsgBuffer;
-    filterOutMsgBuffer = this->filterOutMsg.zeroMsgPayload;
+    NavTransMsgPayload navTransOutMsgBuffer{};
+    FilterMsgPayload filterOutMsgBuffer{};
 
     navTransOutMsgBuffer.timeTag = timeTag;
     eigenVector3d2CArray(r_21_N, navTransOutMsgBuffer.r_BN_N);
@@ -91,7 +85,7 @@ void EphemDifferenceWithUncertainty::updateState(uint64_t currentSimNanos)
     @param Eigen::MatrixXd covariance
     @return void
     */
-void EphemDifferenceWithUncertainty::setCovarianceBase(const Eigen::MatrixXd stateCovariance){
+void EphemDifferenceWithUncertainty::setCovarianceBase(const Eigen::MatrixXd stateCovariance) {
     this->covarianceBase.resize(stateCovariance.rows(), stateCovariance.cols());
     this->covarianceBase << stateCovariance;
 }
@@ -99,15 +93,13 @@ void EphemDifferenceWithUncertainty::setCovarianceBase(const Eigen::MatrixXd sta
 /*! Get the state covariance of the base celestial object (e.g. asteroid)
     @return Eigen::MatrixXd covariance
     */
-Eigen::MatrixXd EphemDifferenceWithUncertainty::getCovarianceBase() const {
-    return this->covarianceBase;
-}
+Eigen::MatrixXd EphemDifferenceWithUncertainty::getCovarianceBase() const { return this->covarianceBase; }
 
 /*! Set the state covariance of the secondary celestial object (e.g. spacecraft)
     @param Eigen::MatrixXd covariance
     @return void
     */
-void EphemDifferenceWithUncertainty::setCovarianceSecondary(const Eigen::MatrixXd stateCovariance){
+void EphemDifferenceWithUncertainty::setCovarianceSecondary(const Eigen::MatrixXd stateCovariance) {
     this->covarianceSecondary.resize(stateCovariance.rows(), stateCovariance.cols());
     this->covarianceSecondary << stateCovariance;
 }
@@ -115,6 +107,4 @@ void EphemDifferenceWithUncertainty::setCovarianceSecondary(const Eigen::MatrixX
 /*! Get the state covariance of the secondary celestial object (e.g. spacecraft)
     @return Eigen::MatrixXd covariance
     */
-Eigen::MatrixXd EphemDifferenceWithUncertainty::getCovarianceSecondary() const {
-    return this->covarianceSecondary;
-}
+Eigen::MatrixXd EphemDifferenceWithUncertainty::getCovarianceSecondary() const { return this->covarianceSecondary; }

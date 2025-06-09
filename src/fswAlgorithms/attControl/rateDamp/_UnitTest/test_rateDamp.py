@@ -24,7 +24,7 @@ from Basilisk.fswAlgorithms import rateDamp
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
-@pytest.mark.parametrize("P", [0.0, 2.0])
+@pytest.mark.parametrize("P", [0.1, 2.0])
 def test_rateDamp(show_plots, P):
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"

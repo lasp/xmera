@@ -29,8 +29,7 @@ OpticalFlow::~OpticalFlow() = default;
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void OpticalFlow::reset(uint64_t currentSimNanos)
-{
+void OpticalFlow::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "opticalFlow.imageInMsg wasn't connected.");
@@ -48,33 +47,28 @@ void OpticalFlow::reset(uint64_t currentSimNanos)
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void OpticalFlow::updateState(uint64_t currentSimNanos)
-{
-    CameraImageMsgPayload imageBuffer;
-    PairedKeyPointsMsgPayload featurePayload;
-
-    imageBuffer = this->imageInMsg.zeroMsgPayload;
-    featurePayload = this->keyPointsMsg.zeroMsgPayload;
+void OpticalFlow::updateState(uint64_t currentSimNanos) {
+    CameraImageMsgPayload imageBuffer{};
+    PairedKeyPointsMsgPayload featurePayload{};
 
     /*! - Read in the bitmap*/
     imageBuffer = this->imageInMsg();
 
     this->sensorTimeTag = 0;
     /*! - Read option which reads images from files*/
-    if (!this->directoryName.empty()){
-        std::string filename = this->directoryName + std::to_string(currentSimNanos*1E-9) + this->imageFileExtension;
+    if (!this->directoryName.empty()) {
+        std::string filename = this->directoryName + std::to_string(currentSimNanos * 1E-9) + this->imageFileExtension;
         std::ifstream imageFile(filename);
-        if (imageFile.good()){
+        if (imageFile.good()) {
             this->secondImage = cv::imread(filename, cv::IMREAD_GRAYSCALE);
             this->sensorTimeTag = currentSimNanos;
             this->secondImagePresent = true;
             imageBuffer.cameraID = 1;
         }
-    }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag > this->firstTimeTag){
+    } else if (imageBuffer.valid == 1 && imageBuffer.timeTag > this->firstTimeTag) {
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
-                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer((char *)imageBuffer.imagePointer,
+                                                (char *)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         this->secondImage = cv::imdecode(vectorBuffer, cv::IMREAD_GRAYSCALE);
 
         this->sensorTimeTag = imageBuffer.timeTag;
@@ -86,26 +80,25 @@ void OpticalFlow::updateState(uint64_t currentSimNanos)
     EphemerisMsgPayload ephemMsgBuffer;
     ephemMsgBuffer = this->ephemerisMsg();
     double dtBetweenImagesSeconds;
-    dtBetweenImagesSeconds = (double)(this->sensorTimeTag - this->firstTimeTag)*NANO2SEC;
+    dtBetweenImagesSeconds = (double)(this->sensorTimeTag - this->firstTimeTag) * NANO2SEC;
     /*! - If there is a second image and an first image, write the paired features message */
-    if (this->firstImagePresent && this->secondImagePresent && dtBetweenImagesSeconds >= this->minTimeBetweenPairs){
+    if (this->firstImagePresent && this->secondImagePresent && dtBetweenImagesSeconds >= this->minTimeBetweenPairs) {
         std::vector<uchar> status;
         std::vector<float> err;
-        auto criteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS,
-                                                     this->criteriaMaxCount,
-                                                     this->criteriaEpsilon);
+        auto criteria = cv::TermCriteria(
+            cv::TermCriteria::COUNT + cv::TermCriteria::EPS, this->criteriaMaxCount, this->criteriaEpsilon);
         cv::calcOpticalFlowPyrLK(this->firstImage,
                                  this->secondImage,
                                  this->firstFeatures,
                                  this->secondFeatures,
                                  status,
                                  err,
-                                 cv::Size(this->flowSearchSize,this->flowSearchSize),
+                                 cv::Size(this->flowSearchSize, this->flowSearchSize),
                                  this->flowMaxLevel,
                                  criteria);
 
         /*! If optical flow matches features between the images */
-        if (!this->secondFeatures.empty()){
+        if (!this->secondFeatures.empty()) {
             featurePayload.timeTag_secondImage = this->sensorTimeTag;
             featurePayload.timeTag_firstImage = this->firstTimeTag;
 
@@ -114,11 +107,11 @@ void OpticalFlow::updateState(uint64_t currentSimNanos)
             v3Copy(this->firstTargetEphemAttitude, featurePayload.sigma_TN_firstImage);
             v3Copy(ephemMsgBuffer.sigma_BN, featurePayload.sigma_TN_secondImage);
 
-            for (size_t i=0; i<this->secondFeatures.size(); i++){
-                featurePayload.keyPoints_firstImage[2*i] = this->firstFeatures[i][0];
-                featurePayload.keyPoints_firstImage[2*i+1] = this->firstFeatures[i][1];
-                featurePayload.keyPoints_secondImage[2*i] = this->secondFeatures[i][0];
-                featurePayload.keyPoints_secondImage[2*i+1] = this->secondFeatures[i][1];
+            for (size_t i = 0; i < this->secondFeatures.size(); i++) {
+                featurePayload.keyPoints_firstImage[2 * i] = this->firstFeatures[i][0];
+                featurePayload.keyPoints_firstImage[2 * i + 1] = this->firstFeatures[i][1];
+                featurePayload.keyPoints_secondImage[2 * i] = this->secondFeatures[i][0];
+                featurePayload.keyPoints_secondImage[2 * i + 1] = this->secondFeatures[i][1];
             }
             featurePayload.cameraID = imageBuffer.cameraID;
             featurePayload.keyPointsFound = (int)this->secondFeatures.size();
@@ -128,21 +121,20 @@ void OpticalFlow::updateState(uint64_t currentSimNanos)
 
             this->secondImagePresent = false;
             /*! Then reset values for next pair of images depending on to the sliding window setting */
-            if (this->slidingWindowImages){
+            if (this->slidingWindowImages) {
                 this->firstImagePresent = true;
                 v3Copy(navAttBuffer.sigma_BN, this->firstSpacecraftAttitude);
                 v3Copy(ephemMsgBuffer.sigma_BN, this->firstTargetEphemAttitude);
                 this->firstTimeTag = this->sensorTimeTag;
                 this->firstFeatures = this->secondFeatures;
-            }
-            else{
+            } else {
                 this->firstImagePresent = false;
                 this->firstTimeTag = 0;
                 this->firstFeatures.clear();
             }
         }
         /*! If optical flow did not succeed, reset features to allow for another attempt next image */
-        else{
+        else {
             this->firstImagePresent = false;
             this->firstTimeTag = 0;
             this->firstFeatures.clear();
@@ -150,7 +142,7 @@ void OpticalFlow::updateState(uint64_t currentSimNanos)
         }
     }
     /*! - If there is a second image but also a first image, populate the first image buffers */
-    else if(this->secondImagePresent){
+    else if (this->secondImagePresent) {
         this->firstImage = this->secondImage.clone();
         cv::Mat mask(this->firstImage.size(), CV_8UC1, cv::Scalar(255));
 
@@ -160,7 +152,7 @@ void OpticalFlow::updateState(uint64_t currentSimNanos)
                                 this->maxNumberFeatures,
                                 this->qualityLevel,
                                 this->minumumFeatureDistance,
-                                 mask,
+                                mask,
                                 this->blockSize,
                                 false,
                                 0.04);
@@ -174,7 +166,7 @@ void OpticalFlow::updateState(uint64_t currentSimNanos)
             this->secondImagePresent = false;
         }
         /*! If no features are found, reset data to attempt again */
-        else{
+        else {
             this->firstImagePresent = false;
             this->secondImagePresent = false;
         }
@@ -183,11 +175,10 @@ void OpticalFlow::updateState(uint64_t currentSimNanos)
         this->keyPointsMsg.write(&featurePayload, this->moduleID, currentSimNanos);
     }
     /*! - If no second image is present, write zeros in message and set valid to false*/
-    else{
+    else {
         featurePayload.valid = false;
         this->keyPointsMsg.write(&featurePayload, this->moduleID, currentSimNanos);
-        }
-
+    }
 }
 
 /*! This method reads an black and white image and makes a mask in order to remove the limb of the target.
@@ -200,8 +191,7 @@ void OpticalFlow::updateState(uint64_t currentSimNanos)
  @param inputBWImage cv::Mat of the input image
  @param mask cv::Mat of the output mask (binary black and white image)
  */
-void OpticalFlow::makeMask (cv::Mat const &inputBWImage, cv::Mat &mask) const {
-
+void OpticalFlow::makeMask(cv::Mat const &inputBWImage, cv::Mat &mask) const {
     cv::Mat distanceImage(inputBWImage.size(), CV_8UC1);
     cv::distanceTransform(inputBWImage, distanceImage, cv::DIST_L2, cv::DIST_MASK_PRECISE);
 
@@ -215,14 +205,10 @@ void OpticalFlow::makeMask (cv::Mat const &inputBWImage, cv::Mat &mask) const {
     /*! Mask the edges of the camera FOV in order to avoid effects of camera distortions.
      * Point in opencv is column, row */
     /*! - Left edge removal */
-    cv::rectangle(mask,
-                  cv::Point(0,0),
-                  cv::Point(this->limbMask, mask.size().height),
-                  cv::Scalar(0),
-                  -1);
+    cv::rectangle(mask, cv::Point(0, 0), cv::Point(this->limbMask, mask.size().height), cv::Scalar(0), -1);
     /*! - Right edge removal */
     cv::rectangle(mask,
-                  cv::Point(mask.size().width - this->limbMask, 0 ),
+                  cv::Point(mask.size().width - this->limbMask, 0),
                   cv::Point(mask.size().width, mask.size().height),
                   cv::Scalar(0),
                   -1);

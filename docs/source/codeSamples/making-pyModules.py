@@ -95,7 +95,7 @@ class TestPythonModule(sysModel.SysModel):
             )
 
         # Initialiazing self.dataOutMsg
-        payload = self.dataOutMsg.zeroMsgPayload
+        payload = messaging.ModuleTemplateMsgPayload()
         payload.dataVector = np.array([0, 0, 0])
         self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
 
@@ -107,7 +107,7 @@ class TestPythonModule(sysModel.SysModel):
         inputVector = inPayload.dataVector
 
         # Set output message
-        payload = self.dataOutMsg.zeroMsgPayload
+        payload = messaging.ModuleTemplateMsgPayload()
         payload.dataVector = (
             self.dataOutMsg.read().dataVector + np.array([0, 1, 0]) + inputVector
         )

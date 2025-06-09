@@ -26,8 +26,7 @@
 /*! This method initializes some basic parameters for the module.
  @return void
  */
-MagneticFieldBase::MagneticFieldBase()
-{
+MagneticFieldBase::MagneticFieldBase() {
     //! - zero class variables
     this->planetRadius = 0.0;
     this->r_BP_N.fill(0.0);
@@ -44,12 +43,11 @@ MagneticFieldBase::MagneticFieldBase()
     this->epochDateTime.tm_mday = EPOCH_DAY;
     this->epochDateTime.tm_hour = EPOCH_HOUR;
     this->epochDateTime.tm_min = EPOCH_MIN;
-    this->epochDateTime.tm_sec = (int) round(EPOCH_SEC);
+    this->epochDateTime.tm_sec = (int)round(EPOCH_SEC);
     this->epochDateTime.tm_isdst = -1;
 
-
     //! - zero the planet message, and set the DCM to an identity matrix
-    this->planetState = planetPosInMsg.zeroMsgPayload;
+    this->planetState = SpicePlanetStateMsgPayload{};
     m33SetIdentity(this->planetState.J20002Pfix);
 
     return;
@@ -58,9 +56,8 @@ MagneticFieldBase::MagneticFieldBase()
 /*! Destructor.
  @return void
  */
-MagneticFieldBase::~MagneticFieldBase()
-{
-    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
+MagneticFieldBase::~MagneticFieldBase() {
+    for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
         delete this->envOutMsgs.at(c);
     }
     return;
@@ -70,8 +67,7 @@ MagneticFieldBase::~MagneticFieldBase()
  @return void
  @param tmpScMsg A spacecraft state message name.
  */
-void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg){
-
+void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
     /* add input message */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
@@ -87,12 +83,10 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScM
     return;
 }
 
-
 /*! This method is used to reset the module.
  @return void
  */
-void MagneticFieldBase::reset(uint64_t currentSimNanos)
-{
+void MagneticFieldBase::reset(uint64_t currentSimNanos) {
     //! - call the custom environment module reset method
     customreset(currentSimNanos);
 
@@ -106,7 +100,7 @@ void MagneticFieldBase::reset(uint64_t currentSimNanos)
         this->epochDateTime.tm_mday = epochMsg.day;
         this->epochDateTime.tm_hour = epochMsg.hours;
         this->epochDateTime.tm_min = epochMsg.minutes;
-        this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
+        this->epochDateTime.tm_sec = (int)round(epochMsg.seconds);
         mktime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
@@ -114,31 +108,23 @@ void MagneticFieldBase::reset(uint64_t currentSimNanos)
     return;
 }
 
-
 /*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void MagneticFieldBase::customreset(uint64_t CurrentClock)
-{
-    return;
-}
+void MagneticFieldBase::customreset(uint64_t CurrentClock) { return; }
 
 /*! Custom customSetEpochFromVariable() method.  This allows a child class to specify how the module epoch information
  is set by a module variable.
  @return void
  */
-void MagneticFieldBase::customSetEpochFromVariable()
-{
-    return;
-}
+void MagneticFieldBase::customSetEpochFromVariable() { return; }
 
 /*! This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
-void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
-{
-    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
+void MagneticFieldBase::writeMessages(uint64_t CurrentClock) {
+    for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
         this->envOutMsgs.at(c)->write(&this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
@@ -151,27 +137,22 @@ void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
  @return void
  */
-void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock)
-{
-    return;
-}
+void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock) { return; }
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
  @return void
  */
-bool MagneticFieldBase::readMessages()
-{
+bool MagneticFieldBase::readMessages() {
     SCStatesMsgPayload scMsg;
 
     this->scStates.clear();
 
     //! - read in the spacecraft state messages
     bool scRead;
-    if(this->scStateInMsgs.size() > 0)
-    {
+    if (this->scStateInMsgs.size() > 0) {
         scRead = true;
-        for (long unsigned int c=0; c<this->scStateInMsgs.size(); c++) {
+        for (long unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
             bool tmpScRead;
             scMsg = this->scStateInMsgs.at(c)();
             tmpScRead = this->scStateInMsgs.at(c).isWritten();
@@ -184,10 +165,10 @@ bool MagneticFieldBase::readMessages()
         scRead = false;
     }
 
-    //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and orientation is assumed
+    //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and
+    //! orientation is assumed
     bool planetRead = true;
-    if(this->planetPosInMsg.isLinked())
-    {
+    if (this->planetPosInMsg.isLinked()) {
         this->planetState = this->planetPosInMsg();
         planetRead = this->planetPosInMsg.isWritten();
     }
@@ -195,40 +176,35 @@ bool MagneticFieldBase::readMessages()
     //! - call the custom method to perform additional input reading
     bool customRead = customReadMessages();
 
-    return(planetRead && scRead && customRead);
+    return (planetRead && scRead && customRead);
 }
-
 
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
  @return void
  */
-bool MagneticFieldBase::customReadMessages()
-{
-    return true;
-}
+bool MagneticFieldBase::customReadMessages() { return true; }
 
 /*! This method is used to update the local magnetic field based on each spacecraft's position.
   @return void
  */
-void MagneticFieldBase::updateLocalMagField(double currentTime)
-{
+void MagneticFieldBase::updateLocalMagField(double currentTime) {
     std::vector<SCStatesMsgPayload>::iterator it;
     uint64_t atmoInd = 0;
 
     //! - loop over all the spacecraft
     std::vector<MagneticFieldMsgPayload>::iterator magMsgIt;
     magMsgIt = this->magFieldOutBuffer.begin();
-    for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++, magMsgIt++){
+    for (it = scStates.begin(); it != scStates.end(); it++, atmoInd++, magMsgIt++) {
         //! - Computes planet relative state vector
         this->updateRelativePos(&(this->planetState), &(*it));
 
         //! - zero the output message for each spacecraft by default
-        *magMsgIt = this->envOutMsgs[0]->zeroMsgPayload;
+        *magMsgIt = MagneticFieldMsgPayload{};
 
         //! - check if radius is in permissible range
-        if(this->orbitRadius > this->envMinReach &&
-           (this->orbitRadius < this->envMaxReach || this->envMaxReach < 0)) {
-            //! - compute the local magnetic field.  The evaluateMageticFieldModel() method must be implement for each model
+        if (this->orbitRadius > this->envMinReach && (this->orbitRadius < this->envMaxReach || this->envMaxReach < 0)) {
+            //! - compute the local magnetic field.  The evaluateMageticFieldModel() method must be implement for each
+            //! model
             evaluateMagneticFieldModel(&(*magMsgIt), currentTime);
         }
     }
@@ -241,8 +217,7 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
  @param scState A spacecraft states message struct.
  @return void
  */
-void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState)
-{
+void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState) {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());
 
@@ -259,18 +234,16 @@ void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetStat
  @return void
  @param currentSimNanos The current simulation time in nanoseconds
  */
-void MagneticFieldBase::updateState(uint64_t currentSimNanos)
-{
+void MagneticFieldBase::updateState(uint64_t currentSimNanos) {
     //! - clear the output buffer
     std::vector<MagneticFieldMsgPayload>::iterator it;
-    for(it = this->magFieldOutBuffer.begin(); it!= this->magFieldOutBuffer.end(); it++){
+    for (it = this->magFieldOutBuffer.begin(); it != this->magFieldOutBuffer.end(); it++) {
         memset(&(*it), 0x0, sizeof(MagneticFieldMsgPayload));
-        *it = this->envOutMsgs[0]->zeroMsgPayload;
+        *it = MagneticFieldMsgPayload{};
     }
     //! - update local neutral density information
-    if(this->readMessages())
-    {
-        updateLocalMagField(currentSimNanos*NANO2SEC);
+    if (this->readMessages()) {
+        updateLocalMagField(currentSimNanos * NANO2SEC);
     }
 
     //! - write out neutral density message

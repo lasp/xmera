@@ -17,18 +17,14 @@
 
 */
 
-
 #include "simulation/sensors/hingedRigidBodyMotorSensor/hingedRigidBodyMotorSensor.h"
-#include <cmath>
 #include <stdint.h>
+#include <cmath>
 #include <random>
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-HingedRigidBodyMotorSensor::HingedRigidBodyMotorSensor()
-{
-
-
-    this->rGen.seed((unsigned int)this->RNGSeed); //! RNGSeed is an attribute of all modules
+HingedRigidBodyMotorSensor::HingedRigidBodyMotorSensor() {
+    this->rGen.seed((unsigned int)this->RNGSeed);  //! RNGSeed is an attribute of all modules
 
     this->thetaNoiseStd = 0.0;
     this->thetaDotNoiseStd = 0.0;
@@ -36,58 +32,50 @@ HingedRigidBodyMotorSensor::HingedRigidBodyMotorSensor()
     this->thetaBias = 0.0;
     this->thetaDotBias = 0.0;
 
-    this->thetaLSB = -1.0; //! -1 for no discretization by default
-    this->thetaDotLSB = -1.0; //! -1 for no discretization by default
-
+    this->thetaLSB = -1.0;     //! -1 for no discretization by default
+    this->thetaDotLSB = -1.0;  //! -1 for no discretization by default
 }
 
 /*! Module Destructor */
-HingedRigidBodyMotorSensor::~HingedRigidBodyMotorSensor()
-{
-}
+HingedRigidBodyMotorSensor::~HingedRigidBodyMotorSensor() {}
 
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
 */
-void HingedRigidBodyMotorSensor::reset(uint64_t currentSimNanos)
-{
+void HingedRigidBodyMotorSensor::reset(uint64_t currentSimNanos) {
     //!< check that required input messages are connected
     if (!this->hingedRigidBodyMotorSensorInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotorSensor.hingedRigidBodyMotorSensorInMsg was not linked.");
     }
-
 }
 
 /*! This allows the RNGSeed to be changed.
     @return void
 */
-void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
-{
-    this->rGen.seed((unsigned int)newSeed);
-}
+void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed) { this->rGen.seed((unsigned int)newSeed); }
 
-/*! This is the main method that gets called every time the module is updated.  Adds Gaussian noise and bias and diescretizes output.
+/*! This is the main method that gets called every time the module is updated.  Adds Gaussian noise and bias and
+   diescretizes output.
     @return void
 */
-void HingedRigidBodyMotorSensor::updateState(uint64_t currentSimNanos)
-{
+void HingedRigidBodyMotorSensor::updateState(uint64_t currentSimNanos) {
     //! variables for  calculations
-    double trueTheta;               //! [rad] actual planel angle
-    double trueThetaDot;            //! [rad/s] actual panel angular rate
-    double thetaNoise;              //! [rad] gaussian noise for panel angle
-    double thetaDotNoise;           //! [rad/s] gaussian noise for panel angular rate
-    double sensedTheta;             //! [rad] the sensed output angle
-    double sensedThetaDot;          //! [rad/s] the sended output angle rate
-    double numLSB;                  //! [] number of times the discretized theta value fits int to sensed value
-    double workingTheta;            //! [rad] discretized panel angle
-    double workingThetaDot;         //! [rad/s] discretized panel angle rate
-    double remainder;               //! [] remainder between sensed state and discretized state
+    double trueTheta;        //! [rad] actual planel angle
+    double trueThetaDot;     //! [rad/s] actual panel angular rate
+    double thetaNoise;       //! [rad] gaussian noise for panel angle
+    double thetaDotNoise;    //! [rad/s] gaussian noise for panel angular rate
+    double sensedTheta;      //! [rad] the sensed output angle
+    double sensedThetaDot;   //! [rad/s] the sended output angle rate
+    double numLSB;           //! [] number of times the discretized theta value fits int to sensed value
+    double workingTheta;     //! [rad] discretized panel angle
+    double workingThetaDot;  //! [rad/s] discretized panel angle rate
+    double remainder;        //! [] remainder between sensed state and discretized state
 
-    HingedRigidBodyMsgPayload hingedRigidBodyMotorSensorInMsgBuffer;  //! local copy of message buffer
+    HingedRigidBodyMsgPayload hingedRigidBodyMotorSensorInMsgBuffer;   //! local copy of message buffer
     HingedRigidBodyMsgPayload hingedRigidBodyMotorSensorOutMsgBuffer;  //! local copy of message buffer
 
     //! zero the output message buffers before assigning values
-    hingedRigidBodyMotorSensorOutMsgBuffer = this->hingedRigidBodyMotorSensorOutMsg.zeroMsgPayload;
+    hingedRigidBodyMotorSensorOutMsgBuffer = HingedRigidBodyMsgPayload{};
 
     //! read in the input messages
     hingedRigidBodyMotorSensorInMsgBuffer = this->hingedRigidBodyMotorSensorInMsg();
@@ -100,39 +88,39 @@ void HingedRigidBodyMotorSensor::updateState(uint64_t currentSimNanos)
     std::normal_distribution<double>::param_type updateThetaDotPair(0.0, this->thetaDotNoiseStd);
 
     this->rNum.param(updateThetaPair);
-    thetaNoise = this->rNum(this->rGen); //! sample using thetaNoiseStd
+    thetaNoise = this->rNum(this->rGen);  //! sample using thetaNoiseStd
     this->rNum.param(updateThetaDotPair);
-    thetaDotNoise = this->rNum(this->rGen); //! sample using thetaDotNoiseStd
+    thetaDotNoise = this->rNum(this->rGen);  //! sample using thetaDotNoiseStd
 
-    sensedTheta =  trueTheta + thetaNoise + this->thetaBias;
+    sensedTheta = trueTheta + thetaNoise + this->thetaBias;
     sensedThetaDot = trueThetaDot + thetaDotNoise + this->thetaDotBias;
 
     //!< apply discretization (rounds to nearest multiple of LSB)
-    if(this->thetaLSB > 0.0)
-    {
-        numLSB = floor(abs(sensedTheta) / this->thetaLSB); //! number of times the LSB goes into the absolute value of the sensed continuous theta
-        workingTheta = numLSB * this->thetaLSB * copysign(1.0,sensedTheta); //! multiply back the signed value of theta times the number of LSBs
-        remainder = sensedTheta-workingTheta;
-        if(abs(remainder) > (this->thetaLSB/2.0)) { //! add an extra LSB if needed to round up/down
-            workingTheta += this->thetaLSB * copysign(1.0,sensedTheta);
+    if (this->thetaLSB > 0.0) {
+        numLSB = floor(
+            abs(sensedTheta) /
+            this->thetaLSB);  //! number of times the LSB goes into the absolute value of the sensed continuous theta
+        workingTheta = numLSB * this->thetaLSB *
+                       copysign(1.0, sensedTheta);  //! multiply back the signed value of theta times the number of LSBs
+        remainder = sensedTheta - workingTheta;
+        if (abs(remainder) > (this->thetaLSB / 2.0)) {  //! add an extra LSB if needed to round up/down
+            workingTheta += this->thetaLSB * copysign(1.0, sensedTheta);
         }
         sensedTheta = workingTheta;
-
     }
-    if(this->thetaDotLSB > 0.0)
-    {
+    if (this->thetaDotLSB > 0.0) {
         numLSB = floor(abs(sensedThetaDot) / this->thetaDotLSB);
-        workingThetaDot = numLSB * this->thetaDotLSB * copysign(1.0,sensedThetaDot);
-        remainder = sensedThetaDot-workingThetaDot;
-        if(abs(remainder) > (this->thetaDotLSB/2.0)) {
-            workingThetaDot += this->thetaDotLSB * copysign(1.0,sensedThetaDot);
+        workingThetaDot = numLSB * this->thetaDotLSB * copysign(1.0, sensedThetaDot);
+        remainder = sensedThetaDot - workingThetaDot;
+        if (abs(remainder) > (this->thetaDotLSB / 2.0)) {
+            workingThetaDot += this->thetaDotLSB * copysign(1.0, sensedThetaDot);
         }
         sensedThetaDot = workingThetaDot;
-
     }
 
     //! write to the output messages
     hingedRigidBodyMotorSensorOutMsgBuffer.theta = sensedTheta;
     hingedRigidBodyMotorSensorOutMsgBuffer.thetaDot = sensedThetaDot;
-    this->hingedRigidBodyMotorSensorOutMsg.write(&hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->hingedRigidBodyMotorSensorOutMsg.write(
+        &hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, currentSimNanos);
 }

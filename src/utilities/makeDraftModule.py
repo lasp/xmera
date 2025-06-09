@@ -378,7 +378,7 @@ class moduleGenerator:
         defFile += '\n'
         defFile += '    // always zero the output message buffers before assigning values\n'
         for msg in outMsgList:
-            defFile += '    ' + msg['var'] + 'Buffer = this->' + msg['var'] + '.zeroMsgPayload;\n'
+            defFile += '    ' + msg['var'] + 'Buffer = ' + msg['type'] + '{};\n'
         defFile += '\n'
         defFile += '    // read in the input messages\n'
         for msg in inMsgList:

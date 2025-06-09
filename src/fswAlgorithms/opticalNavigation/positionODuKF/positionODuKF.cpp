@@ -28,15 +28,14 @@ PositionODuKF::~PositionODuKF() = default;
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void PositionODuKF::reset(uint64_t currentSimNanos)
-{
+void PositionODuKF::reset(uint64_t currentSimNanos) {
     /*! - Check if the required message has not been connected */
     if (!this->cameraPosMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,  "Error: positionODuKF opNavUnitVecInMsg wasn't connected.");
+        bskLogger.bskLog(BSK_ERROR, "Error: positionODuKF opNavUnitVecInMsg wasn't connected.");
     }
 
     /*! - Initialize filter parameters and change units to km and s */
-    this->muCentral *= 1E-9; // mu is input in meters
+    this->muCentral *= 1E-9;  // mu is input in meters
     this->state = 1E-3 * this->stateInitial;
     this->sBar = 1E-6 * this->covarInitial;
     this->covar = 1E-6 * this->covarInitial;
@@ -45,8 +44,8 @@ void PositionODuKF::reset(uint64_t currentSimNanos)
     this->measurementNoise.resize(this->obs.size(), this->obs.size());
     this->processNoise.resize(this->state.size(), this->state.size());
 
-    this->previousFilterTimeTag = (double) currentSimNanos*NANO2SEC;
-    this->numberSigmaPoints = this->state.size()*2+1;
+    this->previousFilterTimeTag = (double)currentSimNanos * NANO2SEC;
+    this->numberSigmaPoints = this->state.size() * 2 + 1;
     this->dt = 0;
 
     /*! - Ensure that all internal filter matrices are zeroed*/
@@ -58,16 +57,15 @@ void PositionODuKF::reset(uint64_t currentSimNanos)
     this->cholProcessNoise.setZero(this->state.size(), this->state.size());
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
-    this->lambdaParameter = (double) this->state.size()*(this->alphaParameter*this->alphaParameter - 1);
-    this->etaParameter = sqrt((double) this->state.size() + this->lambdaParameter);
+    this->lambdaParameter = (double)this->state.size() * (this->alphaParameter * this->alphaParameter - 1);
+    this->etaParameter = sqrt((double)this->state.size() + this->lambdaParameter);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    this->wM(0) = this->lambdaParameter / ((double) this->state.size() + this->lambdaParameter);
-    this->wC(0) = this->lambdaParameter / ((double) this->state.size() + this->lambdaParameter)
-            + (1 - this->alphaParameter*this->alphaParameter + this->betaParameter);
-    for (size_t i = 1; i < this->numberSigmaPoints; i++)
-    {
-        this->wM(i) = 1.0 / (2.0 * ((double) this->state.size() + this->lambdaParameter));
+    this->wM(0) = this->lambdaParameter / ((double)this->state.size() + this->lambdaParameter);
+    this->wC(0) = this->lambdaParameter / ((double)this->state.size() + this->lambdaParameter) +
+                  (1 - this->alphaParameter * this->alphaParameter + this->betaParameter);
+    for (size_t i = 1; i < this->numberSigmaPoints; i++) {
+        this->wM(i) = 1.0 / (2.0 * ((double)this->state.size() + this->lambdaParameter));
         this->wC(i) = this->wM(i);
     }
 
@@ -81,22 +79,19 @@ void PositionODuKF::reset(uint64_t currentSimNanos)
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void PositionODuKF::updateState(uint64_t currentSimNanos)
-{
+void PositionODuKF::updateState(uint64_t currentSimNanos) {
     this->readFilterMeasurements();
     /*! - If the time tag from the measured data is new compared to previous step,
     propagate and update the filter*/
-    if(this->cameraPosBuffer.timeTag * NANO2SEC >= this->previousFilterTimeTag && this->cameraPosBuffer.valid)
-    {
+    if (this->cameraPosBuffer.timeTag * NANO2SEC >= this->previousFilterTimeTag && this->cameraPosBuffer.valid) {
         this->timeUpdate(this->cameraPosBuffer.timeTag * NANO2SEC);
         this->measurementUpdate();
         this->computePostFitResiduals();
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    if((double) currentSimNanos*NANO2SEC >= this->previousFilterTimeTag)
-    {
-        this->timeUpdate((double) currentSimNanos * NANO2SEC);
+    if ((double)currentSimNanos * NANO2SEC >= this->previousFilterTimeTag) {
+        this->timeUpdate((double)currentSimNanos * NANO2SEC);
     }
 
     this->writeOutputMessages(currentSimNanos);
@@ -108,10 +103,9 @@ void PositionODuKF::updateState(uint64_t currentSimNanos)
  @return void
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void PositionODuKF::timeUpdate(double updateTime)
-{
+void PositionODuKF::timeUpdate(double updateTime) {
     Eigen::VectorXd propagatedSigmaPoint;
-    Eigen::MatrixXd A(this->state.size(), 3*this->state.size());
+    Eigen::MatrixXd A(this->state.size(), 3 * this->state.size());
 
     this->dt = updateTime - this->previousFilterTimeTag;
     std::array<double, 2> time = {0, this->dt};
@@ -119,32 +113,29 @@ void PositionODuKF::timeUpdate(double updateTime)
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
     this->sigmaPoints.col(0) = propagate(time, this->state, this->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
-    this->xBar = this->wM(0)*this->sigmaPoints.col(0);
+    this->xBar = this->wM(0) * this->sigmaPoints.col(0);
 
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
      Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-    for (size_t i = 1; i<this->state.size() + 1; i++)
-    {
+    for (size_t i = 1; i < this->state.size() + 1; i++) {
         /*! - Adding covariance columns from sigma points*/
-        this->sigmaPoints.col(i) = propagate(time, this->state + this->etaParameter * this->sBar.col(i-1), this->dt);
+        this->sigmaPoints.col(i) = propagate(time, this->state + this->etaParameter * this->sBar.col(i - 1), this->dt);
         /*! - Subtracting covariance columns from sigma points*/
-        this->sigmaPoints.col( i + this->state.size()) =
-                propagate(time, this->state - this->etaParameter * this->sBar.col(i-1), this->dt);
+        this->sigmaPoints.col(i + this->state.size()) =
+            propagate(time, this->state - this->etaParameter * this->sBar.col(i - 1), this->dt);
     }
 
     /*! - Compute xbar according to Eq (19)*/
-    for (size_t i = 1; i<this->numberSigmaPoints; i++)
-    {
-        this->xBar += this->wM(i)*this->sigmaPoints.col(i);
+    for (size_t i = 1; i < this->numberSigmaPoints; i++) {
+        this->xBar += this->wM(i) * this->sigmaPoints.col(i);
     }
 
     /*! - Assemble the A matrix for QR decomposition as seen in equation 20 in the reference document*/
-    for (size_t i = 1; i < this->numberSigmaPoints; i++)
-    {
-        A.col(i-1) = sqrt(this->wC(i))*(this->sigmaPoints.col(i) - this->xBar);
+    for (size_t i = 1; i < this->numberSigmaPoints; i++) {
+        A.col(i - 1) = sqrt(this->wC(i)) * (this->sigmaPoints.col(i) - this->xBar);
     }
 
-    A.block(0, this->numberSigmaPoints-1, this->state.size(), this->state.size()) = this->cholProcessNoise;
+    A.block(0, this->numberSigmaPoints - 1, this->state.size(), this->state.size()) = this->cholProcessNoise;
 
     /*! - QR decomposition (only R is of interest) of the A matrix provides the new sBar matrix*/
     this->sBar = PositionODuKF::qrDecompositionJustR(A);
@@ -156,34 +147,33 @@ void PositionODuKF::timeUpdate(double updateTime)
     /*! - Cholesky update block for vectors.*/
     this->sBar = PositionODuKF::choleskyUpDownDate(this->sBar, xError, this->wC(0));
 
-    this->covar = this->sBar*this->sBar.transpose();
+    this->covar = this->sBar * this->sBar.transpose();
     this->state = this->sigmaPoints.col(0);
     this->previousFilterTimeTag = updateTime;
 }
-
 
 /*! Read the message containing the measurement data.
  * It updates class variables relating to measurement data including validity and time tags.
  @return void
  */
 void PositionODuKF::writeOutputMessages(uint64_t currentSimNanos) {
-    this->opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
-    this->opNavResidualMsgBuffer = this->opNavResidualMsg.zeroMsgPayload;
-    this->navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
+    this->opNavFilterMsgBuffer = FilterMsgPayload{};
+    this->opNavResidualMsgBuffer = FilterResidualsMsgPayload{};
+    this->navTransOutMsgBuffer = NavTransMsgPayload{};
 
     /*! - Write the position estimate into the copy of the navigation message structure*/
-    eigenMatrixXd2CArray(1e3*this->state.head(3), this->navTransOutMsgBuffer.r_BN_N);
-    eigenMatrixXd2CArray(1e3*this->state.tail(3), this->navTransOutMsgBuffer.v_BN_N);
+    eigenMatrixXd2CArray(1e3 * this->state.head(3), this->navTransOutMsgBuffer.r_BN_N);
+    eigenMatrixXd2CArray(1e3 * this->state.tail(3), this->navTransOutMsgBuffer.v_BN_N);
 
     /*! - Populate the filter states output buffer and write the output message*/
     this->opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
     this->opNavFilterMsgBuffer.numberOfStates = this->state.size();
-    eigenMatrixXd2CArray(1e3*this->state, &this->opNavFilterMsgBuffer.state[0]);
-    eigenMatrixXd2CArray(1e3*this->xBar, &this->opNavFilterMsgBuffer.stateError[0]);
-    eigenMatrixXd2CArray(1e6*this->covar, &this->opNavFilterMsgBuffer.covar[0]);
+    eigenMatrixXd2CArray(1e3 * this->state, &this->opNavFilterMsgBuffer.state[0]);
+    eigenMatrixXd2CArray(1e3 * this->xBar, &this->opNavFilterMsgBuffer.stateError[0]);
+    eigenMatrixXd2CArray(1e6 * this->covar, &this->opNavFilterMsgBuffer.covar[0]);
 
-    if (this->measurementRead){
-        eigenMatrixXd2CArray(1e3*this->postFits, this->opNavResidualMsgBuffer.postFits);
+    if (this->measurementRead) {
+        eigenMatrixXd2CArray(1e3 * this->postFits, this->opNavResidualMsgBuffer.postFits);
         this->opNavResidualMsgBuffer.numberOfObservations = 1;
         this->opNavResidualMsgBuffer.sizeOfObservations = 3;
     }
@@ -200,14 +190,13 @@ void PositionODuKF::writeOutputMessages(uint64_t currentSimNanos) {
 void PositionODuKF::readFilterMeasurements() {
     this->cameraPosBuffer = this->cameraPosMsg();
     this->measurementRead = false;
-    if (this->cameraPosBuffer.valid){
+    if (this->cameraPosBuffer.valid) {
         /*! - Read measurement and cholesky decomposition its noise*/
-        this->obs = cArray2EigenVector3d(this->cameraPosBuffer.cameraPos_N)*1E-3; // Change units to km
+        this->obs = cArray2EigenVector3d(this->cameraPosBuffer.cameraPos_N) * 1E-3;  // Change units to km
         this->measurementNoise.resize(this->obs.size(), this->obs.size());
-        this->measurementNoise << this->measNoiseSD*this->measNoiseSD, 0, 0,
-                                    0, this->measNoiseSD*this->measNoiseSD, 0,
-                                    0, 0, this->measNoiseSD*this->measNoiseSD;
-        this->measurementNoise *= 1E-6*this->measNoiseScaling; // Change units to km and scale
+        this->measurementNoise << this->measNoiseSD * this->measNoiseSD, 0, 0, 0, this->measNoiseSD * this->measNoiseSD,
+            0, 0, 0, this->measNoiseSD * this->measNoiseSD;
+        this->measurementNoise *= 1E-6 * this->measNoiseScaling;  // Change units to km and scale
         this->cholMeasurementNoise = PositionODuKF::choleskyDecomposition(this->measurementNoise);
         this->measurementRead = true;
     }
@@ -218,11 +207,9 @@ void PositionODuKF::readFilterMeasurements() {
  to spacecraft position.
  @return void
  */
-void PositionODuKF::measurementModel()
-{
+void PositionODuKF::measurementModel() {
     this->yMeas.setZero(3, this->numberSigmaPoints);
-    for(size_t j=0; j < this->numberSigmaPoints; j++)
-    {
+    for (size_t j = 0; j < this->numberSigmaPoints; j++) {
         /*! Sigma points positions need to be normalized for the measurement model.*/
         this->yMeas.col(j) = this->sigmaPoints.col(j).head(3);
     }
@@ -233,16 +220,15 @@ void PositionODuKF::measurementModel()
  * a flag is raised to not compute post fit residuals
 @return void
  */
-void PositionODuKF::computePostFitResiduals()
-{
+void PositionODuKF::computePostFitResiduals() {
     /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
     this->measurementModel();
     /*! - Compute the value for the yBar parameter (equation 23)*/
     this->postFits.setZero(this->obs.size());
     Eigen::VectorXd yBar;
     yBar.setZero(this->obs.size());
-    for(size_t i=0; i<this->numberSigmaPoints; i++){
-        yBar += this->wM(i)*this->yMeas.col(i);
+    for (size_t i = 0; i < this->numberSigmaPoints; i++) {
+        yBar += this->wM(i) * this->yMeas.col(i);
     }
     this->postFits = this->obs - yBar;
 }
@@ -252,8 +238,7 @@ void PositionODuKF::computePostFitResiduals()
  updates the state/covariance with that information.
  @return void
  */
-void PositionODuKF::measurementUpdate()
-{
+void PositionODuKF::measurementUpdate() {
     /*! - Compute the valid observations and the measurement model for all observations*/
     this->measurementModel();
 
@@ -261,21 +246,18 @@ void PositionODuKF::measurementUpdate()
      time update section of the reference document*/
     Eigen::VectorXd yBar;
     yBar.setZero(this->obs.size());
-    for(size_t i=0; i<this->numberSigmaPoints; i++)
-    {
+    for (size_t i = 0; i < this->numberSigmaPoints; i++) {
         yBar += this->wM(i) * this->yMeas.col(i);
     }
 
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement
      update section of the code.  This is based on the difference between the yBar
      parameter and the calculated measurement models.  Equation 24. */
-    Eigen::MatrixXd A(this->obs.size(), 2*this->state.size() + this->obs.size());
-    for(size_t i=1; i<this->numberSigmaPoints; i++)
-    {
-        A.col(i-1) = sqrt(this->wC(1))*(yMeas.col(i) - yBar);
+    Eigen::MatrixXd A(this->obs.size(), 2 * this->state.size() + this->obs.size());
+    for (size_t i = 1; i < this->numberSigmaPoints; i++) {
+        A.col(i - 1) = sqrt(this->wC(1)) * (yMeas.col(i) - yBar);
     }
-    A.block(0, this->numberSigmaPoints-1, this->obs.size(), this->obs.size()) =
-            this->cholMeasurementNoise;
+    A.block(0, this->numberSigmaPoints - 1, this->obs.size(), this->obs.size()) = this->cholMeasurementNoise;
 
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
      current Sy matrix*/
@@ -298,11 +280,10 @@ void PositionODuKF::measurementUpdate()
     Eigen::MatrixXd pXY;
     pXY.setZero(this->state.size(), this->obs.size());
 
-    for(size_t i=0; i<this->numberSigmaPoints; i++)
-    {
+    for (size_t i = 0; i < this->numberSigmaPoints; i++) {
         xError = this->sigmaPoints.col(i) - this->xBar;
         yError = this->yMeas.col(i) - yBar;
-        kMat =  this->wC(i) * xError * yError.transpose();
+        kMat = this->wC(i) * xError * yError.transpose();
         pXY += kMat;
     }
 
@@ -315,7 +296,7 @@ void PositionODuKF::measurementUpdate()
     /*! - Difference the yBar and the observations to get the observed error and
      multiply by the Kalman Gain to get the state update.  Add the state update
      to the state to get the updated state value (equation 27).*/
-    this->state = this->xBar + kMat*(this->obs - yBar);
+    this->state = this->xBar + kMat * (this->obs - yBar);
 
     /*! - Compute the updated matrix U from equation 28 */
     Eigen::MatrixXd Umat;
@@ -324,13 +305,12 @@ void PositionODuKF::measurementUpdate()
 
     /*! - For each column in the update matrix, perform a cholesky down-date on it to
      get the total shifted S matrix (called sBar in internal parameters*/
-    for(int i=0; i < Umat.cols(); i++)
-    {
+    for (int i = 0; i < Umat.cols(); i++) {
         this->sBar = PositionODuKF::choleskyUpDownDate(this->sBar, Umat.col(i), -1);
     }
 
     /*! - Compute equivalent covariance based on updated sBar matrix*/
-    this->covar = this->sBar*this->sBar.transpose();
+    this->covar = this->sBar * this->sBar.transpose();
 }
 
 /*! Integrate the equations of motion of two body point mass gravity using Runge-Kutta 4 (RK4)
@@ -339,27 +319,25 @@ void PositionODuKF::measurementUpdate()
     @param dt time step
     @return Eigen::VectorXd
 */
-Eigen::VectorXd PositionODuKF::propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) const
-{
+Eigen::VectorXd PositionODuKF::propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) const {
     double t_0 = interval[0];
     double t_f = interval[1];
     double t = t_0;
     Eigen::VectorXd X = X0;
 
-    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> f = [this](double t, Eigen::VectorXd state)
-    {
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> f = [this](double t, Eigen::VectorXd state) {
         Eigen::VectorXd stateDerivative(state.size());
         /*! Implement point mass gravity for the propagation */
-        stateDerivative.segment(0,3) = state.segment(3, 3);
-        stateDerivative.segment(3,3) = - this->muCentral/(pow(state.head(3).norm(),3)) * state.head(3);
+        stateDerivative.segment(0, 3) = state.segment(3, 3);
+        stateDerivative.segment(3, 3) = -this->muCentral / pow(state.head(3).norm(), 3) * state.head(3);
 
         return stateDerivative;
     };
 
     /*! Propagate to t_final with an RK4 integrator */
-    double N = ceil((t_f-t_0)/dt);
-    for (int c=0; c < N; c++) {
-        double step = std::min(dt,t_f-t);
+    double N = ceil((t_f - t_0) / dt);
+    for (int c = 0; c < N; c++) {
+        double step = std::min(dt, t_f - t);
         X = this->rk4(f, X, t, step);
         t = t + step;
     }
@@ -375,18 +353,17 @@ Eigen::VectorXd PositionODuKF::propagate(std::array<double, 2> interval, const E
     @return Eigen::VectorXd
 */
 Eigen::VectorXd PositionODuKF::rk4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                                const Eigen::VectorXd& X0,
-                                double t0,
-                                double dt) const
-{
+                                   const Eigen::VectorXd& X0,
+                                   double t0,
+                                   double dt) const {
     double h = dt;
 
     Eigen::VectorXd k1 = ODEfunction(t0, X0);
-    Eigen::VectorXd k2 = ODEfunction(t0 + h/2., X0 + h*k1/2.);
-    Eigen::VectorXd k3 = ODEfunction(t0 + h/2., X0 + h*k2/2.);
-    Eigen::VectorXd k4 = ODEfunction(t0 + h, X0 + h*k3);
+    Eigen::VectorXd k2 = ODEfunction(t0 + h / 2., X0 + h * k1 / 2.);
+    Eigen::VectorXd k3 = ODEfunction(t0 + h / 2., X0 + h * k2 / 2.);
+    Eigen::VectorXd k4 = ODEfunction(t0 + h, X0 + h * k3);
 
-    Eigen::VectorXd X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
+    Eigen::VectorXd X = X0 + 1. / 6. * h * (k1 + 2. * k2 + 2. * k3 + k4);
 
     return X;
 }
@@ -396,8 +373,7 @@ Eigen::VectorXd PositionODuKF::rk4(const std::function<Eigen::VectorXd(double, E
  @return Eigen::MatrixXd
  @param Eigen::MatrixXd input : The input matrix. If not square, provide it with more cols then rows
  */
-Eigen::MatrixXd PositionODuKF::qrDecompositionJustR(const Eigen::MatrixXd& input) const
-{
+Eigen::MatrixXd PositionODuKF::qrDecompositionJustR(const Eigen::MatrixXd& input) const {
     Eigen::HouseholderQR<Eigen::MatrixXd> qrDecomposition(input.transpose());
     Eigen::MatrixXd R_tilde;
     R_tilde.setZero(input.rows(), input.rows());
@@ -408,12 +384,12 @@ Eigen::MatrixXd PositionODuKF::qrDecompositionJustR(const Eigen::MatrixXd& input
      * Math is described in the first bullet of section 3 page 3 of the reference document */
     Eigen::MatrixXd Q;
     Q = qrDecomposition.householderQ();
-    R = Q.transpose()*input.transpose();
-    R_tilde = R.block(0,0,input.rows(), input.rows());
+    R = Q.transpose() * input.transpose();
+    R_tilde = R.block(0, 0, input.rows(), input.rows());
 
     /*! Zero all terms that should be zero to avoid errors accumulating */
-    for (int i =0; i < R_tilde.rows(); i ++){
-        for (int j = 0 ; j < i; j ++){
+    for (int i = 0; i < R_tilde.rows(); i++) {
+        for (int j = 0; j < i; j++) {
             R_tilde(i, j) = 0;
         }
     }
@@ -430,16 +406,15 @@ Eigen::MatrixXd PositionODuKF::qrDecompositionJustR(const Eigen::MatrixXd& input
  @param Eigen::VectorXd coefficient : Factor that is square rooted and scales the outer product P +/- sqrt(v)V.V^T
  */
 Eigen::MatrixXd PositionODuKF::choleskyUpDownDate(const Eigen::MatrixXd& input,
-                                               const Eigen::VectorXd& inputVector,
-                                               double coefficient) const
-{
+                                                  const Eigen::VectorXd& inputVector,
+                                                  double coefficient) const {
     Eigen::MatrixXd P;
     P.setZero(inputVector.size(), inputVector.size());
 
     /*! Perform the Cholesky factor updating.
      * Math is described in the second bullet of section 3 page 3 of the reference document */
     P = input * input.transpose();
-    P += ((coefficient > 0) - (coefficient < 0))*abs(coefficient)*inputVector*inputVector.transpose();
+    P += ((coefficient > 0) - (coefficient < 0)) * abs(coefficient) * inputVector * inputVector.transpose();
 
     Eigen::MatrixXd A;
     A = PositionODuKF::choleskyDecomposition(P);
@@ -450,8 +425,7 @@ Eigen::MatrixXd PositionODuKF::choleskyUpDownDate(const Eigen::MatrixXd& input,
  @return Eigen::MatrixXd
  @param Eigen::MatrixXd input : The input matrix
  */
-Eigen::MatrixXd PositionODuKF::choleskyDecomposition(const Eigen::MatrixXd& input) const
-{
+Eigen::MatrixXd PositionODuKF::choleskyDecomposition(const Eigen::MatrixXd& input) const {
     Eigen::LLT<Eigen::MatrixXd> choleskyDecomp(input);
     return choleskyDecomp.matrixL();
 }
@@ -461,22 +435,21 @@ Eigen::MatrixXd PositionODuKF::choleskyDecomposition(const Eigen::MatrixXd& inpu
  @param Eigen::MatrixXd U, an upper triangular matrix
  @param Eigen::MatrixXd b, the right hand side of the Ux = b
  */
-Eigen::MatrixXd PositionODuKF::backSubstitution(const Eigen::MatrixXd& U, const Eigen::MatrixXd& b) const
-{
+Eigen::MatrixXd PositionODuKF::backSubstitution(const Eigen::MatrixXd& U, const Eigen::MatrixXd& b) const {
     assert(U.rows() == b.rows());
 
     Eigen::MatrixXd x;
     Eigen::VectorXd xCol;
 
     x.setZero(b.rows(), b.cols());
-    for (int col =0; col < b.cols(); col++){
+    for (int col = 0; col < b.cols(); col++) {
         xCol.setZero(b.rows());
-        for (long i = U.rows()-1; i >= 0; i--){
+        for (long i = U.rows() - 1; i >= 0; i--) {
             xCol(i) = b(i, col);
-            for (long j = i+1 ; j < U.rows(); j++){
-                xCol(i) = xCol(i) - U(i,j)*xCol(j);
+            for (long j = i + 1; j < U.rows(); j++) {
+                xCol(i) = xCol(i) - U(i, j) * xCol(j);
             }
-            xCol(i) = xCol(i)/U(i,i);
+            xCol(i) = xCol(i) / U(i, i);
         }
         x.col(col) = xCol;
     }
@@ -489,22 +462,21 @@ Eigen::MatrixXd PositionODuKF::backSubstitution(const Eigen::MatrixXd& U, const 
  @param Eigen::MatrixXd L, an lower triangular matrix
  @param Eigen::MatrixXd b, the right hand side of the Ux = b
  */
-Eigen::MatrixXd PositionODuKF::forwardSubstitution(const Eigen::MatrixXd& L, const Eigen::MatrixXd& b) const
-{
+Eigen::MatrixXd PositionODuKF::forwardSubstitution(const Eigen::MatrixXd& L, const Eigen::MatrixXd& b) const {
     assert(L.rows() == b.rows());
 
     Eigen::MatrixXd x;
     Eigen::VectorXd xCol;
 
     x.setZero(b.rows(), b.cols());
-    for (int col =0; col < b.cols(); col++){
+    for (int col = 0; col < b.cols(); col++) {
         xCol.setZero(b.rows());
-        for (int i =0; i < L.rows(); i++){
+        for (int i = 0; i < L.rows(); i++) {
             xCol(i) = b(i, col);
-            for (int j = 0 ; j < i; j++){
-                xCol(i) = xCol(i) - L(i,j)*xCol(j);
+            for (int j = 0; j < i; j++) {
+                xCol(i) = xCol(i) - L(i, j) * xCol(j);
             }
-            xCol(i) = xCol(i)/L(i,i);
+            xCol(i) = xCol(i) / L(i, i);
         }
         x.col(col) = xCol;
     }

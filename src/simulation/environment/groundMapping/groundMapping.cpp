@@ -36,12 +36,12 @@ GroundMapping::GroundMapping() {
     this->cameraPos_B.setZero(3);       // Default to zero
     this->nHat_B.setZero(3);            // Default to zero
 
-    this->planetInMsgBuffer = this->planetInMsg.zeroMsgPayload;
+    this->planetInMsgBuffer = SpicePlanetStateMsgPayload{};
     this->planetInMsgBuffer.J20002Pfix[0][0] = 1;
     this->planetInMsgBuffer.J20002Pfix[1][1] = 1;
     this->planetInMsgBuffer.J20002Pfix[2][2] = 1;
 
-    this->scStateInMsgBuffer = this->scStateInMsg.zeroMsgPayload;
+    this->scStateInMsgBuffer = SCStatesMsgPayload{};
 }
 
 /*! Module Destructor */
@@ -108,8 +108,8 @@ void GroundMapping::addPointToModel(Eigen::Vector3d &r_LP_P_init) {
  */
 void GroundMapping::computeAccess(uint64_t c) {
     //! Zero the output message buffers
-    this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
-    this->currentGroundStateMsgBuffer.at(c) = this->currentGroundStateOutMsgs.at(c)->zeroMsgPayload;
+    this->accessMsgBuffer.at(c) = AccessMsgPayload{};
+    this->currentGroundStateMsgBuffer.at(c) = GroundStateMsgPayload{};
 
     //! Compute the planet to inertial frame location position
     this->r_LP_N = this->dcm_PN.transpose() * this->mappingPoints[c];

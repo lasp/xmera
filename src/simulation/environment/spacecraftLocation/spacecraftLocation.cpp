@@ -35,7 +35,7 @@ SpacecraftLocation::SpacecraftLocation() {
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
 
-    this->planetState = this->planetInMsg.zeroMsgPayload;
+    this->planetState = SpicePlanetStateMsgPayload{};
     this->planetState.J20002Pfix[0][0] = 1;
     this->planetState.J20002Pfix[1][1] = 1;
     this->planetState.J20002Pfix[2][2] = 1;
@@ -182,7 +182,7 @@ void SpacecraftLocation::computeAccess() {
         param = std::max(param, 0.0);  // If param < 0, the closest point on segment is the primary satellite
 
         // determine access output message
-        this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
+        this->accessMsgBuffer.at(c) = AccessMsgPayload{};
         if (rClose.norm() > this->rEquator) {
             r_SL_P[2] = r_SL_P[2] / this->zScale;
             double range = r_SL_P.norm();
