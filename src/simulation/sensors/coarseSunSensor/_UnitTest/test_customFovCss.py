@@ -85,15 +85,14 @@ def test_customFovCss(show_plots, xi, eta, zeta, sunLocation, accuracy):
 
     x = 0
     y = 0
-    match sunLocation:
-        case 0:
-            y = np.sin(xi - accuracy)
-        case 1:
-            x = np.sin(zeta - accuracy)
-        case 2:
-            y = -np.sin(eta - accuracy)
-        case 3:
-            x = -np.sin(zeta - accuracy)
+    if sunLocation == 0:
+        y = np.sin(xi - accuracy)
+    elif sunLocation == 1:
+        x = np.sin(zeta - accuracy)
+    elif sunLocation == 2:
+        y = -np.sin(eta - accuracy)
+    elif sunLocation == 3:
+        x = -np.sin(zeta - accuracy)
     z = (1 - x*x - y*y)**0.5
 
     # Create input Sun spice msg
