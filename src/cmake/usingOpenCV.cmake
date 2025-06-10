@@ -3,11 +3,8 @@ target_link_libraries(${TARGET_NAME} PRIVATE opencv_core opencv_dnn opencv_imgco
 
 if(APPLE)
   find_package(OpenCL REQUIRED)
-  find_library(OPENCL_LIBRARY OpenCL REQUIRED)
   if (OPENCL_FOUND)
-    include_directories(${OPENCL_INCLUDE_DIR})
-    target_link_libraries(${TARGET_NAME} PUBLIC ${OPENCL_LIBRARY})
-    # target_link_libraries(${TARGET_NAME} PUBLIC OpenCL::OpenCL)
+    target_link_libraries(${TARGET_NAME} PUBLIC OpenCL::OpenCL)
   else ()
     message(FATAL_ERROR "OpenCL not found")
   endif ()
