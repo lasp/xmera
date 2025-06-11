@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
     permissions:
       actions: read
       contents: read
@@ -51,9 +51,8 @@ jobs:
           cache-name: cache-pip-modules
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: ${{ runner.os }}-pip-${{ matrix.python-version }}-
       - name: "Install system dependencies"
         run: |
           sudo apt-get update
@@ -108,7 +107,7 @@ jobs:
           VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
         run: source .venv/bin/activate && cd src/ && cmake --preset ci-test
       - name: "Build basilisk"
-        run: source .venv/bin/activate && cd src/ && ninja -C ../dist3/
+        run: source .venv/bin/activate && cd src/ && cmake --build ../dist3/
       - name: "Install Basilisk"
         run: source .venv/bin/activate && pip3 install -e .
       - name: "Run Python Tests"

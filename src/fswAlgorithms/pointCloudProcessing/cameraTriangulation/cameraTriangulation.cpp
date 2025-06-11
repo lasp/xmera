@@ -192,12 +192,10 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
     const Eigen::Matrix3d& cameraCalibrationInverse,
     std::vector<Eigen::Matrix3d> dcmCamera) const {
     unsigned long numLocations = knownLocations.cols();
-    unsigned long numImagePoints = imagePoints.size();
-    unsigned long numDCM = dcmCamera.size();
 
     // make sure number of provided locations is equal to number of image points.
     // number of DCMs must be either 1 or also equal to number of image points
-    assert(numLocations == numImagePoints && (numDCM == 1 || numDCM == numImagePoints));
+    assert(numLocations == imagePoints.size() && (dcmCamera.size() == 1 || dcmCamera.size() == imagePoints.size()));
 
     Eigen::Matrix3d dcm_CF = dcmCamera.at(0);     // dcm from frame of interest F to camera frame C
     Eigen::Matrix3d dcm_FC = dcm_CF.transpose();  // dcm from camera frame C to frame of interest F
