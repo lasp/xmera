@@ -24,28 +24,36 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDefC/RateCmdMsgPayload.h"
-#include <stdint.h>
+#include "architecture/utilities/bskLogging.h"
+#include "fswAlgorithms/attControl/mrpSteering/mrpSteeringAlgorithm.h"
+#include <cstdint>
 
 
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 class MrpSteering : public SysModel {
-public:
+  public:
+    MrpSteering() = default;
+    ~MrpSteering() = default;
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    /* declare module public variables */
-    double K1;                          //!< [rad/sec] Proportional gain applied to MRP errors
-    double K3;                          //!< [rad/sec] Cubic gain applied to MRP error in steering saturation function
-    double omega_max;                   //!< [rad/sec] Maximum rate command of steering control
+    void setK1(double k1);
+    double getK1() const;
+    void setK3(double k3);
+    double getK3() const;
+    void setOmegaMax(double omegaMax);
+    double getOmegaMax() const;
+    void setIgnoreOuterLoopFeedforward(bool flag);
+    bool getIgnoreOuterLoopFeedforward() const;
 
-    uint32_t ignoreOuterLoopFeedforward;//!< []      Boolean flag indicating if outer feedforward term should be included
+    Message<RateCmdMsgPayload> rateCmdOutMsg;  //!< rate command output message
+    ReadFunctor<AttGuidMsgPayload> guidInMsg;   //!< attitude guidance input message
 
-    /* declare module IO interfaces */
-    Message<RateCmdMsgPayload> rateCmdOutMsg;                 //!< rate command output message
-    ReadFunctor<AttGuidMsgPayload> guidInMsg;                             //!< attitude guidance input message
+    BSKLogger bskLogger = {};  //!< BSK Logging
 
-    BSKLogger bskLogger = {};                             //!< BSK Logging
+  private:
+    MrpSteeringAlgorithm algorithm;
 };
 
 #endif

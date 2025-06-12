@@ -24,19 +24,12 @@ from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to b
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+import numpy.testing
 
 
 @pytest.mark.parametrize("K1", [0.15, 0])
 @pytest.mark.parametrize("K3", [1, 0])
 @pytest.mark.parametrize("omegaMax", [1.5 * macros.D2R, 0.001 * macros.D2R])
-
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
 def test_mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     r"""
     **Validation Test Description**
@@ -57,110 +50,53 @@ def test_mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     :return: void
 
     """
-    [testResults, testMessage] = mrp_steering_tracking(show_plots, K1, K3, omegaMax)
-    assert testResults < 1, testMessage
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
 
-
-def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-
-    # Create test thread
-    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Construct algorithm and associated C++ container
     module = mrpSteering.MrpSteering()
     module.modelTag = "mrpSteering"
-
-
-    # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    # Initialize the test module configuration data
-    module.K1 = K1
-    module.K3 = K3
-    module.omega_max = omegaMax
+    module.setK1(K1)
+    module.setK3(K3)
+    module.setOmegaMax(omegaMax)
 
-    #   Create input message and size it because the regular creator of that message
-    #   is not part of the test.
-    guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
+    guidCmdData = messaging.AttGuidMsgPayload()
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
-    omega_BR_B = np.array([0.010, -0.020, 0.015])
-    guidCmdData.omega_BR_B = omega_BR_B
-    omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    guidCmdData.omega_RN_B = omega_RN_B
-    domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    guidCmdData.domega_RN_B = domega_RN_B
+    guidCmdData.omega_BR_B = np.array([0.010, -0.020, 0.015])
+    guidCmdData.omega_RN_B = np.array([-0.02, -0.01, 0.005])
+    guidCmdData.domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
 
-    # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.rateCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    # connect messages
     module.guidInMsg.subscribeTo(guidInMsg)
 
-    # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-
-    # Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
     unitTestSim.ExecuteSimulation()
 
-    # Compute truth states
     omegaAstTrue, omegaAstPTrue = findTrueValues(guidCmdData, module)
 
-    # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0, len(omegaAstTrue)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.omega_BastR_B[i], omegaAstTrue[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.modelTag + " Module failed omega_BastR_B unit test at t="
-                                + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
+    numpy.testing.assert_allclose(dataLog.omega_BastR_B, omegaAstTrue, atol=1e-12)
+    numpy.testing.assert_allclose(dataLog.omegap_BastR_B, omegaAstPTrue, atol=1e-12)
 
-    # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0, len(omegaAstPTrue)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.omegap_BastR_B[i], omegaAstPTrue[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.modelTag + " Module failed omegap_BastR_B unit test at t="
-                                + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    if show_plots:
-        plt.show()
-
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED: " + module.modelTag)
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
 
 
 def findTrueValues(guidCmdData, module):
 
-    omegaMax = module.omega_max
+    omegaMax = module.getOmegaMax()
     sigma = np.asarray(guidCmdData.sigma_BR)
-    K1 = np.asarray(module.K1)
-    K3 = np.asarray(module.K3)
+    K1 = np.asarray(module.getK1())
+    K3 = np.asarray(module.getK3())
     Bmat = RigidBodyKinematics.BmatMRP(sigma)
     omegaAst = []   #np.asarray([0, 0, 0])
     omegaAst_P = []
