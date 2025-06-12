@@ -17,10 +17,15 @@
 
 
 import os
+from datetime import datetime
+
 import numpy
 import spiceypy
+from Basilisk import __path__
 from Basilisk.utilities import RigidBodyKinematics, macros
 
+bskPath = __path__[0]
+from Basilisk.architecture.messaging import EpochMsgPayload, EpochMsg
 
 def ckWrite(handle, time, mrp_array, av_array, start_seg, spacecraft_id=-62, reference_frame="J2000"):
     """
@@ -134,3 +139,39 @@ def ckInitialize(ck_file_in):
 
 def ckClose(ck_file_in):
     spiceypy.unload(ck_file_in)
+
+
+def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
+    """convert a general time/date string to a gregoarian UTC msg object"""
+    # set the data path
+    if 'dataPath' in kwargs:
+        dataPath = kwargs['dataPath']
+        if not isinstance(dataPath, str):
+            print('ERROR: dataPath must be a string argument')
+            exit(1)
+    else:
+        dataPath = bskPath + '/supportData/EphemerisData/'  # default value
+
+    # load spice kernel and convert the string into a UTC date/time string
+    spiceypy.furnsh(dataPath + 'naif0012.tls')
+    ephemeris_time = spiceypy.str2et(DateSpice)
+    etEpoch = ephemeris_time
+    ephemeris_time_epoch = spiceypy.et2utc(etEpoch, 'C', 6, 255)
+    spiceypy.unload(dataPath + 'naif0012.tls')  # leap second file
+
+    # convert UTC string to datetime object
+    datetime_object = datetime.strptime(ephemeris_time_epoch, '%Y %b %d %H:%M:%S.%f')
+
+    # populate the epochMsg with the gregorian UTC date/time information
+    epochMsgStructure = EpochMsgPayload()
+    epochMsgStructure.year = datetime_object.year
+    epochMsgStructure.month = datetime_object.month
+    epochMsgStructure.day = datetime_object.day
+    epochMsgStructure.hours = datetime_object.hour
+    epochMsgStructure.minutes = datetime_object.minute
+    epochMsgStructure.seconds = datetime_object.second + datetime_object.microsecond / 1e6
+
+    epochMsg = EpochMsg().write(epochMsgStructure)
+    epochMsg.this.disown()
+
+    return epochMsg

@@ -30,6 +30,7 @@ from Basilisk.simulation import MtbEffector
 from Basilisk.simulation import spacecraft, magneticFieldWMM
 from Basilisk.utilities import SimulationBaseClass, simIncludeGravBody, orbitalMotion, RigidBodyKinematics
 from Basilisk.utilities import macros
+from Basilisk.utilities import spice_utilities
 from Basilisk.utilities import unitTestSupport
 
 bskPath = __path__[0]
@@ -143,7 +144,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     magModule = magneticFieldWMM.MagneticFieldWMM()
     magModule.modelTag = "WMM"
     magModule.dataPath = bskPath + '/supportData/MagneticField/'
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2020 May 12, 00:00:0.0 (UTC)')
+    epochMsg = spice_utilities.timeStringToGregorianUTCMsg('2020 May 12, 00:00:0.0 (UTC)')
     magModule.epochInMsg.subscribeTo(epochMsg)
     magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
     scSim.AddModelToTask(simTaskName, magModule)

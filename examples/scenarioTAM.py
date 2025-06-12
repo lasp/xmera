@@ -120,7 +120,7 @@ from Basilisk.simulation import magnetometer
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+                                simIncludeGravBody, unitTestSupport, spice_utilities)
 from Basilisk.utilities import simSetPlanetEnvironment
 
 # import simulation related support
@@ -195,7 +195,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
         magModule.modelTag = "WMM"
         magModule.dataPath = bskPath + '/supportData/MagneticField/'
         # set epoch date/time message
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+        epochMsg = spice_utilities.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
         magModule.epochInMsg.subscribeTo(epochMsg)
         if orbitCase == 'elliptical':
             magModule.envMinReach = 10000 * 1000.

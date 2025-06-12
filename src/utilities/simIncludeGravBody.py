@@ -36,7 +36,7 @@ from Basilisk.simulation.gravityEffector import (
 from Basilisk.simulation.gravityEffector import (
     loadPolyFromFile as loadPolyFromFile_python,
 )
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import spice_utilities
 
 from Basilisk.utilities.deprecated import deprecationWarn
 
@@ -478,7 +478,7 @@ class gravBodyFactory:
 
         # create and connect to an epoch input message
         if epochInMsg:
-            self.epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(
+            self.epochMsg = spice_utilities.timeStringToGregorianUTCMsg(
                 time, dataPath=path
             )
             self.spiceObject.epochInMsg.subscribeTo(self.epochMsg)

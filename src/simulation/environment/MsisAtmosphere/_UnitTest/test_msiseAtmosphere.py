@@ -38,6 +38,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import spice_utilities
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
@@ -99,7 +100,7 @@ def run(show_plots, orbitCase, setEpoch):
     newAtmo.modelTag = "MsisAtmo"
 
     if setEpoch == "Msg":
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
+        epochMsg = spice_utilities.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
         newAtmo.epochInMsg.subscribeTo(epochMsg)
 
         # setting epoch day of year info deliberately to a false value.  The epoch msg info should be used

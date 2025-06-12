@@ -141,7 +141,7 @@ from Basilisk.simulation import magneticFieldWMM
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+                                simIncludeGravBody, unitTestSupport, spice_utilities)
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -206,7 +206,7 @@ def run(show_plots, orbitCase):
         magModule.envMaxReach = 20000*1000.
 
     # set epoch date/time message
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+    epochMsg = spice_utilities.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
 
     # add spacecraft to the magnetic field module so it can read the sc position messages
     magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
