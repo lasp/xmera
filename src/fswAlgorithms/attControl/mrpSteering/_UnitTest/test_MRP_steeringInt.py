@@ -24,7 +24,6 @@ from Basilisk.fswAlgorithms import rateServoFullNonlinear
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -59,8 +58,7 @@ def test_mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     :return: void
 
     """
-    [testResults, testMessage] = mrp_steering_tracking(show_plots,K1, K3, omegaMax)
-    assert testResults < 1, testMessage
+    mrp_steering_tracking(show_plots, K1, K3, omegaMax)
 
 
 def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
@@ -69,8 +67,6 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -183,12 +179,14 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     # set the filtered output truth states
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0, len(trueVals)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], trueVals[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.modelTag + " Module failed torqueRequestBody unit test at t="
-                                + str(dataLog.times[i] * macros.NANO2SEC) + "sec \n")
+    for i in range(len(trueVals)):
+        np.testing.assert_allclose(
+            dataLog.torqueRequestBody[i],
+            trueVals[i],
+            rtol=0,
+            atol=accuracy,
+            err_msg=f"FAILED: {module.modelTag} Module failed torqueRequestBody unit test at t={dataLog.times[i] * macros.NANO2SEC} sec",
+        )
 
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
@@ -197,12 +195,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
         plt.show()
 
     # print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED: " + module.modelTag)
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    print("PASSED: " + module.modelTag)
 
 
 def findTrueValues(guidCmdData, module):
