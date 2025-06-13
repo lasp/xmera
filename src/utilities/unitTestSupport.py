@@ -535,4 +535,3 @@ def samplingTime(simTime, baseTimeStep, numDataPoints):
     if deltaTime < 1:
         deltaTime = 1
     return deltaTime
-
