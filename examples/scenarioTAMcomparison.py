@@ -131,7 +131,7 @@ from Basilisk.simulation import magnetometer
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+                                simIncludeGravBody, unitTestSupport, spice_utilities)
 from Basilisk.utilities import simSetPlanetEnvironment
 
 #attempt to import vizard
@@ -221,7 +221,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     magModule3.modelTag = "WMM"
     magModule3.dataPath = bskPath + '/supportData/MagneticField/'
     # set epoch date/time message
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+    epochMsg = spice_utilities.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
     magModule3.epochInMsg.subscribeTo(epochMsg)
     # set the minReach and maxReach values if on an elliptic orbit
     if orbitCase == 'elliptical':

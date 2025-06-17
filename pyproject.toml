@@ -24,6 +24,7 @@ dependencies = [
     "parse>=1.18.0",
     "Pillow",
     "protobuf==3.19.1",
+    "spiceypy",
     "tqdm"
 ]
 

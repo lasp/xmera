@@ -18,11 +18,11 @@ import tempfile
 
 import numpy as np
 from Basilisk.simulation import spacecraft
-from Basilisk.topLevelModules import pyswice
+import spiceypy
 from Basilisk.utilities import (
     SimulationBaseClass,
     macros,
-    pyswice_ck_utilities,
+    spice_utilities,
     simIncludeGravBody,
     RigidBodyKinematics as rbk
 )
@@ -52,8 +52,8 @@ def test_ck_read_write(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     timeInit = 'FEB 01, 2021 12:00:00 (UTC)'
     spiceObject = gravFactory.createSpiceInterface(time=timeInit)
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'MVN_SCLKSCET.00000.tsc')  # spacecraft clock file
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'MVN_SCLKSCET.00000.tsc')  # spacecraft clock file
 
     scObjectLogger = scObject.scStateOutMsg.recorder(dynTaskRate)
     simulation.AddModelToTask(taskName, scObjectLogger)
@@ -69,16 +69,16 @@ def test_ck_read_write(show_plots):
 
     with tempfile.TemporaryDirectory() as tempDirectory:
         tempFileName = os.path.join(tempDirectory, "test.bc")
-        pyswice_ck_utilities.ckWrite(tempFileName, timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
+        spice_utilities.ckWrite(tempFileName, timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
 
         # Read the same CK file to check if the values are identical
-        pyswice_ck_utilities.ckInitialize(tempFileName)
+        spice_utilities.ckInitialize(tempFileName)
         sigmaRead = np.empty_like(sigmaWrite)
         omegaRead = np.empty_like(omegaWrite)
         for idx in range(len(timeWrite)):
             # Change the time string to account for increasing time
             timeString = timeInit[:19] + f"{int(timeWrite[idx] * macros.NANO2SEC):02}" + timeInit[21:]
-            _, kernQuat, kernOmega = pyswice_ck_utilities.ckRead(timeString, spacecraft_id=-202)
+            _, kernQuat, kernOmega = spice_utilities.ckRead(timeString, spacecraft_id=-202)
 
             sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
             omegaRead[idx, :] = kernOmega

@@ -132,13 +132,12 @@ from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
 import numpy as np
+import spiceypy
 from Basilisk import __path__
 from Basilisk.simulation import orbElemConvert
 from Basilisk.simulation import spacecraft
-from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -199,17 +198,17 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     scSim.AddModelToTask(simTaskName, spiceObject, 1)
 
     # Import SPICE ephemeris data into the python environment
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    spiceypy.furnsh(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     # Set spacecraft ICs
     # Use Earth data
     moonSpiceName = 'moon'
-    moonInitialState = 1000 * spkRead(moonSpiceName, timeInitString, 'J2000', 'earth')
-    moon_rN_init = moonInitialState[0:3]
-    moon_vN_init = moonInitialState[3:6]
+    [moonInitialState, _] = spiceypy.spkezr(moonSpiceName, spiceypy.str2et(timeInitString), 'J2000', 'NONE', 'earth')
+    moon_rN_init = 1000 * moonInitialState[0:3]
+    moon_vN_init = 1000 * moonInitialState[3:6]
     moon = gravBodies['moon']
     earth = gravBodies['earth']
     oe = orbitalMotion.rv2elem(earth.mu, moon_rN_init, moon_vN_init)
@@ -300,9 +299,9 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
         usec = (simTime - sec) * 1e6
         time = timeInit + timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
-        moonState = 1000 * spkRead(moonSpiceName, timeString, 'J2000', 'earth')
-        moon_rN = moonState[0:3]
-        moon_vN = moonState[3:6]
+        [moonState, _] = spiceypy.spkezr(moonSpiceName, spiceypy.str2et(timeString), 'J2000', 'NONE', 'earth')
+        moon_rN = 1000 * moonState[0:3]
+        moon_vN = 1000 * moonState[3:6]
         oeDataMoon = orbitalMotion.rv2elem(earth.mu, moon_rN, moon_vN)
         rDataMoon.append(oeDataMoon.rmag)
         fDataMoon.append(oeDataMoon.f + oeDataMoon.omega - oe.omega)
@@ -338,9 +337,9 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
         usec = (simTime - sec) * 1e6
         time = timeInit + timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
-        moonState = 1000 * spkRead(moonSpiceName, timeString, 'J2000', 'earth')
-        moon_rN = moonState[0:3]
-        moon_vN = moonState[3:6]
+        [moonState, _] = spiceypy.spkezr(moonSpiceName, spiceypy.str2et(timeString), 'J2000', 'NONE', 'earth')
+        moon_rN = 1000 * moonState[0:3]
+        moon_vN = 1000 * moonState[3:6]
         oeDataMoon = orbitalMotion.rv2elem(earth.mu, moon_rN, moon_vN)
         moon_f = oeDataMoon.f
 
@@ -372,10 +371,10 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
 
     # Unload spice libraries
     gravFactory.unloadSpiceKernels()
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    spiceypy.unload(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    spiceypy.unload(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+    spiceypy.unload(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    spiceypy.unload(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     return figureList
 

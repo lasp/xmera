@@ -21,7 +21,7 @@ import os
 
 import numpy
 import numpy as np
-
+import spiceypy
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 from Basilisk import __path__
@@ -31,8 +31,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion, RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass
 import matplotlib.pyplot as plt
-from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
+
 from Basilisk.simulation import ephemerisConverter
 from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import spacecraft
@@ -99,15 +98,15 @@ def singleGravityBody(show_plots):
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
     #       SPICE kernels in Python.
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
-    pyswice.furnsh_c(path + '/../_UnitTest/hst_edited.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/pck00010.tpc')
+    spiceypy.furnsh(path + '/../_UnitTest/hst_edited.bsp')
 
     unitTestSim.AddModelToTask(unitTaskName, scObject, 9)
 
-    stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
+    [stateOut, _] = spiceypy.spkezr('HUBBLE SPACE TELESCOPE', spiceypy.str2et(stringCurrent), 'J2000', 'NONE', 'EARTH')
 
     scObject.hub.mHub = 100
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
@@ -137,7 +136,7 @@ def singleGravityBody(show_plots):
     while(currentTime < totalTime):
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
-        stateOut = spkRead('HUBBLE SPACE TELESCOPE', gravFactory.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+        [stateOut, _] = spiceypy.spkezr('HUBBLE SPACE TELESCOPE', spiceypy.str2et(gravFactory.spiceObject.getCurrentTimeString()), 'J2000', 'NONE', 'EARTH')
         posCurr = posRef.getState()
         posCurr = [y for x in posCurr for y in x]
         posArray.append(posCurr)
@@ -152,16 +151,16 @@ def singleGravityBody(show_plots):
 
         currentTime += dt
 
-    stateOut = spkRead('HUBBLE SPACE TELESCOPE', gravFactory.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+    [stateOut, _] = spiceypy.spkezr('HUBBLE SPACE TELESCOPE', spiceypy.str2et(gravFactory.spiceObject.getCurrentTimeString()), 'J2000', 'NONE', 'EARTH')
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
 
     gravFactory.unloadSpiceKernels()
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
-    pyswice.unload_c(path + '/../_UnitTest/hst_edited.bsp')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/pck00010.tpc')
+    spiceypy.unload(path + '/../_UnitTest/hst_edited.bsp')
 
     print(numpy.max(abs(posError[:,1:4])))
 
@@ -223,15 +222,15 @@ def multiBodyGravity(show_plots):
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
     #       SPICE kernels in Python.
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
-    pyswice.furnsh_c(path + '/../_UnitTest/nh_pred_od077.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/pck00010.tpc')
+    spiceypy.furnsh(path + '/../_UnitTest/nh_pred_od077.bsp')
 
     unitTestSim.AddModelToTask(unitTaskName, scObject, 9)
 
-    stateOut = spkRead('NEW HORIZONS', stringCurrent, 'J2000', 'SUN')
+    [stateOut, _] = spiceypy.spkezr('NEW HORIZONS', spiceypy.str2et(stringCurrent), 'J2000', 'NONE', 'SUN')
 
     scObject.hub.mHub = 100
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
@@ -257,8 +256,8 @@ def multiBodyGravity(show_plots):
     while currentTime < totalTime:
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
-        timeString = pyswice.et2utc_c(gravFactory.spiceObject.J2000Current, 'C', 4, 1024, "Yo")
-        stateOut = spkRead('NEW HORIZONS', timeString, 'J2000', 'SUN')
+        timeString = spiceypy.et2utc(gravFactory.spiceObject.J2000Current, 'C', 4, 1024)
+        [stateOut, _] = spiceypy.spkezr('NEW HORIZONS', spiceypy.str2et(timeString), 'J2000', 'NONE', 'SUN')
         posCurr = posRef.getState()
         posCurr = [y for x in posCurr for y in x]
         posArray.append(posCurr)
@@ -276,17 +275,17 @@ def multiBodyGravity(show_plots):
         posPrevious = stateOut[0:3]*1000.0
         currentTime += dt
 
-    stateOut = spkRead('NEW HORIZONS', gravFactory.spiceObject.getCurrentTimeString(), 'J2000', 'SUN')
+    [stateOut, _] = spiceypy.spkezr('NEW HORIZONS', spiceypy.str2et(gravFactory.spiceObject.getCurrentTimeString()), 'J2000', 'NONE', 'SUN')
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
     posInc = numpy.array(posInc)
 
     gravFactory.unloadSpiceKernels()
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
-    pyswice.unload_c(path + '/../_UnitTest/nh_pred_od077.bsp')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/pck00010.tpc')
+    spiceypy.unload(path + '/../_UnitTest/nh_pred_od077.bsp')
 
     plt.close("all")
     plt.figure()

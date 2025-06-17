@@ -445,7 +445,6 @@ else()
   set(_arch_suffix 32)
 endif()
 
-# TODO: Move the cspice library extension into a custom pyswice CMakeList.txt Manually create list of libraries
 # depending on system
 if(WIN32)
   set(CMAKE_MSVCIDE_RUN_PATH "${CMAKE_BINARY_DIR}/Basilisk")
@@ -585,11 +584,6 @@ add_message_headers()
 # ARCHITECTURE
 find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
 generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
-
-# Pyswice
-find_package_targets("${CMAKE_SOURCE_DIR}/topLevelModules/pyswice" PYSWICE_TARGETS) # Finds relative path of all .i
-                                                                                    # files within the directory
-generate_package_targets("${PYSWICE_TARGETS}" "${ARCHITECTURE_LIBS};${library_dependencies}" "topLevelModules")
 
 # PYTHON PACKAGE CONFIGURATION
 # Must make the build directories first, so that cmake can insert empty init files before build (linux specific need)

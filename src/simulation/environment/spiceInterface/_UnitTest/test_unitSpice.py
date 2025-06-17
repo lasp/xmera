@@ -38,6 +38,7 @@ bskPath = __path__[0]
 
 
 import datetime
+from Basilisk.utilities import spice_utilities
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 import numpy
@@ -185,7 +186,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 
     if useMsg:
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(DateSpice)
+        epochMsg = spice_utilities.timeStringToGregorianUTCMsg(DateSpice)
         SpiceObject.epochInMsg.subscribeTo(epochMsg)
 
         # The following value is set, but should not be used by the module.  This checks that the above

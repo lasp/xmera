@@ -92,7 +92,7 @@ from Basilisk.simulation import (reactionWheelStateEffector,
                                  spacecraft)
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+                                simIncludeRW, unitTestSupport, spice_utilities, vizSupport)
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -341,7 +341,7 @@ def run(show_plots):
     magModule = magneticFieldWMM.MagneticFieldWMM()
     magModule.modelTag = "WMM"
     magModule.dataPath = bskPath + '/supportData/MagneticField/'
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+    epochMsg = spice_utilities.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
     magModule.epochInMsg.subscribeTo(epochMsg)
     magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
     scSim.AddModelToTask(simTaskName, magModule)

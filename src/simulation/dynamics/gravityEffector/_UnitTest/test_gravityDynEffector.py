@@ -21,6 +21,7 @@ import math
 import os
 
 import numpy as np
+import spiceypy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -33,8 +34,6 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spiceInterface
-from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.simulation import stateArchitecture
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.architecture import messaging
@@ -325,18 +324,17 @@ def singleGravityBody(show_plots):
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
     #       SPICE kernals in Python.
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
-    pyswice.furnsh_c(path + '/hst_edited.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
+    spiceypy.furnsh(bskPath + '/supportData/EphemerisData/pck00010.tpc')
+    spiceypy.furnsh(path + '/hst_edited.bsp')
 
     SpiceObject.UTCCalInit = "2012 MAY 1 00:02:00.184"
     stringCurrent = SpiceObject.UTCCalInit
-    et = pyswice.new_doubleArray(1)
     dt = 1.0
-    pyswice.str2et_c(stringCurrent, et)
-    etCurr = pyswice.doubleArray_getitem(et, 0)
+    et = spiceypy.str2et(stringCurrent)
+    etCurr = et
     normVec = []
     gravErrNorm = []
     SpiceObject.UTCCalInit = stringCurrent
@@ -347,13 +345,13 @@ def singleGravityBody(show_plots):
     SpiceObject.updateState(0)
 
     for i in range(2*3600):
-        stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
+        [stateOut, _] = spiceypy.spkezr('HUBBLE SPACE TELESCOPE', spiceypy.str2et(stringCurrent), 'J2000', 'NONE', 'EARTH')
         etPrev =etCurr - 2.0
-        stringPrev = pyswice.et2utc_c(etPrev, 'C', 4, 1024, "Yo")
-        statePrev = spkRead('HUBBLE SPACE TELESCOPE', stringPrev, 'J2000', 'EARTH')
+        stringPrev = spiceypy.et2utc(etPrev, 'C', 4, 1024)
+        [statePrev, _] = spiceypy.spkezr('HUBBLE SPACE TELESCOPE', spiceypy.str2et(stringPrev), 'J2000', 'NONE', 'EARTH')
         etNext =etCurr + 2.0
-        stringNext = pyswice.et2utc_c(etNext, 'C', 4, 1024, "Yo")
-        stateNext = spkRead('HUBBLE SPACE TELESCOPE', stringNext, 'J2000', 'EARTH')
+        stringNext = spiceypy.et2utc(etNext, 'C', 4, 1024)
+        [stateNext, _] = spiceypy.spkezr('HUBBLE SPACE TELESCOPE', spiceypy.str2et(stringNext), 'J2000', 'NONE', 'EARTH')
         gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
         normVec.append(np.linalg.norm(stateOut[0:3]))
 
@@ -364,10 +362,10 @@ def singleGravityBody(show_plots):
         gravErrNorm.append(np.linalg.norm(gravVec*1000.0 - np.array(gravOut).reshape(3))/
             np.linalg.norm(gravVec*1000.0))
 
-        pyswice.str2et_c(stringCurrent, et)
-        etCurr = pyswice.doubleArray_getitem(et, 0)
-        etCurr += dt;
-        stringCurrent = pyswice.et2utc_c(etCurr, 'C', 4, 1024, "Yo")
+
+        etCurr = spiceypy.str2et(stringCurrent)
+        etCurr += dt
+        stringCurrent = spiceypy.et2utc(etCurr, 'C', 4, 1024)
 
     accuracy = 1.0e-4
     for gravErr in gravErrNorm:
@@ -379,11 +377,11 @@ def singleGravityBody(show_plots):
     snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
-    pyswice.unload_c(path + '/hst_edited.bsp')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/de430.bsp')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/naif0012.tls')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
+    spiceypy.unload(bskPath + '/supportData/EphemerisData/pck00010.tpc')
+    spiceypy.unload(path + '/hst_edited.bsp')
 
 
     if testFailCount == 0:

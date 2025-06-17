@@ -24,8 +24,6 @@ import matplotlib as mpl
 import numpy as np
 import pytest
 from Basilisk.architecture import bskUtilities
-from Basilisk.architecture import messaging
-from Basilisk.topLevelModules import pyswice
 
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
@@ -501,42 +499,6 @@ def decimalYearToDateTime(start):
     return base + timedelta(seconds=(base.replace(year=base.year + 1) - base).total_seconds() * rem)
 
 
-def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
-    """convert a general time/date string to a gregoarian UTC msg object"""
-    # set the data path
-    if 'dataPath' in kwargs:
-        dataPath = kwargs['dataPath']
-        if not isinstance(dataPath, str):
-            print('ERROR: dataPath must be a string argument')
-            exit(1)
-    else:
-        dataPath = bskPath + '/supportData/EphemerisData/'  # default value
-
-    # load spice kernel and convert the string into a UTC date/time string
-    pyswice.furnsh_c(dataPath + 'naif0012.tls')
-    et = pyswice.new_doubleArray(1)
-    pyswice.str2et_c(DateSpice, et)
-    etEpoch = pyswice.doubleArray_getitem(et, 0)
-    ep1 = pyswice.et2utc_c(etEpoch, 'C', 6, 255, "Yo")
-    pyswice.unload_c(dataPath + 'naif0012.tls')  # leap second file
-
-    # convert UTC string to datetime object
-    datetime_object = datetime.strptime(ep1, '%Y %b %d %H:%M:%S.%f')
-
-    # populate the epochMsg with the gregorian UTC date/time information
-    epochMsgStructure = messaging.EpochMsgPayload()
-    epochMsgStructure.year = datetime_object.year
-    epochMsgStructure.month = datetime_object.month
-    epochMsgStructure.day = datetime_object.day
-    epochMsgStructure.hours = datetime_object.hour
-    epochMsgStructure.minutes = datetime_object.minute
-    epochMsgStructure.seconds = datetime_object.second + datetime_object.microsecond / 1e6
-
-    epochMsg = messaging.EpochMsg().write(epochMsgStructure)
-    epochMsg.this.disown()
-
-    return epochMsg
-
 def columnToRowList(set):
     """Loop through a column list and return a row list"""
     ans = []
@@ -573,4 +535,3 @@ def samplingTime(simTime, baseTimeStep, numDataPoints):
     if deltaTime < 1:
         deltaTime = 1
     return deltaTime
-

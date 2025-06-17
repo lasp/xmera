@@ -16,7 +16,7 @@ By design this module is only applicable to Earth.  The earth radius is set auto
 	\item  {\bfseries Default:} If no epoch information is provided, then the BSK default epoch date and time are set.
 	\item  {\bfseries Use Epoch Message:}  An epoch input message  is connected.  This is read in on reset.
 	\begin{verbatim}
-		epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
+		epochMsg = spice_utilities.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
 		newAtmo.epochInMsg.subscribeTo(epochMsg)
 	\end{verbatim}
 	\item  {\bfseries Direct Setting:} The module variable {\tt epochDoy} can be set directly as well.  However, note that if the input message is specified, the {\tt epochDoy} value is not used.
