@@ -103,6 +103,14 @@ ClassicalElements OEStateEphemAlgorithm::evaluateCoefficients(const double curre
  */
 EphemerisMsgPayload OEStateEphemAlgorithm::updateState(const uint64_t callTime) {
     auto ephmerisMessageOutput = EphemerisMsgPayload{};
+    /*! - Write the output message time */
+    ephmerisMessageOutput.timeTag = callTime * NANO2SEC;
+    /*! If all of the radius of periapsis components are zero, this is the central body and should return all zeros*/
+    if (std::all_of(this->fitCoefficients[0].radiusPeriapsisCoefficients.begin(),
+                    this->fitCoefficients[0].radiusPeriapsisCoefficients.end(),
+                    [](double val) { return std::abs(val) < 1e-10; })) {
+        return ephmerisMessageOutput;
+    }
 
     auto currentArc = this->findCurrentArc(callTime, this->spacecraftTime);
     auto currentScaledValue = this->scaleEphemerisTime(currentArc);
@@ -112,8 +120,7 @@ EphemerisMsgPayload OEStateEphemAlgorithm::updateState(const uint64_t callTime) 
     auto carteisianState = OrbitalMotion::elementsToCartesianState(this->gravitationalParameter, orbitalElements);
     eigenVector3d2CArray(carteisianState.position, ephmerisMessageOutput.r_BdyZero_N);
     eigenVector3d2CArray(carteisianState.velocity, ephmerisMessageOutput.v_BdyZero_N);
-    /*! - Write the output message */
-    ephmerisMessageOutput.timeTag = callTime * NANO2SEC;
+
     return ephmerisMessageOutput;
 }
 
