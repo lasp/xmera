@@ -55,7 +55,7 @@ void MappingInstrument::updateState(uint64_t currentSimNanos) {
         this->dataNodeOutMsgBuffer.at(c) = DataNodeUsageMsgPayload{};
 
         /* Read the access message */
-        AccessMsgPayload accessMsg;
+        AccessMsgPayload accessMsg{};
         accessMsg = this->accessInMsgs.at(c)();
 
         /* Check for access, set the data rate */
@@ -90,8 +90,7 @@ void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg,
     this->dataNodeOutMsgs.push_back(msg);
 
     /* Expand the data node usage buffer vectors */
-    DataNodeUsageMsgPayload dataNodeUsageMsg;
-    this->dataNodeOutMsgBuffer.push_back(dataNodeUsageMsg);
+    this->dataNodeOutMsgBuffer.emplace_back();
 
     return;
 }

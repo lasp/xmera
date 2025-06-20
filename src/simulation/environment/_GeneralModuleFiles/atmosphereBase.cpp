@@ -84,7 +84,7 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->envOutMsgs.push_back(msg);
 
     /* create buffer message copies*/
-    AtmoPropsMsgPayload msgAtmoBuffer;
+    AtmoPropsMsgPayload msgAtmoBuffer{};
     this->envOutBuffer.push_back(msgAtmoBuffer);
 
     return;

@@ -161,7 +161,7 @@ void SpiceInterface::initTimeData() {
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
-        EpochMsgPayload epochMsg;
+        EpochMsgPayload epochMsg{};
         epochMsg = this->epochInMsg();
         if (!this->epochInMsg.isWritten()) {
             bskLogger.bskLog(BSK_ERROR,
@@ -218,7 +218,7 @@ void SpiceInterface::computeGPSData() {
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void SpiceInterface::writeOutputMessages(uint64_t CurrentClock) {
-    SpiceTimeMsgPayload OutputData;
+    SpiceTimeMsgPayload OutputData{};
 
     //! - Set the members of the time output message structure and write
     OutputData.J2000Current = this->J2000Current;

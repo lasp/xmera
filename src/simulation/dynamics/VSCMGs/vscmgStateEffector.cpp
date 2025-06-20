@@ -579,10 +579,9 @@ void VSCMGStateEffector::reset(uint64_t CurrenSimNanos) {
  */
 void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
     this->outputStates = VSCMGSpeedMsgPayload{};
-    VSCMGConfigMsgPayload tmpVSCMG;
     std::vector<VSCMGConfigMsgPayload>::iterator it;
     for (it = VSCMGData.begin(); it != VSCMGData.end(); it++) {
-        tmpVSCMG = VSCMGConfigMsgPayload{};
+        auto tmpVSCMG = VSCMGConfigMsgPayload{};
         if (numVSCMGJitter > 0) {
             double thetaCurrent = this->thetasState->getState()(it - VSCMGData.begin(), 0);
             it->theta = thetaCurrent;

@@ -176,7 +176,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>*
     this->planetInMsgs.push_back(planetSpiceMsg->addSubscriber());
 
     /* expand the planet state buffer vector */
-    SpicePlanetStateMsgPayload plMsg;
+    SpicePlanetStateMsgPayload plMsg{};
     this->planetMsgData.push_back(plMsg);
 }
 
@@ -198,7 +198,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>*
     this->planetInMsgs.push_back(planetSpiceMsg->addSubscriber());
 
     /* expand the planet state buffer vector */
-    SpicePlanetStateMsgPayload plMsg;
+    SpicePlanetStateMsgPayload plMsg{};
     this->planetMsgData.push_back(plMsg);
 }
 
@@ -220,7 +220,7 @@ void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload>* pl
     this->planetInMsgs.push_back(planetSpiceMsg->addSubscriber());
 
     /* expand the planet state buffer vector */
-    SpicePlanetStateMsgPayload plMsg;
+    SpicePlanetStateMsgPayload plMsg{};
     this->planetMsgData.push_back(plMsg);
 }
 
@@ -309,8 +309,7 @@ void Albedo::readMessages() {
  @return void
  */
 void Albedo::writeMessages(uint64_t currentSimNanos) {
-    AlbedoMsgPayload localMessage;
-    memset(&localMessage, 0x0, sizeof(localMessage));
+    AlbedoMsgPayload localMessage{};
 
     //! - Write albedo output messages for each instrument
     for (long unsigned int idx = 0; idx < this->albOutMsgs.size(); idx++) {
@@ -425,7 +424,7 @@ void Albedo::evaluateAlbedoModel(int idx) {
         auto albAvg = this->ALB_avgs.at(idx);
         if (albAvg < 0.0) {
             // set the albedo average automatically based on the planet's name
-            SpicePlanetStateMsgPayload planetInfo;
+            SpicePlanetStateMsgPayload planetInfo{};
             planetInfo = this->planetInMsgs.at(idx)();
             std::string plName(planetInfo.PlanetName);
             this->ALB_avgs.at(idx) = getAlbedoAverage(plName);
