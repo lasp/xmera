@@ -62,8 +62,8 @@ class FacetSRPDynamicEffector : public SysModel, public DynamicEffector {
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload>* tmpMsg);
     void ReadMessages();
 
-    uint64_t numFacets;                                //!< Total number of spacecraft facets
-    uint64_t numArticulatedFacets;                     //!< Number of articulated facets
+    size_t numFacets;                                //!< Total number of spacecraft facets
+    size_t numArticulatedFacets;                     //!< Number of articulated facets
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;  //!< Sun spice ephemeris input message
 
    private:

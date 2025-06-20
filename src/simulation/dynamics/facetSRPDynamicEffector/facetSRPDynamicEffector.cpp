@@ -109,7 +109,7 @@ void FacetSRPDynamicEffector::ReadMessages() {
     if (this->articulatedFacetDataInMsgs.size() == this->numArticulatedFacets) {
         HingedRigidBodyMsgPayload facetAngleMsg;
         this->facetArticulationAngleList.clear();
-        for (int i = 0; i < this->numArticulatedFacets; i++) {
+        for (size_t i = 0; i < this->numArticulatedFacets; i++) {
             if (this->articulatedFacetDataInMsgs[i].isLinked() && this->articulatedFacetDataInMsgs[i].isWritten()) {
                 facetAngleMsg = this->articulatedFacetDataInMsgs[i]();
                 this->facetArticulationAngleList.push_back(facetAngleMsg.theta);
@@ -145,29 +145,22 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
     Eigen::Vector3d sHat = r_SB_B / r_SB_B.norm();
 
     // Define local srp force and torque storage vectors
-    Eigen::Vector3d facetSRPForcePntB_B;
-    Eigen::Vector3d facetSRPTorquePntB_B;
-    Eigen::Vector3d totalSRPForcePntB_B;
-    Eigen::Vector3d totalSRPTorquePntB_B;
+    Eigen::Vector3d facetSRPForcePntB_B = Eigen::Vector3d::Zero();
+    Eigen::Vector3d facetSRPTorquePntB_B = Eigen::Vector3d::Zero();
+    Eigen::Vector3d totalSRPForcePntB_B = Eigen::Vector3d::Zero();
+    Eigen::Vector3d totalSRPTorquePntB_B = Eigen::Vector3d::Zero();
 
     // Zero storage information
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
-    facetSRPForcePntB_B.setZero();
-    facetSRPTorquePntB_B.setZero();
-    totalSRPForcePntB_B.setZero();
-    totalSRPTorquePntB_B.setZero();
-    double projectedArea = 0.0;
-    double cosTheta = 0.0;
 
     // Calculate the SRP pressure acting at the current spacecraft location
     double numAU = AstU / r_SB_B.norm();
     double SRPPressure = (solarRadFlux / speedLight) * numAU * numAU;
 
     // Loop through the facets and calculate the SRP force and torque acting on the spacecraft about point B
-    for (int i = 0; i < this->numFacets; i++) {
-        double dcmBB0[3][3];
-        Eigen::Matrix3d dcm_BB0;
+    for (size_t i = 0; i < this->numFacets; i++) {
+        Eigen::Matrix3d dcm_BB0 = Eigen::Matrix3d::Zero();
 
         // Determine the current facet normal vector if the facet articulates
         if ((this->numArticulatedFacets != 0) && (i >= (this->numFacets - this->numArticulatedFacets)) &&
@@ -179,6 +172,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
             double prv_BB0[3] = {-articulationAngle * scGeometry.facetRotAxes_B[i][0],
                                  -articulationAngle * scGeometry.facetRotAxes_B[i][1],
                                  -articulationAngle * scGeometry.facetRotAxes_B[i][2]};
+            double dcmBB0[3][3];
             PRV2C(prv_BB0, dcmBB0);
             dcm_BB0 = c2DArrayAsEigenMatrix3(dcmBB0);
 
@@ -187,8 +181,8 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
         }
 
         // Determine the facet projected area
-        cosTheta = this->scGeometry.facetNormals_B[i].dot(sHat);
-        projectedArea = this->scGeometry.facetAreas[i] * cosTheta;
+        double cosTheta = this->scGeometry.facetNormals_B[i].dot(sHat);
+        double projectedArea = this->scGeometry.facetAreas[i] * cosTheta;
 
         // Compute the SRP force and torque acting on the facet only if the facet is in view of the Sun
         if (projectedArea > 0.0) {
