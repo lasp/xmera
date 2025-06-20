@@ -221,7 +221,7 @@ Eigen::Vector3d PointCloudTriangulation::triangulation(std::vector<Eigen::Vector
     Eigen::MatrixXd A(3 * numLocations, 3);
     Eigen::VectorXd y(3 * numLocations);
 
-    for (int c = 0; c < numLocations; ++c) {
+    for (size_t c = 0; c < numLocations; ++c) {
         // update dcm in case they are different for each image point
         if (dcmCamera.size() != 1) {
             dcm_CF = dcmCamera.at(c);

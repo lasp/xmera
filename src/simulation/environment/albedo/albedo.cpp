@@ -231,9 +231,8 @@ void Albedo::updateState(uint64_t currentSimNanos) {
     this->readMessages();
     this->albOutData.clear();
     std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
-    int idx;
-    for (int instIdx = 0; instIdx < this->albOutMsgs.size(); instIdx++) {
-        idx = 0;
+    for (size_t instIdx = 0; instIdx < this->albOutMsgs.size(); instIdx++) {
+        size_t idx = 0;
         double tmpTot[4] = {};
         double outData[4] = {};
         for (planetIt = this->planetMsgData.begin(); planetIt != this->planetMsgData.end(); planetIt++) {
@@ -513,8 +512,8 @@ void Albedo::evaluateAlbedoModel(int idx) {
 /*! This method calculates the albedo at instrument
  @return void
  */
-void Albedo::computeAlbedo(int idx,
-                           int instIdx,
+void Albedo::computeAlbedo(size_t idx,
+                           size_t instIdx,
                            SpicePlanetStateMsgPayload planetMsg,
                            bool albArray,
                            double outData[]) {

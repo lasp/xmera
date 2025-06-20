@@ -121,7 +121,7 @@ void SpiceInterface::reset(uint64_t CurrenSimNanos) {
     this->timeDataInit = true;
 
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
-    int c = 0;      // celestial object counter
+    size_t c = 0;   // celestial object counter
     int autoFrame;  // flag to set the frame automatically
     SpiceChar *name = new SpiceChar[this->charBufferSize];
     SpiceBoolean frmFound;
@@ -379,7 +379,7 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
      -# Convert the pos/vel over to meters.
      -# Time stamp the message appropriately
      */
-    int c = 0;  // celestial body counter
+    size_t c = 0; // celestial body counter
     for (planit = spiceData->begin(); planit != spiceData->end(); planit++) {
         double lighttime;
         double localState[6];

@@ -76,8 +76,8 @@ class Albedo : public SysModel {
     void writeMessages(uint64_t currentSimNanos);       //!< writes the outpus messages
     void getPlanetRadius(std::string planetSpiceName);  //!< gets the planet's radius
     void evaluateAlbedoModel(int idx);                  //!< evaluates the ALB model
-    void computeAlbedo(int idx,
-                       int instIdx,
+    void computeAlbedo(size_t idx,
+                       size_t instIdx,
                        SpicePlanetStateMsgPayload planetMsg,
                        bool AlbArray,
                        double outData[]);  //!< computes the albedo at instrument's location

@@ -929,12 +929,12 @@ void VizInterface::WriteProtobuffer(uint64_t currentSimNanos)
             scp->set_logotexture(scIt->logoTexture);
 
             /* set spacecraft osculating orbit line color */
-            for (int i=0; i<scIt->oscOrbitLineColor.size(); i++){
+            for (size_t i=0; i<scIt->oscOrbitLineColor.size(); i++){
                 scp->add_oscorbitlinecolor(scIt->oscOrbitLineColor[i]);
             }
 
             /* set spacecraft true orbit line color */
-            for (int i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
+            for (size_t i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 

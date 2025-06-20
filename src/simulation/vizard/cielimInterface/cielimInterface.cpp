@@ -66,7 +66,7 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     spiceStatus.dataFresh = true;
     spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     this->spiceBodyMessageStatus.clear();
-    for (int c = 0; c < this->celestialBodiesList.size(); ++c) {
+    for (size_t c = 0; c < this->celestialBodiesList.size(); ++c) {
         /*! set default zero translation and rotation states */
         SpicePlanetStateMsgPayload logMsg = {};
         for (int i = 0; i < 3; ++i) {
@@ -200,7 +200,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
     }
 
     /*! Write spice output msgs */
-    for (int k = 0; k < this->spiceBodyMessageStatus.size(); ++k) {
+    for (size_t k = 0; k < this->spiceBodyMessageStatus.size(); ++k) {
         if (this->spiceBodyMessageStatus[k].dataFresh) {
             cielimMessage::CelestialBody *celestialBody = visPayload.add_celestialbodies();
             celestialBody->set_bodyname(this->celestialBodiesList.at(k).name);
