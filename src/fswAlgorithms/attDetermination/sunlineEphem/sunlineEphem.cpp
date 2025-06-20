@@ -18,25 +18,19 @@
  */
 
 #include "sunlineEphem.h"
-#include <string.h>
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 /*! Updates the sun heading based on ephemeris data. Returns the heading as a unit vector in the body frame.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SunlineEphem::updateState(uint64_t callTime)
-{
-    double r_SB_N[3];               /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
-    double r_SB_N_hat[3];           /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
-    double r_SB_B_hat[3];           /* [m] difference between the sun and spacecrat in the body frame (of unit length) */
-    double BN[3][3];                /* [-] direction cosine matrix used to rotate the inertial frame to body frame */
-    NavAttMsgPayload outputSunline = {};     /* [-] Output sunline estimate data */
-    EphemerisMsgPayload sunEphemBuffer; /* [-] Input sun ephemeris data */
-    NavTransMsgPayload scTransBuffer;   /* [-] Input spacecraft position data */
-    NavAttMsgPayload scAttBuffer;       /* [-] Input spacecraft attitude data */
+void SunlineEphem::updateState(uint64_t callTime) {
+    this->readMessages();
+    Eigen::Vector3d r_SB_B_hat = this->algorithm();
+    this->writeMessages(callTime, r_SB_B_hat);
+}
 
+void SunlineEphem::readMessages() {
     // check if the required input messages are included
     if (!this->sunPositionInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: sunlineEphem.sunPositionInMsg wasn't connected.");
@@ -47,21 +41,48 @@ void SunlineEphem::updateState(uint64_t callTime)
     if (!this->scAttitudeInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: sunlineEphem.scAttitudeInMsg wasn't connected.");
     }
+}
 
-    /*! - Read the input messages */
-    sunEphemBuffer = this->sunPositionInMsg();
-    scTransBuffer = this->scPositionInMsg();
-    scAttBuffer = this->scAttitudeInMsg();
-
+Eigen::Vector3d SunlineEphem::algorithm() {
     /*! - Calculate Sunline Heading from Ephemeris Data*/
-    v3Subtract(sunEphemBuffer.r_BdyZero_N, scTransBuffer.r_BN_N, r_SB_N);
-    v3Normalize(r_SB_N, r_SB_N_hat);
-    MRP2C(scAttBuffer.sigma_BN, BN);
-    m33MultV3(BN, r_SB_N_hat, r_SB_B_hat);
-    v3Normalize(r_SB_B_hat, r_SB_B_hat);
+    const Eigen::Vector3d rSun(this->sunPositionInMsg().r_BdyZero_N[0],
+                               this->sunPositionInMsg().r_BdyZero_N[1],
+                               this->sunPositionInMsg().r_BdyZero_N[2]);
+    const Eigen::Vector3d rSc(
+        this->scPositionInMsg().r_BN_N[0], this->scPositionInMsg().r_BN_N[1], this->scPositionInMsg().r_BN_N[2]);
+    // Difference in inertial frame
+    const Eigen::Vector3d r_SB_N = rSun - rSc;
 
+    // Prepare the unit-length inertial vector (defaults to zero)
+    Eigen::Vector3d r_SB_N_hat = Eigen::Vector3d::Zero();
+    if (r_SB_N.norm() > std::numeric_limits<double>::epsilon()) {
+        r_SB_N_hat = r_SB_N;
+        r_SB_N_hat.normalize();  // in-place unit-length
+    }
+
+    // Build DCM from spacecraft attitude
+    const Eigen::Vector3d sigma_BN(
+        this->scAttitudeInMsg().sigma_BN[0], this->scAttitudeInMsg().sigma_BN[1], this->scAttitudeInMsg().sigma_BN[2]);
+    const Eigen::Matrix3d dcm_BN = mrpToDcm(sigma_BN);
+
+    // Rotate into body frame
+    Eigen::Vector3d r_SB_B_hat = dcm_BN * r_SB_N_hat;
+
+    // Ensure unit length (or zero)
+    if (r_SB_B_hat.norm() > std::numeric_limits<double>::epsilon()) {
+        r_SB_B_hat.normalize();  // in-place unit-length
+    } else {
+        r_SB_B_hat.setZero();  // explicit zero
+    }
+
+    return r_SB_B_hat;
+}
+
+void SunlineEphem::writeMessages(uint64_t callTime, Eigen::Vector3d r_SB_B_hat) {
     /*! - store the output message*/
-    v3Copy(r_SB_B_hat, outputSunline.vehSunPntBdy);
+    NavAttMsgPayload outputSunline = {}; /* [-] Output sunline estimate data */
+    for (int i = 0; i < 3; i++) {
+        outputSunline.vehSunPntBdy[i] = r_SB_B_hat[i];
+    }
     this->navStateOutMsg.write(&outputSunline, this->moduleID, callTime);
-    return;
 }
