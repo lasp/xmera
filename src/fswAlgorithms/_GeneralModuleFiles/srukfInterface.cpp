@@ -47,7 +47,7 @@ void SRukfInterface::reset(uint64_t currentSimNanos) {
     this->wM(0) = this->lambda / ((double)this->state.size() + this->lambda);
     this->wC(0) =
         this->lambda / ((double)this->state.size() + this->lambda) + (1 - this->alpha * this->alpha + this->beta);
-    for (auto i = 1; i < this->numberSigmaPoints; ++i) {
+    for (size_t i = 1; i < this->numberSigmaPoints; ++i) {
         this->wM(i) = 1.0 / (2.0 * ((double)this->state.size() + this->lambda));
         this->wC(i) = this->wM(i);
     }

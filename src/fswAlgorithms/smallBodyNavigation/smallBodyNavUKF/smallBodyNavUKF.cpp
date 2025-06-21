@@ -64,7 +64,7 @@ void SmallBodyNavUKF::reset(uint64_t currentSimNanos) {
     /* compute UT weights to be used in the UT */
     this->wm_sigma(0) = this->kappa / (this->kappa + this->numStates);
     this->wc_sigma(0) = this->wm_sigma(0) + 1 - pow(this->alpha, 2) + this->beta;
-    for (int i = 0; i < this->numStates; i++) {
+    for (uint64_t i = 0; i < this->numStates; i++) {
         /* Assign weigths */
         this->wm_sigma(i + 1) = 1 / (2 * (this->numStates + this->kappa));
         this->wm_sigma(numStates + i + 1) = this->wm_sigma(i + 1);
