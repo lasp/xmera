@@ -171,8 +171,7 @@ void SpacecraftReconfig::UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
             this->thrustOnFlag = 1;  // thrustOnFlag is ON
             this->burnArrayInfoOutMsgBuffer.burnArray[0].flag =
                 2;  // first burn is regarded as finished by setting this to 2
-            int i = 0;
-            for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
+            for (uint32_t i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
                 thrustOnMsgBuffer->OnTimeRequest[i] =
                     this->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
             }
@@ -200,8 +199,7 @@ void SpacecraftReconfig::UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
             this->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 1) {
             this->thrustOnFlag = 1;
             this->burnArrayInfoOutMsgBuffer.burnArray[1].flag = 2;
-            int i = 0;
-            for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
+            for (uint32_t i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
                 thrustOnMsgBuffer->OnTimeRequest[i] =
                     this->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
             }
@@ -235,8 +233,7 @@ void SpacecraftReconfig::UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
             this->burnArrayInfoOutMsgBuffer.burnArray[2].flag == 1) {
             this->thrustOnFlag = 1;
             this->burnArrayInfoOutMsgBuffer.burnArray[2].flag = 2;
-            int i = 0;
-            for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
+            for (uint32_t i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
                 thrustOnMsgBuffer->OnTimeRequest[i] =
                     this->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
             }
