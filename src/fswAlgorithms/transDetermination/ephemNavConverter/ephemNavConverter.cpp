@@ -35,13 +35,13 @@ void EphemNavConverter::reset(uint64_t callTime) {
  @param callTime [ns] Time the method is called
  */
 void EphemNavConverter::updateState(uint64_t callTime) {
-    auto localEphemInMsg = EphemerisMsgPayload();
+    auto ephemMsgPayload = EphemerisMsgPayload();
     if (this->ephInMsg.isWritten()) {
-        localEphemInMsg = this->ephInMsg();
+        ephemMsgPayload = this->ephInMsg();
     }
 
     // Call the algorithm update method
-    NavTransMsgPayload navTransMsgPayload = this->algorithm.update(callTime, localEphemInMsg);
+    NavTransMsgPayload navTransMsgPayload = this->algorithm.update(callTime, ephemMsgPayload);
 
     this->stateOutMsg.write(&navTransMsgPayload, this->moduleID, callTime);
 }
