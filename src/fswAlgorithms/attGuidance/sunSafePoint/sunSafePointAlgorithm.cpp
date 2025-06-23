@@ -79,27 +79,27 @@ AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
  @param sHatNorm Norm of measured Sun-direction vector
 */
 void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
+    // Compute the current sun angle error
     double dotProductNormalized =
         this->sHatBdyCmd.dot(cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy)) / sHatNorm;
     dotProductNormalized = std::abs(dotProductNormalized) > 1.0 ? dotProductNormalized / std::abs(dotProductNormalized)
                                                                 : dotProductNormalized;
-    this->sunAngleErr = safeAcos(dotProductNormalized);
+    double sunAngleErr = safeAcos(dotProductNormalized);
 
     // Compute the heading error relative to the sun direction vector
-    if (this->sunAngleErr <
+    if (sunAngleErr <
         this->smallAngle) {  // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
         Eigen::Vector3d sigma_BR = Eigen::Vector3d::Zero();
         eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
     } else {
-        Eigen::Vector3d e_hat;  // Eigen Axis
-        if (M_PI - this->sunAngleErr <
-            this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
+        Eigen::Vector3d e_hat;                        // Eigen Axis
+        if (M_PI - sunAngleErr < this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
             e_hat = this->eHat180_B;
         } else {  // Normal case where sun and commanded body vectors are not aligned
             e_hat = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
         }
-        this->sunMnvrVec = e_hat / e_hat.norm();
-        Eigen::Vector3d v2 = std::tan(this->sunAngleErr * 0.25) * this->sunMnvrVec;
+        Eigen::Vector3d sunMnvrVec = e_hat / e_hat.norm();
+        Eigen::Vector3d v2 = std::tan(sunAngleErr * 0.25) * sunMnvrVec;
         eigenVector3d2CArray(v2, this->attGuidanceOutBuffer.sigma_BR);
         MRPswitch(this->attGuidanceOutBuffer.sigma_BR, 1.0, this->attGuidanceOutBuffer.sigma_BR);
     }
