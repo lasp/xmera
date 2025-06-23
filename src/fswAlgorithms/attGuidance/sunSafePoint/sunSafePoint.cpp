@@ -38,17 +38,17 @@ void SunSafePoint::reset(uint64_t callTime) {
  @param callTime [ns] Time the method is called
 */
 void SunSafePoint::updateState(uint64_t callTime) {
-    auto imuInMsg = NavAttMsgPayload();
+    auto imuMsgPayload = NavAttMsgPayload();
     if (this->imuInMsg.isWritten()) {
-        imuInMsg = this->imuInMsg();
+        imuMsgPayload = this->imuInMsg();
     }
-    auto sunDirectionInMsg = NavAttMsgPayload();
+    auto sunDirectionMsgPayload = NavAttMsgPayload();
     if (this->sunDirectionInMsg.isWritten()) {
-        sunDirectionInMsg = this->sunDirectionInMsg();
+        sunDirectionMsgPayload = this->sunDirectionInMsg();
     }
 
     // Call the algorithm update method
-    AttGuidMsgPayload attGuidanceOutBuffer = this->algorithm.update(callTime, imuInMsg, sunDirectionInMsg);
+    AttGuidMsgPayload attGuidanceOutBuffer = this->algorithm.update(callTime, imuMsgPayload, sunDirectionMsgPayload);
 
     this->attGuidanceOutMsg.write(&attGuidanceOutBuffer, moduleID, callTime);
 }
