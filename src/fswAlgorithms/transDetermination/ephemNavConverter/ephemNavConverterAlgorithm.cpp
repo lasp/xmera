@@ -18,7 +18,12 @@
  */
 
 #include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverterAlgorithm.h"
-#include "architecture/utilities/linearAlgebra.h"
+
+inline void v3Copy(double const v[3], double result[3]) {
+    result[0] = v[0];
+    result[1] = v[1];
+    result[2] = v[2];
+}
 
 /*! Update method for the ephemNavConverter algorithm. This method reads in the ephemeris messages and copies the
  translation ephemeris to the navigation translation interface message.

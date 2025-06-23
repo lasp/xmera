@@ -18,7 +18,6 @@
  */
 
 #include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverter.h"
-#include "architecture/utilities/linearAlgebra.h"
 
 /*! Reset method for the module adapter interface.
  @return void
