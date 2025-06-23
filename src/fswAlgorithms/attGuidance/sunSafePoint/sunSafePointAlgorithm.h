@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <Eigen/Dense>
 
-/*! @brief Sun safe point attitude guidance class. */
+/*! @brief Sun safe point attitude guidance algorithm class. */
 class SunSafePointAlgorithm {
    public:
     SunSafePointAlgorithm() = default;   //!< Constructor
