@@ -54,7 +54,7 @@ AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
     this->sunDirectionInBuffer = sunDirectionInMsg;
 
     // Determine norm of measured Sun-direction vector
-    double sHatNorm = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).norm();
+    const double sHatNorm = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).norm();
 
     // Computing the attitude guidance states sigma_BR and omega_RN_B
     if (this->sunDirectionIsAvailable(sHatNorm)) {
@@ -114,7 +114,7 @@ void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
 */
 void SunSafePointAlgorithm::computeHubAngularRateError(NavAttMsgPayload imuInMsg) {
     // Create local copy of hub inertial angular velocity vector in B frame components
-    Eigen::Vector3d omega_BN_B = cArray2EigenVector3d(imuInMsg.omega_BN_B);  // [rad/s]
+    const Eigen::Vector3d omega_BN_B = cArray2EigenVector3d(imuInMsg.omega_BN_B);  // [rad/s]
 
     // Create local copy of hub angular velocity error in B frame components
     Eigen::Vector3d omega_BR_B = omega_BN_B - this->omega_RN_B;  // [rad/s]
@@ -126,7 +126,7 @@ void SunSafePointAlgorithm::computeHubAngularRateError(NavAttMsgPayload imuInMsg
  @return bool
  @param sHatNorm Norm of measured Sun-direction vector
 */
-bool SunSafePointAlgorithm::sunDirectionIsAvailable(double sHatNorm) const { return sHatNorm > this->minUnitMag; }
+bool SunSafePointAlgorithm::sunDirectionIsAvailable(const double sHatNorm) const { return sHatNorm > this->minUnitMag; }
 
 /*! Getter method for the minimally accepted sun body vector norm.
  @return double

@@ -57,7 +57,7 @@ class SunSafePointAlgorithm {
     void computeHubAngularRateError(
         NavAttMsgPayload imuInMsg);  //!< Method for computing the hub angular rate error omega_BR_B
     bool sunDirectionIsAvailable(
-        double sHatNorm) const;  //!< Method for determining if a valid sun direction vector is available
+        const double sHatNorm) const;  //!< Method for determining if a valid sun direction vector is available
 
     double minUnitMag;           //!< The minimally acceptable norm of sun body vector
     double smallAngle;           //!< [rad] An angle value that specifies what is near 0 or 180 degrees
