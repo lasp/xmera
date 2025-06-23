@@ -25,17 +25,24 @@
 #include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
+#include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverterAlgorithm.h"
 
 /*! @brief The ephemNavConverter class.*/
 class EphemNavConverter : public SysModel {
-public:
-    void updateState(uint64_t callTime) override;
+   public:
+    EphemNavConverter() = default;
+    ~EphemNavConverter() = default;
+
     void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
 
-    Message<NavTransMsgPayload> stateOutMsg; //!< [-] output navigation message for pos/vel
-    ReadFunctor<EphemerisMsgPayload> ephInMsg; //!< ephemeris input message
+    Message<NavTransMsgPayload> stateOutMsg;    //!< [-] output navigation message for pos/vel
+    ReadFunctor<EphemerisMsgPayload> ephInMsg;  //!< ephemeris input message
 
-    BSKLogger bskLogger{};   //!< BSK Logging
+    BSKLogger bskLogger{};  //!< BSK Logging
+
+   private:
+    EphemNavConverterAlgorithm algorithm;  //!< Algorithm for ephemNavConverter control logic (BSK-agnostic)
 };
 
 #endif
