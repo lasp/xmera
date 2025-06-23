@@ -18,37 +18,30 @@
  */
 
 #include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverter.h"
-#include "architecture/utilities/linearAlgebra.h"
 
-/*! This resets the module to original states.
+/*! Reset method for the module adapter interface.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void EphemNavConverter::reset(uint64_t callTime)
-{
+void EphemNavConverter::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->ephInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: ephemNavConverter.ephInMsg wasn't connected.");
     }
 }
 
-/*! This method reads in the ephemeris messages and copies the translation
-    ephemeris to the navigation translation interface message.
+/*! Update method for the module adapter interface. This method also calls the algorithm update method.
  @return void
- @param callTime The clock time at which the function was called (nanoseconds)
+ @param callTime [ns] Time the method is called
  */
-void EphemNavConverter::updateState(uint64_t callTime)
-{
-    NavTransMsgPayload tmpOutputState = {};
+void EphemNavConverter::updateState(uint64_t callTime) {
+    auto ephemMsgPayload = EphemerisMsgPayload();
+    if (this->ephInMsg.isWritten()) {
+        ephemMsgPayload = this->ephInMsg();
+    }
 
-    /*! - read input ephemeris message */
-    EphemerisMsgPayload tmpEphemeris  = this->ephInMsg();
+    // Call the algorithm update method
+    NavTransMsgPayload navTransMsgPayload = this->algorithm.update(callTime, ephemMsgPayload);
 
-    /*! - map timeTag, position and velocity vector to output message */
-	tmpOutputState.timeTag = tmpEphemeris.timeTag;
-	v3Copy(tmpEphemeris.r_BdyZero_N, tmpOutputState.r_BN_N);
-	v3Copy(tmpEphemeris.v_BdyZero_N, tmpOutputState.v_BN_N);
-
-    /*! - write output message */
-    this->stateOutMsg.write(&tmpOutputState, this->moduleID, callTime);
+    this->stateOutMsg.write(&navTransMsgPayload, this->moduleID, callTime);
 }
