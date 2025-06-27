@@ -32,15 +32,9 @@ void SunlineEphem::updateState(uint64_t callTime) {
 
 void SunlineEphem::readMessages() {
     // check if the required input messages are included
-    if (!this->sunPositionInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: sunlineEphem.sunPositionInMsg wasn't connected.");
-    }
-    if (!this->scPositionInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: sunlineEphem.scPositionInMsg wasn't connected.");
-    }
-    if (!this->scAttitudeInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: sunlineEphem.scAttitudeInMsg wasn't connected.");
-    }
+    assert(!this->sunPositionInMsg.isLinked());
+    assert(!this->scPositionInMsg.isLinked());
+    assert(!this->scAttitudeInMsg.isLinked());
 }
 
 Eigen::Vector3d SunlineEphem::algorithm() {

@@ -29,7 +29,7 @@
 #include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <assert.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class SunlineEphem : public SysModel {
