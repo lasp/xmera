@@ -18,10 +18,9 @@
  */
 
 #include "sunlineEphemAlgorithm.h"
-NavAttMsgPayload SunlineEphemAlgorithm::updateState(uint64_t callTime,
-                                                    const EphemerisMsgPayload &sunPos,
+NavAttMsgPayload SunlineEphemAlgorithm::updateState(const EphemerisMsgPayload &sunPos,
                                                     const NavTransMsgPayload &scPos,
-                                                    const NavAttMsgPayload &scAtt) {
+                                                    const NavAttMsgPayload &scAtt) const {
     assert(!sunPos.isLinked());
     assert(!scPos.isLinked());
     assert(!scAtt.isLinked());

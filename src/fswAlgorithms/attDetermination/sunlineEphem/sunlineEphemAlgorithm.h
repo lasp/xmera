@@ -20,7 +20,6 @@
 #ifndef _SUNLINE_EPHEM_ALGORITHM_H_
 #define _SUNLINE_EPHEM_ALGORITHM_H_
 
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
@@ -31,10 +30,9 @@
 
 class SunlineEphemAlgorithm {
    public:
-    NavAttMsgPayload updateState(uint64_t callTime,
-                                 const EphemerisMsgPayload &sunPos,
+    NavAttMsgPayload updateState(const EphemerisMsgPayload &sunPos,
                                  const NavTransMsgPayload &scPos,
-                                 const NavAttMsgPayload &scAtt);
+                                 const NavAttMsgPayload &scAtt) const;
 };
 
 #endif

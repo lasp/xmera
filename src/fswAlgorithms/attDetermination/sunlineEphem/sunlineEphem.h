@@ -32,6 +32,7 @@ class SunlineEphem : public SysModel {
     ReadFunctor<EphemerisMsgPayload> sunPositionInMsg;  //!< The name of the sun ephemeris input message
     ReadFunctor<NavTransMsgPayload> scPositionInMsg;    //!< The name of the spacecraft ephemeris input message
     ReadFunctor<NavAttMsgPayload> scAttitudeInMsg;      //!< The name of the spacecraft attitude input message
+
    private:
     SunlineEphemAlgorithm algorithm;
 };
