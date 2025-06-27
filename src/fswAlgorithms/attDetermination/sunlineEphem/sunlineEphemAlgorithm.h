@@ -17,23 +17,24 @@
 
  */
 
-#ifndef _SUNLINE_EPHEM_H_
-#define _SUNLINE_EPHEM_H_
+#ifndef _SUNLINE_EPHEM_ALGORITHM_H_
+#define _SUNLINE_EPHEM_ALGORITHM_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "fswAlgorithms/attDetermination/sunlineEphem/sunlineEphemAlgorithm.h"
+#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <assert.h>
+#include <stdint.h>
+#include <Eigen/Core>
 
-class SunlineEphem : public SysModel {
+class SunlineEphemAlgorithm {
    public:
-    SunlineEphem();
-    void updateState(uint64_t callTime) override;
-    Message<NavAttMsgPayload> navStateOutMsg;           /*!< The name of the output message*/
-    ReadFunctor<EphemerisMsgPayload> sunPositionInMsg;  //!< The name of the sun ephemeris input message
-    ReadFunctor<NavTransMsgPayload> scPositionInMsg;    //!< The name of the spacecraft ephemeris input message
-    ReadFunctor<NavAttMsgPayload> scAttitudeInMsg;      //!< The name of the spacecraft attitude input message
-   private:
-    SunlineEphemAlgorithm algorithm;
+    NavAttMsgPayload updateState(uint64_t callTime,
+                                 const EphemerisMsgPayload &sunPos,
+                                 const NavTransMsgPayload &scPos,
+                                 const NavAttMsgPayload &scAtt);
 };
 
 #endif
