@@ -1,6 +1,6 @@
 
 
-%module(threads="1") {type}Payload
+%module {type}Payload
 %{{
     #include "{baseDir}/{type}Payload.h"
     #include "architecture/messaging/messaging.h"

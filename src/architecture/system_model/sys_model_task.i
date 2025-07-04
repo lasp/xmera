@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module(threads="1") sys_model_task
+%module sys_model_task
 %{
    #include "sys_model_task.h"
 %}

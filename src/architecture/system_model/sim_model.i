@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module(threads="1") sim_model
+%module sim_model
 %{
    #include "sim_model.h"
 %}
