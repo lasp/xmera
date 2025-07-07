@@ -17,14 +17,22 @@
 
  */
 
-#include "fswAlgorithms/attDetermination/sunlineEphem/sunlineEphem.h"
+#ifndef _SUNLINE_EPHEM_ALGORITHM_H_
+#define _SUNLINE_EPHEM_ALGORITHM_H_
 
-SunlineEphem::SunlineEphem() { this->algorithm = SunlineEphemAlgorithm(); }
+#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <assert.h>
+#include <stdint.h>
+#include <Eigen/Core>
 
-void SunlineEphem::updateState(uint64_t callTime) {
-    EphemerisMsgPayload sunPos = this->sunPositionInMsg();
-    NavTransMsgPayload scPos = this->scPositionInMsg();
-    NavAttMsgPayload scAtt = this->scAttitudeInMsg();
-    auto outputSunline = this->algorithm.updateState(sunPos, scPos, scAtt);
-    this->navStateOutMsg.write(&outputSunline, this->moduleID, callTime);
-}
+class SunlineEphemAlgorithm {
+   public:
+    NavAttMsgPayload updateState(const EphemerisMsgPayload &sunPos,
+                                 const NavTransMsgPayload &scPos,
+                                 const NavAttMsgPayload &scAtt) const;
+};
+
+#endif
