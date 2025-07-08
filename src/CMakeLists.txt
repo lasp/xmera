@@ -276,6 +276,19 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     else()
       set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR}) # define folder in IDE
     endif()
+
+    if(USE_COVERAGE)
+      if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        target_compile_options(${TARGET_NAME} PRIVATE "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline -fprofile-update=atomic")
+        target_link_options(${TARGET_NAME} PRIVATE "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline -fprofile-update=atomic")
+      elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        target_compile_options(${TARGET_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping -O0)
+        target_link_options(${TARGET_NAME} PRIVATE -fprofile-instr-generate -O0)
+      else()
+        message(FATAL_ERROR "Code coverage instrumentation is only available on UNIX systems")
+      endif()
+    endif()
+
     # Define the location for the .so / .dylib file
     set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
                                                     "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
@@ -375,19 +388,19 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 # Test Coverage
 option(USE_COVERAGE "GCOV code coverage analysis" OFF)
 
-if(USE_COVERAGE AND (CMAKE_COMPILER_IS_GNUC OR CMAKE_COMPILER_IS_GNUCXX))
-  message(STATUS "USE_COVERAGE : ${USE_COVERAGE}")
-  set(GCOV_CFLAGS "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
-  set(GCOV_LDFLAGS "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
-
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GCOV_CFLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCOV_CFLAGS}")
-  set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} ${GCOV_LDFLAGS}")
-
-  message(STATUS "CMAKE_C_FLAGS : ${CMAKE_C_FLAGS}")
-  message(STATUS "CMAKE_CXX_FLAGS : ${CMAKE_CXX_FLAGS}")
-  message(STATUS "CMAKE_LD_FLAGS : ${CMAKE_LD_FLAGS}")
-endif()
+#if(USE_COVERAGE AND (CMAKE_COMPILER_IS_GNUC OR CMAKE_COMPILER_IS_GNUCXX))
+#  message(STATUS "USE_COVERAGE : ${USE_COVERAGE}")
+#  set(GCOV_CFLAGS "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
+#  set(GCOV_LDFLAGS "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
+#
+#  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GCOV_CFLAGS}")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCOV_CFLAGS}")
+#  set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} ${GCOV_LDFLAGS}")
+#
+#  message(STATUS "CMAKE_C_FLAGS : ${CMAKE_C_FLAGS}")
+#  message(STATUS "CMAKE_CXX_FLAGS : ${CMAKE_CXX_FLAGS}")
+#  message(STATUS "CMAKE_LD_FLAGS : ${CMAKE_LD_FLAGS}")
+#endif()
 
 # Add platform specific compiler flags
 if(MSVC)

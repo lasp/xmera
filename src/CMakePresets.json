@@ -25,6 +25,8 @@
       "inherits": "base",
       "cacheVariables": {
         "BUILD_OPNAV":
+          "ON",
+        "USE_COVERAGE":
           "ON"
       }
     },
