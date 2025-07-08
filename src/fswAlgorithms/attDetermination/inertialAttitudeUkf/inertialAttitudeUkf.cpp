@@ -46,6 +46,12 @@ void InertialAttitudeUkf::customreset() {
                                (tildeMatrix(omega) * this->spacecraftInertia * omega + wheelTorque));
             stateDerivative.setVelocity(omegaDot);
 
+            if (state.hasBias()) {
+                BiasState xDotBias;
+                xDotBias.setValues(Eigen::VectorXd::Zero(3));
+                stateDerivative.setBias(xDotBias);
+            }
+
             return stateDerivative;
         };
     this->dynamics.setDynamics(attitudeDynamics);
@@ -219,7 +225,7 @@ void InertialAttitudeUkf::readGyroData() {
         gyroMeasurement.setMeasurementNoise(this->measNoiseScaling * this->gyroNoise /
                                             gyroBuffer.numberOfValidGyroMeasurements);
         gyroMeasurement.setObservation(cArray2EigenVector3d(gyroBuffer.AngVelPlatform));
-        gyroMeasurement.setMeasurementModel(MeasurementModel::velocityStates);
+        gyroMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
         this->measurements[this->measurementIndex] = gyroMeasurement;
         this->measurementIndex += 1;
     }

@@ -36,6 +36,7 @@ class MeasurementModel {
     static Eigen::VectorXd normalizedPositionStates(const FilterStateVector& state);
     static Eigen::VectorXd mrpStates(const FilterStateVector& state);
     static Eigen::VectorXd velocityStates(const FilterStateVector& state);
+    static Eigen::VectorXd velocityStatesWithBias(const FilterStateVector& state);
 
     Eigen::MatrixXd model(const FilterStateVector& state) const;
     void setMeasurementModel(const std::function<const Eigen::MatrixXd(const FilterStateVector&)>& modelCalculator);
