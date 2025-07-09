@@ -17,7 +17,7 @@
 #
 
 import numpy as np
-import pytest
+
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import sunlineEphem
 from Basilisk.utilities import SimulationBaseClass
