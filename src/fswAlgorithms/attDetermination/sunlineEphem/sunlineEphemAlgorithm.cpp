@@ -21,9 +21,6 @@
 NavAttMsgPayload SunlineEphemAlgorithm::updateState(const EphemerisMsgPayload &sunPos,
                                                     const NavTransMsgPayload &scPos,
                                                     const NavAttMsgPayload &scAtt) const {
-    assert(!sunPos.isLinked());
-    assert(!scPos.isLinked());
-    assert(!scAtt.isLinked());
     // Get sun position
     const Eigen::Vector3d rSun(sunPos.r_BdyZero_N[0], sunPos.r_BdyZero_N[1], sunPos.r_BdyZero_N[2]);
     const Eigen::Vector3d rSc(scPos.r_BN_N[0], scPos.r_BN_N[1], scPos.r_BN_N[2]);

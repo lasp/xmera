@@ -27,6 +27,7 @@
 class SunlineEphem : public SysModel {
    public:
     SunlineEphem();
+    void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     Message<NavAttMsgPayload> navStateOutMsg;           /*!< The name of the output message*/
     ReadFunctor<EphemerisMsgPayload> sunPositionInMsg;  //!< The name of the sun ephemeris input message
