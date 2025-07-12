@@ -37,9 +37,6 @@ function(generate_messages searchDir)
                  "-I${CMAKE_BINARY_DIR}/autoSource/")
     endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
-    include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../")
-    include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
-    include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../")
 
     swig_add_library(
       ${TARGET_NAME}
@@ -58,6 +55,9 @@ function(generate_messages searchDir)
     set_target_properties(
       ${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE
                                                          "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
+    target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../")
+    target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/")
+    target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../")
     target_link_libraries(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PUBLIC architectureLib)
     target_link_libraries(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PRIVATE Python3::Module)
   endforeach()
