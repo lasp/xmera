@@ -21,7 +21,7 @@
 #define SIM_THRUSTER_BODYTOHUBINFO_H
 #include <stdint.h>
 
-
+#include <Eigen/Dense>
 /*! attached body to hub information structure*/
 typedef struct
 //@cond DOXYGEN_IGNORE

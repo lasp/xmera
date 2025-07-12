@@ -19,7 +19,6 @@
 
 
 #include "fswAlgorithms/effectorInterfaces/forceTorqueThrForceMapping/forceTorqueThrForceMapping.h"
-#include "string.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

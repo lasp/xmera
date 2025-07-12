@@ -28,7 +28,6 @@
 #include "architecture/msgPayloadDefC/DipoleRequestBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/MTBCmdMsgPayload.h"
 #include "architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 class DipoleMapping : public SysModel {

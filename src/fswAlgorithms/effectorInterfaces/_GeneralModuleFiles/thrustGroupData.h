@@ -22,6 +22,9 @@
 
 #include "architecture/msgPayloadDefC/definitions.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/messaging/messaging.h"
+
+#include <cstdint>
 
 /*! @brief Sub structure that contains all of the configuration data and output
     information for a single thruster group.  There can be several thruster

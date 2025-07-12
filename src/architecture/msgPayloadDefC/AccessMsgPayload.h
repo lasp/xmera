@@ -20,6 +20,8 @@
 #ifndef ACCESSSIMMSG_H
 #define ACCESSSIMMSG_H
 
+#include <cstdint>
+
 /*! @brief Message that defines access to spacecraft from a groundLocation, providing access, range, and elevation with
  * repect to a ground location.
  */
