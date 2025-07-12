@@ -33,9 +33,6 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
-# CONSTANTS
-MAX_EFF_CNT = 36
-
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed

@@ -26,8 +26,7 @@
 #include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-#include <stdio.h>
-#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/msgPayloadDefC/definitions.h"
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */

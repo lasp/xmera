@@ -29,7 +29,6 @@
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/signalCondition.h"
 #include <stdint.h>
 

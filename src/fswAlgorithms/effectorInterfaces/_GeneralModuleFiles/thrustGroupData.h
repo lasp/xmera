@@ -20,10 +20,8 @@
 #ifndef _THRUST_GROUP_DATA_
 #define _THRUST_GROUP_DATA_
 
-#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/msgPayloadDefC/definitions.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-
-
 
 /*! @brief Sub structure that contains all of the configuration data and output
     information for a single thruster group.  There can be several thruster

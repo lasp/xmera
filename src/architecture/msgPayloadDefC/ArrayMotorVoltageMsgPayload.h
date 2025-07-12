@@ -20,10 +20,7 @@
 #ifndef SIM_RW_VOLTAGE_INPUT_H
 #define SIM_RW_VOLTAGE_INPUT_H
 
-
 #include "definitions.h"
-
-
 
 /*! @brief Structure used to define the message format of the motor voltage input  */
 typedef struct {

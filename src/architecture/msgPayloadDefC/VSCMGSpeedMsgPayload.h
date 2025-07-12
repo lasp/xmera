@@ -22,7 +22,6 @@
 
 #include "definitions.h"
 
-
 /*! @brief Structure used to define the output definition for VSCMG speeds*/
 typedef struct {
     double wheelSpeeds[MAX_EFF_CNT];	//!< r/s The current angular velocities of the VSCMG wheel

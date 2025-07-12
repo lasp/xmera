@@ -27,8 +27,7 @@
 #include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include "architecture/msgPayloadDefC/definitions.h"
 
 enum class PulsingRegime { ONPULSING = 0, OFFPULSING = 1 };
 

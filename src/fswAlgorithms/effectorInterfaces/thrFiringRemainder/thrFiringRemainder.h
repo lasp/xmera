@@ -21,7 +21,6 @@
 #define _THR_FIRING_REMAINDER_
 
 #include <stdint.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
@@ -29,10 +28,8 @@
 #include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
 #include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 
-#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/msgPayloadDefC/definitions.h"
 #include "architecture/utilities/bskLogging.h"
-
-
 
 /*! @brief Top level structure for the sub-module routines. */
 class ThrFiringRemainder : public SysModel {

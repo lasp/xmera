@@ -28,8 +28,7 @@
 #include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include <stdio.h>
-#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/msgPayloadDefC/definitions.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 class MtbMomentumManagement : public SysModel {

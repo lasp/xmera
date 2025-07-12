@@ -20,10 +20,8 @@
 #ifndef _RW_AVAILABILITY_FSW_MSG_H
 #define _RW_AVAILABILITY_FSW_MSG_H
 
-#include <stdint.h>
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "definitions.h"
-
 
 /*! @brief Array with availability of RW */
 typedef struct {
