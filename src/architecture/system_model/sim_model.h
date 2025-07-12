@@ -20,7 +20,7 @@
 #define _SimModel_HH_
 
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/bskSemaphore.h"
+#include "bskSemaphore.h"
 #include "architecture/system_model/sys_process.h"
 #include <condition_variable>
 #include <iostream>
