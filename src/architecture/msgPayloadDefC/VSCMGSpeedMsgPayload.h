@@ -20,7 +20,7 @@
 #ifndef VSCMG_SPEED_MESSAGE_STRUCT_H
 #define VSCMG_SPEED_MESSAGE_STRUCT_H
 
-#include "architecture/utilities/macroDefinitions.h"
+#include "definitions.h"
 
 
 /*! @brief Structure used to define the output definition for VSCMG speeds*/

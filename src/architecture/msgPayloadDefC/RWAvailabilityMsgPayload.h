@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "definitions.h"
 
 
 /*! @brief Array with availability of RW */

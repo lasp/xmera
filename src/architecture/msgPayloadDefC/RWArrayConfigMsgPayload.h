@@ -21,7 +21,7 @@
 #define RW_CONFIG_MESSAGE_H
 
 #include <stdint.h>
-#include "architecture/utilities/macroDefinitions.h"
+#include "definitions.h"
 
 /*! @brief RW array configuration FSW msg */
 typedef struct{

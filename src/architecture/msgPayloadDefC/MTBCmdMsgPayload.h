@@ -20,7 +20,7 @@
 #ifndef MTB_CMD_MSG_H
 #define MTB_CMD_MSG_H
 
-#include "architecture/utilities/macroDefinitions.h"
+#include "definitions.h"
 
 /*! @brief Message for magnetic torque bar dipole commands. */
 typedef struct {

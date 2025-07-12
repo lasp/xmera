@@ -22,9 +22,7 @@
 
 #include <stdint.h>
 #include "architecture/msgPayloadDefC/CSSUnitConfigMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
-
-
+#include "definitions.h"
 
 /*! @brief Structure used to contain the configuration information for
  each sun sensor*/

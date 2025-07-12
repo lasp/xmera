@@ -21,7 +21,7 @@
 #define ARRAY_EFFECTOR_LOCK_H
 
 
-#include "architecture/utilities/macroDefinitions.h"
+#include "definitions.h"
 
 
 

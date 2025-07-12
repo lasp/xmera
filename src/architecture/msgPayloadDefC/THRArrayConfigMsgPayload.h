@@ -21,7 +21,7 @@
 #define THR_ARRAY_MESSAGE_H
 
 #include "THRConfigMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "definitions.h"
 
 /*! @brief FSW message definition containing the thruster cluster information */
 typedef struct {

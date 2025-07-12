@@ -20,9 +20,8 @@
 #ifndef _RW_CONSTELLATION_MESSAGE_H
 #define _RW_CONSTELLATION_MESSAGE_H
 
-#include "architecture/utilities/macroDefinitions.h"
 #include "RWConfigElementMsgPayload.h"
-
+#include "definitions.h"
 
 
 /*! @brief Message used to define an array of RW FSW configurations  */
