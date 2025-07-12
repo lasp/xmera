@@ -22,9 +22,9 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/PrescribedRotationMsgPayload.h"
-#include "architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
+#include "architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "architecture/utilities/avsEigenMRP.h"

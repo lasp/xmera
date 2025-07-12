@@ -25,8 +25,8 @@
 #include "sicpDefinitions.h"
 #include "architecture/messaging/messaging.h"
 
-#include "architecture/msgPayloadDefCpp/SICPMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/PointCloudMsgPayload.h"
+#include "architecture/msgPayloadDef/SICPMsgPayload.h"
+#include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"

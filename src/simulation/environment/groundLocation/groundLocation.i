@@ -35,13 +35,13 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 
 
-%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
+%include "architecture/msgPayloadDef/AccessMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/GroundStateMsgPayload.h"
+%include "architecture/msgPayloadDef/GroundStateMsgPayload.h"
 
 
 %pythoncode %{

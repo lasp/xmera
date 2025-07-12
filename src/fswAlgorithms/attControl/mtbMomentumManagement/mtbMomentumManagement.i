@@ -31,12 +31,12 @@
 %include "mtbMomentumManagement.h"
 
 // sample Module support file to be included in this sub-module
-%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.h"
-%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-%include "architecture/msgPayloadDefC/MTBCmdMsgPayload.h"
-%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 
 %pythoncode %{
 import sys

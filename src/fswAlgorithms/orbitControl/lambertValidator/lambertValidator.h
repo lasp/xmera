@@ -22,12 +22,12 @@
 #define LAMBERTVALIDATOR_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefC/LambertProblemMsgPayload.h"
-#include "architecture/msgPayloadDefC/LambertSolutionMsgPayload.h"
-#include "architecture/msgPayloadDefC/LambertPerformanceMsgPayload.h"
-#include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/LambertValidatorMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
+#include "architecture/msgPayloadDef/LambertSolutionMsgPayload.h"
+#include "architecture/msgPayloadDef/LambertPerformanceMsgPayload.h"
+#include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/LambertValidatorMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"

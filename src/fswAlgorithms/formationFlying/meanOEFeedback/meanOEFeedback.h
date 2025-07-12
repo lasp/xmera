@@ -24,8 +24,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 

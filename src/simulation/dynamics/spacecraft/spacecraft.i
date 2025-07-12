@@ -40,13 +40,13 @@ from Basilisk.simulation.gravityEffector import GravBodyVector
 %import  "simulation/dynamics/gravityEffector/gravityEffector.i"
 %include "spacecraft.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
+%include "architecture/msgPayloadDef/SCMassPropsMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
+%include "architecture/msgPayloadDef/TransRefMsgPayload.h"
 
 
 %include "../_GeneralModuleFiles/hubEffector.h"

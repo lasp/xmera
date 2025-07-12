@@ -22,9 +22,9 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefC/LandmarkMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/LandmarkMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 
 #include <Eigen/Dense>

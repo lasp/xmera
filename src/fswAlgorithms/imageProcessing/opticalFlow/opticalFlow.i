@@ -35,14 +35,14 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "opticalFlow.h"
 
-%include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 struct CameraImageMsg_C;
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 struct OpNavLimbMsg_C;
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
 
-%include "architecture/msgPayloadDefCpp/PairedKeyPointsMsgPayload.h"
+%include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
 
 %pythoncode %{
 import sys

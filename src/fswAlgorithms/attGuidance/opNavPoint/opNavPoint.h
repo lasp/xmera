@@ -23,10 +23,10 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>

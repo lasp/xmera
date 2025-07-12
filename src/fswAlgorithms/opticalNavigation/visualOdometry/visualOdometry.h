@@ -22,10 +22,10 @@
 #define VIS_ODOMETRY_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefCpp/PairedKeyPointsMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/DirectionOfMotionMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
+#include "architecture/msgPayloadDef/DirectionOfMotionMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"

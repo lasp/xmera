@@ -25,10 +25,10 @@
 #include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AccessMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+#include "architecture/msgPayloadDef/AccessMsgPayload.h"
+#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+#include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 class SimpleInstrumentController : public SysModel{

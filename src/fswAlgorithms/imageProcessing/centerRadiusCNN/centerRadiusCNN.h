@@ -27,8 +27,8 @@
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDefC/OpNavCirclesMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavCirclesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 

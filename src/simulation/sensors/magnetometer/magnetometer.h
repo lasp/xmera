@@ -23,9 +23,9 @@
 #include <random>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
-#include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/MagneticFieldMsgPayload.h"
+#include "architecture/msgPayloadDef/TAMSensorMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/gauss_markov.h"

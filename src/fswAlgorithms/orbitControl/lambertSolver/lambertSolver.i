@@ -33,11 +33,11 @@
 %include "sys_model.h"
 %include "lambertSolver.h"
 
-%include "architecture/msgPayloadDefC/LambertProblemMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
 struct LambertProblemMsg_C;
-%include "architecture/msgPayloadDefC/LambertSolutionMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertSolutionMsgPayload.h"
 struct LambertSolutionMsg_C;
-%include "architecture/msgPayloadDefC/LambertPerformanceMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertPerformanceMsgPayload.h"
 struct LambertPerformanceMsg_C;
 
 %pythoncode %{

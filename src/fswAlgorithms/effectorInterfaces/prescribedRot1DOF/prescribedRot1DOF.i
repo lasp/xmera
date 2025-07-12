@@ -30,8 +30,8 @@
 
 %include "prescribedRot1DOF.h"
 
-%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-%include "architecture/msgPayloadDefC/PrescribedRotationMsgPayload.h"
+%include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
 
 %pythoncode %{
 import sys

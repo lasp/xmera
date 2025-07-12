@@ -22,8 +22,8 @@
 #include <string>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.h"
-#include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h"
+#include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"

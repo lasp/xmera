@@ -31,7 +31,7 @@
 
 %include "attRefCorrection.h"
 
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 
 %pythoncode %{
 import sys

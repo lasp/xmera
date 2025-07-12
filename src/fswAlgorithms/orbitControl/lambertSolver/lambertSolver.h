@@ -22,9 +22,9 @@
 #define LAMBERTSOLVER_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/LambertProblemMsgPayload.h"
-#include "architecture/msgPayloadDefC/LambertSolutionMsgPayload.h"
-#include "architecture/msgPayloadDefC/LambertPerformanceMsgPayload.h"
+#include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
+#include "architecture/msgPayloadDef/LambertSolutionMsgPayload.h"
+#include "architecture/msgPayloadDef/LambertPerformanceMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"

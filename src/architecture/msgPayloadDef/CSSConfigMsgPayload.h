@@ -21,7 +21,7 @@
 #define CSS_CONFIG_MESSAGE_H
 
 #include <stdint.h>
-#include "architecture/msgPayloadDefC/CSSUnitConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h"
 #include "definitions.h"
 
 /*! @brief Structure used to contain the configuration information for

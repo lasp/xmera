@@ -30,8 +30,8 @@
 
 %include "imuComm.h"
 
-%include "architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.h"
-%include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
+%include "architecture/msgPayloadDef/IMUSensorBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
 
 %pythoncode %{
 import sys

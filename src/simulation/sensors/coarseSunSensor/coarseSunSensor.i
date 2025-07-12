@@ -29,20 +29,20 @@
 %include "sys_model.i"
 %include "coarseSunSensor.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/CSSRawDataMsgPayload.h"
+%include "architecture/msgPayloadDef/CSSRawDataMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
+%include "architecture/msgPayloadDef/AlbedoMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
+%include "architecture/msgPayloadDef/EclipseMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+%include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
 
 
-%include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDef/CSSConfigLogMsgPayload.h"
 
 namespace std {
     %template(CSSVector) vector<CoarseSunSensor *, allocator<CoarseSunSensor *> >;

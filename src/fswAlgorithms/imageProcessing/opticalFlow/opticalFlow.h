@@ -28,10 +28,10 @@
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/PairedKeyPointsMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"

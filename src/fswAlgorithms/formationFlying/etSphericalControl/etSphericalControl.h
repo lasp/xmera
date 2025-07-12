@@ -23,11 +23,11 @@
 #include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
-#include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 

@@ -21,7 +21,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
+#include "architecture/msgPayloadDef/FuelTankMsgPayload.h"
 #include "simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.h"
 #include "simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"

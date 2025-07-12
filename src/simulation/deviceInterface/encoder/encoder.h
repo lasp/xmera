@@ -21,8 +21,8 @@
 #define ENCODER_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/definitions.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/definitions.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 

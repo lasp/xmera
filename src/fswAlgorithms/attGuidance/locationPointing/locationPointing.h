@@ -24,12 +24,12 @@
 #include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefC/GroundStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/GroundStateMsgPayload.h"
+#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief This module is used to generate the attitude reference message in order to have a spacecraft point at a location on the ground

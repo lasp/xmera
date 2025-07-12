@@ -29,11 +29,11 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWCmdMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/RWConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/RWCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/RWConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"

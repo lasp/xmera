@@ -33,11 +33,11 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "thrustCMEstimation.h"
 
-%include "architecture/msgPayloadDefC/THRConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/CMEstDataMsgPayload.h"
+%include "architecture/msgPayloadDef/THRConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/CMEstDataMsgPayload.h"
 
 %pythoncode %{
 import sys

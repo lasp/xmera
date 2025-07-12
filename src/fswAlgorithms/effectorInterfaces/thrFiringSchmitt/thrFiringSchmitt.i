@@ -30,9 +30,9 @@
 
 %include "thrFiringSchmitt.h"
 
-%include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 
 %pythoncode %{
 import sys

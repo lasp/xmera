@@ -22,11 +22,11 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWConstellationMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
+#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>

@@ -29,8 +29,8 @@
 //  Message type imports
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefC/HillRelStateMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/HillRelStateMsgPayload.h"
 
 
 

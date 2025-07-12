@@ -28,11 +28,11 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
-#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDefC/EpochMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/EpochMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"

@@ -30,7 +30,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 
-#include "architecture/msgPayloadDefC/GravityGradientMsgPayload.h"
+#include "architecture/msgPayloadDef/GravityGradientMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 

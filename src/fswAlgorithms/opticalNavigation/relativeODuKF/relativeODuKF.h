@@ -24,9 +24,9 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
-#include "architecture/msgPayloadDefC/OpNavFilterMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavFilterMsgPayload.h"
 
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"

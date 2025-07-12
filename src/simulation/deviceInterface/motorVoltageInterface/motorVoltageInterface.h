@@ -24,8 +24,8 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 
-#include "architecture/msgPayloadDefC/ArrayMotorVoltageMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorVoltageMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 
 #include "../../../architecture/utilities/macroDefinitions.h"
 #include "../../../architecture/utilities/bskLogging.h"

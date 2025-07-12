@@ -21,9 +21,9 @@
 #define DENTONFLUXMODEL_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDef/PlasmaFluxMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 

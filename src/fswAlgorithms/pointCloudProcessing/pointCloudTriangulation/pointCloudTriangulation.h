@@ -21,12 +21,12 @@
 #define POINTCLOUDTRIANGULATION_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/DirectionOfMotionMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/PairedKeyPointsMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/PointCloudMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/DirectionOfMotionMsgPayload.h"
+#include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"

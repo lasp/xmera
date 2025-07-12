@@ -22,8 +22,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 
 #define MAX_AGG_NAV_MSG 10
 

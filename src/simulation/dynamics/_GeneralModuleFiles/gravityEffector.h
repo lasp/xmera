@@ -24,7 +24,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <Eigen/Dense>
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include <memory>

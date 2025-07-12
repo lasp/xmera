@@ -31,10 +31,10 @@
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraLocalizationMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/FilterMsgPayload.h"
+#include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraLocalizationMsgPayload.h"
 
 #include <string.h>
 #include <array>

@@ -30,9 +30,9 @@
 
 %include "thrMomentumManagement.h"
 
-%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 
 %pythoncode %{
 import sys

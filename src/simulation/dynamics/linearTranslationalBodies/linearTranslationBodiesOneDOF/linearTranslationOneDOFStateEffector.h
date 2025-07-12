@@ -26,10 +26,10 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
-#include "architecture/msgPayloadDefC/ArrayMotorForceMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorForceMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 /*! @brief linear spring mass damper state effector class */

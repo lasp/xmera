@@ -21,8 +21,8 @@
 #define SIMPLE_MASS_PROPS_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/SCMassPropsMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 

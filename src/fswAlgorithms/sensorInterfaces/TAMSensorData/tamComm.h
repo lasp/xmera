@@ -22,8 +22,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
+#include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/TAMSensorMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 

@@ -33,11 +33,11 @@
 %include "sys_model.h"
 %include "lambertSurfaceRelativeVelocity.h"
 
-%include "architecture/msgPayloadDefC/LambertProblemMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
 struct LambertProblemMsg_C;
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
-%include "architecture/msgPayloadDefC/DesiredVelocityMsgPayload.h"
+%include "architecture/msgPayloadDef/DesiredVelocityMsgPayload.h"
 struct DesiredVelocityMsg_C;
 
 %pythoncode %{

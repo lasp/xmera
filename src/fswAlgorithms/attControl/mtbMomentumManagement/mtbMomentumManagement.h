@@ -22,13 +22,13 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/MTBCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDefC/definitions.h"
+#include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/definitions.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 class MtbMomentumManagement : public SysModel {

@@ -27,8 +27,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 

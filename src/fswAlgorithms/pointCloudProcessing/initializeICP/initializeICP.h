@@ -25,10 +25,10 @@
 #include "fswAlgorithms/pointCloudProcessing/SICP/sicpDefinitions.h"
 #include "architecture/messaging/messaging.h"
 
-#include "architecture/msgPayloadDefCpp/SICPMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/PointCloudMsgPayload.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/SICPMsgPayload.h"
+#include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenSupport.h"

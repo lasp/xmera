@@ -34,11 +34,11 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "extForceTorque.h"
 
-%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
 
 
 

@@ -32,11 +32,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "albedo.h"
 
-%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
+%include "architecture/msgPayloadDef/AlbedoMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
 
 %pythoncode %{

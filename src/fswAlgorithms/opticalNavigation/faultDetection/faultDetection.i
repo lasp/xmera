@@ -31,9 +31,9 @@ STRUCTASLIST(FaultDetectionData)
 
 %include "faultDetection.h"
 
-%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavMsgPayload.h"
 
 %pythoncode %{
 import sys

@@ -30,7 +30,7 @@
 
 %include "rasterManager.h"
 
-%include "architecture/msgPayloadDefC/AttStateMsgPayload.h"
+%include "architecture/msgPayloadDef/AttStateMsgPayload.h"
 
 %pythoncode %{
 import sys

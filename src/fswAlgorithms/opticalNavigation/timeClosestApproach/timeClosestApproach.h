@@ -22,9 +22,9 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/TimeClosestApproachMsgPayload.h"
+#include "architecture/msgPayloadDef/FilterMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/TimeClosestApproachMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 
 #include <Eigen/Core>

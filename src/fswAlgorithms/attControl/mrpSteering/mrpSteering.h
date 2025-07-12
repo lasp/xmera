@@ -22,8 +22,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/RateCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+#include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
 #include <stdint.h>
 
 

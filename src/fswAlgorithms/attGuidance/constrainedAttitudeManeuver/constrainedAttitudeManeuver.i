@@ -29,10 +29,10 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "constrainedAttitudeManeuver.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 
 
 %pythoncode %{

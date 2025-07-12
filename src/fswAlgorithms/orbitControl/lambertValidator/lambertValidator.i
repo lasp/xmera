@@ -33,17 +33,17 @@
 %include "sys_model.h"
 %include "lambertValidator.h"
 
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/LambertProblemMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
 struct LambertProblemMsg_C;
-%include "architecture/msgPayloadDefC/LambertSolutionMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertSolutionMsgPayload.h"
 struct LambertSolutionMsg_C;
-%include "architecture/msgPayloadDefC/LambertPerformanceMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertPerformanceMsgPayload.h"
 struct LambertPerformanceMsg_C;
-%include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
 struct DvBurnCmdMsg_C;
-%include "architecture/msgPayloadDefC/LambertValidatorMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertValidatorMsgPayload.h"
 struct LambertValidatorMsg_C;
 
 %pythoncode %{

@@ -10,19 +10,19 @@
 
 #include <vector>
 
-#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
-#include "architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.h"
-#include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
-#include "architecture/msgPayloadDefC/ColorMsgPayload.h"
+#include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
+#include "architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h"
+#include "architecture/msgPayloadDef/FuelTankMsgPayload.h"
+#include "architecture/msgPayloadDef/ColorMsgPayload.h"
 
-#include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/ChargeMsmMsgPayload.h"
+#include "architecture/msgPayloadDef/CSSConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDef/THROutputMsgPayload.h"
+#include "architecture/msgPayloadDef/ChargeMsmMsgPayload.h"
 
 #include "architecture/messaging/messaging.h"
 

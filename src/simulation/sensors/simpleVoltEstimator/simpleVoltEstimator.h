@@ -23,7 +23,7 @@
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/gauss_markov.h"
-#include "architecture/msgPayloadDefC/VoltMsgPayload.h"
+#include "architecture/msgPayloadDef/VoltMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include "architecture/messaging/messaging.h"

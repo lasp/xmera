@@ -24,9 +24,9 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/BodyHeadingMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/BodyHeadingMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 

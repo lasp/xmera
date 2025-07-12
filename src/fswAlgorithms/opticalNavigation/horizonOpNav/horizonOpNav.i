@@ -31,10 +31,10 @@ STRUCTASLIST(HorizonOpNavData)
 
 %include "horizonOpNav.h"
 
-%include "architecture/msgPayloadDefC/OpNavLimbMsgPayload.h"
-%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavLimbMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavMsgPayload.h"
 
 %pythoncode %{
 import sys

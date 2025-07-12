@@ -23,8 +23,8 @@
 #include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/IMUSensorBodyMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 

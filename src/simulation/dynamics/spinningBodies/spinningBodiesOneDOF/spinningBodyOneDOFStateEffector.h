@@ -26,10 +26,10 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"

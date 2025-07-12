@@ -35,11 +35,11 @@
 %include "std_vector.i"
 
 
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/LandmarkMsgPayload.h"
+%include "architecture/msgPayloadDef/LandmarkMsgPayload.h"
 
 
 

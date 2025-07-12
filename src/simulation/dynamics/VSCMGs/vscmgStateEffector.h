@@ -28,10 +28,10 @@
 #include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/VSCMGSpeedMsgPayload.h"
-#include "architecture/msgPayloadDefC/VSCMGCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/VSCMGArrayTorqueMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/VSCMGConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/VSCMGSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/VSCMGCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/VSCMGArrayTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/VSCMGConfigMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/macroDefinitions.h"

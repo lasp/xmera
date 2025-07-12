@@ -31,9 +31,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "flybyPoint.h"
 
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 
 
 %pythoncode %{

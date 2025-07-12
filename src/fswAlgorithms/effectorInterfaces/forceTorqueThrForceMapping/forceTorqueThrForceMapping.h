@@ -24,11 +24,11 @@
 #include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief This module maps thruster forces for arbitrary forces and torques

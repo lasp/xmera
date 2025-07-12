@@ -25,7 +25,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <chrono>
 
-#include "architecture/msgPayloadDefC/SynchClockMsgPayload.h"
+#include "architecture/msgPayloadDef/SynchClockMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"

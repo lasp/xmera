@@ -27,12 +27,12 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/avsEigenSupport.h"
 
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
-#include "architecture/msgPayloadDefC/EpochMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDef/SpiceTimeMsgPayload.h"
+#include "architecture/msgPayloadDef/EpochMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/TransRefMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 /*! @brief spice interface class */

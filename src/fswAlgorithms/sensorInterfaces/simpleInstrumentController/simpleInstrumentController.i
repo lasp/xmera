@@ -30,10 +30,10 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "simpleInstrumentController.h"
 
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
-%include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
-%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
+%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDef/AccessMsgPayload.h"
+%include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
 
 %pythoncode %{
 import sys

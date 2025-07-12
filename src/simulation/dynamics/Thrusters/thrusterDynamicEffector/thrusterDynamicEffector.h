@@ -29,9 +29,9 @@
 #include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/THROutputMsgPayload.h"
+#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"

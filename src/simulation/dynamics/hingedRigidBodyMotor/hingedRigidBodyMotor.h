@@ -22,8 +22,8 @@
 #define HINGEDRIGIDBODYMOTOR_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 

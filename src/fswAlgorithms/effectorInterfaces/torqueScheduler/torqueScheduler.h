@@ -24,8 +24,8 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h"
 
 
 /*! @brief Top level structure for the sub-module routines. */

@@ -25,7 +25,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
+#include "architecture/msgPayloadDef/AtmoPropsMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"

@@ -33,14 +33,14 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "cobConverter.h"
 
-%include "architecture/msgPayloadDefCpp/CameraModelMsgPayload.h"
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 
-%include "architecture/msgPayloadDefCpp/OpNavUnitVecMsgPayload.h"
-%include "architecture/msgPayloadDefCpp/OpNavCOBMsgPayload.h"
-%include "architecture/msgPayloadDefCpp/OpNavCOMMsgPayload.h"
-%include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"
+%include "architecture/msgPayloadDef/FilterMsgPayload.h"
 
 
 %pythoncode %{

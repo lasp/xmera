@@ -21,8 +21,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/MotorStepCommandMsgPayload.h"
+#include "architecture/msgPayloadDef/MotorStepCommandMsgPayload.h"
+#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 #include <cmath>
 #include <cstdint>
 

@@ -22,13 +22,13 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/InertialFilterMsgPayload.h"
-#include "architecture/msgPayloadDefC/STAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/InertialFilterMsgPayload.h"
+#include "architecture/msgPayloadDef/STAttMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/AccDataMsgPayload.h"
 #include "architecture/utilities/signalCondition.h"
 #include <stdint.h>
 

@@ -21,8 +21,8 @@
 #define MOTOR_THERMAL_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/TemperatureMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
+#include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 

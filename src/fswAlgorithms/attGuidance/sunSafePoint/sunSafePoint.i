@@ -31,9 +31,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "sunSafePoint.h"
 
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 struct NavAttMsg_C;
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
 
 %pythoncode %{

@@ -30,7 +30,7 @@
 
 %include "cssComm.h"
 
-%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
+%include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
 
 %pythoncode %{
 import sys

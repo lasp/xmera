@@ -4,9 +4,9 @@
 %{{
     #include "{baseDir}/{type}Payload.h"
     #include "architecture/messaging/messaging.h"
-    #include "architecture/msgPayloadDefC/ReconfigBurnInfoMsgPayload.h"
-    #include "architecture/msgPayloadDefC/RWConfigElementMsgPayload.h"
-    #include "architecture/msgPayloadDefC/THRConfigMsgPayload.h"
+    #include "architecture/msgPayloadDef/ReconfigBurnInfoMsgPayload.h"
+    #include "architecture/msgPayloadDef/RWConfigElementMsgPayload.h"
+    #include "architecture/msgPayloadDef/THRConfigMsgPayload.h"
     #include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
     #include <stdint.h>
     #include <vector>
@@ -23,7 +23,7 @@
 %template(DoubleVector) std::vector<double, std::allocator<double>>;
 %template(StringVector) std::vector<std::string, std::allocator<std::string>>;
 
-%include "architecture/msgPayloadDefC/definitions.h"
+%include "architecture/msgPayloadDef/definitions.h"
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 ARRAYINTASLIST(FSWdeviceAvailability)

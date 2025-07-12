@@ -22,8 +22,8 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.h"
-#include "architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h"
+#include "architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h"
 #include <Eigen/Dense>
 #include <cstdint>
 
