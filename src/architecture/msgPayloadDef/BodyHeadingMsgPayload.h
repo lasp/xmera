@@ -20,7 +20,6 @@
 #ifndef bodyHeadingSimMsg_h
 #define bodyHeadingSimMsg_h
 
-
 //!@brief Planet heading message definition.
 /*! Many modules in Basilisk utilize the spacecraft body frame heading to something.
   For instance, a spacecraft may want to point at a point on earth, the sun, another planet
@@ -30,7 +29,6 @@
  */
 typedef struct {
     double rHat_XB_B[3];  //!< [] unit heading vector to any thing "X" in the spacecraft, "B", body frame
-}BodyHeadingMsgPayload;
-
+} BodyHeadingMsgPayload;
 
 #endif /* bodyHeadingSimMsg_h */

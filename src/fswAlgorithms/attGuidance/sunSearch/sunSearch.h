@@ -21,28 +21,28 @@
 #define _SUN_SEARCH_
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 
 struct SlewProperties {
     // user-requested properties
-    double    slewTime;             //!< [s] total time for the three-axes maneuver
-    double    slewAngle;            //!< [rad] total angle sweep around one axis
-    double    slewMaxRate;          //!< [rad/s] maximum spacecraft body rate norm
-    int       slewRotAxis;          //!< [-] axes about which to perform the Sun search
+    double slewTime;     //!< [s] total time for the three-axes maneuver
+    double slewAngle;    //!< [rad] total angle sweep around one axis
+    double slewMaxRate;  //!< [rad/s] maximum spacecraft body rate norm
+    int slewRotAxis;     //!< [-] axes about which to perform the Sun search
     // computed properties
-    double    slewAngAcc;           //!< [rad/s^2] angular accelerations about each rotation axis
-    double    slewOmegaMax;         //!< [rad/s] highes angualr rate about each rotation axis
-    double    slewThrustTime;       //!< [s] control time of each rotation
-    double    slewTotalTime;        //!< [s] total slew time of each rotation
+    double slewAngAcc;      //!< [rad/s^2] angular accelerations about each rotation axis
+    double slewOmegaMax;    //!< [rad/s] highes angualr rate about each rotation axis
+    double slewThrustTime;  //!< [s] control time of each rotation
+    double slewTotalTime;   //!< [s] total slew time of each rotation
 };
 
 /*! @brief A class to perform EMA SEP pointing */
-class SunSearch: public SysModel {
-public:
+class SunSearch : public SysModel {
+   public:
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
@@ -52,16 +52,16 @@ public:
     void setMaxTorque(double const u1, double const u2, double const u3);
     void setRotAxis(int const a1, int const a2, int const a3);
 
-    ReadFunctor<NavAttMsgPayload>          attNavInMsg;          //!< input msg measured attitude
-    ReadFunctor<VehicleConfigMsgPayload>   vehConfigInMsg;       //!< input veh config msg
-    Message<AttGuidMsgPayload>             attGuidOutMsg;        //!< Attitude reference output message
+    ReadFunctor<NavAttMsgPayload> attNavInMsg;            //!< input msg measured attitude
+    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< input veh config msg
+    Message<AttGuidMsgPayload> attGuidOutMsg;             //!< Attitude reference output message
 
-private:
+   private:
     SlewProperties slewProperties[3];
-    double         slewMaxTorque[3];     //!< [Nm] maximum deliverable torque along each principal body axis
-    double         principleInertias[3]; //!< [kg m^2] inertias about the three principal axes
-    uint64_t       resetTime;            //!< time at which reset is called
-    BSKLogger      bskLogger;            //!< BSK Logging
+    double slewMaxTorque[3];      //!< [Nm] maximum deliverable torque along each principal body axis
+    double principleInertias[3];  //!< [kg m^2] inertias about the three principal axes
+    uint64_t resetTime;           //!< time at which reset is called
+    BSKLogger bskLogger;          //!< BSK Logging
 
     void computeKinematicProperties(int const index);
     void computeReferenceMotion(uint64_t const currentSimNanos, int const index, double *omega_RN, double *domega_RN);

@@ -17,25 +17,24 @@
 
  */
 
-
 #ifndef GROUND_LOCATION_H
 #define GROUND_LOCATION_H
 
-#include <Eigen/Dense>
-#include <vector>
-#include <string>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <Eigen/Dense>
+#include <string>
+#include <vector>
 
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/AccessMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDef/AccessMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief ground location class */
-class SpacecraftLocation:  public SysModel {
-public:
+class SpacecraftLocation : public SysModel {
+   public:
     SpacecraftLocation();
     ~SpacecraftLocation();
     void updateState(uint64_t currentSimNanos);
@@ -44,37 +43,37 @@ public:
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
 
-private:
+   private:
     void computeAccess();
 
-public:
-    double rEquator;            //!< [m] equatorial planet radius
-    double rPolar;              //!< [m] polar planet radius
-    double maximumRange;        //!< [m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
-    Eigen::Vector3d aHat_B;     //!< [] (optional) unit direction vector vector of the senor/communication boresight axis
-    double theta;               //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
+   public:
+    double rEquator;         //!< [m] equatorial planet radius
+    double rPolar;           //!< [m] polar planet radius
+    double maximumRange;     //!< [m] Maximum slant range to compute access for; defaults to -1, which represents no
+                             //!< maximum range.
+    Eigen::Vector3d aHat_B;  //!< [] (optional) unit direction vector vector of the senor/communication boresight axis
+    double theta;  //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
 
-    ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
-    ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message
-    std::vector<Message<AccessMsgPayload>*> accessOutMsgs;           //!< vector of ground location access messages
-    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of other sc state input messages
-    Eigen::Vector3d r_LB_B;      //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
+    ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;         //!< primary spacecraft input message
+    ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;         //!< planet state input message
+    std::vector<Message<AccessMsgPayload> *> accessOutMsgs;      //!< vector of ground location access messages
+    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs;  //!< vector of other sc state input messages
+    Eigen::Vector3d
+        r_LB_B;  //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
 
-    BSKLogger bskLogger;         //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
-private:
-    std::vector<AccessMsgPayload> accessMsgBuffer;                  //!< buffer of access output data
-    std::vector<SCStatesMsgPayload> scStatesBuffer;             //!< buffer of other spacecraft states
-    SCStatesMsgPayload primaryScStatesBuffer;                   //!< buffer of primary spacecraft states
-    SpicePlanetStateMsgPayload planetState;                         //!< buffer of planet data
+   private:
+    std::vector<AccessMsgPayload> accessMsgBuffer;   //!< buffer of access output data
+    std::vector<SCStatesMsgPayload> scStatesBuffer;  //!< buffer of other spacecraft states
+    SCStatesMsgPayload primaryScStatesBuffer;        //!< buffer of primary spacecraft states
+    SpicePlanetStateMsgPayload planetState;          //!< buffer of planet data
 
-    Eigen::Matrix3d dcm_PN; //!< Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P
-    Eigen::Vector3d r_PN_N; //!< [m] Planet to inertial frame origin vector.
-    Eigen::Vector3d r_BP_P; //!< primary spacecraft relative to planet
-    Eigen::Vector3d r_BN_N; //!< primary spacecraft relative to inertial
-    double zScale;          //!< ration of rEquator over rPolar, used for affine scaling to turn ellipsoid to sphere
-
+    Eigen::Matrix3d dcm_PN;  //!< Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P
+    Eigen::Vector3d r_PN_N;  //!< [m] Planet to inertial frame origin vector.
+    Eigen::Vector3d r_BP_P;  //!< primary spacecraft relative to planet
+    Eigen::Vector3d r_BN_N;  //!< primary spacecraft relative to inertial
+    double zScale;           //!< ration of rEquator over rPolar, used for affine scaling to turn ellipsoid to sphere
 };
-
 
 #endif /* GroundLocation */

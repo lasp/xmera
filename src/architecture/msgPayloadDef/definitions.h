@@ -4,4 +4,4 @@
 #define MAX_NUM_CSS_SENSORS 32
 #define MAX_EFF_CNT 36
 
-#endif //MSG_DEFINITIONS_H
+#endif  // MSG_DEFINITIONS_H

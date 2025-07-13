@@ -22,8 +22,7 @@
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
-    double voltage;         //!<   [V] space object potential
-}VoltMsgPayload;
-
+    double voltage;  //!<   [V] space object potential
+} VoltMsgPayload;
 
 #endif

@@ -20,13 +20,11 @@
 #ifndef SIM_THRUSTER_OUTPUT_MSG_H
 #define SIM_THRUSTER_OUTPUT_MSG_H
 
-
-
 /*! This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/
 typedef struct
-//@cond DOXYGEN_IGNORE
-THROutputMsgPayload
+    //@cond DOXYGEN_IGNORE
+    THROutputMsgPayload
 //@endcond
 {
     double maxThrust;                    //!< N  Steady state thrust of thruster
@@ -38,7 +36,6 @@ THROutputMsgPayload
     double thrustTorquePntB_B[3] = {0};  //!< N-m Thrust torque about point B in body frame components
     double thrusterLocation[3] = {0};    //!< m  Current position vector (inertial)
     double thrusterDirection[3] = {0};   //!< -- Unit vector of thruster pointing
-}THROutputMsgPayload;
-
+} THROutputMsgPayload;
 
 #endif

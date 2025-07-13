@@ -24,9 +24,8 @@
            the pinhole camera model
  */
 typedef struct {
-    int isVisible;//!< [-] 1 when the landmark is visible by the camera, 0 otherwise.
-    int pL[2]; //!< [-] landmark pixel as view from pinhole camera
-}LandmarkMsgPayload;
-
+    int isVisible;  //!< [-] 1 when the landmark is visible by the camera, 0 otherwise.
+    int pL[2];      //!< [-] landmark pixel as view from pinhole camera
+} LandmarkMsgPayload;
 
 #endif

@@ -17,30 +17,30 @@
 
 */
 
-
 #ifndef ATTREFCORRECTION_H
 #define ATTREFCORRECTION_H
 
-#include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
+#include <stdint.h>
 
-/*! @brief This module reads in the attitude reference message and adjusts it by a fixed rotation.  This allows a general body-fixed frame B to align with this corrected reference frame Rc.
+/*! @brief This module reads in the attitude reference message and adjusts it by a fixed rotation.  This allows a
+ * general body-fixed frame B to align with this corrected reference frame Rc.
  */
 class AttRefCorrection : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     /* declare module IO interfaces */
-    ReadFunctor<AttRefMsgPayload> attRefInMsg;    //!< attitude reference input message
-    Message<AttRefMsgPayload> attRefOutMsg;   //!< corrected attitude reference input message
+    ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< attitude reference input message
+    Message<AttRefMsgPayload> attRefOutMsg;     //!< corrected attitude reference input message
 
-    double sigma_BcB[3];        //!< MRP from from body frame B to the corrected body frame Bc
+    double sigma_BcB[3];  //!< MRP from from body frame B to the corrected body frame Bc
 
-    BSKLogger bskLogger={};       //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

@@ -20,49 +20,51 @@
 #define _PRESCRIBEDROT2DOF_
 
 /*! Include the required files. */
-#include <stdint.h>
-#include <stdbool.h>
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class PrescribedRot2DOF : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     /* User configurable variables */
-    double phiDDotMax;                                         //!< [rad/s^2] Maximum angular acceleration of the spinning body
-    double rotAxis1_M[3];                                      //!< M frame rotation axis for the first rotation
-    double rotAxis2_F1[3];                                     //!< F1 frame intermediate rotation axis for the second rotation
+    double phiDDotMax;      //!< [rad/s^2] Maximum angular acceleration of the spinning body
+    double rotAxis1_M[3];   //!< M frame rotation axis for the first rotation
+    double rotAxis2_F1[3];  //!< F1 frame intermediate rotation axis for the second rotation
 
     /* Private variables */
-    double omega_FM_F[3];                                      //!< [rad/s] angular velocity of frame F relative to frame M in F frame components
-    double omegaPrime_FM_F[3];                                 //!< [rad/s^2] B frame time derivative of omega_FB_F in F frame components
-    double sigma_FM[3];                                        //!< MRP attitude of frame F relative to frame M
-    bool isManeuverComplete;                                   //!< Boolean variable is true when the attitude maneuver is complete
-    double maneuverStartTime;                                  //!< [s] Simulation time at the start of the attitude maneuver
-    double rotAxis_M[3];                                       //!< Reference PRV axis expressed in M frame components
-    double phiRef;                                             //!< [rad] Reference PRV angle (The positive short rotation is chosen)
-    double phiDotRef;                                          //!< [rad/s] Reference PRV angle rate
-    double phi;                                                //!< [rad] Current PRV angle
-    double phiRefAccum;                                        //!< [rad] This variable logs the accumulated reference PRV angles
-    double phiAccum;                                           //!< [rad] This variable logs the accumulated current PRV angle
-    double maneuverSwitchTime;                                 //!< [s] Simulation time halfway through the attitude maneuver (switch time)
-    double maneuverEndTime;                                    //!< [s] Simulation time when the maneuver is complete
-    double a;                                                  //!< Parabolic constant for the first half of the attitude maneuver
-    double b;                                                  //!< Parabolic constant for the second half of the attitude maneuver
-    double dcm_F0M[3][3];                                      //!< DCM from the M frame to the spinning body body frame at the beginning of the maneuver
+    double omega_FM_F[3];       //!< [rad/s] angular velocity of frame F relative to frame M in F frame components
+    double omegaPrime_FM_F[3];  //!< [rad/s^2] B frame time derivative of omega_FB_F in F frame components
+    double sigma_FM[3];         //!< MRP attitude of frame F relative to frame M
+    bool isManeuverComplete;    //!< Boolean variable is true when the attitude maneuver is complete
+    double maneuverStartTime;   //!< [s] Simulation time at the start of the attitude maneuver
+    double rotAxis_M[3];        //!< Reference PRV axis expressed in M frame components
+    double phiRef;              //!< [rad] Reference PRV angle (The positive short rotation is chosen)
+    double phiDotRef;           //!< [rad/s] Reference PRV angle rate
+    double phi;                 //!< [rad] Current PRV angle
+    double phiRefAccum;         //!< [rad] This variable logs the accumulated reference PRV angles
+    double phiAccum;            //!< [rad] This variable logs the accumulated current PRV angle
+    double maneuverSwitchTime;  //!< [s] Simulation time halfway through the attitude maneuver (switch time)
+    double maneuverEndTime;     //!< [s] Simulation time when the maneuver is complete
+    double a;                   //!< Parabolic constant for the first half of the attitude maneuver
+    double b;                   //!< Parabolic constant for the second half of the attitude maneuver
+    double dcm_F0M[3][3];  //!< DCM from the M frame to the spinning body body frame at the beginning of the maneuver
 
     /* Declare the module input-output messages */
-    ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyRef1InMsg;                //!< Input msg for the first reference angle and angle rate
-    ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyRef2InMsg;                //!< Input msg for the second reference angles and angle rate
-    Message<PrescribedRotationMsgPayload> prescribedRotationOutMsg;          //!< Output msg for the profiled prescribed rotational states
+    ReadFunctor<HingedRigidBodyMsgPayload>
+        spinningBodyRef1InMsg;  //!< Input msg for the first reference angle and angle rate
+    ReadFunctor<HingedRigidBodyMsgPayload>
+        spinningBodyRef2InMsg;  //!< Input msg for the second reference angles and angle rate
+    Message<PrescribedRotationMsgPayload>
+        prescribedRotationOutMsg;  //!< Output msg for the profiled prescribed rotational states
 
-    BSKLogger bskLogger={};                                      //!< BSK Logging
-
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

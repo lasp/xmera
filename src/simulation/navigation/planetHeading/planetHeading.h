@@ -20,37 +20,36 @@
 #pragma once
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/BodyHeadingMsgPayload.h"
 #include "architecture/messaging/messaging.h"
-
+#include "architecture/msgPayloadDef/BodyHeadingMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
 /*! @brief planet heading class */
-class PlanetHeading: public SysModel {
-public:
+class PlanetHeading : public SysModel {
+   public:
     PlanetHeading();
-    ~PlanetHeading(){};
+    ~PlanetHeading() {};
 
     void updateState(uint64_t currentSimNanos) override;
     void reset(uint64_t currentSimNanos) override;
     void writeMessages(uint64_t currentSimNanos);
     void readMessages();
 
-public:
-    ReadFunctor<SpicePlanetStateMsgPayload> planetPositionInMsg;    //!< planet state input message
-    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
-    Message<BodyHeadingMsgPayload> planetHeadingOutMsg;             //!< body heading output message
+   public:
+    ReadFunctor<SpicePlanetStateMsgPayload> planetPositionInMsg;  //!< planet state input message
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;         //!< spacecraft state input message
+    Message<BodyHeadingMsgPayload> planetHeadingOutMsg;           //!< body heading output message
 
-    BSKLogger bskLogger;                        //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
-private:
-    Eigen::Vector3d r_PN_N;  //!< [m] planet position
-    Eigen::Vector3d r_BN_N;  //!< [m] s/c position
+   private:
+    Eigen::Vector3d r_PN_N;     //!< [m] planet position
+    Eigen::Vector3d r_BN_N;     //!< [m] s/c position
     Eigen::Vector3d rHat_PB_B;  //!< [] planet heading in s/c body frame (unit mag)
-    Eigen::MRPd sigma_BN;  //!< [] s/c body att wrt inertial
+    Eigen::MRPd sigma_BN;       //!< [] s/c body att wrt inertial
 };

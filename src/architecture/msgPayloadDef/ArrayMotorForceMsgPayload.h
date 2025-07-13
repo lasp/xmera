@@ -24,8 +24,7 @@
 
 /*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
-    double motorForce[MAX_EFF_CNT];     //!< [N]  motor force array
-}ArrayMotorForceMsgPayload;
-
+    double motorForce[MAX_EFF_CNT];  //!< [N]  motor force array
+} ArrayMotorForceMsgPayload;
 
 #endif

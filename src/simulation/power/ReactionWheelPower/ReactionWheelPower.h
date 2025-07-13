@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef BASILISK_POWERRW_H
 #define BASILISK_POWERRW_H
 
@@ -28,31 +27,26 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief reaction wheel power class */
-class ReactionWheelPower: public PowerNodeBase {
-
-public:
+class ReactionWheelPower : public PowerNodeBase {
+   public:
     ReactionWheelPower();
     ~ReactionWheelPower();
-    void customreset(uint64_t currentSimNanos); //!< Custom reset method
-    bool customReadMessages();          //!< Custom read method, similar to customSelfInit; returns `true' by default.
+    void customreset(uint64_t currentSimNanos);  //!< Custom reset method
+    bool customReadMessages();  //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
-private:
+   private:
     void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
 
-public:
+   public:
     ReadFunctor<RWConfigLogMsgPayload> rwStateInMsg;  //!< Reaction wheel state input message name
-    double elecToMechEfficiency;        //!< efficiency factor to convert electrical power to mechanical power
-    double mechToElecEfficiency;        //!< efficiency factor to convert mechanical power to electrical power
-    double basePowerNeed;               //!< [W] base electrical power required to operate RW, typically a positive value
-    BSKLogger bskLogger;                //!< -- BSK Logging
+    double elecToMechEfficiency;  //!< efficiency factor to convert electrical power to mechanical power
+    double mechToElecEfficiency;  //!< efficiency factor to convert mechanical power to electrical power
+    double basePowerNeed;         //!< [W] base electrical power required to operate RW, typically a positive value
+    BSKLogger bskLogger;          //!< -- BSK Logging
 
-private:
-    RWConfigLogMsgPayload rwStatus;     //!< copy of the RW status message
-
+   private:
+    RWConfigLogMsgPayload rwStatus;  //!< copy of the RW status message
 };
 
-
-#endif //BASILISK_POWERRW_H
+#endif  // BASILISK_POWERRW_H

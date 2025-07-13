@@ -23,6 +23,6 @@
 /*! gravity gradient torque message definition */
 typedef struct {
     double mtbNetTorque_B[3];  //!< [Nm]  net torque contribution of all magnetic torque bars in Body frame components
-}MTBMsgPayload;
+} MTBMsgPayload;
 
-#endif //BASILISK_DATANODEUSAGESIMMSG_H
+#endif  // BASILISK_DATANODEUSAGESIMMSG_H

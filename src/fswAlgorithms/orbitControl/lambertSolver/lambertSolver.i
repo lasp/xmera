@@ -44,4 +44,3 @@ struct LambertPerformanceMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

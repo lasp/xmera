@@ -20,11 +20,11 @@
 #ifndef _IMAGE_PROC_COB_H_
 #define _IMAGE_PROC_COB_H_
 
+#include "architecture/messaging/messaging.h"
+#include "opencv2/core/mat.hpp"
+#include "opencv2/opencv.hpp"
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/messaging/messaging.h"
-#include "opencv2/opencv.hpp"
-#include "opencv2/core/mat.hpp"
 
 #include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 #include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
@@ -33,53 +33,53 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief visual object tracking using center of brightness detection */
-class CenterOfBrightness: public SysModel {
-public:
+class CenterOfBrightness : public SysModel {
+   public:
     CenterOfBrightness();
     ~CenterOfBrightness();
 
     void updateState(uint64_t currentSimNanos);
     void reset(uint64_t currentSimNanos);
 
-    void setWindowCenter(const Eigen::VectorXi& center);
+    void setWindowCenter(const Eigen::VectorXi &center);
     Eigen::VectorXi getWindowCenter() const;
     void setWindowSize(int32_t width, int32_t height);
     Eigen::VectorXi getWindowSize() const;
     void setRelativeBrightnessIncreaseThreshold(double increaseThreshold);
     double getRelativeBrightnessIncreaseThreshold() const;
 
-private:
+   private:
     std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
     std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
     void computeWindow(cv::Mat const &image);
-    void applyWindow (cv::Mat const &image) const;
+    void applyWindow(cv::Mat const &image) const;
     void updateBrightnessHistory(double brightness);
 
-public:
-    Message<OpNavCOBMsgPayload> opnavCOBOutMsg;  //!< The name of the OpNav center of brightness output message
-    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
-    BSKLogger bskLogger;                //!< -- BSK Logging
+   public:
+    Message<OpNavCOBMsgPayload> opnavCOBOutMsg;     //!< The name of the OpNav center of brightness output message
+    ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< The name of the camera output message
+    BSKLogger bskLogger;                            //!< -- BSK Logging
 
     /* Fields that can be initialized*/
-    std::string filename = "";                 //!< Filename for module to read an image directly
-    int32_t blurSize = 5;                   //!< [px] Size of the blurring box in pixels
-    int32_t threshold = 50;                 //!< [px] Threshold value on whether or not to include the solution
-    bool saveImages = false;                  //!< [-] 1 to save images to file for debugging
-    std::string saveDir = "./";                //!< The name of the directory to save images
+    std::string filename = "";                    //!< Filename for module to read an image directly
+    int32_t blurSize = 5;                         //!< [px] Size of the blurring box in pixels
+    int32_t threshold = 50;                       //!< [px] Threshold value on whether or not to include the solution
+    bool saveImages = false;                      //!< [-] 1 to save images to file for debugging
+    std::string saveDir = "./";                   //!< The name of the directory to save images
     int32_t numberOfPointsBrightnessAverage = 5;  //!< [-] number of points to be used for rolling average of brightness
 
-private:
-    uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
+   private:
+    uint64_t sensorTimeTag;                    //!< [ns] Current time tag for sensor out
     Eigen::VectorXi windowCenter{};            //!< [px] center of mask to be used for windowing
     int32_t windowWidth{};                     //!< [px] width of mask to be used for windowing
     int32_t windowHeight{};                    //!< [px] height of mask to be used for windowing
     Eigen::Vector2i windowPointTopLeft{};      //!< [px] top left point of window
     Eigen::Vector2i windowPointBottomRight{};  //!< [px] bottom right point of window
-    bool validWindow = false;            //!< [px] true if window is set, false if center, height, or width equal 0
-    Eigen::VectorXd brightnessHistory{};    //!< [-] brightness history to be used for rolling average
+    bool validWindow = false;             //!< [px] true if window is set, false if center, height, or width equal 0
+    Eigen::VectorXd brightnessHistory{};  //!< [-] brightness history to be used for rolling average
     double relativeBrightnessIncreaseThreshold{};  //!< [-] minimum relative brightness increase (if less, invalidated)
     /* OpenCV specific arguments needed for finding all non-zero pixels*/
-    cv::Mat imageGray;                   //!< [cv mat] Gray scale image for weighting
+    cv::Mat imageGray;  //!< [cv mat] Gray scale image for weighting
 };
 
 #endif

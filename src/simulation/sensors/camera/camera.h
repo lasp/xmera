@@ -31,8 +31,8 @@
 #include <string_view>
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 #include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 #include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"

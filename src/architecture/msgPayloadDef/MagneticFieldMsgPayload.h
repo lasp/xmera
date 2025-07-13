@@ -22,6 +22,6 @@
 
 /*! magnetic field message definition */
 typedef struct {
-    double magField_N[3];                      //!< [Tesla] Local magnetic field
-}MagneticFieldMsgPayload;
+    double magField_N[3];  //!< [Tesla] Local magnetic field
+} MagneticFieldMsgPayload;
 #endif

@@ -19,45 +19,47 @@
 #ifndef _PRESCRIBEDTRANS_
 #define _PRESCRIBEDTRANS_
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h"
 #include "architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class PrescribedTrans : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     /* User configurable variables */
-    double scalarAccelMax;                                          //!< [m/s^2] Maximum acceleration mag
-    double transAxis_M[3];                                          //!< Axis along the direction of translation
-    double r_FM_M[3];                                               //!< [m] Position of the frame F origin with respect to the M frame origin expressed in M frame components
-    double rPrime_FM_M[3];                                          //!< [m/s] B frame time derivative of r_FM_M expressed in M frame components
-    double rPrimePrime_FM_M[3];                                     //!< [m/s^] B frame time derivative of rPrime_FM_M expressed in M frame components
+    double scalarAccelMax;  //!< [m/s^2] Maximum acceleration mag
+    double transAxis_M[3];  //!< Axis along the direction of translation
+    double r_FM_M[3];  //!< [m] Position of the frame F origin with respect to the M frame origin expressed in M frame
+                       //!< components
+    double rPrime_FM_M[3];       //!< [m/s] B frame time derivative of r_FM_M expressed in M frame components
+    double rPrimePrime_FM_M[3];  //!< [m/s^] B frame time derivative of rPrime_FM_M expressed in M frame components
 
     /* Private variables */
-    bool convergence;                                               //!< Boolean variable is true when the maneuver is complete
-    double tInit;                                                   //!< [s] Simulation time at the start of the maneuver
-    double scalarPosInit;                                           //!< [m] Initial distance between the frame F and frame M origin
-    double scalarVelInit;                                           //!< [m/s] Initial velocity between the frame F and frame M origin
-    double scalarPosRef;                                            //!< [m] Magnitude of the reference position vector
-    double scalarVelRef;                                            //!< [m/s] Magnitude of the reference velocity vector
-    double ts;                                                      //!< [s] Simulation time halfway through the maneuver
-    double tf;                                                      //!< [s] Simulation time at the time the maneuver is complete
-    double a;                                                       //!< Parabolic constant for the first half of the maneuver
-    double b;                                                       //!< Parabolic constant for the second half of the maneuver
+    bool convergence;      //!< Boolean variable is true when the maneuver is complete
+    double tInit;          //!< [s] Simulation time at the start of the maneuver
+    double scalarPosInit;  //!< [m] Initial distance between the frame F and frame M origin
+    double scalarVelInit;  //!< [m/s] Initial velocity between the frame F and frame M origin
+    double scalarPosRef;   //!< [m] Magnitude of the reference position vector
+    double scalarVelRef;   //!< [m/s] Magnitude of the reference velocity vector
+    double ts;             //!< [s] Simulation time halfway through the maneuver
+    double tf;             //!< [s] Simulation time at the time the maneuver is complete
+    double a;              //!< Parabolic constant for the first half of the maneuver
+    double b;              //!< Parabolic constant for the second half of the maneuver
 
     // Messages
-    ReadFunctor<LinearTranslationRigidBodyMsgPayload> linearTranslationRigidBodyInMsg;  //!< Input message for the reference states
-    Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;           //!< Output message for the prescribed translational states
+    ReadFunctor<LinearTranslationRigidBodyMsgPayload>
+        linearTranslationRigidBodyInMsg;  //!< Input message for the reference states
+    Message<PrescribedTranslationMsgPayload>
+        prescribedTranslationOutMsg;  //!< Output message for the prescribed translational states
 
-    BSKLogger bskLogger={};                                             //!< BSK Logging
-
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

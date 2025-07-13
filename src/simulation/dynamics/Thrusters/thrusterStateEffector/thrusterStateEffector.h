@@ -17,85 +17,90 @@
 
  */
 
-
 #ifndef THRUSTER_STATE_EFFECTOR_H
 #define THRUSTER_STATE_EFFECTOR_H
 
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
-#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 
-#include "architecture/msgPayloadDef/THROutputMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/THROutputMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
 
-
-
-
 /*! @brief thruster dynamic effector class */
-class ThrusterStateEffector: public StateEffector, public SysModel {
-public:
+class ThrusterStateEffector : public StateEffector, public SysModel {
+   public:
     ThrusterStateEffector();
     ~ThrusterStateEffector();
     void reset(uint64_t currentSimNanos);
     bool ReadInputs();
     void writeOutputStateMessages(uint64_t CurrentClock);
     void registerStates(DynParamManager& states);  //!< -- Method for the effector to register its states
-    void linkInStates(DynParamManager& states);  //!< -- Method for the effector to get access of other states
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
+    void linkInStates(DynParamManager& states);    //!< -- Method for the effector to get access of other states
+    void computeDerivatives(double integTime,
+                            Eigen::Vector3d rDDot_BN_N,
+                            Eigen::Vector3d omegaDot_BN_B,
+                            Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);
-    void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Method to pass the forces and torques onto the hub
+    void updateContributions(double integTime,
+                             BackSubMatrices& backSubContr,
+                             Eigen::Vector3d sigma_BN,
+                             Eigen::Vector3d omega_BN_B,
+                             Eigen::Vector3d g_N);  //!< Method to pass the forces and torques onto the hub
     void updateEffectorMassProps(double integTime);
     void updateState(uint64_t currentSimNanos);
 
-
-    void addThruster(THRSimConfig* newThruster); //!< -- Add a new thruster to the thruster set
-    void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
+    void addThruster(THRSimConfig* newThruster);  //!< -- Add a new thruster to the thruster set
+    void addThruster(
+        THRSimConfig* newThruster,
+        Message<SCStatesMsgPayload>* bodyStateMsg);  //!< -- (overloaded) Add a new thruster to the thruster set connect
+                                                     //!< to a body different than the hub
     void ConfigureThrustRequests();
     void UpdateThrusterProperties();
 
-public:
+   public:
     // Input and output messages
-    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
+    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;          //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
-    std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
-    std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
+    std::vector<THRSimConfig> thrusterData;                      //!< -- Thruster information
+    std::vector<double> NewThrustCmds;                           //!< -- Incoming thrust commands
 
     // State information
-    std::vector<double> kappaInit;                //!< [] Vector of initial thruster states
-    std::string nameOfKappaState;    //!< -- Identifier for the kappa state data container
+    std::vector<double> kappaInit;  //!< [] Vector of initial thruster states
+    std::string nameOfKappaState;   //!< -- Identifier for the kappa state data container
 
     // State structures
-	StateData *hubSigma;        //!< pointer to hub attitude states
-    StateData *hubOmega;        //!< pointer to hub angular velocity states
-    StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
+    StateData* hubSigma;                        //!< pointer to hub attitude states
+    StateData* hubOmega;                        //!< pointer to hub angular velocity states
+    StateData* kappaState;                      //!< -- state manager of theta for hinged rigid body
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
 
-    BSKLogger bskLogger;        //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
     // Mass flow rate
-    double mDotTotal = 0.0;           //!< [kg/s] Current mass flow rate of thrusters
+    double mDotTotal = 0.0;  //!< [kg/s] Current mass flow rate of thrusters
 
-private:
-    std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
+   private:
+    std::vector<THROutputMsgPayload> thrusterOutBuffer;  //!< -- Message buffer for thruster data
 
-    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;  //!< -- One-time allocation for savings
 
-    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
+    std::vector<ReadFunctor<SCStatesMsgPayload>>
+        attachedBodyInMsgs;  //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
 
-    double prevCommandTime;                       //!< [s] -- Time for previous valid thruster firing
-    static uint64_t effectorID;    //!< [] ID number of this panel
+    double prevCommandTime;      //!< [s] -- Time for previous valid thruster firing
+    static uint64_t effectorID;  //!< [] ID number of this panel
 };
-
 
 #endif /* THRUSTER_STATE_EFFECTOR_H */

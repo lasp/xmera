@@ -27,18 +27,16 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief module configuration message */
 class ImuComm : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    double dcm_BP[9];    /*!< Row major platform 2 bdy DCM*/
-    ReadFunctor<IMUSensorMsgPayload> imuComInMsg;             /*!< imu input message*/
-    Message<IMUSensorBodyMsgPayload> imuSensorOutMsg;     /*!< imu output message*/
-    BSKLogger bskLogger={};   //!< BSK Logging
+    double dcm_BP[9];                                 /*!< Row major platform 2 bdy DCM*/
+    ReadFunctor<IMUSensorMsgPayload> imuComInMsg;     /*!< imu input message*/
+    Message<IMUSensorBodyMsgPayload> imuSensorOutMsg; /*!< imu output message*/
+    BSKLogger bskLogger = {};                         //!< BSK Logging
 };
 
 #endif

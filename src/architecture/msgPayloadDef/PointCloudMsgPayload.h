@@ -20,21 +20,21 @@
 #ifndef POINTCLOUDMSG_H
 #define POINTCLOUDMSG_H
 
-#include <array>
 #include "fswAlgorithms/pointCloudProcessing/SICP/sicpDefinitions.h"
+#include <array>
 
 //!@brief N-D point cloud
 /*! This message contains a point cloud and corresponding time tag
  */
 typedef struct
-//@cond DOXYGEN_IGNORE
-PointCloudMsgPayload
+    //@cond DOXYGEN_IGNORE
+    PointCloudMsgPayload
 //@endcond
 {
-    uint64_t timeTag; //!< --[ns]   Current vehicle time-tag associated with cloud
-    bool valid; //!< --  Quality of measurement
-    int numberOfPoints; //!< -- [-] Number of points detected
-    double points[MAX_POINTS*POINT_DIM]; //!< -- [-]  Point cloud array
-}PointCloudMsgPayload;
+    uint64_t timeTag;                       //!< --[ns]   Current vehicle time-tag associated with cloud
+    bool valid;                             //!< --  Quality of measurement
+    int numberOfPoints;                     //!< -- [-] Number of points detected
+    double points[MAX_POINTS * POINT_DIM];  //!< -- [-]  Point cloud array
+} PointCloudMsgPayload;
 
 #endif /* POINTCLOUDMSG_H */

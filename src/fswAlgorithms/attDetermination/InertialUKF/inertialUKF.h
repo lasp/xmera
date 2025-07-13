@@ -22,13 +22,13 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/AccDataMsgPayload.h"
 #include "architecture/msgPayloadDef/InertialFilterMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/STAttMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/AccDataMsgPayload.h"
 #include "architecture/utilities/signalCondition.h"
 #include <stdint.h>
 
@@ -37,98 +37,96 @@
 /*! @brief Star Tracker (ST) sensor container structure.  Contains the msg input name and Id and sensor noise value.
  */
 typedef struct {
-    ReadFunctor<STAttMsgPayload> stInMsg;     //!< star tracker input message
-    double noise[3*3];                        //!< [-] Per axis noise on the ST
-}STMessage;
+    ReadFunctor<STAttMsgPayload> stInMsg;  //!< star tracker input message
+    double noise[3 * 3];                   //!< [-] Per axis noise on the ST
+} STMessage;
 
 /*! @brief Structure to gather the ST messages and content */
 typedef struct {
-    int numST;                                  //!< Number of Star Trackers
-    STMessage STMessages[MAX_ST_VEH_COUNT];     //!< [-] Decoded MIRU data for both camera heads
-}STDataParsing;
+    int numST;                               //!< Number of Star Trackers
+    STMessage STMessages[MAX_ST_VEH_COUNT];  //!< [-] Decoded MIRU data for both camera heads
+} STDataParsing;
 
 /*! @brief Top level structure for the Inertial unscented kalman filter.
  Used to estimate the spacecraft's inertial attitude. Measurements are StarTracker data and gyro data.
  */
 class InertialUKF : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    Message<NavAttMsgPayload> navStateOutMsg;                     //!< The name of the output message
-    Message<InertialFilterMsgPayload> filtDataOutMsg;             //!< The name of the output filter data message
-    ReadFunctor<VehicleConfigMsgPayload> massPropsInMsg;              //!< [-] The name of the mass props message
-    ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;               //!< The name of the RWConfigParams input message
-    ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;                     //!< [-] The name of the input RW speeds message
-    ReadFunctor<AccDataMsgPayload> gyrBuffInMsg;                      //!< [-] Input message buffer from MIRU
+    Message<NavAttMsgPayload> navStateOutMsg;             //!< The name of the output message
+    Message<InertialFilterMsgPayload> filtDataOutMsg;     //!< The name of the output filter data message
+    ReadFunctor<VehicleConfigMsgPayload> massPropsInMsg;  //!< [-] The name of the mass props message
+    ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;   //!< The name of the RWConfigParams input message
+    ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;         //!< [-] The name of the input RW speeds message
+    ReadFunctor<AccDataMsgPayload> gyrBuffInMsg;          //!< [-] Input message buffer from MIRU
 
+    size_t numStates;     //!< [-] Number of states for this filter
+    size_t countHalfSPs;  //!< [-] Number of sigma points over 2
+    size_t numObs;        //!< [-] Number of measurements this cycle
+    double beta;          //!< [-] Beta parameter for filter
+    double alpha;         //!< [-] Alpha parameter for filter
+    double kappa;         //!< [-] Kappa parameter for filter
+    double lambdaVal;     //!< [-] Lambda parameter for filter
+    double gamma;         //!< [-] Gamma parameter for filter
+    double switchMag;     //!< [-] Threshold for where we switch MRP set
 
-	size_t numStates;             //!< [-] Number of states for this filter
-	size_t countHalfSPs;          //!< [-] Number of sigma points over 2
-	size_t numObs;                //!< [-] Number of measurements this cycle
-	double beta;                  //!< [-] Beta parameter for filter
-	double alpha;                 //!< [-] Alpha parameter for filter
-	double kappa;                 //!< [-] Kappa parameter for filter
-	double lambdaVal;             //!< [-] Lambda parameter for filter
-	double gamma;                 //!< [-] Gamma parameter for filter
-    double switchMag;             //!< [-] Threshold for where we switch MRP set
+    double dt;                        //!< [s] seconds since last data epoch
+    double timeTag;                   //!< [s]  Time tag for statecovar/etc
+    double gyrAggTimeTag;             //!< [s] Time-tag for aggregated gyro data
+    double aggSigma_b2b1[3];          //!< [-] Aggregated attitude motion from gyros
+    double dcm_BdyGyrpltf[3][3];      //!< [-] DCM for converting gyro data to body frame
+    double wM[2 * AKF_N_STATES + 1];  //!< [-] Weighting vector for sigma points
+    double wC[2 * AKF_N_STATES + 1];  //!< [-] Weighting vector for sigma points
 
-	double dt;                     //!< [s] seconds since last data epoch
-	double timeTag;                //!< [s]  Time tag for statecovar/etc
-    double gyrAggTimeTag;          //!< [s] Time-tag for aggregated gyro data
-    double aggSigma_b2b1[3];       //!< [-] Aggregated attitude motion from gyros
-    double dcm_BdyGyrpltf[3][3];   //!< [-] DCM for converting gyro data to body frame
-	double wM[2 * AKF_N_STATES + 1]; //!< [-] Weighting vector for sigma points
-	double wC[2 * AKF_N_STATES + 1]; //!< [-] Weighting vector for sigma points
+    double stateInit[AKF_N_STATES];                 //!< [-] State estimate to initialize filter to
+    double state[AKF_N_STATES];                     //!< [-] State estimate for time TimeTag
+    double statePrev[AKF_N_STATES];                 //!< [-] State estimate for time TimeTag at previous time
+    double sBar[AKF_N_STATES * AKF_N_STATES];       //!< [-] Time updated covariance
+    double sBarPrev[AKF_N_STATES * AKF_N_STATES];   //!< [-] Time updated covariance at previous time
+    double covar[AKF_N_STATES * AKF_N_STATES];      //!< [-] covariance
+    double covarPrev[AKF_N_STATES * AKF_N_STATES];  //!< [-] covariance at previous time
+    double covarInit[AKF_N_STATES * AKF_N_STATES];  //!< [-] Covariance to init filter with
+    double xBar[AKF_N_STATES];                      //!< [-] Current mean state estimate
 
-    double stateInit[AKF_N_STATES];    //!< [-] State estimate to initialize filter to
-    double state[AKF_N_STATES];        //!< [-] State estimate for time TimeTag
-    double statePrev[AKF_N_STATES];        //!< [-] State estimate for time TimeTag at previous time
-    double sBar[AKF_N_STATES*AKF_N_STATES];         //!< [-] Time updated covariance
-    double sBarPrev[AKF_N_STATES*AKF_N_STATES];     //!< [-] Time updated covariance at previous time
-    double covar[AKF_N_STATES*AKF_N_STATES];        //!< [-] covariance
-    double covarPrev[AKF_N_STATES*AKF_N_STATES];    //!< [-] covariance at previous time
-    double covarInit[AKF_N_STATES*AKF_N_STATES];    //!< [-] Covariance to init filter with
-    double xBar[AKF_N_STATES];            //!< [-] Current mean state estimate
+    double obs[3];                             //!< [-] Observation vector for frame
+    double yMeas[3 * (2 * AKF_N_STATES + 1)];  //!< [-] Measurement model data
 
-	double obs[3];          //!< [-] Observation vector for frame
-	double yMeas[3*(2*AKF_N_STATES+1)];        //!< [-] Measurement model data
+    double SP[(2 * AKF_N_STATES + 1) * AKF_N_STATES];  //!< [-]    sigma point matrix
 
-	double SP[(2*AKF_N_STATES+1)*AKF_N_STATES];          //!< [-]    sigma point matrix
+    double qNoise[MAX_ST_VEH_COUNT * AKF_N_STATES * AKF_N_STATES];   //!< [-] process noise matrix
+    double sQnoise[MAX_ST_VEH_COUNT * AKF_N_STATES * AKF_N_STATES];  //!< [-] cholesky of Qnoise
 
-	double qNoise[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];       //!< [-] process noise matrix
-	double sQnoise[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];      //!< [-] cholesky of Qnoise
+    double IInv[3][3];  //!< [(kg m^2)^-1] inverse of inertia tensor
 
-    double IInv[3][3];       //!< [(kg m^2)^-1] inverse of inertia tensor
+    uint32_t numUsedGyros;       //!< -- Number of currently active CSS sensors
+    uint32_t firstPassComplete;  //!< flag
+    double sigma_BNOut[3];       //!< [-] Output MRP
+    double omega_BN_BOut[3];     //!< [r/s] Body rate output data
+    double timeTagOut;           //!< [s] Output time-tag information
+    double maxTimeJump;          //!< [s] Maximum time jump to allow in propagation
 
-    uint32_t numUsedGyros;   //!< -- Number of currently active CSS sensors
-    uint32_t firstPassComplete; //!< flag
-    double sigma_BNOut[3];   //!< [-] Output MRP
-    double omega_BN_BOut[3]; //!< [r/s] Body rate output data
-    double timeTagOut;       //!< [s] Output time-tag information
-    double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
-
-    STAttMsgPayload stSensorIn[MAX_ST_VEH_COUNT]; //!< [-] ST sensor data read in from message bus
-    int stSensorOrder[MAX_ST_VEH_COUNT];    //!< [-] ST sensor data read in from message bus
-    uint64_t ClockTimeST[MAX_ST_VEH_COUNT]; //!< [-] All of the ClockTimes for the STs
-    int isFreshST[MAX_ST_VEH_COUNT]; //!< [-] isWritten flag for STs
-    RWArrayConfigMsgPayload rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
-    RWSpeedMsgPayload rwSpeeds;             //!< [-] Local reaction wheel speeds
-    RWSpeedMsgPayload rwSpeedPrev;          //!< [-] Local reaction wheel speeds
-    double speedDt;                         //!< [s] The time difference between speeds
-    uint64_t timeWheelPrev;                 //!< [ns] Previous wheel time-tag from msg
-    VehicleConfigMsgPayload localConfigData;   //!< [-] Vehicle configuration data
-    LowPassFilterData gyroFilt[3];          //!< [-] Low-pass filters for input gyro data
+    STAttMsgPayload stSensorIn[MAX_ST_VEH_COUNT];  //!< [-] ST sensor data read in from message bus
+    int stSensorOrder[MAX_ST_VEH_COUNT];           //!< [-] ST sensor data read in from message bus
+    uint64_t ClockTimeST[MAX_ST_VEH_COUNT];        //!< [-] All of the ClockTimes for the STs
+    int isFreshST[MAX_ST_VEH_COUNT];               //!< [-] isWritten flag for STs
+    RWArrayConfigMsgPayload
+        rwConfigParams;             //!< [-] struct to store message containing RW config parameters in body B frame
+    RWSpeedMsgPayload rwSpeeds;     //!< [-] Local reaction wheel speeds
+    RWSpeedMsgPayload rwSpeedPrev;  //!< [-] Local reaction wheel speeds
+    double speedDt;                 //!< [s] The time difference between speeds
+    uint64_t timeWheelPrev;         //!< [ns] Previous wheel time-tag from msg
+    VehicleConfigMsgPayload localConfigData;  //!< [-] Vehicle configuration data
+    LowPassFilterData gyroFilt[3];            //!< [-] Low-pass filters for input gyro data
 
     STDataParsing STDatasStruct;  //!< [-] Id of the input message buffer
 
-    BSKLogger bskLogger = {};   //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-
 void Read_STMessages(InertialUKF *configData);
-void inertialUKFAggGyrData(InertialUKF *configData, double prevTime,
-                      double propTime, AccDataMsgPayload *gyrData);
+void inertialUKFAggGyrData(InertialUKF *configData, double prevTime, double propTime, AccDataMsgPayload *gyrData);
 int inertialUKFTimeUpdate(InertialUKF *configData, double updateTime);
 int inertialUKFMeasUpdate(InertialUKF *configData, int currentST);
 void inertialUKFCleanUpdate(InertialUKF *configData);

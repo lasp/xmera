@@ -20,70 +20,64 @@
 #ifndef BASILISK_SENSORTHERMAL_H
 #define BASILISK_SENSORTHERMAL_H
 
+#include "architecture/messaging/messaging.h"
 #include <Eigen/Dense>
 #include <vector>
-#include "architecture/messaging/messaging.h"
 
+#include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
+#include "architecture/msgPayloadDef/EclipseMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDef/EclipseMsgPayload.h"
 #include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
-#include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief sensor thermal class */
-class SensorThermal: public SysModel {
-
-public:
+class SensorThermal : public SysModel {
+   public:
     SensorThermal();
     ~SensorThermal();
     void reset(uint64_t CurrentClock);
     void updateState(uint64_t currentSimNanos);
 
-private:
+   private:
     void evaluateThermalModel(uint64_t CurrentSimSeconds);
     void computeSunData();
     void writeMessages(uint64_t CurrentClock);
     void readMessages();
 
-public:
-    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< [-] sun data input message
-    ReadFunctor<DeviceStatusMsgPayload> sensorStatusInMsg; //!< optional sensor power status input message
-    ReadFunctor<SCStatesMsgPayload> stateInMsg;     //!< [-] spacecraft state input message
-    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;     //!< [-] sun eclipse state input message
-    Message<TemperatureMsgPayload> temperatureOutMsg; //!< output temperature message
+   public:
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;       //!< [-] sun data input message
+    ReadFunctor<DeviceStatusMsgPayload> sensorStatusInMsg;  //!< optional sensor power status input message
+    ReadFunctor<SCStatesMsgPayload> stateInMsg;             //!< [-] spacecraft state input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;         //!< [-] sun eclipse state input message
+    Message<TemperatureMsgPayload> temperatureOutMsg;       //!< output temperature message
 
-    Eigen::Vector3d nHat_B;                     //!< [-] Sensor normal unit vector relative to the spacecraft body frame.
+    Eigen::Vector3d nHat_B;  //!< [-] Sensor normal unit vector relative to the spacecraft body frame.
 
-    double sensorPowerDraw;                     //!< [W] Power consumed by the sensor (+).
-    uint64_t sensorPowerStatus;                //!< [-] Sensor on/off status (0 off / 1 on)
-    double sensorArea;                          //!< [m^2] Sensor area in meters squared
-    double sensorAbsorptivity;                  //!< [-] Sensor absorptivity (between 0 and 1)
-    double sensorEmissivity;                    //!< [-] Sensor emissivity (between 0 and 1)
-    double sensorMass;                          //!< [kg] Sensor mass in kg
-    double sensorSpecificHeat;                  //!< [J/kg/K] Sensor specific heat
-    double T_0;                                 //!< [C] Initial temperature
+    double sensorPowerDraw;      //!< [W] Power consumed by the sensor (+).
+    uint64_t sensorPowerStatus;  //!< [-] Sensor on/off status (0 off / 1 on)
+    double sensorArea;           //!< [m^2] Sensor area in meters squared
+    double sensorAbsorptivity;   //!< [-] Sensor absorptivity (between 0 and 1)
+    double sensorEmissivity;     //!< [-] Sensor emissivity (between 0 and 1)
+    double sensorMass;           //!< [kg] Sensor mass in kg
+    double sensorSpecificHeat;   //!< [J/kg/K] Sensor specific heat
+    double T_0;                  //!< [C] Initial temperature
 
-    BSKLogger bskLogger;                          //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
-private:
-    TemperatureMsgPayload temperatureMsgBuffer; //!< buffer of output message
-    double projectedArea;                       //!< [m^2] Area of the sensor projected along the sun vector.
-    SpicePlanetStateMsgPayload sunData;         //!< [-] sun message input buffer
-    SCStatesMsgPayload stateCurrent;            //!< [-] Current spacecraft state
-    double shadowFactor;                        //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
-    double sensorTemp;                          //!< [C] Current temperature
-    double Q_in;                                //!< [W] Current power in
-    double Q_out;                               //!< [W] Current power out
-    double S;                                   //!< [W/m^2] Solar constant
-    double boltzmannConst;                      //!< [W/m^2/K^4] Boltzmann constant
-    uint64_t CurrentSimSecondsOld;              //!< [s] Seconds at last iteration
-
-
+   private:
+    TemperatureMsgPayload temperatureMsgBuffer;  //!< buffer of output message
+    double projectedArea;                        //!< [m^2] Area of the sensor projected along the sun vector.
+    SpicePlanetStateMsgPayload sunData;          //!< [-] sun message input buffer
+    SCStatesMsgPayload stateCurrent;             //!< [-] Current spacecraft state
+    double shadowFactor;            //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
+    double sensorTemp;              //!< [C] Current temperature
+    double Q_in;                    //!< [W] Current power in
+    double Q_out;                   //!< [W] Current power out
+    double S;                       //!< [W/m^2] Solar constant
+    double boltzmannConst;          //!< [W/m^2/K^4] Boltzmann constant
+    uint64_t CurrentSimSecondsOld;  //!< [s] Seconds at last iteration
 };
 
-
-#endif //BASILISK_SENSORTHERMAL_H
+#endif  // BASILISK_SENSORTHERMAL_H

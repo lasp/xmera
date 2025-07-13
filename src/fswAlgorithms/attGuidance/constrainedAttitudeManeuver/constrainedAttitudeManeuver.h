@@ -21,64 +21,63 @@
 #define WAYPOINTREFERENCE_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/BSpline.h"
 #include "architecture/messaging/messaging.h"
-#include <map>
-#include <iostream>
-#include <fstream>
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include "architecture/utilities/BSpline.h"
+#include "architecture/utilities/bskLogging.h"
+#include <fstream>
+#include <iostream>
+#include <map>
 
 //! @brief The constraintStruc structure is used to store the inertial direction of the keep-in and keep-out zones
 struct constraintStruct {
-
-    double keepOutDir_N[3];                                         //!< Inertial direction of keepOut celestial bodies
-    double keepInDir_N[3];                                          //!< Inertial direction of keepIn celestial bodies
-    bool keepOut;                                                   //!< Flag to assess whether keepOut constraints are being considered
-    bool keepIn;                                                    //!< Flag to assess whether keepIn constraints are being considered
+    double keepOutDir_N[3];  //!< Inertial direction of keepOut celestial bodies
+    double keepInDir_N[3];   //!< Inertial direction of keepIn celestial bodies
+    bool keepOut;            //!< Flag to assess whether keepOut constraints are being considered
+    bool keepIn;             //!< Flag to assess whether keepIn constraints are being considered
 };
 
-//! @brief The scBoresightStruc structure is used to store the body frame directions and fields of view of the instruments
+//! @brief The scBoresightStruc structure is used to store the body frame directions and fields of view of the
+//! instruments
 struct scBoresightStruct {
-
-    double keepOutBoresight_B[10][3];                               //!< Unit vectors containing body frame directions of keepOut instruments
-    double keepInBoresight_B[10][3];                                //!< Unit vectors containing body frame directions of keepIn instruments
-    double keepOutFov[10];                                          //!< Fields of view of the keepOut instruments
-    double keepInFov[10];                                           //!< Fields of view of the keepIn instruments
-    int keepOutBoresightCount = 0;                                  //!< Number of keepOut sensitive instruments
-    int keepInBoresightCount = 0;                                   //!< Number of keepIn instruments
+    double keepOutBoresight_B[10][3];  //!< Unit vectors containing body frame directions of keepOut instruments
+    double keepInBoresight_B[10][3];   //!< Unit vectors containing body frame directions of keepIn instruments
+    double keepOutFov[10];             //!< Fields of view of the keepOut instruments
+    double keepInFov[10];              //!< Fields of view of the keepIn instruments
+    int keepOutBoresightCount = 0;     //!< Number of keepOut sensitive instruments
+    int keepInBoresightCount = 0;      //!< Number of keepIn instruments
 };
 
 //! @brief The Node class is used to create nodes in the 3D MRP graph
 class Node {
-public:
+   public:
     Node();
     Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct boresights);
     ~Node();
 
-    double sigma_BN[3];                                             //!< MRP set corresponding to the node
-    bool isBoundary;                                                //!< If true, the node lies on the |sigma| = 1 boundary surface
-    bool isFree;                                                    //!< If true, the node is constraint-compliant
-    double heuristic;                                               //!< Heuristic value used by cartesian distance A*
-    double priority;                                                //!< Priority of the node in A*
-    Node *neighbors[52];                                            //!< Container of pointers to neighboring nodes
-    int neighborCount;                                              //!< Number of neighboring nodes
-    Node *backPointer;                                              //!< Pointer to the previous node in the path computer by A*
+    double sigma_BN[3];   //!< MRP set corresponding to the node
+    bool isBoundary;      //!< If true, the node lies on the |sigma| = 1 boundary surface
+    bool isFree;          //!< If true, the node is constraint-compliant
+    double heuristic;     //!< Heuristic value used by cartesian distance A*
+    double priority;      //!< Priority of the node in A*
+    Node *neighbors[52];  //!< Container of pointers to neighboring nodes
+    int neighborCount;    //!< Number of neighboring nodes
+    Node *backPointer;    //!< Pointer to the previous node in the path computer by A*
     void appendNeighbor(Node *node);
 };
 
 //! @brief The NodeList class is used in the A* algorithm to handle Open and Closed lists O and C
 class NodeList {
-public:
+   public:
     NodeList();
     ~NodeList();
 
-    Node* list[10000];                                              //!< Container of pointers to the nodes in the list
-    int N;                                                          //!< Number of nodes in the list
-    void append(Node* node);
+    Node *list[10000];  //!< Container of pointers to the nodes in the list
+    int N;              //!< Number of nodes in the list
+    void append(Node *node);
     void pop(int M);
     void clear();
     void swap(int m, int n);
@@ -87,8 +86,8 @@ public:
 };
 
 /*! @brief waypoint reference module class */
-class ConstrainedAttitudeManeuver: public SysModel {
-public:
+class ConstrainedAttitudeManeuver : public SysModel {
+   public:
     ConstrainedAttitudeManeuver();
     ConstrainedAttitudeManeuver(int N);
 
@@ -110,34 +109,35 @@ public:
     bool returnNodeState(int key[3]);
     double returnPathCoord(int index, int nodeCoord);
 
-public:
-    int N;                                                                          //!< Fineness level of discretization
-    int BSplineType;                                                                //!< 0 for interpolation; 1 for LS approximation
-    int costFcnType;                                                                //!< 0 for minimum distance path; 1 for minimum control effort path
-    double sigma_BN_goal[3];                                                        //!< Initial S/C attitude
-    double omega_BN_B_goal[3];                                                      //!< Initial S/C angular rate
-    double avgOmega;                                                                //!< Average angular rate norm during the maneuver
-    double keepOutFov;                                                              //!< Field of view of the sensitive instrument
-    double keepOutBore_B[3];                                                        //!< Body-frame direction of the boresight of the sensitive instrument
-    constraintStruct constraints;                                                   //!< Structure containing the constraint directions in inertial coordinates
-    scBoresightStruct boresights;                                                   //!< Structure containing the instrument boresight directions in body frame coordinates
-    std::map<int,std::map<int,std::map<int,Node>>> NodesMap;                        //!< C++ map from node indices to Node class
-    int keyS[3];                                                                    //!< Key to Start node in NodesMap
-    int keyG[3];                                                                    //!< Key to Goal node in NodesMap
-    NodeList path;                                                                  //!< Path of nodes from start to goal
-    double pathCost;                                                                //!< Cost of the path above, according to the cost function used
-    InputDataSet Input;                                                             //!< Input structure for the BSpline interpolation/approximation
-    OutputDataSet Output;                                                           //!< Output structure of the BSpline interpolation/approximation
+   public:
+    int N;                         //!< Fineness level of discretization
+    int BSplineType;               //!< 0 for interpolation; 1 for LS approximation
+    int costFcnType;               //!< 0 for minimum distance path; 1 for minimum control effort path
+    double sigma_BN_goal[3];       //!< Initial S/C attitude
+    double omega_BN_B_goal[3];     //!< Initial S/C angular rate
+    double avgOmega;               //!< Average angular rate norm during the maneuver
+    double keepOutFov;             //!< Field of view of the sensitive instrument
+    double keepOutBore_B[3];       //!< Body-frame direction of the boresight of the sensitive instrument
+    constraintStruct constraints;  //!< Structure containing the constraint directions in inertial coordinates
+    scBoresightStruct
+        boresights;  //!< Structure containing the instrument boresight directions in body frame coordinates
+    std::map<int, std::map<int, std::map<int, Node>>> NodesMap;  //!< C++ map from node indices to Node class
+    int keyS[3];                                                 //!< Key to Start node in NodesMap
+    int keyG[3];                                                 //!< Key to Goal node in NodesMap
+    NodeList path;                                               //!< Path of nodes from start to goal
+    double pathCost;       //!< Cost of the path above, according to the cost function used
+    InputDataSet Input;    //!< Input structure for the BSpline interpolation/approximation
+    OutputDataSet Output;  //!< Output structure of the BSpline interpolation/approximation
 
-    ReadFunctor<SCStatesMsgPayload> scStateInMsg;                                   //!< Spacecraft state input message
-    ReadFunctor<VehicleConfigMsgPayload> vehicleConfigInMsg;                        //!< FSW vehicle configuration input message
-    ReadFunctor<SpicePlanetStateMsgPayload> keepOutCelBodyInMsg;                    //!< Celestial body state msg - keep out direction
-    ReadFunctor<SpicePlanetStateMsgPayload> keepInCelBodyInMsg;                     //!< Celestial body state msg - keep in direction
-    Message<AttRefMsgPayload> attRefOutMsg;                                         //!< Attitude reference output message
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;                 //!< Spacecraft state input message
+    ReadFunctor<VehicleConfigMsgPayload> vehicleConfigInMsg;      //!< FSW vehicle configuration input message
+    ReadFunctor<SpicePlanetStateMsgPayload> keepOutCelBodyInMsg;  //!< Celestial body state msg - keep out direction
+    ReadFunctor<SpicePlanetStateMsgPayload> keepInCelBodyInMsg;   //!< Celestial body state msg - keep in direction
+    Message<AttRefMsgPayload> attRefOutMsg;                       //!< Attitude reference output message
 
-    BSKLogger bskLogger;                                                            //!< BSK Logging
+    BSKLogger bskLogger;  //!< BSK Logging
 
-private:
+   private:
     SCStatesMsgPayload scStateMsgBuffer;
     VehicleConfigMsgPayload vehicleConfigMsgBuffer;
     SpicePlanetStateMsgPayload keepOutCelBodyMsgBuffer;

@@ -28,19 +28,17 @@
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
-
 /*! @brief Top level structure for the sub-module routines. */
-class RwConfig : public SysModel  {
-public:
+class RwConfig : public SysModel {
+   public:
     void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override {/* Not Implemented */}
+    void updateState(uint64_t callTime) override { /* Not Implemented */ }
 
     /* declare module IO interfaces */
-    ReadFunctor<RWConstellationMsgPayload> rwConstellationInMsg;          /*!< RW array input message */
-    Message<RWArrayConfigMsgPayload> rwParamsOutMsg;                  /*!< RW array output message */
+    ReadFunctor<RWConstellationMsgPayload> rwConstellationInMsg; /*!< RW array input message */
+    Message<RWArrayConfigMsgPayload> rwParamsOutMsg;             /*!< RW array output message */
 
-    BSKLogger bskLogger={};   //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

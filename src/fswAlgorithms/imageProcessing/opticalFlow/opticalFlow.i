@@ -48,4 +48,3 @@ struct EphemerisMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

@@ -31,6 +31,6 @@ typedef struct {
     bool starField;
     char rendering[MAX_STRING_LENGTH];
     bool smear;
-}CameraRenderingMsgPayload;
+} CameraRenderingMsgPayload;
 
-#endif //CAMERA_RENDERING
+#endif  // CAMERA_RENDERING

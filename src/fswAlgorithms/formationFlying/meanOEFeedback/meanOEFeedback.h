@@ -31,23 +31,23 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 class MeanOEFeedback : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void calcLyapunovFeedback(NavTransMsgPayload chiefTransMsg,
                               NavTransMsgPayload deputyTransMsg,
                               CmdForceInertialMsgPayload *forceMsg);
-    ReadFunctor<NavTransMsgPayload> chiefTransInMsg;      //!< chief orbit input message
-    ReadFunctor<NavTransMsgPayload> deputyTransInMsg;     //!< deputy orbit input message
-    Message<CmdForceInertialMsgPayload> forceOutMsg;  //!< deputy control force output message
+    ReadFunctor<NavTransMsgPayload> chiefTransInMsg;   //!< chief orbit input message
+    ReadFunctor<NavTransMsgPayload> deputyTransInMsg;  //!< deputy orbit input message
+    Message<CmdForceInertialMsgPayload> forceOutMsg;   //!< deputy control force output message
 
-    double K[36];               //!< Lyapunov Gain (6*6)
-    double targetDiffOeMean[6];   //!< target mean orbital element difference
-    uint8_t oeType;            //!< 0: classic (default), 1: equinoctial
-    double mu;                  //!< [m^3/s^2] gravitational constant
-    double req;                 //!< [m] equatorial planet radius
-    double J2;                  //!< [] J2 planet oblateness parameter
-    BSKLogger bskLogger={};       //!< BSK Logging
+    double K[36];                //!< Lyapunov Gain (6*6)
+    double targetDiffOeMean[6];  //!< target mean orbital element difference
+    uint8_t oeType;              //!< 0: classic (default), 1: equinoctial
+    double mu;                   //!< [m^3/s^2] gravitational constant
+    double req;                  //!< [m] equatorial planet radius
+    double J2;                   //!< [] J2 planet oblateness parameter
+    BSKLogger bskLogger = {};    //!< BSK Logging
 };
 
 #endif

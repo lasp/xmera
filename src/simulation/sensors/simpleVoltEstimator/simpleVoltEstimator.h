@@ -20,17 +20,17 @@
 #ifndef SIMPLE_VOLT_ESTIMATOR_H
 #define SIMPLE_VOLT_ESTIMATOR_H
 
-#include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/gauss_markov.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/VoltMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/gauss_markov.h"
 #include <Eigen/Dense>
-#include "architecture/messaging/messaging.h"
+#include <vector>
 
 /*! @brief simple voltage estimation module class */
-class SimpleVoltEstimator: public SysModel {
-public:
+class SimpleVoltEstimator : public SysModel {
+   public:
     SimpleVoltEstimator();
     ~SimpleVoltEstimator();
 
@@ -41,21 +41,21 @@ public:
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
 
-public:
-    Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
-    Eigen::VectorXd voltErrors;        //!< -- Current voltage errors applied to truth
-    Message<VoltMsgPayload> voltOutMsg;    //!< voltage output msg
-    VoltMsgPayload trueVoltState;    //!< -- voltage state without errors
-    VoltMsgPayload estVoltState;     //!< -- voltage state including errors
-    BSKLogger bskLogger;              //!< -- BSK Logging
+   public:
+    Eigen::MatrixXd
+        PMatrix;  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
+    Eigen::VectorXd walkBounds;          //!< -- "3-sigma" errors to permit for states
+    Eigen::VectorXd voltErrors;          //!< -- Current voltage errors applied to truth
+    Message<VoltMsgPayload> voltOutMsg;  //!< voltage output msg
+    VoltMsgPayload trueVoltState;        //!< -- voltage state without errors
+    VoltMsgPayload estVoltState;         //!< -- voltage state including errors
+    BSKLogger bskLogger;                 //!< -- BSK Logging
 
-    ReadFunctor<VoltMsgPayload> voltInMsg;          //!< voltage input msg
+    ReadFunctor<VoltMsgPayload> voltInMsg;  //!< voltage input msg
 
-private:
-    Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state
-    GaussMarkov errorModel;            //!< -- Gauss-markov error states
+   private:
+    Eigen::MatrixXd AMatrix;  //!< -- The matrix used to propagate the state
+    GaussMarkov errorModel;   //!< -- Gauss-markov error states
 };
-
 
 #endif
