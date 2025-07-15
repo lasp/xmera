@@ -5,7 +5,11 @@
     "cppzmq",
     "eigen3",
     "gtest",
-    "opencv4",
+    {
+      "name": "opencv4",
+      "default-features": false,
+      "features": [ "dnn", "jpeg", "png", "tiff", "webp"]
+    },
     "protobuf"
   ],
   "overrides": [
