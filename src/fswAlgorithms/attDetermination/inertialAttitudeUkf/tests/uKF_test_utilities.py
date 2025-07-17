@@ -290,3 +290,19 @@ def two_orbits(r_BN, r_BN2, show_plots):
         plt.show()
     plt.close()
     return
+
+
+def plot_normalized_estimate_error_square(t, epsilon, r1, r2, show_plots, test_label):
+    plt.figure()
+    plt.plot(t, epsilon, "b.", label=r"$\epsilon=e^T P^{-1} e$")
+    plt.axhline(y=r1, color='r', linestyle='--')
+    plt.axhline(y=r2, color='r', linestyle='--')
+    plt.ylim([0, max(1.5*r2, np.mean(epsilon))])
+    plt.legend()
+    plt.xlabel("t, sec")
+    plt.ylabel("NEES")
+    plt.title("Filter Process Noise Tuning: "+test_label)
+    if show_plots:
+        plt.show()
+    plt.close()
+    return

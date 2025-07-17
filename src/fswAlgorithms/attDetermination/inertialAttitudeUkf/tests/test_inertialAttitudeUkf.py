@@ -23,6 +23,7 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import inertialAttitudeUkf
 from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from scipy.stats import chi2
 
 starOnly = inertialAttitudeUkf.AttitudeFilterMethod_StarOnly
 gyroWhenDazzled = inertialAttitudeUkf.AttitudeFilterMethod_GyroWhenDazzled
@@ -82,8 +83,8 @@ def setup_filter_data(filter_object):
                                         [0.0, 0.0, 0.0, 0.0, 0.01, 0.0],
                                         [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]])
     filter_object.setGyroNoise([[1e-6,0,0],[0.,1e-6,0],[0,0,1e-6]])
-    sigma_mrp = (1E-2) ** 2
-    sigma_rate = (1E-3) ** 2
+    sigma_mrp = (1E-3) ** 2
+    sigma_rate = (5E-4) ** 2
     filter_object.setProcessNoise([[sigma_mrp, 0.0, 0.0, 0.0, 0.0, 0.0],
                                    [0.0, sigma_mrp, 0.0, 0.0, 0.0, 0.0],
                                    [0.0, 0.0, sigma_mrp, 0.0, 0.0, 0.0],
@@ -109,8 +110,8 @@ def setup_filter_data_with_bias(filter_object):
                                         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
                                         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]])
     filter_object.setGyroNoise([[1e-6,0,0],[0.,1e-6,0],[0,0,1e-6]])
-    sigma_mrp = (1E-2) ** 2
-    sigma_rate = (1E-3) ** 2
+    sigma_mrp = (1E-3) ** 2
+    sigma_rate = (5E-4) ** 2
     sigma_bias = (1E-3) ** 2
     filter_object.setProcessNoise([[sigma_mrp, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                                    [0.0, sigma_mrp, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -122,7 +123,59 @@ def setup_filter_data_with_bias(filter_object):
                                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, sigma_bias, 0.0],
                                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, sigma_bias]])
 
-@pytest.mark.parametrize("show_plots", [False])
+
+def setup_filter_data_parameterize(filter_object, process_noise_tuning):
+    filter_object.setAlpha(0.02)
+    filter_object.setBeta(2.0)
+
+    filter_object.setInitialPosition([0.05, 0.5, 0.1])
+    filter_object.setInitialVelocity([0.02, -0.005, 0.01])
+    filter_object.setInitialCovariance([[1, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 1, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 1, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.01, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.01, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]])
+    filter_object.setGyroNoise([[1e-6,0,0],[0.,1e-6,0],[0,0,1e-6]])
+    sigma_mrp = (1E-3) ** 2
+    sigma_rate = (5E-4) ** 2
+
+    if(process_noise_tuning == "low"):
+        sigma_mrp = sigma_mrp/1000.0
+        sigma_rate = sigma_rate/1000.0
+    if(process_noise_tuning == "high"):
+        sigma_mrp = sigma_mrp*100.0
+        sigma_rate = sigma_rate*100.0
+
+    filter_object.setProcessNoise([[sigma_mrp, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, sigma_mrp, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, sigma_mrp, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, sigma_rate, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, sigma_rate, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, 0.0, sigma_rate]])
+
+
+def normalized_estimate_error_square(state_error, cov, show_plots, test_label=""):
+    """Module Unit Test"""
+    epsilon = []
+    for i in range(state_error.shape[0]):
+        s = state_error[i,1:]
+        P = cov[i, 1:].reshape(6, 6)
+        e = s.T @ np.linalg.inv(P) @ s
+        epsilon.append(e)
+    epsilon = np.array(epsilon)
+    alpha = 0.05
+    df = state_error.shape[1] - 1
+    r1 = chi2.ppf(0.5*alpha, df)
+    r2 = chi2.ppf(1-0.5*alpha, df)
+    t = state_error[:, 0]*1e-9
+    percent_in_range = np.mean((epsilon >= r1) & (epsilon <= r2)) * 100.0
+    filter_plots.plot_normalized_estimate_error_square(t, epsilon, r1, r2, show_plots, test_label)
+    if(percent_in_range < 50.0 or np.mean(epsilon) > 10.0*r2 ):
+        return False
+    return True
+
+
 def test_propagation_kf(show_plots):
     """Module Unit Test"""
     unit_task_name = "unitTask"  # arbitrary name (don't change)
@@ -250,7 +303,6 @@ def test_propagation_kf(show_plots):
     return
 
 
-@pytest.mark.parametrize("show_plots", [False])
 @pytest.mark.parametrize("initial_error", [False, True])
 @pytest.mark.parametrize("method", [starOnly, gyroWhenDazzled, allMeasurements])
 def test_measurements_ukf(show_plots, initial_error, method):
@@ -460,7 +512,6 @@ def test_measurements_ukf(show_plots, initial_error, method):
         filter_plots.post_fit_residuals(gyro_post_fit_log, np.sqrt(gyroSigma_2), 'Update Gyro PostFit', show_plots)
 
 
-@pytest.mark.parametrize("show_plots", [False])
 @pytest.mark.parametrize("initial_error", [False, True])
 @pytest.mark.parametrize("method", [starOnly, gyroWhenDazzled, allMeasurements])
 def test_measurements_ukf_with_bias(show_plots, initial_error, method):
@@ -476,7 +527,6 @@ def test_measurements_ukf_with_bias(show_plots, initial_error, method):
     test_process_rate = macros.sec2nano(step_size)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
     test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
-
     inertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(method)
     unit_test_sim.AddModelToTask(unit_task_name, inertialAttitudeFilter)
 
@@ -588,6 +638,8 @@ def test_measurements_ukf_with_bias(show_plots, initial_error, method):
                 st_1_data.valid = True
                 st_1_data.MRP_BdyInrtl = expected[i+1, 1:4] + np.random.normal(0, np.sqrt(st_sigma_2), 3)
                 st_1_msg.write(st_1_data, int(time[i+1]*1E9))
+
+
             if time[i+1]%2 == 1 and i:
                 st_2_data.timeTag = time[i+1]
                 st_2_data.valid = True
@@ -678,7 +730,210 @@ def test_measurements_ukf_with_bias(show_plots, initial_error, method):
         filter_plots.post_fit_residuals(gyro_post_fit_log, np.sqrt(gyroSigma_2), 'Update Gyro PostFit', show_plots)
 
 
+@pytest.mark.parametrize("initial_error", [False, True])
+@pytest.mark.parametrize("method", [starOnly, gyroWhenDazzled, allMeasurements])
+@pytest.mark.parametrize("process_noise_tuning", ["default", "high", "low"])
+def test_tuning_consistent(show_plots, initial_error, method, process_noise_tuning):
+    """Module Unit Test"""
+    unit_task_name = "unitTask"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
+    np.random.seed(1)
+    #   Create a sim module as an empty container
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    step_size = 1
+    test_process_rate = macros.sec2nano(step_size)  # update process rate update time
+    test_process = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+
+    intertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(method)
+    unit_test_sim.AddModelToTask(unit_task_name, intertialAttitudeFilter)
+
+    # Add test module to runtime call list
+    setup_filter_data_parameterize(intertialAttitudeFilter, process_noise_tuning)
+
+    rw_orientation_list = [
+        0.70710678118654746, -0.5, 0.5,
+        0.70710678118654746, -0.5, -0.5,
+        0.70710678118654746, 0.5, -0.5,
+        0.70710678118654746, 0.5, 0.5
+    ]
+
+    rw_inertia_list = [5, 10, 5, 10]
+
+    I = [900., 0., 0.,
+         0., 800., 0.,
+         0., 0., 600.]
+
+    vehicle_config_data = messaging.VehicleConfigMsgPayload()
+    vehicle_config_data.ISCPntB_B = I
+
+    vehicle_config = messaging.VehicleConfigMsg().write(vehicle_config_data)
+    intertialAttitudeFilter.vehicleConfigMsg.subscribeTo(vehicle_config)
+
+    rw_data_msg = messaging.RWArrayConfigMsgPayload()
+    rw_data_msg.numRW = 4
+    rw_data_msg.GsMatrix_B = rw_orientation_list
+    rw_data_msg.JsList = rw_inertia_list
+    rw_msg = messaging.RWArrayConfigMsg().write(rw_data_msg)
+    intertialAttitudeFilter.rwArrayConfigMsg.subscribeTo(rw_msg)
+
+    rw_speeds_data = messaging.RWSpeedMsgPayload()
+    for i in range(rw_data_msg.numRW):
+        rw_speeds_data.wheelSpeeds[i] = i%2*200
+    rw_speeds = messaging.RWSpeedMsg().write(rw_speeds_data)
+    intertialAttitudeFilter.rwSpeedMsg.subscribeTo(rw_speeds)
+
+    initial_condition = np.zeros(6)
+    initial_condition[:3] = np.array(intertialAttitudeFilter.getInitialPosition()).reshape(3)
+    initial_condition[3:] = np.array(intertialAttitudeFilter.getInitialVelocity()).reshape(3)
+
+    if initial_error:
+        intertialAttitudeFilter.setInitialPosition([0, 0, 0])
+        intertialAttitudeFilter.setInitialVelocity([0, 0, 0])
+
+    st_1_data = messaging.STAttMsgPayload()
+    st_1_data.MRP_BdyInrtl = initial_condition[:3]
+    st_1_data.dcm_CB = np.eye(3).flatten()
+    st_1_data.timeTag = 0
+
+    star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
+    st_1_msg = messaging.STAttMsg().write(st_1_data)
+    star_tracker1.starTrackerMsg.subscribeTo(st_1_msg)
+    star_tracker1.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
+    intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
+
+    st_2_data = messaging.STAttMsgPayload()
+    st_2_data.MRP_BdyInrtl = initial_condition[:3]
+    st_2_data.dcm_CB = np.eye(3).flatten()
+    st_2_data.timeTag = 0
+
+    star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
+    st_2_msg = messaging.STAttMsg().write(st_2_data)
+    star_tracker2.starTrackerMsg.subscribeTo(st_2_msg)
+    star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
+    intertialAttitudeFilter.addStarTrackerInput(star_tracker2)
+
+    imu_data = messaging.IMUSensorMsgPayload()
+    imu_measurement = messaging.IMUSensorMsg().write(imu_data)
+    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(imu_measurement)
+
+    filter_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
+
+    attitude_data_log = intertialAttitudeFilter.navAttitudeOutputMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, attitude_data_log)
+
+    st_residual_data_log = intertialAttitudeFilter.starTrackerResidualMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, st_residual_data_log)
+
+    gyro_residual_data_log = intertialAttitudeFilter.gyroResidualMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, gyro_residual_data_log)
+
+    sim_time = 500
+    time = np.linspace(0, sim_time, sim_time+1)
+    expected = np.zeros([len(time), 7])
+    expected[:int(len(time)/2), :] = rk4(attitude_dynamics, time[:int(len(time)/2)], initial_condition,
+                                         np.array(I).reshape([3,3]))
+    kick = np.array([0.1, 0.01, -0.5, 1E-1, 1E-2, 1E-1])
+    initial_condition = expected[int(len(time)/2) -1, 1:] + kick
+    expected[int(len(time)/2):, :] = rk4(attitude_dynamics, time[int(len(time)/2):], initial_condition,
+                                         np.array(I).reshape([3,3]))
+
+    st_sigma_2 = np.diag(intertialAttitudeFilter.getStarTrackerNoise(0)).mean()
+    gyroSigma_2 = np.diag(intertialAttitudeFilter.getGyroNoise()).mean()
+    if method == starOnly:
+        gyroSigma_2 = st_sigma_2
+
+    unit_test_sim.InitializeSimulation()
+    for i in range(len(time)-1):
+        for k in range(rw_data_msg.numRW):
+            rw_speeds_data.wheelSpeeds[k] = k%2*200
+        rw_speeds.write(rw_speeds_data, int((i+1)*1E9))
+        if (10 < i < sim_time / 4) or (sim_time / 2 < i):
+            if time[i+1]%2 == 0:
+                st_1_data.timeTag = time[i+1]
+                st_1_data.valid = True
+                st_1_data.MRP_BdyInrtl = expected[i+1, 1:4] + np.random.normal(0, np.sqrt(st_sigma_2), 3)
+                st_1_msg.write(st_1_data, int(time[i+1]*1E9))
+
+            if time[i+1]%2 == 1 and i:
+                st_2_data.timeTag = time[i+1]
+                st_2_data.valid = True
+                st_2_data.MRP_BdyInrtl = expected[i+1, 1:4] + np.random.normal(0, np.sqrt(st_sigma_2), 3)
+                st_2_msg.write(st_2_data, int(time[i+1]*1e9))
+
+        if sim_time/4 < i:
+            imu_data.numberOfValidGyroMeasurements = 1
+            imu_data.timeTag = time[i+1]
+            imu_data.AngVelPlatform = expected[i+1, 4:7] + np.random.normal(0, np.sqrt(gyroSigma_2), 3)
+            imu_measurement.write(imu_data, int(time[i+1]*1e9))
+
+        unit_test_sim.ConfigureStopTime(macros.sec2nano((time[i+1])))
+        unit_test_sim.ExecuteSimulation()
+
+    num_states = 6
+    state_data_log = add_time_column(filter_data_log.times(), filter_data_log.state[:, :num_states])
+    covariance_data_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
+
+    covariance = []
+    for i in range(num_states):
+        covariance.append([])
+        for j in range(num_states):
+            covariance[-1].append(covariance_data_log[i][1+j*(num_states+1)])
+
+    st_number_obs = st_residual_data_log.numberOfObservations
+    st_size_obs = st_residual_data_log.sizeOfObservations
+    st_post_fit_log_sparse = add_time_column(st_residual_data_log.times(), st_residual_data_log.postFits)
+    st_post_fit_log = np.zeros([len(st_residual_data_log.times()), np.max(st_size_obs)+1])
+    st_post_fit_log[:, 0] = st_post_fit_log_sparse[:, 0]
+    st_pre_fit_log_sparse = add_time_column(st_residual_data_log.times(), st_residual_data_log.preFits)
+    st_pre_fit_log = np.zeros([len(st_residual_data_log.times()), np.max(st_size_obs)+1])
+    st_pre_fit_log[:, 0] = st_pre_fit_log_sparse[:, 0]
+
+    for i in range(len(st_number_obs)):
+        if st_number_obs[i] > 0:
+            st_post_fit_log[i, 1:st_size_obs[i]+1] = st_post_fit_log_sparse[i, 1:st_size_obs[i]+1]
+            st_pre_fit_log[i, 1:st_size_obs[i]+1] = st_pre_fit_log_sparse[i, 1:st_size_obs[i]+1]
+
+    gyro_number_obs = gyro_residual_data_log.numberOfObservations
+    gyro_size_obs = gyro_residual_data_log.sizeOfObservations
+    gyro_post_fit_log_sparse = add_time_column(gyro_residual_data_log.times(), gyro_residual_data_log.postFits)
+    gyro_post_fit_log = np.zeros([len(gyro_residual_data_log.times()), np.max(gyro_size_obs)+1])
+    gyro_post_fit_log[:, 0] = gyro_post_fit_log_sparse[:, 0]
+    gyro_pre_fit_log_sparse = add_time_column(gyro_residual_data_log.times(), gyro_residual_data_log.preFits)
+    gyro_pre_fit_log = np.zeros([len(gyro_residual_data_log.times()), np.max(gyro_size_obs)+1])
+    gyro_pre_fit_log[:, 0] = gyro_pre_fit_log_sparse[:, 0]
+
+    for i in range(len(gyro_number_obs)):
+        if gyro_number_obs[i] > 0:
+            gyro_post_fit_log[i, 1:gyro_size_obs[i]+1] = gyro_post_fit_log_sparse[i, 1:gyro_size_obs[i]+1]
+            gyro_pre_fit_log[i, 1:gyro_size_obs[i]+1] = gyro_pre_fit_log_sparse[i, 1:gyro_size_obs[i]+1]
+
+    quarter_time = int(3* len(time) / 4)
+    diff = np.copy(state_data_log)
+    for i in range(sim_time+1):
+        diff[i, 1:4] = rbk.subMRP(diff[i, 1:4], expected[i, 1:4])
+        diff[i, 4:] -= expected[i, 4:]
+
+    nees_consistent = normalized_estimate_error_square(diff, covariance_data_log, show_plots,
+                                                       test_label=process_noise_tuning)
+    if(process_noise_tuning == "default"):
+        np.testing.assert_equal(nees_consistent, True)
+    else:
+        np.testing.assert_equal(nees_consistent, False)
+
+    filter_plots.state_covar(diff, covariance_data_log, 'Update', show_plots)
+    filter_plots.states(diff, 'Update', show_plots)
+    filter_plots.post_fit_residuals(st_pre_fit_log, np.sqrt(st_sigma_2), 'Update ST PreFit', show_plots)
+    filter_plots.post_fit_residuals(st_post_fit_log, np.sqrt(st_sigma_2), 'Update ST PostFit', show_plots)
+    if np.max(gyro_size_obs)>0:
+        filter_plots.post_fit_residuals(gyro_pre_fit_log, np.sqrt(gyroSigma_2), 'Update Gyro PreFit', show_plots)
+        filter_plots.post_fit_residuals(gyro_post_fit_log, np.sqrt(gyroSigma_2), 'Update Gyro PostFit', show_plots)
+
 
 if __name__ == "__main__":
     test_measurements_ukf(True, True, allMeasurements)
     test_measurements_ukf_with_bias(True, True, allMeasurements)
+    test_tuning_consistent(True, True, allMeasurements, "low")
