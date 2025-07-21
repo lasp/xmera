@@ -21,7 +21,7 @@ import math
 import os
 
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 import pytest
 import spiceypy
 from Basilisk.architecture import messaging
@@ -96,8 +96,8 @@ def test_zero_inputs(show_plots):
     posChebData = dataLog.r_BdyZero_N
     velChebData = dataLog.v_BdyZero_N
 
-    numpy.testing.assert_allclose(posChebData, 0, atol=1e-10, err_msg="position values should have been zero")
-    numpy.testing.assert_allclose(velChebData, 0, atol=1e-10, err_msg="velocity values should have been zero")
+    np.testing.assert_allclose(posChebData, 0, atol=1e-10, err_msg="position values should have been zero")
+    np.testing.assert_allclose(velChebData, 0, atol=1e-10, err_msg="velocity values should have been zero")
 
 def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     numCurvePoints = 4*8640+1
@@ -122,7 +122,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
 
     tdrssPosList = []
     tdrssVelList = []
-    timeHistory = numpy.linspace(etStart, etEnd, numCurvePoints)
+    timeHistory = np.linspace(etStart, etEnd, numCurvePoints)
     rpArray = []
     eccArray = []
     incArray = []
@@ -154,16 +154,16 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         anomArray.append(2*math.pi*anomCount + currentAnom)
         anomPrev = currentAnom
 
-    tdrssPosList = numpy.array(tdrssPosList)
-    tdrssVelList = numpy.array(tdrssVelList)
+    tdrssPosList = np.array(tdrssPosList)
+    tdrssVelList = np.array(tdrssVelList)
 
-    fitTimes = numpy.linspace(-1, 1, numCurvePoints)
-    chebRpCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, rpArray, numberOfCoefficients - 1) # np chebfit takes in the degree, not the number of coefficients
-    chebEccCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, eccArray, numberOfCoefficients - 1)
-    chebIncCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, incArray, numberOfCoefficients - 1)
-    chebOmegaCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, OmegaArray, numberOfCoefficients - 1)
-    chebomegaCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, omegaArray, numberOfCoefficients - 1)
-    chebAnomCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, anomArray, numberOfCoefficients - 1)
+    fitTimes = np.linspace(-1, 1, numCurvePoints)
+    chebRpCoeff = np.polynomial.chebyshev.chebfit(fitTimes, rpArray, numberOfCoefficients - 1) # np chebfit takes in the degree, not the number of coefficients
+    chebEccCoeff = np.polynomial.chebyshev.chebfit(fitTimes, eccArray, numberOfCoefficients - 1)
+    chebIncCoeff = np.polynomial.chebyshev.chebfit(fitTimes, incArray, numberOfCoefficients - 1)
+    chebOmegaCoeff = np.polynomial.chebyshev.chebfit(fitTimes, OmegaArray, numberOfCoefficients - 1)
+    chebomegaCoeff = np.polynomial.chebyshev.chebfit(fitTimes, omegaArray, numberOfCoefficients - 1)
+    chebAnomCoeff = np.polynomial.chebyshev.chebfit(fitTimes, anomArray, numberOfCoefficients - 1)
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -223,11 +223,11 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         secondLastPos = posChebData[lastLogidx + 1, 0:] - tdrssPosList[lastLogidx, :]
         lastPos = posChebData[lastLogidx, 0:] - tdrssPosList[lastLogidx, :]
 
-        numpy.testing.assert_array_equal(secondLastPos, lastPos, "Expected Chebychev position to rail high or low")
+        np.testing.assert_array_equal(secondLastPos, lastPos, "Expected Chebychev position to rail high or low")
 
         secondLastVel = velChebData[lastLogidx + 1, 0:] - tdrssVelList[lastLogidx, :]
         lastVel = velChebData[lastLogidx, 0:] - tdrssVelList[lastLogidx, :]
-        numpy.testing.assert_array_equal(secondLastVel, lastVel, "Expected Chebychev velocity to rail high or low")
+        np.testing.assert_array_equal(secondLastVel, lastVel, "Expected Chebychev velocity to rail high or low")
 
     else:
         maxErrVec = [abs(max(posChebData[:, 0] - tdrssPosList[:, 0])),
@@ -237,8 +237,8 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
                         abs(max(velChebData[:, 1] - tdrssVelList[:, 1])),
                         abs(max(velChebData[:, 2] - tdrssVelList[:, 2]))]
 
-        numpy.testing.assert_array_less(max(maxErrVec), orbitPosAccuracy, "maxErrVec >= orbitPosAccuracy")
-        numpy.testing.assert_array_less(max(maxVelErrVec), orbitVelAccuracy, "maxVelErrVec >= orbitVelAccuracy")
+        np.testing.assert_array_less(max(maxErrVec), orbitPosAccuracy, "maxErrVec >= orbitPosAccuracy")
+        np.testing.assert_array_less(max(maxVelErrVec), orbitVelAccuracy, "maxVelErrVec >= orbitVelAccuracy")
 
         plt.close("all")
         # plot the fitted and actual position coordinates
@@ -288,11 +288,11 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
                      linewidth=0.5,
                      label=r'$\Delta r_{' + str(idx) + '}$')
         plt.plot(dataLog.times() * macros.NANO2HOUR,
-                 orbitPosAccuracy*numpy.ones(arrayLength),
+                 orbitPosAccuracy*np.ones(arrayLength),
                  color='r',
                  linewidth=1)
         plt.plot(dataLog.times() * macros.NANO2HOUR,
-                 -orbitPosAccuracy * numpy.ones(arrayLength),
+                 -orbitPosAccuracy * np.ones(arrayLength),
                  color='r',
                  linewidth=1)
         plt.legend(loc='lower right')
@@ -309,11 +309,11 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
                      linewidth=0.5,
                      label=r'$\Delta v_{' + str(idx) + '}$')
         plt.plot(dataLog.times() * macros.NANO2HOUR,
-                 orbitVelAccuracy*numpy.ones(arrayLength),
+                 orbitVelAccuracy*np.ones(arrayLength),
                  color='r',
                  linewidth=1)
         plt.plot(dataLog.times() * macros.NANO2HOUR,
-                 -orbitVelAccuracy * numpy.ones(arrayLength),
+                 -orbitVelAccuracy * np.ones(arrayLength),
                  color='r',
                  linewidth=1)
         plt.legend(loc='lower right')
