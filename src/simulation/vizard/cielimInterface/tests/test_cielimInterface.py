@@ -79,9 +79,12 @@ def read_write_test():
 
     # Create asteroid parameter message
     asteroid_parameter_payload = messaging.CelestialBodyParametersMsgPayload()
-    asteroid_parameter_payload.bodyName = "itokawa"
-    asteroid_parameter_payload.shapeModel = "itokawa_normalized"
-    asteroid_parameter_payload.perlinNoise = 0.5
+    asteroid_parameter_payload.bodyName = "bennu"
+    asteroid_parameter_payload.shapeModel = "bennu_normalized"
+    asteroid_parameter_payload.perlinNoiseOctaveCount = 3
+    asteroid_parameter_payload.perlinNoiseBaseFrequency = 0.01
+    asteroid_parameter_payload.perlinNoiseBaseAmplitude = 10.
+    asteroid_parameter_payload.perlinNoisePersistence = 0.4
     asteroid_parameter_payload.proceduralRocks = 1.5
     asteroid_parameter_payload.brdf = "Lambertian"
     asteroid_parameter_payload.reflectanceParameters = [0.5]
@@ -208,7 +211,10 @@ def read_write_test():
         np.testing.assert_equal(cielim_message.celestialBodies[i].centralBody, central)
         if (name == asteroid_parameter_payload.bodyName):
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.shapeModel, asteroid_parameter_payload.shapeModel)
-            np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoiseStdDeviation, asteroid_parameter_payload.perlinNoise)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.octaveCount, asteroid_parameter_payload.perlinNoiseOctaveCount)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.baseFrequency, asteroid_parameter_payload.perlinNoiseBaseFrequency)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.baseAmplitude, asteroid_parameter_payload.perlinNoiseBaseAmplitude)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.persistence, asteroid_parameter_payload.perlinNoisePersistence)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.proceduralRocks, asteroid_parameter_payload.proceduralRocks)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.brdfModel, asteroid_parameter_payload.brdf)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.reflectanceParameters, asteroid_parameter_payload.reflectanceParameters)

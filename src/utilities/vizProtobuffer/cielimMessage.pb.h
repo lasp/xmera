@@ -44,7 +44,7 @@ struct TableStruct_cielimMessage_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -66,6 +66,9 @@ extern EpochDateTimeDefaultTypeInternal _EpochDateTime_default_instance_;
 class MeshModel;
 struct MeshModelDefaultTypeInternal;
 extern MeshModelDefaultTypeInternal _MeshModel_default_instance_;
+class PerlinNoise;
+struct PerlinNoiseDefaultTypeInternal;
+extern PerlinNoiseDefaultTypeInternal _PerlinNoise_default_instance_;
 class RenderingModel;
 struct RenderingModelDefaultTypeInternal;
 extern RenderingModelDefaultTypeInternal _RenderingModel_default_instance_;
@@ -82,6 +85,7 @@ template<> ::cielimMessage::CelestialBody* Arena::CreateMaybeMessage<::cielimMes
 template<> ::cielimMessage::CielimMessage* Arena::CreateMaybeMessage<::cielimMessage::CielimMessage>(Arena*);
 template<> ::cielimMessage::EpochDateTime* Arena::CreateMaybeMessage<::cielimMessage::EpochDateTime>(Arena*);
 template<> ::cielimMessage::MeshModel* Arena::CreateMaybeMessage<::cielimMessage::MeshModel>(Arena*);
+template<> ::cielimMessage::PerlinNoise* Arena::CreateMaybeMessage<::cielimMessage::PerlinNoise>(Arena*);
 template<> ::cielimMessage::RenderingModel* Arena::CreateMaybeMessage<::cielimMessage::RenderingModel>(Arena*);
 template<> ::cielimMessage::Spacecraft* Arena::CreateMaybeMessage<::cielimMessage::Spacecraft>(Arena*);
 template<> ::cielimMessage::TimeStamp* Arena::CreateMaybeMessage<::cielimMessage::TimeStamp>(Arena*);
@@ -412,6 +416,167 @@ class EpochDateTime final :
 };
 // -------------------------------------------------------------------
 
+class PerlinNoise final :
+    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.PerlinNoise) */ {
+ public:
+  inline PerlinNoise() : PerlinNoise(nullptr) {}
+  ~PerlinNoise() override;
+  explicit constexpr PerlinNoise(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  PerlinNoise(const PerlinNoise& from);
+  PerlinNoise(PerlinNoise&& from) noexcept
+    : PerlinNoise() {
+    *this = ::std::move(from);
+  }
+
+  inline PerlinNoise& operator=(const PerlinNoise& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PerlinNoise& operator=(PerlinNoise&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const PerlinNoise& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const PerlinNoise* internal_default_instance() {
+    return reinterpret_cast<const PerlinNoise*>(
+               &_PerlinNoise_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(PerlinNoise& a, PerlinNoise& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(PerlinNoise* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(PerlinNoise* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline PerlinNoise* New() const final {
+    return new PerlinNoise();
+  }
+
+  PerlinNoise* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<PerlinNoise>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
+  void CopyFrom(const PerlinNoise& from);
+  void MergeFrom(const PerlinNoise& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(PerlinNoise* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "cielimMessage.PerlinNoise";
+  }
+  protected:
+  explicit PerlinNoise(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kBaseFrequencyFieldNumber = 2,
+    kBaseAmplitudeFieldNumber = 3,
+    kPersistenceFieldNumber = 4,
+    kOctaveCountFieldNumber = 1,
+  };
+  // double baseFrequency = 2;
+  void clear_basefrequency();
+  double basefrequency() const;
+  void set_basefrequency(double value);
+  private:
+  double _internal_basefrequency() const;
+  void _internal_set_basefrequency(double value);
+  public:
+
+  // double baseAmplitude = 3;
+  void clear_baseamplitude();
+  double baseamplitude() const;
+  void set_baseamplitude(double value);
+  private:
+  double _internal_baseamplitude() const;
+  void _internal_set_baseamplitude(double value);
+  public:
+
+  // double persistence = 4;
+  void clear_persistence();
+  double persistence() const;
+  void set_persistence(double value);
+  private:
+  double _internal_persistence() const;
+  void _internal_set_persistence(double value);
+  public:
+
+  // int32 octaveCount = 1;
+  void clear_octavecount();
+  ::PROTOBUF_NAMESPACE_ID::int32 octavecount() const;
+  void set_octavecount(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_octavecount() const;
+  void _internal_set_octavecount(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:cielimMessage.PerlinNoise)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  double basefrequency_;
+  double baseamplitude_;
+  double persistence_;
+  ::PROTOBUF_NAMESPACE_ID::int32 octavecount_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_cielimMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
 class MeshModel final :
     public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.MeshModel) */ {
  public:
@@ -451,7 +616,7 @@ class MeshModel final :
                &_MeshModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(MeshModel& a, MeshModel& b) {
     a.Swap(&b);
@@ -521,7 +686,7 @@ class MeshModel final :
     kInertialToBodyMrpFieldNumber = 8,
     kShapeModelFieldNumber = 1,
     kBrdfModelFieldNumber = 4,
-    kPerlinNoiseStdDeviationFieldNumber = 2,
+    kPerlinNoiseFieldNumber = 2,
     kProceduralRocksFieldNumber = 3,
     kMeanRadiusFieldNumber = 6,
   };
@@ -619,14 +784,23 @@ class MeshModel final :
   std::string* _internal_mutable_brdfmodel();
   public:
 
-  // double perlinNoiseStdDeviation = 2;
-  void clear_perlinnoisestddeviation();
-  double perlinnoisestddeviation() const;
-  void set_perlinnoisestddeviation(double value);
+  // .cielimMessage.PerlinNoise perlinNoise = 2;
+  bool has_perlinnoise() const;
   private:
-  double _internal_perlinnoisestddeviation() const;
-  void _internal_set_perlinnoisestddeviation(double value);
+  bool _internal_has_perlinnoise() const;
   public:
+  void clear_perlinnoise();
+  const ::cielimMessage::PerlinNoise& perlinnoise() const;
+  PROTOBUF_MUST_USE_RESULT ::cielimMessage::PerlinNoise* release_perlinnoise();
+  ::cielimMessage::PerlinNoise* mutable_perlinnoise();
+  void set_allocated_perlinnoise(::cielimMessage::PerlinNoise* perlinnoise);
+  private:
+  const ::cielimMessage::PerlinNoise& _internal_perlinnoise() const;
+  ::cielimMessage::PerlinNoise* _internal_mutable_perlinnoise();
+  public:
+  void unsafe_arena_set_allocated_perlinnoise(
+      ::cielimMessage::PerlinNoise* perlinnoise);
+  ::cielimMessage::PerlinNoise* unsafe_arena_release_perlinnoise();
 
   // double proceduralRocks = 3;
   void clear_proceduralrocks();
@@ -658,7 +832,7 @@ class MeshModel final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > inertialtobodymrp_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr shapemodel_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr brdfmodel_;
-  double perlinnoisestddeviation_;
+  ::cielimMessage::PerlinNoise* perlinnoise_;
   double proceduralrocks_;
   double meanradius_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -705,7 +879,7 @@ class CelestialBody final :
                &_CelestialBody_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(CelestialBody& a, CelestialBody& b) {
     a.Swap(&b);
@@ -941,7 +1115,7 @@ class Spacecraft final :
                &_Spacecraft_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(Spacecraft& a, Spacecraft& b) {
     a.Swap(&b);
@@ -1146,7 +1320,7 @@ class RenderingModel final :
                &_RenderingModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(RenderingModel& a, RenderingModel& b) {
     a.Swap(&b);
@@ -1323,7 +1497,7 @@ class CameraModel final :
                &_CameraModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(CameraModel& a, CameraModel& b) {
     a.Swap(&b);
@@ -1650,7 +1824,7 @@ class CielimMessage final :
                &_CielimMessage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(CielimMessage& a, CielimMessage& b) {
     a.Swap(&b);
@@ -2003,6 +2177,90 @@ inline void EpochDateTime::set_seconds(double value) {
 
 // -------------------------------------------------------------------
 
+// PerlinNoise
+
+// int32 octaveCount = 1;
+inline void PerlinNoise::clear_octavecount() {
+  octavecount_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PerlinNoise::_internal_octavecount() const {
+  return octavecount_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PerlinNoise::octavecount() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.PerlinNoise.octaveCount)
+  return _internal_octavecount();
+}
+inline void PerlinNoise::_internal_set_octavecount(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  octavecount_ = value;
+}
+inline void PerlinNoise::set_octavecount(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_octavecount(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.PerlinNoise.octaveCount)
+}
+
+// double baseFrequency = 2;
+inline void PerlinNoise::clear_basefrequency() {
+  basefrequency_ = 0;
+}
+inline double PerlinNoise::_internal_basefrequency() const {
+  return basefrequency_;
+}
+inline double PerlinNoise::basefrequency() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.PerlinNoise.baseFrequency)
+  return _internal_basefrequency();
+}
+inline void PerlinNoise::_internal_set_basefrequency(double value) {
+  
+  basefrequency_ = value;
+}
+inline void PerlinNoise::set_basefrequency(double value) {
+  _internal_set_basefrequency(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.PerlinNoise.baseFrequency)
+}
+
+// double baseAmplitude = 3;
+inline void PerlinNoise::clear_baseamplitude() {
+  baseamplitude_ = 0;
+}
+inline double PerlinNoise::_internal_baseamplitude() const {
+  return baseamplitude_;
+}
+inline double PerlinNoise::baseamplitude() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.PerlinNoise.baseAmplitude)
+  return _internal_baseamplitude();
+}
+inline void PerlinNoise::_internal_set_baseamplitude(double value) {
+  
+  baseamplitude_ = value;
+}
+inline void PerlinNoise::set_baseamplitude(double value) {
+  _internal_set_baseamplitude(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.PerlinNoise.baseAmplitude)
+}
+
+// double persistence = 4;
+inline void PerlinNoise::clear_persistence() {
+  persistence_ = 0;
+}
+inline double PerlinNoise::_internal_persistence() const {
+  return persistence_;
+}
+inline double PerlinNoise::persistence() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.PerlinNoise.persistence)
+  return _internal_persistence();
+}
+inline void PerlinNoise::_internal_set_persistence(double value) {
+  
+  persistence_ = value;
+}
+inline void PerlinNoise::set_persistence(double value) {
+  _internal_set_persistence(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.PerlinNoise.persistence)
+}
+
+// -------------------------------------------------------------------
+
 // MeshModel
 
 // string shapeModel = 1;
@@ -2051,24 +2309,94 @@ inline void MeshModel::set_allocated_shapemodel(std::string* shapemodel) {
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.shapeModel)
 }
 
-// double perlinNoiseStdDeviation = 2;
-inline void MeshModel::clear_perlinnoisestddeviation() {
-  perlinnoisestddeviation_ = 0;
+// .cielimMessage.PerlinNoise perlinNoise = 2;
+inline bool MeshModel::_internal_has_perlinnoise() const {
+  return this != internal_default_instance() && perlinnoise_ != nullptr;
 }
-inline double MeshModel::_internal_perlinnoisestddeviation() const {
-  return perlinnoisestddeviation_;
+inline bool MeshModel::has_perlinnoise() const {
+  return _internal_has_perlinnoise();
 }
-inline double MeshModel::perlinnoisestddeviation() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.perlinNoiseStdDeviation)
-  return _internal_perlinnoisestddeviation();
+inline void MeshModel::clear_perlinnoise() {
+  if (GetArenaForAllocation() == nullptr && perlinnoise_ != nullptr) {
+    delete perlinnoise_;
+  }
+  perlinnoise_ = nullptr;
 }
-inline void MeshModel::_internal_set_perlinnoisestddeviation(double value) {
+inline const ::cielimMessage::PerlinNoise& MeshModel::_internal_perlinnoise() const {
+  const ::cielimMessage::PerlinNoise* p = perlinnoise_;
+  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::PerlinNoise&>(
+      ::cielimMessage::_PerlinNoise_default_instance_);
+}
+inline const ::cielimMessage::PerlinNoise& MeshModel::perlinnoise() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.perlinNoise)
+  return _internal_perlinnoise();
+}
+inline void MeshModel::unsafe_arena_set_allocated_perlinnoise(
+    ::cielimMessage::PerlinNoise* perlinnoise) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(perlinnoise_);
+  }
+  perlinnoise_ = perlinnoise;
+  if (perlinnoise) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.MeshModel.perlinNoise)
+}
+inline ::cielimMessage::PerlinNoise* MeshModel::release_perlinnoise() {
   
-  perlinnoisestddeviation_ = value;
+  ::cielimMessage::PerlinNoise* temp = perlinnoise_;
+  perlinnoise_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
 }
-inline void MeshModel::set_perlinnoisestddeviation(double value) {
-  _internal_set_perlinnoisestddeviation(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.perlinNoiseStdDeviation)
+inline ::cielimMessage::PerlinNoise* MeshModel::unsafe_arena_release_perlinnoise() {
+  // @@protoc_insertion_point(field_release:cielimMessage.MeshModel.perlinNoise)
+  
+  ::cielimMessage::PerlinNoise* temp = perlinnoise_;
+  perlinnoise_ = nullptr;
+  return temp;
+}
+inline ::cielimMessage::PerlinNoise* MeshModel::_internal_mutable_perlinnoise() {
+  
+  if (perlinnoise_ == nullptr) {
+    auto* p = CreateMaybeMessage<::cielimMessage::PerlinNoise>(GetArenaForAllocation());
+    perlinnoise_ = p;
+  }
+  return perlinnoise_;
+}
+inline ::cielimMessage::PerlinNoise* MeshModel::mutable_perlinnoise() {
+  ::cielimMessage::PerlinNoise* _msg = _internal_mutable_perlinnoise();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.MeshModel.perlinNoise)
+  return _msg;
+}
+inline void MeshModel::set_allocated_perlinnoise(::cielimMessage::PerlinNoise* perlinnoise) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete perlinnoise_;
+  }
+  if (perlinnoise) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::PerlinNoise>::GetOwningArena(perlinnoise);
+    if (message_arena != submessage_arena) {
+      perlinnoise = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, perlinnoise, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  perlinnoise_ = perlinnoise;
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.perlinNoise)
 }
 
 // double proceduralRocks = 3;
@@ -3795,6 +4123,8 @@ inline void CielimMessage::set_allocated_camera(::cielimMessage::CameraModel* ca
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

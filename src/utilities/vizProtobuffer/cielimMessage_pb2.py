@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'H\003',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13\x63ielimMessage.proto\x12\rcielimMessage\"8\n\tTimeStamp\x12\x13\n\x0b\x66rameNumber\x18\x01 \x01(\x03\x12\x16\n\x0esimTimeElapsed\x18\x02 \x01(\x01\"j\n\rEpochDateTime\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\x05\x12\r\n\x05hours\x18\x04 \x01(\x05\x12\x0f\n\x07minutes\x18\x05 \x01(\x05\x12\x0f\n\x07seconds\x18\x06 \x01(\x01\"\xdb\x01\n\tMeshModel\x12\x12\n\nshapeModel\x18\x01 \x01(\t\x12\x1f\n\x17perlinNoiseStdDeviation\x18\x02 \x01(\x01\x12\x17\n\x0fproceduralRocks\x18\x03 \x01(\x01\x12\x11\n\tbrdfModel\x18\x04 \x01(\t\x12\x1d\n\x15reflectanceParameters\x18\x05 \x03(\x01\x12\x12\n\nmeanRadius\x18\x06 \x01(\x01\x12\x1f\n\x17principalAxisDistortion\x18\x07 \x03(\x01\x12\x19\n\x11inertialToBodyMrp\x18\x08 \x03(\x01\"\x95\x01\n\rCelestialBody\x12\x10\n\x08\x62odyName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\x12\x13\n\x0b\x63\x65ntralBody\x18\x05 \x01(\x08\x12\'\n\x05model\x18\x06 \x01(\x0b\x32\x18.cielimMessage.MeshModel\"Z\n\nSpacecraft\x12\x16\n\x0espacecraftName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\"~\n\x0eRenderingModel\x12\x1d\n\x15\x63osmicRayStdDeviation\x18\x01 \x01(\x01\x12\x12\n\nstrayLight\x18\x02 \x01(\x01\x12\x11\n\tstarField\x18\x03 \x01(\x08\x12\x11\n\trendering\x18\x04 \x01(\t\x12\x13\n\x0b\x65nableSmear\x18\x05 \x01(\x08\"\xd4\x02\n\x0b\x43\x61meraModel\x12\x10\n\x08\x63\x61meraId\x18\x01 \x01(\x03\x12\x12\n\nparentName\x18\x02 \x01(\t\x12\x13\n\x0b\x66ieldOfView\x18\x03 \x03(\x01\x12\x12\n\nresolution\x18\x04 \x03(\x03\x12\x1c\n\x14\x63\x61meraPositionInBody\x18\x05 \x03(\x01\x12\x1c\n\x14\x62odyFrameToCameraMrp\x18\x06 \x03(\x01\x12\x12\n\nrenderRate\x18\x07 \x01(\x04\x12\x13\n\x0b\x66ocalLength\x18\x08 \x01(\x01\x12\x14\n\x0c\x65xposureTime\x18\t \x01(\x01\x12\x1b\n\x13pointSpreadFunction\x18\n \x01(\x01\x12\x11\n\treadNoise\x18\x0b \x01(\x01\x12\x12\n\nsystemGain\x18\x0c \x01(\x01\x12\x37\n\x10renderParameters\x18\r \x01(\x0b\x32\x1d.cielimMessage.RenderingModel\"\xfd\x01\n\rCielimMessage\x12+\n\x05\x65poch\x18\x01 \x01(\x0b\x32\x1c.cielimMessage.EpochDateTime\x12-\n\x0b\x63urrentTime\x18\x02 \x01(\x0b\x32\x18.cielimMessage.TimeStamp\x12\x35\n\x0f\x63\x65lestialBodies\x18\x03 \x03(\x0b\x32\x1c.cielimMessage.CelestialBody\x12-\n\nspacecraft\x18\x04 \x01(\x0b\x32\x19.cielimMessage.Spacecraft\x12*\n\x06\x63\x61mera\x18\x05 \x01(\x0b\x32\x1a.cielimMessage.CameraModelB\x02H\x03\x62\x06proto3'
+  serialized_pb=b'\n\x13\x63ielimMessage.proto\x12\rcielimMessage\"8\n\tTimeStamp\x12\x13\n\x0b\x66rameNumber\x18\x01 \x01(\x03\x12\x16\n\x0esimTimeElapsed\x18\x02 \x01(\x01\"j\n\rEpochDateTime\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\x05\x12\r\n\x05hours\x18\x04 \x01(\x05\x12\x0f\n\x07minutes\x18\x05 \x01(\x05\x12\x0f\n\x07seconds\x18\x06 \x01(\x01\"e\n\x0bPerlinNoise\x12\x13\n\x0boctaveCount\x18\x01 \x01(\x05\x12\x15\n\rbaseFrequency\x18\x02 \x01(\x01\x12\x15\n\rbaseAmplitude\x18\x03 \x01(\x01\x12\x13\n\x0bpersistence\x18\x04 \x01(\x01\"\xeb\x01\n\tMeshModel\x12\x12\n\nshapeModel\x18\x01 \x01(\t\x12/\n\x0bperlinNoise\x18\x02 \x01(\x0b\x32\x1a.cielimMessage.PerlinNoise\x12\x17\n\x0fproceduralRocks\x18\x03 \x01(\x01\x12\x11\n\tbrdfModel\x18\x04 \x01(\t\x12\x1d\n\x15reflectanceParameters\x18\x05 \x03(\x01\x12\x12\n\nmeanRadius\x18\x06 \x01(\x01\x12\x1f\n\x17principalAxisDistortion\x18\x07 \x03(\x01\x12\x19\n\x11inertialToBodyMrp\x18\x08 \x03(\x01\"\x95\x01\n\rCelestialBody\x12\x10\n\x08\x62odyName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\x12\x13\n\x0b\x63\x65ntralBody\x18\x05 \x01(\x08\x12\'\n\x05model\x18\x06 \x01(\x0b\x32\x18.cielimMessage.MeshModel\"Z\n\nSpacecraft\x12\x16\n\x0espacecraftName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\"~\n\x0eRenderingModel\x12\x1d\n\x15\x63osmicRayStdDeviation\x18\x01 \x01(\x01\x12\x12\n\nstrayLight\x18\x02 \x01(\x01\x12\x11\n\tstarField\x18\x03 \x01(\x08\x12\x11\n\trendering\x18\x04 \x01(\t\x12\x13\n\x0b\x65nableSmear\x18\x05 \x01(\x08\"\xd4\x02\n\x0b\x43\x61meraModel\x12\x10\n\x08\x63\x61meraId\x18\x01 \x01(\x03\x12\x12\n\nparentName\x18\x02 \x01(\t\x12\x13\n\x0b\x66ieldOfView\x18\x03 \x03(\x01\x12\x12\n\nresolution\x18\x04 \x03(\x03\x12\x1c\n\x14\x63\x61meraPositionInBody\x18\x05 \x03(\x01\x12\x1c\n\x14\x62odyFrameToCameraMrp\x18\x06 \x03(\x01\x12\x12\n\nrenderRate\x18\x07 \x01(\x04\x12\x13\n\x0b\x66ocalLength\x18\x08 \x01(\x01\x12\x14\n\x0c\x65xposureTime\x18\t \x01(\x01\x12\x1b\n\x13pointSpreadFunction\x18\n \x01(\x01\x12\x11\n\treadNoise\x18\x0b \x01(\x01\x12\x12\n\nsystemGain\x18\x0c \x01(\x01\x12\x37\n\x10renderParameters\x18\r \x01(\x0b\x32\x1d.cielimMessage.RenderingModel\"\xfd\x01\n\rCielimMessage\x12+\n\x05\x65poch\x18\x01 \x01(\x0b\x32\x1c.cielimMessage.EpochDateTime\x12-\n\x0b\x63urrentTime\x18\x02 \x01(\x0b\x32\x18.cielimMessage.TimeStamp\x12\x35\n\x0f\x63\x65lestialBodies\x18\x03 \x03(\x0b\x32\x1c.cielimMessage.CelestialBody\x12-\n\nspacecraft\x18\x04 \x01(\x0b\x32\x19.cielimMessage.Spacecraft\x12*\n\x06\x63\x61mera\x18\x05 \x01(\x0b\x32\x1a.cielimMessage.CameraModelB\x02H\x03\x62\x06proto3'
 )
 
 
@@ -131,6 +131,59 @@ _EPOCHDATETIME = _descriptor.Descriptor(
 )
 
 
+_PERLINNOISE = _descriptor.Descriptor(
+  name='PerlinNoise',
+  full_name='cielimMessage.PerlinNoise',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='octaveCount', full_name='cielimMessage.PerlinNoise.octaveCount', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='baseFrequency', full_name='cielimMessage.PerlinNoise.baseFrequency', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='baseAmplitude', full_name='cielimMessage.PerlinNoise.baseAmplitude', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='persistence', full_name='cielimMessage.PerlinNoise.persistence', index=3,
+      number=4, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=204,
+  serialized_end=305,
+)
+
+
 _MESHMODEL = _descriptor.Descriptor(
   name='MeshModel',
   full_name='cielimMessage.MeshModel',
@@ -147,9 +200,9 @@ _MESHMODEL = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='perlinNoiseStdDeviation', full_name='cielimMessage.MeshModel.perlinNoiseStdDeviation', index=1,
-      number=2, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
+      name='perlinNoise', full_name='cielimMessage.MeshModel.perlinNoise', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -207,8 +260,8 @@ _MESHMODEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=205,
-  serialized_end=424,
+  serialized_start=308,
+  serialized_end=543,
 )
 
 
@@ -274,8 +327,8 @@ _CELESTIALBODY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=427,
-  serialized_end=576,
+  serialized_start=546,
+  serialized_end=695,
 )
 
 
@@ -327,8 +380,8 @@ _SPACECRAFT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=578,
-  serialized_end=668,
+  serialized_start=697,
+  serialized_end=787,
 )
 
 
@@ -387,8 +440,8 @@ _RENDERINGMODEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=670,
-  serialized_end=796,
+  serialized_start=789,
+  serialized_end=915,
 )
 
 
@@ -503,8 +556,8 @@ _CAMERAMODEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=799,
-  serialized_end=1139,
+  serialized_start=918,
+  serialized_end=1258,
 )
 
 
@@ -563,10 +616,11 @@ _CIELIMMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1142,
-  serialized_end=1395,
+  serialized_start=1261,
+  serialized_end=1514,
 )
 
+_MESHMODEL.fields_by_name['perlinNoise'].message_type = _PERLINNOISE
 _CELESTIALBODY.fields_by_name['model'].message_type = _MESHMODEL
 _CAMERAMODEL.fields_by_name['renderParameters'].message_type = _RENDERINGMODEL
 _CIELIMMESSAGE.fields_by_name['epoch'].message_type = _EPOCHDATETIME
@@ -576,6 +630,7 @@ _CIELIMMESSAGE.fields_by_name['spacecraft'].message_type = _SPACECRAFT
 _CIELIMMESSAGE.fields_by_name['camera'].message_type = _CAMERAMODEL
 DESCRIPTOR.message_types_by_name['TimeStamp'] = _TIMESTAMP
 DESCRIPTOR.message_types_by_name['EpochDateTime'] = _EPOCHDATETIME
+DESCRIPTOR.message_types_by_name['PerlinNoise'] = _PERLINNOISE
 DESCRIPTOR.message_types_by_name['MeshModel'] = _MESHMODEL
 DESCRIPTOR.message_types_by_name['CelestialBody'] = _CELESTIALBODY
 DESCRIPTOR.message_types_by_name['Spacecraft'] = _SPACECRAFT
@@ -597,6 +652,13 @@ EpochDateTime = _reflection.GeneratedProtocolMessageType('EpochDateTime', (_mess
   # @@protoc_insertion_point(class_scope:cielimMessage.EpochDateTime)
   })
 _sym_db.RegisterMessage(EpochDateTime)
+
+PerlinNoise = _reflection.GeneratedProtocolMessageType('PerlinNoise', (_message.Message,), {
+  'DESCRIPTOR' : _PERLINNOISE,
+  '__module__' : 'cielimMessage_pb2'
+  # @@protoc_insertion_point(class_scope:cielimMessage.PerlinNoise)
+  })
+_sym_db.RegisterMessage(PerlinNoise)
 
 MeshModel = _reflection.GeneratedProtocolMessageType('MeshModel', (_message.Message,), {
   'DESCRIPTOR' : _MESHMODEL,
