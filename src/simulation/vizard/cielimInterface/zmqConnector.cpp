@@ -75,10 +75,10 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
     auto imageMessage = zmq::message_t();
     auto centerOfBrightnessX = zmq::message_t();
     auto centerOfBrightnessY = zmq::message_t();
-    auto cobYMsgSize = this->requesterSocket->recv(centerOfBrightnessY, zmq::recv_flags::none);
-    auto cobXMsgSize = this->requesterSocket->recv(centerOfBrightnessX, zmq::recv_flags::none);
-    static_cast<void>(this->requesterSocket->recv(imageLengthMessage, zmq::recv_flags::none));
     static_cast<void>(this->requesterSocket->recv(imageMessage, zmq::recv_flags::none));
+    static_cast<void>(this->requesterSocket->recv(imageLengthMessage, zmq::recv_flags::none));
+    auto cobXMsgSize = this->requesterSocket->recv(centerOfBrightnessX, zmq::recv_flags::none);
+    auto cobYMsgSize = this->requesterSocket->recv(centerOfBrightnessY, zmq::recv_flags::none);
 
     const int32_t *lengthPoint = imageLengthMessage.data<int32_t>();
     const void *imagePoint = imageMessage.data();
