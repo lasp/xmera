@@ -45,15 +45,10 @@ void ZmqConnector::send(const cielimMessage::CielimMessage &message) {
     void *serialized_message = malloc(byteCount);
     message.SerializeToArray(serialized_message, (int)byteCount);
     auto payload = zmq::message_t(serialized_message, byteCount, ZmqConnector::message_buffer_deallocate, nullptr);
-
-    auto emptyMsg = zmq::message_t(0);
-
+    
     this->requesterSocket->send(zmq::message_t("SIM_UPDATE", 10), zmq::send_flags::sndmore);
-    this->requesterSocket->send(emptyMsg, zmq::send_flags::sndmore);
-    this->requesterSocket->send(emptyMsg, zmq::send_flags::sndmore);
     this->requesterSocket->send(payload, zmq::send_flags::none);
 
-    // Receive pong
     auto pong = zmq::message_t();
     // SAFETY: it's okay to discard this [[nodiscard]] value because
     //   1) the returned optional could only be empty if ZeroMQ fails due to EAGAIN on a non-blocking socket;
