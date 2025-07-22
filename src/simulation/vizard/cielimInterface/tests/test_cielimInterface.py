@@ -138,15 +138,15 @@ def read_write_test():
     grav_bodies.append(sun)
     bodies_message_list.append(sun_data)
 
-    asteroid_b612 = GravBodies()
-    asteroid_b612.planetName = "asteroid_b612"
-    asteroid_b612.isCentralBody = True
+    asteroid_bennu = GravBodies()
+    asteroid_bennu.planetName = "bennu"
+    asteroid_bennu.isCentralBody = True
     asteroid_data = messaging.SpicePlanetStateMsgPayload()
     asteroid_data.PositionVector = [0,0,0]
     asteroid_data.VelocityVector = [4, 5, 6]
     asteroid_data.J20002Pfix = -np.eye(3)
-    asteroid_b612.planetBodyInMsg = messaging.SpicePlanetStateMsg().write(asteroid_data)
-    grav_bodies.append(asteroid_b612)
+    asteroid_bennu.planetBodyInMsg = messaging.SpicePlanetStateMsg().write(asteroid_data)
+    grav_bodies.append(asteroid_bennu)
     bodies_message_list.append(asteroid_data)
 
     for gravBody in grav_bodies:
