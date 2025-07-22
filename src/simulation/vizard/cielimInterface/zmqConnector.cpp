@@ -29,7 +29,7 @@ void ZmqConnector::connect() {
         this->requesterSocket->connect(this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber);
     }
     this->ping();
-    this->ping();
+    this->init();
 }
 
 bool ZmqConnector::isConnected() const {
@@ -102,6 +102,16 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
 
 void ZmqConnector::ping() {
     this->requesterSocket->send(zmq::message_t("PING", 4), zmq::send_flags::none);
+    auto message = zmq::message_t();
+    // SAFETY: it's okay to discard this [[nodiscard]] value because
+    //   1) the returned optional could only be empty if ZeroMQ fails due to EAGAIN on a non-blocking socket;
+    //      but our socket is not non-blocking
+    //   2) the returned length in the (present) optional is recoverable from `pong.size()`.
+    static_cast<void>(this->requesterSocket->recv(message, zmq::recv_flags::none));
+}
+
+void ZmqConnector::init() {
+    this->requesterSocket->send(zmq::message_t("INIT_SCENE", 10), zmq::send_flags::none);
     auto message = zmq::message_t();
     // SAFETY: it's okay to discard this [[nodiscard]] value because
     //   1) the returned optional could only be empty if ZeroMQ fails due to EAGAIN on a non-blocking socket;

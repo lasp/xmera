@@ -42,6 +42,7 @@ public:
     ImageData requestImage(size_t cameraId, bool shoudReturnImage=true);
     void setComPortNumber(std::string &portNumber);
     void ping();
+    void init();
 
 
 private:
