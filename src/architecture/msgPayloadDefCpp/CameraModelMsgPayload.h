@@ -37,6 +37,7 @@ typedef struct {
     double exposureTime;  //!< [s] Exposure time for each image taken
     double readNoise;  //!< Read noise standard deviation
     double systemGain;  //!< Mapping from current to pixel intensity
+    double gammaCorrection;  //!< Gamma correction factor for improved mid-tones
 }CameraModelMsgPayload;
 
 #endif
