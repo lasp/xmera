@@ -170,6 +170,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     module.setReadNoise(2.3)
     module.setSystemGain(3.3)
     module.setExposureTime(1.1)
+    module.setGammaCorrection(1.1)
 
     # Noise parameters
     module.gaussian = gauss
@@ -233,6 +234,8 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
                             "System failed mapping from current to pixel intensity")
     np.testing.assert_equal(dataLogCameraModel.exposureTime, module.getExposureTime(),
                             "System failed exposure time")
+    np.testing.assert_equal(dataLogCameraModel.gammaCorrection, module.getGammaCorrection(),
+                            "System failed gamma correction")
 
     #  Error check for corruption
     err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)) / np.linalg.norm(

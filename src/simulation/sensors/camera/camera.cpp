@@ -343,6 +343,7 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.readNoise = this->readNoise;
     cameraModelMsg.systemGain = this->systemGain;
     cameraModelMsg.exposureTime = this->exposureTime;
+    cameraModelMsg.gammaCorrection = this->gammaCorrection;
 
     /*! - Update the camera config data no matter if an image is present*/
     this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
@@ -566,3 +567,16 @@ void Camera::setExposureTime(const double openExposureTime) { this->exposureTime
     */
 
 double Camera::getExposureTime() const { return this->exposureTime; }
+
+/*! Set the camera gamma correction factor
+    @param gammaCorrection double
+    @return void
+    */
+
+void Camera::setGammaCorrection(double gammaCorrectionValue) { this->gammaCorrection = gammaCorrectionValue; }
+
+/*! Get the gamma correction factor
+    @return double gammaCorrection
+    */
+
+double Camera::getGammaCorrection() const { return this->gammaCorrection; }

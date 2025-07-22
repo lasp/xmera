@@ -82,6 +82,8 @@ public:
     double getSystemGain() const;
     void setExposureTime(double exposureTime);
     double getExposureTime() const;
+    void setGammaCorrection(double gammaCorrection);
+    double getGammaCorrection() const;
 
 
 private:
@@ -98,6 +100,7 @@ private:
     double readNoise{};  //!< Read noise standard deviation
     double systemGain{};  //!< Mapping from current to pixel intensity
     double exposureTime{1};  //!< Mapping from current to pixel intensity
+    double gammaCorrection{1};  //!<Gamma correction factor
 
 public:
     std::string filename{};                //!< Filename for module to read an image directly
