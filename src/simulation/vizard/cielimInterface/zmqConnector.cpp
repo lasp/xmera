@@ -60,12 +60,10 @@ void ZmqConnector::send(const cielimMessage::CielimMessage &message) {
 void ZmqConnector::message_buffer_deallocate(void *data, void *hint) { free(data); }
 
 ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
-    auto cameraIdAsString = std::to_string(cameraId);
-    zmq::message_t msgCameraId(cameraIdAsString);
-    zmq::message_t msgShouldReturnImage(std::to_string(shouldReturnImage).c_str(), sizeof(char));
-    this->requesterSocket->send(zmq::str_buffer("REQUEST_IMAGE"), zmq::send_flags::sndmore);
-    this->requesterSocket->send(msgCameraId, zmq::send_flags::sndmore);
-    this->requesterSocket->send(msgShouldReturnImage, zmq::send_flags::none);
+    this->requesterSocket->send(zmq::message_t("REQUEST_IMAGE", 13), zmq::send_flags::sndmore);
+    this->requesterSocket->send(zmq::message_t(std::to_string(cameraId)), zmq::send_flags::sndmore);
+    this->requesterSocket->send(zmq::message_t(std::to_string(shouldReturnImage).c_str(), sizeof(char)),
+        zmq::send_flags::none);
 
     // SAFETY: it's okay to discard these [[nodiscard]] values because
     //   1) the returned optional could only be empty if ZeroMQ fails due to EAGAIN on a non-blocking socket;
