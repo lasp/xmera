@@ -40,12 +40,6 @@ bool ZmqConnector::isConnected() const {
 }
 
 void ZmqConnector::send(const cielimMessage::CielimMessage &message) {
-    /*! - The viz needs 10 images before placing the planets, wait for 11 protobuffers to
-     * have been created before attempting to go into opNavMode 2 */
-    if (this->firstPass < 11) {
-        this->firstPass++;
-    }
-
     /*! - send protobuffer raw over zmq_socket */
     size_t byteCount = message.ByteSizeLong();
     void *serialized_message = malloc(byteCount);
