@@ -21,15 +21,14 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <math.h>
+#include <cassert>
 
 /*! This method performs a complete reset of the module. The input message is checked to ensure it is linked.
  @return void
  @param callTime [ns] Time the method is called
 */
 void StepperMotorController::reset(uint64_t callTime) {
-    if (!this->motorRefAngleInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR, "stepperMotorController.motorRefAngleInMsg wasn't connected.");
-    }
+    assert(this->motorRefAngleInMsg.isLinked());
 
     // Set module parameter values for module reset
     this->stepCount = 0;

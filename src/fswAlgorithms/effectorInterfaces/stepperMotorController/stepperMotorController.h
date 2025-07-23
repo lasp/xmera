@@ -23,7 +23,6 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/MotorStepCommandMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include <cstdint>
 
 /*! @brief Stepper Motor Controller Class */
@@ -41,8 +40,6 @@ class StepperMotorController : public SysModel {
     ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;  //!< Intput msg for the stepper motor reference message
     Message<MotorStepCommandMsgPayload>
         motorStepCommandOutMsg;  //!< Output msg for the number of commanded motor step counts
-
-    BSKLogger *bskLogger;  //!< BSK Logging
 
    private:
     /* Motor angle parameters */
