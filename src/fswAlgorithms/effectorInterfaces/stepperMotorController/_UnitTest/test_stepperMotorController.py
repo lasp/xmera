@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -21,7 +21,6 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import stepperMotorController
 from Basilisk.utilities import SimulationBaseClass
@@ -66,7 +65,6 @@ def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motor
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
