@@ -46,11 +46,10 @@ class StepperMotorController : public SysModel {
 
    private:
     /* Motor angle parameters */
-    double thetaInit{};   //!< [rad] Initial motor angle
-    double theta{};       //!< [rad] Current motor angle
-    double thetaRef{};    //!< [rad] Motor reference angle
-    double deltaTheta{};  //!< [rad] Difference between desired and current angle
-    double stepAngle{};   //!< [rad] Angle the stepper motor moves through for a single step (constant)
+    double thetaInit{};  //!< [rad] Initial motor angle
+    double theta{};      //!< [rad] Current motor angle
+    double thetaRef{};   //!< [rad] Motor reference angle
+    double stepAngle{};  //!< [rad] Angle the stepper motor moves through for a single step (constant)
 
     /* Step parameters */
     int stepsCommanded{};  //!< [steps] Number of steps needed to reach the desired angle (output)

@@ -34,7 +34,6 @@ void StepperMotorController::reset(uint64_t callTime) {
     // Set module parameter values for module reset
     this->stepCount = 0;
     this->stepsCommanded = 0;
-    this->deltaTheta = 0.0;
     this->deltaSimTime = 0.0;
     this->previousWrittenTime = -1.0;
 }
@@ -71,14 +70,15 @@ void StepperMotorController::updateState(uint64_t callTime) {
 
         // Calculate the difference between the desired angle and the current motor angle, ensuring that the current
         // motor angle is updated to the next multiple of the motor step angle if actuation is interrupted
+        double deltaTheta{};
         if (this->theta > 0) {
-            this->deltaTheta = this->thetaRef - (ceil(this->theta / this->stepAngle) * this->stepAngle);
+            deltaTheta = this->thetaRef - (ceil(this->theta / this->stepAngle) * this->stepAngle);
         } else {
-            this->deltaTheta = this->thetaRef - (floor(this->theta / this->stepAngle) * this->stepAngle);
+            deltaTheta = this->thetaRef - (floor(this->theta / this->stepAngle) * this->stepAngle);
         }
 
         // Calculate the integer number of steps commanded, ensuring to rounding to the nearest integer step
-        double tempStepsCommanded = this->deltaTheta / this->stepAngle;
+        double tempStepsCommanded = deltaTheta / this->stepAngle;
         if ((ceil(tempStepsCommanded) - tempStepsCommanded) > (tempStepsCommanded - floor(tempStepsCommanded))) {
             this->stepsCommanded = floor(tempStepsCommanded);
         } else {
