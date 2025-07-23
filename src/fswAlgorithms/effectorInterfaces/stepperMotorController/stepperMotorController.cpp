@@ -43,11 +43,8 @@ motor actuation in time.
  @param callTime [ns] Time the method is called
 */
 void StepperMotorController::updateState(uint64_t callTime) {
-    // Create the buffer messages
-    HingedRigidBodyMsgPayload motorRefAngleIn{};
-    MotorStepCommandMsgPayload motorStepCommandOut{};
-
     // Read the input message
+    HingedRigidBodyMsgPayload motorRefAngleIn{};
     if (this->motorRefAngleInMsg.isWritten()) {
         motorRefAngleIn = this->motorRefAngleInMsg();
     }
@@ -83,13 +80,12 @@ void StepperMotorController::updateState(uint64_t callTime) {
         // Update the desired motor angle
         this->thetaRef = this->theta + (this->stepsCommanded * this->stepAngle);
 
-        // Update the output message buffer
-        motorStepCommandOut.stepsCommanded = this->stepsCommanded;
-
         // Reset the steps taken to zero
         this->stepCount = 0;
 
         // Write the output message
+        MotorStepCommandMsgPayload motorStepCommandOut{};
+        motorStepCommandOut.stepsCommanded = this->stepsCommanded;
         this->motorStepCommandOutMsg.write(&motorStepCommandOut, moduleID, callTime);
     }
 
