@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -29,37 +29,41 @@
 void StepperMotorController::reset(uint64_t callTime) {
     assert(this->motorRefAngleInMsg.isLinked());
 
-    // Set module parameter values for module reset
     this->stepCount = 0;
     this->stepsCommanded = 0;
     this->previousWrittenTime = -1.0;
 }
 
-/*! This method computes the required number of motor steps given a reference motor angle message and tracks the
-motor actuation in time.
+/*! The update method computes the required number of motor steps given a motor angle reference message. This method
+ also tracks the motor actuation in time and includes logic for incoming reference commands that interrupt an unfinished
+ motor actuation sequence.
  @return void
  @param callTime [ns] Time the method is called
 */
 void StepperMotorController::updateState(uint64_t callTime) {
-    // Read the input message
     HingedRigidBodyMsgPayload motorRefAngleIn{};
     if (this->motorRefAngleInMsg.isWritten()) {
         motorRefAngleIn = this->motorRefAngleInMsg();
     }
 
-    // Store the time the input message was written
+    // Store the time the motor reference input message was written
     double hingedRigidBodyMsgTimeWritten = NANO2SEC * this->motorRefAngleInMsg.timeWritten();
 
-    // The steps commanded are calculated and updated in this statement when a new message is written
+    // Each time a new motor reference message is written to this module, the required motor steps commanded to achieve
+    // the incoming reference angle are calculated, updated, and output as a MotorStepCommandMsgPayload message
     if (this->previousWrittenTime < hingedRigidBodyMsgTimeWritten) {
         // Update the previous written time
         this->previousWrittenTime = hingedRigidBodyMsgTimeWritten;
 
-        // Read in the desired angle
+        // Set the motor reference angle using the input message
+        // (Important: This angle may not be reachable if it is not a multiple of the motor step angle)
         this->thetaRef = motorRefAngleIn.theta;
 
-        // Calculate the difference between the desired angle and the current motor angle, ensuring that the current
-        // motor angle is updated to the next multiple of the motor step angle if actuation is interrupted
+        // Calculate deltaTheta, the angle the motor must rotate through to achieve the reference angle.
+        // Important: The motor cannot stop actuating during a step. If the motor is currently actuating through a
+        // step and is interrupted by a new incoming reference message, the motor must complete its actuation through
+        // the current step before following the new reference command. Therefore, the motor angle must be rounded up
+        // to the nearest multiple of the motor step angle to compute the correct displacement deltaTheta.
         double deltaTheta{};
         if (this->theta > 0) {
             deltaTheta = this->thetaRef - (std::ceil(this->theta / this->stepAngle) * this->stepAngle);
@@ -67,7 +71,8 @@ void StepperMotorController::updateState(uint64_t callTime) {
             deltaTheta = this->thetaRef - (std::floor(this->theta / this->stepAngle) * this->stepAngle);
         }
 
-        // Calculate the integer number of steps commanded, ensuring to rounding to the nearest integer step
+        // Calculate the integer number of steps the motor must take to reach the reference angle
+        // The exact value is first stored as a double and rounded to the nearest integer step
         double tempStepsCommanded = deltaTheta / this->stepAngle;
         if ((std::ceil(tempStepsCommanded) - tempStepsCommanded) >
             (tempStepsCommanded - std::floor(tempStepsCommanded))) {
@@ -76,10 +81,10 @@ void StepperMotorController::updateState(uint64_t callTime) {
             this->stepsCommanded = std::ceil(tempStepsCommanded);
         }
 
-        // Update the desired motor angle
+        // Use the computed steps commanded to update the motor reference angle to the reachable value
         this->thetaRef = this->theta + (this->stepsCommanded * this->stepAngle);
 
-        // Reset the steps taken to zero
+        // Zero the motor step count because a new reference has been commanded
         this->stepCount = 0;
 
         // Write the output message
@@ -88,7 +93,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
         this->motorStepCommandOutMsg.write(&motorStepCommandOut, moduleID, callTime);
     }
 
-    // Calculate the time elapsed since the last message was written
+    // Calculate the time elapsed since the last motor reference input message was written
     double deltaSimTime = (NANO2SEC * callTime) - this->previousWrittenTime;
 
     // Update the motor information

@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -37,24 +37,18 @@ class StepperMotorController : public SysModel {
     void setStepAngle(const double stepAngle);            //!< Setter method for the motor step angle
     void setStepTime(const double stepTime);              //!< Setter method for the motor step time
 
-    ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;  //!< Intput msg for the stepper motor reference message
-    Message<MotorStepCommandMsgPayload>
-        motorStepCommandOutMsg;  //!< Output msg for the number of commanded motor step counts
+    ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;   //!< Intput msg for the motor reference angle message
+    Message<MotorStepCommandMsgPayload> motorStepCommandOutMsg;  //!< Output msg for the number of commanded motor steps
 
    private:
-    /* Motor angle parameters */
-    double thetaInit{};  //!< [rad] Initial motor angle
-    double theta{};      //!< [rad] Current motor angle
-    double thetaRef{};   //!< [rad] Motor reference angle
-    double stepAngle{};  //!< [rad] Angle the stepper motor moves through for a single step (constant)
-
-    /* Step parameters */
-    int stepsCommanded{};  //!< [steps] Number of steps needed to reach the desired angle (output)
-    int stepCount{};       //!< [steps] Current motor step count (number of steps taken)
-
-    /* Temporal parameters */
-    double stepTime{1.0};              //!< [s] Time required for a single motor step (constant)
-    double previousWrittenTime{-1.0};  //!< [ns] Time the last input message was written
+    double thetaInit{};                //!< [rad] Initial motor angle
+    double theta{};                    //!< [rad] Current motor angle
+    double thetaRef{};                 //!< [rad] Motor reference angle
+    double stepAngle{};                //!< [rad] Step angle the motor rotates through for a single step (constant)
+    int stepsCommanded{};              //!< [steps] Number of steps needed to reach the desired angle (output)
+    int stepCount{};                   //!< [steps] Current motor step count (number of steps taken)
+    double stepTime{1.0};              //!< [s] Time required for the motor to actuate through a single step (constant)
+    double previousWrittenTime{-1.0};  //!< [ns] Time the last motor reference input message was written
 };
 
 #endif
