@@ -19,9 +19,8 @@
 
 #include "stepperMotorController.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include <math.h>
 #include <cassert>
+#include <cmath>
 
 /*! This method performs a complete reset of the module. The input message is checked to ensure it is linked.
  @return void
@@ -63,17 +62,18 @@ void StepperMotorController::updateState(uint64_t callTime) {
         // motor angle is updated to the next multiple of the motor step angle if actuation is interrupted
         double deltaTheta{};
         if (this->theta > 0) {
-            deltaTheta = this->thetaRef - (ceil(this->theta / this->stepAngle) * this->stepAngle);
+            deltaTheta = this->thetaRef - (std::ceil(this->theta / this->stepAngle) * this->stepAngle);
         } else {
-            deltaTheta = this->thetaRef - (floor(this->theta / this->stepAngle) * this->stepAngle);
+            deltaTheta = this->thetaRef - (std::floor(this->theta / this->stepAngle) * this->stepAngle);
         }
 
         // Calculate the integer number of steps commanded, ensuring to rounding to the nearest integer step
         double tempStepsCommanded = deltaTheta / this->stepAngle;
-        if ((ceil(tempStepsCommanded) - tempStepsCommanded) > (tempStepsCommanded - floor(tempStepsCommanded))) {
-            this->stepsCommanded = floor(tempStepsCommanded);
+        if ((std::ceil(tempStepsCommanded) - tempStepsCommanded) >
+            (tempStepsCommanded - std::floor(tempStepsCommanded))) {
+            this->stepsCommanded = std::floor(tempStepsCommanded);
         } else {
-            this->stepsCommanded = ceil(tempStepsCommanded);
+            this->stepsCommanded = std::ceil(tempStepsCommanded);
         }
 
         // Update the desired motor angle
@@ -93,7 +93,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
 
     // Update the motor information
     if (this->stepsCommanded > 0) {
-        this->stepCount = floor(deltaSimTime / this->stepTime);
+        this->stepCount = std::floor(deltaSimTime / this->stepTime);
         this->theta = this->thetaInit + this->stepAngle * (deltaSimTime / this->stepTime);
         if (this->theta >= this->thetaRef) {
             this->stepCount = this->stepsCommanded;
@@ -101,7 +101,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
             this->thetaInit = this->thetaRef;
         }
     } else {
-        this->stepCount = -floor(deltaSimTime / this->stepTime);
+        this->stepCount = -std::floor(deltaSimTime / this->stepTime);
         this->theta = this->thetaInit - this->stepAngle * (deltaSimTime / this->stepTime);
         if (this->theta <= this->thetaRef) {
             this->stepCount = this->stepsCommanded;
