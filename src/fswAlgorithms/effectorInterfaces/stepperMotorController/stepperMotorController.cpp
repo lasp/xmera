@@ -44,12 +44,8 @@ motor actuation in time.
 */
 void StepperMotorController::updateState(uint64_t callTime) {
     // Create the buffer messages
-    HingedRigidBodyMsgPayload motorRefAngleIn;
-    MotorStepCommandMsgPayload motorStepCommandOut;
-
-    // Zero the buffer messages
-    motorRefAngleIn = HingedRigidBodyMsgPayload();
-    motorStepCommandOut = MotorStepCommandMsgPayload();
+    HingedRigidBodyMsgPayload motorRefAngleIn{};
+    MotorStepCommandMsgPayload motorStepCommandOut{};
 
     // Read the input message
     if (this->motorRefAngleInMsg.isWritten()) {
