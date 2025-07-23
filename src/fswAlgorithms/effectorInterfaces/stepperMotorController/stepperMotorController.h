@@ -21,45 +21,45 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/msgPayloadDefC/MotorStepCommandMsgPayload.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/MotorStepCommandMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 #include <cstdint>
 
 /*! @brief Stepper Motor Controller Class */
-class StepperMotorController: public SysModel{
-public:
-    void reset(uint64_t currentSimNanos) override;                         //!< Reset member function
-    void updateState(uint64_t currentSimNanos) override;                   //!< Update member function
-    double getThetaInit() const;                                           //!< Getter method for the initial motor angle
-    double getStepAngle() const;                                           //!< Getter method for the motor step angle
-    double getStepTime() const;                                            //!< Getter method for the motor step time
-    void setThetaInit(const double thetaInit);                             //!< Setter method for the initial motor angle
-    void setStepAngle(const double stepAngle);                             //!< Setter method for the motor step angle
-    void setStepTime(const double stepTime);                               //!< Setter method for the motor step time
+class StepperMotorController : public SysModel {
+   public:
+    void reset(uint64_t currentSimNanos) override;        //!< Reset member function
+    void updateState(uint64_t currentSimNanos) override;  //!< Update member function
+    double getThetaInit() const;                          //!< Getter method for the initial motor angle
+    double getStepAngle() const;                          //!< Getter method for the motor step angle
+    double getStepTime() const;                           //!< Getter method for the motor step time
+    void setThetaInit(const double thetaInit);            //!< Setter method for the initial motor angle
+    void setStepAngle(const double stepAngle);            //!< Setter method for the motor step angle
+    void setStepTime(const double stepTime);              //!< Setter method for the motor step time
 
-    ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;             //!< Intput msg for the stepper motor reference message
-    Message<MotorStepCommandMsgPayload> motorStepCommandOutMsg;            //!< Output msg for the number of commanded motor step counts
+    ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;  //!< Intput msg for the stepper motor reference message
+    Message<MotorStepCommandMsgPayload>
+        motorStepCommandOutMsg;  //!< Output msg for the number of commanded motor step counts
 
-    BSKLogger *bskLogger;                                                  //!< BSK Logging
+    BSKLogger *bskLogger;  //!< BSK Logging
 
-private:
-
+   private:
     /* Motor angle parameters */
-    double thetaInit{};                                                    //!< [rad] Initial motor angle
-    double theta{};                                                        //!< [rad] Current motor angle
-    double thetaRef{};                                                     //!< [rad] Motor reference angle
-    double deltaTheta{};                                                   //!< [rad] Difference between desired and current angle
-    double stepAngle{};                                                    //!< [rad] Angle the stepper motor moves through for a single step (constant)
+    double thetaInit{};   //!< [rad] Initial motor angle
+    double theta{};       //!< [rad] Current motor angle
+    double thetaRef{};    //!< [rad] Motor reference angle
+    double deltaTheta{};  //!< [rad] Difference between desired and current angle
+    double stepAngle{};   //!< [rad] Angle the stepper motor moves through for a single step (constant)
 
     /* Step parameters */
-    int stepsCommanded{};                                                  //!< [steps] Number of steps needed to reach the desired angle (output)
-    int stepCount{};                                                       //!< [steps] Current motor step count (number of steps taken)
+    int stepsCommanded{};  //!< [steps] Number of steps needed to reach the desired angle (output)
+    int stepCount{};       //!< [steps] Current motor step count (number of steps taken)
 
     /* Temporal parameters */
-    double stepTime{1.0};                                                  //!< [s] Time required for a single motor step (constant)
-    double previousWrittenTime{-1.0};                                      //!< [ns] Time the last input message was written
-    double deltaSimTime{};                                                 //!< [ns] The time elapsed since the last message was written
+    double stepTime{1.0};              //!< [s] Time required for a single motor step (constant)
+    double previousWrittenTime{-1.0};  //!< [ns] Time the last input message was written
+    double deltaSimTime{};             //!< [ns] The time elapsed since the last message was written
 };
 
 #endif

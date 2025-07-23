@@ -18,9 +18,9 @@
  */
 
 #include "stepperMotorController.h"
-#include <math.h>
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include <math.h>
 
 /*! This method performs a complete reset of the module. The input message is checked to ensure it is linked.
  @return void
@@ -62,8 +62,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
     double hingedRigidBodyMsgTimeWritten = NANO2SEC * this->motorRefAngleInMsg.timeWritten();
 
     // The steps commanded are calculated and updated in this statement when a new message is written
-    if (this->previousWrittenTime <  hingedRigidBodyMsgTimeWritten) {
-
+    if (this->previousWrittenTime < hingedRigidBodyMsgTimeWritten) {
         // Update the previous written time
         this->previousWrittenTime = hingedRigidBodyMsgTimeWritten;
 
@@ -113,7 +112,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
         }
     } else {
         this->stepCount = -floor(this->deltaSimTime / this->stepTime);
-        this->theta =  this->thetaInit - this->stepAngle * (this->deltaSimTime / this->stepTime);
+        this->theta = this->thetaInit - this->stepAngle * (this->deltaSimTime / this->stepTime);
         if (this->theta <= this->thetaRef) {
             this->stepCount = this->stepsCommanded;
             this->theta = this->thetaRef;
@@ -125,23 +124,17 @@ void StepperMotorController::updateState(uint64_t callTime) {
 /*! Getter method for the initial motor angle.
  @return double
 */
-double StepperMotorController::getThetaInit() const {
-    return this->thetaInit;
-}
+double StepperMotorController::getThetaInit() const { return this->thetaInit; }
 
 /*! Getter method for the motor step angle.
  @return double
 */
-double StepperMotorController::getStepAngle() const {
-    return this->stepAngle;
-}
+double StepperMotorController::getStepAngle() const { return this->stepAngle; }
 
 /*! Getter method for the motor step time.
  @return double
 */
-double StepperMotorController::getStepTime() const {
-    return this->stepTime;
-}
+double StepperMotorController::getStepTime() const { return this->stepTime; }
 
 /*! Setter method for the initial motor angle.
  @return void
@@ -156,14 +149,10 @@ void StepperMotorController::setThetaInit(const double thetaInit) {
  @return void
  @param stepAngle [rad] Motor step angle
 */
-void StepperMotorController::setStepAngle(const double stepAngle) {
-    this->stepAngle = stepAngle;
-}
+void StepperMotorController::setStepAngle(const double stepAngle) { this->stepAngle = stepAngle; }
 
 /*! Setter method for the motor step time.
  @return void
  @param stepTime [s] Motor step time
 */
-void StepperMotorController::setStepTime(const double stepTime) {
-    this->stepTime = stepTime;
-}
+void StepperMotorController::setStepTime(const double stepTime) { this->stepTime = stepTime; }
