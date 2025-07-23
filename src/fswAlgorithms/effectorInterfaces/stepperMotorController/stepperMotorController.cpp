@@ -42,12 +42,13 @@ void StepperMotorController::reset(uint64_t callTime) {
 */
 void StepperMotorController::updateState(uint64_t callTime) {
     HingedRigidBodyMsgPayload motorRefAngleIn{};
+    double hingedRigidBodyMsgTimeWritten{};
     if (this->motorRefAngleInMsg.isWritten()) {
         motorRefAngleIn = this->motorRefAngleInMsg();
-    }
 
-    // Store the time the motor reference input message was written
-    double hingedRigidBodyMsgTimeWritten = NANO2SEC * this->motorRefAngleInMsg.timeWritten();
+        // Store the time the motor reference input message was written
+        hingedRigidBodyMsgTimeWritten = NANO2SEC * this->motorRefAngleInMsg.timeWritten();
+    }
 
     // Each time a new motor reference message is written to this module, the required motor steps commanded to achieve
     // the incoming reference angle are calculated, updated, and output as a MotorStepCommandMsgPayload message
