@@ -58,7 +58,6 @@ class StepperMotorController : public SysModel {
     /* Temporal parameters */
     double stepTime{1.0};              //!< [s] Time required for a single motor step (constant)
     double previousWrittenTime{-1.0};  //!< [ns] Time the last input message was written
-    double deltaSimTime{};             //!< [ns] The time elapsed since the last message was written
 };
 
 #endif

@@ -34,7 +34,6 @@ void StepperMotorController::reset(uint64_t callTime) {
     // Set module parameter values for module reset
     this->stepCount = 0;
     this->stepsCommanded = 0;
-    this->deltaSimTime = 0.0;
     this->previousWrittenTime = -1.0;
 }
 
@@ -99,20 +98,20 @@ void StepperMotorController::updateState(uint64_t callTime) {
     }
 
     // Calculate the time elapsed since the last message was written
-    this->deltaSimTime = (NANO2SEC * callTime) - this->previousWrittenTime;
+    double deltaSimTime = (NANO2SEC * callTime) - this->previousWrittenTime;
 
     // Update the motor information
     if (this->stepsCommanded > 0) {
-        this->stepCount = floor(this->deltaSimTime / this->stepTime);
-        this->theta = this->thetaInit + this->stepAngle * (this->deltaSimTime / this->stepTime);
+        this->stepCount = floor(deltaSimTime / this->stepTime);
+        this->theta = this->thetaInit + this->stepAngle * (deltaSimTime / this->stepTime);
         if (this->theta >= this->thetaRef) {
             this->stepCount = this->stepsCommanded;
             this->theta = this->thetaRef;
             this->thetaInit = this->thetaRef;
         }
     } else {
-        this->stepCount = -floor(this->deltaSimTime / this->stepTime);
-        this->theta = this->thetaInit - this->stepAngle * (this->deltaSimTime / this->stepTime);
+        this->stepCount = -floor(deltaSimTime / this->stepTime);
+        this->theta = this->thetaInit - this->stepAngle * (deltaSimTime / this->stepTime);
         if (this->theta <= this->thetaRef) {
             this->stepCount = this->stepsCommanded;
             this->theta = this->thetaRef;
