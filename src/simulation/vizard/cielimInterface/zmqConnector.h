@@ -21,33 +21,32 @@
 #define ZMQCONNECTOR_H
 
 #include "cielimMessage.pb.h"
-#include <zmq.hpp>
 #include <Eigen/Core>
 #include <string>
+#include <zmq.hpp>
 
-struct ImageData{
+struct ImageData {
     int32_t imageBufferLength;
     void *imageBuffer;
     std::optional<Eigen::Vector2d> centerOfBrightness;
 };
 
 class ZmqConnector {
-public:
+   public:
     ZmqConnector();
     ~ZmqConnector() = default;
 
     void connect();
     [[nodiscard]] bool isConnected() const;
-    void send(const cielimMessage::CielimMessage& messagePayload);
-    ImageData requestImage(size_t cameraId, bool shoudReturnImage=true);
+    void send(const cielimMessage::CielimMessage &messagePayload);
+    ImageData requestImage(size_t cameraId, bool shoudReturnImage = true);
     void setComPortNumber(std::string &portNumber);
     void ping();
+    void init();
 
-
-private:
+   private:
     std::shared_ptr<zmq::context_t> context;
     std::unique_ptr<zmq::socket_t> requesterSocket;
-    int firstPass{}; //!< Flag to initialize the viz at first timestep
     std::string comProtocol = "tcp";
     std::string comAddress = "127.0.0.1";
     std::string comPortNumber = "5556";
@@ -55,4 +54,4 @@ private:
     static void message_buffer_deallocate(void *data, void *hint);
 };
 
-#endif //ZMQCONNECTOR_H
+#endif  // ZMQCONNECTOR_H

@@ -16,9 +16,16 @@ message EpochDateTime{
     double seconds = 6;
 }
 
+message PerlinNoise{
+    int32 octaveCount = 1;
+    double baseFrequency = 2;
+    double baseAmplitude = 3;
+    double persistence = 4;
+}
+
 message MeshModel{
     string shapeModel = 1; // [string] Name of the shape model to apply to the body (default is a sphere)
-    double perlinNoiseStdDeviation = 2;  //[-] Standard deviation of the perlin noise to apply (none by default)
+    PerlinNoise perlinNoise = 2;  //[-] Perlin noise to apply (none by default)
     double proceduralRocks = 3;  //[-] Parameter to generate procedural rocks on the base mesh (none by default)
     string brdfModel = 4; // [string] Name of the BRDF model to apply (Lambertian by default)
     repeated double reflectanceParameters = 5;  //[-] Parameter to apply to BRDF

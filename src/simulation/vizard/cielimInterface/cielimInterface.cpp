@@ -209,10 +209,15 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
             if (this->celestialParametersMessage.isLinked() && this->celestialParametersMessageStatus.dataFresh &&
                 !parameterBodyName.compare(this->celestialBodiesList.at(k).name)) {
                 auto *celestialParameters = new cielimMessage::MeshModel();
+                auto *perlinNoise = new cielimMessage::PerlinNoise();
                 std::string brdfModelName = this->celestialParametersPayload.brdf;
                 celestialParameters->set_brdfmodel(brdfModelName);
                 celestialParameters->set_meanradius(this->celestialParametersPayload.meanRadius);
-                celestialParameters->set_perlinnoisestddeviation(this->celestialParametersPayload.perlinNoise);
+                perlinNoise->set_octavecount(this->celestialParametersPayload.perlinNoiseOctaveCount);
+                perlinNoise->set_baseamplitude(this->celestialParametersPayload.perlinNoiseBaseAmplitude);
+                perlinNoise->set_basefrequency(this->celestialParametersPayload.perlinNoiseBaseFrequency);
+                perlinNoise->set_persistence(this->celestialParametersPayload.perlinNoisePersistence);
+                celestialParameters->set_allocated_perlinnoise(perlinNoise);
                 for (int i = 0; i < 3; ++i) {
                     celestialParameters->add_principalaxisdistortion(
                         this->celestialParametersPayload.principalAxisDistortion[i]);

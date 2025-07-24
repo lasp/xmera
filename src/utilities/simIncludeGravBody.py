@@ -69,7 +69,7 @@ class BodyData:
 BODY_DATA = {
     "sun": BodyData(
         identifier="sun",
-        planetName="sun_planet_data",
+        planetName="sun",
         displayName="sun",
         modelDictionaryKey="",
         mu=1.32712440018e20,
@@ -78,7 +78,7 @@ BODY_DATA = {
     ),
     "mercury": BodyData(
         identifier="mercury",
-        planetName="mercury_planet_data",
+        planetName="mercury",
         displayName="mercury",
         modelDictionaryKey="",
         mu=0.022032e15,
@@ -87,7 +87,7 @@ BODY_DATA = {
     ),
     "venus": BodyData(
         identifier="venus",
-        planetName="venus_planet_data",
+        planetName="venus",
         displayName="venus",
         modelDictionaryKey="",
         mu=3.24858599e14,
@@ -96,7 +96,7 @@ BODY_DATA = {
     ),
     "earth": BodyData(
         identifier="earth",
-        planetName="earth_planet_data",
+        planetName="earth",
         displayName="earth",
         modelDictionaryKey="",
         mu=0.3986004415e15,
@@ -105,7 +105,7 @@ BODY_DATA = {
     ),
     "moon": BodyData(
         identifier="moon",
-        planetName="moon_planet_data",
+        planetName="moon",
         displayName="moon",
         modelDictionaryKey="",
         mu=4.902799e12,
@@ -114,7 +114,7 @@ BODY_DATA = {
     ),
     "mars": BodyData(
         identifier="mars",
-        planetName="mars_planet_data",
+        planetName="mars",
         displayName="mars",
         modelDictionaryKey="",
         mu=4.28283100e13,
@@ -123,7 +123,7 @@ BODY_DATA = {
     ),
     "mars barycenter": BodyData(
         identifier="mars barycenter",
-        planetName="mars barycenter_planet_data",
+        planetName="mars barycenter",
         displayName="mars barycenter",
         modelDictionaryKey="",
         mu=4.28283100e13,
@@ -132,7 +132,7 @@ BODY_DATA = {
     ),
     "jupiter barycenter": BodyData(
         identifier="jupiter barycenter",
-        planetName="jupiter barycenter_planet_data",
+        planetName="jupiter barycenter",
         displayName="jupiter",
         modelDictionaryKey="",
         mu=1.266865349093058e17,
@@ -141,7 +141,7 @@ BODY_DATA = {
     ),
     "saturn": BodyData(
         identifier="saturn",
-        planetName="saturn barycenter_planet_data",
+        planetName="saturn barycenter",
         displayName="saturn",
         modelDictionaryKey="",
         mu=3.79395000e16,
@@ -150,7 +150,7 @@ BODY_DATA = {
     ),
     "uranus": BodyData(
         identifier="uranus",
-        planetName="uranus barycenter_planet_data",
+        planetName="uranus barycenter",
         displayName="uranus",
         modelDictionaryKey="",
         mu=5.79396566e15,
@@ -159,7 +159,7 @@ BODY_DATA = {
     ),
     "neptune": BodyData(
         identifier="neptune",
-        planetName="neptune barycenter_planet_data",
+        planetName="neptune barycenter",
         displayName="neptune",
         modelDictionaryKey="",
         mu=6.83509920e15,

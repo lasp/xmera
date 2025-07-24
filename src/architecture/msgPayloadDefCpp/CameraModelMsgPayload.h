@@ -24,19 +24,20 @@
 /*! @brief Structure used to define the camera model*/
 
 typedef struct {
-    int cameraId;          //!< [-]   ID of the camera that took the snapshot*/
-    bool isOn; //!<  The camera is taking images at rendering rate if 1, 0 if not*/
+    int cameraId;                        //!< [-]   ID of the camera that took the snapshot*/
+    bool isOn;                           //!<  The camera is taking images at rendering rate if 1, 0 if not*/
     char parentName[MAX_STRING_LENGTH];  //!< [-] Name of the parent body to which the camera should be attached
-    double fieldOfView[2];        //!< [rad]   Camera Field of View, edge-to-edge along camera y-axis */
-    int resolution[2];         //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
-    uint64_t renderRate;       //!< [ns] Frame time interval at which to capture images in units of nanosecond */
-    double cameraBodyFramePosition[3];     //!< [m] Camera position in body frame */
-    double bodyToCameraMrp[3];        //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
+    double fieldOfView[2];               //!< [rad]   Camera Field of View, edge-to-edge along camera y-axis */
+    int resolution[2];  //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
+    uint64_t renderRate;  //!< [ns] Frame time interval at which to capture images in units of nanosecond */
+    double cameraBodyFramePosition[3];  //!< [m] Camera position in body frame */
+    double bodyToCameraMrp[3];  //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
     double focalLength;
     int gaussianPointSpreadFunction;  //!< Size of square Gaussian kernel to model point spread function, must be odd
-    double exposureTime;  //!< [s] Exposure time for each image taken
-    double readNoise;  //!< Read noise standard deviation
-    double systemGain;  //!< Mapping from current to pixel intensity
-}CameraModelMsgPayload;
+    double exposureTime;              //!< [s] Exposure time for each image taken
+    double readNoise;                 //!< Read noise standard deviation
+    double systemGain;                //!< Mapping from current to pixel intensity
+    double gammaCorrection;           //!< Gamma correction factor for improved mid-tones
+} CameraModelMsgPayload;
 
 #endif
