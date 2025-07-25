@@ -31,13 +31,10 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-@pytest.mark.parametrize("motorStepAngle", [1.0 * macros.D2R])
-@pytest.mark.parametrize("motorStepTime", [1.0])
-@pytest.mark.parametrize("motorThetaInit", [0.0])
 @pytest.mark.parametrize("motorThetaRef1", [-10.0 * macros.D2R, 10.0 * macros.D2R])
 @pytest.mark.parametrize("motorThetaRef2", [0.0, 5.0 * macros.D2R, 10.0 * macros.D2R])
 @pytest.mark.parametrize("interruptFraction", [0.0, 0.25, 0.5, 0.75])
-def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motorThetaInit, motorThetaRef1, motorThetaRef2, interruptFraction):
+def test_stepperMotorController(show_plots, motorThetaRef1, motorThetaRef2, interruptFraction):
     r"""
     **Validation Test Description**
 
@@ -52,9 +49,6 @@ def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motor
     **Test Parameters**
 
     Args:
-        motorStepAngle (float): [rad] Angle the stepper motor moves through for a single step (constant)
-        motorStepTime (float): [sec] Time required for a single motor step (constant)
-        motorThetaInit (float): [rad] Initial stepper motor angle
         motorThetaRef1 (float): [rad] Desired stepper motor angle 1
         motorThetaRef2 (float): [rad] Desired stepper motor angle 2
         interruptFraction (float): Specifies what fraction of a step is completed when the interrupted message is written
@@ -79,6 +73,9 @@ def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motor
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create an instance of the stepperMotor module to be tested
+    motorStepAngle = 1.0 * macros.D2R  # [rad]
+    motorStepTime = 1.0  # [s]
+    motorThetaInit = 0.0  # [rad]
     motorController = stepperMotorController.StepperMotorController()
     motorController.modelTag = "stepperMotorController"
     motorController.setStepAngle(motorStepAngle)
@@ -190,9 +187,6 @@ def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motor
 if __name__ == "__main__":
     test_stepperMotorController(
                  False,
-                 1.0 * macros.D2R,  # motorStepAngle
-                 1.0,  # motorStepTime
-                 0.0,  # motorThetaInit
                  10.0 * macros.D2R,  # motorThetaRef1,
                  5.0 * macros.D2R,  # motorThetaRef2
                  0.0   # interruptFraction
