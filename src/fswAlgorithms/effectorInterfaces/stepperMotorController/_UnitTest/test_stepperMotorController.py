@@ -109,8 +109,7 @@ def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motor
 
     # Run the simulation
     unitTestSim.InitializeSimulation()
-    holdTime = 5.0  # [sec] Time the simulation will continue while holding the final angle
-    unitTestSim.ConfigureStopTime(macros.sec2nano(actuateTime + holdTime))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(actuateTime))
     unitTestSim.ExecuteSimulation()
 
     # Pull the logged motor step data
