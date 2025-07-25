@@ -34,7 +34,7 @@ splitPath = path.split(bskName)
 @pytest.mark.parametrize("motorThetaRef1", [-10.0 * macros.D2R, 10.0 * macros.D2R])
 @pytest.mark.parametrize("motorThetaRef2", [0.0, 5.0 * macros.D2R, 10.0 * macros.D2R])
 @pytest.mark.parametrize("interruptFraction", [0.0, 0.25, 0.5, 0.75])
-def test_stepperMotorController(show_plots, motorThetaRef1, motorThetaRef2, interruptFraction):
+def test_stepperMotorControllerInterrupt(show_plots, motorThetaRef1, motorThetaRef2, interruptFraction):
     r"""
     **Validation Test Description**
 
@@ -185,7 +185,7 @@ def test_stepperMotorController(show_plots, motorThetaRef1, motorThetaRef2, inte
 
 
 if __name__ == "__main__":
-    test_stepperMotorController(
+    test_stepperMotorControllerInterrupt(
                  False,
                  10.0 * macros.D2R,  # motorThetaRef1,
                  5.0 * macros.D2R,  # motorThetaRef2
