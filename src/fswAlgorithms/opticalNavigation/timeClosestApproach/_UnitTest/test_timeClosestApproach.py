@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2024,  University of Colorado at Boulder
+#  Copyright (c) 2025,  University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -31,6 +31,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 @pytest.mark.parametrize("position", [[-5e7, 7.5e6, 5e5], [-5e6, 7e6, 4e5]])  # m
 @pytest.mark.parametrize("velocity", [[2e4, 0, 0], [1e4, 1e3, 2e2]])  # m/s
 @pytest.mark.parametrize("filter_covariance", [np.eye(6),  np.ones([6, 6]), np.eye(3), np.ones([3, 3])])
+
 def test_TimeClosestApproach(show_plots, position, velocity, filter_covariance):
 
     unit_task_name = "unitTask"               # arbitrary name (don't change)
@@ -80,6 +81,8 @@ def test_TimeClosestApproach(show_plots, position, velocity, filter_covariance):
 
     # Expected
     tca, tca_covariance = time_of_closest_approach_calculation(position, velocity, filter_covariance)
+    tca_1, tca_2 = tca_variation_test()
+
 
     # make sure module output data is correct
     tolerance = 1e-10
@@ -97,8 +100,10 @@ def test_TimeClosestApproach(show_plots, position, velocity, filter_covariance):
                                err_msg='Variable: tca_covariance',
                                verbose=True)
 
+    np.testing.assert_(tca_1 > tca_2, msg="tac_1 is not greater than tca_2")
 
 def time_of_closest_approach_calculation(r, v, filter_covariance):
+
     norm_v = np.linalg.norm(v)
     norm_r = np.linalg.norm(r)
     v_hat = v / norm_v
@@ -117,6 +122,24 @@ def time_of_closest_approach_calculation(r, v, filter_covariance):
     tca_covariance = (1 / ratio**2) * np.dot(covariance_map_to_tca,  np.dot(filter_covariance, covariance_map_to_tca.transpose()))
 
     return tca, np.sqrt(tca_covariance)
+
+
+def tca_variation_test():
+
+    position = np.array([-5e7, 7.5e6, 5e5])
+    velocity_1 = np.array([2e4, 0, 0])
+    velocity_2 = np.array([3e4, 0, 0])
+    position_hat = position / np.linalg.norm(position)
+    velocity_1_hat = velocity_1 / np.linalg.norm(velocity_1)
+    velocity_2_hat = velocity_2 / np.linalg.norm(velocity_2)
+    theta_1 = np.arccos(np.dot(-position_hat, velocity_1_hat))
+    theta_2 = np.arccos(np.dot(-position_hat, velocity_2_hat))
+    ratio_1 = np.linalg.norm(velocity_1) / np.linalg.norm(position)
+    ratio_2 = np.linalg.norm(velocity_2) / np.linalg.norm(position)
+    tca_1 = np.cos(theta_1) / ratio_1
+    tca_2 = np.cos(theta_2) / ratio_2
+
+    return tca_1, tca_2
 
 
 if __name__ == "__main__":
