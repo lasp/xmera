@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -21,45 +21,41 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/msgPayloadDefC/MotorStepCommandMsgPayload.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/MotorStepCommandMsgPayload.h"
+#include <cmath>
 #include <cstdint>
 
 /*! @brief Stepper Motor Controller Class */
-class StepperMotorController: public SysModel{
-public:
-    void reset(uint64_t currentSimNanos) override;                         //!< Reset member function
-    void updateState(uint64_t currentSimNanos) override;                   //!< Update member function
-    double getThetaInit() const;                                           //!< Getter method for the initial motor angle
-    double getStepAngle() const;                                           //!< Getter method for the motor step angle
-    double getStepTime() const;                                            //!< Getter method for the motor step time
-    void setThetaInit(const double thetaInit);                             //!< Setter method for the initial motor angle
-    void setStepAngle(const double stepAngle);                             //!< Setter method for the motor step angle
-    void setStepTime(const double stepTime);                               //!< Setter method for the motor step time
+class StepperMotorController : public SysModel {
+   public:
+    void reset(uint64_t currentSimNanos) override;        //!< Reset member function
+    void updateState(uint64_t currentSimNanos) override;  //!< Update member function
+    double getThetaInit() const;                          //!< Getter method for the initial motor angle
+    double getThetaMax() const;                           //!< Getter method for the motor upper actuation limit
+    double getThetaMin() const;                           //!< Getter method for the motor lower actuation limit
+    double getStepAngle() const;                          //!< Getter method for the motor step angle
+    double getStepTime() const;                           //!< Getter method for the motor step time
+    void setThetaInit(const double thetaInit);            //!< Setter method for the initial motor angle
+    void setThetaMax(const double thetaMax);              //!< Setter method for the motor upper actuation limit
+    void setThetaMin(const double thetaMin);              //!< Setter method for the motor lower actuation limit
+    void setStepAngle(const double stepAngle);            //!< Setter method for the motor step angle
+    void setStepTime(const double stepTime);              //!< Setter method for the motor step time
 
-    ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;             //!< Intput msg for the stepper motor reference message
-    Message<MotorStepCommandMsgPayload> motorStepCommandOutMsg;            //!< Output msg for the number of commanded motor step counts
+    ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;   //!< Intput msg for the motor reference angle message
+    Message<MotorStepCommandMsgPayload> motorStepCommandOutMsg;  //!< Output msg for the number of commanded motor steps
 
-    BSKLogger *bskLogger;                                                  //!< BSK Logging
-
-private:
-
-    /* Motor angle parameters */
-    double thetaInit{};                                                    //!< [rad] Initial motor angle
-    double theta{};                                                        //!< [rad] Current motor angle
-    double thetaRef{};                                                     //!< [rad] Motor reference angle
-    double deltaTheta{};                                                   //!< [rad] Difference between desired and current angle
-    double stepAngle{};                                                    //!< [rad] Angle the stepper motor moves through for a single step (constant)
-
-    /* Step parameters */
-    int stepsCommanded{};                                                  //!< [steps] Number of steps needed to reach the desired angle (output)
-    int stepCount{};                                                       //!< [steps] Current motor step count (number of steps taken)
-
-    /* Temporal parameters */
-    double stepTime{1.0};                                                  //!< [s] Time required for a single motor step (constant)
-    double previousWrittenTime{-1.0};                                      //!< [ns] Time the last input message was written
-    double deltaSimTime{};                                                 //!< [ns] The time elapsed since the last message was written
+   private:
+    double thetaInit{};                //!< [rad] Initial motor angle
+    double theta{};                    //!< [rad] Current motor angle
+    double thetaRef{};                 //!< [rad] Motor reference angle
+    double stepAngle{};                //!< [rad] Step angle the motor rotates through for a single step (constant)
+    double thetaMax{2 * M_PI};         //!< [rad] Motor upper hard stop actuation limit
+    double thetaMin{-2 * M_PI};        //!< [rad] Motor lower hard stop actuation limit
+    int stepsCommanded{};              //!< [steps] Number of steps needed to reach the desired angle (output)
+    int stepCount{};                   //!< [steps] Current motor step count (number of steps taken)
+    double stepTime{1.0};              //!< [s] Time required for the motor to actuate through a single step (constant)
+    double previousWrittenTime{-1.0};  //!< [ns] Time the last motor reference input message was written
 };
 
 #endif
