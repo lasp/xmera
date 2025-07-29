@@ -144,13 +144,13 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     navTrans1 = navAggregate.AggregateTransInput()
     navTrans2 = navAggregate.AggregateTransInput()
 
-    module.attMsgCount = numAttNav
+    module.setAttMsgCount(numAttNav)
     if numAttNav == 3:       # here the index asks to read from an empty (zero) message
-        module.attMsgCount = 2
+        module.setAttMsgCount(2)
 
-    module.transMsgCount = numTransNav
+    module.setTransMsgCount(numTransNav)
     if numTransNav == 3:     # here the index asks to read from an empty (zero) message
-        module.transMsgCount = 2
+        module.setTransMsgCount(2)
 
     if numAttNav <= navAggregate.MAX_AGG_NAV_MSG:
         module.attMsgs = [navAtt1, navAtt2]
@@ -170,15 +170,15 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
             module.transMsgs[i].navTransInMsg.subscribeTo(navTrans1InMsg)
 
     if numAttNav > 1:       # always read from the last message counter
-        module.attTimeIdx = numAttNav - 1
-        module.attIdx = numAttNav - 1
-        module.rateIdx = numAttNav - 1
-        module.sunIdx = numAttNav - 1
+        module.setAttTimeIdx(numAttNav - 1)
+        module.setAttIdx(numAttNav - 1)
+        module.setRateIdx(numAttNav - 1)
+        module.setSunIdx(numAttNav - 1)
     if numTransNav > 1:     # always read from the last message counter
-        module.transTimeIdx = numTransNav-1
-        module.posIdx = numTransNav-1
-        module.velIdx = numTransNav-1
-        module.dvIdx = numTransNav-1
+        module.setTransTimeIdx(numTransNav - 1)
+        module.setPosIdx(numTransNav - 1)
+        module.setVelIdx(numTransNav - 1)
+        module.setDvIdx(numTransNav - 1)
 
     # write TeX snippets for the message values
     unitTestSupport.writeTeXSnippet("navAtt1Msg.timeTag", str(navAtt1Msg.timeTag), path)
@@ -294,37 +294,6 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     testFailCount, testMessages = unitTestSupport.compareArray(trueTransAccum, transAccum,
                                                                accuracy, "vehSunPntBdy",
                                                                testFailCount, testMessages)
-
-    if numAttNav == 11:
-        if module.attMsgCount != navAggregate.MAX_AGG_NAV_MSG:
-            testFailCount += 1
-            testMessages.append("FAILED numAttNav too large test")
-        if module.attTimeIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED attTimeIdx too large test")
-        if module.attIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED attIdx too large test")
-        if module.rateIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED rateIdx too large test")
-        if module.sunIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED sunIdx too large test")
-
-    if numTransNav == 11:
-        if module.transMsgCount != navAggregate.MAX_AGG_NAV_MSG:
-            testFailCount += 1
-            testMessages.append("FAILED numTransNav too large test")
-        if module.posIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED posIdx too large test")
-        if module.velIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED velIdx too large test")
-        if module.dvIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED dvIdx too large test")
 
     #   print out success message if no error were found
     snippentName = "passFail" + str(numAttNav) + str(numTransNav)

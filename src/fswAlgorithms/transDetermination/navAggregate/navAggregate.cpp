@@ -186,3 +186,123 @@ void NavAggregate::updateState(uint64_t callTime)
     this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, callTime);
     this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, callTime);
 }
+
+/**
+ * @brief Set the attitude time index.
+ * @param idx The new attitude time index to set.
+ */
+void NavAggregate::setAttTimeIdx(uint32_t idx) { this->attTimeIdx = idx; }
+
+/**
+ * @brief Get the attitude time index.
+ * @return uint32_t The current attitude time index.
+ */
+uint32_t NavAggregate::getAttTimeIdx() const { return this->attTimeIdx; }
+
+/**
+ * @brief Set the translation time index.
+ * @param idx The new translation time index to set.
+ */
+void NavAggregate::setTransTimeIdx(uint32_t idx) { this->transTimeIdx = idx; }
+
+/**
+ * @brief Get the translation time index.
+ * @return uint32_t The current translation time index.
+ */
+uint32_t NavAggregate::getTransTimeIdx() const { return this->transTimeIdx; }
+
+/**
+ * @brief Set the attitude index.
+ * @param idx The new attitude index to set.
+ */
+void NavAggregate::setAttIdx(uint32_t idx) { this->attIdx = idx; }
+
+/**
+ * @brief Get the attitude index.
+ * @return uint32_t The current attitude index.
+ */
+uint32_t NavAggregate::getAttIdx() const { return this->attIdx; }
+
+/**
+ * @brief Set the rate index.
+ * @param idx The new rate index to set.
+ */
+void NavAggregate::setRateIdx(uint32_t idx) { this->rateIdx = idx; }
+
+/**
+ * @brief Get the rate index.
+ * @return uint32_t The current rate index.
+ */
+uint32_t NavAggregate::getRateIdx() const { return this->rateIdx; }
+
+/**
+ * @brief Set the position index.
+ * @param idx The new position index to set.
+ */
+void NavAggregate::setPosIdx(uint32_t idx) { this->posIdx = idx; }
+
+/**
+ * @brief Get the position index.
+ * @return uint32_t The current position index.
+ */
+uint32_t NavAggregate::getPosIdx() const { return this->posIdx; }
+
+/**
+ * @brief Set the velocity index.
+ * @param idx The new velocity index to set.
+ */
+void NavAggregate::setVelIdx(uint32_t idx) { this->velIdx = idx; }
+
+/**
+ * @brief Get the velocity index.
+ * @return uint32_t The current velocity index.
+ */
+uint32_t NavAggregate::getVelIdx() const { return this->velIdx; }
+
+/**
+ * @brief Set the accumulated DV index.
+ * @param idx The new accumulated DV index to set.
+ */
+void NavAggregate::setDvIdx(uint32_t idx) { this->dvIdx = idx; }
+
+/**
+ * @brief Get the accumulated DV index.
+ * @return uint32_t The current accumulated DV index.
+ */
+uint32_t NavAggregate::getDvIdx() const { return this->dvIdx; }
+
+/**
+ * @brief Set the sun index.
+ * @param idx The new sun index to set.
+ */
+void NavAggregate::setSunIdx(uint32_t idx) { this->sunIdx = idx; }
+
+/**
+ * @brief Get the sun index.
+ * @return uint32_t The current sun index.
+ */
+uint32_t NavAggregate::getSunIdx() const { return this->sunIdx; }
+
+/**
+ * @brief Set the attitude message count.
+ * @param msgCount The new attitude message count to set.
+ */
+void NavAggregate::setAttMsgCount(uint32_t msgCount) { this->attMsgCount = msgCount; }
+
+/**
+ * @brief Get the attitude message count.
+ * @return uint32_t The current attitude message count.
+ */
+uint32_t NavAggregate::getAttMsgCount() const { return this->attMsgCount; }
+
+/**
+ * @brief Set the translational message count.
+ * @param msgCount The new translational message count to set.
+ */
+void NavAggregate::setTransMsgCount(uint32_t msgCount) { this->transMsgCount = msgCount; }
+
+/**
+ * @brief Get the translational message count.
+ * @return uint32_t The current translational message count.
+ */
+uint32_t NavAggregate::getTransMsgCount() const { return this->transMsgCount; }
