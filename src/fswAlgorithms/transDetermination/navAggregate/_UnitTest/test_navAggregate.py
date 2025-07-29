@@ -71,15 +71,6 @@ from Basilisk.architecture import messaging
     , (2, 3)
     , (1, 3)
     , (0, 3)
-    , (11, 11)
-    , (3, 11)
-    , (2, 11)
-    , (1, 11)
-    , (0, 11)
-    , (11, 3)
-    , (11, 2)
-    , (11, 1)
-    , (11, 0)
 ])
 
 # update "module" in this function name to reflect the module name

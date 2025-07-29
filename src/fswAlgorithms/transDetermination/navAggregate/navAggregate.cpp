@@ -28,106 +28,23 @@
  */
 void NavAggregate::reset(uint64_t callTime)
 {
-
-    /*! - ensure incoming message counters are not larger than MAX_AGG_NAV_MSG */
-    if (this->attMsgCount > MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, MAX_LOGGING_LENGTH, "The attitude message count %d is larger than allowed (%d). Setting count to max value.",
-                  this->attMsgCount, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->attMsgCount = MAX_AGG_NAV_MSG;
-    }
-    if (this->transMsgCount > MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The translation message count %d is larger than allowed (%d). Setting count to max value.",
-                  this->transMsgCount, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->transMsgCount = MAX_AGG_NAV_MSG;
-    }
-
     /*! - loop over the number of attitude input messages and make sure they are linked */
     for(uint32_t i=0; i<this->attMsgCount; i=i+1)
     {
         if (!this->attMsgs[i].navAttInMsg.isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR, "An attitude input message name was not linked.  Be sure that attMsgCount is set properly.");
+            throw std::invalid_argument(
+                "An attitude input message name was not linked. "
+                "Be sure that the number of linked messages corresponds to attMsgCount.");
         }
     }
     /*! - loop over the number of translational input messages and make sure they are linked */
     for(uint32_t i=0; i<this->transMsgCount; i=i+1)
     {
         if (!this->transMsgs[i].navTransInMsg.isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR, "A translation input message name was not specified.  Be sure that transMsgCount is set properly.");
+            throw std::invalid_argument(
+                "A translation input message name was not linked. "
+                "Be sure that the number of linked messages corresponds to transMsgCount.");
         }
-    }
-
-    /*! - ensure the attitude message index locations are less than MAX_AGG_NAV_MSG */
-    if (this->attTimeIdx >= MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The attTimeIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-              this->attTimeIdx, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->attTimeIdx = MAX_AGG_NAV_MSG - 1;
-    }
-    if (this->attIdx >= MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The attIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                  this->attIdx, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->attIdx = MAX_AGG_NAV_MSG - 1;
-    }
-    if (this->rateIdx >= MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The rateIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                  this->rateIdx, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->rateIdx = MAX_AGG_NAV_MSG - 1;
-    }
-    if (this->sunIdx >= MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The sunIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                this->sunIdx, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->sunIdx = MAX_AGG_NAV_MSG - 1;
-    }
-
-    /*! - ensure the translational message index locations are less than MAX_AGG_NAV_MSG */
-    if (this->transTimeIdx >= MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The transTimeIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                this->transTimeIdx, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->transTimeIdx = MAX_AGG_NAV_MSG - 1;
-    }
-    if (this->posIdx >= MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The posIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                  this->posIdx, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->posIdx = MAX_AGG_NAV_MSG - 1;
-    }
-    if (this->velIdx >= MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The velIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                  this->velIdx, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->velIdx = MAX_AGG_NAV_MSG - 1;
-    }
-    if (this->dvIdx >= MAX_AGG_NAV_MSG) {
-        char info[MAX_LOGGING_LENGTH];
-        snprintf(info, sizeof(info), "The dvIdx variable %d is too large. Must be less than %d. Setting index to max value.",
-                this->dvIdx, MAX_AGG_NAV_MSG);
-        this->bskLogger.bskLog(BSK_ERROR, info);
-
-        this->dvIdx = MAX_AGG_NAV_MSG - 1;
     }
 
     //! - zero the arrays of input messages
@@ -135,7 +52,6 @@ void NavAggregate::reset(uint64_t callTime)
         this->attMsgs[i].msgStorage = NavAttMsgPayload();
         this->transMsgs[i].msgStorage = NavTransMsgPayload();
     }
-
 }
 
 
@@ -191,7 +107,15 @@ void NavAggregate::updateState(uint64_t callTime)
  * @brief Set the attitude time index.
  * @param idx The new attitude time index to set.
  */
-void NavAggregate::setAttTimeIdx(uint32_t idx) { this->attTimeIdx = idx; }
+void NavAggregate::setAttTimeIdx(uint32_t idx) {
+    if (idx >= MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "attTimeIdx (%i) must be less than maximum navAggregate message size (%i).",
+                idx, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->attTimeIdx = idx;
+}
 
 /**
  * @brief Get the attitude time index.
@@ -203,7 +127,15 @@ uint32_t NavAggregate::getAttTimeIdx() const { return this->attTimeIdx; }
  * @brief Set the translation time index.
  * @param idx The new translation time index to set.
  */
-void NavAggregate::setTransTimeIdx(uint32_t idx) { this->transTimeIdx = idx; }
+void NavAggregate::setTransTimeIdx(uint32_t idx) {
+    if (idx >= MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "transTimeIdx (%i) must be less than maximum navAggregate message size (%i).",
+                idx, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->transTimeIdx = idx;
+}
 
 /**
  * @brief Get the translation time index.
@@ -215,7 +147,15 @@ uint32_t NavAggregate::getTransTimeIdx() const { return this->transTimeIdx; }
  * @brief Set the attitude index.
  * @param idx The new attitude index to set.
  */
-void NavAggregate::setAttIdx(uint32_t idx) { this->attIdx = idx; }
+void NavAggregate::setAttIdx(uint32_t idx) {
+    if (idx >= MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "attIdx (%i) must be less than maximum navAggregate message size (%i).",
+                idx, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->attIdx = idx;
+}
 
 /**
  * @brief Get the attitude index.
@@ -227,7 +167,15 @@ uint32_t NavAggregate::getAttIdx() const { return this->attIdx; }
  * @brief Set the rate index.
  * @param idx The new rate index to set.
  */
-void NavAggregate::setRateIdx(uint32_t idx) { this->rateIdx = idx; }
+void NavAggregate::setRateIdx(uint32_t idx) {
+    if (idx >= MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "rateIdx (%i) must be less than maximum navAggregate message size (%i).",
+                idx, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->rateIdx = idx;
+}
 
 /**
  * @brief Get the rate index.
@@ -239,7 +187,15 @@ uint32_t NavAggregate::getRateIdx() const { return this->rateIdx; }
  * @brief Set the position index.
  * @param idx The new position index to set.
  */
-void NavAggregate::setPosIdx(uint32_t idx) { this->posIdx = idx; }
+void NavAggregate::setPosIdx(uint32_t idx) {
+    if (idx >= MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "posIdx (%i) must be less than maximum navAggregate message size (%i).",
+                idx, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->posIdx = idx;
+}
 
 /**
  * @brief Get the position index.
@@ -251,7 +207,15 @@ uint32_t NavAggregate::getPosIdx() const { return this->posIdx; }
  * @brief Set the velocity index.
  * @param idx The new velocity index to set.
  */
-void NavAggregate::setVelIdx(uint32_t idx) { this->velIdx = idx; }
+void NavAggregate::setVelIdx(uint32_t idx) {
+    if (idx >= MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "velIdx (%i) must be less than maximum navAggregate message size (%i).",
+                idx, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->velIdx = idx;
+}
 
 /**
  * @brief Get the velocity index.
@@ -263,7 +227,15 @@ uint32_t NavAggregate::getVelIdx() const { return this->velIdx; }
  * @brief Set the accumulated DV index.
  * @param idx The new accumulated DV index to set.
  */
-void NavAggregate::setDvIdx(uint32_t idx) { this->dvIdx = idx; }
+void NavAggregate::setDvIdx(uint32_t idx) {
+    if (idx >= MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "dvIdx (%i) must be less than maximum navAggregate message size (%i).",
+                idx, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->dvIdx = idx;
+}
 
 /**
  * @brief Get the accumulated DV index.
@@ -275,7 +247,15 @@ uint32_t NavAggregate::getDvIdx() const { return this->dvIdx; }
  * @brief Set the sun index.
  * @param idx The new sun index to set.
  */
-void NavAggregate::setSunIdx(uint32_t idx) { this->sunIdx = idx; }
+void NavAggregate::setSunIdx(uint32_t idx) {
+    if (idx >= MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "sunIdx (%i) must be less than maximum navAggregate message size (%i).",
+                idx, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->sunIdx = idx;
+}
 
 /**
  * @brief Get the sun index.
@@ -287,7 +267,15 @@ uint32_t NavAggregate::getSunIdx() const { return this->sunIdx; }
  * @brief Set the attitude message count.
  * @param msgCount The new attitude message count to set.
  */
-void NavAggregate::setAttMsgCount(uint32_t msgCount) { this->attMsgCount = msgCount; }
+void NavAggregate::setAttMsgCount(uint32_t msgCount) {
+    if (msgCount > MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "attMsgCount (%i) must not be greater than maximum navAggregate message size (%i).",
+                msgCount, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->attMsgCount = msgCount;
+}
 
 /**
  * @brief Get the attitude message count.
@@ -299,7 +287,15 @@ uint32_t NavAggregate::getAttMsgCount() const { return this->attMsgCount; }
  * @brief Set the translational message count.
  * @param msgCount The new translational message count to set.
  */
-void NavAggregate::setTransMsgCount(uint32_t msgCount) { this->transMsgCount = msgCount; }
+void NavAggregate::setTransMsgCount(uint32_t msgCount) {
+    if (msgCount > MAX_AGG_NAV_MSG) {
+        char errorMsg[MAX_LOGGING_LENGTH];
+        snprintf(errorMsg, sizeof(errorMsg), "transMsgCount (%i) must not be greater than maximum navAggregate message size (%i).",
+                msgCount, MAX_AGG_NAV_MSG);
+        throw std::invalid_argument(errorMsg);
+    }
+    this->transMsgCount = msgCount;
+}
 
 /**
  * @brief Get the translational message count.

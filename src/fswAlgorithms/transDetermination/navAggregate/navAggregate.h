@@ -67,10 +67,8 @@ class NavAggregate : public SysModel {
 
     AggregateAttInput attMsgs[MAX_AGG_NAV_MSG];     /*!< [-] The incoming nav message buffer */
     AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
-    Message<NavAttMsgPayload> navAttOutMsg;         /*!< blended attitude navigation output message */
-    Message<NavTransMsgPayload> navTransOutMsg;     /*!< blended translation navigation output message */
-    
-    BSKLogger bskLogger = {};                             //!< BSK Logging
+    Message<NavAttMsgPayload> navAttOutMsg; /*!< blended attitude navigation output message */
+    Message<NavTransMsgPayload> navTransOutMsg; /*!< blended translation navigation output message */
 
    private:
     uint32_t attTimeIdx;        /*!< [-] The index of the message to use for attitude message time */
