@@ -35,14 +35,14 @@ splitPath = path.split(bskName)
 @pytest.mark.parametrize("motorStepTime", [0.008, 0.1, 0.5])
 @pytest.mark.parametrize("motorThetaInit", [-5.0 * macros.D2R, 0.0, 60.0 * macros.D2R])
 @pytest.mark.parametrize("motorThetaRef", [0.0, 10.6 * macros.D2R, 60.0051 * macros.D2R])
-def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motorThetaInit, motorThetaRef):
+def test_stepperMotorController_nominal(show_plots, motorStepAngle, motorStepTime, motorThetaInit, motorThetaRef):
     r"""
     **Validation Test Description**
 
-    This unit test ensures that the stepper motor controller module correctly determines the number of steps required to
-    actuate from an initial angle to a final reference angle. The initial and reference motor angles are varied so that
-    both positive and negative steps are required in this test. It must be noted that the motor angles are discretized
-    by a constant ``motorStepAngle``; therefore the motor cannot simply actuate to any desired angle.
+    This nominal unit test ensures that the stepper motor controller module correctly determines the number of steps
+    required to actuate from an initial angle to a final reference angle. The initial and reference motor angles are
+    varied so that both positive and negative steps are required in this test. It must be noted that the motor angles
+    are discretized by a constant ``motorStepAngle``; therefore the motor cannot simply actuate to any desired angle.
     The reference motor angles are chosen in this test so that several cases require the reference to be adjusted
     to the nearest multiple of the motor step angle. In other words, this test checks cases where the exact number of
     motor steps required to reach the reference exactly is not an integer. For these cases, the final result for the
@@ -122,11 +122,75 @@ def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motor
                                atol=accuracy,
                                verbose=True)
 
+
+@pytest.mark.parametrize("motorThetaRef", [-10.0, 275.0])
+def test_stepperMotorController_invalid(show_plots, motorThetaRef):
+    r"""
+    **Validation Test Description**
+
+    This unit test ensures that the stepper motor controller module correctly outputs zero steps commanded when the
+    reference motor angle is outside the motor actuation bounds.
+
+    **Test Parameters**
+
+    Args:
+        motorThetaRef (float): [rad] Reference stepper motor angle
+
+    **Description of Variables Being Tested**
+
+    The module-computed number of required stepper motor steps is checked to be zero in this test.
+
+    """
+
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProcessRate = macros.sec2nano(1.0)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Create the stepperMotorController module
+    motorController = stepperMotorController.StepperMotorController()
+    motorController.modelTag = "stepperMotorController"
+    motorController.setThetaMin(180.0 * macros.D2R)  # [rad]
+    motorController.setThetaMin(0.0)  # [rad]
+    unitTestSim.AddModelToTask(unitTaskName, motorController)
+
+    # Create the stepperMotorController input message
+    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
+    HingedRigidBodyMessageData.theta = motorThetaRef  # [rad]
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
+    motorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
+
+    # Set up data logging
+    motorStepCommandLog = motorController.motorStepCommandOutMsg.recorder(testProcessRate)
+    unitTestSim.AddModelToTask(unitTaskName, motorStepCommandLog)
+
+    # Run the simulation
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))
+    unitTestSim.ExecuteSimulation()
+
+    # Pull the logged motor step data
+    stepsCommandedSim = motorStepCommandLog.stepsCommanded
+
+    # Check that the correct number of steps was calculated
+    accuracy = 1e-12
+    np.testing.assert_allclose(stepsCommandedSim[0],
+                               0,
+                               atol=accuracy,
+                               verbose=True)
+
+
 if __name__ == "__main__":
-    test_stepperMotorController(
+    test_stepperMotorController_nominal(
          False,
          1.0 * macros.D2R,  # [rad] motorStepAngle
          1.0,  # [s] motorStepTime
          0.0,  # [rad] motorThetaInit
          10.0 * macros.D2R,  # [rad] motorThetaRef
+    )
+    test_stepperMotorController_invalid(
+        False,
+        270.0 * macros.D2R,  # [rad] motorThetaRef
     )
