@@ -20,7 +20,6 @@
 #include "stepperMotorController.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <cassert>
-#include <cmath>
 
 /*! This method performs a complete reset of the module. The input message is checked to ensure it is linked.
  @return void
@@ -60,26 +59,34 @@ void StepperMotorController::updateState(uint64_t callTime) {
         // (Important: This angle may not be reachable if it is not a multiple of the motor step angle)
         this->thetaRef = motorRefAngleIn.theta;
 
-        // Calculate deltaTheta, the angle the motor must rotate through to achieve the reference angle.
-        // Important: The motor cannot stop actuating during a step. If the motor is currently actuating through a
-        // step and is interrupted by a new incoming reference message, the motor must complete its actuation through
-        // the current step before following the new reference command. Therefore, the motor angle must be rounded up
-        // to the nearest multiple of the motor step angle to compute the correct displacement deltaTheta.
-        double deltaTheta{};
-        if (this->theta > 0) {
-            deltaTheta = this->thetaRef - (std::ceil(this->theta / this->stepAngle) * this->stepAngle);
+        // Check that the reference angle is within the actuation region of the motor
+        assert(this->thetaRef <= this->thetaMax && this->thetaRef >= this->thetaMin);
+        if (this->thetaRef >= this->thetaMax || this->thetaRef <= this->thetaMin) {
+            this->thetaRef = this->theta;
+            this->stepsCommanded = 0;
         } else {
-            deltaTheta = this->thetaRef - (std::floor(this->theta / this->stepAngle) * this->stepAngle);
-        }
+            // Calculate deltaTheta, the angle the motor must rotate through to achieve the reference angle.
+            // Important: The motor cannot stop actuating during a step. If the motor is currently actuating through a
+            // step and is interrupted by a new incoming reference message, the motor must complete its actuation
+            // through the current step before following the new reference command. Therefore, the motor angle must be
+            // rounded up to the nearest multiple of the motor step angle to compute the correct displacement
+            // deltaTheta.
+            double deltaTheta{};
+            if (this->theta > 0) {
+                deltaTheta = this->thetaRef - (std::ceil(this->theta / this->stepAngle) * this->stepAngle);
+            } else {
+                deltaTheta = this->thetaRef - (std::floor(this->theta / this->stepAngle) * this->stepAngle);
+            }
 
-        // Calculate the integer number of steps the motor must take to reach the reference angle
-        // The exact value is first stored as a double and rounded to the nearest integer step
-        double tempStepsCommanded = deltaTheta / this->stepAngle;
-        if ((std::ceil(tempStepsCommanded) - tempStepsCommanded) >
-            (tempStepsCommanded - std::floor(tempStepsCommanded))) {
-            this->stepsCommanded = std::floor(tempStepsCommanded);
-        } else {
-            this->stepsCommanded = std::ceil(tempStepsCommanded);
+            // Calculate the integer number of steps the motor must take to reach the reference angle
+            // The exact value is first stored as a double and rounded to the nearest integer step
+            double tempStepsCommanded = deltaTheta / this->stepAngle;
+            if ((std::ceil(tempStepsCommanded) - tempStepsCommanded) >
+                (tempStepsCommanded - std::floor(tempStepsCommanded))) {
+                this->stepsCommanded = std::floor(tempStepsCommanded);
+            } else {
+                this->stepsCommanded = std::ceil(tempStepsCommanded);
+            }
         }
 
         // Use the computed steps commanded to update the motor reference angle to the reachable value
@@ -97,7 +104,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
     // Calculate the time elapsed since the last motor reference input message was written
     double deltaSimTime = (NANO2SEC * callTime) - this->previousWrittenTime;
 
-    // Update the motor information
+    // Update the motor information if steps were commanded
     if (this->stepsCommanded > 0) {
         this->stepCount = std::floor(deltaSimTime / this->stepTime);
         this->theta = this->thetaInit + this->stepAngle * (deltaSimTime / this->stepTime);
@@ -106,7 +113,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
             this->theta = this->thetaRef;
             this->thetaInit = this->thetaRef;
         }
-    } else {
+    } else if (this->stepsCommanded < 0) {
         this->stepCount = -std::floor(deltaSimTime / this->stepTime);
         this->theta = this->thetaInit - this->stepAngle * (deltaSimTime / this->stepTime);
         if (this->theta <= this->thetaRef) {
@@ -121,6 +128,16 @@ void StepperMotorController::updateState(uint64_t callTime) {
  @return double
 */
 double StepperMotorController::getThetaInit() const { return this->thetaInit; }
+
+/*! Getter method for the motor upper actuation limit.
+ @return double
+*/
+double StepperMotorController::getThetaMax() const { return this->thetaMax; }
+
+/*! Getter method for the motor lower actuation limit.
+ @return double
+*/
+double StepperMotorController::getThetaMin() const { return this->thetaMin; }
 
 /*! Getter method for the motor step angle.
  @return double
@@ -140,6 +157,18 @@ void StepperMotorController::setThetaInit(const double thetaInit) {
     this->thetaInit = thetaInit;
     this->theta = thetaInit;
 }
+
+/*! Setter method for the motor upper actuation limit.
+ @return void
+ @param thetaMax [rad] Motor upper actuation limit
+*/
+void StepperMotorController::setThetaMax(const double thetaMax) { this->thetaMax = thetaMax; }
+
+/*! Setter method for the motor lower actuation limit.
+ @return void
+ @param thetaMin [rad] Motor lower actuation limit
+*/
+void StepperMotorController::setThetaMin(const double thetaMin) { this->thetaMin = thetaMin; }
 
 /*! Setter method for the motor step angle.
  @return void
