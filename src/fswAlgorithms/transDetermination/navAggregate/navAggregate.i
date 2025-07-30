@@ -31,6 +31,7 @@ from Basilisk.architecture.swig_common_model import *
 STRUCTASLIST(AggregateAttInput)
 STRUCTASLIST(AggregateTransInput)
 %include "navAggregate.h"
+%include "navAggregateAlgorithm.h"
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 %include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 

@@ -17,38 +17,29 @@
 
  */
 
-#ifndef NAV_AGGREGATE_H
-#define NAV_AGGREGATE_H
+#ifndef NAV_AGGREGATE_ALGORITHM_H
+#define NAV_AGGREGATE_ALGORITHM_H
 
 #include <stdint.h>
+#include <stdexcept>
 
 #include <array>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "fswAlgorithms/transDetermination/navAggregate/navAggregateAlgorithm.h"
 
-/*! structure containing the attitude navigation message name, ID and local buffer*/
+#define MAX_AGG_NAV_MSG 10
+
+/*! structure containing the attitude and translational navigation out messages */
 typedef struct {
-    ReadFunctor<NavAttMsgPayload> navAttInMsg; /*!< attitude navigation input message*/
-    NavAttMsgPayload msgStorage;               /*!< [-] Local buffer to store nav message*/
-} AggregateAttInput;
+    NavAttMsgPayload navAttOut; /*!< attitude navigation out message payload */
+    NavTransMsgPayload navTransOut; /*!< translation navigation out message payload */
+}AggregateOutput;
 
-/*! structure containing the translational navigation message name, ID and local buffer*/
-typedef struct {
-    ReadFunctor<NavTransMsgPayload> navTransInMsg; /*!< translation navigation input message*/
-    NavTransMsgPayload msgStorage;                 /*!< [-] Local buffer to store nav message*/
-} AggregateTransInput;
-
-class NavAggregate : public SysModel {
+class NavAggregateAlgorithm {
    public:
-    NavAggregate() = default;
-    ~NavAggregate() = default;
-
-    void updateState(uint64_t callTime) override;
-    void reset(uint64_t callTime) override;
+    AggregateOutput update(std::array<NavAttMsgPayload, MAX_AGG_NAV_MSG> attMsgsPayloads,
+                           std::array<NavTransMsgPayload, MAX_AGG_NAV_MSG> transMsgsPayloads);
     void setAttTimeIdx(uint32_t idx);
     uint32_t getAttTimeIdx() const;
     void setTransTimeIdx(uint32_t idx);
@@ -70,13 +61,17 @@ class NavAggregate : public SysModel {
     void setTransMsgCount(uint32_t msgCount);
     uint32_t getTransMsgCount() const;
 
-    AggregateAttInput attMsgs[MAX_AGG_NAV_MSG];     /*!< [-] The incoming nav message buffer */
-    AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
-    Message<NavAttMsgPayload> navAttOutMsg; /*!< blended attitude navigation output message */
-    Message<NavTransMsgPayload> navTransOutMsg; /*!< blended translation navigation output message */
-
    private:
-    NavAggregateAlgorithm algorithm{};
+    uint32_t attTimeIdx{};        /*!< [-] The index of the message to use for attitude message time */
+    uint32_t transTimeIdx{};      /*!< [-] The index of the message to use for translation message time */
+    uint32_t attIdx{};        /*!< [-] The index of the message to use for inertial MRP*/
+    uint32_t rateIdx{};       /*!< [-] The index of the message to use for attitude rate*/
+    uint32_t posIdx{};        /*!< [-] The index of the message to use for inertial position*/
+    uint32_t velIdx{};        /*!< [-] The index of the message to use for inertial velocity*/
+    uint32_t dvIdx{};         /*!< [-] The index of the message to use for accumulated DV */
+    uint32_t sunIdx{};        /*!< [-] The index of the message to use for sun pointing*/
+    uint32_t attMsgCount{};   /*!< [-] The total number of messages available as inputs */
+    uint32_t transMsgCount{}; /*!< [-] The total number of messages available as inputs */
 };
 
 #endif
