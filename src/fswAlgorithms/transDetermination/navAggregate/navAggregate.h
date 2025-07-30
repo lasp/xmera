@@ -47,8 +47,8 @@ class NavAggregate : public SysModel {
     NavAggregate() = default;
     ~NavAggregate() = default;
 
-    void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
+    void updateState(uint64_t callTime) override;
     void setAttTimeIdx(uint32_t idx);
     uint32_t getAttTimeIdx() const;
     void setTransTimeIdx(uint32_t idx);
