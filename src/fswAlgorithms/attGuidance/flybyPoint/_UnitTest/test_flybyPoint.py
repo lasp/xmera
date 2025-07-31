@@ -93,11 +93,17 @@ def flybyPointTestFunction(show_plots, initial_position, initial_velocity, filte
     flyby_guidance = flybyPoint.FlybyPoint()
     flyby_guidance.modelTag = "flybyPoint"
     flyby_guidance.setTimeBetweenFilterData(filter_dt)
+    np.testing.assert_equal(flyby_guidance.getTimeBetweenFilterData(), filter_dt)
     flyby_guidance.setToleranceForCollinearity(1E-5)
+    np.testing.assert_equal(flyby_guidance.getToleranceForCollinearity(), 1E-5)
     flyby_guidance.setSignOfOrbitNormalFrameVector(orbit_normal_sign)
+    np.testing.assert_equal(flyby_guidance.getSignOfOrbitNormalFrameVector(), orbit_normal_sign)
     flyby_guidance.setMaximumRateThreshold(max_rate)
+    np.testing.assert_equal(flyby_guidance.getMaximumRateThreshold(), max_rate)
     flyby_guidance.setMaximumAccelerationThreshold(max_acceleration)
+    np.testing.assert_equal(flyby_guidance.getMaximumAccelerationThreshold(), max_acceleration)
     flyby_guidance.setPositionKnowledgeSigma(pos_knowledge)
+    np.testing.assert_equal(flyby_guidance.getPositionKnowledgeSigma(), pos_knowledge)
     unit_test_sim.AddModelToTask("unit_task", flyby_guidance)
 
     input_data = messaging.NavTransMsgPayload()
@@ -243,5 +249,6 @@ if __name__ == "__main__":
                     1,  # filter_dt
                     1,  # sign Orbit Normal
                     0.01,  # max rate
-                    0  # max acceleration
+                    0,  # max acceleration
+                    0
                     )
