@@ -20,7 +20,6 @@
 #include "fswAlgorithms/transDetermination/navAggregate/navAggregateAlgorithm.h"
 #include "architecture/utilities/linearAlgebra.h"
 
-
 /*! This method takes the navigation message snippets created by the various
     navigation components in the FSW and aggregates them into a single complete
     navigation message.
@@ -29,10 +28,10 @@
  @param transMsgsPayloads Aggregated translational navigation messages
  */
 AggregateOutput NavAggregateAlgorithm::update(std::array<NavAttMsgPayload, MAX_AGG_NAV_MSG> attMsgsPayloads,
-                                              std::array<NavTransMsgPayload, MAX_AGG_NAV_MSG> transMsgsPayloads)
-{
-    NavAttMsgPayload navAttOutMsgPayload{};     /* [-] local storage of the outgoing attitude navigation message data*/
-    NavTransMsgPayload navTransOutMsgPayload{}; /* [-] local storage of the outgoing translation navigation message data*/
+                                              std::array<NavTransMsgPayload, MAX_AGG_NAV_MSG> transMsgsPayloads) {
+    NavAttMsgPayload navAttOutMsgPayload{}; /* [-] local storage of the outgoing attitude navigation message data*/
+    NavTransMsgPayload
+        navTransOutMsgPayload{}; /* [-] local storage of the outgoing translation navigation message data*/
     AggregateOutput navAggregateOut{};
 
     /*! - check that attitude navigation messages are present */
@@ -42,7 +41,6 @@ AggregateOutput NavAggregateAlgorithm::update(std::array<NavAttMsgPayload, MAX_A
         v3Copy(attMsgsPayloads[this->attIdx].sigma_BN, navAttOutMsgPayload.sigma_BN);
         v3Copy(attMsgsPayloads[this->rateIdx].omega_BN_B, navAttOutMsgPayload.omega_BN_B);
         v3Copy(attMsgsPayloads[this->sunIdx].vehSunPntBdy, navAttOutMsgPayload.vehSunPntBdy);
-
     }
 
     /*! - check that translation navigation messages are present */
@@ -66,7 +64,9 @@ AggregateOutput NavAggregateAlgorithm::update(std::array<NavAttMsgPayload, MAX_A
  */
 void NavAggregateAlgorithm::setAttTimeIdx(uint32_t idx) {
     if (idx >= MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "attTimeIdx (" + std::to_string(idx) + ") must be less than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "attTimeIdx (" + std::to_string(idx) +
+                               ") must be less than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->attTimeIdx = idx;
@@ -84,7 +84,9 @@ uint32_t NavAggregateAlgorithm::getAttTimeIdx() const { return this->attTimeIdx;
  */
 void NavAggregateAlgorithm::setTransTimeIdx(uint32_t idx) {
     if (idx >= MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "transTimeIdx (" + std::to_string(idx) + ") must be less than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "transTimeIdx (" + std::to_string(idx) +
+                               ") must be less than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->transTimeIdx = idx;
@@ -102,7 +104,9 @@ uint32_t NavAggregateAlgorithm::getTransTimeIdx() const { return this->transTime
  */
 void NavAggregateAlgorithm::setAttIdx(uint32_t idx) {
     if (idx >= MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "attIdx (" + std::to_string(idx) + ") must be less than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "attIdx (" + std::to_string(idx) +
+                               ") must be less than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->attIdx = idx;
@@ -120,7 +124,9 @@ uint32_t NavAggregateAlgorithm::getAttIdx() const { return this->attIdx; }
  */
 void NavAggregateAlgorithm::setRateIdx(uint32_t idx) {
     if (idx >= MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "rateIdx (" + std::to_string(idx) + ") must be less than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "rateIdx (" + std::to_string(idx) +
+                               ") must be less than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->rateIdx = idx;
@@ -138,7 +144,9 @@ uint32_t NavAggregateAlgorithm::getRateIdx() const { return this->rateIdx; }
  */
 void NavAggregateAlgorithm::setPosIdx(uint32_t idx) {
     if (idx >= MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "posIdx (" + std::to_string(idx) + ") must be less than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "posIdx (" + std::to_string(idx) +
+                               ") must be less than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->posIdx = idx;
@@ -156,7 +164,9 @@ uint32_t NavAggregateAlgorithm::getPosIdx() const { return this->posIdx; }
  */
 void NavAggregateAlgorithm::setVelIdx(uint32_t idx) {
     if (idx >= MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "velIdx (" + std::to_string(idx) + ") must be less than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "velIdx (" + std::to_string(idx) +
+                               ") must be less than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->velIdx = idx;
@@ -174,7 +184,9 @@ uint32_t NavAggregateAlgorithm::getVelIdx() const { return this->velIdx; }
  */
 void NavAggregateAlgorithm::setDvIdx(uint32_t idx) {
     if (idx >= MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "dvIdx (" + std::to_string(idx) + ") must be less than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "dvIdx (" + std::to_string(idx) +
+                               ") must be less than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->dvIdx = idx;
@@ -192,7 +204,9 @@ uint32_t NavAggregateAlgorithm::getDvIdx() const { return this->dvIdx; }
  */
 void NavAggregateAlgorithm::setSunIdx(uint32_t idx) {
     if (idx >= MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "sunIdx (" + std::to_string(idx) + ") must be less than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "sunIdx (" + std::to_string(idx) +
+                               ") must be less than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->sunIdx = idx;
@@ -210,7 +224,9 @@ uint32_t NavAggregateAlgorithm::getSunIdx() const { return this->sunIdx; }
  */
 void NavAggregateAlgorithm::setAttMsgCount(uint32_t msgCount) {
     if (msgCount > MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "attMsgCount (" + std::to_string(msgCount) + ") must not be greater than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "attMsgCount (" + std::to_string(msgCount) +
+                               ") must not be greater than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->attMsgCount = msgCount;
@@ -228,7 +244,9 @@ uint32_t NavAggregateAlgorithm::getAttMsgCount() const { return this->attMsgCoun
  */
 void NavAggregateAlgorithm::setTransMsgCount(uint32_t msgCount) {
     if (msgCount > MAX_AGG_NAV_MSG) {
-        std::string errorMsg = "transMsgCount (" + std::to_string(msgCount) + ") must not be greater than maximum navAggregate message size (" + std::to_string(MAX_AGG_NAV_MSG) + ").";
+        std::string errorMsg = "transMsgCount (" + std::to_string(msgCount) +
+                               ") must not be greater than maximum navAggregate message size (" +
+                               std::to_string(MAX_AGG_NAV_MSG) + ").";
         throw std::invalid_argument(errorMsg);
     }
     this->transMsgCount = msgCount;

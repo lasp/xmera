@@ -72,8 +72,8 @@ class NavAggregate : public SysModel {
 
     AggregateAttInput attMsgs[MAX_AGG_NAV_MSG];     /*!< [-] The incoming nav message buffer */
     AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
-    Message<NavAttMsgPayload> navAttOutMsg; /*!< blended attitude navigation output message */
-    Message<NavTransMsgPayload> navTransOutMsg; /*!< blended translation navigation output message */
+    Message<NavAttMsgPayload> navAttOutMsg;         /*!< blended attitude navigation output message */
+    Message<NavTransMsgPayload> navTransOutMsg;     /*!< blended translation navigation output message */
 
    private:
     NavAggregateAlgorithm algorithm{};

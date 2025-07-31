@@ -32,9 +32,9 @@
 
 /*! structure containing the attitude and translational navigation out messages */
 typedef struct {
-    NavAttMsgPayload navAttOut; /*!< attitude navigation out message payload */
+    NavAttMsgPayload navAttOut;     /*!< attitude navigation out message payload */
     NavTransMsgPayload navTransOut; /*!< translation navigation out message payload */
-}AggregateOutput;
+} AggregateOutput;
 
 class NavAggregateAlgorithm {
    public:
@@ -62,8 +62,8 @@ class NavAggregateAlgorithm {
     uint32_t getTransMsgCount() const;
 
    private:
-    uint32_t attTimeIdx{};        /*!< [-] The index of the message to use for attitude message time */
-    uint32_t transTimeIdx{};      /*!< [-] The index of the message to use for translation message time */
+    uint32_t attTimeIdx{};    /*!< [-] The index of the message to use for attitude message time */
+    uint32_t transTimeIdx{};  /*!< [-] The index of the message to use for translation message time */
     uint32_t attIdx{};        /*!< [-] The index of the message to use for inertial MRP*/
     uint32_t rateIdx{};       /*!< [-] The index of the message to use for attitude rate*/
     uint32_t posIdx{};        /*!< [-] The index of the message to use for inertial position*/
