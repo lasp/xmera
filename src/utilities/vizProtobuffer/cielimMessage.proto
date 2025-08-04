@@ -69,8 +69,8 @@ message CameraModel{
     repeated double cameraPositionInBody = 5;  //[m] Camera position in body frame
     repeated double bodyFrameToCameraMrp = 6;  //[-] Rotation to the camera frame MRP
     uint64 renderRate = 7;  //[ns] Sim elapsed time between saved camera images
-    double focalLength = 8; // [mm] Camera focal length
-    double exposureTime = 9; // [ns] Time with open shutter
+    double focalLength = 8; // [m] Camera focal length
+    double exposureTime = 9; // [s] Time with open shutter
     double pointSpreadFunction = 10; // [pix] Kernel size of gaussian psf
     double readNoise = 11; // [ns] Time with open shutter
     double systemGain = 12; // [-] System gain between sensor current and pixel intensity

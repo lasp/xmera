@@ -32,7 +32,7 @@ typedef struct {
     uint64_t renderRate;  //!< [ns] Frame time interval at which to capture images in units of nanosecond */
     double cameraBodyFramePosition[3];  //!< [m] Camera position in body frame */
     double bodyToCameraMrp[3];  //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
-    double focalLength;
+    double focalLength;               //!< [m] Camera focal length
     int gaussianPointSpreadFunction;  //!< Size of square Gaussian kernel to model point spread function, must be odd
     double exposureTime;              //!< [s] Exposure time for each image taken
     double readNoise;                 //!< Read noise standard deviation

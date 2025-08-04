@@ -98,11 +98,11 @@ class Camera : public SysModel {
     Eigen::Vector3d cameraBodyFramePosition{};    //!< [m] Camera position in body frame
     Eigen::Vector3d
         bodyToCameraMrp{};  //!< [-] MRP defining the orientation of the camera frame relative to the body frame
-    double focalLength{};   //!< Camera focal length
+    double focalLength{};   //!< [m] Camera focal length
     int gaussianPointSpreadFunction{};  //!< Size of square Gaussian kernel to model point spread function, must be odd
     double readNoise{};                 //!< Read noise standard deviation
     double systemGain{};                //!< Mapping from current to pixel intensity
-    double exposureTime{1};             //!< Mapping from current to pixel intensity
+    double exposureTime{1};             //!< [s] Time with open shutter
     double gammaCorrection{1};          //!< Gamma correction factor
 
    public:
