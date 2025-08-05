@@ -54,13 +54,7 @@ The motor states are then written to the output messages.
  @param callTime [ns] Time the method is called
 */
 void StepperMotor::updateState(uint64_t callTime) {
-    // Create the buffer messages
-    MotorStepCommandMsgPayload motorStepCommandIn;
-    StepperMotorMsgPayload stepperMotorOut;
-
-    // Zero the buffer messages
-    motorStepCommandIn = MotorStepCommandMsgPayload();
-    stepperMotorOut = StepperMotorMsgPayload();
+    MotorStepCommandMsgPayload motorStepCommandIn{};
 
     // Read the input message
     if (this->motorStepCommandInMsg.isWritten()) {
@@ -83,14 +77,13 @@ void StepperMotor::updateState(uint64_t callTime) {
         this->actuateMotor(callTime * NANO2SEC);
     }
 
-    // Copy motor information to the stepper motor message
+    // Write the output message
+    StepperMotorMsgPayload stepperMotorOut{};
     stepperMotorOut.theta = this->theta;
     stepperMotorOut.thetaDot = this->thetaDot;
     stepperMotorOut.thetaDDot = this->thetaDDot;
     stepperMotorOut.stepsCommanded = this->stepsCommanded;
     stepperMotorOut.stepCount = this->stepCount;
-
-    // Write the output messages
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
 }
 
