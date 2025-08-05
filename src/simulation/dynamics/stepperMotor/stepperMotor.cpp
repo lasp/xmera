@@ -65,7 +65,7 @@ void StepperMotor::updateState(uint64_t callTime) {
     if (this->motorStepCommandInMsg.isWritten()) {
         motorStepCommandIn = this->motorStepCommandInMsg();
         // Store the number of commanded motor steps when a new message is written
-        if (this->previousWrittenTime <  this->motorStepCommandInMsg.timeWritten()) {
+        if (this->previousWrittenTime < this->motorStepCommandInMsg.timeWritten()) {
             this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
             this->stepsCommanded = motorStepCommandIn.stepsCommanded;
             if (this->stepsCommanded != 0) {
@@ -191,7 +191,7 @@ bool StepperMotor::isInStepSecondHalf(double t) {
  @param t [s] Time the method is called
 */
 void StepperMotor::computeStepSecondHalf(double t) {
-    if (this->stepsCommanded > 0 && !this->newMsg){
+    if (this->stepsCommanded > 0 && !this->newMsg) {
         this->thetaDDot = -this->thetaDDotMax;
     } else if (!this->newMsg) {
         this->thetaDDot = this->thetaDDotMax;
@@ -238,59 +238,43 @@ void StepperMotor::computeStepComplete(double t) {
 /*! Getter method for the initial motor angle.
  @return double
 */
-double StepperMotor::getThetaInit() const {
-    return this->thetaInit;
-}
+double StepperMotor::getThetaInit() const { return this->thetaInit; }
 
 /*! Getter method for the motor step angle.
  @return double
 */
-double StepperMotor::getStepAngle() const {
-    return this->stepAngle;
-}
+double StepperMotor::getStepAngle() const { return this->stepAngle; }
 
 /*! Getter method for the motor step time.
  @return double
 */
-double StepperMotor::getStepTime() const {
-    return this->stepTime;
-}
+double StepperMotor::getStepTime() const { return this->stepTime; }
 
 /*! Getter method for the maximum motor angular acceleration.
  @return double
 */
-double StepperMotor::getThetaDDotMax() const {
-    return this->thetaDDotMax;
-}
+double StepperMotor::getThetaDDotMax() const { return this->thetaDDotMax; }
 
 /*! Setter method for the initial motor angle.
  @return void
  @param thetaInit [rad] Initial motor angle
 */
-void StepperMotor::setThetaInit(const double thetaInit) {
-    this->thetaInit = thetaInit;
-}
+void StepperMotor::setThetaInit(const double thetaInit) { this->thetaInit = thetaInit; }
 
 /*! Setter method for the motor step angle.
  @return void
  @param stepAngle [rad] Motor step angle
 */
-void StepperMotor::setStepAngle(const double stepAngle) {
-    this->stepAngle = stepAngle;
-}
+void StepperMotor::setStepAngle(const double stepAngle) { this->stepAngle = stepAngle; }
 
 /*! Setter method for the motor step time.
  @return void
  @param stepTime [s] Motor step time
 */
-void StepperMotor::setStepTime(const double stepTime) {
-    this->stepTime = stepTime;
-}
+void StepperMotor::setStepTime(const double stepTime) { this->stepTime = stepTime; }
 
 /*! Setter method for the maximum motor angular acceleration.
  @return void
  @param thetaDDotMax [rad/s^2] Maximum motor angular acceleration
 */
-void StepperMotor::setThetaDDotMax(const double thetaDDotMax) {
-    this->thetaDDotMax = thetaDDotMax;
-}
+void StepperMotor::setThetaDDotMax(const double thetaDDotMax) { this->thetaDDotMax = thetaDDotMax; }
