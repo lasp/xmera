@@ -41,8 +41,6 @@ class StepperMotor : public SysModel {
     void setStepAngle(const double stepAngle);            //!< Setter method for the motor step angle
     void setStepTime(const double stepTime);              //!< Setter method for the motor step time
 
-    BSKLogger *bskLogger;  //!< BSK Logging
-
     ReadFunctor<MotorStepCommandMsgPayload>
         motorStepCommandInMsg;                           //!< Input msg for the number of commanded motor step counts
     Message<StepperMotorMsgPayload> stepperMotorOutMsg;  //!< Output msg for the stepper motor state information

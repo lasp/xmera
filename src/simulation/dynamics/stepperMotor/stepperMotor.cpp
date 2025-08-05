@@ -19,6 +19,7 @@
 #include "stepperMotor.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <cassert>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -26,9 +27,7 @@
  @param callTime [ns] Time the method is called
 */
 void StepperMotor::reset(uint64_t callTime) {
-    if (!this->motorStepCommandInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "Error: stepperMotor.motorStepCommandInMsg wasn't connected.");
-    }
+    assert(this->motorStepCommandInMsg.isLinked());
 
     // Initialize the module parameters to zero
     this->theta = this->thetaInit;
