@@ -61,14 +61,13 @@ void StepperMotor::updateState(uint64_t callTime) {
         motorStepCommandIn = this->motorStepCommandInMsg();
         // Store the number of commanded motor steps when a new message is written
         if (this->previousWrittenTime < this->motorStepCommandInMsg.timeWritten()) {
-            this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
+            this->newMsg = true;
             this->stepsCommanded = motorStepCommandIn.stepsCommanded;
+            this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
+            this->completion = true;
             if (this->stepsCommanded != 0) {
                 this->completion = false;
-            } else {
-                this->completion = true;
             }
-            this->newMsg = true;
         }
     }
 
