@@ -109,7 +109,6 @@ def test_stepperMotorInterrupt(show_plots, stepAngle, stepTime, initialMotorAngl
     StepperMotor.setThetaInit(initialMotorAngle)
     StepperMotor.setStepAngle(stepAngle)
     StepperMotor.setStepTime(stepTime)
-    StepperMotor.setThetaDDotMax(stepAngle / (0.25 * stepTime * stepTime))
 
     # Add the stepperMotor test module to the runtime call list
     unitTestSim.AddModelToTask(unitTaskName, StepperMotor)

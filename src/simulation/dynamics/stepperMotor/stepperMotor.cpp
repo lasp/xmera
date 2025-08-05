@@ -45,6 +45,9 @@ void StepperMotor::reset(uint64_t callTime) {
     this->completion = true;
     this->stepComplete = true;
     this->newMsg = false;
+
+    // Set motor maximum angular acceleration
+    this->thetaDDotMax = this->stepAngle / (0.25 * this->stepTime * this->stepTime);  // [rad/s^2]
 }
 
 /*! This method profiles the stepper motor trajectory and updates the prescribed motor states as a function of time.
@@ -272,9 +275,3 @@ void StepperMotor::setStepAngle(const double stepAngle) { this->stepAngle = step
  @param stepTime [s] Motor step time
 */
 void StepperMotor::setStepTime(const double stepTime) { this->stepTime = stepTime; }
-
-/*! Setter method for the maximum motor angular acceleration.
- @return void
- @param thetaDDotMax [rad/s^2] Maximum motor angular acceleration
-*/
-void StepperMotor::setThetaDDotMax(const double thetaDDotMax) { this->thetaDDotMax = thetaDDotMax; }

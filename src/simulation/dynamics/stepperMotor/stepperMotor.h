@@ -40,7 +40,6 @@ class StepperMotor : public SysModel {
     void setThetaInit(const double thetaInit);            //!< Setter method for the initial motor angle
     void setStepAngle(const double stepAngle);            //!< Setter method for the motor step angle
     void setStepTime(const double stepTime);              //!< Setter method for the motor step time
-    void setThetaDDotMax(const double thetaDDotMax);      //!< Setter method for the maximum motor angular acceleration
 
     BSKLogger *bskLogger;  //!< BSK Logging
 
