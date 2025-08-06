@@ -29,7 +29,6 @@ void StepperMotor::reset(uint64_t callTime) {
 
     // Reset required module parameters
     this->theta = this->thetaInit;
-    this->maneuverThetaInit = this->thetaInit;
     this->thetaDot = 0.0;
     this->thetaDDot = 0.0;
     this->tInit = 0.0;
@@ -112,7 +111,7 @@ void StepperMotor::actuateMotor(double t) {
 */
 void StepperMotor::resetMotor(double t) {
     this->stepCount = 0;
-    this->maneuverThetaInit = this->theta;
+    this->thetaInit = this->theta;
     this->tInit = t;
     this->newMsg = false;
 }
@@ -123,14 +122,14 @@ void StepperMotor::resetMotor(double t) {
 void StepperMotor::updateStepParameters() {
     this->tf = this->tInit + this->stepTime;
     this->ts = this->tInit + this->stepTime / 2;
-    this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
+    this->intermediateThetaInit = this->thetaInit + (this->stepCount * this->stepAngle);
 
     if (this->stepsCommanded > 0) {
-        this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount + 1) * this->stepAngle);
+        this->intermediateThetaRef = this->thetaInit + ((this->stepCount + 1) * this->stepAngle);
         this->a = 0.5 * (this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
         this->b = -0.5 * (this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
     } else {
-        this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount - 1) * this->stepAngle);
+        this->intermediateThetaRef = this->thetaInit + ((this->stepCount - 1) * this->stepAngle);
         this->a = 0.5 * (-this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
         this->b = -0.5 * (-this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
     }

@@ -66,7 +66,6 @@ class StepperMotor : public SysModel {
 
     /* Motor angle parameters */
     double thetaInit;              //!< [rad] Initial motor angle
-    double maneuverThetaInit;      //!< [rad] Motor angle at the start of a new actuation command
     double intermediateThetaInit;  //!< [rad] Initial motor angle at the start of each step
     double intermediateThetaRef;   //!< [rad] Reference motor angle at the end of each step
     double theta;                  //!< [rad] Current motor angle
