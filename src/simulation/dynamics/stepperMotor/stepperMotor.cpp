@@ -96,10 +96,6 @@ void StepperMotor::actuateMotor(double t) {
         this->resetMotor(t);
     }
 
-    // Define temporal information for the maneuver
-    this->tf = this->tInit + this->stepTime;
-    this->ts = this->tInit + this->stepTime / 2;
-
     // Update the intermediate initial and reference motor angles and the parabolic constants when a step is completed
     if (this->stepComplete) {
         this->updateStepParameters();
@@ -136,7 +132,10 @@ void StepperMotor::resetMotor(double t) {
  @return void
 */
 void StepperMotor::updateStepParameters() {
+    this->tf = this->tInit + this->stepTime;
+    this->ts = this->tInit + this->stepTime / 2;
     this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
+
     if (this->stepsCommanded > 0) {
         this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount + 1) * this->stepAngle);
         this->a = 0.5 * (this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
