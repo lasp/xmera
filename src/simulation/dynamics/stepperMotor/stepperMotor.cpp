@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -20,26 +20,21 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include <cassert>
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! Module reset method.
  @return void
  @param callTime [ns] Time the method is called
 */
 void StepperMotor::reset(uint64_t callTime) {
     assert(this->motorStepCommandInMsg.isLinked());
 
-    // Initialize the module parameters to zero
+    // Reset required module parameters
     this->theta = this->thetaInit;
     this->maneuverThetaInit = this->thetaInit;
     this->thetaDot = 0.0;
     this->thetaDDot = 0.0;
     this->tInit = 0.0;
     this->stepCount = 0;
-
-    // Set the previous written time to a negative value to capture a message written at time zero
     this->previousWrittenTime = -1;
-
-    // Initialize the module boolean parameters
     this->actuationComplete = true;
     this->stepComplete = true;
     this->newMsg = false;
@@ -48,8 +43,8 @@ void StepperMotor::reset(uint64_t callTime) {
     this->thetaDDotMax = this->stepAngle / (0.25 * this->stepTime * this->stepTime);  // [rad/s^2]
 }
 
-/*! This method profiles the stepper motor trajectory and updates the prescribed motor states as a function of time.
-The motor states are then written to the output messages.
+/*! Module update method. This method profiles the stepper motor actuation as a function of time. The motor states
+ are then written to the output message.
  @return void
  @param callTime [ns] Time the method is called
 */
@@ -71,7 +66,7 @@ void StepperMotor::updateState(uint64_t callTime) {
         }
     }
 
-    // Reset the motor states for the next maneuver ONLY when the current step is completed
+    // Actuate the motor only if a current actuation segment is not complete
     if (!(this->actuationComplete)) {
         this->actuateMotor(callTime * NANO2SEC);
     }
@@ -86,7 +81,7 @@ void StepperMotor::updateState(uint64_t callTime) {
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
 }
 
-/*! This high-level method is used to simulate the stepper motor states in time.
+/*! This method is used to simulate the stepper motor actuation in time.
  @return void
  @param t [s] Time the method is called
 */
@@ -96,12 +91,12 @@ void StepperMotor::actuateMotor(double t) {
         this->resetMotor(t);
     }
 
-    // Update the intermediate initial and reference motor angles and the parabolic constants when a step is completed
+    // Update the motor step parameters when a step is completed
     if (this->stepComplete) {
         this->updateStepParameters();
     }
 
-    // Update the scalar motor states during each step
+    // Update the motor states during each step
     if (this->isInStepFirstHalf(t)) {
         this->computeStepFirstHalf(t);
     } else if (this->isInStepSecondHalf(t)) {
@@ -116,19 +111,13 @@ void StepperMotor::actuateMotor(double t) {
  @param t [s] Time the method is called
 */
 void StepperMotor::resetMotor(double t) {
-    // Reset the motor step count to zero
     this->stepCount = 0;
-
-    // Update the current motor angle
     this->maneuverThetaInit = this->theta;
-
-    // Update the initial time as the current simulation time
     this->tInit = t;
-
     this->newMsg = false;
 }
 
-/*! This method updates the rotation parameters after a step is completed.
+/*! This method updates the step parameters after a step is completed.
  @return void
 */
 void StepperMotor::updateStepParameters() {
