@@ -46,21 +46,14 @@ void addEP(double *b1, double *b2, double *result) {
  * (1-2-1) rotations E1 and E2.
  */
 void addEuler121(double *e1, double *e2, double *result) {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
-
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
+    double cp1 = cos(e1[1]);
+    double cp2 = cos(e2[1]);
+    double sp1 = sin(e1[1]);
+    double sp2 = sin(e2[1]);
+    double dum = e1[2] + e2[0];
 
     result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
+    double cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
@@ -71,21 +64,14 @@ void addEuler121(double *e1, double *e2, double *result) {
  * (1-3-1) rotations E1 and E2.
  */
 void addEuler131(double *e1, double *e2, double *result) {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
-
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
+    double cp1 = cos(e1[1]);
+    double cp2 = cos(e2[1]);
+    double sp1 = sin(e1[1]);
+    double sp2 = sin(e2[1]);
+    double dum = e1[2] + e2[0];
 
     result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
+    double cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
@@ -128,21 +114,14 @@ void addEuler132(double *e1, double *e2, double *result) {
  * (2-1-2) rotations E1 and E2.
  */
 void addEuler212(double *e1, double *e2, double *result) {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
-
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
+    double cp1 = cos(e1[1]);
+    double cp2 = cos(e2[1]);
+    double sp1 = sin(e1[1]);
+    double sp2 = sin(e2[1]);
+    double dum = e1[2] + e2[0];
 
     result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
+    double cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
@@ -185,21 +164,14 @@ void addEuler231(double *e1, double *e2, double *result) {
  * (2-3-2) rotations E1 and E2.
  */
 void addEuler232(double *e1, double *e2, double *result) {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
-
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
+    double cp1 = cos(e1[1]);
+    double cp2 = cos(e2[1]);
+    double sp1 = sin(e1[1]);
+    double sp2 = sin(e2[1]);
+    double dum = e1[2] + e2[0];
 
     result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
+    double cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
@@ -226,21 +198,14 @@ void addEuler312(double *e1, double *e2, double *result) {
  * (3-1-3) rotations E1 and E2.
  */
 void addEuler313(double *e1, double *e2, double *result) {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
-
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
+    double cp1 = cos(e1[1]);
+    double cp2 = cos(e2[1]);
+    double sp1 = sin(e1[1]);
+    double sp2 = sin(e2[1]);
+    double dum = e1[2] + e2[0];
 
     result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
+    double cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
@@ -267,21 +232,14 @@ void addEuler321(double *e1, double *e2, double *result) {
  * (3-2-3) rotations E1 and E2.
  */
 void addEuler323(double *e1, double *e2, double *result) {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
-
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
+    double cp1 = cos(e1[1]);
+    double cp2 = cos(e2[1]);
+    double sp1 = sin(e1[1]);
+    double sp2 = sin(e2[1]);
+    double dum = e1[2] + e2[0];
 
     result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
+    double cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
@@ -307,21 +265,19 @@ void addGibbs(double *q1, double *q2, double *result) {
  * rotations Q1 and Q2.
  */
 void addMRP(double *q1, double *q2, double *result) {
-    double v1[3];
-    double v2[3];
     double s1[3];
-    double det;
-    double mag;
 
     v3Copy(q1, s1);
-    det = (1 + v3Dot(s1, s1) * v3Dot(q2, q2) - 2 * v3Dot(s1, q2));
-
+    double det = (1 + v3Dot(s1, s1) * v3Dot(q2, q2) - 2 * v3Dot(s1, q2));
+    double mag = 0;
     if (fabs(det) < 0.1) {
         mag = v3Dot(s1, s1);
         v3Scale(-1. / mag, s1, s1);
         det = (1 + v3Dot(s1, s1) * v3Dot(q2, q2) - 2 * v3Dot(s1, q2));
     }
 
+    double v1[3];
+    double v2[3];
     v3Cross(s1, q2, v1);
     v3Scale(2., v1, v2);
     v3Scale(1 - v3Dot(q2, q2), s1, result);
@@ -343,12 +299,6 @@ void addMRP(double *q1, double *q2, double *result) {
  * prinicipal rotations Q1 and Q2.
  */
 void addPRV(double *qq1, double *qq2, double *result) {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double p;
-    double sp;
     double e1[3];
     double e2[3];
     double compSum[3];
@@ -364,19 +314,19 @@ void addPRV(double *qq1, double *qq2, double *result) {
 
     PRV2elem(qq1, q1);
     PRV2elem(qq2, q2);
-    cp1 = cos(q1[0] / 2.);
-    cp2 = cos(q2[0] / 2.);
-    sp1 = sin(q1[0] / 2.);
-    sp2 = sin(q2[0] / 2.);
+    double cp1 = cos(q1[0] / 2.);
+    double cp2 = cos(q2[0] / 2.);
+    double sp1 = sin(q1[0] / 2.);
+    double sp2 = sin(q2[0] / 2.);
     v3Set(q1[1], q1[2], q1[3], e1);
     v3Set(q2[1], q2[2], q2[3], e2);
 
-    p = 2 * safeAcos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
+    double p = 2 * safeAcos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
     if (fabs(p) < 1.0E-13) {
         v3SetZero(result);
         return;
     }
-    sp = sin(p / 2.);
+    double sp = sin(p / 2.);
     v3Scale(cp1 * sp2, e2, q1);
     v3Scale(cp2 * sp1, e1, q2);
     v3Add(q1, q2, result);
@@ -415,15 +365,10 @@ void BinvEP(double *q, double B[3][4]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler121(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = c2;
     B[0][1] = 0;
@@ -444,15 +389,10 @@ void BinvEuler121(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler123(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = c2 * c3;
     B[0][1] = s3;
@@ -473,15 +413,10 @@ void BinvEuler123(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler131(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = c2;
     B[0][1] = 0;
@@ -502,15 +437,10 @@ void BinvEuler131(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler132(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = c2 * c3;
     B[0][1] = -s3;
@@ -531,15 +461,10 @@ void BinvEuler132(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler212(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = s2 * s3;
     B[0][1] = c3;
@@ -560,15 +485,10 @@ void BinvEuler212(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler213(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = c2 * s3;
     B[0][1] = c3;
@@ -589,15 +509,10 @@ void BinvEuler213(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler231(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = s2;
     B[0][1] = 0;
@@ -618,15 +533,10 @@ void BinvEuler231(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler232(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = s2 * c3;
     B[0][1] = -s3;
@@ -647,15 +557,10 @@ void BinvEuler232(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler323(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = -s2 * c3;
     B[0][1] = s3;
@@ -676,15 +581,10 @@ void BinvEuler323(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler313(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = s2 * s3;
     B[0][1] = c3;
@@ -705,15 +605,10 @@ void BinvEuler313(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler321(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = -s2;
     B[0][1] = 0;
@@ -734,15 +629,10 @@ void BinvEuler321(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvEuler312(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = -c2 * s3;
     B[0][1] = c3;
@@ -783,9 +673,7 @@ void BinvGibbs(double *q, double B[3][3]) {
  * w = 4 [B(Q)]^(-1) dQ/dt
  */
 void BinvMRP(double *q, double B[3][3]) {
-    double s2;
-
-    s2 = v3Dot(q, q);
+    double s2 = v3Dot(q, q);
     B[0][0] = 1 - s2 + 2 * q[0] * q[0];
     B[0][1] = 2 * (q[0] * q[1] + q[2]);
     B[0][2] = 2 * (q[0] * q[2] - q[1]);
@@ -806,13 +694,9 @@ void BinvMRP(double *q, double B[3][3]) {
  * w = [B(Q)]^(-1) dQ/dt
  */
 void BinvPRV(double *q, double B[3][3]) {
-    double p;
-    double c1;
-    double c2;
-
-    p = sqrt(v3Dot(q, q));
-    c1 = (1 - cos(p)) / p / p;
-    c2 = (p - sin(p)) / p / p / p;
+    double p = sqrt(v3Dot(q, q));
+    double c1 = (1 - cos(p)) / p / p;
+    double c2 = (p - sin(p)) / p / p / p;
 
     B[0][0] = 1 - c2 * (q[1] * q[1] + q[2] * q[2]);
     B[0][1] = c1 * q[2] + c2 * q[0] * q[1];
@@ -855,15 +739,10 @@ void BmatEP(double *q, double B[4][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler121(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = 0;
     B[0][1] = s3;
@@ -885,15 +764,10 @@ void BmatEuler121(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler131(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = 0;
     B[0][1] = -c3;
@@ -915,15 +789,10 @@ void BmatEuler131(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler123(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = c3;
     B[0][1] = -s3;
@@ -945,15 +814,10 @@ void BmatEuler123(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler132(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = c3;
     B[0][1] = 0;
@@ -975,15 +839,10 @@ void BmatEuler132(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler212(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = s3;
     B[0][1] = 0;
@@ -1005,15 +864,10 @@ void BmatEuler212(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler213(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = s3;
     B[0][1] = c3;
@@ -1035,15 +889,10 @@ void BmatEuler213(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler231(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = 0;
     B[0][1] = c3;
@@ -1065,15 +914,10 @@ void BmatEuler231(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler232(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = c3;
     B[0][1] = 0;
@@ -1095,15 +939,10 @@ void BmatEuler232(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler312(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = -s3;
     B[0][1] = 0;
@@ -1125,15 +964,10 @@ void BmatEuler312(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler313(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = s3;
     B[0][1] = c3;
@@ -1155,15 +989,10 @@ void BmatEuler313(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler321(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = 0;
     B[0][1] = s3;
@@ -1185,15 +1014,10 @@ void BmatEuler321(double *q, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatEuler323(double *q, double B[3][3]) {
-    double s2;
-    double c2;
-    double s3;
-    double c3;
-
-    s2 = sin(q[1]);
-    c2 = cos(q[1]);
-    s3 = sin(q[2]);
-    c3 = cos(q[2]);
+    double s2 = sin(q[1]);
+    double c2 = cos(q[1]);
+    double s3 = sin(q[2]);
+    double c3 = cos(q[2]);
 
     B[0][0] = -c3;
     B[0][1] = s3;
@@ -1234,9 +1058,7 @@ void BmatGibbs(double *q, double B[3][3]) {
  * dQ/dt = 1/4 [B(Q)] w
  */
 void BmatMRP(double *q, double B[3][3]) {
-    double s2;
-
-    s2 = v3Dot(q, q);
+    double s2 = v3Dot(q, q);
     B[0][0] = 1 - s2 + 2 * q[0] * q[0];
     B[0][1] = 2 * (q[0] * q[1] - q[2]);
     B[0][2] = 2 * (q[0] * q[2] + q[1]);
@@ -1257,9 +1079,7 @@ void BmatMRP(double *q, double B[3][3]) {
  * (d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
  */
 void BdotmatMRP(double *q, double *dq, double B[3][3]) {
-    double s;
-
-    s = -2 * v3Dot(q, dq);
+    double s = -2 * v3Dot(q, dq);
     B[0][0] = s + 4 * (q[0] * dq[0]);
     B[0][1] = 2 * (-dq[2] + q[0] * dq[1] + dq[0] * q[1]);
     B[0][2] = 2 * (dq[1] + q[0] * dq[2] + dq[0] * q[2]);
@@ -1279,10 +1099,8 @@ void BdotmatMRP(double *q, double *dq, double B[3][3]) {
  * dQ/dt = [B(Q)] w
  */
 void BmatPRV(double *q, double B[3][3]) {
-    double p;
-    double c;
-    p = v3Norm(q);
-    c = 1. / p / p * (1. - p / 2. / tan(p / 2.));
+    double p = v3Norm(q);
+    double c = 1. / p / p * (1. - p / 2. / tan(p / 2.));
     B[0][0] = 1 - c * (q[1] * q[1] + q[2] * q[2]);
     B[0][1] = -q[2] / 2 + c * (q[0] * q[1]);
     B[0][2] = q[1] / 2 + c * (q[0] * q[2]);
@@ -1303,21 +1121,17 @@ void BmatPRV(double *q, double B[3][3]) {
  *
  */
 void C2EP(double C[3][3], double b[4]) {
-    double tr;
     double b2[4];
-    double max;
-    int i;
-    int j;
 
-    tr = C[0][0] + C[1][1] + C[2][2];
+    double tr = C[0][0] + C[1][1] + C[2][2];
     b2[0] = (1 + tr) / 4.;
     b2[1] = (1 + 2 * C[0][0] - tr) / 4.;
     b2[2] = (1 + 2 * C[1][1] - tr) / 4.;
     b2[3] = (1 + 2 * C[2][2] - tr) / 4.;
 
-    i = 0;
-    max = b2[0];
-    for (j = 1; j < 4; j++) {
+    int i = 0;
+    double max = b2[0];
+    for (int j = 1; j < 4; j++) {
         if (b2[j] > max) {
             i = j;
             max = b2[j];
@@ -1537,14 +1351,11 @@ void C2PRV(double C[3][3], double *q) {
  */
 void dEP(double *q, double *w, double *dq) {
     double B[4][3];
-    int i;
-    int j;
-
     BmatEP(q, B);
     m33MultV3(B, w, dq);
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         dq[i] = 0.;
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             dq[i] += B[i][j] * w[j];
         }
     }
@@ -1773,15 +1584,16 @@ void dMRP2Omega(double *q, double *dq, double *w) {
  * (d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
  */
 void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq) {
-    double B[3][3], Bdot[3][3];
-    double s1[3], s2[3];
-    int i;
+    double B[3][3];
+    double Bdot[3][3];
+    double s1[3];
+    double s2[3];
 
     BmatMRP(q, B);
     BdotmatMRP(q, dq, Bdot);
     m33MultV3(B, dw, s1);
     m33MultV3(Bdot, w, s2);
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         ddq[i] = 0.25 * (s1[i] + s2[i]);
     }
 }
@@ -1794,15 +1606,17 @@ void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq) {
  * dW/dt = 4 [B(Q)]^(-1) ( ddQ - [Bdot(Q,dQ)] [B(Q)]^(-1) dQ )
  */
 void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw) {
-    double B[3][3], Bdot[3][3];
-    double s1[3], s2[3], s3[3];
-    int i;
+    double B[3][3];
+    double Bdot[3][3];
+    double s1[3];
+    double s2[3];
+    double s3[3];
 
     BinvMRP(q, B);
     BdotmatMRP(q, dq, Bdot);
     m33MultV3(B, dq, s1);
     m33MultV3(Bdot, s1, s2);
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         s3[i] = ddq[i] - s2[i];
     }
     m33MultV3(B, s3, dw);
@@ -1842,15 +1656,10 @@ void elem2PRV(double *r, double *q) {
  * the Eulerparameter vector.
  */
 void EP2C(double *q, double C[3][3]) {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
-
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
+    double q0 = q[0];
+    double q1 = q[1];
+    double q2 = q[2];
+    double q3 = q[3];
 
     C[0][0] = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3;
     C[0][1] = 2 * (q1 * q2 + q0 * q3);
@@ -1869,11 +1678,8 @@ void EP2C(double *q, double C[3][3]) {
  * vector E.
  */
 void EP2Euler121(double *q, double *e) {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[3], q[2]);
-    t2 = atan2(q[1], q[0]);
+    double t1 = atan2(q[3], q[2]);
+    double t2 = atan2(q[1], q[0]);
 
     e[0] = t1 + t2;
     e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[1] * q[1]));
@@ -1885,15 +1691,10 @@ void EP2Euler121(double *q, double *e) {
  * Q into the corresponding (1-2-3) Euler angle set.
  */
 void EP2Euler123(double *q, double *e) {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
-
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
+    double q0 = q[0];
+    double q1 = q[1];
+    double q2 = q[2];
+    double q3 = q[3];
 
     e[0] = atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
     e[1] = safeAsin(2 * (q1 * q3 + q0 * q2));
@@ -1906,11 +1707,8 @@ void EP2Euler123(double *q, double *e) {
  * vector E.
  */
 void EP2Euler131(double *q, double *e) {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[2], q[3]);
-    t2 = atan2(q[1], q[0]);
+    double t1 = atan2(q[2], q[3]);
+    double t2 = atan2(q[1], q[0]);
 
     e[0] = t2 - t1;
     e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[1] * q[1]));
@@ -1922,15 +1720,10 @@ void EP2Euler131(double *q, double *e) {
  * Q into the corresponding (1-3-2) Euler angle set.
  */
 void EP2Euler132(double *q, double *e) {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
-
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
+    double q0 = q[0];
+    double q1 = q[1];
+    double q2 = q[2];
+    double q3 = q[3];
 
     e[0] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
     e[1] = safeAsin(-2 * (q1 * q2 - q0 * q3));
@@ -1943,11 +1736,8 @@ void EP2Euler132(double *q, double *e) {
  * vector E.
  */
 void EP2Euler212(double *q, double *e) {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[3], q[1]);
-    t2 = atan2(q[2], q[0]);
+    double t1 = atan2(q[3], q[1]);
+    double t2 = atan2(q[2], q[0]);
 
     e[0] = t2 - t1;
     e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[2] * q[2]));
@@ -1959,15 +1749,10 @@ void EP2Euler212(double *q, double *e) {
  * Q into the corresponding (2-1-3) Euler angle set.
  */
 void EP2Euler213(double *q, double *e) {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
-
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
+    double q0 = q[0];
+    double q1 = q[1];
+    double q2 = q[2];
+    double q3 = q[3];
 
     e[0] = atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
     e[1] = safeAsin(-2 * (q2 * q3 - q0 * q1));
@@ -1979,15 +1764,10 @@ void EP2Euler213(double *q, double *e) {
  * Q into the corresponding (2-3-1) Euler angle set.
  */
 void EP2Euler231(double *q, double *e) {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
-
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
+    double q0 = q[0];
+    double q1 = q[1];
+    double q2 = q[2];
+    double q3 = q[3];
 
     e[0] = atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
     e[1] = safeAsin(2 * (q1 * q2 + q0 * q3));
@@ -2000,11 +1780,8 @@ void EP2Euler231(double *q, double *e) {
  * vector E.
  */
 void EP2Euler232(double *q, double *e) {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[1], q[3]);
-    t2 = atan2(q[2], q[0]);
+    double t1 = atan2(q[1], q[3]);
+    double t2 = atan2(q[2], q[0]);
 
     e[0] = t1 + t2;
     e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[2] * q[2]));
@@ -2016,15 +1793,10 @@ void EP2Euler232(double *q, double *e) {
  * Q into the corresponding (3-1-2) Euler angle set.
  */
 void EP2Euler312(double *q, double *e) {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
-
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
+    double q0 = q[0];
+    double q1 = q[1];
+    double q2 = q[2];
+    double q3 = q[3];
 
     e[0] = atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
     e[1] = safeAsin(2 * (q2 * q3 + q0 * q1));
@@ -2037,11 +1809,8 @@ void EP2Euler312(double *q, double *e) {
  * vector E.
  */
 void EP2Euler313(double *q, double *e) {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[2], q[1]);
-    t2 = atan2(q[3], q[0]);
+    double t1 = atan2(q[2], q[1]);
+    double t2 = atan2(q[3], q[0]);
 
     e[0] = t1 + t2;
     e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[3] * q[3]));
@@ -2053,15 +1822,10 @@ void EP2Euler313(double *q, double *e) {
  * Q into the corresponding (3-2-1) Euler angle set.
  */
 void EP2Euler321(double *q, double *e) {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
-
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
+    double q0 = q[0];
+    double q1 = q[1];
+    double q2 = q[2];
+    double q3 = q[3];
 
     e[0] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
     e[1] = safeAsin(-2 * (q1 * q3 - q0 * q2));
@@ -2074,11 +1838,8 @@ void EP2Euler321(double *q, double *e) {
  * vector E.
  */
 void EP2Euler323(double *q, double *e) {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[1], q[2]);
-    t2 = atan2(q[3], q[0]);
+    double t1 = atan2(q[1], q[2]);
+    double t2 = atan2(q[3], q[0]);
 
     e[0] = t2 - t1;
     e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[3] * q[3]));
@@ -2116,11 +1877,8 @@ void EP2MRP(double *q1, double *q) {
  * into the principal rotation vector Q.
  */
 void EP2PRV(double *q1, double *q) {
-    double p;
-    double sp;
-
-    p = 2 * safeAcos(q1[0]);
-    sp = sin(p / 2);
+    double p = 2 * safeAcos(q1[0]);
+    double sp = sin(p / 2);
     if (fabs(sp) < nearZero) {
         q[0] = 0.0;
         q[1] = 0.0;
@@ -2177,19 +1935,12 @@ void Euler3(double x, double m[3][3]) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler1212C(double *q, double C[3][3]) {
-    double st1;
-    double ct1;
-    double st2;
-    double ct2;
-    double st3;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct2;
     C[0][1] = st1 * st2;
@@ -2207,13 +1958,9 @@ void Euler1212C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler1212EP(double *e, double *q) {
-    double e1;
-    double e2;
-    double e3;
-
-    e1 = e[0] / 2;
-    e2 = e[1] / 2;
-    e3 = e[2] / 2;
+    double e1 = e[0] / 2;
+    double e2 = e[1] / 2;
+    double e3 = e[2] / 2;
 
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = cos(e2) * sin(e1 + e3);
@@ -2260,19 +2007,12 @@ void Euler1212PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler1232C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct2 * ct3;
     C[0][1] = ct3 * st1 * st2 + ct1 * st3;
@@ -2290,19 +2030,12 @@ void Euler1232C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler1232EP(double *e, double *q) {
-    double c1;
-    double c2;
-    double c3;
-    double s1;
-    double s2;
-    double s3;
-
-    c1 = cos(e[0] / 2);
-    s1 = sin(e[0] / 2);
-    c2 = cos(e[1] / 2);
-    s2 = sin(e[1] / 2);
-    c3 = cos(e[2] / 2);
-    s3 = sin(e[2] / 2);
+    double c1 = cos(e[0] / 2);
+    double s1 = sin(e[0] / 2);
+    double c2 = cos(e[1] / 2);
+    double s2 = sin(e[1] / 2);
+    double c3 = cos(e[2] / 2);
+    double s3 = sin(e[2] / 2);
 
     q[0] = c1 * c2 * c3 - s1 * s2 * s3;
     q[1] = s1 * c2 * c3 + c1 * s2 * s3;
@@ -2349,19 +2082,12 @@ void Euler1232PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler1312C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct2;
     C[0][1] = ct1 * st2;
@@ -2379,13 +2105,9 @@ void Euler1312C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler1312EP(double *e, double *q) {
-    double e1;
-    double e2;
-    double e3;
-
-    e1 = e[0] / 2;
-    e2 = e[1] / 2;
-    e3 = e[2] / 2;
+    double e1 = e[0] / 2;
+    double e2 = e[1] / 2;
+    double e3 = e[2] / 2;
 
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = cos(e2) * sin(e1 + e3);
@@ -2432,19 +2154,12 @@ void Euler1312PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler1322C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct2 * ct3;
     C[0][1] = ct1 * ct3 * st2 + st1 * st3;
@@ -2462,19 +2177,12 @@ void Euler1322C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler1322EP(double *e, double *q) {
-    double c1;
-    double c2;
-    double c3;
-    double s1;
-    double s2;
-    double s3;
-
-    c1 = cos(e[0] / 2);
-    s1 = sin(e[0] / 2);
-    c2 = cos(e[1] / 2);
-    s2 = sin(e[1] / 2);
-    c3 = cos(e[2] / 2);
-    s3 = sin(e[2] / 2);
+    double c1 = cos(e[0] / 2);
+    double s1 = sin(e[0] / 2);
+    double c2 = cos(e[1] / 2);
+    double s2 = sin(e[1] / 2);
+    double c3 = cos(e[2] / 2);
+    double s3 = sin(e[2] / 2);
 
     q[0] = c1 * c2 * c3 + s1 * s2 * s3;
     q[1] = s1 * c2 * c3 - c1 * s2 * s3;
@@ -2521,19 +2229,12 @@ void Euler1322PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler2122C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct1 * ct3 - ct2 * st1 * st3;
     C[0][1] = st2 * st3;
@@ -2551,13 +2252,9 @@ void Euler2122C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler2122EP(double *e, double *q) {
-    double e1;
-    double e2;
-    double e3;
-
-    e1 = e[0] / 2;
-    e2 = e[1] / 2;
-    e3 = e[2] / 2;
+    double e1 = e[0] / 2;
+    double e2 = e[1] / 2;
+    double e3 = e[2] / 2;
 
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = sin(e2) * cos(-e1 + e3);
@@ -2604,19 +2301,12 @@ void Euler2122PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler2132C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct1 * ct3 + st1 * st2 * st3;
     C[0][1] = ct2 * st3;
@@ -2634,19 +2324,12 @@ void Euler2132C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler2132EP(double *e, double *q) {
-    double c1;
-    double c2;
-    double c3;
-    double s1;
-    double s2;
-    double s3;
-
-    c1 = cos(e[0] / 2);
-    s1 = sin(e[0] / 2);
-    c2 = cos(e[1] / 2);
-    s2 = sin(e[1] / 2);
-    c3 = cos(e[2] / 2);
-    s3 = sin(e[2] / 2);
+    double c1 = cos(e[0] / 2);
+    double s1 = sin(e[0] / 2);
+    double c2 = cos(e[1] / 2);
+    double s2 = sin(e[1] / 2);
+    double c3 = cos(e[2] / 2);
+    double s3 = sin(e[2] / 2);
 
     q[0] = c1 * c2 * c3 + s1 * s2 * s3;
     q[1] = c1 * s2 * c3 + s1 * c2 * s3;
@@ -2693,19 +2376,12 @@ void Euler2132PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler2312C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct1 * ct2;
     C[0][1] = st2;
@@ -2723,19 +2399,12 @@ void Euler2312C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler2312EP(double *e, double *q) {
-    double c1;
-    double c2;
-    double c3;
-    double s1;
-    double s2;
-    double s3;
-
-    c1 = cos(e[0] / 2);
-    s1 = sin(e[0] / 2);
-    c2 = cos(e[1] / 2);
-    s2 = sin(e[1] / 2);
-    c3 = cos(e[2] / 2);
-    s3 = sin(e[2] / 2);
+    double c1 = cos(e[0] / 2);
+    double s1 = sin(e[0] / 2);
+    double c2 = cos(e[1] / 2);
+    double s2 = sin(e[1] / 2);
+    double c3 = cos(e[2] / 2);
+    double s3 = sin(e[2] / 2);
 
     q[0] = c1 * c2 * c3 - s1 * s2 * s3;
     q[1] = c1 * c2 * s3 + s1 * s2 * c3;
@@ -2782,19 +2451,12 @@ void Euler2312PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler2322C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct1 * ct2 * ct3 - st1 * st3;
     C[0][1] = ct3 * st2;
@@ -2812,13 +2474,9 @@ void Euler2322C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler2322EP(double *e, double *q) {
-    double e1;
-    double e2;
-    double e3;
-
-    e1 = e[0] / 2;
-    e2 = e[1] / 2;
-    e3 = e[2] / 2;
+    double e1 = e[0] / 2;
+    double e2 = e[1] / 2;
+    double e3 = e[2] / 2;
 
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = sin(e2) * sin(e1 - e3);
@@ -2865,19 +2523,12 @@ void Euler2322PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler3122C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct1 * ct3 - st1 * st2 * st3;
     C[0][1] = ct3 * st1 + ct1 * st2 * st3;
@@ -2895,19 +2546,12 @@ void Euler3122C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler3122EP(double *e, double *q) {
-    double c1;
-    double c2;
-    double c3;
-    double s1;
-    double s2;
-    double s3;
-
-    c1 = cos(e[0] / 2);
-    s1 = sin(e[0] / 2);
-    c2 = cos(e[1] / 2);
-    s2 = sin(e[1] / 2);
-    c3 = cos(e[2] / 2);
-    s3 = sin(e[2] / 2);
+    double c1 = cos(e[0] / 2);
+    double s1 = sin(e[0] / 2);
+    double c2 = cos(e[1] / 2);
+    double s2 = sin(e[1] / 2);
+    double c3 = cos(e[2] / 2);
+    double s3 = sin(e[2] / 2);
 
     q[0] = c1 * c2 * c3 - s1 * s2 * s3;
     q[1] = c1 * s2 * c3 - s1 * c2 * s3;
@@ -2954,19 +2598,12 @@ void Euler3122PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler3132C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct3 * ct1 - st3 * ct2 * st1;
     C[0][1] = ct3 * st1 + st3 * ct2 * ct1;
@@ -2984,13 +2621,9 @@ void Euler3132C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler3132EP(double *e, double *q) {
-    double e1;
-    double e2;
-    double e3;
-
-    e1 = e[0] / 2;
-    e2 = e[1] / 2;
-    e3 = e[2] / 2;
+    double e1 = e[0] / 2;
+    double e2 = e[1] / 2;
+    double e3 = e[2] / 2;
 
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = sin(e2) * cos(e1 - e3);
@@ -3037,19 +2670,12 @@ void Euler3132PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler3212C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct2 * ct1;
     C[0][1] = ct2 * st1;
@@ -3067,19 +2693,12 @@ void Euler3212C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler3212EP(double *e, double *q) {
-    double c1;
-    double c2;
-    double c3;
-    double s1;
-    double s2;
-    double s3;
-
-    c1 = cos(e[0] / 2);
-    s1 = sin(e[0] / 2);
-    c2 = cos(e[1] / 2);
-    s2 = sin(e[1] / 2);
-    c3 = cos(e[2] / 2);
-    s3 = sin(e[2] / 2);
+    double c1 = cos(e[0] / 2);
+    double s1 = sin(e[0] / 2);
+    double c2 = cos(e[1] / 2);
+    double s2 = sin(e[1] / 2);
+    double c3 = cos(e[2] / 2);
+    double s3 = sin(e[2] / 2);
 
     q[0] = c1 * c2 * c3 + s1 * s2 * s3;
     q[1] = c1 * c2 * s3 - s1 * s2 * c3;
@@ -3126,19 +2745,12 @@ void Euler3212PRV(double *e, double *q) {
  * Input Q must be a 3x1 vector of Euler angles.
  */
 void Euler3232C(double *q, double C[3][3]) {
-    double st1;
-    double st2;
-    double st3;
-    double ct1;
-    double ct2;
-    double ct3;
-
-    st1 = sin(q[0]);
-    ct1 = cos(q[0]);
-    st2 = sin(q[1]);
-    ct2 = cos(q[1]);
-    st3 = sin(q[2]);
-    ct3 = cos(q[2]);
+    double st1 = sin(q[0]);
+    double ct1 = cos(q[0]);
+    double st2 = sin(q[1]);
+    double ct2 = cos(q[1]);
+    double st3 = sin(q[2]);
+    double ct3 = cos(q[2]);
 
     C[0][0] = ct1 * ct2 * ct3 - st1 * st3;
     C[0][1] = ct2 * ct3 * st1 + ct1 * st3;
@@ -3156,13 +2768,9 @@ void Euler3232C(double *q, double C[3][3]) {
  * vector E into the Euler parameter vector Q.
  */
 void Euler3232EP(double *e, double *q) {
-    double e1;
-    double e2;
-    double e3;
-
-    e1 = e[0] / 2;
-    e2 = e[1] / 2;
-    e3 = e[2] / 2;
+    double e1 = e[0] / 2;
+    double e2 = e[1] / 2;
+    double e3 = e[2] / 2;
 
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = sin(e2) * sin(-e1 + e3);
@@ -3208,16 +2816,11 @@ void Euler3232PRV(double *e, double *q) {
  * matrix in terms of the 3x1 Gibbs vector Q.
  */
 void Gibbs2C(double *q, double C[3][3]) {
-    double q1;
-    double q2;
-    double q3;
-    double d1;
+    double q1 = q[0];
+    double q2 = q[1];
+    double q3 = q[2];
 
-    q1 = q[0];
-    q2 = q[1];
-    q3 = q[2];
-
-    d1 = v3Dot(q, q);
+    double d1 = v3Dot(q, q);
     C[0][0] = 1 + 2 * q1 * q1 - d1;
     C[0][1] = 2 * (q1 * q2 + q3);
     C[0][2] = 2 * (q1 * q3 - q2);
@@ -3384,11 +2987,8 @@ void Gibbs2MRP(double *q1, double *q) { v3Scale(1.0 / (1 + sqrt(1 + v3Dot(q1, q1
  * into the principal rotation vector Q.
  */
 void Gibbs2PRV(double *q1, double *q) {
-    double tp;
-    double p;
-
-    tp = sqrt(v3Dot(q1, q1));
-    p = 2 * atan(tp);
+    double tp = sqrt(v3Dot(q1, q1));
+    double p = 2 * atan(tp);
     if (tp < nearZero) {
         q[0] = 0.0;
         q[1] = 0.0;
@@ -3405,20 +3005,13 @@ void Gibbs2PRV(double *q1, double *q) {
  * matrix in terms of the 3x1 MRP vector Q.
  */
 void MRP2C(double *q, double C[3][3]) {
-    double q1;
-    double q2;
-    double q3;
-    double S;
-    double d1;
-    double d;
+    double q1 = q[0];
+    double q2 = q[1];
+    double q3 = q[2];
 
-    q1 = q[0];
-    q2 = q[1];
-    q3 = q[2];
-
-    d1 = v3Dot(q, q);
-    S = 1 - d1;
-    d = (1 + d1) * (1 + d1);
+    double d1 = v3Dot(q, q);
+    double S = 1 - d1;
+    double d = (1 + d1) * (1 + d1);
     C[0][0] = 4 * (2 * q1 * q1 - d1) + S * S;
     C[0][1] = 8 * q1 * q2 + 4 * q3 * S;
     C[0][2] = 8 * q1 * q3 - 4 * q2 * S;
@@ -3436,9 +3029,7 @@ void MRP2C(double *q, double C[3][3]) {
  * into the Euler parameter vector Q.
  */
 void MRP2EP(double *q1, double *q) {
-    double ps;
-
-    ps = 1 + v3Dot(q1, q1);
+    double ps = 1 + v3Dot(q1, q1);
     q[0] = (1 - v3Dot(q1, q1)) / ps;
     q[1] = 2 * q1[0] / ps;
     q[2] = 2 * q1[1] / ps;
@@ -3588,15 +3179,12 @@ void MRP2Gibbs(double *q1, double *q) { v3Scale(2. / (1. - v3Dot(q1, q1)), q1, q
  * into the principal rotation vector Q.
  */
 void MRP2PRV(double *q1, double *q) {
-    double tp;
-    double p;
-
-    tp = sqrt(v3Dot(q1, q1));
+    double tp = sqrt(v3Dot(q1, q1));
     if (tp < nearZero) {
         memset(q, 0x0, 3 * sizeof(double));
         return;
     }
-    p = 4 * atan(tp);
+    double p = 4 * atan(tp);
     q[0] = q1[0] / tp * p;
     q[1] = q1[1] / tp * p;
     q[2] = q1[2] / tp * p;
@@ -3607,9 +3195,7 @@ void MRP2PRV(double *q1, double *q) {
  * If yes, then the MRP vector Q is mapped to its shadow set.
  */
 void MRPswitch(double *q, double s2, double *s) {
-    double q2;
-
-    q2 = v3Dot(q, q);
+    double q2 = v3Dot(q, q);
     if (q2 > s2 * s2) {
         v3Scale(-1. / q2, q, s);
     } else {
@@ -3621,20 +3207,15 @@ void MRPswitch(double *q, double s2, double *s) {
  * MRPshadow forces a switch from the current MRP to its shadow set
  */
 void MRPshadow(double *qIn, double *qOut) {
-    double q2;
-
-    q2 = v3Dot(qIn, qIn);
+    double q2 = v3Dot(qIn, qIn);
     v3Scale(-1. / q2, qIn, qOut);
-    return;
 }
 
 /*
  * Makes sure that the angle x lies within +/- Pi.
  */
 double wrapToPi(double x) {
-    double q;
-
-    q = x;
+    double q = x;
 
     if (x > M_PI) {
         q = x - 2 * M_PI;
@@ -3653,27 +3234,19 @@ double wrapToPi(double x) {
  * Q.
  */
 void PRV2C(double *q, double C[3][3]) {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
-    double cp;
-    double sp;
-    double d1;
-
     if (v3Norm(q) == 0.0) {
         m33SetIdentity(C);
         return;
     }
 
-    q0 = sqrt(v3Dot(q, q));
-    q1 = q[0] / q0;
-    q2 = q[1] / q0;
-    q3 = q[2] / q0;
+    double q0 = sqrt(v3Dot(q, q));
+    double q1 = q[0] / q0;
+    double q2 = q[1] / q0;
+    double q3 = q[2] / q0;
 
-    cp = cos(q0);
-    sp = sin(q0);
-    d1 = 1 - cp;
+    double cp = cos(q0);
+    double sp = sin(q0);
+    double d1 = 1 - cp;
     C[0][0] = q1 * q1 * d1 + cp;
     C[0][1] = q1 * q2 * d1 + q3 * sp;
     C[0][2] = q1 * q3 * d1 - q2 * sp;
@@ -3706,10 +3279,9 @@ void PRV2elem(double *r, double *q) {
  */
 void PRV2EP(double *q0, double *q) {
     double q1[4];
-    double sp;
 
     PRV2elem(q0, q1);
-    sp = sin(q1[0] / 2);
+    double sp = sin(q1[0] / 2);
     q[0] = cos(q1[0] / 2);
     q[1] = q1[1] * sp;
     q[2] = q1[2] * sp;
@@ -3854,10 +3426,9 @@ void PRV2Euler323(double *q, double *e) {
  */
 void PRV2Gibbs(double *q0, double *q) {
     double q1[4];
-    double tp;
 
     PRV2elem(q0, q1);
-    tp = tan(q1[0] / 2.);
+    double tp = tan(q1[0] / 2.);
     q[0] = q1[1] * tp;
     q[1] = q1[2] * tp;
     q[2] = q1[3] * tp;
@@ -3869,10 +3440,9 @@ void PRV2Gibbs(double *q0, double *q) {
  */
 void PRV2MRP(double *q0, double *q) {
     double q1[4];
-    double tp;
 
     PRV2elem(q0, q1);
-    tp = tan(q1[0] / 4.);
+    double tp = tan(q1[0] / 4.);
     q[0] = q1[1] * tp;
     q[1] = q1[2] * tp;
     q[2] = q1[3] * tp;
@@ -3895,21 +3465,14 @@ void subEP(double *b1, double *b2, double *q) {
  * (1-2-1) Euler angle vector from E1 to E.
  */
 void subEuler121(double *e, double *e1, double *e2) {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double cp2;
-    double dum;
-
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
+    double cp = cos(e[1]);
+    double cp1 = cos(e1[1]);
+    double sp = sin(e[1]);
+    double sp1 = sin(e1[1]);
+    double dum = e[0] - e1[0];
 
     e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
+    double cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
@@ -3934,21 +3497,14 @@ void subEuler123(double *e, double *e1, double *e2) {
  * (1-3-1) Euler angle vector from E1 to E.
  */
 void subEuler131(double *e, double *e1, double *e2) {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
-
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
+    double cp = cos(e[1]);
+    double cp1 = cos(e1[1]);
+    double sp = sin(e[1]);
+    double sp1 = sin(e1[1]);
+    double dum = e[0] - e1[0];
 
     e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
+    double cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
@@ -3973,21 +3529,14 @@ void subEuler132(double *e, double *e1, double *e2) {
  * (2-1-2) Euler angle vector from E1 to E.
  */
 void subEuler212(double *e, double *e1, double *e2) {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
-
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
+    double cp = cos(e[1]);
+    double cp1 = cos(e1[1]);
+    double sp = sin(e[1]);
+    double sp1 = sin(e1[1]);
+    double dum = e[0] - e1[0];
 
     e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
+    double cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
@@ -4027,21 +3576,14 @@ void subEuler231(double *e, double *e1, double *e2) {
  * (2-3-2) Euler angle vector from E1 to E.
  */
 void subEuler232(double *e, double *e1, double *e2) {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
-
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
+    double cp = cos(e[1]);
+    double cp1 = cos(e1[1]);
+    double sp = sin(e[1]);
+    double sp1 = sin(e1[1]);
+    double dum = e[0] - e1[0];
 
     e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
+    double cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
@@ -4066,21 +3608,14 @@ void subEuler312(double *e, double *e1, double *e2) {
  * (3-1-3) Euler angle vector from E1 to E.
  */
 void subEuler313(double *e, double *e1, double *e2) {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
-
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
+    double cp = cos(e[1]);
+    double cp1 = cos(e1[1]);
+    double sp = sin(e[1]);
+    double sp1 = sin(e1[1]);
+    double dum = e[0] - e1[0];
 
     e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
+    double cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
@@ -4105,21 +3640,14 @@ void subEuler321(double *e, double *e1, double *e2) {
  * (3-2-3) Euler angle vector from E1 to E.
  */
 void subEuler323(double *e, double *e1, double *e2) {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
-
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
+    double cp = cos(e[1]);
+    double cp1 = cos(e1[1]);
+    double sp = sin(e[1]);
+    double sp1 = sin(e1[1]);
+    double dum = e[0] - e1[0];
 
     e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
+    double cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
@@ -4146,11 +3674,10 @@ void subGibbs(double *q1, double *q2, double *q) {
 void subMRP(double *q1, double *q2, double *q) {
     double d1[3];
     double s1[3];
-    double det;
     double mag;
 
     v3Copy(q1, s1);
-    det = (1. + v3Dot(s1, s1) * v3Dot(q2, q2) + 2. * v3Dot(s1, q2));
+    double det = (1. + v3Dot(s1, s1) * v3Dot(q2, q2) + 2. * v3Dot(s1, q2));
     if (fabs(det) < 0.1) {
         mag = v3Dot(s1, s1);
         v3Scale(-1.0 / mag, s1, s1);
@@ -4180,26 +3707,20 @@ void subMRP(double *q1, double *q2, double *q) {
 void subPRV(double *q10, double *q20, double *q) {
     double q1[4];
     double q2[4];
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
     double e1[3];
     double e2[3];
-    double p;
-    double sp;
 
     PRV2elem(q10, q1);
     PRV2elem(q20, q2);
-    cp1 = cos(q1[0] / 2.);
-    cp2 = cos(q2[0] / 2.);
-    sp1 = sin(q1[0] / 2.);
-    sp2 = sin(q2[0] / 2.);
+    double cp1 = cos(q1[0] / 2.);
+    double cp2 = cos(q2[0] / 2.);
+    double sp1 = sin(q1[0] / 2.);
+    double sp2 = sin(q2[0] / 2.);
     v3Copy(&(q1[1]), e1);
     v3Copy(&(q2[1]), e2);
 
-    p = 2. * safeAcos(cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2));
-    sp = sin(p / 2.);
+    double p = 2. * safeAcos(cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2));
+    double sp = sin(p / 2.);
 
     v3Cross(e1, e2, q1);
     v3Scale(sp1 * sp2, q1, q);
@@ -4215,11 +3736,8 @@ void subPRV(double *q10, double *q20, double *q) {
  * to a single axis rotation about axis a by the angle theta
  */
 void Mi(double theta, int a, double C[3][3]) {
-    double c;
-    double s;
-
-    c = cos(theta);
-    s = sin(theta);
+    double c = cos(theta);
+    double s = sin(theta);
 
     switch (a) {
         case 1:
@@ -4274,6 +3792,4 @@ void tilde(double *v, double mat[3][3]) {
     mat[2][0] = -v[1];
     mat[1][2] = -v[0];
     mat[2][1] = v[0];
-
-    return;
 }
