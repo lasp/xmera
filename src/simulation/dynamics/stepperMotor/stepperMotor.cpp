@@ -102,7 +102,7 @@ void StepperMotor::actuateMotor(double t) {
 
     // Update the intermediate initial and reference motor angles and the parabolic constants when a step is completed
     if (this->stepComplete) {
-        this->updateRotationParameters();
+        this->updateStepParameters();
     }
 
     // Update the scalar motor states during each step
@@ -135,7 +135,7 @@ void StepperMotor::resetMotor(double t) {
 /*! This method updates the rotation parameters after a step is completed.
  @return void
 */
-void StepperMotor::updateRotationParameters() {
+void StepperMotor::updateStepParameters() {
     this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
     if (this->stepsCommanded > 0) {
         this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount + 1) * this->stepAngle);
