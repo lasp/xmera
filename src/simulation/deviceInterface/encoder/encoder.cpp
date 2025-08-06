@@ -17,6 +17,7 @@
 
  */
 #include "simulation/deviceInterface/encoder/encoder.h"
+#include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <math.h>
 

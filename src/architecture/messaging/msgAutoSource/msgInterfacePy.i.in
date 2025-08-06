@@ -23,7 +23,7 @@
 %template(DoubleVector) std::vector<double, std::allocator<double>>;
 %template(StringVector) std::vector<std::string, std::allocator<std::string>>;
 
-%include "architecture/utilities/macroDefinitions.h"
+%include "architecture/msgPayloadDefC/definitions.h"
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 ARRAYINTASLIST(FSWdeviceAvailability)

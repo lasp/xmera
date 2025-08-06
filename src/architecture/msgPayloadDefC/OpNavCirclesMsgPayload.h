@@ -22,7 +22,7 @@
 
 /*! @brief Structure used to define circles processed from image*/
 
-#include "architecture/utilities/macroDefinitions.h"
+#define MAX_CIRCLE_NUM 10
 
 typedef struct {
     uint64_t timeTag;         //!< --[ns]   Current vehicle time-tag associated with measurements

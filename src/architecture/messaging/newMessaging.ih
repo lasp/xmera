@@ -20,8 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %};
 %{
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/msgPayloadDefC/definitions.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include <vector>
 %}

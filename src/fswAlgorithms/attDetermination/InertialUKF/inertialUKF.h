@@ -32,9 +32,8 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/signalCondition.h"
 #include <stdint.h>
-#include <string.h>
 
-
+#define MAX_ST_VEH_COUNT 4
 
 /*! @brief Star Tracker (ST) sensor container structure.  Contains the msg input name and Id and sensor noise value.
  */

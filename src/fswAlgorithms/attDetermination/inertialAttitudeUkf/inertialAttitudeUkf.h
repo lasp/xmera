@@ -35,11 +35,9 @@
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
-#include "architecture/utilities/signalProcessing.h"
-#include "fswAlgorithms/_GeneralModuleFiles/measurementModels.h"
 #include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.h"
+
+#define MAX_ST_VEH_COUNT 4
 
 /*! @brief Star Tracker (ST) sensor container class. Contains the msg input name and Id and sensor noise value. */
 class StarTrackerMessage {

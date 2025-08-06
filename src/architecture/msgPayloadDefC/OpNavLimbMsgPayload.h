@@ -20,8 +20,7 @@
 #ifndef LIMB_MSG_H
 #define LIMB_MSG_H
 
-#include "architecture/utilities/macroDefinitions.h"
-
+#define MAX_LIMB_PNTS 2000
 
 /*! @brief Structure used to define the message containing planet limb data for opNav*/
 typedef struct {

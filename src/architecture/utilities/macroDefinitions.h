@@ -20,10 +20,6 @@
 #ifndef SIM_FSW_MACROS_H
 #define SIM_FSW_MACROS_H
 
-#define MAX_CIRCLE_NUM 10
-#define MAX_LIMB_PNTS 2000
-#define MAX_ST_VEH_COUNT 4
-
 #define NANO2SEC        1e-9
 #define SEC2NANO        1e9
 #define RECAST6X6       (double (*)[6])
