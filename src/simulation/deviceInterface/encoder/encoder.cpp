@@ -18,6 +18,7 @@
  */
 #include "simulation/deviceInterface/encoder/encoder.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/simDefinitions.h"
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable

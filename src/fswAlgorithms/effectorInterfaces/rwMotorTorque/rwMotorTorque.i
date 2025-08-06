@@ -30,10 +30,10 @@
 
 %include "rwMotorTorque.h"
 
-%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-%include "architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
-%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
+%include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
 
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 

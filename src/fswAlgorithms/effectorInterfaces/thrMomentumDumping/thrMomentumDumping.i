@@ -30,10 +30,10 @@
 
 %include "thrMomentumDumping.h"
 
-%include "architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 
 %pythoncode %{
 import sys

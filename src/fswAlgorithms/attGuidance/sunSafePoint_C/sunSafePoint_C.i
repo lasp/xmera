@@ -30,8 +30,8 @@
 
 %include "sunSafePoint_C.h"
 
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 
 %pythoncode %{
 import sys

@@ -20,50 +20,47 @@
 #ifndef _RATE_SERVO_FULL_NONLINEAR_
 #define _RATE_SERVO_FULL_NONLINEAR_
 
-
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
-#include "architecture/msgPayloadDefC/RateCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 
 #include <stdint.h>
 
-
-
 /*! @brief The configuration structure for the rateServoFullNonlinear module.  */
 class RateServoFullNonlinear : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
     /* declare module public variables */
-    double P;                           //!< [N*m*s]   Rate error feedback gain applied
-    double Ki;                          //!< [N*m]     Integration feedback error on rate error
-    double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
-    double integralLimit;               //!< [N*m]     Integration limit to avoid wind-up issue
+    double P;                     //!< [N*m*s]   Rate error feedback gain applied
+    double Ki;                    //!< [N*m]     Integration feedback error on rate error
+    double knownTorquePntB_B[3];  //!< [N*m]     known external torque in body frame vector components
+    double integralLimit;         //!< [N*m]     Integration limit to avoid wind-up issue
 
     /* declare module private variables */
-    uint64_t priorTime;                 //!< [ns]      Last time the attitude control is called
-    double z[3];                        //!< [rad]     integral state of delta_omega
-    double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
-    RWArrayConfigMsgPayload rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
+    uint64_t priorTime;   //!< [ns]      Last time the attitude control is called
+    double z[3];          //!< [rad]     integral state of delta_omega
+    double ISCPntB_B[9];  //!< [kg m^2] Spacecraft Inertia
+    RWArrayConfigMsgPayload
+        rwConfigParams;  //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module IO interfaces */
-    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;             //!< commanded torque output message
-    ReadFunctor<AttGuidMsgPayload> guidInMsg;                         //!< attitude guidance input message
-    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;              //!< vehicle configuration input message
-    ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;                     //!< (optional) RW speed input message
-    ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;               //!< (optional) RW availability input message
-    ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;               //!< (optional) RW configuration parameter input message
-    ReadFunctor<RateCmdMsgPayload> rateSteeringInMsg;                 //!< commanded rate input message
+    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< commanded torque output message
+    ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< attitude guidance input message
+    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< vehicle configuration input message
+    ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;         //!< (optional) RW speed input message
+    ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;   //!< (optional) RW availability input message
+    ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;   //!< (optional) RW configuration parameter input message
+    ReadFunctor<RateCmdMsgPayload> rateSteeringInMsg;     //!< commanded rate input message
 
-    BSKLogger bskLogger = {};                           //!< BSK Logging
-
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

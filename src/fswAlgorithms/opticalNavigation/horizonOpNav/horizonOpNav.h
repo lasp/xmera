@@ -22,36 +22,35 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/OpNavLimbMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/OpNavMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavLimbMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavMsgPayload.h"
 
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
-
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! @brief The configuration structure for the horizon OpNav module.*/
 class HorizonOpNav : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    Message<OpNavMsgPayload> opNavOutMsg; //!< [-] output navigation message for relative position
-    ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg; //!< camera config input message
-    ReadFunctor<NavAttMsgPayload> attInMsg; //!< attitude input message
-    ReadFunctor<OpNavLimbMsgPayload> limbInMsg; //!< limb input message
+    Message<OpNavMsgPayload> opNavOutMsg;                   //!< [-] output navigation message for relative position
+    ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;  //!< camera config input message
+    ReadFunctor<NavAttMsgPayload> attInMsg;                 //!< attitude input message
+    ReadFunctor<OpNavLimbMsgPayload> limbInMsg;             //!< limb input message
 
-    int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-    double noiseSF;   //!< A scale factor to control measurement noise
+    int32_t planetTarget;  //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
+    double noiseSF;        //!< A scale factor to control measurement noise
 
-    BSKLogger bskLogger={};                             //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 void BackSub(double *R, double *inVec, int32_t nRow, double *n);
-void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R);
+void QRDecomp(double *inMat, int32_t nRow, double *Q, double *R);
 
 #endif

@@ -31,10 +31,10 @@
 
 %include "scanningInstrumentController.h"
 
-%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
-%include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/AccessMsgPayload.h"
+%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
+%include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
 
 %pythoncode %{
 import sys

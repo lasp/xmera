@@ -30,12 +30,12 @@
 
 %include "spacecraftReconfig.h"
 
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/ReconfigBurnArrayInfoMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/ReconfigBurnArrayInfoMsgPayload.h"
 
 %pythoncode %{
 import sys

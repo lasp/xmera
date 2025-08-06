@@ -46,10 +46,10 @@ namespace std {
 %include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
 %include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 
-%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 
-%include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/THROutputMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
 
 %pythoncode %{

@@ -34,11 +34,11 @@
 
 %include "architecture/utilities/ukfUtilities.h"
 
-%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDefC/PixelLineFilterMsgPayload.h"
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-%include "architecture/msgPayloadDefC/OpNavCirclesMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/PixelLineFilterMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavCirclesMsgPayload.h"
 
 %pythoncode %{
 import sys

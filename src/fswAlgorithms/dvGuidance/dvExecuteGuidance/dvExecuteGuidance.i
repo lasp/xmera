@@ -30,10 +30,10 @@
 
 %include "dvExecuteGuidance.h"
 
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-%include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
-%include "architecture/msgPayloadDefC/DvExecutionDataMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/DvExecutionDataMsgPayload.h"
 
 %pythoncode %{
 import sys

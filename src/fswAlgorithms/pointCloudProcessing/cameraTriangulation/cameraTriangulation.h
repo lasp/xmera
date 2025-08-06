@@ -21,39 +21,39 @@
 #define CAMERATRIANGULATION_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefCpp/PointCloudMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/PairedKeyPointsMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraLocalizationMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraLocalizationMsgPayload.h"
+#include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
+#include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include <vector>
 #include <array>
-
+#include <vector>
 
 /*! @brief This module triangulates a camera position from a point cloud
  */
-class CameraTriangulation: public SysModel {
-public:
+class CameraTriangulation : public SysModel {
+   public:
     CameraTriangulation();
     ~CameraTriangulation();
 
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
-    ReadFunctor<PointCloudMsgPayload> pointCloudInMsg; //!< point cloud input message
-    ReadFunctor<PairedKeyPointsMsgPayload> keyPointsInMsg; //!< key (feature) points input message
-    ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg; //!< camera configuration input message
-    Message<CameraLocalizationMsgPayload> cameraLocationOutMsg; //!< estimated camera location output message
+    ReadFunctor<PointCloudMsgPayload> pointCloudInMsg;           //!< point cloud input message
+    ReadFunctor<PairedKeyPointsMsgPayload> keyPointsInMsg;       //!< key (feature) points input message
+    ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;       //!< camera configuration input message
+    Message<CameraLocalizationMsgPayload> cameraLocationOutMsg;  //!< estimated camera location output message
 
-    BSKLogger bskLogger; //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
-    double uncertaintyImageMeasurement = 0.; //!< [pixel] standard deviation of image point errors (about 1/4 to 1/2 px)
+    double uncertaintyImageMeasurement =
+        0.;  //!< [pixel] standard deviation of image point errors (about 1/4 to 1/2 px)
 
-private:
+   private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
     std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulation(Eigen::MatrixXd knownLocations,
@@ -61,18 +61,19 @@ private:
                                                               const Eigen::Matrix3d& cameraCalibrationInverse,
                                                               std::vector<Eigen::Matrix3d> dcmCamera) const;
 
-    Eigen::MatrixXd pointCloud{}; //!< [-] point cloud
-    std::vector<Eigen::Vector2d> keyPoints{}; //!< [-] key point pixel coordinates
-    Eigen::Matrix3d cameraCalibrationMatrixInverse{}; //!< [-] inverse of camera calibration matrix
-    Eigen::Matrix2d Ru{}; //!< [-] measurement covariance matrix of pixel coordinate u
-    Eigen::Matrix3d Rx{}; //!< [-] measurement covariance matrix of image point x
-    Eigen::Matrix3d dcm_CN{}; //!< [-] direction cosine matrix (DCM) from inertial frame N to camera frame C
-    Eigen::MRPd sigma_BN{}; //!< [-] MRP orientation of spacecraft body B w.r.t. inertial frame N when images where taken
-    int64_t cameraID{}; //!< [-] ID of the camera that took the images
-    uint64_t timeTag{}; //!< [ns] vehicle time-tag associated with images
-    bool validInputs; //!< [-] validity flag for triangulation (true if information from input messages is as expected)
-    Eigen::Vector3d estimatedCameraLocation{}; //!< [m] triangulated camera location in inertial frame
-    Eigen::Matrix3d triangulationCovariance{}; //!< [m^2] covariance of triangulation result
+    Eigen::MatrixXd pointCloud{};                      //!< [-] point cloud
+    std::vector<Eigen::Vector2d> keyPoints{};          //!< [-] key point pixel coordinates
+    Eigen::Matrix3d cameraCalibrationMatrixInverse{};  //!< [-] inverse of camera calibration matrix
+    Eigen::Matrix2d Ru{};                              //!< [-] measurement covariance matrix of pixel coordinate u
+    Eigen::Matrix3d Rx{};                              //!< [-] measurement covariance matrix of image point x
+    Eigen::Matrix3d dcm_CN{};  //!< [-] direction cosine matrix (DCM) from inertial frame N to camera frame C
+    Eigen::MRPd
+        sigma_BN{};      //!< [-] MRP orientation of spacecraft body B w.r.t. inertial frame N when images where taken
+    int64_t cameraID{};  //!< [-] ID of the camera that took the images
+    uint64_t timeTag{};  //!< [ns] vehicle time-tag associated with images
+    bool validInputs;  //!< [-] validity flag for triangulation (true if information from input messages is as expected)
+    Eigen::Vector3d estimatedCameraLocation{};  //!< [m] triangulated camera location in inertial frame
+    Eigen::Matrix3d triangulationCovariance{};  //!< [m^2] covariance of triangulation result
 };
 
 #endif

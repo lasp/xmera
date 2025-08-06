@@ -31,9 +31,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "sunSearch.h"
 
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 
 %pythoncode %{
 import sys

@@ -31,9 +31,9 @@
 %include "sys_model.i"
 %include "mappingInstrument.h"
 
-%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
+%include "architecture/msgPayloadDef/AccessMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+%include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
 
 %pythoncode %{
 import sys

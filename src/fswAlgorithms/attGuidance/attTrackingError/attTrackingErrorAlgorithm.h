@@ -22,9 +22,9 @@
 
 #include <Eigen/Core>
 
-#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
 class AttTrackingErrorAlgorithm {

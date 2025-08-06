@@ -22,8 +22,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "fswAlgorithms/attControl/rateDamp/rateDampAlgorithm.h"
 

@@ -30,8 +30,8 @@
 
 %include "torqueScheduler.h"
 
-%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-%include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
+%include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h"
 
 %pythoncode %{
 import sys

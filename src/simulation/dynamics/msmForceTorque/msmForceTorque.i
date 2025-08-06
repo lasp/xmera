@@ -33,15 +33,15 @@
 %include "sys_model.i"
 %include "msmForceTorque.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/VoltMsgPayload.h"
+%include "architecture/msgPayloadDef/VoltMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
 
-%include "architecture/msgPayloadDefCpp/ChargeMsmMsgPayload.h"
+%include "architecture/msgPayloadDef/ChargeMsmMsgPayload.h"
 
 
 

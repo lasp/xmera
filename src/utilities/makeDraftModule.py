@@ -296,9 +296,9 @@ class moduleGenerator:
             # ensure we don't include message definition files multiple times
             if msg['type'] not in includedMsgs:
                 if msg['wrap'] == 'C':
-                    headerFile += '#include "architecture/msgPayloadDefC/' + msg['type'] + 'Payload.h"\n'
+                    headerFile += '#include "architecture/msgPayloadDef/' + msg['type'] + 'Payload.h"\n'
                 if msg['wrap'] == 'C++':
-                    headerFile += '#include "architecture/msgPayloadDefCpp/' + msg['type'] + 'Payload.h"\n'
+                    headerFile += '#include "architecture/msgPayloadDef/' + msg['type'] + 'Payload.h"\n'
                 includedMsgs.append(msg['type'])
         headerFile += '#include "architecture/utilities/bskLogging.h"\n'
         headerFile += '#include "architecture/messaging/messaging.h"\n'
@@ -421,10 +421,10 @@ class moduleGenerator:
             # ensure we don't include message definition files multiple times
             if msg['type'] not in includedMsgs:
                 if msg['wrap'] == 'C':
-                    swigFile += '%include "architecture/msgPayloadDefC/' + msg['type'] + 'Payload.h"\n'
+                    swigFile += '%include "architecture/msgPayloadDef/' + msg['type'] + 'Payload.h"\n'
                     swigFile += 'struct ' + msg['type'] + '_C;\n'
                 if msg['wrap'] == 'C++':
-                    swigFile += '%include "architecture/msgPayloadDefCpp/' + msg['type'] + 'Payload.h"\n'
+                    swigFile += '%include "architecture/msgPayloadDef/' + msg['type'] + 'Payload.h"\n'
                 includedMsgs.append(msg['type'])
         swigFile += '\n'
         swigFile += '%pythoncode %{\n'

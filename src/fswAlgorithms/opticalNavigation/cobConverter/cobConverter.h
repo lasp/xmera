@@ -20,31 +20,31 @@
 #ifndef _COB_CONVERT_H_
 #define _COB_CONVERT_H_
 
+#include "architecture/messaging/messaging.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/messaging/messaging.h"
 
-#include "architecture/msgPayloadDefCpp/CameraModelMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/OpNavCOBMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/OpNavCOMMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/OpNavUnitVecMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/FilterMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"
+#include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
-enum class PhaseAngleCorrectionMethod {NoCorrection, Lambertian, Binary};
+enum class PhaseAngleCorrectionMethod { NoCorrection, Lambertian, Binary };
 
 /*! @brief visual limb finding module */
-class CobConverter: public SysModel {
-public:
+class CobConverter : public SysModel {
+   public:
     CobConverter(PhaseAngleCorrectionMethod method, double radiusObject);
     ~CobConverter();
 
@@ -64,7 +64,7 @@ public:
     void disableOutlierDetection();
     bool isOutlierDetectionEnabled() const;
 
-private:
+   private:
     bool cobOutlierDetection(Eigen::Vector3d& rhatCOB_C,
                              const Eigen::Vector3d& rhatNav_N,
                              const Eigen::Matrix3d& covarNav_N,
@@ -73,7 +73,7 @@ private:
                              const Eigen::Matrix3d& dcm_CB,
                              const Eigen::Matrix3d& cameraCalibrationMatrix) const;
 
-public:
+   public:
     Message<OpNavUnitVecMsgPayload> opnavUnitVecCOBOutMsg;
     Message<OpNavUnitVecMsgPayload> opnavUnitVecCOMOutMsg;
     Message<OpNavCOMMsgPayload> opnavCOMOutMsg;
@@ -86,7 +86,7 @@ public:
     uint64_t sensorTimeTag;
     BSKLogger bskLogger;
 
-private:
+   private:
     PhaseAngleCorrectionMethod phaseAngleCorrectionMethod;
     double objectRadius{};
     Eigen::Matrix3d covarAtt_BN_B{};

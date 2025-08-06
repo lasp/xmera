@@ -12,8 +12,8 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "miruLowPassFilterConverter.h"
 
-%include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
-%include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
+%include "architecture/msgPayloadDef/AccDataMsgPayload.h"
+%include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
 
 %pythoncode %{
 import sys

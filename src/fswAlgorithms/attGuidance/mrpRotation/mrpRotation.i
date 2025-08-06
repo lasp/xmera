@@ -30,8 +30,8 @@
 
 %include "mrpRotation.h"
 
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttStateMsgPayload.h"
+%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDef/AttStateMsgPayload.h"
 
 %pythoncode %{
 import sys

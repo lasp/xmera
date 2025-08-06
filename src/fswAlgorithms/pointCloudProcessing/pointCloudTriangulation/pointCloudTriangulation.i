@@ -33,14 +33,14 @@
 
 %include "pointCloudTriangulation.h"
 
-%include "architecture/msgPayloadDefCpp/PointCloudMsgPayload.h"
-%include "architecture/msgPayloadDefCpp/PairedKeyPointsMsgPayload.h"
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
+%include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefCpp/DirectionOfMotionMsgPayload.h"
-%include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/DirectionOfMotionMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
 
 %pythoncode %{

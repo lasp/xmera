@@ -24,18 +24,15 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
-
-
-
 
 /*!@brief Data structure for module to compute the orbital velocity spinning pointing navigation solution.
  */
 class VelocityPoint : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     void computeVelocityPointingReference(double r_BN_N[3],
@@ -45,17 +42,16 @@ public:
                                           AttRefMsgPayload *attRefOut);
 
     /* declare module private variables */
-    double mu;                                      //!< Planet gravitational parameter
+    double mu;  //!< Planet gravitational parameter
 
     /* declare module IO interfaces */
-    Message<AttRefMsgPayload> attRefOutMsg;               //!<        The name of the output message
-    ReadFunctor<NavTransMsgPayload> transNavInMsg;            //!<        The name of the incoming attitude command
-    ReadFunctor<EphemerisMsgPayload> celBodyInMsg;            //!<        The name of the celestial body message
+    Message<AttRefMsgPayload> attRefOutMsg;         //!<        The name of the output message
+    ReadFunctor<NavTransMsgPayload> transNavInMsg;  //!<        The name of the incoming attitude command
+    ReadFunctor<EphemerisMsgPayload> celBodyInMsg;  //!<        The name of the celestial body message
 
-    int planetMsgIsLinked;                  //!<        flag if the planet message is linked
+    int planetMsgIsLinked;  //!<        flag if the planet message is linked
 
-    BSKLogger bskLogger{};                             //!< BSK Logging
-
+    BSKLogger bskLogger{};  //!< BSK Logging
 };
 
 #endif

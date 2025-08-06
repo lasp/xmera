@@ -5,8 +5,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
-#include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
+#include "architecture/msgPayloadDef/AccDataMsgPayload.h"
+#include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/signalProcessing.h"

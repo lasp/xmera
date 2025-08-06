@@ -20,22 +20,22 @@
 #ifndef _EPHEM_DIFFERENCE_WITH_UNCERTAINTY_H_
 #define _EPHEM_DIFFERENCE_WITH_UNCERTAINTY_H_
 
+#include "architecture/messaging/messaging.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/messaging/messaging.h"
 
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/FilterMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief This module computes the difference between two ephemeris messages, and outputs the relative states into a
  * navigation and filter message */
-class EphemDifferenceWithUncertainty: public SysModel {
-public:
+class EphemDifferenceWithUncertainty : public SysModel {
+   public:
     EphemDifferenceWithUncertainty();
     ~EphemDifferenceWithUncertainty();
 
@@ -54,7 +54,7 @@ public:
 
     BSKLogger bskLogger;
 
-private:
+   private:
     Eigen::MatrixXd covarianceBase{};
     Eigen::MatrixXd covarianceSecondary{};
 };

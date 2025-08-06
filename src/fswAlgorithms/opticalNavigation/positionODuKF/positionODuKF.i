@@ -33,12 +33,12 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "positionODuKF.h"
 
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/CameraLocalizationMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraLocalizationMsgPayload.h"
 struct CameraLocalizationMsg_C;
-%include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
-%include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
+%include "architecture/msgPayloadDef/FilterMsgPayload.h"
+%include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
 
 %pythoncode %{
 import sys

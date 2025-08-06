@@ -32,11 +32,11 @@
 %include "sys_model.i"
 %include "smallBodyNavEKF.h"
 
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-%include "architecture/msgPayloadDefC/SmallBodyNavMsgPayload.h"
-%include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/SmallBodyNavMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
 
 %pythoncode %{
 import sys

@@ -28,8 +28,8 @@
 #include <vector>
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"

@@ -30,9 +30,9 @@
 
 %include "mrpPD_C.h"
 
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 
 %pythoncode %{
 import sys

@@ -22,37 +22,36 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 
 #define MAX_AGG_NAV_MSG 10
-
 
 /*! structure containing the attitude navigation message name, ID and local buffer*/
 typedef struct {
     ReadFunctor<NavAttMsgPayload> navAttInMsg; /*!< attitude navigation input message*/
-    NavAttMsgPayload msgStorage; /*!< [-] Local buffer to store nav message*/
-}AggregateAttInput;
+    NavAttMsgPayload msgStorage;               /*!< [-] Local buffer to store nav message*/
+} AggregateAttInput;
 
 /*! structure containing the translational navigation message name, ID and local buffer*/
 typedef struct {
     ReadFunctor<NavTransMsgPayload> navTransInMsg; /*!< translation navigation input message*/
-    NavTransMsgPayload msgStorage; /*!< [-] Local buffer to store nav message*/
-}AggregateTransInput;
+    NavTransMsgPayload msgStorage;                 /*!< [-] Local buffer to store nav message*/
+} AggregateTransInput;
 
 /*! @brief Top level structure for the aggregated navigation message module.  */
 class NavAggregate : public SysModel {
-public:
+   public:
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 
-    AggregateAttInput attMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
+    AggregateAttInput attMsgs[MAX_AGG_NAV_MSG];     /*!< [-] The incoming nav message buffer */
     AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
-    Message<NavAttMsgPayload> navAttOutMsg; /*!< blended attitude navigation output message */
-    Message<NavTransMsgPayload> navTransOutMsg; /*!< blended translation navigation output message */
+    Message<NavAttMsgPayload> navAttOutMsg;         /*!< blended attitude navigation output message */
+    Message<NavTransMsgPayload> navTransOutMsg;     /*!< blended translation navigation output message */
 
-    uint32_t attTimeIdx;        /*!< [-] The index of the message to use for attitude message time */
-    uint32_t transTimeIdx;      /*!< [-] The index of the message to use for translation message time */
+    uint32_t attTimeIdx;    /*!< [-] The index of the message to use for attitude message time */
+    uint32_t transTimeIdx;  /*!< [-] The index of the message to use for translation message time */
     uint32_t attIdx;        /*!< [-] The index of the message to use for inertial MRP*/
     uint32_t rateIdx;       /*!< [-] The index of the message to use for attitude rate*/
     uint32_t posIdx;        /*!< [-] The index of the message to use for inertial position*/
@@ -62,7 +61,7 @@ public:
     uint32_t attMsgCount;   /*!< [-] The total number of messages available as inputs */
     uint32_t transMsgCount; /*!< [-] The total number of messages available as inputs */
 
-    BSKLogger bskLogger = {};                             //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

@@ -32,9 +32,9 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "limbFinding.h"
 
-%include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 struct CameraImageMsg_C;
-%include "architecture/msgPayloadDefC/OpNavLimbMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavLimbMsgPayload.h"
 struct OpNavLimbMsg_C;
 
 %pythoncode %{

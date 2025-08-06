@@ -25,9 +25,9 @@
 #include "architecture/utilities/avsEigenSupport.h"
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDef/AlbedoMsgPayload.h"
+#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
 #include <Eigen/Core>
 #include <string>

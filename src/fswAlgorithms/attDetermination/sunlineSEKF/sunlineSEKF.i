@@ -31,10 +31,10 @@
 
 %include "sunlineSEKF.h"
 
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h";
-%include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h";
-%include "architecture/msgPayloadDefC/SunlineFilterMsgPayload.h";
-%include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h";
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h";
+%include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h";
+%include "architecture/msgPayloadDef/SunlineFilterMsgPayload.h";
+%include "architecture/msgPayloadDef/CSSConfigMsgPayload.h";
 
 %pythoncode %{
 import sys

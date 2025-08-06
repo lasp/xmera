@@ -54,9 +54,9 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 %include "partitionedStorageUnit.h"
-%include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
+%include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
 
-%include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
+%include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
 
 %pythoncode %{
 import sys

@@ -24,20 +24,16 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AttStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/AttStateMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
-
 /*! @brief Top level structure for the sub-module routines. */
 class EulerRotation : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-
 
     void checkRasterCommands();
     void computeTimeStep(uint64_t callTime);
@@ -47,23 +43,24 @@ public:
                                        AttRefMsgPayload *attRefOut);
 
     /* Declare module public variables */
-    double angleSet[3];                         //!< [-] current euler angle 321 set R/R0  with respect to the input reference
-    double angleRates[3];                       //!< [rad/s] euler angle 321 rates
+    double angleSet[3];    //!< [-] current euler angle 321 set R/R0  with respect to the input reference
+    double angleRates[3];  //!< [rad/s] euler angle 321 rates
 
     /* Declare module private variables */
-    double cmdSet[3];                           //!< [] msg commanded initial Euler angle 321 set with respect to input reference
-    double cmdRates[3];                         //!< [rad/s] msg commanded constant 321 Euler angle rates
-    double priorCmdSet[3];                      //!< [] prior commanded 321 Euler angle set
-    double priorCmdRates[3];                    //!< [rad/s] prior commanded 321 Euler angle rates
-    uint64_t priorTime;                         //!< [ns] last time the guidance module is called
-    double dt;                                  //!< [s] integration time-step
+    double cmdSet[3];         //!< [] msg commanded initial Euler angle 321 set with respect to input reference
+    double cmdRates[3];       //!< [rad/s] msg commanded constant 321 Euler angle rates
+    double priorCmdSet[3];    //!< [] prior commanded 321 Euler angle set
+    double priorCmdRates[3];  //!< [rad/s] prior commanded 321 Euler angle rates
+    uint64_t priorTime;       //!< [ns] last time the guidance module is called
+    double dt;                //!< [s] integration time-step
 
     /* Declare module IO interfaces */
-    Message<AttRefMsgPayload> attRefOutMsg;                   //!< The name of the output message containing the Reference
-    ReadFunctor<AttRefMsgPayload> attRefInMsg;                    //!< The name of the guidance reference input message
-    ReadFunctor<AttStateMsgPayload>  desiredAttInMsg;             //!< The name of the incoming message containing the desired EA set
+    Message<AttRefMsgPayload> attRefOutMsg;     //!< The name of the output message containing the Reference
+    ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< The name of the guidance reference input message
+    ReadFunctor<AttStateMsgPayload>
+        desiredAttInMsg;  //!< The name of the incoming message containing the desired EA set
 
-    BSKLogger bskLogger={};                             //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

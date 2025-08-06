@@ -33,11 +33,11 @@
 %include "sys_model.h"
 %include "lambertSecondDV.h"
 
-%include "architecture/msgPayloadDefC/LambertSolutionMsgPayload.h"
+%include "architecture/msgPayloadDef/LambertSolutionMsgPayload.h"
 struct LambertSolutionMsg_C;
-%include "architecture/msgPayloadDefC/DesiredVelocityMsgPayload.h"
+%include "architecture/msgPayloadDef/DesiredVelocityMsgPayload.h"
 struct DesiredVelocityMsg_C;
-%include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
 struct DvBurnCmdMsg_C;
 
 %pythoncode %{

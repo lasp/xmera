@@ -30,8 +30,8 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "tamComm.h"
 
-%include "architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.h"
-%include "architecture/msgPayloadDefC/TAMSensorMsgPayload.h"
+%include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/TAMSensorMsgPayload.h"
 
 %pythoncode %{
 import sys

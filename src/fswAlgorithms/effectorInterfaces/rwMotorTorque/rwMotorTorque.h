@@ -24,37 +24,35 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWAvailabilityMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief Top level structure for the sub-module routines. */
 class RwMotorTorque : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
     /* declare module private variables */
-    double   controlAxes_B[3*3];        //!< [-] array of the control unit axes
-    uint32_t numControlAxes;            //!< [-] counter indicating how many orthogonal axes are controlled
-    int      numAvailRW;                //!< [-] number of reaction wheels available
-    RWArrayConfigMsgPayload rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
-    double GsMatrix_B[3*MAX_EFF_CNT];   //!< [-] The RW spin axis matrix in body frame components
-    double CGs[3][MAX_EFF_CNT];         //!< [-] Projection matrix that defines the controlled body axes
+    double controlAxes_B[3 * 3];  //!< [-] array of the control unit axes
+    uint32_t numControlAxes;      //!< [-] counter indicating how many orthogonal axes are controlled
+    int numAvailRW;               //!< [-] number of reaction wheels available
+    RWArrayConfigMsgPayload
+        rwConfigParams;  //!< [-] struct to store message containing RW config parameters in body B frame
+    double GsMatrix_B[3 * MAX_EFF_CNT];  //!< [-] The RW spin axis matrix in body frame components
+    double CGs[3][MAX_EFF_CNT];          //!< [-] Projection matrix that defines the controlled body axes
 
     /* declare module IO interfaces */
-    Message<ArrayMotorTorqueMsgPayload> rwMotorTorqueOutMsg;   //!< RW motor torque output message
-    ReadFunctor<CmdTorqueBodyMsgPayload> vehControlInMsg;  //!<  vehicle control (Lr) Input message
-    ReadFunctor<CmdTorqueBodyMsgPayload> vehControlIn2Msg; //!<  optional vehicle control input message
-    ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;    //!<  RW Array input message
-    ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;     //!< optional RWs availability input message
+    Message<ArrayMotorTorqueMsgPayload> rwMotorTorqueOutMsg;  //!< RW motor torque output message
+    ReadFunctor<CmdTorqueBodyMsgPayload> vehControlInMsg;     //!<  vehicle control (Lr) Input message
+    ReadFunctor<CmdTorqueBodyMsgPayload> vehControlIn2Msg;    //!<  optional vehicle control input message
+    ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;       //!<  RW Array input message
+    ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;       //!< optional RWs availability input message
 
-    BSKLogger bskLogger={};                             //!< BSK Logging
-
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
-
 
 #endif

@@ -30,11 +30,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "hillPointCpp.h"
 
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 struct AttRefMsg_C;
 
 %pythoncode %{

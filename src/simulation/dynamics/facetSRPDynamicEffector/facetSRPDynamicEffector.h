@@ -25,8 +25,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"

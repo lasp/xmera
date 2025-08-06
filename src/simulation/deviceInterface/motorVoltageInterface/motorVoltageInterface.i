@@ -31,9 +31,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "motorVoltageInterface.h"
 
-%include "architecture/msgPayloadDefC/ArrayMotorVoltageMsgPayload.h"
+%include "architecture/msgPayloadDef/ArrayMotorVoltageMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 
 
 %include "architecture/utilities/macroDefinitions.h"

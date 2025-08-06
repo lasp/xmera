@@ -53,9 +53,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "simplePowerMonitor.h"
 %include "swig_conly_data.i"
 
-%include "architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.h"
+%include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.h"
+%include "architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h"
 
 
 %pythoncode %{

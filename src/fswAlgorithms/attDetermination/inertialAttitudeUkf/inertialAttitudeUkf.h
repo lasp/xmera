@@ -27,19 +27,17 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/IMUSensorMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDefC/STAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
-#include "architecture/utilities/signalProcessing.h"
-#include "fswAlgorithms/_GeneralModuleFiles/measurementModels.h"
+#include "architecture/msgPayloadDef/FilterMsgPayload.h"
+#include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
+#include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/STAttMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 #include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.h"
+
+#define MAX_ST_VEH_COUNT 4
 
 /*! @brief Star Tracker (ST) sensor container class. Contains the msg input name and Id and sensor noise value. */
 class StarTrackerMessage {

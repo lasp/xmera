@@ -17,16 +17,15 @@
 
  */
 
-
 #include "torqueScheduler.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime [ns] time the method is called
 */
-void TorqueScheduler::reset(uint64_t callTime)
-{
+void TorqueScheduler::reset(uint64_t callTime) {
     if (!this->motorTorque1InMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "torqueScheduler.motorTorque1InMsg wasn't connected.");
     }
@@ -41,12 +40,11 @@ void TorqueScheduler::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void TorqueScheduler::updateState(uint64_t callTime)
-{
+void TorqueScheduler::updateState(uint64_t callTime) {
     /*! - Create and assign buffer messages */
-    ArrayMotorTorqueMsgPayload  motorTorque1In  = this->motorTorque1InMsg();
-    ArrayMotorTorqueMsgPayload  motorTorque2In  = this->motorTorque2InMsg();
-    ArrayMotorTorqueMsgPayload  motorTorqueOut  = {};
+    ArrayMotorTorqueMsgPayload motorTorque1In = this->motorTorque1InMsg();
+    ArrayMotorTorqueMsgPayload motorTorque2In = this->motorTorque2InMsg();
+    ArrayMotorTorqueMsgPayload motorTorqueOut = {};
     ArrayEffectorLockMsgPayload effectorLockOut = {};
 
     /*! compute current time from Reset call */
@@ -57,7 +55,6 @@ void TorqueScheduler::updateState(uint64_t callTime)
     motorTorqueOut.motorTorque[1] = motorTorque2In.motorTorque[0];
 
     switch (this->lockFlag) {
-
         case 0:
             effectorLockOut.effectorLockFlag[0] = 0;
             effectorLockOut.effectorLockFlag[1] = 0;
@@ -67,8 +64,7 @@ void TorqueScheduler::updateState(uint64_t callTime)
             if (t > this->tSwitch) {
                 effectorLockOut.effectorLockFlag[0] = 1;
                 effectorLockOut.effectorLockFlag[1] = 0;
-            }
-            else {
+            } else {
                 effectorLockOut.effectorLockFlag[0] = 0;
                 effectorLockOut.effectorLockFlag[1] = 1;
             }
@@ -78,8 +74,7 @@ void TorqueScheduler::updateState(uint64_t callTime)
             if (t > this->tSwitch) {
                 effectorLockOut.effectorLockFlag[0] = 0;
                 effectorLockOut.effectorLockFlag[1] = 1;
-            }
-            else {
+            } else {
                 effectorLockOut.effectorLockFlag[0] = 1;
                 effectorLockOut.effectorLockFlag[1] = 0;
             }
@@ -91,8 +86,7 @@ void TorqueScheduler::updateState(uint64_t callTime)
             break;
 
         default:
-        this->bskLogger.bskLog(BSK_ERROR, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
-
+            this->bskLogger.bskLog(BSK_ERROR, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
     }
 
     /* write output messages */

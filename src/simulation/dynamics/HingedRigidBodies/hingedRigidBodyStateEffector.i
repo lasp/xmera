@@ -37,11 +37,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "hingedRigidBodyStateEffector.h"
 
-%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+%include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 
 
 %pythoncode %{

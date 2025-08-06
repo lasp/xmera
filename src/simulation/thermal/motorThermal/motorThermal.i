@@ -30,10 +30,10 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "motorThermal.h"
 
-%include "architecture/msgPayloadDefC/TemperatureMsgPayload.h"
+%include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
 
 
-%include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+%include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
 
 
 %pythoncode %{

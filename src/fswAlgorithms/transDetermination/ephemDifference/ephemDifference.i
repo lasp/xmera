@@ -30,7 +30,7 @@ from Basilisk.architecture.swig_common_model import *
 STRUCTASLIST(EphemChangeConfig)
 %include "ephemDifference.h"
 
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 
 %include <std_array.i>
 %template(EphemChangeConfigArray10) std::array<EphemChangeConfig,MAX_NUM_CHANGE_BODIES>;

@@ -20,17 +20,17 @@
 #ifndef GRAVITY_DYN_EFFECTOR_H
 #define GRAVITY_DYN_EFFECTOR_H
 
-#include "dynamicEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include <vector>
-#include <Eigen/Dense>
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
-#include <memory>
+#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
+#include "dynamicEffector.h"
 #include "gravityModel.h"
 #include "pointMassGravityModel.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include <Eigen/Dense>
+#include <memory>
+#include <vector>
 
 /** Container for gravitational body data
  *
@@ -38,15 +38,14 @@
  * body.  The nominal use-case has it initialized at the python level and
  * attached to dynamics using the AddGravityBody method.
  */
-class GravBodyData
-{
-public:
+class GravBodyData {
+   public:
     friend class GravityEffector;
 
     /** Initializes `localPlanet` to zero except for `localPlanet.J20002Pfix`, which
      * is initialized to the identity matrix. Additionally, initializes `gravityModel`
      * to a `PointMassGravityModel`.
-    */
+     */
     GravBodyData();
 
     /** Initializes the gravityModel, logging and raising an error if
@@ -80,24 +79,28 @@ public:
      */
     void registerProperties(DynParamManager &statesIn);
 
-public:
+   public:
     bool isCentralBody = false; /**< Flag indicating that object is center */
 
     std::shared_ptr<GravityModel> gravityModel; /**< Model used to compute the gravity of the object */
 
-    double mu = 0;                       /**< [m3/s^2] central body gravitational param */
-    double radEquator = 0;               /**< [m]      Equatorial radius for the body */
-    double radiusRatio = 1;              /**< []       ratio of polar over equatorial radius */
-    std::string planetName = "";         /**< Gravitational body name, this is used as the Spice name if spiceInterface is used */
-    std::string displayName = "";        /**< This is the name that is displayed in Vizard.  If not set, Vizard shows planetName */
-    std::string modelDictionaryKey = ""; /**< "" will result in using the current default for the celestial body's given name, otherwise key will be matched if possible to available model in internal model dictionary */
+    double mu = 0;          /**< [m3/s^2] central body gravitational param */
+    double radEquator = 0;  /**< [m]      Equatorial radius for the body */
+    double radiusRatio = 1; /**< []       ratio of polar over equatorial radius */
+    std::string planetName =
+        ""; /**< Gravitational body name, this is used as the Spice name if spiceInterface is used */
+    std::string displayName =
+        ""; /**< This is the name that is displayed in Vizard.  If not set, Vizard shows planetName */
+    std::string modelDictionaryKey =
+        ""; /**< "" will result in using the current default for the celestial body's given name, otherwise key will be
+               matched if possible to available model in internal model dictionary */
 
     ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg; /**< planet spice ephemeris input message */
-    SpicePlanetStateMsgPayload localPlanet;             /**< [-]   Class storage of ephemeris info from scheduled portion */
+    SpicePlanetStateMsgPayload localPlanet; /**< [-]   Class storage of ephemeris info from scheduled portion */
 
     BSKLogger bskLogger; /**< -- BSK Logging */
 
-private:
+   private:
     Eigen::MatrixXd *r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
     Eigen::MatrixXd *v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
     Eigen::MatrixXd *muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */
@@ -108,9 +111,8 @@ private:
 };
 
 /*! @brief gravity effector class */
-class GravityEffector : public SysModel
-{
-public:
+class GravityEffector : public SysModel {
+   public:
     /** Initializes every `GravBodyData` associated with this `GravityEffector` */
     void reset(uint64_t currentSimNanos);
 
@@ -149,10 +151,10 @@ public:
      *
      * This can be used to make property names unique between different `GravityEffector` in a simulation
      * with multiple dynamic objects.
-    */
+     */
     void prependSpacecraftNameToStates();
 
-private:
+   private:
     /**
         Compute planet position with Euler integration
         @param bodyData planet data
@@ -162,7 +164,7 @@ private:
     /** Writes to centralBodyOutMsg if it is linked and there is a central body */
     void writeOutputMessages(uint64_t currentSimNanos);
 
-public:
+   public:
     std::vector<std::shared_ptr<GravBodyData>> gravBodies; /**< [-] Vector of bodies we feel gravity from */
     std::shared_ptr<GravBodyData> centralBody;             /**<  Central body */
 
@@ -176,11 +178,13 @@ public:
 
     BSKLogger bskLogger; /**< -- BSK Logging */
 
-private:
+   private:
     Eigen::MatrixXd *gravProperty;             /**< [-] g_N property for output */
     Eigen::MatrixXd *timeCorr;                 /**< [-] Time correlation property */
-    Eigen::MatrixXd *inertialPositionProperty; /**< [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output. */
-    Eigen::MatrixXd *inertialVelocityProperty; /**< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output. */
+    Eigen::MatrixXd *inertialPositionProperty; /**< [m] r_N inertial position relative to system spice zeroBase/refBase
+                                                  coordinate frame, property for output. */
+    Eigen::MatrixXd *inertialVelocityProperty; /**< [m/s] v_N inertial velocity relative to system spice
+                                                  zeroBase/refBase coordinate frame, property for output. */
 };
 
 #endif /* GRAVITY_EFFECTOR_H */

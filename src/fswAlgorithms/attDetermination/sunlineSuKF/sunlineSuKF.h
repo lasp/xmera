@@ -25,93 +25,91 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/CSSArraySensorMsgPayload.h"
-#include "architecture/msgPayloadDefC/SunlineFilterMsgPayload.h"
-#include "architecture/msgPayloadDefC/CSSConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
+#include "architecture/msgPayloadDef/CSSConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDef/SunlineFilterMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
-
-
 
 /*! structure containing the fitting parameters
  */
 typedef struct {
-    double cssRelScale;                          //!< Relative scale factor for this CSS
-    double cssKellPow;                           //!< CSS kelly estimate power
-    double cssKellFact;                          //!< CSS kelly scale factor
-}SunlineSuKFCFit;
+    double cssRelScale;  //!< Relative scale factor for this CSS
+    double cssKellPow;   //!< CSS kelly estimate power
+    double cssKellFact;  //!< CSS kelly scale factor
+} SunlineSuKFCFit;
 
 /*!@brief Data structure for CSS Switch unscented kalman filter estimator.
  */
 class SunlineSuKF : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    Message<NavAttMsgPayload> navStateOutMsg;                     /*!< The name of the output message*/
-    Message<SunlineFilterMsgPayload> filtDataOutMsg;              /*!< The name of the output filter data message*/
-    ReadFunctor<CSSArraySensorMsgPayload> cssDataInMsg;               /*!< The name of the Input message*/
-    ReadFunctor<CSSConfigMsgPayload> cssConfigInMsg;                  /*!< [-] The name of the CSS configuration message*/
+    Message<NavAttMsgPayload> navStateOutMsg;           /*!< The name of the output message*/
+    Message<SunlineFilterMsgPayload> filtDataOutMsg;    /*!< The name of the output filter data message*/
+    ReadFunctor<CSSArraySensorMsgPayload> cssDataInMsg; /*!< The name of the Input message*/
+    ReadFunctor<CSSConfigMsgPayload> cssConfigInMsg;    /*!< [-] The name of the CSS configuration message*/
 
-	size_t numStates;                           //!< [-] Number of states for this filter
-	size_t countHalfSPs;                        //!< [-] Number of sigma points over 2
-	size_t numObs;                              //!< [-] Number of measurements this cycle
-	double beta;                                //!< [-] Beta parameter for filter
-	double alpha;                               //!< [-] Alpha parameter for filter
-	double kappa;                               //!< [-] Kappa parameter for filter
-	double lambdaVal;                           //!< [-] Lambda parameter for filter
-	double gamma;                               //!< [-] Gamma parameter for filter
-    double qObsVal;                             //!< [-] CSS instrument noise parameter
+    size_t numStates;     //!< [-] Number of states for this filter
+    size_t countHalfSPs;  //!< [-] Number of sigma points over 2
+    size_t numObs;        //!< [-] Number of measurements this cycle
+    double beta;          //!< [-] Beta parameter for filter
+    double alpha;         //!< [-] Alpha parameter for filter
+    double kappa;         //!< [-] Kappa parameter for filter
+    double lambdaVal;     //!< [-] Lambda parameter for filter
+    double gamma;         //!< [-] Gamma parameter for filter
+    double qObsVal;       //!< [-] CSS instrument noise parameter
 
-	double dt;                                  //!< [s] seconds since last data epoch
-	double timeTag;                             //!< [s]  Time tag for statecovar/etc
+    double dt;       //!< [s] seconds since last data epoch
+    double timeTag;  //!< [s]  Time tag for statecovar/etc
 
-    double bVec_B[SKF_N_STATES_HALF];           //!< [-] current vector of the b frame used to make frame
-    double switchTresh;                         //!< [-]  Threshold for switching frames
+    double bVec_B[SKF_N_STATES_HALF];  //!< [-] current vector of the b frame used to make frame
+    double switchTresh;                //!< [-]  Threshold for switching frames
 
-    double stateInit[SKF_N_STATES_SWITCH];      //!< [-] State to initialize filter to
-    double state[SKF_N_STATES_SWITCH];          //!< [-] State estimate for time TimeTag
-    double statePrev[SKF_N_STATES_SWITCH];      //!< [-] Previous state logged for clean
+    double stateInit[SKF_N_STATES_SWITCH];  //!< [-] State to initialize filter to
+    double state[SKF_N_STATES_SWITCH];      //!< [-] State estimate for time TimeTag
+    double statePrev[SKF_N_STATES_SWITCH];  //!< [-] Previous state logged for clean
 
-	double wM[2 * SKF_N_STATES_SWITCH + 1];     //!< [-] Weighting vector for sigma points
-	double wC[2 * SKF_N_STATES_SWITCH + 1];     //!< [-] Weighting vector for sigma points
+    double wM[2 * SKF_N_STATES_SWITCH + 1];  //!< [-] Weighting vector for sigma points
+    double wC[2 * SKF_N_STATES_SWITCH + 1];  //!< [-] Weighting vector for sigma points
 
-    double sBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         //!< [-] Time updated covariance
-    double sBarPrev[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];     //!< [-] Time updated covariance logged for clean
-    double covarInit[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];    //!< [-] covariance to init to
-	double covar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        //!< [-] covariance
-    double covarPrev[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];    //!< [-] Covariance logged for clean
+    double sBar[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];       //!< [-] Time updated covariance
+    double sBarPrev[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];   //!< [-] Time updated covariance logged for clean
+    double covarInit[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];  //!< [-] covariance to init to
+    double covar[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];      //!< [-] covariance
+    double covarPrev[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];  //!< [-] Covariance logged for clean
     double xBar[SKF_N_STATES_SWITCH];                             //!< [-] Current mean state estimate
 
-	double obs[MAX_N_CSS_MEAS];                                   //!< [-] Observation vector for frame
-	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES_SWITCH+1)];       //!< [-] Measurement model data
-    double postFits[MAX_N_CSS_MEAS];                              //!< [-] PostFit residuals
+    double obs[MAX_N_CSS_MEAS];                                    //!< [-] Observation vector for frame
+    double yMeas[MAX_N_CSS_MEAS * (2 * SKF_N_STATES_SWITCH + 1)];  //!< [-] Measurement model data
+    double postFits[MAX_N_CSS_MEAS];                               //!< [-] PostFit residuals
 
-	double SP[(2*SKF_N_STATES_SWITCH+1)*SKF_N_STATES_SWITCH];     //!< [-]    sigma point matrix
+    double SP[(2 * SKF_N_STATES_SWITCH + 1) * SKF_N_STATES_SWITCH];  //!< [-]    sigma point matrix
 
-	double qNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];       //!< [-] process noise matrix
-	double sQnoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];      //!< [-] cholesky of Qnoise
+    double qNoise[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];   //!< [-] process noise matrix
+    double sQnoise[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];  //!< [-] cholesky of Qnoise
 
-	double qObs[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS]; //!< [-] Maximally sized obs noise matrix
+    double qObs[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];  //!< [-] Maximally sized obs noise matrix
 
-    double cssNHat_B[MAX_NUM_CSS_SENSORS*3];    //!< [-] CSS normal vectors converted over to body
-    double CBias[MAX_NUM_CSS_SENSORS];          //!< [-] CSS individual calibration coefficients
-    SunlineSuKFCFit kellFits[MAX_NUM_CSS_SENSORS]; //!< [-] Curve fit components for CSS sensors
+    double cssNHat_B[MAX_NUM_CSS_SENSORS * 3];      //!< [-] CSS normal vectors converted over to body
+    double CBias[MAX_NUM_CSS_SENSORS];              //!< [-] CSS individual calibration coefficients
+    SunlineSuKFCFit kellFits[MAX_NUM_CSS_SENSORS];  //!< [-] Curve fit components for CSS sensors
 
-    uint32_t numActiveCss;                      //!< -- Number of currently active CSS sensors
-    uint32_t numCSSTotal;                       //!< [-] Count on the number of CSS we have on the spacecraft
-    double sensorUseThresh;                     //!< -- Threshold below which we discount sensors
-	NavAttMsgPayload outputSunline;                 //!< -- Output sunline estimate data
-    CSSArraySensorMsgPayload cssSensorInBuffer;     //!< [-] CSS sensor data read in from message bus
-    uint32_t filterInitialized;                 //!< [-] Flag indicating if filter has been init or not
+    uint32_t numActiveCss;                       //!< -- Number of currently active CSS sensors
+    uint32_t numCSSTotal;                        //!< [-] Count on the number of CSS we have on the spacecraft
+    double sensorUseThresh;                      //!< -- Threshold below which we discount sensors
+    NavAttMsgPayload outputSunline;              //!< -- Output sunline estimate data
+    CSSArraySensorMsgPayload cssSensorInBuffer;  //!< [-] CSS sensor data read in from message bus
+    uint32_t filterInitialized;                  //!< [-] Flag indicating if filter has been init or not
 
-    BSKLogger bskLogger={};                         //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 int sunlineSuKFTimeUpdate(SunlineSuKF *data, double updateTime);
 int sunlineSuKFMeasUpdate(SunlineSuKF *data, double updateTime);
-void sunlineStateProp(double *stateInOut,  double *b_vec, double dt);
+void sunlineStateProp(double *stateInOut, double *b_vec, double dt);
 void sunlineSuKFMeasModel(SunlineSuKF *data);
 void sunlineSuKFCleanUpdate(SunlineSuKF *data);
 void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);

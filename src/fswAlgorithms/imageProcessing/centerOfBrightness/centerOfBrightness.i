@@ -35,10 +35,10 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "centerOfBrightness.h"
 
-%include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
+%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 struct CameraImageMsg_C;
 
-%include "architecture/msgPayloadDefCpp/OpNavCOBMsgPayload.h"
+%include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
 
 %pythoncode %{
 import sys

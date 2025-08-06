@@ -17,15 +17,15 @@
 
  */
 
-#include <Eigen/Dense>
-#include <vector>
-#include <string>
-#include <cstring>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <Eigen/Dense>
+#include <cstring>
+#include <string>
+#include <vector>
 
-#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
+#include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 
@@ -33,44 +33,47 @@
 #define BASILISK_DATASTORAGEUNITBASE_H
 
 struct dataInstance {
-    char dataInstanceName[128];     //!< data instance name
-    int64_t dataInstanceSum;         //!< data instance sum value, bits
-}; //!< Struct for instances of data stored in a buffer. Includes names and amounts.
+    char dataInstanceName[128];  //!< data instance name
+    int64_t dataInstanceSum;     //!< data instance sum value, bits
+};  //!< Struct for instances of data stored in a buffer. Includes names and amounts.
 
 /*! @brief on-board data handling base class */
-class DataStorageUnitBase: public SysModel {
-public:
+class DataStorageUnitBase : public SysModel {
+   public:
     DataStorageUnitBase();
     ~DataStorageUnitBase();
     void reset(uint64_t currentSimNanos);
-    void addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg); //!< Adds dataNode to the storageUnit
+    void addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg);  //!< Adds dataNode to the storageUnit
     void updateState(uint64_t currentSimNanos);
-    void setDataBuffer(std::string partitionName, int64_t data); //!< Adds/removes the data from the partitionName partition once
+    void setDataBuffer(std::string partitionName,
+                       int64_t data);  //!< Adds/removes the data from the partitionName partition once
 
-protected:
+   protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
-    virtual void integrateDataStatus(double currentTime); //!< Integrates the dataStatus over all of the dataNodes
-    virtual void customreset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
-    virtual void customWriteMessages(uint64_t CurrentClock); //!< custom Write method, similar to customSelfInit.
-    virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
-    int messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg); //!< Returns index of the dataName if it's already in storedData
-    int64_t sumAllData(); //!< Sums all of the data in the storedData vector
+    virtual void integrateDataStatus(double currentTime);     //!< Integrates the dataStatus over all of the dataNodes
+    virtual void customreset(uint64_t CurrentClock);          //!< Custom Reset method, similar to customSelfInit.
+    virtual void customWriteMessages(uint64_t CurrentClock);  //!< custom Write method, similar to customSelfInit.
+    virtual bool customReadMessages();  //!< Custom read method, similar to customSelfInit; returns `true' by default.
+    int messageInStoredData(
+        DataNodeUsageMsgPayload *tmpNodeMsg);  //!< Returns index of the dataName if it's already in storedData
+    int64_t sumAllData();                      //!< Sums all of the data in the storedData vector
 
-public:
-    std::vector<ReadFunctor<DataNodeUsageMsgPayload>> nodeDataUseInMsgs; //!< Vector of data node input message names
-    Message<DataStorageStatusMsgPayload> storageUnitDataOutMsg; //!< Vector of message names to be written out by the storage unit
-    int64_t storageCapacity; //!< Storage capacity of the storage unit
-    BSKLogger bskLogger;    //!< logging variable
+   public:
+    std::vector<ReadFunctor<DataNodeUsageMsgPayload>> nodeDataUseInMsgs;  //!< Vector of data node input message names
+    Message<DataStorageStatusMsgPayload>
+        storageUnitDataOutMsg;  //!< Vector of message names to be written out by the storage unit
+    int64_t storageCapacity;    //!< Storage capacity of the storage unit
+    BSKLogger bskLogger;        //!< logging variable
 
-protected:
-    DataStorageStatusMsgPayload storageStatusMsg; //!< class variable
-    std::vector<DataNodeUsageMsgPayload> nodeBaudMsgs; //!< class variable
-    int64_t storedDataSum; //!< [bits] Stored data in bits.
-    std::vector<dataInstance> storedData; //!< Vector of data. Represents the makeup of the data buffer.
-    double previousTime; //!< Previous time used for integration
-    double currentTimestep;//!< [s] Timestep duration in seconds.
-    double netBaud; //!< Net baud rate at a given time step
+   protected:
+    DataStorageStatusMsgPayload storageStatusMsg;       //!< class variable
+    std::vector<DataNodeUsageMsgPayload> nodeBaudMsgs;  //!< class variable
+    int64_t storedDataSum;                              //!< [bits] Stored data in bits.
+    std::vector<dataInstance> storedData;               //!< Vector of data. Represents the makeup of the data buffer.
+    double previousTime;                                //!< Previous time used for integration
+    double currentTimestep;                             //!< [s] Timestep duration in seconds.
+    double netBaud;                                     //!< Net baud rate at a given time step
 };
 
-#endif //BASILISK_DATASTORAGEUNITBASE_H
+#endif  // BASILISK_DATASTORAGEUNITBASE_H

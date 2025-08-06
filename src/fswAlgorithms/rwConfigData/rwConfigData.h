@@ -22,25 +22,23 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/RWConstellationMsgPayload.h"
+#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
-
 /*! @brief Top level structure for the sub-module routines. */
-class RwConfig : public SysModel  {
-public:
+class RwConfig : public SysModel {
+   public:
     void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override {/* Not Implemented */}
+    void updateState(uint64_t callTime) override { /* Not Implemented */ }
 
     /* declare module IO interfaces */
-    ReadFunctor<RWConstellationMsgPayload> rwConstellationInMsg;          /*!< RW array input message */
-    Message<RWArrayConfigMsgPayload> rwParamsOutMsg;                  /*!< RW array output message */
+    ReadFunctor<RWConstellationMsgPayload> rwConstellationInMsg; /*!< RW array input message */
+    Message<RWArrayConfigMsgPayload> rwParamsOutMsg;             /*!< RW array output message */
 
-    BSKLogger bskLogger={};   //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

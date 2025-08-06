@@ -20,43 +20,43 @@
 #ifndef _INITSICP_H_
 #define _INITSICP_H_
 
+#include "architecture/messaging/messaging.h"
+#include "fswAlgorithms/pointCloudProcessing/SICP/sicpDefinitions.h"
 #include <stdint.h>
 #include <Eigen/Dense>
-#include "fswAlgorithms/pointCloudProcessing/SICP/sicpDefinitions.h"
-#include "architecture/messaging/messaging.h"
 
-#include "architecture/msgPayloadDefCpp/SICPMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/PointCloudMsgPayload.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
+#include "architecture/msgPayloadDef/SICPMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! @brief Scaling iterative Closest Point Algorithm */
-class InitializeICP: public SysModel {
-public:
+class InitializeICP : public SysModel {
+   public:
     InitializeICP();
     ~InitializeICP();
 
     void updateState(uint64_t currentSimNanos) override;
     void reset(uint64_t currentSimNanos) override;
 
-    ReadFunctor<SICPMsgPayload> inputSICPData;  //!< The output algorithm data
-    ReadFunctor<EphemerisMsgPayload> ephemerisInMsg; //!< ephemeris input message
-    ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg; //!< camera configuration input message
-    ReadFunctor<PointCloudMsgPayload> inputMeasuredPointCloud;          //!< The input measured data
-    Message<PointCloudMsgPayload> measuredPointCloud;  //!< The output fitted point cloud
-    Message<SICPMsgPayload> initializeSICPMsg;  //!< The output algorithm data
+    ReadFunctor<SICPMsgPayload> inputSICPData;                  //!< The output algorithm data
+    ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;            //!< ephemeris input message
+    ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;      //!< camera configuration input message
+    ReadFunctor<PointCloudMsgPayload> inputMeasuredPointCloud;  //!< The input measured data
+    Message<PointCloudMsgPayload> measuredPointCloud;           //!< The output fitted point cloud
+    Message<SICPMsgPayload> initializeSICPMsg;                  //!< The output algorithm data
 
-    BSKLogger bskLogger;                //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
     double maxTimeBetweenMeasurements = 600;
     bool normalizeMeasuredCloud = false;
 
-private:
+   private:
     void normalizePointCloud();
     void setInitialConditions(uint64_t currentSimNanos);
     void writeOutputMessages(uint64_t currentSimNanos);
@@ -73,7 +73,6 @@ private:
     Eigen::MatrixXd t_logged = Eigen::VectorXd::Zero(POINT_DIM);
     double s_logged = 1;
     uint64_t previousTimeTag = 0;
-
 };
 
 #endif

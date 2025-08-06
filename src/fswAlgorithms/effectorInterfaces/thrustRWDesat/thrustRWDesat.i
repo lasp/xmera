@@ -30,11 +30,11 @@
 
 %include "thrustRWDesat.h"
 
-%include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
-%include "architecture/msgPayloadDefC/RWConstellationMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+%include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 
 %pythoncode %{
 import sys

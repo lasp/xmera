@@ -17,40 +17,37 @@
 
 */
 
-
 #ifndef HINGEDRIGIDBODYMOTOR_H
 #define HINGEDRIGIDBODYMOTOR_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 
-/*! @brief Calculates a motor torque to drive a hinged panel to a reference angle state. A sensed and reference hinged rigid body angle
-           drives a simple PD control law.
+/*! @brief Calculates a motor torque to drive a hinged panel to a reference angle state. A sensed and reference hinged
+   rigid body angle drives a simple PD control law.
  */
-class HingedRigidBodyMotor: public SysModel {
-public:
+class HingedRigidBodyMotor : public SysModel {
+   public:
     HingedRigidBodyMotor();
     ~HingedRigidBodyMotor();
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
 
-public:
-
+   public:
     double K;  //!< gain on theta
-    double P; //!< gain on theta dot
+    double P;  //!< gain on theta dot
 
     ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateSensedInMsg;  //!< sensed rigid body state (theta, theta dot)
-    ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateReferenceInMsg;  //!< reference hinged rigid body state (theta, theta dot)
+    ReadFunctor<HingedRigidBodyMsgPayload>
+        hingedBodyStateReferenceInMsg;  //!< reference hinged rigid body state (theta, theta dot)
 
     Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg;  //!< motor torque on hinged rigid body
 
-    BSKLogger bskLogger;              //!< -- BSK Logging
-
+    BSKLogger bskLogger;  //!< -- BSK Logging
 };
-
 
 #endif

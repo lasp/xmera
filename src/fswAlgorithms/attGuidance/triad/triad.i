@@ -31,12 +31,12 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 
 %include "triad.h"
 
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDefC/BodyHeadingMsgPayload.h"
-%include "architecture/msgPayloadDefC/InertialHeadingMsgPayload.h"
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include "architecture/msgPayloadDef/BodyHeadingMsgPayload.h"
+%include "architecture/msgPayloadDef/InertialHeadingMsgPayload.h"
+%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 
 %pythoncode %{
 import sys

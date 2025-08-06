@@ -22,25 +22,22 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDefC/DvBurnCmdMsgPayload.h"
+#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
-
-
 /*! @brief Top level structure for the nominal delta-V guidance
  */
 class DvGuidance : public SysModel {
-public:
+   public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    Message<AttRefMsgPayload> attRefOutMsg;           //!< The name of the output message
-    ReadFunctor<DvBurnCmdMsgPayload> burnDataInMsg;       //!< Input message that configures the vehicle burn
+    Message<AttRefMsgPayload> attRefOutMsg;          //!< The name of the output message
+    ReadFunctor<DvBurnCmdMsgPayload> burnDataInMsg;  //!< Input message that configures the vehicle burn
 
-    BSKLogger bskLogger={};   //!< BSK Logging
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

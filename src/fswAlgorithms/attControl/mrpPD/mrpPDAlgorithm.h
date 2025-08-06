@@ -20,9 +20,9 @@
 #ifndef _MRP_PD_ALGORITHM_H_
 #define _MRP_PD_ALGORITHM_H_
 
-#include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
+#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 #include <stdint.h>
 #include <Eigen/Dense>
 

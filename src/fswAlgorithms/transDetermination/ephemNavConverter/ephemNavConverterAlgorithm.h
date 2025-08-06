@@ -20,8 +20,8 @@
 #ifndef EPHEM_NAV_CONVERTER_ALGORITHM_H
 #define EPHEM_NAV_CONVERTER_ALGORITHM_H
 
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include <stdint.h>
 
 /*! @brief The ephemNavConverter algorithm class.*/

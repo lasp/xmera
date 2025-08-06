@@ -30,8 +30,8 @@
 
 %include "rwConfigData.h"
 
-%include "architecture/msgPayloadDefC/RWArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDefC/RWConstellationMsgPayload.h"
+%include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
 
 %pythoncode %{
 import sys

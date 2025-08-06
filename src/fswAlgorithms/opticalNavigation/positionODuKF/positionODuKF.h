@@ -17,7 +17,6 @@
 
  */
 
-
 /*! @brief Top level structure for the position based OD unscented kalman filter.
  Used to estimate the spacecraft's inertial position relative to a body.
  */
@@ -26,28 +25,28 @@
 #define POSODUKF_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/orbitalMotion.h"
+#include "architecture/msgPayloadDef/CameraLocalizationMsgPayload.h"
+#include "architecture/msgPayloadDef/FilterMsgPayload.h"
+#include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
+#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
-#include "architecture/msgPayloadDefC/CameraLocalizationMsgPayload.h"
+#include "architecture/utilities/orbitalMotion.h"
 
+#include <math.h>
 #include <string.h>
 #include <array>
-#include <math.h>
 
-class PositionODuKF: public SysModel {
-public:
+class PositionODuKF : public SysModel {
+   public:
     PositionODuKF();
     ~PositionODuKF() override;
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
-private:
+   private:
     void timeUpdate(const double updateTime);
     void measurementUpdate();
     void measurementModel();
@@ -68,7 +67,7 @@ private:
                         double dt) const;
     Eigen::VectorXd propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) const;
 
-public:
+   public:
     ReadFunctor<CameraLocalizationMsgPayload> cameraPosMsg;
     CameraLocalizationMsgPayload cameraPosBuffer;
     Message<NavTransMsgPayload> navTransOutMsg;
@@ -84,39 +83,40 @@ public:
     double gammaParameter;
     double muCentral;
 
-    Eigen::MatrixXd processNoise; //!< [-] process noise matrix
-    Eigen::MatrixXd measurementNoise; //!< [-] Measurement Noise
-    Eigen::VectorXd stateInitial; //!< [-] State estimate for time TimeTag at previous time
-    Eigen::MatrixXd sBarInitial; //!< [-] Time updated covariance at previous time
-    Eigen::MatrixXd covarInitial; //!< [-] covariance at previous time
+    Eigen::MatrixXd processNoise;      //!< [-] process noise matrix
+    Eigen::MatrixXd measurementNoise;  //!< [-] Measurement Noise
+    Eigen::VectorXd stateInitial;      //!< [-] State estimate for time TimeTag at previous time
+    Eigen::MatrixXd sBarInitial;       //!< [-] Time updated covariance at previous time
+    Eigen::MatrixXd covarInitial;      //!< [-] covariance at previous time
 
-    double measNoiseScaling = 1; //!< [-] Scale factor that can be applied on the measurement noise to over/under weight
-    double measNoiseSD = 0.1; //!< [km] Constant measurement noise
-private:
-    NavTransMsgPayload navTransOutMsgBuffer; //!< Message buffer for input translational nav message
+    double measNoiseScaling =
+        1;                     //!< [-] Scale factor that can be applied on the measurement noise to over/under weight
+    double measNoiseSD = 0.1;  //!< [km] Constant measurement noise
+   private:
+    NavTransMsgPayload navTransOutMsgBuffer;  //!< Message buffer for input translational nav message
     FilterMsgPayload opNavFilterMsgBuffer;
     FilterResidualsMsgPayload opNavResidualMsgBuffer;
 
-    double dt; //!< [s] seconds since last data epoch
-    double previousFilterTimeTag; //!< [s]  Time tag for statecovar/etc
-    bool measurementRead=false; //!< [bool]  Presence of a valid measurement to process
-    size_t numberSigmaPoints; //!< [s]  2n+1 sigma points for convenience
+    double dt;                     //!< [s] seconds since last data epoch
+    double previousFilterTimeTag;  //!< [s]  Time tag for statecovar/etc
+    bool measurementRead = false;  //!< [bool]  Presence of a valid measurement to process
+    size_t numberSigmaPoints;      //!< [s]  2n+1 sigma points for convenience
     Eigen::VectorXd wM;
     Eigen::VectorXd wC;
 
-    Eigen::VectorXd state; //!< [-] State estimate for time TimeTag
-    Eigen::MatrixXd sBar; //!< [-] Time updated covariance
-    Eigen::MatrixXd covar; //!< [-] covariance
-    Eigen::VectorXd xBar; //!< [-] Current mean state estimate
-    Eigen::MatrixXd sigmaPoints; //!< [-]    sigma point matrix
+    Eigen::VectorXd state;        //!< [-] State estimate for time TimeTag
+    Eigen::MatrixXd sBar;         //!< [-] Time updated covariance
+    Eigen::MatrixXd covar;        //!< [-] covariance
+    Eigen::VectorXd xBar;         //!< [-] Current mean state estimate
+    Eigen::MatrixXd sigmaPoints;  //!< [-]    sigma point matrix
 
-    Eigen::VectorXd obs; //!< [-] Observation vector for frame
-    Eigen::MatrixXd yMeas; //!< [-] Measurement model data
-    Eigen::VectorXd postFits; //!< [-] PostFit residuals
-    Eigen::MatrixXd cholProcessNoise; //!< [-] cholesky of Qnoise
-    Eigen::MatrixXd cholMeasurementNoise; //!< [-] cholesky of Qnoise
+    Eigen::VectorXd obs;                   //!< [-] Observation vector for frame
+    Eigen::MatrixXd yMeas;                 //!< [-] Measurement model data
+    Eigen::VectorXd postFits;              //!< [-] PostFit residuals
+    Eigen::MatrixXd cholProcessNoise;      //!< [-] cholesky of Qnoise
+    Eigen::MatrixXd cholMeasurementNoise;  //!< [-] cholesky of Qnoise
 
-    BSKLogger bskLogger; //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 };
 
 #endif

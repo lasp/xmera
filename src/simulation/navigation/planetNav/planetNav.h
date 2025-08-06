@@ -17,51 +17,49 @@
 
 */
 
-
 #ifndef PLANETNAV_H
 #define PLANETNAV_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/gauss_markov.h"
-#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include <Eigen/Dense>
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/gauss_markov.h"
+#include <Eigen/Dense>
 
 /*! @brief This is an auto-created sample C++ module.  The description is included with the module class definition
  */
-class PlanetNav: public SysModel {
-public:
+class PlanetNav : public SysModel {
+   public:
     PlanetNav();
     ~PlanetNav();
 
-    void reset(uint64_t currentSimNanos);  //!< -- Reset function
-    void updateState(uint64_t currentSimNanos);  //!< -- updateState
+    void reset(uint64_t currentSimNanos);          //!< -- Reset function
+    void updateState(uint64_t currentSimNanos);    //!< -- updateState
     void computeErrors(uint64_t currentSimNanos);  //!< -- Compute the errors to add to the truth
-    void applyErrors();  //!< -- Add the errors to the truth
-    void readInputMessages();  //!> -- Read the input messages
-    void writeOutputMessages(uint64_t Clock);  //!> -- Write the output messages
+    void applyErrors();                            //!< -- Add the errors to the truth
+    void readInputMessages();                      //!> -- Read the input messages
+    void writeOutputMessages(uint64_t Clock);      //!> -- Write the output messages
 
-public:
-    Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
-    Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
-    bool crossTrans;                  //!< -- Have position error depend on velocity
-    bool crossAtt;                    //!< -- Have attitude depend on attitude rate
+   public:
+    Eigen::MatrixXd
+        PMatrix;  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
+    Eigen::VectorXd walkBounds;  //!< -- "3-sigma" errors to permit for states
+    Eigen::VectorXd navErrors;   //!< -- Current navigation errors applied to truth
+    bool crossTrans;             //!< -- Have position error depend on velocity
+    bool crossAtt;               //!< -- Have attitude depend on attitude rate
 
-    EphemerisMsgPayload truePlanetState; //!< planet ephemeris msg without noise
-    EphemerisMsgPayload noisePlanetState;  //!< planet ephemeris msg with noise
+    EphemerisMsgPayload truePlanetState;              //!< planet ephemeris msg without noise
+    EphemerisMsgPayload noisePlanetState;             //!< planet ephemeris msg with noise
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg;  //!< planet ephemeris input msg
-    Message<EphemerisMsgPayload> ephemerisOutMsg;  //!< planet ephemeris output msg
+    Message<EphemerisMsgPayload> ephemerisOutMsg;     //!< planet ephemeris output msg
 
-    BSKLogger bskLogger;              //!< -- BSK Logging
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
-private:
-    Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state
-    GaussMarkov errorModel;            //!< -- Gauss-markov error states
-    uint64_t prevTime;                 //!< -- Previous simulation time observed
-
+   private:
+    Eigen::MatrixXd AMatrix;  //!< -- The matrix used to propagate the state
+    GaussMarkov errorModel;   //!< -- Gauss-markov error states
+    uint64_t prevTime;        //!< -- Previous simulation time observed
 };
-
 
 #endif

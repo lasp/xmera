@@ -34,13 +34,13 @@
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "MtbEffector.h"
 
-%include "architecture/msgPayloadDefC/MTBCmdMsgPayload.h"
+%include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
+%include "architecture/msgPayloadDef/MagneticFieldMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
 
-%include "architecture/msgPayloadDefC/MTBMsgPayload.h"
+%include "architecture/msgPayloadDef/MTBMsgPayload.h"
 
 
 %pythoncode %{
