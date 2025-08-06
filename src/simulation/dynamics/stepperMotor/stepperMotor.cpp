@@ -40,7 +40,7 @@ void StepperMotor::reset(uint64_t callTime) {
     this->previousWrittenTime = -1;
 
     // Initialize the module boolean parameters
-    this->completion = true;
+    this->actuationComplete = true;
     this->stepComplete = true;
     this->newMsg = false;
 
@@ -64,15 +64,15 @@ void StepperMotor::updateState(uint64_t callTime) {
             this->newMsg = true;
             this->stepsCommanded = motorStepCommandIn.stepsCommanded;
             this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
-            this->completion = true;
+            this->actuationComplete = true;
             if (this->stepsCommanded != 0) {
-                this->completion = false;
+                this->actuationComplete = false;
             }
         }
     }
 
     // Reset the motor states for the next maneuver ONLY when the current step is completed
-    if (!(this->completion)) {
+    if (!(this->actuationComplete)) {
         this->actuateMotor(callTime * NANO2SEC);
     }
 
@@ -222,9 +222,9 @@ void StepperMotor::computeStepComplete(double t) {
     // Update the initial time
     this->tInit = t;
 
-    // Update the completion boolean variable only when motor actuation is complete
+    // Update the actuationComplete boolean variable only when motor actuation is complete
     if ((this->stepCount == this->stepsCommanded) && !this->newMsg) {
-        this->completion = true;
+        this->actuationComplete = true;
     }
 }
 

@@ -81,9 +81,9 @@ class StepperMotor : public SysModel {
     double tf;                   //!< [s] Simulation time when the maneuver is finished
 
     /* Boolean parameters */
-    bool completion;    //!< Boolean designating a fully completed maneuver
-    bool stepComplete;  //!< Boolean designating a completed step
-    bool newMsg;        //!< Boolean designating a new message was written
+    bool actuationComplete;  //!< Boolean designating a fully completed maneuver
+    bool stepComplete;       //!< Boolean designating a completed step
+    bool newMsg;             //!< Boolean designating a new message was written
 
     /* Constant parameters */
     double a;  //!< Parabolic constant for the first half of a step
