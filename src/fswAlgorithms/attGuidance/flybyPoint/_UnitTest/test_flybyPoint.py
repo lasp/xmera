@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2024 University of Colorado at Boulder
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -14,13 +14,7 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-#
-#
-#   Unit Test Script
-#   Module Name:        flybyPoint
-#   Author:             Riccardo Calaon
-#   Creation Date:      May 26, 2023
-#
+
 
 import os
 
@@ -47,33 +41,12 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 def test_flybyPoint(show_plots, initial_position, initial_velocity, filter_dt, orbit_normal_sign, max_rate,
                     max_acceleration, pos_knowledge):
     r"""
-    **Validation Test Description**
-
-    This unit test script tests the correctness of the reference attitude computed by :ref:`flybyPoint` in a scenario
-    where the rectilinear flyby assumption is valid.
-
-    **Test Parameters**
-
-    In this test, there is no gravity body, and the spacecraft is put onto a rectilinear trajectory about the origin.
-    With no gravity, the linear momentum of the spacecraft does not change, which means that the spacecraft proceeds
-    along a rectilinear trajectory. The input message to the :ref:`flybyPoint` is the relative position and velocity
-    of the spacecraft with respect to the body/asteroid, which coincides with the origin and is assumed to be static.
-    Correctness is tested assessing whether the computed hill frame moves according to the motion of the spacecraft.
-
     Args:
         initial_position[3] (m): initial position of the spacecraft w.r.t. the body/origin
         initial_velocity[3] (m): initial velocity of the spacecraft w.r.t. the body/origin
         filter_dt (s): time between two consecutive reads of the input message
         orbit_normal_sign (-): sign of the reference frame "out of plane" vector (orbit normal or anti orbit normal)
 
-    **Description of Variables Being Tested**
-
-    The reference attitude :math:`\sigma_\mathcal{R/N}`, reference angular rates :math:`\omega_\mathcal{R/N}` and
-    angular accelerations :math:`\dot{\omega}_\mathcal{R/N}` are tested. These are compared to the analytical results
-    expected from the rectilinear motion described in the documentation of :ref:`flybyPoint`.
-    The reference attitude is mapped to the corresponding reference frame, and each axis of the reference frame is
-    tested for correctness. The angular rate and acceleration vectors are tested against the analytical result,
-    expressed in R-frame coordinates.
     """
     # each test method requires a single assert method to be called
     flybyPointTestFunction(show_plots, initial_position, initial_velocity, filter_dt, orbit_normal_sign,
@@ -243,12 +216,12 @@ def plot_ref_accelerations(time_data, omegaDot_RN):
 
 
 if __name__ == "__main__":
-    test_flybyPoint(True,  # show_plots
-                    [-5e7, 7.5e6, 5e5],  # initial_position
-                    [2e4, 0, 0],  # initial_velocity
-                    1,  # filter_dt
-                    1,  # sign Orbit Normal
-                    0.01,  # max rate
-                    0,  # max acceleration
+    test_flybyPoint(True,
+                    [-5e7, 7.5e6, 5e5],
+                    [2e4, 0, 0],
+                    1,
+                    1,
+                    0.01,
+                    0,
                     0
                     )
