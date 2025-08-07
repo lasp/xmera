@@ -25,9 +25,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
 
-@pytest.mark.parametrize("initialMotorAngle", [0.0 * (np.pi / 180), 10.0 * (np.pi / 180), -5.0 * (np.pi / 180)])
+@pytest.mark.parametrize("initialMotorAngle", [0.0 * macros.D2R, 10.0 * macros.D2R, -5.0 * macros.D2R])
 @pytest.mark.parametrize("stepsCommanded", [0, 5, -5])
-@pytest.mark.parametrize("stepAngle", [0.01 * (np.pi / 180), 0.5 * (np.pi / 180), 1.0 * (np.pi / 180)])
+@pytest.mark.parametrize("stepAngle", [0.01 * macros.D2R, 0.5 * macros.D2R, 1.0 * macros.D2R])
 @pytest.mark.parametrize("stepTime", [0.1, 0.5, 1.0])
 @pytest.mark.parametrize("accuracy", [1e-12])
 def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, stepTime, accuracy):
@@ -98,10 +98,10 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
-    timespan = stepperMotorDataLog.times()
-    theta = macros.R2D * stepperMotorDataLog.theta
-    thetaDot = macros.R2D * stepperMotorDataLog.thetaDot
-    thetaDDot = macros.R2D * stepperMotorDataLog.thetaDDot
+    timespan = macros.NANO2SEC * stepperMotorDataLog.times()  # [s]
+    theta = macros.R2D * stepperMotorDataLog.theta  # [deg]
+    thetaDot = macros.R2D * stepperMotorDataLog.thetaDot  # [deg/s]
+    thetaDDot = macros.R2D * stepperMotorDataLog.thetaDDot  # [deg/s^2]
     motorStepCount = stepperMotorDataLog.stepCount
     motorCommandedSteps = stepperMotorDataLog.stepsCommanded
 
@@ -112,7 +112,7 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     # Plot motor angle
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, theta, label=r"$\theta$")
+    plt.plot(timespan, theta, label=r"$\theta$")
     plt.title(r'Stepper Motor Angle $\theta_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
     plt.ylabel('(deg)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
@@ -122,7 +122,7 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     # Plot motor thetaDot
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, thetaDot, label=r"$\dot{\theta}$")
+    plt.plot(timespan, thetaDot, label=r"$\dot{\theta}$")
     plt.title(r'Stepper Motor Angle Rate $\dot{\theta}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
     plt.ylabel('(deg/s)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
@@ -132,7 +132,7 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     # Plot motor thetaDDot
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, thetaDDot, label=r"$\ddot{\theta}$")
+    plt.plot(timespan, thetaDDot, label=r"$\ddot{\theta}$")
     plt.title(r'Stepper Motor Angular Acceleration $\ddot{\theta}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
     plt.ylabel('(deg/s$^2$)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
@@ -142,8 +142,8 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     # Plot steps commanded and motor steps taken
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, motorStepCount)
-    plt.plot(timespan * macros.NANO2SEC, motorCommandedSteps, '--', label='Commanded')
+    plt.plot(timespan, motorStepCount)
+    plt.plot(timespan, motorCommandedSteps, '--', label='Commanded')
     plt.title(r'Motor Step History', fontsize=14)
     plt.ylabel('Steps', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
@@ -176,9 +176,9 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
 if __name__ == "__main__":
     test_stepperMotor(
                  True,
-                 0.0,                       # initialMotorAngle
-                 10,                        # stepsCommanded
-                 1.0 * (np.pi / 180),       # stepAngle
-                 1.0,                       # stepTime
-                 1e-12                      # accuracy
+                 0.0,  # [rad] initialMotorAngle
+                 10,  # stepsCommanded
+                 1.0 * macros.D2R,  # [rad] stepAngle
+                 1.0,  # [s] stepTime
+                 1e-12  # accuracy
                )
