@@ -190,6 +190,7 @@ void StepperMotor::computeStepComplete(double t) {
     this->thetaDDot = 0.0;
     this->thetaDot = 0.0;
     this->theta = this->intermediateThetaRef;
+    this->tInit = t;
 
     // Update the motor step count
     if (!this->newMsg) {
@@ -198,20 +199,16 @@ void StepperMotor::computeStepComplete(double t) {
         } else {
             this->stepCount--;
         }
+        // Update the actuationComplete boolean variable only when motor actuation is complete
+        if (this->stepCount == this->stepsCommanded) {
+            this->actuationComplete = true;
+        }
     } else {
         if (this->intermediateThetaRef > this->intermediateThetaInit) {
             this->stepCount++;
         } else {
             this->stepCount--;
         }
-    }
-
-    // Update the initial time
-    this->tInit = t;
-
-    // Update the actuationComplete boolean variable only when motor actuation is complete
-    if ((this->stepCount == this->stepsCommanded) && !this->newMsg) {
-        this->actuationComplete = true;
     }
 }
 
