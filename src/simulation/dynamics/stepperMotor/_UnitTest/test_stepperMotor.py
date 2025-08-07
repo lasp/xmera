@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -16,28 +16,14 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-#
-#   Unit Test Script
-#   Module Name:        stepperMotor
-#   Author:             Leah Kiner
-#   Creation Date:      March 25, 2024
-#
-
-import inspect
-import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.simulation import stepperMotor
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
 
 @pytest.mark.parametrize("initialMotorAngle", [0.0 * (np.pi / 180), 10.0 * (np.pi / 180), -5.0 * (np.pi / 180)])
 @pytest.mark.parametrize("stepsCommanded", [0, 5, -5])
@@ -75,7 +61,6 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
