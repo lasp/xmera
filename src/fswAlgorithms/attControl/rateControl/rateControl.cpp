@@ -29,10 +29,10 @@
 */
 void RateControl::reset(uint64_t callTime) {
     if (!this->guidInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "rateControl.guidInMsg wasn't connected.");
+        throw std::invalid_argument("rateControl.guidInMsg wasn't connected.");
     }
     if (!this->vehConfigInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "rateControl.vehConfigInMsg wasn't connected.");
+        throw std::invalid_argument("rateControl.vehConfigInMsg wasn't connected.");
     }
 
     // Read the VehicleConfigMsgPayload input message

@@ -21,6 +21,7 @@
 #define _RATE_CONTROL_
 
 #include <stdint.h>
+#include <stdexcept>
 
 #include <Eigen/Dense>
 
@@ -29,7 +30,6 @@
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 
 /*! @brief Rate control class. */
 class RateControl : public SysModel {
@@ -48,8 +48,6 @@ class RateControl : public SysModel {
     ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< Attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< Vehicle configuration input message
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< Commanded torque output message
-
-    BSKLogger *bskLogger;  //!< BSK Logging
 
    private:
     double P{};                           //!< [N*m*s] Rate error feedback gain applied
