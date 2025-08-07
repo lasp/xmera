@@ -26,19 +26,19 @@ from Basilisk.utilities import macros
 
 
 @pytest.mark.parametrize("motor_theta_init", [0.0 * macros.D2R, 10.0 * macros.D2R, -5.0 * macros.D2R])
-@pytest.mark.parametrize("steps_commanded", [0, 5, -5])
+@pytest.mark.parametrize("steps_commanded", [0, 10, 100, -50, -150])
 @pytest.mark.parametrize("step_angle", [0.01 * macros.D2R, 0.5 * macros.D2R, 1.0 * macros.D2R])
 @pytest.mark.parametrize("step_time", [0.1, 0.5, 1.0])
-def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle, step_time):
+def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, step_angle, step_time):
     r"""
     **Verification Test Description**
 
-    This unit test ensures that the stepper motor profiler module correctly actuates the stepper motor from an initial
-    angle to a final reference angle, given an input integer number of commanded steps contained in the
-    ``motorStepCommand`` input message. The initial motor angle and number of commanded steps are varied so that the
-    module is shown to work for both positive and negative steps. The motor states are profiled for each step using
-    a bang-bang constant positive, constant negative acceleration profile. The motor acceleration is determined from
-    the given constant step angle and constant step time.
+    This nominal unit test ensures that the stepper motor simulation module correctly actuates the stepper motor from
+    an initial angle to a final reference angle, given an input integer number of commanded steps. The module outputs
+    the motor scalar states (angle, angle rate, and acceleration) and the motor step count as a function of time.
+    The motor actuation is simulated using a bang-bang acceleration profile. The motor acceleration is calculated in
+    the module using the given motor step angle and step time constants. The capability for the motor to take both
+    positive and negative steps is checked in this test by commanding both positive and negative steps to the module.
 
     **Test Parameters**
 
@@ -50,10 +50,9 @@ def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle,
 
     **Description of Variables Being Tested**
 
-    This unit test checks that the final motor angle matches the reference motor angele. The reference motor angle is
-    determined from the initial motor angle and number of commanded steps. The test also checks that the module
-    keeps track of the motor step count correctly by comparing the final motor step count with the number of steps
-    commanded from the module ``motorStepCommand`` input message.
+    This unit test checks that the final motor angle from the simulation matches the reference motor angle computed
+    in this script. The test also checks that the final motor step count matches the numer of steps commanded to the
+    module. The motor angle rate is also checked to be zero at the end of the simulation.
 
     """
 
@@ -163,7 +162,7 @@ def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle,
                                verbose=True)
 
 if __name__ == "__main__":
-    test_stepperMotor(
+    test_stepper_motor_nominal(
                  True,
                  0.0,  # [rad] motor_theta_init
                  10,  # steps_commanded
