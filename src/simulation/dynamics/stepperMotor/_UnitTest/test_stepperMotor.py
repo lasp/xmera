@@ -31,7 +31,7 @@ from Basilisk.utilities import macros
 @pytest.mark.parametrize("step_time", [0.1, 0.5, 1.0])
 def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle, step_time):
     r"""
-    **Validation Test Description**
+    **Verification Test Description**
 
     This unit test ensures that the stepper motor profiler module correctly actuates the stepper motor from an initial
     angle to a final reference angle, given an input integer number of commanded steps contained in the
@@ -59,39 +59,33 @@ def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle,
 
     task_name = "unitTask"
     process_name = "TestProcess"
-
-    # Create a sim module as an empty container
     test_sim = SimulationBaseClass.SimBaseClass()
-
-    # Create the test thread
-    test_process_rate = macros.sec2nano(0.1)     # Set process rate update time
+    test_process_rate = macros.sec2nano(0.1)
     test_process = test_sim.CreateNewProcess(process_name)
     test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
 
-    # Create an instance of the stepperMotor module to be tested
+    # Create the stepperMotor module
     stepper_motor = stepperMotor.StepperMotor()
     stepper_motor.modelTag = "StepperMotor"
     stepper_motor.setThetaInit(motor_theta_init)
     stepper_motor.setStepAngle(step_angle)
     stepper_motor.setStepTime(step_time)
-
-    # Add the test module to the runtime call list
     test_sim.AddModelToTask(task_name, stepper_motor)
 
-    # Create the StepperMotor input message
+    # Create the stepperMotor input message
     motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
     motor_step_command_msg_data.stepsCommanded = steps_commanded
     motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data)
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
-    # Log the test module output message for data comparison
+    # Set up data logging
     stepper_motor_data_log = stepper_motor.stepperMotorOutMsg.recorder()
     test_sim.AddModelToTask(task_name, stepper_motor_data_log)
 
-    # Initialize the simulation, set the sim run time, and execute the simulation
+    # Run the simulation
     test_sim.InitializeSimulation()
-    sim_time = step_time * np.abs(steps_commanded)  # [sec] Time for the motor to actuate to the desired angle
-    sim_time_extra = 5.0  # [sec] Time the simulation will continue while holding the final angle
+    sim_time = step_time * np.abs(steps_commanded)  # [s]
+    sim_time_extra = 5.0  # [s]
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time + sim_time_extra))
     test_sim.ExecuteSimulation()
 
@@ -103,15 +97,11 @@ def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle,
     motor_step_count = stepper_motor_data_log.stepCount
     motor_steps_commanded = stepper_motor_data_log.stepsCommanded
 
-    # Only show plots if the motor actuates
-    if (steps_commanded == 0):
-        show_plots = False
-
     # Plot motor angle
     plt.figure()
     plt.clf()
     plt.plot(timespan, theta, label=r"$\theta$")
-    plt.title(r'Stepper Motor Angle $\theta_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.title(r'Stepper Motor Angle $\theta$', fontsize=14)
     plt.ylabel('(deg)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
     plt.legend(loc='upper right', prop={'size': 12})
@@ -121,7 +111,7 @@ def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle,
     plt.figure()
     plt.clf()
     plt.plot(timespan, theta_dot, label=r"$\dot{\theta}$")
-    plt.title(r'Stepper Motor Angle Rate $\dot{\theta}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+    plt.title(r'Stepper Motor Angle Rate $\dot{\theta}$', fontsize=14)
     plt.ylabel('(deg/s)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
     plt.legend(loc='upper right', prop={'size': 12})
@@ -131,7 +121,7 @@ def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle,
     plt.figure()
     plt.clf()
     plt.plot(timespan, theta_ddot, label=r"$\ddot{\theta}$")
-    plt.title(r'Stepper Motor Angular Acceleration $\ddot{\theta}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+    plt.title(r'Stepper Motor Angular Acceleration $\ddot{\theta}$ ', fontsize=14)
     plt.ylabel('(deg/s$^2$)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
     plt.legend(loc='upper right', prop={'size': 12})
@@ -140,7 +130,7 @@ def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle,
     # Plot steps commanded and motor steps taken
     plt.figure()
     plt.clf()
-    plt.plot(timespan, motor_step_count)
+    plt.plot(timespan, motor_step_count, label='Step Count')
     plt.plot(timespan, motor_steps_commanded, '--', label='Commanded')
     plt.title(r'Motor Step History', fontsize=14)
     plt.ylabel('Steps', fontsize=14)
