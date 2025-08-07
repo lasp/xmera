@@ -29,8 +29,7 @@ from Basilisk.utilities import macros
 @pytest.mark.parametrize("stepsCommanded", [0, 5, -5])
 @pytest.mark.parametrize("stepAngle", [0.01 * macros.D2R, 0.5 * macros.D2R, 1.0 * macros.D2R])
 @pytest.mark.parametrize("stepTime", [0.1, 0.5, 1.0])
-@pytest.mark.parametrize("accuracy", [1e-12])
-def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, stepTime, accuracy):
+def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, stepTime):
     r"""
     **Validation Test Description**
 
@@ -48,7 +47,6 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
         stepsCommanded (int): [steps] Number of steps commanded to the stepper motor
         stepAngle (float): [rad] Angle the stepper motor moves through for a single step (constant)
         stepTime (float): [sec] Time required for a single motor step (constant)
-        accuracy (float): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
 
@@ -155,6 +153,7 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     plt.close("all")
 
     # Check to ensure the angle converges to the reference angle
+    accuracy = 1e-12
     desiredMotorAngleTrue = initialMotorAngle + (stepsCommanded * stepAngle)
     np.testing.assert_allclose(theta[-1],
                                macros.R2D * desiredMotorAngleTrue,
@@ -180,5 +179,4 @@ if __name__ == "__main__":
                  10,  # stepsCommanded
                  1.0 * macros.D2R,  # [rad] stepAngle
                  1.0,  # [s] stepTime
-                 1e-12  # accuracy
                )
