@@ -25,11 +25,11 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
 
-@pytest.mark.parametrize("initialMotorAngle", [0.0 * macros.D2R, 10.0 * macros.D2R, -5.0 * macros.D2R])
-@pytest.mark.parametrize("stepsCommanded", [0, 5, -5])
-@pytest.mark.parametrize("stepAngle", [0.01 * macros.D2R, 0.5 * macros.D2R, 1.0 * macros.D2R])
-@pytest.mark.parametrize("stepTime", [0.1, 0.5, 1.0])
-def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, stepTime):
+@pytest.mark.parametrize("motor_theta_init", [0.0 * macros.D2R, 10.0 * macros.D2R, -5.0 * macros.D2R])
+@pytest.mark.parametrize("steps_commanded", [0, 5, -5])
+@pytest.mark.parametrize("step_angle", [0.01 * macros.D2R, 0.5 * macros.D2R, 1.0 * macros.D2R])
+@pytest.mark.parametrize("step_time", [0.1, 0.5, 1.0])
+def test_stepperMotor(show_plots, motor_theta_init, steps_commanded, step_angle, step_time):
     r"""
     **Validation Test Description**
 
@@ -43,10 +43,10 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     **Test Parameters**
 
     Args:
-        initialMotorAngle (float): [rad] Initial stepper motor angle
-        stepsCommanded (int): [steps] Number of steps commanded to the stepper motor
-        stepAngle (float): [rad] Angle the stepper motor moves through for a single step (constant)
-        stepTime (float): [sec] Time required for a single motor step (constant)
+        motor_theta_init (float): [rad] Initial stepper motor angle
+        steps_commanded (int): [steps] Number of steps commanded to the stepper motor
+        step_angle (float): [rad] Angle the stepper motor moves through for a single step (constant)
+        step_time (float): [sec] Time required for a single motor step (constant)
 
     **Description of Variables Being Tested**
 
@@ -57,54 +57,54 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
 
     """
 
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
+    task_name = "unitTask"
+    process_name = "TestProcess"
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create the test thread
-    testProcessRate = macros.sec2nano(0.1)     # Set process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.1)     # Set process rate update time
+    test_process = test_sim.CreateNewProcess(process_name)
+    test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
 
     # Create an instance of the stepperMotor module to be tested
-    StepperMotor = stepperMotor.StepperMotor()
-    StepperMotor.modelTag = "StepperMotor"
-    StepperMotor.setThetaInit(initialMotorAngle)
-    StepperMotor.setStepAngle(stepAngle)
-    StepperMotor.setStepTime(stepTime)
+    stepper_motor = stepperMotor.StepperMotor()
+    stepper_motor.modelTag = "StepperMotor"
+    stepper_motor.setThetaInit(motor_theta_init)
+    stepper_motor.setStepAngle(step_angle)
+    stepper_motor.setStepTime(step_time)
 
     # Add the test module to the runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, StepperMotor)
+    test_sim.AddModelToTask(task_name, stepper_motor)
 
     # Create the StepperMotor input message
-    MotorStepCommandMessageData = messaging.MotorStepCommandMsgPayload()
-    MotorStepCommandMessageData.stepsCommanded = stepsCommanded
-    MotorStepCommandMessage = messaging.MotorStepCommandMsg().write(MotorStepCommandMessageData)
-    StepperMotor.motorStepCommandInMsg.subscribeTo(MotorStepCommandMessage)
+    motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
+    motor_step_command_msg_data.stepsCommanded = steps_commanded
+    motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data)
+    stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
     # Log the test module output message for data comparison
-    stepperMotorDataLog = StepperMotor.stepperMotorOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, stepperMotorDataLog)
+    stepper_motor_data_log = stepper_motor.stepperMotorOutMsg.recorder()
+    test_sim.AddModelToTask(task_name, stepper_motor_data_log)
 
     # Initialize the simulation, set the sim run time, and execute the simulation
-    unitTestSim.InitializeSimulation()
-    actuateTime = stepTime * np.abs(stepsCommanded)  # [sec] Time for the motor to actuate to the desired angle
-    holdTime = 5  # [sec] Time the simulation will continue while holding the final angle
-    unitTestSim.ConfigureStopTime(macros.sec2nano(actuateTime + holdTime))
-    unitTestSim.ExecuteSimulation()
+    test_sim.InitializeSimulation()
+    sim_time = step_time * np.abs(steps_commanded)  # [sec] Time for the motor to actuate to the desired angle
+    sim_time_extra = 5.0  # [sec] Time the simulation will continue while holding the final angle
+    test_sim.ConfigureStopTime(macros.sec2nano(sim_time + sim_time_extra))
+    test_sim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
-    timespan = macros.NANO2SEC * stepperMotorDataLog.times()  # [s]
-    theta = macros.R2D * stepperMotorDataLog.theta  # [deg]
-    thetaDot = macros.R2D * stepperMotorDataLog.thetaDot  # [deg/s]
-    thetaDDot = macros.R2D * stepperMotorDataLog.thetaDDot  # [deg/s^2]
-    motorStepCount = stepperMotorDataLog.stepCount
-    motorCommandedSteps = stepperMotorDataLog.stepsCommanded
+    timespan = macros.NANO2SEC * stepper_motor_data_log.times()  # [s]
+    theta = macros.R2D * stepper_motor_data_log.theta  # [deg]
+    theta_dot = macros.R2D * stepper_motor_data_log.thetaDot  # [deg/s]
+    theta_ddot = macros.R2D * stepper_motor_data_log.thetaDDot  # [deg/s^2]
+    motor_step_count = stepper_motor_data_log.stepCount
+    motor_steps_commanded = stepper_motor_data_log.stepsCommanded
 
     # Only show plots if the motor actuates
-    if (stepsCommanded == 0):
+    if (steps_commanded == 0):
         show_plots = False
 
     # Plot motor angle
@@ -117,20 +117,20 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     plt.legend(loc='upper right', prop={'size': 12})
     plt.grid(True)
 
-    # Plot motor thetaDot
+    # Plot motor theta_dot
     plt.figure()
     plt.clf()
-    plt.plot(timespan, thetaDot, label=r"$\dot{\theta}$")
+    plt.plot(timespan, theta_dot, label=r"$\dot{\theta}$")
     plt.title(r'Stepper Motor Angle Rate $\dot{\theta}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
     plt.ylabel('(deg/s)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
     plt.legend(loc='upper right', prop={'size': 12})
     plt.grid(True)
 
-    # Plot motor thetaDDot
+    # Plot motor theta_ddot
     plt.figure()
     plt.clf()
-    plt.plot(timespan, thetaDDot, label=r"$\ddot{\theta}$")
+    plt.plot(timespan, theta_ddot, label=r"$\ddot{\theta}$")
     plt.title(r'Stepper Motor Angular Acceleration $\ddot{\theta}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
     plt.ylabel('(deg/s$^2$)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
@@ -140,8 +140,8 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
     # Plot steps commanded and motor steps taken
     plt.figure()
     plt.clf()
-    plt.plot(timespan, motorStepCount)
-    plt.plot(timespan, motorCommandedSteps, '--', label='Commanded')
+    plt.plot(timespan, motor_step_count)
+    plt.plot(timespan, motor_steps_commanded, '--', label='Commanded')
     plt.title(r'Motor Step History', fontsize=14)
     plt.ylabel('Steps', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
@@ -154,29 +154,29 @@ def test_stepperMotor(show_plots, initialMotorAngle, stepsCommanded, stepAngle, 
 
     # Check to ensure the angle converges to the reference angle
     accuracy = 1e-12
-    desiredMotorAngleTrue = initialMotorAngle + (stepsCommanded * stepAngle)
+    motor_theta_ref_true = motor_theta_init + (steps_commanded * step_angle)
     np.testing.assert_allclose(theta[-1],
-                               macros.R2D * desiredMotorAngleTrue,
+                               macros.R2D * motor_theta_ref_true,
                                atol=accuracy,
                                verbose=True)
 
     # Check to ensure angle rate converges to zero
-    np.testing.assert_allclose(thetaDot[-1],
+    np.testing.assert_allclose(theta_dot[-1],
                                0.0,
                                atol=accuracy,
                                verbose=True)
 
     # Check the motor achieved the commanded steps
-    np.testing.assert_allclose(motorStepCount[-1],
-                               stepsCommanded,
+    np.testing.assert_allclose(motor_step_count[-1],
+                               steps_commanded,
                                atol=accuracy,
                                verbose=True)
 
 if __name__ == "__main__":
     test_stepperMotor(
                  True,
-                 0.0,  # [rad] initialMotorAngle
-                 10,  # stepsCommanded
-                 1.0 * macros.D2R,  # [rad] stepAngle
-                 1.0,  # [s] stepTime
+                 0.0,  # [rad] motor_theta_init
+                 10,  # steps_commanded
+                 1.0 * macros.D2R,  # [rad] step_angle
+                 1.0,  # [s] step_time
                )
