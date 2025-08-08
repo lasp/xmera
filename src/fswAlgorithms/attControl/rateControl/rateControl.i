@@ -30,6 +30,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "sys_model.i"
 %include "rateControl.h"
+%include "rateControlAlgorithm.h"
 
 %include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 

@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _RATE_CONTROL_
-#define _RATE_CONTROL_
+#ifndef _RATE_CONTROL
+#define _RATE_CONTROL
 
 #include <stdint.h>
 #include <stdexcept>
@@ -30,18 +30,18 @@
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include "fswAlgorithms/attControl/rateControl/rateControlAlgorithm.h"
 
-/*! @brief Rate control class. */
 class RateControl : public SysModel {
    public:
-    RateControl() = default;   //!< Constructor
-    ~RateControl() = default;  //!< Destructor
+    RateControl() = default;
+    ~RateControl() = default;
 
     void reset(uint64_t currentSimNanos) override;        //!< Reset member function
     void updateState(uint64_t currentSimNanos) override;  //!< Update member function
-    const double getDerivativeGainP() const;              //!< Getter method for derivative gain P
+    double getDerivativeGainP() const;              //!< Getter method for derivative gain P
     const Eigen::Vector3d &getKnownTorquePntB_B() const;  //!< Getter method for the known external torque about point B
-    void setDerivativeGainP(const double P);              //!< Setter method for derivative gain P
+    void setDerivativeGainP(double P);              //!< Setter method for derivative gain P
     void setKnownTorquePntB_B(
         const Eigen::Vector3d &knownTorquePntB_B);  //!< Getter method for the known external torque about point B
 
@@ -50,10 +50,7 @@ class RateControl : public SysModel {
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< Commanded torque output message
 
    private:
-    double P{};                           //!< [N*m*s] Rate error feedback gain applied
-    Eigen::Vector3d knownTorquePntB_B{};  //!< [N*m] Known external torque expressed in body frame components
-    Eigen::Matrix3d ISCPntB_B{
-        Eigen::Matrix3d::Identity()};  //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
+    RateControlAlgorithm algorithm{};
 };
 
 #endif
