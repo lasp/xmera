@@ -96,6 +96,43 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
     motor_step_count = stepper_motor_data_log.stepCount
     motor_steps_commanded = stepper_motor_data_log.stepsCommanded
 
+    if show_plots:
+        plot_results(timespan,
+                     theta,
+                     theta_dot,
+                     theta_ddot,
+                     motor_step_count,
+                     motor_steps_commanded)
+        plt.show()
+    plt.close("all")
+
+    # Check to ensure the angle converges to the reference angle
+    accuracy = 1e-12
+    motor_theta_ref_true = motor_theta_init + (steps_commanded * step_angle)
+    np.testing.assert_allclose(theta[-1],
+                               macros.R2D * motor_theta_ref_true,
+                               atol=accuracy,
+                               verbose=True)
+
+    # Check to ensure angle rate converges to zero
+    np.testing.assert_allclose(theta_dot[-1],
+                               0.0,
+                               atol=accuracy,
+                               verbose=True)
+
+    # Check the motor achieved the commanded steps
+    np.testing.assert_allclose(motor_step_count[-1],
+                               steps_commanded,
+                               atol=accuracy,
+                               verbose=True)
+
+def plot_results(timespan,
+                 theta,
+                 theta_dot,
+                 theta_ddot,
+                 motor_step_count,
+                 motor_steps_commanded):
+
     # Plot motor angle
     plt.figure()
     plt.clf()
@@ -137,29 +174,6 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
     plt.legend(loc='upper right', prop={'size': 12})
     plt.grid(True)
 
-    if show_plots:
-        plt.show()
-    plt.close("all")
-
-    # Check to ensure the angle converges to the reference angle
-    accuracy = 1e-12
-    motor_theta_ref_true = motor_theta_init + (steps_commanded * step_angle)
-    np.testing.assert_allclose(theta[-1],
-                               macros.R2D * motor_theta_ref_true,
-                               atol=accuracy,
-                               verbose=True)
-
-    # Check to ensure angle rate converges to zero
-    np.testing.assert_allclose(theta_dot[-1],
-                               0.0,
-                               atol=accuracy,
-                               verbose=True)
-
-    # Check the motor achieved the commanded steps
-    np.testing.assert_allclose(motor_step_count[-1],
-                               steps_commanded,
-                               atol=accuracy,
-                               verbose=True)
 
 if __name__ == "__main__":
     test_stepper_motor_nominal(
@@ -168,4 +182,4 @@ if __name__ == "__main__":
                  10,  # steps_commanded
                  1.0 * macros.D2R,  # [rad] step_angle
                  1.0,  # [s] step_time
-               )
+    )
