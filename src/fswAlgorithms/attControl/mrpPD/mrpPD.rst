@@ -8,24 +8,23 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_MRPPD:
-.. figure:: /../../src/fswAlgorithms/attControl/mrpPD/_Documentation/Images/moduleIOMrpPd.svg
-    :align: center
+.. list-table:: Module I/O Messages
+    :widths: 25 25 50
+    :header-rows: 1
 
-    Figure 1: ``mrpPD()`` Module I/O Illustration
+    * - Msg Variable Name
+      - Msg Type
+      - Description
+    * - vehConfigInMsg
+      - :ref:`VehicleConfigMsgPayload`
+      - Attitude guidance input message
+    * - guidInMsg
+      - :ref:`AttGuidMsgPayload`
+      - Vehicle configuration input message
+    * - cmdTorqueOutMsg
+      - :ref:`CmdTorqueBodyMsgPayload`
+      - Commanded torque output message
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
-
-    +-------------------------------+-------------------------------+-----------------------------------------------+
-    | Msg Variable Name             | Msg Type                      | Description                                   |
-    +===============================+===============================+===============================================+
-    | cmdTorqueOutMsg               | :ref:`CmdTorqueBodyMsgPayload`| Commanded external torque output message      |
-    +-------------------------------+-------------------------------+-----------------------------------------------+
-    | vehConfigInMsg                | :ref:`VehicleConfigMsgPayload`| Vehicle configuration input message           |
-    +-------------------------------+-------------------------------+-----------------------------------------------+
-    | guidInMsg                     | :ref:`VehicleConfigMsgPayload`| Vehicle configuration input message           |
-    +-------------------------------+-------------------------------+-----------------------------------------------+
 
 Detailed Module Description
 ---------------------------
@@ -48,9 +47,10 @@ This control assumes the spacecraft is rigid and that the inertia tensor does no
 
 User Guide
 ----------
-The following parameters must be set for the module:
+The required module configuration is::
 
-- ``K``: the MRP proportional feedback gain
-- ``P``: the :math:`\pmb\omega` tracking error proportional feedback gain
-- ``knownTorquePntB_B``: (Optional) the known external torque vector :math:`{}^{B}{\bf L}`.  The default value is a zero vector.
-
+    module = mrpPD.mrpPD()
+    module.modelTag = "mrpPD"
+    module.setProportionalGainK(K)
+    module.setDerivativeGainP(P)
+    module.setKnownTorquePntB_B(knownTorquePntB_B)
