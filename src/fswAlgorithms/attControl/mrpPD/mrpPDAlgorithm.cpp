@@ -22,15 +22,6 @@
 #include <cassert>
 #include <cmath>
 
-/*! Reset method for the mrpPD control algorithm.
- @return void
- @param callTime [ns] Time the method is called
- @param vehConfigInMsg Vehicle configuration message
-*/
-void MrpPDAlgorithm::reset(uint64_t callTime, VehicleConfigMsgPayload vehConfigInMsg) {
-    this->ISCPntB_B = cArray2EigenMatrix3d(vehConfigInMsg.ISCPntB_B);
-}
-
 /*! Update method for mrpPD control algorithm. This method takes the attitude and rate errors relative to the
  reference frame, as well as the reference frame angular rates and acceleration, and computes the required control
  torque Lr.
@@ -56,6 +47,14 @@ CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayl
     eigenVector3d2CArray(Lr, torqueCmdMsgPayload.torqueRequestBody);
 
     return torqueCmdMsgPayload;
+}
+
+/*! This method sets the spacecraft inertia according to the vehicle configuration input message
+ @return void
+ @param vehicleConfigIn Vehicle config input
+*/
+void MrpPDAlgorithm::setSpacecraftInertia(VehicleConfigMsgPayload vehicleConfigIn) {
+    this->ISCPntB_B = cArray2EigenMatrixXd(vehicleConfigIn.ISCPntB_B, 3, 3);
 }
 
 /*! Getter method for the derivative gain P.

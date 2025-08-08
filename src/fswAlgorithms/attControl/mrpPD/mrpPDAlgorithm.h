@@ -32,9 +32,9 @@ class MrpPDAlgorithm {
     MrpPDAlgorithm() = default;   //!< Constructor
     ~MrpPDAlgorithm() = default;  //!< Destructor
 
-    void reset(uint64_t currentSimNanos, VehicleConfigMsgPayload vehConfigInMsg);  //!< Reset member function
     CmdTorqueBodyMsgPayload update(uint64_t currentSimNanos,
                                    AttGuidMsgPayload guidInMsg);  //!< Update member function
+    void setSpacecraftInertia(VehicleConfigMsgPayload vehConfigInMsg);
     double getDerivativeGainP() const;                            //!< Getter method for derivative gain P
     const Eigen::Vector3d& getKnownTorquePntB_B() const;  //!< Getter method for the known external torque about point B
     double getProportionalGainK() const;                  //!< Getter method for proportional gain K

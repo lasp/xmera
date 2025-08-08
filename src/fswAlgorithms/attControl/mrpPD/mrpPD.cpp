@@ -33,7 +33,7 @@ void MrpPD::reset(uint64_t callTime) {
     }
 
     if (this->vehConfigInMsg.isWritten()) {
-        this->algorithm.reset(callTime, this->vehConfigInMsg());
+        this->algorithm.setSpacecraftInertia(this->vehConfigInMsg());
     }
 }
 
