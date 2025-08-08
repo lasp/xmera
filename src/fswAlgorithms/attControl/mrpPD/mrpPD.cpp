@@ -25,7 +25,12 @@
  @param callTime [ns] Time the method is called
 */
 void MrpPD::reset(uint64_t callTime) {
-    assert(this->guidInMsg.isLinked() && this->vehConfigInMsg.isLinked());
+    if (!this->guidInMsg.isLinked()) {
+        throw std::invalid_argument("mrpPD.guidInMsg wasn't connected.");
+    }
+    if (!this->vehConfigInMsg.isLinked()) {
+        throw std::invalid_argument("mrpPD.vehConfigInMsg wasn't connected.");
+    }
 
     auto vcInMsg = VehicleConfigMsgPayload();
     if (this->vehConfigInMsg.isWritten()) {

@@ -25,9 +25,9 @@
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include "fswAlgorithms/attControl/mrpPD/mrpPDAlgorithm.h"
 #include <stdint.h>
+#include <stdexcept>
 #include <Eigen/Dense>
 
 /*! @brief MRP PD control class. */
@@ -49,8 +49,6 @@ class MrpPD : public SysModel {
     ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< Attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< Vehicle configuration input message
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< Commanded torque output message
-
-    BSKLogger* bskLogger;  //!< BSK Logging
 
    private:
     MrpPDAlgorithm algorithm;  //!< Algorithm for mrpPD control logic (BSK-agnostic)
