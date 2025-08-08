@@ -19,6 +19,7 @@
 #include "stepperMotor.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <cassert>
+#include <cmath>
 
 /*! Module reset method.
  @return void
@@ -242,10 +243,16 @@ void StepperMotor::setThetaInit(const double thetaInit) { this->thetaInit = thet
  @return void
  @param stepAngle [rad] Motor step angle
 */
-void StepperMotor::setStepAngle(const double stepAngle) { this->stepAngle = stepAngle; }
+void StepperMotor::setStepAngle(const double stepAngle) {
+    assert(stepAngle > 0.0);
+    this->stepAngle = std::abs(stepAngle);
+}
 
 /*! Setter method for the motor step time.
  @return void
  @param stepTime [s] Motor step time
 */
-void StepperMotor::setStepTime(const double stepTime) { this->stepTime = stepTime; }
+void StepperMotor::setStepTime(const double stepTime) {
+    assert(stepTime > 0.0);
+    this->stepTime = std::abs(stepTime);
+}
