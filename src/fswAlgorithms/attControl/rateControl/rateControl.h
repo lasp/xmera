@@ -37,13 +37,12 @@ class RateControl : public SysModel {
     RateControl() = default;
     ~RateControl() = default;
 
-    void reset(uint64_t currentSimNanos) override;        //!< Reset member function
-    void updateState(uint64_t currentSimNanos) override;  //!< Update member function
-    double getDerivativeGainP() const;              //!< Getter method for derivative gain P
-    const Eigen::Vector3d &getKnownTorquePntB_B() const;  //!< Getter method for the known external torque about point B
-    void setDerivativeGainP(double P);              //!< Setter method for derivative gain P
-    void setKnownTorquePntB_B(
-        const Eigen::Vector3d &knownTorquePntB_B);  //!< Getter method for the known external torque about point B
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
+    void setDerivativeGainP(double P);
+    double getDerivativeGainP() const;
+    void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
+    const Eigen::Vector3d &getKnownTorquePntB_B() const;
 
     ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< Attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< Vehicle configuration input message

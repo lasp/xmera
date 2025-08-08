@@ -53,21 +53,16 @@ void RateControl::updateState(uint64_t callTime) {
     this->cmdTorqueOutMsg.write(&torqueCmdOut, moduleID, callTime);
 }
 
-/*! Getter method for the derivative gain P.
- @return const double
-*/
-double RateControl::getDerivativeGainP() const { return this->algorithm.getDerivativeGainP(); }
-
-/*! Getter method for the known torque about point B.
- @return const Eigen::Vector3d
-*/
-const Eigen::Vector3d &RateControl::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }
-
 /*! Setter method for the derivative gain P.
  @return void
  @param P [N*m*s] Rate error feedback gain applied
 */
 void RateControl::setDerivativeGainP(const double P) { this->algorithm.setDerivativeGainP(P); }
+
+/*! Getter method for the derivative gain P.
+ @return const double
+*/
+double RateControl::getDerivativeGainP() const { return this->algorithm.getDerivativeGainP(); }
 
 /*! Setter method for the known external torque about point B.
  @return void
@@ -76,3 +71,8 @@ void RateControl::setDerivativeGainP(const double P) { this->algorithm.setDeriva
 void RateControl::setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B) {
     this->algorithm.setKnownTorquePntB_B(knownTorquePntB_B);
 }
+
+/*! Getter method for the known torque about point B.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &RateControl::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }
