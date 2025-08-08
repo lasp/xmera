@@ -19,7 +19,6 @@
 
 #include "fswAlgorithms/attControl/mrpPD/mrpPDAlgorithm.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include <cassert>
 #include <cmath>
 
 /*! Update method for mrpPD control algorithm. This method takes the attitude and rate errors relative to the
@@ -77,8 +76,11 @@ double MrpPDAlgorithm::getProportionalGainK() const { return this->K; }
  @param P [N*m*s] Rate error feedback gain applied
 */
 void MrpPDAlgorithm::setDerivativeGainP(double P) {
-    assert(P >= 0.0);
-    this->P = std::abs(P);
+    if (P < 0.0) {
+        throw std::invalid_argument("Feedback gain P must not be negative");
+    }
+
+    this->P = P;
 }
 
 /*! Setter method for the known external torque about point B.
@@ -94,6 +96,9 @@ void MrpPDAlgorithm::setKnownTorquePntB_B(Eigen::Vector3d& knownTorquePntB_B) {
  @param K [rad/s] Proportional gain applied to MRP errors
 */
 void MrpPDAlgorithm::setProportionalGainK(double K) {
-    assert(K >= 0.0);
-    this->K = std::abs(K);
+    if (K < 0.0) {
+        throw std::invalid_argument("Feedback gain K must not be negative");
+    }
+
+    this->K = K;
 }

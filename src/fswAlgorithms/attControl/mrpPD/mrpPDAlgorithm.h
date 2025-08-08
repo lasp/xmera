@@ -24,6 +24,7 @@
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 #include <stdint.h>
+#include <stdexcept>
 #include <Eigen/Dense>
 
 /*! @brief MRP PD control algorithm class. */
