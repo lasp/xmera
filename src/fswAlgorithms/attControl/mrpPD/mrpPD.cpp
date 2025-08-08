@@ -32,13 +32,9 @@ void MrpPD::reset(uint64_t callTime) {
         throw std::invalid_argument("mrpPD.vehConfigInMsg wasn't connected.");
     }
 
-    auto vcInMsg = VehicleConfigMsgPayload();
     if (this->vehConfigInMsg.isWritten()) {
-        vcInMsg = this->vehConfigInMsg();
+        this->algorithm.reset(callTime, this->vehConfigInMsg());
     }
-
-    // Call the algorithm reset method
-    this->algorithm.reset(callTime, vcInMsg);
 }
 
 /*! Update method for the BSK module adapter interface. This method also calls the algorithm update method.
