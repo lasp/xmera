@@ -124,7 +124,7 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
       RELATIVE ${CMAKE_SOURCE_DIR}
       "${INIT_DIRECTORY}/${LIB_DIR}")
     # Grab the library source files
-    file(GLOB C_FILES "${LIB_DIR}/*.cpp" "${LIB_DIR}/*.c" "${LIB_DIR}/*.h")
+    file(GLOB C_FILES "${LIB_DIR}/*.cpp" "${LIB_DIR}/*.c" "${LIB_DIR}/*.h" "${LIB_NAME}/*.cmake")
     # Grab the framework source files
     file(GLOB BSK_FWK_FILES "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp" # Might not be needed
          "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
@@ -132,6 +132,11 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
 
     # Add Target
     add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
+
+    if(EXISTS "${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+	    message(STATUS "Including custom Custom.cmake for: ${LIB_NAME}")
+      include("${LIB_DIR}/Custom.cmake")
+    endif()
 
     # Add to list of library
     list(APPEND AllLibs ${LIB_NAME})
