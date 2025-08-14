@@ -55,6 +55,8 @@ class SpiceBody {
     std::string name{};                                           //!< [-] celestial body name
     ReadFunctor<SpicePlanetStateMsgPayload> spiceStateMessage{};  //!< [-] celestial body name
     SpicePlanetStateMsgPayload spiceStatePayload{};               //!< [-] celestial body name
+    ReadFunctor<CelestialBodyParametersMsgPayload> celestialParametersMessage{};  //!< [-] celestial body parameters msg
+    CelestialBodyParametersMsgPayload celestialParametersPayload{};               //!< [-] celestial body parameters
     bool isCentralBody = false;                                   //!< [-] celestial body name
 };
 
@@ -81,7 +83,6 @@ class CielimInterface : public SysModel {
     ReadFunctor<SCStatesMsgPayload> spacecraftMessage;              //!< [-] vector of spacecraft data containers
     ReadFunctor<CameraModelMsgPayload> cameraModelMessage;          //!< [-] incoming camera data message
     ReadFunctor<CameraRenderingMsgPayload> cameraRenderingMessage;  //!< [-] camera rendering message
-    ReadFunctor<CelestialBodyParametersMsgPayload> celestialParametersMessage;  //!< [-] celestial body parameters
     ReadFunctor<EpochMsgPayload> epochMessage;  //!< [-] simulation epoch date/time input msg
 
     Message<CameraImageMsgPayload> imageOutMessage;            //!< vector of vizard instrument camera output messages
@@ -107,13 +108,12 @@ class CielimInterface : public SysModel {
 
     std::vector<SpicePlanetStateMsgPayload> spiceBodyPayloads;  //!< [-] payloads of planet Spice data
     std::vector<MessageStatus> spiceBodyMessageStatus;          //!< [-] status of the incoming planets' spice data
+    std::vector<CelestialBodyParametersMsgPayload> celestialParametersPayloads;  //!< [-] celestial parameters payloads
+    std::vector<MessageStatus> celestialParametersMessageStatus;  //!< [-] status of celestial parameter messages
     std::vector<SpiceBody> celestialBodiesList;                 //!< [-] celestial body names
 
     CameraModelMsgPayload cameraModelPayload{};  //!< [-] camera config buffers
     MessageStatus cameraModelMessageStatus{};    //!< [-] message status of incoming camera data
-
-    CelestialBodyParametersMsgPayload celestialParametersPayload{};  //!< [-] buffer for celestial parameters
-    MessageStatus celestialParametersMessageStatus{};  //!< [-] message status of celestial parameter message
 
     CameraRenderingMsgPayload cameraRenderingPayload{};  //!< [-] buffer for camera rendering settings
     MessageStatus cameraRenderingMessageStatus{};        //!< [-] message status of the camera rendering message

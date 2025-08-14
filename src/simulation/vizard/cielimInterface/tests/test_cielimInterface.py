@@ -92,8 +92,6 @@ def read_write_test():
     asteroid_parameter_payload.meanRadius = 10000
     asteroid_parameter_payload.principalAxisDistortion = [1, 0.9, 1.1]
     asteroid_parameter_payload.sigma_BN = [0, 0, 0.5]
-    asteroid_parameter_message = messaging.CelestialBodyParametersMsg().write(asteroid_parameter_payload)
-    module.celestialParametersMessage.subscribeTo(asteroid_parameter_message)
 
     # Create camera message
     camera_payload = messaging.CameraModelMsgPayload()
@@ -141,6 +139,7 @@ def read_write_test():
         planetName = ""
         isCentralBody = False
         planetBodyInMsg = messaging.SpicePlanetStateMsg()
+        celestialParametersInMsg = messaging.CelestialBodyParametersMsg()
 
     grav_bodies = []
     bodies_message_list = []
@@ -162,6 +161,7 @@ def read_write_test():
     asteroid_data.VelocityVector = [4, 5, 6]
     asteroid_data.J20002Pfix = -np.eye(3)
     asteroid_bennu.planetBodyInMsg = messaging.SpicePlanetStateMsg().write(asteroid_data)
+    asteroid_bennu.celestialParametersInMsg = messaging.CelestialBodyParametersMsg().write(asteroid_parameter_payload)
     grav_bodies.append(asteroid_bennu)
     bodies_message_list.append(asteroid_data)
 
@@ -170,6 +170,8 @@ def read_write_test():
         body.name = gravBody.planetName
         body.isCentralBody = gravBody.isCentralBody
         body.spiceStateMessage.subscribeTo(gravBody.planetBodyInMsg)
+        if (gravBody.planetName == asteroid_parameter_payload.bodyName):
+            body.celestialParametersMessage.subscribeTo(gravBody.celestialParametersInMsg)
         module.addCelestialBody(body)
 
     # Run block

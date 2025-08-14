@@ -45,18 +45,21 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     }
 
     /*! Check asteroid parameter information messages */
-    if (this->celestialParametersMessage.isLinked()) {
-        this->celestialParametersMessageStatus.dataFresh = false;
-        this->celestialParametersMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    }
-
-    /*! Check asteroid parameter information messages */
     if (this->epochMessage.isLinked()) {
         this->epochMessageStatus.dataFresh = false;
         this->epochMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     }
 
     this->epochMessageStatus.dataFresh = false;
+
+    /*! Check asteroid parameter information messages */
+    MessageStatus celestialParametersStatus;
+    celestialParametersStatus.dataFresh = false;
+    celestialParametersStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    this->celestialParametersMessageStatus.clear();
+    for (int c = 0; c < this->celestialBodiesList.size(); ++c) {
+        this->celestialParametersMessageStatus.push_back(celestialParametersStatus);
+    }
 
     /*! Check Spice input message */
     MessageStatus spiceStatus;
@@ -128,14 +131,18 @@ void CielimInterface::readBskMessages() {
     }
 
     /*! Read celestial body parameter message */
-    if (this->celestialParametersMessage.isLinked()) {
-        CelestialBodyParametersMsgPayload celestialParamArray = this->celestialParametersMessage();
-        if (this->celestialParametersMessage.isWritten() &&
-            this->celestialParametersMessage.timeWritten() != this->celestialParametersMessageStatus.lastTimeTag) {
-            this->celestialParametersMessageStatus.lastTimeTag = this->celestialParametersMessage.timeWritten();
-            this->celestialParametersMessageStatus.dataFresh = true;
+    for (size_t i = 0; i < this->celestialBodiesList.size(); ++i) {
+        if (this->celestialBodiesList.at(i).celestialParametersMessage.isLinked()) {
+            CelestialBodyParametersMsgPayload celestialParamArray = this->celestialBodiesList.at(i).celestialParametersMessage();
+            if (this->celestialBodiesList.at(i).celestialParametersMessage.isWritten() &&
+                this->celestialBodiesList.at(i).celestialParametersMessage.timeWritten() !=
+                    this->celestialParametersMessageStatus[i].lastTimeTag) {
+                this->celestialParametersMessageStatus[i].lastTimeTag =
+                    this->celestialBodiesList.at(i).celestialParametersMessage.timeWritten();
+                this->celestialParametersMessageStatus[i].dataFresh = true;
+            }
+            this->celestialBodiesList.at(i).celestialParametersPayload = celestialParamArray;
         }
-        this->celestialParametersPayload = celestialParamArray;
     }
 
     /*! Read sim epoch msg */
@@ -205,34 +212,32 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                 celestialBody->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][2]);
             }
             celestialBody->set_centralbody(this->celestialBodiesList.at(k).isCentralBody);
-            std::string parameterBodyName = this->celestialParametersPayload.bodyName;
-            if (this->celestialParametersMessage.isLinked() && this->celestialParametersMessageStatus.dataFresh &&
-                !parameterBodyName.compare(this->celestialBodiesList.at(k).name)) {
+            if (this->celestialBodiesList.at(k).celestialParametersMessage.isLinked() && this->celestialParametersMessageStatus[k].dataFresh) {
                 auto *meshModel = new cielimMessage::MeshModel();
                 auto *perlinNoise = new cielimMessage::PerlinNoise();
                 auto *reflectanceModel = new cielimMessage::ReflectanceModel();
-                celestialBody->set_geometricalbedo(this->celestialParametersPayload.geometricAlbedo);
-                perlinNoise->set_octavecount(this->celestialParametersPayload.perlinNoiseOctaveCount);
-                perlinNoise->set_baseamplitude(this->celestialParametersPayload.perlinNoiseBaseAmplitude);
-                perlinNoise->set_basefrequency(this->celestialParametersPayload.perlinNoiseBaseFrequency);
-                perlinNoise->set_persistence(this->celestialParametersPayload.perlinNoisePersistence);
-                std::string brdfModelName = this->celestialParametersPayload.brdf;
+                celestialBody->set_geometricalbedo(this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo);
+                perlinNoise->set_octavecount(this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseOctaveCount);
+                perlinNoise->set_baseamplitude(this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseAmplitude);
+                perlinNoise->set_basefrequency(this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseFrequency);
+                perlinNoise->set_persistence(this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoisePersistence);
+                std::string brdfModelName = this->celestialBodiesList.at(k).celestialParametersPayload.brdf;
                 reflectanceModel->set_brdfmodel(brdfModelName);
-                reflectanceModel->set_isotropicscattering(this->celestialParametersPayload.isotropicScattering);
+                reflectanceModel->set_isotropicscattering(this->celestialBodiesList.at(k).celestialParametersPayload.isotropicScattering);
                 for (int i = 0; i < MAX_PARAMETER_LENGTH; ++i) {
                     reflectanceModel->add_reflectanceparameters(
-                        this->celestialParametersPayload.reflectanceParameters[i]);
+                        this->celestialBodiesList.at(k).celestialParametersPayload.reflectanceParameters[i]);
                 }
-                meshModel->set_meanradius(this->celestialParametersPayload.meanRadius);
+                meshModel->set_meanradius(this->celestialBodiesList.at(k).celestialParametersPayload.meanRadius);
                 meshModel->set_allocated_perlinnoise(perlinNoise);
                 meshModel->set_allocated_refmodel(reflectanceModel);
                 for (int i = 0; i < 3; ++i) {
                     meshModel->add_principalaxisdistortion(
-                        this->celestialParametersPayload.principalAxisDistortion[i]);
-                    meshModel->add_inertialtobodymrp(this->celestialParametersPayload.sigma_BN[i]);
+                        this->celestialBodiesList.at(k).celestialParametersPayload.principalAxisDistortion[i]);
+                    meshModel->add_inertialtobodymrp(this->celestialBodiesList.at(k).celestialParametersPayload.sigma_BN[i]);
                 }
-                meshModel->set_proceduralrocks(this->celestialParametersPayload.proceduralRocks);
-                meshModel->set_shapemodel(this->celestialParametersPayload.shapeModel);
+                meshModel->set_proceduralrocks(this->celestialBodiesList.at(k).celestialParametersPayload.proceduralRocks);
+                meshModel->set_shapemodel(this->celestialBodiesList.at(k).celestialParametersPayload.shapeModel);
                 celestialBody->set_allocated_model(meshModel);
             }
         }
