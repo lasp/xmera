@@ -102,6 +102,7 @@ def test_rateControl(setExtTorque):
     np.testing.assert_allclose(cmdTorqueTruth,
                                cmdTorqueOutMsgDataLog.torqueRequestBody,
                                atol=accuracy,
+                               rtol=0,
                                verbose=True)
 
 def findTrueTorques(rateCntrl, attGuidanceMessageData, vehicleConfigOut, knownTorquePntB_B):
