@@ -98,6 +98,7 @@ def test_mrpPD(show_plots, setExtTorque):
     np.testing.assert_allclose(truthTorque,
                                cmdTorqueDataLog.torqueRequestBody[-1],
                                atol=accuracy,
+                               rtol=0,
                                verbose=True)
 
 def findTrueTorques(mrp_pd, guidCmdData, ISCPntB_B, knownTorquePntB_B):
