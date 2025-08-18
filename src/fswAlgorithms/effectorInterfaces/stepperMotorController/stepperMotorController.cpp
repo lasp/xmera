@@ -60,7 +60,6 @@ void StepperMotorController::updateState(uint64_t callTime) {
         this->thetaRef = motorRefAngleIn.theta;
 
         // Check that the reference angle is within the actuation region of the motor
-        assert(this->thetaRef <= this->thetaMax && this->thetaRef >= this->thetaMin);
         if (this->thetaRef >= this->thetaMax || this->thetaRef <= this->thetaMin) {
             this->thetaRef = this->theta;
             this->stepsCommanded = 0;
