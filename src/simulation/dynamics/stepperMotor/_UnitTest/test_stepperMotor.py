@@ -59,7 +59,8 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
     task_name = "unitTask"
     process_name = "TestProcess"
     test_sim = SimulationBaseClass.SimBaseClass()
-    test_process_rate = macros.sec2nano(0.1)
+    test_process_rate_sec = 0.01
+    test_process_rate = macros.sec2nano(test_process_rate_sec)
     test_process = test_sim.CreateNewProcess(process_name)
     test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
 
@@ -106,22 +107,23 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
         plt.show()
     plt.close("all")
 
-    # Check to ensure the angle converges to the reference angle
+    # Check to ensure the motor states converge to the reference values
     accuracy = 1e-12
+    motor_theta_final_index_1 = int(round(sim_time / test_process_rate_sec))
     motor_theta_ref_true = motor_theta_init + (steps_commanded * step_angle)
-    np.testing.assert_allclose(theta[-1],
+    np.testing.assert_allclose(theta[motor_theta_final_index_1],
                                macros.R2D * motor_theta_ref_true,
                                atol=accuracy,
                                verbose=True)
-
-    # Check to ensure angle rate converges to zero
-    np.testing.assert_allclose(theta_dot[-1],
+    np.testing.assert_allclose(theta_dot[motor_theta_final_index_1],
                                0.0,
                                atol=accuracy,
                                verbose=True)
-
-    # Check the motor achieved the commanded steps
-    np.testing.assert_allclose(motor_step_count[-1],
+    np.testing.assert_allclose(theta_ddot[motor_theta_final_index_1 + 1],
+                               0.0,
+                               atol=accuracy,
+                               verbose=True)
+    np.testing.assert_allclose(motor_step_count[motor_theta_final_index_1],
                                steps_commanded,
                                atol=accuracy,
                                verbose=True)
