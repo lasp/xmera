@@ -26,10 +26,16 @@ from Basilisk.utilities import macros
 
 
 @pytest.mark.parametrize("motor_theta_init", [0.0 * macros.D2R, 10.0 * macros.D2R, -5.0 * macros.D2R])
-@pytest.mark.parametrize("steps_commanded", [0, 10, 100, -50, -150])
-@pytest.mark.parametrize("step_angle", [0.01 * macros.D2R, 0.5 * macros.D2R, 1.0 * macros.D2R])
-@pytest.mark.parametrize("step_time", [0.1, 0.5, 1.0])
-def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, step_angle, step_time):
+@pytest.mark.parametrize("steps_commanded_1", [0, 10, -15])
+@pytest.mark.parametrize("steps_commanded_2", [0, 10, -15])
+@pytest.mark.parametrize("step_angle", [0.1 * macros.D2R, 0.5 * macros.D2R, 1.0 * macros.D2R])
+@pytest.mark.parametrize("step_time", [0.3, 0.5, 1.0])
+def test_stepper_motor_nominal(show_plots,
+                               motor_theta_init,
+                               steps_commanded_1,
+                               steps_commanded_2,
+                               step_angle,
+                               step_time):
     r"""
     **Verification Test Description**
 
@@ -44,7 +50,8 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
 
     Args:
         motor_theta_init (float): [rad] Initial stepper motor angle
-        steps_commanded (int): [steps] Number of steps commanded to the stepper motor
+        steps_commanded_1 (int): [steps] Number of steps commanded to the stepper motor (first command)
+        steps_commanded_2 (int): [steps] Number of steps commanded to the stepper motor (second command)
         step_angle (float): [rad] Angle the stepper motor moves through for a single step (constant)
         step_time (float): [sec] Time required for a single motor step (constant)
 
@@ -72,9 +79,9 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
     stepper_motor.setStepTime(step_time)
     test_sim.AddModelToTask(task_name, stepper_motor)
 
-    # Create the stepperMotor input message
+    # Create the first stepperMotor input message
     motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
-    motor_step_command_msg_data.stepsCommanded = steps_commanded
+    motor_step_command_msg_data.stepsCommanded = steps_commanded_1
     motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data)
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
@@ -84,9 +91,21 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
 
     # Run the simulation
     test_sim.InitializeSimulation()
-    sim_time = step_time * np.abs(steps_commanded)  # [s]
+    sim_time_1 = step_time * np.abs(steps_commanded_1)  # [s]
     sim_time_extra = 5.0  # [s]
-    test_sim.ConfigureStopTime(macros.sec2nano(sim_time + sim_time_extra))
+    test_sim.ConfigureStopTime(macros.sec2nano(sim_time_1 + sim_time_extra))
+    test_sim.ExecuteSimulation()
+
+    # Create the second stepperMotor input message
+    motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
+    motor_step_command_msg_data.stepsCommanded = steps_commanded_2
+    motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data,
+                                                                   test_sim.TotalSim.getCurrentNanos())
+    stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
+
+    # Run the simulation
+    sim_time_2 = step_time * np.abs(steps_commanded_2) + 2 * test_process_rate_sec  # [s]
+    test_sim.ConfigureStopTime(macros.sec2nano(sim_time_1 + sim_time_extra + sim_time_2))
     test_sim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
@@ -107,12 +126,13 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
         plt.show()
     plt.close("all")
 
-    # Check to ensure the motor states converge to the reference values
     accuracy = 1e-12
-    motor_theta_final_index_1 = int(round(sim_time / test_process_rate_sec))
-    motor_theta_ref_true = motor_theta_init + (steps_commanded * step_angle)
+
+    # Check the motor states converge to the reference values for the first actuation
+    motor_theta_final_index_1 = int(round(sim_time_1 / test_process_rate_sec))
+    motor_theta_1_ref_true = motor_theta_init + (steps_commanded_1 * step_angle)
     np.testing.assert_allclose(theta[motor_theta_final_index_1],
-                               macros.R2D * motor_theta_ref_true,
+                               macros.R2D * motor_theta_1_ref_true,
                                atol=accuracy,
                                verbose=True)
     np.testing.assert_allclose(theta_dot[motor_theta_final_index_1],
@@ -124,7 +144,27 @@ def test_stepper_motor_nominal(show_plots, motor_theta_init, steps_commanded, st
                                atol=accuracy,
                                verbose=True)
     np.testing.assert_allclose(motor_step_count[motor_theta_final_index_1],
-                               steps_commanded,
+                               steps_commanded_1,
+                               atol=accuracy,
+                               verbose=True)
+
+    # Check the motor states converge to the reference values for the second actuation
+    motor_theta_final_index_2 = -1
+    motor_theta_2_ref_true = motor_theta_1_ref_true + (steps_commanded_2 * step_angle)
+    np.testing.assert_allclose(theta[motor_theta_final_index_2],
+                               macros.R2D * motor_theta_2_ref_true,
+                               atol=accuracy,
+                               verbose=True)
+    np.testing.assert_allclose(theta_dot[motor_theta_final_index_2],
+                               0.0,
+                               atol=accuracy,
+                               verbose=True)
+    np.testing.assert_allclose(theta_ddot[motor_theta_final_index_2],
+                               0.0,
+                               atol=accuracy,
+                               verbose=True)
+    np.testing.assert_allclose(motor_step_count[motor_theta_final_index_2],
+                               steps_commanded_2,
                                atol=accuracy,
                                verbose=True)
 
@@ -179,9 +219,10 @@ def plot_results(timespan,
 
 if __name__ == "__main__":
     test_stepper_motor_nominal(
-                 True,
-                 0.0,  # [rad] motor_theta_init
-                 10,  # steps_commanded
-                 1.0 * macros.D2R,  # [rad] step_angle
-                 1.0,  # [s] step_time
+        True,
+        0.0,  # [rad] motor_theta_init
+        15,  # steps_commanded_1
+        -15,  # steps_commanded_2
+        1.0 * macros.D2R,  # [rad] step_angle
+        1.0,  # [s] step_time
     )
