@@ -140,9 +140,7 @@ void StepperMotor::updateStepParameters() {
  @return bool
  @param t [s] Time the method is called
 */
-bool StepperMotor::isInStepFirstHalf(double t) {
-    return (t < this->ts || t == this->ts) && (this->tf - this->tInit != 0.0);
-}
+bool StepperMotor::isInStepFirstHalf(double t) { return (t < this->ts && std::abs(this->ts - t) > 1e-5); }
 
 /*! This method computes the motor states during the first half of each step.
  @return void
@@ -164,7 +162,7 @@ void StepperMotor::computeStepFirstHalf(double t) {
  @param t [s] Time the method is called
 */
 bool StepperMotor::isInStepSecondHalf(double t) {
-    return (t > this->ts && t < this->tf) && (this->tf - this->tInit != 0.0);
+    return ((t >= this->ts || std::abs(this->ts - t) < 1e-5) && std::abs(this->tf - t) > 1e-5);
 }
 
 /*! This method computes the motor states during the second half of each step.
