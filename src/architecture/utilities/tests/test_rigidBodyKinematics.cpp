@@ -17,700 +17,965 @@
 
  */
 
-#include "architecture/utilities/rigidBodyKinematics.hpp"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include <Eigen/Dense>
 #include <gtest/gtest.h>
+
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include "architecture/utilities/tests/rbk_float_wrappers.h"
+#include <Eigen/Dense>
+#include <functional>
 #include <random>
 
-std::random_device rd;
-std::default_random_engine generator(rd());
-std::uniform_real_distribution<double> angleDistribution(-3.14, 3.14);
-const double kinematicsAccuracy = 1e-8;
+// Test-wide Helpers
+using FloatingPointTypes = ::testing::Types<float, double>;
 
-// Test suite for additive properties of kinematic representations
-class AdditiveTestSuite: public testing::TestWithParam<
-                            std::tuple<std::string,
-                            void (*)(double*, double*, double*),
-                            std::function<Eigen::Vector3d(Eigen::Vector3d, Eigen::Vector3d)>,
-                            std::function<Eigen::Matrix3d(Eigen::Vector3d)>>> {
-    public:
-        struct PrintToStringParamName {
-            template<class ParamType>
-            std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-                return std::get<0>(info.param);
-            }
-        };
+template <typename T>
+T kinematicsAccuracy() {
+    if constexpr (std::is_same_v<T, float>)
+        return static_cast<T>(1e-4);
+    else
+        return static_cast<T>(1e-8);
+}
+
+template <typename T>
+Eigen::Map<const Eigen::Matrix<T, 3, 3, Eigen::RowMajor>> cArray33ToEigenMatrix33(const T (&array)[3][3]) {
+    return Eigen::Map<const Eigen::Matrix<T, 3, 3, Eigen::RowMajor>>(&array[0][0]);
+}
+
+template <typename T>
+Eigen::Map<const Eigen::Matrix<T, 3, 4, Eigen::RowMajor>> cArray34ToEigenMatrix34(const T (&array)[3][4]) {
+    return Eigen::Map<const Eigen::Matrix<T, 3, 4, Eigen::RowMajor>>(&array[0][0]);
+}
+
+template <typename T>
+Eigen::Map<const Eigen::Matrix<T, 4, 3, Eigen::RowMajor>> cArray43ToEigenMatrix43(const T (&array)[4][3]) {
+    return Eigen::Map<const Eigen::Matrix<T, 4, 3, Eigen::RowMajor>>(&array[0][0]);
+}
+
+template <typename Derived, typename T>
+void eigenMatrix3ToCArray(const Eigen::MatrixBase<Derived>& mat, T out[3][3]) {
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j) out[i][j] = mat(i, j);
+}
+
+// Addition and subtraction of kinematic representation tests
+template <typename T>
+struct AdditiveTestCase {
+    std::string name;
+    std::function<void(T*, T*, T*)> cFunc;
+    std::function<Eigen::Matrix<T, 3, 1>(Eigen::Matrix<T, 3, 1>, Eigen::Matrix<T, 3, 1>)> cppFunc;
+    std::function<Eigen::Matrix<T, 3, 3>(Eigen::Matrix<T, 3, 1>)> dcmFunc;
 };
 
-TEST_P(AdditiveTestSuite, additiveProperties)
-{
-    Eigen::Vector3d representation1;
-    Eigen::Vector3d representation2;
-    Eigen::Vector3d expected;
-    double expectedArray[3];
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const AdditiveTestCase<T>& param) {
+    os << param.name;
+#if defined(__cpp_rtti)
+    if constexpr (std::is_same_v<T, float>) {
+        os << "_float";
+    } else if constexpr (std::is_same_v<T, double>) {
+        os << "_double";
+    }
+#endif
+    return os;
+}
 
-    auto [testName, cFunction, cppFunction, dcmFunction] = GetParam();
+template <typename T>
+class AdditiveTest : public ::testing::TestWithParam<AdditiveTestCase<T>> {
+   public:
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+    using Mat3 = Eigen::Matrix<T, 3, 3>;
 
-    representation1 << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    representation2 << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
+    std::default_random_engine generator{std::random_device{}()};
+    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    const T accuracy = kinematicsAccuracy<T>();
 
-    cFunction(representation1.data(), representation2.data(), expectedArray);
-    expected = cArray2EigenVector3d(expectedArray);
+    Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
+};
 
-    Eigen::Matrix3d dcm;
-    dcm = dcmFunction(cppFunction(representation1, representation2));
+template <typename T>
+std::string GetTypeName();
 
-    EXPECT_TRUE((dcm*dcm.transpose() - Eigen::Matrix3d::Identity()).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((cppFunction(representation1, representation2) - expected).norm() < kinematicsAccuracy);
+template <>
+std::string GetTypeName<float>() {
+    return "float";
+}
+
+template <>
+std::string GetTypeName<double>() {
+    return "double";
+}
+
+template <typename T>
+std::string MakeNameWithType(const AdditiveTestCase<T>& testCase) {
+    std::string name;
+    for (char c : testCase.name) {
+        if (std::isalnum(c) || c == '_') {
+            name += c;
+        } else {
+            name += '_';
+        }
+    }
+    return name + "_" + GetTypeName<T>();
+}
+
+std::string AdditiveTestNameFloat(const ::testing::TestParamInfo<AdditiveTestCase<float>>& info) {
+    return MakeNameWithType<float>(info.param);
+}
+
+std::string AdditiveTestNameDouble(const ::testing::TestParamInfo<AdditiveTestCase<double>>& info) {
+    return MakeNameWithType<double>(info.param);
+}
+
+template <typename T>
+void runAdditiveTest(const AdditiveTestCase<T>& param,
+                     const Eigen::Matrix<T, 3, 1>& a,
+                     const Eigen::Matrix<T, 3, 1>& b,
+                     T accuracy) {
+    Eigen::Matrix<T, 3, 1> expected;
+    T expectedArray[3] = {};
+    param.cFunc(const_cast<T*>(a.data()), const_cast<T*>(b.data()), expectedArray);
+    expected = Eigen::Matrix<T, 3, 1>(expectedArray);
+
+    Eigen::Matrix<T, 3, 1> result = param.cppFunc(a, b);
+    Eigen::Matrix<T, 3, 3> dcm = param.dcmFunc(result);
+
+    EXPECT_LT((dcm * dcm.transpose() - Eigen::Matrix<T, 3, 3>::Identity()).norm(), accuracy);
+    EXPECT_LT((result - expected).norm(), accuracy);
+}
+
+class AdditiveFloatTest : public AdditiveTest<float> {};
+
+TEST_P(AdditiveFloatTest, AdditiveProperties) {
+    const auto& param = GetParam();
+    Vec3 a = this->randVec3();
+    Vec3 b = this->randVec3();
+    runAdditiveTest<float>(param, a, b, accuracy);
+}
+
+class AdditiveDoubleTest : public AdditiveTest<double> {};
+
+TEST_P(AdditiveDoubleTest, AdditiveProperties) {
+    const auto& param = GetParam();
+    Vec3 a = this->randVec3();
+    Vec3 b = this->randVec3();
+    runAdditiveTest<double>(param, a, b, accuracy);
 }
 
 INSTANTIATE_TEST_SUITE_P(
-  RigidBodyKinematics,
-  AdditiveTestSuite,
-  ::testing::Values(
-        std::make_tuple("addMrps", addMRP, addMrp, mrpToDcm),
-        std::make_tuple("addPrvs", addPRV, addPrv, prvToDcm),
-        std::make_tuple("addEulerAngles", addEuler321, addEulerAngles321, eulerAngles321ToDcm),
-        std::make_tuple("subMrps", subMRP, subMrp, mrpToDcm),
-        std::make_tuple("subPrvs", subPRV, subPrv, prvToDcm),
-        std::make_tuple("subEulerAngles", subEuler321, subEulerAngles321, eulerAngles321ToDcm)),
-    AdditiveTestSuite::PrintToStringParamName()
-);
-
-// Extra tests are done on Euler Parameters and their different size makes them harder to test
-TEST(RigidBodyKinematics, addEulerParameters){
-    Eigen::Vector4d ep1;
-    Eigen::Vector4d ep2;
-    Eigen::Vector4d expected;
-    double expectedArray[4];
-
-    // Generate a random euler parameter satisfying the holonomic constraint
-    double phi1 = angleDistribution(generator);
-    double phi2 = angleDistribution(generator);
-    Eigen::Vector3d unitVector1;
-    Eigen::Vector3d unitVector2;
-    unitVector1 << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector1 << unitVector1.normalized();
-    unitVector2 << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector2 << unitVector2.normalized();
-
-    ep1 << std::cos(phi1/2), std::sin(phi1/2)*unitVector1(0), std::sin(phi1/2)*unitVector1(1), std::sin(phi1/2)*unitVector1(2);
-    ep2 << std::cos(phi2/2), std::sin(phi2/2)*unitVector2(0), std::sin(phi2/2)*unitVector2(1), std::sin(phi2/2)*unitVector2(2);
-
-    EXPECT_TRUE(std::abs(ep1(0)*ep1(0) + ep1(1)*ep1(1) + ep1(2)*ep1(2) + ep1(3)*ep1(3) - 1) < kinematicsAccuracy);
-    EXPECT_TRUE(std::abs(ep2(0)*ep2(0) + ep2(1)*ep2(1) + ep2(2)*ep2(2) + ep2(3)*ep2(3) - 1) < kinematicsAccuracy);
-
-    addEP(ep1.data(), ep2.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector4d>(expectedArray);
-
-    Eigen::Vector4d ep;
-    ep = addEp(ep1, ep2);
-
-    EXPECT_TRUE(std::abs(ep(0)*ep(0) + ep(1)*ep(1) + ep(2)*ep(2) + ep(3)*ep(3) - 1) < kinematicsAccuracy);
-    EXPECT_TRUE((ep - expected).norm() < kinematicsAccuracy);
-}
-
-// Extra tests are done on Euler Parameters and their different size makes them harder to test
-TEST(RigidBodyKinematics, subEulerParameters){
-    Eigen::Vector4d ep1;
-    Eigen::Vector4d ep2;
-    Eigen::Vector4d expected;
-    double expectedArray[4];
-
-    // Generate a random euler parameter satisfying the holonomic constraint
-    double phi1 = angleDistribution(generator);
-    double phi2 = angleDistribution(generator);
-    Eigen::Vector3d unitVector1;
-    Eigen::Vector3d unitVector2;
-    unitVector1 << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector1 << unitVector1.normalized();
-    unitVector2 << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector2 << unitVector2.normalized();
-
-    ep1 << std::cos(phi1/2), std::sin(phi1/2)*unitVector1(0), std::sin(phi1/2)*unitVector1(1), std::sin(phi1/2)*unitVector1(2);
-    ep2 << std::cos(phi2/2), std::sin(phi2/2)*unitVector2(0), std::sin(phi2/2)*unitVector2(1), std::sin(phi2/2)*unitVector2(2);
-
-    EXPECT_TRUE(std::abs(ep1(0)*ep1(0) + ep1(1)*ep1(1) + ep1(2)*ep1(2) + ep1(3)*ep1(3) - 1) < kinematicsAccuracy);
-    EXPECT_TRUE(std::abs(ep2(0)*ep2(0) + ep2(1)*ep2(1) + ep2(2)*ep2(2) + ep2(3)*ep2(3) - 1) < kinematicsAccuracy);
-
-    subEP(ep1.data(), ep2.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector4d>(expectedArray);
-
-    Eigen::Vector4d ep;
-    ep = subEp(ep1, ep2);
-
-    EXPECT_TRUE(std::abs(ep(0)*ep(0) + ep(1)*ep(1) + ep(2)*ep(2) + ep(3)*ep(3) - 1) < kinematicsAccuracy);
-    EXPECT_TRUE((ep - expected).norm() < kinematicsAccuracy);
-}
-
-
-// Bmatrix Tests are hard to gather under a single fixture (invariants differ and sizes differ
-TEST(RigidBodyKinematics, bmatrixInverseEulerParameters){
-    Eigen::Vector4d ep;
-    Eigen::Matrix<double, 3, 4> expected;
-    double expectedArray[3][4];
-
-    // Generate a random euler parameter satisfying the holonomic constraint
-    double phi = angleDistribution(generator);
-    Eigen::Vector3d unitVector;
-    unitVector << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector << unitVector.normalized();
-
-    ep << std::cos(phi/2), std::sin(phi/2)*unitVector(0), std::sin(phi/2)*unitVector(1), std::sin(phi/2)*unitVector(2);
-
-    BinvEP(ep.data(), expectedArray);
-    expected = cArray2EigenMatrixXd(reinterpret_cast<double *>(&expectedArray), 4, 3).transpose();
-
-    EXPECT_TRUE((binvEp(ep) - expected).norm() < kinematicsAccuracy);
-}
-
-TEST(RigidBodyKinematics, bmatrixInverseMrp){
-    Eigen::Vector3d mrp;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    mrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    BinvMRP(mrp.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(&expectedArray));
-
-    EXPECT_TRUE(((1 + mrp.dot(mrp))*(1 + mrp.dot(mrp))*binvMrp(mrp) - bmatMrp(mrp).transpose()).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((binvMrp(mrp) - expected).norm() < kinematicsAccuracy);
-}
-
-TEST(RigidBodyKinematics, bmatrixInversePrv){
-    Eigen::Vector3d prv;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    prv << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    BinvPRV(prv.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(&expectedArray));
-
-    EXPECT_TRUE((binvPrv(prv)*bmatPrv(prv) - Eigen::Matrix3d::Identity()).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((binvPrv(prv) - expected).norm() < kinematicsAccuracy);
-}
-
-TEST(RigidBodyKinematics, bmatrixInverseEulerAngles321){
-    Eigen::Vector3d euler321;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    euler321 << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    BinvEuler321(euler321.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(&expectedArray));
-
-    EXPECT_TRUE((binvEulerAngles321(euler321) - expected).norm() < kinematicsAccuracy);
-}
-
-
-TEST(RigidBodyKinematics, bmatrixEulerParameter){
-    Eigen::Vector4d ep;
-    Eigen::Matrix<double, 4, 3> expected;
-    double expectedArray[4][3];
-
-    // Generate a random euler parameter satisfying the holonomic constraint
-    double phi = angleDistribution(generator);
-    Eigen::Vector3d unitVector;
-    unitVector << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector << unitVector.normalized();
-
-    ep << std::cos(phi/2), std::sin(phi/2)*unitVector(0), std::sin(phi/2)*unitVector(1), std::sin(phi/2)*unitVector(2);
-
-    BmatEP(ep.data(), expectedArray);
-    expected = cArray2EigenMatrixXd(reinterpret_cast<double *>(&expectedArray), 3, 4).transpose();
-
-    EXPECT_TRUE((bmatEp(ep).transpose()*ep).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((bmatEp(ep) - expected).norm() < kinematicsAccuracy);
-}
-
-TEST(RigidBodyKinematics, bMatrixMrp){
-    Eigen::Vector3d mrp;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    mrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    BmatMRP(mrp.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(&expectedArray));
-
-
-    EXPECT_TRUE((bmatMrp(mrp).transpose()*bmatMrp(mrp) - (1 + mrp.dot(mrp))*(1 + mrp.dot(mrp))*
-                        Eigen::Matrix3d::Identity()).norm()< kinematicsAccuracy);
-    EXPECT_TRUE((bmatMrp(mrp) - expected).norm() < kinematicsAccuracy);
-}
-
-TEST(RigidBodyKinematics, bMatrixDotMrp){
-    Eigen::Vector3d mrp;
-    Eigen::Vector3d dmrp;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    mrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    dmrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    BdotmatMRP(mrp.data(), dmrp.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(&expectedArray));
-
-    EXPECT_TRUE((bmatDotMrp(mrp, dmrp) - expected).norm() < kinematicsAccuracy);
-}
-
-TEST(RigidBodyKinematics, bMatrixPrv){
-    Eigen::Vector3d prv;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    prv << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    BmatPRV(prv.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(&expectedArray));
-
-    EXPECT_TRUE((bmatPrv(prv) - expected).norm() < kinematicsAccuracy);
-}
-
-TEST(RigidBodyKinematics, bmatrixEulerAngles321){
-    Eigen::Vector3d euler321;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    euler321 << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    BmatEuler321(euler321.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(&expectedArray));
-
-    EXPECT_TRUE((bmatEulerAngles321(euler321) - expected).norm() < kinematicsAccuracy);
-}
-
-// Test suite for dcm conversions of kinematic representations
-class DcmToRepresentationTestSuite:
-public testing::TestWithParam<std::tuple<std::string,
-                            void (*)(double[3][3], double*),
-                            std::function<Eigen::Vector3d(Eigen::Matrix3d)>>>{
-    public:
-        struct PrintToStringParamName {
-            template<class ParamType>
-            std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-                return std::get<0>(info.param);
-            }
-        };
-};
-
-
-TEST_P(DcmToRepresentationTestSuite, dcmToRepresentationTransformations)
-{
-    Eigen::Matrix3d dcm1;
-    Eigen::Matrix3d dcm2;
-    Eigen::Matrix3d dcm3;
-    Eigen::Matrix3d dcm;
-    Eigen::Vector3d expected;
-    double expectedArray[3];
-    double dcmArray[3][3];
-
-    auto [testName, cFunction, cppFunction] = GetParam();
-
-    dcm1 = rotationMatrix(angleDistribution(generator), 1);
-    dcm2 = rotationMatrix(angleDistribution(generator), 2);
-    dcm3 = rotationMatrix(angleDistribution(generator), 3);
-
-    dcm = dcm3*dcm2*dcm1;
-
-    eigenMatrix3d2CArray(dcm, reinterpret_cast<double *>(dcmArray));
-    cFunction(dcmArray, expectedArray);
-    expected = Eigen::Map<Eigen::Vector3d>(expectedArray);
-
-    EXPECT_TRUE((dcm*dcm.transpose() - Eigen::Matrix3d::Identity()).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((cppFunction(dcm) - expected).norm() < kinematicsAccuracy);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    RigidBodyKinematics,
-    DcmToRepresentationTestSuite,
+    FloatAddTests,
+    AdditiveFloatTest,
     ::testing::Values(
-        std::make_tuple("dcmToMrp", C2MRP, dcmToMrp),
-        std::make_tuple("dcmToPrv", C2PRV, dcmToPrv),
-        std::make_tuple("dcmToEulerAngles321", C2Euler321, dcmToEulerAngles321)),
-    DcmToRepresentationTestSuite::PrintToStringParamName()
-);
-
-// Euler Parameters are of a different size and the function I/Os need to be the same for TestWithParam
-TEST(RigidBodyKinematics, dcmToEulerParameter){
-    Eigen::Matrix3d dcm1;
-    Eigen::Matrix3d dcm2;
-    Eigen::Matrix3d dcm3;
-    Eigen::Matrix3d dcm;
-    Eigen::Vector4d expected;
-    double expectedArray[4];
-    double dcmArray[3][3];
-
-    dcm1 = rotationMatrix(angleDistribution(generator), 1);
-    dcm2 = rotationMatrix(angleDistribution(generator), 2);
-    dcm3 = rotationMatrix(angleDistribution(generator), 3);
-
-    dcm = dcm3*dcm2*dcm1;
-
-    eigenMatrix3d2CArray(dcm, reinterpret_cast<double *>(dcmArray));
-    C2EP(dcmArray, expectedArray);
-    expected = Eigen::Map<Eigen::Vector4d>(expectedArray);
-
-    EXPECT_TRUE((dcm*dcm.transpose() - Eigen::Matrix3d::Identity()).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((dcmToEp(dcm) - expected).norm() < kinematicsAccuracy);
-}
-
-// Test suite for kinematic representations converted to dcms
-class RepresentationToDcmTestSuite:
-public testing::TestWithParam<std::tuple<std::string,
-                            void (*)(double*, double[3][3]),
-                            std::function<Eigen::Matrix3d(Eigen::Vector3d)>>>{
-    public:
-        struct PrintToStringParamName {
-            template<class ParamType>
-            std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-                return std::get<0>(info.param);
-            }
-        };
-};
-
-TEST_P(RepresentationToDcmTestSuite, representationToDcmTransformations)
-{
-    Eigen::Vector3d representation;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    auto [testName, cFunction, cppFunction] = GetParam();
-
-    representation << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    cFunction(representation.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(expectedArray));
-
-    EXPECT_TRUE((cppFunction(representation)*cppFunction(representation).transpose() - Eigen::Matrix3d::Identity()).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((cppFunction(representation) - expected).norm() < kinematicsAccuracy);
-}
+        AdditiveTestCase<float>{"addMRP",
+                                addMRP_float,
+                                [](const Eigen::Vector3f& a, const Eigen::Vector3f& b) { return addMrp<float>(a, b); },
+                                [](const Eigen::Vector3f& a) { return mrpToDcm<float>(a); }},
+        AdditiveTestCase<float>{"addPrvs",
+                                addPRV_float,
+                                [](const Eigen::Vector3f& a, const Eigen::Vector3f& b) { return addPrv<float>(a, b); },
+                                [](const Eigen::Vector3f& a) { return prvToDcm<float>(a); }},
+        AdditiveTestCase<float>{
+            "addEulerAngles",
+            addEuler321_float,
+            [](const Eigen::Vector3f& a, const Eigen::Vector3f& b) { return addEulerAngles321<float>(a, b); },
+            [](const Eigen::Vector3f& a) { return eulerAngles321ToDcm<float>(a); }},
+        AdditiveTestCase<float>{"subMRPs",
+                                subMRP_float,
+                                [](const Eigen::Vector3f& a, const Eigen::Vector3f& b) { return subMrp<float>(a, b); },
+                                [](const Eigen::Vector3f& a) { return mrpToDcm<float>(a); }},
+        AdditiveTestCase<float>{"subPrvs",
+                                subPRV_float,
+                                [](const Eigen::Vector3f& a, const Eigen::Vector3f& b) { return subPrv<float>(a, b); },
+                                [](const Eigen::Vector3f& a) { return prvToDcm<float>(a); }},
+        AdditiveTestCase<float>{
+            "subEulerAngles",
+            subEuler321_float,
+            [](const Eigen::Vector3f& a, const Eigen::Vector3f& b) { return subEulerAngles321<float>(a, b); },
+            [](const Eigen::Vector3f& a) { return eulerAngles321ToDcm<float>(a); }}),
+    AdditiveTestNameFloat);
 
 INSTANTIATE_TEST_SUITE_P(
-    RigidBodyKinematics,
-    RepresentationToDcmTestSuite,
-    ::testing::Values(
-        std::make_tuple("mrpToDcm", MRP2C, mrpToDcm),
-        std::make_tuple("prvToDcm", PRV2C, prvToDcm),
-        std::make_tuple("eulerAngles321ToDcm", Euler3212C, eulerAngles321ToDcm)),
-    RepresentationToDcmTestSuite::PrintToStringParamName()
-);
+    DoubleAddTests,
+    AdditiveDoubleTest,
+    ::testing::Values(AdditiveTestCase<double>{
+                          "addMRP",
+                          addMRP,
+                          [](const Eigen::Vector3d& a, const Eigen::Vector3d& b) { return addMrp<double>(a, b); },
+                          [](const Eigen::Vector3d& a) { return mrpToDcm<double>(a); }},
+                      AdditiveTestCase<double>{
+                          "addPrvs",
+                          addPRV,
+                          [](const Eigen::Vector3d& a, const Eigen::Vector3d& b) { return addPrv<double>(a, b); },
+                          [](const Eigen::Vector3d& a) { return prvToDcm<double>(a); }},
+                      AdditiveTestCase<double>{"addEulerAngles",
+                                               addEuler321,
+                                               [](const Eigen::Vector3d& a, const Eigen::Vector3d& b) {
+                                                   return addEulerAngles321<double>(a, b);
+                                               },
+                                               [](const Eigen::Vector3d& a) { return eulerAngles321ToDcm<double>(a); }},
+                      AdditiveTestCase<double>{
+                          "subMRPs",
+                          subMRP,
+                          [](const Eigen::Vector3d& a, const Eigen::Vector3d& b) { return subMrp<double>(a, b); },
+                          [](const Eigen::Vector3d& a) { return mrpToDcm<double>(a); }},
+                      AdditiveTestCase<double>{
+                          "subPrvs",
+                          subPRV,
+                          [](const Eigen::Vector3d& a, const Eigen::Vector3d& b) { return subPrv<double>(a, b); },
+                          [](const Eigen::Vector3d& a) { return prvToDcm<double>(a); }},
+                      AdditiveTestCase<double>{
+                          "subEulerAngles",
+                          subEuler321,
+                          [](const Eigen::Vector3d& a, const Eigen::Vector3d& b) {
+                              return subEulerAngles321<double>(a, b);
+                          },
+                          [](const Eigen::Vector3d& a) { return eulerAngles321ToDcm<double>(a); }}),
+    AdditiveTestNameDouble);
 
-// Euler Parameters are of a different size and the function I/Os need to be the same for TestWithParam
-TEST(RigidBodyKinematics, eulerToDcmParameter){
-    Eigen::Vector4d ep;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
-
-    double phi = angleDistribution(generator);
-    Eigen::Vector3d unitVector;
-    unitVector << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector << unitVector.normalized();
-    ep << std::cos(phi/2), std::sin(phi/2)*unitVector(0), std::sin(phi/2)*unitVector(1), std::sin(phi/2)*unitVector(2);
-
-    EP2C(ep.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(expectedArray));
-
-    EXPECT_TRUE((epToDcm(ep)*epToDcm(ep).transpose() - Eigen::Matrix3d::Identity()).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((epToDcm(ep) - expected).norm() < kinematicsAccuracy);
-}
-
-// Test suite for kinematic representations converted to dcms
-class EpToRepresentationTestSuite:
-public testing::TestWithParam<std::tuple<std::string,
-                            void (*)(double*, double*),
-                            std::function<Eigen::Vector3d(Eigen::Vector4d)>>>{
-    public:
-        struct PrintToStringParamName {
-            template<class ParamType>
-            std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-                return std::get<0>(info.param);
-            }
-        };
+// Euler Parameters add/subtract tests
+template <typename T>
+struct EulerTestCase {
+    std::string name;
+    void (*cFunc)(T*, T*, T*);
+    std::function<Eigen::Matrix<T, 4, 1>(Eigen::Matrix<T, 4, 1>, Eigen::Matrix<T, 4, 1>)> cppFunc;
 };
 
-TEST_P(EpToRepresentationTestSuite, epToRepresentationTransformations)
-{
-    Eigen::Vector4d ep;
-    Eigen::Vector3d expected;
-    double expectedArray[3];
-
-    auto [testName, cFunction, cppFunction] = GetParam();
-
-    // Generate a random euler parameter satisfying the holonomic constraint
-    double phi = angleDistribution(generator);
-    Eigen::Vector3d unitVector;
-    unitVector << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector << unitVector.normalized();
-    ep << std::cos(phi/2), std::sin(phi/2)*unitVector(0), std::sin(phi/2)*unitVector(1), std::sin(phi/2)*unitVector(2);
-
-    cFunction(ep.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector3d>(expectedArray);
-
-    EXPECT_TRUE((cppFunction(ep) - expected).norm() < kinematicsAccuracy);
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const EulerTestCase<T>& param) {
+    os << param.name;
+    return os;
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    RigidBodyKinematics,
-    EpToRepresentationTestSuite,
-    ::testing::Values(
-        std::make_tuple("epToMrp", EP2MRP, epToMrp),
-        std::make_tuple("epToPrv", EP2PRV, epToPrv),
-        std::make_tuple("epToEulerAngles321", EP2Euler321, epToEulerAngles321)),
-    EpToRepresentationTestSuite::PrintToStringParamName()
-);
+template <typename T>
+class EulerParameterTest : public ::testing::TestWithParam<EulerTestCase<T>> {
+   public:
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+    using Vec4 = Eigen::Matrix<T, 4, 1>;
 
-// Test suite for kinematic representations converted to dcms
-class RepresentationToEpTestSuite:
-public testing::TestWithParam<std::tuple<std::string,
-                            void (*)(double*, double*),
-                            std::function<Eigen::Vector4d(Eigen::Vector3d)>>>{
-    public:
-        struct PrintToStringParamName {
-            template<class ParamType>
-            std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-                return std::get<0>(info.param);
-            }
-        };
+    const T accuracy = kinematicsAccuracy<T>();
+
+    std::default_random_engine generator{std::random_device{}()};
+    std::uniform_real_distribution<T> angleDistribution{-3.14, 3.14};
+
+    Vec4 randomEulerParameter() {
+        T phi = angleDistribution(generator);
+        Vec3 axis(angleDistribution(generator), angleDistribution(generator), angleDistribution(generator));
+        axis.normalize();
+        return Vec4(
+            std::cos(phi / 2), std::sin(phi / 2) * axis(0), std::sin(phi / 2) * axis(1), std::sin(phi / 2) * axis(2));
+    }
+
+    T normConstraintViolation(const Vec4& ep) { return std::abs(ep.squaredNorm() - static_cast<T>(1)); }
+
+    void runTest(const EulerTestCase<T>& param) {
+        Vec4 ep1 = randomEulerParameter();
+        Vec4 ep2 = randomEulerParameter();
+
+        EXPECT_LT(normConstraintViolation(ep1), accuracy);
+        EXPECT_LT(normConstraintViolation(ep2), accuracy);
+
+        T expectedArray[4] = {};
+        param.cFunc(ep1.data(), ep2.data(), expectedArray);
+        Vec4 expected = Eigen::Map<Vec4>(expectedArray);
+
+        Vec4 result = param.cppFunc(ep1, ep2);
+
+        EXPECT_LT(normConstraintViolation(result), accuracy)
+            << "Holonomic constraint violated for test: " << param.name;
+
+        EXPECT_NEAR((result - expected).norm(), 0, accuracy) << "C/C++ mismatch for test: " << param.name;
+    }
 };
 
-TEST_P(RepresentationToEpTestSuite, representationToEpTransformations)
-{
-    Eigen::Vector3d representation;
-    Eigen::Vector4d ep;
-    Eigen::Vector4d expected;
-    double expectedArray[4];
+using FloatEulerTest = EulerParameterTest<float>;
+using DoubleEulerTest = EulerParameterTest<double>;
 
-    auto [testName, cFunction, cppFunction] = GetParam();
-
-    representation << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    cFunction(representation.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector4d>(expectedArray);
-    ep = cppFunction(representation);
-
-    EXPECT_TRUE(std::abs(ep(0)*ep(0) + ep(1)*ep(1) + ep(2)*ep(2) + ep(3)*ep(3) - 1) < kinematicsAccuracy);
-    EXPECT_TRUE((ep - expected).norm() < kinematicsAccuracy);
+std::vector<EulerTestCase<float>> getFloatEulerTests() {
+    return {
+        {"addEulerParameters", addEP_float, addEp<float>},
+        {"subEulerParameters", subEP_float, subEp<float>},
+    };
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    RigidBodyKinematics,
-    RepresentationToEpTestSuite,
-    ::testing::Values(
-        std::make_tuple("mrpToEp", MRP2EP, mrpToEp),
-        std::make_tuple("prvToEp", PRV2EP, prvToEp),
-        std::make_tuple("eulerAnglesToEp", Euler3212EP, eulerAngles321ToEp)),
-    RepresentationToEpTestSuite::PrintToStringParamName()
-);
+std::vector<EulerTestCase<double>> getDoubleEulerTests() {
+    return {
+        {"addEulerParameters", addEP, addEp<double>},
+        {"subEulerParameters", subEP, subEp<double>},
+    };
+}
 
-// Test suite for kinematic representations converted to dcms
-class RepresentationTransformationsTestSuite:
-public testing::TestWithParam<std::tuple<std::string,
-                            void (*)(double*, double*),
-                            std::function<Eigen::Vector3d(Eigen::Vector3d)>>>{
-    public:
-        struct PrintToStringParamName {
-            template<class ParamType>
-            std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-                return std::get<0>(info.param);
-            }
-        };
+TEST_P(FloatEulerTest, HolonomicConstraintAndCReferenceMatch) { this->runTest(GetParam()); }
+
+TEST_P(DoubleEulerTest, HolonomicConstraintAndCReferenceMatch) { this->runTest(GetParam()); }
+
+std::string EulerTestNameFloat(const ::testing::TestParamInfo<EulerTestCase<float>>& info) {
+    std::string name = info.param.name;
+    for (char& c : name)
+        if (!std::isalnum(c)) c = '_';
+    return name + "_float";
+}
+
+std::string EulerTestNameDouble(const ::testing::TestParamInfo<EulerTestCase<double>>& info) {
+    std::string name = info.param.name;
+    for (char& c : name)
+        if (!std::isalnum(c)) c = '_';
+    return name + "_double";
+}
+
+INSTANTIATE_TEST_SUITE_P(FloatTests, FloatEulerTest, ::testing::ValuesIn(getFloatEulerTests()), EulerTestNameFloat);
+
+INSTANTIATE_TEST_SUITE_P(DoubleTests, DoubleEulerTest, ::testing::ValuesIn(getDoubleEulerTests()), EulerTestNameDouble);
+
+// Bmatrix tests
+template <typename T>
+class BMatrixTypedTest : public ::testing::Test {
+   public:
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+    using Vec4 = Eigen::Matrix<T, 4, 1>;
+    using Mat3 = Eigen::Matrix<T, 3, 3>;
+    using Mat43 = Eigen::Matrix<T, 4, 3>;
+
+    std::default_random_engine generator{std::random_device{}()};
+    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    const T accuracy = kinematicsAccuracy<T>();
+
+    Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
+
+    Vec4 randEp() {
+        Vec3 axis = randVec3().normalized();
+        T phi = dist(generator);
+        return Vec4(
+            std::cos(phi / 2), std::sin(phi / 2) * axis(0), std::sin(phi / 2) * axis(1), std::sin(phi / 2) * axis(2));
+    }
 };
 
-TEST_P(RepresentationTransformationsTestSuite, representationTransform3Vectors)
-{
-    Eigen::Vector3d representation;
-    Eigen::Vector3d expected;
-    double expectedArray[3];
+TYPED_TEST_SUITE(BMatrixTypedTest, FloatingPointTypes);
 
-    auto [testName, cFunction, cppFunction] = GetParam();
-
-    representation << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-
-    cFunction(representation.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector3d>(expectedArray);
-
-    EXPECT_TRUE((cppFunction(representation) - expected).norm() < kinematicsAccuracy);
+TYPED_TEST(BMatrixTypedTest, BinvEp) {
+    auto ep = this->randEp();
+    TypeParam expectedArray[3][4] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BinvEP_float(ep.data(), expectedArray);
+    else
+        BinvEP(ep.data(), expectedArray);
+    auto expected = cArray34ToEigenMatrix34(expectedArray);
+    EXPECT_LT((binvEp(ep) - expected).norm(), this->accuracy);
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    RigidBodyKinematics,
-    RepresentationTransformationsTestSuite,
-    ::testing::Values(
-        std::make_tuple("mrpToPrv", MRP2PRV, mrpToPrv),
-        std::make_tuple("prvToMrp", PRV2MRP, prvToMrp),
-        std::make_tuple("eulerAngles321ToMrp", Euler3212MRP, eulerAngles321ToMrp),
-        std::make_tuple("mrpToEulerAngles321", MRP2Euler321, mrpToEulerAngles321),
-        std::make_tuple("prvToEulerAngles321", PRV2Euler321, prvToEulerAngles321),
-        std::make_tuple("eulerAngles321ToPrv", Euler3212PRV, eulerAngles321ToPrv)),
-    RepresentationTransformationsTestSuite::PrintToStringParamName()
-);
+TYPED_TEST(BMatrixTypedTest, BinvMrp) {
+    auto mrp = this->randVec3();
+    TypeParam expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BinvMRP_float(mrp.data(), expectedArray);
+    else
+        BinvMRP(mrp.data(), expectedArray);
+    auto expected = cArray33ToEigenMatrix33(expectedArray);
+    EXPECT_LT(((1 + mrp.dot(mrp)) * (1 + mrp.dot(mrp)) * binvMrp(mrp) - bmatMrp(mrp).transpose()).norm(),
+              this->accuracy);
+    EXPECT_LT((binvMrp(mrp) - expected).norm(), this->accuracy);
+}
 
-// Test suite for kinematic representations converted to dcms
-class RepresentationDerivativesTestSuite:
-public testing::TestWithParam<std::tuple<std::string,
-                            void (*)(double*, double*, double*),
-                            std::function<Eigen::Vector3d(Eigen::Vector3d, Eigen::Vector3d)>>>{
-    public:
-        struct PrintToStringParamName {
-            template<class ParamType>
-            std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-                return std::get<0>(info.param);
-            }
-        };
+TYPED_TEST(BMatrixTypedTest, BinvPrv) {
+    auto prv = this->randVec3();
+    TypeParam expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BinvPRV_float(prv.data(), expectedArray);
+    else
+        BinvPRV(prv.data(), expectedArray);
+    auto expected = cArray33ToEigenMatrix33(expectedArray);
+    EXPECT_LT((binvPrv(prv) * bmatPrv(prv) - Eigen::Matrix<TypeParam, 3, 3>::Identity()).norm(), this->accuracy);
+    EXPECT_LT((binvPrv(prv) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(BMatrixTypedTest, BinvEuler321) {
+    auto euler = this->randVec3();
+    TypeParam expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BinvEuler321_float(euler.data(), expectedArray);
+    else
+        BinvEuler321(euler.data(), expectedArray);
+    auto expected = cArray33ToEigenMatrix33(expectedArray);
+    EXPECT_LT((binvEulerAngles321(euler) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(BMatrixTypedTest, BmatEp) {
+    auto ep = this->randEp();
+    TypeParam expectedArray[4][3] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BmatEP_float(ep.data(), expectedArray);
+    else
+        BmatEP(ep.data(), expectedArray);
+    auto expected = cArray43ToEigenMatrix43(expectedArray);
+    EXPECT_LT((bmatEp(ep).transpose() * ep).norm(), this->accuracy);
+    EXPECT_LT((bmatEp(ep) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(BMatrixTypedTest, BmatMrp) {
+    auto mrp = this->randVec3();
+    TypeParam expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BmatMRP_float(mrp.data(), expectedArray);
+    else
+        BmatMRP(mrp.data(), expectedArray);
+    auto expected = cArray33ToEigenMatrix33(expectedArray);
+    EXPECT_LT((bmatMrp(mrp).transpose() * bmatMrp(mrp) -
+               (1 + mrp.dot(mrp)) * (1 + mrp.dot(mrp)) * Eigen::Matrix<TypeParam, 3, 3>::Identity())
+                  .norm(),
+              this->accuracy);
+    EXPECT_LT((bmatMrp(mrp) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(BMatrixTypedTest, BdotMrp) {
+    auto mrp = this->randVec3();
+    auto dmrp = this->randVec3();
+    TypeParam expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BdotmatMRP_float(mrp.data(), dmrp.data(), expectedArray);
+    else
+        BdotmatMRP(mrp.data(), dmrp.data(), expectedArray);
+    auto expected = cArray33ToEigenMatrix33(expectedArray);
+    EXPECT_LT((bmatDotMrp(mrp, dmrp) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(BMatrixTypedTest, BmatPrv) {
+    auto prv = this->randVec3();
+    TypeParam expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BmatPRV_float(prv.data(), expectedArray);
+    else
+        BmatPRV(prv.data(), expectedArray);
+    auto expected = cArray33ToEigenMatrix33(expectedArray);
+    EXPECT_LT((bmatPrv(prv) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(BMatrixTypedTest, BmatEuler321) {
+    auto euler = this->randVec3();
+    TypeParam expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<TypeParam, float>)
+        BmatEuler321_float(euler.data(), expectedArray);
+    else
+        BmatEuler321(euler.data(), expectedArray);
+    auto expected = cArray33ToEigenMatrix33(expectedArray);
+    EXPECT_LT((bmatEulerAngles321(euler) - expected).norm(), this->accuracy);
+}
+
+// DCM to representations test
+template <typename T>
+class DcmToRepresentationTest : public ::testing::Test {
+   public:
+    using Mat3 = Eigen::Matrix<T, 3, 3>;
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+
+    std::default_random_engine generator{std::random_device{}()};
+    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    const T accuracy = kinematicsAccuracy<T>();
 };
 
-TEST_P(RepresentationDerivativesTestSuite, representationDerivatives3Vectors)
-{
-    Eigen::Vector3d representation;
-    Eigen::Vector3d rate;
-    Eigen::Vector3d expected;
-    double expectedArray[3];
+TYPED_TEST_SUITE(DcmToRepresentationTest, FloatingPointTypes);
 
-    auto [testName, cFunction, cppFunction] = GetParam();
+TYPED_TEST(DcmToRepresentationTest, dcmToMrp) {
+    using T = TypeParam;
+    typename TestFixture::Mat3 dcm1 = rotationMatrix(this->dist(this->generator), 1);
+    typename TestFixture::Mat3 dcm2 = rotationMatrix(this->dist(this->generator), 2);
+    typename TestFixture::Mat3 dcm3 = rotationMatrix(this->dist(this->generator), 3);
+    typename TestFixture::Mat3 dcm = dcm3 * dcm2 * dcm1;
 
-    representation << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    rate << angleDistribution(generator)/10, angleDistribution(generator)/10, angleDistribution(generator)/10;
+    T dcmArray[3][3];
+    eigenMatrix3ToCArray(dcm, dcmArray);
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        C2MRP_float(dcmArray, expectedArray);
+    else
+        C2MRP(dcmArray, expectedArray);
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
 
-    cFunction(representation.data(), rate.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector3d>(expectedArray);
-
-    EXPECT_TRUE((cppFunction(representation, rate) - expected).norm() < kinematicsAccuracy);
+    EXPECT_LT((dcm * dcm.transpose() - TestFixture::Mat3::Identity()).norm(), this->accuracy);
+    EXPECT_LT((dcmToMrp(dcm) - expected).norm(), this->accuracy);
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    RigidBodyKinematics,
-    RepresentationDerivativesTestSuite,
-    ::testing::Values(
-        std::make_tuple("dmrp",dMRP, dmrp),
-        std::make_tuple("dmrpToOmega",dMRP2Omega, dmrpToOmega),
-        std::make_tuple("dprv",dPRV, dprv),
-        std::make_tuple("deuler321",dEuler321, deuler321)),
-    RepresentationDerivativesTestSuite::PrintToStringParamName()
-);
+TYPED_TEST(DcmToRepresentationTest, mrpToDcm) {
+    using T = TypeParam;
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+    using Mat3 = Eigen::Matrix<T, 3, 3>;
 
-TEST(RigidBodyKinematics, epDerivativeTest)
-{
-    Eigen::Vector4d ep;
-    Eigen::Vector3d omega;
-    Eigen::Vector4d expected;
-    double expectedArray[4];
+    Vec3 mrp(this->dist(this->generator), this->dist(this->generator), this->dist(this->generator));
+    T expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        MRP2C_float(mrp.data(), expectedArray);
+    else
+        MRP2C(mrp.data(), expectedArray);
 
-    // Generate a random euler parameter satisfying the holonomic constraint
-    double phi = angleDistribution(generator);
-    Eigen::Vector3d unitVector;
-    unitVector << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    unitVector << unitVector.normalized();
-    ep << std::cos(phi/2), std::sin(phi/2)*unitVector(0), std::sin(phi/2)*unitVector(1), std::sin(phi/2)*unitVector(2);
-    omega << angleDistribution(generator)/10, angleDistribution(generator)/10, angleDistribution(generator)/10;
+    Mat3 expected = cArray33ToEigenMatrix33(expectedArray);
+    Mat3 result = mrpToDcm<T>(mrp);
 
-    dEP(ep.data(), omega.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector4d>(expectedArray);
-
-    EXPECT_TRUE((dep(ep, omega) - expected).norm() < kinematicsAccuracy);
+    EXPECT_LT((result * result.transpose() - Mat3::Identity()).norm(), this->accuracy);
+    EXPECT_LT((result - expected).norm(), this->accuracy);
 }
 
-TEST(RigidBodyKinematics, dmrpDerivativeTest)
-{
-    Eigen::Vector3d mrp;
-    Eigen::Vector3d dmrp;
-    Eigen::Vector3d omega;
-    Eigen::Vector3d domega;
-    Eigen::Vector3d expected;
-    double expectedArray[3];
+TYPED_TEST(DcmToRepresentationTest, dcmToPrv) {
+    using T = TypeParam;
+    Eigen::Matrix<T, 3, 3> dcm = rotationMatrix(this->dist(this->generator), 3) *
+                                 rotationMatrix(this->dist(this->generator), 2) *
+                                 rotationMatrix(this->dist(this->generator), 1);
 
-    mrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    dmrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    omega << angleDistribution(generator)/10, angleDistribution(generator)/10, angleDistribution(generator)/10;
-    domega << angleDistribution(generator)/10, angleDistribution(generator)/10, angleDistribution(generator)/10;
+    T dcmArray[3][3];
+    eigenMatrix3ToCArray(dcm, dcmArray);
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        C2PRV_float(dcmArray, expectedArray);
+    else
+        C2PRV(dcmArray, expectedArray);
+    auto expected = Eigen::Map<Eigen::Matrix<T, 3, 1>>(expectedArray);
 
-    ddMRP(mrp.data(), dmrp.data(),omega.data(), domega.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector3d>(expectedArray);
-
-    EXPECT_TRUE((ddmrp(mrp, dmrp, omega, domega) - expected).norm() < kinematicsAccuracy);
+    EXPECT_LT((dcm * dcm.transpose() - TestFixture::Mat3::Identity()).norm(), this->accuracy);
+    EXPECT_LT((dcmToPrv(dcm) - expected).norm(), this->accuracy);
 }
 
-TEST(RigidBodyKinematics, dmrpToOmegaDerivativeTest)
-{
-    Eigen::Vector3d mrp;
-    Eigen::Vector3d dmrp;
-    Eigen::Vector3d ddmrp;
-    Eigen::Vector3d expected;
-    double expectedArray[3];
+TYPED_TEST(DcmToRepresentationTest, prvToDcm) {
+    using T = TypeParam;
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+    using Mat3 = Eigen::Matrix<T, 3, 3>;
 
-    mrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    dmrp << angleDistribution(generator)/10, angleDistribution(generator)/10, angleDistribution(generator)/10;
-    ddmrp << angleDistribution(generator)/100, angleDistribution(generator)/100, angleDistribution(generator)/100;
+    Vec3 prv(this->dist(this->generator), this->dist(this->generator), this->dist(this->generator));
+    T expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        PRV2C_float(prv.data(), expectedArray);
+    else
+        PRV2C(prv.data(), expectedArray);
 
-    ddMRP2dOmega(mrp.data(), dmrp.data(), ddmrp.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector3d>(expectedArray);
+    Mat3 expected = cArray33ToEigenMatrix33(expectedArray);
+    Mat3 result = prvToDcm<T>(prv);
 
-    EXPECT_TRUE((ddmrpTodOmega(mrp, dmrp, ddmrp) - expected).norm() < kinematicsAccuracy);
+    EXPECT_LT((result * result.transpose() - Mat3::Identity()).norm(), this->accuracy);
+    EXPECT_LT((result - expected).norm(), this->accuracy);
 }
 
-TEST(RigidBodyKinematics, mrpSwitchTest)
-{
-    Eigen::Vector3d mrp;
-    Eigen::Vector3d expected;
-    double value = angleDistribution(generator);
-    double expectedArray[3];
+TYPED_TEST(DcmToRepresentationTest, dcmToEuler321) {
+    using T = TypeParam;
+    Eigen::Matrix<T, 3, 3> dcm = rotationMatrix(this->dist(this->generator), 3) *
+                                 rotationMatrix(this->dist(this->generator), 2) *
+                                 rotationMatrix(this->dist(this->generator), 1);
 
-    mrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
+    T dcmArray[3][3];
+    eigenMatrix3ToCArray(dcm, dcmArray);
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        C2Euler321_float(dcmArray, expectedArray);
+    else
+        C2Euler321(dcmArray, expectedArray);
+    auto expected = Eigen::Map<Eigen::Matrix<T, 3, 1>>(expectedArray);
 
-    MRPswitch(mrp.data(), value, expectedArray);
-    expected = Eigen::Map<Eigen::Vector3d>(expectedArray);
-
-    EXPECT_TRUE((mrpSwitch(mrp, value) - expected).norm() < kinematicsAccuracy);
+    EXPECT_LT((dcm * dcm.transpose() - TestFixture::Mat3::Identity()).norm(), this->accuracy);
+    EXPECT_LT((dcmToEulerAngles321(dcm) - expected).norm(), this->accuracy);
 }
 
-TEST(RigidBodyKinematics, mrpShadowTest)
-{
-    Eigen::Vector3d mrp;
-    Eigen::Vector3d expected;
-    double expectedArray[3];
+TYPED_TEST(DcmToRepresentationTest, eulerAngles321ToDcm) {
+    using T = TypeParam;
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+    using Mat3 = Eigen::Matrix<T, 3, 3>;
 
-    mrp << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
+    Vec3 euler(this->dist(this->generator), this->dist(this->generator), this->dist(this->generator));
+    T expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        Euler3212C_float(euler.data(), expectedArray);
+    else
+        Euler3212C(euler.data(), expectedArray);
 
-    MRPshadow(mrp.data(), expectedArray);
-    expected = Eigen::Map<Eigen::Vector3d>(expectedArray);
+    Mat3 expected = cArray33ToEigenMatrix33(expectedArray);
+    Mat3 result = eulerAngles321ToDcm<T>(euler);
 
-    EXPECT_TRUE((mrpShadow(mrp) - expected).norm() < kinematicsAccuracy);
+    EXPECT_LT((result * result.transpose() - Mat3::Identity()).norm(), this->accuracy);
+    EXPECT_LT((result - expected).norm(), this->accuracy);
 }
 
-TEST(RigidBodyKinematics, rotationMatrixTest)
-{
-    Eigen::Vector3d mrp;
-    Eigen::Matrix3d expected;
-    double angle;
-    double expectedArray[3][3];
+TYPED_TEST(DcmToRepresentationTest, dcmToEulerParameter) {
+    using T = TypeParam;
+    Eigen::Matrix<T, 3, 3> dcm = rotationMatrix(this->dist(this->generator), 3) *
+                                 rotationMatrix(this->dist(this->generator), 2) *
+                                 rotationMatrix(this->dist(this->generator), 1);
 
-    for (int i=1; i<4; i++){
-        angle = angleDistribution(generator);
-        Mi(angle, i, expectedArray);
-        expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(expectedArray));
-        EXPECT_TRUE((rotationMatrix(angle, i) - expected).norm() < kinematicsAccuracy);
+    T dcmArray[3][3];
+    eigenMatrix3ToCArray(dcm, dcmArray);
+    T expectedArray[4] = {};
+    if constexpr (std::is_same_v<T, float>)
+        C2EP_float(dcmArray, expectedArray);
+    else
+        C2EP(dcmArray, expectedArray);
+    auto expected = Eigen::Map<Eigen::Matrix<T, 4, 1>>(expectedArray);
+
+    EXPECT_LT((dcm * dcm.transpose() - TestFixture::Mat3::Identity()).norm(), this->accuracy);
+    EXPECT_LT((dcmToEp(dcm) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(DcmToRepresentationTest, eulerParameterToDcm) {
+    using T = TypeParam;
+    using Vec4 = Eigen::Matrix<T, 4, 1>;
+    using Mat3 = Eigen::Matrix<T, 3, 3>;
+
+    T phi = this->dist(this->generator);
+    Eigen::Matrix<T, 3, 1> unitVector(
+        this->dist(this->generator), this->dist(this->generator), this->dist(this->generator));
+    unitVector.normalize();
+    Vec4 ep(std::cos(phi / 2),
+            std::sin(phi / 2) * unitVector(0),
+            std::sin(phi / 2) * unitVector(1),
+            std::sin(phi / 2) * unitVector(2));
+
+    T expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        EP2C_float(ep.data(), expectedArray);
+    else
+        EP2C(ep.data(), expectedArray);
+
+    Mat3 expected = cArray33ToEigenMatrix33(expectedArray);
+    Mat3 result = epToDcm(ep);
+
+    EXPECT_LT((result * result.transpose() - Mat3::Identity()).norm(), this->accuracy);
+    EXPECT_LT((result - expected).norm(), this->accuracy);
+}
+
+// Representation-to-representation tests
+template <typename T>
+class RepresentationTransformTest : public ::testing::Test {
+   public:
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+
+    std::default_random_engine generator{std::random_device{}()};
+    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    const T accuracy = kinematicsAccuracy<T>();
+};
+
+TYPED_TEST_SUITE(RepresentationTransformTest, FloatingPointTypes);
+
+TYPED_TEST(RepresentationTransformTest, epToMrp) {
+    using T = TypeParam;
+    using Vec4 = Eigen::Matrix<T, 4, 1>;
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+
+    T phi = TestFixture::dist(TestFixture::generator);
+    Vec3 axis(TestFixture::dist(TestFixture::generator),
+              TestFixture::dist(TestFixture::generator),
+              TestFixture::dist(TestFixture::generator));
+    axis.normalize();
+    Vec4 ep(std::cos(phi / 2), std::sin(phi / 2) * axis(0), std::sin(phi / 2) * axis(1), std::sin(phi / 2) * axis(2));
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        EP2MRP_float(ep.data(), expectedArray);
+    else
+        EP2MRP(ep.data(), expectedArray);
+
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    Vec3 result = epToMrp<T>(ep);
+
+    EXPECT_LT((result - expected).norm(), TestFixture::accuracy);
+}
+
+TYPED_TEST(RepresentationTransformTest, epToPrv) {
+    using T = TypeParam;
+    using Vec4 = Eigen::Matrix<T, 4, 1>;
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+
+    T phi = TestFixture::dist(TestFixture::generator);
+    Vec3 axis(TestFixture::dist(TestFixture::generator),
+              TestFixture::dist(TestFixture::generator),
+              TestFixture::dist(TestFixture::generator));
+    axis.normalize();
+    Vec4 ep(std::cos(phi / 2), std::sin(phi / 2) * axis(0), std::sin(phi / 2) * axis(1), std::sin(phi / 2) * axis(2));
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        EP2PRV_float(ep.data(), expectedArray);
+    else
+        EP2PRV(ep.data(), expectedArray);
+
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    Vec3 result = epToPrv<T>(ep);
+
+    EXPECT_LT((result - expected).norm(), TestFixture::accuracy);
+}
+
+TYPED_TEST(RepresentationTransformTest, epToEulerAngles321) {
+    using T = TypeParam;
+    using Vec4 = Eigen::Matrix<T, 4, 1>;
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+
+    T phi = TestFixture::dist(TestFixture::generator);
+    Vec3 axis(TestFixture::dist(TestFixture::generator),
+              TestFixture::dist(TestFixture::generator),
+              TestFixture::dist(TestFixture::generator));
+    axis.normalize();
+    Vec4 ep(std::cos(phi / 2), std::sin(phi / 2) * axis(0), std::sin(phi / 2) * axis(1), std::sin(phi / 2) * axis(2));
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        EP2Euler321_float(ep.data(), expectedArray);
+    else
+        EP2Euler321(ep.data(), expectedArray);
+
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    Vec3 result = epToEulerAngles321<T>(ep);
+
+    EXPECT_LT((result - expected).norm(), TestFixture::accuracy);
+}
+
+TYPED_TEST(RepresentationTransformTest, mrpToPrv) {
+    using T = TypeParam;
+    using Vec3 = typename RepresentationTransformTest<T>::Vec3;
+    Vec3 rep(RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator));
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        MRP2PRV_float(rep.data(), expectedArray);
+    else
+        MRP2PRV(rep.data(), expectedArray);
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    EXPECT_LT((mrpToPrv<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+}
+
+TYPED_TEST(RepresentationTransformTest, prvToMrp) {
+    using T = TypeParam;
+    using Vec3 = typename RepresentationTransformTest<T>::Vec3;
+    Vec3 rep(RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator));
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        PRV2MRP_float(rep.data(), expectedArray);
+    else
+        PRV2MRP(rep.data(), expectedArray);
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    EXPECT_LT((prvToMrp<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+}
+
+TYPED_TEST(RepresentationTransformTest, eulerAngles321ToMrp) {
+    using T = TypeParam;
+    using Vec3 = typename RepresentationTransformTest<T>::Vec3;
+    Vec3 rep(RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator));
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        Euler3212MRP_float(rep.data(), expectedArray);
+    else
+        Euler3212MRP(rep.data(), expectedArray);
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    EXPECT_LT((eulerAngles321ToMrp<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+}
+
+TYPED_TEST(RepresentationTransformTest, mrpToEulerAngles321) {
+    using T = TypeParam;
+    using Vec3 = typename RepresentationTransformTest<T>::Vec3;
+    Vec3 rep(RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator));
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        MRP2Euler321_float(rep.data(), expectedArray);
+    else
+        MRP2Euler321(rep.data(), expectedArray);
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    EXPECT_LT((mrpToEulerAngles321<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+}
+
+TYPED_TEST(RepresentationTransformTest, prvToEulerAngles321) {
+    using T = TypeParam;
+    using Vec3 = typename RepresentationTransformTest<T>::Vec3;
+    Vec3 rep(RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator));
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        PRV2Euler321_float(rep.data(), expectedArray);
+    else
+        PRV2Euler321(rep.data(), expectedArray);
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    EXPECT_LT((prvToEulerAngles321<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+}
+
+TYPED_TEST(RepresentationTransformTest, eulerAngles321ToPrv) {
+    using T = TypeParam;
+    using Vec3 = typename RepresentationTransformTest<T>::Vec3;
+    Vec3 rep(RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator),
+             RepresentationTransformTest<T>::dist(RepresentationTransformTest<T>::generator));
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        Euler3212PRV_float(rep.data(), expectedArray);
+    else
+        Euler3212PRV(rep.data(), expectedArray);
+    Vec3 expected = Eigen::Map<Vec3>(expectedArray);
+    EXPECT_LT((eulerAngles321ToPrv<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+}
+
+// Representation Derivatives Tests
+template <typename T>
+class RepresentationDerivativesTest : public ::testing::Test {
+   public:
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
+
+    std::default_random_engine generator{std::random_device{}()};
+    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    const T accuracy = kinematicsAccuracy<T>();
+
+    Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
+};
+
+TYPED_TEST_SUITE(RepresentationDerivativesTest, FloatingPointTypes);
+
+TYPED_TEST(RepresentationDerivativesTest, dmrp) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 rep = this->randVec3();
+    typename TestFixture::Vec3 rate = this->randVec3() / 10.0;
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        dMRP_float(rep.data(), rate.data(), expectedArray);
+    else
+        dMRP(rep.data(), rate.data(), expectedArray);
+
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
+    EXPECT_LT((dmrp<T>(rep, rate) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(RepresentationDerivativesTest, dmrpToOmega) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 rep = this->randVec3();
+    typename TestFixture::Vec3 rate = this->randVec3() / 10.0;
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        dMRP2Omega_float(rep.data(), rate.data(), expectedArray);
+    else
+        dMRP2Omega(rep.data(), rate.data(), expectedArray);
+
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
+    EXPECT_LT((dmrpToOmega<T>(rep, rate) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(RepresentationDerivativesTest, dprv) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 rep = this->randVec3();
+    typename TestFixture::Vec3 rate = this->randVec3() / 10.0;
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        dPRV_float(rep.data(), rate.data(), expectedArray);
+    else
+        dPRV(rep.data(), rate.data(), expectedArray);
+
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
+    EXPECT_LT((dprv<T>(rep, rate) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(RepresentationDerivativesTest, deuler321) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 rep = this->randVec3();
+    typename TestFixture::Vec3 rate = this->randVec3() / 10.0;
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        dEuler321_float(rep.data(), rate.data(), expectedArray);
+    else
+        dEuler321(rep.data(), rate.data(), expectedArray);
+
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
+    EXPECT_LT((deuler321<T>(rep, rate) - expected).norm(), this->accuracy);
+}
+
+TYPED_TEST(RepresentationDerivativesTest, ddmrp) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 mrp = TestFixture::randVec3();
+    typename TestFixture::Vec3 dmrp = TestFixture::randVec3();
+    typename TestFixture::Vec3 omega = TestFixture::randVec3() / 10.0;
+    typename TestFixture::Vec3 domega = TestFixture::randVec3() / 10.0;
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        ddMRP_float(mrp.data(), dmrp.data(), omega.data(), domega.data(), expectedArray);
+    else
+        ddMRP(mrp.data(), dmrp.data(), omega.data(), domega.data(), expectedArray);
+
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
+    EXPECT_LT((ddmrp<T>(mrp, dmrp, omega, domega) - expected).norm(), TestFixture::accuracy);
+}
+
+TYPED_TEST(RepresentationDerivativesTest, ddmrpToOmega) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 mrp = TestFixture::randVec3();
+    typename TestFixture::Vec3 dmrp = TestFixture::randVec3() / 10.0;
+    typename TestFixture::Vec3 ddmrp = TestFixture::randVec3() / 100.0;
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        ddMRP2dOmega_float(mrp.data(), dmrp.data(), ddmrp.data(), expectedArray);
+    else
+        ddMRP2dOmega(mrp.data(), dmrp.data(), ddmrp.data(), expectedArray);
+
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
+    EXPECT_LT((ddmrpTodOmega<T>(mrp, dmrp, ddmrp) - expected).norm(), TestFixture::accuracy);
+}
+
+TYPED_TEST(RepresentationDerivativesTest, mrpSwitch) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 mrp = TestFixture::randVec3();
+    T value = TestFixture::dist(TestFixture::generator);
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        MRPswitch_float(mrp.data(), value, expectedArray);
+    else
+        MRPswitch(mrp.data(), value, expectedArray);
+
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
+    EXPECT_LT((mrpSwitch<T>(mrp, value) - expected).norm(), TestFixture::accuracy);
+}
+
+TYPED_TEST(RepresentationDerivativesTest, mrpShadow) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 mrp = TestFixture::randVec3();
+
+    T expectedArray[3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        MRPshadow_float(mrp.data(), expectedArray);
+    else
+        MRPshadow(mrp.data(), expectedArray);
+
+    typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
+    EXPECT_LT((mrpShadow<T>(mrp) - expected).norm(), TestFixture::accuracy);
+}
+
+TYPED_TEST(RepresentationDerivativesTest, rotationMatrix) {
+    using T = TypeParam;
+    T expectedArray[3][3] = {};
+
+    for (int axis = 1; axis <= 3; ++axis) {
+        T angle = TestFixture::dist(TestFixture::generator);
+        if constexpr (std::is_same_v<T, float>)
+            Mi_float(angle, axis, expectedArray);
+        else
+            Mi(angle, axis, expectedArray);
+
+        Eigen::Matrix<T, 3, 3> expected = cArray33ToEigenMatrix33(expectedArray);
+        EXPECT_LT((rotationMatrix<T>(angle, axis) - expected).norm(), TestFixture::accuracy);
     }
 }
 
-TEST(RigidBodyKinematics, tildeMatrixTest)
-{
-    Eigen::Vector3d vector;
-    Eigen::Vector3d testVector;
-    Eigen::Matrix3d expected;
-    double expectedArray[3][3];
+TYPED_TEST(RepresentationDerivativesTest, tildeMatrix) {
+    using T = TypeParam;
+    typename TestFixture::Vec3 vec = TestFixture::randVec3();
+    typename TestFixture::Vec3 testVec = TestFixture::randVec3();
 
-    vector << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
-    testVector << angleDistribution(generator), angleDistribution(generator), angleDistribution(generator);
+    T expectedArray[3][3] = {};
+    if constexpr (std::is_same_v<T, float>)
+        tilde_float(vec.data(), expectedArray);
+    else
+        tilde(vec.data(), expectedArray);
 
-    tilde(vector.data(), expectedArray);
-    expected = cArray2EigenMatrix3d(reinterpret_cast<double *>(expectedArray));
-
-    EXPECT_TRUE((tildeMatrix(vector)*vector).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((tildeMatrix(vector)*testVector - vector.cross(testVector)).norm() < kinematicsAccuracy);
-    EXPECT_TRUE((tildeMatrix(vector) - expected).norm() < kinematicsAccuracy);
+    Eigen::Matrix<T, 3, 3> expected = cArray33ToEigenMatrix33(expectedArray);
+    EXPECT_LT((tildeMatrix<T>(vec) * vec).norm(), TestFixture::accuracy);
+    EXPECT_LT((tildeMatrix<T>(vec) * testVec - vec.cross(testVec)).norm(), TestFixture::accuracy);
+    EXPECT_LT((tildeMatrix<T>(vec) - expected).norm(), TestFixture::accuracy);
 }

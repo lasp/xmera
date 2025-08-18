@@ -548,11 +548,23 @@ void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond
 //      foo(MatrixXi)
 //      foo(MatrixXd)
 
+%fragment("eigen_aliases","header") {
+  using Mat3x1d = Eigen::Matrix<double,3,1>;
+  using Mat3x1f = Eigen::Matrix<float ,3,1>;
+}
 EIGEN_MAT_WRAP(Eigen::Vector2i, 157)
 EIGEN_MAT_WRAP(Eigen::Vector2d, 157)
 EIGEN_MAT_WRAP(Eigen::Vector3i, 158)
 EIGEN_MAT_WRAP(Eigen::Vector3d, 159)
 EIGEN_MAT_WRAP(Eigen::Matrix3d, 159)
+EIGEN_MAT_WRAP(Mat3x1d, 159)
+EIGEN_MAT_WRAP(Mat3x1f, 159)
+EIGEN_MAT_WRAP(Eigen::Vector3< double >, 159)
+EIGEN_MAT_WRAP(Eigen::Vector3< float  >, 159)
+EIGEN_MAT_WRAP(Eigen::Vector4< double >, 159)
+EIGEN_MAT_WRAP(Eigen::Vector4< float  >, 159)
+EIGEN_MAT_WRAP(Eigen::Matrix3< double >, 159)
+EIGEN_MAT_WRAP(Eigen::Matrix3< float  >, 159)
 EIGEN_MAT_WRAP(Eigen::MatrixX3i,163)
 EIGEN_MAT_WRAP(Eigen::VectorXi, 163)
 EIGEN_MAT_WRAP(Eigen::VectorXd, 164)
