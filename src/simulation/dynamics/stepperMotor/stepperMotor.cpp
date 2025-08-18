@@ -38,6 +38,7 @@ void StepperMotor::reset(uint64_t callTime) {
     this->actuationComplete = true;
     this->stepComplete = true;
     this->newMsg = false;
+    this->interruptMsg = false;
 
     // Set motor maximum angular acceleration
     this->thetaDDotMax = this->stepAngle / (0.25 * this->stepTime * this->stepTime);  // [rad/s^2]
@@ -56,19 +57,36 @@ void StepperMotor::updateState(uint64_t callTime) {
         motorStepCommandIn = this->motorStepCommandInMsg();
         // Store the number of commanded motor steps when a new message is written
         if (this->previousWrittenTime < this->motorStepCommandInMsg.timeWritten()) {
-            this->newMsg = true;
             this->stepsCommanded = motorStepCommandIn.stepsCommanded;
             this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
-            this->actuationComplete = true;
-            if (this->stepsCommanded != 0) {
+
+            // Update booleans
+            this->newMsg = true;
+            if (this->actuationComplete) {
+                this->interruptMsg = false;
+            } else {
+                this->interruptMsg = true;
+            }
+            if (this->stepsCommanded == 0) {
+                this->actuationComplete = true;
+                this->stepCount = 0;
+            } else {
                 this->actuationComplete = false;
             }
         }
     }
 
     // Actuate the motor only if a current actuation segment is not complete
+    double t = callTime * NANO2SEC;
     if (!(this->actuationComplete)) {
-        this->actuateMotor(callTime * NANO2SEC);
+        // Reset the motor immediately after a new non-interrupting request is received
+        if (this->newMsg && !this->interruptMsg) {
+            this->resetMotor(t);
+        }
+
+        this->actuateMotor(t);
+    } else {
+        this->thetaDDot = 0.0;
     }
 
     // Write the output message
@@ -79,6 +97,11 @@ void StepperMotor::updateState(uint64_t callTime) {
     stepperMotorOut.stepsCommanded = this->stepsCommanded;
     stepperMotorOut.stepCount = this->stepCount;
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
+
+    // Reset the motor for an interrupted request only when a step is complete
+    if (this->interruptMsg && this->stepComplete) {
+        this->resetMotor(t);
+    }
 }
 
 /*! This method is used to simulate the stepper motor actuation in time.
@@ -86,11 +109,6 @@ void StepperMotor::updateState(uint64_t callTime) {
  @param t [s] Time the method is called
 */
 void StepperMotor::actuateMotor(double t) {
-    // Reset the motor states when the current request is complete and a new request is received
-    if (this->newMsg && this->stepComplete) {
-        this->resetMotor(t);
-    }
-
     // Update the motor step parameters when a step is completed
     if (this->stepComplete) {
         this->updateStepParameters();
@@ -115,12 +133,14 @@ void StepperMotor::resetMotor(double t) {
     this->thetaInit = this->theta;
     this->tInit = t;
     this->newMsg = false;
+    this->interruptMsg = false;
 }
 
 /*! This method updates the step parameters after a step is completed.
  @return void
 */
 void StepperMotor::updateStepParameters() {
+    this->stepComplete = false;
     this->tf = this->tInit + this->stepTime;
     this->ts = this->tInit + this->stepTime / 2;
     this->intermediateThetaInit = this->thetaInit + (this->stepCount * this->stepAngle);
@@ -147,14 +167,13 @@ bool StepperMotor::isInStepFirstHalf(double t) { return (t < this->ts && std::ab
  @param t [s] Time the method is called
 */
 void StepperMotor::computeStepFirstHalf(double t) {
-    if (this->stepsCommanded > 0 && !this->newMsg) {
+    if (this->intermediateThetaRef > this->intermediateThetaInit) {
         this->thetaDDot = this->thetaDDotMax;
-    } else if (!this->newMsg) {
+    } else {
         this->thetaDDot = -this->thetaDDotMax;
     }
     this->thetaDot = this->thetaDDot * (t - this->tInit);
     this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->intermediateThetaInit;
-    this->stepComplete = false;
 }
 
 /*! This method determines if the motor is in the second half of a step.
@@ -170,14 +189,13 @@ bool StepperMotor::isInStepSecondHalf(double t) {
  @param t [s] Time the method is called
 */
 void StepperMotor::computeStepSecondHalf(double t) {
-    if (this->stepsCommanded > 0 && !this->newMsg) {
+    if (this->intermediateThetaRef > this->intermediateThetaInit) {
         this->thetaDDot = -this->thetaDDotMax;
-    } else if (!this->newMsg) {
+    } else {
         this->thetaDDot = this->thetaDDotMax;
     }
     this->thetaDot = this->thetaDDot * (t - this->tInit) - this->thetaDDot * (this->tf - this->tInit);
     this->theta = this->b * (t - this->tf) * (t - this->tf) + this->intermediateThetaRef;
-    this->stepComplete = false;
 }
 
 /*! This method computes the motor states when a step is complete.
@@ -186,28 +204,20 @@ void StepperMotor::computeStepSecondHalf(double t) {
 */
 void StepperMotor::computeStepComplete(double t) {
     this->stepComplete = true;
-    this->thetaDDot = 0.0;
     this->thetaDot = 0.0;
     this->theta = this->intermediateThetaRef;
     this->tInit = t;
 
     // Update the motor step count
-    if (!this->newMsg) {
-        if (this->stepsCommanded > 0) {
-            this->stepCount++;
-        } else {
-            this->stepCount--;
-        }
-        // Update the actuationComplete boolean variable only when motor actuation is complete
-        if (this->stepCount == this->stepsCommanded) {
-            this->actuationComplete = true;
-        }
+    if (this->intermediateThetaRef > this->intermediateThetaInit) {
+        this->stepCount++;
     } else {
-        if (this->intermediateThetaRef > this->intermediateThetaInit) {
-            this->stepCount++;
-        } else {
-            this->stepCount--;
-        }
+        this->stepCount--;
+    }
+
+    // Update the actuationComplete boolean variable only when motor actuation is complete
+    if ((this->stepCount == this->stepsCommanded) && !this->interruptMsg) {
+        this->actuationComplete = true;
     }
 }
 
