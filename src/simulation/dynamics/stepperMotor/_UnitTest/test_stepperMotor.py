@@ -91,7 +91,7 @@ def test_stepper_motor_nominal(show_plots,
 
     # Run the simulation
     test_sim.InitializeSimulation()
-    sim_time_1 = step_time * np.abs(steps_commanded_1)  # [s]
+    sim_time_1 = step_time * abs(steps_commanded_1)  # [s]
     sim_time_extra = 5.0  # [s]
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time_1 + sim_time_extra))
     test_sim.ExecuteSimulation()
@@ -104,7 +104,7 @@ def test_stepper_motor_nominal(show_plots,
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
     # Run the simulation
-    sim_time_2 = step_time * np.abs(steps_commanded_2) + 2 * test_process_rate_sec  # [s]
+    sim_time_2 = step_time * abs(steps_commanded_2) + 2 * test_process_rate_sec  # [s]
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time_1 + sim_time_extra + sim_time_2))
     test_sim.ExecuteSimulation()
 
