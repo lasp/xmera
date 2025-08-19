@@ -26,12 +26,10 @@ static Eigen::Matrix3d computeTotalCobCovariance(const Eigen::Matrix3d& covarNav
                                                  const Eigen::Matrix3d& dcm_CB,
                                                  const Eigen::Matrix3d& cameraCalibrationMatrix);
 
-CobConverter::CobConverter(PhaseAngleCorrectionMethod method, double radiusObject, double objectUncertaintyRadius) {
+CobConverter::CobConverter(PhaseAngleCorrectionMethod method, double radiusObject) {
     this->phaseAngleCorrectionMethod = method;
     assert(radiusObject > 0);
     this->objectRadius = radiusObject;
-    assert(objectUncertaintyRadius > 0);
-    this->objectRadiusUncertainty = objectUncertaintyRadius;
 }
 
 CobConverter::~CobConverter() = default;
@@ -365,7 +363,7 @@ double CobConverter::getRadius() const { return this->objectRadius; }
     @return void
     */
 void CobConverter::setRadiusUncertainty(const double radiusUncertainty) {
-    assert(radiusUncertainty > 0);
+    assert(radiusUncertainty >= 0);
     this->objectRadiusUncertainty = radiusUncertainty;
 }
 
