@@ -168,7 +168,8 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     R_object_uncer = 8 * 1e3
     att_sigma = 0.001
     covar_att_B = np.diag([att_sigma**2, (0.9*att_sigma)**2, (0.95*att_sigma)**2])
-    module = cobConverter.CobConverter(method, R_object, R_object_uncer)
+    module = cobConverter.CobConverter(method, R_object)
+    module.setRadiusUncertainty(R_object_uncer)
     module.setAttitudeCovariance(covar_att_B)
     module.setNumStandardDeviations(3)
     module.setStandardDeviation(100)
@@ -320,7 +321,7 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
 
     # make sure module output data is correct
     tolerance = 1e-9  #atol=1e-9 due to floating point precision limits
-    np.testing.assert_((np.linalg.norm(covar_COM_C_true) >= np.linalg.norm(covar_COB_C_true)), "Some elements in A are less than in B")
+    np.testing.assert_((np.linalg.norm(covar_COM_C_true) + tolerance >= np.linalg.norm(covar_COB_C_true)), "Some elements in A are less than in B")
 
     np.testing.assert_allclose(rhat_COB_N,
                                rhat_COB_N_true,
