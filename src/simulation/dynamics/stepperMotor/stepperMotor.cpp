@@ -80,10 +80,9 @@ void StepperMotor::updateState(uint64_t callTime) {
     double t = callTime * NANO2SEC;
     if (!(this->actuationComplete)) {
         // Reset the motor immediately after a new non-interrupting request is received
-        if (this->newMsg && !this->interruptMsg) {
+        if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) {
             this->resetMotor(t);
         }
-
         this->actuateMotor(t);
     } else {
         this->thetaDDot = 0.0;
