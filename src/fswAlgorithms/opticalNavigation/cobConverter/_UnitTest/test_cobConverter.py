@@ -46,7 +46,7 @@ def mapState(state, input_camera):
 
 
 def mapCovar(pixels, input_camera, norm_COB_vector):
-    """Secondary method to map the covariance in pixel space to position"""
+    """Secondary method to map the cob covariance in pixel space to position"""
     K = compute_camera_calibration_matrix(input_camera)
     d_x = K[0, 0]
     d_y = K[1, 1]
@@ -61,6 +61,51 @@ def mapCovar(pixels, input_camera, norm_COB_vector):
     covar[2, 2] = 1
 
     return scale_factor * covar
+
+def mapComCovar(pixels, input_camera,norm_COB_vector, r_BdyZero_N, R_object, alpha,vehSunPntN, R_object_uncer, phi, position_covar):
+    """Secondary method to map the com covariance in pixel space to position"""
+
+    resX = input_camera.resolution[0]
+    resY = input_camera.resolution[1]
+    pX = 2. * np.tan(input_camera.fieldOfView[0] / 2.0)
+    pY = 2. * np.tan(input_camera.fieldOfView[0] * resY / resX / 2.0)
+    dX = resX / pX
+    dY = resY / pY
+    X = 1 / dX
+    Y = 1 / dY
+    ifov_x = input_camera.fieldOfView[0]/ dX * pX
+    ifov_y = input_camera.fieldOfView[0]/ dY * pY
+
+    scale_factor = np.sqrt(pixels / (4 * np.pi)) / (norm_COB_vector ** 2)
+
+    position = r_BdyZero_N
+    constants_deltaR = (4*R_object/
+                                (3*np.pi*np.linalg.norm(position))*(1 - np.cos(alpha))
+                                /(1 + (4*R_object/(3*np.pi*np.linalg.norm(position))
+                                *(1 - np.cos(alpha)))**2))
+
+    r_hat = (position / np.linalg.norm(position)).reshape(3,)
+    deltaBinary_delta_r = (-r_hat/np.linalg.norm(position)*constants_deltaR)
+
+    deltaBinary_delta_R = (constants_deltaR/R_object)
+
+    deltaBinary_deltaAlpha = ((4*R_object
+                                    /(3*np.pi*np.linalg.norm(position))
+                                    /((1 + (4*R_object/(3*np.pi*np.linalg.norm(position))
+                                    *(1 - np.cos(alpha)))**2))))
+
+    deltaAlpha_delta_R = np.dot(vehSunPntN/ (np.linalg.norm(position)), np.eye(3) - np.outer(r_hat, r_hat))
+
+    deltaBinary_r = deltaBinary_delta_r + np.dot(deltaBinary_deltaAlpha,deltaAlpha_delta_R)
+    total_deltaBinary_partials = np.dot(np.dot(deltaBinary_r, position_covar), deltaBinary_r.T)
+    sigma_beta_squared  = total_deltaBinary_partials + np.dot(deltaBinary_delta_R **2, R_object_uncer ** 2)
+
+    covar_com = np.zeros([3, 3])
+    covar_com[0, 0] = X ** 2 + ((sigma_beta_squared/ifov_x**2) * np.cos(phi))
+    covar_com[1, 1] = Y ** 2 + ((sigma_beta_squared/ifov_y**2) * np.sin(phi))
+    covar_com[2, 2] = 1
+
+    return scale_factor * covar_com
 
 
 def compute_camera_calibration_matrix(input_camera):
@@ -120,9 +165,10 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
     R_object = 25. * 1e3
+    R_object_uncer = 8 * 1e3
     att_sigma = 0.001
     covar_att_B = np.diag([att_sigma**2, (0.9*att_sigma)**2, (0.95*att_sigma)**2])
-    module = cobConverter.CobConverter(method, R_object)
+    module = cobConverter.CobConverter(method, R_object, R_object_uncer)
     module.setAttitudeCovariance(covar_att_B)
     module.setNumStandardDeviations(3)
     module.setStandardDeviation(100)
@@ -168,13 +214,15 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     module.opnavCOBInMsg.subscribeTo(cobInMsg)
 
     # Set filter message
+    full_covariance = np.diag([50e3, 50e3, 50e3, 0.01, 0.01, 0.01])
     inputFilter.numberOfStates = 6
     inputFilter.state = np.array([r_BdyZero_N, v_BdyZero_N]).flatten()
-    inputFilter.covar = np.diag([50e3, 50e3, 50e3, 0.01, 0.01, 0.01]).flatten()
+    inputFilter.covar = full_covariance.flatten()
+    position_covar = full_covariance[:3,:3]
     filterInMsg = messaging.FilterMsg().write(inputFilter)
     module.opnavFilterInMsg.subscribeTo(filterInMsg)
-
     vehSunPntN = np.array(sunDirection) / np.linalg.norm(np.array(sunDirection))  # unit vector from SC to Sun
+
     # Set body attitude relative to inertial
     inputAtt.sigma_BN = sigma_BN
     inputAtt.vehSunPntBdy = dcm_BN @ vehSunPntN
@@ -215,22 +263,6 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     dcm_BN = rbk.MRP2C(inputAtt.sigma_BN)
     dcm_NC = np.dot(dcm_CB, dcm_BN).T
 
-    # Center of Brightness Unit Vector
-    [rhat_COB_C_true, norm_COB_vector] = mapState(cob_true, inputCamera)
-    covar_COB_C_true = mapCovar(num_pixels, inputCamera, norm_COB_vector)
-    rhat_COB_N_true = np.dot(dcm_NC, rhat_COB_C_true) * goodPixels  # multiple by validity to get zero vector if bad
-    timeTag_true_ns = inputCob.timeTag * goodPixels
-    timeTag_true = timeTag_true_ns * macros.NANO2SEC
-
-    covar_COB_B_true = np.dot(dcm_CB.T, np.dot(covar_COB_C_true, dcm_CB))
-    covar_B_true = covar_COB_B_true + covar_att_B
-    covar_N_true = np.dot(dcm_BN.T, np.dot(covar_B_true, dcm_BN)).flatten() * goodPixels
-
-    if goodPixels and cobErrorCenter < acceptedCobError:
-        valid_COB_true = True
-    else:
-        valid_COB_true = False
-
     # Center of Mass Message and Unit Vector
     alpha = np.arccos(np.dot(r_BdyZero_N.T / np.linalg.norm(r_BdyZero_N), vehSunPntN))  # phase angle
     gamma = phase_angle_correction(alpha, method)  # COB/COM offset factor
@@ -244,6 +276,31 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     com_true[0] = cob_true[0] - gamma * Rc * np.cos(phi) * goodPixels
     com_true[1] = cob_true[1] - gamma * Rc * np.sin(phi) * goodPixels
     [rhat_COM_C_true, norm_COM_vector] = mapState(com_true, inputCamera)
+
+# Center of Brightness Unit Vector
+    [rhat_COB_C_true, norm_COB_vector] = mapState(cob_true, inputCamera)
+    covar_COB_C_true = mapCovar(num_pixels, inputCamera, norm_COB_vector)
+    covar_COM_C_true = mapComCovar(num_pixels, inputCamera,norm_COB_vector,r_BdyZero_N, R_object, alpha,vehSunPntN, R_object_uncer, phi,position_covar)
+    rhat_COB_N_true = np.dot(dcm_NC, rhat_COB_C_true) * goodPixels  # multiple by validity to get zero vector if bad
+    timeTag_true_ns = inputCob.timeTag * goodPixels
+    timeTag_true = timeTag_true_ns * macros.NANO2SEC
+
+    covar_COB_B_true = np.dot(dcm_CB.T, np.dot(covar_COB_C_true, dcm_CB))
+    covar_COM_B_true = np.dot(dcm_CB.T, np.dot(covar_COM_C_true, dcm_CB))
+
+    if method == binary:
+        covar_B_true = covar_att_B + covar_COM_B_true
+    else:
+        covar_B_true = covar_att_B + covar_COB_B_true
+
+    covar_N_true = np.dot(dcm_BN.T, np.dot(covar_B_true, dcm_BN)).flatten() * goodPixels
+
+    if goodPixels and cobErrorCenter < acceptedCobError:
+        valid_COB_true = True
+    else:
+        valid_COB_true = False
+
+    # Center of Mass Message and Unit Vector
     if goodPixels and (method == binary or method == lambertian):
         valid_COM_true = True
         rhat_COM_N_true = np.dot(dcm_NC, rhat_COM_C_true)
@@ -262,7 +319,9 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     rhat_COM_N = dataLogUnitVecCOM.rhat_BN_N[0]
 
     # make sure module output data is correct
-    tolerance = 1e-10
+    tolerance = 1e-9  #atol=1e-9 due to floating point precision limits
+    np.testing.assert_((np.linalg.norm(covar_COM_C_true) >= np.linalg.norm(covar_COB_C_true)), "Some elements in A are less than in B")
+
     np.testing.assert_allclose(rhat_COB_N,
                                rhat_COB_N_true,
                                rtol=0,

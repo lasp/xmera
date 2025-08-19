@@ -26,10 +26,12 @@ static Eigen::Matrix3d computeTotalCobCovariance(const Eigen::Matrix3d& covarNav
                                                  const Eigen::Matrix3d& dcm_CB,
                                                  const Eigen::Matrix3d& cameraCalibrationMatrix);
 
-CobConverter::CobConverter(PhaseAngleCorrectionMethod method, double radiusObject) {
-    phaseAngleCorrectionMethod = method;
+CobConverter::CobConverter(PhaseAngleCorrectionMethod method, double radiusObject, double objectUncertaintyRadius) {
+    this->phaseAngleCorrectionMethod = method;
     assert(radiusObject > 0);
-    objectRadius = radiusObject;
+    this->objectRadius = radiusObject;
+    assert(objectUncertaintyRadius > 0);
+    this->objectRadiusUncertainty = objectUncertaintyRadius;
 }
 
 CobConverter::~CobConverter() = default;
@@ -97,6 +99,9 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
         double vp = resolutionY / 2;
         double X = 1 / dX;
         double Y = 1 / dY;
+        double ifov_x = fieldOfView / dX * pX;
+        double ifov_y = fieldOfView / dY * pY;
+
         /*! - build camera calibration matrix K */
         Eigen::Matrix3d cameraCalibrationMatrix;
         cameraCalibrationMatrix << dX, alpha, up, 0., dY, vp, 0., 0., 1.;
@@ -171,17 +176,64 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
         covarCob_C *= scaleFactor;
         Eigen::Matrix3d covarCob_B = dcm_CB.transpose() * covarCob_C * dcm_CB;
         /*! - add attitude error covariance in B frame to get total covariance of unit vector measurements */
-        Eigen::Matrix3d covar_B = covarCob_B + this->covarAtt_BN_B;
+        // Eigen::Matrix3d covar_B = covarCob_B + this->covarAtt_BN_B;
+
+        /*! Compute partials of the phase angle and Geometric model corrrection with respect to the flyby and asteroid
+         * states */
+        FilterMsgPayload filterMsgBuffer = this->opnavFilterInMsg();
+        Eigen::Matrix3d covar_B;
+        if (phaseAngleCorrectionMethod == PhaseAngleCorrectionMethod::Binary) {
+            Eigen::Vector3d position = cArray2EigenVector3d(filterMsgBuffer.state);
+            double constants_deltaR =
+                (4 * this->objectRadius / (3 * M_PI * position.norm()) * (1 - cos(alphaPA)) /
+                 (1 + pow(4.0 * this->objectRadius / (3.0 * M_PI * position.norm()) * (1.0 - cos(alphaPA)), 2.0)));
+
+            Eigen::RowVector3d deltaBinary_delta_r = (-position.normalized() / position.norm() * constants_deltaR);
+
+            double deltaBinary_delta_R = (constants_deltaR / this->objectRadius);
+
+            double deltaBinary_deltaAlpha =
+                (4 * this->objectRadius / (3 * M_PI * position.norm()) /
+                 (1 + pow(4.0 * this->objectRadius / (3.0 * M_PI * position.norm()) * (1.0 - cos(alphaPA)), 2.0)));
+
+            Eigen::Matrix<double, 3, 3> I = Eigen::Matrix3d::Identity();
+            Eigen::RowVector3d sr = shat_N / position.norm();
+            Eigen::Matrix<double, 3, 3> rr = I - (position.normalized() * position.normalized().transpose());
+            Eigen::RowVector3d deltaAlpha_delta_R = sr * rr;
+
+            /*! Compute Com uncertainty direction */
+            Eigen::Matrix<double, 6, 6> Covariance = cArray2EigenMatrixXd(filterMsgBuffer.covar, 6, 6);
+            Eigen::Matrix<double, 3, 3> positionCovariance = Covariance.topLeftCorner(3, 3);
+
+            Eigen::RowVector3d deltaBinary_r = deltaBinary_delta_r + (deltaBinary_deltaAlpha * deltaAlpha_delta_R);
+
+            double total_deltaBinary_partials = deltaBinary_r * positionCovariance * deltaBinary_r.transpose();
+            double term2 = pow(deltaBinary_delta_R, 2) * pow(this->objectRadiusUncertainty, 2);
+            double sigma_beta_squared = total_deltaBinary_partials + term2;
+
+            /*! - define diagonal terms of the COM covariance */
+            Eigen::Matrix3d covarCom_C = Eigen::Matrix3d::Zero();
+            covarCom_C.setZero();
+            covarCom_C(0, 0) = pow(X, 2) + (sigma_beta_squared / pow(ifov_x, 2)) * cos(phi);
+            covarCom_C(1, 1) = pow(Y, 2) + (sigma_beta_squared / pow(ifov_y, 2)) * sin(phi);
+            covarCom_C(2, 2) = 1;
+            covarCom_C *= scaleFactor;
+            Eigen::Matrix3d covarCom_B = dcm_CB.transpose() * covarCom_C * dcm_CB;
+
+            /*! - add com covariance in B frame to get total covariance */
+            covar_B = this->covarAtt_BN_B + covarCom_B;
+
+        } else {
+            covar_B = covarCob_B + this->covarAtt_BN_B;
+        }
+
         /*! - rotate total covariance into all remaining frames */
         Eigen::Matrix3d covar_N = dcm_BN.transpose() * covar_B * dcm_BN;
         Eigen::Matrix3d covar_C = dcm_CB.transpose() * covar_B * dcm_CB;
-
         Eigen::Matrix3d dcm_CN = dcm_NC.transpose();
 
         bool goodOutlierCheck = true;
         if (this->performOutlierDetection) {
-            FilterMsgPayload filterMsgBuffer = this->opnavFilterInMsg();
-
             int numberOfStates = filterMsgBuffer.numberOfStates;
             Eigen::VectorXd filterState = cArray2EigenMatrixXd(filterMsgBuffer.state, numberOfStates, 1);
             Eigen::Vector3d rNav_BN_N = filterState.segment(0, 3);
@@ -307,6 +359,20 @@ void CobConverter::setRadius(const double radius) {
     @return double radius [m]
     */
 double CobConverter::getRadius() const { return this->objectRadius; }
+
+/*! Set the object radius uncertainty
+    @param double radiusUncertaintyInput [m]
+    @return void
+    */
+void CobConverter::setRadiusUncertainty(const double radiusUncertainty) {
+    assert(radiusUncertainty > 0);
+    this->objectRadiusUncertainty = radiusUncertainty;
+}
+
+/*! Get the object radius uncertainty
+    @return double radiusUncertaintyInput [m]
+    */
+double CobConverter::getRadiusUncertainty() const { return this->objectRadiusUncertainty; }
 
 /*! Set the attitude error covariance matrix in body frame B, for unit vector measurements
     @param cov_att_BN_B
