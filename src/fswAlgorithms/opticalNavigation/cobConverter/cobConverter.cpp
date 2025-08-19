@@ -363,7 +363,7 @@ double CobConverter::getRadius() const { return this->objectRadius; }
     @return void
     */
 void CobConverter::setRadiusUncertainty(const double radiusUncertainty) {
-    assert(radiusUncertainty > 0);
+    assert(radiusUncertainty >= 0);
     this->objectRadiusUncertainty = radiusUncertainty;
 }
 
