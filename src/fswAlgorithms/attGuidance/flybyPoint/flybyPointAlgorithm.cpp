@@ -135,8 +135,7 @@ void FlybyPointAlgorithm::computeRN(const Eigen::Vector3d &r_BN_N, const Eigen::
 std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d> FlybyPointAlgorithm::computeGuidanceSolution() const {
     /*! compute DCM (RtR0) of reference frame from last read time */
     double theta = std::atan(std::tan(this->gamma0) + this->f0 / std::cos(this->gamma0) * this->dt) - this->gamma0;
-    Eigen::Vector3d PRV_theta;
-    PRV_theta << 0, 0, theta;
+    Eigen::Vector3d PRV_theta{0, 0, theta};
     Eigen::Matrix3d RtR0 = prvToDcm(PRV_theta);
 
     /*! compute DCM of reference frame at time t_0 + dt with respect to inertial frame */
@@ -147,17 +146,14 @@ std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d> FlybyPointAlgorith
     double thetaDot = this->f0 * cos(this->gamma0) / den;
     double thetaDDot =
         -2 * this->f0 * this->f0 * cos(this->gamma0) * (this->f0 * this->dt + sin(this->gamma0)) / (den * den);
-    Eigen::Vector3d omega_RN_R;
-    omega_RN_R << 0, 0, thetaDot;
-    Eigen::Vector3d omegaDot_RN_R;
-    omegaDot_RN_R << 0, 0, thetaDDot;
+    Eigen::Vector3d omega_RN_R{0, 0, thetaDot};
+    Eigen::Vector3d omegaDot_RN_R{0, 0, thetaDDot};
 
     /*! populate attRefOut with reference frame information */
     Eigen::Vector3d sigma_RN = dcmToMrp(RtN);
 
     if (this->signOfOrbitNormalFrameVector == -1) {
-        Eigen::Vector3d halfRotationX;
-        halfRotationX << 1, 0, 0;
+        Eigen::Vector3d halfRotationX{1, 0, 0};
         sigma_RN = addMrp(sigma_RN, halfRotationX);
     }
     Eigen::Vector3d omega_RN_N = RtN.transpose() * omega_RN_R;
