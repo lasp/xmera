@@ -40,12 +40,14 @@ def test_stepper_motor_nominal(show_plots,
     r"""
     **Verification Test Description**
 
-    This nominal unit test ensures that the stepper motor simulation module correctly actuates the stepper motor from
-    an initial angle to a final reference angle, given an input integer number of commanded steps. The module outputs
-    the motor scalar states (angle, angle rate, and acceleration) and the motor step count as a function of time.
-    The motor actuation is simulated using a bang-bang acceleration profile. The motor acceleration is calculated in
-    the module using the given motor step angle and step time constants. The capability for the motor to take both
-    positive and negative steps is checked in this test by commanding both positive and negative steps to the module.
+    This nominal unit test ensures that the stepper motor simulation module correctly actuates the motor from an
+    initial angle to a final reference angle, given an input integer number of commanded steps. The module outputs
+    the motor scalar states (angle, angle rate, acceleration), the motor step count, and steps commanded as a function
+    of time. The motor actuation is profiled using a bang-bang acceleration profile. The motor acceleration is
+    calculated in the module using the given motor step angle and step time constants. The capability for the motor to
+    actuate both forwards and backwards is checked by commanding both positive and negative steps to the module.
+    Zero steps commanded are also included in the test to check that the module correctly updates the motor states for
+    a zero command message.
 
     **Test Parameters**
 
@@ -58,9 +60,8 @@ def test_stepper_motor_nominal(show_plots,
 
     **Description of Variables Being Tested**
 
-    This unit test checks that the final motor angle from the simulation matches the reference motor angle computed
-    in this script. The test also checks that the final motor step count matches the numer of steps commanded to the
-    module. The motor angle rate is also checked to be zero at the end of the simulation.
+     The motor angle, rate, acceleration, and step count are checked to converge to the reference values at the end of
+     each simulation chunk.
 
     """
 
@@ -180,12 +181,14 @@ def test_stepper_motor_interrupt(show_plots, steps_commanded_1, steps_commanded_
     r"""
     **Verification Test Description**
 
-    This nominal unit test ensures that the stepper motor simulation module correctly actuates the stepper motor from
-    an initial angle to a final reference angle, given an input integer number of commanded steps. The module outputs
-    the motor scalar states (angle, angle rate, and acceleration) and the motor step count as a function of time.
-    The motor actuation is simulated using a bang-bang acceleration profile. The motor acceleration is calculated in
-    the module using the given motor step angle and step time constants. The capability for the motor to take both
-    positive and negative steps is checked in this test by commanding both positive and negative steps to the module.
+    The interruption unit test ensures that the module correctly handles reference messages that interrupt an
+    unfinished motor actuation sequence. The initial motor angle, motor step angle, and step time are not varied in the
+    interruption test because these parameters were already varied in the nominal test. The interruption test interrupts
+    the first command sequence after half of the commanded motor steps are completed. The time the second command
+    message is written is determined using an interruption factor to specify what fraction of the next step is
+    completed before the second command message is written. Interruption factors of 0 and 1 are also included to
+    ensure the module correctly resets the motor states when the interruption falls precisely when a step is completed.
+    A rest period of 5 seconds is added to the end of the simulation for clarity when viewing the generated plots.
 
     **Test Parameters**
 
@@ -196,9 +199,8 @@ def test_stepper_motor_interrupt(show_plots, steps_commanded_1, steps_commanded_
 
     **Description of Variables Being Tested**
 
-    This unit test checks that the final motor angle from the simulation matches the reference motor angle computed
-    in this script. The test also checks that the final motor step count matches the numer of steps commanded to the
-    module. The motor angle rate is also checked to be zero at the end of the simulation.
+    The motor angle, rate, acceleration, and step count are checked to converge to the reference values at the end of
+    each simulation chunk.
 
     """
 
