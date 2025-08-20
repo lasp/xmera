@@ -105,8 +105,11 @@ def test_stepper_motor_nominal(show_plots,
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
     # Run the simulation
-    sim_time_2 = step_time * abs(steps_commanded_2) + 2 * test_process_rate_sec  # [s]
-    test_sim.ConfigureStopTime(macros.sec2nano(sim_time_1 + sim_time_extra + sim_time_2))
+    sim_time_2 = step_time * abs(steps_commanded_2)  # [s]
+    test_sim.ConfigureStopTime(macros.sec2nano(sim_time_1
+                                               + sim_time_extra
+                                               + sim_time_2
+                                               + sim_time_extra))
     test_sim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
@@ -150,7 +153,7 @@ def test_stepper_motor_nominal(show_plots,
                                verbose=True)
 
     # Check the motor states converge to the reference values for the second actuation
-    motor_theta_final_index_2 = -1
+    motor_theta_final_index_2 = int(round((sim_time_1 + sim_time_extra + sim_time_2) / test_process_rate_sec))
     motor_theta_2_ref_true = motor_theta_1_ref_true + (steps_commanded_2 * step_angle)
     np.testing.assert_allclose(theta[motor_theta_final_index_2],
                                macros.R2D * motor_theta_2_ref_true,
@@ -160,11 +163,11 @@ def test_stepper_motor_nominal(show_plots,
                                0.0,
                                atol=accuracy,
                                verbose=True)
-    np.testing.assert_allclose(theta_ddot[motor_theta_final_index_2],
+    np.testing.assert_allclose(theta_ddot[motor_theta_final_index_2 + 1],
                                0.0,
                                atol=accuracy,
                                verbose=True)
-    np.testing.assert_allclose(motor_step_count[motor_theta_final_index_2],
+    np.testing.assert_allclose(motor_step_count[motor_theta_final_index_2 + 1],
                                steps_commanded_2,
                                atol=accuracy,
                                verbose=True)
@@ -244,7 +247,7 @@ def test_stepper_motor_interrupt(show_plots, steps_commanded_1, steps_commanded_
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
     # Run the second simulation chunk
-    sim_time_2 = step_time * abs(steps_commanded_2) + 2 * test_time_step_sec  # [s]
+    sim_time_2 = step_time * abs(steps_commanded_2)  # [s]
     sim_time_extra = 5.0  # [s]
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time_interrupt_1 + sim_time_2 + sim_time_extra))
     test_sim.ExecuteSimulation()
@@ -291,7 +294,7 @@ def test_stepper_motor_interrupt(show_plots, steps_commanded_1, steps_commanded_
                                verbose=True)
 
     # Check the motor states converge to the reference values for the second actuation
-    motor_theta_final_2_index = -1
+    motor_theta_final_2_index = int(round((abs(step_time * steps_taken_1) + sim_time_2) / test_time_step_sec))
     np.testing.assert_allclose(theta[motor_theta_final_2_index],
                                macros.R2D * motor_theta_ref_2_true,
                                atol=accuracy,
@@ -300,7 +303,7 @@ def test_stepper_motor_interrupt(show_plots, steps_commanded_1, steps_commanded_
                                0.0,
                                atol=accuracy,
                                verbose=True)
-    np.testing.assert_allclose(theta_ddot[motor_theta_final_2_index],
+    np.testing.assert_allclose(theta_ddot[motor_theta_final_2_index + 1],
                                0.0,
                                atol=accuracy,
                                verbose=True)
