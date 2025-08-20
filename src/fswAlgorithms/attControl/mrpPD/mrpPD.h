@@ -52,7 +52,7 @@ class MrpPD : public SysModel {
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< Commanded torque output message
 
    private:
-    MrpPDAlgorithm algorithm;  //!< Algorithm for mrpPD control logic (BSK-agnostic)
+    MrpPDAlgorithm algorithm{};  //!< Algorithm for mrpPD control logic (BSK-agnostic)
 };
 
 #endif
