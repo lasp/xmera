@@ -47,7 +47,7 @@ class StepperMotor : public SysModel {
 
    private:
     void actuateMotor(double t);  //!< Method used to simulate the stepper motor actuation in time.
-    void resetMotor(double t);    //!< Method used to reset the motor states when the current request is complete and a
+    void resetMotor();            //!< Method used to reset the motor states when the current request is complete and a
                                   //!< new request is received
     void updateStepParameters();  //!< Method used to update the step parameters after a step is completed
     bool isInStepFirstHalf(double t);  //!< Method used to determine if the motor is in the first half of a step

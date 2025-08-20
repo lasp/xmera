@@ -81,10 +81,11 @@ void StepperMotor::updateState(uint64_t callTime) {
     if (!(this->actuationComplete)) {
         // Reset the motor immediately after a new non-interrupting request is received
         if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) {
-            this->resetMotor(t);
+            this->resetMotor();
         }
         this->actuateMotor(t);
     } else {
+        this->tInit = t;
         this->thetaDDot = 0.0;
     }
 
@@ -96,11 +97,6 @@ void StepperMotor::updateState(uint64_t callTime) {
     stepperMotorOut.stepsCommanded = this->stepsCommanded;
     stepperMotorOut.stepCount = this->stepCount;
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
-
-    // Reset the motor for an interrupted request only when a step is complete
-    if (this->interruptMsg && this->stepComplete) {
-        this->resetMotor(t);
-    }
 }
 
 /*! This method is used to simulate the stepper motor actuation in time.
@@ -125,12 +121,10 @@ void StepperMotor::actuateMotor(double t) {
 
 /*! This method resets the motor states when the current request is complete and a new request is received.
  @return void
- @param t [s] Time the method is called
 */
-void StepperMotor::resetMotor(double t) {
+void StepperMotor::resetMotor() {
     this->stepCount = 0;
     this->thetaInit = this->theta;
-    this->tInit = t;
     this->newMsg = false;
     this->interruptMsg = false;
 }
