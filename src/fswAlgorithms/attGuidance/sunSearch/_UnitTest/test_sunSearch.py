@@ -64,7 +64,7 @@ def computeKinematicProperties(theta_R, T_R, u_M, I, omega_M):
 @pytest.mark.parametrize("axis3", [1, 2, 3])
 @pytest.mark.parametrize("omega_BN_B", [[0, 0, 0], [0.01, -0.02, 0.03]])
 @pytest.mark.parametrize("accuracy", [1e-12])
-def test_rateDamp(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
+def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
@@ -184,4 +184,4 @@ def test_rateDamp(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
 
 
 if __name__ == "__main__":
-    test_rateDamp(False, 1, 2, 3, [0, 0, 0], 1e-12)
+    test_sunSearch(False, 1, 2, 3, [0, 0, 0], 1e-12)
