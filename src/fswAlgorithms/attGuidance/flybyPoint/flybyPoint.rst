@@ -97,3 +97,14 @@ The module is configurable with the following parameters:
    * - ``flybyModel``
      - 0
      - 0 for rectilinear flyby model, 1 for Clohessy-Wiltshire model
+
+Unit Test
+----------
+This unit test script tests the correctness of the reference attitude computed by :ref:`flybyPoint` in a scenario where the rectilinear flyby assumption is valid.
+
+In this test, there is no gravity body, and the spacecraft is put onto a rectilinear trajectory about the origin.
+With no gravity, the linear momentum of the spacecraft does not change, which means that the spacecraft proceeds along a rectilinear trajectory. The input message to the :ref:`flybyPoint` is the relative position and velocity of the spacecraft with respect to the body/asteroid, which coincides with the origin and is assumed to be static.
+Correctness is tested assessing whether the computed hill frame moves according to the motion of the spacecraft.
+
+The reference attitude :math:`\sigma_\mathcal{R/N}`, reference angular rates :math:`\omega_\mathcal{R/N}` and angular accelerations :math:`\dot{\omega}_\mathcal{R/N}` are tested. These are compared to the analytical results expected from the rectilinear motion described in the documentation of :ref:`flybyPoint`.
+The reference attitude is mapped to the corresponding reference frame, and each axis of the reference frame is tested for correctness. The angular rate and acceleration vectors are tested against the analytical result, expressed in R-frame coordinates.
