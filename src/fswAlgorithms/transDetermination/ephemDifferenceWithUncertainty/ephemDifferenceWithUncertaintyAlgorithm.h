@@ -36,15 +36,15 @@ class EphemDifferenceWithUncertaintyAlgorithm {
     EphemDifferenceWithUncertaintyAlgorithm() = default;
     ~EphemDifferenceWithUncertaintyAlgorithm() = default;
 
-    std::tuple<NavTransMsgPayload, FilterMsgPayload> updateState(EphemerisMsgPayload, EphemerisMsgPayload);
+    std::tuple<NavTransMsgPayload, FilterMsgPayload> updateState(EphemerisMsgPayload, EphemerisMsgPayload) const;
     void setCovarianceBase(const Eigen::MatrixXd stateCovariance);
     Eigen::MatrixXd getCovarianceBase() const;
     void setCovarianceSecondary(const Eigen::MatrixXd stateCovariance);
     Eigen::MatrixXd getCovarianceSecondary() const;
 
    private:
-    Eigen::MatrixXd covarianceBase{};
-    Eigen::MatrixXd covarianceSecondary{};
+    Eigen::MatrixXd covarianceBase{Eigen::MatrixXd::Zero(6, 6)};
+    Eigen::MatrixXd covarianceSecondary{Eigen::MatrixXd::Zero(6, 6)};
 };
 
 #endif

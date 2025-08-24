@@ -26,7 +26,7 @@
  */
 std::tuple<NavTransMsgPayload, FilterMsgPayload> EphemDifferenceWithUncertaintyAlgorithm::updateState(
     EphemerisMsgPayload ephemBaseInBuffer,
-    EphemerisMsgPayload ephemSecondaryInBuffer) {
+    EphemerisMsgPayload ephemSecondaryInBuffer) const {
     // take timeTag from secondary, as timeTag from primary/base may be constant due to stand-alone message
     double timeTag = ephemSecondaryInBuffer.timeTag;
 
