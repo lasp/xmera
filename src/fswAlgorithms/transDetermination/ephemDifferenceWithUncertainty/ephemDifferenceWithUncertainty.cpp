@@ -25,10 +25,10 @@
  */
 void EphemDifferenceWithUncertainty::reset(uint64_t currentSimNanos) {
     if (!this->ephemBaseInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "EphemDifferenceWithUncertainty.ephemBaseInMsg wasn't connected.");
+        throw std::invalid_argument("EphemDifferenceWithUncertainty.ephemBaseInMsg wasn't connected.");
     }
     if (!this->ephemSecondaryInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "EphemDifferenceWithUncertainty.ephemSecondaryInMsg wasn't connected.");
+        throw std::invalid_argument("EphemDifferenceWithUncertainty.ephemSecondaryInMsg wasn't connected.");
     }
 }
 

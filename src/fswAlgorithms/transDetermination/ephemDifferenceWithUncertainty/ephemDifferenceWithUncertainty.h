@@ -30,7 +30,6 @@
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
 #include "fswAlgorithms/transDetermination/ephemDifferenceWithUncertainty/ephemDifferenceWithUncertaintyAlgorithm.h"
 
 /*! @brief This module computes the difference between two ephemeris messages, and outputs the relative states into a
@@ -52,8 +51,6 @@ class EphemDifferenceWithUncertainty : public SysModel {
     ReadFunctor<EphemerisMsgPayload> ephemSecondaryInMsg;
     Message<NavTransMsgPayload> navTransOutMsg;
     Message<FilterMsgPayload> filterOutMsg;
-
-    BSKLogger bskLogger;
 
    private:
     EphemDifferenceWithUncertaintyAlgorithm algorithm{};
