@@ -110,7 +110,16 @@ void RwMotorVoltage::updateState(uint64_t callTime)
     }
 
     /* check for voltage saturation */
-    for (int i=0; i<this->rwConfigParams.numRW; i++) {
+    for (int i = 0; i < this->rwConfigParams.numRW; i++) {
+        /* check for torque saturation limit*/
+        if (abs(rwSpeed.wheelSpeeds[i]) >= this->rwConfigParams.torqueSatSpeedLimit[i]) {
+            if (voltage[i] > this->VMaxSat) {
+                voltage[i] = this->VMaxSat;
+            }
+            if (voltage[i] < -this->VMaxSat) {
+                voltage[i] = -this->VMaxSat;
+            }
+        }
         if (voltage[i] > this->VMax) {
             voltage[i] = this->VMax;
         }
