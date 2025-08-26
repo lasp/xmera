@@ -654,7 +654,9 @@ double Camera::getSensorHeight() const { return this->sensorHeight; }
     @param integrationWeightFactor double
     @return void
     */
-void Camera::setIntegrationWeightFactor(double integrationWeightFactorValue) { this->integrationWeightFactor = integrationWeightFactorValue; }
+void Camera::setIntegrationWeightFactor(double integrationWeightFactorValue) {
+    this->integrationWeightFactor = integrationWeightFactorValue;
+}
 
 /*! Get the integration weight factor
     @return double integrationWeightFactor
@@ -709,7 +711,9 @@ Eigen::Vector3d Camera::getBlueQuantumEfficiency() const { return this->blueQuan
     @param horizontalVignettingCoeffs Eigen::VectorXd
     @return void
     */
-void Camera::setHorizontalVignetting(const Eigen::VectorXd& horizontalVignettingCoeffs) { this->horizontalVignetting = horizontalVignettingCoeffs; }
+void Camera::setHorizontalVignetting(const Eigen::VectorXd& horizontalVignettingCoeffs) {
+    this->horizontalVignetting = horizontalVignettingCoeffs;
+}
 
 /*! Get the horizontal vignetting polynomial coefficients
     @return Eigen::VectorXd horizontalVignetting
@@ -720,7 +724,9 @@ Eigen::VectorXd Camera::getHorizontalVignetting() const { return this->horizonta
     @param verticalVignettingCoeffs Eigen::VectorXd
     @return void
     */
-void Camera::setVerticalVignetting(const Eigen::VectorXd& verticalVignettingCoeffs) { this->verticalVignetting = verticalVignettingCoeffs; }
+void Camera::setVerticalVignetting(const Eigen::VectorXd& verticalVignettingCoeffs) {
+    this->verticalVignetting = verticalVignettingCoeffs;
+}
 
 /*! Get the vertical vignetting polynomial coefficients
     @return Eigen::VectorXd verticalVignetting

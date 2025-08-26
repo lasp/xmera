@@ -142,10 +142,16 @@ class Camera : public SysModel {
     Eigen::Vector3d redQuantumEfficiency{};    //!< [-] Values of QE curve at specified wavelengths (red channel)
     Eigen::Vector3d greenQuantumEfficiency{};  //!< [-] Values of QE curve at specified wavelengths (green channel)
     Eigen::Vector3d blueQuantumEfficiency{};   //!< [-] Values of QE curve at specified wavelengths (blue channel)
-    Eigen::VectorXd horizontalVignetting{}; //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of horizontal distance from camera center (degrees)
-    Eigen::VectorXd verticalVignetting{}; //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of vertical distance from camera center (degrees)
-    Eigen::VectorXd distortion{}; //!< [-] Polynomial coefficients to form the curve of distortion (values between 0 and 1) as a function of vertical distance from camera center (degrees)
-    double transmission{}; //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all wavelengths
+    Eigen::VectorXd
+        horizontalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and
+                                 //!< 1) as a function of horizontal distance from camera center (degrees)
+    Eigen::VectorXd
+        verticalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1)
+                               //!< as a function of vertical distance from camera center (degrees)
+    Eigen::VectorXd distortion{};  //!< [-] Polynomial coefficients to form the curve of distortion (values between 0
+                                   //!< and 1) as a function of vertical distance from camera center (degrees)
+    double transmission{};  //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
+                            //!< wavelengths
 
    public:
     std::string filename{};                              //!< Filename for module to read an image directly
@@ -183,7 +189,7 @@ class Camera : public SysModel {
 
     /*! Noise paramters */
     double gaussian{};                             //!< Gaussian noise level
-    double darkCurrentIntensity{};                          //!< Dark current intensity
+    double darkCurrentIntensity{};                 //!< Dark current intensity
     double saltPepper{};                           //!< Stuck and Dark pixels probability
     double cosmicRays{};                           //!< Random cosmic rays (number)
     double blurParam{};                            //!< Blur over image in pixels

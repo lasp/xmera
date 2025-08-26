@@ -133,7 +133,8 @@ void CielimInterface::readBskMessages() {
     /*! Read celestial body parameter message */
     for (size_t i = 0; i < this->celestialBodiesList.size(); ++i) {
         if (this->celestialBodiesList.at(i).celestialParametersMessage.isLinked()) {
-            CelestialBodyParametersMsgPayload celestialParamArray = this->celestialBodiesList.at(i).celestialParametersMessage();
+            CelestialBodyParametersMsgPayload celestialParamArray =
+                this->celestialBodiesList.at(i).celestialParametersMessage();
             if (this->celestialBodiesList.at(i).celestialParametersMessage.isWritten() &&
                 this->celestialBodiesList.at(i).celestialParametersMessage.timeWritten() !=
                     this->celestialParametersMessageStatus[i].lastTimeTag) {
@@ -212,18 +213,25 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                 celestialBody->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][2]);
             }
             celestialBody->set_centralbody(this->celestialBodiesList.at(k).isCentralBody);
-            if (this->celestialBodiesList.at(k).celestialParametersMessage.isLinked() && this->celestialParametersMessageStatus[k].dataFresh) {
+            if (this->celestialBodiesList.at(k).celestialParametersMessage.isLinked() &&
+                this->celestialParametersMessageStatus[k].dataFresh) {
                 auto *meshModel = new cielimMessage::MeshModel();
                 auto *perlinNoise = new cielimMessage::PerlinNoise();
                 auto *reflectanceModel = new cielimMessage::ReflectanceModel();
-                celestialBody->set_geometricalbedo(this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo);
-                perlinNoise->set_octavecount(this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseOctaveCount);
-                perlinNoise->set_baseamplitude(this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseAmplitude);
-                perlinNoise->set_basefrequency(this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseFrequency);
-                perlinNoise->set_persistence(this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoisePersistence);
+                celestialBody->set_geometricalbedo(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo);
+                perlinNoise->set_octavecount(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseOctaveCount);
+                perlinNoise->set_baseamplitude(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseAmplitude);
+                perlinNoise->set_basefrequency(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseFrequency);
+                perlinNoise->set_persistence(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoisePersistence);
                 std::string brdfModelName = this->celestialBodiesList.at(k).celestialParametersPayload.brdf;
                 reflectanceModel->set_brdfmodel(brdfModelName);
-                reflectanceModel->set_isotropicscattering(this->celestialBodiesList.at(k).celestialParametersPayload.isotropicScattering);
+                reflectanceModel->set_isotropicscattering(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.isotropicScattering);
                 for (int i = 0; i < MAX_PARAMETER_LENGTH; ++i) {
                     reflectanceModel->add_reflectanceparameters(
                         this->celestialBodiesList.at(k).celestialParametersPayload.reflectanceParameters[i]);
@@ -234,9 +242,11 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                 for (int i = 0; i < 3; ++i) {
                     meshModel->add_principalaxisdistortion(
                         this->celestialBodiesList.at(k).celestialParametersPayload.principalAxisDistortion[i]);
-                    meshModel->add_inertialtobodymrp(this->celestialBodiesList.at(k).celestialParametersPayload.sigma_BN[i]);
+                    meshModel->add_inertialtobodymrp(
+                        this->celestialBodiesList.at(k).celestialParametersPayload.sigma_BN[i]);
                 }
-                meshModel->set_proceduralrocks(this->celestialBodiesList.at(k).celestialParametersPayload.proceduralRocks);
+                meshModel->set_proceduralrocks(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.proceduralRocks);
                 meshModel->set_shapemodel(this->celestialBodiesList.at(k).celestialParametersPayload.shapeModel);
                 celestialBody->set_allocated_model(meshModel);
             }

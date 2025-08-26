@@ -52,12 +52,12 @@ class MessageStatus {
 /*! Structure defining vizard gravity body values */
 class SpiceBody {
    public:
-    std::string name{};                                           //!< [-] celestial body name
-    ReadFunctor<SpicePlanetStateMsgPayload> spiceStateMessage{};  //!< [-] celestial body name
-    SpicePlanetStateMsgPayload spiceStatePayload{};               //!< [-] celestial body name
+    std::string name{};                                                           //!< [-] celestial body name
+    ReadFunctor<SpicePlanetStateMsgPayload> spiceStateMessage{};                  //!< [-] celestial body name
+    SpicePlanetStateMsgPayload spiceStatePayload{};                               //!< [-] celestial body name
     ReadFunctor<CelestialBodyParametersMsgPayload> celestialParametersMessage{};  //!< [-] celestial body parameters msg
     CelestialBodyParametersMsgPayload celestialParametersPayload{};               //!< [-] celestial body parameters
-    bool isCentralBody = false;                                   //!< [-] celestial body name
+    bool isCentralBody = false;                                                   //!< [-] celestial body name
 };
 
 /*!  @brief The interface to Cielim via ZMQ and protobuffers
@@ -83,7 +83,7 @@ class CielimInterface : public SysModel {
     ReadFunctor<SCStatesMsgPayload> spacecraftMessage;              //!< [-] vector of spacecraft data containers
     ReadFunctor<CameraModelMsgPayload> cameraModelMessage;          //!< [-] incoming camera data message
     ReadFunctor<CameraRenderingMsgPayload> cameraRenderingMessage;  //!< [-] camera rendering message
-    ReadFunctor<EpochMsgPayload> epochMessage;  //!< [-] simulation epoch date/time input msg
+    ReadFunctor<EpochMsgPayload> epochMessage;                      //!< [-] simulation epoch date/time input msg
 
     Message<CameraImageMsgPayload> imageOutMessage;            //!< vector of vizard instrument camera output messages
     Message<OpNavCOBMsgPayload> centerOfBrightnessOutMessage;  //!< The true image center of brightness output message
@@ -110,7 +110,7 @@ class CielimInterface : public SysModel {
     std::vector<MessageStatus> spiceBodyMessageStatus;          //!< [-] status of the incoming planets' spice data
     std::vector<CelestialBodyParametersMsgPayload> celestialParametersPayloads;  //!< [-] celestial parameters payloads
     std::vector<MessageStatus> celestialParametersMessageStatus;  //!< [-] status of celestial parameter messages
-    std::vector<SpiceBody> celestialBodiesList;                 //!< [-] celestial body names
+    std::vector<SpiceBody> celestialBodiesList;                   //!< [-] celestial body names
 
     CameraModelMsgPayload cameraModelPayload{};  //!< [-] camera config buffers
     MessageStatus cameraModelMessageStatus{};    //!< [-] message status of incoming camera data

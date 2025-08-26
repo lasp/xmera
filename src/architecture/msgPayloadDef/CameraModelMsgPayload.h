@@ -50,10 +50,16 @@ typedef struct {
     double redQuantumEfficiency[3];    //!< [-] Values of QE curve at specified wavelengths (red channel)
     double greenQuantumEfficiency[3];  //!< [-] Values of QE curve at specified wavelengths (green channel)
     double blueQuantumEfficiency[3];   //!< [-] Values of QE curve at specified wavelengths (blue channel)
-    double horizontalVignetting[MAX_POLY_COEFF]; //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of horizontal distance from camera center (degrees)
-    double verticalVignetting[MAX_POLY_COEFF]; //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of vertical distance from camera center (degrees)
-    double distortion[MAX_POLY_COEFF]; //!< [-] Polynomial coefficients to form the curve of distortion (values between 0 and 1) as a function of vertical distance from camera center (degrees)
-    double transmission; //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all wavelengths
+    double horizontalVignetting[MAX_POLY_COEFF];  //!< [-] Polynomial coefficients to form the curve of vignetting
+                                                  //!< (values between 0 and 1) as a function of horizontal distance
+                                                  //!< from camera center (degrees)
+    double verticalVignetting[MAX_POLY_COEFF];  //!< [-] Polynomial coefficients to form the curve of vignetting (values
+                                                //!< between 0 and 1) as a function of vertical distance from camera
+                                                //!< center (degrees)
+    double distortion[MAX_POLY_COEFF];  //!< [-] Polynomial coefficients to form the curve of distortion (values between
+                                        //!< 0 and 1) as a function of vertical distance from camera center (degrees)
+    double transmission;  //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
+                          //!< wavelengths
 } CameraModelMsgPayload;
 
 #endif
