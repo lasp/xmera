@@ -81,7 +81,8 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PerlinNoiseDefaultTypeInternal 
 constexpr ReflectanceModel::ReflectanceModel(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : reflectanceparameters_()
-  , brdfmodel_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+  , brdfmodel_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , isotropicscattering_(0){}
 struct ReflectanceModelDefaultTypeInternal {
   constexpr ReflectanceModelDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -116,6 +117,7 @@ constexpr CelestialBody::CelestialBody(
   , attitude_()
   , bodyname_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , model_(nullptr)
+  , geometricalbedo_(0)
   , centralbody_(false){}
 struct CelestialBodyDefaultTypeInternal {
   constexpr CelestialBodyDefaultTypeInternal()
@@ -1390,11 +1392,13 @@ ReflectanceModel::ReflectanceModel(const ReflectanceModel& from)
     brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_brdfmodel(), 
       GetArenaForAllocation());
   }
+  isotropicscattering_ = from.isotropicscattering_;
   // @@protoc_insertion_point(copy_constructor:cielimMessage.ReflectanceModel)
 }
 
 void ReflectanceModel::SharedCtor() {
 brdfmodel_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+isotropicscattering_ = 0;
 }
 
 ReflectanceModel::~ReflectanceModel() {
@@ -1427,6 +1431,7 @@ void ReflectanceModel::Clear() {
 
   reflectanceparameters_.Clear();
   brdfmodel_.ClearToEmpty();
+  isotropicscattering_ = 0;
   _internal_metadata_.Clear<std::string>();
 }
 
@@ -1446,12 +1451,20 @@ const char* ReflectanceModel::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPA
         } else
           goto handle_unusual;
         continue;
-      // repeated double reflectanceParameters = 2;
+      // double isotropicScattering = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 17)) {
+          isotropicscattering_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          ptr += sizeof(double);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated double reflectanceParameters = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedDoubleParser(_internal_mutable_reflectanceparameters(), ptr, ctx);
           CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 17) {
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 25) {
           _internal_add_reflectanceparameters(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
           ptr += sizeof(double);
         } else
@@ -1496,9 +1509,15 @@ failure:
         1, this->_internal_brdfmodel(), target);
   }
 
-  // repeated double reflectanceParameters = 2;
+  // double isotropicScattering = 2;
+  if (!(this->_internal_isotropicscattering() <= 0 && this->_internal_isotropicscattering() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_isotropicscattering(), target);
+  }
+
+  // repeated double reflectanceParameters = 3;
   if (this->_internal_reflectanceparameters_size() > 0) {
-    target = stream->WriteFixedPacked(2, _internal_reflectanceparameters(), target);
+    target = stream->WriteFixedPacked(3, _internal_reflectanceparameters(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1517,7 +1536,7 @@ size_t ReflectanceModel::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated double reflectanceParameters = 2;
+  // repeated double reflectanceParameters = 3;
   {
     unsigned int count = static_cast<unsigned int>(this->_internal_reflectanceparameters_size());
     size_t data_size = 8UL * count;
@@ -1534,6 +1553,11 @@ size_t ReflectanceModel::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_brdfmodel());
+  }
+
+  // double isotropicScattering = 2;
+  if (!(this->_internal_isotropicscattering() <= 0 && this->_internal_isotropicscattering() >= 0)) {
+    total_size += 1 + 8;
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1560,6 +1584,9 @@ void ReflectanceModel::MergeFrom(const ReflectanceModel& from) {
   if (!from._internal_brdfmodel().empty()) {
     _internal_set_brdfmodel(from._internal_brdfmodel());
   }
+  if (!(from._internal_isotropicscattering() <= 0 && from._internal_isotropicscattering() >= 0)) {
+    _internal_set_isotropicscattering(from._internal_isotropicscattering());
+  }
   _internal_metadata_.MergeFrom<std::string>(from._internal_metadata_);
 }
 
@@ -1585,6 +1612,7 @@ void ReflectanceModel::InternalSwap(ReflectanceModel* other) {
       &brdfmodel_, lhs_arena,
       &other->brdfmodel_, rhs_arena
   );
+  swap(isotropicscattering_, other->isotropicscattering_);
 }
 
 std::string ReflectanceModel::GetTypeName() const {
@@ -2033,7 +2061,9 @@ CelestialBody::CelestialBody(const CelestialBody& from)
   } else {
     model_ = nullptr;
   }
-  centralbody_ = from.centralbody_;
+  ::memcpy(&geometricalbedo_, &from.geometricalbedo_,
+    static_cast<size_t>(reinterpret_cast<char*>(&centralbody_) -
+    reinterpret_cast<char*>(&geometricalbedo_)) + sizeof(centralbody_));
   // @@protoc_insertion_point(copy_constructor:cielimMessage.CelestialBody)
 }
 
@@ -2082,7 +2112,9 @@ void CelestialBody::Clear() {
     delete model_;
   }
   model_ = nullptr;
-  centralbody_ = false;
+  ::memset(&geometricalbedo_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&centralbody_) -
+      reinterpret_cast<char*>(&geometricalbedo_)) + sizeof(centralbody_));
   _internal_metadata_.Clear<std::string>();
 }
 
@@ -2148,6 +2180,14 @@ const char* CelestialBody::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
           centralbody_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // double geometricAlbedo = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 57)) {
+          geometricalbedo_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          ptr += sizeof(double);
         } else
           goto handle_unusual;
         continue;
@@ -2219,6 +2259,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_centralbody(), target);
   }
 
+  // double geometricAlbedo = 7;
+  if (!(this->_internal_geometricalbedo() <= 0 && this->_internal_geometricalbedo() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(7, this->_internal_geometricalbedo(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = stream->WriteRaw(_internal_metadata_.unknown_fields<std::string>(::PROTOBUF_NAMESPACE_ID::internal::GetEmptyString).data(),
         static_cast<int>(_internal_metadata_.unknown_fields<std::string>(::PROTOBUF_NAMESPACE_ID::internal::GetEmptyString).size()), target);
@@ -2285,6 +2331,11 @@ size_t CelestialBody::ByteSizeLong() const {
         *model_);
   }
 
+  // double geometricAlbedo = 7;
+  if (!(this->_internal_geometricalbedo() <= 0 && this->_internal_geometricalbedo() >= 0)) {
+    total_size += 1 + 8;
+  }
+
   // bool centralBody = 6;
   if (this->_internal_centralbody() != 0) {
     total_size += 1 + 1;
@@ -2318,6 +2369,9 @@ void CelestialBody::MergeFrom(const CelestialBody& from) {
   }
   if (from._internal_has_model()) {
     _internal_mutable_model()->::cielimMessage::MeshModel::MergeFrom(from._internal_model());
+  }
+  if (!(from._internal_geometricalbedo() <= 0 && from._internal_geometricalbedo() >= 0)) {
+    _internal_set_geometricalbedo(from._internal_geometricalbedo());
   }
   if (from._internal_centralbody() != 0) {
     _internal_set_centralbody(from._internal_centralbody());

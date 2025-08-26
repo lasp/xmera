@@ -36,7 +36,8 @@ message PerlinNoise{
 
 message ReflectanceModel{
     string brdfModel = 1; // [string] Name of the BRDF model to apply (Lambertian by default)
-    repeated double reflectanceParameters = 2; // [-] Parameter to apply to BRDF
+    double isotropicScattering = 2; // [-] Isotropic scattering
+    repeated double reflectanceParameters = 3; // [-] Parameter to apply to BRDF
 }
 
 message MeshModel{
@@ -57,6 +58,7 @@ message CelestialBody{
     repeated double attitude = 4;  //SpicePlanetStateSimMsg.J20002Pfix
     MeshModel model = 5; // Model for rendering
     bool centralBody = 6;  // Central body for all positions and velocities
+    double geometricAlbedo = 7; // [-] Geometric albedo of the celestial body
 }
 
 //Spacecraft position, velocity, and attitude data

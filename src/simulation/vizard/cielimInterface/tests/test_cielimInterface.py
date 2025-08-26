@@ -253,6 +253,7 @@ def read_write_test():
         np.testing.assert_equal(cielim_message.celestialBodies[i].attitude, np.array(message.J20002Pfix).flatten())
         np.testing.assert_equal(cielim_message.celestialBodies[i].centralBody, central)
         if (name == asteroid_parameter_payload.bodyName):
+            np.testing.assert_equal(cielim_message.celestialBodies[i].geometricAlbedo, asteroid_parameter_payload.geometricAlbedo)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.meanRadius, asteroid_parameter_payload.meanRadius)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.shapeModel, asteroid_parameter_payload.shapeModel)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.octaveCount, asteroid_parameter_payload.perlinNoiseOctaveCount)
@@ -261,6 +262,7 @@ def read_write_test():
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.persistence, asteroid_parameter_payload.perlinNoisePersistence)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.refModel.brdfModel, asteroid_parameter_payload.brdf)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.refModel.reflectanceParameters, asteroid_parameter_payload.reflectanceParameters)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.refModel.isotropicScattering, asteroid_parameter_payload.isotropicScattering)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.proceduralRocks, asteroid_parameter_payload.proceduralRocks)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.principalAxisDistortion, asteroid_parameter_payload.principalAxisDistortion)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.inertialToBodyMrp, asteroid_parameter_payload.sigma_BN)

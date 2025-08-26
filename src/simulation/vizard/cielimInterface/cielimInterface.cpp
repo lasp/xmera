@@ -211,12 +211,14 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                 auto *meshModel = new cielimMessage::MeshModel();
                 auto *perlinNoise = new cielimMessage::PerlinNoise();
                 auto *reflectanceModel = new cielimMessage::ReflectanceModel();
+                celestialBody->set_geometricalbedo(this->celestialParametersPayload.geometricAlbedo);
                 perlinNoise->set_octavecount(this->celestialParametersPayload.perlinNoiseOctaveCount);
                 perlinNoise->set_baseamplitude(this->celestialParametersPayload.perlinNoiseBaseAmplitude);
                 perlinNoise->set_basefrequency(this->celestialParametersPayload.perlinNoiseBaseFrequency);
                 perlinNoise->set_persistence(this->celestialParametersPayload.perlinNoisePersistence);
                 std::string brdfModelName = this->celestialParametersPayload.brdf;
                 reflectanceModel->set_brdfmodel(brdfModelName);
+                reflectanceModel->set_isotropicscattering(this->celestialParametersPayload.isotropicScattering);
                 for (int i = 0; i < MAX_PARAMETER_LENGTH; ++i) {
                     reflectanceModel->add_reflectanceparameters(
                         this->celestialParametersPayload.reflectanceParameters[i]);

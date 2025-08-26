@@ -907,10 +907,11 @@ class ReflectanceModel final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kReflectanceParametersFieldNumber = 2,
+    kReflectanceParametersFieldNumber = 3,
     kBrdfModelFieldNumber = 1,
+    kIsotropicScatteringFieldNumber = 2,
   };
-  // repeated double reflectanceParameters = 2;
+  // repeated double reflectanceParameters = 3;
   int reflectanceparameters_size() const;
   private:
   int _internal_reflectanceparameters_size() const;
@@ -946,6 +947,15 @@ class ReflectanceModel final :
   std::string* _internal_mutable_brdfmodel();
   public:
 
+  // double isotropicScattering = 2;
+  void clear_isotropicscattering();
+  double isotropicscattering() const;
+  void set_isotropicscattering(double value);
+  private:
+  double _internal_isotropicscattering() const;
+  void _internal_set_isotropicscattering(double value);
+  public:
+
   // @@protoc_insertion_point(class_scope:cielimMessage.ReflectanceModel)
  private:
   class _Internal;
@@ -955,6 +965,7 @@ class ReflectanceModel final :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > reflectanceparameters_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr brdfmodel_;
+  double isotropicscattering_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_cielimMessage_2eproto;
 };
@@ -1312,6 +1323,7 @@ class CelestialBody final :
     kAttitudeFieldNumber = 4,
     kBodyNameFieldNumber = 1,
     kModelFieldNumber = 5,
+    kGeometricAlbedoFieldNumber = 7,
     kCentralBodyFieldNumber = 6,
   };
   // repeated double position = 2;
@@ -1412,6 +1424,15 @@ class CelestialBody final :
       ::cielimMessage::MeshModel* model);
   ::cielimMessage::MeshModel* unsafe_arena_release_model();
 
+  // double geometricAlbedo = 7;
+  void clear_geometricalbedo();
+  double geometricalbedo() const;
+  void set_geometricalbedo(double value);
+  private:
+  double _internal_geometricalbedo() const;
+  void _internal_set_geometricalbedo(double value);
+  public:
+
   // bool centralBody = 6;
   void clear_centralbody();
   bool centralbody() const;
@@ -1433,6 +1454,7 @@ class CelestialBody final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > attitude_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr bodyname_;
   ::cielimMessage::MeshModel* model_;
+  double geometricalbedo_;
   bool centralbody_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_cielimMessage_2eproto;
@@ -3366,7 +3388,27 @@ inline void ReflectanceModel::set_allocated_brdfmodel(std::string* brdfmodel) {
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.ReflectanceModel.brdfModel)
 }
 
-// repeated double reflectanceParameters = 2;
+// double isotropicScattering = 2;
+inline void ReflectanceModel::clear_isotropicscattering() {
+  isotropicscattering_ = 0;
+}
+inline double ReflectanceModel::_internal_isotropicscattering() const {
+  return isotropicscattering_;
+}
+inline double ReflectanceModel::isotropicscattering() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.ReflectanceModel.isotropicScattering)
+  return _internal_isotropicscattering();
+}
+inline void ReflectanceModel::_internal_set_isotropicscattering(double value) {
+  
+  isotropicscattering_ = value;
+}
+inline void ReflectanceModel::set_isotropicscattering(double value) {
+  _internal_set_isotropicscattering(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.ReflectanceModel.isotropicScattering)
+}
+
+// repeated double reflectanceParameters = 3;
 inline int ReflectanceModel::_internal_reflectanceparameters_size() const {
   return reflectanceparameters_.size();
 }
@@ -4076,6 +4118,26 @@ inline void CelestialBody::_internal_set_centralbody(bool value) {
 inline void CelestialBody::set_centralbody(bool value) {
   _internal_set_centralbody(value);
   // @@protoc_insertion_point(field_set:cielimMessage.CelestialBody.centralBody)
+}
+
+// double geometricAlbedo = 7;
+inline void CelestialBody::clear_geometricalbedo() {
+  geometricalbedo_ = 0;
+}
+inline double CelestialBody::_internal_geometricalbedo() const {
+  return geometricalbedo_;
+}
+inline double CelestialBody::geometricalbedo() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.CelestialBody.geometricAlbedo)
+  return _internal_geometricalbedo();
+}
+inline void CelestialBody::_internal_set_geometricalbedo(double value) {
+  
+  geometricalbedo_ = value;
+}
+inline void CelestialBody::set_geometricalbedo(double value) {
+  _internal_set_geometricalbedo(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.CelestialBody.geometricAlbedo)
 }
 
 // -------------------------------------------------------------------
