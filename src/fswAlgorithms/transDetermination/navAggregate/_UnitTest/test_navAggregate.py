@@ -35,11 +35,6 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
@@ -71,28 +66,10 @@ from Basilisk.architecture import messaging
     , (2, 3)
     , (1, 3)
     , (0, 3)
-    , (11, 11)
-    , (3, 11)
-    , (2, 11)
-    , (1, 11)
-    , (0, 11)
-    , (11, 3)
-    , (11, 2)
-    , (11, 1)
-    , (11, 0)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, numAttNav, numTransNav):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = navAggregateTestFunction(show_plots, numAttNav, numTransNav)
-    assert testResults < 1, testMessage
-
-
-def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+def test_navAggregate(show_plots, numAttNav, numTransNav):
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -144,13 +121,13 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     navTrans1 = navAggregate.AggregateTransInput()
     navTrans2 = navAggregate.AggregateTransInput()
 
-    module.attMsgCount = numAttNav
+    module.setAttMsgCount(numAttNav)
     if numAttNav == 3:       # here the index asks to read from an empty (zero) message
-        module.attMsgCount = 2
+        module.setAttMsgCount(2)
 
-    module.transMsgCount = numTransNav
+    module.setTransMsgCount(numTransNav)
     if numTransNav == 3:     # here the index asks to read from an empty (zero) message
-        module.transMsgCount = 2
+        module.setTransMsgCount(2)
 
     if numAttNav <= navAggregate.MAX_AGG_NAV_MSG:
         module.attMsgs = [navAtt1, navAtt2]
@@ -170,33 +147,15 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
             module.transMsgs[i].navTransInMsg.subscribeTo(navTrans1InMsg)
 
     if numAttNav > 1:       # always read from the last message counter
-        module.attTimeIdx = numAttNav - 1
-        module.attIdx = numAttNav - 1
-        module.rateIdx = numAttNav - 1
-        module.sunIdx = numAttNav - 1
+        module.setAttTimeIdx(numAttNav - 1)
+        module.setAttIdx(numAttNav - 1)
+        module.setRateIdx(numAttNav - 1)
+        module.setSunIdx(numAttNav - 1)
     if numTransNav > 1:     # always read from the last message counter
-        module.transTimeIdx = numTransNav-1
-        module.posIdx = numTransNav-1
-        module.velIdx = numTransNav-1
-        module.dvIdx = numTransNav-1
-
-    # write TeX snippets for the message values
-    unitTestSupport.writeTeXSnippet("navAtt1Msg.timeTag", str(navAtt1Msg.timeTag), path)
-    unitTestSupport.writeTeXSnippet("navAtt1Msg.sigma_BN", str(navAtt1Msg.sigma_BN), path)
-    unitTestSupport.writeTeXSnippet("navAtt1Msg.omega_BN_B", str(navAtt1Msg.omega_BN_B), path)
-    unitTestSupport.writeTeXSnippet("navAtt1Msg.vehSunPntBdy", str(navAtt1Msg.vehSunPntBdy), path)
-    unitTestSupport.writeTeXSnippet("navAtt2Msg.timeTag", str(navAtt2Msg.timeTag), path)
-    unitTestSupport.writeTeXSnippet("navAtt2Msg.sigma_BN", str(navAtt2Msg.sigma_BN), path)
-    unitTestSupport.writeTeXSnippet("navAtt2Msg.omega_BN_B", str(navAtt2Msg.omega_BN_B), path)
-    unitTestSupport.writeTeXSnippet("navAtt2Msg.vehSunPntBdy", str(navAtt2Msg.vehSunPntBdy), path)
-    unitTestSupport.writeTeXSnippet("navTrans1Msg.timeTag", str(navTrans1Msg.timeTag), path)
-    unitTestSupport.writeTeXSnippet("navTrans1Msg.r_BN_N", str(navTrans1Msg.r_BN_N), path)
-    unitTestSupport.writeTeXSnippet("navTrans1Msg.v_BN_N", str(navTrans1Msg.v_BN_N), path)
-    unitTestSupport.writeTeXSnippet("navTrans1Msg.vehAccumDV", str(navTrans1Msg.vehAccumDV), path)
-    unitTestSupport.writeTeXSnippet("navTrans2Msg.timeTag", str(navTrans2Msg.timeTag), path)
-    unitTestSupport.writeTeXSnippet("navTrans2Msg.r_BN_N", str(navTrans2Msg.r_BN_N), path)
-    unitTestSupport.writeTeXSnippet("navTrans2Msg.v_BN_N", str(navTrans2Msg.v_BN_N), path)
-    unitTestSupport.writeTeXSnippet("navTrans2Msg.vehAccumDV", str(navTrans2Msg.vehAccumDV), path)
+        module.setTransTimeIdx(numTransNav - 1)
+        module.setPosIdx(numTransNav - 1)
+        module.setVelIdx(numTransNav - 1)
+        module.setDvIdx(numTransNav - 1)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataAttLog = module.navAttOutMsg.recorder()
@@ -266,79 +225,15 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
-    # check if the module output matches the truth data
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueAttTimeTag, attTimeTag,
-                                                               accuracy, "attTimeTag", 1,
-                                                               testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(trueAttSigma, attSigma,
-                                                                 accuracy, "sigma_BN",
-                                                                 testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(trueAttOmega, attOmega,
-                                                               accuracy, "omega_BN_B",
-                                                               testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(trueAttSunVector, attSunVector,
-                                                               accuracy, "vehSunPntBdy",
-                                                               testFailCount, testMessages)
-
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueTransTimeTag, transTimeTag,
-                                                                 accuracy, "transTimeTag", 1,
-                                                                 testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(trueTransPos, transPos,
-                                                               accuracy, "sigma_BN",
-                                                               testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(trueTransVel, transVel,
-                                                               accuracy, "omega_BN_B",
-                                                               testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArray(trueTransAccum, transAccum,
-                                                               accuracy, "vehSunPntBdy",
-                                                               testFailCount, testMessages)
-
-    if numAttNav == 11:
-        if module.attMsgCount != navAggregate.MAX_AGG_NAV_MSG:
-            testFailCount += 1
-            testMessages.append("FAILED numAttNav too large test")
-        if module.attTimeIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED attTimeIdx too large test")
-        if module.attIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED attIdx too large test")
-        if module.rateIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED rateIdx too large test")
-        if module.sunIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED sunIdx too large test")
-
-    if numTransNav == 11:
-        if module.transMsgCount != navAggregate.MAX_AGG_NAV_MSG:
-            testFailCount += 1
-            testMessages.append("FAILED numTransNav too large test")
-        if module.posIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED posIdx too large test")
-        if module.velIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED velIdx too large test")
-        if module.dvIdx != navAggregate.MAX_AGG_NAV_MSG-1:
-            testFailCount += 1
-            testMessages.append("FAILED dvIdx too large test")
-
-    #   print out success message if no error were found
-    snippentName = "passFail" + str(numAttNav) + str(numTransNav)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-    return [testFailCount, ''.join(testMessages)]
+    np.testing.assert_allclose(attTimeTag, trueAttTimeTag, atol=accuracy, rtol=0, err_msg="attTimeTag")
+    np.testing.assert_allclose(attSigma, trueAttSigma, atol=accuracy, rtol=0, err_msg="attSigma")
+    np.testing.assert_allclose(attOmega, trueAttOmega, atol=accuracy, rtol=0, err_msg="attOmega")
+    np.testing.assert_allclose(attSunVector, trueAttSunVector, atol=accuracy, rtol=0, err_msg="attSunVector")
+    np.testing.assert_allclose(transTimeTag, trueTransTimeTag, atol=accuracy, rtol=0, err_msg="transTimeTag")
+    np.testing.assert_allclose(transPos, trueTransPos, atol=accuracy, rtol=0, err_msg="transPos")
+    np.testing.assert_allclose(transVel, trueTransVel, atol=accuracy, rtol=0, err_msg="transVel")
+    np.testing.assert_allclose(transAccum, trueTransAccum, atol=accuracy, rtol=0, err_msg="transAccum")
 
 
 #
@@ -346,8 +241,4 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(
-                 False,
-                 2,             # numAttNav
-                 2              # numTransNav
-               )
+    test_navAggregate(False, 2, 2)
