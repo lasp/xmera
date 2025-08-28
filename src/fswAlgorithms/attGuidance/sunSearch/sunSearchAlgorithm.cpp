@@ -18,8 +18,8 @@
  */
 
 #include "fswAlgorithms/attGuidance/sunSearch/sunSearchAlgorithm.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <cmath>
 
 /*! This method is used to reset the module.
@@ -104,7 +104,7 @@ void SunSearchAlgorithm::computeKinematicProperties(uint32_t const index) {
         thrustTime = omegaMax / alpha;
     }
 
-    KinematicProperties *KP = &this->kinematicProperties[index];
+    KinematicProperties* KP = &this->kinematicProperties[index];
 
     KP->slewRotAxis = SP->slewRotAxis;
     KP->slewAngAcc = alpha;
@@ -150,7 +150,7 @@ ReferenceMotionOutput SunSearchAlgorithm::computeReferenceMotion(uint64_t const 
  * @brief Set the properties of a slew maneuver
  * @param slewPropertiesInput the properties of the slew maneuver
  */
-void SunSearchAlgorithm::setSlewProperties(SlewProperties slewPropertiesInput){
+void SunSearchAlgorithm::setSlewProperties(SlewProperties slewPropertiesInput) {
     this->slewProperties[this->numberOfSlews] = slewPropertiesInput;
     this->numberOfSlews += 1;
 }
@@ -169,6 +169,4 @@ void SunSearchAlgorithm::modifySlewProperties(SlewProperties slewPropertiesInput
  * @param index index of the slew maneuver
  * @return SlewProperties the properties of the slew maneuver
  */
-SlewProperties SunSearchAlgorithm::getSlewProperties(uint32_t index) const {
-    return this->slewProperties[index];
-}
+SlewProperties SunSearchAlgorithm::getSlewProperties(uint32_t index) const { return this->slewProperties[index]; }
