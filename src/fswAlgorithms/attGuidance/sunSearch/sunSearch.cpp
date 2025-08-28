@@ -62,14 +62,14 @@ void SunSearch::updateState(uint64_t currentSimNanos) {
     double CurrentSimSeconds = (currentSimNanos - this->resetTime) * NANO2SEC;
 
     double timeInf = 0;
-    double timeSup = this->slewProperties[0].slewTotalTime;
+    double timeSup = this->kinematicProperties[0].slewTotalTime;
     for (int index = 0; index < 3; ++index) {
         if (CurrentSimSeconds >= timeInf && CurrentSimSeconds < timeSup) {
             referenceMotion = this->computeReferenceMotion(currentSimNanos, index);
             break;
         } else if (CurrentSimSeconds >= timeSup && index != 2) {
-            timeInf += this->slewProperties[index].slewTotalTime;
-            timeSup += this->slewProperties[index + 1].slewTotalTime;
+            timeInf += this->kinematicProperties[index].slewTotalTime;
+            timeSup += this->kinematicProperties[index + 1].slewTotalTime;
         }
     }
 
@@ -112,10 +112,13 @@ void SunSearch::computeKinematicProperties(int const index) {
         thrustTime = omegaMax / alpha;
     }
 
-    SP->slewAngAcc = alpha;
-    SP->slewOmegaMax = omegaMax;
-    SP->slewTotalTime = totalTime;
-    SP->slewThrustTime = thrustTime;
+    KinematicProperties *KP = &this->kinematicProperties[index];
+
+    KP->slewRotAxis = SP->slewRotAxis;
+    KP->slewAngAcc = alpha;
+    KP->slewOmegaMax = omegaMax;
+    KP->slewTotalTime = totalTime;
+    KP->slewThrustTime = thrustTime;
 }
 
 /*! Define this method to compute the rate and acceleration as function of time
@@ -124,24 +127,24 @@ void SunSearch::computeKinematicProperties(int const index) {
 ReferenceMotionOutput SunSearch::computeReferenceMotion(uint64_t const currentSimNanos, int const index) {
     double zeroTime = 0;
     for (int i = 0; i < index; ++i) {
-        zeroTime += this->slewProperties[i].slewTotalTime;
+        zeroTime += this->kinematicProperties[i].slewTotalTime;
     }
     double localSimSeconds = (currentSimNanos - this->resetTime) * NANO2SEC - zeroTime;
 
-    SlewProperties SP = this->slewProperties[index];
-    int axis = SP.slewRotAxis - 1;
+    KinematicProperties KP = this->kinematicProperties[index];
+    int axis = KP.slewRotAxis - 1;
 
     Eigen::Vector3d omega_RN{Eigen::Vector3d::Zero()};
     Eigen::Vector3d domega_RN{Eigen::Vector3d::Zero()};
 
-    if (localSimSeconds <= SP.slewThrustTime) {
-        omega_RN[axis] = SP.slewOmegaMax * localSimSeconds / SP.slewThrustTime;
-        domega_RN[axis] = SP.slewAngAcc;
-    } else if (localSimSeconds > SP.slewThrustTime && localSimSeconds < SP.slewTotalTime - SP.slewThrustTime) {
-        omega_RN[axis] = SP.slewOmegaMax;
-    } else if (localSimSeconds >= SP.slewTotalTime - SP.slewThrustTime && localSimSeconds <= SP.slewTotalTime) {
-        omega_RN[axis] = SP.slewOmegaMax * (SP.slewTotalTime - localSimSeconds) / SP.slewThrustTime;
-        domega_RN[axis] = -SP.slewAngAcc;
+    if (localSimSeconds <= KP.slewThrustTime) {
+        omega_RN[axis] = KP.slewOmegaMax * localSimSeconds / KP.slewThrustTime;
+        domega_RN[axis] = KP.slewAngAcc;
+    } else if (localSimSeconds > KP.slewThrustTime && localSimSeconds < KP.slewTotalTime - KP.slewThrustTime) {
+        omega_RN[axis] = KP.slewOmegaMax;
+    } else if (localSimSeconds >= KP.slewTotalTime - KP.slewThrustTime && localSimSeconds <= KP.slewTotalTime) {
+        omega_RN[axis] = KP.slewOmegaMax * (KP.slewTotalTime - localSimSeconds) / KP.slewThrustTime;
+        domega_RN[axis] = -KP.slewAngAcc;
     }
 
     ReferenceMotionOutput referenceMotion{};

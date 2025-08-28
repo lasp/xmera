@@ -29,23 +29,25 @@
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 #include <Eigen/Dense>
 
-/*! structure containing the output of the computed reference motion */
-struct ReferenceMotionOutput {
-    Eigen::Vector3d omega_RN_B{Eigen::Vector3d::Zero()}; /*!< reference angular velocity */
-    Eigen::Vector3d domega_RN_B{Eigen::Vector3d::Zero()}; /*!< reference angular acceleration */
-};
-
 struct SlewProperties {
-    // user-requested properties
     double slewTime;     //!< [s] total time for the three-axes maneuver
     double slewAngle;    //!< [rad] total angle sweep around one axis
     double slewMaxRate;  //!< [rad/s] maximum spacecraft body rate norm
     int slewRotAxis;     //!< [-] axes about which to perform the Sun search
-    // computed properties
+};
+
+struct KinematicProperties {
+    int slewRotAxis;     //!< [-] axes about which to perform the Sun search
     double slewAngAcc;      //!< [rad/s^2] angular accelerations about each rotation axis
-    double slewOmegaMax;    //!< [rad/s] highes angualr rate about each rotation axis
+    double slewOmegaMax;    //!< [rad/s] highes angular rate about each rotation axis
     double slewThrustTime;  //!< [s] control time of each rotation
     double slewTotalTime;   //!< [s] total slew time of each rotation
+};
+
+/*! structure containing the output of the computed reference motion */
+struct ReferenceMotionOutput {
+    Eigen::Vector3d omega_RN_B{Eigen::Vector3d::Zero()}; /*!< reference angular velocity */
+    Eigen::Vector3d domega_RN_B{Eigen::Vector3d::Zero()}; /*!< reference angular acceleration */
 };
 
 /*! @brief A class to perform EMA SEP pointing */
@@ -66,6 +68,7 @@ class SunSearch : public SysModel {
 
    private:
     SlewProperties slewProperties[3];
+    KinematicProperties kinematicProperties[3];
     Eigen::Vector3d slewMaxTorque{};      //!< [Nm] maximum deliverable torque along each principal body axis
     Eigen::Vector3d principleInertias{};  //!< [kg m^2] inertias about the three principal axes
     uint64_t resetTime;           //!< time at which reset is called
