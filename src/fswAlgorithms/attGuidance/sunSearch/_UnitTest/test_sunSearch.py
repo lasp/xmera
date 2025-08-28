@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -63,8 +63,7 @@ def computeKinematicProperties(theta_R, T_R, u_M, I, omega_M):
 @pytest.mark.parametrize("axis2", [1, 2, 3])
 @pytest.mark.parametrize("axis3", [1, 2, 3])
 @pytest.mark.parametrize("omega_BN_B", [[0, 0, 0], [0.01, -0.02, 0.03]])
-@pytest.mark.parametrize("accuracy", [1e-12])
-def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
+def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B):
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
@@ -194,6 +193,8 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
             omegaDot_RN_B_truth[i, axis3-1] = -alpha3
         omega_BR_B_truth[i] = omega_BN_B - omega_RN_B_truth[i]
 
+    accuracy = 1e-12
+
     # set the filtered output truth states
     np.testing.assert_allclose(omega_BR_B, omega_BR_B_truth, rtol=0, atol=accuracy, verbose=True)
     np.testing.assert_allclose(omega_RN_B, omega_RN_B_truth, rtol=0, atol=accuracy, verbose=True)
@@ -204,4 +205,4 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
 
 
 if __name__ == "__main__":
-    test_sunSearch(False, 1, 2, 3, [0, 0, 0], 1e-12)
+    test_sunSearch(False, 1, 2, 3, [0, 0, 0])
