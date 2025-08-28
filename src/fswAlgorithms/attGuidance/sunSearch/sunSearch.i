@@ -33,6 +33,7 @@ from Basilisk.architecture.swig_common_model import *
 STRUCTASLIST(SlewProperties)
 
 %include "sunSearch.h"
+%include "sunSearchAlgorithm.h"
 
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 %include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"

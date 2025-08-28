@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,45 +17,21 @@
 
  */
 
-#ifndef _SUN_SEARCH_
-#define _SUN_SEARCH_
-
-#include <stdexcept>
+#ifndef SUN_SEARCH_H
+#define SUN_SEARCH_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include <Eigen/Dense>
+#include "fswAlgorithms/attGuidance/sunSearch/sunSearchAlgorithm.h"
 
-#define NUM_SLEWS 3
-
-struct SlewProperties {
-    double slewTime;     //!< [s] total time for the three-axes maneuver
-    double slewAngle;    //!< [rad] total angle sweep around one axis
-    double slewMaxRate;  //!< [rad/s] maximum spacecraft body rate norm
-    double slewMaxTorque;  //!< [Nm] maximum torque for slew
-    int slewRotAxis;     //!< [-] axes about which to perform the Sun search
-};
-
-struct KinematicProperties {
-    int slewRotAxis;     //!< [-] axes about which to perform the Sun search
-    double slewAngAcc;      //!< [rad/s^2] angular accelerations about each rotation axis
-    double slewOmegaMax;    //!< [rad/s] highes angular rate about each rotation axis
-    double slewThrustTime;  //!< [s] control time of each rotation
-    double slewTotalTime;   //!< [s] total slew time of each rotation
-};
-
-/*! structure containing the output of the computed reference motion */
-struct ReferenceMotionOutput {
-    Eigen::Vector3d omega_RN_B{Eigen::Vector3d::Zero()}; /*!< reference angular velocity */
-    Eigen::Vector3d domega_RN_B{Eigen::Vector3d::Zero()}; /*!< reference angular acceleration */
-};
-
-/*! @brief A class to perform EMA SEP pointing */
 class SunSearch : public SysModel {
    public:
+    SunSearch() = default;
+    ~SunSearch() = default;
+
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
     void setSlewProperties(SlewProperties slewPropertiesInput);
@@ -67,14 +43,7 @@ class SunSearch : public SysModel {
     Message<AttGuidMsgPayload> attGuidOutMsg;             //!< Attitude reference output message
 
    private:
-    SlewProperties slewProperties[NUM_SLEWS];
-    KinematicProperties kinematicProperties[NUM_SLEWS];
-    int numberOfSlews{};                //!< [-] number of slew maneuvers set
-    Eigen::Vector3d principleInertias{};  //!< [kg m^2] inertias about the three principal axes
-    uint64_t resetTime;           //!< time at which reset is called
-
-    void computeKinematicProperties(int const index);
-    ReferenceMotionOutput computeReferenceMotion(uint64_t const currentSimNanos, int const index);
+    SunSearchAlgorithm algorithm{};
 };
 
 #endif
