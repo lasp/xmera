@@ -26,10 +26,10 @@
  */
 void SunSearch::reset(uint64_t currentSimNanos) {
     if (!this->attNavInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
+        throw std::invalid_argument("SunSearch.attNavInMsg wasn't connected.");
     }
     if (!this->vehConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".vehConfigInMsg wasn't connected.");
+        throw std::invalid_argument("SunSearch.vehConfigInMsg wasn't connected.");
     }
 
     /*! read vehicle configuration message */
