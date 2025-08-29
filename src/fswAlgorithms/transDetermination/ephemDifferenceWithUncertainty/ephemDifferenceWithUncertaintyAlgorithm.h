@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _EPHEM_DIFFERENCE_WITH_UNCERTAINTY_H_
-#define _EPHEM_DIFFERENCE_WITH_UNCERTAINTY_H_
+#ifndef EPHEM_DIFFERENCE_WITH_UNCERTAINTY_ALGORITHM_H
+#define EPHEM_DIFFERENCE_WITH_UNCERTAINTY_ALGORITHM_H
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -29,31 +29,22 @@
 #include "architecture/msgPayloadDef/FilterMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "fswAlgorithms/transDetermination/ephemDifferenceWithUncertainty/ephemDifferenceWithUncertaintyAlgorithm.h"
-
 /*! @brief This module computes the difference between two ephemeris messages, and outputs the relative states into a
  * navigation and filter message */
-class EphemDifferenceWithUncertainty : public SysModel {
+class EphemDifferenceWithUncertaintyAlgorithm {
    public:
-    EphemDifferenceWithUncertainty() = default;
-    ~EphemDifferenceWithUncertainty() = default;
+    EphemDifferenceWithUncertaintyAlgorithm() = default;
+    ~EphemDifferenceWithUncertaintyAlgorithm() = default;
 
-    void updateState(uint64_t currentSimNanos) override;
-    void reset(uint64_t currentSimNanos) override;
-
+    std::tuple<NavTransMsgPayload, FilterMsgPayload> updateState(EphemerisMsgPayload, EphemerisMsgPayload) const;
     void setCovarianceBase(const Eigen::MatrixXd stateCovariance);
     Eigen::MatrixXd getCovarianceBase() const;
     void setCovarianceSecondary(const Eigen::MatrixXd stateCovariance);
     Eigen::MatrixXd getCovarianceSecondary() const;
 
-    ReadFunctor<EphemerisMsgPayload> ephemBaseInMsg;
-    ReadFunctor<EphemerisMsgPayload> ephemSecondaryInMsg;
-    Message<NavTransMsgPayload> navTransOutMsg;
-    Message<FilterMsgPayload> filterOutMsg;
-
    private:
-    EphemDifferenceWithUncertaintyAlgorithm algorithm{};
+    Eigen::MatrixXd covarianceBase{Eigen::MatrixXd::Zero(6, 6)};
+    Eigen::MatrixXd covarianceSecondary{Eigen::MatrixXd::Zero(6, 6)};
 };
 
 #endif

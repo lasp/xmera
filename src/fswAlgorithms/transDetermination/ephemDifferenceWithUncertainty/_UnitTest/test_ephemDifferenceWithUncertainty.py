@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -22,7 +22,7 @@ import os
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import ephemDifferenceWithUncertainty
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import SimulationBaseClass, macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -34,11 +34,7 @@ path = os.path.dirname(os.path.abspath(filename))
                           ([10., 20., 30.], [40., 50., 60.], [70., 80., 90.], [100., 110., 120.], 2., 1.),
                           ([0., 20., -30.], [40., 0., 60.], [-70., -80., 0.], [0., 110., 120.], 5., 5.),
                           ])
-def test_ephem_difference_with_uncertainty(show_plots, r_1_N, r_2_N, v_1_N, v_2_N, sig_1_N, sig_2_N):
-    ephem_difference_with_uncertainty_test_function(show_plots, r_1_N, r_2_N, v_1_N, v_2_N, sig_1_N, sig_2_N)
-
-
-def ephem_difference_with_uncertainty_test_function(show_plots, r_1_N, r_2_N, v_1_N, v_2_N, sig_1_N, sig_2_N):
+def test_ephem_difference_with_uncertainty(r_1_N, r_2_N, v_1_N, v_2_N, sig_1_N, sig_2_N):
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -100,6 +96,10 @@ def ephem_difference_with_uncertainty_test_function(show_plots, r_1_N, r_2_N, v_
     covar_21_N_module = dataLogFilter.covar[0, :num_states*num_states].reshape((num_states, num_states))
     timeTag_Filter_module = dataLogFilter.timeTag[0]
 
+    # set and get test
+    np.testing.assert_equal(module.getCovarianceBase(), covar_1, err_msg="getCovarianceBase failed")
+    np.testing.assert_equal(module.getCovarianceSecondary(), covar_2, err_msg="getCovarianceSecondary failed")
+
     # make sure module output data is correct
     tolerance = 1e-10
     np.testing.assert_allclose(r_21_N_module,
@@ -141,7 +141,6 @@ def ephem_difference_with_uncertainty_test_function(show_plots, r_1_N, r_2_N, v_
 
 
 if __name__ == '__main__':
-    test_ephem_difference_with_uncertainty(False,
-                                           [100., 50., -20.], [-80., 20., -30.],
+    test_ephem_difference_with_uncertainty([100., 50., -20.], [-80., 20., -30.],
                                            [70., -40., 10.], [10., 90., -60.],
                                            3., 2.)
