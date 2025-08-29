@@ -21,14 +21,13 @@
 #define _CELESTIAL_BODY_POINT_H_
 
 #include <stdint.h>
+#include <stdexcept>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-
-#include "architecture/utilities/bskLogging.h"
 
 /*!@brief Data structure for module to compute the two-body celestial pointing navigation solution.
  */
@@ -57,8 +56,6 @@ class CelestialTwoBodyPoint : public SysModel {
 
     /* Output attitude reference data to send */
     AttRefMsgPayload attRefOut;  //!< (-) copy of output reference frame message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

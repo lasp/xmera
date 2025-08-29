@@ -29,10 +29,10 @@ void CelestialTwoBodyPoint::reset(uint64_t callTime) {
 
     // check if required input messages have been included
     if (!this->transNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: celestialTwoBodyPoint.transNavInMsg wasn't connected.");
+        throw std::invalid_argument("celestialTwoBodyPoint.transNavInMsg was not linked.");
     }
     if (!this->celBodyInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: celestialTwoBodyPoint.celBodyInMsg wasn't connected.");
+        throw std::invalid_argument("celestialTwoBodyPoint.celBodyInMsg was not linked.");
     }
 
     return;
