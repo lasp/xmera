@@ -20,28 +20,29 @@
 #ifndef _MRP_PD_ALGORITHM_H_
 #define _MRP_PD_ALGORITHM_H_
 
+#include <stdint.h>
+#include <stdexcept>
+
+#include <Eigen/Dense>
+
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include <stdint.h>
-#include <Eigen/Dense>
 
 /*! @brief MRP PD control algorithm class. */
 class MrpPDAlgorithm {
    public:
-    MrpPDAlgorithm() = default;   //!< Constructor
-    ~MrpPDAlgorithm() = default;  //!< Destructor
+    MrpPDAlgorithm() = default;
+    ~MrpPDAlgorithm() = default;
 
-    void reset(uint64_t currentSimNanos, VehicleConfigMsgPayload vehConfigInMsg);  //!< Reset member function
-    CmdTorqueBodyMsgPayload update(uint64_t currentSimNanos,
-                                   AttGuidMsgPayload guidInMsg);  //!< Update member function
-    double getDerivativeGainP() const;                            //!< Getter method for derivative gain P
-    const Eigen::Vector3d& getKnownTorquePntB_B() const;  //!< Getter method for the known external torque about point B
-    double getProportionalGainK() const;                  //!< Getter method for proportional gain K
-    void setDerivativeGainP(double P);                    //!< Setter method for derivative gain P
-    void setKnownTorquePntB_B(
-        Eigen::Vector3d& knownTorquePntB_B);  //!< Setter method for the known external torque about point B
-    void setProportionalGainK(double K);      //!< Setter method for proportional gain K
+    CmdTorqueBodyMsgPayload update(uint64_t currentSimNanos, AttGuidMsgPayload guidInMsg);
+    void setSpacecraftInertia(VehicleConfigMsgPayload vehConfigInMsg);
+    void setDerivativeGainP(double P);
+    double getDerivativeGainP() const;
+    void setKnownTorquePntB_B(Eigen::Vector3d& knownTorquePntB_B);
+    const Eigen::Vector3d& getKnownTorquePntB_B() const;
+    void setProportionalGainK(double K);
+    double getProportionalGainK() const;
 
    private:
     double K{};                           //!< [rad/s] Proportional gain applied to MRP errors

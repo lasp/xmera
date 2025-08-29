@@ -19,17 +19,7 @@
 
 #include "fswAlgorithms/attControl/mrpPD/mrpPDAlgorithm.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include <cassert>
 #include <cmath>
-
-/*! Reset method for the mrpPD control algorithm.
- @return void
- @param callTime [ns] Time the method is called
- @param vehConfigInMsg Vehicle configuration message
-*/
-void MrpPDAlgorithm::reset(uint64_t callTime, VehicleConfigMsgPayload vehConfigInMsg) {
-    this->ISCPntB_B = cArray2EigenMatrix3d(vehConfigInMsg.ISCPntB_B);
-}
 
 /*! Update method for mrpPD control algorithm. This method takes the attitude and rate errors relative to the
  reference frame, as well as the reference frame angular rates and acceleration, and computes the required control
@@ -58,29 +48,29 @@ CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayl
     return torqueCmdMsgPayload;
 }
 
-/*! Getter method for the derivative gain P.
- @return double
+/*! This method sets the spacecraft inertia according to the vehicle configuration input message
+ @return void
+ @param vehicleConfigIn Vehicle config input
 */
-double MrpPDAlgorithm::getDerivativeGainP() const { return this->P; }
-
-/*! Getter method for the known torque about point B.
- @return const Eigen::Vector3d&
-*/
-const Eigen::Vector3d& MrpPDAlgorithm::getKnownTorquePntB_B() const { return this->knownTorquePntB_B; }
-
-/*! Getter method for the proportional gain K.
- @return double
-*/
-double MrpPDAlgorithm::getProportionalGainK() const { return this->K; }
+void MrpPDAlgorithm::setSpacecraftInertia(VehicleConfigMsgPayload vehicleConfigIn) {
+    this->ISCPntB_B = cArray2EigenMatrixXd(vehicleConfigIn.ISCPntB_B, 3, 3);
+}
 
 /*! Setter method for the derivative gain P.
  @return void
  @param P [N*m*s] Rate error feedback gain applied
 */
 void MrpPDAlgorithm::setDerivativeGainP(double P) {
-    assert(P >= 0.0);
-    this->P = std::abs(P);
+    if (P < 0.0) {
+        throw std::invalid_argument("Feedback gain P must not be negative");
+    }
+    this->P = P;
 }
+
+/*! Getter method for the derivative gain P.
+ @return double
+*/
+double MrpPDAlgorithm::getDerivativeGainP() const { return this->P; }
 
 /*! Setter method for the known external torque about point B.
  @return void
@@ -90,11 +80,23 @@ void MrpPDAlgorithm::setKnownTorquePntB_B(Eigen::Vector3d& knownTorquePntB_B) {
     this->knownTorquePntB_B = knownTorquePntB_B;
 }
 
+/*! Getter method for the known torque about point B.
+ @return const Eigen::Vector3d&
+*/
+const Eigen::Vector3d& MrpPDAlgorithm::getKnownTorquePntB_B() const { return this->knownTorquePntB_B; }
+
 /*! Setter method for the proportional gain K.
  @return void
  @param K [rad/s] Proportional gain applied to MRP errors
 */
 void MrpPDAlgorithm::setProportionalGainK(double K) {
-    assert(K >= 0.0);
-    this->K = std::abs(K);
+    if (K < 0.0) {
+        throw std::invalid_argument("Feedback gain K must not be negative");
+    }
+    this->K = K;
 }
+
+/*! Getter method for the proportional gain K.
+ @return double
+*/
+double MrpPDAlgorithm::getProportionalGainK() const { return this->K; }
