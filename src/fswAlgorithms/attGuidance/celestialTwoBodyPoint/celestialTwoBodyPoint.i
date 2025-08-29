@@ -29,6 +29,7 @@
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
+%include "celestialTwoBodyPointAlgorithm.h"
 %include "celestialTwoBodyPoint.h"
 
 %include "architecture/msgPayloadDef/EphemerisMsgPayload.h"

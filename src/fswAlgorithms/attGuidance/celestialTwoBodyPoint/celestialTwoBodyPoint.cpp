@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -18,11 +18,6 @@
  */
 
 #include "fswAlgorithms/attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
-#include "architecture/utilities/safeMath.h"
-
-#include <math.h>
 
 void CelestialTwoBodyPoint::reset(uint64_t callTime) {
     this->secCelBodyIsLinked = this->secCelBodyInMsg.isLinked();
@@ -35,7 +30,7 @@ void CelestialTwoBodyPoint::reset(uint64_t callTime) {
         throw std::invalid_argument("celestialTwoBodyPoint.celBodyInMsg was not linked.");
     }
 
-    return;
+    this->algorithm.reset(this->secCelBodyIsLinked);
 }
 
 /*! This method takes the spacecraft and points a specified axis at a named
@@ -46,107 +41,17 @@ void CelestialTwoBodyPoint::reset(uint64_t callTime) {
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void CelestialTwoBodyPoint::updateState(uint64_t callTime) {
-    /*! - Parse the input messages */
-    this->parseInputMessages();
-    /*! - Compute the pointing requirements */
-    this->computeCelestialTwoBodyPoint(callTime);
-    /*! - Write the output message */
-    this->attRefOutMsg.write(&this->attRefOut, this->moduleID, callTime);
-}
-
-/*! This method takes the navigation translational info as well as the spice data of the
- primary celestial body and, if applicable, the second one, and computes the relative state vectors
- necessary to create the restricted 2-body pointing reference frame.
- @return void
- */
-void CelestialTwoBodyPoint::parseInputMessages() {
-    NavTransMsgPayload navData = this->transNavInMsg();
-    EphemerisMsgPayload primPlanet = this->celBodyInMsg();
-
-    double platAngDiff{}; /* Angle between r_P1 and r_P2 */
-
-    this->R_P1B_N = Eigen::Map<const Eigen::Vector3d>(primPlanet.r_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(navData.r_BN_N);
-    this->v_P1B_N = Eigen::Map<const Eigen::Vector3d>(primPlanet.v_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(navData.v_BN_N);
-
-    this->a_P1B_N = Eigen::Vector3d::Zero();
-    this->a_P2B_N = Eigen::Vector3d::Zero();
-
+    NavTransMsgPayload transNavIn = this->transNavInMsg();
+    EphemerisMsgPayload celBodyIn = this->celBodyInMsg();
+    EphemerisMsgPayload secCelBodyIn{};
     if (this->secCelBodyIsLinked) {
-        EphemerisMsgPayload secPlanet = this->secCelBodyInMsg();
-        this->R_P2B_N = Eigen::Map<const Eigen::Vector3d>(secPlanet.r_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(navData.r_BN_N);
-        this->v_P2B_N = Eigen::Map<const Eigen::Vector3d>(secPlanet.v_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(navData.v_BN_N);
-        double dotProduct = this->R_P2B_N.normalized().dot(this->R_P1B_N.normalized());
-        platAngDiff = safeAcos(dotProduct);
+        secCelBodyIn = this->secCelBodyInMsg();
     }
 
-    /*! - Cross the P1 states to get R_P2, v_p2 and a_P2 */
-    if (!this->secCelBodyIsLinked || fabs(platAngDiff) < this->singularityThresh ||
-        fabs(platAngDiff) > M_PI - this->singularityThresh) {
-        this->R_P2B_N = this->R_P1B_N.cross(this->v_P1B_N);
-        this->v_P2B_N = this->R_P1B_N.cross(this->a_P1B_N);
-        this->a_P2B_N = this->v_P1B_N.cross(this->a_P1B_N);
-    }
-}
+    AttRefMsgPayload attRefOut = this->algorithm.update(celBodyIn, secCelBodyIn, transNavIn);
 
-/*! This method takes the spacecraft and points a specified axis at a named
- celestial body specified in the configuration data.  It generates the
- commanded attitude and assumes that the control errors are computed
- downstream.
- @return void
- @param this The configuration data associated with the celestial body guidance
- @param callTime The clock time at which the function was called (nanoseconds)
- */
-void CelestialTwoBodyPoint::computeCelestialTwoBodyPoint(uint64_t callTime) {
-    this->attRefOut = {};
-
-    /* - Initial computations: R_n, v_n, a_n */
-    Eigen::Vector3d R_N = this->R_P1B_N.cross(this->R_P2B_N);
-    Eigen::Vector3d v_N = this->v_P1B_N.cross(this->R_P2B_N) + this->R_P1B_N.cross(this->v_P2B_N);
-    Eigen::Vector3d a_N = this->a_P1B_N.cross(this->R_P2B_N) + this->R_P1B_N.cross(this->a_P2B_N) +
-        2 * this->v_P1B_N.cross(this->v_P2B_N);
-
-    /* - Reference Frame computation */
-    Eigen::Vector3d r1_N_hat = this->R_P1B_N.normalized();
-    Eigen::Vector3d r3_N_hat = R_N.normalized();
-    Eigen::Vector3d r2_N_hat = (r3_N_hat.cross(r1_N_hat)).normalized();
-    Eigen::Matrix3d dcm_RN{};
-    dcm_RN.row(0) = r1_N_hat;
-    dcm_RN.row(1) = r2_N_hat;
-    dcm_RN.row(2) = r3_N_hat;
-
-    /* - MRP computation */
-    Eigen::Vector3d sigma_RN = dcmToMrp(dcm_RN);
-    eigenVector3d2CArray(sigma_RN, this->attRefOut.sigma_RN);
-
-    /* - Reference base-vectors first time-derivative */
-    Eigen::Vector3d dr1_N_hat = (Eigen::Matrix3d::Identity() - r1_N_hat * r1_N_hat.transpose()) * this->v_P1B_N / this->R_P1B_N.norm();
-    Eigen::Vector3d dr3_N_hat = (Eigen::Matrix3d::Identity() - r3_N_hat * r3_N_hat.transpose()) * v_N / R_N.norm();
-    Eigen::Vector3d dr2_N_hat = dr3_N_hat.cross(r1_N_hat) + r3_N_hat.cross(dr1_N_hat);
-
-    /* - Angular velocity computation */
-    Eigen::Vector3d omega_RN_R{};
-    omega_RN_R[0] = r3_N_hat.dot(dr2_N_hat);
-    omega_RN_R[1] = r1_N_hat.dot(dr3_N_hat);
-    omega_RN_R[2] = r2_N_hat.dot(dr1_N_hat);
-    Eigen::Vector3d omega_RN_N = dcm_RN.transpose() * omega_RN_R;
-    eigenVector3d2CArray(omega_RN_N, this->attRefOut.omega_RN_N);
-
-    /* - Reference base-vectors second time-derivative */
-    Eigen::Vector3d ddr1_N_hat = ((Eigen::Matrix3d::Identity() - r1_N_hat * r1_N_hat.transpose()) * this->a_P1B_N -
-        (2 * dr1_N_hat * r1_N_hat.transpose() + r1_N_hat * dr1_N_hat.transpose()) * this->v_P1B_N) / this->R_P1B_N.norm();
-    Eigen::Vector3d ddr3_N_hat = ((Eigen::Matrix3d::Identity() - r3_N_hat * r3_N_hat.transpose()) * a_N -
-        (2 * dr3_N_hat * r3_N_hat.transpose() + r3_N_hat * dr3_N_hat.transpose()) * v_N) / R_N.norm();
-    Eigen::Vector3d ddr2_N_hat = ddr3_N_hat.cross(r1_N_hat) + r3_N_hat.cross(ddr1_N_hat) + 2 * dr3_N_hat.cross(dr1_N_hat);
-
-    /* - Angular acceleration computation */
-    Eigen::Vector3d domega_RN_R{};
-    domega_RN_R[0] = dr3_N_hat.dot(dr2_N_hat) + r3_N_hat.dot(ddr2_N_hat) - omega_RN_R.dot(dr1_N_hat);
-    domega_RN_R[1] = dr1_N_hat.dot(dr3_N_hat) + r1_N_hat.dot(ddr3_N_hat) - omega_RN_R.dot(dr2_N_hat);
-    domega_RN_R[2] = dr2_N_hat.dot(dr1_N_hat) + r2_N_hat.dot(ddr1_N_hat) - omega_RN_R.dot(dr3_N_hat);
-    Eigen::Vector3d domega_RN_N = dcm_RN.transpose() * domega_RN_R;
-    eigenVector3d2CArray(domega_RN_N, this->attRefOut.domega_RN_N);
-
-    return;
+    /*! - Write the output message */
+    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
 }
 
 /**
@@ -154,10 +59,7 @@ void CelestialTwoBodyPoint::computeCelestialTwoBodyPoint(uint64_t callTime) {
  * @param thresh singularity threshold
  */
 void CelestialTwoBodyPoint::setSingularityThresh(double thresh) {
-    if (thresh < 0.0) {
-        throw std::invalid_argument("Singularity threshold must not be negative");
-    }
-    this->singularityThresh = thresh;
+    this->algorithm.setSingularityThresh(thresh);
 }
 
 /**
@@ -165,5 +67,5 @@ void CelestialTwoBodyPoint::setSingularityThresh(double thresh) {
  * @return double singularity threshold
  */
 double CelestialTwoBodyPoint::getSingularityThresh() const {
-    return this->singularityThresh;
+    return this->algorithm.getSingularityThresh();
 }
