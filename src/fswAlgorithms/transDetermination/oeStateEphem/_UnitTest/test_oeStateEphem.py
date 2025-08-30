@@ -36,83 +36,83 @@ splitPath = path.split('fswAlgorithms')
 from Basilisk import __path__
 bskPath = __path__[0]
 
-orbitPosAccuracy = 10000.0
-orbitVelAccuracy = 1.0
+orbit_position_epsilon = 10000.0
+orbit_velocity_epsilon = 1.0
 colors = ['r','g','b']
 
-@pytest.mark.parametrize('validChebyCurveTime, anomFlag', [
+@pytest.mark.parametrize('valid_curve, anomay_flag', [
     (True, 0),
     (True, 1),
     (True, -1),
     (False, -1)
 ])
-def test_chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
+def test_cheby_fit(show_plots, valid_curve, anomay_flag):
     """Module Unit Test"""
-    chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag)
+    cheby_fit(show_plots, valid_curve, anomay_flag)
 
 def test_zero_inputs(show_plots):
     """Module Unit Test"""
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    task_name = "unitTask"  # arbitrary name (don't change)
+    process_name = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
 
-    FSWUnitTestProc = sim.CreateNewProcess(unitProcessName)
+    test_process = sim.CreateNewProcess(process_name)
     # create the dynamics task and specify the integration update time
-    FSWUnitTestProc.addTask(sim.CreateNewTask(unitTaskName, macros.sec2nano(1)))
+    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(1)))
 
-    oeStateModel = oeStateEphem.OEStateEphem()
-    oeStateModel.modelTag = "oeStateModel"
-    sim.AddModelToTask(unitTaskName, oeStateModel)
+    oe_ephemeris_module = oeStateEphem.OEStateEphem()
+    oe_ephemeris_module.modelTag = "oe_ephemeris_module"
+    sim.AddModelToTask(task_name, oe_ephemeris_module)
 
-    oeStateModel.setCentralBodyGravitationalParameter(0)
+    oe_ephemeris_module.setCentralBodyGravitationalParameter(0)
 
-    oeStateModel.setArcRadiusPeriapsisCoefficients(0, [0] * 20)
-    oeStateModel.setArcEccentricityCoefficients(0, [0] * 20)
-    oeStateModel.setArcInclinationCoefficients(0, [0] * 20)
-    oeStateModel.setArcArgPeriapsisCoefficients(0, [0] * 20)
-    oeStateModel.setArcTrueAnomalyCoefficients(0, [0] * 20)
-    oeStateModel.setArcRaanCoefficients(0, [0] * 20)
-    oeStateModel.setArcNumberOfCoefficients(0, 1)
-    oeStateModel.setArcMiddleTime(0, 1)
-    oeStateModel.setArcRadiusTime(0, 1/2.0)
-    oeStateModel.setArcAnomalyFlag(0, 0)
+    oe_ephemeris_module.setArcRadiusPeriapsisCoefficients(0, [0] * 20)
+    oe_ephemeris_module.setArcEccentricityCoefficients(0, [0] * 20)
+    oe_ephemeris_module.setArcInclinationCoefficients(0, [0] * 20)
+    oe_ephemeris_module.setArcArgPeriapsisCoefficients(0, [0] * 20)
+    oe_ephemeris_module.setArcTrueAnomalyCoefficients(0, [0] * 20)
+    oe_ephemeris_module.setArcRaanCoefficients(0, [0] * 20)
+    oe_ephemeris_module.setArcNumberOfCoefficients(0, 1)
+    oe_ephemeris_module.setArcMiddleTime(0, 1)
+    oe_ephemeris_module.setArcRadiusTime(0, 1/2.0)
+    oe_ephemeris_module.setArcAnomalyFlag(0, 0)
 
-    clockCorrData = messaging.TDBVehicleClockCorrelationMsgPayload()
-    clockCorrData.vehicleClockTime = 0.0
-    clockCorrData.ephemerisTime = oeStateModel.getArcMiddleTime(0) - oeStateModel.getArcRadiusTime(0)
+    clock_correlation_data = messaging.TDBVehicleClockCorrelationMsgPayload()
+    clock_correlation_data.vehicleClockTime = 0.0
+    clock_correlation_data.ephemerisTime = oe_ephemeris_module.getArcMiddleTime(0) - oe_ephemeris_module.getArcRadiusTime(0)
 
-    clockInMsg = messaging.TDBVehicleClockCorrelationMsg().write(clockCorrData)
-    oeStateModel.clockCorrInMsg.subscribeTo(clockInMsg)
+    clock_input_msg = messaging.TDBVehicleClockCorrelationMsg().write(clock_correlation_data)
+    oe_ephemeris_module.clockCorrInMsg.subscribeTo(clock_input_msg)
 
-    dataLog = oeStateModel.stateFitOutMsg.recorder()
-    sim.AddModelToTask(unitTaskName, dataLog)
+    ephemeris_log = oe_ephemeris_module.stateFitOutMsg.recorder()
+    sim.AddModelToTask(task_name, ephemeris_log)
 
     sim.InitializeSimulation()
     sim.ConfigureStopTime(int(1*1.0E9))
     sim.ExecuteSimulation()
 
-    posChebData = dataLog.r_BdyZero_N
-    velChebData = dataLog.v_BdyZero_N
+    ephemeris_positions = ephemeris_log.r_BdyZero_N
+    ephemeris_velocities = ephemeris_log.v_BdyZero_N
 
-    np.testing.assert_allclose(posChebData, 0, atol=1e-10, err_msg="position values should have been zero")
-    np.testing.assert_allclose(velChebData, 0, atol=1e-10, err_msg="velocity values should have been zero")
+    np.testing.assert_allclose(ephemeris_positions, 0, atol=1e-10, err_msg="position values should have been zero")
+    np.testing.assert_allclose(ephemeris_velocities, 0, atol=1e-10, err_msg="velocity values should have been zero")
 
-def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
-    numCurvePoints = 4*8640+1
-    curveDurationSeconds = 4*86400
-    logPeriod = curveDurationSeconds // (numCurvePoints - 1)
-    numberOfCoefficients = 14
-    integFrame = "j2000"
-    zeroBase = "Earth"
-    centralBodyMu = 3.98574405096E14
+def cheby_fit(show_plots, valid_curve, anomay_flag):
+    number_curve_points = 4*8640+1
+    curve_duration_sec = 4*86400
+    log_rate = curve_duration_sec // (number_curve_points - 1)
+    number_cheby_coefficients = 14
+    frame = "j2000"
+    zero_base = "Earth"
+    central_body_mu = 3.98574405096E14
 
-    dateSpice = "2015 April 10, 00:00:00.0 TDB"
+    spice_time = "2015 April 10, 00:00:00.0 TDB"
     spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
-    et = spiceypy.str2et(dateSpice)
-    etStart = et
-    etEnd = etStart + curveDurationSeconds
+    et = spiceypy.str2et(spice_time)
+    start_time_et = et
+    end_time_et = start_time_et + curve_duration_sec
 
     spiceypy.furnsh(bskPath + '/supportData/EphemerisData/de430.bsp')
     spiceypy.furnsh(bskPath + '/supportData/EphemerisData/naif0012.tls')
@@ -120,125 +120,123 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     spiceypy.furnsh(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     spiceypy.furnsh(path + '/TDRSS.bsp')
 
-    tdrssPosList = []
-    tdrssVelList = []
-    timeHistory = np.linspace(etStart, etEnd, numCurvePoints)
-    rpArray = []
-    eccArray = []
-    incArray = []
-    OmegaArray = []
-    omegaArray = []
-    anomArray = []
-    anomPrev = 0.0
-    anomCount = 0
+    true_positions_m = []
+    true_velocities_mps = []
+    time_array = np.linspace(start_time_et, end_time_et, number_curve_points)
+    radius_periapsis = []
+    eccentricity = []
+    inclination = []
+    raan = []
+    omega = []
+    true_anomaly = []
+    previous_anomaly = 0.0
+    anomaly_switch_count = 0
 
-    for timeVal in timeHistory:
-        stringCurrent = spiceypy.et2utc(timeVal, 'C', 4, 1024)
-        [stateOut, _] = spiceypy.spkezr('-221', spiceypy.str2et(stringCurrent), integFrame, 'NONE', zeroBase)
-        position = stateOut[0:3]*1000.0
-        velocity = stateOut[3:6]*1000.0
-        orbEl = orbitalMotion.rv2elem(centralBodyMu, position, velocity)
-        tdrssPosList.append(position)
-        tdrssVelList.append(velocity)
-        rpArray.append(orbEl.rPeriap)
-        eccArray.append(orbEl.e)
-        incArray.append(orbEl.i)
-        OmegaArray.append(orbEl.Omega)
-        omegaArray.append(orbEl.omega)
-        if anomFlag == 1:
-            currentAnom = orbitalMotion.E2M(orbitalMotion.f2E(orbEl.f, orbEl.e), orbEl.e)
+    for timeVal in time_array:
+        current_time = spiceypy.et2utc(timeVal, 'C', 4, 1024)
+        [spice_state, _] = spiceypy.spkezr('-221', spiceypy.str2et(current_time), frame, 'NONE', zero_base)
+        position = spice_state[0:3]*1000.0
+        velocity = spice_state[3:6]*1000.0
+        orbital_elements = orbitalMotion.rv2elem(central_body_mu, position, velocity)
+        true_positions_m.append(position)
+        true_velocities_mps.append(velocity)
+        radius_periapsis.append(orbital_elements.rPeriap)
+        eccentricity.append(orbital_elements.e)
+        inclination.append(orbital_elements.i)
+        raan.append(orbital_elements.Omega)
+        omega.append(orbital_elements.omega)
+        if anomay_flag == 1:
+            current_anomaly = orbitalMotion.E2M(orbitalMotion.f2E(orbital_elements.f, orbital_elements.e), orbital_elements.e)
         else:
-            currentAnom = orbEl.f
-        if currentAnom < anomPrev:
-            anomCount += 1
-        anomArray.append(2*math.pi*anomCount + currentAnom)
-        anomPrev = currentAnom
+            current_anomaly = orbital_elements.f
+        if current_anomaly < previous_anomaly:
+            anomaly_switch_count += 1
+        true_anomaly.append(2*math.pi*anomaly_switch_count + current_anomaly)
+        previous_anomaly = current_anomaly
 
-    tdrssPosList = np.array(tdrssPosList)
-    tdrssVelList = np.array(tdrssVelList)
+    true_positions_m = np.array(true_positions_m)
+    true_velocities_mps = np.array(true_velocities_mps)
 
-    fitTimes = np.linspace(-1, 1, numCurvePoints)
-    chebRpCoeff = np.polynomial.chebyshev.chebfit(fitTimes, rpArray, numberOfCoefficients - 1) # np chebfit takes in the degree, not the number of coefficients
-    chebEccCoeff = np.polynomial.chebyshev.chebfit(fitTimes, eccArray, numberOfCoefficients - 1)
-    chebIncCoeff = np.polynomial.chebyshev.chebfit(fitTimes, incArray, numberOfCoefficients - 1)
-    chebOmegaCoeff = np.polynomial.chebyshev.chebfit(fitTimes, OmegaArray, numberOfCoefficients - 1)
-    chebomegaCoeff = np.polynomial.chebyshev.chebfit(fitTimes, omegaArray, numberOfCoefficients - 1)
-    chebAnomCoeff = np.polynomial.chebyshev.chebfit(fitTimes, anomArray, numberOfCoefficients - 1)
+    fit_times = np.linspace(-1, 1, number_curve_points)
+    radius_periasis_fit = np.polynomial.chebyshev.chebfit(fit_times, radius_periapsis, number_cheby_coefficients - 1) # np chebfit takes in the degree, not the number of coefficients
+    eccentricity_fit = np.polynomial.chebyshev.chebfit(fit_times, eccentricity, number_cheby_coefficients - 1)
+    inclination_fit = np.polynomial.chebyshev.chebfit(fit_times, inclination, number_cheby_coefficients - 1)
+    rann_fit = np.polynomial.chebyshev.chebfit(fit_times, raan, number_cheby_coefficients - 1)
+    omega_fit = np.polynomial.chebyshev.chebfit(fit_times, omega, number_cheby_coefficients - 1)
+    anomaly_fit = np.polynomial.chebyshev.chebfit(fit_times, true_anomaly, number_cheby_coefficients - 1)
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    task_name = "unitTask"  # arbitrary name (don't change)
+    process_name = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
 
-    FSWUnitTestProc = sim.CreateNewProcess(unitProcessName)
+    test_process = sim.CreateNewProcess(process_name)
     # create the dynamics task and specify the integration update time
-    FSWUnitTestProc.addTask(sim.CreateNewTask(unitTaskName, macros.sec2nano(logPeriod)))
+    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(log_rate)))
 
-    oeStateModel = oeStateEphem.OEStateEphem()
-    oeStateModel.modelTag = "oeStateModel"
-    sim.AddModelToTask(unitTaskName, oeStateModel)
+    oe_ephemeris_module = oeStateEphem.OEStateEphem()
+    oe_ephemeris_module.modelTag = "oe_ephemeris_module"
+    sim.AddModelToTask(task_name, oe_ephemeris_module)
 
-    oeStateModel.setCentralBodyGravitationalParameter(centralBodyMu)
+    oe_ephemeris_module.setCentralBodyGravitationalParameter(central_body_mu)
 
-    oeStateModel.setArcRadiusPeriapsisCoefficients(0, chebRpCoeff.tolist() + [0] * (20 - numberOfCoefficients))
-    oeStateModel.setArcEccentricityCoefficients(0, chebEccCoeff.tolist() + [0] * (20 - numberOfCoefficients))
-    oeStateModel.setArcInclinationCoefficients(0, chebIncCoeff.tolist() + [0] * (20 - numberOfCoefficients))
-    oeStateModel.setArcArgPeriapsisCoefficients(0, chebomegaCoeff.tolist() + [0] * (20 - numberOfCoefficients))
-    oeStateModel.setArcTrueAnomalyCoefficients(0, chebAnomCoeff.tolist() + [0] * (20 - numberOfCoefficients))
-    oeStateModel.setArcRaanCoefficients(0, chebOmegaCoeff.tolist() + [0] * (20 - numberOfCoefficients))
-    oeStateModel.setArcNumberOfCoefficients(0, numberOfCoefficients)
-    oeStateModel.setArcMiddleTime(0, etStart + curveDurationSeconds/2.0)
-    oeStateModel.setArcRadiusTime(0, curveDurationSeconds/2.0)
+    oe_ephemeris_module.setArcRadiusPeriapsisCoefficients(0, radius_periasis_fit.tolist() + [0] * (20 - number_cheby_coefficients))
+    oe_ephemeris_module.setArcEccentricityCoefficients(0, eccentricity_fit.tolist() + [0] * (20 - number_cheby_coefficients))
+    oe_ephemeris_module.setArcInclinationCoefficients(0, inclination_fit.tolist() + [0] * (20 - number_cheby_coefficients))
+    oe_ephemeris_module.setArcArgPeriapsisCoefficients(0, omega_fit.tolist() + [0] * (20 - number_cheby_coefficients))
+    oe_ephemeris_module.setArcTrueAnomalyCoefficients(0, anomaly_fit.tolist() + [0] * (20 - number_cheby_coefficients))
+    oe_ephemeris_module.setArcRaanCoefficients(0, rann_fit.tolist() + [0] * (20 - number_cheby_coefficients))
+    oe_ephemeris_module.setArcNumberOfCoefficients(0, number_cheby_coefficients)
+    oe_ephemeris_module.setArcMiddleTime(0, start_time_et + curve_duration_sec/2.0)
+    oe_ephemeris_module.setArcRadiusTime(0, curve_duration_sec/2.0)
 
-    if not (anomFlag == -1):
-        oeStateModel.setArcAnomalyFlag(0, anomFlag)
+    if not (anomay_flag == -1):
+        oe_ephemeris_module.setArcAnomalyFlag(0, anomay_flag)
 
-    clockCorrData = messaging.TDBVehicleClockCorrelationMsgPayload()
-    clockCorrData.vehicleClockTime = 0.0
-    clockCorrData.ephemerisTime = oeStateModel.getArcMiddleTime(0) - oeStateModel.getArcRadiusTime(0)
+    clock_correlation_data = messaging.TDBVehicleClockCorrelationMsgPayload()
+    clock_correlation_data.vehicleClockTime = 0.0
+    clock_correlation_data.ephemerisTime = oe_ephemeris_module.getArcMiddleTime(0) - oe_ephemeris_module.getArcRadiusTime(0)
 
-    clockInMsg = messaging.TDBVehicleClockCorrelationMsg().write(clockCorrData)
-    oeStateModel.clockCorrInMsg.subscribeTo(clockInMsg)
+    clock_input_msg = messaging.TDBVehicleClockCorrelationMsg().write(clock_correlation_data)
+    oe_ephemeris_module.clockCorrInMsg.subscribeTo(clock_input_msg)
 
-    dataLog = oeStateModel.stateFitOutMsg.recorder()
-    sim.AddModelToTask(unitTaskName, dataLog)
+    ephemeris_log = oe_ephemeris_module.stateFitOutMsg.recorder()
+    sim.AddModelToTask(task_name, ephemeris_log)
 
-    if not validChebyCurveTime:
+    if not valid_curve:
         sim.InitializeSimulation()
-        # increase the run time by one logging period so that the sim time is outside the
-        # valid chebychev curve duration
-        sim.ConfigureStopTime(int((curveDurationSeconds + logPeriod) * 1.0E9))
+        sim.ConfigureStopTime(int((curve_duration_sec + log_rate) * 1.0E9))
         sim.ExecuteSimulation()
     else:
         sim.InitializeSimulation()
-        sim.ConfigureStopTime(int(curveDurationSeconds*1.0E9))
+        sim.ConfigureStopTime(int(curve_duration_sec*1.0E9))
         sim.ExecuteSimulation()
 
-    posChebData = dataLog.r_BdyZero_N
-    velChebData = dataLog.v_BdyZero_N
+    ephemeris_positions = ephemeris_log.r_BdyZero_N
+    ephemeris_velocities = ephemeris_log.v_BdyZero_N
 
-    if not validChebyCurveTime:
-        lastLogidx = (curveDurationSeconds + logPeriod) // logPeriod - 1
-        secondLastPos = posChebData[lastLogidx + 1, 0:] - tdrssPosList[lastLogidx, :]
-        lastPos = posChebData[lastLogidx, 0:] - tdrssPosList[lastLogidx, :]
+    if not valid_curve:
+        last_log_index = (curve_duration_sec + log_rate) // log_rate - 1
+        second_last_position = ephemeris_positions[last_log_index + 1, 0:] - true_positions_m[last_log_index, :]
+        last_position = ephemeris_positions[last_log_index, 0:] - true_positions_m[last_log_index, :]
 
-        np.testing.assert_array_equal(secondLastPos, lastPos, "Expected Chebychev position to rail high or low")
+        np.testing.assert_array_equal(second_last_position, last_position, "Expected Chebychev position to rail high or low")
 
-        secondLastVel = velChebData[lastLogidx + 1, 0:] - tdrssVelList[lastLogidx, :]
-        lastVel = velChebData[lastLogidx, 0:] - tdrssVelList[lastLogidx, :]
-        np.testing.assert_array_equal(secondLastVel, lastVel, "Expected Chebychev velocity to rail high or low")
+        second_last_velocity = ephemeris_velocities[last_log_index + 1, 0:] - true_velocities_mps[last_log_index, :]
+        last_velocity = ephemeris_velocities[last_log_index, 0:] - true_velocities_mps[last_log_index, :]
+        np.testing.assert_array_equal(second_last_velocity, last_velocity, "Expected Chebychev velocity to rail high or low")
 
     else:
-        maxErrVec = [abs(max(posChebData[:, 0] - tdrssPosList[:, 0])),
-                     abs(max(posChebData[:, 1] - tdrssPosList[:, 1])),
-                     abs(max(posChebData[:,2] - tdrssPosList[:, 2]))]
-        maxVelErrVec = [abs(max(velChebData[:, 0] - tdrssVelList[:, 0])),
-                        abs(max(velChebData[:, 1] - tdrssVelList[:, 1])),
-                        abs(max(velChebData[:, 2] - tdrssVelList[:, 2]))]
+        mas_pox_vector_err = [abs(max(ephemeris_positions[:, 0] - true_positions_m[:, 0])),
+                     abs(max(ephemeris_positions[:, 1] - true_positions_m[:, 1])),
+                     abs(max(ephemeris_positions[:,2] - true_positions_m[:, 2]))]
+        max_vel_vector_err = [abs(max(ephemeris_velocities[:, 0] - true_velocities_mps[:, 0])),
+                        abs(max(ephemeris_velocities[:, 1] - true_velocities_mps[:, 1])),
+                        abs(max(ephemeris_velocities[:, 2] - true_velocities_mps[:, 2]))]
 
-        np.testing.assert_array_less(max(maxErrVec), orbitPosAccuracy, "maxErrVec >= orbitPosAccuracy")
-        np.testing.assert_array_less(max(maxVelErrVec), orbitVelAccuracy, "maxVelErrVec >= orbitVelAccuracy")
+        np.testing.assert_array_less(max(mas_pox_vector_err), orbit_position_epsilon, "mas_pox_vector_err >= orbit_position_epsilon")
+        np.testing.assert_array_less(max(max_vel_vector_err), orbit_velocity_epsilon, "max_vel_vector_err >= orbit_velocity_epsilon")
 
         plt.close("all")
         # plot the fitted and actual position coordinates
@@ -247,13 +245,13 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         ax = fig.gca()
         ax.ticklabel_format(useOffset=False, style='plain')
         for idx in range(0, 3):
-            plt.plot(dataLog.times()*macros.NANO2HOUR,
-                     posChebData[:, idx]/1000,
+            plt.plot(ephemeris_log.times()*macros.NANO2HOUR,
+                     ephemeris_positions[:, idx]/1000,
                      color=colors[idx],
                      linewidth=0.5,
                      label='$r_{fit,' + str(idx) + '}$')
-            plt.plot(dataLog.times()*macros.NANO2HOUR,
-                     tdrssPosList[:, idx]/1000,
+            plt.plot(ephemeris_log.times()*macros.NANO2HOUR,
+                     true_positions_m[:, idx]/1000,
                      color=colors[idx],
                      linestyle='dashed', linewidth=2,
                      label='$r_{true,' + str(idx) + '}$')
@@ -264,13 +262,13 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         # plot the fitted and actual velocity coordinates
         plt.figure(2)
         for idx in range(0, 3):
-            plt.plot(dataLog.times()*macros.NANO2HOUR,
-                     velChebData[:, idx]/1000,
+            plt.plot(ephemeris_log.times()*macros.NANO2HOUR,
+                     ephemeris_velocities[:, idx]/1000,
                      color=colors[idx],
                      linewidth=0.5,
                      label='$v_{fit,' + str(idx) + '}$')
-            plt.plot(dataLog.times()*macros.NANO2HOUR,
-                     tdrssVelList[:, idx]/1000,
+            plt.plot(ephemeris_log.times()*macros.NANO2HOUR,
+                     true_velocities_mps[:, idx]/1000,
                      color=colors[idx],
                      linestyle='dashed', linewidth=2,
                      label='$v_{true,' + str(idx) + '}$')
@@ -280,19 +278,19 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
 
         # plot the difference in position coordinates
         plt.figure(3)
-        arrayLength = posChebData[:, 0].size
+        array_length = ephemeris_positions[:, 0].size
         for idx in range(0,3):
-            plt.plot(dataLog.times() * macros.NANO2HOUR,
-                     posChebData[:, idx] - tdrssPosList[:, idx],
+            plt.plot(ephemeris_log.times() * macros.NANO2HOUR,
+                     ephemeris_positions[:, idx] - true_positions_m[:, idx],
                      color=colors[idx],
                      linewidth=0.5,
                      label=r'$\Delta r_{' + str(idx) + '}$')
-        plt.plot(dataLog.times() * macros.NANO2HOUR,
-                 orbitPosAccuracy*np.ones(arrayLength),
+        plt.plot(ephemeris_log.times() * macros.NANO2HOUR,
+                 orbit_position_epsilon*np.ones(array_length),
                  color='r',
                  linewidth=1)
-        plt.plot(dataLog.times() * macros.NANO2HOUR,
-                 -orbitPosAccuracy * np.ones(arrayLength),
+        plt.plot(ephemeris_log.times() * macros.NANO2HOUR,
+                 -orbit_position_epsilon * np.ones(array_length),
                  color='r',
                  linewidth=1)
         plt.legend(loc='lower right')
@@ -301,19 +299,19 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
 
         # plot the difference in velocity coordinates
         plt.figure(4)
-        arrayLength = velChebData[:, 0].size
+        array_length = ephemeris_velocities[:, 0].size
         for idx in range(0,3):
-            plt.plot(dataLog.times() * macros.NANO2HOUR,
-                     velChebData[:, idx] - tdrssVelList[:, idx],
+            plt.plot(ephemeris_log.times() * macros.NANO2HOUR,
+                     ephemeris_velocities[:, idx] - true_velocities_mps[:, idx],
                      color=colors[idx],
                      linewidth=0.5,
                      label=r'$\Delta v_{' + str(idx) + '}$')
-        plt.plot(dataLog.times() * macros.NANO2HOUR,
-                 orbitVelAccuracy*np.ones(arrayLength),
+        plt.plot(ephemeris_log.times() * macros.NANO2HOUR,
+                 orbit_velocity_epsilon*np.ones(array_length),
                  color='r',
                  linewidth=1)
-        plt.plot(dataLog.times() * macros.NANO2HOUR,
-                 -orbitVelAccuracy * np.ones(arrayLength),
+        plt.plot(ephemeris_log.times() * macros.NANO2HOUR,
+                 -orbit_velocity_epsilon * np.ones(array_length),
                  color='r',
                  linewidth=1)
         plt.legend(loc='lower right')
@@ -327,6 +325,6 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
 
 
 if __name__ == "__main__":
-    chebyPosFitAllTest(True,        # showPlots
-                       True,        # validChebyCurveTime
-                       1)           # anomFlag
+    cheby_fit(True,        # showPlots
+                       True,        # valid_curve
+                       1)           # anomay_flag
