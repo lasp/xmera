@@ -173,10 +173,16 @@ void StepperMotorController::setThetaMin(const double thetaMin) { this->thetaMin
  @return void
  @param stepAngle [rad] Motor step angle
 */
-void StepperMotorController::setStepAngle(const double stepAngle) { this->stepAngle = stepAngle; }
+void StepperMotorController::setStepAngle(const double stepAngle) {
+    assert(stepAngle > 0.0);
+    this->stepAngle = std::abs(stepAngle);
+}
 
 /*! Setter method for the motor step time.
  @return void
  @param stepTime [s] Motor step time
 */
-void StepperMotorController::setStepTime(const double stepTime) { this->stepTime = stepTime; }
+void StepperMotorController::setStepTime(const double stepTime) {
+    assert(stepTime > 0.0);
+    this->stepTime = std::abs(stepTime);
+}

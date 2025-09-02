@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,102 +17,99 @@
  */
 
 #include "stepperMotor.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <cassert>
+#include <cmath>
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! Module reset method.
  @return void
  @param callTime [ns] Time the method is called
 */
 void StepperMotor::reset(uint64_t callTime) {
-    if (!this->motorStepCommandInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "Error: stepperMotor.motorStepCommandInMsg wasn't connected.");
-    }
+    assert(this->motorStepCommandInMsg.isLinked());
 
-    // Initialize the module parameters to zero
+    // Reset required module parameters
     this->theta = this->thetaInit;
-    this->maneuverThetaInit = this->thetaInit;
     this->thetaDot = 0.0;
     this->thetaDDot = 0.0;
     this->tInit = 0.0;
     this->stepCount = 0;
-
-    // Set the previous written time to a negative value to capture a message written at time zero
     this->previousWrittenTime = -1;
-
-    // Initialize the module boolean parameters
-    this->completion = true;
+    this->actuationComplete = true;
     this->stepComplete = true;
     this->newMsg = false;
+    this->interruptMsg = false;
+
+    // Set motor maximum angular acceleration
+    this->thetaDDotMax = this->stepAngle / (0.25 * this->stepTime * this->stepTime);  // [rad/s^2]
 }
 
-/*! This method profiles the stepper motor trajectory and updates the prescribed motor states as a function of time.
-The motor states are then written to the output messages.
+/*! Module update method. This method profiles the stepper motor actuation as a function of time. The motor states
+ are then written to the output message.
  @return void
  @param callTime [ns] Time the method is called
 */
 void StepperMotor::updateState(uint64_t callTime) {
-    // Create the buffer messages
-    MotorStepCommandMsgPayload motorStepCommandIn;
-    StepperMotorMsgPayload stepperMotorOut;
-
-    // Zero the buffer messages
-    motorStepCommandIn = MotorStepCommandMsgPayload();
-    stepperMotorOut = StepperMotorMsgPayload();
+    MotorStepCommandMsgPayload motorStepCommandIn{};
 
     // Read the input message
     if (this->motorStepCommandInMsg.isWritten()) {
         motorStepCommandIn = this->motorStepCommandInMsg();
         // Store the number of commanded motor steps when a new message is written
-        if (this->previousWrittenTime <  this->motorStepCommandInMsg.timeWritten()) {
-            this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
+        if (this->previousWrittenTime < this->motorStepCommandInMsg.timeWritten()) {
             this->stepsCommanded = motorStepCommandIn.stepsCommanded;
-            if (this->stepsCommanded != 0) {
-                this->completion = false;
-            } else {
-                this->completion = true;
-            }
+            this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
+
+            // Update booleans
             this->newMsg = true;
+            if (this->actuationComplete) {
+                this->interruptMsg = false;
+            } else {
+                this->interruptMsg = true;
+            }
+            if (this->stepsCommanded == 0) {
+                this->actuationComplete = true;
+                this->stepCount = 0;
+            } else {
+                this->actuationComplete = false;
+            }
         }
     }
 
-    // Reset the motor states for the next maneuver ONLY when the current step is completed
-    if (!(this->completion)) {
-        this->actuateMotor(callTime * NANO2SEC);
+    // Actuate the motor only if a current actuation segment is not complete
+    double t = callTime * NANO2SEC;
+    if (!(this->actuationComplete)) {
+        // Reset the motor immediately after a new non-interrupting request is received
+        if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) {
+            this->resetMotor();
+        }
+        this->actuateMotor(t);
+    } else {
+        this->tInit = t;
+        this->thetaDDot = 0.0;
     }
 
-    // Copy motor information to the stepper motor message
+    // Write the output message
+    StepperMotorMsgPayload stepperMotorOut{};
     stepperMotorOut.theta = this->theta;
     stepperMotorOut.thetaDot = this->thetaDot;
     stepperMotorOut.thetaDDot = this->thetaDDot;
     stepperMotorOut.stepsCommanded = this->stepsCommanded;
     stepperMotorOut.stepCount = this->stepCount;
-
-    // Write the output messages
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
 }
 
-/*! This high-level method is used to simulate the stepper motor states in time.
+/*! This method is used to simulate the stepper motor actuation in time.
  @return void
  @param t [s] Time the method is called
 */
 void StepperMotor::actuateMotor(double t) {
-    // Reset the motor states when the current request is complete and a new request is received
-    if (this->newMsg && this->stepComplete) {
-        this->resetMotor(t);
-    }
-
-    // Define temporal information for the maneuver
-    this->tf = this->tInit + this->stepTime;
-    this->ts = this->tInit + this->stepTime / 2;
-
-    // Update the intermediate initial and reference motor angles and the parabolic constants when a step is completed
+    // Update the motor step parameters when a step is completed
     if (this->stepComplete) {
-        this->updateRotationParameters();
+        this->updateStepParameters();
     }
 
-    // Update the scalar motor states during each step
+    // Update the motor states during each step
     if (this->isInStepFirstHalf(t)) {
         this->computeStepFirstHalf(t);
     } else if (this->isInStepSecondHalf(t)) {
@@ -124,32 +121,29 @@ void StepperMotor::actuateMotor(double t) {
 
 /*! This method resets the motor states when the current request is complete and a new request is received.
  @return void
- @param t [s] Time the method is called
 */
-void StepperMotor::resetMotor(double t) {
-    // Reset the motor step count to zero
+void StepperMotor::resetMotor() {
     this->stepCount = 0;
-
-    // Update the current motor angle
-    this->maneuverThetaInit = this->theta;
-
-    // Update the initial time as the current simulation time
-    this->tInit = t;
-
+    this->thetaInit = this->theta;
     this->newMsg = false;
+    this->interruptMsg = false;
 }
 
-/*! This method updates the rotation parameters after a step is completed.
+/*! This method updates the step parameters after a step is completed.
  @return void
 */
-void StepperMotor::updateRotationParameters() {
-    this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
+void StepperMotor::updateStepParameters() {
+    this->stepComplete = false;
+    this->tf = this->tInit + this->stepTime;
+    this->ts = this->tInit + this->stepTime / 2;
+    this->intermediateThetaInit = this->thetaInit + (this->stepCount * this->stepAngle);
+
     if (this->stepsCommanded > 0) {
-        this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount + 1) * this->stepAngle);
+        this->intermediateThetaRef = this->thetaInit + ((this->stepCount + 1) * this->stepAngle);
         this->a = 0.5 * (this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
         this->b = -0.5 * (this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
     } else {
-        this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount - 1) * this->stepAngle);
+        this->intermediateThetaRef = this->thetaInit + ((this->stepCount - 1) * this->stepAngle);
         this->a = 0.5 * (-this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
         this->b = -0.5 * (-this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
     }
@@ -159,23 +153,20 @@ void StepperMotor::updateRotationParameters() {
  @return bool
  @param t [s] Time the method is called
 */
-bool StepperMotor::isInStepFirstHalf(double t) {
-    return (t < this->ts || t == this->ts) && (this->tf - this->tInit != 0.0);
-}
+bool StepperMotor::isInStepFirstHalf(double t) { return (t < this->ts && std::abs(this->ts - t) > 1e-5); }
 
 /*! This method computes the motor states during the first half of each step.
  @return void
  @param t [s] Time the method is called
 */
 void StepperMotor::computeStepFirstHalf(double t) {
-    if (this->stepsCommanded > 0 && !this->newMsg) {
+    if (this->intermediateThetaRef > this->intermediateThetaInit) {
         this->thetaDDot = this->thetaDDotMax;
-    } else if (!this->newMsg) {
+    } else {
         this->thetaDDot = -this->thetaDDotMax;
     }
     this->thetaDot = this->thetaDDot * (t - this->tInit);
     this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->intermediateThetaInit;
-    this->stepComplete = false;
 }
 
 /*! This method determines if the motor is in the second half of a step.
@@ -183,7 +174,7 @@ void StepperMotor::computeStepFirstHalf(double t) {
  @param t [s] Time the method is called
 */
 bool StepperMotor::isInStepSecondHalf(double t) {
-    return (t > this->ts && t < this->tf) && (this->tf - this->tInit != 0.0);
+    return ((t >= this->ts || std::abs(this->ts - t) < 1e-5) && std::abs(this->tf - t) > 1e-5);
 }
 
 /*! This method computes the motor states during the second half of each step.
@@ -191,14 +182,13 @@ bool StepperMotor::isInStepSecondHalf(double t) {
  @param t [s] Time the method is called
 */
 void StepperMotor::computeStepSecondHalf(double t) {
-    if (this->stepsCommanded > 0 && !this->newMsg){
+    if (this->intermediateThetaRef > this->intermediateThetaInit) {
         this->thetaDDot = -this->thetaDDotMax;
-    } else if (!this->newMsg) {
+    } else {
         this->thetaDDot = this->thetaDDotMax;
     }
     this->thetaDot = this->thetaDDot * (t - this->tInit) - this->thetaDDot * (this->tf - this->tInit);
     this->theta = this->b * (t - this->tf) * (t - this->tf) + this->intermediateThetaRef;
-    this->stepComplete = false;
 }
 
 /*! This method computes the motor states when a step is complete.
@@ -207,76 +197,56 @@ void StepperMotor::computeStepSecondHalf(double t) {
 */
 void StepperMotor::computeStepComplete(double t) {
     this->stepComplete = true;
-    this->thetaDDot = 0.0;
     this->thetaDot = 0.0;
     this->theta = this->intermediateThetaRef;
-
-    // Update the motor step count
-    if (!this->newMsg) {
-        if (this->stepsCommanded > 0) {
-            this->stepCount++;
-        } else {
-            this->stepCount--;
-        }
-    } else {
-        if (this->intermediateThetaRef > this->intermediateThetaInit) {
-            this->stepCount++;
-        } else {
-            this->stepCount--;
-        }
-    }
-
-    // Update the initial time
     this->tInit = t;
 
-    // Update the completion boolean variable only when motor actuation is complete
-    if ((this->stepCount == this->stepsCommanded) && !this->newMsg) {
-        this->completion = true;
+    // Update the motor step count
+    if (this->intermediateThetaRef > this->intermediateThetaInit) {
+        this->stepCount++;
+    } else {
+        this->stepCount--;
+    }
+
+    // Update the actuationComplete boolean variable only when motor actuation is complete
+    if ((this->stepCount == this->stepsCommanded) && !this->interruptMsg) {
+        this->actuationComplete = true;
     }
 }
 
 /*! Getter method for the initial motor angle.
  @return double
 */
-double StepperMotor::getThetaInit() const {
-    return this->thetaInit;
-}
+double StepperMotor::getThetaInit() const { return this->thetaInit; }
 
 /*! Getter method for the motor step angle.
  @return double
 */
-double StepperMotor::getStepAngle() const {
-    return this->stepAngle;
-}
+double StepperMotor::getStepAngle() const { return this->stepAngle; }
 
 /*! Getter method for the motor step time.
  @return double
 */
-double StepperMotor::getStepTime() const {
-    return this->stepTime;
-}
+double StepperMotor::getStepTime() const { return this->stepTime; }
 
 /*! Getter method for the maximum motor angular acceleration.
  @return double
 */
-double StepperMotor::getThetaDDotMax() const {
-    return this->thetaDDotMax;
-}
+double StepperMotor::getThetaDDotMax() const { return this->thetaDDotMax; }
 
 /*! Setter method for the initial motor angle.
  @return void
  @param thetaInit [rad] Initial motor angle
 */
-void StepperMotor::setThetaInit(const double thetaInit) {
-    this->thetaInit = thetaInit;
-}
+void StepperMotor::setThetaInit(const double thetaInit) { this->thetaInit = thetaInit; }
 
 /*! Setter method for the motor step angle.
  @return void
  @param stepAngle [rad] Motor step angle
 */
 void StepperMotor::setStepAngle(const double stepAngle) {
-    this->stepAngle = stepAngle;
+    assert(stepAngle > 0.0);
+    this->stepAngle = std::abs(stepAngle);
 }
 
 /*! Setter method for the motor step time.
@@ -284,13 +254,6 @@ void StepperMotor::setStepAngle(const double stepAngle) {
  @param stepTime [s] Motor step time
 */
 void StepperMotor::setStepTime(const double stepTime) {
-    this->stepTime = stepTime;
-}
-
-/*! Setter method for the maximum motor angular acceleration.
- @return void
- @param thetaDDotMax [rad/s^2] Maximum motor angular acceleration
-*/
-void StepperMotor::setThetaDDotMax(const double thetaDDotMax) {
-    this->thetaDDotMax = thetaDDotMax;
+    assert(stepTime > 0.0);
+    this->stepTime = std::abs(stepTime);
 }
