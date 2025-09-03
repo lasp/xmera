@@ -28,6 +28,7 @@ def create(
         gs_hat_B,
         Js,
         u_max = numpy.NaN,
+        torque_sat_speed_limit=4000 * 2 * numpy.pi / 60
     ):
     """
     Create a FSW RW object
@@ -52,6 +53,7 @@ def create(
     RW.gsHat_B = gs_hat_B
     RW.uMax = u_max
     RW.Js = Js
+    RW.torqueSatSpeedLimit = torque_sat_speed_limit
 
     # add RW to the list of RW devices
     rw_list.append(RW)
@@ -73,17 +75,20 @@ def write_config_message():
     gs_matrix_b = []
     js_list = []
     u_max_list = []
+    torque_sat_speed_limit_list = []
 
     for rw in rw_list:
         gs_matrix_b.extend(rw.gsHat_B)
         js_list.extend([rw.Js])
         u_max_list.extend([rw.uMax])
+        torque_sat_speed_limit_list.extend([rw.torqueSatSpeedLimit])
 
     rw_config_params = messaging.RWArrayConfigMsgPayload()
     rw_config_params.GsMatrix_B = gs_matrix_b
     rw_config_params.JsList = js_list
     rw_config_params.uMax = u_max_list
     rw_config_params.numRW = len(rw_list)
+    rw_config_params.torqueSatSpeedLimit = torque_sat_speed_limit_list
     rw_config_msg = messaging.RWArrayConfigMsg().write(rw_config_params)
     rw_config_msg.this.disown()
 
