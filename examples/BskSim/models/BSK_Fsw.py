@@ -422,14 +422,14 @@ class BSKFswModels:
         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
         wheelJs = 50.0 / (6000.0 * math.pi * 2.0 / 60)
 
-        fswSetupRW.clearSetup()
+        fswSetupRW.clear_setup()
         for elAngle, azAngle in zip(rwElAngle, rwAzimuthAngle):
             gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(np.array([1, 0, 0]))
             fswSetupRW.create(gsHat,  # spin axis
                               wheelJs,  # kg*m^2
                               0.2)  # Nm        uMax
 
-        self.fswRwConfigMsg = fswSetupRW.writeConfigMessage()
+        self.fswRwConfigMsg = fswSetupRW.write_config_message()
 
     def SetRWMotorTorque(self):
         """Set the RW motor torque information"""

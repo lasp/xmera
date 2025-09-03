@@ -53,13 +53,13 @@ def test_thrMomentumManagement(show_plots, hsMinCheck):
     rwSpeedMessage = messaging.RWSpeedMsgPayload()
     rwSpeedMessage.wheelSpeeds = [10.0, -25.0, 50.0, 100.]
     rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
-    fswSetupRW.clearSetup()
+    fswSetupRW.clear_setup()
     Js = 0.1
     fswSetupRW.create([1.0, 0.0, 0.0], Js)
     fswSetupRW.create([0.0, 1.0, 0.0], Js)
     fswSetupRW.create([0.0, 0.0, 1.0], Js)
     fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
-    rwConfigInMsg = fswSetupRW.writeConfigMessage()
+    rwConfigInMsg = fswSetupRW.write_config_message()
     module.rwSpeedsInMsg.subscribeTo(rwSpeedInMsg)
     module.rwConfigDataInMsg.subscribeTo(rwConfigInMsg)
 
@@ -107,7 +107,7 @@ def test_momentumBias(show_plots):
     rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData Message
-    fswSetupRW.clearSetup()
+    fswSetupRW.clear_setup()
     Js = 0.1
     Gs = np.array([[1.0, 0.0, 0.0],
                    [0.0, 1.0, 0.0],
@@ -117,7 +117,7 @@ def test_momentumBias(show_plots):
     fswSetupRW.create(Gs[1, :], Js)
     fswSetupRW.create(Gs[2, :], Js)
     fswSetupRW.create(Gs[3, :], Js)
-    rwConfigInMsg = fswSetupRW.writeConfigMessage()
+    rwConfigInMsg = fswSetupRW.write_config_message()
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.deltaHOutMsg.recorder()

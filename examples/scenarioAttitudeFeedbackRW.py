@@ -569,10 +569,10 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # method of the second method below is that it is easy to vary the FSW parameters slightly from the
     # simulation parameters.  In this script the second method is used, while the fist method is included
     # to show both options.
-    fswSetupRW.clearSetup()
+    fswSetupRW.clear_setup()
     for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    fswRwParamMsg1 = fswSetupRW.writeConfigMessage()
+    fswRwParamMsg1 = fswSetupRW.write_config_message()
 
     # Second case: If the exact same RW configuration states are to be used by the simulation and fsw, then the
     # following helper function is convenient to extract the fsw RW configuration message from the

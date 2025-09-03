@@ -308,7 +308,7 @@ def run(show_plots, rFirst, rSecond):
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Create the FSW reaction wheel configuration message
-    fswSetupRW.clearSetup()
+    fswSetupRW.clear_setup()
     fswRwParamMsg = rwFactory.getConfigMessage()
 
     # Set up the spacecraft's initial condition

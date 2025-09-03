@@ -422,10 +422,10 @@ def run(show_plots, simCase):
 
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
-    fswSetupRW.clearSetup()
+    fswSetupRW.clear_setup()
     for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    fswRwParamMsg = fswSetupRW.writeConfigMessage()
+    fswRwParamMsg = fswSetupRW.write_config_message()
 
     # setup message connections
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)

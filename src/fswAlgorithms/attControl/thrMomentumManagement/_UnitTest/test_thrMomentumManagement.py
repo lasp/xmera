@@ -102,13 +102,13 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
 
     # wheelConfigData Message
-    fswSetupRW.clearSetup()
+    fswSetupRW.clear_setup()
     Js = 0.1
     fswSetupRW.create([1.0, 0.0, 0.0], Js)
     fswSetupRW.create([0.0, 1.0, 0.0], Js)
     fswSetupRW.create([0.0, 0.0, 1.0], Js)
     fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
-    rwConfigInMsg = fswSetupRW.writeConfigMessage()
+    rwConfigInMsg = fswSetupRW.write_config_message()
 
 
 

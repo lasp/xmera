@@ -513,10 +513,10 @@ def createScenarioAttitudeFeedbackRW():
 
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
-    fswSetupRW.clearSetup()
+    fswSetupRW.clear_setup()
     for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    fswRwConfMsg = fswSetupRW.writeConfigMessage()
+    fswRwConfMsg = fswSetupRW.write_config_message()
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
