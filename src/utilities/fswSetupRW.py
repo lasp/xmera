@@ -21,45 +21,45 @@ from Basilisk.architecture import messaging
 #
 #   FSW Setup Utilities for RW
 #
-rwList = []
+rw_list = []
 
 
 def create(
-        gsHat_B,
+        gs_hat_B,
         Js,
-        uMax = numpy.NaN
+        u_max = numpy.NaN,
     ):
     """
     Create a FSW RW object
 
     This function is called to setup a FSW RW device in python, and adds it to the of RW
-    devices in rwList[].  This list is accessible from the parent python script that
+    devices in rw_list[].  This list is accessible from the parent python script that
     imported this rw library script, and thus any particular value can be over-ridden
     by the user.
     """
-    global rwList
+    global rw_list
 
     # create the blank RW object
     RW = messaging.RWConfigElementMsgPayload()
 
-    norm = numpy.linalg.norm(gsHat_B)
+    norm = numpy.linalg.norm(gs_hat_B)
     if norm > 1e-10:
-        gsHat_B = gsHat_B / norm
+        gs_hat_B = gs_hat_B / norm
     else:
         print('Error: RW gsHat input must be non-zero 3x1 vector')
         exit(1)
 
-    RW.gsHat_B = gsHat_B
-    RW.uMax = uMax
+    RW.gsHat_B = gs_hat_B
+    RW.uMax = u_max
     RW.Js = Js
 
     # add RW to the list of RW devices
-    rwList.append(RW)
+    rw_list.append(RW)
 
     return
 
 
-def writeConfigMessage():
+def write_config_message():
     """
     Write FSW RW array msg
 
@@ -68,34 +68,35 @@ def writeConfigMessage():
     this container to the spacecraft object
 
     """
-    global rwList
+    global rw_list
 
-    GsMatrix_B = []
-    JsList = []
-    uMaxList = []
-    for rw in rwList:
-        GsMatrix_B.extend(rw.gsHat_B)
-        JsList.extend([rw.Js])
-        uMaxList.extend([rw.uMax])
+    gs_matrix_b = []
+    js_list = []
+    u_max_list = []
 
-    rwConfigParams = messaging.RWArrayConfigMsgPayload()
-    rwConfigParams.GsMatrix_B = GsMatrix_B
-    rwConfigParams.JsList = JsList
-    rwConfigParams.uMax = uMaxList
-    rwConfigParams.numRW = len(rwList)
-    rwConfigMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
-    rwConfigMsg.this.disown()
+    for rw in rw_list:
+        gs_matrix_b.extend(rw.gsHat_B)
+        js_list.extend([rw.Js])
+        u_max_list.extend([rw.uMax])
 
-    return rwConfigMsg
+    rw_config_params = messaging.RWArrayConfigMsgPayload()
+    rw_config_params.GsMatrix_B = gs_matrix_b
+    rw_config_params.JsList = js_list
+    rw_config_params.uMax = u_max_list
+    rw_config_params.numRW = len(rw_list)
+    rw_config_msg = messaging.RWArrayConfigMsg().write(rw_config_params)
+    rw_config_msg.this.disown()
+
+    return rw_config_msg
 
 
-def clearSetup():
-    global rwList
+def clear_setup():
+    global rw_list
 
-    rwList = []
+    rw_list = []
 
     return
 
 
-def getNumOfDevices():
-    return len(rwList)
+def get_num_of_devices():
+    return len(rw_list)
