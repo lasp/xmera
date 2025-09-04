@@ -1,7 +1,7 @@
 Executive Summary
 -----------------
 This module computes the time of closest approach estimation and its covariance during a rectilinear flyby. It was written based on the paper "Attitude Uncertainty Quantification Of Rectilinear Asteroid Flyby For The Emirates Mission Th The Asteroid Belt" that was presented by Thibaud Teil and Riccardo Calaon in 2023.
-Because the filter may not estimate both position and velocity, the TCA module uses the navigation message as well which is populated regardless of the
+Because the filter may not estimate both position and velocity, the TCA module uses the navigation message which is populated regardless of the
 filter state vector. It then checks the size of the state to perform the covariance mapping.
 
 Message Connection Descriptions
@@ -18,10 +18,10 @@ provides information on what this message is used for.
       - Description
     * - filterInMsg
       - :ref:`FilterMsgPayload`
-      - Input message containing the relative spacecraft state (position and velocity) and it's covariance. "of the spacecraft with respect to the small body, estimated from a filter"
+      - Input message containing estimated relative spacecraft state and it's covariance from the filter.
     * - navFilterMsg
       - :ref:`NavTransMsgPayload`
-      - Input message containing the spacecraft navigation information. All information is present regardless of what the filter estimates.
+      - Input message containing the spacecraft translational state.
     * - tcaOutMsg
       - :ref:`TimeClosestApproachMsgPayload`
       - Output time of closest approach message containing time of closest approach during the flyby and the covariance.
@@ -32,7 +32,7 @@ The relative position and velocity vector and the covariance of the spacecraft w
 
 Rectilinear Motion Model
 ........................
-In this case the flyby is modeled as rectilinear motion of the spacecraft, i.e., the spacecraft moves with a constant velocity. At every filter read, the relative position and velocity vectors :math:`\boldsymbol{r}` and :math:`\boldsymbol{v}` of the spacecraft with respect to the small body are provided. The following coefficients are defined: the flight path angle :math:`\gamma_0= \theta - \frac{\pi}{2}` of the spacecraft, and the ratio between velocity and radius magnitudes :math:`f_0 = \frac{v_0}{r_0}`. From these quantities, the angle between -:math:`\boldsymbol{r}` and :math:`\boldsymbol{v}` of the spacecraft with the respect to the asteroid which is defined as :math:`\theta` the following equation shows how it can be found:
+In this case the flyby is modeled as rectilinear motion of the spacecraft, i.e., the spacecraft moves with a constant velocity. At every filter read, the relative position and velocity vectors :math:`\boldsymbol{r}` and :math:`\boldsymbol{v}` of the spacecraft with respect to the small body are provided. The following coefficients are defined: the flight path angle :math:`\gamma_0= \theta - \frac{\pi}{2}` of the spacecraft, and the ratio between velocity and radius magnitudes :math:`f_0 = \frac{v_0}{r_0}` at :math:`t_0`. From these quantities, the angle :math:`\theta` between -:math:`\boldsymbol{r}` and :math:`\boldsymbol{v}` of the spacecraft with the respect to the asteroid can be determined using the following equation:
 
 .. math::
     \theta = \arccos\left( -  \mathbf{\hat{r}}  \cdot  \mathbf{\hat{v}} \right )
@@ -43,7 +43,7 @@ By replacing the values of :math:`\gamma_0` and  :math:`f_0` we can obtain the t
 The following equation solves for time of closest approach uncertainty where :math:`P` is the spacecraft state covariance.
 
 .. math::
-    \sigma_{t_{CA}}^2 = \frac{1}{f_0^2}  \left[ \frac{\mathbf{\hat{v}}^T}{\ \mathbf{r} } \ \frac{{1}}{ \mathbf{v} } \  \left( \mathbf{\hat{r}}^T - \sin \gamma_0 \mathbf{\hat{v}}^ T \right)] [{P}] (t) [\left[ \frac{\mathbf{\hat{v}}^T}{\ \mathbf{r} } \ \frac{{1}}{\ \mathbf{v} } \  \left( \mathbf{\hat{r}}^T - \sin\gamma_0 \mathbf{\hat{v}}^ T \right)]^T
+    \sigma_{t_{CA}}^2 = \frac{1}{f_0^2}  \left[ \frac{\mathbf{\hat{v}}^T}{\ \mathbf{r} } \ \frac{{1}}{ \mathbf{v} } \  \left( \mathbf{\hat{r}}^T - \sin \gamma_0 \mathbf{\hat{v}}^ T \right)] [{P}] (t_0) [\left \frac{\mathbf{\hat{v}}^T}{\ \mathbf{r} } \ \frac{{1}}{\ \mathbf{v} } \  \left( \mathbf{\hat{r}}^T - \sin\gamma_0 \mathbf{\hat{v}}^ T \right)]^T
 
 The covariance mapping only occurs with the position components if the covariance is a 3x3 matrix, meaning the filter only
 estimated the position

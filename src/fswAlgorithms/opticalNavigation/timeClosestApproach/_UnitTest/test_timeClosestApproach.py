@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2024,  University of Colorado at Boulder
+#  Copyright (c) 2025,  University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -31,7 +31,8 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 @pytest.mark.parametrize("position", [[-5e7, 7.5e6, 5e5], [-5e6, 7e6, 4e5]])  # m
 @pytest.mark.parametrize("velocity", [[2e4, 0, 0], [1e4, 1e3, 2e2]])  # m/s
 @pytest.mark.parametrize("filter_covariance", [np.eye(6),  np.ones([6, 6]), np.eye(3), np.ones([3, 3])])
-def test_TimeClosestApproach(show_plots, position, velocity, filter_covariance):
+
+def test_time_closest_approach(show_plots, position, velocity, filter_covariance):
 
     unit_task_name = "unitTask"               # arbitrary name (don't change)
     unit_process_name = "test_processes"         # arbitrary name (don't change)
@@ -77,9 +78,13 @@ def test_TimeClosestApproach(show_plots, position, velocity, filter_covariance):
     tca_tca = data_log_tca.timeClosestApproach
     sigmatca_tca = data_log_tca.standardDeviation
 
-
-    # Expected
+    # Expected TCA
     tca, tca_covariance = time_of_closest_approach_calculation(position, velocity, filter_covariance)
+
+    # Expected TCA when velocity is doubled
+    tca_tca_value = tca_tca[0]
+    tca_doubled_v = tca_with_doubled_velocity(position, velocity, filter_covariance)
+
 
     # make sure module output data is correct
     tolerance = 1e-10
@@ -97,8 +102,12 @@ def test_TimeClosestApproach(show_plots, position, velocity, filter_covariance):
                                err_msg='Variable: tca_covariance',
                                verbose=True)
 
+    np.testing.assert_(tca_doubled_v < tca_tca_value, msg="TCA_2 is not smaller than TCA_1"
+)
+
 
 def time_of_closest_approach_calculation(r, v, filter_covariance):
+
     norm_v = np.linalg.norm(v)
     norm_r = np.linalg.norm(r)
     v_hat = v / norm_v
@@ -119,8 +128,18 @@ def time_of_closest_approach_calculation(r, v, filter_covariance):
     return tca, np.sqrt(tca_covariance)
 
 
+def tca_with_doubled_velocity(position, velocity, filter_covariance):
+    """Return tca_2 when the velocity is doubled."""
+
+    velocity_2 = 2.0 * np.array(velocity)   # Double the input velocity
+    tca_2, _ = time_of_closest_approach_calculation(
+        np.array(position), velocity_2, np.array(filter_covariance)
+    )
+    return tca_2
+
+
 if __name__ == "__main__":
-    test_TimeClosestApproach(True,
+    test_time_closest_approach(True,
                              np.array([-5e7, 7.5e6, 5e5]),
                              np.array([2e4, 0, 0]),
                              np.eye(3)

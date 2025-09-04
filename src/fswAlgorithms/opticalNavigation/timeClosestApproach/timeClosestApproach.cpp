@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics,  University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics,  University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -63,7 +63,7 @@ void TimeClosestApproach::computeGeometry() {
     /*! - compute velocity/radius ratio at time of read */
     this->ratio = this->v_BN_N.norm() / this->r_BN_N.norm();
 
-    // compute angle at the time of read
+    // compute an angle at the time of read
     Eigen::Vector3d r_BN_N_hat = this->r_BN_N.normalized();
     Eigen::Vector3d v_BN_N_hat = this->v_BN_N.normalized();
 
@@ -105,7 +105,7 @@ double TimeClosestApproach::computeTcaStandardDeviation() const {
  @return void
  @param currentSimNanos The current simulation time for system
  */
-void TimeClosestApproach::updateState(uint64_t currentSimNanos) {
+void TimeClosestApproach::updateState(const uint64_t currentSimNanos) {
     this->readMessages();
     this->computeGeometry();
     const double tCA = this->computeTca();
