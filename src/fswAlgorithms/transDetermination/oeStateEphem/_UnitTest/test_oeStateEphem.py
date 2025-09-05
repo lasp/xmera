@@ -135,11 +135,11 @@ def cheby_fit(show_plots, valid_curve, anomay_flag):
     for timeVal in time_array:
         current_time = spiceypy.et2utc(timeVal, 'C', 4, 1024)
         [spice_state, _] = spiceypy.spkezr('-221', spiceypy.str2et(current_time), frame, 'NONE', zero_base)
-        position = spice_state[0:3]*1000.0
-        velocity = spice_state[3:6]*1000.0
-        orbital_elements = orbitalMotion.rv2elem(central_body_mu, position, velocity)
-        true_positions_m.append(position)
-        true_velocities_mps.append(velocity)
+        position = spice_state[0:3]
+        velocity = spice_state[3:6]
+        orbital_elements = orbitalMotion.rv2elem(central_body_mu*1e-9, position, velocity)
+        true_positions_m.append(position*1e3)
+        true_velocities_mps.append(velocity*1e3)
         radius_periapsis.append(orbital_elements.rPeriap)
         eccentricity.append(orbital_elements.e)
         inclination.append(orbital_elements.i)
