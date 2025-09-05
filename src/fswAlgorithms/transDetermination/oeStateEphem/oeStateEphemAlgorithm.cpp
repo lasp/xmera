@@ -59,7 +59,8 @@ ClassicalElements OEStateEphemAlgorithm::evaluateCoefficients(const double curre
     double anomalyAngle{}; /* [r] general anomaly angle variable */
     ClassicalElements elements{};
     elements.radiusPeriapsis =
-        calculateChebyValue(arc.radiusPeriapsisCoefficients.data(), arc.numberChebCoefficients, currentScaledValue);
+        calculateChebyValue(arc.radiusPeriapsisCoefficients.data(), arc.numberChebCoefficients, currentScaledValue) *
+        1e3;  // coefficients are in km but module operates in meters
     elements.inclination =
         calculateChebyValue(arc.inclinationCoefficients.data(), arc.numberChebCoefficients, currentScaledValue);
     elements.eccentricity =
