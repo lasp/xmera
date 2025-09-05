@@ -19,6 +19,7 @@
 
 #include "sunSearch.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <cmath>
 
 /*! This method is used to reset the module.
@@ -56,10 +57,7 @@ void SunSearch::updateState(uint64_t currentSimNanos) {
     /*! read vehicle configuration message */
     NavAttMsgPayload attNavIn = this->attNavInMsg();
 
-    double omega_BN_B[3] = {attNavIn.omega_BN_B[0], attNavIn.omega_BN_B[1], attNavIn.omega_BN_B[2]};
-
-    double omega_RN_B[3] = {0, 0, 0};
-    double domega_RN_B[3] = {0, 0, 0};
+    ReferenceMotionOutput referenceMotion{};
 
     double CurrentSimSeconds = (currentSimNanos - this->resetTime) * NANO2SEC;
 
@@ -67,7 +65,7 @@ void SunSearch::updateState(uint64_t currentSimNanos) {
     double timeSup = this->slewProperties[0].slewTotalTime;
     for (int index = 0; index < 3; ++index) {
         if (CurrentSimSeconds >= timeInf && CurrentSimSeconds < timeSup) {
-            this->computeReferenceMotion(currentSimNanos, index, &omega_RN_B[0], &domega_RN_B[0]);
+            referenceMotion = this->computeReferenceMotion(currentSimNanos, index);
             break;
         } else if (CurrentSimSeconds >= timeSup && index != 2) {
             timeInf += this->slewProperties[index].slewTotalTime;
@@ -75,11 +73,11 @@ void SunSearch::updateState(uint64_t currentSimNanos) {
         }
     }
 
-    for (int i = 0; i < 3; ++i) {
-        attGuidOut.omega_RN_B[i] = omega_RN_B[i];
-        attGuidOut.omega_BR_B[i] = omega_BN_B[i] - omega_RN_B[i];
-        attGuidOut.domega_RN_B[i] = domega_RN_B[i];
-    }
+    Eigen::Vector3d omega_BR_B = Eigen::Map<const Eigen::Vector3d>(attNavIn.omega_BN_B) - referenceMotion.omega_RN_B;
+
+    eigenVector3d2CArray(referenceMotion.omega_RN_B, attGuidOut.omega_RN_B);
+    eigenVector3d2CArray(omega_BR_B, attGuidOut.omega_BR_B);
+    eigenVector3d2CArray(referenceMotion.domega_RN_B, attGuidOut.domega_RN_B);
 
     /*! Write the output messages */
     this->attGuidOutMsg.write(&attGuidOut, this->moduleID, currentSimNanos);
@@ -121,12 +119,9 @@ void SunSearch::computeKinematicProperties(int const index) {
 }
 
 /*! Define this method to compute the rate and acceleration as function of time
-    @return void
+    @return ReferenceMotionOutput
     */
-void SunSearch::computeReferenceMotion(uint64_t const currentSimNanos,
-                                       int const index,
-                                       double *omega_RN,
-                                       double *domega_RN) {
+ReferenceMotionOutput SunSearch::computeReferenceMotion(uint64_t const currentSimNanos, int const index) {
     double zeroTime = 0;
     for (int i = 0; i < index; ++i) {
         zeroTime += this->slewProperties[i].slewTotalTime;
@@ -135,6 +130,9 @@ void SunSearch::computeReferenceMotion(uint64_t const currentSimNanos,
 
     SlewProperties SP = this->slewProperties[index];
     int axis = SP.slewRotAxis - 1;
+
+    Eigen::Vector3d omega_RN{Eigen::Vector3d::Zero()};
+    Eigen::Vector3d domega_RN{Eigen::Vector3d::Zero()};
 
     if (localSimSeconds <= SP.slewThrustTime) {
         omega_RN[axis] = SP.slewOmegaMax * localSimSeconds / SP.slewThrustTime;
@@ -145,6 +143,12 @@ void SunSearch::computeReferenceMotion(uint64_t const currentSimNanos,
         omega_RN[axis] = SP.slewOmegaMax * (SP.slewTotalTime - localSimSeconds) / SP.slewThrustTime;
         domega_RN[axis] = -SP.slewAngAcc;
     }
+
+    ReferenceMotionOutput referenceMotion{};
+    referenceMotion.omega_RN_B = omega_RN;
+    referenceMotion.domega_RN_B = domega_RN;
+
+    return referenceMotion;
 }
 
 /*! Set the slew time

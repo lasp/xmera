@@ -27,6 +27,13 @@
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include <Eigen/Dense>
+
+/*! structure containing the output of the computed reference motion */
+struct ReferenceMotionOutput {
+    Eigen::Vector3d omega_RN_B{Eigen::Vector3d::Zero()}; /*!< reference angular velocity */
+    Eigen::Vector3d domega_RN_B{Eigen::Vector3d::Zero()}; /*!< reference angular acceleration */
+};
 
 struct SlewProperties {
     // user-requested properties
@@ -59,12 +66,12 @@ class SunSearch : public SysModel {
 
    private:
     SlewProperties slewProperties[3];
-    double slewMaxTorque[3];      //!< [Nm] maximum deliverable torque along each principal body axis
-    double principleInertias[3];  //!< [kg m^2] inertias about the three principal axes
+    Eigen::Vector3d slewMaxTorque{};      //!< [Nm] maximum deliverable torque along each principal body axis
+    Eigen::Vector3d principleInertias{};  //!< [kg m^2] inertias about the three principal axes
     uint64_t resetTime;           //!< time at which reset is called
 
     void computeKinematicProperties(int const index);
-    void computeReferenceMotion(uint64_t const currentSimNanos, int const index, double *omega_RN, double *domega_RN);
+    ReferenceMotionOutput computeReferenceMotion(uint64_t const currentSimNanos, int const index);
 };
 
 #endif
