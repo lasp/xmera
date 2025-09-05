@@ -36,7 +36,7 @@ void SunSearchAlgorithm::reset(uint64_t currentSimNanos, VehicleConfigMsgPayload
     this->principleInertias[1] = vehicleConfigIn.ISCPntB_B[4];
     this->principleInertias[2] = vehicleConfigIn.ISCPntB_B[8];
 
-    for (int index = 0; index < NUM_SLEWS; index++) {
+    for (uint32_t index = 0; index < NUM_SLEWS; index++) {
         this->computeKinematicProperties(index);
     }
 
@@ -56,7 +56,7 @@ AttGuidMsgPayload SunSearchAlgorithm::update(uint64_t currentSimNanos, NavAttMsg
 
     double timeInf = 0;
     double timeSup = this->kinematicProperties[0].slewTotalTime;
-    for (int index = 0; index < NUM_SLEWS; ++index) {
+    for (uint32_t index = 0; index < NUM_SLEWS; ++index) {
         if (CurrentSimSeconds >= timeInf && CurrentSimSeconds < timeSup) {
             referenceMotion = this->computeReferenceMotion(currentSimNanos, index);
             break;
@@ -78,9 +78,9 @@ AttGuidMsgPayload SunSearchAlgorithm::update(uint64_t currentSimNanos, NavAttMsg
 /*! Define this method to compute the kinematic properties of each slew
     @return void
     */
-void SunSearchAlgorithm::computeKinematicProperties(int const index) {
-    SlewProperties *SP = &this->slewProperties[index];
-    int axis = SP->slewRotAxis - 1;
+void SunSearchAlgorithm::computeKinematicProperties(uint32_t const index) {
+    SlewProperties* SP = &this->slewProperties[index];
+    uint32_t axis = SP->slewRotAxis - 1;
     double maxAcc = SP->slewMaxTorque / this->principleInertias[axis];
 
     /*! Computing fastest bang-bang slew with no coasting arc */
@@ -116,15 +116,15 @@ void SunSearchAlgorithm::computeKinematicProperties(int const index) {
 /*! Define this method to compute the rate and acceleration as function of time
     @return ReferenceMotionOutput
     */
-ReferenceMotionOutput SunSearchAlgorithm::computeReferenceMotion(uint64_t const currentSimNanos, int const index) {
+ReferenceMotionOutput SunSearchAlgorithm::computeReferenceMotion(uint64_t const currentSimNanos, uint32_t const index) {
     double zeroTime = 0;
-    for (int i = 0; i < index; ++i) {
+    for (uint32_t i = 0; i < index; ++i) {
         zeroTime += this->kinematicProperties[i].slewTotalTime;
     }
     double localSimSeconds = (currentSimNanos - this->resetTime) * NANO2SEC - zeroTime;
 
     KinematicProperties KP = this->kinematicProperties[index];
-    int axis = KP.slewRotAxis - 1;
+    uint32_t axis = KP.slewRotAxis - 1;
 
     Eigen::Vector3d omega_RN{Eigen::Vector3d::Zero()};
     Eigen::Vector3d domega_RN{Eigen::Vector3d::Zero()};

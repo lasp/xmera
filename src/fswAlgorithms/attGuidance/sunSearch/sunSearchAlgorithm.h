@@ -62,12 +62,12 @@ class SunSearchAlgorithm {
     SlewProperties getSlewProperties(uint32_t index) const;
 
    private:
-    void computeKinematicProperties(int const index);
-    ReferenceMotionOutput computeReferenceMotion(uint64_t const currentSimNanos, int const index);
+    void computeKinematicProperties(uint32_t const index);
+    ReferenceMotionOutput computeReferenceMotion(uint64_t const currentSimNanos, uint32_t const index);
 
     SlewProperties slewProperties[NUM_SLEWS];
     KinematicProperties kinematicProperties[NUM_SLEWS];
-    int numberOfSlews{};                //!< [-] number of slew maneuvers set
+    uint32_t numberOfSlews{};                  //!< [-] number of slew maneuvers set
     Eigen::Vector3d principleInertias{};  //!< [kg m^2] inertias about the three principal axes
     uint64_t resetTime;           //!< time at which reset is called
 };
