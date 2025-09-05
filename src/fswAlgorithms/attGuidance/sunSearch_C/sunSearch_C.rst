@@ -76,28 +76,8 @@ User Guide
 The required module configuration is::
 
     attGuid = sunSearch.SunSearch()
-
-    slewProp1 = sunSearch.SlewProperties()
-    slewProp1.slewTime = slewTime1
-    slewProp1.slewAngle = slewAngle1
-    slewProp1.slewMaxRate = slewMaxRate1
-    slewProp1.slewMaxTorque = slewMaxTorque1
-    slewProp1.slewRotAxis = slewRotAxis1
-
-    slewProp2 = sunSearch.SlewProperties()
-    slewProp2.slewTime = slewTime2
-    slewProp2.slewAngle = slewAngle2
-    slewProp2.slewMaxRate = slewMaxRate2
-    slewProp2.slewMaxTorque = slewMaxTorque2
-    slewProp2.slewRotAxis = slewRotAxis2
-
-    slewProp3 = sunSearch.SlewProperties()
-    slewProp3.slewTime = slewTime3
-    slewProp3.slewAngle = slewAngle3
-    slewProp3.slewMaxRate = slewMaxRate3
-    slewProp3.slewMaxTorque = slewMaxTorque3
-    slewProp3.slewRotAxis = slewRotAxis3
-
-    attGuid.setSlewProperties(slewProp1)
-    attGuid.setSlewProperties(slewProp2)
-    attGuid.setSlewProperties(slewProp3)                               # 1 = 'x', 2 = 'y', 3 = 'z'
+    attGuid.setSlewTime(90, 90, 90)                             # [s]
+    attGuid.setSlewAngle(np.pi/2, np.pi, 2*np.pi)               # [rad]
+    attGuid.setMaxRate(np.pi/180, 2*np.pi/180, 3*np.pi/180)     # [rad/s]
+    attGuid.setMaxTorque(12.5, 25.0, 50)                        # [Nm]
+    attGuid.setRotAxis(1, 2, 3)                                 # 1 = 'x', 2 = 'y', 3 = 'z'

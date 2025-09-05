@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module sunSearch
+%module sunSearch_C
 %{
-   #include "sunSearch.h"
+   #include "sunSearch_C.h"
 %}
 
 %include "std_string.i"
@@ -29,11 +29,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.h"
-
-STRUCTASLIST(SlewProperties)
-
-%include "sunSearch.h"
-%include "sunSearchAlgorithm.h"
+%include "sunSearch_C.h"
 
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 %include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"

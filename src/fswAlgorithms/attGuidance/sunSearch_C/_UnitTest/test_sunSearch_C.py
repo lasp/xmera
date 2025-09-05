@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#  Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -27,7 +27,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import sunSearch
+from Basilisk.fswAlgorithms import sunSearch_C
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 from Basilisk.architecture import bskLogging
@@ -63,7 +63,8 @@ def computeKinematicProperties(theta_R, T_R, u_M, I, omega_M):
 @pytest.mark.parametrize("axis2", [1, 2, 3])
 @pytest.mark.parametrize("axis3", [1, 2, 3])
 @pytest.mark.parametrize("omega_BN_B", [[0, 0, 0], [0.01, -0.02, 0.03]])
-def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B):
+@pytest.mark.parametrize("accuracy", [1e-12])
+def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
@@ -85,33 +86,13 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B):
     omega_M = np.pi / 18
 
     # Construct algorithm and associated C++ container
-    attGuidance = sunSearch.SunSearch()
+    attGuidance = sunSearch_C.SunSearch_C()
+    attGuidance.setSlewTime(T_R, T_R, T_R)
+    attGuidance.setSlewAngle(theta1, theta2, theta3)
+    attGuidance.setMaxRate(omega_M, omega_M, omega_M)
+    attGuidance.setMaxTorque(u_M, u_M, u_M)
+    attGuidance.setRotAxis(axis1, axis2, axis3)
     attGuidance.modelTag = "sunSearch"
-
-    slewProp1 = sunSearch.SlewProperties()
-    slewProp1.slewTime = T_R
-    slewProp1.slewAngle = theta1
-    slewProp1.slewMaxRate = omega_M
-    slewProp1.slewMaxTorque = u_M
-    slewProp1.slewRotAxis = axis1
-
-    slewProp2 = sunSearch.SlewProperties()
-    slewProp2.slewTime = T_R
-    slewProp2.slewAngle = theta2
-    slewProp2.slewMaxRate = omega_M
-    slewProp2.slewMaxTorque = u_M
-    slewProp2.slewRotAxis = axis2
-
-    slewProp3 = sunSearch.SlewProperties()
-    slewProp3.slewTime = T_R
-    slewProp3.slewAngle = theta3
-    slewProp3.slewMaxRate = omega_M
-    slewProp3.slewMaxTorque = u_M
-    slewProp3.slewRotAxis = axis3
-
-    attGuidance.setSlewProperties(slewProp1)
-    attGuidance.setSlewProperties(slewProp2)
-    attGuidance.setSlewProperties(slewProp3)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, attGuidance)
@@ -193,8 +174,6 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B):
             omegaDot_RN_B_truth[i, axis3-1] = -alpha3
         omega_BR_B_truth[i] = omega_BN_B - omega_RN_B_truth[i]
 
-    accuracy = 1e-12
-
     # set the filtered output truth states
     np.testing.assert_allclose(omega_BR_B, omega_BR_B_truth, rtol=0, atol=accuracy, verbose=True)
     np.testing.assert_allclose(omega_RN_B, omega_RN_B_truth, rtol=0, atol=accuracy, verbose=True)
@@ -205,4 +184,4 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B):
 
 
 if __name__ == "__main__":
-    test_sunSearch(False, 1, 2, 3, [0, 0, 0])
+    test_sunSearch(False, 1, 2, 3, [0, 0, 0], 1e-12)
