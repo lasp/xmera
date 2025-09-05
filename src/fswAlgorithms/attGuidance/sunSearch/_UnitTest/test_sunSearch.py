@@ -87,12 +87,32 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
 
     # Construct algorithm and associated C++ container
     attGuidance = sunSearch.SunSearch()
-    attGuidance.setSlewTime(T_R, T_R, T_R)
-    attGuidance.setSlewAngle(theta1, theta2, theta3)
-    attGuidance.setMaxRate(omega_M, omega_M, omega_M)
-    attGuidance.setMaxTorque(u_M, u_M, u_M)
-    attGuidance.setRotAxis(axis1, axis2, axis3)
     attGuidance.modelTag = "sunSearch"
+
+    slewProp1 = sunSearch.SlewProperties()
+    slewProp1.slewTime = T_R
+    slewProp1.slewAngle = theta1
+    slewProp1.slewMaxRate = omega_M
+    slewProp1.slewMaxTorque = u_M
+    slewProp1.slewRotAxis = axis1
+
+    slewProp2 = sunSearch.SlewProperties()
+    slewProp2.slewTime = T_R
+    slewProp2.slewAngle = theta2
+    slewProp2.slewMaxRate = omega_M
+    slewProp2.slewMaxTorque = u_M
+    slewProp2.slewRotAxis = axis2
+
+    slewProp3 = sunSearch.SlewProperties()
+    slewProp3.slewTime = T_R
+    slewProp3.slewAngle = theta3
+    slewProp3.slewMaxRate = omega_M
+    slewProp3.slewMaxTorque = u_M
+    slewProp3.slewRotAxis = axis3
+
+    attGuidance.setSlewProperties(slewProp1)
+    attGuidance.setSlewProperties(slewProp2)
+    attGuidance.setSlewProperties(slewProp3)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, attGuidance)

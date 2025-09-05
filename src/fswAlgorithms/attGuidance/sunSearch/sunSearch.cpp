@@ -32,6 +32,9 @@ void SunSearch::reset(uint64_t currentSimNanos) {
     if (!this->vehConfigInMsg.isLinked()) {
         throw std::invalid_argument("SunSearch.vehConfigInMsg wasn't connected.");
     }
+    if (this->numberOfSlews != NUM_SLEWS) {
+        throw std::invalid_argument("The number of specified slew maneuvers must be equal to 3");
+    }
 
     /*! read vehicle configuration message */
     VehicleConfigMsgPayload vehConfigIn = this->vehConfigInMsg();
@@ -39,7 +42,7 @@ void SunSearch::reset(uint64_t currentSimNanos) {
     this->principleInertias[1] = vehConfigIn.ISCPntB_B[4];
     this->principleInertias[2] = vehConfigIn.ISCPntB_B[8];
 
-    for (int index = 0; index < 3; index++) {
+    for (int index = 0; index < NUM_SLEWS; index++) {
         this->computeKinematicProperties(index);
     }
 
@@ -63,11 +66,11 @@ void SunSearch::updateState(uint64_t currentSimNanos) {
 
     double timeInf = 0;
     double timeSup = this->kinematicProperties[0].slewTotalTime;
-    for (int index = 0; index < 3; ++index) {
+    for (int index = 0; index < NUM_SLEWS; ++index) {
         if (CurrentSimSeconds >= timeInf && CurrentSimSeconds < timeSup) {
             referenceMotion = this->computeReferenceMotion(currentSimNanos, index);
             break;
-        } else if (CurrentSimSeconds >= timeSup && index != 2) {
+        } else if (CurrentSimSeconds >= timeSup && index != NUM_SLEWS - 1) {
             timeInf += this->kinematicProperties[index].slewTotalTime;
             timeSup += this->kinematicProperties[index + 1].slewTotalTime;
         }
@@ -89,7 +92,7 @@ void SunSearch::updateState(uint64_t currentSimNanos) {
 void SunSearch::computeKinematicProperties(int const index) {
     SlewProperties *SP = &this->slewProperties[index];
     int axis = SP->slewRotAxis - 1;
-    double maxAcc = this->slewMaxTorque[axis] / this->principleInertias[axis];
+    double maxAcc = SP->slewMaxTorque / this->principleInertias[axis];
 
     /*! Computing fastest bang-bang slew with no coasting arc */
     double alpha = 4 * SP->slewAngle / (SP->slewTime * SP->slewTime);
@@ -154,52 +157,29 @@ ReferenceMotionOutput SunSearch::computeReferenceMotion(uint64_t const currentSi
     return referenceMotion;
 }
 
-/*! Set the slew time
-    @param double slewTime
-    @return void
-    */
-void SunSearch::setSlewTime(double const t1, const double t2, const double t3) {
-    this->slewProperties[0].slewTime = t1;
-    this->slewProperties[1].slewTime = t2;
-    this->slewProperties[2].slewTime = t3;
+/**
+ * @brief Set the properties of a slew maneuver
+ * @param slewPropertiesInput the properties of the slew maneuver
+ */
+void SunSearch::setSlewProperties(SlewProperties slewPropertiesInput){
+    this->slewProperties[this->numberOfSlews] = slewPropertiesInput;
+    this->numberOfSlews += 1;
 }
 
-/*! Set the slew angle
-    @param double slewAngle
-    @return void
-    */
-void SunSearch::setSlewAngle(double const theta1, double const theta2, double const theta3) {
-    this->slewProperties[0].slewAngle = theta1;
-    this->slewProperties[1].slewAngle = theta2;
-    this->slewProperties[2].slewAngle = theta3;
+/**
+ * @brief Modify the properties of a slew maneuver
+ * @param slewPropertiesInput the properties of the slew maneuver
+ * @param index index of the slew maneuver
+ */
+void SunSearch::modifySlewProperties(SlewProperties slewPropertiesInput, uint32_t index) {
+    this->slewProperties[index] = slewPropertiesInput;
 }
 
-/*! Set the maximum angle rate
-    @param double slewMaxRate
-    @return void
-    */
-void SunSearch::setMaxRate(double const omega1, double const omega2, double const omega3) {
-    this->slewProperties[0].slewMaxRate = omega1;
-    this->slewProperties[1].slewMaxRate = omega2;
-    this->slewProperties[2].slewMaxRate = omega3;
-}
-
-/*! Set the rotation axis
-    @param double slewRotAxis
-    @return void
-    */
-void SunSearch::setRotAxis(int const a1, int const a2, int const a3) {
-    this->slewProperties[0].slewRotAxis = a1;
-    this->slewProperties[1].slewRotAxis = a2;
-    this->slewProperties[2].slewRotAxis = a3;
-}
-
-/*! Set the maximum torque
-    @param double slewMaxTorque
-    @return void
-    */
-void SunSearch::setMaxTorque(double const u1, double const u2, double const u3) {
-    this->slewMaxTorque[0] = u1;
-    this->slewMaxTorque[1] = u2;
-    this->slewMaxTorque[2] = u3;
+/**
+ * @brief Get the properties of a slew maneuver
+ * @param index index of the slew maneuver
+ * @return SlewProperties the properties of the slew maneuver
+ */
+SlewProperties SunSearch::getSlewProperties(uint32_t index) const {
+    return this->slewProperties[index];
 }

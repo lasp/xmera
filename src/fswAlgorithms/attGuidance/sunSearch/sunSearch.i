@@ -29,6 +29,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.h"
+
+STRUCTASLIST(SlewProperties)
+
 %include "sunSearch.h"
 
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
