@@ -45,9 +45,6 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
     Eigen::Vector3d R_P2B_N{};
     Eigen::Vector3d v_P2B_N{};
 
-    Eigen::Vector3d a_P1B_N{Eigen::Vector3d::Zero()};
-    Eigen::Vector3d a_P2B_N{Eigen::Vector3d::Zero()};
-
     if (this->secCelBodyIsLinked) {
         R_P2B_N = Eigen::Map<const Eigen::Vector3d>(secCelBodyIn.r_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(transNavIn.r_BN_N);
         v_P2B_N = Eigen::Map<const Eigen::Vector3d>(secCelBodyIn.v_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(transNavIn.v_BN_N);
@@ -59,8 +56,7 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
     if (!this->secCelBodyIsLinked || fabs(platAngDiff) < this->singularityThresh ||
         fabs(platAngDiff) > M_PI - this->singularityThresh) {
         R_P2B_N = R_P1B_N.cross(v_P1B_N);
-        v_P2B_N = R_P1B_N.cross(a_P1B_N);
-        a_P2B_N = v_P1B_N.cross(a_P1B_N);
+        v_P2B_N = Eigen::Vector3d::Zero();
     }
 
     AttRefMsgPayload attRefOut{};
@@ -68,8 +64,7 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
     /* - Initial computations: R_n, v_n, a_n */
     Eigen::Vector3d R_N = R_P1B_N.cross(R_P2B_N);
     Eigen::Vector3d v_N = v_P1B_N.cross(R_P2B_N) + R_P1B_N.cross(v_P2B_N);
-    Eigen::Vector3d a_N = a_P1B_N.cross(R_P2B_N) + R_P1B_N.cross(a_P2B_N) +
-        2 * v_P1B_N.cross(v_P2B_N);
+    Eigen::Vector3d a_N = 2 * v_P1B_N.cross(v_P2B_N);
 
     /* - Reference Frame computation */
     Eigen::Vector3d r1_N_hat = R_P1B_N.normalized();
@@ -98,8 +93,7 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
     eigenVector3d2CArray(omega_RN_N, attRefOut.omega_RN_N);
 
     /* - Reference base-vectors second time-derivative */
-    Eigen::Vector3d ddr1_N_hat = ((Eigen::Matrix3d::Identity() - r1_N_hat * r1_N_hat.transpose()) * a_P1B_N -
-        (2 * dr1_N_hat * r1_N_hat.transpose() + r1_N_hat * dr1_N_hat.transpose()) * v_P1B_N) / R_P1B_N.norm();
+    Eigen::Vector3d ddr1_N_hat = -(2 * dr1_N_hat * r1_N_hat.transpose() + r1_N_hat * dr1_N_hat.transpose()) * v_P1B_N / R_P1B_N.norm();
     Eigen::Vector3d ddr3_N_hat = ((Eigen::Matrix3d::Identity() - r3_N_hat * r3_N_hat.transpose()) * a_N -
         (2 * dr3_N_hat * r3_N_hat.transpose() + r3_N_hat * dr3_N_hat.transpose()) * v_N) / R_N.norm();
     Eigen::Vector3d ddr2_N_hat = ddr3_N_hat.cross(r1_N_hat) + r3_N_hat.cross(ddr1_N_hat) + 2 * dr3_N_hat.cross(dr1_N_hat);

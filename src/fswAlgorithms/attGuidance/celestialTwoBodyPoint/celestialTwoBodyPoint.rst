@@ -7,6 +7,8 @@ body-fixed axis towards another celestial object.
 For example, the goal is to point the sensor towards the center of a planet while doing the best to keep the solar
 panel normal point at the sun.
 
+The module assumes that the acceleration of the spacecraft with respect to the planets is negligible.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg connection is set by the
@@ -85,6 +87,9 @@ obtained:
             \mathbf{a}_{P1} &=\mathbf{a}_{P} - \mathbf{a}_{B/N} \\
             \mathbf{a}_{P2} &=\mathbf{a}_{S} - \mathbf{a}_{B/N}
        \end{align}
+
+Note that, while the documentation includes the full derivation including the acceleration of the spacecraft with
+respect to the planets, the module assumes that :math:`\mathbf{a}_{P1} = \mathbf{a}_{P2} = 0`.
 
 The normal vector :math:`\mathbf{R}_{n}` of the plane defined by
 :math:`\mathbf{R}_{P1}` and :math:`\mathbf{R}_{P2}` is computed through:
