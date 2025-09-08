@@ -24,9 +24,7 @@
 
 #include <math.h>
 
-void CelestialTwoBodyPointAlgorithm::reset(bool secCelBodyIsLinked) {
-    this->secCelBodyIsLinked = secCelBodyIsLinked;
-}
+void CelestialTwoBodyPointAlgorithm::reset(bool secCelBodyIsLinked) { this->secCelBodyIsLinked = secCelBodyIsLinked; }
 
 /*! This method takes the spacecraft and points a specified axis at a named
  celestial body specified in the configuration data.  It generates the
@@ -39,15 +37,19 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
                                                         NavTransMsgPayload& transNavIn) {
     double platAngDiff{}; /* Angle between r_P1 and r_P2 */
 
-    Eigen::Vector3d R_P1B_N = Eigen::Map<const Eigen::Vector3d>(celBodyIn.r_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(transNavIn.r_BN_N);
-    Eigen::Vector3d v_P1B_N = Eigen::Map<const Eigen::Vector3d>(celBodyIn.v_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(transNavIn.v_BN_N);
+    Eigen::Vector3d R_P1B_N =
+        Eigen::Map<const Eigen::Vector3d>(celBodyIn.r_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(transNavIn.r_BN_N);
+    Eigen::Vector3d v_P1B_N =
+        Eigen::Map<const Eigen::Vector3d>(celBodyIn.v_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(transNavIn.v_BN_N);
 
     Eigen::Vector3d R_P2B_N{};
     Eigen::Vector3d v_P2B_N{};
 
     if (this->secCelBodyIsLinked) {
-        R_P2B_N = Eigen::Map<const Eigen::Vector3d>(secCelBodyIn.r_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(transNavIn.r_BN_N);
-        v_P2B_N = Eigen::Map<const Eigen::Vector3d>(secCelBodyIn.v_BdyZero_N) - Eigen::Map<const Eigen::Vector3d>(transNavIn.v_BN_N);
+        R_P2B_N = Eigen::Map<const Eigen::Vector3d>(secCelBodyIn.r_BdyZero_N) -
+                  Eigen::Map<const Eigen::Vector3d>(transNavIn.r_BN_N);
+        v_P2B_N = Eigen::Map<const Eigen::Vector3d>(secCelBodyIn.v_BdyZero_N) -
+                  Eigen::Map<const Eigen::Vector3d>(transNavIn.v_BN_N);
         double dotProduct = R_P2B_N.normalized().dot(R_P1B_N.normalized());
         platAngDiff = safeAcos(dotProduct);
     }
@@ -80,7 +82,8 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
     eigenVector3d2CArray(sigma_RN, attRefOut.sigma_RN);
 
     /* - Reference base-vectors first time-derivative */
-    Eigen::Vector3d dr1_N_hat = (Eigen::Matrix3d::Identity() - r1_N_hat * r1_N_hat.transpose()) * v_P1B_N / R_P1B_N.norm();
+    Eigen::Vector3d dr1_N_hat =
+        (Eigen::Matrix3d::Identity() - r1_N_hat * r1_N_hat.transpose()) * v_P1B_N / R_P1B_N.norm();
     Eigen::Vector3d dr3_N_hat = (Eigen::Matrix3d::Identity() - r3_N_hat * r3_N_hat.transpose()) * v_N / R_N.norm();
     Eigen::Vector3d dr2_N_hat = dr3_N_hat.cross(r1_N_hat) + r3_N_hat.cross(dr1_N_hat);
 
@@ -93,10 +96,13 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
     eigenVector3d2CArray(omega_RN_N, attRefOut.omega_RN_N);
 
     /* - Reference base-vectors second time-derivative */
-    Eigen::Vector3d ddr1_N_hat = -(2 * dr1_N_hat * r1_N_hat.transpose() + r1_N_hat * dr1_N_hat.transpose()) * v_P1B_N / R_P1B_N.norm();
+    Eigen::Vector3d ddr1_N_hat =
+        -(2 * dr1_N_hat * r1_N_hat.transpose() + r1_N_hat * dr1_N_hat.transpose()) * v_P1B_N / R_P1B_N.norm();
     Eigen::Vector3d ddr3_N_hat = ((Eigen::Matrix3d::Identity() - r3_N_hat * r3_N_hat.transpose()) * a_N -
-        (2 * dr3_N_hat * r3_N_hat.transpose() + r3_N_hat * dr3_N_hat.transpose()) * v_N) / R_N.norm();
-    Eigen::Vector3d ddr2_N_hat = ddr3_N_hat.cross(r1_N_hat) + r3_N_hat.cross(ddr1_N_hat) + 2 * dr3_N_hat.cross(dr1_N_hat);
+                                  (2 * dr3_N_hat * r3_N_hat.transpose() + r3_N_hat * dr3_N_hat.transpose()) * v_N) /
+                                 R_N.norm();
+    Eigen::Vector3d ddr2_N_hat =
+        ddr3_N_hat.cross(r1_N_hat) + r3_N_hat.cross(ddr1_N_hat) + 2 * dr3_N_hat.cross(dr1_N_hat);
 
     /* - Angular acceleration computation */
     Eigen::Vector3d domega_RN_R{};
@@ -124,6 +130,4 @@ void CelestialTwoBodyPointAlgorithm::setSingularityThresh(double thresh) {
  * @brief Get the singularity threshold
  * @return double singularity threshold
  */
-double CelestialTwoBodyPointAlgorithm::getSingularityThresh() const {
-    return this->singularityThresh;
-}
+double CelestialTwoBodyPointAlgorithm::getSingularityThresh() const { return this->singularityThresh; }
