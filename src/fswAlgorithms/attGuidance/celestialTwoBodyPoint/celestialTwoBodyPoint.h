@@ -28,6 +28,7 @@
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include <Eigen/Core>
 
 /*!@brief Data structure for module to compute the two-body celestial pointing navigation solution.
  */
@@ -47,12 +48,12 @@ class CelestialTwoBodyPoint : public SysModel {
 
    private:
     int secCelBodyIsLinked;  //!< flag to indicate if the optional 2nd celestial body message is linked
-    double R_P1B_N[3];         //!< [m] planet 1 position vector relative to inertial frame, in N-frame components
-    double R_P2B_N[3];         //!< [m] planet 2 position vector relative to inertial frame, in N-frame components
-    double v_P1B_N[3];         //!< [m/s] planet 1 velocity vector relative to inertial frame, in N-frame components
-    double v_P2B_N[3];         //!< [m/s] planet 2 velocity vector relative to inertial frame, in N-frame components
-    double a_P1B_N[3];  //!< [m/s^2] planet 1 acceleration vector relative to inertial frame, in N-frame components
-    double a_P2B_N[3];  //!< [m/s^2] planet 2 acceleration vector relative to inertial frame, in N-frame components
+    Eigen::Vector3d R_P1B_N{};   //!< [m] planet 1 position vector relative to inertial frame, in N-frame components
+    Eigen::Vector3d R_P2B_N{};   //!< [m] planet 2 position vector relative to inertial frame, in N-frame components
+    Eigen::Vector3d v_P1B_N{};   //!< [m/s] planet 1 velocity vector relative to inertial frame, in N-frame components
+    Eigen::Vector3d v_P2B_N{};   //!< [m/s] planet 2 velocity vector relative to inertial frame, in N-frame components
+    Eigen::Vector3d a_P1B_N{};   //!< [m/s^2] planet 1 acceleration vector relative to inertial frame, in N-frame components
+    Eigen::Vector3d a_P2B_N{};   //!< [m/s^2] planet 2 acceleration vector relative to inertial frame, in N-frame components
     AttRefMsgPayload attRefOut;  //!< (-) copy of output reference frame message
 };
 
