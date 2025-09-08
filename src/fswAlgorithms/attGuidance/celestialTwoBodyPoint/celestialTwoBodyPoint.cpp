@@ -148,3 +148,22 @@ void CelestialTwoBodyPoint::computeCelestialTwoBodyPoint(uint64_t callTime) {
 
     return;
 }
+
+/**
+ * @brief Set the singularity threshold
+ * @param thresh singularity threshold
+ */
+void CelestialTwoBodyPoint::setSingularityThresh(double thresh) {
+    if (thresh < 0.0) {
+        throw std::invalid_argument("Singularity threshold must not be negative");
+    }
+    this->singularityThresh = thresh;
+}
+
+/**
+ * @brief Get the singularity threshold
+ * @return double singularity threshold
+ */
+double CelestialTwoBodyPoint::getSingularityThresh() const {
+    return this->singularityThresh;
+}

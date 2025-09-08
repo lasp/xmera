@@ -128,7 +128,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.singularityThresh = 1.0 * af.D2R
+    module.setSingularityThresh(1.0 * af.D2R)
 
 
     # Previous Computation of Initial Conditions for the test
@@ -289,7 +289,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.singularityThresh = 1.0 * af.D2R
+    module.setSingularityThresh(1.0 * af.D2R)
 
     # Previous Computation of Initial Conditions for the test
     a = af.E_radius * 2.8

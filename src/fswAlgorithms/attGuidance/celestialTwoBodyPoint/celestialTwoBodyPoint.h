@@ -38,8 +38,8 @@ class CelestialTwoBodyPoint : public SysModel {
     void updateState(uint64_t callTime) override;
     void parseInputMessages();
     void computeCelestialTwoBodyPoint(uint64_t callTime);
-    
-    double singularityThresh;  //!< (r) Threshold for when to fix constraint axis*/
+    void setSingularityThresh(double thresh);
+    double getSingularityThresh() const;
 
     Message<AttRefMsgPayload> attRefOutMsg;            //!< The name of the output message*/
     ReadFunctor<EphemerisMsgPayload> celBodyInMsg;     //!< The name of the celestial body message*/
@@ -47,6 +47,7 @@ class CelestialTwoBodyPoint : public SysModel {
     ReadFunctor<NavTransMsgPayload> transNavInMsg;     //!< The name of the incoming attitude command*/
 
    private:
+    double singularityThresh;  //!< [rad] Threshold for when to fix constraint axis*/
     int secCelBodyIsLinked;  //!< flag to indicate if the optional 2nd celestial body message is linked
     Eigen::Vector3d R_P1B_N{};   //!< [m] planet 1 position vector relative to inertial frame, in N-frame components
     Eigen::Vector3d R_P2B_N{};   //!< [m] planet 2 position vector relative to inertial frame, in N-frame components
