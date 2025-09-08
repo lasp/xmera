@@ -176,9 +176,9 @@ Several lines of algebra lead to the following sets:
 .. math::
 
    \begin{align}
-           \dot{\hat{\mathbf{r}}}_1 &= ([I_{3\times3}] - {\hat{\mathbf{r}}_1}{\hat{\mathbf{r}}_1}^T)  \frac{{\mathbf R}_{P1}} {|{\mathbf R}_{P1}|} \\
-           \dot{\hat{\mathbf{r}}}_3 &= ([I_{3\times3}] - \hat{\mathbf{r}}_3 \hat{\mathbf{r}}_3^T)  \frac{{\mathbf R}_{n}} {|{\mathbf R}_{n}|} \\
-           \dot{\hat{\mathbf{r}}}_2 &= \dot{\hat{\mathbf{r}}}_3 \times \mathbf{r}_1 +  \mathbf{r}_n  \times \dot{\hat{\mathbf{r}}}_3
+           \dot{\hat{\mathbf{r}}}_1 &= ([I_{3\times3}] - {\hat{\mathbf{r}}_1}{\hat{\mathbf{r}}_1}^T)  \frac{{\mathbf V}_{P1}} {|{\mathbf R}_{P1}|} \\
+           \dot{\hat{\mathbf{r}}}_3 &= ([I_{3\times3}] - \hat{\mathbf{r}}_3 \hat{\mathbf{r}}_3^T)  \frac{{\mathbf v}_{n}} {|{\mathbf R}_{n}|} \\
+           \dot{\hat{\mathbf{r}}}_2 &= \dot{\hat{\mathbf{r}}}_3 \times \hat{\mathbf{r}}_1 +  \hat{\mathbf{r}}_3  \times \dot{\hat{\mathbf{r}}}_1
        \end{align}
 
 .. math::
@@ -196,7 +196,7 @@ Several lines of algebra lead to the following sets:
            2\dot{\hat{\mathbf{r}}}_3 (\hat{\mathbf{r}}_3 \cdot \mathbf{v}_{n}) -
            \hat{\mathbf{r}}_3 (\dot{\hat{\mathbf{r}}}_3 \cdot \mathbf{v}_{n})
            ) \\
-           \ddot{\hat{\mathbf{r}}}_2 &= \ddot{\hat{\mathbf{r}}}_3 \times \mathbf{r}_1 +  \mathbf{r}_n  \times \ddot{\hat{\mathbf{r}}}_3 + 2\dot{\hat{\mathbf{r}}}_3 \cdot \dot{\hat{\mathbf{r}}}_1
+           \ddot{\hat{\mathbf{r}}}_2 &= \ddot{\hat{\mathbf{r}}}_3 \times \hat{\mathbf{r}}_1 +  \hat{\mathbf{r}}_3  \times \ddot{\hat{\mathbf{r}}}_1 + 2 \dot{\hat{\mathbf{r}}}_3 \times \dot{\hat{\mathbf{r}}}_1
        \end{align}
 
 Angular Velocity and Acceleration Descriptions
