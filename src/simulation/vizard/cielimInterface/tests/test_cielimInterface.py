@@ -74,6 +74,7 @@ def read_write_test():
     rendering_payload.starField = True
     rendering_payload.rendering = "Lumen"
     rendering_payload.smear = True
+    rendering_payload.wavelengths = [450, 550, 650]
     rendering_message = messaging.CameraRenderingMsg().write(rendering_payload)
     module.cameraRenderingMessage.subscribeTo(rendering_message)
 
@@ -120,7 +121,6 @@ def read_write_test():
     camera_payload.redQuantumEfficiency = [0.8, 0.7, 0.6]
     camera_payload.greenQuantumEfficiency = [0.5, 0.6, 0.7]
     camera_payload.blueQuantumEfficiency = [0.6, 0.7, 0.6]
-    camera_payload.wavelengthsQuantumEfficiency = [450, 550, 650]
     camera_payload.horizontalVignetting = [0.1, 0.2, 0.3, 0.4]
     camera_payload.verticalVignetting = [0.5, 0.6, 0.7, 0.8]
     camera_payload.distortion = [0.2, 0.4, 0.6, 0.8]
@@ -224,9 +224,6 @@ def read_write_test():
     np.testing.assert_equal(cielim_message.camera.sensorModel.gamma, camera_payload.gammaCorrection)
 
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.integrationWeightFactor, camera_payload.integrationWeightFactor)
-    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.wavelengths1, camera_payload.wavelengthsQuantumEfficiency[0])
-    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.wavelengths2, camera_payload.wavelengthsQuantumEfficiency[1])
-    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.wavelengths3, camera_payload.wavelengthsQuantumEfficiency[2])
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue1, camera_payload.redQuantumEfficiency[0])
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue2, camera_payload.redQuantumEfficiency[1])
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue3, camera_payload.redQuantumEfficiency[2])
@@ -237,11 +234,14 @@ def read_write_test():
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.blueValue2, camera_payload.blueQuantumEfficiency[1])
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.blueValue3, camera_payload.blueQuantumEfficiency[2])
 
-    np.testing.assert_equal(cielim_message.camera.renderParameters.cosmicRayStdDeviation, rendering_payload.cosmicRayStdDeviation)
-    np.testing.assert_equal(cielim_message.camera.renderParameters.strayLight, rendering_payload.strayLight)
-    np.testing.assert_equal(cielim_message.camera.renderParameters.starField, rendering_payload.starField)
-    np.testing.assert_equal(cielim_message.camera.renderParameters.rendering, rendering_payload.rendering)
-    np.testing.assert_equal(cielim_message.camera.renderParameters.enableSmear, rendering_payload.smear)
+    np.testing.assert_equal(cielim_message.renderParameters.wavelength1, rendering_payload.wavelengths[0])
+    np.testing.assert_equal(cielim_message.renderParameters.wavelength2, rendering_payload.wavelengths[1])
+    np.testing.assert_equal(cielim_message.renderParameters.wavelength3, rendering_payload.wavelengths[2])
+    np.testing.assert_equal(cielim_message.renderParameters.cosmicRayStdDeviation, rendering_payload.cosmicRayStdDeviation)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLight, rendering_payload.strayLight)
+    np.testing.assert_equal(cielim_message.renderParameters.starField, rendering_payload.starField)
+    np.testing.assert_equal(cielim_message.renderParameters.rendering, rendering_payload.rendering)
+    np.testing.assert_equal(cielim_message.renderParameters.enableSmear, rendering_payload.smear)
 
     i = 0
     for message, body in zip(bodies_message_list, grav_bodies):

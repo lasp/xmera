@@ -104,8 +104,6 @@ class Camera : public SysModel {
     Eigen::Vector3d getGreenQuantumEfficiency() const;
     void setBlueQuantumEfficiency(const Eigen::Vector3d &blueQE);
     Eigen::Vector3d getBlueQuantumEfficiency() const;
-    void setWavelengthsQuantumEfficiency(const Eigen::Vector3d &wavelengthsQE);
-    Eigen::Vector3d getWavelengthsQuantumEfficiency() const;
     void setHorizontalVignetting(const Eigen::VectorXd &horizontalVignettingCoeffs);
     Eigen::VectorXd getHorizontalVignetting() const;
     void setVerticalVignetting(const Eigen::VectorXd &verticalVignettingCoeffs);
@@ -144,7 +142,6 @@ class Camera : public SysModel {
     Eigen::Vector3d redQuantumEfficiency{};    //!< [-] Values of QE curve at specified wavelengths (red channel)
     Eigen::Vector3d greenQuantumEfficiency{};  //!< [-] Values of QE curve at specified wavelengths (green channel)
     Eigen::Vector3d blueQuantumEfficiency{};   //!< [-] Values of QE curve at specified wavelengths (blue channel)
-    Eigen::Vector3d wavelengthsQuantumEfficiency{}; //!< [nm] wavelength sample points used for Quantum Efficiency curve
     Eigen::VectorXd horizontalVignetting{}; //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of horizontal distance from camera center (degrees)
     Eigen::VectorXd verticalVignetting{}; //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of vertical distance from camera center (degrees)
     Eigen::VectorXd distortion{}; //!< [-] Polynomial coefficients to form the curve of distortion (values between 0 and 1) as a function of vertical distance from camera center (degrees)

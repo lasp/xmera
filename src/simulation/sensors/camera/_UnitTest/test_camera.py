@@ -181,7 +181,6 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     module.setRedQuantumEfficiency([0.8, 0.7, 0.6])
     module.setGreenQuantumEfficiency([0.5, 0.6, 0.7])
     module.setBlueQuantumEfficiency([0.6, 0.7, 0.6])
-    module.setWavelengthsQuantumEfficiency([450, 550, 650])
     module.setHorizontalVignetting([0.1, 0.2, 0.3, 0.4])
     module.setVerticalVignetting([0.5, 0.6, 0.7, 0.8])
     module.setDistortion([0.2, 0.4, 0.6, 0.8])
@@ -274,9 +273,6 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     np.testing.assert_array_equal(dataLogCameraModel.blueQuantumEfficiency[-1, :],
                                   np.array(module.getBlueQuantumEfficiency()).reshape(3),
                                   "Test failed blue QE curve")
-    np.testing.assert_array_equal(dataLogCameraModel.wavelengthsQuantumEfficiency[-1, :],
-                                  np.array(module.getWavelengthsQuantumEfficiency()).reshape(3),
-                                  "Test failed wavelengths QE")
     np.testing.assert_array_equal(np.trim_zeros(dataLogCameraModel.horizontalVignetting[-1, :]),
                                   np.array(module.getHorizontalVignetting()).reshape(-1),
                                   "Test failed horizontal Vignetting coefficients")

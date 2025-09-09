@@ -428,6 +428,216 @@ class EpochDateTime final :
 };
 // -------------------------------------------------------------------
 
+class RenderingModel final :
+    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.RenderingModel) */ {
+ public:
+  inline RenderingModel() : RenderingModel(nullptr) {}
+  ~RenderingModel() override;
+  explicit constexpr RenderingModel(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  RenderingModel(const RenderingModel& from);
+  RenderingModel(RenderingModel&& from) noexcept
+    : RenderingModel() {
+    *this = ::std::move(from);
+  }
+
+  inline RenderingModel& operator=(const RenderingModel& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RenderingModel& operator=(RenderingModel&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const RenderingModel& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RenderingModel* internal_default_instance() {
+    return reinterpret_cast<const RenderingModel*>(
+               &_RenderingModel_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(RenderingModel& a, RenderingModel& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RenderingModel* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RenderingModel* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline RenderingModel* New() const final {
+    return new RenderingModel();
+  }
+
+  RenderingModel* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<RenderingModel>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
+  void CopyFrom(const RenderingModel& from);
+  void MergeFrom(const RenderingModel& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(RenderingModel* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "cielimMessage.RenderingModel";
+  }
+  protected:
+  explicit RenderingModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRenderingFieldNumber = 7,
+    kWavelength1FieldNumber = 1,
+    kWavelength2FieldNumber = 2,
+    kWavelength3FieldNumber = 3,
+    kCosmicRayStdDeviationFieldNumber = 4,
+    kStrayLightFieldNumber = 5,
+    kStarFieldFieldNumber = 6,
+    kEnableSmearFieldNumber = 8,
+  };
+  // string rendering = 7;
+  void clear_rendering();
+  const std::string& rendering() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_rendering(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_rendering();
+  PROTOBUF_MUST_USE_RESULT std::string* release_rendering();
+  void set_allocated_rendering(std::string* rendering);
+  private:
+  const std::string& _internal_rendering() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_rendering(const std::string& value);
+  std::string* _internal_mutable_rendering();
+  public:
+
+  // double wavelength1 = 1;
+  void clear_wavelength1();
+  double wavelength1() const;
+  void set_wavelength1(double value);
+  private:
+  double _internal_wavelength1() const;
+  void _internal_set_wavelength1(double value);
+  public:
+
+  // double wavelength2 = 2;
+  void clear_wavelength2();
+  double wavelength2() const;
+  void set_wavelength2(double value);
+  private:
+  double _internal_wavelength2() const;
+  void _internal_set_wavelength2(double value);
+  public:
+
+  // double wavelength3 = 3;
+  void clear_wavelength3();
+  double wavelength3() const;
+  void set_wavelength3(double value);
+  private:
+  double _internal_wavelength3() const;
+  void _internal_set_wavelength3(double value);
+  public:
+
+  // double cosmicRayStdDeviation = 4;
+  void clear_cosmicraystddeviation();
+  double cosmicraystddeviation() const;
+  void set_cosmicraystddeviation(double value);
+  private:
+  double _internal_cosmicraystddeviation() const;
+  void _internal_set_cosmicraystddeviation(double value);
+  public:
+
+  // double strayLight = 5;
+  void clear_straylight();
+  double straylight() const;
+  void set_straylight(double value);
+  private:
+  double _internal_straylight() const;
+  void _internal_set_straylight(double value);
+  public:
+
+  // bool starField = 6;
+  void clear_starfield();
+  bool starfield() const;
+  void set_starfield(bool value);
+  private:
+  bool _internal_starfield() const;
+  void _internal_set_starfield(bool value);
+  public:
+
+  // bool enableSmear = 8;
+  void clear_enablesmear();
+  bool enablesmear() const;
+  void set_enablesmear(bool value);
+  private:
+  bool _internal_enablesmear() const;
+  void _internal_set_enablesmear(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:cielimMessage.RenderingModel)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr rendering_;
+  double wavelength1_;
+  double wavelength2_;
+  double wavelength3_;
+  double cosmicraystddeviation_;
+  double straylight_;
+  bool starfield_;
+  bool enablesmear_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_cielimMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
 class PerlinNoise final :
     public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.PerlinNoise) */ {
  public:
@@ -467,7 +677,7 @@ class PerlinNoise final :
                &_PerlinNoise_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(PerlinNoise& a, PerlinNoise& b) {
     a.Swap(&b);
@@ -628,7 +838,7 @@ class MeshModel final :
                &_MeshModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(MeshModel& a, MeshModel& b) {
     a.Swap(&b);
@@ -891,7 +1101,7 @@ class CelestialBody final :
                &_CelestialBody_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(CelestialBody& a, CelestialBody& b) {
     a.Swap(&b);
@@ -1127,7 +1337,7 @@ class Spacecraft final :
                &_Spacecraft_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(Spacecraft& a, Spacecraft& b) {
     a.Swap(&b);
@@ -1293,183 +1503,6 @@ class Spacecraft final :
 };
 // -------------------------------------------------------------------
 
-class RenderingModel final :
-    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.RenderingModel) */ {
- public:
-  inline RenderingModel() : RenderingModel(nullptr) {}
-  ~RenderingModel() override;
-  explicit constexpr RenderingModel(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  RenderingModel(const RenderingModel& from);
-  RenderingModel(RenderingModel&& from) noexcept
-    : RenderingModel() {
-    *this = ::std::move(from);
-  }
-
-  inline RenderingModel& operator=(const RenderingModel& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline RenderingModel& operator=(RenderingModel&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const RenderingModel& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const RenderingModel* internal_default_instance() {
-    return reinterpret_cast<const RenderingModel*>(
-               &_RenderingModel_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    6;
-
-  friend void swap(RenderingModel& a, RenderingModel& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(RenderingModel* other) {
-    if (other == this) return;
-    if (GetOwningArena() == other->GetOwningArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(RenderingModel* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline RenderingModel* New() const final {
-    return new RenderingModel();
-  }
-
-  RenderingModel* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<RenderingModel>(arena);
-  }
-  void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
-  void CopyFrom(const RenderingModel& from);
-  void MergeFrom(const RenderingModel& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  void DiscardUnknownFields();
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  void InternalSwap(RenderingModel* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "cielimMessage.RenderingModel";
-  }
-  protected:
-  explicit RenderingModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  std::string GetTypeName() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kRenderingFieldNumber = 4,
-    kCosmicRayStdDeviationFieldNumber = 1,
-    kStrayLightFieldNumber = 2,
-    kStarFieldFieldNumber = 3,
-    kEnableSmearFieldNumber = 5,
-  };
-  // string rendering = 4;
-  void clear_rendering();
-  const std::string& rendering() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_rendering(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_rendering();
-  PROTOBUF_MUST_USE_RESULT std::string* release_rendering();
-  void set_allocated_rendering(std::string* rendering);
-  private:
-  const std::string& _internal_rendering() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_rendering(const std::string& value);
-  std::string* _internal_mutable_rendering();
-  public:
-
-  // double cosmicRayStdDeviation = 1;
-  void clear_cosmicraystddeviation();
-  double cosmicraystddeviation() const;
-  void set_cosmicraystddeviation(double value);
-  private:
-  double _internal_cosmicraystddeviation() const;
-  void _internal_set_cosmicraystddeviation(double value);
-  public:
-
-  // double strayLight = 2;
-  void clear_straylight();
-  double straylight() const;
-  void set_straylight(double value);
-  private:
-  double _internal_straylight() const;
-  void _internal_set_straylight(double value);
-  public:
-
-  // bool starField = 3;
-  void clear_starfield();
-  bool starfield() const;
-  void set_starfield(bool value);
-  private:
-  bool _internal_starfield() const;
-  void _internal_set_starfield(bool value);
-  public:
-
-  // bool enableSmear = 5;
-  void clear_enablesmear();
-  bool enablesmear() const;
-  void set_enablesmear(bool value);
-  private:
-  bool _internal_enablesmear() const;
-  void _internal_set_enablesmear(bool value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:cielimMessage.RenderingModel)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr rendering_;
-  double cosmicraystddeviation_;
-  double straylight_;
-  bool starfield_;
-  bool enablesmear_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_cielimMessage_2eproto;
-};
-// -------------------------------------------------------------------
-
 class QuantumEfficiency final :
     public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.QuantumEfficiency) */ {
  public:
@@ -1584,9 +1617,6 @@ class QuantumEfficiency final :
     kBlueValue1FieldNumber = 8,
     kBlueValue2FieldNumber = 9,
     kBlueValue3FieldNumber = 10,
-    kWavelengths1FieldNumber = 11,
-    kWavelengths2FieldNumber = 12,
-    kWavelengths3FieldNumber = 13,
   };
   // double integrationWeightFactor = 1;
   void clear_integrationweightfactor();
@@ -1678,33 +1708,6 @@ class QuantumEfficiency final :
   void _internal_set_bluevalue3(double value);
   public:
 
-  // double wavelengths1 = 11;
-  void clear_wavelengths1();
-  double wavelengths1() const;
-  void set_wavelengths1(double value);
-  private:
-  double _internal_wavelengths1() const;
-  void _internal_set_wavelengths1(double value);
-  public:
-
-  // double wavelengths2 = 12;
-  void clear_wavelengths2();
-  double wavelengths2() const;
-  void set_wavelengths2(double value);
-  private:
-  double _internal_wavelengths2() const;
-  void _internal_set_wavelengths2(double value);
-  public:
-
-  // double wavelengths3 = 13;
-  void clear_wavelengths3();
-  double wavelengths3() const;
-  void set_wavelengths3(double value);
-  private:
-  double _internal_wavelengths3() const;
-  void _internal_set_wavelengths3(double value);
-  public:
-
   // @@protoc_insertion_point(class_scope:cielimMessage.QuantumEfficiency)
  private:
   class _Internal;
@@ -1722,9 +1725,6 @@ class QuantumEfficiency final :
   double bluevalue1_;
   double bluevalue2_;
   double bluevalue3_;
-  double wavelengths1_;
-  double wavelengths2_;
-  double wavelengths3_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_cielimMessage_2eproto;
 };
@@ -2366,9 +2366,8 @@ class CameraModel final :
     kCameraPositionInBodyFieldNumber = 3,
     kBodyFrameToCameraMrpFieldNumber = 4,
     kParentNameFieldNumber = 2,
-    kRenderParametersFieldNumber = 5,
-    kLensModelFieldNumber = 6,
-    kSensorModelFieldNumber = 7,
+    kLensModelFieldNumber = 5,
+    kSensorModelFieldNumber = 6,
     kCameraIdFieldNumber = 1,
   };
   // repeated double cameraPositionInBody = 3;
@@ -2429,25 +2428,7 @@ class CameraModel final :
   std::string* _internal_mutable_parentname();
   public:
 
-  // .cielimMessage.RenderingModel renderParameters = 5;
-  bool has_renderparameters() const;
-  private:
-  bool _internal_has_renderparameters() const;
-  public:
-  void clear_renderparameters();
-  const ::cielimMessage::RenderingModel& renderparameters() const;
-  PROTOBUF_MUST_USE_RESULT ::cielimMessage::RenderingModel* release_renderparameters();
-  ::cielimMessage::RenderingModel* mutable_renderparameters();
-  void set_allocated_renderparameters(::cielimMessage::RenderingModel* renderparameters);
-  private:
-  const ::cielimMessage::RenderingModel& _internal_renderparameters() const;
-  ::cielimMessage::RenderingModel* _internal_mutable_renderparameters();
-  public:
-  void unsafe_arena_set_allocated_renderparameters(
-      ::cielimMessage::RenderingModel* renderparameters);
-  ::cielimMessage::RenderingModel* unsafe_arena_release_renderparameters();
-
-  // .cielimMessage.LensModel lensModel = 6;
+  // .cielimMessage.LensModel lensModel = 5;
   bool has_lensmodel() const;
   private:
   bool _internal_has_lensmodel() const;
@@ -2465,7 +2446,7 @@ class CameraModel final :
       ::cielimMessage::LensModel* lensmodel);
   ::cielimMessage::LensModel* unsafe_arena_release_lensmodel();
 
-  // .cielimMessage.SensorModel sensorModel = 7;
+  // .cielimMessage.SensorModel sensorModel = 6;
   bool has_sensormodel() const;
   private:
   bool _internal_has_sensormodel() const;
@@ -2502,7 +2483,6 @@ class CameraModel final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > camerapositioninbody_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > bodyframetocameramrp_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr parentname_;
-  ::cielimMessage::RenderingModel* renderparameters_;
   ::cielimMessage::LensModel* lensmodel_;
   ::cielimMessage::SensorModel* sensormodel_;
   ::PROTOBUF_NAMESPACE_ID::int64 cameraid_;
@@ -2615,13 +2595,14 @@ class CielimMessage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kCelestialBodiesFieldNumber = 3,
+    kCelestialBodiesFieldNumber = 4,
     kEpochFieldNumber = 1,
     kCurrentTimeFieldNumber = 2,
-    kSpacecraftFieldNumber = 4,
-    kCameraFieldNumber = 5,
+    kRenderParametersFieldNumber = 3,
+    kSpacecraftFieldNumber = 5,
+    kCameraFieldNumber = 6,
   };
-  // repeated .cielimMessage.CelestialBody celestialBodies = 3;
+  // repeated .cielimMessage.CelestialBody celestialBodies = 4;
   int celestialbodies_size() const;
   private:
   int _internal_celestialbodies_size() const;
@@ -2675,7 +2656,25 @@ class CielimMessage final :
       ::cielimMessage::TimeStamp* currenttime);
   ::cielimMessage::TimeStamp* unsafe_arena_release_currenttime();
 
-  // .cielimMessage.Spacecraft spacecraft = 4;
+  // .cielimMessage.RenderingModel renderParameters = 3;
+  bool has_renderparameters() const;
+  private:
+  bool _internal_has_renderparameters() const;
+  public:
+  void clear_renderparameters();
+  const ::cielimMessage::RenderingModel& renderparameters() const;
+  PROTOBUF_MUST_USE_RESULT ::cielimMessage::RenderingModel* release_renderparameters();
+  ::cielimMessage::RenderingModel* mutable_renderparameters();
+  void set_allocated_renderparameters(::cielimMessage::RenderingModel* renderparameters);
+  private:
+  const ::cielimMessage::RenderingModel& _internal_renderparameters() const;
+  ::cielimMessage::RenderingModel* _internal_mutable_renderparameters();
+  public:
+  void unsafe_arena_set_allocated_renderparameters(
+      ::cielimMessage::RenderingModel* renderparameters);
+  ::cielimMessage::RenderingModel* unsafe_arena_release_renderparameters();
+
+  // .cielimMessage.Spacecraft spacecraft = 5;
   bool has_spacecraft() const;
   private:
   bool _internal_has_spacecraft() const;
@@ -2693,7 +2692,7 @@ class CielimMessage final :
       ::cielimMessage::Spacecraft* spacecraft);
   ::cielimMessage::Spacecraft* unsafe_arena_release_spacecraft();
 
-  // .cielimMessage.CameraModel camera = 5;
+  // .cielimMessage.CameraModel camera = 6;
   bool has_camera() const;
   private:
   bool _internal_has_camera() const;
@@ -2721,6 +2720,7 @@ class CielimMessage final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::cielimMessage::CelestialBody > celestialbodies_;
   ::cielimMessage::EpochDateTime* epoch_;
   ::cielimMessage::TimeStamp* currenttime_;
+  ::cielimMessage::RenderingModel* renderparameters_;
   ::cielimMessage::Spacecraft* spacecraft_;
   ::cielimMessage::CameraModel* camera_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -2899,6 +2899,196 @@ inline void EpochDateTime::_internal_set_seconds(double value) {
 inline void EpochDateTime::set_seconds(double value) {
   _internal_set_seconds(value);
   // @@protoc_insertion_point(field_set:cielimMessage.EpochDateTime.seconds)
+}
+
+// -------------------------------------------------------------------
+
+// RenderingModel
+
+// double wavelength1 = 1;
+inline void RenderingModel::clear_wavelength1() {
+  wavelength1_ = 0;
+}
+inline double RenderingModel::_internal_wavelength1() const {
+  return wavelength1_;
+}
+inline double RenderingModel::wavelength1() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.wavelength1)
+  return _internal_wavelength1();
+}
+inline void RenderingModel::_internal_set_wavelength1(double value) {
+  
+  wavelength1_ = value;
+}
+inline void RenderingModel::set_wavelength1(double value) {
+  _internal_set_wavelength1(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.wavelength1)
+}
+
+// double wavelength2 = 2;
+inline void RenderingModel::clear_wavelength2() {
+  wavelength2_ = 0;
+}
+inline double RenderingModel::_internal_wavelength2() const {
+  return wavelength2_;
+}
+inline double RenderingModel::wavelength2() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.wavelength2)
+  return _internal_wavelength2();
+}
+inline void RenderingModel::_internal_set_wavelength2(double value) {
+  
+  wavelength2_ = value;
+}
+inline void RenderingModel::set_wavelength2(double value) {
+  _internal_set_wavelength2(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.wavelength2)
+}
+
+// double wavelength3 = 3;
+inline void RenderingModel::clear_wavelength3() {
+  wavelength3_ = 0;
+}
+inline double RenderingModel::_internal_wavelength3() const {
+  return wavelength3_;
+}
+inline double RenderingModel::wavelength3() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.wavelength3)
+  return _internal_wavelength3();
+}
+inline void RenderingModel::_internal_set_wavelength3(double value) {
+  
+  wavelength3_ = value;
+}
+inline void RenderingModel::set_wavelength3(double value) {
+  _internal_set_wavelength3(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.wavelength3)
+}
+
+// double cosmicRayStdDeviation = 4;
+inline void RenderingModel::clear_cosmicraystddeviation() {
+  cosmicraystddeviation_ = 0;
+}
+inline double RenderingModel::_internal_cosmicraystddeviation() const {
+  return cosmicraystddeviation_;
+}
+inline double RenderingModel::cosmicraystddeviation() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.cosmicRayStdDeviation)
+  return _internal_cosmicraystddeviation();
+}
+inline void RenderingModel::_internal_set_cosmicraystddeviation(double value) {
+  
+  cosmicraystddeviation_ = value;
+}
+inline void RenderingModel::set_cosmicraystddeviation(double value) {
+  _internal_set_cosmicraystddeviation(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.cosmicRayStdDeviation)
+}
+
+// double strayLight = 5;
+inline void RenderingModel::clear_straylight() {
+  straylight_ = 0;
+}
+inline double RenderingModel::_internal_straylight() const {
+  return straylight_;
+}
+inline double RenderingModel::straylight() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.strayLight)
+  return _internal_straylight();
+}
+inline void RenderingModel::_internal_set_straylight(double value) {
+  
+  straylight_ = value;
+}
+inline void RenderingModel::set_straylight(double value) {
+  _internal_set_straylight(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.strayLight)
+}
+
+// bool starField = 6;
+inline void RenderingModel::clear_starfield() {
+  starfield_ = false;
+}
+inline bool RenderingModel::_internal_starfield() const {
+  return starfield_;
+}
+inline bool RenderingModel::starfield() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.starField)
+  return _internal_starfield();
+}
+inline void RenderingModel::_internal_set_starfield(bool value) {
+  
+  starfield_ = value;
+}
+inline void RenderingModel::set_starfield(bool value) {
+  _internal_set_starfield(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.starField)
+}
+
+// string rendering = 7;
+inline void RenderingModel::clear_rendering() {
+  rendering_.ClearToEmpty();
+}
+inline const std::string& RenderingModel::rendering() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.rendering)
+  return _internal_rendering();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RenderingModel::set_rendering(ArgT0&& arg0, ArgT... args) {
+ 
+ rendering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.rendering)
+}
+inline std::string* RenderingModel::mutable_rendering() {
+  std::string* _s = _internal_mutable_rendering();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.RenderingModel.rendering)
+  return _s;
+}
+inline const std::string& RenderingModel::_internal_rendering() const {
+  return rendering_.Get();
+}
+inline void RenderingModel::_internal_set_rendering(const std::string& value) {
+  
+  rendering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* RenderingModel::_internal_mutable_rendering() {
+  
+  return rendering_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* RenderingModel::release_rendering() {
+  // @@protoc_insertion_point(field_release:cielimMessage.RenderingModel.rendering)
+  return rendering_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void RenderingModel::set_allocated_rendering(std::string* rendering) {
+  if (rendering != nullptr) {
+    
+  } else {
+    
+  }
+  rendering_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), rendering,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.RenderingModel.rendering)
+}
+
+// bool enableSmear = 8;
+inline void RenderingModel::clear_enablesmear() {
+  enablesmear_ = false;
+}
+inline bool RenderingModel::_internal_enablesmear() const {
+  return enablesmear_;
+}
+inline bool RenderingModel::enablesmear() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.enableSmear)
+  return _internal_enablesmear();
+}
+inline void RenderingModel::_internal_set_enablesmear(bool value) {
+  
+  enablesmear_ = value;
+}
+inline void RenderingModel::set_enablesmear(bool value) {
+  _internal_set_enablesmear(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.enableSmear)
 }
 
 // -------------------------------------------------------------------
@@ -3846,136 +4036,6 @@ Spacecraft::mutable_attitude() {
 
 // -------------------------------------------------------------------
 
-// RenderingModel
-
-// double cosmicRayStdDeviation = 1;
-inline void RenderingModel::clear_cosmicraystddeviation() {
-  cosmicraystddeviation_ = 0;
-}
-inline double RenderingModel::_internal_cosmicraystddeviation() const {
-  return cosmicraystddeviation_;
-}
-inline double RenderingModel::cosmicraystddeviation() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.cosmicRayStdDeviation)
-  return _internal_cosmicraystddeviation();
-}
-inline void RenderingModel::_internal_set_cosmicraystddeviation(double value) {
-  
-  cosmicraystddeviation_ = value;
-}
-inline void RenderingModel::set_cosmicraystddeviation(double value) {
-  _internal_set_cosmicraystddeviation(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.cosmicRayStdDeviation)
-}
-
-// double strayLight = 2;
-inline void RenderingModel::clear_straylight() {
-  straylight_ = 0;
-}
-inline double RenderingModel::_internal_straylight() const {
-  return straylight_;
-}
-inline double RenderingModel::straylight() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.strayLight)
-  return _internal_straylight();
-}
-inline void RenderingModel::_internal_set_straylight(double value) {
-  
-  straylight_ = value;
-}
-inline void RenderingModel::set_straylight(double value) {
-  _internal_set_straylight(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.strayLight)
-}
-
-// bool starField = 3;
-inline void RenderingModel::clear_starfield() {
-  starfield_ = false;
-}
-inline bool RenderingModel::_internal_starfield() const {
-  return starfield_;
-}
-inline bool RenderingModel::starfield() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.starField)
-  return _internal_starfield();
-}
-inline void RenderingModel::_internal_set_starfield(bool value) {
-  
-  starfield_ = value;
-}
-inline void RenderingModel::set_starfield(bool value) {
-  _internal_set_starfield(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.starField)
-}
-
-// string rendering = 4;
-inline void RenderingModel::clear_rendering() {
-  rendering_.ClearToEmpty();
-}
-inline const std::string& RenderingModel::rendering() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.rendering)
-  return _internal_rendering();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void RenderingModel::set_rendering(ArgT0&& arg0, ArgT... args) {
- 
- rendering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.rendering)
-}
-inline std::string* RenderingModel::mutable_rendering() {
-  std::string* _s = _internal_mutable_rendering();
-  // @@protoc_insertion_point(field_mutable:cielimMessage.RenderingModel.rendering)
-  return _s;
-}
-inline const std::string& RenderingModel::_internal_rendering() const {
-  return rendering_.Get();
-}
-inline void RenderingModel::_internal_set_rendering(const std::string& value) {
-  
-  rendering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* RenderingModel::_internal_mutable_rendering() {
-  
-  return rendering_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* RenderingModel::release_rendering() {
-  // @@protoc_insertion_point(field_release:cielimMessage.RenderingModel.rendering)
-  return rendering_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void RenderingModel::set_allocated_rendering(std::string* rendering) {
-  if (rendering != nullptr) {
-    
-  } else {
-    
-  }
-  rendering_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), rendering,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:cielimMessage.RenderingModel.rendering)
-}
-
-// bool enableSmear = 5;
-inline void RenderingModel::clear_enablesmear() {
-  enablesmear_ = false;
-}
-inline bool RenderingModel::_internal_enablesmear() const {
-  return enablesmear_;
-}
-inline bool RenderingModel::enablesmear() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.enableSmear)
-  return _internal_enablesmear();
-}
-inline void RenderingModel::_internal_set_enablesmear(bool value) {
-  
-  enablesmear_ = value;
-}
-inline void RenderingModel::set_enablesmear(bool value) {
-  _internal_set_enablesmear(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.enableSmear)
-}
-
-// -------------------------------------------------------------------
-
 // QuantumEfficiency
 
 // double integrationWeightFactor = 1;
@@ -3996,66 +4056,6 @@ inline void QuantumEfficiency::_internal_set_integrationweightfactor(double valu
 inline void QuantumEfficiency::set_integrationweightfactor(double value) {
   _internal_set_integrationweightfactor(value);
   // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.integrationWeightFactor)
-}
-
-// double wavelengths1 = 11;
-inline void QuantumEfficiency::clear_wavelengths1() {
-  wavelengths1_ = 0;
-}
-inline double QuantumEfficiency::_internal_wavelengths1() const {
-  return wavelengths1_;
-}
-inline double QuantumEfficiency::wavelengths1() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.wavelengths1)
-  return _internal_wavelengths1();
-}
-inline void QuantumEfficiency::_internal_set_wavelengths1(double value) {
-  
-  wavelengths1_ = value;
-}
-inline void QuantumEfficiency::set_wavelengths1(double value) {
-  _internal_set_wavelengths1(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.wavelengths1)
-}
-
-// double wavelengths2 = 12;
-inline void QuantumEfficiency::clear_wavelengths2() {
-  wavelengths2_ = 0;
-}
-inline double QuantumEfficiency::_internal_wavelengths2() const {
-  return wavelengths2_;
-}
-inline double QuantumEfficiency::wavelengths2() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.wavelengths2)
-  return _internal_wavelengths2();
-}
-inline void QuantumEfficiency::_internal_set_wavelengths2(double value) {
-  
-  wavelengths2_ = value;
-}
-inline void QuantumEfficiency::set_wavelengths2(double value) {
-  _internal_set_wavelengths2(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.wavelengths2)
-}
-
-// double wavelengths3 = 13;
-inline void QuantumEfficiency::clear_wavelengths3() {
-  wavelengths3_ = 0;
-}
-inline double QuantumEfficiency::_internal_wavelengths3() const {
-  return wavelengths3_;
-}
-inline double QuantumEfficiency::wavelengths3() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.wavelengths3)
-  return _internal_wavelengths3();
-}
-inline void QuantumEfficiency::_internal_set_wavelengths3(double value) {
-  
-  wavelengths3_ = value;
-}
-inline void QuantumEfficiency::set_wavelengths3(double value) {
-  _internal_set_wavelengths3(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.wavelengths3)
 }
 
 // double redValue1 = 2;
@@ -5015,97 +5015,7 @@ CameraModel::mutable_bodyframetocameramrp() {
   return _internal_mutable_bodyframetocameramrp();
 }
 
-// .cielimMessage.RenderingModel renderParameters = 5;
-inline bool CameraModel::_internal_has_renderparameters() const {
-  return this != internal_default_instance() && renderparameters_ != nullptr;
-}
-inline bool CameraModel::has_renderparameters() const {
-  return _internal_has_renderparameters();
-}
-inline void CameraModel::clear_renderparameters() {
-  if (GetArenaForAllocation() == nullptr && renderparameters_ != nullptr) {
-    delete renderparameters_;
-  }
-  renderparameters_ = nullptr;
-}
-inline const ::cielimMessage::RenderingModel& CameraModel::_internal_renderparameters() const {
-  const ::cielimMessage::RenderingModel* p = renderparameters_;
-  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::RenderingModel&>(
-      ::cielimMessage::_RenderingModel_default_instance_);
-}
-inline const ::cielimMessage::RenderingModel& CameraModel::renderparameters() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.renderParameters)
-  return _internal_renderparameters();
-}
-inline void CameraModel::unsafe_arena_set_allocated_renderparameters(
-    ::cielimMessage::RenderingModel* renderparameters) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(renderparameters_);
-  }
-  renderparameters_ = renderparameters;
-  if (renderparameters) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.CameraModel.renderParameters)
-}
-inline ::cielimMessage::RenderingModel* CameraModel::release_renderparameters() {
-  
-  ::cielimMessage::RenderingModel* temp = renderparameters_;
-  renderparameters_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::cielimMessage::RenderingModel* CameraModel::unsafe_arena_release_renderparameters() {
-  // @@protoc_insertion_point(field_release:cielimMessage.CameraModel.renderParameters)
-  
-  ::cielimMessage::RenderingModel* temp = renderparameters_;
-  renderparameters_ = nullptr;
-  return temp;
-}
-inline ::cielimMessage::RenderingModel* CameraModel::_internal_mutable_renderparameters() {
-  
-  if (renderparameters_ == nullptr) {
-    auto* p = CreateMaybeMessage<::cielimMessage::RenderingModel>(GetArenaForAllocation());
-    renderparameters_ = p;
-  }
-  return renderparameters_;
-}
-inline ::cielimMessage::RenderingModel* CameraModel::mutable_renderparameters() {
-  ::cielimMessage::RenderingModel* _msg = _internal_mutable_renderparameters();
-  // @@protoc_insertion_point(field_mutable:cielimMessage.CameraModel.renderParameters)
-  return _msg;
-}
-inline void CameraModel::set_allocated_renderparameters(::cielimMessage::RenderingModel* renderparameters) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete renderparameters_;
-  }
-  if (renderparameters) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::RenderingModel>::GetOwningArena(renderparameters);
-    if (message_arena != submessage_arena) {
-      renderparameters = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, renderparameters, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  renderparameters_ = renderparameters;
-  // @@protoc_insertion_point(field_set_allocated:cielimMessage.CameraModel.renderParameters)
-}
-
-// .cielimMessage.LensModel lensModel = 6;
+// .cielimMessage.LensModel lensModel = 5;
 inline bool CameraModel::_internal_has_lensmodel() const {
   return this != internal_default_instance() && lensmodel_ != nullptr;
 }
@@ -5195,7 +5105,7 @@ inline void CameraModel::set_allocated_lensmodel(::cielimMessage::LensModel* len
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.CameraModel.lensModel)
 }
 
-// .cielimMessage.SensorModel sensorModel = 7;
+// .cielimMessage.SensorModel sensorModel = 6;
 inline bool CameraModel::_internal_has_sensormodel() const {
   return this != internal_default_instance() && sensormodel_ != nullptr;
 }
@@ -5469,7 +5379,97 @@ inline void CielimMessage::set_allocated_currenttime(::cielimMessage::TimeStamp*
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.CielimMessage.currentTime)
 }
 
-// repeated .cielimMessage.CelestialBody celestialBodies = 3;
+// .cielimMessage.RenderingModel renderParameters = 3;
+inline bool CielimMessage::_internal_has_renderparameters() const {
+  return this != internal_default_instance() && renderparameters_ != nullptr;
+}
+inline bool CielimMessage::has_renderparameters() const {
+  return _internal_has_renderparameters();
+}
+inline void CielimMessage::clear_renderparameters() {
+  if (GetArenaForAllocation() == nullptr && renderparameters_ != nullptr) {
+    delete renderparameters_;
+  }
+  renderparameters_ = nullptr;
+}
+inline const ::cielimMessage::RenderingModel& CielimMessage::_internal_renderparameters() const {
+  const ::cielimMessage::RenderingModel* p = renderparameters_;
+  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::RenderingModel&>(
+      ::cielimMessage::_RenderingModel_default_instance_);
+}
+inline const ::cielimMessage::RenderingModel& CielimMessage::renderparameters() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.CielimMessage.renderParameters)
+  return _internal_renderparameters();
+}
+inline void CielimMessage::unsafe_arena_set_allocated_renderparameters(
+    ::cielimMessage::RenderingModel* renderparameters) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(renderparameters_);
+  }
+  renderparameters_ = renderparameters;
+  if (renderparameters) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.CielimMessage.renderParameters)
+}
+inline ::cielimMessage::RenderingModel* CielimMessage::release_renderparameters() {
+  
+  ::cielimMessage::RenderingModel* temp = renderparameters_;
+  renderparameters_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::cielimMessage::RenderingModel* CielimMessage::unsafe_arena_release_renderparameters() {
+  // @@protoc_insertion_point(field_release:cielimMessage.CielimMessage.renderParameters)
+  
+  ::cielimMessage::RenderingModel* temp = renderparameters_;
+  renderparameters_ = nullptr;
+  return temp;
+}
+inline ::cielimMessage::RenderingModel* CielimMessage::_internal_mutable_renderparameters() {
+  
+  if (renderparameters_ == nullptr) {
+    auto* p = CreateMaybeMessage<::cielimMessage::RenderingModel>(GetArenaForAllocation());
+    renderparameters_ = p;
+  }
+  return renderparameters_;
+}
+inline ::cielimMessage::RenderingModel* CielimMessage::mutable_renderparameters() {
+  ::cielimMessage::RenderingModel* _msg = _internal_mutable_renderparameters();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.CielimMessage.renderParameters)
+  return _msg;
+}
+inline void CielimMessage::set_allocated_renderparameters(::cielimMessage::RenderingModel* renderparameters) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete renderparameters_;
+  }
+  if (renderparameters) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::RenderingModel>::GetOwningArena(renderparameters);
+    if (message_arena != submessage_arena) {
+      renderparameters = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, renderparameters, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  renderparameters_ = renderparameters;
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.CielimMessage.renderParameters)
+}
+
+// repeated .cielimMessage.CelestialBody celestialBodies = 4;
 inline int CielimMessage::_internal_celestialbodies_size() const {
   return celestialbodies_.size();
 }
@@ -5509,7 +5509,7 @@ CielimMessage::celestialbodies() const {
   return celestialbodies_;
 }
 
-// .cielimMessage.Spacecraft spacecraft = 4;
+// .cielimMessage.Spacecraft spacecraft = 5;
 inline bool CielimMessage::_internal_has_spacecraft() const {
   return this != internal_default_instance() && spacecraft_ != nullptr;
 }
@@ -5599,7 +5599,7 @@ inline void CielimMessage::set_allocated_spacecraft(::cielimMessage::Spacecraft*
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.CielimMessage.spacecraft)
 }
 
-// .cielimMessage.CameraModel camera = 5;
+// .cielimMessage.CameraModel camera = 6;
 inline bool CielimMessage::_internal_has_camera() const {
   return this != internal_default_instance() && camera_ != nullptr;
 }

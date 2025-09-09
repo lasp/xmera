@@ -31,6 +31,7 @@ typedef struct {
     bool starField;
     char rendering[MAX_STRING_LENGTH];
     bool smear;
+    double wavelengths[3];  //!< [nm] wavelength sample points
 } CameraRenderingMsgPayload;
 
 #endif  // CAMERA_RENDERING

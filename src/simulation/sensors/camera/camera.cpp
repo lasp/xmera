@@ -354,7 +354,6 @@ void Camera::updateState(uint64_t currentSimNanos) {
     eigenVector3d2CArray(this->redQuantumEfficiency, cameraModelMsg.redQuantumEfficiency);
     eigenVector3d2CArray(this->greenQuantumEfficiency, cameraModelMsg.greenQuantumEfficiency);
     eigenVector3d2CArray(this->blueQuantumEfficiency, cameraModelMsg.blueQuantumEfficiency);
-    eigenVector3d2CArray(this->wavelengthsQuantumEfficiency, cameraModelMsg.wavelengthsQuantumEfficiency);
     eigenMatrixXd2CArray(this->horizontalVignetting, cameraModelMsg.horizontalVignetting);
     eigenMatrixXd2CArray(this->verticalVignetting, cameraModelMsg.verticalVignetting);
     eigenMatrixXd2CArray(this->distortion, cameraModelMsg.distortion);
@@ -705,17 +704,6 @@ void Camera::setBlueQuantumEfficiency(const Eigen::Vector3d& blueQE) { this->blu
     @return Eigen::Vector3d blueQuantumEfficiency
     */
 Eigen::Vector3d Camera::getBlueQuantumEfficiency() const { return this->blueQuantumEfficiency; }
-
-/*! Set the wavelength values for the QE curve
-    @param wavelengthsQE Eigen::Vector3d
-    @return void
-    */
-void Camera::setWavelengthsQuantumEfficiency(const Eigen::Vector3d& wavelengthsQE) { this->wavelengthsQuantumEfficiency = wavelengthsQE; }
-
-/*! Get the wavelength values for the QE curve
-    @return Eigen::Vector3d wavelengthsQuantumEfficiency
-    */
-Eigen::Vector3d Camera::getWavelengthsQuantumEfficiency() const { return this->wavelengthsQuantumEfficiency; }
 
 /*! Set the horizontal vignetting polynomial coefficients
     @param horizontalVignettingCoeffs Eigen::VectorXd

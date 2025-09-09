@@ -290,9 +290,6 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         sensorModel->set_gamma(this->cameraModelPayload.gammaCorrection);
 
         quantumEfficiency->set_integrationweightfactor(this->cameraModelPayload.integrationWeightFactor);
-        quantumEfficiency->set_wavelengths1(this->cameraModelPayload.wavelengthsQuantumEfficiency[0]);
-        quantumEfficiency->set_wavelengths2(this->cameraModelPayload.wavelengthsQuantumEfficiency[1]);
-        quantumEfficiency->set_wavelengths3(this->cameraModelPayload.wavelengthsQuantumEfficiency[2]);
         quantumEfficiency->set_redvalue1(this->cameraModelPayload.redQuantumEfficiency[0]);
         quantumEfficiency->set_redvalue2(this->cameraModelPayload.redQuantumEfficiency[1]);
         quantumEfficiency->set_redvalue3(this->cameraModelPayload.redQuantumEfficiency[2]);
@@ -307,17 +304,20 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         camera->set_allocated_lensmodel(lensModel);
         camera->set_allocated_sensormodel(sensorModel);
 
-        if (this->cameraRenderingMessage.isLinked() && this->cameraRenderingMessageStatus.dataFresh &&
-            this->cameraRenderingPayload.cameraId == this->cameraModelPayload.cameraId) {
-            auto *rendering = new cielimMessage::RenderingModel();
-            rendering->set_cosmicraystddeviation(this->cameraRenderingPayload.cosmicRayStdDeviation);
-            rendering->set_straylight(this->cameraRenderingPayload.strayLight);
-            rendering->set_starfield(this->cameraRenderingPayload.starField);
-            rendering->set_rendering(this->cameraRenderingPayload.rendering);
-            rendering->set_enablesmear(this->cameraRenderingPayload.smear);
-            camera->set_allocated_renderparameters(rendering);
-        }
         visPayload.set_allocated_camera(camera);
+    }
+
+    if (this->cameraRenderingMessage.isLinked() && this->cameraRenderingMessageStatus.dataFresh) {
+        auto *rendering = new cielimMessage::RenderingModel();
+        rendering->set_wavelength1(this->cameraRenderingPayload.wavelengths[0]);
+        rendering->set_wavelength2(this->cameraRenderingPayload.wavelengths[1]);
+        rendering->set_wavelength3(this->cameraRenderingPayload.wavelengths[2]);
+        rendering->set_cosmicraystddeviation(this->cameraRenderingPayload.cosmicRayStdDeviation);
+        rendering->set_straylight(this->cameraRenderingPayload.strayLight);
+        rendering->set_starfield(this->cameraRenderingPayload.starField);
+        rendering->set_rendering(this->cameraRenderingPayload.rendering);
+        rendering->set_enablesmear(this->cameraRenderingPayload.smear);
+        visPayload.set_allocated_renderparameters(rendering);
     }
 
     /*! Enter in lock-step with the vizard to simulate a camera */
