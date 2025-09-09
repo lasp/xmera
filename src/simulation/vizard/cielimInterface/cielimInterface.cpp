@@ -210,24 +210,26 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                 !parameterBodyName.compare(this->celestialBodiesList.at(k).name)) {
                 auto *meshModel = new cielimMessage::MeshModel();
                 auto *perlinNoise = new cielimMessage::PerlinNoise();
-                std::string brdfModelName = this->celestialParametersPayload.brdf;
-                meshModel->set_brdfmodel(brdfModelName);
-                meshModel->set_meanradius(this->celestialParametersPayload.meanRadius);
+                auto *reflectanceModel = new cielimMessage::ReflectanceModel();
                 perlinNoise->set_octavecount(this->celestialParametersPayload.perlinNoiseOctaveCount);
                 perlinNoise->set_baseamplitude(this->celestialParametersPayload.perlinNoiseBaseAmplitude);
                 perlinNoise->set_basefrequency(this->celestialParametersPayload.perlinNoiseBaseFrequency);
                 perlinNoise->set_persistence(this->celestialParametersPayload.perlinNoisePersistence);
+                std::string brdfModelName = this->celestialParametersPayload.brdf;
+                reflectanceModel->set_brdfmodel(brdfModelName);
+                for (int i = 0; i < MAX_PARAMETER_LENGTH; ++i) {
+                    reflectanceModel->add_reflectanceparameters(
+                        this->celestialParametersPayload.reflectanceParameters[i]);
+                }
+                meshModel->set_meanradius(this->celestialParametersPayload.meanRadius);
                 meshModel->set_allocated_perlinnoise(perlinNoise);
+                meshModel->set_allocated_refmodel(reflectanceModel);
                 for (int i = 0; i < 3; ++i) {
                     meshModel->add_principalaxisdistortion(
                         this->celestialParametersPayload.principalAxisDistortion[i]);
                     meshModel->add_inertialtobodymrp(this->celestialParametersPayload.sigma_BN[i]);
                 }
                 meshModel->set_proceduralrocks(this->celestialParametersPayload.proceduralRocks);
-                for (int i = 0; i < MAX_PARAMETER_LENGTH; ++i) {
-                    meshModel->add_reflectanceparameters(
-                        this->celestialParametersPayload.reflectanceParameters[i]);
-                }
                 meshModel->set_shapemodel(this->celestialParametersPayload.shapeModel);
                 celestialBody->set_allocated_model(meshModel);
             }

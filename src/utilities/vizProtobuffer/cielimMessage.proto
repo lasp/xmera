@@ -34,15 +34,19 @@ message PerlinNoise{
     double persistence = 4;
 }
 
+message ReflectanceModel{
+    string brdfModel = 1; // [string] Name of the BRDF model to apply (Lambertian by default)
+    repeated double reflectanceParameters = 2; // [-] Parameter to apply to BRDF
+}
+
 message MeshModel{
     string shapeModel = 1; // [string] Name of the shape model to apply to the body (default is a sphere)
-    PerlinNoise perlinNoise = 2;  //[-] Perlin noise to apply (none by default)
-    double proceduralRocks = 3;  //[-] Parameter to generate procedural rocks on the base mesh (none by default)
-    string brdfModel = 4; // [string] Name of the BRDF model to apply (Lambertian by default)
-    repeated double reflectanceParameters = 5;  //[-] Parameter to apply to BRDF
-    double meanRadius = 6; // [m] Length of the mean asteroid radius
-    repeated double principalAxisDistortion = 7; // Ratio distortions to apply to principal axes (none by default)
-    repeated double inertialToBodyMrp = 8; // Attitude of mesh relative to inertial
+    double meanRadius = 2; // [m] Length of the mean asteroid radius
+    repeated double principalAxisDistortion = 3; // Ratio distortions to apply to principal axes (none by default)
+    repeated double inertialToBodyMrp = 4; // Attitude of mesh relative to inertial
+    ReflectanceModel refModel = 5; // [-] reflectance model to apply
+    PerlinNoise perlinNoise = 6;  //[-] Perlin noise to apply (none by default)
+    double proceduralRocks = 7;  //[-] Parameter to generate procedural rocks on the base mesh (none by default)
 }
 
 //CelestialBody messages will carry position, velocity, and rotation data for all celestial bodies
@@ -51,8 +55,8 @@ message CelestialBody{
     repeated double position = 2;   //SpicePlanetStateSimMsg.PositionVector
     repeated double velocity = 3;   //SpicePlanetStateSimMsg.VelocityVector
     repeated double attitude = 4;  //SpicePlanetStateSimMsg.J20002Pfix
-    bool centralBody = 5;  // Central body for all positions and velocities
-    MeshModel model = 6; // Model for rendering
+    MeshModel model = 5; // Model for rendering
+    bool centralBody = 6;  // Central body for all positions and velocities
 }
 
 //Spacecraft position, velocity, and attitude data

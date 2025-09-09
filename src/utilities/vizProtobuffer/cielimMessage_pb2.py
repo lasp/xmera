@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'H\003',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13\x63ielimMessage.proto\x12\rcielimMessage\"8\n\tTimeStamp\x12\x13\n\x0b\x66rameNumber\x18\x01 \x01(\x03\x12\x16\n\x0esimTimeElapsed\x18\x02 \x01(\x01\"j\n\rEpochDateTime\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\x05\x12\r\n\x05hours\x18\x04 \x01(\x05\x12\x0f\n\x07minutes\x18\x05 \x01(\x05\x12\x0f\n\x07seconds\x18\x06 \x01(\x01\"\xbd\x01\n\x0eRenderingModel\x12\x13\n\x0bwavelength1\x18\x01 \x01(\x01\x12\x13\n\x0bwavelength2\x18\x02 \x01(\x01\x12\x13\n\x0bwavelength3\x18\x03 \x01(\x01\x12\x1d\n\x15\x63osmicRayStdDeviation\x18\x04 \x01(\x01\x12\x12\n\nstrayLight\x18\x05 \x01(\x01\x12\x11\n\tstarField\x18\x06 \x01(\x08\x12\x11\n\trendering\x18\x07 \x01(\t\x12\x13\n\x0b\x65nableSmear\x18\x08 \x01(\x08\"e\n\x0bPerlinNoise\x12\x13\n\x0boctaveCount\x18\x01 \x01(\x05\x12\x15\n\rbaseFrequency\x18\x02 \x01(\x01\x12\x15\n\rbaseAmplitude\x18\x03 \x01(\x01\x12\x13\n\x0bpersistence\x18\x04 \x01(\x01\"\xeb\x01\n\tMeshModel\x12\x12\n\nshapeModel\x18\x01 \x01(\t\x12/\n\x0bperlinNoise\x18\x02 \x01(\x0b\x32\x1a.cielimMessage.PerlinNoise\x12\x17\n\x0fproceduralRocks\x18\x03 \x01(\x01\x12\x11\n\tbrdfModel\x18\x04 \x01(\t\x12\x1d\n\x15reflectanceParameters\x18\x05 \x03(\x01\x12\x12\n\nmeanRadius\x18\x06 \x01(\x01\x12\x1f\n\x17principalAxisDistortion\x18\x07 \x03(\x01\x12\x19\n\x11inertialToBodyMrp\x18\x08 \x03(\x01\"\x95\x01\n\rCelestialBody\x12\x10\n\x08\x62odyName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\x12\x13\n\x0b\x63\x65ntralBody\x18\x05 \x01(\x08\x12\'\n\x05model\x18\x06 \x01(\x0b\x32\x18.cielimMessage.MeshModel\"Z\n\nSpacecraft\x12\x16\n\x0espacecraftName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\"\xe8\x01\n\x11QuantumEfficiency\x12\x1f\n\x17integrationWeightFactor\x18\x01 \x01(\x01\x12\x11\n\tredValue1\x18\x02 \x01(\x01\x12\x11\n\tredValue2\x18\x03 \x01(\x01\x12\x11\n\tredValue3\x18\x04 \x01(\x01\x12\x13\n\x0bgreenValue1\x18\x05 \x01(\x01\x12\x13\n\x0bgreenValue2\x18\x06 \x01(\x01\x12\x13\n\x0bgreenValue3\x18\x07 \x01(\x01\x12\x12\n\nblueValue1\x18\x08 \x01(\x01\x12\x12\n\nblueValue2\x18\t \x01(\x01\x12\x12\n\nblueValue3\x18\n \x01(\x01\"\xce\x01\n\tLensModel\x12\x13\n\x0b\x66ieldOfView\x18\x01 \x03(\x01\x12\x13\n\x0b\x66ocalLength\x18\x02 \x01(\x01\x12\x1b\n\x13pointSpreadFunction\x18\x03 \x01(\x01\x12\x16\n\x0e\x61pertureRadius\x18\x04 \x01(\x01\x12\x1c\n\x14horizontalVignetting\x18\x05 \x03(\x01\x12\x1a\n\x12verticalVignetting\x18\x06 \x03(\x01\x12\x12\n\ndistortion\x18\x07 \x03(\x01\x12\x14\n\x0ctransmission\x18\x08 \x01(\x01\"\xa1\x02\n\x0bSensorModel\x12\x12\n\nresolution\x18\x01 \x03(\x03\x12\x12\n\nrenderRate\x18\x02 \x01(\x04\x12\x14\n\x0c\x65xposureTime\x18\x03 \x01(\x01\x12\x11\n\treadNoise\x18\x04 \x01(\x01\x12\x11\n\tshotNoise\x18\x05 \x01(\x08\x12\x13\n\x0b\x64\x61rkCurrent\x18\x06 \x01(\x01\x12\x12\n\nsystemGain\x18\x07 \x01(\x01\x12\x13\n\x0bsensorWidth\x18\x08 \x01(\x01\x12\x14\n\x0csensorHeight\x18\t \x01(\x01\x12\x18\n\x10\x66ullWellCapacity\x18\n \x01(\x01\x12\r\n\x05gamma\x18\x0b \x01(\x01\x12\x31\n\x07qeCurve\x18\x0c \x01(\x0b\x32 .cielimMessage.QuantumEfficiency\"\xcd\x01\n\x0b\x43\x61meraModel\x12\x10\n\x08\x63\x61meraId\x18\x01 \x01(\x03\x12\x12\n\nparentName\x18\x02 \x01(\t\x12\x1c\n\x14\x63\x61meraPositionInBody\x18\x03 \x03(\x01\x12\x1c\n\x14\x62odyFrameToCameraMrp\x18\x04 \x03(\x01\x12+\n\tlensModel\x18\x05 \x01(\x0b\x32\x18.cielimMessage.LensModel\x12/\n\x0bsensorModel\x18\x06 \x01(\x0b\x32\x1a.cielimMessage.SensorModel\"\xb6\x02\n\rCielimMessage\x12+\n\x05\x65poch\x18\x01 \x01(\x0b\x32\x1c.cielimMessage.EpochDateTime\x12-\n\x0b\x63urrentTime\x18\x02 \x01(\x0b\x32\x18.cielimMessage.TimeStamp\x12\x37\n\x10renderParameters\x18\x03 \x01(\x0b\x32\x1d.cielimMessage.RenderingModel\x12\x35\n\x0f\x63\x65lestialBodies\x18\x04 \x03(\x0b\x32\x1c.cielimMessage.CelestialBody\x12-\n\nspacecraft\x18\x05 \x01(\x0b\x32\x19.cielimMessage.Spacecraft\x12*\n\x06\x63\x61mera\x18\x06 \x01(\x0b\x32\x1a.cielimMessage.CameraModelB\x02H\x03\x62\x06proto3'
+  serialized_pb=b'\n\x13\x63ielimMessage.proto\x12\rcielimMessage\"8\n\tTimeStamp\x12\x13\n\x0b\x66rameNumber\x18\x01 \x01(\x03\x12\x16\n\x0esimTimeElapsed\x18\x02 \x01(\x01\"j\n\rEpochDateTime\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\x05\x12\r\n\x05hours\x18\x04 \x01(\x05\x12\x0f\n\x07minutes\x18\x05 \x01(\x05\x12\x0f\n\x07seconds\x18\x06 \x01(\x01\"\xbd\x01\n\x0eRenderingModel\x12\x13\n\x0bwavelength1\x18\x01 \x01(\x01\x12\x13\n\x0bwavelength2\x18\x02 \x01(\x01\x12\x13\n\x0bwavelength3\x18\x03 \x01(\x01\x12\x1d\n\x15\x63osmicRayStdDeviation\x18\x04 \x01(\x01\x12\x12\n\nstrayLight\x18\x05 \x01(\x01\x12\x11\n\tstarField\x18\x06 \x01(\x08\x12\x11\n\trendering\x18\x07 \x01(\t\x12\x13\n\x0b\x65nableSmear\x18\x08 \x01(\x08\"e\n\x0bPerlinNoise\x12\x13\n\x0boctaveCount\x18\x01 \x01(\x05\x12\x15\n\rbaseFrequency\x18\x02 \x01(\x01\x12\x15\n\rbaseAmplitude\x18\x03 \x01(\x01\x12\x13\n\x0bpersistence\x18\x04 \x01(\x01\"D\n\x10ReflectanceModel\x12\x11\n\tbrdfModel\x18\x01 \x01(\t\x12\x1d\n\x15reflectanceParameters\x18\x02 \x03(\x01\"\xec\x01\n\tMeshModel\x12\x12\n\nshapeModel\x18\x01 \x01(\t\x12\x12\n\nmeanRadius\x18\x02 \x01(\x01\x12\x1f\n\x17principalAxisDistortion\x18\x03 \x03(\x01\x12\x19\n\x11inertialToBodyMrp\x18\x04 \x03(\x01\x12\x31\n\x08refModel\x18\x05 \x01(\x0b\x32\x1f.cielimMessage.ReflectanceModel\x12/\n\x0bperlinNoise\x18\x06 \x01(\x0b\x32\x1a.cielimMessage.PerlinNoise\x12\x17\n\x0fproceduralRocks\x18\x07 \x01(\x01\"\x95\x01\n\rCelestialBody\x12\x10\n\x08\x62odyName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\x12\'\n\x05model\x18\x05 \x01(\x0b\x32\x18.cielimMessage.MeshModel\x12\x13\n\x0b\x63\x65ntralBody\x18\x06 \x01(\x08\"Z\n\nSpacecraft\x12\x16\n\x0espacecraftName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\"\xe8\x01\n\x11QuantumEfficiency\x12\x1f\n\x17integrationWeightFactor\x18\x01 \x01(\x01\x12\x11\n\tredValue1\x18\x02 \x01(\x01\x12\x11\n\tredValue2\x18\x03 \x01(\x01\x12\x11\n\tredValue3\x18\x04 \x01(\x01\x12\x13\n\x0bgreenValue1\x18\x05 \x01(\x01\x12\x13\n\x0bgreenValue2\x18\x06 \x01(\x01\x12\x13\n\x0bgreenValue3\x18\x07 \x01(\x01\x12\x12\n\nblueValue1\x18\x08 \x01(\x01\x12\x12\n\nblueValue2\x18\t \x01(\x01\x12\x12\n\nblueValue3\x18\n \x01(\x01\"\xce\x01\n\tLensModel\x12\x13\n\x0b\x66ieldOfView\x18\x01 \x03(\x01\x12\x13\n\x0b\x66ocalLength\x18\x02 \x01(\x01\x12\x1b\n\x13pointSpreadFunction\x18\x03 \x01(\x01\x12\x16\n\x0e\x61pertureRadius\x18\x04 \x01(\x01\x12\x1c\n\x14horizontalVignetting\x18\x05 \x03(\x01\x12\x1a\n\x12verticalVignetting\x18\x06 \x03(\x01\x12\x12\n\ndistortion\x18\x07 \x03(\x01\x12\x14\n\x0ctransmission\x18\x08 \x01(\x01\"\xa1\x02\n\x0bSensorModel\x12\x12\n\nresolution\x18\x01 \x03(\x03\x12\x12\n\nrenderRate\x18\x02 \x01(\x04\x12\x14\n\x0c\x65xposureTime\x18\x03 \x01(\x01\x12\x11\n\treadNoise\x18\x04 \x01(\x01\x12\x11\n\tshotNoise\x18\x05 \x01(\x08\x12\x13\n\x0b\x64\x61rkCurrent\x18\x06 \x01(\x01\x12\x12\n\nsystemGain\x18\x07 \x01(\x01\x12\x13\n\x0bsensorWidth\x18\x08 \x01(\x01\x12\x14\n\x0csensorHeight\x18\t \x01(\x01\x12\x18\n\x10\x66ullWellCapacity\x18\n \x01(\x01\x12\r\n\x05gamma\x18\x0b \x01(\x01\x12\x31\n\x07qeCurve\x18\x0c \x01(\x0b\x32 .cielimMessage.QuantumEfficiency\"\xcd\x01\n\x0b\x43\x61meraModel\x12\x10\n\x08\x63\x61meraId\x18\x01 \x01(\x03\x12\x12\n\nparentName\x18\x02 \x01(\t\x12\x1c\n\x14\x63\x61meraPositionInBody\x18\x03 \x03(\x01\x12\x1c\n\x14\x62odyFrameToCameraMrp\x18\x04 \x03(\x01\x12+\n\tlensModel\x18\x05 \x01(\x0b\x32\x18.cielimMessage.LensModel\x12/\n\x0bsensorModel\x18\x06 \x01(\x0b\x32\x1a.cielimMessage.SensorModel\"\xb6\x02\n\rCielimMessage\x12+\n\x05\x65poch\x18\x01 \x01(\x0b\x32\x1c.cielimMessage.EpochDateTime\x12-\n\x0b\x63urrentTime\x18\x02 \x01(\x0b\x32\x18.cielimMessage.TimeStamp\x12\x37\n\x10renderParameters\x18\x03 \x01(\x0b\x32\x1d.cielimMessage.RenderingModel\x12\x35\n\x0f\x63\x65lestialBodies\x18\x04 \x03(\x0b\x32\x1c.cielimMessage.CelestialBody\x12-\n\nspacecraft\x18\x05 \x01(\x0b\x32\x19.cielimMessage.Spacecraft\x12*\n\x06\x63\x61mera\x18\x06 \x01(\x0b\x32\x1a.cielimMessage.CameraModelB\x02H\x03\x62\x06proto3'
 )
 
 
@@ -265,66 +265,24 @@ _PERLINNOISE = _descriptor.Descriptor(
 )
 
 
-_MESHMODEL = _descriptor.Descriptor(
-  name='MeshModel',
-  full_name='cielimMessage.MeshModel',
+_REFLECTANCEMODEL = _descriptor.Descriptor(
+  name='ReflectanceModel',
+  full_name='cielimMessage.ReflectanceModel',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='shapeModel', full_name='cielimMessage.MeshModel.shapeModel', index=0,
+      name='brdfModel', full_name='cielimMessage.ReflectanceModel.brdfModel', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='perlinNoise', full_name='cielimMessage.MeshModel.perlinNoise', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='proceduralRocks', full_name='cielimMessage.MeshModel.proceduralRocks', index=2,
-      number=3, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='brdfModel', full_name='cielimMessage.MeshModel.brdfModel', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='reflectanceParameters', full_name='cielimMessage.MeshModel.reflectanceParameters', index=4,
-      number=5, type=1, cpp_type=5, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='meanRadius', full_name='cielimMessage.MeshModel.meanRadius', index=5,
-      number=6, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='principalAxisDistortion', full_name='cielimMessage.MeshModel.principalAxisDistortion', index=6,
-      number=7, type=1, cpp_type=5, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='inertialToBodyMrp', full_name='cielimMessage.MeshModel.inertialToBodyMrp', index=7,
-      number=8, type=1, cpp_type=5, label=3,
+      name='reflectanceParameters', full_name='cielimMessage.ReflectanceModel.reflectanceParameters', index=1,
+      number=2, type=1, cpp_type=5, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -341,8 +299,82 @@ _MESHMODEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=500,
-  serialized_end=735,
+  serialized_start=499,
+  serialized_end=567,
+)
+
+
+_MESHMODEL = _descriptor.Descriptor(
+  name='MeshModel',
+  full_name='cielimMessage.MeshModel',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='shapeModel', full_name='cielimMessage.MeshModel.shapeModel', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='meanRadius', full_name='cielimMessage.MeshModel.meanRadius', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='principalAxisDistortion', full_name='cielimMessage.MeshModel.principalAxisDistortion', index=2,
+      number=3, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='inertialToBodyMrp', full_name='cielimMessage.MeshModel.inertialToBodyMrp', index=3,
+      number=4, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='refModel', full_name='cielimMessage.MeshModel.refModel', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='perlinNoise', full_name='cielimMessage.MeshModel.perlinNoise', index=5,
+      number=6, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='proceduralRocks', full_name='cielimMessage.MeshModel.proceduralRocks', index=6,
+      number=7, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=570,
+  serialized_end=806,
 )
 
 
@@ -383,16 +415,16 @@ _CELESTIALBODY = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='centralBody', full_name='cielimMessage.CelestialBody.centralBody', index=4,
-      number=5, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
+      name='model', full_name='cielimMessage.CelestialBody.model', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='model', full_name='cielimMessage.CelestialBody.model', index=5,
-      number=6, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='centralBody', full_name='cielimMessage.CelestialBody.centralBody', index=5,
+      number=6, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -408,8 +440,8 @@ _CELESTIALBODY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=738,
-  serialized_end=887,
+  serialized_start=809,
+  serialized_end=958,
 )
 
 
@@ -461,8 +493,8 @@ _SPACECRAFT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=889,
-  serialized_end=979,
+  serialized_start=960,
+  serialized_end=1050,
 )
 
 
@@ -556,8 +588,8 @@ _QUANTUMEFFICIENCY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=982,
-  serialized_end=1214,
+  serialized_start=1053,
+  serialized_end=1285,
 )
 
 
@@ -637,8 +669,8 @@ _LENSMODEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1217,
-  serialized_end=1423,
+  serialized_start=1288,
+  serialized_end=1494,
 )
 
 
@@ -746,8 +778,8 @@ _SENSORMODEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1426,
-  serialized_end=1715,
+  serialized_start=1497,
+  serialized_end=1786,
 )
 
 
@@ -813,8 +845,8 @@ _CAMERAMODEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1718,
-  serialized_end=1923,
+  serialized_start=1789,
+  serialized_end=1994,
 )
 
 
@@ -880,10 +912,11 @@ _CIELIMMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1926,
-  serialized_end=2236,
+  serialized_start=1997,
+  serialized_end=2307,
 )
 
+_MESHMODEL.fields_by_name['refModel'].message_type = _REFLECTANCEMODEL
 _MESHMODEL.fields_by_name['perlinNoise'].message_type = _PERLINNOISE
 _CELESTIALBODY.fields_by_name['model'].message_type = _MESHMODEL
 _SENSORMODEL.fields_by_name['qeCurve'].message_type = _QUANTUMEFFICIENCY
@@ -899,6 +932,7 @@ DESCRIPTOR.message_types_by_name['TimeStamp'] = _TIMESTAMP
 DESCRIPTOR.message_types_by_name['EpochDateTime'] = _EPOCHDATETIME
 DESCRIPTOR.message_types_by_name['RenderingModel'] = _RENDERINGMODEL
 DESCRIPTOR.message_types_by_name['PerlinNoise'] = _PERLINNOISE
+DESCRIPTOR.message_types_by_name['ReflectanceModel'] = _REFLECTANCEMODEL
 DESCRIPTOR.message_types_by_name['MeshModel'] = _MESHMODEL
 DESCRIPTOR.message_types_by_name['CelestialBody'] = _CELESTIALBODY
 DESCRIPTOR.message_types_by_name['Spacecraft'] = _SPACECRAFT
@@ -936,6 +970,13 @@ PerlinNoise = _reflection.GeneratedProtocolMessageType('PerlinNoise', (_message.
   # @@protoc_insertion_point(class_scope:cielimMessage.PerlinNoise)
   })
 _sym_db.RegisterMessage(PerlinNoise)
+
+ReflectanceModel = _reflection.GeneratedProtocolMessageType('ReflectanceModel', (_message.Message,), {
+  'DESCRIPTOR' : _REFLECTANCEMODEL,
+  '__module__' : 'cielimMessage_pb2'
+  # @@protoc_insertion_point(class_scope:cielimMessage.ReflectanceModel)
+  })
+_sym_db.RegisterMessage(ReflectanceModel)
 
 MeshModel = _reflection.GeneratedProtocolMessageType('MeshModel', (_message.Message,), {
   'DESCRIPTOR' : _MESHMODEL,

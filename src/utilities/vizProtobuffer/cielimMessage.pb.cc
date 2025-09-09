@@ -78,16 +78,28 @@ struct PerlinNoiseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PerlinNoiseDefaultTypeInternal _PerlinNoise_default_instance_;
-constexpr MeshModel::MeshModel(
+constexpr ReflectanceModel::ReflectanceModel(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : reflectanceparameters_()
-  , principalaxisdistortion_()
+  , brdfmodel_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct ReflectanceModelDefaultTypeInternal {
+  constexpr ReflectanceModelDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ReflectanceModelDefaultTypeInternal() {}
+  union {
+    ReflectanceModel _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ReflectanceModelDefaultTypeInternal _ReflectanceModel_default_instance_;
+constexpr MeshModel::MeshModel(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : principalaxisdistortion_()
   , inertialtobodymrp_()
   , shapemodel_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , brdfmodel_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , refmodel_(nullptr)
   , perlinnoise_(nullptr)
-  , proceduralrocks_(0)
-  , meanradius_(0){}
+  , meanradius_(0)
+  , proceduralrocks_(0){}
 struct MeshModelDefaultTypeInternal {
   constexpr MeshModelDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -1355,11 +1367,243 @@ std::string PerlinNoise::GetTypeName() const {
 
 // ===================================================================
 
+class ReflectanceModel::_Internal {
+ public:
+};
+
+ReflectanceModel::ReflectanceModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::MessageLite(arena, is_message_owned),
+  reflectanceparameters_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:cielimMessage.ReflectanceModel)
+}
+ReflectanceModel::ReflectanceModel(const ReflectanceModel& from)
+  : ::PROTOBUF_NAMESPACE_ID::MessageLite(),
+      reflectanceparameters_(from.reflectanceparameters_) {
+  _internal_metadata_.MergeFrom<std::string>(from._internal_metadata_);
+  brdfmodel_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_brdfmodel().empty()) {
+    brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_brdfmodel(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:cielimMessage.ReflectanceModel)
+}
+
+void ReflectanceModel::SharedCtor() {
+brdfmodel_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+ReflectanceModel::~ReflectanceModel() {
+  // @@protoc_insertion_point(destructor:cielimMessage.ReflectanceModel)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<std::string>();
+}
+
+inline void ReflectanceModel::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  brdfmodel_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void ReflectanceModel::ArenaDtor(void* object) {
+  ReflectanceModel* _this = reinterpret_cast< ReflectanceModel* >(object);
+  (void)_this;
+}
+void ReflectanceModel::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void ReflectanceModel::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void ReflectanceModel::Clear() {
+// @@protoc_insertion_point(message_clear_start:cielimMessage.ReflectanceModel)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  reflectanceparameters_.Clear();
+  brdfmodel_.ClearToEmpty();
+  _internal_metadata_.Clear<std::string>();
+}
+
+const char* ReflectanceModel::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string brdfModel = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_brdfmodel();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, nullptr));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated double reflectanceParameters = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedDoubleParser(_internal_mutable_reflectanceparameters(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 17) {
+          _internal_add_reflectanceparameters(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
+          ptr += sizeof(double);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<std::string>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* ReflectanceModel::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:cielimMessage.ReflectanceModel)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string brdfModel = 1;
+  if (!this->_internal_brdfmodel().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_brdfmodel().data(), static_cast<int>(this->_internal_brdfmodel().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "cielimMessage.ReflectanceModel.brdfModel");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_brdfmodel(), target);
+  }
+
+  // repeated double reflectanceParameters = 2;
+  if (this->_internal_reflectanceparameters_size() > 0) {
+    target = stream->WriteFixedPacked(2, _internal_reflectanceparameters(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = stream->WriteRaw(_internal_metadata_.unknown_fields<std::string>(::PROTOBUF_NAMESPACE_ID::internal::GetEmptyString).data(),
+        static_cast<int>(_internal_metadata_.unknown_fields<std::string>(::PROTOBUF_NAMESPACE_ID::internal::GetEmptyString).size()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:cielimMessage.ReflectanceModel)
+  return target;
+}
+
+size_t ReflectanceModel::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:cielimMessage.ReflectanceModel)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated double reflectanceParameters = 2;
+  {
+    unsigned int count = static_cast<unsigned int>(this->_internal_reflectanceparameters_size());
+    size_t data_size = 8UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    total_size += data_size;
+  }
+
+  // string brdfModel = 1;
+  if (!this->_internal_brdfmodel().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_brdfmodel());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    total_size += _internal_metadata_.unknown_fields<std::string>(::PROTOBUF_NAMESPACE_ID::internal::GetEmptyString).size();
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void ReflectanceModel::CheckTypeAndMergeFrom(
+    const ::PROTOBUF_NAMESPACE_ID::MessageLite& from) {
+  MergeFrom(*::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ReflectanceModel*>(
+      &from));
+}
+
+void ReflectanceModel::MergeFrom(const ReflectanceModel& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:cielimMessage.ReflectanceModel)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  reflectanceparameters_.MergeFrom(from.reflectanceparameters_);
+  if (!from._internal_brdfmodel().empty()) {
+    _internal_set_brdfmodel(from._internal_brdfmodel());
+  }
+  _internal_metadata_.MergeFrom<std::string>(from._internal_metadata_);
+}
+
+void ReflectanceModel::CopyFrom(const ReflectanceModel& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:cielimMessage.ReflectanceModel)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ReflectanceModel::IsInitialized() const {
+  return true;
+}
+
+void ReflectanceModel::InternalSwap(ReflectanceModel* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  reflectanceparameters_.InternalSwap(&other->reflectanceparameters_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &brdfmodel_, lhs_arena,
+      &other->brdfmodel_, rhs_arena
+  );
+}
+
+std::string ReflectanceModel::GetTypeName() const {
+  return "cielimMessage.ReflectanceModel";
+}
+
+
+// ===================================================================
+
 class MeshModel::_Internal {
  public:
+  static const ::cielimMessage::ReflectanceModel& refmodel(const MeshModel* msg);
   static const ::cielimMessage::PerlinNoise& perlinnoise(const MeshModel* msg);
 };
 
+const ::cielimMessage::ReflectanceModel&
+MeshModel::_Internal::refmodel(const MeshModel* msg) {
+  return *msg->refmodel_;
+}
 const ::cielimMessage::PerlinNoise&
 MeshModel::_Internal::perlinnoise(const MeshModel* msg) {
   return *msg->perlinnoise_;
@@ -1367,7 +1611,6 @@ MeshModel::_Internal::perlinnoise(const MeshModel* msg) {
 MeshModel::MeshModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::MessageLite(arena, is_message_owned),
-  reflectanceparameters_(arena),
   principalaxisdistortion_(arena),
   inertialtobodymrp_(arena) {
   SharedCtor();
@@ -1378,7 +1621,6 @@ MeshModel::MeshModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
 }
 MeshModel::MeshModel(const MeshModel& from)
   : ::PROTOBUF_NAMESPACE_ID::MessageLite(),
-      reflectanceparameters_(from.reflectanceparameters_),
       principalaxisdistortion_(from.principalaxisdistortion_),
       inertialtobodymrp_(from.inertialtobodymrp_) {
   _internal_metadata_.MergeFrom<std::string>(from._internal_metadata_);
@@ -1387,29 +1629,28 @@ MeshModel::MeshModel(const MeshModel& from)
     shapemodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_shapemodel(), 
       GetArenaForAllocation());
   }
-  brdfmodel_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_brdfmodel().empty()) {
-    brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_brdfmodel(), 
-      GetArenaForAllocation());
+  if (from._internal_has_refmodel()) {
+    refmodel_ = new ::cielimMessage::ReflectanceModel(*from.refmodel_);
+  } else {
+    refmodel_ = nullptr;
   }
   if (from._internal_has_perlinnoise()) {
     perlinnoise_ = new ::cielimMessage::PerlinNoise(*from.perlinnoise_);
   } else {
     perlinnoise_ = nullptr;
   }
-  ::memcpy(&proceduralrocks_, &from.proceduralrocks_,
-    static_cast<size_t>(reinterpret_cast<char*>(&meanradius_) -
-    reinterpret_cast<char*>(&proceduralrocks_)) + sizeof(meanradius_));
+  ::memcpy(&meanradius_, &from.meanradius_,
+    static_cast<size_t>(reinterpret_cast<char*>(&proceduralrocks_) -
+    reinterpret_cast<char*>(&meanradius_)) + sizeof(proceduralrocks_));
   // @@protoc_insertion_point(copy_constructor:cielimMessage.MeshModel)
 }
 
 void MeshModel::SharedCtor() {
 shapemodel_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-brdfmodel_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&perlinnoise_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&meanradius_) -
-    reinterpret_cast<char*>(&perlinnoise_)) + sizeof(meanradius_));
+    reinterpret_cast<char*>(&refmodel_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&proceduralrocks_) -
+    reinterpret_cast<char*>(&refmodel_)) + sizeof(proceduralrocks_));
 }
 
 MeshModel::~MeshModel() {
@@ -1422,7 +1663,7 @@ MeshModel::~MeshModel() {
 inline void MeshModel::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   shapemodel_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  brdfmodel_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete refmodel_;
   if (this != internal_default_instance()) delete perlinnoise_;
 }
 
@@ -1442,18 +1683,20 @@ void MeshModel::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  reflectanceparameters_.Clear();
   principalaxisdistortion_.Clear();
   inertialtobodymrp_.Clear();
   shapemodel_.ClearToEmpty();
-  brdfmodel_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && refmodel_ != nullptr) {
+    delete refmodel_;
+  }
+  refmodel_ = nullptr;
   if (GetArenaForAllocation() == nullptr && perlinnoise_ != nullptr) {
     delete perlinnoise_;
   }
   perlinnoise_ = nullptr;
-  ::memset(&proceduralrocks_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&meanradius_) -
-      reinterpret_cast<char*>(&proceduralrocks_)) + sizeof(meanradius_));
+  ::memset(&meanradius_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&proceduralrocks_) -
+      reinterpret_cast<char*>(&meanradius_)) + sizeof(proceduralrocks_));
   _internal_metadata_.Clear<std::string>();
 }
 
@@ -1473,69 +1716,56 @@ const char* MeshModel::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::
         } else
           goto handle_unusual;
         continue;
-      // .cielimMessage.PerlinNoise perlinNoise = 2;
+      // double meanRadius = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_perlinnoise(), ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // double proceduralRocks = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 25)) {
-          proceduralrocks_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
-          ptr += sizeof(double);
-        } else
-          goto handle_unusual;
-        continue;
-      // string brdfModel = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
-          auto str = _internal_mutable_brdfmodel();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, nullptr));
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated double reflectanceParameters = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedDoubleParser(_internal_mutable_reflectanceparameters(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 41) {
-          _internal_add_reflectanceparameters(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
-          ptr += sizeof(double);
-        } else
-          goto handle_unusual;
-        continue;
-      // double meanRadius = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 49)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 17)) {
           meanradius_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
         } else
           goto handle_unusual;
         continue;
-      // repeated double principalAxisDistortion = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+      // repeated double principalAxisDistortion = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedDoubleParser(_internal_mutable_principalaxisdistortion(), ptr, ctx);
           CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 57) {
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 25) {
           _internal_add_principalaxisdistortion(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
           ptr += sizeof(double);
         } else
           goto handle_unusual;
         continue;
-      // repeated double inertialToBodyMrp = 8;
-      case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 66)) {
+      // repeated double inertialToBodyMrp = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedDoubleParser(_internal_mutable_inertialtobodymrp(), ptr, ctx);
           CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 65) {
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 33) {
           _internal_add_inertialtobodymrp(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
+          ptr += sizeof(double);
+        } else
+          goto handle_unusual;
+        continue;
+      // .cielimMessage.ReflectanceModel refModel = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          ptr = ctx->ParseMessage(_internal_mutable_refmodel(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .cielimMessage.PerlinNoise perlinNoise = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          ptr = ctx->ParseMessage(_internal_mutable_perlinnoise(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // double proceduralRocks = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 57)) {
+          proceduralrocks_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
         } else
           goto handle_unusual;
@@ -1579,49 +1809,42 @@ failure:
         1, this->_internal_shapemodel(), target);
   }
 
-  // .cielimMessage.PerlinNoise perlinNoise = 2;
+  // double meanRadius = 2;
+  if (!(this->_internal_meanradius() <= 0 && this->_internal_meanradius() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_meanradius(), target);
+  }
+
+  // repeated double principalAxisDistortion = 3;
+  if (this->_internal_principalaxisdistortion_size() > 0) {
+    target = stream->WriteFixedPacked(3, _internal_principalaxisdistortion(), target);
+  }
+
+  // repeated double inertialToBodyMrp = 4;
+  if (this->_internal_inertialtobodymrp_size() > 0) {
+    target = stream->WriteFixedPacked(4, _internal_inertialtobodymrp(), target);
+  }
+
+  // .cielimMessage.ReflectanceModel refModel = 5;
+  if (this->_internal_has_refmodel()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        5, _Internal::refmodel(this), target, stream);
+  }
+
+  // .cielimMessage.PerlinNoise perlinNoise = 6;
   if (this->_internal_has_perlinnoise()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        2, _Internal::perlinnoise(this), target, stream);
+        6, _Internal::perlinnoise(this), target, stream);
   }
 
-  // double proceduralRocks = 3;
+  // double proceduralRocks = 7;
   if (!(this->_internal_proceduralrocks() <= 0 && this->_internal_proceduralrocks() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_proceduralrocks(), target);
-  }
-
-  // string brdfModel = 4;
-  if (!this->_internal_brdfmodel().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_brdfmodel().data(), static_cast<int>(this->_internal_brdfmodel().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "cielimMessage.MeshModel.brdfModel");
-    target = stream->WriteStringMaybeAliased(
-        4, this->_internal_brdfmodel(), target);
-  }
-
-  // repeated double reflectanceParameters = 5;
-  if (this->_internal_reflectanceparameters_size() > 0) {
-    target = stream->WriteFixedPacked(5, _internal_reflectanceparameters(), target);
-  }
-
-  // double meanRadius = 6;
-  if (!(this->_internal_meanradius() <= 0 && this->_internal_meanradius() >= 0)) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(6, this->_internal_meanradius(), target);
-  }
-
-  // repeated double principalAxisDistortion = 7;
-  if (this->_internal_principalaxisdistortion_size() > 0) {
-    target = stream->WriteFixedPacked(7, _internal_principalaxisdistortion(), target);
-  }
-
-  // repeated double inertialToBodyMrp = 8;
-  if (this->_internal_inertialtobodymrp_size() > 0) {
-    target = stream->WriteFixedPacked(8, _internal_inertialtobodymrp(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(7, this->_internal_proceduralrocks(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1640,19 +1863,7 @@ size_t MeshModel::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated double reflectanceParameters = 5;
-  {
-    unsigned int count = static_cast<unsigned int>(this->_internal_reflectanceparameters_size());
-    size_t data_size = 8UL * count;
-    if (data_size > 0) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
-    }
-    total_size += data_size;
-  }
-
-  // repeated double principalAxisDistortion = 7;
+  // repeated double principalAxisDistortion = 3;
   {
     unsigned int count = static_cast<unsigned int>(this->_internal_principalaxisdistortion_size());
     size_t data_size = 8UL * count;
@@ -1664,7 +1875,7 @@ size_t MeshModel::ByteSizeLong() const {
     total_size += data_size;
   }
 
-  // repeated double inertialToBodyMrp = 8;
+  // repeated double inertialToBodyMrp = 4;
   {
     unsigned int count = static_cast<unsigned int>(this->_internal_inertialtobodymrp_size());
     size_t data_size = 8UL * count;
@@ -1683,27 +1894,27 @@ size_t MeshModel::ByteSizeLong() const {
         this->_internal_shapemodel());
   }
 
-  // string brdfModel = 4;
-  if (!this->_internal_brdfmodel().empty()) {
+  // .cielimMessage.ReflectanceModel refModel = 5;
+  if (this->_internal_has_refmodel()) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_brdfmodel());
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *refmodel_);
   }
 
-  // .cielimMessage.PerlinNoise perlinNoise = 2;
+  // .cielimMessage.PerlinNoise perlinNoise = 6;
   if (this->_internal_has_perlinnoise()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *perlinnoise_);
   }
 
-  // double proceduralRocks = 3;
-  if (!(this->_internal_proceduralrocks() <= 0 && this->_internal_proceduralrocks() >= 0)) {
+  // double meanRadius = 2;
+  if (!(this->_internal_meanradius() <= 0 && this->_internal_meanradius() >= 0)) {
     total_size += 1 + 8;
   }
 
-  // double meanRadius = 6;
-  if (!(this->_internal_meanradius() <= 0 && this->_internal_meanradius() >= 0)) {
+  // double proceduralRocks = 7;
+  if (!(this->_internal_proceduralrocks() <= 0 && this->_internal_proceduralrocks() >= 0)) {
     total_size += 1 + 8;
   }
 
@@ -1727,23 +1938,22 @@ void MeshModel::MergeFrom(const MeshModel& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  reflectanceparameters_.MergeFrom(from.reflectanceparameters_);
   principalaxisdistortion_.MergeFrom(from.principalaxisdistortion_);
   inertialtobodymrp_.MergeFrom(from.inertialtobodymrp_);
   if (!from._internal_shapemodel().empty()) {
     _internal_set_shapemodel(from._internal_shapemodel());
   }
-  if (!from._internal_brdfmodel().empty()) {
-    _internal_set_brdfmodel(from._internal_brdfmodel());
+  if (from._internal_has_refmodel()) {
+    _internal_mutable_refmodel()->::cielimMessage::ReflectanceModel::MergeFrom(from._internal_refmodel());
   }
   if (from._internal_has_perlinnoise()) {
     _internal_mutable_perlinnoise()->::cielimMessage::PerlinNoise::MergeFrom(from._internal_perlinnoise());
   }
-  if (!(from._internal_proceduralrocks() <= 0 && from._internal_proceduralrocks() >= 0)) {
-    _internal_set_proceduralrocks(from._internal_proceduralrocks());
-  }
   if (!(from._internal_meanradius() <= 0 && from._internal_meanradius() >= 0)) {
     _internal_set_meanradius(from._internal_meanradius());
+  }
+  if (!(from._internal_proceduralrocks() <= 0 && from._internal_proceduralrocks() >= 0)) {
+    _internal_set_proceduralrocks(from._internal_proceduralrocks());
   }
   _internal_metadata_.MergeFrom<std::string>(from._internal_metadata_);
 }
@@ -1764,7 +1974,6 @@ void MeshModel::InternalSwap(MeshModel* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  reflectanceparameters_.InternalSwap(&other->reflectanceparameters_);
   principalaxisdistortion_.InternalSwap(&other->principalaxisdistortion_);
   inertialtobodymrp_.InternalSwap(&other->inertialtobodymrp_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
@@ -1772,17 +1981,12 @@ void MeshModel::InternalSwap(MeshModel* other) {
       &shapemodel_, lhs_arena,
       &other->shapemodel_, rhs_arena
   );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &brdfmodel_, lhs_arena,
-      &other->brdfmodel_, rhs_arena
-  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(MeshModel, meanradius_)
-      + sizeof(MeshModel::meanradius_)
-      - PROTOBUF_FIELD_OFFSET(MeshModel, perlinnoise_)>(
-          reinterpret_cast<char*>(&perlinnoise_),
-          reinterpret_cast<char*>(&other->perlinnoise_));
+      PROTOBUF_FIELD_OFFSET(MeshModel, proceduralrocks_)
+      + sizeof(MeshModel::proceduralrocks_)
+      - PROTOBUF_FIELD_OFFSET(MeshModel, refmodel_)>(
+          reinterpret_cast<char*>(&refmodel_),
+          reinterpret_cast<char*>(&other->refmodel_));
 }
 
 std::string MeshModel::GetTypeName() const {
@@ -1931,18 +2135,18 @@ const char* CelestialBody::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
         } else
           goto handle_unusual;
         continue;
-      // bool centralBody = 5;
+      // .cielimMessage.MeshModel model = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
-          centralbody_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          ptr = ctx->ParseMessage(_internal_mutable_model(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // .cielimMessage.MeshModel model = 6;
+      // bool centralBody = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
-          ptr = ctx->ParseMessage(_internal_mutable_model(), ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+          centralbody_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -2001,18 +2205,18 @@ failure:
     target = stream->WriteFixedPacked(4, _internal_attitude(), target);
   }
 
-  // bool centralBody = 5;
-  if (this->_internal_centralbody() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_centralbody(), target);
-  }
-
-  // .cielimMessage.MeshModel model = 6;
+  // .cielimMessage.MeshModel model = 5;
   if (this->_internal_has_model()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        6, _Internal::model(this), target, stream);
+        5, _Internal::model(this), target, stream);
+  }
+
+  // bool centralBody = 6;
+  if (this->_internal_centralbody() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_centralbody(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2074,14 +2278,14 @@ size_t CelestialBody::ByteSizeLong() const {
         this->_internal_bodyname());
   }
 
-  // .cielimMessage.MeshModel model = 6;
+  // .cielimMessage.MeshModel model = 5;
   if (this->_internal_has_model()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *model_);
   }
 
-  // bool centralBody = 5;
+  // bool centralBody = 6;
   if (this->_internal_centralbody() != 0) {
     total_size += 1 + 1;
   }
@@ -4474,6 +4678,9 @@ template<> PROTOBUF_NOINLINE ::cielimMessage::RenderingModel* Arena::CreateMaybe
 }
 template<> PROTOBUF_NOINLINE ::cielimMessage::PerlinNoise* Arena::CreateMaybeMessage< ::cielimMessage::PerlinNoise >(Arena* arena) {
   return Arena::CreateMessageInternal< ::cielimMessage::PerlinNoise >(arena);
+}
+template<> PROTOBUF_NOINLINE ::cielimMessage::ReflectanceModel* Arena::CreateMaybeMessage< ::cielimMessage::ReflectanceModel >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::cielimMessage::ReflectanceModel >(arena);
 }
 template<> PROTOBUF_NOINLINE ::cielimMessage::MeshModel* Arena::CreateMaybeMessage< ::cielimMessage::MeshModel >(Arena* arena) {
   return Arena::CreateMessageInternal< ::cielimMessage::MeshModel >(arena);

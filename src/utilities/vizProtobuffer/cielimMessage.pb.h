@@ -44,7 +44,7 @@ struct TableStruct_cielimMessage_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[12]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[13]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -75,6 +75,9 @@ extern PerlinNoiseDefaultTypeInternal _PerlinNoise_default_instance_;
 class QuantumEfficiency;
 struct QuantumEfficiencyDefaultTypeInternal;
 extern QuantumEfficiencyDefaultTypeInternal _QuantumEfficiency_default_instance_;
+class ReflectanceModel;
+struct ReflectanceModelDefaultTypeInternal;
+extern ReflectanceModelDefaultTypeInternal _ReflectanceModel_default_instance_;
 class RenderingModel;
 struct RenderingModelDefaultTypeInternal;
 extern RenderingModelDefaultTypeInternal _RenderingModel_default_instance_;
@@ -97,6 +100,7 @@ template<> ::cielimMessage::LensModel* Arena::CreateMaybeMessage<::cielimMessage
 template<> ::cielimMessage::MeshModel* Arena::CreateMaybeMessage<::cielimMessage::MeshModel>(Arena*);
 template<> ::cielimMessage::PerlinNoise* Arena::CreateMaybeMessage<::cielimMessage::PerlinNoise>(Arena*);
 template<> ::cielimMessage::QuantumEfficiency* Arena::CreateMaybeMessage<::cielimMessage::QuantumEfficiency>(Arena*);
+template<> ::cielimMessage::ReflectanceModel* Arena::CreateMaybeMessage<::cielimMessage::ReflectanceModel>(Arena*);
 template<> ::cielimMessage::RenderingModel* Arena::CreateMaybeMessage<::cielimMessage::RenderingModel>(Arena*);
 template<> ::cielimMessage::SensorModel* Arena::CreateMaybeMessage<::cielimMessage::SensorModel>(Arena*);
 template<> ::cielimMessage::Spacecraft* Arena::CreateMaybeMessage<::cielimMessage::Spacecraft>(Arena*);
@@ -799,6 +803,163 @@ class PerlinNoise final :
 };
 // -------------------------------------------------------------------
 
+class ReflectanceModel final :
+    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.ReflectanceModel) */ {
+ public:
+  inline ReflectanceModel() : ReflectanceModel(nullptr) {}
+  ~ReflectanceModel() override;
+  explicit constexpr ReflectanceModel(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ReflectanceModel(const ReflectanceModel& from);
+  ReflectanceModel(ReflectanceModel&& from) noexcept
+    : ReflectanceModel() {
+    *this = ::std::move(from);
+  }
+
+  inline ReflectanceModel& operator=(const ReflectanceModel& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ReflectanceModel& operator=(ReflectanceModel&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ReflectanceModel& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ReflectanceModel* internal_default_instance() {
+    return reinterpret_cast<const ReflectanceModel*>(
+               &_ReflectanceModel_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(ReflectanceModel& a, ReflectanceModel& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ReflectanceModel* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ReflectanceModel* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ReflectanceModel* New() const final {
+    return new ReflectanceModel();
+  }
+
+  ReflectanceModel* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ReflectanceModel>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
+  void CopyFrom(const ReflectanceModel& from);
+  void MergeFrom(const ReflectanceModel& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ReflectanceModel* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "cielimMessage.ReflectanceModel";
+  }
+  protected:
+  explicit ReflectanceModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kReflectanceParametersFieldNumber = 2,
+    kBrdfModelFieldNumber = 1,
+  };
+  // repeated double reflectanceParameters = 2;
+  int reflectanceparameters_size() const;
+  private:
+  int _internal_reflectanceparameters_size() const;
+  public:
+  void clear_reflectanceparameters();
+  private:
+  double _internal_reflectanceparameters(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      _internal_reflectanceparameters() const;
+  void _internal_add_reflectanceparameters(double value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      _internal_mutable_reflectanceparameters();
+  public:
+  double reflectanceparameters(int index) const;
+  void set_reflectanceparameters(int index, double value);
+  void add_reflectanceparameters(double value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      reflectanceparameters() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      mutable_reflectanceparameters();
+
+  // string brdfModel = 1;
+  void clear_brdfmodel();
+  const std::string& brdfmodel() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_brdfmodel(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_brdfmodel();
+  PROTOBUF_MUST_USE_RESULT std::string* release_brdfmodel();
+  void set_allocated_brdfmodel(std::string* brdfmodel);
+  private:
+  const std::string& _internal_brdfmodel() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_brdfmodel(const std::string& value);
+  std::string* _internal_mutable_brdfmodel();
+  public:
+
+  // @@protoc_insertion_point(class_scope:cielimMessage.ReflectanceModel)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > reflectanceparameters_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr brdfmodel_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_cielimMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
 class MeshModel final :
     public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.MeshModel) */ {
  public:
@@ -838,7 +999,7 @@ class MeshModel final :
                &_MeshModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(MeshModel& a, MeshModel& b) {
     a.Swap(&b);
@@ -903,38 +1064,15 @@ class MeshModel final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kReflectanceParametersFieldNumber = 5,
-    kPrincipalAxisDistortionFieldNumber = 7,
-    kInertialToBodyMrpFieldNumber = 8,
+    kPrincipalAxisDistortionFieldNumber = 3,
+    kInertialToBodyMrpFieldNumber = 4,
     kShapeModelFieldNumber = 1,
-    kBrdfModelFieldNumber = 4,
-    kPerlinNoiseFieldNumber = 2,
-    kProceduralRocksFieldNumber = 3,
-    kMeanRadiusFieldNumber = 6,
+    kRefModelFieldNumber = 5,
+    kPerlinNoiseFieldNumber = 6,
+    kMeanRadiusFieldNumber = 2,
+    kProceduralRocksFieldNumber = 7,
   };
-  // repeated double reflectanceParameters = 5;
-  int reflectanceparameters_size() const;
-  private:
-  int _internal_reflectanceparameters_size() const;
-  public:
-  void clear_reflectanceparameters();
-  private:
-  double _internal_reflectanceparameters(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-      _internal_reflectanceparameters() const;
-  void _internal_add_reflectanceparameters(double value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-      _internal_mutable_reflectanceparameters();
-  public:
-  double reflectanceparameters(int index) const;
-  void set_reflectanceparameters(int index, double value);
-  void add_reflectanceparameters(double value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-      reflectanceparameters() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-      mutable_reflectanceparameters();
-
-  // repeated double principalAxisDistortion = 7;
+  // repeated double principalAxisDistortion = 3;
   int principalaxisdistortion_size() const;
   private:
   int _internal_principalaxisdistortion_size() const;
@@ -956,7 +1094,7 @@ class MeshModel final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
       mutable_principalaxisdistortion();
 
-  // repeated double inertialToBodyMrp = 8;
+  // repeated double inertialToBodyMrp = 4;
   int inertialtobodymrp_size() const;
   private:
   int _internal_inertialtobodymrp_size() const;
@@ -992,21 +1130,25 @@ class MeshModel final :
   std::string* _internal_mutable_shapemodel();
   public:
 
-  // string brdfModel = 4;
-  void clear_brdfmodel();
-  const std::string& brdfmodel() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_brdfmodel(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_brdfmodel();
-  PROTOBUF_MUST_USE_RESULT std::string* release_brdfmodel();
-  void set_allocated_brdfmodel(std::string* brdfmodel);
+  // .cielimMessage.ReflectanceModel refModel = 5;
+  bool has_refmodel() const;
   private:
-  const std::string& _internal_brdfmodel() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_brdfmodel(const std::string& value);
-  std::string* _internal_mutable_brdfmodel();
+  bool _internal_has_refmodel() const;
   public:
+  void clear_refmodel();
+  const ::cielimMessage::ReflectanceModel& refmodel() const;
+  PROTOBUF_MUST_USE_RESULT ::cielimMessage::ReflectanceModel* release_refmodel();
+  ::cielimMessage::ReflectanceModel* mutable_refmodel();
+  void set_allocated_refmodel(::cielimMessage::ReflectanceModel* refmodel);
+  private:
+  const ::cielimMessage::ReflectanceModel& _internal_refmodel() const;
+  ::cielimMessage::ReflectanceModel* _internal_mutable_refmodel();
+  public:
+  void unsafe_arena_set_allocated_refmodel(
+      ::cielimMessage::ReflectanceModel* refmodel);
+  ::cielimMessage::ReflectanceModel* unsafe_arena_release_refmodel();
 
-  // .cielimMessage.PerlinNoise perlinNoise = 2;
+  // .cielimMessage.PerlinNoise perlinNoise = 6;
   bool has_perlinnoise() const;
   private:
   bool _internal_has_perlinnoise() const;
@@ -1024,22 +1166,22 @@ class MeshModel final :
       ::cielimMessage::PerlinNoise* perlinnoise);
   ::cielimMessage::PerlinNoise* unsafe_arena_release_perlinnoise();
 
-  // double proceduralRocks = 3;
-  void clear_proceduralrocks();
-  double proceduralrocks() const;
-  void set_proceduralrocks(double value);
-  private:
-  double _internal_proceduralrocks() const;
-  void _internal_set_proceduralrocks(double value);
-  public:
-
-  // double meanRadius = 6;
+  // double meanRadius = 2;
   void clear_meanradius();
   double meanradius() const;
   void set_meanradius(double value);
   private:
   double _internal_meanradius() const;
   void _internal_set_meanradius(double value);
+  public:
+
+  // double proceduralRocks = 7;
+  void clear_proceduralrocks();
+  double proceduralrocks() const;
+  void set_proceduralrocks(double value);
+  private:
+  double _internal_proceduralrocks() const;
+  void _internal_set_proceduralrocks(double value);
   public:
 
   // @@protoc_insertion_point(class_scope:cielimMessage.MeshModel)
@@ -1049,14 +1191,13 @@ class MeshModel final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > reflectanceparameters_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > principalaxisdistortion_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > inertialtobodymrp_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr shapemodel_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr brdfmodel_;
+  ::cielimMessage::ReflectanceModel* refmodel_;
   ::cielimMessage::PerlinNoise* perlinnoise_;
-  double proceduralrocks_;
   double meanradius_;
+  double proceduralrocks_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_cielimMessage_2eproto;
 };
@@ -1101,7 +1242,7 @@ class CelestialBody final :
                &_CelestialBody_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(CelestialBody& a, CelestialBody& b) {
     a.Swap(&b);
@@ -1170,8 +1311,8 @@ class CelestialBody final :
     kVelocityFieldNumber = 3,
     kAttitudeFieldNumber = 4,
     kBodyNameFieldNumber = 1,
-    kModelFieldNumber = 6,
-    kCentralBodyFieldNumber = 5,
+    kModelFieldNumber = 5,
+    kCentralBodyFieldNumber = 6,
   };
   // repeated double position = 2;
   int position_size() const;
@@ -1253,7 +1394,7 @@ class CelestialBody final :
   std::string* _internal_mutable_bodyname();
   public:
 
-  // .cielimMessage.MeshModel model = 6;
+  // .cielimMessage.MeshModel model = 5;
   bool has_model() const;
   private:
   bool _internal_has_model() const;
@@ -1271,7 +1412,7 @@ class CelestialBody final :
       ::cielimMessage::MeshModel* model);
   ::cielimMessage::MeshModel* unsafe_arena_release_model();
 
-  // bool centralBody = 5;
+  // bool centralBody = 6;
   void clear_centralbody();
   bool centralbody() const;
   void set_centralbody(bool value);
@@ -1337,7 +1478,7 @@ class Spacecraft final :
                &_Spacecraft_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(Spacecraft& a, Spacecraft& b) {
     a.Swap(&b);
@@ -1542,7 +1683,7 @@ class QuantumEfficiency final :
                &_QuantumEfficiency_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(QuantumEfficiency& a, QuantumEfficiency& b) {
     a.Swap(&b);
@@ -1769,7 +1910,7 @@ class LensModel final :
                &_LensModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(LensModel& a, LensModel& b) {
     a.Swap(&b);
@@ -2026,7 +2167,7 @@ class SensorModel final :
                &_SensorModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(SensorModel& a, SensorModel& b) {
     a.Swap(&b);
@@ -2298,7 +2439,7 @@ class CameraModel final :
                &_CameraModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(CameraModel& a, CameraModel& b) {
     a.Swap(&b);
@@ -2530,7 +2671,7 @@ class CielimMessage final :
                &_CielimMessage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(CielimMessage& a, CielimMessage& b) {
     a.Swap(&b);
@@ -3177,6 +3318,103 @@ inline void PerlinNoise::set_persistence(double value) {
 
 // -------------------------------------------------------------------
 
+// ReflectanceModel
+
+// string brdfModel = 1;
+inline void ReflectanceModel::clear_brdfmodel() {
+  brdfmodel_.ClearToEmpty();
+}
+inline const std::string& ReflectanceModel::brdfmodel() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.ReflectanceModel.brdfModel)
+  return _internal_brdfmodel();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ReflectanceModel::set_brdfmodel(ArgT0&& arg0, ArgT... args) {
+ 
+ brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:cielimMessage.ReflectanceModel.brdfModel)
+}
+inline std::string* ReflectanceModel::mutable_brdfmodel() {
+  std::string* _s = _internal_mutable_brdfmodel();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.ReflectanceModel.brdfModel)
+  return _s;
+}
+inline const std::string& ReflectanceModel::_internal_brdfmodel() const {
+  return brdfmodel_.Get();
+}
+inline void ReflectanceModel::_internal_set_brdfmodel(const std::string& value) {
+  
+  brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ReflectanceModel::_internal_mutable_brdfmodel() {
+  
+  return brdfmodel_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ReflectanceModel::release_brdfmodel() {
+  // @@protoc_insertion_point(field_release:cielimMessage.ReflectanceModel.brdfModel)
+  return brdfmodel_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void ReflectanceModel::set_allocated_brdfmodel(std::string* brdfmodel) {
+  if (brdfmodel != nullptr) {
+    
+  } else {
+    
+  }
+  brdfmodel_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), brdfmodel,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.ReflectanceModel.brdfModel)
+}
+
+// repeated double reflectanceParameters = 2;
+inline int ReflectanceModel::_internal_reflectanceparameters_size() const {
+  return reflectanceparameters_.size();
+}
+inline int ReflectanceModel::reflectanceparameters_size() const {
+  return _internal_reflectanceparameters_size();
+}
+inline void ReflectanceModel::clear_reflectanceparameters() {
+  reflectanceparameters_.Clear();
+}
+inline double ReflectanceModel::_internal_reflectanceparameters(int index) const {
+  return reflectanceparameters_.Get(index);
+}
+inline double ReflectanceModel::reflectanceparameters(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.ReflectanceModel.reflectanceParameters)
+  return _internal_reflectanceparameters(index);
+}
+inline void ReflectanceModel::set_reflectanceparameters(int index, double value) {
+  reflectanceparameters_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.ReflectanceModel.reflectanceParameters)
+}
+inline void ReflectanceModel::_internal_add_reflectanceparameters(double value) {
+  reflectanceparameters_.Add(value);
+}
+inline void ReflectanceModel::add_reflectanceparameters(double value) {
+  _internal_add_reflectanceparameters(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.ReflectanceModel.reflectanceParameters)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+ReflectanceModel::_internal_reflectanceparameters() const {
+  return reflectanceparameters_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+ReflectanceModel::reflectanceparameters() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.ReflectanceModel.reflectanceParameters)
+  return _internal_reflectanceparameters();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+ReflectanceModel::_internal_mutable_reflectanceparameters() {
+  return &reflectanceparameters_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+ReflectanceModel::mutable_reflectanceparameters() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.ReflectanceModel.reflectanceParameters)
+  return _internal_mutable_reflectanceparameters();
+}
+
+// -------------------------------------------------------------------
+
 // MeshModel
 
 // string shapeModel = 1;
@@ -3225,7 +3463,211 @@ inline void MeshModel::set_allocated_shapemodel(std::string* shapemodel) {
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.shapeModel)
 }
 
-// .cielimMessage.PerlinNoise perlinNoise = 2;
+// double meanRadius = 2;
+inline void MeshModel::clear_meanradius() {
+  meanradius_ = 0;
+}
+inline double MeshModel::_internal_meanradius() const {
+  return meanradius_;
+}
+inline double MeshModel::meanradius() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.meanRadius)
+  return _internal_meanradius();
+}
+inline void MeshModel::_internal_set_meanradius(double value) {
+  
+  meanradius_ = value;
+}
+inline void MeshModel::set_meanradius(double value) {
+  _internal_set_meanradius(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.meanRadius)
+}
+
+// repeated double principalAxisDistortion = 3;
+inline int MeshModel::_internal_principalaxisdistortion_size() const {
+  return principalaxisdistortion_.size();
+}
+inline int MeshModel::principalaxisdistortion_size() const {
+  return _internal_principalaxisdistortion_size();
+}
+inline void MeshModel::clear_principalaxisdistortion() {
+  principalaxisdistortion_.Clear();
+}
+inline double MeshModel::_internal_principalaxisdistortion(int index) const {
+  return principalaxisdistortion_.Get(index);
+}
+inline double MeshModel::principalaxisdistortion(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.principalAxisDistortion)
+  return _internal_principalaxisdistortion(index);
+}
+inline void MeshModel::set_principalaxisdistortion(int index, double value) {
+  principalaxisdistortion_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.principalAxisDistortion)
+}
+inline void MeshModel::_internal_add_principalaxisdistortion(double value) {
+  principalaxisdistortion_.Add(value);
+}
+inline void MeshModel::add_principalaxisdistortion(double value) {
+  _internal_add_principalaxisdistortion(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.principalAxisDistortion)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+MeshModel::_internal_principalaxisdistortion() const {
+  return principalaxisdistortion_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+MeshModel::principalaxisdistortion() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.principalAxisDistortion)
+  return _internal_principalaxisdistortion();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+MeshModel::_internal_mutable_principalaxisdistortion() {
+  return &principalaxisdistortion_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+MeshModel::mutable_principalaxisdistortion() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.principalAxisDistortion)
+  return _internal_mutable_principalaxisdistortion();
+}
+
+// repeated double inertialToBodyMrp = 4;
+inline int MeshModel::_internal_inertialtobodymrp_size() const {
+  return inertialtobodymrp_.size();
+}
+inline int MeshModel::inertialtobodymrp_size() const {
+  return _internal_inertialtobodymrp_size();
+}
+inline void MeshModel::clear_inertialtobodymrp() {
+  inertialtobodymrp_.Clear();
+}
+inline double MeshModel::_internal_inertialtobodymrp(int index) const {
+  return inertialtobodymrp_.Get(index);
+}
+inline double MeshModel::inertialtobodymrp(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.inertialToBodyMrp)
+  return _internal_inertialtobodymrp(index);
+}
+inline void MeshModel::set_inertialtobodymrp(int index, double value) {
+  inertialtobodymrp_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.inertialToBodyMrp)
+}
+inline void MeshModel::_internal_add_inertialtobodymrp(double value) {
+  inertialtobodymrp_.Add(value);
+}
+inline void MeshModel::add_inertialtobodymrp(double value) {
+  _internal_add_inertialtobodymrp(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.inertialToBodyMrp)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+MeshModel::_internal_inertialtobodymrp() const {
+  return inertialtobodymrp_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+MeshModel::inertialtobodymrp() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.inertialToBodyMrp)
+  return _internal_inertialtobodymrp();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+MeshModel::_internal_mutable_inertialtobodymrp() {
+  return &inertialtobodymrp_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+MeshModel::mutable_inertialtobodymrp() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.inertialToBodyMrp)
+  return _internal_mutable_inertialtobodymrp();
+}
+
+// .cielimMessage.ReflectanceModel refModel = 5;
+inline bool MeshModel::_internal_has_refmodel() const {
+  return this != internal_default_instance() && refmodel_ != nullptr;
+}
+inline bool MeshModel::has_refmodel() const {
+  return _internal_has_refmodel();
+}
+inline void MeshModel::clear_refmodel() {
+  if (GetArenaForAllocation() == nullptr && refmodel_ != nullptr) {
+    delete refmodel_;
+  }
+  refmodel_ = nullptr;
+}
+inline const ::cielimMessage::ReflectanceModel& MeshModel::_internal_refmodel() const {
+  const ::cielimMessage::ReflectanceModel* p = refmodel_;
+  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::ReflectanceModel&>(
+      ::cielimMessage::_ReflectanceModel_default_instance_);
+}
+inline const ::cielimMessage::ReflectanceModel& MeshModel::refmodel() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.refModel)
+  return _internal_refmodel();
+}
+inline void MeshModel::unsafe_arena_set_allocated_refmodel(
+    ::cielimMessage::ReflectanceModel* refmodel) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(refmodel_);
+  }
+  refmodel_ = refmodel;
+  if (refmodel) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.MeshModel.refModel)
+}
+inline ::cielimMessage::ReflectanceModel* MeshModel::release_refmodel() {
+  
+  ::cielimMessage::ReflectanceModel* temp = refmodel_;
+  refmodel_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::cielimMessage::ReflectanceModel* MeshModel::unsafe_arena_release_refmodel() {
+  // @@protoc_insertion_point(field_release:cielimMessage.MeshModel.refModel)
+  
+  ::cielimMessage::ReflectanceModel* temp = refmodel_;
+  refmodel_ = nullptr;
+  return temp;
+}
+inline ::cielimMessage::ReflectanceModel* MeshModel::_internal_mutable_refmodel() {
+  
+  if (refmodel_ == nullptr) {
+    auto* p = CreateMaybeMessage<::cielimMessage::ReflectanceModel>(GetArenaForAllocation());
+    refmodel_ = p;
+  }
+  return refmodel_;
+}
+inline ::cielimMessage::ReflectanceModel* MeshModel::mutable_refmodel() {
+  ::cielimMessage::ReflectanceModel* _msg = _internal_mutable_refmodel();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.MeshModel.refModel)
+  return _msg;
+}
+inline void MeshModel::set_allocated_refmodel(::cielimMessage::ReflectanceModel* refmodel) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete refmodel_;
+  }
+  if (refmodel) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::ReflectanceModel>::GetOwningArena(refmodel);
+    if (message_arena != submessage_arena) {
+      refmodel = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, refmodel, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  refmodel_ = refmodel;
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.refModel)
+}
+
+// .cielimMessage.PerlinNoise perlinNoise = 6;
 inline bool MeshModel::_internal_has_perlinnoise() const {
   return this != internal_default_instance() && perlinnoise_ != nullptr;
 }
@@ -3315,7 +3757,7 @@ inline void MeshModel::set_allocated_perlinnoise(::cielimMessage::PerlinNoise* p
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.perlinNoise)
 }
 
-// double proceduralRocks = 3;
+// double proceduralRocks = 7;
 inline void MeshModel::clear_proceduralrocks() {
   proceduralrocks_ = 0;
 }
@@ -3333,213 +3775,6 @@ inline void MeshModel::_internal_set_proceduralrocks(double value) {
 inline void MeshModel::set_proceduralrocks(double value) {
   _internal_set_proceduralrocks(value);
   // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.proceduralRocks)
-}
-
-// string brdfModel = 4;
-inline void MeshModel::clear_brdfmodel() {
-  brdfmodel_.ClearToEmpty();
-}
-inline const std::string& MeshModel::brdfmodel() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.brdfModel)
-  return _internal_brdfmodel();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void MeshModel::set_brdfmodel(ArgT0&& arg0, ArgT... args) {
- 
- brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.brdfModel)
-}
-inline std::string* MeshModel::mutable_brdfmodel() {
-  std::string* _s = _internal_mutable_brdfmodel();
-  // @@protoc_insertion_point(field_mutable:cielimMessage.MeshModel.brdfModel)
-  return _s;
-}
-inline const std::string& MeshModel::_internal_brdfmodel() const {
-  return brdfmodel_.Get();
-}
-inline void MeshModel::_internal_set_brdfmodel(const std::string& value) {
-  
-  brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* MeshModel::_internal_mutable_brdfmodel() {
-  
-  return brdfmodel_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* MeshModel::release_brdfmodel() {
-  // @@protoc_insertion_point(field_release:cielimMessage.MeshModel.brdfModel)
-  return brdfmodel_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void MeshModel::set_allocated_brdfmodel(std::string* brdfmodel) {
-  if (brdfmodel != nullptr) {
-    
-  } else {
-    
-  }
-  brdfmodel_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), brdfmodel,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.brdfModel)
-}
-
-// repeated double reflectanceParameters = 5;
-inline int MeshModel::_internal_reflectanceparameters_size() const {
-  return reflectanceparameters_.size();
-}
-inline int MeshModel::reflectanceparameters_size() const {
-  return _internal_reflectanceparameters_size();
-}
-inline void MeshModel::clear_reflectanceparameters() {
-  reflectanceparameters_.Clear();
-}
-inline double MeshModel::_internal_reflectanceparameters(int index) const {
-  return reflectanceparameters_.Get(index);
-}
-inline double MeshModel::reflectanceparameters(int index) const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.reflectanceParameters)
-  return _internal_reflectanceparameters(index);
-}
-inline void MeshModel::set_reflectanceparameters(int index, double value) {
-  reflectanceparameters_.Set(index, value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.reflectanceParameters)
-}
-inline void MeshModel::_internal_add_reflectanceparameters(double value) {
-  reflectanceparameters_.Add(value);
-}
-inline void MeshModel::add_reflectanceparameters(double value) {
-  _internal_add_reflectanceparameters(value);
-  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.reflectanceParameters)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::_internal_reflectanceparameters() const {
-  return reflectanceparameters_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::reflectanceparameters() const {
-  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.reflectanceParameters)
-  return _internal_reflectanceparameters();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::_internal_mutable_reflectanceparameters() {
-  return &reflectanceparameters_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::mutable_reflectanceparameters() {
-  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.reflectanceParameters)
-  return _internal_mutable_reflectanceparameters();
-}
-
-// double meanRadius = 6;
-inline void MeshModel::clear_meanradius() {
-  meanradius_ = 0;
-}
-inline double MeshModel::_internal_meanradius() const {
-  return meanradius_;
-}
-inline double MeshModel::meanradius() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.meanRadius)
-  return _internal_meanradius();
-}
-inline void MeshModel::_internal_set_meanradius(double value) {
-  
-  meanradius_ = value;
-}
-inline void MeshModel::set_meanradius(double value) {
-  _internal_set_meanradius(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.meanRadius)
-}
-
-// repeated double principalAxisDistortion = 7;
-inline int MeshModel::_internal_principalaxisdistortion_size() const {
-  return principalaxisdistortion_.size();
-}
-inline int MeshModel::principalaxisdistortion_size() const {
-  return _internal_principalaxisdistortion_size();
-}
-inline void MeshModel::clear_principalaxisdistortion() {
-  principalaxisdistortion_.Clear();
-}
-inline double MeshModel::_internal_principalaxisdistortion(int index) const {
-  return principalaxisdistortion_.Get(index);
-}
-inline double MeshModel::principalaxisdistortion(int index) const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.principalAxisDistortion)
-  return _internal_principalaxisdistortion(index);
-}
-inline void MeshModel::set_principalaxisdistortion(int index, double value) {
-  principalaxisdistortion_.Set(index, value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.principalAxisDistortion)
-}
-inline void MeshModel::_internal_add_principalaxisdistortion(double value) {
-  principalaxisdistortion_.Add(value);
-}
-inline void MeshModel::add_principalaxisdistortion(double value) {
-  _internal_add_principalaxisdistortion(value);
-  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.principalAxisDistortion)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::_internal_principalaxisdistortion() const {
-  return principalaxisdistortion_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::principalaxisdistortion() const {
-  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.principalAxisDistortion)
-  return _internal_principalaxisdistortion();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::_internal_mutable_principalaxisdistortion() {
-  return &principalaxisdistortion_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::mutable_principalaxisdistortion() {
-  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.principalAxisDistortion)
-  return _internal_mutable_principalaxisdistortion();
-}
-
-// repeated double inertialToBodyMrp = 8;
-inline int MeshModel::_internal_inertialtobodymrp_size() const {
-  return inertialtobodymrp_.size();
-}
-inline int MeshModel::inertialtobodymrp_size() const {
-  return _internal_inertialtobodymrp_size();
-}
-inline void MeshModel::clear_inertialtobodymrp() {
-  inertialtobodymrp_.Clear();
-}
-inline double MeshModel::_internal_inertialtobodymrp(int index) const {
-  return inertialtobodymrp_.Get(index);
-}
-inline double MeshModel::inertialtobodymrp(int index) const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.inertialToBodyMrp)
-  return _internal_inertialtobodymrp(index);
-}
-inline void MeshModel::set_inertialtobodymrp(int index, double value) {
-  inertialtobodymrp_.Set(index, value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.inertialToBodyMrp)
-}
-inline void MeshModel::_internal_add_inertialtobodymrp(double value) {
-  inertialtobodymrp_.Add(value);
-}
-inline void MeshModel::add_inertialtobodymrp(double value) {
-  _internal_add_inertialtobodymrp(value);
-  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.inertialToBodyMrp)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::_internal_inertialtobodymrp() const {
-  return inertialtobodymrp_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::inertialtobodymrp() const {
-  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.inertialToBodyMrp)
-  return _internal_inertialtobodymrp();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::_internal_mutable_inertialtobodymrp() {
-  return &inertialtobodymrp_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::mutable_inertialtobodymrp() {
-  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.inertialToBodyMrp)
-  return _internal_mutable_inertialtobodymrp();
 }
 
 // -------------------------------------------------------------------
@@ -3733,27 +3968,7 @@ CelestialBody::mutable_attitude() {
   return _internal_mutable_attitude();
 }
 
-// bool centralBody = 5;
-inline void CelestialBody::clear_centralbody() {
-  centralbody_ = false;
-}
-inline bool CelestialBody::_internal_centralbody() const {
-  return centralbody_;
-}
-inline bool CelestialBody::centralbody() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CelestialBody.centralBody)
-  return _internal_centralbody();
-}
-inline void CelestialBody::_internal_set_centralbody(bool value) {
-  
-  centralbody_ = value;
-}
-inline void CelestialBody::set_centralbody(bool value) {
-  _internal_set_centralbody(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CelestialBody.centralBody)
-}
-
-// .cielimMessage.MeshModel model = 6;
+// .cielimMessage.MeshModel model = 5;
 inline bool CelestialBody::_internal_has_model() const {
   return this != internal_default_instance() && model_ != nullptr;
 }
@@ -3841,6 +4056,26 @@ inline void CelestialBody::set_allocated_model(::cielimMessage::MeshModel* model
   }
   model_ = model;
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.CelestialBody.model)
+}
+
+// bool centralBody = 6;
+inline void CelestialBody::clear_centralbody() {
+  centralbody_ = false;
+}
+inline bool CelestialBody::_internal_centralbody() const {
+  return centralbody_;
+}
+inline bool CelestialBody::centralbody() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.CelestialBody.centralBody)
+  return _internal_centralbody();
+}
+inline void CelestialBody::_internal_set_centralbody(bool value) {
+  
+  centralbody_ = value;
+}
+inline void CelestialBody::set_centralbody(bool value) {
+  _internal_set_centralbody(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.CelestialBody.centralBody)
 }
 
 // -------------------------------------------------------------------
@@ -5692,6 +5927,8 @@ inline void CielimMessage::set_allocated_camera(::cielimMessage::CameraModel* ca
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
