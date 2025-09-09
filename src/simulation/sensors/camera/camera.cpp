@@ -271,9 +271,9 @@ void Camera::applyFilters(cv::Mat& mSource, cv::Mat& mDst) {
         }
         cv::blur(mFilters, mFilters, cv::Size(blurSize, blurSize), cv::Point(-1, -1));
     }
-    if (this->darkCurrent > 0) {
+    if (this->darkCurrentIntensity > 0) {
         float scale = 15;
-        this->addGaussianNoise(mFilters, mFilters, this->darkCurrent * scale, 0.0);
+        this->addGaussianNoise(mFilters, mFilters, this->darkCurrentIntensity * scale, 0.0);
     }
     if (this->hsv.cwiseAbs().sum() > 0.00001) {
         this->hsvAdjust(mFilters, mFilters);
@@ -341,9 +341,24 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.focalLength = this->focalLength;
     cameraModelMsg.gaussianPointSpreadFunction = this->gaussianPointSpreadFunction;
     cameraModelMsg.readNoise = this->readNoise;
+    cameraModelMsg.shotNoise = this->shotNoise;
+    cameraModelMsg.darkCurrent = this->darkCurrent;
     cameraModelMsg.systemGain = this->systemGain;
     cameraModelMsg.exposureTime = this->exposureTime;
     cameraModelMsg.gammaCorrection = this->gammaCorrection;
+    cameraModelMsg.apertureRadius = this->apertureRadius;
+    cameraModelMsg.sensorWidth = this->sensorWidth;
+    cameraModelMsg.sensorHeight = this->sensorHeight;
+    cameraModelMsg.fullWellCapacity = this->fullWellCapacity;
+    cameraModelMsg.integrationWeightFactor = this->integrationWeightFactor;
+    eigenVector3d2CArray(this->redQuantumEfficiency, cameraModelMsg.redQuantumEfficiency);
+    eigenVector3d2CArray(this->greenQuantumEfficiency, cameraModelMsg.greenQuantumEfficiency);
+    eigenVector3d2CArray(this->blueQuantumEfficiency, cameraModelMsg.blueQuantumEfficiency);
+    eigenVector3d2CArray(this->wavelengthsQuantumEfficiency, cameraModelMsg.wavelengthsQuantumEfficiency);
+    eigenMatrixXd2CArray(this->horizontalVignetting, cameraModelMsg.horizontalVignetting);
+    eigenMatrixXd2CArray(this->verticalVignetting, cameraModelMsg.verticalVignetting);
+    eigenMatrixXd2CArray(this->distortion, cameraModelMsg.distortion);
+    cameraModelMsg.transmission = this->transmission;
 
     /*! - Update the camera config data no matter if an image is present*/
     this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
@@ -542,6 +557,28 @@ void Camera::setReadNoise(const double cameraReadNoise) { this->readNoise = came
 
 double Camera::getReadNoise() const { return this->readNoise; }
 
+/*! Set the shot noise standard deviation
+    @param cameraShotNoise bool
+    @return void
+    */
+void Camera::setShotNoise(const bool cameraShotNoise) { this->shotNoise = cameraShotNoise; }
+
+/*! Get the shot noise standard deviation
+    @return bool shotNoise
+    */
+bool Camera::getShotNoise() const { return this->shotNoise; }
+
+/*! Set the dark current
+    @param cameraDarkCurrent double
+    @return void
+    */
+void Camera::setDarkCurrent(const double cameraDarkCurrent) { this->darkCurrent = cameraDarkCurrent; }
+
+/*! Get the dark current
+    @return double darkCurrent
+    */
+double Camera::getDarkCurrent() const { return this->darkCurrent; }
+
 /*! Set the mapping from current to pixel intensity
     @param cameraGain double
     @return void
@@ -580,3 +617,146 @@ void Camera::setGammaCorrection(double gammaCorrectionValue) { this->gammaCorrec
     */
 
 double Camera::getGammaCorrection() const { return this->gammaCorrection; }
+
+/*! Set the aperture radius
+    @param apertureRadius double
+    @return void
+    */
+void Camera::setApertureRadius(double apertureRadiusValue) { this->apertureRadius = apertureRadiusValue; }
+
+/*! Get the aperture radius
+    @return double apertureRadius
+    */
+double Camera::getApertureRadius() const { return this->apertureRadius; }
+
+/*! Set the sensor width
+    @param sensorWidth double
+    @return void
+    */
+void Camera::setSensorWidth(double sensorWidthValue) { this->sensorWidth = sensorWidthValue; }
+
+/*! Get the sensor width
+    @return double sensorWidth
+    */
+double Camera::getSensorWidth() const { return this->sensorWidth; }
+
+/*! Set the sensor height
+    @param sensorHeight double
+    @return void
+    */
+void Camera::setSensorHeight(double sensorHeightValue) { this->sensorHeight = sensorHeightValue; }
+
+/*! Get the sensor height
+    @return double sensorHeight
+    */
+double Camera::getSensorHeight() const { return this->sensorHeight; }
+
+/*! Set the integration weight factor
+    @param integrationWeightFactor double
+    @return void
+    */
+void Camera::setIntegrationWeightFactor(double integrationWeightFactorValue) { this->integrationWeightFactor = integrationWeightFactorValue; }
+
+/*! Get the integration weight factor
+    @return double integrationWeightFactor
+    */
+double Camera::getIntegrationWeightFactor() const { return this->integrationWeightFactor; }
+
+/*! Set the full well capacity
+    @param fullWellCapacity double
+    @return void
+    */
+void Camera::setFullWellCapacity(double fullWellCapacityValue) { this->fullWellCapacity = fullWellCapacityValue; }
+
+/*! Get the full well capacity
+    @return double fullWellCapacity
+    */
+double Camera::getFullWellCapacity() const { return this->fullWellCapacity; }
+
+/*! Set the values of the QE curve at 450, 550 and 650 nm (red channel)
+    @param redQE Eigen::Vector3d
+    @return void
+    */
+void Camera::setRedQuantumEfficiency(const Eigen::Vector3d& redQE) { this->redQuantumEfficiency = redQE; }
+
+/*! Get the values of the QE curve at 450, 550 and 650 nm (red channel)
+    @return Eigen::Vector3d redQuantumEfficiency
+    */
+Eigen::Vector3d Camera::getRedQuantumEfficiency() const { return this->redQuantumEfficiency; }
+
+/*! Set the values of the QE curve at 450, 550 and 650 nm (green channel)
+    @param greenQE Eigen::Vector3d
+    @return void
+    */
+void Camera::setGreenQuantumEfficiency(const Eigen::Vector3d& greenQE) { this->greenQuantumEfficiency = greenQE; }
+
+/*! Get the values of the QE curve at 450, 550 and 650 nm (green channel)
+    @return Eigen::Vector3d greenQuantumEfficiency
+    */
+Eigen::Vector3d Camera::getGreenQuantumEfficiency() const { return this->greenQuantumEfficiency; }
+
+/*! Set the values of the QE curve at 450, 550 and 650 nm (blue channel)
+    @param blueQE Eigen::Vector3d
+    @return void
+    */
+void Camera::setBlueQuantumEfficiency(const Eigen::Vector3d& blueQE) { this->blueQuantumEfficiency = blueQE; }
+
+/*! Get the values of the QE curve at 450, 550 and 650 nm (blue channel)
+    @return Eigen::Vector3d blueQuantumEfficiency
+    */
+Eigen::Vector3d Camera::getBlueQuantumEfficiency() const { return this->blueQuantumEfficiency; }
+
+/*! Set the wavelength values for the QE curve
+    @param wavelengthsQE Eigen::Vector3d
+    @return void
+    */
+void Camera::setWavelengthsQuantumEfficiency(const Eigen::Vector3d& wavelengthsQE) { this->wavelengthsQuantumEfficiency = wavelengthsQE; }
+
+/*! Get the wavelength values for the QE curve
+    @return Eigen::Vector3d wavelengthsQuantumEfficiency
+    */
+Eigen::Vector3d Camera::getWavelengthsQuantumEfficiency() const { return this->wavelengthsQuantumEfficiency; }
+
+/*! Set the horizontal vignetting polynomial coefficients
+    @param horizontalVignettingCoeffs Eigen::VectorXd
+    @return void
+    */
+void Camera::setHorizontalVignetting(const Eigen::VectorXd& horizontalVignettingCoeffs) { this->horizontalVignetting = horizontalVignettingCoeffs; }
+
+/*! Get the horizontal vignetting polynomial coefficients
+    @return Eigen::VectorXd horizontalVignetting
+    */
+Eigen::VectorXd Camera::getHorizontalVignetting() const { return this->horizontalVignetting; }
+
+/*! Set the vertical vignetting polynomial coefficients
+    @param verticalVignettingCoeffs Eigen::VectorXd
+    @return void
+    */
+void Camera::setVerticalVignetting(const Eigen::VectorXd& verticalVignettingCoeffs) { this->verticalVignetting = verticalVignettingCoeffs; }
+
+/*! Get the vertical vignetting polynomial coefficients
+    @return Eigen::VectorXd verticalVignetting
+    */
+Eigen::VectorXd Camera::getVerticalVignetting() const { return this->verticalVignetting; }
+
+/*! Set the distortion polynomial coefficients
+    @param distortionCoeffs Eigen::VectorXd
+    @return void
+    */
+void Camera::setDistortion(const Eigen::VectorXd& distortionCoeffs) { this->distortion = distortionCoeffs; }
+
+/*! Get the distortion polynomial coefficients
+    @return Eigen::VectorXd distortion
+    */
+Eigen::VectorXd Camera::getDistortion() const { return this->distortion; }
+
+/*! Set the transmission rate of the lens
+    @param transmission double
+    @return void
+    */
+void Camera::setTransmission(double transmissionValue) { this->transmission = transmissionValue; }
+
+/*! Get the transmission rate of the lens
+    @return double transmission
+    */
+double Camera::getTransmission() const { return this->transmission; }

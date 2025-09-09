@@ -60,21 +60,57 @@ message RenderingModel{
     bool enableSmear = 5;  //[-] Enable effects of long exposure times
 }
 
+message QuantumEfficiency{
+    double integrationWeightFactor = 1; // [-] Weight factor for integration over wavelength to obtain photo-electrons
+    double wavelengths1 = 11; // [nm] first wavelength sample point
+    double wavelengths2 = 12; // [nm] second wavelength sample point
+    double wavelengths3 = 13; // [nm] third wavelength sample point
+    double redValue1 = 2; // [-] Value of the red channel Qe curve at the first wavelength sample point
+    double redValue2 = 3; // [-] Value of the red channel Qe curve at the second wavelength sample point
+    double redValue3 = 4; // [-] Value of the red channel Qe curve at the third wavelength sample point
+    double greenValue1 = 5; // [-] Value of the green channel Qe curve at the first wavelength sample point
+    double greenValue2 = 6; // [-] Value of the green channel Qe curve at the second wavelength sample point
+    double greenValue3 = 7; // [-] Value of the green channel Qe curve at the third wavelength sample point
+    double blueValue1 = 8; // [-] Value of the blue channel Qe curve at the first wavelength sample point
+    double blueValue2 = 9; // [-] Value of the blue channel Qe curve at the second wavelength sample point
+    double blueValue3 = 10; // [-] Value of the blue channel Qe curve at the third wavelength sample point
+}
+
+message LensModel{
+    repeated double fieldOfView = 1;  //[deg, deg] Camera Field of View edge-to-edge
+    double focalLength = 2; // [m] Camera focal length
+    double pointSpreadFunction = 3; // [pix] Kernel size of gaussian psf
+    double apertureRadius = 4; // [m] Aperture radius of lens
+    repeated double horizontalVignetting = 5; // [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of horizontal distance from camera center (degrees)
+    repeated double verticalVignetting = 6; // [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of vertical distance from camera center (degrees)
+    repeated double distortion = 7; // [-] Polynomial coefficients to form the curve of distortion (values between 0 and 1) as a function of vertical distance from camera center (degrees)
+    double transmission = 8; // [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all wavelengths
+}
+
+message SensorModel{
+    repeated int64 resolution = 1;  // [pixels, pixels] Desired image width and height
+    uint64 renderRate = 2;  //[ns] Sim elapsed time between saved camera images
+    double exposureTime = 3; // [s] Time with open shutter
+    double readNoise = 4; // [e-] Read noise standard deviation in electrons
+    bool shotNoise = 5; // [-] Model shot noise true or false
+    double darkCurrent = 6; // [e-/s] Dark current variance value in electrons per second (will be multiplied by exposure time)
+    double systemGain = 7; // [-] System gain between sensor current and pixel intensity
+    double sensorWidth = 8; // [m] Width of sensor
+    double sensorHeight = 9; // [m] Height of sensor
+    double fullWellCapacity = 10; // [e-] Amount of charge that can be stored within an individual pixel
+    double gamma = 11; // [-] Gamma correction factor
+    QuantumEfficiency qeCurve = 12; // [-] Quantum Efficiency curve information
+}
+
 //Camera parameters
 message CameraModel{
     int64 cameraId = 1;  //[-] ID of the camera
     string parentName = 2;  //[-] Name of the parent body to which the camera is attached
-    repeated double fieldOfView = 3;  //[deg, deg] Camera Field of View edge-to-edge
-    repeated int64 resolution = 4;  // [pixels, pixels] Desired image width and height
-    repeated double cameraPositionInBody = 5;  //[m] Camera position in body frame
-    repeated double bodyFrameToCameraMrp = 6;  //[-] Rotation to the camera frame MRP
-    uint64 renderRate = 7;  //[ns] Sim elapsed time between saved camera images
-    double focalLength = 8; // [m] Camera focal length
-    double exposureTime = 9; // [s] Time with open shutter
-    double pointSpreadFunction = 10; // [pix] Kernel size of gaussian psf
-    double readNoise = 11; // [ns] Time with open shutter
-    double systemGain = 12; // [-] System gain between sensor current and pixel intensity
-    RenderingModel renderParameters = 13; // [-] Rendering information attached to the camera
+    repeated double cameraPositionInBody = 3;  //[m] Camera position in body frame
+    repeated double bodyFrameToCameraMrp = 4;  //[-] Rotation to the camera frame MRP
+    RenderingModel renderParameters = 5; // [-] Rendering information attached to the camera
+    LensModel lensModel = 6; // [-] Parameters to model the optics of the camera
+    SensorModel sensorModel = 7; // [-] Parameters to model the camera sensor
 }
 
 /*! Cielim Message containing relevant data for image generation*/

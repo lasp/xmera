@@ -252,22 +252,60 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
          * UE5 has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame:
          * z point, x horizontal, y vertical (down) */
         auto *camera = new cielimMessage::CameraModel();
-        for (int j = 0; j < 2; j++) {
-            camera->add_resolution(this->cameraModelPayload.resolution[j]);
-            camera->add_fieldofview(this->cameraModelPayload.fieldOfView[j]);
-        }
+        auto *lensModel = new cielimMessage::LensModel();
+        auto *sensorModel = new cielimMessage::SensorModel();
+        auto *quantumEfficiency = new cielimMessage::QuantumEfficiency();
+
+        camera->set_cameraid(this->cameraModelPayload.cameraId);
+        camera->set_parentname(this->cameraModelPayload.parentName);
         for (int j = 0; j < 3; j++) {
             camera->add_bodyframetocameramrp(this->cameraModelPayload.bodyToCameraMrp[j]);
             camera->add_camerapositioninbody(this->cameraModelPayload.cameraBodyFramePosition[j]);
         }
-        camera->set_renderrate(this->cameraModelPayload.renderRate);
-        camera->set_cameraid(this->cameraModelPayload.cameraId);
-        camera->set_parentname(this->cameraModelPayload.parentName);
-        camera->set_focallength(this->cameraModelPayload.focalLength);
-        camera->set_pointspreadfunction(this->cameraModelPayload.gaussianPointSpreadFunction);
-        camera->set_exposuretime(this->cameraModelPayload.exposureTime);
-        camera->set_readnoise(this->cameraModelPayload.readNoise);
-        camera->set_systemgain(this->cameraModelPayload.systemGain);
+
+        for (int j = 0; j < 2; j++) {
+            sensorModel->add_resolution(this->cameraModelPayload.resolution[j]);
+            lensModel->add_fieldofview(this->cameraModelPayload.fieldOfView[j]);
+        }
+
+        lensModel->set_focallength(this->cameraModelPayload.focalLength);
+        lensModel->set_pointspreadfunction(this->cameraModelPayload.gaussianPointSpreadFunction);
+        lensModel->set_apertureradius(this->cameraModelPayload.apertureRadius);
+        for (int j = 0; j < MAX_POLY_COEFF; j++) {
+            lensModel->add_horizontalvignetting(this->cameraModelPayload.horizontalVignetting[j]);
+            lensModel->add_verticalvignetting(this->cameraModelPayload.verticalVignetting[j]);
+            lensModel->add_distortion(this->cameraModelPayload.distortion[j]);
+        }
+        lensModel->set_transmission(this->cameraModelPayload.transmission);
+
+        sensorModel->set_renderrate(this->cameraModelPayload.renderRate);
+        sensorModel->set_exposuretime(this->cameraModelPayload.exposureTime);
+        sensorModel->set_readnoise(this->cameraModelPayload.readNoise);
+        sensorModel->set_shotnoise(this->cameraModelPayload.shotNoise);
+        sensorModel->set_darkcurrent(this->cameraModelPayload.darkCurrent);
+        sensorModel->set_systemgain(this->cameraModelPayload.systemGain);
+        sensorModel->set_sensorwidth(this->cameraModelPayload.sensorWidth);
+        sensorModel->set_sensorheight(this->cameraModelPayload.sensorHeight);
+        sensorModel->set_fullwellcapacity(this->cameraModelPayload.fullWellCapacity);
+        sensorModel->set_gamma(this->cameraModelPayload.gammaCorrection);
+
+        quantumEfficiency->set_integrationweightfactor(this->cameraModelPayload.integrationWeightFactor);
+        quantumEfficiency->set_wavelengths1(this->cameraModelPayload.wavelengthsQuantumEfficiency[0]);
+        quantumEfficiency->set_wavelengths2(this->cameraModelPayload.wavelengthsQuantumEfficiency[1]);
+        quantumEfficiency->set_wavelengths3(this->cameraModelPayload.wavelengthsQuantumEfficiency[2]);
+        quantumEfficiency->set_redvalue1(this->cameraModelPayload.redQuantumEfficiency[0]);
+        quantumEfficiency->set_redvalue2(this->cameraModelPayload.redQuantumEfficiency[1]);
+        quantumEfficiency->set_redvalue3(this->cameraModelPayload.redQuantumEfficiency[2]);
+        quantumEfficiency->set_greenvalue1(this->cameraModelPayload.greenQuantumEfficiency[0]);
+        quantumEfficiency->set_greenvalue2(this->cameraModelPayload.greenQuantumEfficiency[1]);
+        quantumEfficiency->set_greenvalue3(this->cameraModelPayload.greenQuantumEfficiency[2]);
+        quantumEfficiency->set_bluevalue1(this->cameraModelPayload.blueQuantumEfficiency[0]);
+        quantumEfficiency->set_bluevalue2(this->cameraModelPayload.blueQuantumEfficiency[1]);
+        quantumEfficiency->set_bluevalue3(this->cameraModelPayload.blueQuantumEfficiency[2]);
+        sensorModel->set_allocated_qecurve(quantumEfficiency);
+
+        camera->set_allocated_lensmodel(lensModel);
+        camera->set_allocated_sensormodel(sensorModel);
 
         if (this->cameraRenderingMessage.isLinked() && this->cameraRenderingMessageStatus.dataFresh &&
             this->cameraRenderingPayload.cameraId == this->cameraModelPayload.cameraId) {

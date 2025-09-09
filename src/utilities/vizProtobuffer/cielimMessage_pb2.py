@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'H\003',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13\x63ielimMessage.proto\x12\rcielimMessage\"8\n\tTimeStamp\x12\x13\n\x0b\x66rameNumber\x18\x01 \x01(\x03\x12\x16\n\x0esimTimeElapsed\x18\x02 \x01(\x01\"j\n\rEpochDateTime\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\x05\x12\r\n\x05hours\x18\x04 \x01(\x05\x12\x0f\n\x07minutes\x18\x05 \x01(\x05\x12\x0f\n\x07seconds\x18\x06 \x01(\x01\"e\n\x0bPerlinNoise\x12\x13\n\x0boctaveCount\x18\x01 \x01(\x05\x12\x15\n\rbaseFrequency\x18\x02 \x01(\x01\x12\x15\n\rbaseAmplitude\x18\x03 \x01(\x01\x12\x13\n\x0bpersistence\x18\x04 \x01(\x01\"\xeb\x01\n\tMeshModel\x12\x12\n\nshapeModel\x18\x01 \x01(\t\x12/\n\x0bperlinNoise\x18\x02 \x01(\x0b\x32\x1a.cielimMessage.PerlinNoise\x12\x17\n\x0fproceduralRocks\x18\x03 \x01(\x01\x12\x11\n\tbrdfModel\x18\x04 \x01(\t\x12\x1d\n\x15reflectanceParameters\x18\x05 \x03(\x01\x12\x12\n\nmeanRadius\x18\x06 \x01(\x01\x12\x1f\n\x17principalAxisDistortion\x18\x07 \x03(\x01\x12\x19\n\x11inertialToBodyMrp\x18\x08 \x03(\x01\"\x95\x01\n\rCelestialBody\x12\x10\n\x08\x62odyName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\x12\x13\n\x0b\x63\x65ntralBody\x18\x05 \x01(\x08\x12\'\n\x05model\x18\x06 \x01(\x0b\x32\x18.cielimMessage.MeshModel\"Z\n\nSpacecraft\x12\x16\n\x0espacecraftName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\"~\n\x0eRenderingModel\x12\x1d\n\x15\x63osmicRayStdDeviation\x18\x01 \x01(\x01\x12\x12\n\nstrayLight\x18\x02 \x01(\x01\x12\x11\n\tstarField\x18\x03 \x01(\x08\x12\x11\n\trendering\x18\x04 \x01(\t\x12\x13\n\x0b\x65nableSmear\x18\x05 \x01(\x08\"\xd4\x02\n\x0b\x43\x61meraModel\x12\x10\n\x08\x63\x61meraId\x18\x01 \x01(\x03\x12\x12\n\nparentName\x18\x02 \x01(\t\x12\x13\n\x0b\x66ieldOfView\x18\x03 \x03(\x01\x12\x12\n\nresolution\x18\x04 \x03(\x03\x12\x1c\n\x14\x63\x61meraPositionInBody\x18\x05 \x03(\x01\x12\x1c\n\x14\x62odyFrameToCameraMrp\x18\x06 \x03(\x01\x12\x12\n\nrenderRate\x18\x07 \x01(\x04\x12\x13\n\x0b\x66ocalLength\x18\x08 \x01(\x01\x12\x14\n\x0c\x65xposureTime\x18\t \x01(\x01\x12\x1b\n\x13pointSpreadFunction\x18\n \x01(\x01\x12\x11\n\treadNoise\x18\x0b \x01(\x01\x12\x12\n\nsystemGain\x18\x0c \x01(\x01\x12\x37\n\x10renderParameters\x18\r \x01(\x0b\x32\x1d.cielimMessage.RenderingModel\"\xfd\x01\n\rCielimMessage\x12+\n\x05\x65poch\x18\x01 \x01(\x0b\x32\x1c.cielimMessage.EpochDateTime\x12-\n\x0b\x63urrentTime\x18\x02 \x01(\x0b\x32\x18.cielimMessage.TimeStamp\x12\x35\n\x0f\x63\x65lestialBodies\x18\x03 \x03(\x0b\x32\x1c.cielimMessage.CelestialBody\x12-\n\nspacecraft\x18\x04 \x01(\x0b\x32\x19.cielimMessage.Spacecraft\x12*\n\x06\x63\x61mera\x18\x05 \x01(\x0b\x32\x1a.cielimMessage.CameraModelB\x02H\x03\x62\x06proto3'
+  serialized_pb=b'\n\x13\x63ielimMessage.proto\x12\rcielimMessage\"8\n\tTimeStamp\x12\x13\n\x0b\x66rameNumber\x18\x01 \x01(\x03\x12\x16\n\x0esimTimeElapsed\x18\x02 \x01(\x01\"j\n\rEpochDateTime\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\x05\x12\r\n\x05hours\x18\x04 \x01(\x05\x12\x0f\n\x07minutes\x18\x05 \x01(\x05\x12\x0f\n\x07seconds\x18\x06 \x01(\x01\"e\n\x0bPerlinNoise\x12\x13\n\x0boctaveCount\x18\x01 \x01(\x05\x12\x15\n\rbaseFrequency\x18\x02 \x01(\x01\x12\x15\n\rbaseAmplitude\x18\x03 \x01(\x01\x12\x13\n\x0bpersistence\x18\x04 \x01(\x01\"\xeb\x01\n\tMeshModel\x12\x12\n\nshapeModel\x18\x01 \x01(\t\x12/\n\x0bperlinNoise\x18\x02 \x01(\x0b\x32\x1a.cielimMessage.PerlinNoise\x12\x17\n\x0fproceduralRocks\x18\x03 \x01(\x01\x12\x11\n\tbrdfModel\x18\x04 \x01(\t\x12\x1d\n\x15reflectanceParameters\x18\x05 \x03(\x01\x12\x12\n\nmeanRadius\x18\x06 \x01(\x01\x12\x1f\n\x17principalAxisDistortion\x18\x07 \x03(\x01\x12\x19\n\x11inertialToBodyMrp\x18\x08 \x03(\x01\"\x95\x01\n\rCelestialBody\x12\x10\n\x08\x62odyName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\x12\x13\n\x0b\x63\x65ntralBody\x18\x05 \x01(\x08\x12\'\n\x05model\x18\x06 \x01(\x0b\x32\x18.cielimMessage.MeshModel\"Z\n\nSpacecraft\x12\x16\n\x0espacecraftName\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x03(\x01\x12\x10\n\x08velocity\x18\x03 \x03(\x01\x12\x10\n\x08\x61ttitude\x18\x04 \x03(\x01\"~\n\x0eRenderingModel\x12\x1d\n\x15\x63osmicRayStdDeviation\x18\x01 \x01(\x01\x12\x12\n\nstrayLight\x18\x02 \x01(\x01\x12\x11\n\tstarField\x18\x03 \x01(\x08\x12\x11\n\trendering\x18\x04 \x01(\t\x12\x13\n\x0b\x65nableSmear\x18\x05 \x01(\x08\"\xaa\x02\n\x11QuantumEfficiency\x12\x1f\n\x17integrationWeightFactor\x18\x01 \x01(\x01\x12\x14\n\x0cwavelengths1\x18\x0b \x01(\x01\x12\x14\n\x0cwavelengths2\x18\x0c \x01(\x01\x12\x14\n\x0cwavelengths3\x18\r \x01(\x01\x12\x11\n\tredValue1\x18\x02 \x01(\x01\x12\x11\n\tredValue2\x18\x03 \x01(\x01\x12\x11\n\tredValue3\x18\x04 \x01(\x01\x12\x13\n\x0bgreenValue1\x18\x05 \x01(\x01\x12\x13\n\x0bgreenValue2\x18\x06 \x01(\x01\x12\x13\n\x0bgreenValue3\x18\x07 \x01(\x01\x12\x12\n\nblueValue1\x18\x08 \x01(\x01\x12\x12\n\nblueValue2\x18\t \x01(\x01\x12\x12\n\nblueValue3\x18\n \x01(\x01\"\xce\x01\n\tLensModel\x12\x13\n\x0b\x66ieldOfView\x18\x01 \x03(\x01\x12\x13\n\x0b\x66ocalLength\x18\x02 \x01(\x01\x12\x1b\n\x13pointSpreadFunction\x18\x03 \x01(\x01\x12\x16\n\x0e\x61pertureRadius\x18\x04 \x01(\x01\x12\x1c\n\x14horizontalVignetting\x18\x05 \x03(\x01\x12\x1a\n\x12verticalVignetting\x18\x06 \x03(\x01\x12\x12\n\ndistortion\x18\x07 \x03(\x01\x12\x14\n\x0ctransmission\x18\x08 \x01(\x01\"\xa1\x02\n\x0bSensorModel\x12\x12\n\nresolution\x18\x01 \x03(\x03\x12\x12\n\nrenderRate\x18\x02 \x01(\x04\x12\x14\n\x0c\x65xposureTime\x18\x03 \x01(\x01\x12\x11\n\treadNoise\x18\x04 \x01(\x01\x12\x11\n\tshotNoise\x18\x05 \x01(\x08\x12\x13\n\x0b\x64\x61rkCurrent\x18\x06 \x01(\x01\x12\x12\n\nsystemGain\x18\x07 \x01(\x01\x12\x13\n\x0bsensorWidth\x18\x08 \x01(\x01\x12\x14\n\x0csensorHeight\x18\t \x01(\x01\x12\x18\n\x10\x66ullWellCapacity\x18\n \x01(\x01\x12\r\n\x05gamma\x18\x0b \x01(\x01\x12\x31\n\x07qeCurve\x18\x0c \x01(\x0b\x32 .cielimMessage.QuantumEfficiency\"\x86\x02\n\x0b\x43\x61meraModel\x12\x10\n\x08\x63\x61meraId\x18\x01 \x01(\x03\x12\x12\n\nparentName\x18\x02 \x01(\t\x12\x1c\n\x14\x63\x61meraPositionInBody\x18\x03 \x03(\x01\x12\x1c\n\x14\x62odyFrameToCameraMrp\x18\x04 \x03(\x01\x12\x37\n\x10renderParameters\x18\x05 \x01(\x0b\x32\x1d.cielimMessage.RenderingModel\x12+\n\tlensModel\x18\x06 \x01(\x0b\x32\x18.cielimMessage.LensModel\x12/\n\x0bsensorModel\x18\x07 \x01(\x0b\x32\x1a.cielimMessage.SensorModel\"\xfd\x01\n\rCielimMessage\x12+\n\x05\x65poch\x18\x01 \x01(\x0b\x32\x1c.cielimMessage.EpochDateTime\x12-\n\x0b\x63urrentTime\x18\x02 \x01(\x0b\x32\x18.cielimMessage.TimeStamp\x12\x35\n\x0f\x63\x65lestialBodies\x18\x03 \x03(\x0b\x32\x1c.cielimMessage.CelestialBody\x12-\n\nspacecraft\x18\x04 \x01(\x0b\x32\x19.cielimMessage.Spacecraft\x12*\n\x06\x63\x61mera\x18\x05 \x01(\x0b\x32\x1a.cielimMessage.CameraModelB\x02H\x03\x62\x06proto3'
 )
 
 
@@ -445,6 +445,312 @@ _RENDERINGMODEL = _descriptor.Descriptor(
 )
 
 
+_QUANTUMEFFICIENCY = _descriptor.Descriptor(
+  name='QuantumEfficiency',
+  full_name='cielimMessage.QuantumEfficiency',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='integrationWeightFactor', full_name='cielimMessage.QuantumEfficiency.integrationWeightFactor', index=0,
+      number=1, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='wavelengths1', full_name='cielimMessage.QuantumEfficiency.wavelengths1', index=1,
+      number=11, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='wavelengths2', full_name='cielimMessage.QuantumEfficiency.wavelengths2', index=2,
+      number=12, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='wavelengths3', full_name='cielimMessage.QuantumEfficiency.wavelengths3', index=3,
+      number=13, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='redValue1', full_name='cielimMessage.QuantumEfficiency.redValue1', index=4,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='redValue2', full_name='cielimMessage.QuantumEfficiency.redValue2', index=5,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='redValue3', full_name='cielimMessage.QuantumEfficiency.redValue3', index=6,
+      number=4, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='greenValue1', full_name='cielimMessage.QuantumEfficiency.greenValue1', index=7,
+      number=5, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='greenValue2', full_name='cielimMessage.QuantumEfficiency.greenValue2', index=8,
+      number=6, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='greenValue3', full_name='cielimMessage.QuantumEfficiency.greenValue3', index=9,
+      number=7, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='blueValue1', full_name='cielimMessage.QuantumEfficiency.blueValue1', index=10,
+      number=8, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='blueValue2', full_name='cielimMessage.QuantumEfficiency.blueValue2', index=11,
+      number=9, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='blueValue3', full_name='cielimMessage.QuantumEfficiency.blueValue3', index=12,
+      number=10, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=918,
+  serialized_end=1216,
+)
+
+
+_LENSMODEL = _descriptor.Descriptor(
+  name='LensModel',
+  full_name='cielimMessage.LensModel',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='fieldOfView', full_name='cielimMessage.LensModel.fieldOfView', index=0,
+      number=1, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='focalLength', full_name='cielimMessage.LensModel.focalLength', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='pointSpreadFunction', full_name='cielimMessage.LensModel.pointSpreadFunction', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='apertureRadius', full_name='cielimMessage.LensModel.apertureRadius', index=3,
+      number=4, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='horizontalVignetting', full_name='cielimMessage.LensModel.horizontalVignetting', index=4,
+      number=5, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='verticalVignetting', full_name='cielimMessage.LensModel.verticalVignetting', index=5,
+      number=6, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='distortion', full_name='cielimMessage.LensModel.distortion', index=6,
+      number=7, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='transmission', full_name='cielimMessage.LensModel.transmission', index=7,
+      number=8, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1219,
+  serialized_end=1425,
+)
+
+
+_SENSORMODEL = _descriptor.Descriptor(
+  name='SensorModel',
+  full_name='cielimMessage.SensorModel',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='resolution', full_name='cielimMessage.SensorModel.resolution', index=0,
+      number=1, type=3, cpp_type=2, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='renderRate', full_name='cielimMessage.SensorModel.renderRate', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='exposureTime', full_name='cielimMessage.SensorModel.exposureTime', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='readNoise', full_name='cielimMessage.SensorModel.readNoise', index=3,
+      number=4, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='shotNoise', full_name='cielimMessage.SensorModel.shotNoise', index=4,
+      number=5, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='darkCurrent', full_name='cielimMessage.SensorModel.darkCurrent', index=5,
+      number=6, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='systemGain', full_name='cielimMessage.SensorModel.systemGain', index=6,
+      number=7, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sensorWidth', full_name='cielimMessage.SensorModel.sensorWidth', index=7,
+      number=8, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sensorHeight', full_name='cielimMessage.SensorModel.sensorHeight', index=8,
+      number=9, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='fullWellCapacity', full_name='cielimMessage.SensorModel.fullWellCapacity', index=9,
+      number=10, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='gamma', full_name='cielimMessage.SensorModel.gamma', index=10,
+      number=11, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qeCurve', full_name='cielimMessage.SensorModel.qeCurve', index=11,
+      number=12, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1428,
+  serialized_end=1717,
+)
+
+
 _CAMERAMODEL = _descriptor.Descriptor(
   name='CameraModel',
   full_name='cielimMessage.CameraModel',
@@ -468,78 +774,36 @@ _CAMERAMODEL = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='fieldOfView', full_name='cielimMessage.CameraModel.fieldOfView', index=2,
+      name='cameraPositionInBody', full_name='cielimMessage.CameraModel.cameraPositionInBody', index=2,
       number=3, type=1, cpp_type=5, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='resolution', full_name='cielimMessage.CameraModel.resolution', index=3,
-      number=4, type=3, cpp_type=2, label=3,
+      name='bodyFrameToCameraMrp', full_name='cielimMessage.CameraModel.bodyFrameToCameraMrp', index=3,
+      number=4, type=1, cpp_type=5, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='cameraPositionInBody', full_name='cielimMessage.CameraModel.cameraPositionInBody', index=4,
-      number=5, type=1, cpp_type=5, label=3,
-      has_default_value=False, default_value=[],
+      name='renderParameters', full_name='cielimMessage.CameraModel.renderParameters', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='bodyFrameToCameraMrp', full_name='cielimMessage.CameraModel.bodyFrameToCameraMrp', index=5,
-      number=6, type=1, cpp_type=5, label=3,
-      has_default_value=False, default_value=[],
+      name='lensModel', full_name='cielimMessage.CameraModel.lensModel', index=5,
+      number=6, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='renderRate', full_name='cielimMessage.CameraModel.renderRate', index=6,
-      number=7, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='focalLength', full_name='cielimMessage.CameraModel.focalLength', index=7,
-      number=8, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='exposureTime', full_name='cielimMessage.CameraModel.exposureTime', index=8,
-      number=9, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='pointSpreadFunction', full_name='cielimMessage.CameraModel.pointSpreadFunction', index=9,
-      number=10, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='readNoise', full_name='cielimMessage.CameraModel.readNoise', index=10,
-      number=11, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='systemGain', full_name='cielimMessage.CameraModel.systemGain', index=11,
-      number=12, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='renderParameters', full_name='cielimMessage.CameraModel.renderParameters', index=12,
-      number=13, type=11, cpp_type=10, label=1,
+      name='sensorModel', full_name='cielimMessage.CameraModel.sensorModel', index=6,
+      number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -556,8 +820,8 @@ _CAMERAMODEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=918,
-  serialized_end=1258,
+  serialized_start=1720,
+  serialized_end=1982,
 )
 
 
@@ -616,13 +880,16 @@ _CIELIMMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1261,
-  serialized_end=1514,
+  serialized_start=1985,
+  serialized_end=2238,
 )
 
 _MESHMODEL.fields_by_name['perlinNoise'].message_type = _PERLINNOISE
 _CELESTIALBODY.fields_by_name['model'].message_type = _MESHMODEL
+_SENSORMODEL.fields_by_name['qeCurve'].message_type = _QUANTUMEFFICIENCY
 _CAMERAMODEL.fields_by_name['renderParameters'].message_type = _RENDERINGMODEL
+_CAMERAMODEL.fields_by_name['lensModel'].message_type = _LENSMODEL
+_CAMERAMODEL.fields_by_name['sensorModel'].message_type = _SENSORMODEL
 _CIELIMMESSAGE.fields_by_name['epoch'].message_type = _EPOCHDATETIME
 _CIELIMMESSAGE.fields_by_name['currentTime'].message_type = _TIMESTAMP
 _CIELIMMESSAGE.fields_by_name['celestialBodies'].message_type = _CELESTIALBODY
@@ -635,6 +902,9 @@ DESCRIPTOR.message_types_by_name['MeshModel'] = _MESHMODEL
 DESCRIPTOR.message_types_by_name['CelestialBody'] = _CELESTIALBODY
 DESCRIPTOR.message_types_by_name['Spacecraft'] = _SPACECRAFT
 DESCRIPTOR.message_types_by_name['RenderingModel'] = _RENDERINGMODEL
+DESCRIPTOR.message_types_by_name['QuantumEfficiency'] = _QUANTUMEFFICIENCY
+DESCRIPTOR.message_types_by_name['LensModel'] = _LENSMODEL
+DESCRIPTOR.message_types_by_name['SensorModel'] = _SENSORMODEL
 DESCRIPTOR.message_types_by_name['CameraModel'] = _CAMERAMODEL
 DESCRIPTOR.message_types_by_name['CielimMessage'] = _CIELIMMESSAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -687,6 +957,27 @@ RenderingModel = _reflection.GeneratedProtocolMessageType('RenderingModel', (_me
   # @@protoc_insertion_point(class_scope:cielimMessage.RenderingModel)
   })
 _sym_db.RegisterMessage(RenderingModel)
+
+QuantumEfficiency = _reflection.GeneratedProtocolMessageType('QuantumEfficiency', (_message.Message,), {
+  'DESCRIPTOR' : _QUANTUMEFFICIENCY,
+  '__module__' : 'cielimMessage_pb2'
+  # @@protoc_insertion_point(class_scope:cielimMessage.QuantumEfficiency)
+  })
+_sym_db.RegisterMessage(QuantumEfficiency)
+
+LensModel = _reflection.GeneratedProtocolMessageType('LensModel', (_message.Message,), {
+  'DESCRIPTOR' : _LENSMODEL,
+  '__module__' : 'cielimMessage_pb2'
+  # @@protoc_insertion_point(class_scope:cielimMessage.LensModel)
+  })
+_sym_db.RegisterMessage(LensModel)
+
+SensorModel = _reflection.GeneratedProtocolMessageType('SensorModel', (_message.Message,), {
+  'DESCRIPTOR' : _SENSORMODEL,
+  '__module__' : 'cielimMessage_pb2'
+  # @@protoc_insertion_point(class_scope:cielimMessage.SensorModel)
+  })
+_sym_db.RegisterMessage(SensorModel)
 
 CameraModel = _reflection.GeneratedProtocolMessageType('CameraModel', (_message.Message,), {
   'DESCRIPTOR' : _CAMERAMODEL,

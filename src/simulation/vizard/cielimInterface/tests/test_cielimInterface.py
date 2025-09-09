@@ -106,9 +106,25 @@ def read_write_test():
     camera_payload.renderRate = 10000
     camera_payload.focalLength = 0.1
     camera_payload.readNoise = 10
+    camera_payload.shotNoise = True
+    camera_payload.darkCurrent = 0.11
     camera_payload.systemGain = 1
     camera_payload.gaussianPointSpreadFunction = 5
     camera_payload.exposureTime = 0.1
+    camera_payload.apertureRadius = 0.2
+    camera_payload.sensorWidth = 0.5
+    camera_payload.sensorHeight = 0.6
+    camera_payload.fullWellCapacity = 1000.5
+    camera_payload.integrationWeightFactor = 1.1
+    camera_payload.gammaCorrection = 1.1
+    camera_payload.redQuantumEfficiency = [0.8, 0.7, 0.6]
+    camera_payload.greenQuantumEfficiency = [0.5, 0.6, 0.7]
+    camera_payload.blueQuantumEfficiency = [0.6, 0.7, 0.6]
+    camera_payload.wavelengthsQuantumEfficiency = [450, 550, 650]
+    camera_payload.horizontalVignetting = [0.1, 0.2, 0.3, 0.4]
+    camera_payload.verticalVignetting = [0.5, 0.6, 0.7, 0.8]
+    camera_payload.distortion = [0.2, 0.4, 0.6, 0.8]
+    camera_payload.transmission = 0.9
     camera_message = messaging.CameraModelMsg().write(camera_payload)
     module.cameraModelMessage.subscribeTo(camera_message)
 
@@ -183,16 +199,43 @@ def read_write_test():
 
     np.testing.assert_equal(cielim_message.camera.cameraId, camera_payload.cameraId)
     np.testing.assert_equal(cielim_message.camera.parentName, "cielim_sat")
-    np.testing.assert_equal(cielim_message.camera.fieldOfView,camera_payload.fieldOfView)
-    np.testing.assert_equal(cielim_message.camera.resolution, camera_payload.resolution)
     np.testing.assert_equal(cielim_message.camera.cameraPositionInBody, camera_payload.cameraBodyFramePosition)
     np.testing.assert_equal(cielim_message.camera.bodyFrameToCameraMrp, camera_payload.bodyToCameraMrp)
-    np.testing.assert_equal(cielim_message.camera.renderRate, camera_payload.renderRate)
-    np.testing.assert_equal(cielim_message.camera.focalLength, camera_payload.focalLength)
-    np.testing.assert_equal(cielim_message.camera.exposureTime, camera_payload.exposureTime)
-    np.testing.assert_equal(cielim_message.camera.pointSpreadFunction, camera_payload.gaussianPointSpreadFunction)
-    np.testing.assert_equal(cielim_message.camera.systemGain, camera_payload.systemGain)
-    np.testing.assert_equal(cielim_message.camera.readNoise, camera_payload.readNoise)
+
+    np.testing.assert_equal(cielim_message.camera.lensModel.fieldOfView,camera_payload.fieldOfView)
+    np.testing.assert_equal(cielim_message.camera.lensModel.focalLength, camera_payload.focalLength)
+    np.testing.assert_equal(cielim_message.camera.lensModel.pointSpreadFunction, camera_payload.gaussianPointSpreadFunction)
+    np.testing.assert_equal(cielim_message.camera.lensModel.apertureRadius, camera_payload.apertureRadius)
+    np.testing.assert_equal(cielim_message.camera.lensModel.horizontalVignetting, camera_payload.horizontalVignetting)
+    np.testing.assert_equal(cielim_message.camera.lensModel.verticalVignetting, camera_payload.verticalVignetting)
+    np.testing.assert_equal(cielim_message.camera.lensModel.distortion, camera_payload.distortion)
+    np.testing.assert_equal(cielim_message.camera.lensModel.transmission, camera_payload.transmission)
+
+    np.testing.assert_equal(cielim_message.camera.sensorModel.resolution, camera_payload.resolution)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.renderRate, camera_payload.renderRate)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.exposureTime, camera_payload.exposureTime)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.readNoise, camera_payload.readNoise)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.shotNoise, camera_payload.shotNoise)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.darkCurrent, camera_payload.darkCurrent)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.systemGain, camera_payload.systemGain)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.sensorWidth, camera_payload.sensorWidth)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.sensorHeight, camera_payload.sensorHeight)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.fullWellCapacity, camera_payload.fullWellCapacity)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.gamma, camera_payload.gammaCorrection)
+
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.integrationWeightFactor, camera_payload.integrationWeightFactor)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.wavelengths1, camera_payload.wavelengthsQuantumEfficiency[0])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.wavelengths2, camera_payload.wavelengthsQuantumEfficiency[1])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.wavelengths3, camera_payload.wavelengthsQuantumEfficiency[2])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue1, camera_payload.redQuantumEfficiency[0])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue2, camera_payload.redQuantumEfficiency[1])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue3, camera_payload.redQuantumEfficiency[2])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.greenValue1, camera_payload.greenQuantumEfficiency[0])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.greenValue2, camera_payload.greenQuantumEfficiency[1])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.greenValue3, camera_payload.greenQuantumEfficiency[2])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.blueValue1, camera_payload.blueQuantumEfficiency[0])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.blueValue2, camera_payload.blueQuantumEfficiency[1])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.blueValue3, camera_payload.blueQuantumEfficiency[2])
 
     np.testing.assert_equal(cielim_message.camera.renderParameters.cosmicRayStdDeviation, rendering_payload.cosmicRayStdDeviation)
     np.testing.assert_equal(cielim_message.camera.renderParameters.strayLight, rendering_payload.strayLight)

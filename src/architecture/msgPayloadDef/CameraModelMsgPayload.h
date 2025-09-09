@@ -21,6 +21,8 @@
 #define CAMERA_MODEL_MSG_H
 
 #define MAX_STRING_LENGTH 256
+#define MAX_POLY_COEFF 10
+
 /*! @brief Structure used to define the camera model*/
 
 typedef struct {
@@ -32,12 +34,27 @@ typedef struct {
     uint64_t renderRate;  //!< [ns] Frame time interval at which to capture images in units of nanosecond */
     double cameraBodyFramePosition[3];  //!< [m] Camera position in body frame */
     double bodyToCameraMrp[3];  //!< [-] MRP defining the orientation of the camera frame relative to the body frame */
-    double focalLength;               //!< [m] Camera focal length
-    int gaussianPointSpreadFunction;  //!< Size of square Gaussian kernel to model point spread function, must be odd
-    double exposureTime;              //!< [s] Exposure time for each image taken
-    double readNoise;                 //!< Read noise standard deviation
-    double systemGain;                //!< Mapping from current to pixel intensity
-    double gammaCorrection;           //!< Gamma correction factor for improved mid-tones
+    double focalLength;         //!< [m] Camera focal length
+    int gaussianPointSpreadFunction;   //!< Size of square Gaussian kernel to model point spread function, must be odd
+    double exposureTime;               //!< [s] Exposure time for each image taken
+    double readNoise;                  //!< [e-] Read noise standard deviation
+    bool shotNoise;                    //!< [-] Model shot noise true or false
+    double darkCurrent;                //!< [e-/s] Dark current variance value in electrons per second
+    double systemGain;                 //!< Mapping from current to pixel intensity
+    double gammaCorrection;            //!< Gamma correction factor for improved mid-tones
+    double apertureRadius;             //!< [m] Aperture radius of lens
+    double sensorWidth;                //!< [m] Width of sensor
+    double sensorHeight;               //!< [m] Height of sensor
+    double fullWellCapacity;           //!< [e-] Amount of charge that can be stored within an individual pixel
+    double integrationWeightFactor;    //!< [-] Weight factor for integration over wavelength to obtain photo-electrons
+    double redQuantumEfficiency[3];    //!< [-] Values of QE curve at specified wavelengths (red channel)
+    double greenQuantumEfficiency[3];  //!< [-] Values of QE curve at specified wavelengths (green channel)
+    double blueQuantumEfficiency[3];   //!< [-] Values of QE curve at specified wavelengths (blue channel)
+    double wavelengthsQuantumEfficiency[3]; //!< [nm] wavelength sample points used for Quantum Efficiency curve
+    double horizontalVignetting[MAX_POLY_COEFF]; //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of horizontal distance from camera center (degrees)
+    double verticalVignetting[MAX_POLY_COEFF]; //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of vertical distance from camera center (degrees)
+    double distortion[MAX_POLY_COEFF]; //!< [-] Polynomial coefficients to form the curve of distortion (values between 0 and 1) as a function of vertical distance from camera center (degrees)
+    double transmission; //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all wavelengths
 } CameraModelMsgPayload;
 
 #endif
