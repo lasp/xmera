@@ -23,21 +23,16 @@
 
 /* modify the path to reflect the new module names */
 #include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
-
-
-
-
-/* Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 /*! Generate attitude reference associated with Intertial 3D Pointing.  In this case this is a fixed attitude
     with zero angular rate and acceleration vectors
  @return void
  @param attRefOut Output message
  */
-static void computeInertialPointingReference(double sigma_R0N[3], AttRefMsgPayload *attRefOut)
+static void computeInertialPointingReference(Eigen::Vector3d sigma_R0N, AttRefMsgPayload *attRefOut)
 {
-    v3Copy(sigma_R0N, attRefOut->sigma_RN);
+    eigenVector3d2CArray(sigma_R0N, attRefOut->sigma_RN);
 }
 
 /*! This method creates a fixed attitude reference message.  The desired orientation is
