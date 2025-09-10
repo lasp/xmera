@@ -38,6 +38,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import inertial3D                   # import the module that is to be tested
 from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -75,7 +76,7 @@ def subModuleTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     vector = [0.1, 0.2, 0.3]
-    module.sigma_R0N = vector
+    module.setSigmaR0N(vector)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.attRefOutMsg.recorder()

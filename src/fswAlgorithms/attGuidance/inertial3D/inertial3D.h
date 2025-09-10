@@ -31,8 +31,12 @@
 class Inertial3D : public SysModel {
    public:
     void updateState(uint64_t callTime) override;
-    Eigen::Vector3d sigma_R0N{Eigen::Vector3d::Zero()}; //!<  MRP from inertial frame N to corrected reference frame R
+    void setSigmaR0N(const Eigen::Vector3d& sigma_RN);
+    const Eigen::Vector3d& getSigmaR0N() const;
     Message<AttRefMsgPayload> attRefOutMsg;  //!< reference attitude output message
+
+   private:
+    Eigen::Vector3d sigma_R0N{Eigen::Vector3d::Zero()}; //!<  MRP from inertial frame N to corrected reference frame R
 };
 
 #endif
