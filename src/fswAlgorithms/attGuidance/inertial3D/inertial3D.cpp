@@ -25,16 +25,6 @@
 #include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
 #include "architecture/utilities/avsEigenSupport.h"
 
-/*! Generate attitude reference associated with Intertial 3D Pointing.  In this case this is a fixed attitude
-    with zero angular rate and acceleration vectors
- @return void
- @param attRefOut Output message
- */
-static void computeInertialPointingReference(Eigen::Vector3d sigma_R0N, AttRefMsgPayload *attRefOut)
-{
-    eigenVector3d2CArray(sigma_R0N, attRefOut->sigma_RN);
-}
-
 /*! This method creates a fixed attitude reference message.  The desired orientation is
     defined within the module.
  @return void
@@ -42,15 +32,10 @@ static void computeInertialPointingReference(Eigen::Vector3d sigma_R0N, AttRefMs
  */
 void Inertial3D::updateState(uint64_t callTime)
 {
-    AttRefMsgPayload attRefOut = {};         /* output message structure */
+    AttRefMsgPayload attRefOut{};
+    eigenVector3d2CArray(this->sigma_R0N, attRefOut.sigma_RN);
 
-    /*! - Compute and store output message */
-    computeInertialPointingReference(this->sigma_R0N, &attRefOut);
-
-    /*! - Write output message */
     this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
-
-    return;
 }
 
 /*! Setter method for the MRP from frame N to frame R.
