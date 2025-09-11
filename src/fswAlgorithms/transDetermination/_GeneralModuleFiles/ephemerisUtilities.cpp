@@ -18,34 +18,28 @@
  */
 
 #include "ephemerisUtilities.h"
+/*
+ * Function to evaluate a set of chebyshev polynomials (first argument) to a certain degree (second argument) at
+ * a specific point (evaluationPoint)
+ */
+double calculateChebyValue(const double *coefficients,
+                           const signed int numberOfCoefficients,
+                           const double evaluationPoint) {
+    double chebyPrev = 1.0;
+    double chebyNow = evaluationPoint;
+    const double valueMult = 2.0 * evaluationPoint;
 
-double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
-                           double evalValue)
-{
-    double chebyPrev;
-    double chebyNow;
-    double chebyLocalPrev;
-    double valueMult;
-    double estValue;
-    uint32_t i;
-    
-    chebyPrev = 1.0;
-    chebyNow = evalValue;
-    valueMult = 2.0*evalValue;
-    
-    estValue = chebyCoeff[0]*chebyPrev;
-    if(nCoeff <= 1)
-    {
-        return(estValue);
+    double estValue = coefficients[0] * chebyPrev;
+    if (numberOfCoefficients <= 1) {
+        return estValue;
     }
-    estValue += chebyCoeff[1]*chebyNow;
-    for(i=2; i<nCoeff; i=i+1)
-    {
-        chebyLocalPrev = chebyNow;
-        chebyNow = valueMult*chebyNow - chebyPrev;
+    estValue += coefficients[1] * chebyNow;
+    for (int i = 2; i < numberOfCoefficients; ++i) {
+        const double chebyLocalPrev = chebyNow;
+        chebyNow = valueMult * chebyNow - chebyPrev;
         chebyPrev = chebyLocalPrev;
-        estValue += chebyCoeff[i]*chebyNow;
+        estValue += coefficients[i] * chebyNow;
     }
-    
-    return(estValue);
+
+    return estValue;
 }
