@@ -18,21 +18,16 @@
  */
 
 #include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphem.h"
-#include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/orbitalMotion.h"
-#include <cmath>
 
 /*!
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OEStateEphem::reset(uint64_t callTime)
-{
-    // check if the required message has not been connected
+void OEStateEphem::reset(uint64_t callTime) {
     if (!this->clockCorrInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR, "Error: oeStateEphem.clockCorrInMsg wasn't connected.");
+        throw std::invalid_argument("OEStateEphem.clockCorrInMsg wasn't connected.");
     }
+    this->algorithm.reset(callTime, this->clockCorrInMsg());
 }
 
 /*! This method takes the current time and computes the state of the object
@@ -41,85 +36,102 @@ void OEStateEphem::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OEStateEphem::updateState(uint64_t callTime)
-{
-    double currentScaledValue;              /* [s] scaled time value to within [-1,1] */
-    double currentEphTime;                  /* [s] current ephemeris time */
-    double smallestTimeDifference;          /* [s] smallest difference to the time interval mid-point */
-    double timeDifference;                  /* [s] time difference with respect to an interval mid-point */
-    double anomalyAngle;                    /* [r] general anomaly angle variable */
-    ChebyOERecord *currRec;                 /* []  pointer to the current Chebyshev record being used */
-    int i;
-    TDBVehicleClockCorrelationMsgPayload localCorr;
-    EphemerisMsgPayload tmpOutputState = EphemerisMsgPayload();
-    ClassicElements orbEl;
-
-    /*! - read in the input message */
-    localCorr = this->clockCorrInMsg();
-
-    /*! - compute time for fitting interval */
-    currentEphTime = callTime*NANO2SEC;
-    currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
-
-    /*! - select the fitting coefficients for the nearest fit interval */
-    this->coeffSelector = 0;
-    smallestTimeDifference = fabs(currentEphTime - this->ephArray[0].ephemTimeMid);
-    for(i=1; i<MAX_OE_RECORDS; i++)
-    {
-        timeDifference = fabs(currentEphTime - this->ephArray[i].ephemTimeMid);
-        if(timeDifference < smallestTimeDifference)
-        {
-            this->coeffSelector = (uint32_t) i;
-            smallestTimeDifference = timeDifference;
-        }
-    }
-
-    /*! - determine the scaled fitting time */
-    currRec = &(this->ephArray[this->coeffSelector]);
-    currentScaledValue = (currentEphTime - currRec->ephemTimeMid)/currRec->ephemTimeRad;
-    if(fabs(currentScaledValue) > 1.0)
-    {
-        currentScaledValue = currentScaledValue/fabs(currentScaledValue);
-    }
-
-    /* - determine orbit elements from chebychev polynominals */
-    tmpOutputState.timeTag = callTime*NANO2SEC;
-    orbEl.rPeriap = calculateChebyValue(currRec->rPeriapCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    orbEl.i = calculateChebyValue(currRec->incCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    orbEl.e = calculateChebyValue(currRec->eccCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    orbEl.omega = calculateChebyValue(currRec->argPerCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    orbEl.Omega = calculateChebyValue(currRec->RAANCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    anomalyAngle = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff,
-                                   currentScaledValue);
-
-    /*! - determine the true anomaly angle */
-    if (currRec->anomalyFlag == 0) {
-        orbEl.f = anomalyAngle;
-    } else if (orbEl.e < 1.0) {
-        /* input is mean elliptic anomaly angle */
-        orbEl.f = E2f(M2E(anomalyAngle, orbEl.e), orbEl.e);
-    } else {
-        /* input is mean hyperbolic anomaly angle */
-        orbEl.f = H2f(N2H(anomalyAngle, orbEl.e), orbEl.e);
-    }
-
-    /*! - determine semi-major axis */
-    if (fabs(orbEl.e - 1.0) > 1e-12) {
-        /* elliptic or hyperbolic case */
-        orbEl.a = orbEl.rPeriap/(1.0-orbEl.e);
-    } else {
-        /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
-        orbEl.a = 0.0;
-    }
-
-    /*! - Determine position and velocity vectors */
-    elem2rv(this->muCentral, &orbEl, tmpOutputState.r_BdyZero_N, tmpOutputState.v_BdyZero_N);
-
-    /*! - Write the output message */
+void OEStateEphem::updateState(const uint64_t callTime) {
+    auto tmpOutputState = this->algorithm.updateState(callTime);
     this->stateFitOutMsg.write(&tmpOutputState, moduleID, callTime);
 }
+
+void OEStateEphem::setCentralBodyGravitationalParameter(const double mu) {
+    this->algorithm.setCentralBodyGravitationalParameter(mu);
+};
+
+double OEStateEphem::getCentralBodyGravitationalParameter() const {
+    return this->algorithm.getCentralBodyGravitationalParameter();
+};
+
+void OEStateEphem::setArcNumberOfCoefficients(const unsigned int arcNumber, const unsigned int numberOfCoefficients) {
+    this->algorithm.setArcNumberOfCoefficients(arcNumber, numberOfCoefficients);
+};
+
+unsigned int OEStateEphem::getArcNumberOfCoefficients(const unsigned int arcNumber) const {
+    return this->algorithm.getArcNumberOfCoefficients(arcNumber);
+};
+
+void OEStateEphem::setArcMiddleTime(const unsigned int arcNumber, const double timeMiddle) {
+    this->algorithm.setArcMiddleTime(arcNumber, timeMiddle);
+};
+
+double OEStateEphem::getArcMiddleTime(const unsigned int arcNumber) const {
+    return this->algorithm.getArcMiddleTime(arcNumber);
+};
+
+void OEStateEphem::setArcRadiusTime(const unsigned int arcNumber, const double timeRadius) {
+    this->algorithm.setArcRadiusTime(arcNumber, timeRadius);
+};
+
+double OEStateEphem::getArcRadiusTime(const unsigned int arcNumber) const {
+    return this->algorithm.getArcRadiusTime(arcNumber);
+};
+
+void OEStateEphem::setArcAnomalyFlag(const unsigned int arcNumber, const unsigned int anomalyFlag) {
+    this->algorithm.setArcAnomalyFlag(arcNumber, anomalyFlag);
+};
+
+unsigned int OEStateEphem::getArcAnomalyFlag(unsigned int arcNumber) const {
+    return this->algorithm.getArcAnomalyFlag(arcNumber);
+};
+
+void OEStateEphem::setArcRadiusPeriapsisCoefficients(
+    const unsigned int arcNumber,
+    const std::array<double, MAX_OE_COEFF> &radiusPeriapsisCoefficients) {
+    this->algorithm.setArcRadiusPeriapsisCoefficients(arcNumber, radiusPeriapsisCoefficients);
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRadiusPeriapsisCoefficients(const unsigned int arcNumber) {
+    return this->algorithm.getArcRadiusPeriapsisCoefficients(arcNumber);
+};
+
+void OEStateEphem::setArcEccentricityCoefficients(const unsigned int arcNumber,
+                                                  const std::array<double, MAX_OE_COEFF> &eccentricityCoefficients) {
+    this->algorithm.setArcEccentricityCoefficients(arcNumber, eccentricityCoefficients);
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcEccentricityCoefficients(const unsigned int arcNumber) {
+    return this->algorithm.getArcEccentricityCoefficients(arcNumber);
+};
+
+void OEStateEphem::setArcInclinationCoefficients(const unsigned int arcNumber,
+                                                 const std::array<double, MAX_OE_COEFF> &inclinationCoefficients) {
+    this->algorithm.setArcInclinationCoefficients(arcNumber, inclinationCoefficients);
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcInclinationCoefficients(const unsigned int arcNumber) {
+    return this->algorithm.getArcInclinationCoefficients(arcNumber);
+};
+
+void OEStateEphem::setArcArgPeriapsisCoefficients(const unsigned int arcNumber,
+                                                  const std::array<double, MAX_OE_COEFF> &argPeriapsisCoefficients) {
+    this->algorithm.setArcArgPeriapsisCoefficients(arcNumber, argPeriapsisCoefficients);
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcArgPeriapsisCoefficients(const unsigned int arcNumber) {
+    return this->algorithm.getArcArgPeriapsisCoefficients(arcNumber);
+};
+
+void OEStateEphem::setArcRaanCoefficients(const unsigned int arcNumber,
+                                          const std::array<double, MAX_OE_COEFF> &raanCoefficients) {
+    this->algorithm.setArcRaanCoefficients(arcNumber, raanCoefficients);
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRaanCoefficients(const unsigned int arcNumber) {
+    return this->algorithm.getArcRaanCoefficients(arcNumber);
+};
+
+void OEStateEphem::setArcTrueAnomalyCoefficients(const unsigned int arcNumber,
+                                                 const std::array<double, MAX_OE_COEFF> &trueAnomalyCoefficients) {
+    this->algorithm.setArcTrueAnomalyCoefficients(arcNumber, trueAnomalyCoefficients);
+};
+
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcTrueAnomalyCoefficients(const unsigned int arcNumber) {
+    return this->algorithm.getArcTrueAnomalyCoefficients(arcNumber);
+};
