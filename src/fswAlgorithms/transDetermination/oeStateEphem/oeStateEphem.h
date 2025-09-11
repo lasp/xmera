@@ -24,26 +24,10 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
+#include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphemAlgorithm.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20
-
-/*! @brief Structure that defines the layout of an Ephemeris "record."  This is
-           basically the set of coefficients for the ephemeris elements and
-           the time factors associated with those coefficients
-*/
-typedef struct {
-    uint32_t nChebCoeff;                //!< [-] Number chebyshev coefficients loaded into record
-    double ephemTimeMid;                //!< [s] Ephemeris time (TDB) associated with the mid-point of the curve
-    double ephemTimeRad;                //!< [s] "Radius" of time that curve is valid for (half of total range
-    double rPeriapCoeff[MAX_OE_COEFF];  //!< [-] Set of chebyshev coefficients for radius at periapses
-    double eccCoeff[MAX_OE_COEFF];      //!< [-] Set of chebyshev coefficients for eccentrity
-    double incCoeff[MAX_OE_COEFF];      //!< [-] Set of chebyshev coefficients for inclination
-    double argPerCoeff[MAX_OE_COEFF];   //!< [-] Set of chebyshev coefficients for argument of periapses
-    double RAANCoeff[MAX_OE_COEFF];     //!< [-] Set of chebyshev coefficients for right ascention of the ascending node
-    double anomCoeff[MAX_OE_COEFF];     //!< [-] Set of chebyshev coefficients for true anomaly angle
-    uint32_t anomalyFlag;               //!< [-] Flag indicating if the anomaly angle is true (0), mean (1)
-} ChebyOERecord;
 
 /*! @brief Top level structure for the Chebyshev position ephemeris
            fit system.  Allows the user to specify a set of chebyshev
@@ -52,16 +36,50 @@ typedef struct {
 */
 class OEStateEphem : public SysModel {
    public:
+    OEStateEphem() = default;
+    ~OEStateEphem() final = default;
+
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 
     Message<EphemerisMsgPayload> stateFitOutMsg;                       //!< [-] output navigation message for pos/vel
     ReadFunctor<TDBVehicleClockCorrelationMsgPayload> clockCorrInMsg;  //!< clock correlation input message
 
-    double muCentral;                        //!< [m3/s^2] Gravitational parameter for center of orbital elements
-    ChebyOERecord ephArray[MAX_OE_RECORDS];  //!< [-] Array of Chebyshev records for ephemeris
-    uint32_t coeffSelector;                  //!< [-] Index in the ephArray that we are currently using
-    BSKLogger *bskLogger;                    //!< BSK Logging
+    void setCentralBodyGravitationalParameter(double gravitationalParameter);
+    double getCentralBodyGravitationalParameter() const;
+
+    void setArcNumberOfCoefficients(unsigned int arcNumber, unsigned int numberOfCoefficients);
+    unsigned int getArcNumberOfCoefficients(unsigned int arcNumber) const;
+
+    void setArcMiddleTime(unsigned int arcNumber, double timeMiddle);
+    double getArcMiddleTime(unsigned int arcNumber) const;
+
+    void setArcRadiusTime(unsigned int arcNumber, double timeRadius);
+    double getArcRadiusTime(unsigned int arcNumber) const;
+
+    void setArcAnomalyFlag(unsigned int arcNumber, unsigned int anomalyFlag);
+    unsigned int getArcAnomalyFlag(unsigned int arcNumber) const;
+
+    void setArcRadiusPeriapsisCoefficients(unsigned int arcNumber,
+                                           const std::array<double, MAX_OE_COEFF> &radiusPeriapsisCoefficients);
+    std::array<double, MAX_OE_COEFF> getArcRadiusPeriapsisCoefficients(unsigned int arcNumber);
+    void setArcEccentricityCoefficients(unsigned int arcNumber,
+                                        const std::array<double, MAX_OE_COEFF> &eccentricityCoefficients);
+    std::array<double, MAX_OE_COEFF> getArcEccentricityCoefficients(unsigned int arcNumber);
+    void setArcInclinationCoefficients(unsigned int arcNumber,
+                                       const std::array<double, MAX_OE_COEFF> &inclinationCoefficients);
+    std::array<double, MAX_OE_COEFF> getArcInclinationCoefficients(unsigned int arcNumber);
+    void setArcArgPeriapsisCoefficients(unsigned int arcNumber,
+                                        const std::array<double, MAX_OE_COEFF> &argPeriapsisCoefficients);
+    std::array<double, MAX_OE_COEFF> getArcArgPeriapsisCoefficients(unsigned int arcNumber);
+    void setArcRaanCoefficients(unsigned int arcNumber, const std::array<double, MAX_OE_COEFF> &raanCoefficients);
+    std::array<double, MAX_OE_COEFF> getArcRaanCoefficients(unsigned int arcNumber);
+    void setArcTrueAnomalyCoefficients(unsigned int arcNumber,
+                                       const std::array<double, MAX_OE_COEFF> &trueAnomalyCoefficients);
+    std::array<double, MAX_OE_COEFF> getArcTrueAnomalyCoefficients(unsigned int arcNumber);
+
+   private:
+    OEStateEphemAlgorithm algorithm{};
 };
 
 #endif
