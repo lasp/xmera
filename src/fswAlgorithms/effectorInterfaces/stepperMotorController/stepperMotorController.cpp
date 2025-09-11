@@ -125,31 +125,6 @@ void StepperMotorController::updateState(uint64_t callTime) {
     }
 }
 
-/*! Getter method for the initial motor angle.
- @return double
-*/
-double StepperMotorController::getThetaInit() const { return this->thetaInit; }
-
-/*! Getter method for the motor upper actuation limit.
- @return double
-*/
-double StepperMotorController::getThetaMax() const { return this->thetaMax; }
-
-/*! Getter method for the motor lower actuation limit.
- @return double
-*/
-double StepperMotorController::getThetaMin() const { return this->thetaMin; }
-
-/*! Getter method for the motor step angle.
- @return double
-*/
-double StepperMotorController::getStepAngle() const { return this->stepAngle; }
-
-/*! Getter method for the motor step time.
- @return double
-*/
-double StepperMotorController::getStepTime() const { return this->stepTime; }
-
 /*! Setter method for the initial motor angle.
  @return void
  @param thetaInit [rad] Initial motor angle
@@ -159,17 +134,32 @@ void StepperMotorController::setThetaInit(const double thetaInit) {
     this->theta = thetaInit;
 }
 
+/*! Getter method for the initial motor angle.
+ @return double
+*/
+double StepperMotorController::getThetaInit() const { return this->thetaInit; }
+
 /*! Setter method for the motor upper actuation limit.
  @return void
  @param thetaMax [rad] Motor upper actuation limit
 */
 void StepperMotorController::setThetaMax(const double thetaMax) { this->thetaMax = thetaMax; }
 
+/*! Getter method for the motor upper actuation limit.
+ @return double
+*/
+double StepperMotorController::getThetaMax() const { return this->thetaMax; }
+
 /*! Setter method for the motor lower actuation limit.
  @return void
  @param thetaMin [rad] Motor lower actuation limit
 */
 void StepperMotorController::setThetaMin(const double thetaMin) { this->thetaMin = thetaMin; }
+
+/*! Getter method for the motor lower actuation limit.
+ @return double
+*/
+double StepperMotorController::getThetaMin() const { return this->thetaMin; }
 
 /*! Setter method for the motor step angle.
  @return void
@@ -182,6 +172,11 @@ void StepperMotorController::setStepAngle(const double stepAngle) {
     this->stepAngle = stepAngle;
 }
 
+/*! Getter method for the motor step angle.
+ @return double
+*/
+double StepperMotorController::getStepAngle() const { return this->stepAngle; }
+
 /*! Setter method for the motor step time.
  @return void
  @param stepTime [s] Motor step time
@@ -192,3 +187,8 @@ void StepperMotorController::setStepTime(const double stepTime) {
     }
     this->stepTime = stepTime;
 }
+
+/*! Getter method for the motor step time.
+ @return double
+*/
+double StepperMotorController::getStepTime() const { return this->stepTime; }

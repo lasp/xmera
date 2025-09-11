@@ -31,16 +31,16 @@ class StepperMotorController : public SysModel {
    public:
     void reset(uint64_t currentSimNanos) override;        //!< Reset member function
     void updateState(uint64_t currentSimNanos) override;  //!< Update member function
-    double getThetaInit() const;                          //!< Getter method for the initial motor angle
-    double getThetaMax() const;                           //!< Getter method for the motor upper actuation limit
-    double getThetaMin() const;                           //!< Getter method for the motor lower actuation limit
-    double getStepAngle() const;                          //!< Getter method for the motor step angle
-    double getStepTime() const;                           //!< Getter method for the motor step time
     void setThetaInit(const double thetaInit);            //!< Setter method for the initial motor angle
+    double getThetaInit() const;                          //!< Getter method for the initial motor angle
     void setThetaMax(const double thetaMax);              //!< Setter method for the motor upper actuation limit
+    double getThetaMax() const;                           //!< Getter method for the motor upper actuation limit
     void setThetaMin(const double thetaMin);              //!< Setter method for the motor lower actuation limit
+    double getThetaMin() const;                           //!< Getter method for the motor lower actuation limit
     void setStepAngle(const double stepAngle);            //!< Setter method for the motor step angle
+    double getStepAngle() const;                          //!< Getter method for the motor step angle
     void setStepTime(const double stepTime);              //!< Setter method for the motor step time
+    double getStepTime() const;                           //!< Getter method for the motor step time
 
     ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;   //!< Intput msg for the motor reference angle message
     Message<MotorStepCommandMsgPayload> motorStepCommandOutMsg;  //!< Output msg for the number of commanded motor steps
