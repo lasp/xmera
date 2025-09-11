@@ -16,25 +16,23 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module inertial3D
-%{
-   #include "inertial3D.h"
-%}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
+#ifndef INERTIAL3DALGORITHM_H
+#define INERTIAL3DALGORITHM_H
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
+#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include <Eigen/Core>
 
-%include "inertial3D.h"
-%include "inertial3DAlgorithm.h"
+/*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.
+ */
+class Inertial3DAlgorithm {
+   public:
+    AttRefMsgPayload update();
+    void setSigmaR0N(const Eigen::Vector3d& sigma_RN);
+    const Eigen::Vector3d& getSigmaR0N() const;
 
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+   private:
+    Eigen::Vector3d sigma_R0N{Eigen::Vector3d::Zero()}; //!<  MRP from inertial frame N to corrected reference frame R
+};
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif
