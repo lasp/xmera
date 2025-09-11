@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -32,11 +32,12 @@
 class Inertial3D : public SysModel {
    public:
     Inertial3D() = default;
-    ~Inertial3D() = default;
+    ~Inertial3D() final = default;
 
     void updateState(uint64_t callTime) override;
     void setSigmaR0N(const Eigen::Vector3d& sigma_RN);
     const Eigen::Vector3d& getSigmaR0N() const;
+
     Message<AttRefMsgPayload> attRefOutMsg;  //!< reference attitude output message
 
    private:
