@@ -32,7 +32,7 @@ class Inertial3DAlgorithm {
     const Eigen::Vector3d& getSigmaR0N() const;
 
    private:
-    Eigen::Vector3d sigma_R0N{Eigen::Vector3d::Zero()}; //!<  MRP from inertial frame N to corrected reference frame R
+    Eigen::Vector3d sigma_R0N{Eigen::Vector3d::Zero()};  //!<  MRP from inertial frame N to corrected reference frame R
 };
 
 #endif

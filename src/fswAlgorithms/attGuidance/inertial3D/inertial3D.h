@@ -24,8 +24,8 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "fswAlgorithms/attGuidance/inertial3D/inertial3DAlgorithm.h"
-#include <Eigen/Core>
 #include <stdint.h>
+#include <Eigen/Core>
 
 /*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.
  */

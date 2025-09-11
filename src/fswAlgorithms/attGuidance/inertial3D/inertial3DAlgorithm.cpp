@@ -17,15 +17,14 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
 
 /*! This method creates a fixed attitude reference message.  The desired orientation is
     defined within the module.
  @return AttRefMsgPayload
  */
-AttRefMsgPayload Inertial3DAlgorithm::update()
-{
+AttRefMsgPayload Inertial3DAlgorithm::update() {
     AttRefMsgPayload attRefOut{};
     eigenVector3d2CArray(this->sigma_R0N, attRefOut.sigma_RN);
 
