@@ -96,7 +96,7 @@ def test_momentumBiasIntegrated(show_plots):
     inertial3DObj = inertial3D.Inertial3D()
     inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(fswTask, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]
+    inertial3DObj.setSigmaR0N([0., 0., 0.])
 
     # Set up the attitude tracking error module
     attError = attTrackingError.AttTrackingError()
