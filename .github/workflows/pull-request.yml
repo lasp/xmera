@@ -61,8 +61,9 @@ jobs:
         os: [ubuntu-24.04, macos-14]
         python-version: ["3.9", "3.10", "3.11"]
     permissions:
-      actions: read
       contents: read
+      packages: write
+      actions: read
       security-events: write
     steps:
       - name: Checkout code
