@@ -16,6 +16,9 @@ env:
   FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
   VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite"
   VCPKG_FEATURE_FLAGS: "manifests,registries,binarycaching"
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
+  CTEST_PARALLEL_LEVEL: 4
+  CTEST_OUTPUT_ON_FAILURE: 1
 
 jobs:
   pre-commit:
@@ -108,6 +111,12 @@ jobs:
           mono --version || true
           ccache --version || true
 
+      - name: Enable ccache for CMake
+        run: |
+          echo "CMAKE_C_COMPILER_LAUNCHER=ccache"   >> $GITHUB_ENV
+          echo "CMAKE_CXX_COMPILER_LAUNCHER=ccache" >> $GITHUB_ENV
+
+      - name: Setup CMake 3.28.3
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: '3.28.3'
