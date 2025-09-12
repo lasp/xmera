@@ -8,9 +8,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  USERNAME: ${{github.repository_owner}}
-  FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
-  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{github.repository_owner}}/index.json,readwrite"
+  USERNAME: ${{ github.repository_owner }}
+  FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite"
+  VCPKG_FEATURE_FLAGS: "manifests,registries,binarycaching"
 
 jobs:
   pre-commit:
@@ -46,12 +47,14 @@ jobs:
         with:
           extra_args: --color always --files ${{ steps.file_changes.outputs.all_changed_files }}
 
-  build-linux:
-    name: Build Linux
-    runs-on: ubuntu-24.04
+  build-test:
+    name: Build & Test (${{ matrix.os }} / py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    if: ${{ github.event.pull_request.draft == false }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-24.04, macos-14]
         python-version: ["3.9", "3.10", "3.11"]
     permissions:
       actions: read
@@ -61,7 +64,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -70,9 +73,10 @@ jobs:
             **/pyproject.toml
             **/requirements*.txt
 
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get purge cmake
           sudo apt-get install -y \
             ninja-build build-essential \
             pkg-config autoconf automake libtool \
@@ -82,64 +86,120 @@ jobs:
             libx11-dev libxkbcommon-x11-dev libx11-xcb-dev \
             libxft-dev libxext-dev libgles2-mesa-dev \
             libxi-dev libxtst-dev libxrandr-dev libltdl-dev \
-            gtk2.0 libgtk2.0-dev \
+            libgtk2.0-dev \
             python3-setuptools python3-jinja2 python3-tk \
             mono-complete
-      - name: Setup cmake
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+          HOMEBREW_NO_ANALYTICS: 1
+        run: |
+          brew install ninja swig pkg-config mono || true
+          swig -version
+          mono --version || true
+
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: '3.28.3'
-      - # https://github.com/lukka/CppBuildTasks-Validation/blob/v10/.github/workflows/hosted-ninja-vcpkg.yml
-        name: "Install vcpkg"
+
+      - name: Install vcpkg
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
           vcpkgJsonGlob: "src/vcpkg.json"
           vcpkgConfigurationJsonGlob: "src/vcpkg-configuration.json"
-      - name: Add NuGet sources
-        shell: bash
+
+      - name: Cache vcpkg build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.workspace }}/b/vcpkg/installed
+            ${{ runner.workspace }}/b/vcpkg/packages
+            ${{ runner.workspace }}/b/vcpkg/buildtrees
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('src/vcpkg.json', 'src/vcpkg-configuration.json') }}
+
+      - name: Add NuGet sources for vcpkg binary cache (portable)
         env:
           VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
         run: |
-          mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
-            sources add \
-            -Source "${{ env.FEED_URL }}" \
+          set -euo pipefail
+          NUGET="$(${VCPKG_EXE} fetch nuget | tail -n 1)"
+
+          # Build the command invocation safely (handles paths with spaces)
+          if [[ "$NUGET" == *.exe ]]; then
+            NUGET_CMD=(mono "$NUGET")
+          else
+            # e.g., "nuget" shim from Mono on macOS, or a native path
+            NUGET_CMD=("$NUGET")
+          fi
+
+          echo "Using NuGet CLI: ${NUGET_CMD[*]}"
+
+          "${NUGET_CMD[@]}" sources add \
+            -Source "${FEED_URL}" \
             -StorePasswordInClearText \
             -Name GitHubPackages \
-            -UserName "${{ env.USERNAME }}" \
+            -UserName "${USERNAME}" \
             -Password "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}"
-          mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
-            setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
-            -Source "${{ env.FEED_URL }}"
-      - name: "Create virtual Environment"
+
+          "${NUGET_CMD[@]}" setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
+            -Source "${FEED_URL}"
+
+      - name: Create virtual environment
         run: |
-          python${{ matrix.python-version }} -m venv .venv
+          python -m venv .venv
           source .venv/bin/activate
-          echo "VIRTUAL ENV:" $VIRTUAL_ENV
-      - name: "Install required Python dependencies"
-        run: source .venv/bin/activate && pip3 install -r requirements.txt
-      - name: "Generate build recipes"
+          python -V
+          pip -V
+
+      - name: Install required Python dependencies
+        run: |
+          source .venv/bin/activate
+          python -m pip install -r requirements.txt
+
+      - name: Configure (CMake preset)
+        working-directory: src
         env:
-          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
-        run: source .venv/bin/activate && cd src/ && cmake --preset ci-test
-      - name: "Build basilisk"
-        run: source .venv/bin/activate && cd src/ && cmake --build ../dist3/
-      - name: "Install Basilisk"
-        run: source .venv/bin/activate && pip3 install -e .
-      - name: "Run Python Tests"
+          VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
+        run: cmake --preset ci-test
+
+      - name: Build
+        working-directory: src
+        run: cmake --build ../dist3/ --parallel
+
+      - name: Install Basilisk (editable)
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not scenarioTest" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
-      - name: "Upload pytest test results"
+          python -m pip install -e .
+
+      - name: Run Python tests
+        run: |
+          source .venv/bin/activate
+          cd src
+          pytest -n auto -m "not scenarioTest" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+
+      - name: Upload pytest test results
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-results-${{ matrix.python-version }}
+          name: pytest-${{ matrix.os }}-py${{ matrix.python-version }}
           path: junit/test-results-${{ matrix.python-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
-      - name: "Run C/C++ Tests"
-        working-directory: ./dist3
-        run: ctest
-        if: ${{ always() }}
+          retention-days: 7
 
+      - name: Run C/C++ tests
+        working-directory: ./dist3
+        run: ctest --output-on-failure
+
+      - name: Upload CMake & test logs on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
         with:
+          name: cmake-logs-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: |
+            dist3/CMakeCache.txt
+            dist3/CMakeFiles/CMakeOutput.log
+            dist3/CMakeFiles/CMakeError.log
+            **/Testing/Temporary/LastTest.log
+          retention-days: 7
