@@ -17,39 +17,28 @@
 
  */
 
-#ifndef CELESTIAL_BODY_POINT_H
-#define CELESTIAL_BODY_POINT_H
+#ifndef CELESTIAL_BODY_POINT_ALGORITHM_H
+#define CELESTIAL_BODY_POINT_ALGORITHM_H
 
-#include <stdint.h>
-#include <stdexcept>
-
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "fswAlgorithms/attGuidance/celestialTwoBodyPoint/celestialTwoBodyPointAlgorithm.h"
+#include <Eigen/Core>
 
 /*!@brief Data structure for module to compute the two-body celestial pointing navigation solution.
  */
-class CelestialTwoBodyPoint : public SysModel {
+class CelestialTwoBodyPointAlgorithm {
    public:
-    CelestialTwoBodyPoint() = default;
-    ~CelestialTwoBodyPoint() = default;
-
-    void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override;
+    void reset(bool secCelBodyIsLinked);
+    AttRefMsgPayload update(EphemerisMsgPayload& celBodyIn,
+                            EphemerisMsgPayload& secCelBodyIn,
+                            NavTransMsgPayload& transNavIn);
     void setSingularityThresh(double thresh);
     double getSingularityThresh() const;
 
-    Message<AttRefMsgPayload> attRefOutMsg;            //!< The name of the output message*/
-    ReadFunctor<EphemerisMsgPayload> celBodyInMsg;     //!< The name of the celestial body message*/
-    ReadFunctor<EphemerisMsgPayload> secCelBodyInMsg;  //!< The name of the secondary body to constrain point*/
-    ReadFunctor<NavTransMsgPayload> transNavInMsg;     //!< The name of the incoming attitude command*/
-
    private:
-    bool secCelBodyIsLinked{};
-    CelestialTwoBodyPointAlgorithm algorithm{};
+    double singularityThresh;  //!< [rad] Threshold for when to fix constraint axis*/
+    bool secCelBodyIsLinked;   //!< flag to indicate if the optional 2nd celestial body message is linked
 };
 
 #endif

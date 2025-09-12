@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module celestialTwoBodyPoint
+%module celestialTwoBodyPoint_C
 %{
-   #include "celestialTwoBodyPoint.h"
+   #include "celestialTwoBodyPoint_C.h"
 %}
 
 %pythoncode %{
@@ -27,10 +27,8 @@
 
 %include "sys_model.i"
 %include "swig_conly_data.i"
-%include "swig_eigen.i"
 
-%include "celestialTwoBodyPointAlgorithm.h"
-%include "celestialTwoBodyPoint.h"
+%include "celestialTwoBodyPoint_C.h"
 
 %include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 %include "architecture/msgPayloadDef/NavTransMsgPayload.h"

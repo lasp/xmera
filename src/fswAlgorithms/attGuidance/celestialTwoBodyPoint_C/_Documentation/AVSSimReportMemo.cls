@@ -31,7 +31,6 @@
 \RequirePackage[absolute]{textpos}
 
 \renewcommand*{\familydefault}{\sfdefault}
-\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
 
 
 %
@@ -40,13 +39,11 @@
 \RequirePackage{fancyhdr}
 \fancyhead{}
 \fancyfoot{}
-\fancyhead[L]{\footnotesize Doc. ID: Basilisk-\ModuleName}
+\fancyhead[L]{\footnotesize Doc. ID: AVS-Sim-\ModuleName}
 \fancyhead[R]{\footnotesize Page \thepage \ of \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
-\setcounter{secnumdepth}{5}
-\setcounter{tocdepth}{5}
 
 
 %
@@ -55,17 +52,17 @@
 \newcommand{\makeCover}{
 
 \begin{textblock*}{6.625in}(2.25in,0.975in)
-	\includegraphics[width=3.5in]{Figures/Basilisk-Logo.pdf}
+	\includegraphics[width=3.5in]{Figures/AVSlogo.pdf}
 \end{textblock*}
 
 
 
 \begin{textblock*}{6.5in}(1in,3.5in)
 \centering
-\LARGE\bfseries \noindent \submiterInstitute\\
+\LARGE\bfseries \noindent Autonomous Vehicle Simulation (AVS) Laboratory\\
 \vskip 0.1in
-\noindent Basilisk Technical Memorandum\\
-\large\noindent Document ID: Basilisk-\ModuleName\\
+\noindent AVS-Sim Technical Memorandum\\
+\large\noindent Document ID: AVS-SIM-\ModuleName\\
 \vskip 0.1in
 \noindent \MakeUppercase{\subject}
 \end{textblock*}
@@ -118,4 +115,3 @@
 %
 %	Miscellaneous definitions
 %
-
