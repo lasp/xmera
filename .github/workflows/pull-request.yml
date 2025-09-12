@@ -20,7 +20,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install clang-format
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            **/pyproject.toml
+            **/requirements*.txt
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Install clang-format (Linux static binary)
         run: |
           sudo wget -qO /usr/local/bin/clang-format https://github.com/cpp-linter/clang-tools-static-binaries/releases/latest/download/clang-format-20_linux-amd64
           sudo chmod a+x /usr/local/bin/clang-format
