@@ -7,6 +7,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
 env:
   USERNAME: ${{ github.repository_owner }}
   FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
