@@ -40,9 +40,11 @@ jobs:
           clang-format --version
       - id: file_changes
         uses: tj-actions/changed-files@v46
-      - uses: pre-commit/action@v3.0.1
+
+      - name: Run pre-commit (changed files)
+        uses: pre-commit/action@v3.0.1
         with:
-          extra_args: --files ${{ steps.file_changes.outputs.all_changed_files}}
+          extra_args: --color always --files ${{ steps.file_changes.outputs.all_changed_files }}
 
   build-linux:
     name: Build Linux
