@@ -64,16 +64,12 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: ${{ runner.os }}-pip-${{ matrix.python-version }}-
-      - name: "Install system dependencies"
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            **/pyproject.toml
+            **/requirements*.txt
+
         run: |
           sudo apt-get update
           sudo apt-get purge cmake
