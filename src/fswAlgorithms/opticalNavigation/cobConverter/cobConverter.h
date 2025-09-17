@@ -84,6 +84,7 @@ class CobConverter : public SysModel {
     ReadFunctor<CameraModelMsgPayload> cameraConfigInMsg;
     ReadFunctor<NavAttMsgPayload> navAttInMsg;
     ReadFunctor<EphemerisMsgPayload> ephemInMsg;
+    ReadFunctor<NavAttMsgPayload> sunInMsg;
 
     uint64_t sensorTimeTag;
     BSKLogger bskLogger;

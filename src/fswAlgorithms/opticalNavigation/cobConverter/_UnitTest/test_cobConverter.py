@@ -197,6 +197,7 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     inputFilter = messaging.FilterMsgPayload()
     inputAtt = messaging.NavAttMsgPayload()
     inputEphem = messaging.EphemerisMsgPayload()
+    inputSun = messaging.NavAttMsgPayload()
 
     # Set camera parameters
     inputCamera.fieldOfView = [np.deg2rad(20.0), np.deg2rad(20.0)]
@@ -226,9 +227,12 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
 
     # Set body attitude relative to inertial
     inputAtt.sigma_BN = sigma_BN
-    inputAtt.vehSunPntBdy = dcm_BN @ vehSunPntN
     attInMsg = messaging.NavAttMsg().write(inputAtt)
     module.navAttInMsg.subscribeTo(attInMsg)
+
+    inputSun.vehSunPntBdy = dcm_BN @ vehSunPntN
+    sunInMsg = messaging.NavAttMsg().write(inputSun)
+    module.sunInMsg.subscribeTo(sunInMsg)
 
     # Set ephemeris message of spacecraft relative to object
     inputEphem.r_BdyZero_N = r_BdyZero_N
