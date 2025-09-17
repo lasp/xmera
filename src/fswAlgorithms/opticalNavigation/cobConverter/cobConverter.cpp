@@ -56,6 +56,9 @@ void CobConverter::reset(uint64_t currentSimNanos) {
     if (!this->ephemInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "CobConverter.ephemInMsg wasn't connected.");
     }
+    if (!this->sunInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "CobConverter.sunInMsg wasn't connected.");
+    }
 }
 
 /*! During an update, this module transforms pixel values for the center of brightness into a unit vector
@@ -68,6 +71,7 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
     OpNavCOBMsgPayload cobMsgBuffer = this->opnavCOBInMsg();
     NavAttMsgPayload navAttBuffer = this->navAttInMsg();
     EphemerisMsgPayload ephemBuffer = this->ephemInMsg();
+    NavAttMsgPayload sunBuffer = this->sunInMsg();
 
     OpNavUnitVecMsgPayload uVecCOBMsgBuffer{};
     OpNavUnitVecMsgPayload uVecCOMMsgBuffer{};
@@ -111,7 +115,7 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
         /*! - phase angle correction */
         Eigen::Vector3d rhat_N = cArray2EigenVector3d(ephemBuffer.r_BdyZero_N).normalized();
         double rho = cArray2EigenVector3d(ephemBuffer.r_BdyZero_N).norm();
-        Eigen::Vector3d shat_B = cArray2EigenVector3d(navAttBuffer.vehSunPntBdy).normalized();
+        Eigen::Vector3d shat_B = cArray2EigenVector3d(sunBuffer.vehSunPntBdy).normalized();
         Eigen::Vector3d shat_N = dcm_BN.transpose() * shat_B;
         double alphaPA = acos(rhat_N.transpose() * shat_N);  // phase angle
 
@@ -180,7 +184,7 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
          * states */
         FilterMsgPayload filterMsgBuffer = this->opnavFilterInMsg();
         Eigen::Matrix3d covar_B;
-        if (phaseAngleCorrectionMethod == PhaseAngleCorrectionMethod::Binary) {
+        if (phaseAngleCorrectionMethod == PhaseAngleCorrectionMethod::Binary && this->objectRadiusUncertainty > 0) {
             Eigen::Vector3d position = cArray2EigenVector3d(filterMsgBuffer.state);
             double constants_deltaR =
                 (4 * this->objectRadius / (3 * M_PI * position.norm()) * (1 - cos(alphaPA)) /
