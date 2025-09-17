@@ -26,6 +26,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/AttStateMsgPayload.h"
+#include <Eigen/Core>
 
 /*! @brief Top level structure for the sub-module routines. */
 class MrpRotation : public SysModel {
@@ -34,13 +35,13 @@ class MrpRotation : public SysModel {
     void updateState(uint64_t callTime) override;
     void checkRasterCommands();
     void computeTimeStep(uint64_t callTime);
-    void computeMRPRotationReference(double sigma_R0N[3],
-                                     double omega_R0N_N[3],
-                                     double domega_R0N_N[3],
+    void computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
+                                     Eigen::Vector3d omega_R0N_N,
+                                     Eigen::Vector3d domega_R0N_N,
                                      AttRefMsgPayload *attRefOut);
 
-    double mrpSet[3];       //!< [-] current MRP attitude coordinate set with respect to the input reference
-    double omega_RR0_R[3];  //!< [rad/s] angular velocity vector relative to input reference
+    Eigen::Vector3d mrpSet{Eigen::Vector3d::Zero()};       //!< [-] current MRP attitude coordinate set with respect to the input reference
+    Eigen::Vector3d omega_RR0_R{Eigen::Vector3d::Zero()};  //!< [rad/s] angular velocity vector relative to input reference
 
     Message<AttRefMsgPayload> attRefOutMsg;     //!< The name of the output message containing the Reference
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< The name of the guidance reference input message
@@ -48,10 +49,10 @@ class MrpRotation : public SysModel {
         desiredAttInMsg;  //!< The name of the incoming message containing the desired EA set
 
    private:
-    double cmdSet[3];         //!< [] msg commanded initial MRP sigma_RR0 set with respect to input reference
-    double cmdRates[3];       //!< [rad/s] msg commanded constant angular velocity vector omega_RR0_R
-    double priorCmdSet[3];    //!< [] prior commanded MRP set
-    double priorCmdRates[3];  //!< [rad/s] prior commanded angular velocity vector
+    Eigen::Vector3d cmdSet{};         //!< [] msg commanded initial MRP sigma_RR0 set with respect to input reference
+    Eigen::Vector3d cmdRates{};       //!< [rad/s] msg commanded constant angular velocity vector omega_RR0_R
+    Eigen::Vector3d priorCmdSet{};    //!< [] prior commanded MRP set
+    Eigen::Vector3d priorCmdRates{};  //!< [rad/s] prior commanded angular velocity vector
     uint64_t priorTime;       //!< [ns] last time the guidance module is called
     double dt;                //!< [s] integration time-step
 };
