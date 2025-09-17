@@ -74,6 +74,7 @@ def read_write_test():
     rendering_payload.starField = True
     rendering_payload.rendering = "Lumen"
     rendering_payload.smear = True
+    rendering_payload.wavelengths = [450, 550, 650]
     rendering_message = messaging.CameraRenderingMsg().write(rendering_payload)
     module.cameraRenderingMessage.subscribeTo(rendering_message)
 
@@ -91,8 +92,6 @@ def read_write_test():
     asteroid_parameter_payload.meanRadius = 10000
     asteroid_parameter_payload.principalAxisDistortion = [1, 0.9, 1.1]
     asteroid_parameter_payload.sigma_BN = [0, 0, 0.5]
-    asteroid_parameter_message = messaging.CelestialBodyParametersMsg().write(asteroid_parameter_payload)
-    module.celestialParametersMessage.subscribeTo(asteroid_parameter_message)
 
     # Create camera message
     camera_payload = messaging.CameraModelMsgPayload()
@@ -106,9 +105,24 @@ def read_write_test():
     camera_payload.renderRate = 10000
     camera_payload.focalLength = 0.1
     camera_payload.readNoise = 10
+    camera_payload.shotNoise = True
+    camera_payload.darkCurrent = 0.11
     camera_payload.systemGain = 1
     camera_payload.gaussianPointSpreadFunction = 5
     camera_payload.exposureTime = 0.1
+    camera_payload.apertureRadius = 0.2
+    camera_payload.sensorWidth = 0.5
+    camera_payload.sensorHeight = 0.6
+    camera_payload.fullWellCapacity = 1000.5
+    camera_payload.integrationWeightFactor = 1.1
+    camera_payload.gammaCorrection = 1.1
+    camera_payload.redQuantumEfficiency = [0.8, 0.7, 0.6]
+    camera_payload.greenQuantumEfficiency = [0.5, 0.6, 0.7]
+    camera_payload.blueQuantumEfficiency = [0.6, 0.7, 0.6]
+    camera_payload.horizontalVignetting = [0.1, 0.2, 0.3, 0.4]
+    camera_payload.verticalVignetting = [0.5, 0.6, 0.7, 0.8]
+    camera_payload.distortion = [0.2, 0.4, 0.6, 0.8]
+    camera_payload.transmission = 0.9
     camera_message = messaging.CameraModelMsg().write(camera_payload)
     module.cameraModelMessage.subscribeTo(camera_message)
 
@@ -125,6 +139,7 @@ def read_write_test():
         planetName = ""
         isCentralBody = False
         planetBodyInMsg = messaging.SpicePlanetStateMsg()
+        celestialParametersInMsg = messaging.CelestialBodyParametersMsg()
 
     grav_bodies = []
     bodies_message_list = []
@@ -146,6 +161,7 @@ def read_write_test():
     asteroid_data.VelocityVector = [4, 5, 6]
     asteroid_data.J20002Pfix = -np.eye(3)
     asteroid_bennu.planetBodyInMsg = messaging.SpicePlanetStateMsg().write(asteroid_data)
+    asteroid_bennu.celestialParametersInMsg = messaging.CelestialBodyParametersMsg().write(asteroid_parameter_payload)
     grav_bodies.append(asteroid_bennu)
     bodies_message_list.append(asteroid_data)
 
@@ -154,6 +170,8 @@ def read_write_test():
         body.name = gravBody.planetName
         body.isCentralBody = gravBody.isCentralBody
         body.spiceStateMessage.subscribeTo(gravBody.planetBodyInMsg)
+        if (gravBody.planetName == asteroid_parameter_payload.bodyName):
+            body.celestialParametersMessage.subscribeTo(gravBody.celestialParametersInMsg)
         module.addCelestialBody(body)
 
     # Run block
@@ -183,22 +201,49 @@ def read_write_test():
 
     np.testing.assert_equal(cielim_message.camera.cameraId, camera_payload.cameraId)
     np.testing.assert_equal(cielim_message.camera.parentName, "cielim_sat")
-    np.testing.assert_equal(cielim_message.camera.fieldOfView,camera_payload.fieldOfView)
-    np.testing.assert_equal(cielim_message.camera.resolution, camera_payload.resolution)
     np.testing.assert_equal(cielim_message.camera.cameraPositionInBody, camera_payload.cameraBodyFramePosition)
     np.testing.assert_equal(cielim_message.camera.bodyFrameToCameraMrp, camera_payload.bodyToCameraMrp)
-    np.testing.assert_equal(cielim_message.camera.renderRate, camera_payload.renderRate)
-    np.testing.assert_equal(cielim_message.camera.focalLength, camera_payload.focalLength)
-    np.testing.assert_equal(cielim_message.camera.exposureTime, camera_payload.exposureTime)
-    np.testing.assert_equal(cielim_message.camera.pointSpreadFunction, camera_payload.gaussianPointSpreadFunction)
-    np.testing.assert_equal(cielim_message.camera.systemGain, camera_payload.systemGain)
-    np.testing.assert_equal(cielim_message.camera.readNoise, camera_payload.readNoise)
 
-    np.testing.assert_equal(cielim_message.camera.renderParameters.cosmicRayStdDeviation, rendering_payload.cosmicRayStdDeviation)
-    np.testing.assert_equal(cielim_message.camera.renderParameters.strayLight, rendering_payload.strayLight)
-    np.testing.assert_equal(cielim_message.camera.renderParameters.starField, rendering_payload.starField)
-    np.testing.assert_equal(cielim_message.camera.renderParameters.rendering, rendering_payload.rendering)
-    np.testing.assert_equal(cielim_message.camera.renderParameters.enableSmear, rendering_payload.smear)
+    np.testing.assert_equal(cielim_message.camera.lensModel.fieldOfView,camera_payload.fieldOfView)
+    np.testing.assert_equal(cielim_message.camera.lensModel.focalLength, camera_payload.focalLength)
+    np.testing.assert_equal(cielim_message.camera.lensModel.pointSpreadFunction, camera_payload.gaussianPointSpreadFunction)
+    np.testing.assert_equal(cielim_message.camera.lensModel.apertureRadius, camera_payload.apertureRadius)
+    np.testing.assert_equal(cielim_message.camera.lensModel.horizontalVignetting, camera_payload.horizontalVignetting)
+    np.testing.assert_equal(cielim_message.camera.lensModel.verticalVignetting, camera_payload.verticalVignetting)
+    np.testing.assert_equal(cielim_message.camera.lensModel.distortion, camera_payload.distortion)
+    np.testing.assert_equal(cielim_message.camera.lensModel.transmission, camera_payload.transmission)
+
+    np.testing.assert_equal(cielim_message.camera.sensorModel.resolution, camera_payload.resolution)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.renderRate, camera_payload.renderRate)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.exposureTime, camera_payload.exposureTime)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.readNoise, camera_payload.readNoise)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.shotNoise, camera_payload.shotNoise)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.darkCurrent, camera_payload.darkCurrent)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.systemGain, camera_payload.systemGain)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.sensorWidth, camera_payload.sensorWidth)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.sensorHeight, camera_payload.sensorHeight)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.fullWellCapacity, camera_payload.fullWellCapacity)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.gamma, camera_payload.gammaCorrection)
+
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.integrationWeightFactor, camera_payload.integrationWeightFactor)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue1, camera_payload.redQuantumEfficiency[0])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue2, camera_payload.redQuantumEfficiency[1])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue3, camera_payload.redQuantumEfficiency[2])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.greenValue1, camera_payload.greenQuantumEfficiency[0])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.greenValue2, camera_payload.greenQuantumEfficiency[1])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.greenValue3, camera_payload.greenQuantumEfficiency[2])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.blueValue1, camera_payload.blueQuantumEfficiency[0])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.blueValue2, camera_payload.blueQuantumEfficiency[1])
+    np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.blueValue3, camera_payload.blueQuantumEfficiency[2])
+
+    np.testing.assert_equal(cielim_message.renderParameters.wavelength1, rendering_payload.wavelengths[0])
+    np.testing.assert_equal(cielim_message.renderParameters.wavelength2, rendering_payload.wavelengths[1])
+    np.testing.assert_equal(cielim_message.renderParameters.wavelength3, rendering_payload.wavelengths[2])
+    np.testing.assert_equal(cielim_message.renderParameters.cosmicRayStdDeviation, rendering_payload.cosmicRayStdDeviation)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLight, rendering_payload.strayLight)
+    np.testing.assert_equal(cielim_message.renderParameters.starField, rendering_payload.starField)
+    np.testing.assert_equal(cielim_message.renderParameters.rendering, rendering_payload.rendering)
+    np.testing.assert_equal(cielim_message.renderParameters.enableSmear, rendering_payload.smear)
 
     i = 0
     for message, body in zip(bodies_message_list, grav_bodies):
@@ -210,15 +255,17 @@ def read_write_test():
         np.testing.assert_equal(cielim_message.celestialBodies[i].attitude, np.array(message.J20002Pfix).flatten())
         np.testing.assert_equal(cielim_message.celestialBodies[i].centralBody, central)
         if (name == asteroid_parameter_payload.bodyName):
+            np.testing.assert_equal(cielim_message.celestialBodies[i].geometricAlbedo, asteroid_parameter_payload.geometricAlbedo)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.meanRadius, asteroid_parameter_payload.meanRadius)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.shapeModel, asteroid_parameter_payload.shapeModel)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.octaveCount, asteroid_parameter_payload.perlinNoiseOctaveCount)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.baseFrequency, asteroid_parameter_payload.perlinNoiseBaseFrequency)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.baseAmplitude, asteroid_parameter_payload.perlinNoiseBaseAmplitude)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.persistence, asteroid_parameter_payload.perlinNoisePersistence)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.refModel.brdfModel, asteroid_parameter_payload.brdf)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.refModel.reflectanceParameters, asteroid_parameter_payload.reflectanceParameters)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.refModel.isotropicScattering, asteroid_parameter_payload.isotropicScattering)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.proceduralRocks, asteroid_parameter_payload.proceduralRocks)
-            np.testing.assert_equal(cielim_message.celestialBodies[i].model.brdfModel, asteroid_parameter_payload.brdf)
-            np.testing.assert_equal(cielim_message.celestialBodies[i].model.reflectanceParameters, asteroid_parameter_payload.reflectanceParameters)
-            np.testing.assert_equal(cielim_message.celestialBodies[i].model.meanRadius, asteroid_parameter_payload.meanRadius)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.principalAxisDistortion, asteroid_parameter_payload.principalAxisDistortion)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.inertialToBodyMrp, asteroid_parameter_payload.sigma_BN)
         i += 1

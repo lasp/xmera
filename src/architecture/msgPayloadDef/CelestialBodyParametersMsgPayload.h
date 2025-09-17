@@ -38,6 +38,8 @@ typedef struct {
     double reflectanceParameters[MAX_PARAMETER_LENGTH];
     double meanRadius;
     double principalAxisDistortion[3];
+    double isotropicScattering;
+    double geometricAlbedo;
 } CelestialBodyParametersMsgPayload;
 
 #endif  // CELESTIAL_BODY_PARAMETERS

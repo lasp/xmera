@@ -78,12 +78,40 @@ class Camera : public SysModel {
     int getGaussianPointSpreadFunction() const;
     void setReadNoise(double cameraReadNoise);
     double getReadNoise() const;
+    void setShotNoise(bool cameraShotNoise);
+    bool getShotNoise() const;
+    void setDarkCurrent(double cameraDarkCurrent);
+    double getDarkCurrent() const;
     void setSystemGain(double cameraGain);
     double getSystemGain() const;
     void setExposureTime(double exposureTime);
     double getExposureTime() const;
     void setGammaCorrection(double gammaCorrection);
     double getGammaCorrection() const;
+    void setApertureRadius(double apertureRadiusValue);
+    double getApertureRadius() const;
+    void setSensorWidth(double sensorWidthValue);
+    double getSensorWidth() const;
+    void setSensorHeight(double sensorHeightValue);
+    double getSensorHeight() const;
+    void setIntegrationWeightFactor(double integrationWeightFactorValue);
+    double getIntegrationWeightFactor() const;
+    void setFullWellCapacity(double fullWellCapacityValue);
+    double getFullWellCapacity() const;
+    void setRedQuantumEfficiency(const Eigen::Vector3d &redQE);
+    Eigen::Vector3d getRedQuantumEfficiency() const;
+    void setGreenQuantumEfficiency(const Eigen::Vector3d &greenQE);
+    Eigen::Vector3d getGreenQuantumEfficiency() const;
+    void setBlueQuantumEfficiency(const Eigen::Vector3d &blueQE);
+    Eigen::Vector3d getBlueQuantumEfficiency() const;
+    void setHorizontalVignetting(const Eigen::VectorXd &horizontalVignettingCoeffs);
+    Eigen::VectorXd getHorizontalVignetting() const;
+    void setVerticalVignetting(const Eigen::VectorXd &verticalVignettingCoeffs);
+    Eigen::VectorXd getVerticalVignetting() const;
+    void setDistortion(const Eigen::VectorXd &distortionCoeffs);
+    Eigen::VectorXd getDistortion() const;
+    void setTransmission(double transmissionValue);
+    double getTransmission() const;
 
    private:
     std::string parentSpacecraftName{};  //!< [-] Name of the parent body to which the camera should be attached
@@ -98,12 +126,32 @@ class Camera : public SysModel {
     Eigen::Vector3d cameraBodyFramePosition{};    //!< [m] Camera position in body frame
     Eigen::Vector3d
         bodyToCameraMrp{};  //!< [-] MRP defining the orientation of the camera frame relative to the body frame
-    double focalLength{};   //!< Camera focal length
+    double focalLength{};   //!< [m] Camera focal length
     int gaussianPointSpreadFunction{};  //!< Size of square Gaussian kernel to model point spread function, must be odd
-    double readNoise{};                 //!< Read noise standard deviation
+    double readNoise{};                 //!< [e-] Read noise standard deviation
+    bool shotNoise{};                   //!< [-] Model shot noise true or false
+    double darkCurrent{};               //!< [e-/s] Dark current variance value in electrons per second
     double systemGain{};                //!< Mapping from current to pixel intensity
-    double exposureTime{1};             //!< Mapping from current to pixel intensity
+    double exposureTime{1};             //!< [s] Time with open shutter
     double gammaCorrection{1};          //!< Gamma correction factor
+    double apertureRadius{};            //!< [m] Aperture radius of lens
+    double sensorWidth{};               //!< [m] Width of sensor
+    double sensorHeight{};              //!< [m] Height of sensor
+    double fullWellCapacity{};          //!< [e-] Amount of charge that can be stored within an individual pixel
+    double integrationWeightFactor{1};  //!< [-] Weight factor for integration over wavelength to obtain photo-electrons
+    Eigen::Vector3d redQuantumEfficiency{};    //!< [-] Values of QE curve at specified wavelengths (red channel)
+    Eigen::Vector3d greenQuantumEfficiency{};  //!< [-] Values of QE curve at specified wavelengths (green channel)
+    Eigen::Vector3d blueQuantumEfficiency{};   //!< [-] Values of QE curve at specified wavelengths (blue channel)
+    Eigen::VectorXd
+        horizontalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and
+                                 //!< 1) as a function of horizontal distance from camera center (degrees)
+    Eigen::VectorXd
+        verticalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1)
+                               //!< as a function of vertical distance from camera center (degrees)
+    Eigen::VectorXd distortion{};  //!< [-] Polynomial coefficients to form the curve of distortion (values between 0
+                                   //!< and 1) as a function of vertical distance from camera center (degrees)
+    double transmission{};  //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
+                            //!< wavelengths
 
    public:
     std::string filename{};                              //!< Filename for module to read an image directly
@@ -141,7 +189,7 @@ class Camera : public SysModel {
 
     /*! Noise paramters */
     double gaussian{};                             //!< Gaussian noise level
-    double darkCurrent{};                          //!< Dark current intensity
+    double darkCurrentIntensity{};                 //!< Dark current intensity
     double saltPepper{};                           //!< Stuck and Dark pixels probability
     double cosmicRays{};                           //!< Random cosmic rays (number)
     double blurParam{};                            //!< Blur over image in pixels

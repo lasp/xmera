@@ -168,13 +168,27 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     module.setFocalLength(2.1)
     module.setGaussianPointSpreadFunction(3)
     module.setReadNoise(2.3)
+    module.setShotNoise(True)
+    module.setDarkCurrent(darkCurrent)
     module.setSystemGain(3.3)
     module.setExposureTime(1.1)
     module.setGammaCorrection(1.1)
+    module.setApertureRadius(0.1)
+    module.setSensorWidth(0.5)
+    module.setSensorHeight(0.6)
+    module.setFullWellCapacity(1000.5)
+    module.setIntegrationWeightFactor(1.1)
+    module.setRedQuantumEfficiency([0.8, 0.7, 0.6])
+    module.setGreenQuantumEfficiency([0.5, 0.6, 0.7])
+    module.setBlueQuantumEfficiency([0.6, 0.7, 0.6])
+    module.setHorizontalVignetting([0.1, 0.2, 0.3, 0.4])
+    module.setVerticalVignetting([0.5, 0.6, 0.7, 0.8])
+    module.setDistortion([0.2, 0.4, 0.6, 0.8])
+    module.setTransmission(0.9)
 
     # Noise parameters
     module.gaussian = gauss
-    module.darkCurrent = darkCurrent
+    module.darkCurrentIntensity = darkCurrent
     module.saltPepper = saltPepper
     module.cosmicRays = cosmic
     module.blurParam = blurSize
@@ -230,12 +244,46 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
                             "Test failed size of square Gaussian kernel to model point spread function")
     np.testing.assert_equal(dataLogCameraModel.readNoise, module.getReadNoise(),
                             "Test failed read noise standard deviation")
+    np.testing.assert_equal(dataLogCameraModel.shotNoise, module.getShotNoise(),
+                            "Test failed shot noise")
+    np.testing.assert_equal(dataLogCameraModel.darkCurrent, module.getDarkCurrent(),
+                            "Test failed dark current")
     np.testing.assert_equal(dataLogCameraModel.systemGain, module.getSystemGain(),
                             "System failed mapping from current to pixel intensity")
     np.testing.assert_equal(dataLogCameraModel.exposureTime, module.getExposureTime(),
                             "System failed exposure time")
     np.testing.assert_equal(dataLogCameraModel.gammaCorrection, module.getGammaCorrection(),
                             "System failed gamma correction")
+    np.testing.assert_equal(dataLogCameraModel.apertureRadius, module.getApertureRadius(),
+                            "Test failed aperture radius")
+    np.testing.assert_equal(dataLogCameraModel.sensorWidth, module.getSensorWidth(),
+                            "Test failed sensor width")
+    np.testing.assert_equal(dataLogCameraModel.sensorHeight, module.getSensorHeight(),
+                            "Test failed sensor height")
+    np.testing.assert_equal(dataLogCameraModel.fullWellCapacity, module.getFullWellCapacity(),
+                            "Test failed full well capacity")
+    np.testing.assert_equal(dataLogCameraModel.integrationWeightFactor, module.getIntegrationWeightFactor(),
+                            "Test failed integration weight factor")
+    np.testing.assert_array_equal(dataLogCameraModel.redQuantumEfficiency[-1, :],
+                                  np.array(module.getRedQuantumEfficiency()).reshape(3),
+                                  "Test failed red QE curve")
+    np.testing.assert_array_equal(dataLogCameraModel.greenQuantumEfficiency[-1, :],
+                                  np.array(module.getGreenQuantumEfficiency()).reshape(3),
+                                  "Test failed green QE curve")
+    np.testing.assert_array_equal(dataLogCameraModel.blueQuantumEfficiency[-1, :],
+                                  np.array(module.getBlueQuantumEfficiency()).reshape(3),
+                                  "Test failed blue QE curve")
+    np.testing.assert_array_equal(np.trim_zeros(dataLogCameraModel.horizontalVignetting[-1, :]),
+                                  np.array(module.getHorizontalVignetting()).reshape(-1),
+                                  "Test failed horizontal Vignetting coefficients")
+    np.testing.assert_array_equal(np.trim_zeros(dataLogCameraModel.verticalVignetting[-1, :]),
+                                  np.array(module.getVerticalVignetting()).reshape(-1),
+                                  "Test failed vertical Vignetting coefficients")
+    np.testing.assert_array_equal(np.trim_zeros(dataLogCameraModel.distortion[-1, :]),
+                                  np.array(module.getDistortion()).reshape(-1),
+                                  "Test failed distortion coefficients")
+    np.testing.assert_equal(dataLogCameraModel.transmission, module.getTransmission(),
+                            "Test failed transmission rate of lens")
 
     #  Error check for corruption
     err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)) / np.linalg.norm(

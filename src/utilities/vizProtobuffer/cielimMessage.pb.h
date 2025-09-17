@@ -44,7 +44,7 @@ struct TableStruct_cielimMessage_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[13]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -63,15 +63,27 @@ extern CielimMessageDefaultTypeInternal _CielimMessage_default_instance_;
 class EpochDateTime;
 struct EpochDateTimeDefaultTypeInternal;
 extern EpochDateTimeDefaultTypeInternal _EpochDateTime_default_instance_;
+class LensModel;
+struct LensModelDefaultTypeInternal;
+extern LensModelDefaultTypeInternal _LensModel_default_instance_;
 class MeshModel;
 struct MeshModelDefaultTypeInternal;
 extern MeshModelDefaultTypeInternal _MeshModel_default_instance_;
 class PerlinNoise;
 struct PerlinNoiseDefaultTypeInternal;
 extern PerlinNoiseDefaultTypeInternal _PerlinNoise_default_instance_;
+class QuantumEfficiency;
+struct QuantumEfficiencyDefaultTypeInternal;
+extern QuantumEfficiencyDefaultTypeInternal _QuantumEfficiency_default_instance_;
+class ReflectanceModel;
+struct ReflectanceModelDefaultTypeInternal;
+extern ReflectanceModelDefaultTypeInternal _ReflectanceModel_default_instance_;
 class RenderingModel;
 struct RenderingModelDefaultTypeInternal;
 extern RenderingModelDefaultTypeInternal _RenderingModel_default_instance_;
+class SensorModel;
+struct SensorModelDefaultTypeInternal;
+extern SensorModelDefaultTypeInternal _SensorModel_default_instance_;
 class Spacecraft;
 struct SpacecraftDefaultTypeInternal;
 extern SpacecraftDefaultTypeInternal _Spacecraft_default_instance_;
@@ -84,9 +96,13 @@ template<> ::cielimMessage::CameraModel* Arena::CreateMaybeMessage<::cielimMessa
 template<> ::cielimMessage::CelestialBody* Arena::CreateMaybeMessage<::cielimMessage::CelestialBody>(Arena*);
 template<> ::cielimMessage::CielimMessage* Arena::CreateMaybeMessage<::cielimMessage::CielimMessage>(Arena*);
 template<> ::cielimMessage::EpochDateTime* Arena::CreateMaybeMessage<::cielimMessage::EpochDateTime>(Arena*);
+template<> ::cielimMessage::LensModel* Arena::CreateMaybeMessage<::cielimMessage::LensModel>(Arena*);
 template<> ::cielimMessage::MeshModel* Arena::CreateMaybeMessage<::cielimMessage::MeshModel>(Arena*);
 template<> ::cielimMessage::PerlinNoise* Arena::CreateMaybeMessage<::cielimMessage::PerlinNoise>(Arena*);
+template<> ::cielimMessage::QuantumEfficiency* Arena::CreateMaybeMessage<::cielimMessage::QuantumEfficiency>(Arena*);
+template<> ::cielimMessage::ReflectanceModel* Arena::CreateMaybeMessage<::cielimMessage::ReflectanceModel>(Arena*);
 template<> ::cielimMessage::RenderingModel* Arena::CreateMaybeMessage<::cielimMessage::RenderingModel>(Arena*);
+template<> ::cielimMessage::SensorModel* Arena::CreateMaybeMessage<::cielimMessage::SensorModel>(Arena*);
 template<> ::cielimMessage::Spacecraft* Arena::CreateMaybeMessage<::cielimMessage::Spacecraft>(Arena*);
 template<> ::cielimMessage::TimeStamp* Arena::CreateMaybeMessage<::cielimMessage::TimeStamp>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -416,6 +432,216 @@ class EpochDateTime final :
 };
 // -------------------------------------------------------------------
 
+class RenderingModel final :
+    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.RenderingModel) */ {
+ public:
+  inline RenderingModel() : RenderingModel(nullptr) {}
+  ~RenderingModel() override;
+  explicit constexpr RenderingModel(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  RenderingModel(const RenderingModel& from);
+  RenderingModel(RenderingModel&& from) noexcept
+    : RenderingModel() {
+    *this = ::std::move(from);
+  }
+
+  inline RenderingModel& operator=(const RenderingModel& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RenderingModel& operator=(RenderingModel&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const RenderingModel& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RenderingModel* internal_default_instance() {
+    return reinterpret_cast<const RenderingModel*>(
+               &_RenderingModel_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(RenderingModel& a, RenderingModel& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RenderingModel* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RenderingModel* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline RenderingModel* New() const final {
+    return new RenderingModel();
+  }
+
+  RenderingModel* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<RenderingModel>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
+  void CopyFrom(const RenderingModel& from);
+  void MergeFrom(const RenderingModel& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(RenderingModel* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "cielimMessage.RenderingModel";
+  }
+  protected:
+  explicit RenderingModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRenderingFieldNumber = 7,
+    kWavelength1FieldNumber = 1,
+    kWavelength2FieldNumber = 2,
+    kWavelength3FieldNumber = 3,
+    kCosmicRayStdDeviationFieldNumber = 4,
+    kStrayLightFieldNumber = 5,
+    kStarFieldFieldNumber = 6,
+    kEnableSmearFieldNumber = 8,
+  };
+  // string rendering = 7;
+  void clear_rendering();
+  const std::string& rendering() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_rendering(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_rendering();
+  PROTOBUF_MUST_USE_RESULT std::string* release_rendering();
+  void set_allocated_rendering(std::string* rendering);
+  private:
+  const std::string& _internal_rendering() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_rendering(const std::string& value);
+  std::string* _internal_mutable_rendering();
+  public:
+
+  // double wavelength1 = 1;
+  void clear_wavelength1();
+  double wavelength1() const;
+  void set_wavelength1(double value);
+  private:
+  double _internal_wavelength1() const;
+  void _internal_set_wavelength1(double value);
+  public:
+
+  // double wavelength2 = 2;
+  void clear_wavelength2();
+  double wavelength2() const;
+  void set_wavelength2(double value);
+  private:
+  double _internal_wavelength2() const;
+  void _internal_set_wavelength2(double value);
+  public:
+
+  // double wavelength3 = 3;
+  void clear_wavelength3();
+  double wavelength3() const;
+  void set_wavelength3(double value);
+  private:
+  double _internal_wavelength3() const;
+  void _internal_set_wavelength3(double value);
+  public:
+
+  // double cosmicRayStdDeviation = 4;
+  void clear_cosmicraystddeviation();
+  double cosmicraystddeviation() const;
+  void set_cosmicraystddeviation(double value);
+  private:
+  double _internal_cosmicraystddeviation() const;
+  void _internal_set_cosmicraystddeviation(double value);
+  public:
+
+  // double strayLight = 5;
+  void clear_straylight();
+  double straylight() const;
+  void set_straylight(double value);
+  private:
+  double _internal_straylight() const;
+  void _internal_set_straylight(double value);
+  public:
+
+  // bool starField = 6;
+  void clear_starfield();
+  bool starfield() const;
+  void set_starfield(bool value);
+  private:
+  bool _internal_starfield() const;
+  void _internal_set_starfield(bool value);
+  public:
+
+  // bool enableSmear = 8;
+  void clear_enablesmear();
+  bool enablesmear() const;
+  void set_enablesmear(bool value);
+  private:
+  bool _internal_enablesmear() const;
+  void _internal_set_enablesmear(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:cielimMessage.RenderingModel)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr rendering_;
+  double wavelength1_;
+  double wavelength2_;
+  double wavelength3_;
+  double cosmicraystddeviation_;
+  double straylight_;
+  bool starfield_;
+  bool enablesmear_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_cielimMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
 class PerlinNoise final :
     public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.PerlinNoise) */ {
  public:
@@ -455,7 +681,7 @@ class PerlinNoise final :
                &_PerlinNoise_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(PerlinNoise& a, PerlinNoise& b) {
     a.Swap(&b);
@@ -577,6 +803,174 @@ class PerlinNoise final :
 };
 // -------------------------------------------------------------------
 
+class ReflectanceModel final :
+    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.ReflectanceModel) */ {
+ public:
+  inline ReflectanceModel() : ReflectanceModel(nullptr) {}
+  ~ReflectanceModel() override;
+  explicit constexpr ReflectanceModel(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ReflectanceModel(const ReflectanceModel& from);
+  ReflectanceModel(ReflectanceModel&& from) noexcept
+    : ReflectanceModel() {
+    *this = ::std::move(from);
+  }
+
+  inline ReflectanceModel& operator=(const ReflectanceModel& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ReflectanceModel& operator=(ReflectanceModel&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ReflectanceModel& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ReflectanceModel* internal_default_instance() {
+    return reinterpret_cast<const ReflectanceModel*>(
+               &_ReflectanceModel_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(ReflectanceModel& a, ReflectanceModel& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ReflectanceModel* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ReflectanceModel* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ReflectanceModel* New() const final {
+    return new ReflectanceModel();
+  }
+
+  ReflectanceModel* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ReflectanceModel>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
+  void CopyFrom(const ReflectanceModel& from);
+  void MergeFrom(const ReflectanceModel& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ReflectanceModel* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "cielimMessage.ReflectanceModel";
+  }
+  protected:
+  explicit ReflectanceModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kReflectanceParametersFieldNumber = 3,
+    kBrdfModelFieldNumber = 1,
+    kIsotropicScatteringFieldNumber = 2,
+  };
+  // repeated double reflectanceParameters = 3;
+  int reflectanceparameters_size() const;
+  private:
+  int _internal_reflectanceparameters_size() const;
+  public:
+  void clear_reflectanceparameters();
+  private:
+  double _internal_reflectanceparameters(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      _internal_reflectanceparameters() const;
+  void _internal_add_reflectanceparameters(double value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      _internal_mutable_reflectanceparameters();
+  public:
+  double reflectanceparameters(int index) const;
+  void set_reflectanceparameters(int index, double value);
+  void add_reflectanceparameters(double value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      reflectanceparameters() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      mutable_reflectanceparameters();
+
+  // string brdfModel = 1;
+  void clear_brdfmodel();
+  const std::string& brdfmodel() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_brdfmodel(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_brdfmodel();
+  PROTOBUF_MUST_USE_RESULT std::string* release_brdfmodel();
+  void set_allocated_brdfmodel(std::string* brdfmodel);
+  private:
+  const std::string& _internal_brdfmodel() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_brdfmodel(const std::string& value);
+  std::string* _internal_mutable_brdfmodel();
+  public:
+
+  // double isotropicScattering = 2;
+  void clear_isotropicscattering();
+  double isotropicscattering() const;
+  void set_isotropicscattering(double value);
+  private:
+  double _internal_isotropicscattering() const;
+  void _internal_set_isotropicscattering(double value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:cielimMessage.ReflectanceModel)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > reflectanceparameters_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr brdfmodel_;
+  double isotropicscattering_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_cielimMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
 class MeshModel final :
     public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.MeshModel) */ {
  public:
@@ -616,7 +1010,7 @@ class MeshModel final :
                &_MeshModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    5;
 
   friend void swap(MeshModel& a, MeshModel& b) {
     a.Swap(&b);
@@ -681,38 +1075,15 @@ class MeshModel final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kReflectanceParametersFieldNumber = 5,
-    kPrincipalAxisDistortionFieldNumber = 7,
-    kInertialToBodyMrpFieldNumber = 8,
+    kPrincipalAxisDistortionFieldNumber = 3,
+    kInertialToBodyMrpFieldNumber = 4,
     kShapeModelFieldNumber = 1,
-    kBrdfModelFieldNumber = 4,
-    kPerlinNoiseFieldNumber = 2,
-    kProceduralRocksFieldNumber = 3,
-    kMeanRadiusFieldNumber = 6,
+    kRefModelFieldNumber = 5,
+    kPerlinNoiseFieldNumber = 6,
+    kMeanRadiusFieldNumber = 2,
+    kProceduralRocksFieldNumber = 7,
   };
-  // repeated double reflectanceParameters = 5;
-  int reflectanceparameters_size() const;
-  private:
-  int _internal_reflectanceparameters_size() const;
-  public:
-  void clear_reflectanceparameters();
-  private:
-  double _internal_reflectanceparameters(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-      _internal_reflectanceparameters() const;
-  void _internal_add_reflectanceparameters(double value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-      _internal_mutable_reflectanceparameters();
-  public:
-  double reflectanceparameters(int index) const;
-  void set_reflectanceparameters(int index, double value);
-  void add_reflectanceparameters(double value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-      reflectanceparameters() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-      mutable_reflectanceparameters();
-
-  // repeated double principalAxisDistortion = 7;
+  // repeated double principalAxisDistortion = 3;
   int principalaxisdistortion_size() const;
   private:
   int _internal_principalaxisdistortion_size() const;
@@ -734,7 +1105,7 @@ class MeshModel final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
       mutable_principalaxisdistortion();
 
-  // repeated double inertialToBodyMrp = 8;
+  // repeated double inertialToBodyMrp = 4;
   int inertialtobodymrp_size() const;
   private:
   int _internal_inertialtobodymrp_size() const;
@@ -770,21 +1141,25 @@ class MeshModel final :
   std::string* _internal_mutable_shapemodel();
   public:
 
-  // string brdfModel = 4;
-  void clear_brdfmodel();
-  const std::string& brdfmodel() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_brdfmodel(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_brdfmodel();
-  PROTOBUF_MUST_USE_RESULT std::string* release_brdfmodel();
-  void set_allocated_brdfmodel(std::string* brdfmodel);
+  // .cielimMessage.ReflectanceModel refModel = 5;
+  bool has_refmodel() const;
   private:
-  const std::string& _internal_brdfmodel() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_brdfmodel(const std::string& value);
-  std::string* _internal_mutable_brdfmodel();
+  bool _internal_has_refmodel() const;
   public:
+  void clear_refmodel();
+  const ::cielimMessage::ReflectanceModel& refmodel() const;
+  PROTOBUF_MUST_USE_RESULT ::cielimMessage::ReflectanceModel* release_refmodel();
+  ::cielimMessage::ReflectanceModel* mutable_refmodel();
+  void set_allocated_refmodel(::cielimMessage::ReflectanceModel* refmodel);
+  private:
+  const ::cielimMessage::ReflectanceModel& _internal_refmodel() const;
+  ::cielimMessage::ReflectanceModel* _internal_mutable_refmodel();
+  public:
+  void unsafe_arena_set_allocated_refmodel(
+      ::cielimMessage::ReflectanceModel* refmodel);
+  ::cielimMessage::ReflectanceModel* unsafe_arena_release_refmodel();
 
-  // .cielimMessage.PerlinNoise perlinNoise = 2;
+  // .cielimMessage.PerlinNoise perlinNoise = 6;
   bool has_perlinnoise() const;
   private:
   bool _internal_has_perlinnoise() const;
@@ -802,22 +1177,22 @@ class MeshModel final :
       ::cielimMessage::PerlinNoise* perlinnoise);
   ::cielimMessage::PerlinNoise* unsafe_arena_release_perlinnoise();
 
-  // double proceduralRocks = 3;
-  void clear_proceduralrocks();
-  double proceduralrocks() const;
-  void set_proceduralrocks(double value);
-  private:
-  double _internal_proceduralrocks() const;
-  void _internal_set_proceduralrocks(double value);
-  public:
-
-  // double meanRadius = 6;
+  // double meanRadius = 2;
   void clear_meanradius();
   double meanradius() const;
   void set_meanradius(double value);
   private:
   double _internal_meanradius() const;
   void _internal_set_meanradius(double value);
+  public:
+
+  // double proceduralRocks = 7;
+  void clear_proceduralrocks();
+  double proceduralrocks() const;
+  void set_proceduralrocks(double value);
+  private:
+  double _internal_proceduralrocks() const;
+  void _internal_set_proceduralrocks(double value);
   public:
 
   // @@protoc_insertion_point(class_scope:cielimMessage.MeshModel)
@@ -827,14 +1202,13 @@ class MeshModel final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > reflectanceparameters_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > principalaxisdistortion_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > inertialtobodymrp_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr shapemodel_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr brdfmodel_;
+  ::cielimMessage::ReflectanceModel* refmodel_;
   ::cielimMessage::PerlinNoise* perlinnoise_;
-  double proceduralrocks_;
   double meanradius_;
+  double proceduralrocks_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_cielimMessage_2eproto;
 };
@@ -879,7 +1253,7 @@ class CelestialBody final :
                &_CelestialBody_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    6;
 
   friend void swap(CelestialBody& a, CelestialBody& b) {
     a.Swap(&b);
@@ -948,8 +1322,9 @@ class CelestialBody final :
     kVelocityFieldNumber = 3,
     kAttitudeFieldNumber = 4,
     kBodyNameFieldNumber = 1,
-    kModelFieldNumber = 6,
-    kCentralBodyFieldNumber = 5,
+    kModelFieldNumber = 5,
+    kGeometricAlbedoFieldNumber = 7,
+    kCentralBodyFieldNumber = 6,
   };
   // repeated double position = 2;
   int position_size() const;
@@ -1031,7 +1406,7 @@ class CelestialBody final :
   std::string* _internal_mutable_bodyname();
   public:
 
-  // .cielimMessage.MeshModel model = 6;
+  // .cielimMessage.MeshModel model = 5;
   bool has_model() const;
   private:
   bool _internal_has_model() const;
@@ -1049,7 +1424,16 @@ class CelestialBody final :
       ::cielimMessage::MeshModel* model);
   ::cielimMessage::MeshModel* unsafe_arena_release_model();
 
-  // bool centralBody = 5;
+  // double geometricAlbedo = 7;
+  void clear_geometricalbedo();
+  double geometricalbedo() const;
+  void set_geometricalbedo(double value);
+  private:
+  double _internal_geometricalbedo() const;
+  void _internal_set_geometricalbedo(double value);
+  public:
+
+  // bool centralBody = 6;
   void clear_centralbody();
   bool centralbody() const;
   void set_centralbody(bool value);
@@ -1070,6 +1454,7 @@ class CelestialBody final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > attitude_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr bodyname_;
   ::cielimMessage::MeshModel* model_;
+  double geometricalbedo_;
   bool centralbody_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_cielimMessage_2eproto;
@@ -1115,7 +1500,7 @@ class Spacecraft final :
                &_Spacecraft_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    7;
 
   friend void swap(Spacecraft& a, Spacecraft& b) {
     a.Swap(&b);
@@ -1281,24 +1666,24 @@ class Spacecraft final :
 };
 // -------------------------------------------------------------------
 
-class RenderingModel final :
-    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.RenderingModel) */ {
+class QuantumEfficiency final :
+    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.QuantumEfficiency) */ {
  public:
-  inline RenderingModel() : RenderingModel(nullptr) {}
-  ~RenderingModel() override;
-  explicit constexpr RenderingModel(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline QuantumEfficiency() : QuantumEfficiency(nullptr) {}
+  ~QuantumEfficiency() override;
+  explicit constexpr QuantumEfficiency(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  RenderingModel(const RenderingModel& from);
-  RenderingModel(RenderingModel&& from) noexcept
-    : RenderingModel() {
+  QuantumEfficiency(const QuantumEfficiency& from);
+  QuantumEfficiency(QuantumEfficiency&& from) noexcept
+    : QuantumEfficiency() {
     *this = ::std::move(from);
   }
 
-  inline RenderingModel& operator=(const RenderingModel& from) {
+  inline QuantumEfficiency& operator=(const QuantumEfficiency& from) {
     CopyFrom(from);
     return *this;
   }
-  inline RenderingModel& operator=(RenderingModel&& from) noexcept {
+  inline QuantumEfficiency& operator=(QuantumEfficiency&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1312,20 +1697,20 @@ class RenderingModel final :
     return *this;
   }
 
-  static const RenderingModel& default_instance() {
+  static const QuantumEfficiency& default_instance() {
     return *internal_default_instance();
   }
-  static inline const RenderingModel* internal_default_instance() {
-    return reinterpret_cast<const RenderingModel*>(
-               &_RenderingModel_default_instance_);
+  static inline const QuantumEfficiency* internal_default_instance() {
+    return reinterpret_cast<const QuantumEfficiency*>(
+               &_QuantumEfficiency_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
-  friend void swap(RenderingModel& a, RenderingModel& b) {
+  friend void swap(QuantumEfficiency& a, QuantumEfficiency& b) {
     a.Swap(&b);
   }
-  inline void Swap(RenderingModel* other) {
+  inline void Swap(QuantumEfficiency* other) {
     if (other == this) return;
     if (GetOwningArena() == other->GetOwningArena()) {
       InternalSwap(other);
@@ -1333,7 +1718,7 @@ class RenderingModel final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(RenderingModel* other) {
+  void UnsafeArenaSwap(QuantumEfficiency* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1341,16 +1726,16 @@ class RenderingModel final :
 
   // implements Message ----------------------------------------------
 
-  inline RenderingModel* New() const final {
-    return new RenderingModel();
+  inline QuantumEfficiency* New() const final {
+    return new QuantumEfficiency();
   }
 
-  RenderingModel* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<RenderingModel>(arena);
+  QuantumEfficiency* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<QuantumEfficiency>(arena);
   }
   void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
-  void CopyFrom(const RenderingModel& from);
-  void MergeFrom(const RenderingModel& from);
+  void CopyFrom(const QuantumEfficiency& from);
+  void MergeFrom(const QuantumEfficiency& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -1365,13 +1750,13 @@ class RenderingModel final :
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(RenderingModel* other);
+  void InternalSwap(QuantumEfficiency* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "cielimMessage.RenderingModel";
+    return "cielimMessage.QuantumEfficiency";
   }
   protected:
-  explicit RenderingModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit QuantumEfficiency(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
@@ -1385,74 +1770,653 @@ class RenderingModel final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRenderingFieldNumber = 4,
-    kCosmicRayStdDeviationFieldNumber = 1,
-    kStrayLightFieldNumber = 2,
-    kStarFieldFieldNumber = 3,
-    kEnableSmearFieldNumber = 5,
+    kIntegrationWeightFactorFieldNumber = 1,
+    kRedValue1FieldNumber = 2,
+    kRedValue2FieldNumber = 3,
+    kRedValue3FieldNumber = 4,
+    kGreenValue1FieldNumber = 5,
+    kGreenValue2FieldNumber = 6,
+    kGreenValue3FieldNumber = 7,
+    kBlueValue1FieldNumber = 8,
+    kBlueValue2FieldNumber = 9,
+    kBlueValue3FieldNumber = 10,
   };
-  // string rendering = 4;
-  void clear_rendering();
-  const std::string& rendering() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_rendering(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_rendering();
-  PROTOBUF_MUST_USE_RESULT std::string* release_rendering();
-  void set_allocated_rendering(std::string* rendering);
+  // double integrationWeightFactor = 1;
+  void clear_integrationweightfactor();
+  double integrationweightfactor() const;
+  void set_integrationweightfactor(double value);
   private:
-  const std::string& _internal_rendering() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_rendering(const std::string& value);
-  std::string* _internal_mutable_rendering();
+  double _internal_integrationweightfactor() const;
+  void _internal_set_integrationweightfactor(double value);
   public:
 
-  // double cosmicRayStdDeviation = 1;
-  void clear_cosmicraystddeviation();
-  double cosmicraystddeviation() const;
-  void set_cosmicraystddeviation(double value);
+  // double redValue1 = 2;
+  void clear_redvalue1();
+  double redvalue1() const;
+  void set_redvalue1(double value);
   private:
-  double _internal_cosmicraystddeviation() const;
-  void _internal_set_cosmicraystddeviation(double value);
+  double _internal_redvalue1() const;
+  void _internal_set_redvalue1(double value);
   public:
 
-  // double strayLight = 2;
-  void clear_straylight();
-  double straylight() const;
-  void set_straylight(double value);
+  // double redValue2 = 3;
+  void clear_redvalue2();
+  double redvalue2() const;
+  void set_redvalue2(double value);
   private:
-  double _internal_straylight() const;
-  void _internal_set_straylight(double value);
+  double _internal_redvalue2() const;
+  void _internal_set_redvalue2(double value);
   public:
 
-  // bool starField = 3;
-  void clear_starfield();
-  bool starfield() const;
-  void set_starfield(bool value);
+  // double redValue3 = 4;
+  void clear_redvalue3();
+  double redvalue3() const;
+  void set_redvalue3(double value);
   private:
-  bool _internal_starfield() const;
-  void _internal_set_starfield(bool value);
+  double _internal_redvalue3() const;
+  void _internal_set_redvalue3(double value);
   public:
 
-  // bool enableSmear = 5;
-  void clear_enablesmear();
-  bool enablesmear() const;
-  void set_enablesmear(bool value);
+  // double greenValue1 = 5;
+  void clear_greenvalue1();
+  double greenvalue1() const;
+  void set_greenvalue1(double value);
   private:
-  bool _internal_enablesmear() const;
-  void _internal_set_enablesmear(bool value);
+  double _internal_greenvalue1() const;
+  void _internal_set_greenvalue1(double value);
   public:
 
-  // @@protoc_insertion_point(class_scope:cielimMessage.RenderingModel)
+  // double greenValue2 = 6;
+  void clear_greenvalue2();
+  double greenvalue2() const;
+  void set_greenvalue2(double value);
+  private:
+  double _internal_greenvalue2() const;
+  void _internal_set_greenvalue2(double value);
+  public:
+
+  // double greenValue3 = 7;
+  void clear_greenvalue3();
+  double greenvalue3() const;
+  void set_greenvalue3(double value);
+  private:
+  double _internal_greenvalue3() const;
+  void _internal_set_greenvalue3(double value);
+  public:
+
+  // double blueValue1 = 8;
+  void clear_bluevalue1();
+  double bluevalue1() const;
+  void set_bluevalue1(double value);
+  private:
+  double _internal_bluevalue1() const;
+  void _internal_set_bluevalue1(double value);
+  public:
+
+  // double blueValue2 = 9;
+  void clear_bluevalue2();
+  double bluevalue2() const;
+  void set_bluevalue2(double value);
+  private:
+  double _internal_bluevalue2() const;
+  void _internal_set_bluevalue2(double value);
+  public:
+
+  // double blueValue3 = 10;
+  void clear_bluevalue3();
+  double bluevalue3() const;
+  void set_bluevalue3(double value);
+  private:
+  double _internal_bluevalue3() const;
+  void _internal_set_bluevalue3(double value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:cielimMessage.QuantumEfficiency)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr rendering_;
-  double cosmicraystddeviation_;
-  double straylight_;
-  bool starfield_;
-  bool enablesmear_;
+  double integrationweightfactor_;
+  double redvalue1_;
+  double redvalue2_;
+  double redvalue3_;
+  double greenvalue1_;
+  double greenvalue2_;
+  double greenvalue3_;
+  double bluevalue1_;
+  double bluevalue2_;
+  double bluevalue3_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_cielimMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class LensModel final :
+    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.LensModel) */ {
+ public:
+  inline LensModel() : LensModel(nullptr) {}
+  ~LensModel() override;
+  explicit constexpr LensModel(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  LensModel(const LensModel& from);
+  LensModel(LensModel&& from) noexcept
+    : LensModel() {
+    *this = ::std::move(from);
+  }
+
+  inline LensModel& operator=(const LensModel& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LensModel& operator=(LensModel&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const LensModel& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const LensModel* internal_default_instance() {
+    return reinterpret_cast<const LensModel*>(
+               &_LensModel_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(LensModel& a, LensModel& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LensModel* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(LensModel* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline LensModel* New() const final {
+    return new LensModel();
+  }
+
+  LensModel* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<LensModel>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
+  void CopyFrom(const LensModel& from);
+  void MergeFrom(const LensModel& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(LensModel* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "cielimMessage.LensModel";
+  }
+  protected:
+  explicit LensModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kFieldOfViewFieldNumber = 1,
+    kHorizontalVignettingFieldNumber = 5,
+    kVerticalVignettingFieldNumber = 6,
+    kDistortionFieldNumber = 7,
+    kFocalLengthFieldNumber = 2,
+    kPointSpreadFunctionFieldNumber = 3,
+    kApertureRadiusFieldNumber = 4,
+    kTransmissionFieldNumber = 8,
+  };
+  // repeated double fieldOfView = 1;
+  int fieldofview_size() const;
+  private:
+  int _internal_fieldofview_size() const;
+  public:
+  void clear_fieldofview();
+  private:
+  double _internal_fieldofview(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      _internal_fieldofview() const;
+  void _internal_add_fieldofview(double value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      _internal_mutable_fieldofview();
+  public:
+  double fieldofview(int index) const;
+  void set_fieldofview(int index, double value);
+  void add_fieldofview(double value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      fieldofview() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      mutable_fieldofview();
+
+  // repeated double horizontalVignetting = 5;
+  int horizontalvignetting_size() const;
+  private:
+  int _internal_horizontalvignetting_size() const;
+  public:
+  void clear_horizontalvignetting();
+  private:
+  double _internal_horizontalvignetting(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      _internal_horizontalvignetting() const;
+  void _internal_add_horizontalvignetting(double value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      _internal_mutable_horizontalvignetting();
+  public:
+  double horizontalvignetting(int index) const;
+  void set_horizontalvignetting(int index, double value);
+  void add_horizontalvignetting(double value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      horizontalvignetting() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      mutable_horizontalvignetting();
+
+  // repeated double verticalVignetting = 6;
+  int verticalvignetting_size() const;
+  private:
+  int _internal_verticalvignetting_size() const;
+  public:
+  void clear_verticalvignetting();
+  private:
+  double _internal_verticalvignetting(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      _internal_verticalvignetting() const;
+  void _internal_add_verticalvignetting(double value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      _internal_mutable_verticalvignetting();
+  public:
+  double verticalvignetting(int index) const;
+  void set_verticalvignetting(int index, double value);
+  void add_verticalvignetting(double value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      verticalvignetting() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      mutable_verticalvignetting();
+
+  // repeated double distortion = 7;
+  int distortion_size() const;
+  private:
+  int _internal_distortion_size() const;
+  public:
+  void clear_distortion();
+  private:
+  double _internal_distortion(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      _internal_distortion() const;
+  void _internal_add_distortion(double value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      _internal_mutable_distortion();
+  public:
+  double distortion(int index) const;
+  void set_distortion(int index, double value);
+  void add_distortion(double value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+      distortion() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+      mutable_distortion();
+
+  // double focalLength = 2;
+  void clear_focallength();
+  double focallength() const;
+  void set_focallength(double value);
+  private:
+  double _internal_focallength() const;
+  void _internal_set_focallength(double value);
+  public:
+
+  // double pointSpreadFunction = 3;
+  void clear_pointspreadfunction();
+  double pointspreadfunction() const;
+  void set_pointspreadfunction(double value);
+  private:
+  double _internal_pointspreadfunction() const;
+  void _internal_set_pointspreadfunction(double value);
+  public:
+
+  // double apertureRadius = 4;
+  void clear_apertureradius();
+  double apertureradius() const;
+  void set_apertureradius(double value);
+  private:
+  double _internal_apertureradius() const;
+  void _internal_set_apertureradius(double value);
+  public:
+
+  // double transmission = 8;
+  void clear_transmission();
+  double transmission() const;
+  void set_transmission(double value);
+  private:
+  double _internal_transmission() const;
+  void _internal_set_transmission(double value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:cielimMessage.LensModel)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > fieldofview_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > horizontalvignetting_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > verticalvignetting_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > distortion_;
+  double focallength_;
+  double pointspreadfunction_;
+  double apertureradius_;
+  double transmission_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_cielimMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SensorModel final :
+    public ::PROTOBUF_NAMESPACE_ID::MessageLite /* @@protoc_insertion_point(class_definition:cielimMessage.SensorModel) */ {
+ public:
+  inline SensorModel() : SensorModel(nullptr) {}
+  ~SensorModel() override;
+  explicit constexpr SensorModel(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SensorModel(const SensorModel& from);
+  SensorModel(SensorModel&& from) noexcept
+    : SensorModel() {
+    *this = ::std::move(from);
+  }
+
+  inline SensorModel& operator=(const SensorModel& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SensorModel& operator=(SensorModel&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const SensorModel& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SensorModel* internal_default_instance() {
+    return reinterpret_cast<const SensorModel*>(
+               &_SensorModel_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(SensorModel& a, SensorModel& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SensorModel* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SensorModel* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SensorModel* New() const final {
+    return new SensorModel();
+  }
+
+  SensorModel* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SensorModel>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::PROTOBUF_NAMESPACE_ID::MessageLite& from)  final;
+  void CopyFrom(const SensorModel& from);
+  void MergeFrom(const SensorModel& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(SensorModel* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "cielimMessage.SensorModel";
+  }
+  protected:
+  explicit SensorModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kResolutionFieldNumber = 1,
+    kQeCurveFieldNumber = 12,
+    kRenderRateFieldNumber = 2,
+    kExposureTimeFieldNumber = 3,
+    kReadNoiseFieldNumber = 4,
+    kDarkCurrentFieldNumber = 6,
+    kSystemGainFieldNumber = 7,
+    kSensorWidthFieldNumber = 8,
+    kSensorHeightFieldNumber = 9,
+    kFullWellCapacityFieldNumber = 10,
+    kGammaFieldNumber = 11,
+    kShotNoiseFieldNumber = 5,
+  };
+  // repeated int64 resolution = 1;
+  int resolution_size() const;
+  private:
+  int _internal_resolution_size() const;
+  public:
+  void clear_resolution();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_resolution(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+      _internal_resolution() const;
+  void _internal_add_resolution(::PROTOBUF_NAMESPACE_ID::int64 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+      _internal_mutable_resolution();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::int64 resolution(int index) const;
+  void set_resolution(int index, ::PROTOBUF_NAMESPACE_ID::int64 value);
+  void add_resolution(::PROTOBUF_NAMESPACE_ID::int64 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+      resolution() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+      mutable_resolution();
+
+  // .cielimMessage.QuantumEfficiency qeCurve = 12;
+  bool has_qecurve() const;
+  private:
+  bool _internal_has_qecurve() const;
+  public:
+  void clear_qecurve();
+  const ::cielimMessage::QuantumEfficiency& qecurve() const;
+  PROTOBUF_MUST_USE_RESULT ::cielimMessage::QuantumEfficiency* release_qecurve();
+  ::cielimMessage::QuantumEfficiency* mutable_qecurve();
+  void set_allocated_qecurve(::cielimMessage::QuantumEfficiency* qecurve);
+  private:
+  const ::cielimMessage::QuantumEfficiency& _internal_qecurve() const;
+  ::cielimMessage::QuantumEfficiency* _internal_mutable_qecurve();
+  public:
+  void unsafe_arena_set_allocated_qecurve(
+      ::cielimMessage::QuantumEfficiency* qecurve);
+  ::cielimMessage::QuantumEfficiency* unsafe_arena_release_qecurve();
+
+  // uint64 renderRate = 2;
+  void clear_renderrate();
+  ::PROTOBUF_NAMESPACE_ID::uint64 renderrate() const;
+  void set_renderrate(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_renderrate() const;
+  void _internal_set_renderrate(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // double exposureTime = 3;
+  void clear_exposuretime();
+  double exposuretime() const;
+  void set_exposuretime(double value);
+  private:
+  double _internal_exposuretime() const;
+  void _internal_set_exposuretime(double value);
+  public:
+
+  // double readNoise = 4;
+  void clear_readnoise();
+  double readnoise() const;
+  void set_readnoise(double value);
+  private:
+  double _internal_readnoise() const;
+  void _internal_set_readnoise(double value);
+  public:
+
+  // double darkCurrent = 6;
+  void clear_darkcurrent();
+  double darkcurrent() const;
+  void set_darkcurrent(double value);
+  private:
+  double _internal_darkcurrent() const;
+  void _internal_set_darkcurrent(double value);
+  public:
+
+  // double systemGain = 7;
+  void clear_systemgain();
+  double systemgain() const;
+  void set_systemgain(double value);
+  private:
+  double _internal_systemgain() const;
+  void _internal_set_systemgain(double value);
+  public:
+
+  // double sensorWidth = 8;
+  void clear_sensorwidth();
+  double sensorwidth() const;
+  void set_sensorwidth(double value);
+  private:
+  double _internal_sensorwidth() const;
+  void _internal_set_sensorwidth(double value);
+  public:
+
+  // double sensorHeight = 9;
+  void clear_sensorheight();
+  double sensorheight() const;
+  void set_sensorheight(double value);
+  private:
+  double _internal_sensorheight() const;
+  void _internal_set_sensorheight(double value);
+  public:
+
+  // double fullWellCapacity = 10;
+  void clear_fullwellcapacity();
+  double fullwellcapacity() const;
+  void set_fullwellcapacity(double value);
+  private:
+  double _internal_fullwellcapacity() const;
+  void _internal_set_fullwellcapacity(double value);
+  public:
+
+  // double gamma = 11;
+  void clear_gamma();
+  double gamma() const;
+  void set_gamma(double value);
+  private:
+  double _internal_gamma() const;
+  void _internal_set_gamma(double value);
+  public:
+
+  // bool shotNoise = 5;
+  void clear_shotnoise();
+  bool shotnoise() const;
+  void set_shotnoise(bool value);
+  private:
+  bool _internal_shotnoise() const;
+  void _internal_set_shotnoise(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:cielimMessage.SensorModel)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 > resolution_;
+  mutable std::atomic<int> _resolution_cached_byte_size_;
+  ::cielimMessage::QuantumEfficiency* qecurve_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 renderrate_;
+  double exposuretime_;
+  double readnoise_;
+  double darkcurrent_;
+  double systemgain_;
+  double sensorwidth_;
+  double sensorheight_;
+  double fullwellcapacity_;
+  double gamma_;
+  bool shotnoise_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_cielimMessage_2eproto;
 };
@@ -1497,7 +2461,7 @@ class CameraModel final :
                &_CameraModel_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    11;
 
   friend void swap(CameraModel& a, CameraModel& b) {
     a.Swap(&b);
@@ -1562,65 +2526,14 @@ class CameraModel final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kFieldOfViewFieldNumber = 3,
-    kResolutionFieldNumber = 4,
-    kCameraPositionInBodyFieldNumber = 5,
-    kBodyFrameToCameraMrpFieldNumber = 6,
+    kCameraPositionInBodyFieldNumber = 3,
+    kBodyFrameToCameraMrpFieldNumber = 4,
     kParentNameFieldNumber = 2,
-    kRenderParametersFieldNumber = 13,
+    kLensModelFieldNumber = 5,
+    kSensorModelFieldNumber = 6,
     kCameraIdFieldNumber = 1,
-    kRenderRateFieldNumber = 7,
-    kFocalLengthFieldNumber = 8,
-    kExposureTimeFieldNumber = 9,
-    kPointSpreadFunctionFieldNumber = 10,
-    kReadNoiseFieldNumber = 11,
-    kSystemGainFieldNumber = 12,
   };
-  // repeated double fieldOfView = 3;
-  int fieldofview_size() const;
-  private:
-  int _internal_fieldofview_size() const;
-  public:
-  void clear_fieldofview();
-  private:
-  double _internal_fieldofview(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-      _internal_fieldofview() const;
-  void _internal_add_fieldofview(double value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-      _internal_mutable_fieldofview();
-  public:
-  double fieldofview(int index) const;
-  void set_fieldofview(int index, double value);
-  void add_fieldofview(double value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-      fieldofview() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-      mutable_fieldofview();
-
-  // repeated int64 resolution = 4;
-  int resolution_size() const;
-  private:
-  int _internal_resolution_size() const;
-  public:
-  void clear_resolution();
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int64 _internal_resolution(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
-      _internal_resolution() const;
-  void _internal_add_resolution(::PROTOBUF_NAMESPACE_ID::int64 value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
-      _internal_mutable_resolution();
-  public:
-  ::PROTOBUF_NAMESPACE_ID::int64 resolution(int index) const;
-  void set_resolution(int index, ::PROTOBUF_NAMESPACE_ID::int64 value);
-  void add_resolution(::PROTOBUF_NAMESPACE_ID::int64 value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
-      resolution() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
-      mutable_resolution();
-
-  // repeated double cameraPositionInBody = 5;
+  // repeated double cameraPositionInBody = 3;
   int camerapositioninbody_size() const;
   private:
   int _internal_camerapositioninbody_size() const;
@@ -1642,7 +2555,7 @@ class CameraModel final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
       mutable_camerapositioninbody();
 
-  // repeated double bodyFrameToCameraMrp = 6;
+  // repeated double bodyFrameToCameraMrp = 4;
   int bodyframetocameramrp_size() const;
   private:
   int _internal_bodyframetocameramrp_size() const;
@@ -1678,23 +2591,41 @@ class CameraModel final :
   std::string* _internal_mutable_parentname();
   public:
 
-  // .cielimMessage.RenderingModel renderParameters = 13;
-  bool has_renderparameters() const;
+  // .cielimMessage.LensModel lensModel = 5;
+  bool has_lensmodel() const;
   private:
-  bool _internal_has_renderparameters() const;
+  bool _internal_has_lensmodel() const;
   public:
-  void clear_renderparameters();
-  const ::cielimMessage::RenderingModel& renderparameters() const;
-  PROTOBUF_MUST_USE_RESULT ::cielimMessage::RenderingModel* release_renderparameters();
-  ::cielimMessage::RenderingModel* mutable_renderparameters();
-  void set_allocated_renderparameters(::cielimMessage::RenderingModel* renderparameters);
+  void clear_lensmodel();
+  const ::cielimMessage::LensModel& lensmodel() const;
+  PROTOBUF_MUST_USE_RESULT ::cielimMessage::LensModel* release_lensmodel();
+  ::cielimMessage::LensModel* mutable_lensmodel();
+  void set_allocated_lensmodel(::cielimMessage::LensModel* lensmodel);
   private:
-  const ::cielimMessage::RenderingModel& _internal_renderparameters() const;
-  ::cielimMessage::RenderingModel* _internal_mutable_renderparameters();
+  const ::cielimMessage::LensModel& _internal_lensmodel() const;
+  ::cielimMessage::LensModel* _internal_mutable_lensmodel();
   public:
-  void unsafe_arena_set_allocated_renderparameters(
-      ::cielimMessage::RenderingModel* renderparameters);
-  ::cielimMessage::RenderingModel* unsafe_arena_release_renderparameters();
+  void unsafe_arena_set_allocated_lensmodel(
+      ::cielimMessage::LensModel* lensmodel);
+  ::cielimMessage::LensModel* unsafe_arena_release_lensmodel();
+
+  // .cielimMessage.SensorModel sensorModel = 6;
+  bool has_sensormodel() const;
+  private:
+  bool _internal_has_sensormodel() const;
+  public:
+  void clear_sensormodel();
+  const ::cielimMessage::SensorModel& sensormodel() const;
+  PROTOBUF_MUST_USE_RESULT ::cielimMessage::SensorModel* release_sensormodel();
+  ::cielimMessage::SensorModel* mutable_sensormodel();
+  void set_allocated_sensormodel(::cielimMessage::SensorModel* sensormodel);
+  private:
+  const ::cielimMessage::SensorModel& _internal_sensormodel() const;
+  ::cielimMessage::SensorModel* _internal_mutable_sensormodel();
+  public:
+  void unsafe_arena_set_allocated_sensormodel(
+      ::cielimMessage::SensorModel* sensormodel);
+  ::cielimMessage::SensorModel* unsafe_arena_release_sensormodel();
 
   // int64 cameraId = 1;
   void clear_cameraid();
@@ -1705,60 +2636,6 @@ class CameraModel final :
   void _internal_set_cameraid(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
-  // uint64 renderRate = 7;
-  void clear_renderrate();
-  ::PROTOBUF_NAMESPACE_ID::uint64 renderrate() const;
-  void set_renderrate(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_renderrate() const;
-  void _internal_set_renderrate(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  public:
-
-  // double focalLength = 8;
-  void clear_focallength();
-  double focallength() const;
-  void set_focallength(double value);
-  private:
-  double _internal_focallength() const;
-  void _internal_set_focallength(double value);
-  public:
-
-  // double exposureTime = 9;
-  void clear_exposuretime();
-  double exposuretime() const;
-  void set_exposuretime(double value);
-  private:
-  double _internal_exposuretime() const;
-  void _internal_set_exposuretime(double value);
-  public:
-
-  // double pointSpreadFunction = 10;
-  void clear_pointspreadfunction();
-  double pointspreadfunction() const;
-  void set_pointspreadfunction(double value);
-  private:
-  double _internal_pointspreadfunction() const;
-  void _internal_set_pointspreadfunction(double value);
-  public:
-
-  // double readNoise = 11;
-  void clear_readnoise();
-  double readnoise() const;
-  void set_readnoise(double value);
-  private:
-  double _internal_readnoise() const;
-  void _internal_set_readnoise(double value);
-  public:
-
-  // double systemGain = 12;
-  void clear_systemgain();
-  double systemgain() const;
-  void set_systemgain(double value);
-  private:
-  double _internal_systemgain() const;
-  void _internal_set_systemgain(double value);
-  public:
-
   // @@protoc_insertion_point(class_scope:cielimMessage.CameraModel)
  private:
   class _Internal;
@@ -1766,20 +2643,12 @@ class CameraModel final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > fieldofview_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 > resolution_;
-  mutable std::atomic<int> _resolution_cached_byte_size_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > camerapositioninbody_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > bodyframetocameramrp_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr parentname_;
-  ::cielimMessage::RenderingModel* renderparameters_;
+  ::cielimMessage::LensModel* lensmodel_;
+  ::cielimMessage::SensorModel* sensormodel_;
   ::PROTOBUF_NAMESPACE_ID::int64 cameraid_;
-  ::PROTOBUF_NAMESPACE_ID::uint64 renderrate_;
-  double focallength_;
-  double exposuretime_;
-  double pointspreadfunction_;
-  double readnoise_;
-  double systemgain_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_cielimMessage_2eproto;
 };
@@ -1824,7 +2693,7 @@ class CielimMessage final :
                &_CielimMessage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    12;
 
   friend void swap(CielimMessage& a, CielimMessage& b) {
     a.Swap(&b);
@@ -1889,13 +2758,14 @@ class CielimMessage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kCelestialBodiesFieldNumber = 3,
+    kCelestialBodiesFieldNumber = 4,
     kEpochFieldNumber = 1,
     kCurrentTimeFieldNumber = 2,
-    kSpacecraftFieldNumber = 4,
-    kCameraFieldNumber = 5,
+    kRenderParametersFieldNumber = 3,
+    kSpacecraftFieldNumber = 5,
+    kCameraFieldNumber = 6,
   };
-  // repeated .cielimMessage.CelestialBody celestialBodies = 3;
+  // repeated .cielimMessage.CelestialBody celestialBodies = 4;
   int celestialbodies_size() const;
   private:
   int _internal_celestialbodies_size() const;
@@ -1949,7 +2819,25 @@ class CielimMessage final :
       ::cielimMessage::TimeStamp* currenttime);
   ::cielimMessage::TimeStamp* unsafe_arena_release_currenttime();
 
-  // .cielimMessage.Spacecraft spacecraft = 4;
+  // .cielimMessage.RenderingModel renderParameters = 3;
+  bool has_renderparameters() const;
+  private:
+  bool _internal_has_renderparameters() const;
+  public:
+  void clear_renderparameters();
+  const ::cielimMessage::RenderingModel& renderparameters() const;
+  PROTOBUF_MUST_USE_RESULT ::cielimMessage::RenderingModel* release_renderparameters();
+  ::cielimMessage::RenderingModel* mutable_renderparameters();
+  void set_allocated_renderparameters(::cielimMessage::RenderingModel* renderparameters);
+  private:
+  const ::cielimMessage::RenderingModel& _internal_renderparameters() const;
+  ::cielimMessage::RenderingModel* _internal_mutable_renderparameters();
+  public:
+  void unsafe_arena_set_allocated_renderparameters(
+      ::cielimMessage::RenderingModel* renderparameters);
+  ::cielimMessage::RenderingModel* unsafe_arena_release_renderparameters();
+
+  // .cielimMessage.Spacecraft spacecraft = 5;
   bool has_spacecraft() const;
   private:
   bool _internal_has_spacecraft() const;
@@ -1967,7 +2855,7 @@ class CielimMessage final :
       ::cielimMessage::Spacecraft* spacecraft);
   ::cielimMessage::Spacecraft* unsafe_arena_release_spacecraft();
 
-  // .cielimMessage.CameraModel camera = 5;
+  // .cielimMessage.CameraModel camera = 6;
   bool has_camera() const;
   private:
   bool _internal_has_camera() const;
@@ -1995,6 +2883,7 @@ class CielimMessage final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::cielimMessage::CelestialBody > celestialbodies_;
   ::cielimMessage::EpochDateTime* epoch_;
   ::cielimMessage::TimeStamp* currenttime_;
+  ::cielimMessage::RenderingModel* renderparameters_;
   ::cielimMessage::Spacecraft* spacecraft_;
   ::cielimMessage::CameraModel* camera_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -2177,6 +3066,196 @@ inline void EpochDateTime::set_seconds(double value) {
 
 // -------------------------------------------------------------------
 
+// RenderingModel
+
+// double wavelength1 = 1;
+inline void RenderingModel::clear_wavelength1() {
+  wavelength1_ = 0;
+}
+inline double RenderingModel::_internal_wavelength1() const {
+  return wavelength1_;
+}
+inline double RenderingModel::wavelength1() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.wavelength1)
+  return _internal_wavelength1();
+}
+inline void RenderingModel::_internal_set_wavelength1(double value) {
+  
+  wavelength1_ = value;
+}
+inline void RenderingModel::set_wavelength1(double value) {
+  _internal_set_wavelength1(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.wavelength1)
+}
+
+// double wavelength2 = 2;
+inline void RenderingModel::clear_wavelength2() {
+  wavelength2_ = 0;
+}
+inline double RenderingModel::_internal_wavelength2() const {
+  return wavelength2_;
+}
+inline double RenderingModel::wavelength2() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.wavelength2)
+  return _internal_wavelength2();
+}
+inline void RenderingModel::_internal_set_wavelength2(double value) {
+  
+  wavelength2_ = value;
+}
+inline void RenderingModel::set_wavelength2(double value) {
+  _internal_set_wavelength2(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.wavelength2)
+}
+
+// double wavelength3 = 3;
+inline void RenderingModel::clear_wavelength3() {
+  wavelength3_ = 0;
+}
+inline double RenderingModel::_internal_wavelength3() const {
+  return wavelength3_;
+}
+inline double RenderingModel::wavelength3() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.wavelength3)
+  return _internal_wavelength3();
+}
+inline void RenderingModel::_internal_set_wavelength3(double value) {
+  
+  wavelength3_ = value;
+}
+inline void RenderingModel::set_wavelength3(double value) {
+  _internal_set_wavelength3(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.wavelength3)
+}
+
+// double cosmicRayStdDeviation = 4;
+inline void RenderingModel::clear_cosmicraystddeviation() {
+  cosmicraystddeviation_ = 0;
+}
+inline double RenderingModel::_internal_cosmicraystddeviation() const {
+  return cosmicraystddeviation_;
+}
+inline double RenderingModel::cosmicraystddeviation() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.cosmicRayStdDeviation)
+  return _internal_cosmicraystddeviation();
+}
+inline void RenderingModel::_internal_set_cosmicraystddeviation(double value) {
+  
+  cosmicraystddeviation_ = value;
+}
+inline void RenderingModel::set_cosmicraystddeviation(double value) {
+  _internal_set_cosmicraystddeviation(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.cosmicRayStdDeviation)
+}
+
+// double strayLight = 5;
+inline void RenderingModel::clear_straylight() {
+  straylight_ = 0;
+}
+inline double RenderingModel::_internal_straylight() const {
+  return straylight_;
+}
+inline double RenderingModel::straylight() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.strayLight)
+  return _internal_straylight();
+}
+inline void RenderingModel::_internal_set_straylight(double value) {
+  
+  straylight_ = value;
+}
+inline void RenderingModel::set_straylight(double value) {
+  _internal_set_straylight(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.strayLight)
+}
+
+// bool starField = 6;
+inline void RenderingModel::clear_starfield() {
+  starfield_ = false;
+}
+inline bool RenderingModel::_internal_starfield() const {
+  return starfield_;
+}
+inline bool RenderingModel::starfield() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.starField)
+  return _internal_starfield();
+}
+inline void RenderingModel::_internal_set_starfield(bool value) {
+  
+  starfield_ = value;
+}
+inline void RenderingModel::set_starfield(bool value) {
+  _internal_set_starfield(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.starField)
+}
+
+// string rendering = 7;
+inline void RenderingModel::clear_rendering() {
+  rendering_.ClearToEmpty();
+}
+inline const std::string& RenderingModel::rendering() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.rendering)
+  return _internal_rendering();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RenderingModel::set_rendering(ArgT0&& arg0, ArgT... args) {
+ 
+ rendering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.rendering)
+}
+inline std::string* RenderingModel::mutable_rendering() {
+  std::string* _s = _internal_mutable_rendering();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.RenderingModel.rendering)
+  return _s;
+}
+inline const std::string& RenderingModel::_internal_rendering() const {
+  return rendering_.Get();
+}
+inline void RenderingModel::_internal_set_rendering(const std::string& value) {
+  
+  rendering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* RenderingModel::_internal_mutable_rendering() {
+  
+  return rendering_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* RenderingModel::release_rendering() {
+  // @@protoc_insertion_point(field_release:cielimMessage.RenderingModel.rendering)
+  return rendering_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void RenderingModel::set_allocated_rendering(std::string* rendering) {
+  if (rendering != nullptr) {
+    
+  } else {
+    
+  }
+  rendering_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), rendering,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.RenderingModel.rendering)
+}
+
+// bool enableSmear = 8;
+inline void RenderingModel::clear_enablesmear() {
+  enablesmear_ = false;
+}
+inline bool RenderingModel::_internal_enablesmear() const {
+  return enablesmear_;
+}
+inline bool RenderingModel::enablesmear() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.enableSmear)
+  return _internal_enablesmear();
+}
+inline void RenderingModel::_internal_set_enablesmear(bool value) {
+  
+  enablesmear_ = value;
+}
+inline void RenderingModel::set_enablesmear(bool value) {
+  _internal_set_enablesmear(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.enableSmear)
+}
+
+// -------------------------------------------------------------------
+
 // PerlinNoise
 
 // int32 octaveCount = 1;
@@ -2261,6 +3340,123 @@ inline void PerlinNoise::set_persistence(double value) {
 
 // -------------------------------------------------------------------
 
+// ReflectanceModel
+
+// string brdfModel = 1;
+inline void ReflectanceModel::clear_brdfmodel() {
+  brdfmodel_.ClearToEmpty();
+}
+inline const std::string& ReflectanceModel::brdfmodel() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.ReflectanceModel.brdfModel)
+  return _internal_brdfmodel();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ReflectanceModel::set_brdfmodel(ArgT0&& arg0, ArgT... args) {
+ 
+ brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:cielimMessage.ReflectanceModel.brdfModel)
+}
+inline std::string* ReflectanceModel::mutable_brdfmodel() {
+  std::string* _s = _internal_mutable_brdfmodel();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.ReflectanceModel.brdfModel)
+  return _s;
+}
+inline const std::string& ReflectanceModel::_internal_brdfmodel() const {
+  return brdfmodel_.Get();
+}
+inline void ReflectanceModel::_internal_set_brdfmodel(const std::string& value) {
+  
+  brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ReflectanceModel::_internal_mutable_brdfmodel() {
+  
+  return brdfmodel_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ReflectanceModel::release_brdfmodel() {
+  // @@protoc_insertion_point(field_release:cielimMessage.ReflectanceModel.brdfModel)
+  return brdfmodel_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void ReflectanceModel::set_allocated_brdfmodel(std::string* brdfmodel) {
+  if (brdfmodel != nullptr) {
+    
+  } else {
+    
+  }
+  brdfmodel_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), brdfmodel,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.ReflectanceModel.brdfModel)
+}
+
+// double isotropicScattering = 2;
+inline void ReflectanceModel::clear_isotropicscattering() {
+  isotropicscattering_ = 0;
+}
+inline double ReflectanceModel::_internal_isotropicscattering() const {
+  return isotropicscattering_;
+}
+inline double ReflectanceModel::isotropicscattering() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.ReflectanceModel.isotropicScattering)
+  return _internal_isotropicscattering();
+}
+inline void ReflectanceModel::_internal_set_isotropicscattering(double value) {
+  
+  isotropicscattering_ = value;
+}
+inline void ReflectanceModel::set_isotropicscattering(double value) {
+  _internal_set_isotropicscattering(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.ReflectanceModel.isotropicScattering)
+}
+
+// repeated double reflectanceParameters = 3;
+inline int ReflectanceModel::_internal_reflectanceparameters_size() const {
+  return reflectanceparameters_.size();
+}
+inline int ReflectanceModel::reflectanceparameters_size() const {
+  return _internal_reflectanceparameters_size();
+}
+inline void ReflectanceModel::clear_reflectanceparameters() {
+  reflectanceparameters_.Clear();
+}
+inline double ReflectanceModel::_internal_reflectanceparameters(int index) const {
+  return reflectanceparameters_.Get(index);
+}
+inline double ReflectanceModel::reflectanceparameters(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.ReflectanceModel.reflectanceParameters)
+  return _internal_reflectanceparameters(index);
+}
+inline void ReflectanceModel::set_reflectanceparameters(int index, double value) {
+  reflectanceparameters_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.ReflectanceModel.reflectanceParameters)
+}
+inline void ReflectanceModel::_internal_add_reflectanceparameters(double value) {
+  reflectanceparameters_.Add(value);
+}
+inline void ReflectanceModel::add_reflectanceparameters(double value) {
+  _internal_add_reflectanceparameters(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.ReflectanceModel.reflectanceParameters)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+ReflectanceModel::_internal_reflectanceparameters() const {
+  return reflectanceparameters_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+ReflectanceModel::reflectanceparameters() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.ReflectanceModel.reflectanceParameters)
+  return _internal_reflectanceparameters();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+ReflectanceModel::_internal_mutable_reflectanceparameters() {
+  return &reflectanceparameters_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+ReflectanceModel::mutable_reflectanceparameters() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.ReflectanceModel.reflectanceParameters)
+  return _internal_mutable_reflectanceparameters();
+}
+
+// -------------------------------------------------------------------
+
 // MeshModel
 
 // string shapeModel = 1;
@@ -2309,7 +3505,211 @@ inline void MeshModel::set_allocated_shapemodel(std::string* shapemodel) {
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.shapeModel)
 }
 
-// .cielimMessage.PerlinNoise perlinNoise = 2;
+// double meanRadius = 2;
+inline void MeshModel::clear_meanradius() {
+  meanradius_ = 0;
+}
+inline double MeshModel::_internal_meanradius() const {
+  return meanradius_;
+}
+inline double MeshModel::meanradius() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.meanRadius)
+  return _internal_meanradius();
+}
+inline void MeshModel::_internal_set_meanradius(double value) {
+  
+  meanradius_ = value;
+}
+inline void MeshModel::set_meanradius(double value) {
+  _internal_set_meanradius(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.meanRadius)
+}
+
+// repeated double principalAxisDistortion = 3;
+inline int MeshModel::_internal_principalaxisdistortion_size() const {
+  return principalaxisdistortion_.size();
+}
+inline int MeshModel::principalaxisdistortion_size() const {
+  return _internal_principalaxisdistortion_size();
+}
+inline void MeshModel::clear_principalaxisdistortion() {
+  principalaxisdistortion_.Clear();
+}
+inline double MeshModel::_internal_principalaxisdistortion(int index) const {
+  return principalaxisdistortion_.Get(index);
+}
+inline double MeshModel::principalaxisdistortion(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.principalAxisDistortion)
+  return _internal_principalaxisdistortion(index);
+}
+inline void MeshModel::set_principalaxisdistortion(int index, double value) {
+  principalaxisdistortion_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.principalAxisDistortion)
+}
+inline void MeshModel::_internal_add_principalaxisdistortion(double value) {
+  principalaxisdistortion_.Add(value);
+}
+inline void MeshModel::add_principalaxisdistortion(double value) {
+  _internal_add_principalaxisdistortion(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.principalAxisDistortion)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+MeshModel::_internal_principalaxisdistortion() const {
+  return principalaxisdistortion_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+MeshModel::principalaxisdistortion() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.principalAxisDistortion)
+  return _internal_principalaxisdistortion();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+MeshModel::_internal_mutable_principalaxisdistortion() {
+  return &principalaxisdistortion_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+MeshModel::mutable_principalaxisdistortion() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.principalAxisDistortion)
+  return _internal_mutable_principalaxisdistortion();
+}
+
+// repeated double inertialToBodyMrp = 4;
+inline int MeshModel::_internal_inertialtobodymrp_size() const {
+  return inertialtobodymrp_.size();
+}
+inline int MeshModel::inertialtobodymrp_size() const {
+  return _internal_inertialtobodymrp_size();
+}
+inline void MeshModel::clear_inertialtobodymrp() {
+  inertialtobodymrp_.Clear();
+}
+inline double MeshModel::_internal_inertialtobodymrp(int index) const {
+  return inertialtobodymrp_.Get(index);
+}
+inline double MeshModel::inertialtobodymrp(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.inertialToBodyMrp)
+  return _internal_inertialtobodymrp(index);
+}
+inline void MeshModel::set_inertialtobodymrp(int index, double value) {
+  inertialtobodymrp_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.inertialToBodyMrp)
+}
+inline void MeshModel::_internal_add_inertialtobodymrp(double value) {
+  inertialtobodymrp_.Add(value);
+}
+inline void MeshModel::add_inertialtobodymrp(double value) {
+  _internal_add_inertialtobodymrp(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.inertialToBodyMrp)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+MeshModel::_internal_inertialtobodymrp() const {
+  return inertialtobodymrp_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+MeshModel::inertialtobodymrp() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.inertialToBodyMrp)
+  return _internal_inertialtobodymrp();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+MeshModel::_internal_mutable_inertialtobodymrp() {
+  return &inertialtobodymrp_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+MeshModel::mutable_inertialtobodymrp() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.inertialToBodyMrp)
+  return _internal_mutable_inertialtobodymrp();
+}
+
+// .cielimMessage.ReflectanceModel refModel = 5;
+inline bool MeshModel::_internal_has_refmodel() const {
+  return this != internal_default_instance() && refmodel_ != nullptr;
+}
+inline bool MeshModel::has_refmodel() const {
+  return _internal_has_refmodel();
+}
+inline void MeshModel::clear_refmodel() {
+  if (GetArenaForAllocation() == nullptr && refmodel_ != nullptr) {
+    delete refmodel_;
+  }
+  refmodel_ = nullptr;
+}
+inline const ::cielimMessage::ReflectanceModel& MeshModel::_internal_refmodel() const {
+  const ::cielimMessage::ReflectanceModel* p = refmodel_;
+  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::ReflectanceModel&>(
+      ::cielimMessage::_ReflectanceModel_default_instance_);
+}
+inline const ::cielimMessage::ReflectanceModel& MeshModel::refmodel() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.refModel)
+  return _internal_refmodel();
+}
+inline void MeshModel::unsafe_arena_set_allocated_refmodel(
+    ::cielimMessage::ReflectanceModel* refmodel) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(refmodel_);
+  }
+  refmodel_ = refmodel;
+  if (refmodel) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.MeshModel.refModel)
+}
+inline ::cielimMessage::ReflectanceModel* MeshModel::release_refmodel() {
+  
+  ::cielimMessage::ReflectanceModel* temp = refmodel_;
+  refmodel_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::cielimMessage::ReflectanceModel* MeshModel::unsafe_arena_release_refmodel() {
+  // @@protoc_insertion_point(field_release:cielimMessage.MeshModel.refModel)
+  
+  ::cielimMessage::ReflectanceModel* temp = refmodel_;
+  refmodel_ = nullptr;
+  return temp;
+}
+inline ::cielimMessage::ReflectanceModel* MeshModel::_internal_mutable_refmodel() {
+  
+  if (refmodel_ == nullptr) {
+    auto* p = CreateMaybeMessage<::cielimMessage::ReflectanceModel>(GetArenaForAllocation());
+    refmodel_ = p;
+  }
+  return refmodel_;
+}
+inline ::cielimMessage::ReflectanceModel* MeshModel::mutable_refmodel() {
+  ::cielimMessage::ReflectanceModel* _msg = _internal_mutable_refmodel();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.MeshModel.refModel)
+  return _msg;
+}
+inline void MeshModel::set_allocated_refmodel(::cielimMessage::ReflectanceModel* refmodel) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete refmodel_;
+  }
+  if (refmodel) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::ReflectanceModel>::GetOwningArena(refmodel);
+    if (message_arena != submessage_arena) {
+      refmodel = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, refmodel, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  refmodel_ = refmodel;
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.refModel)
+}
+
+// .cielimMessage.PerlinNoise perlinNoise = 6;
 inline bool MeshModel::_internal_has_perlinnoise() const {
   return this != internal_default_instance() && perlinnoise_ != nullptr;
 }
@@ -2399,7 +3799,7 @@ inline void MeshModel::set_allocated_perlinnoise(::cielimMessage::PerlinNoise* p
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.perlinNoise)
 }
 
-// double proceduralRocks = 3;
+// double proceduralRocks = 7;
 inline void MeshModel::clear_proceduralrocks() {
   proceduralrocks_ = 0;
 }
@@ -2417,213 +3817,6 @@ inline void MeshModel::_internal_set_proceduralrocks(double value) {
 inline void MeshModel::set_proceduralrocks(double value) {
   _internal_set_proceduralrocks(value);
   // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.proceduralRocks)
-}
-
-// string brdfModel = 4;
-inline void MeshModel::clear_brdfmodel() {
-  brdfmodel_.ClearToEmpty();
-}
-inline const std::string& MeshModel::brdfmodel() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.brdfModel)
-  return _internal_brdfmodel();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void MeshModel::set_brdfmodel(ArgT0&& arg0, ArgT... args) {
- 
- brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.brdfModel)
-}
-inline std::string* MeshModel::mutable_brdfmodel() {
-  std::string* _s = _internal_mutable_brdfmodel();
-  // @@protoc_insertion_point(field_mutable:cielimMessage.MeshModel.brdfModel)
-  return _s;
-}
-inline const std::string& MeshModel::_internal_brdfmodel() const {
-  return brdfmodel_.Get();
-}
-inline void MeshModel::_internal_set_brdfmodel(const std::string& value) {
-  
-  brdfmodel_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* MeshModel::_internal_mutable_brdfmodel() {
-  
-  return brdfmodel_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* MeshModel::release_brdfmodel() {
-  // @@protoc_insertion_point(field_release:cielimMessage.MeshModel.brdfModel)
-  return brdfmodel_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void MeshModel::set_allocated_brdfmodel(std::string* brdfmodel) {
-  if (brdfmodel != nullptr) {
-    
-  } else {
-    
-  }
-  brdfmodel_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), brdfmodel,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:cielimMessage.MeshModel.brdfModel)
-}
-
-// repeated double reflectanceParameters = 5;
-inline int MeshModel::_internal_reflectanceparameters_size() const {
-  return reflectanceparameters_.size();
-}
-inline int MeshModel::reflectanceparameters_size() const {
-  return _internal_reflectanceparameters_size();
-}
-inline void MeshModel::clear_reflectanceparameters() {
-  reflectanceparameters_.Clear();
-}
-inline double MeshModel::_internal_reflectanceparameters(int index) const {
-  return reflectanceparameters_.Get(index);
-}
-inline double MeshModel::reflectanceparameters(int index) const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.reflectanceParameters)
-  return _internal_reflectanceparameters(index);
-}
-inline void MeshModel::set_reflectanceparameters(int index, double value) {
-  reflectanceparameters_.Set(index, value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.reflectanceParameters)
-}
-inline void MeshModel::_internal_add_reflectanceparameters(double value) {
-  reflectanceparameters_.Add(value);
-}
-inline void MeshModel::add_reflectanceparameters(double value) {
-  _internal_add_reflectanceparameters(value);
-  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.reflectanceParameters)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::_internal_reflectanceparameters() const {
-  return reflectanceparameters_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::reflectanceparameters() const {
-  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.reflectanceParameters)
-  return _internal_reflectanceparameters();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::_internal_mutable_reflectanceparameters() {
-  return &reflectanceparameters_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::mutable_reflectanceparameters() {
-  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.reflectanceParameters)
-  return _internal_mutable_reflectanceparameters();
-}
-
-// double meanRadius = 6;
-inline void MeshModel::clear_meanradius() {
-  meanradius_ = 0;
-}
-inline double MeshModel::_internal_meanradius() const {
-  return meanradius_;
-}
-inline double MeshModel::meanradius() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.meanRadius)
-  return _internal_meanradius();
-}
-inline void MeshModel::_internal_set_meanradius(double value) {
-  
-  meanradius_ = value;
-}
-inline void MeshModel::set_meanradius(double value) {
-  _internal_set_meanradius(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.meanRadius)
-}
-
-// repeated double principalAxisDistortion = 7;
-inline int MeshModel::_internal_principalaxisdistortion_size() const {
-  return principalaxisdistortion_.size();
-}
-inline int MeshModel::principalaxisdistortion_size() const {
-  return _internal_principalaxisdistortion_size();
-}
-inline void MeshModel::clear_principalaxisdistortion() {
-  principalaxisdistortion_.Clear();
-}
-inline double MeshModel::_internal_principalaxisdistortion(int index) const {
-  return principalaxisdistortion_.Get(index);
-}
-inline double MeshModel::principalaxisdistortion(int index) const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.principalAxisDistortion)
-  return _internal_principalaxisdistortion(index);
-}
-inline void MeshModel::set_principalaxisdistortion(int index, double value) {
-  principalaxisdistortion_.Set(index, value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.principalAxisDistortion)
-}
-inline void MeshModel::_internal_add_principalaxisdistortion(double value) {
-  principalaxisdistortion_.Add(value);
-}
-inline void MeshModel::add_principalaxisdistortion(double value) {
-  _internal_add_principalaxisdistortion(value);
-  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.principalAxisDistortion)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::_internal_principalaxisdistortion() const {
-  return principalaxisdistortion_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::principalaxisdistortion() const {
-  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.principalAxisDistortion)
-  return _internal_principalaxisdistortion();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::_internal_mutable_principalaxisdistortion() {
-  return &principalaxisdistortion_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::mutable_principalaxisdistortion() {
-  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.principalAxisDistortion)
-  return _internal_mutable_principalaxisdistortion();
-}
-
-// repeated double inertialToBodyMrp = 8;
-inline int MeshModel::_internal_inertialtobodymrp_size() const {
-  return inertialtobodymrp_.size();
-}
-inline int MeshModel::inertialtobodymrp_size() const {
-  return _internal_inertialtobodymrp_size();
-}
-inline void MeshModel::clear_inertialtobodymrp() {
-  inertialtobodymrp_.Clear();
-}
-inline double MeshModel::_internal_inertialtobodymrp(int index) const {
-  return inertialtobodymrp_.Get(index);
-}
-inline double MeshModel::inertialtobodymrp(int index) const {
-  // @@protoc_insertion_point(field_get:cielimMessage.MeshModel.inertialToBodyMrp)
-  return _internal_inertialtobodymrp(index);
-}
-inline void MeshModel::set_inertialtobodymrp(int index, double value) {
-  inertialtobodymrp_.Set(index, value);
-  // @@protoc_insertion_point(field_set:cielimMessage.MeshModel.inertialToBodyMrp)
-}
-inline void MeshModel::_internal_add_inertialtobodymrp(double value) {
-  inertialtobodymrp_.Add(value);
-}
-inline void MeshModel::add_inertialtobodymrp(double value) {
-  _internal_add_inertialtobodymrp(value);
-  // @@protoc_insertion_point(field_add:cielimMessage.MeshModel.inertialToBodyMrp)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::_internal_inertialtobodymrp() const {
-  return inertialtobodymrp_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-MeshModel::inertialtobodymrp() const {
-  // @@protoc_insertion_point(field_list:cielimMessage.MeshModel.inertialToBodyMrp)
-  return _internal_inertialtobodymrp();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::_internal_mutable_inertialtobodymrp() {
-  return &inertialtobodymrp_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-MeshModel::mutable_inertialtobodymrp() {
-  // @@protoc_insertion_point(field_mutable_list:cielimMessage.MeshModel.inertialToBodyMrp)
-  return _internal_mutable_inertialtobodymrp();
 }
 
 // -------------------------------------------------------------------
@@ -2817,27 +4010,7 @@ CelestialBody::mutable_attitude() {
   return _internal_mutable_attitude();
 }
 
-// bool centralBody = 5;
-inline void CelestialBody::clear_centralbody() {
-  centralbody_ = false;
-}
-inline bool CelestialBody::_internal_centralbody() const {
-  return centralbody_;
-}
-inline bool CelestialBody::centralbody() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CelestialBody.centralBody)
-  return _internal_centralbody();
-}
-inline void CelestialBody::_internal_set_centralbody(bool value) {
-  
-  centralbody_ = value;
-}
-inline void CelestialBody::set_centralbody(bool value) {
-  _internal_set_centralbody(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CelestialBody.centralBody)
-}
-
-// .cielimMessage.MeshModel model = 6;
+// .cielimMessage.MeshModel model = 5;
 inline bool CelestialBody::_internal_has_model() const {
   return this != internal_default_instance() && model_ != nullptr;
 }
@@ -2925,6 +4098,46 @@ inline void CelestialBody::set_allocated_model(::cielimMessage::MeshModel* model
   }
   model_ = model;
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.CelestialBody.model)
+}
+
+// bool centralBody = 6;
+inline void CelestialBody::clear_centralbody() {
+  centralbody_ = false;
+}
+inline bool CelestialBody::_internal_centralbody() const {
+  return centralbody_;
+}
+inline bool CelestialBody::centralbody() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.CelestialBody.centralBody)
+  return _internal_centralbody();
+}
+inline void CelestialBody::_internal_set_centralbody(bool value) {
+  
+  centralbody_ = value;
+}
+inline void CelestialBody::set_centralbody(bool value) {
+  _internal_set_centralbody(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.CelestialBody.centralBody)
+}
+
+// double geometricAlbedo = 7;
+inline void CelestialBody::clear_geometricalbedo() {
+  geometricalbedo_ = 0;
+}
+inline double CelestialBody::_internal_geometricalbedo() const {
+  return geometricalbedo_;
+}
+inline double CelestialBody::geometricalbedo() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.CelestialBody.geometricAlbedo)
+  return _internal_geometricalbedo();
+}
+inline void CelestialBody::_internal_set_geometricalbedo(double value) {
+  
+  geometricalbedo_ = value;
+}
+inline void CelestialBody::set_geometricalbedo(double value) {
+  _internal_set_geometricalbedo(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.CelestialBody.geometricAlbedo)
 }
 
 // -------------------------------------------------------------------
@@ -3120,132 +4333,819 @@ Spacecraft::mutable_attitude() {
 
 // -------------------------------------------------------------------
 
-// RenderingModel
+// QuantumEfficiency
 
-// double cosmicRayStdDeviation = 1;
-inline void RenderingModel::clear_cosmicraystddeviation() {
-  cosmicraystddeviation_ = 0;
+// double integrationWeightFactor = 1;
+inline void QuantumEfficiency::clear_integrationweightfactor() {
+  integrationweightfactor_ = 0;
 }
-inline double RenderingModel::_internal_cosmicraystddeviation() const {
-  return cosmicraystddeviation_;
+inline double QuantumEfficiency::_internal_integrationweightfactor() const {
+  return integrationweightfactor_;
 }
-inline double RenderingModel::cosmicraystddeviation() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.cosmicRayStdDeviation)
-  return _internal_cosmicraystddeviation();
+inline double QuantumEfficiency::integrationweightfactor() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.integrationWeightFactor)
+  return _internal_integrationweightfactor();
 }
-inline void RenderingModel::_internal_set_cosmicraystddeviation(double value) {
+inline void QuantumEfficiency::_internal_set_integrationweightfactor(double value) {
   
-  cosmicraystddeviation_ = value;
+  integrationweightfactor_ = value;
 }
-inline void RenderingModel::set_cosmicraystddeviation(double value) {
-  _internal_set_cosmicraystddeviation(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.cosmicRayStdDeviation)
-}
-
-// double strayLight = 2;
-inline void RenderingModel::clear_straylight() {
-  straylight_ = 0;
-}
-inline double RenderingModel::_internal_straylight() const {
-  return straylight_;
-}
-inline double RenderingModel::straylight() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.strayLight)
-  return _internal_straylight();
-}
-inline void RenderingModel::_internal_set_straylight(double value) {
-  
-  straylight_ = value;
-}
-inline void RenderingModel::set_straylight(double value) {
-  _internal_set_straylight(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.strayLight)
+inline void QuantumEfficiency::set_integrationweightfactor(double value) {
+  _internal_set_integrationweightfactor(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.integrationWeightFactor)
 }
 
-// bool starField = 3;
-inline void RenderingModel::clear_starfield() {
-  starfield_ = false;
+// double redValue1 = 2;
+inline void QuantumEfficiency::clear_redvalue1() {
+  redvalue1_ = 0;
 }
-inline bool RenderingModel::_internal_starfield() const {
-  return starfield_;
+inline double QuantumEfficiency::_internal_redvalue1() const {
+  return redvalue1_;
 }
-inline bool RenderingModel::starfield() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.starField)
-  return _internal_starfield();
+inline double QuantumEfficiency::redvalue1() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.redValue1)
+  return _internal_redvalue1();
 }
-inline void RenderingModel::_internal_set_starfield(bool value) {
+inline void QuantumEfficiency::_internal_set_redvalue1(double value) {
   
-  starfield_ = value;
+  redvalue1_ = value;
 }
-inline void RenderingModel::set_starfield(bool value) {
-  _internal_set_starfield(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.starField)
+inline void QuantumEfficiency::set_redvalue1(double value) {
+  _internal_set_redvalue1(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.redValue1)
 }
 
-// string rendering = 4;
-inline void RenderingModel::clear_rendering() {
-  rendering_.ClearToEmpty();
+// double redValue2 = 3;
+inline void QuantumEfficiency::clear_redvalue2() {
+  redvalue2_ = 0;
 }
-inline const std::string& RenderingModel::rendering() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.rendering)
-  return _internal_rendering();
+inline double QuantumEfficiency::_internal_redvalue2() const {
+  return redvalue2_;
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void RenderingModel::set_rendering(ArgT0&& arg0, ArgT... args) {
- 
- rendering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.rendering)
+inline double QuantumEfficiency::redvalue2() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.redValue2)
+  return _internal_redvalue2();
 }
-inline std::string* RenderingModel::mutable_rendering() {
-  std::string* _s = _internal_mutable_rendering();
-  // @@protoc_insertion_point(field_mutable:cielimMessage.RenderingModel.rendering)
-  return _s;
-}
-inline const std::string& RenderingModel::_internal_rendering() const {
-  return rendering_.Get();
-}
-inline void RenderingModel::_internal_set_rendering(const std::string& value) {
+inline void QuantumEfficiency::_internal_set_redvalue2(double value) {
   
-  rendering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  redvalue2_ = value;
 }
-inline std::string* RenderingModel::_internal_mutable_rendering() {
+inline void QuantumEfficiency::set_redvalue2(double value) {
+  _internal_set_redvalue2(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.redValue2)
+}
+
+// double redValue3 = 4;
+inline void QuantumEfficiency::clear_redvalue3() {
+  redvalue3_ = 0;
+}
+inline double QuantumEfficiency::_internal_redvalue3() const {
+  return redvalue3_;
+}
+inline double QuantumEfficiency::redvalue3() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.redValue3)
+  return _internal_redvalue3();
+}
+inline void QuantumEfficiency::_internal_set_redvalue3(double value) {
   
-  return rendering_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  redvalue3_ = value;
 }
-inline std::string* RenderingModel::release_rendering() {
-  // @@protoc_insertion_point(field_release:cielimMessage.RenderingModel.rendering)
-  return rendering_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+inline void QuantumEfficiency::set_redvalue3(double value) {
+  _internal_set_redvalue3(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.redValue3)
 }
-inline void RenderingModel::set_allocated_rendering(std::string* rendering) {
-  if (rendering != nullptr) {
+
+// double greenValue1 = 5;
+inline void QuantumEfficiency::clear_greenvalue1() {
+  greenvalue1_ = 0;
+}
+inline double QuantumEfficiency::_internal_greenvalue1() const {
+  return greenvalue1_;
+}
+inline double QuantumEfficiency::greenvalue1() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.greenValue1)
+  return _internal_greenvalue1();
+}
+inline void QuantumEfficiency::_internal_set_greenvalue1(double value) {
+  
+  greenvalue1_ = value;
+}
+inline void QuantumEfficiency::set_greenvalue1(double value) {
+  _internal_set_greenvalue1(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.greenValue1)
+}
+
+// double greenValue2 = 6;
+inline void QuantumEfficiency::clear_greenvalue2() {
+  greenvalue2_ = 0;
+}
+inline double QuantumEfficiency::_internal_greenvalue2() const {
+  return greenvalue2_;
+}
+inline double QuantumEfficiency::greenvalue2() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.greenValue2)
+  return _internal_greenvalue2();
+}
+inline void QuantumEfficiency::_internal_set_greenvalue2(double value) {
+  
+  greenvalue2_ = value;
+}
+inline void QuantumEfficiency::set_greenvalue2(double value) {
+  _internal_set_greenvalue2(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.greenValue2)
+}
+
+// double greenValue3 = 7;
+inline void QuantumEfficiency::clear_greenvalue3() {
+  greenvalue3_ = 0;
+}
+inline double QuantumEfficiency::_internal_greenvalue3() const {
+  return greenvalue3_;
+}
+inline double QuantumEfficiency::greenvalue3() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.greenValue3)
+  return _internal_greenvalue3();
+}
+inline void QuantumEfficiency::_internal_set_greenvalue3(double value) {
+  
+  greenvalue3_ = value;
+}
+inline void QuantumEfficiency::set_greenvalue3(double value) {
+  _internal_set_greenvalue3(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.greenValue3)
+}
+
+// double blueValue1 = 8;
+inline void QuantumEfficiency::clear_bluevalue1() {
+  bluevalue1_ = 0;
+}
+inline double QuantumEfficiency::_internal_bluevalue1() const {
+  return bluevalue1_;
+}
+inline double QuantumEfficiency::bluevalue1() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.blueValue1)
+  return _internal_bluevalue1();
+}
+inline void QuantumEfficiency::_internal_set_bluevalue1(double value) {
+  
+  bluevalue1_ = value;
+}
+inline void QuantumEfficiency::set_bluevalue1(double value) {
+  _internal_set_bluevalue1(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.blueValue1)
+}
+
+// double blueValue2 = 9;
+inline void QuantumEfficiency::clear_bluevalue2() {
+  bluevalue2_ = 0;
+}
+inline double QuantumEfficiency::_internal_bluevalue2() const {
+  return bluevalue2_;
+}
+inline double QuantumEfficiency::bluevalue2() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.blueValue2)
+  return _internal_bluevalue2();
+}
+inline void QuantumEfficiency::_internal_set_bluevalue2(double value) {
+  
+  bluevalue2_ = value;
+}
+inline void QuantumEfficiency::set_bluevalue2(double value) {
+  _internal_set_bluevalue2(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.blueValue2)
+}
+
+// double blueValue3 = 10;
+inline void QuantumEfficiency::clear_bluevalue3() {
+  bluevalue3_ = 0;
+}
+inline double QuantumEfficiency::_internal_bluevalue3() const {
+  return bluevalue3_;
+}
+inline double QuantumEfficiency::bluevalue3() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.QuantumEfficiency.blueValue3)
+  return _internal_bluevalue3();
+}
+inline void QuantumEfficiency::_internal_set_bluevalue3(double value) {
+  
+  bluevalue3_ = value;
+}
+inline void QuantumEfficiency::set_bluevalue3(double value) {
+  _internal_set_bluevalue3(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.QuantumEfficiency.blueValue3)
+}
+
+// -------------------------------------------------------------------
+
+// LensModel
+
+// repeated double fieldOfView = 1;
+inline int LensModel::_internal_fieldofview_size() const {
+  return fieldofview_.size();
+}
+inline int LensModel::fieldofview_size() const {
+  return _internal_fieldofview_size();
+}
+inline void LensModel::clear_fieldofview() {
+  fieldofview_.Clear();
+}
+inline double LensModel::_internal_fieldofview(int index) const {
+  return fieldofview_.Get(index);
+}
+inline double LensModel::fieldofview(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.LensModel.fieldOfView)
+  return _internal_fieldofview(index);
+}
+inline void LensModel::set_fieldofview(int index, double value) {
+  fieldofview_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.LensModel.fieldOfView)
+}
+inline void LensModel::_internal_add_fieldofview(double value) {
+  fieldofview_.Add(value);
+}
+inline void LensModel::add_fieldofview(double value) {
+  _internal_add_fieldofview(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.LensModel.fieldOfView)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+LensModel::_internal_fieldofview() const {
+  return fieldofview_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+LensModel::fieldofview() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.LensModel.fieldOfView)
+  return _internal_fieldofview();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+LensModel::_internal_mutable_fieldofview() {
+  return &fieldofview_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+LensModel::mutable_fieldofview() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.LensModel.fieldOfView)
+  return _internal_mutable_fieldofview();
+}
+
+// double focalLength = 2;
+inline void LensModel::clear_focallength() {
+  focallength_ = 0;
+}
+inline double LensModel::_internal_focallength() const {
+  return focallength_;
+}
+inline double LensModel::focallength() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.LensModel.focalLength)
+  return _internal_focallength();
+}
+inline void LensModel::_internal_set_focallength(double value) {
+  
+  focallength_ = value;
+}
+inline void LensModel::set_focallength(double value) {
+  _internal_set_focallength(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.LensModel.focalLength)
+}
+
+// double pointSpreadFunction = 3;
+inline void LensModel::clear_pointspreadfunction() {
+  pointspreadfunction_ = 0;
+}
+inline double LensModel::_internal_pointspreadfunction() const {
+  return pointspreadfunction_;
+}
+inline double LensModel::pointspreadfunction() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.LensModel.pointSpreadFunction)
+  return _internal_pointspreadfunction();
+}
+inline void LensModel::_internal_set_pointspreadfunction(double value) {
+  
+  pointspreadfunction_ = value;
+}
+inline void LensModel::set_pointspreadfunction(double value) {
+  _internal_set_pointspreadfunction(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.LensModel.pointSpreadFunction)
+}
+
+// double apertureRadius = 4;
+inline void LensModel::clear_apertureradius() {
+  apertureradius_ = 0;
+}
+inline double LensModel::_internal_apertureradius() const {
+  return apertureradius_;
+}
+inline double LensModel::apertureradius() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.LensModel.apertureRadius)
+  return _internal_apertureradius();
+}
+inline void LensModel::_internal_set_apertureradius(double value) {
+  
+  apertureradius_ = value;
+}
+inline void LensModel::set_apertureradius(double value) {
+  _internal_set_apertureradius(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.LensModel.apertureRadius)
+}
+
+// repeated double horizontalVignetting = 5;
+inline int LensModel::_internal_horizontalvignetting_size() const {
+  return horizontalvignetting_.size();
+}
+inline int LensModel::horizontalvignetting_size() const {
+  return _internal_horizontalvignetting_size();
+}
+inline void LensModel::clear_horizontalvignetting() {
+  horizontalvignetting_.Clear();
+}
+inline double LensModel::_internal_horizontalvignetting(int index) const {
+  return horizontalvignetting_.Get(index);
+}
+inline double LensModel::horizontalvignetting(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.LensModel.horizontalVignetting)
+  return _internal_horizontalvignetting(index);
+}
+inline void LensModel::set_horizontalvignetting(int index, double value) {
+  horizontalvignetting_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.LensModel.horizontalVignetting)
+}
+inline void LensModel::_internal_add_horizontalvignetting(double value) {
+  horizontalvignetting_.Add(value);
+}
+inline void LensModel::add_horizontalvignetting(double value) {
+  _internal_add_horizontalvignetting(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.LensModel.horizontalVignetting)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+LensModel::_internal_horizontalvignetting() const {
+  return horizontalvignetting_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+LensModel::horizontalvignetting() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.LensModel.horizontalVignetting)
+  return _internal_horizontalvignetting();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+LensModel::_internal_mutable_horizontalvignetting() {
+  return &horizontalvignetting_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+LensModel::mutable_horizontalvignetting() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.LensModel.horizontalVignetting)
+  return _internal_mutable_horizontalvignetting();
+}
+
+// repeated double verticalVignetting = 6;
+inline int LensModel::_internal_verticalvignetting_size() const {
+  return verticalvignetting_.size();
+}
+inline int LensModel::verticalvignetting_size() const {
+  return _internal_verticalvignetting_size();
+}
+inline void LensModel::clear_verticalvignetting() {
+  verticalvignetting_.Clear();
+}
+inline double LensModel::_internal_verticalvignetting(int index) const {
+  return verticalvignetting_.Get(index);
+}
+inline double LensModel::verticalvignetting(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.LensModel.verticalVignetting)
+  return _internal_verticalvignetting(index);
+}
+inline void LensModel::set_verticalvignetting(int index, double value) {
+  verticalvignetting_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.LensModel.verticalVignetting)
+}
+inline void LensModel::_internal_add_verticalvignetting(double value) {
+  verticalvignetting_.Add(value);
+}
+inline void LensModel::add_verticalvignetting(double value) {
+  _internal_add_verticalvignetting(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.LensModel.verticalVignetting)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+LensModel::_internal_verticalvignetting() const {
+  return verticalvignetting_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+LensModel::verticalvignetting() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.LensModel.verticalVignetting)
+  return _internal_verticalvignetting();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+LensModel::_internal_mutable_verticalvignetting() {
+  return &verticalvignetting_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+LensModel::mutable_verticalvignetting() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.LensModel.verticalVignetting)
+  return _internal_mutable_verticalvignetting();
+}
+
+// repeated double distortion = 7;
+inline int LensModel::_internal_distortion_size() const {
+  return distortion_.size();
+}
+inline int LensModel::distortion_size() const {
+  return _internal_distortion_size();
+}
+inline void LensModel::clear_distortion() {
+  distortion_.Clear();
+}
+inline double LensModel::_internal_distortion(int index) const {
+  return distortion_.Get(index);
+}
+inline double LensModel::distortion(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.LensModel.distortion)
+  return _internal_distortion(index);
+}
+inline void LensModel::set_distortion(int index, double value) {
+  distortion_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.LensModel.distortion)
+}
+inline void LensModel::_internal_add_distortion(double value) {
+  distortion_.Add(value);
+}
+inline void LensModel::add_distortion(double value) {
+  _internal_add_distortion(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.LensModel.distortion)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+LensModel::_internal_distortion() const {
+  return distortion_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+LensModel::distortion() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.LensModel.distortion)
+  return _internal_distortion();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+LensModel::_internal_mutable_distortion() {
+  return &distortion_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+LensModel::mutable_distortion() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.LensModel.distortion)
+  return _internal_mutable_distortion();
+}
+
+// double transmission = 8;
+inline void LensModel::clear_transmission() {
+  transmission_ = 0;
+}
+inline double LensModel::_internal_transmission() const {
+  return transmission_;
+}
+inline double LensModel::transmission() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.LensModel.transmission)
+  return _internal_transmission();
+}
+inline void LensModel::_internal_set_transmission(double value) {
+  
+  transmission_ = value;
+}
+inline void LensModel::set_transmission(double value) {
+  _internal_set_transmission(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.LensModel.transmission)
+}
+
+// -------------------------------------------------------------------
+
+// SensorModel
+
+// repeated int64 resolution = 1;
+inline int SensorModel::_internal_resolution_size() const {
+  return resolution_.size();
+}
+inline int SensorModel::resolution_size() const {
+  return _internal_resolution_size();
+}
+inline void SensorModel::clear_resolution() {
+  resolution_.Clear();
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 SensorModel::_internal_resolution(int index) const {
+  return resolution_.Get(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 SensorModel::resolution(int index) const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.resolution)
+  return _internal_resolution(index);
+}
+inline void SensorModel::set_resolution(int index, ::PROTOBUF_NAMESPACE_ID::int64 value) {
+  resolution_.Set(index, value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.resolution)
+}
+inline void SensorModel::_internal_add_resolution(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  resolution_.Add(value);
+}
+inline void SensorModel::add_resolution(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_add_resolution(value);
+  // @@protoc_insertion_point(field_add:cielimMessage.SensorModel.resolution)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+SensorModel::_internal_resolution() const {
+  return resolution_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+SensorModel::resolution() const {
+  // @@protoc_insertion_point(field_list:cielimMessage.SensorModel.resolution)
+  return _internal_resolution();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+SensorModel::_internal_mutable_resolution() {
+  return &resolution_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+SensorModel::mutable_resolution() {
+  // @@protoc_insertion_point(field_mutable_list:cielimMessage.SensorModel.resolution)
+  return _internal_mutable_resolution();
+}
+
+// uint64 renderRate = 2;
+inline void SensorModel::clear_renderrate() {
+  renderrate_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SensorModel::_internal_renderrate() const {
+  return renderrate_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SensorModel::renderrate() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.renderRate)
+  return _internal_renderrate();
+}
+inline void SensorModel::_internal_set_renderrate(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  renderrate_ = value;
+}
+inline void SensorModel::set_renderrate(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_renderrate(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.renderRate)
+}
+
+// double exposureTime = 3;
+inline void SensorModel::clear_exposuretime() {
+  exposuretime_ = 0;
+}
+inline double SensorModel::_internal_exposuretime() const {
+  return exposuretime_;
+}
+inline double SensorModel::exposuretime() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.exposureTime)
+  return _internal_exposuretime();
+}
+inline void SensorModel::_internal_set_exposuretime(double value) {
+  
+  exposuretime_ = value;
+}
+inline void SensorModel::set_exposuretime(double value) {
+  _internal_set_exposuretime(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.exposureTime)
+}
+
+// double readNoise = 4;
+inline void SensorModel::clear_readnoise() {
+  readnoise_ = 0;
+}
+inline double SensorModel::_internal_readnoise() const {
+  return readnoise_;
+}
+inline double SensorModel::readnoise() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.readNoise)
+  return _internal_readnoise();
+}
+inline void SensorModel::_internal_set_readnoise(double value) {
+  
+  readnoise_ = value;
+}
+inline void SensorModel::set_readnoise(double value) {
+  _internal_set_readnoise(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.readNoise)
+}
+
+// bool shotNoise = 5;
+inline void SensorModel::clear_shotnoise() {
+  shotnoise_ = false;
+}
+inline bool SensorModel::_internal_shotnoise() const {
+  return shotnoise_;
+}
+inline bool SensorModel::shotnoise() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.shotNoise)
+  return _internal_shotnoise();
+}
+inline void SensorModel::_internal_set_shotnoise(bool value) {
+  
+  shotnoise_ = value;
+}
+inline void SensorModel::set_shotnoise(bool value) {
+  _internal_set_shotnoise(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.shotNoise)
+}
+
+// double darkCurrent = 6;
+inline void SensorModel::clear_darkcurrent() {
+  darkcurrent_ = 0;
+}
+inline double SensorModel::_internal_darkcurrent() const {
+  return darkcurrent_;
+}
+inline double SensorModel::darkcurrent() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.darkCurrent)
+  return _internal_darkcurrent();
+}
+inline void SensorModel::_internal_set_darkcurrent(double value) {
+  
+  darkcurrent_ = value;
+}
+inline void SensorModel::set_darkcurrent(double value) {
+  _internal_set_darkcurrent(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.darkCurrent)
+}
+
+// double systemGain = 7;
+inline void SensorModel::clear_systemgain() {
+  systemgain_ = 0;
+}
+inline double SensorModel::_internal_systemgain() const {
+  return systemgain_;
+}
+inline double SensorModel::systemgain() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.systemGain)
+  return _internal_systemgain();
+}
+inline void SensorModel::_internal_set_systemgain(double value) {
+  
+  systemgain_ = value;
+}
+inline void SensorModel::set_systemgain(double value) {
+  _internal_set_systemgain(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.systemGain)
+}
+
+// double sensorWidth = 8;
+inline void SensorModel::clear_sensorwidth() {
+  sensorwidth_ = 0;
+}
+inline double SensorModel::_internal_sensorwidth() const {
+  return sensorwidth_;
+}
+inline double SensorModel::sensorwidth() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.sensorWidth)
+  return _internal_sensorwidth();
+}
+inline void SensorModel::_internal_set_sensorwidth(double value) {
+  
+  sensorwidth_ = value;
+}
+inline void SensorModel::set_sensorwidth(double value) {
+  _internal_set_sensorwidth(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.sensorWidth)
+}
+
+// double sensorHeight = 9;
+inline void SensorModel::clear_sensorheight() {
+  sensorheight_ = 0;
+}
+inline double SensorModel::_internal_sensorheight() const {
+  return sensorheight_;
+}
+inline double SensorModel::sensorheight() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.sensorHeight)
+  return _internal_sensorheight();
+}
+inline void SensorModel::_internal_set_sensorheight(double value) {
+  
+  sensorheight_ = value;
+}
+inline void SensorModel::set_sensorheight(double value) {
+  _internal_set_sensorheight(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.sensorHeight)
+}
+
+// double fullWellCapacity = 10;
+inline void SensorModel::clear_fullwellcapacity() {
+  fullwellcapacity_ = 0;
+}
+inline double SensorModel::_internal_fullwellcapacity() const {
+  return fullwellcapacity_;
+}
+inline double SensorModel::fullwellcapacity() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.fullWellCapacity)
+  return _internal_fullwellcapacity();
+}
+inline void SensorModel::_internal_set_fullwellcapacity(double value) {
+  
+  fullwellcapacity_ = value;
+}
+inline void SensorModel::set_fullwellcapacity(double value) {
+  _internal_set_fullwellcapacity(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.fullWellCapacity)
+}
+
+// double gamma = 11;
+inline void SensorModel::clear_gamma() {
+  gamma_ = 0;
+}
+inline double SensorModel::_internal_gamma() const {
+  return gamma_;
+}
+inline double SensorModel::gamma() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.gamma)
+  return _internal_gamma();
+}
+inline void SensorModel::_internal_set_gamma(double value) {
+  
+  gamma_ = value;
+}
+inline void SensorModel::set_gamma(double value) {
+  _internal_set_gamma(value);
+  // @@protoc_insertion_point(field_set:cielimMessage.SensorModel.gamma)
+}
+
+// .cielimMessage.QuantumEfficiency qeCurve = 12;
+inline bool SensorModel::_internal_has_qecurve() const {
+  return this != internal_default_instance() && qecurve_ != nullptr;
+}
+inline bool SensorModel::has_qecurve() const {
+  return _internal_has_qecurve();
+}
+inline void SensorModel::clear_qecurve() {
+  if (GetArenaForAllocation() == nullptr && qecurve_ != nullptr) {
+    delete qecurve_;
+  }
+  qecurve_ = nullptr;
+}
+inline const ::cielimMessage::QuantumEfficiency& SensorModel::_internal_qecurve() const {
+  const ::cielimMessage::QuantumEfficiency* p = qecurve_;
+  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::QuantumEfficiency&>(
+      ::cielimMessage::_QuantumEfficiency_default_instance_);
+}
+inline const ::cielimMessage::QuantumEfficiency& SensorModel::qecurve() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.SensorModel.qeCurve)
+  return _internal_qecurve();
+}
+inline void SensorModel::unsafe_arena_set_allocated_qecurve(
+    ::cielimMessage::QuantumEfficiency* qecurve) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(qecurve_);
+  }
+  qecurve_ = qecurve;
+  if (qecurve) {
     
   } else {
     
   }
-  rendering_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), rendering,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:cielimMessage.RenderingModel.rendering)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.SensorModel.qeCurve)
 }
-
-// bool enableSmear = 5;
-inline void RenderingModel::clear_enablesmear() {
-  enablesmear_ = false;
-}
-inline bool RenderingModel::_internal_enablesmear() const {
-  return enablesmear_;
-}
-inline bool RenderingModel::enablesmear() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.RenderingModel.enableSmear)
-  return _internal_enablesmear();
-}
-inline void RenderingModel::_internal_set_enablesmear(bool value) {
+inline ::cielimMessage::QuantumEfficiency* SensorModel::release_qecurve() {
   
-  enablesmear_ = value;
+  ::cielimMessage::QuantumEfficiency* temp = qecurve_;
+  qecurve_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
 }
-inline void RenderingModel::set_enablesmear(bool value) {
-  _internal_set_enablesmear(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.RenderingModel.enableSmear)
+inline ::cielimMessage::QuantumEfficiency* SensorModel::unsafe_arena_release_qecurve() {
+  // @@protoc_insertion_point(field_release:cielimMessage.SensorModel.qeCurve)
+  
+  ::cielimMessage::QuantumEfficiency* temp = qecurve_;
+  qecurve_ = nullptr;
+  return temp;
+}
+inline ::cielimMessage::QuantumEfficiency* SensorModel::_internal_mutable_qecurve() {
+  
+  if (qecurve_ == nullptr) {
+    auto* p = CreateMaybeMessage<::cielimMessage::QuantumEfficiency>(GetArenaForAllocation());
+    qecurve_ = p;
+  }
+  return qecurve_;
+}
+inline ::cielimMessage::QuantumEfficiency* SensorModel::mutable_qecurve() {
+  ::cielimMessage::QuantumEfficiency* _msg = _internal_mutable_qecurve();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.SensorModel.qeCurve)
+  return _msg;
+}
+inline void SensorModel::set_allocated_qecurve(::cielimMessage::QuantumEfficiency* qecurve) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete qecurve_;
+  }
+  if (qecurve) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::QuantumEfficiency>::GetOwningArena(qecurve);
+    if (message_arena != submessage_arena) {
+      qecurve = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, qecurve, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  qecurve_ = qecurve;
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.SensorModel.qeCurve)
 }
 
 // -------------------------------------------------------------------
@@ -3318,101 +5218,7 @@ inline void CameraModel::set_allocated_parentname(std::string* parentname) {
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.CameraModel.parentName)
 }
 
-// repeated double fieldOfView = 3;
-inline int CameraModel::_internal_fieldofview_size() const {
-  return fieldofview_.size();
-}
-inline int CameraModel::fieldofview_size() const {
-  return _internal_fieldofview_size();
-}
-inline void CameraModel::clear_fieldofview() {
-  fieldofview_.Clear();
-}
-inline double CameraModel::_internal_fieldofview(int index) const {
-  return fieldofview_.Get(index);
-}
-inline double CameraModel::fieldofview(int index) const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.fieldOfView)
-  return _internal_fieldofview(index);
-}
-inline void CameraModel::set_fieldofview(int index, double value) {
-  fieldofview_.Set(index, value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CameraModel.fieldOfView)
-}
-inline void CameraModel::_internal_add_fieldofview(double value) {
-  fieldofview_.Add(value);
-}
-inline void CameraModel::add_fieldofview(double value) {
-  _internal_add_fieldofview(value);
-  // @@protoc_insertion_point(field_add:cielimMessage.CameraModel.fieldOfView)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-CameraModel::_internal_fieldofview() const {
-  return fieldofview_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-CameraModel::fieldofview() const {
-  // @@protoc_insertion_point(field_list:cielimMessage.CameraModel.fieldOfView)
-  return _internal_fieldofview();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-CameraModel::_internal_mutable_fieldofview() {
-  return &fieldofview_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-CameraModel::mutable_fieldofview() {
-  // @@protoc_insertion_point(field_mutable_list:cielimMessage.CameraModel.fieldOfView)
-  return _internal_mutable_fieldofview();
-}
-
-// repeated int64 resolution = 4;
-inline int CameraModel::_internal_resolution_size() const {
-  return resolution_.size();
-}
-inline int CameraModel::resolution_size() const {
-  return _internal_resolution_size();
-}
-inline void CameraModel::clear_resolution() {
-  resolution_.Clear();
-}
-inline ::PROTOBUF_NAMESPACE_ID::int64 CameraModel::_internal_resolution(int index) const {
-  return resolution_.Get(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::int64 CameraModel::resolution(int index) const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.resolution)
-  return _internal_resolution(index);
-}
-inline void CameraModel::set_resolution(int index, ::PROTOBUF_NAMESPACE_ID::int64 value) {
-  resolution_.Set(index, value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CameraModel.resolution)
-}
-inline void CameraModel::_internal_add_resolution(::PROTOBUF_NAMESPACE_ID::int64 value) {
-  resolution_.Add(value);
-}
-inline void CameraModel::add_resolution(::PROTOBUF_NAMESPACE_ID::int64 value) {
-  _internal_add_resolution(value);
-  // @@protoc_insertion_point(field_add:cielimMessage.CameraModel.resolution)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
-CameraModel::_internal_resolution() const {
-  return resolution_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
-CameraModel::resolution() const {
-  // @@protoc_insertion_point(field_list:cielimMessage.CameraModel.resolution)
-  return _internal_resolution();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
-CameraModel::_internal_mutable_resolution() {
-  return &resolution_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
-CameraModel::mutable_resolution() {
-  // @@protoc_insertion_point(field_mutable_list:cielimMessage.CameraModel.resolution)
-  return _internal_mutable_resolution();
-}
-
-// repeated double cameraPositionInBody = 5;
+// repeated double cameraPositionInBody = 3;
 inline int CameraModel::_internal_camerapositioninbody_size() const {
   return camerapositioninbody_.size();
 }
@@ -3459,7 +5265,7 @@ CameraModel::mutable_camerapositioninbody() {
   return _internal_mutable_camerapositioninbody();
 }
 
-// repeated double bodyFrameToCameraMrp = 6;
+// repeated double bodyFrameToCameraMrp = 4;
 inline int CameraModel::_internal_bodyframetocameramrp_size() const {
   return bodyframetocameramrp_.size();
 }
@@ -3506,165 +5312,45 @@ CameraModel::mutable_bodyframetocameramrp() {
   return _internal_mutable_bodyframetocameramrp();
 }
 
-// uint64 renderRate = 7;
-inline void CameraModel::clear_renderrate() {
-  renderrate_ = uint64_t{0u};
+// .cielimMessage.LensModel lensModel = 5;
+inline bool CameraModel::_internal_has_lensmodel() const {
+  return this != internal_default_instance() && lensmodel_ != nullptr;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 CameraModel::_internal_renderrate() const {
-  return renderrate_;
+inline bool CameraModel::has_lensmodel() const {
+  return _internal_has_lensmodel();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 CameraModel::renderrate() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.renderRate)
-  return _internal_renderrate();
-}
-inline void CameraModel::_internal_set_renderrate(::PROTOBUF_NAMESPACE_ID::uint64 value) {
-  
-  renderrate_ = value;
-}
-inline void CameraModel::set_renderrate(::PROTOBUF_NAMESPACE_ID::uint64 value) {
-  _internal_set_renderrate(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CameraModel.renderRate)
-}
-
-// double focalLength = 8;
-inline void CameraModel::clear_focallength() {
-  focallength_ = 0;
-}
-inline double CameraModel::_internal_focallength() const {
-  return focallength_;
-}
-inline double CameraModel::focallength() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.focalLength)
-  return _internal_focallength();
-}
-inline void CameraModel::_internal_set_focallength(double value) {
-  
-  focallength_ = value;
-}
-inline void CameraModel::set_focallength(double value) {
-  _internal_set_focallength(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CameraModel.focalLength)
-}
-
-// double exposureTime = 9;
-inline void CameraModel::clear_exposuretime() {
-  exposuretime_ = 0;
-}
-inline double CameraModel::_internal_exposuretime() const {
-  return exposuretime_;
-}
-inline double CameraModel::exposuretime() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.exposureTime)
-  return _internal_exposuretime();
-}
-inline void CameraModel::_internal_set_exposuretime(double value) {
-  
-  exposuretime_ = value;
-}
-inline void CameraModel::set_exposuretime(double value) {
-  _internal_set_exposuretime(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CameraModel.exposureTime)
-}
-
-// double pointSpreadFunction = 10;
-inline void CameraModel::clear_pointspreadfunction() {
-  pointspreadfunction_ = 0;
-}
-inline double CameraModel::_internal_pointspreadfunction() const {
-  return pointspreadfunction_;
-}
-inline double CameraModel::pointspreadfunction() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.pointSpreadFunction)
-  return _internal_pointspreadfunction();
-}
-inline void CameraModel::_internal_set_pointspreadfunction(double value) {
-  
-  pointspreadfunction_ = value;
-}
-inline void CameraModel::set_pointspreadfunction(double value) {
-  _internal_set_pointspreadfunction(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CameraModel.pointSpreadFunction)
-}
-
-// double readNoise = 11;
-inline void CameraModel::clear_readnoise() {
-  readnoise_ = 0;
-}
-inline double CameraModel::_internal_readnoise() const {
-  return readnoise_;
-}
-inline double CameraModel::readnoise() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.readNoise)
-  return _internal_readnoise();
-}
-inline void CameraModel::_internal_set_readnoise(double value) {
-  
-  readnoise_ = value;
-}
-inline void CameraModel::set_readnoise(double value) {
-  _internal_set_readnoise(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CameraModel.readNoise)
-}
-
-// double systemGain = 12;
-inline void CameraModel::clear_systemgain() {
-  systemgain_ = 0;
-}
-inline double CameraModel::_internal_systemgain() const {
-  return systemgain_;
-}
-inline double CameraModel::systemgain() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.systemGain)
-  return _internal_systemgain();
-}
-inline void CameraModel::_internal_set_systemgain(double value) {
-  
-  systemgain_ = value;
-}
-inline void CameraModel::set_systemgain(double value) {
-  _internal_set_systemgain(value);
-  // @@protoc_insertion_point(field_set:cielimMessage.CameraModel.systemGain)
-}
-
-// .cielimMessage.RenderingModel renderParameters = 13;
-inline bool CameraModel::_internal_has_renderparameters() const {
-  return this != internal_default_instance() && renderparameters_ != nullptr;
-}
-inline bool CameraModel::has_renderparameters() const {
-  return _internal_has_renderparameters();
-}
-inline void CameraModel::clear_renderparameters() {
-  if (GetArenaForAllocation() == nullptr && renderparameters_ != nullptr) {
-    delete renderparameters_;
+inline void CameraModel::clear_lensmodel() {
+  if (GetArenaForAllocation() == nullptr && lensmodel_ != nullptr) {
+    delete lensmodel_;
   }
-  renderparameters_ = nullptr;
+  lensmodel_ = nullptr;
 }
-inline const ::cielimMessage::RenderingModel& CameraModel::_internal_renderparameters() const {
-  const ::cielimMessage::RenderingModel* p = renderparameters_;
-  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::RenderingModel&>(
-      ::cielimMessage::_RenderingModel_default_instance_);
+inline const ::cielimMessage::LensModel& CameraModel::_internal_lensmodel() const {
+  const ::cielimMessage::LensModel* p = lensmodel_;
+  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::LensModel&>(
+      ::cielimMessage::_LensModel_default_instance_);
 }
-inline const ::cielimMessage::RenderingModel& CameraModel::renderparameters() const {
-  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.renderParameters)
-  return _internal_renderparameters();
+inline const ::cielimMessage::LensModel& CameraModel::lensmodel() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.lensModel)
+  return _internal_lensmodel();
 }
-inline void CameraModel::unsafe_arena_set_allocated_renderparameters(
-    ::cielimMessage::RenderingModel* renderparameters) {
+inline void CameraModel::unsafe_arena_set_allocated_lensmodel(
+    ::cielimMessage::LensModel* lensmodel) {
   if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(renderparameters_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(lensmodel_);
   }
-  renderparameters_ = renderparameters;
-  if (renderparameters) {
+  lensmodel_ = lensmodel;
+  if (lensmodel) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.CameraModel.renderParameters)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.CameraModel.lensModel)
 }
-inline ::cielimMessage::RenderingModel* CameraModel::release_renderparameters() {
+inline ::cielimMessage::LensModel* CameraModel::release_lensmodel() {
   
-  ::cielimMessage::RenderingModel* temp = renderparameters_;
-  renderparameters_ = nullptr;
+  ::cielimMessage::LensModel* temp = lensmodel_;
+  lensmodel_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
   temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
@@ -3676,44 +5362,134 @@ inline ::cielimMessage::RenderingModel* CameraModel::release_renderparameters() 
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::cielimMessage::RenderingModel* CameraModel::unsafe_arena_release_renderparameters() {
-  // @@protoc_insertion_point(field_release:cielimMessage.CameraModel.renderParameters)
+inline ::cielimMessage::LensModel* CameraModel::unsafe_arena_release_lensmodel() {
+  // @@protoc_insertion_point(field_release:cielimMessage.CameraModel.lensModel)
   
-  ::cielimMessage::RenderingModel* temp = renderparameters_;
-  renderparameters_ = nullptr;
+  ::cielimMessage::LensModel* temp = lensmodel_;
+  lensmodel_ = nullptr;
   return temp;
 }
-inline ::cielimMessage::RenderingModel* CameraModel::_internal_mutable_renderparameters() {
+inline ::cielimMessage::LensModel* CameraModel::_internal_mutable_lensmodel() {
   
-  if (renderparameters_ == nullptr) {
-    auto* p = CreateMaybeMessage<::cielimMessage::RenderingModel>(GetArenaForAllocation());
-    renderparameters_ = p;
+  if (lensmodel_ == nullptr) {
+    auto* p = CreateMaybeMessage<::cielimMessage::LensModel>(GetArenaForAllocation());
+    lensmodel_ = p;
   }
-  return renderparameters_;
+  return lensmodel_;
 }
-inline ::cielimMessage::RenderingModel* CameraModel::mutable_renderparameters() {
-  ::cielimMessage::RenderingModel* _msg = _internal_mutable_renderparameters();
-  // @@protoc_insertion_point(field_mutable:cielimMessage.CameraModel.renderParameters)
+inline ::cielimMessage::LensModel* CameraModel::mutable_lensmodel() {
+  ::cielimMessage::LensModel* _msg = _internal_mutable_lensmodel();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.CameraModel.lensModel)
   return _msg;
 }
-inline void CameraModel::set_allocated_renderparameters(::cielimMessage::RenderingModel* renderparameters) {
+inline void CameraModel::set_allocated_lensmodel(::cielimMessage::LensModel* lensmodel) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete renderparameters_;
+    delete lensmodel_;
   }
-  if (renderparameters) {
+  if (lensmodel) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::RenderingModel>::GetOwningArena(renderparameters);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::LensModel>::GetOwningArena(lensmodel);
     if (message_arena != submessage_arena) {
-      renderparameters = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, renderparameters, submessage_arena);
+      lensmodel = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, lensmodel, submessage_arena);
     }
     
   } else {
     
   }
-  renderparameters_ = renderparameters;
-  // @@protoc_insertion_point(field_set_allocated:cielimMessage.CameraModel.renderParameters)
+  lensmodel_ = lensmodel;
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.CameraModel.lensModel)
+}
+
+// .cielimMessage.SensorModel sensorModel = 6;
+inline bool CameraModel::_internal_has_sensormodel() const {
+  return this != internal_default_instance() && sensormodel_ != nullptr;
+}
+inline bool CameraModel::has_sensormodel() const {
+  return _internal_has_sensormodel();
+}
+inline void CameraModel::clear_sensormodel() {
+  if (GetArenaForAllocation() == nullptr && sensormodel_ != nullptr) {
+    delete sensormodel_;
+  }
+  sensormodel_ = nullptr;
+}
+inline const ::cielimMessage::SensorModel& CameraModel::_internal_sensormodel() const {
+  const ::cielimMessage::SensorModel* p = sensormodel_;
+  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::SensorModel&>(
+      ::cielimMessage::_SensorModel_default_instance_);
+}
+inline const ::cielimMessage::SensorModel& CameraModel::sensormodel() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.CameraModel.sensorModel)
+  return _internal_sensormodel();
+}
+inline void CameraModel::unsafe_arena_set_allocated_sensormodel(
+    ::cielimMessage::SensorModel* sensormodel) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(sensormodel_);
+  }
+  sensormodel_ = sensormodel;
+  if (sensormodel) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.CameraModel.sensorModel)
+}
+inline ::cielimMessage::SensorModel* CameraModel::release_sensormodel() {
+  
+  ::cielimMessage::SensorModel* temp = sensormodel_;
+  sensormodel_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::cielimMessage::SensorModel* CameraModel::unsafe_arena_release_sensormodel() {
+  // @@protoc_insertion_point(field_release:cielimMessage.CameraModel.sensorModel)
+  
+  ::cielimMessage::SensorModel* temp = sensormodel_;
+  sensormodel_ = nullptr;
+  return temp;
+}
+inline ::cielimMessage::SensorModel* CameraModel::_internal_mutable_sensormodel() {
+  
+  if (sensormodel_ == nullptr) {
+    auto* p = CreateMaybeMessage<::cielimMessage::SensorModel>(GetArenaForAllocation());
+    sensormodel_ = p;
+  }
+  return sensormodel_;
+}
+inline ::cielimMessage::SensorModel* CameraModel::mutable_sensormodel() {
+  ::cielimMessage::SensorModel* _msg = _internal_mutable_sensormodel();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.CameraModel.sensorModel)
+  return _msg;
+}
+inline void CameraModel::set_allocated_sensormodel(::cielimMessage::SensorModel* sensormodel) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete sensormodel_;
+  }
+  if (sensormodel) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::SensorModel>::GetOwningArena(sensormodel);
+    if (message_arena != submessage_arena) {
+      sensormodel = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, sensormodel, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  sensormodel_ = sensormodel;
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.CameraModel.sensorModel)
 }
 
 // -------------------------------------------------------------------
@@ -3900,7 +5676,97 @@ inline void CielimMessage::set_allocated_currenttime(::cielimMessage::TimeStamp*
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.CielimMessage.currentTime)
 }
 
-// repeated .cielimMessage.CelestialBody celestialBodies = 3;
+// .cielimMessage.RenderingModel renderParameters = 3;
+inline bool CielimMessage::_internal_has_renderparameters() const {
+  return this != internal_default_instance() && renderparameters_ != nullptr;
+}
+inline bool CielimMessage::has_renderparameters() const {
+  return _internal_has_renderparameters();
+}
+inline void CielimMessage::clear_renderparameters() {
+  if (GetArenaForAllocation() == nullptr && renderparameters_ != nullptr) {
+    delete renderparameters_;
+  }
+  renderparameters_ = nullptr;
+}
+inline const ::cielimMessage::RenderingModel& CielimMessage::_internal_renderparameters() const {
+  const ::cielimMessage::RenderingModel* p = renderparameters_;
+  return p != nullptr ? *p : reinterpret_cast<const ::cielimMessage::RenderingModel&>(
+      ::cielimMessage::_RenderingModel_default_instance_);
+}
+inline const ::cielimMessage::RenderingModel& CielimMessage::renderparameters() const {
+  // @@protoc_insertion_point(field_get:cielimMessage.CielimMessage.renderParameters)
+  return _internal_renderparameters();
+}
+inline void CielimMessage::unsafe_arena_set_allocated_renderparameters(
+    ::cielimMessage::RenderingModel* renderparameters) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(renderparameters_);
+  }
+  renderparameters_ = renderparameters;
+  if (renderparameters) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:cielimMessage.CielimMessage.renderParameters)
+}
+inline ::cielimMessage::RenderingModel* CielimMessage::release_renderparameters() {
+  
+  ::cielimMessage::RenderingModel* temp = renderparameters_;
+  renderparameters_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::cielimMessage::RenderingModel* CielimMessage::unsafe_arena_release_renderparameters() {
+  // @@protoc_insertion_point(field_release:cielimMessage.CielimMessage.renderParameters)
+  
+  ::cielimMessage::RenderingModel* temp = renderparameters_;
+  renderparameters_ = nullptr;
+  return temp;
+}
+inline ::cielimMessage::RenderingModel* CielimMessage::_internal_mutable_renderparameters() {
+  
+  if (renderparameters_ == nullptr) {
+    auto* p = CreateMaybeMessage<::cielimMessage::RenderingModel>(GetArenaForAllocation());
+    renderparameters_ = p;
+  }
+  return renderparameters_;
+}
+inline ::cielimMessage::RenderingModel* CielimMessage::mutable_renderparameters() {
+  ::cielimMessage::RenderingModel* _msg = _internal_mutable_renderparameters();
+  // @@protoc_insertion_point(field_mutable:cielimMessage.CielimMessage.renderParameters)
+  return _msg;
+}
+inline void CielimMessage::set_allocated_renderparameters(::cielimMessage::RenderingModel* renderparameters) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete renderparameters_;
+  }
+  if (renderparameters) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::cielimMessage::RenderingModel>::GetOwningArena(renderparameters);
+    if (message_arena != submessage_arena) {
+      renderparameters = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, renderparameters, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  renderparameters_ = renderparameters;
+  // @@protoc_insertion_point(field_set_allocated:cielimMessage.CielimMessage.renderParameters)
+}
+
+// repeated .cielimMessage.CelestialBody celestialBodies = 4;
 inline int CielimMessage::_internal_celestialbodies_size() const {
   return celestialbodies_.size();
 }
@@ -3940,7 +5806,7 @@ CielimMessage::celestialbodies() const {
   return celestialbodies_;
 }
 
-// .cielimMessage.Spacecraft spacecraft = 4;
+// .cielimMessage.Spacecraft spacecraft = 5;
 inline bool CielimMessage::_internal_has_spacecraft() const {
   return this != internal_default_instance() && spacecraft_ != nullptr;
 }
@@ -4030,7 +5896,7 @@ inline void CielimMessage::set_allocated_spacecraft(::cielimMessage::Spacecraft*
   // @@protoc_insertion_point(field_set_allocated:cielimMessage.CielimMessage.spacecraft)
 }
 
-// .cielimMessage.CameraModel camera = 5;
+// .cielimMessage.CameraModel camera = 6;
 inline bool CielimMessage::_internal_has_camera() const {
   return this != internal_default_instance() && camera_ != nullptr;
 }
@@ -4123,6 +5989,14 @@ inline void CielimMessage::set_allocated_camera(::cielimMessage::CameraModel* ca
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

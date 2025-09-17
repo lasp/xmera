@@ -45,18 +45,21 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     }
 
     /*! Check asteroid parameter information messages */
-    if (this->celestialParametersMessage.isLinked()) {
-        this->celestialParametersMessageStatus.dataFresh = false;
-        this->celestialParametersMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    }
-
-    /*! Check asteroid parameter information messages */
     if (this->epochMessage.isLinked()) {
         this->epochMessageStatus.dataFresh = false;
         this->epochMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     }
 
     this->epochMessageStatus.dataFresh = false;
+
+    /*! Check asteroid parameter information messages */
+    MessageStatus celestialParametersStatus;
+    celestialParametersStatus.dataFresh = false;
+    celestialParametersStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    this->celestialParametersMessageStatus.clear();
+    for (int c = 0; c < this->celestialBodiesList.size(); ++c) {
+        this->celestialParametersMessageStatus.push_back(celestialParametersStatus);
+    }
 
     /*! Check Spice input message */
     MessageStatus spiceStatus;
@@ -128,14 +131,19 @@ void CielimInterface::readBskMessages() {
     }
 
     /*! Read celestial body parameter message */
-    if (this->celestialParametersMessage.isLinked()) {
-        CelestialBodyParametersMsgPayload celestialParamArray = this->celestialParametersMessage();
-        if (this->celestialParametersMessage.isWritten() &&
-            this->celestialParametersMessage.timeWritten() != this->celestialParametersMessageStatus.lastTimeTag) {
-            this->celestialParametersMessageStatus.lastTimeTag = this->celestialParametersMessage.timeWritten();
-            this->celestialParametersMessageStatus.dataFresh = true;
+    for (size_t i = 0; i < this->celestialBodiesList.size(); ++i) {
+        if (this->celestialBodiesList.at(i).celestialParametersMessage.isLinked()) {
+            CelestialBodyParametersMsgPayload celestialParamArray =
+                this->celestialBodiesList.at(i).celestialParametersMessage();
+            if (this->celestialBodiesList.at(i).celestialParametersMessage.isWritten() &&
+                this->celestialBodiesList.at(i).celestialParametersMessage.timeWritten() !=
+                    this->celestialParametersMessageStatus[i].lastTimeTag) {
+                this->celestialParametersMessageStatus[i].lastTimeTag =
+                    this->celestialBodiesList.at(i).celestialParametersMessage.timeWritten();
+                this->celestialParametersMessageStatus[i].dataFresh = true;
+            }
+            this->celestialBodiesList.at(i).celestialParametersPayload = celestialParamArray;
         }
-        this->celestialParametersPayload = celestialParamArray;
     }
 
     /*! Read sim epoch msg */
@@ -194,42 +202,53 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
     /*! Write spice output msgs */
     for (int k = 0; k < this->spiceBodyMessageStatus.size(); ++k) {
         if (this->spiceBodyMessageStatus[k].dataFresh) {
-            cielimMessage::CelestialBody *spice = visPayload.add_celestialbodies();
-            spice->set_bodyname(this->celestialBodiesList.at(k).name);
+            cielimMessage::CelestialBody *celestialBody = visPayload.add_celestialbodies();
+            celestialBody->set_bodyname(this->celestialBodiesList.at(k).name);
             for (int i = 0; i < 3; i++) {
-                spice->add_position(this->celestialBodiesList.at(k).spiceStatePayload.PositionVector[i]);
-                spice->add_velocity(this->celestialBodiesList.at(k).spiceStatePayload.VelocityVector[i]);
+                celestialBody->add_position(this->celestialBodiesList.at(k).spiceStatePayload.PositionVector[i]);
+                celestialBody->add_velocity(this->celestialBodiesList.at(k).spiceStatePayload.VelocityVector[i]);
 
-                spice->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][0]);
-                spice->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][1]);
-                spice->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][2]);
+                celestialBody->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][0]);
+                celestialBody->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][1]);
+                celestialBody->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][2]);
             }
-            spice->set_centralbody(this->celestialBodiesList.at(k).isCentralBody);
-            std::string parameterBodyName = this->celestialParametersPayload.bodyName;
-            if (this->celestialParametersMessage.isLinked() && this->celestialParametersMessageStatus.dataFresh &&
-                !parameterBodyName.compare(this->celestialBodiesList.at(k).name)) {
-                auto *celestialParameters = new cielimMessage::MeshModel();
+            celestialBody->set_centralbody(this->celestialBodiesList.at(k).isCentralBody);
+            if (this->celestialBodiesList.at(k).celestialParametersMessage.isLinked() &&
+                this->celestialParametersMessageStatus[k].dataFresh) {
+                auto *meshModel = new cielimMessage::MeshModel();
                 auto *perlinNoise = new cielimMessage::PerlinNoise();
-                std::string brdfModelName = this->celestialParametersPayload.brdf;
-                celestialParameters->set_brdfmodel(brdfModelName);
-                celestialParameters->set_meanradius(this->celestialParametersPayload.meanRadius);
-                perlinNoise->set_octavecount(this->celestialParametersPayload.perlinNoiseOctaveCount);
-                perlinNoise->set_baseamplitude(this->celestialParametersPayload.perlinNoiseBaseAmplitude);
-                perlinNoise->set_basefrequency(this->celestialParametersPayload.perlinNoiseBaseFrequency);
-                perlinNoise->set_persistence(this->celestialParametersPayload.perlinNoisePersistence);
-                celestialParameters->set_allocated_perlinnoise(perlinNoise);
-                for (int i = 0; i < 3; ++i) {
-                    celestialParameters->add_principalaxisdistortion(
-                        this->celestialParametersPayload.principalAxisDistortion[i]);
-                    celestialParameters->add_inertialtobodymrp(this->celestialParametersPayload.sigma_BN[i]);
-                }
-                celestialParameters->set_proceduralrocks(this->celestialParametersPayload.proceduralRocks);
+                auto *reflectanceModel = new cielimMessage::ReflectanceModel();
+                celestialBody->set_geometricalbedo(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo);
+                perlinNoise->set_octavecount(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseOctaveCount);
+                perlinNoise->set_baseamplitude(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseAmplitude);
+                perlinNoise->set_basefrequency(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseFrequency);
+                perlinNoise->set_persistence(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoisePersistence);
+                std::string brdfModelName = this->celestialBodiesList.at(k).celestialParametersPayload.brdf;
+                reflectanceModel->set_brdfmodel(brdfModelName);
+                reflectanceModel->set_isotropicscattering(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.isotropicScattering);
                 for (int i = 0; i < MAX_PARAMETER_LENGTH; ++i) {
-                    celestialParameters->add_reflectanceparameters(
-                        this->celestialParametersPayload.reflectanceParameters[i]);
+                    reflectanceModel->add_reflectanceparameters(
+                        this->celestialBodiesList.at(k).celestialParametersPayload.reflectanceParameters[i]);
                 }
-                celestialParameters->set_shapemodel(this->celestialParametersPayload.shapeModel);
-                spice->set_allocated_model(celestialParameters);
+                meshModel->set_meanradius(this->celestialBodiesList.at(k).celestialParametersPayload.meanRadius);
+                meshModel->set_allocated_perlinnoise(perlinNoise);
+                meshModel->set_allocated_refmodel(reflectanceModel);
+                for (int i = 0; i < 3; ++i) {
+                    meshModel->add_principalaxisdistortion(
+                        this->celestialBodiesList.at(k).celestialParametersPayload.principalAxisDistortion[i]);
+                    meshModel->add_inertialtobodymrp(
+                        this->celestialBodiesList.at(k).celestialParametersPayload.sigma_BN[i]);
+                }
+                meshModel->set_proceduralrocks(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.proceduralRocks);
+                meshModel->set_shapemodel(this->celestialBodiesList.at(k).celestialParametersPayload.shapeModel);
+                celestialBody->set_allocated_model(meshModel);
             }
         }
     }
@@ -252,34 +271,72 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
          * UE5 has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame:
          * z point, x horizontal, y vertical (down) */
         auto *camera = new cielimMessage::CameraModel();
-        for (int j = 0; j < 2; j++) {
-            camera->add_resolution(this->cameraModelPayload.resolution[j]);
-            camera->add_fieldofview(this->cameraModelPayload.fieldOfView[j]);
-        }
+        auto *lensModel = new cielimMessage::LensModel();
+        auto *sensorModel = new cielimMessage::SensorModel();
+        auto *quantumEfficiency = new cielimMessage::QuantumEfficiency();
+
+        camera->set_cameraid(this->cameraModelPayload.cameraId);
+        camera->set_parentname(this->cameraModelPayload.parentName);
         for (int j = 0; j < 3; j++) {
             camera->add_bodyframetocameramrp(this->cameraModelPayload.bodyToCameraMrp[j]);
             camera->add_camerapositioninbody(this->cameraModelPayload.cameraBodyFramePosition[j]);
         }
-        camera->set_renderrate(this->cameraModelPayload.renderRate);
-        camera->set_cameraid(this->cameraModelPayload.cameraId);
-        camera->set_parentname(this->cameraModelPayload.parentName);
-        camera->set_focallength(this->cameraModelPayload.focalLength);
-        camera->set_pointspreadfunction(this->cameraModelPayload.gaussianPointSpreadFunction);
-        camera->set_exposuretime(this->cameraModelPayload.exposureTime);
-        camera->set_readnoise(this->cameraModelPayload.readNoise);
-        camera->set_systemgain(this->cameraModelPayload.systemGain);
 
-        if (this->cameraRenderingMessage.isLinked() && this->cameraRenderingMessageStatus.dataFresh &&
-            this->cameraRenderingPayload.cameraId == this->cameraModelPayload.cameraId) {
-            auto *rendering = new cielimMessage::RenderingModel();
-            rendering->set_cosmicraystddeviation(this->cameraRenderingPayload.cosmicRayStdDeviation);
-            rendering->set_straylight(this->cameraRenderingPayload.strayLight);
-            rendering->set_starfield(this->cameraRenderingPayload.starField);
-            rendering->set_rendering(this->cameraRenderingPayload.rendering);
-            rendering->set_enablesmear(this->cameraRenderingPayload.smear);
-            camera->set_allocated_renderparameters(rendering);
+        for (int j = 0; j < 2; j++) {
+            sensorModel->add_resolution(this->cameraModelPayload.resolution[j]);
+            lensModel->add_fieldofview(this->cameraModelPayload.fieldOfView[j]);
         }
+
+        lensModel->set_focallength(this->cameraModelPayload.focalLength);
+        lensModel->set_pointspreadfunction(this->cameraModelPayload.gaussianPointSpreadFunction);
+        lensModel->set_apertureradius(this->cameraModelPayload.apertureRadius);
+        for (int j = 0; j < MAX_POLY_COEFF; j++) {
+            lensModel->add_horizontalvignetting(this->cameraModelPayload.horizontalVignetting[j]);
+            lensModel->add_verticalvignetting(this->cameraModelPayload.verticalVignetting[j]);
+            lensModel->add_distortion(this->cameraModelPayload.distortion[j]);
+        }
+        lensModel->set_transmission(this->cameraModelPayload.transmission);
+
+        sensorModel->set_renderrate(this->cameraModelPayload.renderRate);
+        sensorModel->set_exposuretime(this->cameraModelPayload.exposureTime);
+        sensorModel->set_readnoise(this->cameraModelPayload.readNoise);
+        sensorModel->set_shotnoise(this->cameraModelPayload.shotNoise);
+        sensorModel->set_darkcurrent(this->cameraModelPayload.darkCurrent);
+        sensorModel->set_systemgain(this->cameraModelPayload.systemGain);
+        sensorModel->set_sensorwidth(this->cameraModelPayload.sensorWidth);
+        sensorModel->set_sensorheight(this->cameraModelPayload.sensorHeight);
+        sensorModel->set_fullwellcapacity(this->cameraModelPayload.fullWellCapacity);
+        sensorModel->set_gamma(this->cameraModelPayload.gammaCorrection);
+
+        quantumEfficiency->set_integrationweightfactor(this->cameraModelPayload.integrationWeightFactor);
+        quantumEfficiency->set_redvalue1(this->cameraModelPayload.redQuantumEfficiency[0]);
+        quantumEfficiency->set_redvalue2(this->cameraModelPayload.redQuantumEfficiency[1]);
+        quantumEfficiency->set_redvalue3(this->cameraModelPayload.redQuantumEfficiency[2]);
+        quantumEfficiency->set_greenvalue1(this->cameraModelPayload.greenQuantumEfficiency[0]);
+        quantumEfficiency->set_greenvalue2(this->cameraModelPayload.greenQuantumEfficiency[1]);
+        quantumEfficiency->set_greenvalue3(this->cameraModelPayload.greenQuantumEfficiency[2]);
+        quantumEfficiency->set_bluevalue1(this->cameraModelPayload.blueQuantumEfficiency[0]);
+        quantumEfficiency->set_bluevalue2(this->cameraModelPayload.blueQuantumEfficiency[1]);
+        quantumEfficiency->set_bluevalue3(this->cameraModelPayload.blueQuantumEfficiency[2]);
+        sensorModel->set_allocated_qecurve(quantumEfficiency);
+
+        camera->set_allocated_lensmodel(lensModel);
+        camera->set_allocated_sensormodel(sensorModel);
+
         visPayload.set_allocated_camera(camera);
+    }
+
+    if (this->cameraRenderingMessage.isLinked() && this->cameraRenderingMessageStatus.dataFresh) {
+        auto *rendering = new cielimMessage::RenderingModel();
+        rendering->set_wavelength1(this->cameraRenderingPayload.wavelengths[0]);
+        rendering->set_wavelength2(this->cameraRenderingPayload.wavelengths[1]);
+        rendering->set_wavelength3(this->cameraRenderingPayload.wavelengths[2]);
+        rendering->set_cosmicraystddeviation(this->cameraRenderingPayload.cosmicRayStdDeviation);
+        rendering->set_straylight(this->cameraRenderingPayload.strayLight);
+        rendering->set_starfield(this->cameraRenderingPayload.starField);
+        rendering->set_rendering(this->cameraRenderingPayload.rendering);
+        rendering->set_enablesmear(this->cameraRenderingPayload.smear);
+        visPayload.set_allocated_renderparameters(rendering);
     }
 
     /*! Enter in lock-step with the vizard to simulate a camera */
