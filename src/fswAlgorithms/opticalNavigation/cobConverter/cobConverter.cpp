@@ -184,7 +184,7 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
          * states */
         FilterMsgPayload filterMsgBuffer = this->opnavFilterInMsg();
         Eigen::Matrix3d covar_B;
-        if (phaseAngleCorrectionMethod == PhaseAngleCorrectionMethod::Binary) {
+        if (phaseAngleCorrectionMethod == PhaseAngleCorrectionMethod::Binary && this->objectRadiusUncertainty > 0) {
             Eigen::Vector3d position = cArray2EigenVector3d(filterMsgBuffer.state);
             double constants_deltaR =
                 (4 * this->objectRadius / (3 * M_PI * position.norm()) * (1 - cos(alphaPA)) /
