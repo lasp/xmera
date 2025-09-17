@@ -93,9 +93,9 @@ def run(show_plots, cmdStateFlag, testReset):
 
     # Initialize the test module configuration data
     sigma_RR0 = np.array([0.3, .5, 0.0])
-    module.mrpSet = sigma_RR0
+    module.setSigmaRR0(sigma_RR0)
     omega_RR0_R = np.array([0.1, 0.0, 0.0]) * mc.D2R
-    module.omega_RR0_R = omega_RR0_R
+    module.setOmegaRR0(omega_RR0_R)
     unitTestSupport.writeTeXSnippet("sigma_RR0", str(sigma_RR0), path)
     unitTestSupport.writeTeXSnippet("omega_RR0_R", str(omega_RR0_R*mc.R2D) + "deg/sec", path)
 

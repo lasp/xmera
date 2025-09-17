@@ -112,7 +112,7 @@ void MrpRotation::checkRasterCommands()
     if (!prevCmdActive)
     {
         /*! - copy over the commanded initial MRP and rate information */
-        this->mrpSet = this->cmdSet;
+        this->sigma_RR0 = this->cmdSet;
         this->omega_RR0_R = this->cmdRates;
 
         /*! - reset the prior commanded attitude state variables */
@@ -150,11 +150,11 @@ void MrpRotation::computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
                                               AttRefMsgPayload   *attRefOut)
 {
     /*! - Compute attitude reference frame R/N information */
-    Eigen::Matrix3d B = bmatMrp(this->mrpSet);
+    Eigen::Matrix3d B = bmatMrp(this->sigma_RR0);
     Eigen::Vector3d sigmaDot_RR0 = 0.25 * B * this->omega_RR0_R;
-    Eigen::Vector3d mrpSetNew = this->mrpSet + sigmaDot_RR0 * this->dt;
-    this->mrpSet = mrpSwitch(mrpSetNew, 1.0);
-    Eigen::Matrix3d dcm_RR0 = mrpToDcm(this->mrpSet);
+    Eigen::Vector3d mrpSetNew = this->sigma_RR0 + sigmaDot_RR0 * this->dt;
+    this->sigma_RR0 = mrpSwitch(mrpSetNew, 1.0);
+    Eigen::Matrix3d dcm_RR0 = mrpToDcm(this->sigma_RR0);
     Eigen::Matrix3d dcm_R0N = mrpToDcm(sigma_R0N);
     Eigen::Matrix3d dcm_RN = dcm_RR0 * dcm_R0N;
 
@@ -170,3 +170,25 @@ void MrpRotation::computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
     eigenVector3d2CArray(omega_RN_N, attRefOut->omega_RN_N);
     eigenVector3d2CArray(domega_RN_N, attRefOut->domega_RN_N);
 }
+
+/*! Setter method for the current MRP attitude coordinate set with respect to the input reference
+ @return void
+ @param sigma [-] current MRP attitude coordinate set with respect to the input reference
+*/
+void MrpRotation::setSigmaRR0(const Eigen::Vector3d &sigma) { this->sigma_RR0 = sigma; }
+
+/*! Getter method for the current MRP attitude coordinate set with respect to the input reference
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d& MrpRotation::getSigmaRR0() const {return this->sigma_RR0; }
+
+/*! Setter method for the angular velocity vector relative to input reference
+ @return void
+ @param omega [rad/s] angular velocity vector relative to input reference
+*/
+void MrpRotation::setOmegaRR0(const Eigen::Vector3d &omega) { this->omega_RR0_R = omega; }
+
+/*! Getter method for the angular velocity vector relative to input reference
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d& MrpRotation::getOmegaRR0() const { return this->omega_RR0_R; }

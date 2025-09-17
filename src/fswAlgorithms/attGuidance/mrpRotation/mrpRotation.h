@@ -39,9 +39,10 @@ class MrpRotation : public SysModel {
                                      Eigen::Vector3d omega_R0N_N,
                                      Eigen::Vector3d domega_R0N_N,
                                      AttRefMsgPayload *attRefOut);
-
-    Eigen::Vector3d mrpSet{Eigen::Vector3d::Zero()};       //!< [-] current MRP attitude coordinate set with respect to the input reference
-    Eigen::Vector3d omega_RR0_R{Eigen::Vector3d::Zero()};  //!< [rad/s] angular velocity vector relative to input reference
+    void setSigmaRR0(const Eigen::Vector3d &sigma);
+    const Eigen::Vector3d &getSigmaRR0() const;
+    void setOmegaRR0(const Eigen::Vector3d &omega);
+    const Eigen::Vector3d &getOmegaRR0() const;
 
     Message<AttRefMsgPayload> attRefOutMsg;     //!< The name of the output message containing the Reference
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< The name of the guidance reference input message
@@ -49,6 +50,8 @@ class MrpRotation : public SysModel {
         desiredAttInMsg;  //!< The name of the incoming message containing the desired EA set
 
    private:
+    Eigen::Vector3d sigma_RR0{Eigen::Vector3d::Zero()};    //!< [-] current MRP attitude coordinate set with respect to the input reference
+    Eigen::Vector3d omega_RR0_R{Eigen::Vector3d::Zero()};  //!< [rad/s] angular velocity vector relative to input reference
     Eigen::Vector3d cmdSet{};         //!< [] msg commanded initial MRP sigma_RR0 set with respect to input reference
     Eigen::Vector3d cmdRates{};       //!< [rad/s] msg commanded constant angular velocity vector omega_RR0_R
     Eigen::Vector3d priorCmdSet{};    //!< [] prior commanded MRP set
