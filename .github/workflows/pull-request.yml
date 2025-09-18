@@ -7,61 +7,87 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
 env:
-  USERNAME: ${{github.repository_owner}}
-  FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
-  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{github.repository_owner}}/index.json,readwrite"
+  USERNAME: ${{ github.repository_owner }}
+  FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite"
+  VCPKG_FEATURE_FLAGS: "manifests,registries,binarycaching"
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
+  CTEST_PARALLEL_LEVEL: 4
+  CTEST_OUTPUT_ON_FAILURE: 1
 
 jobs:
   pre-commit:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install clang-format
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            **/pyproject.toml
+            **/requirements*.txt
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Install clang-format (Linux static binary)
         run: |
           sudo wget -qO /usr/local/bin/clang-format https://github.com/cpp-linter/clang-tools-static-binaries/releases/latest/download/clang-format-20_linux-amd64
           sudo chmod a+x /usr/local/bin/clang-format
           clang-format --version
+
       - id: file_changes
         uses: tj-actions/changed-files@v46
-      - uses: pre-commit/action@v3.0.1
-        with:
-          extra_args: --files ${{ steps.file_changes.outputs.all_changed_files}}
 
-  build-linux:
-    name: Build Linux
-    runs-on: ubuntu-24.04
+      - name: Run pre-commit (changed files)
+        uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --color always --files ${{ steps.file_changes.outputs.all_changed_files }}
+
+  build-test:
+    name: Build & Test (${{ matrix.os }} / py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    if: ${{ github.event.pull_request.draft == false }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-24.04, macos-14]
         python-version: ["3.9", "3.10", "3.11"]
     permissions:
-      actions: read
       contents: read
+      packages: write
+      actions: read
       security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: ${{ runner.os }}-pip-${{ matrix.python-version }}-
-      - name: "Install system dependencies"
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            **/pyproject.toml
+            **/requirements*.txt
+
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get purge cmake
           sudo apt-get install -y \
             ninja-build build-essential \
             pkg-config autoconf automake libtool \
@@ -71,149 +97,121 @@ jobs:
             libx11-dev libxkbcommon-x11-dev libx11-xcb-dev \
             libxft-dev libxext-dev libgles2-mesa-dev \
             libxi-dev libxtst-dev libxrandr-dev libltdl-dev \
-            gtk2.0 libgtk2.0-dev \
+            libgtk2.0-dev \
             python3-setuptools python3-jinja2 python3-tk \
             mono-complete
-      - name: Setup cmake
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+          HOMEBREW_NO_ANALYTICS: 1
+        run: |
+          brew install ninja swig pkg-config mono || true
+          swig -version
+          mono --version || true
+
+      - name: Setup CMake 3.28.3
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: '3.28.3'
-      - # https://github.com/lukka/CppBuildTasks-Validation/blob/v10/.github/workflows/hosted-ninja-vcpkg.yml
-        name: "Install vcpkg"
+
+      - name: Install vcpkg
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
           vcpkgJsonGlob: "src/vcpkg.json"
           vcpkgConfigurationJsonGlob: "src/vcpkg-configuration.json"
-      - name: Add NuGet sources
-        shell: bash
+
+      - name: Cache vcpkg build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.workspace }}/b/vcpkg/installed
+            ${{ runner.workspace }}/b/vcpkg/packages
+            ${{ runner.workspace }}/b/vcpkg/buildtrees
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('src/vcpkg.json', 'src/vcpkg-configuration.json') }}
+
+      - name: Add NuGet sources for vcpkg binary cache (portable)
         env:
           VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
         run: |
-          mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
-            sources add \
-            -Source "${{ env.FEED_URL }}" \
+          set -euo pipefail
+          NUGET="$(${VCPKG_EXE} fetch nuget | tail -n 1)"
+
+          # Build the command invocation safely (handles paths with spaces)
+          if [[ "$NUGET" == *.exe ]]; then
+            NUGET_CMD=(mono "$NUGET")
+          else
+            # e.g., "nuget" shim from Mono on macOS, or a native path
+            NUGET_CMD=("$NUGET")
+          fi
+
+          echo "Using NuGet CLI: ${NUGET_CMD[*]}"
+
+          "${NUGET_CMD[@]}" sources add \
+            -Source "${FEED_URL}" \
             -StorePasswordInClearText \
             -Name GitHubPackages \
-            -UserName "${{ env.USERNAME }}" \
+            -UserName "${USERNAME}" \
             -Password "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}"
-          mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
-            setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
-            -Source "${{ env.FEED_URL }}"
-      - name: "Create virtual Environment"
+
+          "${NUGET_CMD[@]}" setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
+            -Source "${FEED_URL}"
+
+      - name: Create virtual environment
         run: |
-          python${{ matrix.python-version }} -m venv .venv
+          python -m venv .venv
           source .venv/bin/activate
-          echo "VIRTUAL ENV:" $VIRTUAL_ENV
-      - name: "Install required Python dependencies"
-        run: source .venv/bin/activate && pip3 install -r requirements.txt
-      - name: "Generate build recipes"
+          python -V
+          pip -V
+
+      - name: Install required Python dependencies
+        run: |
+          source .venv/bin/activate
+          python -m pip install -r requirements.txt
+
+      - name: Configure (CMake preset)
+        working-directory: src
         env:
-          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
-        run: source .venv/bin/activate && cd src/ && cmake --preset ci-test
-      - name: "Build basilisk"
-        run: source .venv/bin/activate && cd src/ && cmake --build ../dist3/
-      - name: "Install Basilisk"
-        run: source .venv/bin/activate && pip3 install -e .
-      - name: "Run Python Tests"
+          VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
+        run: cmake --preset ci-test
+
+      - name: Build
+        working-directory: src
+        run: cmake --build ../dist3/ --parallel
+
+      - name: Install Basilisk (editable)
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not scenarioTest" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
-      - name: "Upload pytest test results"
+          python -m pip install -e .
+
+      - name: Run Python tests
+        run: |
+          source .venv/bin/activate
+          cd src
+          pytest -n auto -m "not scenarioTest" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+
+      - name: Upload pytest test results
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-results-${{ matrix.python-version }}
+          name: pytest-${{ matrix.os }}-py${{ matrix.python-version }}
           path: junit/test-results-${{ matrix.python-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
-      - name: "Run C/C++ Tests"
-        working-directory: ./dist3
-        run: ctest
-        if: ${{ always() }}
+          retention-days: 7
 
-  build-windows:
-    if: 'false'
-    name: Build Windows
-    runs-on: windows-2022
-    strategy:
-      matrix:
-        python-version: ["3.10"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    env:
-      MPLBACKEND: agg
-      CONAN_USER_HOME: C:\Users\runneradmin\
-      CONAN_USER_HOME_SHORT: None
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Run C/C++ tests
+        working-directory: ./dist3
+        run: ctest --output-on-failure
+
+      - name: Upload CMake & test logs on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: '**/requirements.txt'
-      - name: Cache conan packages
-        id: cache-conan
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-conan-packages
-        with:
-          path: C:\Users\runneradmin\.conan
-          key:
-            conan-packages-${{ runner.os }}-hash-${{ hashFiles('conanfile.py') }}
-          restore-keys: |
-            conan-packages-${{ runner.os }}-hash-
-      - name: Choco help
-        uses: crazy-max/ghaction-chocolatey@v3
-        with:
-          args: -h
-      - name: "Install swig and cmake"
-        shell: pwsh
-        run: choco install swig cmake -y
-      - name: "Create python virtual env"
-        shell: pwsh
-        run: python -m venv venv
-      - name: "Install wheel and conan package"
-        shell: pwsh
-        run: |
-            venv\Scripts\activate
-            pip install -r requirements.txt
-      - name: "Add basilisk and cmake path to env path"
-        shell: pwsh
-        run: |
-          $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
-          $newpath = “$oldpath;${{ env.GITHUB_WORKSPACE }}\dist3\Basilisk;C:\Program Files\CMake\bin”
-          Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
-      - name: "Build basilisk"
-        shell: pwsh
-        run: |
-          venv\Scripts\activate
-          python conanfile.py --opNav True
-      - name: "Test Simulation Python"
-        shell: pwsh
-        run: |
-          Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name MPLBACKEND -Value ${MPLBACKEND}
-          venv\Scripts\activate
-          cd src\simulation
-          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n auto -m "not scenarioTest"; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
-      - name: "Python Architecture Tests"
-        shell: pwsh
-        run: |
-          venv\Scripts\activate
-          cd src\architecture
-          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n auto; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
-      - name: "Python FswAlgorithms Tests"
-        shell: pwsh
-        run: |
-          venv\Scripts\activate
-          cd src\fswAlgorithms
-          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n auto; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
-      - name: "C/C++ Tests"
-        shell: pwsh
-        run: |
-          cd dist3
-          ctest
-          if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
+          name: cmake-logs-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: |
+            dist3/CMakeCache.txt
+            dist3/CMakeFiles/CMakeOutput.log
+            dist3/CMakeFiles/CMakeError.log
+            **/Testing/Temporary/LastTest.log
+          retention-days: 7
