@@ -27,8 +27,6 @@
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/AttStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
-
 /*! @brief Top level structure for the sub-module routines. */
 class MrpRotation : public SysModel {
    public:
@@ -56,8 +54,6 @@ class MrpRotation : public SysModel {
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< The name of the guidance reference input message
     ReadFunctor<AttStateMsgPayload>
         desiredAttInMsg;  //!< The name of the incoming message containing the desired EA set
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

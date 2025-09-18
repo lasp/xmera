@@ -27,6 +27,7 @@
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include <stdexcept>
 
 
 /*! @brief This resets the module to original states.
@@ -37,7 +38,7 @@ void MrpRotation::reset(uint64_t callTime)
 {
     // check if the required input messages are included
     if (!this->attRefInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpRotation.attRefInMsg wasn't connected.");
+        throw std::invalid_argument("mrpRotation.attRefInMsg wasn't connected.");
     }
 
     this->priorTime = 0;
