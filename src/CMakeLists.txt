@@ -436,25 +436,12 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
 endif()
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(_arch_suffix 64)
-else()
-  set(_arch_suffix 32)
-endif()
-
 # depending on system
 if(WIN32)
   set(CMAKE_MSVCIDE_RUN_PATH "${CMAKE_BINARY_DIR}/Basilisk")
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
-  set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib)
 
 elseif(APPLE)
-  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64")
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx_arm64.a)
-  else()
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx.a)
-  endif()
-
   set(CMAKE_SKIP_BUILD_RPATH FALSE) # use, i.e. don't skip the full RPATH for the build tree
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) # when building, don't use the install RPATH already (but later on when
                                            # installing)
@@ -464,11 +451,6 @@ elseif(APPLE)
   # install RPATH
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 else()
-  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "^(arm64|aarch64)$")
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_arm64.a)
-  else()
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice.a)
-  endif()
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
   set(CMAKE_INSTALL_RPATH "\$ORIGIN/../../")
 endif()
@@ -521,7 +503,7 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # The quotations around DYN_TARGETS informs function that it is a list
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
-generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation")
+generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS}" "simulation")
 generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${POWER_TARGETS}" "powerLib;${ARCHITECTURE_LIBS};" "simulation")
