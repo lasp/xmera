@@ -30,6 +30,7 @@
 %include "swig_eigen.i"
 
 %include "mrpRotation.h"
+%include "mrpRotationAlgorithm.h"
 
 %include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 %include "architecture/msgPayloadDef/AttStateMsgPayload.h"
