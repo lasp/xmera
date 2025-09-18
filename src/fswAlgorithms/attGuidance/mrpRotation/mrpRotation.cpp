@@ -47,20 +47,13 @@ void MrpRotation::reset(uint64_t callTime)
  */
 void MrpRotation::updateState(uint64_t callTime)
 {
-    /* - Read input messages */
-    AttRefMsgPayload inputRef;
+    AttRefMsgPayload inputRef = this->attRefInMsg();
     AttRefMsgPayload attRefOut = {};
-
-    /*!- read in input reference frame message */
-    inputRef = this->attRefInMsg();
 
     /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
     if (this->desiredAttInMsg.isLinked())
     {
-        AttStateMsgPayload attStates;
-
-        /* - Read Raster Manager messages */
-        attStates = this->desiredAttInMsg();
+        AttStateMsgPayload attStates = this->desiredAttInMsg();
 
         /* - Save commanded MRP set and body rates */
         this->cmdSet = Eigen::Map<const Eigen::Vector3d>(attStates.state);

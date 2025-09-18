@@ -56,8 +56,8 @@ class MrpRotation : public SysModel {
     Eigen::Vector3d cmdRates{};       //!< [rad/s] msg commanded constant angular velocity vector omega_RR0_R
     Eigen::Vector3d priorCmdSet{};    //!< [] prior commanded MRP set
     Eigen::Vector3d priorCmdRates{};  //!< [rad/s] prior commanded angular velocity vector
-    uint64_t priorTime;       //!< [ns] last time the guidance module is called
-    double dt;                //!< [s] integration time-step
+    uint64_t priorTime{};       //!< [ns] last time the guidance module is called
+    double dt{};                //!< [s] integration time-step
 };
 
 #endif
