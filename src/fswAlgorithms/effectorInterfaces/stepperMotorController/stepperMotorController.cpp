@@ -19,18 +19,18 @@
 
 #include "stepperMotorController.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <cassert>
+#include <stdexcept>
 
 /*! This method performs a complete reset of the module. The input message is checked to ensure it is linked.
  @return void
  @param callTime [ns] Time the method is called
 */
 void StepperMotorController::reset(uint64_t callTime) {
-    assert(this->motorRefAngleInMsg.isLinked());
+    if (!this->motorRefAngleInMsg.isLinked()) {
+        throw std::invalid_argument("StepperMotorController.motorRefAngleInMsg wasn't connected.");
+    }
 
-    this->stepCount = 0;
-    this->stepsCommanded = 0;
-    this->previousWrittenTime = -1.0;
+    this->algorithm.reset();
 }
 
 /*! The update method computes the required number of motor steps given a motor angle reference message. This method
@@ -49,140 +49,65 @@ void StepperMotorController::updateState(uint64_t callTime) {
         hingedRigidBodyMsgTimeWritten = NANO2SEC * this->motorRefAngleInMsg.timeWritten();
     }
 
-    // Each time a new motor reference message is written to this module, the required motor steps commanded to achieve
-    // the incoming reference angle are calculated, updated, and output as a MotorStepCommandMsgPayload message
-    if (this->previousWrittenTime < hingedRigidBodyMsgTimeWritten) {
-        // Update the previous written time
-        this->previousWrittenTime = hingedRigidBodyMsgTimeWritten;
+    StepperMotorControllerOutput stepperMotorControllerOutput =
+        this->algorithm.update(callTime, hingedRigidBodyMsgTimeWritten, motorRefAngleIn);
 
-        // Set the motor reference angle using the input message
-        // (Important: This angle may not be reachable if it is not a multiple of the motor step angle)
-        this->thetaRef = motorRefAngleIn.theta;
-
-        // Check that the reference angle is within the actuation region of the motor
-        if (this->thetaRef >= this->thetaMax || this->thetaRef <= this->thetaMin) {
-            this->thetaRef = this->theta;
-            this->stepsCommanded = 0;
-        } else {
-            // Calculate deltaTheta, the angle the motor must rotate through to achieve the reference angle.
-            // Important: The motor cannot stop actuating during a step. If the motor is currently actuating through a
-            // step and is interrupted by a new incoming reference message, the motor must complete its actuation
-            // through the current step before following the new reference command. Therefore, the motor angle must be
-            // rounded up to the nearest multiple of the motor step angle to compute the correct displacement
-            // deltaTheta.
-            double deltaTheta{};
-            if (this->theta > 0) {
-                deltaTheta = this->thetaRef - (std::ceil(this->theta / this->stepAngle) * this->stepAngle);
-            } else {
-                deltaTheta = this->thetaRef - (std::floor(this->theta / this->stepAngle) * this->stepAngle);
-            }
-
-            // Calculate the integer number of steps the motor must take to reach the reference angle
-            // The exact value is first stored as a double and rounded to the nearest integer step
-            double tempStepsCommanded = deltaTheta / this->stepAngle;
-            if ((std::ceil(tempStepsCommanded) - tempStepsCommanded) >
-                (tempStepsCommanded - std::floor(tempStepsCommanded))) {
-                this->stepsCommanded = std::floor(tempStepsCommanded);
-            } else {
-                this->stepsCommanded = std::ceil(tempStepsCommanded);
-            }
-        }
-
-        // Use the computed steps commanded to update the motor reference angle to the reachable value
-        this->thetaRef = this->theta + (this->stepsCommanded * this->stepAngle);
-
-        // Zero the motor step count because a new reference has been commanded
-        this->stepCount = 0;
-
-        // Write the output message
-        MotorStepCommandMsgPayload motorStepCommandOut{};
-        motorStepCommandOut.stepsCommanded = this->stepsCommanded;
-        this->motorStepCommandOutMsg.write(&motorStepCommandOut, moduleID, callTime);
-    }
-
-    // Calculate the time elapsed since the last motor reference input message was written
-    double deltaSimTime = (NANO2SEC * callTime) - this->previousWrittenTime;
-
-    // Update the motor information if steps were commanded
-    if (this->stepsCommanded > 0) {
-        this->stepCount = std::floor(deltaSimTime / this->stepTime);
-        this->theta = this->thetaInit + this->stepAngle * (deltaSimTime / this->stepTime);
-        if (this->theta >= this->thetaRef) {
-            this->stepCount = this->stepsCommanded;
-            this->theta = this->thetaRef;
-            this->thetaInit = this->thetaRef;
-        }
-    } else if (this->stepsCommanded < 0) {
-        this->stepCount = -std::floor(deltaSimTime / this->stepTime);
-        this->theta = this->thetaInit - this->stepAngle * (deltaSimTime / this->stepTime);
-        if (this->theta <= this->thetaRef) {
-            this->stepCount = this->stepsCommanded;
-            this->theta = this->thetaRef;
-            this->thetaInit = this->thetaRef;
-        }
+    if (stepperMotorControllerOutput.writeOutputMessage) {
+        this->motorStepCommandOutMsg.write(&stepperMotorControllerOutput.motorStepCommandOut, moduleID, callTime);
     }
 }
-
-/*! Getter method for the initial motor angle.
- @return double
-*/
-double StepperMotorController::getThetaInit() const { return this->thetaInit; }
-
-/*! Getter method for the motor upper actuation limit.
- @return double
-*/
-double StepperMotorController::getThetaMax() const { return this->thetaMax; }
-
-/*! Getter method for the motor lower actuation limit.
- @return double
-*/
-double StepperMotorController::getThetaMin() const { return this->thetaMin; }
-
-/*! Getter method for the motor step angle.
- @return double
-*/
-double StepperMotorController::getStepAngle() const { return this->stepAngle; }
-
-/*! Getter method for the motor step time.
- @return double
-*/
-double StepperMotorController::getStepTime() const { return this->stepTime; }
 
 /*! Setter method for the initial motor angle.
  @return void
  @param thetaInit [rad] Initial motor angle
 */
-void StepperMotorController::setThetaInit(const double thetaInit) {
-    this->thetaInit = thetaInit;
-    this->theta = thetaInit;
-}
+void StepperMotorController::setThetaInit(const double thetaInit) { this->algorithm.setThetaInit(thetaInit); }
+
+/*! Getter method for the initial motor angle.
+ @return double
+*/
+double StepperMotorController::getThetaInit() const { return this->algorithm.getThetaInit(); }
 
 /*! Setter method for the motor upper actuation limit.
  @return void
  @param thetaMax [rad] Motor upper actuation limit
 */
-void StepperMotorController::setThetaMax(const double thetaMax) { this->thetaMax = thetaMax; }
+void StepperMotorController::setThetaMax(const double thetaMax) { this->algorithm.setThetaMax(thetaMax); }
+
+/*! Getter method for the motor upper actuation limit.
+ @return double
+*/
+double StepperMotorController::getThetaMax() const { return this->algorithm.getThetaMax(); }
 
 /*! Setter method for the motor lower actuation limit.
  @return void
  @param thetaMin [rad] Motor lower actuation limit
 */
-void StepperMotorController::setThetaMin(const double thetaMin) { this->thetaMin = thetaMin; }
+void StepperMotorController::setThetaMin(const double thetaMin) { this->algorithm.setThetaMin(thetaMin); }
+
+/*! Getter method for the motor lower actuation limit.
+ @return double
+*/
+double StepperMotorController::getThetaMin() const { return this->algorithm.getThetaMin(); }
 
 /*! Setter method for the motor step angle.
  @return void
  @param stepAngle [rad] Motor step angle
 */
-void StepperMotorController::setStepAngle(const double stepAngle) {
-    assert(stepAngle > 0.0);
-    this->stepAngle = std::abs(stepAngle);
-}
+void StepperMotorController::setStepAngle(const double stepAngle) { this->algorithm.setStepAngle(stepAngle); }
+
+/*! Getter method for the motor step angle.
+ @return double
+*/
+double StepperMotorController::getStepAngle() const { return this->algorithm.getStepAngle(); }
 
 /*! Setter method for the motor step time.
  @return void
  @param stepTime [s] Motor step time
 */
-void StepperMotorController::setStepTime(const double stepTime) {
-    assert(stepTime > 0.0);
-    this->stepTime = std::abs(stepTime);
-}
+void StepperMotorController::setStepTime(const double stepTime) { this->algorithm.setStepTime(stepTime); }
+
+/*! Getter method for the motor step time.
+ @return double
+*/
+double StepperMotorController::getStepTime() const { return this->algorithm.getStepTime(); }

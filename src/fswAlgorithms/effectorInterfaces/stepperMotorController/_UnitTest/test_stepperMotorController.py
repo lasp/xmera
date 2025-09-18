@@ -31,11 +31,12 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-@pytest.mark.parametrize("motorStepAngle", [0.008 * macros.D2R, 0.01 * macros.D2R, 0.5 * macros.D2R])
-@pytest.mark.parametrize("motorStepTime", [0.008, 0.1, 0.5])
-@pytest.mark.parametrize("motorThetaInit", [-5.0 * macros.D2R, 0.0, 60.0 * macros.D2R])
-@pytest.mark.parametrize("motorThetaRef", [0.0, 10.6 * macros.D2R, 60.0051 * macros.D2R])
-def test_stepperMotorController_nominal(show_plots, motorStepAngle, motorStepTime, motorThetaInit, motorThetaRef):
+@pytest.mark.parametrize("motor_step_angle", [0.008 * macros.D2R, 0.01 * macros.D2R, 0.5 * macros.D2R])
+@pytest.mark.parametrize("motor_step_time", [0.008, 0.1, 0.5])
+@pytest.mark.parametrize("motor_theta_init", [-5.0 * macros.D2R, 0.0, 60.0 * macros.D2R])
+@pytest.mark.parametrize("motor_theta_ref", [0.0, 10.6 * macros.D2R, 60.0051 * macros.D2R])
+def test_stepper_motor_controller_nominal(show_plots, motor_step_angle, motor_step_time, motor_theta_init,
+                                          motor_theta_ref):
     r"""
     **Validation Test Description**
 
@@ -52,10 +53,10 @@ def test_stepperMotorController_nominal(show_plots, motorStepAngle, motorStepTim
     **Test Parameters**
 
     Args:
-        motorStepAngle (float): [rad] Step angle the motor rotates through for a single step (constant)
-        motorStepTime (float): [sec] Time required for the motor to actuate through a single step (constant)
-        motorThetaInit (float): [rad] Initial stepper motor angle
-        motorThetaRef (float): [rad] Reference stepper motor angle
+        motor_step_angle (float): [rad] Step angle the motor rotates through for a single step (constant)
+        motor_step_time (float): [sec] Time required for the motor to actuate through a single step (constant)
+        motor_theta_init (float): [rad] Initial stepper motor angle
+        motor_theta_ref (float): [rad] Reference stepper motor angle
 
     **Description of Variables Being Tested**
 
@@ -64,67 +65,67 @@ def test_stepperMotorController_nominal(show_plots, motorStepAngle, motorStepTim
 
     """
 
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    testProcessRate = macros.sec2nano(motorStepTime)
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process_rate = macros.sec2nano(motor_step_time)
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Create the stepperMotorController module
-    motorController = stepperMotorController.StepperMotorController()
-    motorController.modelTag = "stepperMotorController"
-    motorController.setStepAngle(motorStepAngle)  # [rad]
-    motorController.setStepTime(motorStepTime)  # [s]
-    motorController.setThetaInit(motorThetaInit)  # [rad]
-    unitTestSim.AddModelToTask(unitTaskName, motorController)
+    motor_controller = stepperMotorController.StepperMotorController()
+    motor_controller.modelTag = "stepperMotorController"
+    motor_controller.setStepAngle(motor_step_angle)  # [rad]
+    motor_controller.setStepTime(motor_step_time)  # [s]
+    motor_controller.setThetaInit(motor_theta_init)  # [rad]
+    unit_test_sim.AddModelToTask(unit_task_name, motor_controller)
 
     # Create the stepperMotorController input message
-    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = motorThetaRef  # [rad]
-    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    motorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
+    hinged_rigid_body_message_data = messaging.HingedRigidBodyMsgPayload()
+    hinged_rigid_body_message_data.theta = motor_theta_ref  # [rad]
+    hinged_rigid_body_message = messaging.HingedRigidBodyMsg().write(hinged_rigid_body_message_data)
+    motor_controller.motorRefAngleInMsg.subscribeTo(hinged_rigid_body_message)
 
     # Set up data logging
-    motorStepCommandLog = motorController.motorStepCommandOutMsg.recorder(testProcessRate)
-    unitTestSim.AddModelToTask(unitTaskName, motorStepCommandLog)
+    motor_step_command_log = motor_controller.motorStepCommandOutMsg.recorder(test_process_rate)
+    unit_test_sim.AddModelToTask(unit_task_name, motor_step_command_log)
 
     # Calculate required number of motor steps to achieve the reference angle
-    if (motorThetaInit > 0):
-        stepsCommandedTruth = (motorThetaRef - (np.ceil(motorThetaInit/motorStepAngle)*motorStepAngle)) / motorStepAngle
+    if motor_theta_init > 0:
+        steps_commanded_truth = (motor_theta_ref - (np.ceil(motor_theta_init / motor_step_angle) * motor_step_angle)) / motor_step_angle
     else:
-        stepsCommandedTruth = (motorThetaRef - (np.floor(motorThetaInit/motorStepAngle)*motorStepAngle)) / motorStepAngle
+        steps_commanded_truth = (motor_theta_ref - (np.floor(motor_theta_init / motor_step_angle) * motor_step_angle)) / motor_step_angle
 
     # If the reference motor angle is not a multiple of the motor step angle, the number of steps calculated is not an
     # integer and it must be rounded to the nearest integer step
-    lowerStepFraction = stepsCommandedTruth - np.floor(stepsCommandedTruth)
-    upperStepFraction = np.ceil(stepsCommandedTruth) - stepsCommandedTruth
-    if (upperStepFraction > lowerStepFraction):
-        stepsCommandedTruth = np.floor(stepsCommandedTruth)
+    lower_step_fraction = steps_commanded_truth - np.floor(steps_commanded_truth)
+    upper_step_fraction = np.ceil(steps_commanded_truth) - steps_commanded_truth
+    if upper_step_fraction > lower_step_fraction:
+        steps_commanded_truth = np.floor(steps_commanded_truth)
     else:
-        stepsCommandedTruth = np.ceil(stepsCommandedTruth)
+        steps_commanded_truth = np.ceil(steps_commanded_truth)
 
     # Compute the time required for the motor to actuate to the reference angle
-    actuateTime = motorStepTime * np.abs(stepsCommandedTruth)  # [s]
+    actuate_time = motor_step_time * np.abs(steps_commanded_truth)  # [s]
 
     # Run the simulation
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(actuateTime))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(actuate_time))
+    unit_test_sim.ExecuteSimulation()
 
     # Pull the logged motor step data
-    stepsCommandedSim = motorStepCommandLog.stepsCommanded
+    steps_commanded_sim = motor_step_command_log.stepsCommanded
 
     # Check that the correct number of steps was calculated
     accuracy = 1e-12
-    np.testing.assert_allclose(stepsCommandedSim[0],
-                               stepsCommandedTruth,
+    np.testing.assert_allclose(steps_commanded_sim[0],
+                               steps_commanded_truth,
                                atol=accuracy,
                                verbose=True)
 
 
-@pytest.mark.parametrize("motorThetaRef", [-10.0, 275.0])
-def test_stepperMotorController_invalid(show_plots, motorThetaRef):
+@pytest.mark.parametrize("motor_theta_ref", [-10.0, 275.0])
+def test_stepper_motor_controller_invalid(show_plots, motor_theta_ref):
     r"""
     **Validation Test Description**
 
@@ -134,7 +135,7 @@ def test_stepperMotorController_invalid(show_plots, motorThetaRef):
     **Test Parameters**
 
     Args:
-        motorThetaRef (float): [rad] Reference stepper motor angle
+        motor_theta_ref (float): [rad] Reference stepper motor angle
 
     **Description of Variables Being Tested**
 
@@ -142,50 +143,50 @@ def test_stepperMotorController_invalid(show_plots, motorThetaRef):
 
     """
 
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    testProcessRate = macros.sec2nano(1.0)
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process_rate = macros.sec2nano(1.0)
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Create the stepperMotorController module
-    motorController = stepperMotorController.StepperMotorController()
-    motorController.modelTag = "stepperMotorController"
-    motorController.setThetaMin(180.0 * macros.D2R)  # [rad]
-    motorController.setThetaMin(0.0)  # [rad]
-    unitTestSim.AddModelToTask(unitTaskName, motorController)
+    motor_controller = stepperMotorController.StepperMotorController()
+    motor_controller.modelTag = "stepperMotorController"
+    motor_controller.setThetaMin(180.0 * macros.D2R)  # [rad]
+    motor_controller.setThetaMin(0.0)  # [rad]
+    unit_test_sim.AddModelToTask(unit_task_name, motor_controller)
 
     # Create the stepperMotorController input message
-    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = motorThetaRef  # [rad]
-    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    motorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
+    hinged_rigid_body_message_data = messaging.HingedRigidBodyMsgPayload()
+    hinged_rigid_body_message_data.theta = motor_theta_ref  # [rad]
+    hinged_rigid_body_message = messaging.HingedRigidBodyMsg().write(hinged_rigid_body_message_data)
+    motor_controller.motorRefAngleInMsg.subscribeTo(hinged_rigid_body_message)
 
     # Set up data logging
-    motorStepCommandLog = motorController.motorStepCommandOutMsg.recorder(testProcessRate)
-    unitTestSim.AddModelToTask(unitTaskName, motorStepCommandLog)
+    motor_step_command_log = motor_controller.motorStepCommandOutMsg.recorder(test_process_rate)
+    unit_test_sim.AddModelToTask(unit_task_name, motor_step_command_log)
 
     # Run the simulation
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(3.0))
+    unit_test_sim.ExecuteSimulation()
 
     # Pull the logged motor step data
-    stepsCommandedSim = motorStepCommandLog.stepsCommanded
+    steps_commanded_sim = motor_step_command_log.stepsCommanded
 
     # Check that the correct number of steps was calculated
     accuracy = 1e-12
-    np.testing.assert_allclose(stepsCommandedSim[0],
+    np.testing.assert_allclose(steps_commanded_sim[0],
                                0,
                                atol=accuracy,
                                verbose=True)
 
 
-@pytest.mark.parametrize("motorThetaRef1", [-10.0 * macros.D2R, 10.0 * macros.D2R])
-@pytest.mark.parametrize("motorThetaRef2", [0.0, 5.0 * macros.D2R, 10.0 * macros.D2R])
-@pytest.mark.parametrize("interruptFraction", [0.0, 0.25, 0.5, 0.75])
-def test_stepperMotorController_interrupt(show_plots, motorThetaRef1, motorThetaRef2, interruptFraction):
+@pytest.mark.parametrize("motor_theta_ref1", [-10.0 * macros.D2R, 10.0 * macros.D2R])
+@pytest.mark.parametrize("motor_theta_ref2", [0.0, 5.0 * macros.D2R, 10.0 * macros.D2R])
+@pytest.mark.parametrize("interrupt_fraction", [0.0, 0.25, 0.5, 0.75])
+def test_stepper_motor_controller_interrupt(show_plots, motor_theta_ref1, motor_theta_ref2, interrupt_fraction):
     r"""
     **Validation Test Description**
 
@@ -200,9 +201,9 @@ def test_stepperMotorController_interrupt(show_plots, motorThetaRef1, motorTheta
     **Test Parameters**
 
     Args:
-        motorThetaRef1 (float): [rad] Reference motor angle 1
-        motorThetaRef2 (float): [rad] Reference stepper motor angle 2
-        interruptFraction (float): Specifies what fraction of a step is completed when the interrupted message is written
+        motor_theta_ref1 (float): [rad] Reference motor angle 1
+        motor_theta_ref2 (float): [rad] Reference stepper motor angle 2
+        interrupt_fraction (float): Specifies what fraction of a step is completed when the interrupted message is written
 
     **Description of Variables Being Tested**
 
@@ -211,124 +212,124 @@ def test_stepperMotorController_interrupt(show_plots, motorThetaRef1, motorTheta
 
     """
 
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    testProcessRate = macros.sec2nano(0.1)
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process_rate = macros.sec2nano(0.1)
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Create the stepperMotorController module
-    motorStepAngle = 1.0 * macros.D2R  # [rad]
-    motorStepTime = 1.0  # [s]
-    motorThetaInit = 0.0  # [rad]
-    motorController = stepperMotorController.StepperMotorController()
-    motorController.modelTag = "stepperMotorController"
-    motorController.setStepAngle(motorStepAngle)  # [rad]
-    motorController.setStepTime(motorStepTime)  # [s]
-    motorController.setThetaInit(motorThetaInit)  # [rad]
-    unitTestSim.AddModelToTask(unitTaskName, motorController)
+    motor_step_angle = 1.0 * macros.D2R  # [rad]
+    motor_step_time = 1.0  # [s]
+    motor_theta_init = 0.0  # [rad]
+    motor_controller = stepperMotorController.StepperMotorController()
+    motor_controller.modelTag = "stepperMotorController"
+    motor_controller.setStepAngle(motor_step_angle)  # [rad]
+    motor_controller.setStepTime(motor_step_time)  # [s]
+    motor_controller.setThetaInit(motor_theta_init)  # [rad]
+    unit_test_sim.AddModelToTask(unit_task_name, motor_controller)
 
     # Create the stepperMotorController input message
-    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = motorThetaRef1  # [rad]
-    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    motorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
+    hinged_rigid_body_message_data = messaging.HingedRigidBodyMsgPayload()
+    hinged_rigid_body_message_data.theta = motor_theta_ref1  # [rad]
+    hinged_rigid_body_message = messaging.HingedRigidBodyMsg().write(hinged_rigid_body_message_data)
+    motor_controller.motorRefAngleInMsg.subscribeTo(hinged_rigid_body_message)
 
     # Set up data logging
-    motorStepCommandLog = motorController.motorStepCommandOutMsg.recorder(testProcessRate)
-    unitTestSim.AddModelToTask(unitTaskName, motorStepCommandLog)
+    motor_step_command_log = motor_controller.motorStepCommandOutMsg.recorder(test_process_rate)
+    unit_test_sim.AddModelToTask(unit_task_name, motor_step_command_log)
 
     # Calculate required number of steps to achieve the reference angle
-    stepsCommandedTruth1 = (motorThetaRef1 - (np.ceil(motorThetaInit/motorStepAngle)*motorStepAngle)) / motorStepAngle
+    steps_commanded_truth1 = (motor_theta_ref1 - (np.ceil(motor_theta_init / motor_step_angle) * motor_step_angle)) / motor_step_angle
 
     # If the reference motor angle is not a multiple of the motor step angle, the number of steps calculated is not an
     # integer and it must be rounded to the nearest integer step
-    lowerStepFraction = stepsCommandedTruth1 - np.floor(stepsCommandedTruth1)
-    upperStepFraction = np.ceil(stepsCommandedTruth1) - stepsCommandedTruth1
-    if (upperStepFraction > lowerStepFraction):
-        stepsCommandedTruth1 = np.floor(stepsCommandedTruth1)
+    lower_step_fraction = steps_commanded_truth1 - np.floor(steps_commanded_truth1)
+    upper_step_fraction = np.ceil(steps_commanded_truth1) - steps_commanded_truth1
+    if upper_step_fraction > lower_step_fraction:
+        steps_commanded_truth1 = np.floor(steps_commanded_truth1)
     else:
-        stepsCommandedTruth1 = np.ceil(stepsCommandedTruth1)
+        steps_commanded_truth1 = np.ceil(steps_commanded_truth1)
 
     # Compute the time required for the motor to actuate to the reference angle
-    actuateTime1 = motorStepTime * np.abs(stepsCommandedTruth1)  # [s]
+    actuate_time1 = motor_step_time * np.abs(steps_commanded_truth1)  # [s]
 
     # Compute the simulation time for chunk 1/2
     # Set the simulation time to be half of the determined motor actuation time, plus a fraction of the time it takes
     # for the motor to complete a step so that the simulation is interrupted during a step
-    simTime1 = (actuateTime1 / 2) + (interruptFraction * motorStepTime)  # [s]
+    sim_time1 = (actuate_time1 / 2) + (interrupt_fraction * motor_step_time)  # [s]
 
     # Run simulation chunk 1/2 (This simulation chunk ends at actuation interruption)
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(sim_time1))
+    unit_test_sim.ExecuteSimulation()
 
     # Create a new motor angle reference message (This message interrupts and overwrites the first reference message)
-    HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = motorThetaRef2  # [rad]
-    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.getCurrentNanos())
-    motorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
+    hinged_rigid_body_message_data = messaging.HingedRigidBodyMsgPayload()
+    hinged_rigid_body_message_data.theta = motor_theta_ref2  # [rad]
+    hinged_rigid_body_message = messaging.HingedRigidBodyMsg().write(hinged_rigid_body_message_data, unit_test_sim.TotalSim.getCurrentNanos())
+    motor_controller.motorRefAngleInMsg.subscribeTo(hinged_rigid_body_message)
 
     # Calculate number of steps to actuate from interrupted motor position to the second reference motor angle
-    if (stepsCommandedTruth1 > 0):
-        interruptedMotorAngle = motorThetaInit + ((simTime1 / motorStepTime) * motorStepAngle)
+    if steps_commanded_truth1 > 0:
+        interrupted_motor_angle = motor_theta_init + ((sim_time1 / motor_step_time) * motor_step_angle)
         # Ensure the interrupted motor angle is set to the next multiple of the motor step angle
         # (If the motor is interrupted during a step)
-        interruptedMotorAngle = np.ceil(interruptedMotorAngle / motorStepAngle) * motorStepAngle
+        interrupted_motor_angle = np.ceil(interrupted_motor_angle / motor_step_angle) * motor_step_angle
     else:
-        interruptedMotorAngle = motorThetaInit - ((simTime1 / motorStepTime) * motorStepAngle)
+        interrupted_motor_angle = motor_theta_init - ((sim_time1 / motor_step_time) * motor_step_angle)
         # Ensure the interrupted motor angle is set to the next multiple of the motor step angle
         # (If the motor is interrupted during a step)
-        interruptedMotorAngle = np.floor(interruptedMotorAngle / motorStepAngle) * motorStepAngle
+        interrupted_motor_angle = np.floor(interrupted_motor_angle / motor_step_angle) * motor_step_angle
 
-    stepsCommandedTruth2 = (motorThetaRef2 - interruptedMotorAngle) / motorStepAngle
+    steps_commanded_truth2 = (motor_theta_ref2 - interrupted_motor_angle) / motor_step_angle
 
     # If the reference motor angle is not a multiple of the step angle, the number of steps calculated is not an integer
     # and it must be rounded to the nearest integer step
-    lowerStepFraction = stepsCommandedTruth2 - np.floor(stepsCommandedTruth2)
-    upperStepFraction = np.ceil(stepsCommandedTruth2) - stepsCommandedTruth2
-    if (upperStepFraction > lowerStepFraction):
-        stepsCommandedTruth2 = np.floor(stepsCommandedTruth2)
+    lower_step_fraction = steps_commanded_truth2 - np.floor(steps_commanded_truth2)
+    upper_step_fraction = np.ceil(steps_commanded_truth2) - steps_commanded_truth2
+    if upper_step_fraction > lower_step_fraction:
+        steps_commanded_truth2 = np.floor(steps_commanded_truth2)
     else:
-        stepsCommandedTruth2 = np.ceil(stepsCommandedTruth2)
+        steps_commanded_truth2 = np.ceil(steps_commanded_truth2)
 
     # Set the simulation time for chunk 2
-    simTime2 = motorStepTime * np.abs(stepsCommandedTruth2)  # [s]
+    sim_time2 = motor_step_time * np.abs(steps_commanded_truth2)  # [s]
 
     # Run simulation chunk 2/2
-    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2 + 5.0))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(sim_time1 + sim_time2 + 5.0))
+    unit_test_sim.ExecuteSimulation()
 
     # Pull the logged motor step data
-    stepsCommanded = motorStepCommandLog.stepsCommanded
+    steps_commanded = motor_step_command_log.stepsCommanded
 
     # Check that the correct number of steps was calculated for both simulation chunks
     accuracy = 1e-12
-    np.testing.assert_allclose(stepsCommanded[0],
-                               stepsCommandedTruth1,
+    np.testing.assert_allclose(steps_commanded[0],
+                               steps_commanded_truth1,
                                atol=accuracy,
                                verbose=True)
 
-    np.testing.assert_allclose(stepsCommanded[-1],
-                               stepsCommandedTruth2,
+    np.testing.assert_allclose(steps_commanded[-1],
+                               steps_commanded_truth2,
                                atol=accuracy,
                                verbose=True)
 
 
 if __name__ == "__main__":
-    test_stepperMotorController_nominal(
+    test_stepper_motor_controller_nominal(
          False,
          1.0 * macros.D2R,  # [rad] motorStepAngle
          1.0,  # [s] motorStepTime
          0.0,  # [rad] motorThetaInit
          10.0 * macros.D2R,  # [rad] motorThetaRef
     )
-    test_stepperMotorController_invalid(
+    test_stepper_motor_controller_invalid(
         False,
         270.0 * macros.D2R,  # [rad] motorThetaRef
     )
-    test_stepperMotorController_interrupt(
+    test_stepper_motor_controller_interrupt(
         False,
         10.0 * macros.D2R,  # [rad] motorThetaRef1,
         5.0 * macros.D2R,  # [rad] motorThetaRef2

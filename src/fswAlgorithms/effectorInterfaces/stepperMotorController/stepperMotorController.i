@@ -27,9 +27,10 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
-
 %include "sys_model.i"
+
 %include "stepperMotorController.h"
+%include "stepperMotorControllerAlgorithm.h"
 
 %include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 %include "architecture/msgPayloadDef/MotorStepCommandMsgPayload.h"
