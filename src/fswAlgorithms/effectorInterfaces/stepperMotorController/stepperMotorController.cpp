@@ -19,14 +19,16 @@
 
 #include "stepperMotorController.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <cassert>
+#include <stdexcept>
 
 /*! This method performs a complete reset of the module. The input message is checked to ensure it is linked.
  @return void
  @param callTime [ns] Time the method is called
 */
 void StepperMotorController::reset(uint64_t callTime) {
-    assert(this->motorRefAngleInMsg.isLinked());
+    if (!this->motorRefAngleInMsg.isLinked()) {
+        throw std::invalid_argument("StepperMotorController.motorRefAngleInMsg wasn't connected.");
+    }
 
     this->stepCount = 0;
     this->stepsCommanded = 0;
@@ -174,8 +176,10 @@ void StepperMotorController::setThetaMin(const double thetaMin) { this->thetaMin
  @param stepAngle [rad] Motor step angle
 */
 void StepperMotorController::setStepAngle(const double stepAngle) {
-    assert(stepAngle > 0.0);
-    this->stepAngle = std::abs(stepAngle);
+    if (stepAngle <= 0.0) {
+        throw std::invalid_argument("StepAngle must be positive");
+    }
+    this->stepAngle = stepAngle;
 }
 
 /*! Setter method for the motor step time.
@@ -183,6 +187,8 @@ void StepperMotorController::setStepAngle(const double stepAngle) {
  @param stepTime [s] Motor step time
 */
 void StepperMotorController::setStepTime(const double stepTime) {
-    assert(stepTime > 0.0);
-    this->stepTime = std::abs(stepTime);
+    if (stepTime <= 0.0) {
+        throw std::invalid_argument("stepTime must be positive");
+    }
+    this->stepTime = stepTime;
 }
