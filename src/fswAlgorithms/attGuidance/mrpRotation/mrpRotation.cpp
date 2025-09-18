@@ -48,7 +48,6 @@ void MrpRotation::reset(uint64_t callTime)
 void MrpRotation::updateState(uint64_t callTime)
 {
     AttRefMsgPayload inputRef = this->attRefInMsg();
-    AttRefMsgPayload attRefOut = {};
 
     /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
     if (this->desiredAttInMsg.isLinked())
@@ -70,11 +69,7 @@ void MrpRotation::updateState(uint64_t callTime)
     Eigen::Vector3d domega_RN_N = Eigen::Map<const Eigen::Vector3d>(inputRef.domega_RN_N);
 
     /*! - Compute output reference frame */
-    this->computeMRPRotationReference(sigma_RN,
-                                      omega_RN_N,
-                                      domega_RN_N,
-                                      &attRefOut);
-
+    AttRefMsgPayload attRefOut = this->computeMRPRotationReference(sigma_RN, omega_RN_N, domega_RN_N);
 
     /*! - write attitude guidance reference output */
     this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
@@ -122,16 +117,14 @@ void MrpRotation::computeTimeStep(uint64_t callTime)
 
 /*! @brief This function computes the reference (MRP attitude Set, angular velocity and angular acceleration)
  associated with a rotation defined in terms of an initial MRP set and a constant angular velocity vector
- @return void
+ @return AttRefMsgPayload The output message copy
  @param sigma_R0N The input reference attitude using MRPs
  @param omega_R0N_N The input reference frame angular rate vector
  @param domega_R0N_N The input reference frame angular acceleration vector
- @param attRefOut The output message copy
  */
-void MrpRotation::computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
-                                              Eigen::Vector3d omega_R0N_N,
-                                              Eigen::Vector3d domega_R0N_N,
-                                              AttRefMsgPayload   *attRefOut)
+AttRefMsgPayload MrpRotation::computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
+                                                          Eigen::Vector3d omega_R0N_N,
+                                                          Eigen::Vector3d domega_R0N_N)
 {
     /*! - Compute attitude reference frame R/N information */
     Eigen::Matrix3d B = bmatMrp(this->sigma_RR0);
@@ -150,9 +143,13 @@ void MrpRotation::computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
     Eigen::Vector3d domega_RR0_N = omega_R0N_N.cross(omega_RR0_N);
     Eigen::Vector3d domega_RN_N = domega_RR0_N + domega_R0N_N;
 
-    eigenVector3d2CArray(sigma_RN, attRefOut->sigma_RN);
-    eigenVector3d2CArray(omega_RN_N, attRefOut->omega_RN_N);
-    eigenVector3d2CArray(domega_RN_N, attRefOut->domega_RN_N);
+    AttRefMsgPayload attRefOut{};
+
+    eigenVector3d2CArray(sigma_RN, attRefOut.sigma_RN);
+    eigenVector3d2CArray(omega_RN_N, attRefOut.omega_RN_N);
+    eigenVector3d2CArray(domega_RN_N, attRefOut.domega_RN_N);
+
+    return attRefOut;
 }
 
 /*! Setter method for the current MRP attitude coordinate set with respect to the input reference

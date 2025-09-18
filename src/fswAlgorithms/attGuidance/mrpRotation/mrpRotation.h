@@ -36,10 +36,10 @@ class MrpRotation : public SysModel {
 
     void checkRasterCommands();
     void computeTimeStep(uint64_t callTime);
-    void computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
-                                     Eigen::Vector3d omega_R0N_N,
-                                     Eigen::Vector3d domega_R0N_N,
-                                     AttRefMsgPayload *attRefOut);
+    AttRefMsgPayload computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
+                                                 Eigen::Vector3d omega_R0N_N,
+                                                 Eigen::Vector3d domega_R0N_N);
+
     void setSigmaRR0(const Eigen::Vector3d &sigma);
     const Eigen::Vector3d &getSigmaRR0() const;
     void setOmegaRR0(const Eigen::Vector3d &omega);
