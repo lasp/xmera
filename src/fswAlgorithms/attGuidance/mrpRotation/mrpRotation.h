@@ -58,6 +58,7 @@ class MrpRotation : public SysModel {
     Eigen::Vector3d priorCmdRates{};  //!< [rad/s] prior commanded angular velocity vector
     uint64_t priorTime{};       //!< [ns] last time the guidance module is called
     double dt{};                //!< [s] integration time-step
+    bool dynamicReferenceEnabled{}; //!< true if desired attitude input message is linked to provide a dynamic reference
 };
 
 #endif

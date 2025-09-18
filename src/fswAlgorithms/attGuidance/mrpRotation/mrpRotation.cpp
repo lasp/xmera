@@ -35,6 +35,11 @@ void MrpRotation::reset(uint64_t callTime)
         throw std::invalid_argument("mrpRotation.attRefInMsg wasn't connected.");
     }
 
+    // Check if optional input messages are linked
+    if (this->desiredAttInMsg.isLinked()) {
+        this->dynamicReferenceEnabled = true;
+    }
+
     this->priorTime = 0;
     this->priorCmdSet = Eigen::Vector3d::Zero();
     this->priorCmdRates = Eigen::Vector3d::Zero();
@@ -50,7 +55,7 @@ void MrpRotation::updateState(uint64_t callTime)
     AttRefMsgPayload inputRef = this->attRefInMsg();
 
     /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
-    if (this->desiredAttInMsg.isLinked())
+    if (this->dynamicReferenceEnabled)
     {
         AttStateMsgPayload attStates = this->desiredAttInMsg();
 
