@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,15 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
- MRP Rotation Guidance Module with a Constant Body Rate Vector
-
- */
 
 #include "fswAlgorithms/attGuidance/mrpRotation/mrpRotation.h"
 #include "architecture/utilities/macroDefinitions.h"
-
-/* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include <stdexcept>
@@ -44,7 +38,6 @@ void MrpRotation::reset(uint64_t callTime)
     this->priorTime = 0;
     this->priorCmdSet = Eigen::Vector3d::Zero();
     this->priorCmdRates = Eigen::Vector3d::Zero();
-
 }
 
 /*! @brief This method takes the input attitude reference frame, and and superimposes the dynamics MRP
@@ -55,8 +48,8 @@ void MrpRotation::reset(uint64_t callTime)
 void MrpRotation::updateState(uint64_t callTime)
 {
     /* - Read input messages */
-    AttRefMsgPayload inputRef;                                /* [-] read in the [R_0N] input reference message */
-    AttRefMsgPayload attRefOut = {};                               /* [-] structure for the Reference frame output data */
+    AttRefMsgPayload inputRef;
+    AttRefMsgPayload attRefOut = {};
 
     /*!- read in input reference frame message */
     inputRef = this->attRefInMsg();
@@ -64,7 +57,7 @@ void MrpRotation::updateState(uint64_t callTime)
     /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
     if (this->desiredAttInMsg.isLinked())
     {
-        AttStateMsgPayload attStates;                         /* [-] initial [RR_0] attitude state message */
+        AttStateMsgPayload attStates;
 
         /* - Read Raster Manager messages */
         attStates = this->desiredAttInMsg();
@@ -97,8 +90,6 @@ void MrpRotation::updateState(uint64_t callTime)
     this->priorTime = callTime;
     return;
 }
-
-
 
 /*! @brief This function checks if there is a new commanded raster maneuver message available
  @return void

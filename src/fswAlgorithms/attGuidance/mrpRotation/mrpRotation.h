@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _MRP_ROTATION_
-#define _MRP_ROTATION_
+#ifndef MRP_ROTATION_H
+#define MRP_ROTATION_H
 
 #include <stdint.h>
 
@@ -28,11 +28,12 @@
 #include "architecture/msgPayloadDef/AttStateMsgPayload.h"
 #include <Eigen/Core>
 
-/*! @brief Top level structure for the sub-module routines. */
+/*! @brief MRP Rotation class */
 class MrpRotation : public SysModel {
    public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
+
     void checkRasterCommands();
     void computeTimeStep(uint64_t callTime);
     void computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
@@ -44,10 +45,9 @@ class MrpRotation : public SysModel {
     void setOmegaRR0(const Eigen::Vector3d &omega);
     const Eigen::Vector3d &getOmegaRR0() const;
 
-    Message<AttRefMsgPayload> attRefOutMsg;     //!< The name of the output message containing the Reference
-    ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< The name of the guidance reference input message
-    ReadFunctor<AttStateMsgPayload>
-        desiredAttInMsg;  //!< The name of the incoming message containing the desired EA set
+    Message<AttRefMsgPayload> attRefOutMsg;     //!< output message containing the Reference
+    ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< guidance reference input message
+    ReadFunctor<AttStateMsgPayload> desiredAttInMsg;  //!< incoming message containing the desired attitude set
 
    private:
     Eigen::Vector3d sigma_RR0{Eigen::Vector3d::Zero()};    //!< [-] current MRP attitude coordinate set with respect to the input reference
