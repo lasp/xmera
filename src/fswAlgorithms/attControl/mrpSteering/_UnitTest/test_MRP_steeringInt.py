@@ -27,19 +27,19 @@ from Basilisk.utilities import macros
 
 @pytest.mark.parametrize("K1", [0.15, 0])
 @pytest.mark.parametrize("K3", [1.0, 0])
-@pytest.mark.parametrize("omegaMax", [1.5 * macros.D2R, 0.001])
+@pytest.mark.parametrize("omega_max", [1.5 * macros.D2R, 0.001])
 
-def test_mrp_steering_tracking_integrated(show_plots, K1, K3, omegaMax):
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
+def test_mrp_steering_tracking_integrated(show_plots, K1, K3, omega_max):
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.5)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     module = mrpSteering.MrpSteering()
     module.modelTag = "mrpSteering"
@@ -47,12 +47,12 @@ def test_mrp_steering_tracking_integrated(show_plots, K1, K3, omegaMax):
     servo = rateServoFullNonlinear.RateServoFullNonlinear()
     servo.modelTag = "rate_servo"
 
-    unitTestSim.AddModelToTask(unitTaskName, module)
-    unitTestSim.AddModelToTask(unitTaskName, servo)
+    unit_test_sim.AddModelToTask(unit_task_name, module)
+    unit_test_sim.AddModelToTask(unit_task_name, servo)
 
     module.setK1(K1)
     module.setK3(K3)
-    module.setOmegaMax(omegaMax)
+    module.setOmegaMax(omega_max)
 
     servo.Ki = 0.01
     servo.P = 150.0
@@ -60,121 +60,121 @@ def test_mrp_steering_tracking_integrated(show_plots, K1, K3, omegaMax):
     servo.knownTorquePntB_B = [0., 0., 0.]
 
     # attGuidOut Message:
-    guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
-    guidCmdData.sigma_BR = [0.3, -0.5, 0.7]
-    guidCmdData.omega_BR_B = [0.010, -0.020, 0.015]
-    guidCmdData.omega_RN_B = [-0.02, -0.01, 0.005]
-    guidCmdData.domega_RN_B = [0.0002, 0.0003, 0.0001]
-    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
+    guid_cmd_data = messaging.AttGuidMsgPayload()  # Create a structure for the input message
+    guid_cmd_data.sigma_BR = [0.3, -0.5, 0.7]
+    guid_cmd_data.omega_BR_B = [0.010, -0.020, 0.015]
+    guid_cmd_data.omega_RN_B = [-0.02, -0.01, 0.005]
+    guid_cmd_data.domega_RN_B = [0.0002, 0.0003, 0.0001]
+    guid_in_msg = messaging.AttGuidMsg().write(guid_cmd_data)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
+    vehicle_config_out = messaging.VehicleConfigMsgPayload()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
+    vehicle_config_out.ISCPntB_B = I
+    vc_in_msg = messaging.VehicleConfigMsg().write(vehicle_config_out)
 
     # wheelSpeeds Message
-    rwSpeedMessage = messaging.RWSpeedMsgPayload()
-    Omega = [10.0, 25.0, 50.0, 100.0]
-    rwSpeedMessage.wheelSpeeds = Omega
-    rwInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
+    rw_speed_message = messaging.RWSpeedMsgPayload()
+    omega = [10.0, 25.0, 50.0, 100.0]
+    rw_speed_message.wheelSpeeds = omega
+    rw_in_msg = messaging.RWSpeedMsg().write(rw_speed_message)
 
     # wheelConfigData message
-    rwConfigParams = messaging.RWArrayConfigMsgPayload()
-    rwConfigParams.GsMatrix_B = [
+    rw_config_params = messaging.RWArrayConfigMsgPayload()
+    rw_config_params.GsMatrix_B = [
         1.0, 0.0, 0.0,
         0.0, 1.0, 0.0,
         0.0, 0.0, 1.0,
         0.5773502691896258, 0.5773502691896258, 0.5773502691896258
     ]
-    rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
-    rwConfigParams.numRW = 4
-    rwParamInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
+    rw_config_params.JsList = [0.1, 0.1, 0.1, 0.1]
+    rw_config_params.numRW = 4
+    rw_param_in_msg = messaging.RWArrayConfigMsg().write(rw_config_params)
 
     # wheelAvailability message
-    rwAvailList = []
-    rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
-    rwAvail = [messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE]
-    rwAvailabilityMessage.wheelAvailability = rwAvail
-    rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
-    rwAvailList.append(rwAvail)
+    rw_avail_list = []
+    rw_availability_message = messaging.RWAvailabilityMsgPayload()
+    rw_avail = [messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE, messaging.AVAILABLE]
+    rw_availability_message.wheelAvailability = rw_avail
+    rw_avail_in_msg = messaging.RWAvailabilityMsg().write(rw_availability_message)
+    rw_avail_list.append(rw_avail)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = servo.cmdTorqueOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = servo.cmdTorqueOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # connect messages
-    module.guidInMsg.subscribeTo(guidInMsg)
-    servo.guidInMsg.subscribeTo(guidInMsg)
-    servo.vehConfigInMsg.subscribeTo(vcInMsg)
-    servo.rwParamsInMsg.subscribeTo(rwParamInMsg)
-    servo.vehConfigInMsg.subscribeTo(vcInMsg)
-    servo.rwSpeedsInMsg.subscribeTo(rwInMsg)
+    module.guidInMsg.subscribeTo(guid_in_msg)
+    servo.guidInMsg.subscribeTo(guid_in_msg)
+    servo.vehConfigInMsg.subscribeTo(vc_in_msg)
+    servo.rwParamsInMsg.subscribeTo(rw_param_in_msg)
+    servo.vehConfigInMsg.subscribeTo(vc_in_msg)
+    servo.rwSpeedsInMsg.subscribeTo(rw_in_msg)
     servo.rateSteeringInMsg.subscribeTo(module.rateCmdOutMsg)
-    servo.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+    servo.rwAvailInMsg.subscribeTo(rw_avail_in_msg)
 
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
+    unit_test_sim.ExecuteSimulation()
 
     servo.reset(1)  # this module reset function needs a time input (in NanoSeconds)
 
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
+    unit_test_sim.ExecuteSimulation()
 
     # Compute true values
-    trueVals = findTrueTorques(module, servo, guidCmdData, rwSpeedMessage, vehicleConfigOut, rwAvailList)
+    true_vals = find_true_torques(module, servo, guid_cmd_data, rw_speed_message, vehicle_config_out, rw_avail_list)
 
     # compare the module results to the truth values
     accuracy = 1e-12
 
-    np.testing.assert_allclose(dataLog.torqueRequestBody, trueVals, atol=accuracy, rtol=0, verbose=True)
+    np.testing.assert_allclose(data_log.torqueRequestBody, true_vals, atol=accuracy, rtol=0, verbose=True)
 
 
-def findTrueValues(guidCmdData, module):
+def find_true_values(guid_cmd_data, module):
 
-    omegaMax = module.getOmegaMax()
-    sigma = np.asarray(guidCmdData.sigma_BR)
+    omega_max = module.getOmegaMax()
+    sigma = np.asarray(guid_cmd_data.sigma_BR)
     K1 = np.asarray(module.getK1())
     K3 = np.asarray(module.getK3())
-    Bmat = RigidBodyKinematics.BmatMRP(sigma)
-    omegaAst = []
-    omegaAst_P = []
+    B = RigidBodyKinematics.BmatMRP(sigma)
+    omega_ast = []
+    omega_ast_p = []
 
     for i in range(len(sigma)):
-        steerRate = -1*(2*omegaMax/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omegaMax))
-        omegaAst.append(steerRate)
+        steer_rate = -1*(2*omega_max/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omega_max))
+        omega_ast.append(steer_rate)
 
     if 1:#module.ignoreOuterLoopFeedforward: #should be "if not"
-        sigmaP = 0.25*Bmat.dot(omegaAst)
+        sigma_p = 0.25*B.dot(omega_ast)
         for i in range(len(sigma)):
-            omegaAstRate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omegaMax))**2)*sigmaP[i]
-            omegaAst_P.append(-omegaAstRate)
+            omega_ast_rate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omega_max))**2)*sigma_p[i]
+            omega_ast_p.append(-omega_ast_rate)
     else:
-        omegaAst_P = np.asarray([0, 0, 0])
+        omega_ast_p = np.asarray([0, 0, 0])
 
-    return omegaAst, omegaAst_P
+    return omega_ast, omega_ast_p
 
-def findTrueTorques(module,servo, guidCmdData,rwSpeedMessage,vehicleConfigOut, rwAvailMsg):
+def find_true_torques(module, servo, guid_cmd_data, rw_speed_message, vehicle_config_out, rw_avail_msg):
     Lr = []
 
     #Read in variables
     numRW = servo.rwConfigParams.numRW
     L = np.asarray(servo.knownTorquePntB_B)
     steps = [0, 0, .5, 0, .5]
-    omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
-    omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
+    omega_BR_B = np.asarray(guid_cmd_data.omega_BR_B)
+    omega_RN_B = np.asarray(guid_cmd_data.omega_RN_B)
     omega_BN_B = omega_BR_B + omega_RN_B #find body rate
-    domega_RN_B = np.asarray(guidCmdData.domega_RN_B)
+    domega_RN_B = np.asarray(guid_cmd_data.domega_RN_B)
 
-    omega_BastR_B, omegap_BastR_B = findTrueValues(guidCmdData, module)
+    omega_BastR_B, omegap_BastR_B = find_true_values(guid_cmd_data, module)
 
     omega_BastN_B = omega_BastR_B+omega_RN_B
     omega_BBast_B = omega_BN_B - omega_BastN_B
 
-    Isc = np.asarray(vehicleConfigOut.ISCPntB_B)
+    Isc = np.asarray(vehicle_config_out.ISCPntB_B)
     Isc = np.reshape(Isc, (3, 3))
     Ki = servo.Ki
     P = servo.P
@@ -207,8 +207,8 @@ def findTrueTorques(module,servo, guidCmdData,rwSpeedMessage,vehicleConfigOut, r
 
         if numRW > 0:
             for i in range(numRW):
-                if rwAvailMsg[0][i] == 0:  # Make RW availability check
-                    GsHs = GsHs + np.dot(GsMatrix_B_array[i, :], jsVec[i]*(np.dot(omega_BN_B, GsMatrix_B_array[i, :]) + rwSpeedMessage.wheelSpeeds[i]))
+                if rw_avail_msg[0][i] == 0:  # Make RW availability check
+                    GsHs = GsHs + np.dot(GsMatrix_B_array[i, :], jsVec[i] * (np.dot(omega_BN_B, GsMatrix_B_array[i, :]) + rw_speed_message.wheelSpeeds[i]))
                     # J_s*(dot(omegaBN_B,Gs_vec)+Omega_wheel)
 
         Lr2 = Lr1 - np.cross(omega_BastN_B, (Isc.dot(omega_BN_B)+GsHs))  #  - omega_BastN x ([I]omega + [Gs]h_s)
