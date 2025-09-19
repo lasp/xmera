@@ -25,8 +25,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MrpSteering::reset(uint64_t callTime)
-{
+void MrpSteering::reset(uint64_t callTime) {
     // check for required input message
     if (!this->guidInMsg.isLinked()) {
         throw std::invalid_argument("mrpSteering.guidInMsg wasn't connected.");
@@ -38,8 +37,7 @@ void MrpSteering::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MrpSteering::updateState(uint64_t callTime)
-{
+void MrpSteering::updateState(uint64_t callTime) {
     AttGuidMsgPayload guidCmd = this->guidInMsg();
 
     RateCmdMsgPayload outMsg = this->algorithm.update(guidCmd);

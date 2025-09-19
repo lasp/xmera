@@ -38,9 +38,9 @@ class MrpSteeringAlgorithm {
     bool getIgnoreFeedforward() const;
 
    private:
-    double K1{};         //!< [rad/sec] Proportional gain applied to MRP errors
-    double K3{};         //!< [rad/sec] Cubic gain applied to MRP error in steering saturation function
-    double omegaMax{};   //!< [rad/sec] Maximum rate command of steering control
+    double K1{};                        //!< [rad/sec] Proportional gain applied to MRP errors
+    double K3{};                        //!< [rad/sec] Cubic gain applied to MRP error in steering saturation function
+    double omegaMax{};                  //!< [rad/sec] Maximum rate command of steering control
     bool ignoreOuterLoopFeedforward{};  //!< [] Boolean flag indicating if outer feedforward term should be included
 };
 

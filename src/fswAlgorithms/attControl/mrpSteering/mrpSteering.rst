@@ -309,4 +309,3 @@ The module is configured by::
 If the outer loop feed-forward term should be ignored::
 
     module.ignoreFeedforward()
-

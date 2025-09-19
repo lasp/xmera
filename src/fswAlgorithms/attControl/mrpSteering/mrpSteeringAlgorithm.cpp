@@ -30,27 +30,27 @@
  @return RateCmdMsgPayload
  @param guidInMsg attitude guidance input message
  */
-RateCmdMsgPayload MrpSteeringAlgorithm::update(AttGuidMsgPayload& guidInMsg) const
-{
+RateCmdMsgPayload MrpSteeringAlgorithm::update(AttGuidMsgPayload& guidInMsg) const {
     Eigen::Vector3d sigma_BR = Eigen::Map<const Eigen::Vector3d>(guidInMsg.sigma_BR);
 
     Eigen::Vector3d omega_ast{};
     Eigen::Vector3d omega_ast_p{Eigen::Vector3d::Zero()};
 
-    for (uint32_t i=0; i<3; ++i) {
+    for (uint32_t i = 0; i < 3; ++i) {
         double sigma_i = sigma_BR[i];
-        double f_i = atan(M_PI_2/this->omegaMax*(this->K1*sigma_i + this->K3*pow(sigma_i,3)))/M_PI_2*this->omegaMax;
-        omega_ast[i] = - f_i;
+        double f_i =
+            atan(M_PI_2 / this->omegaMax * (this->K1 * sigma_i + this->K3 * pow(sigma_i, 3))) / M_PI_2 * this->omegaMax;
+        omega_ast[i] = -f_i;
     }
     if (!this->ignoreOuterLoopFeedforward) {
         Eigen::Matrix3d B = bmatMrp(sigma_BR);
         Eigen::Vector3d sigmaDot_BR = 0.25 * B * omega_ast;
 
-        for (uint32_t i=0; i<3; ++i) {
+        for (uint32_t i = 0; i < 3; ++i) {
             double sigma_i = sigma_BR[i];
-            double f_i = (3*this->K3*pow(sigma_i,2) + this->K1)/
-                         (pow(M_PI_2/this->omegaMax*(this->K1*sigma_i + this->K3*pow(sigma_i,3)),2) + 1);
-            omega_ast_p[i] = - f_i * sigmaDot_BR[i];
+            double f_i = (3 * this->K3 * pow(sigma_i, 2) + this->K1) /
+                         (pow(M_PI_2 / this->omegaMax * (this->K1 * sigma_i + this->K3 * pow(sigma_i, 3)), 2) + 1);
+            omega_ast_p[i] = -f_i * sigmaDot_BR[i];
         }
     }
     RateCmdMsgPayload outMsg{};
