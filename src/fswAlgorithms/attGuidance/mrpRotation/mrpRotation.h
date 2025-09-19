@@ -43,8 +43,8 @@ class MrpRotation : public SysModel {
     void setOmegaRR0(const Eigen::Vector3d &omega);
     const Eigen::Vector3d &getOmegaRR0() const;
 
-    Message<AttRefMsgPayload> attRefOutMsg;     //!< output message containing the Reference
-    ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< guidance reference input message
+    Message<AttRefMsgPayload> attRefOutMsg;           //!< output message containing the Reference
+    ReadFunctor<AttRefMsgPayload> attRefInMsg;        //!< guidance reference input message
     ReadFunctor<AttStateMsgPayload> desiredAttInMsg;  //!< incoming message containing the desired attitude set
 
    private:

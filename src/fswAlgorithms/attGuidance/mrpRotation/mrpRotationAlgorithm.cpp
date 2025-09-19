@@ -18,15 +18,14 @@
  */
 
 #include "mrpRotationAlgorithm.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 
 /*! @brief This resets the module to original states.
  @return void
  */
-void MrpRotationAlgorithm::reset()
-{
+void MrpRotationAlgorithm::reset() {
     this->priorTime = 0;
     this->priorCmdSet = Eigen::Vector3d::Zero();
     this->priorCmdRates = Eigen::Vector3d::Zero();
@@ -41,11 +40,10 @@ void MrpRotationAlgorithm::reset()
  */
 AttRefMsgPayload MrpRotationAlgorithm::update(uint64_t callTime,
                                               AttRefMsgPayload inputRef,
-                                              AttStateMsgPayload attStates)
-{
-    /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
-    if (this->dynamicReferenceEnabled)
-    {
+                                              AttStateMsgPayload attStates) {
+    /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP
+     * rotation */
+    if (this->dynamicReferenceEnabled) {
         /* - Save commanded MRP set and body rates */
         this->cmdSet = Eigen::Map<const Eigen::Vector3d>(attStates.state);
         this->cmdRates = Eigen::Map<const Eigen::Vector3d>(attStates.rate);
@@ -72,14 +70,12 @@ AttRefMsgPayload MrpRotationAlgorithm::update(uint64_t callTime,
 /*! @brief This function checks if there is a new commanded raster maneuver message available
  @return void
  */
-void MrpRotationAlgorithm::checkRasterCommands()
-{
-    bool prevCmdActive = ((this->cmdSet - this->priorCmdSet).array().abs() < 1E-12).all()
-                         && ((this->cmdRates - this->priorCmdRates).array().abs() < 1E-12).all();
+void MrpRotationAlgorithm::checkRasterCommands() {
+    bool prevCmdActive = ((this->cmdSet - this->priorCmdSet).array().abs() < 1E-12).all() &&
+                         ((this->cmdRates - this->priorCmdRates).array().abs() < 1E-12).all();
 
     /*! - check if a new attitude reference command message content is availble */
-    if (!prevCmdActive)
-    {
+    if (!prevCmdActive) {
         /*! - copy over the commanded initial MRP and rate information */
         this->sigma_RR0 = this->cmdSet;
         this->omega_RR0_R = this->cmdRates;
@@ -94,16 +90,13 @@ void MrpRotationAlgorithm::checkRasterCommands()
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MrpRotationAlgorithm::computeTimeStep(uint64_t callTime)
-{
-    if (this->priorTime == 0)
-    {
+void MrpRotationAlgorithm::computeTimeStep(uint64_t callTime) {
+    if (this->priorTime == 0) {
         this->dt = 0.0;
     } else {
-        this->dt = (callTime - this->priorTime)*NANO2SEC;
+        this->dt = (callTime - this->priorTime) * NANO2SEC;
     }
 }
-
 
 /*! @brief This function computes the reference (MRP attitude Set, angular velocity and angular acceleration)
  associated with a rotation defined in terms of an initial MRP set and a constant angular velocity vector
@@ -113,9 +106,8 @@ void MrpRotationAlgorithm::computeTimeStep(uint64_t callTime)
  @param domega_R0N_N The input reference frame angular acceleration vector
  */
 AttRefMsgPayload MrpRotationAlgorithm::computeMRPRotationReference(Eigen::Vector3d sigma_R0N,
-                                                          Eigen::Vector3d omega_R0N_N,
-                                                          Eigen::Vector3d domega_R0N_N)
-{
+                                                                   Eigen::Vector3d omega_R0N_N,
+                                                                   Eigen::Vector3d domega_R0N_N) {
     /*! - Compute attitude reference frame R/N information */
     Eigen::Matrix3d B = bmatMrp(this->sigma_RR0);
     Eigen::Vector3d sigmaDot_RR0 = 0.25 * B * this->omega_RR0_R;
@@ -146,18 +138,18 @@ AttRefMsgPayload MrpRotationAlgorithm::computeMRPRotationReference(Eigen::Vector
  @return void
  @param sigma [-] current MRP attitude coordinate set with respect to the input reference
 */
-void MrpRotationAlgorithm::setSigmaRR0(const Eigen::Vector3d &sigma) { this->sigma_RR0 = sigma; }
+void MrpRotationAlgorithm::setSigmaRR0(const Eigen::Vector3d& sigma) { this->sigma_RR0 = sigma; }
 
 /*! Getter method for the current MRP attitude coordinate set with respect to the input reference
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d& MrpRotationAlgorithm::getSigmaRR0() const {return this->sigma_RR0; }
+const Eigen::Vector3d& MrpRotationAlgorithm::getSigmaRR0() const { return this->sigma_RR0; }
 
 /*! Setter method for the angular velocity vector relative to input reference
  @return void
  @param omega [rad/s] angular velocity vector relative to input reference
 */
-void MrpRotationAlgorithm::setOmegaRR0(const Eigen::Vector3d &omega) { this->omega_RR0_R = omega; }
+void MrpRotationAlgorithm::setOmegaRR0(const Eigen::Vector3d& omega) { this->omega_RR0_R = omega; }
 
 /*! Getter method for the angular velocity vector relative to input reference
  @return const Eigen::Vector3d

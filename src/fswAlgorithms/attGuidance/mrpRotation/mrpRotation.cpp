@@ -20,13 +20,11 @@
 #include "fswAlgorithms/attGuidance/mrpRotation/mrpRotation.h"
 #include <stdexcept>
 
-
 /*! @brief This resets the module to original states.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MrpRotation::reset(uint64_t callTime)
-{
+void MrpRotation::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->attRefInMsg.isLinked()) {
         throw std::invalid_argument("mrpRotation.attRefInMsg wasn't connected.");
@@ -45,13 +43,11 @@ void MrpRotation::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MrpRotation::updateState(uint64_t callTime)
-{
+void MrpRotation::updateState(uint64_t callTime) {
     AttRefMsgPayload inputRef = this->attRefInMsg();
     AttStateMsgPayload attStates{};
 
-    if (this->algorithm.isDynamicReferenceEnabled())
-    {
+    if (this->algorithm.isDynamicReferenceEnabled()) {
         attStates = this->desiredAttInMsg();
     }
 
@@ -65,18 +61,18 @@ void MrpRotation::updateState(uint64_t callTime)
  @return void
  @param sigma [-] current MRP attitude coordinate set with respect to the input reference
 */
-void MrpRotation::setSigmaRR0(const Eigen::Vector3d &sigma) { this->algorithm.setSigmaRR0(sigma); }
+void MrpRotation::setSigmaRR0(const Eigen::Vector3d& sigma) { this->algorithm.setSigmaRR0(sigma); }
 
 /*! Getter method for the current MRP attitude coordinate set with respect to the input reference
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d& MrpRotation::getSigmaRR0() const {return this->algorithm.getSigmaRR0(); }
+const Eigen::Vector3d& MrpRotation::getSigmaRR0() const { return this->algorithm.getSigmaRR0(); }
 
 /*! Setter method for the angular velocity vector relative to input reference
  @return void
  @param omega [rad/s] angular velocity vector relative to input reference
 */
-void MrpRotation::setOmegaRR0(const Eigen::Vector3d &omega) { this->algorithm.setOmegaRR0(omega); }
+void MrpRotation::setOmegaRR0(const Eigen::Vector3d& omega) { this->algorithm.setOmegaRR0(omega); }
 
 /*! Getter method for the angular velocity vector relative to input reference
  @return const Eigen::Vector3d

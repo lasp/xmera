@@ -214,4 +214,3 @@ Alternatively, the desired rotation state can be specified with the input messag
 Finally, the module is added to the simulation using::
 
     unitTestSim.AddModelToTask(unitTaskName, module)
-
