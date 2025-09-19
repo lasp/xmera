@@ -25,6 +25,7 @@
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
 #include <stdint.h>
+#include <Eigen/Core>
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 class MrpSteering : public SysModel {
