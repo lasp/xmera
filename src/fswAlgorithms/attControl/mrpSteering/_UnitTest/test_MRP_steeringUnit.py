@@ -26,87 +26,87 @@ from Basilisk.utilities import macros
 
 @pytest.mark.parametrize("K1", [0.15, 0])
 @pytest.mark.parametrize("K3", [1.0, 0])
-@pytest.mark.parametrize("omegaMax", [1.5 * macros.D2R, 0.001 * macros.D2R])
+@pytest.mark.parametrize("omega_max", [1.5 * macros.D2R, 0.001 * macros.D2R])
 
-def test_mrp_steering_tracking(show_plots, K1, K3, omegaMax):
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
+def test_mrp_steering_tracking(show_plots, K1, K3, omega_max):
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.5)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     module = mrpSteering.MrpSteering()
     module.modelTag = "mrpSteering"
-    unitTestSim.AddModelToTask(unitTaskName, module)
+    unit_test_sim.AddModelToTask(unit_task_name, module)
 
     module.setK1(K1)
     module.setK3(K3)
-    module.setOmegaMax(omegaMax)
+    module.setOmegaMax(omega_max)
 
-    guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
+    guid_cmd_data = messaging.AttGuidMsgPayload()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
-    guidCmdData.sigma_BR = sigma_BR
+    guid_cmd_data.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
-    guidCmdData.omega_BR_B = omega_BR_B
+    guid_cmd_data.omega_BR_B = omega_BR_B
     omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    guidCmdData.omega_RN_B = omega_RN_B
+    guid_cmd_data.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    guidCmdData.domega_RN_B = domega_RN_B
-    guidInMsg = messaging.AttGuidMsg().write(guidCmdData)
+    guid_cmd_data.domega_RN_B = domega_RN_B
+    guid_in_msg = messaging.AttGuidMsg().write(guid_cmd_data)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = module.rateCmdOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = module.rateCmdOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # connect messages
-    module.guidInMsg.subscribeTo(guidInMsg)
+    module.guidInMsg.subscribeTo(guid_in_msg)
 
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
+    unit_test_sim.ExecuteSimulation()
 
     # Compute truth states
-    omegaAstTrue, omegaAstPTrue = findTrueValues(guidCmdData, module)
+    omega_ast_true, omega_ast_p_true = find_true_values(guid_cmd_data, module)
 
     # compare the module results to the truth values
     accuracy = 1e-12
 
-    np.testing.assert_allclose(dataLog.omega_BastR_B, omegaAstTrue, atol=accuracy, rtol=0, verbose=True)
-    np.testing.assert_allclose(dataLog.omegap_BastR_B, omegaAstPTrue, atol=accuracy, rtol=0, verbose=True)
+    np.testing.assert_allclose(data_log.omega_BastR_B, omega_ast_true, atol=accuracy, rtol=0, verbose=True)
+    np.testing.assert_allclose(data_log.omegap_BastR_B, omega_ast_p_true, atol=accuracy, rtol=0, verbose=True)
 
 
-def findTrueValues(guidCmdData, module):
+def find_true_values(guid_cmd_data, module):
 
-    omegaMax = module.getOmegaMax()
-    sigma = np.asarray(guidCmdData.sigma_BR)
+    omega_max = module.getOmegaMax()
+    sigma = np.asarray(guid_cmd_data.sigma_BR)
     K1 = np.asarray(module.getK1())
     K3 = np.asarray(module.getK3())
-    Bmat = RigidBodyKinematics.BmatMRP(sigma)
-    omegaAst = []
-    omegaAst_P = []
+    B = RigidBodyKinematics.BmatMRP(sigma)
+    omega_ast = []
+    omega_ast_p = []
 
     for i in range(len(sigma)):
-        steerRate = -1*(2*omegaMax/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omegaMax))
-        omegaAst.append(steerRate)
+        steer_rate = -1*(2*omega_max/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omega_max))
+        omega_ast.append(steer_rate)
 
 
     if 1:   #module.ignoreOuterLoopFeedforward: #should be "if not"
-        sigmaP = 0.25*Bmat.dot(omegaAst)
+        sigma_p = 0.25*B.dot(omega_ast)
         for i in range(len(sigma)):
-            omegaAstRate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omegaMax))**2)*sigmaP[i]
-            omegaAst_P.append(-omegaAstRate)
+            omega_ast_rate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omega_max))**2)*sigma_p[i]
+            omega_ast_p.append(-omega_ast_rate)
     else:
-        omegaAst_P = np.asarray([0, 0, 0])
+        omega_ast_p = np.asarray([0, 0, 0])
 
-    omegaAst = [omegaAst, omegaAst, omegaAst]
-    omegaAst_P = [omegaAst_P, omegaAst_P, omegaAst_P]
+    omega_ast = [omega_ast, omega_ast, omega_ast]
+    omega_ast_p = [omega_ast_p, omega_ast_p, omega_ast_p]
 
-    return omegaAst, omegaAst_P
+    return omega_ast, omega_ast_p
 
 
 if __name__ == "__main__":
