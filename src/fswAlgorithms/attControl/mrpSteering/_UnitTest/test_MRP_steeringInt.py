@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-import matplotlib.pyplot as plt
+
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
@@ -24,57 +24,16 @@ from Basilisk.fswAlgorithms import rateServoFullNonlinear
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
 
 @pytest.mark.parametrize("K1", [0.15, 0])
-@pytest.mark.parametrize("K3", [1, 0])
+@pytest.mark.parametrize("K3", [1.0, 0])
 @pytest.mark.parametrize("omegaMax", [1.5 * macros.D2R, 0.001])
 
+def test_mrp_steering_tracking_integrated(show_plots, K1, K3, omegaMax):
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
 
-def test_mrp_steering_tracking(show_plots,K1, K3, omegaMax):
-    r"""
-    **Validation Test Description**
-
-    This unit test is an integrated test of this module with :ref:`rateServoFullNonlinear` as well,
-    comparing the desired torques computed :math:`{\bf L}_r` with truth values computed in the test.
-
-    **Test Parameters**
-
-    This test checks a set of gains ``K1``, ``K3`` and ``omegaMax`` on a rigid body with no external
-    torques, and with a fixed input reference attitude message. The commanded rate solution
-    is evaluated against python computed values at 0s, 0.5s, 1.0s, 1.5s and 2s to within a
-    tolerance of :math:`10^{-12}`.
-
-    :param show_plots: flag indicating if plots should be shown.
-    :param K1: The control gain :math:`K_1`
-    :param K3: The control gain :math:`K_3`
-    :param omegaMax: The control gain :math:`\omega_{\text{max}}`
-    :return: void
-
-    """
-    [testResults, testMessage] = mrp_steering_tracking(show_plots,K1, K3, omegaMax)
-    assert testResults < 1, testMessage
-
-
-def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
+    # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
@@ -82,28 +41,25 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Construct algorithm and associated C++ container
     module = mrpSteering.MrpSteering()
     module.modelTag = "mrpSteering"
 
     servo = rateServoFullNonlinear.RateServoFullNonlinear()
     servo.modelTag = "rate_servo"
 
-    # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
     unitTestSim.AddModelToTask(unitTaskName, servo)
 
     module.setK1(K1)
     module.setK3(K3)
     module.setOmegaMax(omegaMax)
+
     servo.Ki = 0.01
     servo.P = 150.0
     servo.integralLimit = 2. / servo.Ki * 0.1
     servo.knownTorquePntB_B = [0., 0., 0.]
 
-    #   Create input message and size it because the regular creator of that message
-    #   is not part of the test.
-    #   attGuidOut Message:
+    # attGuidOut Message:
     guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
     guidCmdData.sigma_BR = [0.3, -0.5, 0.7]
     guidCmdData.omega_BR_B = [0.010, -0.020, 0.015]
@@ -126,22 +82,16 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     rwInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
-    def writeMsgInWheelConfiguration():
-        rwConfigParams = messaging.RWArrayConfigMsgPayload()
-        rwConfigParams.GsMatrix_B = [
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0,
-            0.5773502691896258, 0.5773502691896258, 0.5773502691896258
-        ]
-        rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
-        rwConfigParams.numRW = 4
-        msg = messaging.RWArrayConfigMsg().write(rwConfigParams)
-        jsList = rwConfigParams.JsList
-        GsMatrix_B = rwConfigParams.GsMatrix_B
-        return jsList, GsMatrix_B, msg
-
-    jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
+    rwConfigParams = messaging.RWArrayConfigMsgPayload()
+    rwConfigParams.GsMatrix_B = [
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0,
+        0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+    ]
+    rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
+    rwConfigParams.numRW = 4
+    rwParamInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
 
     # wheelAvailability message
     rwAvailList = []
@@ -165,10 +115,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     servo.rateSteeringInMsg.subscribeTo(module.rateCmdOutMsg)
     servo.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
-    # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-
-    # Step the simulation to 3*process rate so 4 total steps including zero
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
@@ -180,29 +127,10 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     # Compute true values
     trueVals = findTrueTorques(module, servo, guidCmdData, rwSpeedMessage, vehicleConfigOut, rwAvailList)
 
-    # set the filtered output truth states
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0, len(trueVals)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], trueVals[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.modelTag + " Module failed torqueRequestBody unit test at t="
-                                + str(dataLog.times[i] * macros.NANO2SEC) + "sec \n")
 
-
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    if show_plots:
-        plt.show()
-
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED: " + module.modelTag)
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    np.testing.assert_allclose(dataLog.torqueRequestBody, trueVals, atol=accuracy, rtol=0, verbose=True)
 
 
 def findTrueValues(guidCmdData, module):
@@ -212,14 +140,12 @@ def findTrueValues(guidCmdData, module):
     K1 = np.asarray(module.getK1())
     K3 = np.asarray(module.getK3())
     Bmat = RigidBodyKinematics.BmatMRP(sigma)
-    omegaAst = []#np.asarray([0, 0, 0])
+    omegaAst = []
     omegaAst_P = []
 
     for i in range(len(sigma)):
         steerRate = -1*(2*omegaMax/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omegaMax))
         omegaAst.append(steerRate)
-    #print omegaAst
-
 
     if 1:#module.ignoreOuterLoopFeedforward: #should be "if not"
         sigmaP = 0.25*Bmat.dot(omegaAst)
@@ -243,7 +169,6 @@ def findTrueTorques(module,servo, guidCmdData,rwSpeedMessage,vehicleConfigOut, r
     omega_BN_B = omega_BR_B + omega_RN_B #find body rate
     domega_RN_B = np.asarray(guidCmdData.domega_RN_B)
 
-
     omega_BastR_B, omegap_BastR_B = findTrueValues(guidCmdData, module)
 
     omega_BastN_B = omega_BastR_B+omega_RN_B
@@ -254,17 +179,16 @@ def findTrueTorques(module,servo, guidCmdData,rwSpeedMessage,vehicleConfigOut, r
     Ki = servo.Ki
     P = servo.P
     jsVec = servo.rwConfigParams.JsList[0:numRW]
-    #GsMatrix_B_array = np.asarray(GsMatrix)
     GsMatrix = (servo.rwConfigParams.GsMatrix_B)
     GsMatrix_B_array = np.reshape(GsMatrix[0:numRW * 3], (numRW, 3))
 
-    #Compute toruqes
+    # Compute toruqes
     for i in range(len(steps)):
         dt = steps[i]
         if dt == 0:
             zVec = np.asarray([0, 0, 0])
 
-        #evaluate integral term
+        # evaluate integral term
         if Ki > 0 and abs(servo.integralLimit) > 0: #if integral feedback is on
             zVec = dt * omega_BBast_B + zVec  # z = integral(del_omega)
             # Make sure each component is less than the integral limit
@@ -272,7 +196,7 @@ def findTrueTorques(module,servo, guidCmdData,rwSpeedMessage,vehicleConfigOut, r
                 if zVec[i] > servo.integralLimit:
                         zVec[i] = zVec[i]/abs(zVec[i])*servo.integralLimit
 
-        else: #integral gain turned off/negative setting
+        else: # integral gain turned off/negative setting
             zVec = np.asarray([0, 0, 0])
 
         #compute torque Lr
@@ -294,7 +218,8 @@ def findTrueTorques(module,servo, guidCmdData,rwSpeedMessage,vehicleConfigOut, r
         Lr4 = Lr3 + L
         Lr4 = -Lr4
         Lr.append(np.ndarray.tolist(Lr4))
+
     return Lr
 
 if __name__ == "__main__":
-    test_mrp_steering_tracking(False, 0.15, 1.0, 0.025)
+    test_mrp_steering_tracking_integrated(False, 0.15, 1.0, 0.025)
