@@ -25,6 +25,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <math.h>
+#include <stdexcept>
 
 static void MRPSteeringLaw(MrpSteering *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
@@ -37,7 +38,7 @@ void MrpSteering::reset(uint64_t callTime)
 {
     // check for required input message
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpSteering.guidInMsg wasn't connected.");
+        throw std::invalid_argument("mrpSteering.guidInMsg wasn't connected.");
     }
 
     return;
