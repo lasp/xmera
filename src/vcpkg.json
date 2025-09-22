@@ -2,6 +2,7 @@
   "name": "basilisk",
   "version": "2.3.4",
   "dependencies": [
+    "cspice",
     "cppzmq",
     "eigen3",
     "gtest",
