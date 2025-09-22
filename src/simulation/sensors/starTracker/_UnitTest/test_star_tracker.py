@@ -196,29 +196,22 @@ def test_starTracker(show_plots, useFlag, testCase):
     elif testCase == 'angular velocity check':
         # Check computed platform angular velocity
         omega_CN_CTruth = [np.zeros((1, 3))]
-        previousSimTime = timespan[0]
         currentSimTime = timespan[0]
         for idx in range(1, len(timespan)):
-            # Group quaternion components without beta_0
-            epsilon_CN = np.array(beta_CN[idx, 1:]).reshape(3, 1)
-            epsilonPrevious_CN = np.array(beta_CN[idx-1, 1:]).reshape(3, 1)
+            # Grab the current and previous quaternions for numerical differentiation
+            beta_current_cn = np.array(beta_CN[idx, :])
+            beta_previous_cn = np.array(beta_CN[idx-1, :])
 
-            # Determine CRPs (Gibbs Vector)
-            q_CN = epsilon_CN / beta_CN[idx, 0]
-            qPrevious_CN = epsilonPrevious_CN / beta_CN[idx-1, 0]
-
-            # Compute qDot_PN
+            # Compute beta_dot_cn
             previousSimTime = currentSimTime
             currentSimTime = timespan[idx]
             dt = currentSimTime - previousSimTime
-            qDot_CN = (q_CN - qPrevious_CN) / dt
+            beta_dot_cn = (beta_current_cn - beta_previous_cn) / dt
 
-            # Solve for platform rate using Eq. 3.137 from Schaub and Junkins Pg 120
-            qTilde_CN = rbk.v3Tilde(q_CN.flatten())
-            qTilde_CN = np.array(qTilde_CN)
-            I = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-            omega_cn_c = (2.0 / (1.0 + np.dot(q_CN.flatten(), q_CN.flatten()))) * (I - qTilde_CN) @ qDot_CN
-            omega_cn_c = omega_cn_c.reshape(1, 3)
+            # Solve for platform rate using Eq. 3.106 from Schaub and Junkins 3rd edition Pg 111
+            b_inv = rbk.BinvEP(beta_current_cn)
+
+            omega_cn_c = 2 * b_inv.dot(beta_dot_cn)
             omega_CN_CTruth.append(macros.R2D * omega_cn_c)  # [deg]
 
         omega_CN_CTruth = np.vstack(omega_CN_CTruth)
