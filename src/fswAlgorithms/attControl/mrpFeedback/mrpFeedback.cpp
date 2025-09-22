@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <math.h>
+#include <stdexcept>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -43,17 +44,17 @@ void MrpFeedback::reset(uint64_t callTime)
     /* check that optional messages are correct connected */
     if(this->rwParamsInMsg.isLinked()) {
         if (!this->rwSpeedsInMsg.isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR, "Error: the mrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+            throw std::invalid_argument("MrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
 
     }
 
     // check if the required message has not been connected
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpFeedback.guidInMsg wasn't connected.");
+        throw std::invalid_argument("MrpFeedback.guidInMsg wasn't connected.");
     }
     if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: the mrpFeedback.vehConfigInMsg wasn't connected.");
+        throw std::invalid_argument("MrpFeedback.vehConfigInMsg wasn't connected.");
     }
 
     /*! - zero and read in vehicle configuration message */
