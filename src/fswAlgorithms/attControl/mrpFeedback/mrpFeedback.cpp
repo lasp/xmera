@@ -26,12 +26,12 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MrpFeedback::reset(uint64_t callTime)
-{
+void MrpFeedback::reset(uint64_t callTime) {
     /* check that optional messages are correct connected */
-    if(this->rwParamsInMsg.isLinked()) {
+    if (this->rwParamsInMsg.isLinked()) {
         if (!this->rwSpeedsInMsg.isLinked()) {
-            throw std::invalid_argument("MrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+            throw std::invalid_argument(
+                "MrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
     }
 
@@ -62,27 +62,23 @@ void MrpFeedback::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MrpFeedback::updateState(uint64_t callTime)
-{
-    AttGuidMsgPayload guidCmd{};  /* attitude tracking error message */
-    RWSpeedMsgPayload wheelSpeeds{};  /* Reaction wheel speed message */
-    RWAvailabilityMsgPayload wheelsAvailability{};  /* Reaction wheel availability message */
+void MrpFeedback::updateState(uint64_t callTime) {
+    AttGuidMsgPayload guidCmd{};                   /* attitude tracking error message */
+    RWSpeedMsgPayload wheelSpeeds{};               /* Reaction wheel speed message */
+    RWAvailabilityMsgPayload wheelsAvailability{}; /* Reaction wheel availability message */
 
     /*! - Read the attitude tracking error message */
     guidCmd = this->guidInMsg();
 
     /*! - read in optional RW speed and availability message */
-    if(this->numRW > 0) {
+    if (this->numRW > 0) {
         wheelSpeeds = this->rwSpeedsInMsg();
         if (this->rwAvailInMsg.isLinked()) {
             wheelsAvailability = this->rwAvailInMsg();
         }
     }
 
-    MrpFeedbackOutput mrpFeedbackOutput = algorithm.update(callTime,
-                                                           guidCmd,
-                                                           wheelSpeeds,
-                                                           wheelsAvailability);
+    MrpFeedbackOutput mrpFeedbackOutput = algorithm.update(callTime, guidCmd, wheelSpeeds, wheelsAvailability);
 
     this->cmdTorqueOutMsg.write(&mrpFeedbackOutput.controlOut, moduleID, callTime);
     this->intFeedbackTorqueOutMsg.write(&mrpFeedbackOutput.intFeedbackOut, this->moduleID, callTime);
