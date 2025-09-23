@@ -15,30 +15,13 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-#
-#   Unit Test Script
-#   Module Name:        mrpFeedback
-#   Author:             Hanspeter Schaub
-#   Creation Date:      December 18, 2015
-#
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
+
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
-
-
-#   Import all of the modules that we are going to call in this simulation
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-#@pytest.mark.xfail()
-# provide a unique test method name, starting with test_
-
 
 @pytest.mark.parametrize("intGain", [0.01, -1])
 @pytest.mark.parametrize("rwNum", [4, 0])
@@ -47,61 +30,16 @@ from Basilisk.utilities import unitTestSupport
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
 
 def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
-    r"""
-        **Validation Test Description**
-
-        The unit test for this module tests a set of gains :math:`K`, :math:`K_i`, :math:`P` on a rigid body
-        with no external torques, and with a fixed input reference attitude message. The torque requested
-        by the controller is evaluated against python computed torques at 0s, 0.5s, 1s, 1.5s and 2s to
-        within a tolerance of :math:`10^{-8}`. After 1s the simulation is stopped and the ``reset()``
-        function is called to check that integral feedback related variables are properly reset.
-        The following permutations are run:
-
-        - The test is run for a case with error integration feedback (:math:`k_i`=0.01) and one case
-          where :math:`k_i` is set to a negative value, resulting in a case with no integrator.
-        - The RW array number is configured either to 4 or 0
-        - The integral limit term is set to either 0 or 20
-        - The RW availability message is tested in 3 manners.  Either the availability  message is not
-          written where all wheels should default to being available.  If the availability message is
-          written, then the RWs are either zero to available or not available.
-        - The control parameter :math:`\delta\omega_{0}` is set to either a zero or non-zero vector
-
-        All permutations of these test cases are expected to pass.
-
-
-        **Test Parameters**
-
-        Args:
-            intGain (float): value of the integral gain :math:`K_i`
-            rwNum (int): number of RW devices to simulate
-            integralLimit (float): value of the integral limit
-            ctrlLaw (int): type of control law used
-            useRwAvailability (string): Flag to not use RW availabillity (``NO``), use the availability
-               message and turn on the RW devices (``ON``) and use the message and turn off the devices (``OFF``)
-    """
-
-    # each test method requires a single assert method to be called
-
-    [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability)
-
-    assert testResults < 1, testMessage
-
-
-def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-                                                        # this creates a fresh and consistent simulation environment for each test run
 
     #   Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     #   Construct algorithm and associated C++ container
     module = mrpFeedback.MrpFeedback()
@@ -148,22 +86,20 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     # wheelConfigData message
     jsList = []
     GsMatrix_B = []
-    def writeMsgInWheelConfiguration():
+    if rwNum > 0:
         rwConfigParams = messaging.RWArrayConfigMsgPayload()
 
-        rwConfigParams.GsMatrix_B = [
+        GsMatrix_B = [
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
             0.0, 0.0, 1.0,
             0.577350269190, 0.577350269190, 0.577350269190
         ]
-        rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
+        jsList = [0.1, 0.1, 0.1, 0.1]
+        rwConfigParams.GsMatrix_B = GsMatrix_B
+        rwConfigParams.JsList = jsList
         rwConfigParams.numRW = rwNum
-        msg = messaging.RWArrayConfigMsg().write(rwConfigParams)
-        return rwConfigParams.JsList, rwConfigParams.GsMatrix_B, msg
-
-    if rwNum > 0:
-        jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
+        rwParamInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
 
     # wheelAvailability message
     rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
@@ -210,24 +146,11 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
+    Lr = dataLog.torqueRequestBody
+
     # compare the module results to the truth values
     accuracy = 1e-8
-    for i in range(0, len(LrTrue)):
-        # check vector values
-        if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], LrTrue[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.modelTag + " Module failed mrpFeedback unit test at t="
-                                + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
-
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED: " + module.modelTag)
-    else:
-        print("Failed: " + module.modelTag)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    np.testing.assert_allclose(Lr, LrTrue, atol=accuracy, rtol=0, verbose=True)
 
 
 def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg,ctrlLaw):
@@ -292,11 +215,6 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
     return np.array(Lr)
 
 
-
-
-#   This statement below ensures that the unitTestScript can be run as a stand-along python scripts
-#   automatically executes the test_MRP_Feedback() method
-#
 if __name__ == "__main__":
     test_MRP_Feedback(False,    # showplots
                       0.01,     # intGain
