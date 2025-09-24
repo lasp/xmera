@@ -1,10 +1,6 @@
 Executive Summary
 -----------------
-
-This attitude guidance module create a reference attitude message that points in fixed inertial direction. The module
-:download:`PDF Description </../../src/fswAlgorithms/attGuidance/inertial3D/_Documentation/Basilisk-Inertial3D-2016-01-15.pdf>`
-contains further information on this module's function,
-how to run it, as well as testing.
+This attitude guidance module create a reference attitude message that points in fixed inertial direction.
 
 Message Connection Descriptions
 -------------------------------
@@ -23,3 +19,20 @@ provides information on what this message is used for.
       - :ref:`AttRefMsgPayload`
       - attitude reference output message
 
+
+Reference Frame Generation
+--------------------------
+The modules requires the desired reference orientation in terms of the MRP set :math:`\mathbf{\sigma}_{R_0 N}`.
+This input is only set once and does not have to be changed. Let us designate :math:`\mathcal{R}` as the output
+generated reference frame. Since the fixed-pointing is inertial:
+
+.. math::
+    \mathbf{\sigma}_{RN} = \mathbf{\sigma}_{R_0 N} \\
+    \mathbf{\omega}_{RN} = \dot{\mathbf{\omega}}_{RN} = 0
+
+User Guide
+----------
+The required module configuration is::
+
+    attGuid = inertial3D.inertial3D()
+    attGuid.setSigmaR0N(sigma_R0N)

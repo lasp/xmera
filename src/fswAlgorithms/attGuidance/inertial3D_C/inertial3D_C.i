@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2025, Laboratory for Atmospheric Space Physics, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module inertial3D
+%module inertial3D_C
 %{
-   #include "inertial3D.h"
+   #include "inertial3D_C.h"
 %}
 
 %pythoncode %{
@@ -27,10 +27,8 @@
 
 %include "sys_model.i"
 %include "swig_conly_data.i"
-%include "swig_eigen.i"
 
-%include "inertial3D.h"
-%include "inertial3DAlgorithm.h"
+%include "inertial3D_C.h"
 
 %include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 
