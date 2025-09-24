@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -30,6 +30,7 @@
 %include "swig_eigen.i"
 
 %include "rateServoFullNonlinear.h"
+%include "rateServoFullNonlinearAlgorithm.h"
 
 %include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 %include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"

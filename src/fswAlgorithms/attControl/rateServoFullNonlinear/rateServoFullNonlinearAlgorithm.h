@@ -17,13 +17,11 @@
 
  */
 
-#ifndef RATE_SERVO_FULL_NONLINEAR_H
-#define RATE_SERVO_FULL_NONLINEAR_H
+#ifndef RATE_SERVO_FULL_NONLINEAR_ALGORITHM_H
+#define RATE_SERVO_FULL_NONLINEAR_ALGORITHM_H
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
@@ -31,15 +29,18 @@
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinearAlgorithm.h"
 
 #include <Eigen/Core>
 
 /*! @brief The configuration structure for the rateServoFullNonlinear module.  */
-class RateServoFullNonlinear : public SysModel {
+class RateServoFullNonlinearAlgorithm {
    public:
-    void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override;
+    void reset(VehicleConfigMsgPayload vehConfigMsg, RWArrayConfigMsgPayload rwConfigMsg, bool rwIsLinked);
+    CmdTorqueBodyMsgPayload update(uint64_t callTime,
+                                   AttGuidMsgPayload guidCmd,
+                                   RateCmdMsgPayload rateCmd,
+                                   RWSpeedMsgPayload wheelSpeeds,
+                                   RWAvailabilityMsgPayload wheelsAvailability);
 
     void setP(const double gain);
     double getP() const;
@@ -50,18 +51,17 @@ class RateServoFullNonlinear : public SysModel {
     void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
     Eigen::Vector3d getKnownTorquePntB_B() const;
 
-    /* declare module IO interfaces */
-    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< commanded torque output message
-    ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< attitude guidance input message
-    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< vehicle configuration input message
-    ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;         //!< (optional) RW speed input message
-    ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;   //!< (optional) RW availability input message
-    ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;   //!< (optional) RW configuration parameter input message
-    ReadFunctor<RateCmdMsgPayload> rateSteeringInMsg;     //!< commanded rate input message
-
    private:
-    RateServoFullNonlinearAlgorithm algorithm{};
-    uint32_t numRW{};  //!< number of reaction wheels
+    double P{};              //!< [N*m*s]   Rate error feedback gain applied
+    double Ki{};             //!< [N*m]     Integration feedback error on rate error
+    double integralLimit{};  //!< [N*m]     Integration limit to avoid wind-up issue
+    Eigen::Vector3d knownTorquePntB_B{
+        Eigen::Vector3d::Zero()};  //!< [N*m]     known external torque in body frame vector components
+    uint64_t priorTime{};          //!< [ns]      Last time the attitude control is called
+    Eigen::Vector3d z{};           //!< [rad]     integral state of delta_omega
+    Eigen::Matrix3d ISCPntB_B{};   //!< [kg m^2] Spacecraft Inertia
+    RWArrayConfigMsgPayload
+        rwConfigParams{};  //!< [-] struct to store message containing RW config parameters in body B frame
 };
 
 #endif
