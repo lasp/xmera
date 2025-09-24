@@ -448,10 +448,10 @@ def run(show_plots, useDVThrusters):
     mrpControl = mrpFeedback.MrpFeedback()
     mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTaskName, mrpControl)
-    mrpControl.K = 3.5 * 10.0
-    mrpControl.Ki = 0.0002  # make value negative to turn off integral feedback
-    mrpControl.P = 30.0 * 10.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.setK(3.5 * 10.0)
+    mrpControl.setKi(0.0002)  # make value negative to turn off integral feedback
+    mrpControl.setP(30.0 * 10.0)
+    mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
 
     # setup the thruster force mapping module
     thrForceMappingObj = thrForceMapping.ThrForceMapping()

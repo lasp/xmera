@@ -222,10 +222,10 @@ def run(show_plots, useRefAttitude):
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
     extFTObject2.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
-    mrpControl.K = 10
-    mrpControl.Ki = 0.0002
-    mrpControl.P = 50.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.setK(10)
+    mrpControl.setKi(0.0002)
+    mrpControl.setP(50.0)
+    mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
 
     # ----- Setup spacecraft initial states ----- #
     oe = orbitalMotion.ClassicElements()

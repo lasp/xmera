@@ -164,10 +164,10 @@ The MRP Feedback control module is configured next for attitude control::
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControl.K = 3.5
-    mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
-    mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.setK(3.5)
+    mrpControl.setKi(-1.0)  # make value negative to turn off integral feedback
+    mrpControl.setP(30.0)
+    mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
 
 To complete the feedback loop, the MRP feedback module's ``cmdTorqueOutMsg`` output message is connected to the
 external torque module's ``cmdTorqueInMsg``::
@@ -466,11 +466,11 @@ def run(planetCase):
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
+    mrpControl.setKi(-1.0)  # make value negative to turn off integral feedback
     II = 900.
-    mrpControl.P = 2*II/(3*60)
-    mrpControl.K = mrpControl.P*mrpControl.P/II
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.setP(2*II/(3*60))
+    mrpControl.setK(mrpControl.getP()*mrpControl.getP()/II)
+    mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
 
     # Connect torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)

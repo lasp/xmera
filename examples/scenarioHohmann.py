@@ -290,10 +290,10 @@ def run(show_plots, rFirst, rSecond):
     mrpControl = mrpFeedback.MrpFeedback()
     mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(fswTaskName, mrpControl)
-    mrpControl.K = 3.5
-    mrpControl.P = 30.0
-    mrpControl.Ki = -1  # make value negative to turn off integral feedback
-    mrpControl.integralLimit = -1
+    mrpControl.setK(3.5)
+    mrpControl.setP(30.0)
+    mrpControl.setKi(-1)  # make value negative to turn off integral feedback
+    mrpControl.setIntegralLimit(-1)
 
     # Add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
