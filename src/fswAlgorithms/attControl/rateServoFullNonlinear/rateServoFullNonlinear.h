@@ -38,18 +38,10 @@ class RateServoFullNonlinear : public SysModel {
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    /* declare module public variables */
     double P;                     //!< [N*m*s]   Rate error feedback gain applied
     double Ki;                    //!< [N*m]     Integration feedback error on rate error
     double knownTorquePntB_B[3];  //!< [N*m]     known external torque in body frame vector components
     double integralLimit;         //!< [N*m]     Integration limit to avoid wind-up issue
-
-    /* declare module private variables */
-    uint64_t priorTime;   //!< [ns]      Last time the attitude control is called
-    double z[3];          //!< [rad]     integral state of delta_omega
-    double ISCPntB_B[9];  //!< [kg m^2] Spacecraft Inertia
-    RWArrayConfigMsgPayload
-        rwConfigParams;  //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module IO interfaces */
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< commanded torque output message
@@ -59,6 +51,13 @@ class RateServoFullNonlinear : public SysModel {
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;   //!< (optional) RW availability input message
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;   //!< (optional) RW configuration parameter input message
     ReadFunctor<RateCmdMsgPayload> rateSteeringInMsg;     //!< commanded rate input message
+
+   private:
+    uint64_t priorTime{};   //!< [ns]      Last time the attitude control is called
+    double z[3];          //!< [rad]     integral state of delta_omega
+    double ISCPntB_B[9];  //!< [kg m^2] Spacecraft Inertia
+    RWArrayConfigMsgPayload
+        rwConfigParams{};  //!< [-] struct to store message containing RW config parameters in body B frame
 };
 
 #endif
