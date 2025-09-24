@@ -30,7 +30,7 @@ CenterOfBrightness::~CenterOfBrightness() = default;
  */
 void CenterOfBrightness::reset(uint64_t currentSimNanos) {
     if (!this->imageInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CenterOfBrightness.imageInMsg wasn't connected.");
+        throw std::invalid_argument( "CenterOfBrightness.imageInMsg wasn't connected.");
     }
 }
 
@@ -72,7 +72,7 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
     if (this->saveImages) {
         dirName = this->saveDir + std::to_string((double)currentSimNanos * NANO2SEC) + ".png";
         if (!cv::imwrite(dirName, imageCV)) {
-            bskLogger.bskLog(BSK_WARNING, "CenterOfBrightness: wasn't able to save images.");
+            std::cerr << "Warning: CenterOfBrightness wasn't able to save images." << std::endl;
         }
     }
 
