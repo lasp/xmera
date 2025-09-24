@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <math.h>
+#include <stdexcept>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -46,21 +47,21 @@ void RateServoFullNonlinear::reset(uint64_t callTime)
     /* make sure option msg connections are correctly done */
     if (this->rwParamsInMsg.isLinked()) {
         if (!this->rwSpeedsInMsg.isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR,"The rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+            throw std::invalid_argument("rateServoFullNonlinear.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
     }
 
     // check if essential messages are connected
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.guidInMsg wasn't connected.");
+        throw std::invalid_argument("rateServoFullNonlinear.guidInMsg wasn't connected.");
     }
 
     if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
+        throw std::invalid_argument("rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
     }
 
     if (!this->rateSteeringInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
+        throw std::invalid_argument("rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
     }
 
 
