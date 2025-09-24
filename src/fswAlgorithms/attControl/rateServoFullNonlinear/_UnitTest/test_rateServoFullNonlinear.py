@@ -79,10 +79,10 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # configure module parameters
-    module.Ki = intGain
-    module.P = 150.0
-    module.integralLimit = integralLimit
-    module.knownTorquePntB_B = [1,1,1]
+    module.setKi(intGain)
+    module.setP(150.0)
+    module.setIntegralLimit(integralLimit)
+    module.setKnownTorquePntB_B([1,1,1])
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -216,7 +216,7 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
     Lr = []
 
     #Read in variables
-    L = np.asarray(module.knownTorquePntB_B).flatten()
+    L = np.asarray(module.getKnownTorquePntB_B()).flatten()
     steps = [0, 0, .5, 0, .5]
     omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
     omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
@@ -229,8 +229,8 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
 
     Isc = np.asarray(vehicleConfigOut.ISCPntB_B)
     Isc = np.reshape(Isc, (3, 3))
-    Ki = module.Ki
-    P = module.P
+    Ki = module.getKi()
+    P = module.getP()
     jsVec = jsList
     GsMatrix_B_array = np.asarray(GsMatrix_B)
     GsMatrix_B_array = np.reshape(GsMatrix_B_array[0:numRW * 3], (numRW, 3))
@@ -242,12 +242,12 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
             zVec = np.asarray([0, 0, 0])
 
         #evaluate integral term
-        if Ki > 0 and abs(module.integralLimit) > 0: #if integral feedback is on
+        if Ki > 0 and abs(module.getIntegralLimit()) > 0: #if integral feedback is on
             zVec = dt * omega_BBast_B + zVec  # z = integral(del_omega)
             # Make sure each component is less than the integral limit
             for i in range(3):
-                if zVec[i] > module.integralLimit:
-                        zVec[i] = zVec[i]/abs(zVec[i])*module.integralLimit
+                if zVec[i] > module.getIntegralLimit():
+                        zVec[i] = zVec[i]/abs(zVec[i])*module.getIntegralLimit()
 
         else: #integral gain turned off/negative setting
             zVec = np.asarray([0, 0, 0])

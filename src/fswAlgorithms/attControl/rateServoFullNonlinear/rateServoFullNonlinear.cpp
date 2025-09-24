@@ -174,3 +174,54 @@ void RateServoFullNonlinear::updateState(uint64_t callTime)
 
     return;
 }
+
+/*! Setter method for the gain P.
+ @return void
+ @param gain [N*m*s] Rate error feedback gain
+*/
+void RateServoFullNonlinear::setP(const double gain) {
+    if (gain < 0.0) {
+        throw std::invalid_argument("Feedback gain P must not be negative");
+    }
+    this->P = gain;
+}
+
+/*! Getter method for the gain P.
+ @return const double
+*/
+double RateServoFullNonlinear::getP() const { return this->P; }
+
+/*! Setter method for the gain Ki.
+ @return void
+ @param gain [N*m] Integral feedback gain
+*/
+void RateServoFullNonlinear::setKi(const double gain) { this->Ki = gain; }
+
+/*! Getter method for the gain Ki.
+ @return const double
+*/
+double RateServoFullNonlinear::getKi() const { return this->Ki; }
+
+/*! Setter method for the integral limit.
+ @return void
+ @param limit [N*m*s] Integral limit
+*/
+void RateServoFullNonlinear::setIntegralLimit(const double limit) { this->integralLimit = limit; }
+
+/*! Getter method for the integral limit.
+ @return const double
+*/
+double RateServoFullNonlinear::getIntegralLimit() const { return this->integralLimit; }
+
+/*! Setter method for the known external torque about point B.
+ @return void
+ @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
+*/
+void RateServoFullNonlinear::setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B) {
+    this->knownTorquePntB_B = knownTorquePntB_B;
+}
+
+/*! Getter method for the known torque about point B.
+ @return const Eigen::Vector3d
+*/
+Eigen::Vector3d RateServoFullNonlinear::getKnownTorquePntB_B() const { return this->knownTorquePntB_B; }

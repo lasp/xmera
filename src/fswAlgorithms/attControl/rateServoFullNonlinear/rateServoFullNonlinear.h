@@ -40,10 +40,14 @@ class RateServoFullNonlinear : public SysModel {
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    double P;                     //!< [N*m*s]   Rate error feedback gain applied
-    double Ki;                    //!< [N*m]     Integration feedback error on rate error
-    Eigen::Vector3d knownTorquePntB_B{Eigen::Vector3d::Zero()};  //!< [N*m]     known external torque in body frame vector components
-    double integralLimit;         //!< [N*m]     Integration limit to avoid wind-up issue
+    void setP(const double gain);
+    double getP() const;
+    void setKi(const double gain);
+    double getKi() const;
+    void setIntegralLimit(const double limit);
+    double getIntegralLimit() const;
+    void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
+    Eigen::Vector3d getKnownTorquePntB_B() const;
 
     /* declare module IO interfaces */
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< commanded torque output message
@@ -55,6 +59,10 @@ class RateServoFullNonlinear : public SysModel {
     ReadFunctor<RateCmdMsgPayload> rateSteeringInMsg;     //!< commanded rate input message
 
    private:
+    double P{};                     //!< [N*m*s]   Rate error feedback gain applied
+    double Ki{};                    //!< [N*m]     Integration feedback error on rate error
+    double integralLimit{};         //!< [N*m]     Integration limit to avoid wind-up issue
+    Eigen::Vector3d knownTorquePntB_B{Eigen::Vector3d::Zero()};  //!< [N*m]     known external torque in body frame vector components
     uint64_t priorTime{};   //!< [ns]      Last time the attitude control is called
     Eigen::Vector3d z{};          //!< [rad]     integral state of delta_omega
     Eigen::Matrix3d ISCPntB_B{};  //!< [kg m^2] Spacecraft Inertia
