@@ -111,12 +111,12 @@ def run(show_plots, intGain, rwNum, integralLimit, ctrlLaw, useRwAvailability):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     #   Initialize the test module configuration data
-    module.K = 0.15
-    module.Ki = intGain
-    module.P = 150.0
-    module.integralLimit = integralLimit
-    module.controlLawType = ctrlLaw
-    module.knownTorquePntB_B = [1., 1., 1.]
+    module.setK(0.15)
+    module.setKi(intGain)
+    module.setP(150.0)
+    module.setIntegralLimit(integralLimit)
+    module.setControlLawType(ctrlLaw)
+    module.setKnownTorquePntB_B([1., 1., 1.])
 
     # create input messages
     #   AttGuidFswMsg Message:
@@ -234,7 +234,7 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
     Lr = []
 
     #Read in variables
-    L = np.asarray(module.knownTorquePntB_B).flatten()
+    L = np.asarray(module.getKnownTorquePntB_B()).flatten()
     steps = [0, 0, .5, 0, .5]
     omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
     omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
@@ -243,9 +243,9 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
     sigma_BR = np.asarray(guidCmdData.sigma_BR)
     Isc = np.asarray(vehicleConfigOut.ISCPntB_B)
     Isc = np.reshape(Isc, (3, 3))
-    Ki = module.Ki
-    K = module.K
-    P = module.P
+    Ki = module.getKi()
+    K = module.getK()
+    P = module.getP()
     jsVec = jsList
     GsMatrix_B_array = np.asarray(GsMatrix_B)
     GsMatrix_B_array = np.reshape(GsMatrix_B_array[0:numRW * 3], (numRW, 3))
@@ -261,8 +261,8 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
         if Ki > 0: #if integral feedback is on
             sigmaInt = K * dt * sigma_BR + sigmaInt
             for n in range(3):
-                if abs(sigmaInt[n]) > module.integralLimit:
-                    sigmaInt[n] *= module.integralLimit/sigmaInt[n] #check elementwise if integral term is greater than limit; preserve direction (+/-)
+                if abs(sigmaInt[n]) > module.getIntegralLimit():
+                    sigmaInt[n] *= module.getIntegralLimit()/sigmaInt[n] #check elementwise if integral term is greater than limit; preserve direction (+/-)
 
             zVec = sigmaInt + Isc.dot(omega_BR_B)
         else: #integral gain turned off/negative setting
