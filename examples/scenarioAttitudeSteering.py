@@ -377,16 +377,13 @@ def run(show_plots, simCase):
     scSim.AddModelToTask(simTaskName, mrpControl)
 
     if simCase < 2:
-        mrpControl.K1 = 0.05
-        mrpControl.ignoreOuterLoopFeedforward = False
+        mrpControl.setK1(0.05)
     else:
-        mrpControl.K1 = 2.2
-        if simCase == 2:
-            mrpControl.ignoreOuterLoopFeedforward = False
-        else:
-            mrpControl.ignoreOuterLoopFeedforward = True
-    mrpControl.K3 = 0.75
-    mrpControl.omega_max = 1. * macros.D2R
+        mrpControl.setK1(2.2)
+        if simCase != 2:
+            mrpControl.setIgnoreFeedforward(True)
+    mrpControl.setK3(0.75)
+    mrpControl.setOmegaMax(1. * macros.D2R)
 
     # setup Rate servo module
     servo = rateServoFullNonlinear.RateServoFullNonlinear()

@@ -388,10 +388,9 @@ class BSKFswModels:
 
     def SetMRPSteering(self):
         """Set the MRP Steering module"""
-        self.mrpSteering.K1 = 0.05
-        self.mrpSteering.ignoreOuterLoopFeedforward = False
-        self.mrpSteering.K3 = 0.75
-        self.mrpSteering.omega_max = 1.0 * mc.D2R
+        self.mrpSteering.setK1(0.05)
+        self.mrpSteering.setK3(0.75)
+        self.mrpSteering.setOmegaMax(1.0 * mc.D2R)
         self.mrpSteering.guidInMsg.subscribeTo(self.attGuidMsg)
 
     def SetRateServo(self, SimBase):
