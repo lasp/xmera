@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -16,50 +16,22 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import rateServoFullNonlinear  # import the module that is to be tested
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
-
 
 @pytest.mark.parametrize("rwNum", [4, 0])
 @pytest.mark.parametrize("intGain", [0.01, -1])
-@pytest.mark.parametrize("omegap_BastR_B", [(1.87766650e-04, -3.91233583e-05, 3.56369489e-05), (0, 0, 0)])
-@pytest.mark.parametrize("omega_BastR_B",  [(-2.23886891e-02, 2.47942516e-02, -2.55601849e-02), (0, 0, 0)])
+@pytest.mark.parametrize("omegap_BastR_B", [[1.87766650e-04, -3.91233583e-05, 3.56369489e-05], [0, 0, 0]])
+@pytest.mark.parametrize("omega_BastR_B",  [[-2.23886891e-02, 2.47942516e-02, -2.55601849e-02], [0, 0, 0]])
 @pytest.mark.parametrize("integralLimit", [0, 20])
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
 
-
 def test_rate_servo_full_nonlinear(show_plots, rwNum, intGain, omegap_BastR_B, omega_BastR_B, integralLimit,
                                    useRwAvailability):
-    """Module Unit Test"""
-
-    [testResults, testMessage] = rate_servo_full_nonlinear(show_plots, rwNum, intGain, omegap_BastR_B, omega_BastR_B,
-                                                           integralLimit, useRwAvailability)
-
-    assert testResults < 1, testMessage
-
-
-def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_BastR_B, integralLimit,
-                              useRwAvailability):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    #__tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -113,22 +85,18 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
 
     # wheelConfigData message
-    jsList = []
-    GsMatrix_B = []
-    def writeMsgInWheelConfiguration():
-        rwConfigParams = messaging.RWArrayConfigMsgPayload()
-        rwConfigParams.GsMatrix_B = [
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0,
-            0.5773502691896258, 0.5773502691896258, 0.5773502691896258
-        ]
-        rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
-        rwConfigParams.numRW = rwNum
-        rwParamInMsg = messaging.RWArrayConfigMsg().write((rwConfigParams))
-        return rwConfigParams.JsList, rwConfigParams.GsMatrix_B, rwParamInMsg
-
-    jsList, GsMatrix_B, rwParamInMsg = writeMsgInWheelConfiguration()
+    rwConfigParams = messaging.RWArrayConfigMsgPayload()
+    jsList = [0.1, 0.1, 0.1, 0.1]
+    GsMatrix_B = [
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0,
+        0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+    ]
+    rwConfigParams.GsMatrix_B = GsMatrix_B
+    rwConfigParams.JsList = jsList
+    rwConfigParams.numRW = rwNum
+    rwParamInMsg = messaging.RWArrayConfigMsg().write((rwConfigParams))
 
     # wheelAvailability message
     rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
@@ -146,7 +114,6 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
         # set default availability
         rwAvailabilityMessage.wheelAvailability = [messaging.AVAILABLE, messaging.AVAILABLE,
                                                    messaging.AVAILABLE, messaging.AVAILABLE]
-
 
     # rateSteering message
     rateSteeringMsg = messaging.RateCmdMsgPayload()
@@ -184,32 +151,11 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     LrTrue = findTrueTorques(module, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList,
                              rwNum, GsMatrix_B, rwAvailabilityMessage,rateSteeringMsg)
 
+    Lr = dataLog.torqueRequestBody
 
     # compare the module results to the truth values
     accuracy = 1e-8
-    for i in range(0, len(LrTrue)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.torqueRequestBody[i], LrTrue[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.modelTag + " Module failed torqueRequestBody unit test at t="
-                                + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
-
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    if show_plots:
-        plt.show()
-
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print("PASSED: " + module.modelTag)
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
-
-
-
+    np.testing.assert_allclose(Lr, LrTrue, atol=accuracy, rtol=0, verbose=True)
 
 
 def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg,rateSteeringMsg ):
@@ -272,7 +218,6 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
         Lr4 = -Lr4
         Lr.append(np.ndarray.tolist(Lr4))
     return np.array(Lr)
-
 
 
 if __name__ == "__main__":
