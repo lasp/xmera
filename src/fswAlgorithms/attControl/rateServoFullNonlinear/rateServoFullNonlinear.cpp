@@ -26,12 +26,12 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RateServoFullNonlinear::reset(uint64_t callTime)
-{
+void RateServoFullNonlinear::reset(uint64_t callTime) {
     /* make sure option msg connections are correctly done */
     if (this->rwParamsInMsg.isLinked()) {
         if (!this->rwSpeedsInMsg.isLinked()) {
-            throw std::invalid_argument("rateServoFullNonlinear.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+            throw std::invalid_argument(
+                "rateServoFullNonlinear.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
     }
 
@@ -66,28 +66,23 @@ void RateServoFullNonlinear::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RateServoFullNonlinear::updateState(uint64_t callTime)
-{
-    AttGuidMsgPayload guidCmd{};                    /*!< Guidance input Message */
-    RWSpeedMsgPayload wheelSpeeds{};                /*!< Reaction wheel speed estimates input message */
-    RWAvailabilityMsgPayload wheelsAvailability{};  /*!< Reaction wheel availability input message */
-    RateCmdMsgPayload rateGuid{};                   /*!< rate steering law message input message */
+void RateServoFullNonlinear::updateState(uint64_t callTime) {
+    AttGuidMsgPayload guidCmd{};                   /*!< Guidance input Message */
+    RWSpeedMsgPayload wheelSpeeds{};               /*!< Reaction wheel speed estimates input message */
+    RWAvailabilityMsgPayload wheelsAvailability{}; /*!< Reaction wheel availability input message */
+    RateCmdMsgPayload rateGuid{};                  /*!< rate steering law message input message */
 
     guidCmd = this->guidInMsg();
     rateGuid = this->rateSteeringInMsg();
 
-    if(this->numRW > 0) {
+    if (this->numRW > 0) {
         wheelSpeeds = this->rwSpeedsInMsg();
         if (this->rwAvailInMsg.isLinked()) {
             wheelsAvailability = this->rwAvailInMsg();
         }
     }
 
-    CmdTorqueBodyMsgPayload controlOut = algorithm.update(callTime,
-                                                          guidCmd,
-                                                          rateGuid,
-                                                          wheelSpeeds,
-                                                          wheelsAvailability);
+    CmdTorqueBodyMsgPayload controlOut = algorithm.update(callTime, guidCmd, rateGuid, wheelSpeeds, wheelsAvailability);
 
     this->cmdTorqueOutMsg.write(&controlOut, moduleID, callTime);
 }
