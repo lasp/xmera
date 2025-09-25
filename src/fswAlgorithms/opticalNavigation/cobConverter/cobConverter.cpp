@@ -42,22 +42,22 @@ CobConverter::~CobConverter() = default;
 void CobConverter::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
     if (!this->opnavCOBInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CobConverter.opnavCOBInMsg wasn't connected.");
+        throw std::invalid_argument("CobConverter.opnavCOBInMsg wasn't connected.");
     }
     if (this->performOutlierDetection && !this->opnavFilterInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CobConverter.opnavFilterInMsg wasn't connected.");
+        throw std::invalid_argument("CobConverter.opnavFilterInMsg wasn't connected.");
     }
     if (!this->cameraConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CobConverter.cameraConfigInMsg wasn't connected.");
+        throw std::invalid_argument("CobConverter.cameraConfigInMsg wasn't connected.");
     }
     if (!this->navAttInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CobConverter.navAttInMsg wasn't connected.");
+        throw std::invalid_argument("CobConverter.navAttInMsg wasn't connected.");
     }
     if (!this->ephemInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CobConverter.ephemInMsg wasn't connected.");
+        throw std::invalid_argument("CobConverter.ephemInMsg wasn't connected.");
     }
     if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CobConverter.sunInMsg wasn't connected.");
+        throw std::invalid_argument("CobConverter.sunInMsg wasn't connected.");
     }
 }
 
