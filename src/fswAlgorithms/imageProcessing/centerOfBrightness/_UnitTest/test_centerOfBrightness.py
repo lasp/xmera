@@ -73,8 +73,8 @@ def compute_brightness_and_pixel_refs(image, input_image,
                                       window_point_top_left, window_point_bottom_right,
                                       valid_image):
 
-    cob_ref = [input_image.width/2, input_image.height/2]
-    pixelNum_ref = None
+    cob_true = [input_image.width/2, input_image.height/2]
+    pixel_num_true = None
 
     if image == "half_half.png":
         # left half black, right half white, and a 1px wide grey stripe in the center (116/255)
@@ -84,13 +84,13 @@ def compute_brightness_and_pixel_refs(image, input_image,
         if np.array_equal(window_point_top_left, [50, 0]) and np.array_equal(window_point_bottom_right, [275, 91]):
             height = 91
 
-        cob_ref = [(3/4 * 1 * white_width + 1/2 * 116/255 * grey_width)/(white_width + grey_width) * input_image.width,
+        cob_true = [(3/4 * 1 * white_width + 1/2 * 116/255 * grey_width)/(white_width + grey_width) * input_image.width,
                    int(height/2)*valid_image]
-        pixelNum_ref = ((white_width+grey_width)*height)*valid_image
+        pixel_num_true = ((white_width+grey_width)*height)*valid_image
 
-        return cob_ref, pixelNum_ref, white_width, grey_width, height
+        return cob_true, pixel_num_true, white_width, grey_width, height
 
-    return cob_ref, pixelNum_ref, None, None, None
+    return cob_true, pixel_num_true, None, None, None
 
 
 
@@ -173,11 +173,11 @@ def run_sequence(image, blur, save_test, valid_image,
             lower_idx = max(0, i-(int(module_config.getNumberOfPointsBrightnessAverage())-1))
             brightnessAverage_ref[i] = np.mean(brightness_ref[lower_idx:i+1])
 
-    center = data_log.centerOfBrightness[0, :]
+    cob = data_log.centerOfBrightness[0, :]
     pixelNum = data_log.pixelsFound[0]
     brightnessAverage = data_log.rollingAverageBrightness
 
-    return center, pixelNum, brightnessAverage, brightnessAverage_ref
+    return cob, pixelNum, brightnessAverage, brightnessAverage_ref
 
 
 def centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save_image, window_point_top_left,
@@ -187,11 +187,11 @@ def centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save
     input_image = Image.open(image_path)
     input_image.load()
 
-    cob_ref, pixelNum_ref, _, _, _ = compute_brightness_and_pixel_refs(
+    cob_true, pixel_num_true, _, _, _ = compute_brightness_and_pixel_refs(
         image, input_image, window_point_top_left, window_point_bottom_right, valid_image
     )
 
-    center, pixelNum, brightnessAverage, brightnessAverage_ref = run_sequence(
+    cob, pixelNum, brightnessAverage, brightnessAverage_ref = run_sequence(
         image, blur, save_test, valid_image,
         window_point_top_left, window_point_bottom_right,
         image_path, image_path_module
@@ -205,7 +205,7 @@ def centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save
     draw_result = ImageDraw.Draw(output_image)
 
     if pixelNum > 0:
-        data = [center[0], center[1], np.sqrt(pixelNum)/50]
+        data = [cob[0], cob[1], np.sqrt(pixelNum)/50]
         draw_result.ellipse((data[0] - data[2], data[1] - data[2], data[0] + data[2], data[1] + data[2]),
                             outline=(255, 0, 0, 0))
     if window_center.all() != 0 and window_width != 0 and window_height != 0:
@@ -228,8 +228,8 @@ def centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save
         os.remove(f)
 
     tolerance = 0.6  # just above half a pixel
-    np.testing.assert_allclose(center,
-                               cob_ref,
+    np.testing.assert_allclose(cob,
+                               cob_true,
                                rtol=0,
                                atol=tolerance,
                                err_msg='Variable: rhat_COB_N',
@@ -237,7 +237,7 @@ def centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save
 
     if image == "half_half.png":
         np.testing.assert_allclose(pixelNum,
-                                   pixelNum_ref,
+                                   pixel_num_true,
                                    rtol=0,
                                    atol=tolerance,
                                    err_msg='Variable: pixelNum',

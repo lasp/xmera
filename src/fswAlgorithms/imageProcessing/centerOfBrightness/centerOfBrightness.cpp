@@ -53,9 +53,11 @@ cv::Mat CenterOfBrightness::readImage(CameraImageMsgPayload &imageBuffer,
         this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
-    if (!this->filename.empty()) {
-        imageCV = cv::imread(this->filename, cv::IMREAD_COLOR);
-    } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
+    if (!this->fileName.empty()) {
+        imageCV = cv::imread(this->fileName, cv::IMREAD_COLOR);
+    }
+    else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
+
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char *)imageBuffer.imagePointer,
                                                 (char *)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
@@ -89,7 +91,7 @@ std::vector<cv::Vec2i> CenterOfBrightness::extractBrightPixels(cv::Mat image) {
     /*! - Grayscale, blur, and threshold iamge*/
     cv::cvtColor(image, this->imageGray, cv::COLOR_BGR2GRAY);
     cv::blur(this->imageGray, blured, cv::Size(this->blurSize, this->blurSize));
-    cv::threshold(blured, image, this->threshold, 255, cv::THRESH_BINARY);
+    cv::threshold(blured, image, this->pixelThreshold, 255, cv::THRESH_BINARY);
 
     /*! - Find all the non-zero pixels in the image*/
     cv::findNonZero(image, locations);
