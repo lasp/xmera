@@ -32,7 +32,7 @@ CenterOfBrightness::~CenterOfBrightness() = default;
  */
 void CenterOfBrightness::reset(uint64_t currentSimNanos) {
     if (!this->imageInMsg.isLinked()) {
-        throw std::invalid_argument( "CenterOfBrightness.imageInMsg wasn't connected.");
+        throw std::invalid_argument("CenterOfBrightness.imageInMsg wasn't connected.");
     }
 }
 
@@ -55,15 +55,14 @@ cv::Mat CenterOfBrightness::readImage(CameraImageMsgPayload &imageBuffer,
     /* Added for debugging purposes*/
     if (!this->fileName.empty()) {
         imageCV = cv::imread(this->fileName, cv::IMREAD_COLOR);
-    }
-    else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
-
+    } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char *)imageBuffer.imagePointer,
                                                 (char *)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-    } else {
-        /*! - If no image is present, write zeros in message */
+    }
+    /*! - If no image is present, write zeros in message */
+    else {
         this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
         return cv::Mat();
     }
@@ -209,10 +208,9 @@ void CenterOfBrightness::computeWindow(cv::Mat const &image) {
  @param imageBuffer Reference to the image payload buffer
  @param cobBuffer Reference to the COB output buffer.
  */
-void CenterOfBrightness::findCob(const cv::Mat& imageCV,
-                                 const CameraImageMsgPayload& imageBuffer,
-                                 OpNavCOBMsgPayload& cobBuffer) {
-
+void CenterOfBrightness::findCob(const cv::Mat &imageCV,
+                                 const CameraImageMsgPayload &imageBuffer,
+                                 OpNavCOBMsgPayload &cobBuffer) {
     std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
 
     /*!- If no lit pixels are found do not validate the image as a measurement */
@@ -242,7 +240,6 @@ void CenterOfBrightness::findCob(const cv::Mat& imageCV,
         }
         cobBuffer.rollingAverageBrightness = averageBrightnessNew;
     }
-
 }
 
 /*! This module reads an OpNav image and extracts the weighted center of brightness. It performs a grayscale, a blur,
@@ -253,7 +250,6 @@ void CenterOfBrightness::findCob(const cv::Mat& imageCV,
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
-
     CameraImageMsgPayload imageBuffer{};
     OpNavCOBMsgPayload cobBuffer{};
 
@@ -318,76 +314,56 @@ double CenterOfBrightness::getRelativeBrightnessIncreaseThreshold() const {
     @param double pixelThreshold
     @return void
     */
-void CenterOfBrightness::setPixelThreshold(double PixelThreshold) {
-    this->pixelThreshold = PixelThreshold;
-}
+void CenterOfBrightness::setPixelThreshold(double PixelThreshold) { this->pixelThreshold = PixelThreshold; }
 
 /*! Get the pixel brightness threshold used for detecting bright pixels
     @return double pixelThreshold
     */
-double CenterOfBrightness::getPixelThreshold() const {
-    return this->pixelThreshold;
-}
+double CenterOfBrightness::getPixelThreshold() const { return this->pixelThreshold; }
 
 /*! Set the filename for the module to read an image directly
     @param std::string fileName
     @return void
 */
-void CenterOfBrightness::setFileName(const std::string &fileName) {
-    this->fileName = fileName;
-}
+void CenterOfBrightness::setFileName(const std::string &fileName) { this->fileName = fileName; }
 
 /*! Get the filename for the module to read an image directly
     @return std::string fileName
 */
-std::string CenterOfBrightness::getFileName() const {
-    return this->fileName;
-}
+std::string CenterOfBrightness::getFileName() const { return this->fileName; }
 
 /*! Set the blur size for the image processing filter
     @param int32_t blur
     @return void
 */
-void CenterOfBrightness::setBlurSize(int32_t blur) {
-    this->blurSize = blur;
-}
+void CenterOfBrightness::setBlurSize(int32_t blur) { this->blurSize = blur; }
 
 /*! Get the blur size for the image processing filter
     @return int32_t blur
 */
-int32_t CenterOfBrightness::getBlurSize() const {
-    return this->blurSize;
-}
+int32_t CenterOfBrightness::getBlurSize() const { return this->blurSize; }
 
 /*! Enable or disable saving debug images to file
     @param bool save
     @return void
 */
-void CenterOfBrightness::setSaveImages(bool save) {
-    this->saveImages = save;
-}
+void CenterOfBrightness::setSaveImages(bool save) { this->saveImages = save; }
 
 /*! Get whether saving debug images is enabled
     @return bool save
 */
-bool CenterOfBrightness::getSaveImages() const {
-    return this->saveImages;
-}
+bool CenterOfBrightness::getSaveImages() const { return this->saveImages; }
 
 /*! Set the directory where images should be saved
     @param std::string directory
     @return void
 */
-void CenterOfBrightness::setSaveDir(const std::string &directory) {
-    this->saveDir = directory;
-}
+void CenterOfBrightness::setSaveDir(const std::string &directory) { this->saveDir = directory; }
 
 /*! Get the directory where images are saved
     @return std::string directory
 */
-std::string CenterOfBrightness::getSaveDir() const {
-    return this->saveDir;
-}
+std::string CenterOfBrightness::getSaveDir() const { return this->saveDir; }
 
 /*! Set the number of points used for rolling brightness averaging
     @param int32_t rollingAverage
@@ -400,6 +376,4 @@ void CenterOfBrightness::setNumberOfPointsBrightnessAverage(int32_t rollingAvera
 /*! Get the number of points used for rolling brightness averaging
     @return int32_t rollingAverage
 */
-int32_t CenterOfBrightness::getNumberOfPointsBrightnessAverage() const {
-    return this->numberOfPointsBrightnessAverage;
-}
+int32_t CenterOfBrightness::getNumberOfPointsBrightnessAverage() const { return this->numberOfPointsBrightnessAverage; }

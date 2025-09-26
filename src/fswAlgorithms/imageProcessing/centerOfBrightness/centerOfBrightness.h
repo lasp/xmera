@@ -40,17 +40,7 @@ class CenterOfBrightness : public SysModel {
 
     void updateState(uint64_t currentSimNanos);
     void reset(uint64_t currentSimNanos);
-    cv::Mat readImage(CameraImageMsgPayload &imageBuffer,
-                                      OpNavCOBMsgPayload &cobBuffer,
-                                      uint64_t currentSimNanos);
-    std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
-    std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
-    void computeWindow(cv::Mat const &image);
-    void applyWindow(cv::Mat const &image) const;
-    void findCob(const cv::Mat& imageCV,
-                                 const CameraImageMsgPayload& imageBuffer,
-                                 OpNavCOBMsgPayload& cobBuffer);
-    void updateBrightnessHistory(double brightness);
+
     void setWindowCenter(const Eigen::VectorXi &center);
     Eigen::VectorXi getWindowCenter() const;
     void setWindowSize(int32_t width, int32_t height);
@@ -75,6 +65,14 @@ class CenterOfBrightness : public SysModel {
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
    private:
+    cv::Mat readImage(CameraImageMsgPayload &imageBuffer, OpNavCOBMsgPayload &cobBuffer, uint64_t currentSimNanos);
+    std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
+    std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
+    void computeWindow(cv::Mat const &image);
+    void applyWindow(cv::Mat const &image) const;
+    void findCob(const cv::Mat &imageCV, const CameraImageMsgPayload &imageBuffer, OpNavCOBMsgPayload &cobBuffer);
+    void updateBrightnessHistory(double brightness);
+
     uint64_t sensorTimeTag;                    //!< [ns] Current time tag for sensor out
     Eigen::VectorXi windowCenter{};            //!< [px] center of mask to be used for windowing
     int32_t windowWidth{};                     //!< [px] width of mask to be used for windowing
@@ -84,12 +82,12 @@ class CenterOfBrightness : public SysModel {
     bool validWindow = false;             //!< [px] true if window is set, false if center, height, or width equal 0
     Eigen::VectorXd brightnessHistory{};  //!< [-] brightness history to be used for rolling average
     double relativeBrightnessIncreaseThreshold{};  //!< [-] minimum relative brightness increase (if less, invalidated)
-    double pixelThreshold{};                    ////!< [-] minimum pixel brightness threshold used for detecting bright pixels
-    std::string fileName{};                    //!< Filename for module to read an image directly
-    int32_t blurSize{};                        //!< [px] Size of the blurring box in pixels
-    bool saveImages{};                         //!< [-] 1 to save images to file for debugging
-    std::string saveDir{};                     //!< The name of the directory to save images
-    int32_t numberOfPointsBrightnessAverage{};     //!< [-] number of points to be used for rolling average of brightness
+    double pixelThreshold{};  ////!< [-] minimum pixel brightness threshold used for detecting bright pixels
+    std::string fileName{};   //!< Filename for module to read an image directly
+    int32_t blurSize{};       //!< [px] Size of the blurring box in pixels
+    bool saveImages{};        //!< [-] 1 to save images to file for debugging
+    std::string saveDir{};    //!< The name of the directory to save images
+    int32_t numberOfPointsBrightnessAverage{};  //!< [-] number of points to be used for rolling average of brightness
     /* OpenCV specific arguments needed for finding all non-zero pixels*/
     cv::Mat imageGray;  //!< [cv mat] Gray scale image for weighting
 };

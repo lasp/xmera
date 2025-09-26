@@ -50,8 +50,8 @@ except ImportError:
                           ("half_half.png", 1, True, True, False, [0, 0], [0, 0]),
                           ("half_half.png", 1, True, True, False, [50, 0], [275, 91])
                           ])
-
 def test_module(show_plots, image, blur, save_test, valid_image, save_image, window_point_top_left, window_point_bottom_right):
+
     centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save_image, window_point_top_left,
                            window_point_bottom_right)
 
@@ -59,14 +59,12 @@ def test_module(show_plots, image, blur, save_test, valid_image, save_image, win
 def compute_window_center(window_point_top_left, window_point_bottom_right):
     center_x = int(window_point_top_left[0] + (window_point_bottom_right[0] - window_point_top_left[0])/2)
     center_y = int(window_point_top_left[1] + (window_point_bottom_right[1] - window_point_top_left[1])/2)
-
     return np.array([center_x, center_y])
 
 
 def compute_window_size(window_point_top_left, window_point_bottom_right):
     width = int(window_point_bottom_right[0] - window_point_top_left[0])
     height = int(window_point_bottom_right[1] - window_point_top_left[1])
-
     return [width, height]
 
 def compute_brightness_and_pixel_refs(image, input_image,
@@ -125,7 +123,6 @@ def run_sequence(image, blur, save_test, valid_image,
     np.testing.assert_equal(module_config.getPixelThreshold(), 50)
     module_config.setSaveDir(path + '/result_save.png')
     np.testing.assert_equal(module_config.getSaveDir(), path + '/result_save.png')
-
     if save_test:
         module_config.setSaveImages(True)
         np.testing.assert_equal(module_config.getSaveImages(), True)
@@ -268,8 +265,8 @@ def test_windowing():
     top_bright_pixels = (top_image >= pixel_threshold).astype(np.float64)
     y, x = np.nonzero(top_bright_pixels)
     expected_top = np.array([x.mean(), y.mean()])
-    
-    # full image 
+
+    # full image
     unit_test_sim_full = SimulationBaseClass.SimBaseClass()
     process_rate = macros.sec2nano(0.5)
     test_process_full = unit_test_sim_full.CreateNewProcess("window_process_A")
