@@ -53,7 +53,7 @@ def mapCovar(pixels, input_camera, norm_COB_vector):
     X = 1 / d_x
     Y = 1 / d_y
 
-    scale_factor = np.sqrt(pixels / (4 * np.pi)) / (norm_COB_vector ** 2)
+    scale_factor = np.sqrt(pixels / (4 * np.pi))
 
     covar = np.zeros([3, 3])
     covar[0, 0] = X ** 2
@@ -76,7 +76,7 @@ def mapComCovar(pixels, input_camera,norm_COB_vector, r_BdyZero_N, R_object, alp
     ifov_x = input_camera.fieldOfView[0]/ dX * pX
     ifov_y = input_camera.fieldOfView[0]/ dY * pY
 
-    scale_factor = np.sqrt(pixels / (4 * np.pi)) / (norm_COB_vector ** 2)
+    scale_factor = np.sqrt(pixels / (4 * np.pi))
 
     position = r_BdyZero_N
     constants_deltaR = (4*R_object/
