@@ -21,9 +21,6 @@
 #define _COB_CONVERT_H_
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/eigenSupport.h"
-#include <stdint.h>
-#include <Eigen/Dense>
 
 #include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
@@ -34,17 +31,18 @@
 #include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include "fswAlgorithms/opticalNavigation/cobConverter/cobConverterAlgorithm.h"
 
 /**
  * @enum PhaseAngleCorrectionMethod
  * @brief Phase-angle correction models for converting COB to COM.
  */
 enum class PhaseAngleCorrectionMethod { NoCorrection, Lambertian, Binary };
+
+const std::map<PhaseAngleCorrectionMethod, PhaseAngleCorrectionMethodAlgorithm> enumMap = {
+    {PhaseAngleCorrectionMethod::NoCorrection, PhaseAngleCorrectionMethodAlgorithm::NoCorrectionAlg},
+    {PhaseAngleCorrectionMethod::Lambertian, PhaseAngleCorrectionMethodAlgorithm::LambertianAlg},
+    {PhaseAngleCorrectionMethod::Binary, PhaseAngleCorrectionMethodAlgorithm::BinaryAlg}};
 
 /**
  * @class CobConverter
@@ -75,16 +73,6 @@ class CobConverter : public SysModel {
     void disableOutlierDetection();
     bool isOutlierDetectionEnabled() const;
 
-   private:
-    void cobOutlierDetection(const FilterMsgPayload &filterMsgBuffer);
-    void computeCameraParameters(const CameraModelMsgPayload &cameraSpecs);
-    void computeRotations(const NavAttMsgPayload &navAttBuffer);
-    void computePhaseAngleCorrection(const EphemerisMsgPayload &ephemBuffer, const NavAttMsgPayload &sunBuffer);
-    std::tuple<Eigen::Vector3d, Eigen::Vector3d> computeCentersOfInterest(const OpNavCOBMsgPayload &cobMsgBuffer) const;
-    void computeRelevantVectors(const Eigen::Vector3d &centerOfBrightness, const Eigen::Vector3d &centerOfMass);
-    void computeCameraFrameUncertainty(const FilterMsgPayload &filterMsgBuffer, double pixelsFound);
-    std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload,OpNavCOMMsgPayload> populateOutputMessages(uint64_t timeTag, const Eigen::Vector3d &centerOfMass, OpNavUnitVecMsgPayload &uVecCOBMsgBuffer, OpNavUnitVecMsgPayload &uVecCOMMsgBuffer, OpNavCOMMsgPayload &comMsgBuffer);
-
    public:
     // Output messages
     Message<OpNavUnitVecMsgPayload> opnavUnitVecCOBOutMsg;
@@ -99,42 +87,8 @@ class CobConverter : public SysModel {
     ReadFunctor<EphemerisMsgPayload> ephemInMsg;
     ReadFunctor<NavAttMsgPayload> sunInMsg;
 
-    uint64_t sensorTimeTag;
-    BSKLogger bskLogger;
-
    private:
-    PhaseAngleCorrectionMethod phaseAngleCorrectionMethod;
-    double objectRadius{};
-    double objectRadiusUncertainty{};
-    Eigen::Matrix3d covarAtt_BN_B{};
-    Eigen::Matrix3d dcm_NC{};
-    Eigen::Matrix3d dcm_CB{};
-    Eigen::Matrix3d dcm_BN{};
-    Eigen::Matrix3d cameraCalibrationMatrix{};
-    Eigen::Matrix3d cameraCalibrationMatrixInverse{};
-    Eigen::Matrix3d covar_B{};
-    double numStandardDeviations = 3;
-    double standardDeviation{};
-    bool specifiedStandardDeviation{};
-    bool performOutlierDetection{};
-    bool validCOM = false;
-    double dX{};
-    double X{};
-    double Y{};
-    double ifov_x{};
-    double ifov_y{};
-    double Rc = 0;
-    double gamma=0;
-    double phi =0;
-    double alphaPA = 0;
-    Eigen::Vector3d rhatCOB_C{};
-    Eigen::Vector3d rhatCOM_C{};
-    Eigen::Vector3d sc_position{};
-    Eigen::Vector3d shat_N{};
-    double rhatCOBNorm = 0;;
-    double spacecraftRange = 0;
-    int cameraId = 0;
-    bool goodOutlierCheck = true;
+    CobConverterAlgorithm algorithm;
 };
 
 #endif
