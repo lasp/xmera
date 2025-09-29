@@ -54,7 +54,7 @@ AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
     this->sunDirectionInBuffer = sunDirectionInMsg;
 
     // Determine norm of measured Sun-direction vector
-    const double sHatNorm = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).norm();
+    const double sHatNorm = cArrayAsEigenVector(this->sunDirectionInBuffer.vehSunPntBdy).norm();
 
     // Zero the attitude guidance output buffer message
     this->attGuidanceOutBuffer = AttGuidMsgPayload();
@@ -64,14 +64,14 @@ AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
         this->computeAttGuidanceStates(sHatNorm);
     } else {
         Eigen::Vector3d sigma_BR = Eigen::Vector3d::Zero();
-        eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
+        eigenVectorToCArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
     }
 
     // Compute the hub angular rate error omega_BR_B
     this->computeHubAngularRateError(imuInMsg);
 
     // Create the output guidance message
-    eigenVector3d2CArray(this->omega_RN_B, this->attGuidanceOutBuffer.omega_RN_B);
+    eigenVectorToCArray(this->omega_RN_B, this->attGuidanceOutBuffer.omega_RN_B);
 
     return this->attGuidanceOutBuffer;
 }
@@ -84,7 +84,7 @@ AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
 void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
     // Compute the current sun angle error
     double dotProductNormalized =
-        this->sHatBdyCmd.dot(cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy)) / sHatNorm;
+        this->sHatBdyCmd.dot(cArrayAsEigenVector(this->sunDirectionInBuffer.vehSunPntBdy)) / sHatNorm;
     dotProductNormalized = std::abs(dotProductNormalized) > 1.0 ? dotProductNormalized / std::abs(dotProductNormalized)
                                                                 : dotProductNormalized;
     double sunAngleErr = safeAcos(dotProductNormalized);
@@ -93,7 +93,7 @@ void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
     // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
     if (sunAngleErr < this->smallAngle) {
         Eigen::Vector3d sigma_BR = Eigen::Vector3d::Zero();
-        eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
+        eigenVectorToCArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
     } else {
         Eigen::Vector3d e_hat;  // Eigen Axis
         // The commanded body vector nearly is opposite the sun heading
@@ -101,27 +101,27 @@ void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
             e_hat = this->eHat180_B;
             // Normal case where sun and commanded body vectors are not aligned
         } else {
-            e_hat = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
+            e_hat = cArrayAsEigenVector(this->sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
         }
         Eigen::Vector3d sunMnvrVec = e_hat / e_hat.norm();
         Eigen::Vector3d sigma_BR = std::tan(sunAngleErr * 0.25) * sunMnvrVec;
-        eigenVector3d2CArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
+        eigenVectorToCArray(sigma_BR, this->attGuidanceOutBuffer.sigma_BR);
         MRPswitch(this->attGuidanceOutBuffer.sigma_BR, 1.0, this->attGuidanceOutBuffer.sigma_BR);
     }
 
     // Rate tracking error is the body rate to bring spacecraft to rest
     this->omega_RN_B =
-        (this->sunAxisSpinRate / sHatNorm) * cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy);
+        (this->sunAxisSpinRate / sHatNorm) * cArrayAsEigenVector(this->sunDirectionInBuffer.vehSunPntBdy);
 }
 
 /*! Method for computing the hub angular rate error omega_BR_B.
  @return void
 */
 void SunSafePointAlgorithm::computeHubAngularRateError(NavAttMsgPayload imuInMsg) {
-    const Eigen::Vector3d omega_BN_B = cArray2EigenVector3d(imuInMsg.omega_BN_B);  // [rad/s]
+    const Eigen::Vector3d omega_BN_B = cArrayAsEigenVector(imuInMsg.omega_BN_B);  // [rad/s]
     Eigen::Vector3d omega_BR_B = omega_BN_B - this->omega_RN_B;                    // [rad/s]
 
-    eigenVector3d2CArray(omega_BR_B, this->attGuidanceOutBuffer.omega_BR_B);
+    eigenVectorToCArray(omega_BR_B, this->attGuidanceOutBuffer.omega_BR_B);
 }
 
 /*! Method for determining if a valid sun direction vector is available.

@@ -31,10 +31,10 @@ std::tuple<NavTransMsgPayload, FilterMsgPayload> EphemDifferenceWithUncertaintyA
     double timeTag = ephemSecondaryInBuffer.timeTag;
 
     /*! - compute relative states */
-    Eigen::Vector3d r_1_N = cArray2EigenVector3d(ephemBaseInBuffer.r_BdyZero_N);
-    Eigen::Vector3d v_1_N = cArray2EigenVector3d(ephemBaseInBuffer.v_BdyZero_N);
-    Eigen::Vector3d r_2_N = cArray2EigenVector3d(ephemSecondaryInBuffer.r_BdyZero_N);
-    Eigen::Vector3d v_2_N = cArray2EigenVector3d(ephemSecondaryInBuffer.v_BdyZero_N);
+    Eigen::Vector3d r_1_N = cArrayAsEigenVector(ephemBaseInBuffer.r_BdyZero_N);
+    Eigen::Vector3d v_1_N = cArrayAsEigenVector(ephemBaseInBuffer.v_BdyZero_N);
+    Eigen::Vector3d r_2_N = cArrayAsEigenVector(ephemSecondaryInBuffer.r_BdyZero_N);
+    Eigen::Vector3d v_2_N = cArrayAsEigenVector(ephemSecondaryInBuffer.v_BdyZero_N);
 
     Eigen::Vector3d r_21_N = r_2_N - r_1_N;
     Eigen::Vector3d v_21_N = v_2_N - v_1_N;
@@ -52,13 +52,13 @@ std::tuple<NavTransMsgPayload, FilterMsgPayload> EphemDifferenceWithUncertaintyA
     FilterMsgPayload filterOutMsgBuffer{};
 
     navTransOutMsgBuffer.timeTag = timeTag;
-    eigenVector3d2CArray(r_21_N, navTransOutMsgBuffer.r_BN_N);
-    eigenVector3d2CArray(v_21_N, navTransOutMsgBuffer.v_BN_N);
+    eigenVectorToCArray(r_21_N, navTransOutMsgBuffer.r_BN_N);
+    eigenVectorToCArray(v_21_N, navTransOutMsgBuffer.v_BN_N);
 
     filterOutMsgBuffer.numberOfStates = numStates;
     filterOutMsgBuffer.timeTag = timeTag;
-    eigenMatrixXd2CArray(state_21_N, filterOutMsgBuffer.state);
-    eigenMatrixXd2CArray(covar_21_N, filterOutMsgBuffer.covar);
+    eigenMatrixXToCArray(state_21_N, filterOutMsgBuffer.state);
+    eigenMatrixXToCArray(covar_21_N, filterOutMsgBuffer.covar);
 
     return std::make_tuple(navTransOutMsgBuffer, filterOutMsgBuffer);
 }

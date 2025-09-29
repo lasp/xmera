@@ -102,7 +102,7 @@ void FacetSRPDynamicEffector::ReadMessages() {
         SpicePlanetStateMsgPayload sunMsgBuffer;
         sunMsgBuffer = SpicePlanetStateMsgPayload{};
         sunMsgBuffer = this->sunInMsg();
-        this->r_SN_N = cArray2EigenVector3d(sunMsgBuffer.PositionVector);
+        this->r_SN_N = cArrayAsEigenVector(sunMsgBuffer.PositionVector);
     }
 
     // Read the facet articulation angle data
@@ -180,7 +180,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
                                  -articulationAngle * scGeometry.facetRotAxes_B[i][1],
                                  -articulationAngle * scGeometry.facetRotAxes_B[i][2]};
             PRV2C(prv_BB0, dcmBB0);
-            dcm_BB0 = c2DArray2EigenMatrix3d(dcmBB0);
+            dcm_BB0 = c2DArrayAsEigenMatrix3(dcmBB0);
 
             // Rotate the facet normal vector through the current articulation angle
             this->scGeometry.facetNormals_B[i] = dcm_BB0 * this->scGeometry.facetNormals_B[i];

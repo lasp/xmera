@@ -34,9 +34,9 @@ void TimeClosestApproach::readMessages() {
     auto navFilterMsgPayload = this->navFilterMsg();
 
     this->numberOfStates = filterStatePayload.numberOfStates;
-    this->r_BN_N = cArray2EigenVector3d(navFilterMsgPayload.r_BN_N);
-    this->v_BN_N = cArray2EigenVector3d(navFilterMsgPayload.v_BN_N);
-    this->filterCovariance = cArray2EigenMatrixXd(filterStatePayload.covar, this->numberOfStates, this->numberOfStates);
+    this->r_BN_N = cArrayAsEigenVector(navFilterMsgPayload.r_BN_N);
+    this->v_BN_N = cArrayAsEigenVector(navFilterMsgPayload.v_BN_N);
+    this->filterCovariance = cArrayAsEigenMatrixX(filterStatePayload.covar, this->numberOfStates, this->numberOfStates);
 }
 
 /*! Write output messages.

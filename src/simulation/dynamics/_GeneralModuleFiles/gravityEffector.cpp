@@ -59,12 +59,12 @@ void GravBodyData::initBody(int64_t moduleID) {
 
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos) {
     double dt = computeDtInSeconds(simTimeNanos, this->timeWritten);
-    Eigen::Matrix3d dcm_PfixN = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix).transpose();
+    Eigen::Matrix3d dcm_PfixN = c2DArrayAsEigenMatrix3(this->localPlanet.J20002Pfix).transpose();
     if (dcm_PfixN.isZero()) {  // Sanity check for connected messages that do not initialize J20002Pfix
         dcm_PfixN = Eigen::Matrix3d::Identity();
     }
 
-    Eigen::Matrix3d dcm_PfixN_dot = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot).transpose();
+    Eigen::Matrix3d dcm_PfixN_dot = c2DArrayAsEigenMatrix3(this->localPlanet.J20002Pfix_dot).transpose();
     dcm_PfixN += dcm_PfixN_dot * dt;
 
     // store the current planet orientation and rates
@@ -105,9 +105,9 @@ void GravBodyData::registerProperties(DynParamManager& statesIn) {
     this->muPlanet = statesIn.createProperty(this->planetName + ".mu", muInit);
 
     this->J20002Pfix =
-        statesIn.createProperty(this->planetName + ".J20002Pfix", c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix));
+        statesIn.createProperty(this->planetName + ".J20002Pfix", c2DArrayAsEigenMatrix3(this->localPlanet.J20002Pfix));
     this->J20002Pfix_dot = statesIn.createProperty(this->planetName + ".J20002Pfix_dot",
-                                                   c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot));
+                                                   c2DArrayAsEigenMatrix3(this->localPlanet.J20002Pfix_dot));
 }
 
 void GravityEffector::reset(uint64_t currentSimNanos) {
@@ -204,7 +204,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
 
         // store planet states in the state engine parameters
         *(body->r_PN_N) = r_PN_N;
-        *(body->v_PN_N) = cArray2EigenVector3d(body->localPlanet.VelocityVector);
+        *(body->v_PN_N) = cArrayAsEigenVector(body->localPlanet.VelocityVector);
         (*(body->muPlanet))(0, 0) = body->mu;
     }
 
@@ -220,7 +220,7 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
         Eigen::Vector3d r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
         *this->inertialPositionProperty = r_CN_N + r_BF_N;
         *this->inertialVelocityProperty =
-            cArray2EigenMatrixXd(this->centralBody->localPlanet.VelocityVector, 3, 1) + rDot_BF_N;
+            cArrayAsEigenMatrixX(this->centralBody->localPlanet.VelocityVector, 3, 1) + rDot_BF_N;
     } else {
         *this->inertialPositionProperty = r_BF_N;
         *this->inertialVelocityProperty = rDot_BF_N;
@@ -230,8 +230,8 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
 Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData) {
     uint64_t systemClock = (uint64_t)this->timeCorr->data()[0];
     double dt = computeDtInSeconds(systemClock, bodyData->timeWritten);
-    Eigen::Vector3d r_PN_N = cArray2EigenVector3d(bodyData->localPlanet.PositionVector);
-    r_PN_N += cArray2EigenVector3d(bodyData->localPlanet.VelocityVector) * dt;
+    Eigen::Vector3d r_PN_N = cArrayAsEigenVector(bodyData->localPlanet.PositionVector);
+    r_PN_N += cArrayAsEigenVector(bodyData->localPlanet.VelocityVector) * dt;
     return r_PN_N;
 }
 

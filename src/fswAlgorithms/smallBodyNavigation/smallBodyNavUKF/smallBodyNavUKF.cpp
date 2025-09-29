@@ -88,7 +88,7 @@ void SmallBodyNavUKF::readMessages() {
 */
 void SmallBodyNavUKF::processUT(uint64_t currentSimNanos) {
     /* Read angular velocity of the small body fixed frame */
-    this->omega_AN_A = cArray2EigenVector3d(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
+    this->omega_AN_A = cArrayAsEigenVector(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
 
     /* Declare matrix to store sigma points spread */
     Eigen::MatrixXd X_sigma_k;
@@ -211,7 +211,7 @@ void SmallBodyNavUKF::measurementUT() {
     /* Extract dcm of the small body, it transforms from inertial to small body fixed frame */
     double dcm_AN_array[3][3];
     MRP2C(asteroidEphemerisInMsgBuffer.sigma_BN, dcm_AN_array);
-    this->dcm_AN = cArray2EigenMatrix3d(*dcm_AN_array);
+    this->dcm_AN = cArrayAsEigenMatrix3(*dcm_AN_array);
 
     /* Add process noise covariance */
     this->R_k1_ = this->R_k1_ + this->dcm_AN * this->R_meas * this->dcm_AN.transpose();
@@ -223,13 +223,13 @@ void SmallBodyNavUKF::measurementUT() {
 void SmallBodyNavUKF::kalmanUpdate() {
     /* Read attitude MRP of the small body fixed frame w.r.t. inertial */
     Eigen::Vector3d sigma_AN;
-    sigma_AN = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.sigma_BN);
+    sigma_AN = cArrayAsEigenVector(asteroidEphemerisInMsgBuffer.sigma_BN);
 
     /* Subtract the asteroid position from the spacecraft position */
     Eigen::VectorXd y_k1;
     y_k1.setZero(this->numMeas);
-    y_k1.segment(0, 3) = this->dcm_AN * (cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N) -
-                                         cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
+    y_k1.segment(0, 3) = this->dcm_AN * (cArrayAsEigenVector(navTransInMsgBuffer.r_BN_N) -
+                                         cArrayAsEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
 
     /* Compute Kalman gain */
     this->K = this->H * this->R_k1_.inverse();
@@ -256,8 +256,8 @@ void SmallBodyNavUKF::writeMessages(uint64_t currentSimNanos) {
     SmallBodyNavUKFMsgPayload smallBodyNavUKFOutMsgBuffer{};
 
     /* Assign values to the small body navigation output message */
-    eigenMatrixXd2CArray(this->x_hat_k1, smallBodyNavUKFOutMsgBuffer.state);
-    eigenMatrixXd2CArray(this->P_k1, *smallBodyNavUKFOutMsgBuffer.covar);
+    eigenMatrixXToCArray(this->x_hat_k1, smallBodyNavUKFOutMsgBuffer.state);
+    eigenMatrixXToCArray2D(this->P_k1, smallBodyNavUKFOutMsgBuffer.covar);
 
     /* Write to the C++-wrapped output messages */
     this->smallBodyNavUKFOutMsg.write(&smallBodyNavUKFOutMsgBuffer, this->moduleID, currentSimNanos);

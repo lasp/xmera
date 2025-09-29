@@ -130,8 +130,8 @@ void MsmForceTorque::readMessages() {
         this->volt.at(c) = voltInMsgBuffer.voltage;
 
         scStateInMsgsBuffer = this->scStateInMsgs.at(c)();
-        this->r_BN_NList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.r_BN_N);
-        this->sigma_BNList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.sigma_BN);
+        this->r_BN_NList.at(c) = cArrayAsEigenVector(scStateInMsgsBuffer.r_BN_N);
+        this->sigma_BNList.at(c) = cArrayAsEigenVector(scStateInMsgsBuffer.sigma_BN);
     }
 }
 
@@ -250,9 +250,9 @@ void MsmForceTorque::updateState(uint64_t currentSimNanos) {
         }
 
         // store net force and torque acting on body
-        eigenVector3d2CArray(netForce_N, forceMsgBuffer.forceRequestInertial);
+        eigenVectorToCArray(netForce_N, forceMsgBuffer.forceRequestInertial);
         this->eForceOutMsgs.at(c)->write(&forceMsgBuffer, this->moduleID, currentSimNanos);
-        eigenVector3d2CArray(netTorque_B, torqueMsgBuffer.torqueRequestBody);
+        eigenVectorToCArray(netTorque_B, torqueMsgBuffer.torqueRequestBody);
         this->eTorqueOutMsgs.at(c)->write(&torqueMsgBuffer, this->moduleID, currentSimNanos);
 
         // store MSM charges to output message

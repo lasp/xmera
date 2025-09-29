@@ -91,8 +91,8 @@ void Magnetometer::computeMagData() {
     Eigen::Matrix3d dcm_BN;
     Eigen::MRPd sigma_BN;
     //! - Magnetic field vector in inertial frame using a magnetic field model (WMM, Dipole, etc.)
-    tam_N = cArray2EigenVector3d(this->magData.magField_N);
-    sigma_BN = cArray2EigenMRPd(this->stateCurrent.sigma_BN);
+    tam_N = cArrayAsEigenVector(this->magData.magField_N);
+    sigma_BN = cArrayAsEigenMrp(this->stateCurrent.sigma_BN);
     //! - Get the inertial to sensor frame transformation information and convert tam_N to tam_S
     dcm_BN = sigma_BN.toRotationMatrix().transpose();
     this->tam_S = this->dcm_SB * dcm_BN * tam_N;
@@ -134,7 +134,7 @@ void Magnetometer::writeOutputMessages(uint64_t Clock) {
     TAMSensorMsgPayload localMessage;
     //! - Zero the output message
     localMessage = TAMSensorMsgPayload{};
-    eigenVector3d2CArray(this->tamSensed_S, localMessage.tam_S);
+    eigenVectorToCArray(this->tamSensed_S, localMessage.tam_S);
     //! - Write the outgoing message to the architecture
     this->tamDataOutMsg.write(&localMessage, this->moduleID, Clock);
 }

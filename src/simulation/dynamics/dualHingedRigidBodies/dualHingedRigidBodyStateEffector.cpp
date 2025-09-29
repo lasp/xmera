@@ -439,10 +439,10 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     // Note, logging the hinge frame S is the body frame B of that object
     for (int i = 0; i < 2; i++) {
         configLogMsg = SCStatesMsgPayload{};
-        eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_SN_N[i], configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_SN_N[i], configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_SN[i], configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
         this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }

@@ -143,11 +143,11 @@ void ImuSensor::readInputMessages() {
     if (this->scStateInMsg.isLinked()) {
         this->StateCurrent = this->scStateInMsg();
     }
-    this->current_sigma_BN = cArray2EigenVector3d(this->StateCurrent.sigma_BN);
-    this->current_omega_BN_B = cArray2EigenVector3d(this->StateCurrent.omega_BN_B);
-    this->current_nonConservativeAccelpntB_B = cArray2EigenVector3d(this->StateCurrent.nonConservativeAccelpntB_B);
-    this->current_omegaDot_BN_B = cArray2EigenVector3d(this->StateCurrent.omegaDot_BN_B);
-    this->current_TotalAccumDV_BN_B = cArray2EigenVector3d(this->StateCurrent.TotalAccumDV_BN_B);
+    this->current_sigma_BN = cArrayAsEigenVector(this->StateCurrent.sigma_BN);
+    this->current_omega_BN_B = cArrayAsEigenVector(this->StateCurrent.omega_BN_B);
+    this->current_nonConservativeAccelpntB_B = cArrayAsEigenVector(this->StateCurrent.nonConservativeAccelpntB_B);
+    this->current_omegaDot_BN_B = cArrayAsEigenVector(this->StateCurrent.omegaDot_BN_B);
+    this->current_TotalAccumDV_BN_B = cArrayAsEigenVector(this->StateCurrent.TotalAccumDV_BN_B);
 }
 
 /*!
@@ -156,10 +156,10 @@ void ImuSensor::readInputMessages() {
 void ImuSensor::writeOutputMessages(uint64_t Clock) {
     IMUSensorMsgPayload localOutput;
 
-    eigenVector3d2CArray(this->accel_SN_P_out, localOutput.AccelPlatform);
-    eigenVector3d2CArray(this->DV_SN_P_out, localOutput.DVFramePlatform);
-    eigenVector3d2CArray(this->omega_PN_P_out, localOutput.AngVelPlatform);
-    eigenVector3d2CArray(this->prv_PN_out, localOutput.DRFramePlatform);
+    eigenVectorToCArray(this->accel_SN_P_out, localOutput.AccelPlatform);
+    eigenVectorToCArray(this->DV_SN_P_out, localOutput.DVFramePlatform);
+    eigenVectorToCArray(this->omega_PN_P_out, localOutput.AngVelPlatform);
+    eigenVectorToCArray(this->prv_PN_out, localOutput.DRFramePlatform);
     localOutput.timeTag = Clock * NANO2SEC;
     this->sensorOutMsg.write(&localOutput, this->moduleID, Clock);
 }
@@ -298,9 +298,9 @@ void ImuSensor::computePlatformDR() {
     Eigen::Matrix3d dcm_P2P1;  // direction cosine matrix from P at time 1 to P at time 2
     dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose() *
                (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
-    eigenMatrix3d2CArray(dcm_P2P1, dcm_P2P1_cArray);         // makes a 9x1
+    eigenMatrixToCArray(dcm_P2P1, dcm_P2P1_cArray);         // makes a 9x1
     C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray);         // makes it back into a 3x3
-    this->prv_PN_out = cArray2EigenVector3d(prv_PN_cArray);  // writes it back to the variable to be passed along.
+    this->prv_PN_out = cArrayAsEigenVector(prv_PN_cArray);  // writes it back to the variable to be passed along.
 
     // calculate "instantaneous" angular rate
     this->omega_PN_P_out = this->dcm_PB * this->current_omega_BN_B;

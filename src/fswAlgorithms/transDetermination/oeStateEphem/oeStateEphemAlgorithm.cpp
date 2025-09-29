@@ -118,8 +118,8 @@ EphemerisMsgPayload OEStateEphemAlgorithm::updateState(const uint64_t callTime) 
 
     /*! - Determine position and velocity vectors */
     auto carteisianState = OrbitalMotion::elementsToCartesianState(this->gravitationalParameter, orbitalElements);
-    eigenVector3d2CArray(carteisianState.position, ephmerisMessageOutput.r_BdyZero_N);
-    eigenVector3d2CArray(carteisianState.velocity, ephmerisMessageOutput.v_BdyZero_N);
+    eigenVectorToCArray(carteisianState.position, ephmerisMessageOutput.r_BdyZero_N);
+    eigenVectorToCArray(carteisianState.velocity, ephmerisMessageOutput.v_BdyZero_N);
 
     return ephmerisMessageOutput;
 }

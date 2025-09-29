@@ -50,7 +50,7 @@ void InitializeICP::normalizePointCloud() {
     PointCloudMsgPayload measuredCloudBuffer = this->inputMeasuredPointCloud();
     this->normalizedCloudBuffer = PointCloudMsgPayload{};
     Eigen::MatrixXd measuredPoints =
-        cArray2EigenMatrixXd(measuredCloudBuffer.points, POINT_DIM, measuredCloudBuffer.numberOfPoints);
+        cArrayAsEigenMatrixX(measuredCloudBuffer.points, POINT_DIM, measuredCloudBuffer.numberOfPoints);
     Eigen::MatrixXd normalizedPoints = Eigen::MatrixXd::Zero(POINT_DIM, measuredCloudBuffer.numberOfPoints);
     //! If there is a valid point cloud present, average the point norms to normalize each point
     if (measuredCloudBuffer.valid && measuredCloudBuffer.numberOfPoints > 0) {
@@ -61,9 +61,9 @@ void InitializeICP::normalizePointCloud() {
         this->averageNorm = this->averageNorm / measuredCloudBuffer.numberOfPoints;
         if (this->normalizeMeasuredCloud) {
             normalizedPoints = measuredPoints / this->averageNorm;
-            eigenMatrixXd2CArray(normalizedPoints.transpose(), this->normalizedCloudBuffer.points);
+            eigenMatrixXToCArray(normalizedPoints.transpose(), this->normalizedCloudBuffer.points);
         } else {
-            eigenMatrixXd2CArray(measuredPoints.transpose(), this->normalizedCloudBuffer.points);
+            eigenMatrixXToCArray(measuredPoints.transpose(), this->normalizedCloudBuffer.points);
         }
     } else {
         this->normalizedCloudBuffer = PointCloudMsgPayload{};
@@ -89,11 +89,11 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
     //!< When a valid ICP solution has been computed, use that instead of ephemeris information as a priority
     if (sicpBuffer.valid) {
         this->R_logged =
-            cArray2EigenMatrixXd(&sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * POINT_DIM * POINT_DIM],
+            cArrayAsEigenMatrixX(&sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * POINT_DIM * POINT_DIM],
                                  POINT_DIM,
                                  POINT_DIM);
         this->t_logged =
-            cArray2EigenMatrixXd(&sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * POINT_DIM], 1, POINT_DIM);
+            cArrayAsEigenMatrixX(&sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * POINT_DIM], 1, POINT_DIM);
         this->s_logged = sicpBuffer.scaleFactor[sicpBuffer.numberOfIteration - 1];
         this->initialPhase = false;
         this->previousTimeTag = sicpBuffer.timeTag;
@@ -104,12 +104,12 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
     if (this->normalizedCloudBuffer.valid) {
         if (this->initialPhase || timeSinceICPSolution > this->maxTimeBetweenMeasurements) {
             EphemerisMsgPayload ephemerisInMsgBuffer = this->ephemerisInMsg();
-            Eigen::Vector3d r_BN_N = cArray2EigenVector3d(ephemerisInMsgBuffer.r_BdyZero_N);
+            Eigen::Vector3d r_BN_N = cArrayAsEigenVector(ephemerisInMsgBuffer.r_BdyZero_N);
 
-            Eigen::MRPd sigma_CB = cArray2EigenMRPd(cameraBuffer.sigma_CB);
+            Eigen::MRPd sigma_CB = cArrayAsEigenMrp(cameraBuffer.sigma_CB);
             Eigen::Matrix3d dcm_CB = sigma_CB.toRotationMatrix().transpose();
 
-            Eigen::MRPd sigma_BN = cArray2EigenMRPd(ephemerisInMsgBuffer.sigma_BN);
+            Eigen::MRPd sigma_BN = cArrayAsEigenMrp(ephemerisInMsgBuffer.sigma_BN);
             Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
 
             R_prev = (dcm_CB * dcm_BN);
@@ -127,8 +127,8 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
     }
 
     this->outputIcpBuffer.scaleFactor[0] = s_prev;
-    eigenMatrixXd2CArray(R_prev, this->outputIcpBuffer.rotationMatrix);
-    eigenMatrixXd2CArray(t_prev, this->outputIcpBuffer.translation);
+    eigenMatrixXToCArray(R_prev, this->outputIcpBuffer.rotationMatrix);
+    eigenMatrixXToCArray(t_prev, this->outputIcpBuffer.translation);
     this->outputIcpBuffer.numberOfIteration = 0;
 }
 

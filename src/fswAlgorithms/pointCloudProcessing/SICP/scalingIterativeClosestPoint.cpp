@@ -196,7 +196,7 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
 
     //! - If initial condition message exists populate the initial conditions, otherwise use defaults
     if (initicalConditionValidity) {
-        this->R_init = cArray2EigenMatrixXd(this->initialConditionBuffer.rotationMatrix, POINT_DIM, POINT_DIM);
+        this->R_init = cArrayAsEigenMatrixX(this->initialConditionBuffer.rotationMatrix, POINT_DIM, POINT_DIM);
         this->t_init = Eigen::Map<Eigen::VectorXd>(this->initialConditionBuffer.translation, POINT_DIM, 1);
         this->s_init = this->initialConditionBuffer.scaleFactor[0];
     } else {
@@ -212,8 +212,8 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
         this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, currentSimNanos);
     } else {
         Eigen::MatrixXd measuredPoints =
-            cArray2EigenMatrixXd(this->measuredCloudBuffer.points, POINT_DIM, this->measuredCloudBuffer.numberOfPoints);
-        Eigen::MatrixXd referencePoints = cArray2EigenMatrixXd(
+            cArrayAsEigenMatrixX(this->measuredCloudBuffer.points, POINT_DIM, this->measuredCloudBuffer.numberOfPoints);
+        Eigen::MatrixXd referencePoints = cArrayAsEigenMatrixX(
             this->referenceCloudBuffer.points, POINT_DIM, this->referenceCloudBuffer.numberOfPoints);
         //! - Initialize R (rotation matrix), t (translation vector) and s (scale factor).
         //! k and kmin1 refer to the iteration
@@ -259,8 +259,8 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
             }
             //! - Save intermediate algorithm data
             this->sicpBuffer.scaleFactor[iteration] = s_k;
-            eigenMatrixXd2CArray(R_k, &this->sicpBuffer.rotationMatrix[iteration * POINT_DIM * POINT_DIM]);
-            eigenMatrixXd2CArray(t_k, &this->sicpBuffer.translation[iteration * POINT_DIM]);
+            eigenMatrixXInsertCArray(R_k, this->sicpBuffer.rotationMatrix, iteration * POINT_DIM * POINT_DIM);
+            eigenMatrixXInsertCArray(R_k, this->sicpBuffer.translation, iteration * POINT_DIM);
             this->sicpBuffer.numberOfIteration += 1;
 
             R_kmin1 = R_k;
@@ -276,7 +276,7 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
         for (int i = 0; i < this->Np; i++) {
             newPoints.col(i) = s_k * (R_k * measuredPoints.col(i)) + t_k;
         }
-        eigenMatrixXd2CArray(newPoints.transpose(), this->outputCloudBuffer.points);
+        eigenMatrixXToCArray(newPoints.transpose(), this->outputCloudBuffer.points);
         this->outputCloudBuffer.numberOfPoints = this->Np;
         this->outputCloudBuffer.timeTag = currentSimNanos;
         //! - Write the algorithm output data with zeros are results

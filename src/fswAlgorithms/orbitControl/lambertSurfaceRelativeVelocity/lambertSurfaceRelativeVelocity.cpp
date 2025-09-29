@@ -72,11 +72,11 @@ void LambertSurfaceRelativeVelocity::readMessages() {
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
     EphemerisMsgPayload ephemerisInMsgBuffer = this->ephemerisInMsg();
 
-    this->r_BN_N = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2vec);
+    this->r_BN_N = cArrayAsEigenVector(lambertProblemInMsgBuffer.r2vec);
 
-    Eigen::MRPd sigma_PN = cArray2EigenMRPd(ephemerisInMsgBuffer.sigma_BN);
+    Eigen::MRPd sigma_PN = cArrayAsEigenMrp(ephemerisInMsgBuffer.sigma_BN);
     this->dcm_PN = sigma_PN.toRotationMatrix().transpose();
-    Eigen::Vector3d omega_PN_P = cArray2EigenVector3d(ephemerisInMsgBuffer.omega_BN_B);
+    Eigen::Vector3d omega_PN_P = cArrayAsEigenVector(ephemerisInMsgBuffer.omega_BN_B);
     this->omega_PN_N = this->dcm_PN.transpose() * omega_PN_P;
 }
 
@@ -87,7 +87,7 @@ void LambertSurfaceRelativeVelocity::readMessages() {
 void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos) {
     DesiredVelocityMsgPayload desiredVelocityOutMsgBuffer{};
 
-    eigenVector3d2CArray(this->v_BN_N, desiredVelocityOutMsgBuffer.vDesired_N);
+    eigenVectorToCArray(this->v_BN_N, desiredVelocityOutMsgBuffer.vDesired_N);
     desiredVelocityOutMsgBuffer.maneuverTime = this->time;
 
     // Write to the output messages

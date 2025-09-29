@@ -336,8 +336,8 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.fieldOfView[0] = this->cameraFieldOfView[0];
     cameraModelMsg.fieldOfView[1] = this->cameraFieldOfView[1];
     cameraModelMsg.isOn = this->cameraIsImaging;
-    eigenVector3d2CArray(this->cameraBodyFramePosition, cameraModelMsg.cameraBodyFramePosition);
-    eigenVector3d2CArray(this->bodyToCameraMrp, cameraModelMsg.bodyToCameraMrp);
+    eigenVectorToCArray(this->cameraBodyFramePosition, cameraModelMsg.cameraBodyFramePosition);
+    eigenVectorToCArray(this->bodyToCameraMrp, cameraModelMsg.bodyToCameraMrp);
     cameraModelMsg.focalLength = this->focalLength;
     cameraModelMsg.gaussianPointSpreadFunction = this->gaussianPointSpreadFunction;
     cameraModelMsg.readNoise = this->readNoise;
@@ -351,20 +351,20 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.sensorHeight = this->sensorHeight;
     cameraModelMsg.fullWellCapacity = this->fullWellCapacity;
     cameraModelMsg.integrationWeightFactor = this->integrationWeightFactor;
-    eigenVector3d2CArray(this->redQuantumEfficiency, cameraModelMsg.redQuantumEfficiency);
-    eigenVector3d2CArray(this->greenQuantumEfficiency, cameraModelMsg.greenQuantumEfficiency);
-    eigenVector3d2CArray(this->blueQuantumEfficiency, cameraModelMsg.blueQuantumEfficiency);
+    eigenVectorToCArray(this->redQuantumEfficiency, cameraModelMsg.redQuantumEfficiency);
+    eigenVectorToCArray(this->greenQuantumEfficiency, cameraModelMsg.greenQuantumEfficiency);
+    eigenVectorToCArray(this->blueQuantumEfficiency, cameraModelMsg.blueQuantumEfficiency);
     if (this->horizontalVignetting.size() > 0) {
         vSetZero(cameraModelMsg.horizontalVignetting, std::size(cameraModelMsg.horizontalVignetting));
-        eigenMatrixXd2CArray(this->horizontalVignetting, cameraModelMsg.horizontalVignetting);
+        eigenMatrixXToCArray(this->horizontalVignetting, cameraModelMsg.horizontalVignetting);
     }
     if (this->verticalVignetting.size() > 0) {
         vSetZero(cameraModelMsg.verticalVignetting, std::size(cameraModelMsg.verticalVignetting));
-        eigenMatrixXd2CArray(this->verticalVignetting, cameraModelMsg.verticalVignetting);
+        eigenMatrixXToCArray(this->verticalVignetting, cameraModelMsg.verticalVignetting);
     }
     if (this->distortion.size() > 0) {
         vSetZero(cameraModelMsg.distortion, std::size(cameraModelMsg.distortion));
-        eigenMatrixXd2CArray(this->distortion, cameraModelMsg.distortion);
+        eigenMatrixXToCArray(this->distortion, cameraModelMsg.distortion);
     }
     cameraModelMsg.transmission = this->transmission;
 

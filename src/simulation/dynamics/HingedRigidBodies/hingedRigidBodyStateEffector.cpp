@@ -77,10 +77,10 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
         SCStatesMsgPayload configLogMsg;
         configLogMsg = SCStatesMsgPayload{};
         // Note, logging the hinge frame S is the body frame B of that object
-        eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_SN_N, configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_SN_N, configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_SN, configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_SN_S, configLogMsg.omega_BN_B);
         this->hingedRigidBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }

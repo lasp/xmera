@@ -640,9 +640,9 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
     Eigen::Vector3d rPrimePrime_FM_M = this->transAccel * this->transHat_M;  // [m/s^2]
 
     // Copy the module variables to the output buffer message
-    eigenVector3d2CArray(r_FM_M, prescribedTranslationMsgOut.r_FM_M);
-    eigenVector3d2CArray(rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
-    eigenVector3d2CArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
+    eigenVectorToCArray(r_FM_M, prescribedTranslationMsgOut.r_FM_M);
+    eigenVectorToCArray(rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
+    eigenVectorToCArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
 
     // Write the output messages
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);

@@ -69,10 +69,10 @@ void LambertSecondDV::readMessages() {
 
     // lambert solution content
     if (this->lambertSolutionSpecifier == 1) {
-        this->vExpected_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v2);
+        this->vExpected_N = cArrayAsEigenVector(lambertSolutionInMsgBuffer.v2);
         this->validLambert = lambertSolutionInMsgBuffer.valid;
     } else if (this->lambertSolutionSpecifier == 2) {
-        this->vExpected_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v2Sol2);
+        this->vExpected_N = cArrayAsEigenVector(lambertSolutionInMsgBuffer.v2Sol2);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
     } else {
         bskLogger.bskLog(BSK_ERROR,
@@ -81,7 +81,7 @@ void LambertSecondDV::readMessages() {
     }
 
     // desired velocity
-    this->vDesired_N = cArray2EigenVector3d(desiredVelocityInMsgBuffer.vDesired_N);
+    this->vDesired_N = cArrayAsEigenVector(desiredVelocityInMsgBuffer.vDesired_N);
     this->maneuverTime = desiredVelocityInMsgBuffer.maneuverTime;
 }
 
@@ -101,8 +101,8 @@ void LambertSecondDV::writeMessages(uint64_t currentSimNanos) {
 
     // Write Delta-V message content only if all checks on performance and violations were passed
     if (this->validLambert) {
-        eigenVector3d2CArray(this->dv_N, dvBurnCmdOutMsgBuffer.dvInrtlCmd);
-        eigenVector3d2CArray(dvRotVecUnit, dvBurnCmdOutMsgBuffer.dvRotVecUnit);
+        eigenVectorToCArray(this->dv_N, dvBurnCmdOutMsgBuffer.dvInrtlCmd);
+        eigenVectorToCArray(dvRotVecUnit, dvBurnCmdOutMsgBuffer.dvRotVecUnit);
         dvBurnCmdOutMsgBuffer.dvRotVecMag = dvRotVecMag;
         dvBurnCmdOutMsgBuffer.burnStartTime = burnStartTime;
     }

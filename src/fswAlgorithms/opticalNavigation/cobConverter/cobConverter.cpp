@@ -82,9 +82,9 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
         double CB[3][3];
         double BN[3][3];
         MRP2C(cameraSpecs.bodyToCameraMrp, CB);
-        Eigen::Matrix3d dcm_CB = c2DArray2EigenMatrix3d(CB);
+        Eigen::Matrix3d dcm_CB = c2DArrayAsEigenMatrix3(CB);
         MRP2C(navAttBuffer.sigma_BN, BN);
-        Eigen::Matrix3d dcm_BN = c2DArray2EigenMatrix3d(BN);
+        Eigen::Matrix3d dcm_BN = c2DArrayAsEigenMatrix3(BN);
 
         Eigen::Matrix3d dcm_NC = dcm_BN.transpose() * dcm_CB.transpose();
 
@@ -113,9 +113,9 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
             -vp / dY, 0., 0., 1.;
 
         /*! - phase angle correction */
-        Eigen::Vector3d rhat_N = cArray2EigenVector3d(ephemBuffer.r_BdyZero_N).normalized();
-        double rho = cArray2EigenVector3d(ephemBuffer.r_BdyZero_N).norm();
-        Eigen::Vector3d shat_B = cArray2EigenVector3d(sunBuffer.vehSunPntBdy).normalized();
+        Eigen::Vector3d rhat_N = cArrayAsEigenVector(ephemBuffer.r_BdyZero_N).normalized();
+        double rho = cArrayAsEigenVector(ephemBuffer.r_BdyZero_N).norm();
+        Eigen::Vector3d shat_B = cArrayAsEigenVector(sunBuffer.vehSunPntBdy).normalized();
         Eigen::Vector3d shat_N = dcm_BN.transpose() * shat_B;
         double alphaPA = acos(rhat_N.transpose() * shat_N);  // phase angle
 
@@ -185,7 +185,7 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
         FilterMsgPayload filterMsgBuffer = this->opnavFilterInMsg();
         Eigen::Matrix3d covar_B;
         if (phaseAngleCorrectionMethod == PhaseAngleCorrectionMethod::Binary && this->objectRadiusUncertainty > 0) {
-            Eigen::Vector3d position = cArray2EigenVector3d(filterMsgBuffer.state);
+            Eigen::Vector3d position = cArrayAsEigenVector3(filterMsgBuffer.state);
             double constants_deltaR =
                 (4 * this->objectRadius / (3 * M_PI * position.norm()) * (1 - cos(alphaPA)) /
                  (1 + pow(4.0 * this->objectRadius / (3.0 * M_PI * position.norm()) * (1.0 - cos(alphaPA)), 2.0)));
@@ -204,7 +204,7 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
             Eigen::RowVector3d deltaAlpha_delta_R = sr * rr;
 
             /*! Compute Com uncertainty direction */
-            Eigen::Matrix<double, 6, 6> Covariance = cArray2EigenMatrixXd(filterMsgBuffer.covar, 6, 6);
+            Eigen::Matrix<double, 6, 6> Covariance = cArrayAsEigenMatrixX(filterMsgBuffer.covar, 6, 6);
             Eigen::Matrix<double, 3, 3> positionCovariance = Covariance.topLeftCorner(3, 3);
 
             Eigen::RowVector3d deltaBinary_r = deltaBinary_delta_r + (deltaBinary_deltaAlpha * deltaAlpha_delta_R);
@@ -237,11 +237,11 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
         bool goodOutlierCheck = true;
         if (this->performOutlierDetection) {
             int numberOfStates = filterMsgBuffer.numberOfStates;
-            Eigen::VectorXd filterState = cArray2EigenMatrixXd(filterMsgBuffer.state, numberOfStates, 1);
+            Eigen::VectorXd filterState = cArrayAsEigenMatrixX(filterMsgBuffer.state, numberOfStates, 1);
             Eigen::Vector3d rNav_BN_N = filterState.segment(0, 3);
             Eigen::Vector3d rhatNav_N = rNav_BN_N.normalized();
             Eigen::MatrixXd filterCovariance =
-                cArray2EigenMatrixXd(filterMsgBuffer.covar, numberOfStates, numberOfStates);
+                cArrayAsEigenMatrixX(filterMsgBuffer.covar, numberOfStates, numberOfStates);
             Eigen::Matrix3d covarNav_N = filterCovariance.block(0, 0, 3, 3) / pow(rNav_BN_N.norm(), 2);
 
             goodOutlierCheck = this->cobOutlierDetection(
@@ -249,21 +249,21 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
         }
 
         /*! - output messages */
-        eigenMatrix3d2CArray(covar_N, uVecCOBMsgBuffer.covar_N);
-        eigenMatrix3d2CArray(covar_C, uVecCOBMsgBuffer.covar_C);
-        eigenMatrix3d2CArray(covar_B, uVecCOBMsgBuffer.covar_B);
-        eigenVector3d2CArray(rhatCOB_N, uVecCOBMsgBuffer.rhat_BN_N);
-        eigenVector3d2CArray(rhatCOB_C, uVecCOBMsgBuffer.rhat_BN_C);
-        eigenVector3d2CArray(rhatCOB_B, uVecCOBMsgBuffer.rhat_BN_B);
+        eigenMatrixToCArray(covar_N, uVecCOBMsgBuffer.covar_N);
+        eigenMatrixToCArray(covar_C, uVecCOBMsgBuffer.covar_C);
+        eigenMatrixToCArray(covar_B, uVecCOBMsgBuffer.covar_B);
+        eigenVectorToCArray(rhatCOB_N, uVecCOBMsgBuffer.rhat_BN_N);
+        eigenVectorToCArray(rhatCOB_C, uVecCOBMsgBuffer.rhat_BN_C);
+        eigenVectorToCArray(rhatCOB_B, uVecCOBMsgBuffer.rhat_BN_B);
         uVecCOBMsgBuffer.timeTag = (double)cobMsgBuffer.timeTag * NANO2SEC;
         uVecCOBMsgBuffer.valid = goodOutlierCheck;
 
-        eigenMatrix3d2CArray(covar_N, uVecCOMMsgBuffer.covar_N);
-        eigenMatrix3d2CArray(covar_C, uVecCOMMsgBuffer.covar_C);
-        eigenMatrix3d2CArray(covar_B, uVecCOMMsgBuffer.covar_B);
-        eigenVector3d2CArray(rhatCOM_N, uVecCOMMsgBuffer.rhat_BN_N);
-        eigenVector3d2CArray(rhatCOM_C, uVecCOMMsgBuffer.rhat_BN_C);
-        eigenVector3d2CArray(rhatCOM_B, uVecCOMMsgBuffer.rhat_BN_B);
+        eigenMatrixToCArray(covar_N, uVecCOMMsgBuffer.covar_N);
+        eigenMatrixToCArray(covar_C, uVecCOMMsgBuffer.covar_C);
+        eigenMatrixToCArray(covar_B, uVecCOMMsgBuffer.covar_B);
+        eigenVectorToCArray(rhatCOM_N, uVecCOMMsgBuffer.rhat_BN_N);
+        eigenVectorToCArray(rhatCOM_C, uVecCOMMsgBuffer.rhat_BN_C);
+        eigenVectorToCArray(rhatCOM_B, uVecCOMMsgBuffer.rhat_BN_B);
         uVecCOMMsgBuffer.timeTag = (double)cobMsgBuffer.timeTag * NANO2SEC;
         uVecCOMMsgBuffer.valid = (validCOM && goodOutlierCheck);
 

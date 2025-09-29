@@ -264,7 +264,7 @@ def EigenConversions(show_plots):
 
     inputArray = [[3.0], [1.0], [2.0]]
     outputArray = sim_model.new_doubleArray(3)
-    stateArchitecture.eigenVector3d2CArray(inputArray, outputArray)
+    stateArchitecture.eigenVectorToCArray(inputArray, outputArray)
     
     flatList =  [y for x in inputArray for y in x]
 
@@ -275,7 +275,7 @@ def EigenConversions(show_plots):
 
     inputArray = [[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 0.0]]
     outputArray = sim_model.new_doubleArray(9)
-    stateArchitecture.eigenMatrix3d2CArray(inputArray, outputArray)
+    stateArchitecture.eigenMatrixToCArray(inputArray, outputArray)
     
     flatList =  [y for x in inputArray for y in x]
 
@@ -287,7 +287,7 @@ def EigenConversions(show_plots):
 
     inputArray = [[0.0, 1.0, 0.0, 2.0], [0.0, 0.0, 1.0, 0.5], [1.0, 0.0, 0.0, 2.7]]
     outputArray = sim_model.new_doubleArray(12)
-    stateArchitecture.eigenMatrixXd2CArray(inputArray, outputArray)
+    stateArchitecture.eigenMatrixToCArray(inputArray, outputArray)
     
     flatList =  [y for x in inputArray for y in x]
 

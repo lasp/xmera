@@ -244,7 +244,7 @@ void Albedo::updateState(uint64_t currentSimNanos) {
             tmpTot[3] += outData[3];
             idx++;
         }
-        this->albOutData.push_back(cArray2EigenMatrixXd(tmpTot, 4, 1));
+        this->albOutData.push_back(cArrayAsEigenMatrixX(tmpTot, 4, 1));
     }
     this->writeMessages(currentSimNanos);
 }
@@ -656,8 +656,8 @@ void Albedo::computeAlbedo(int idx,
             num1[i] = albLon1[i];
             num2[i] = albLat1[i];
         }
-        this->albLon = cArray2EigenMatrixXd(num1, 1, IIdx);
-        this->albLat = cArray2EigenMatrixXd(num2, 1, IIdx);
+        this->albLon = cArrayAsEigenMatrixX(num1, 1, IIdx);
+        this->albLat = cArrayAsEigenMatrixX(num2, 1, IIdx);
         //! - Total albedo flux ratio [-]
         auto albedoAtInstrumentMax = alb_Imax;
         auto albedoAtInstrument = alb_I;

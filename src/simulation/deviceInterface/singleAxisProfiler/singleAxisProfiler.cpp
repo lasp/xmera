@@ -60,9 +60,9 @@ void SingleAxisProfiler::updateState(uint64_t callTime) {
     Eigen::Vector3d sigma_FM = this->computeSigma_FM(stepperMotorIn.theta);
 
     // Copy the prescribed rotational states to the output buffer message
-    eigenVector3d2CArray(omega_FM_F, prescribedRotationOut.omega_FM_F);
-    eigenVector3d2CArray(omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
-    eigenVector3d2CArray(sigma_FM, prescribedRotationOut.sigma_FM);
+    eigenVectorToCArray(omega_FM_F, prescribedRotationOut.omega_FM_F);
+    eigenVectorToCArray(omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
+    eigenVectorToCArray(sigma_FM, prescribedRotationOut.sigma_FM);
 
     // Write the output message
     this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
@@ -76,13 +76,13 @@ Eigen::Vector3d SingleAxisProfiler::computeSigma_FM(double theta) {
     double dcm_FM[3][3];
     double prv_FM_array[3];
     Eigen::Vector3d prv_FM = theta * this->rotHat_M;
-    eigenVector3d2CArray(prv_FM, prv_FM_array);
+    eigenVectorToCArray(prv_FM, prv_FM_array);
     PRV2C(prv_FM_array, dcm_FM);
 
     // Compute the MRP sigma_FM representing the current spinning body attitude relative to the mount frame
     double sigma_FM_array[3];
     C2MRP(dcm_FM, sigma_FM_array);
-    return cArray2EigenVector3d(sigma_FM_array);
+    return cArrayAsEigenVector(sigma_FM_array);
 }
 
 /*! Setter method for the spinning body rotation axis.

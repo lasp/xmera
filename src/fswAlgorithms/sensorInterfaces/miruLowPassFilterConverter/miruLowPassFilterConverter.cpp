@@ -49,7 +49,7 @@ void MiruLowPassFilterConverter::updateState(uint64_t callTime) {
     imuSensorOut.timeTag = meanMeasurementTime;
     imuSensorOut.numberOfValidGyroMeasurements = numberOfValidGyroMeasurements;
     Eigen::Vector3d omega_BN_B = lowPass.getCurrentState();
-    eigenVector3d2CArray(omega_BN_B, imuSensorOut.AngVelPlatform);
+    eigenVectorToCArray(omega_BN_B, imuSensorOut.AngVelPlatform);
     this->imuSensorOutMsg.write(&imuSensorOut, moduleID, callTime);
 }
 

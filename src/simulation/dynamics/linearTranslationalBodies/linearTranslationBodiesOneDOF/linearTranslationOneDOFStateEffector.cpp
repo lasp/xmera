@@ -127,10 +127,10 @@ void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
         configLogMsg = SCStatesMsgPayload{};
 
         // Logging the P frame is the body frame B of that object
-        eigenVector3d2CArray(this->r_FcN_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_FN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_FN_F, configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_FcN_N, configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_FcN_N, configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_FN, configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_FN_F, configLogMsg.omega_BN_B);
         this->translatingBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentSimNanos);
     }
 }

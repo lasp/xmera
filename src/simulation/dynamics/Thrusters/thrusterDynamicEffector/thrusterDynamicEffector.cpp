@@ -68,8 +68,8 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock) {
     THROutputMsgPayload tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it) {
         tmpThruster = THROutputMsgPayload{};
-        eigenVector3d2CArray(it->thrLoc_B, tmpThruster.thrusterLocation);
-        eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection);
+        eigenVectorToCArray(it->thrLoc_B, tmpThruster.thrusterLocation);
+        eigenVectorToCArray(it->thrDir_B, tmpThruster.thrusterDirection);
         tmpThruster.maxThrust = it->MaxThrust;
         tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
         tmpThruster.thrustBlowDownFactor = it->ThrustOps.thrustBlowDownFactor;
@@ -181,9 +181,9 @@ void ThrusterDynamicEffector::UpdateThrusterProperties() {
             this->attachedBodyBuffer = this->attachedBodyInMsgs.at(index)();
 
             // Grab attached body variables
-            sigma_FN = cArray2EigenMRPd(attachedBodyBuffer.sigma_BN);
-            omega_FN_F = cArray2EigenVector3d(attachedBodyBuffer.omega_BN_B);
-            r_FN_N = cArray2EigenVector3d(attachedBodyBuffer.r_BN_N);
+            sigma_FN = cArrayAsEigenMrp(attachedBodyBuffer.sigma_BN);
+            omega_FN_F = cArrayAsEigenVector(attachedBodyBuffer.omega_BN_B);
+            r_FN_N = cArrayAsEigenVector(attachedBodyBuffer.r_BN_N);
 
             // Compute the DCM between the attached body and the hub
             dcm_FN = (sigma_FN.toRotationMatrix()).transpose();
@@ -310,8 +310,8 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
                                           (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
         }
         // - Save force and torque values for messages
-        eigenVector3d2CArray(SingleThrusterForce, it->ThrustOps.opThrustForce_B);
-        eigenVector3d2CArray(SingleThrusterTorque, it->ThrustOps.opThrustTorquePntB_B);
+        eigenVectorToCArray(SingleThrusterForce, it->ThrustOps.opThrustForce_B);
+        eigenVectorToCArray(SingleThrusterTorque, it->ThrustOps.opThrustTorquePntB_B);
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation
     prevFireTime = integTime;

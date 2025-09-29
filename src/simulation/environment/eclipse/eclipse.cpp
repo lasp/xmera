@@ -114,12 +114,12 @@ void Eclipse::updateState(uint64_t currentSimNanos) {
         double tmpShadowFactor = 1.0;  // 1.0 means 100% illumination (no eclipse)
         double eclipsePlanetDistance = 0.0;
         int64_t eclipsePlanetKey = -1;
-        r_BN_N = cArray2EigenVector3d(scIt->r_BN_N);
+        r_BN_N = cArrayAsEigenVector(scIt->r_BN_N);
 
         // Find the closest planet if there is one
         int idx = 0;
         for (planetIt = this->planetBuffer.begin(); planetIt != this->planetBuffer.end(); planetIt++) {
-            r_PN_N = cArray2EigenVector3d(planetIt->PositionVector);
+            r_PN_N = cArrayAsEigenVector(planetIt->PositionVector);
             s_HP_N = r_HN_N - r_PN_N;
             r_HB_N = r_HN_N - r_BN_N;
             s_BP_N = r_BN_N - r_PN_N;
@@ -142,7 +142,7 @@ void Eclipse::updateState(uint64_t currentSimNanos) {
         // If planetkey is not -1 then we have a planet for which
         // we compute the eclipse conditions
         if (eclipsePlanetKey >= 0) {
-            r_PN_N = cArray2EigenVector3d(this->planetBuffer[eclipsePlanetKey].PositionVector);
+            r_PN_N = cArrayAsEigenVector(this->planetBuffer[eclipsePlanetKey].PositionVector);
             s_BP_N = r_BN_N - r_PN_N;
             r_HB_N = r_HN_N - r_BN_N;
             s_HP_N = r_HN_N - r_PN_N;

@@ -72,13 +72,13 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
     FilterResidualsMsgPayload filterCssResMsgBuffer{};
 
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-    eigenMatrixXd2CArray(this->state.getPositionStates(), navAttOutMsgBuffer.vehSunPntBdy);
+    eigenMatrixXToCArray(this->state.getPositionStates(), navAttOutMsgBuffer.vehSunPntBdy);
 
     /*! - Populate the filter states output buffer and write the output message*/
     filterMsgBuffer.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXd2CArray(this->state.returnValues(), filterMsgBuffer.state);
-    eigenMatrixXd2CArray(this->xBar.returnValues(), filterMsgBuffer.stateError);
-    eigenMatrixXd2CArray(this->covar, filterMsgBuffer.covar);
+    eigenMatrixXToCArray(this->state.returnValues(), filterMsgBuffer.state);
+    eigenMatrixXToCArray(this->xBar.returnValues(), filterMsgBuffer.stateError);
+    eigenMatrixXToCArray(this->covar, filterMsgBuffer.covar);
     filterMsgBuffer.numberOfStates = this->state.size();
 
     int i = 0;
@@ -89,18 +89,18 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
             filterGyroResMsgBuffer.valid = true;
             filterGyroResMsgBuffer.numberOfObservations = 1;
             filterGyroResMsgBuffer.sizeOfObservations = measurement.size();
-            eigenMatrixXd2CArray(measurement.getObservation(), &filterGyroResMsgBuffer.observation[0]);
-            eigenMatrixXd2CArray(measurement.getPostFitResiduals(), &filterGyroResMsgBuffer.postFits[0]);
-            eigenMatrixXd2CArray(measurement.getPreFitResiduals(), &filterGyroResMsgBuffer.preFits[0]);
+            eigenMatrixXToCArray(measurement.getObservation(), filterGyroResMsgBuffer.observation);
+            eigenMatrixXToCArray(measurement.getPostFitResiduals(), filterGyroResMsgBuffer.postFits);
+            eigenMatrixXToCArray(measurement.getPreFitResiduals(), filterGyroResMsgBuffer.preFits);
         } else if (optionalMeasurement.has_value() && optionalMeasurement->getMeasurementName() == "css") {
             auto measurement = MeasurementModel();
             measurement = optionalMeasurement.value();
             filterCssResMsgBuffer.valid = true;
             filterCssResMsgBuffer.numberOfObservations = 1;
             filterCssResMsgBuffer.sizeOfObservations = measurement.size();
-            eigenMatrixXd2CArray(measurement.getObservation(), &filterCssResMsgBuffer.observation[0]);
-            eigenMatrixXd2CArray(measurement.getPostFitResiduals(), &filterCssResMsgBuffer.postFits[0]);
-            eigenMatrixXd2CArray(measurement.getPreFitResiduals(), &filterCssResMsgBuffer.preFits[0]);
+            eigenMatrixXToCArray(measurement.getObservation(), filterCssResMsgBuffer.observation);
+            eigenMatrixXToCArray(measurement.getPostFitResiduals(), filterCssResMsgBuffer.postFits);
+            eigenMatrixXToCArray(measurement.getPreFitResiduals(), filterCssResMsgBuffer.preFits);
         }
         this->measurements[i].reset();
         i += 1;
@@ -124,7 +124,7 @@ void SunlineSRuKF::readGyroMeasurements() {
         gyroMeasurements.setValidity(true);
         gyroMeasurements.setMeasurementName("gyro");
         gyroMeasurements.setTimeTag(navAttInputBuffer.timeTag);
-        gyroMeasurements.setObservation(cArray2EigenVector3d(navAttInputBuffer.omega_BN_B));
+        gyroMeasurements.setObservation(cArrayAsEigenVector(navAttInputBuffer.omega_BN_B));
         gyroMeasurements.setMeasurementModel(MeasurementModel::velocityStates);
         Eigen::MatrixXd I = Eigen::Matrix3d::Identity();
         gyroMeasurements.setMeasurementNoise(this->measNoiseScaling * pow(this->gyroMeasNoiseStd, 2) * I);

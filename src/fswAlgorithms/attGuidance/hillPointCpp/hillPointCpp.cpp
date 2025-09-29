@@ -80,7 +80,7 @@ void HillPointCpp::computeHillPointingReference(Eigen::Vector3d r_BN_N,
 
     /*! - Compute R-frame orientation */
     Eigen::Vector3d sigma_RN = dcmToMrp(dcm_RN);
-    eigenVector3d2CArray(sigma_RN, attRefOut->sigma_RN);
+    eigenVectorToCArray(sigma_RN, attRefOut->sigma_RN);
 
     /*! - Compute R-frame inertial rate and acceleration */
     double  orbitRadius = relPosVector.norm(); /* orbit radius */
@@ -101,7 +101,7 @@ void HillPointCpp::computeHillPointingReference(Eigen::Vector3d r_BN_N,
     Eigen::Vector3d domega_RN_R = {0.0, 0.0, ddfdt2}; /* reference angular acceleration vector in Reference frame R components */
 
     Eigen::Vector3d temp = dcm_RN.transpose()*omega_RN_R;
-    eigenVector3d2CArray(temp, attRefOut->omega_RN_N);
+    eigenVectorToCArray(temp, attRefOut->omega_RN_N);
     temp = dcm_RN.transpose()*domega_RN_R;
-    eigenVector3d2CArray(temp, attRefOut->domega_RN_N);
+    eigenVectorToCArray(temp, attRefOut->domega_RN_N);
 }

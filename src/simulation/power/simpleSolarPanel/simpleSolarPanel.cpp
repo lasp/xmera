@@ -99,9 +99,9 @@ void SimpleSolarPanel::computeSunData() {
     Eigen::Vector3d sHat_B;  //!< [] unit Sun heading vector relative to the spacecraft in B frame.
 
     //! - Read Message data to eigen
-    r_BN_N = cArray2EigenVector3d(this->stateCurrent.r_BN_N);
-    r_SN_N = cArray2EigenVector3d(this->sunData.PositionVector);
-    sigma_BN = cArray2EigenMRPd(this->stateCurrent.sigma_BN);
+    r_BN_N = cArrayAsEigenVector(this->stateCurrent.r_BN_N);
+    r_SN_N = cArrayAsEigenVector(this->sunData.PositionVector);
+    sigma_BN = cArrayAsEigenMrp(this->stateCurrent.sigma_BN);
 
     //! - Find sun heading unit vector
     r_SB_N = r_SN_N - r_BN_N;

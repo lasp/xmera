@@ -80,19 +80,19 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime) 
     // Write the prescribed translational motion output message if it is linked
     if (this->prescribedTranslationOutMsg.isLinked()) {
         PrescribedTranslationMsgPayload prescribedTranslationBuffer{};
-        eigenVector3d2CArray(this->r_FM_M, prescribedTranslationBuffer.r_FM_M);
-        eigenVector3d2CArray(this->rPrime_FM_M, prescribedTranslationBuffer.rPrime_FM_M);
-        eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedTranslationBuffer.rPrimePrime_FM_M);
+        eigenVectorToCArray(this->r_FM_M, prescribedTranslationBuffer.r_FM_M);
+        eigenVectorToCArray(this->rPrime_FM_M, prescribedTranslationBuffer.rPrime_FM_M);
+        eigenVectorToCArray(this->rPrimePrime_FM_M, prescribedTranslationBuffer.rPrimePrime_FM_M);
         this->prescribedTranslationOutMsg.write(&prescribedTranslationBuffer, this->moduleID, callTime);
     }
 
     // Write the prescribed rotational motion output message if it is linked
     if (this->prescribedRotationOutMsg.isLinked()) {
         PrescribedRotationMsgPayload prescribedRotationBuffer{};
-        eigenVector3d2CArray(this->omega_FM_F, prescribedRotationBuffer.omega_FM_F);
-        eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedRotationBuffer.omegaPrime_FM_F);
-        Eigen::Vector3d sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
-        eigenVector3d2CArray(sigma_FM_loc, prescribedRotationBuffer.sigma_FM);
+        eigenVectorToCArray(this->omega_FM_F, prescribedRotationBuffer.omega_FM_F);
+        eigenVectorToCArray(this->omegaPrime_FM_F, prescribedRotationBuffer.omegaPrime_FM_F);
+        Eigen::Vector3d sigma_FM_loc = eigenMrpToVector3(this->sigma_FM);
+        eigenVectorToCArray(sigma_FM_loc, prescribedRotationBuffer.sigma_FM);
         this->prescribedRotationOutMsg.write(&prescribedRotationBuffer, this->moduleID, callTime);
     }
 
@@ -101,10 +101,10 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime) 
         SCStatesMsgPayload configLogMsg{};
 
         // Note that the configLogMsg B frame represents the prescribed motion effector body frame (F frame)
-        eigenVector3d2CArray(this->r_FcN_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_FN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_FN_F, configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_FcN_N, configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_FcN_N, configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_FN, configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_FN_F, configLogMsg.omega_BN_B);
         this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, callTime);
     }
 }
@@ -126,7 +126,7 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn) {
 */
 void PrescribedMotionStateEffector::registerStates(DynParamManager& states) {
     this->sigma_FMState = states.registerState(3, 1, this->nameOfsigma_FMState);
-    Eigen::Vector3d sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
+    Eigen::Vector3d sigma_FM_loc = eigenMrpToVector3(this->sigma_FM);
     Eigen::Vector3d sigma_FMInitMatrix;
     sigma_FMInitMatrix(0) = sigma_FM_loc[0];
     sigma_FMInitMatrix(1) = sigma_FM_loc[1];
@@ -314,25 +314,25 @@ void PrescribedMotionStateEffector::updateState(uint64_t callTime) {
     // Read the translational input message if it is linked and written
     if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten()) {
         PrescribedTranslationMsgPayload incomingPrescribedTransStates = this->prescribedTranslationInMsg();
-        this->r_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.r_FM_M);
-        this->rPrime_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrime_FM_M);
-        this->rPrimePrime_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrimePrime_FM_M);
+        this->r_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.r_FM_M);
+        this->rPrime_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.rPrime_FM_M);
+        this->rPrimePrime_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.rPrimePrime_FM_M);
 
         // Save off the prescribed translational states at each dynamics time step
-        this->rEpoch_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.r_FM_M);
-        this->rPrimeEpoch_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrime_FM_M);
+        this->rEpoch_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.r_FM_M);
+        this->rPrimeEpoch_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.rPrime_FM_M);
     }
 
     // Read the rotational input message if it is linked and written
     if (this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten()) {
         PrescribedRotationMsgPayload incomingPrescribedRotStates = this->prescribedRotationInMsg();
-        this->omega_FM_F = cArray2EigenVector3d(incomingPrescribedRotStates.omega_FM_F);
-        this->omegaPrime_FM_F = cArray2EigenVector3d(incomingPrescribedRotStates.omegaPrime_FM_F);
-        this->sigma_FM = cArray2EigenVector3d(incomingPrescribedRotStates.sigma_FM);
+        this->omega_FM_F = cArrayAsEigenVector(incomingPrescribedRotStates.omega_FM_F);
+        this->omegaPrime_FM_F = cArrayAsEigenVector(incomingPrescribedRotStates.omegaPrime_FM_F);
+        this->sigma_FM = cArrayAsEigenVector(incomingPrescribedRotStates.sigma_FM);
 
         // Save off the prescribed rotational states at each dynamics time step
-        this->omegaEpoch_FM_F = cArray2EigenVector3d(incomingPrescribedRotStates.omega_FM_F);
-        Eigen::Vector3d sigma_FM_loc = cArray2EigenVector3d(incomingPrescribedRotStates.sigma_FM);
+        this->omegaEpoch_FM_F = cArrayAsEigenVector(incomingPrescribedRotStates.omega_FM_F);
+        Eigen::Vector3d sigma_FM_loc = cArrayAsEigenVector(incomingPrescribedRotStates.sigma_FM);
         this->sigma_FMState->setState(sigma_FM_loc);
     }
 

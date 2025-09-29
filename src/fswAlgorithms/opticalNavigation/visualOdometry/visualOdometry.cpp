@@ -121,23 +121,23 @@ void VisualOdometry::computeAframeDCM()
 {
     double CB_temp[3][3];
     MRP2C(this->cameraBuffer.sigma_CB, CB_temp);
-    Eigen::Matrix3d CB = cArray2EigenMatrix3d(*CB_temp);
+    Eigen::Matrix3d CB = cArrayAsEigenMatrix3(*CB_temp);
 
     double Bkmin1N_temp[3][3];
     MRP2C(this->keyPointBuffer.sigma_BN_firstImage, Bkmin1N_temp);
-    Eigen::Matrix3d Bkmin1N = cArray2EigenMatrix3d(*Bkmin1N_temp);
+    Eigen::Matrix3d Bkmin1N = cArrayAsEigenMatrix3(*Bkmin1N_temp);
 
     double NTkmin1_temp[3][3];
     MRP2C(this->keyPointBuffer.sigma_TN_firstImage, NTkmin1_temp);
-    Eigen::Matrix3d NTkmin1 = cArray2EigenMatrix3d(*NTkmin1_temp).transpose();
+    Eigen::Matrix3d NTkmin1 = cArrayAsEigenMatrix3(*NTkmin1_temp).transpose();
 
     double BkmN_temp[3][3];
     MRP2C(this->keyPointBuffer.sigma_BN_secondImage, BkmN_temp);
-    Eigen::Matrix3d BkN = cArray2EigenMatrix3d(*BkmN_temp);
+    Eigen::Matrix3d BkN = cArrayAsEigenMatrix3(*BkmN_temp);
 
     double NTk_temp[3][3];
     MRP2C(this->keyPointBuffer.sigma_TN_secondImage, NTk_temp);
-    Eigen::Matrix3d NTk = cArray2EigenMatrix3d(*NTk_temp).transpose();
+    Eigen::Matrix3d NTk = cArrayAsEigenMatrix3(*NTk_temp).transpose();
 
     this->CkCkmin1 = CB*BkN*NTk*(CB*Bkmin1N*NTkmin1).transpose();
 }
@@ -327,7 +327,7 @@ void VisualOdometry::writeMessages(Eigen::Vector3d sprime, Eigen::Matrix3d covar
     this->dirMotionBuffer.timeOfDirectionEstimate = this->keyPointBuffer.timeTag_secondImage;
     Eigen::Vector3d sprime_hat;
     sprime_hat = sprime/sprime.norm();
-    eigenVector3d2CArray(sprime_hat, this->dirMotionBuffer.v_C_hat );
-    eigenMatrix3d2CArray(covar, this->dirMotionBuffer.covar_C);
+    eigenVectorToCArray(sprime_hat, this->dirMotionBuffer.v_C_hat );
+    eigenMatrixToCArray(covar, this->dirMotionBuffer.covar_C);
     this->dirOfMotionMsgOutput.write(&this->dirMotionBuffer, this->moduleID, currentSimNanos);
 }

@@ -68,9 +68,9 @@ AttGuidMsgPayload SunSearchAlgorithm::update(uint64_t currentSimNanos, NavAttMsg
 
     Eigen::Vector3d omega_BR_B = Eigen::Map<const Eigen::Vector3d>(navAttIn.omega_BN_B) - referenceMotion.omega_RN_B;
 
-    eigenVector3d2CArray(referenceMotion.omega_RN_B, attGuidOut.omega_RN_B);
-    eigenVector3d2CArray(omega_BR_B, attGuidOut.omega_BR_B);
-    eigenVector3d2CArray(referenceMotion.domega_RN_B, attGuidOut.domega_RN_B);
+    eigenVectorToCArray(referenceMotion.omega_RN_B, attGuidOut.omega_RN_B);
+    eigenVectorToCArray(omega_BR_B, attGuidOut.omega_BR_B);
+    eigenVectorToCArray(referenceMotion.domega_RN_B, attGuidOut.domega_RN_B);
 
     return attGuidOut;
 }

@@ -149,14 +149,14 @@ void DataFileToViz::setNumOfSatellites(int numSat) {
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void DataFileToViz::appendThrPos(double pos_B[3]) { this->thrPosList.push_back(cArray2EigenVector3d(pos_B)); }
+void DataFileToViz::appendThrPos(double pos_B[3]) { this->thrPosList.push_back(cArrayAsEigenVector3(pos_B)); }
 
 /*!
  Add a thruster 3d unit direction vector to the list.  The input vectors gets normalized before being added to the list.
  */
 void DataFileToViz::appendThrDir(double dir_B[3]) {
     v3Normalize(dir_B, dir_B);
-    this->thrDirList.push_back(cArray2EigenVector3d(dir_B));
+    this->thrDirList.push_back(cArrayAsEigenVector3(dir_B));
 }
 
 /*!
@@ -221,7 +221,7 @@ void DataFileToViz::appendOmegaMax(double OmegaMax) { this->rwOmegaMaxList.push_
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cArray2EigenVector3d(pos_B)); }
+void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cArrayAsEigenVector3(pos_B)); }
 
 /*!
  Add a RW spin axis unit direction vector to the list.  The input vectors gets normalized before being added to the
@@ -229,7 +229,7 @@ void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cAr
  */
 void DataFileToViz::appendRwDir(double dir_B[3]) {
     v3Normalize(dir_B, dir_B);
-    this->rwDirList.push_back(cArray2EigenVector3d(dir_B));
+    this->rwDirList.push_back(cArrayAsEigenVector3(dir_B));
 }
 
 /*! Update this module at the task rate
@@ -312,8 +312,8 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                                 /* fill out the thruster state message */
                                 thrMsg.maxThrust = this->thrForceMaxList[thrCounter];
                                 thrMsg.thrustForce = pullScalar(&iss);
-                                eigenVector3d2CArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
-                                eigenVector3d2CArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
+                                eigenVectorToCArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
+                                eigenVectorToCArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
 
                                 this->thrScOutMsgs[scCounter]
                                     .at(thrCounter)
@@ -338,8 +338,8 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                             rwOutMsg.Omega_max = this->rwOmegaMaxList[rwCounter];
                             rwOutMsg.u_current = pullScalar(&iss);
                             rwOutMsg.u_max = this->rwUMaxList[rwCounter];
-                            eigenVector3d2CArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
-                            eigenVector3d2CArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
+                            eigenVectorToCArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
+                            eigenVectorToCArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
 
                             this->rwScOutMsgs[scCounter].at(rwCounter)->write(
                                 &rwOutMsg, this->moduleID, currentSimNanos);

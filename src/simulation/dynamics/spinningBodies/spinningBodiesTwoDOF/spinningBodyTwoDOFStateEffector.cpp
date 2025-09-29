@@ -104,10 +104,10 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         configLogMsg = SCStatesMsgPayload{};
 
         // Logging the S frame is the body frame B of that object
-        eigenVector3d2CArray(this->r_Sc1N_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_Sc1N_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_S1N, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_S1N_S1, configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_Sc1N_N, configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_Sc1N_N, configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_S1N, configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_S1N_S1, configLogMsg.omega_BN_B);
         this->spinningBodyConfigLogOutMsgs[0]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 
@@ -116,10 +116,10 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         configLogMsg = SCStatesMsgPayload{};
 
         // Logging the S frame is the body frame B of that object
-        eigenVector3d2CArray(this->r_Sc2N_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_Sc2N_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_S2N, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_S2N_S2, configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_Sc2N_N, configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_Sc2N_N, configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_S2N, configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_S2N_S2, configLogMsg.omega_BN_B);
         this->spinningBodyConfigLogOutMsgs[1]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }

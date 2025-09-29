@@ -65,9 +65,9 @@ AttRefMsgPayload FlybyPointAlgorithm::updateState(uint64_t currentSimNanos,
     auto [sigma_RN, omega_RN_N, omegaDot_RN_N] = this->computeGuidanceSolution();
     AttRefMsgPayload attMsgBuffer{};
 
-    eigenVector3d2CArray(sigma_RN, attMsgBuffer.sigma_RN);
-    eigenVector3d2CArray(omega_RN_N, attMsgBuffer.omega_RN_N);
-    eigenVector3d2CArray(omegaDot_RN_N, attMsgBuffer.domega_RN_N);
+    eigenVectorToCArray(sigma_RN, attMsgBuffer.sigma_RN);
+    eigenVectorToCArray(omega_RN_N, attMsgBuffer.omega_RN_N);
+    eigenVectorToCArray(omegaDot_RN_N, attMsgBuffer.domega_RN_N);
     return attMsgBuffer;
 }
 

@@ -62,14 +62,14 @@ void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
     FilterResidualsMsgPayload residualsBuffer{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    eigenMatrixXd2CArray(this->state.scale(1 / this->unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
-    eigenMatrixXd2CArray(this->state.scale(1 / this->unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
+    eigenMatrixXToCArray(this->state.scale(1 / this->unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
+    eigenMatrixXToCArray(this->state.scale(1 / this->unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXd2CArray(this->state.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.state);
-    eigenMatrixXd2CArray(this->xBar.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.stateError);
-    eigenMatrixXd2CArray(1 / this->unitConversion / this->unitConversion * this->covar, opNavFilterMsgBuffer.covar);
+    eigenMatrixXToCArray(this->state.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.state);
+    eigenMatrixXToCArray(this->xBar.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.stateError);
+    eigenMatrixXToCArray(1 / this->unitConversion / this->unitConversion * this->covar, opNavFilterMsgBuffer.covar);
     opNavFilterMsgBuffer.numberOfStates = this->state.size();
 
     auto optionalMeasurement = this->measurements[0];
@@ -79,9 +79,9 @@ void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
         residualsBuffer.valid = true;
         residualsBuffer.numberOfObservations = 1;
         residualsBuffer.sizeOfObservations = measurement.getObservation().size();
-        eigenMatrixXd2CArray(measurement.getObservation(), &residualsBuffer.observation[0]);
-        eigenMatrixXd2CArray(measurement.getPostFitResiduals(), &residualsBuffer.postFits[0]);
-        eigenMatrixXd2CArray(measurement.getPreFitResiduals(), &residualsBuffer.preFits[0]);
+        eigenMatrixXToCArray(measurement.getObservation(), residualsBuffer.observation);
+        eigenMatrixXToCArray(measurement.getPostFitResiduals(), residualsBuffer.postFits);
+        eigenMatrixXToCArray(measurement.getPreFitResiduals(), residualsBuffer.preFits);
         this->measurements[0].reset();
     }
     this->opNavResidualMsg.write(&residualsBuffer, this->moduleID, currentSimNanos);
@@ -102,10 +102,10 @@ void FlybyODuKF::readFilterMeasurements() {
 
     if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->previousFilterTimeTag) {
         /*! - Read measurement and cholesky decomposition its noise*/
-        headingMeasurement.setObservation(cArray2EigenVector3d(this->opNavHeadingBuffer.rhat_BN_N));
+        headingMeasurement.setObservation(cArrayAsEigenVector(this->opNavHeadingBuffer.rhat_BN_N));
         headingMeasurement.getObservation().normalize();
         headingMeasurement.setMeasurementNoise(this->measNoiseScaling *
-                                               cArray2EigenMatrixXd(this->opNavHeadingBuffer.covar_N,
+                                               cArrayAsEigenMatrixX(this->opNavHeadingBuffer.covar_N,
                                                                     (int)headingMeasurement.size(),
                                                                     (int)headingMeasurement.size()));
         headingMeasurement.setMeasurementModel(MeasurementModel::normalizedPositionStates);

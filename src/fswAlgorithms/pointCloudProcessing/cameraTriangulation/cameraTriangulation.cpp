@@ -80,7 +80,7 @@ void CameraTriangulation::readMessages() {
     /* point cloud message */
     bool validPointCloud = pointCloudInMsgBuffer.valid;
     int pointCloudSize = pointCloudInMsgBuffer.numberOfPoints;
-    this->pointCloud = cArray2EigenMatrixXd(pointCloudInMsgBuffer.points, POINT_DIM, pointCloudSize);
+    this->pointCloud = cArrayAsEigenMatrixX(pointCloudInMsgBuffer.points, POINT_DIM, pointCloudSize);
     uint64_t timeTagPointCloud = pointCloudInMsgBuffer.timeTag;
 
     /* key points message */
@@ -89,7 +89,7 @@ void CameraTriangulation::readMessages() {
     int cameraIDkeyPoints = keyPointsInMsgBuffer.cameraID;
     // stacked vector with all pixel locations of key points
     Eigen::VectorXd keyPointsStacked(2 * numberKeyPoints);
-    keyPointsStacked = cArray2EigenMatrixXd(keyPointsInMsgBuffer.keyPoints_secondImage, 2 * numberKeyPoints, 1);
+    keyPointsStacked = cArrayAsEigenMatrixX(keyPointsInMsgBuffer.keyPoints_secondImage, 2 * numberKeyPoints, 1);
     // convert to std vector that includes all key point pixel locations
     this->keyPoints.clear();
     for (int c = 0; c < numberKeyPoints; c++) {
@@ -98,13 +98,13 @@ void CameraTriangulation::readMessages() {
     }
     uint64_t timeTagKeyPoints = keyPointsInMsgBuffer.timeTag_secondImage;
     // dcm from inertial frame N to body frame B
-    this->sigma_BN = cArray2EigenMRPd(keyPointsInMsgBuffer.sigma_BN_secondImage);
+    this->sigma_BN = cArrayAsEigenMrp(keyPointsInMsgBuffer.sigma_BN_secondImage);
     Eigen::Matrix3d dcm_BN = this->sigma_BN.toRotationMatrix().transpose();
 
     /* camera config message */
     int cameraIDconfig = cameraConfigInMsgBuffer.cameraID;
     // dcm from body frame B to camera frame C
-    Eigen::MRPd sigma_CB = cArray2EigenMRPd(cameraConfigInMsgBuffer.sigma_CB);
+    Eigen::MRPd sigma_CB = cArrayAsEigenMrp(cameraConfigInMsgBuffer.sigma_CB);
     Eigen::Matrix3d dcm_CB = sigma_CB.toRotationMatrix().transpose();
     // camera parameters
     double alpha = 0;
@@ -170,10 +170,10 @@ void CameraTriangulation::writeMessages(uint64_t currentSimNanos) {
     cameraLocationOutMsgBuffer.valid = this->validInputs;
     cameraLocationOutMsgBuffer.cameraID = this->cameraID;
     cameraLocationOutMsgBuffer.timeTag = this->timeTag;
-    Eigen::Vector3d sig_BN = eigenMRPd2Vector3d(this->sigma_BN);
-    eigenVector3d2CArray(sig_BN, cameraLocationOutMsgBuffer.sigma_BN);
-    eigenVector3d2CArray(this->estimatedCameraLocation, cameraLocationOutMsgBuffer.cameraPos_N);
-    eigenMatrix3d2CArray(this->triangulationCovariance, cameraLocationOutMsgBuffer.covariance_N);
+    Eigen::Vector3d sig_BN = eigenMrpToVector3(this->sigma_BN);
+    eigenVectorToCArray(sig_BN, cameraLocationOutMsgBuffer.sigma_BN);
+    eigenVectorToCArray(this->estimatedCameraLocation, cameraLocationOutMsgBuffer.cameraPos_N);
+    eigenMatrixToCArray(this->triangulationCovariance, cameraLocationOutMsgBuffer.covariance_N);
 
     this->cameraLocationOutMsg.write(&cameraLocationOutMsgBuffer, this->moduleID, currentSimNanos);
 }

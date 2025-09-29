@@ -77,31 +77,31 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime) {
     // - Populate state output message
     SCStatesMsgPayload stateOut;
     stateOut = SCStatesMsgPayload{};
-    eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
-    eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
+    eigenMatrixXToCArray(*this->inertialPositionProperty, stateOut.r_BN_N);
+    eigenMatrixXToCArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     Eigen::MRPd sigmaLocal_BN;
     sigmaLocal_BN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
     Eigen::Vector3d rLocal_CN_N = (*this->inertialPositionProperty) + dcm_NB * (*this->c_B);
     Eigen::Vector3d vLocal_CN_N = (*this->inertialVelocityProperty) + dcm_NB * (*this->cDot_B);
-    eigenVector3d2CArray(rLocal_CN_N, stateOut.r_CN_N);
-    eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
-    eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
-    eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
-    eigenMatrixXd2CArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
+    eigenVectorToCArray(rLocal_CN_N, stateOut.r_CN_N);
+    eigenVectorToCArray(vLocal_CN_N, stateOut.v_CN_N);
+    eigenMatrixXToCArray(this->hubSigma->getState(), stateOut.sigma_BN);
+    eigenMatrixXToCArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
+    eigenMatrixToCArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
-    eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
-    eigenMatrixXd2CArray(this->dvAccum_CN_N, stateOut.TotalAccumDV_CN_N);
-    eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
-    eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
+    eigenMatrixToCArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
+    eigenMatrixToCArray(this->dvAccum_CN_N, stateOut.TotalAccumDV_CN_N);
+    eigenVectorToCArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
+    eigenVectorToCArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
     this->scStateOutMsg.write(&stateOut, this->moduleID, clockTime);
 
     // - Populate mass state output message
     SCMassPropsMsgPayload massStateOut;
     massStateOut = SCMassPropsMsgPayload{};
     massStateOut.massSC = (*this->m_SC)(0, 0);
-    eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
-    eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
+    eigenMatrixXToCArray(*this->c_B, massStateOut.c_B);
+    eigenMatrixXToCArray2D(*this->ISCPntB_B, massStateOut.ISC_PntB_B);
     this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
 }
 
@@ -112,12 +112,12 @@ void Spacecraft::readOptionalRefMsg() {
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
         attRefMsgBuffer = this->attRefInMsg();
-        Eigen::MRPd sigma_BN = cArray2EigenMRPd(attRefMsgBuffer.sigma_RN);
-        Eigen::Vector3d omega_BN_N = cArray2EigenVector3d(attRefMsgBuffer.omega_RN_N);
+        Eigen::MRPd sigma_BN = cArrayAsEigenMrp(attRefMsgBuffer.sigma_RN);
+        Eigen::Vector3d omega_BN_N = cArrayAsEigenVector(attRefMsgBuffer.omega_RN_N);
         Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
         omega_BN_B = dcm_BN * omega_BN_N;
 
-        this->hubSigma->setState(eigenMRPd2Vector3d(sigma_BN));
+        this->hubSigma->setState(eigenMrpToVector3(sigma_BN));
         this->hubOmega_BN_B->setState(omega_BN_B);
     }
 
@@ -127,8 +127,8 @@ void Spacecraft::readOptionalRefMsg() {
         TransRefMsgPayload transRefMsgBuffer;
         transRefMsgBuffer = this->transRefInMsg();
 
-        r_RN_N = cArray2EigenVector3d(transRefMsgBuffer.r_RN_N);
-        v_RN_N = cArray2EigenVector3d(transRefMsgBuffer.v_RN_N);
+        r_RN_N = cArrayAsEigenVector(transRefMsgBuffer.r_RN_N);
+        v_RN_N = cArrayAsEigenVector(transRefMsgBuffer.v_RN_N);
 
         this->hubR_N->setState(r_RN_N);
         this->hubV_N->setState(v_RN_N);

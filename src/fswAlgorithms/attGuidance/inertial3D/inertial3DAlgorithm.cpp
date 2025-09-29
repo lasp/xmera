@@ -26,7 +26,7 @@
  */
 AttRefMsgPayload Inertial3DAlgorithm::update() {
     AttRefMsgPayload attRefOut{};
-    eigenVector3d2CArray(this->sigma_R0N, attRefOut.sigma_RN);
+    eigenVectorToCArray(this->sigma_R0N, attRefOut.sigma_RN);
 
     return attRefOut;
 }
