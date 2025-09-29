@@ -38,28 +38,37 @@
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
+/**
+ * @enum PhaseAngleCorrectionMethod
+ * @brief Phase-angle correction models for converting COB to COM.
+ */
 enum class PhaseAngleCorrectionMethod { NoCorrection, Lambertian, Binary };
 
-/*! @brief visual limb finding module */
+/**
+ * @class CobConverter
+ * @brief Converts center-of-brightness (COB) pixel measurements into unit vectors
+ *        (camera, body, inertial frames), with optional phase-angle correction
+ *        and outlier detection.
+ */
 class CobConverter : public SysModel {
    public:
     CobConverter(PhaseAngleCorrectionMethod method, double radiusObject);
-    ~CobConverter();
+    ~CobConverter() final;
 
-    void updateState(uint64_t currentSimNanos);
-    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
 
-    void setRadius(const double radius);
+    void setRadius(double radius);
     double getRadius() const;
-    void setRadiusUncertainty(const double radiusUncertainty);
+    void setRadiusUncertainty(double radiusUncertainty);
     double getRadiusUncertainty() const;
-    void setAttitudeCovariance(const Eigen::Matrix3d covAtt_BN_B);
+    void setAttitudeCovariance(const Eigen::Matrix3d &covAtt_BN_B);
     Eigen::Matrix3d getAttitudeCovariance() const;
-    void setNumStandardDeviations(const double num);
+    void setNumStandardDeviations(double num);
     double getNumStandardDeviations() const;
-    void setStandardDeviation(const double num);
+    void setStandardDeviation(double num);
     double getStandardDeviation() const;
     bool isStandardDeviationSpecified() const;
     void enableOutlierDetection();
@@ -67,18 +76,22 @@ class CobConverter : public SysModel {
     bool isOutlierDetectionEnabled() const;
 
    private:
-    bool cobOutlierDetection(Eigen::Vector3d& rhatCOB_C,
-                             const Eigen::Vector3d& rhatNav_N,
-                             const Eigen::Matrix3d& covarNav_N,
-                             const Eigen::Matrix3d& covarCob_C,
-                             const Eigen::Matrix3d& dcm_CN,
-                             const Eigen::Matrix3d& dcm_CB,
-                             const Eigen::Matrix3d& cameraCalibrationMatrix) const;
+    void cobOutlierDetection(const FilterMsgPayload &filterMsgBuffer);
+    void computeCameraParameters(const CameraModelMsgPayload &cameraSpecs);
+    void computeRotations(const NavAttMsgPayload &navAttBuffer);
+    void computePhaseAngleCorrection(const EphemerisMsgPayload &ephemBuffer, const NavAttMsgPayload &sunBuffer);
+    std::tuple<Eigen::Vector3d, Eigen::Vector3d> computeCentersOfInterest(const OpNavCOBMsgPayload &cobMsgBuffer) const;
+    void computeRelevantVectors(const Eigen::Vector3d &centerOfBrightness, const Eigen::Vector3d &centerOfMass);
+    void computeCameraFrameUncertainty(const FilterMsgPayload &filterMsgBuffer, double pixelsFound);
+    std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload,OpNavCOMMsgPayload> populateOutputMessages(uint64_t timeTag, const Eigen::Vector3d &centerOfMass, OpNavUnitVecMsgPayload &uVecCOBMsgBuffer, OpNavUnitVecMsgPayload &uVecCOMMsgBuffer, OpNavCOMMsgPayload &comMsgBuffer);
 
    public:
+    // Output messages
     Message<OpNavUnitVecMsgPayload> opnavUnitVecCOBOutMsg;
     Message<OpNavUnitVecMsgPayload> opnavUnitVecCOMOutMsg;
     Message<OpNavCOMMsgPayload> opnavCOMOutMsg;
+
+    // Input messages
     ReadFunctor<OpNavCOBMsgPayload> opnavCOBInMsg;
     ReadFunctor<FilterMsgPayload> opnavFilterInMsg;
     ReadFunctor<CameraModelMsgPayload> cameraConfigInMsg;
@@ -94,10 +107,34 @@ class CobConverter : public SysModel {
     double objectRadius{};
     double objectRadiusUncertainty{};
     Eigen::Matrix3d covarAtt_BN_B{};
+    Eigen::Matrix3d dcm_NC{};
+    Eigen::Matrix3d dcm_CB{};
+    Eigen::Matrix3d dcm_BN{};
+    Eigen::Matrix3d cameraCalibrationMatrix{};
+    Eigen::Matrix3d cameraCalibrationMatrixInverse{};
+    Eigen::Matrix3d covar_B{};
     double numStandardDeviations = 3;
     double standardDeviation{};
     bool specifiedStandardDeviation{};
     bool performOutlierDetection{};
+    bool validCOM = false;
+    double dX{};
+    double X{};
+    double Y{};
+    double ifov_x{};
+    double ifov_y{};
+    double Rc = 0;
+    double gamma=0;
+    double phi =0;
+    double alphaPA = 0;
+    Eigen::Vector3d rhatCOB_C{};
+    Eigen::Vector3d rhatCOM_C{};
+    Eigen::Vector3d sc_position{};
+    Eigen::Vector3d shat_N{};
+    double rhatCOBNorm = 0;;
+    double spacecraftRange = 0;
+    int cameraId = 0;
+    bool goodOutlierCheck = true;
 };
 
 #endif
