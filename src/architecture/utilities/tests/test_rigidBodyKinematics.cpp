@@ -6,6 +6,7 @@
 #include "architecture/utilities/tests/rbk_float_wrappers.h"
 #include <Eigen/Dense>
 #include <functional>
+#include <numbers>
 #include <random>
 
 // Test-wide Helpers
@@ -69,7 +70,7 @@ class AdditiveTest : public ::testing::TestWithParam<AdditiveTestCase<T>> {
     using Mat3 = Eigen::Matrix<T, 3, 3>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 
     Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
@@ -237,7 +238,7 @@ class EulerParameterTest : public ::testing::TestWithParam<EulerTestCase<T>> {
     const T accuracy = kinematicsAccuracy<T>();
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> angleDistribution{-3.14, 3.14};
+    std::uniform_real_distribution<T> angleDistribution{-std::numbers::pi, std::numbers::pi};
 
     Vec4 randomEulerParameter() {
         T phi = angleDistribution(generator);
@@ -318,7 +319,7 @@ class BMatrixTypedTest : public ::testing::Test {
     using Mat43 = Eigen::Matrix<T, 4, 3>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 
     Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
@@ -449,7 +450,7 @@ class DcmToRepresentationTest : public ::testing::Test {
     using Vec3 = Eigen::Matrix<T, 3, 1>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 };
 
@@ -623,7 +624,7 @@ class RepresentationTransformTest : public ::testing::Test {
     using Vec3 = Eigen::Matrix<T, 3, 1>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 };
 
@@ -798,7 +799,7 @@ class RepresentationDerivativesTest : public ::testing::Test {
     using Vec3 = Eigen::Matrix<T, 3, 1>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 
     Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
