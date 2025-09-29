@@ -23,7 +23,6 @@
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/FilterMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
@@ -84,7 +83,6 @@ class CobConverter : public SysModel {
     ReadFunctor<FilterMsgPayload> opnavFilterInMsg;
     ReadFunctor<CameraModelMsgPayload> cameraConfigInMsg;
     ReadFunctor<NavAttMsgPayload> navAttInMsg;
-    ReadFunctor<EphemerisMsgPayload> ephemInMsg;
     ReadFunctor<NavAttMsgPayload> sunInMsg;
 
    private:

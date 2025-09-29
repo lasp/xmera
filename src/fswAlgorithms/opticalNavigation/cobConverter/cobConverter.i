@@ -35,8 +35,6 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-
 %include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
 %include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
 %include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"

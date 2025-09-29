@@ -50,9 +50,6 @@ void CobConverter::reset(uint64_t currentSimNanos) {
     if (!this->navAttInMsg.isLinked()) {
         throw std::invalid_argument("CobConverter.navAttInMsg wasn't connected.");
     }
-    if (!this->ephemInMsg.isLinked()) {
-        throw std::invalid_argument("CobConverter.ephemInMsg wasn't connected.");
-    }
     if (!this->sunInMsg.isLinked()) {
         throw std::invalid_argument("CobConverter.sunInMsg wasn't connected.");
     }
@@ -68,9 +65,9 @@ void CobConverter::reset(uint64_t currentSimNanos) {
  * @param currentSimNanos Current simulation time in nanoseconds.
  */
 void CobConverter::updateState(const uint64_t currentSimNanos) {
+    CameraModelMsgPayload cameraModelInMsg = this->cameraConfigInMsg();
     OpNavCOBMsgPayload cobMsgBuffer = this->opnavCOBInMsg();
     NavAttMsgPayload navAttBuffer = this->navAttInMsg();
-    EphemerisMsgPayload ephemBuffer = this->ephemInMsg();
     NavAttMsgPayload sunBuffer = this->sunInMsg();
     FilterMsgPayload filterMsgBuffer = this->opnavFilterInMsg();
 
@@ -80,7 +77,7 @@ void CobConverter::updateState(const uint64_t currentSimNanos) {
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0) {
         std::tie(uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer) = this->algorithm.updateState(
-            currentSimNanos, cobMsgBuffer, navAttBuffer, ephemBuffer, sunBuffer, filterMsgBuffer);
+            currentSimNanos, cameraModelInMsg, cobMsgBuffer, navAttBuffer, sunBuffer, filterMsgBuffer);
     }
 
     this->opnavUnitVecCOBOutMsg.write(&uVecCOBMsgBuffer, this->moduleID, currentSimNanos);

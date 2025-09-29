@@ -196,7 +196,6 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     inputCob = messaging.OpNavCOBMsgPayload()
     inputFilter = messaging.FilterMsgPayload()
     inputAtt = messaging.NavAttMsgPayload()
-    inputEphem = messaging.EphemerisMsgPayload()
     inputSun = messaging.NavAttMsgPayload()
 
     # Set camera parameters
@@ -233,11 +232,6 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     inputSun.vehSunPntBdy = dcm_BN @ vehSunPntN
     sunInMsg = messaging.NavAttMsg().write(inputSun)
     module.sunInMsg.subscribeTo(sunInMsg)
-
-    # Set ephemeris message of spacecraft relative to object
-    inputEphem.r_BdyZero_N = r_BdyZero_N
-    ephemInMsg = messaging.EphemerisMsg().write(inputEphem)
-    module.ephemInMsg.subscribeTo(ephemInMsg)
 
     dataLogUnitVecCOB = module.opnavUnitVecCOBOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLogUnitVecCOB)
