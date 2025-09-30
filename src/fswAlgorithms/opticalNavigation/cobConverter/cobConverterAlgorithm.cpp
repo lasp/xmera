@@ -59,7 +59,6 @@ CobConverterAlgorithm::CobConverterAlgorithm(const PhaseAngleCorrectionMethodAlg
 /** @brief Default destructor. */
 CobConverterAlgorithm::~CobConverterAlgorithm() = default;
 
-
 /**
  * @brief Compute camera calibration matrix and camera in body DCM
  *
@@ -276,42 +275,29 @@ void CobConverterAlgorithm::computeCameraFrameUncertainty(const FilterMsgPayload
  * @param timeTag Measurement timestamp (nanoseconds).
  * @param centerOfMass COM in pixel coordinates (homogeneous).
  * @param centerOfBrightness COB in pixel coordinates (homogeneous).
- * @param uVecCOBMsgBuffer Output COB unit-vector payload (to be filled).
- * @param uVecCOMMsgBuffer Output COM unit-vector payload (to be filled).
+ * @param uVecMsgBuffer Output COM unit-vector payload (to be filled).
  * @param comMsgBuffer Output COM metadata payload (to be filled).
- * @return Tuple of populated (uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer).
+ * @return Tuple of populated (uVecCOMMsgBuffer, comMsgBuffer).
  */
-std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload, OpNavCOMMsgPayload>
-CobConverterAlgorithm::populateOutputMessages(const uint64_t timeTag,
-                                              const Eigen::Vector3d &centerOfMass,
-                                              const Eigen::Vector3d &centerOfBrightness,
-                                              OpNavUnitVecMsgPayload &uVecCOBMsgBuffer,
-                                              OpNavUnitVecMsgPayload &uVecCOMMsgBuffer,
-                                              OpNavCOMMsgPayload &comMsgBuffer) {
-    Eigen::Vector3d rhatCOB_N = this->dcm_NC * this->rhatCOB_C;
-    Eigen::Vector3d rhatCOB_B = this->dcm_BN * rhatCOB_N;
+std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::populateOutputMessages(
+    const uint64_t timeTag,
+    const Eigen::Vector3d &centerOfMass,
+    const Eigen::Vector3d &centerOfBrightness,
+    OpNavUnitVecMsgPayload &uVecMsgBuffer,
+    OpNavCOMMsgPayload &comMsgBuffer) {
     Eigen::Vector3d rhatCOM_N = this->dcm_NC * this->rhatCOM_C;
-    Eigen::Vector3d rhatCOM_B = this->dcm_BN * rhatCOB_N;
+    Eigen::Vector3d rhatCOM_B = this->dcm_BN * rhatCOM_N;
     Eigen::Matrix3d covar_N = this->dcm_BN.transpose() * this->covar_B * this->dcm_BN;
     Eigen::Matrix3d covar_C = this->dcm_NC.transpose() * covar_N * this->dcm_NC;
 
-    eigenMatrix3d2CArray(covar_N, uVecCOBMsgBuffer.covar_N);
-    eigenMatrix3d2CArray(covar_C, uVecCOBMsgBuffer.covar_C);
-    eigenMatrix3d2CArray(this->covar_B, uVecCOBMsgBuffer.covar_B);
-    eigenVector3d2CArray(rhatCOB_N, uVecCOBMsgBuffer.rhat_BN_N);
-    eigenVector3d2CArray(this->rhatCOB_C, uVecCOBMsgBuffer.rhat_BN_C);
-    eigenVector3d2CArray(rhatCOB_B, uVecCOBMsgBuffer.rhat_BN_B);
-    uVecCOBMsgBuffer.timeTag = static_cast<double>(timeTag) * NANO2SEC;
-    uVecCOBMsgBuffer.valid = this->goodOutlierCheck;
-
-    eigenMatrix3d2CArray(covar_N, uVecCOMMsgBuffer.covar_N);
-    eigenMatrix3d2CArray(covar_C, uVecCOMMsgBuffer.covar_C);
-    eigenMatrix3d2CArray(this->covar_B, uVecCOMMsgBuffer.covar_B);
-    eigenVector3d2CArray(rhatCOM_N, uVecCOMMsgBuffer.rhat_BN_N);
-    eigenVector3d2CArray(this->rhatCOM_C, uVecCOMMsgBuffer.rhat_BN_C);
-    eigenVector3d2CArray(rhatCOM_B, uVecCOMMsgBuffer.rhat_BN_B);
-    uVecCOMMsgBuffer.timeTag = static_cast<double>(timeTag) * NANO2SEC;
-    uVecCOMMsgBuffer.valid = (this->validCOM && this->goodOutlierCheck);
+    eigenMatrix3d2CArray(covar_N, uVecMsgBuffer.covar_N);
+    eigenMatrix3d2CArray(covar_C, uVecMsgBuffer.covar_C);
+    eigenMatrix3d2CArray(this->covar_B, uVecMsgBuffer.covar_B);
+    eigenVector3d2CArray(rhatCOM_N, uVecMsgBuffer.rhat_BN_N);
+    eigenVector3d2CArray(this->rhatCOM_C, uVecMsgBuffer.rhat_BN_C);
+    eigenVector3d2CArray(rhatCOM_B, uVecMsgBuffer.rhat_BN_B);
+    uVecMsgBuffer.timeTag = static_cast<double>(timeTag) * NANO2SEC;
+    uVecMsgBuffer.valid = (this->validCOM && this->goodOutlierCheck);
 
     comMsgBuffer.centerOfBrightness[0] = centerOfBrightness[0];
     comMsgBuffer.centerOfBrightness[1] = centerOfBrightness[1];
@@ -325,7 +311,7 @@ CobConverterAlgorithm::populateOutputMessages(const uint64_t timeTag,
     comMsgBuffer.timeTag = timeTag;
     comMsgBuffer.valid = this->validCOM;
 
-    return {uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer};
+    return {uVecMsgBuffer, comMsgBuffer};
 }
 
 /**
@@ -337,15 +323,14 @@ CobConverterAlgorithm::populateOutputMessages(const uint64_t timeTag,
  *
  * @param currentSimNanos Current simulation time in nanoseconds.
  */
-std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::updateState(
+std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::updateState(
     const uint64_t currentSimNanos,
     const CameraModelMsgPayload &cameraSpecs,
     const OpNavCOBMsgPayload &cobMsgBuffer,
     const NavAttMsgPayload &navAttBuffer,
     const NavAttMsgPayload &sunBuffer,
     const FilterMsgPayload &filterMsgBuffer) {
-    OpNavUnitVecMsgPayload uVecCOBMsgBuffer{};
-    OpNavUnitVecMsgPayload uVecCOMMsgBuffer{};
+    OpNavUnitVecMsgPayload uVecMsgBuffer{};
     OpNavCOMMsgPayload comMsgBuffer{};
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0) {
@@ -366,11 +351,11 @@ std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> C
             this->cobOutlierDetection(filterMsgBuffer);
         }
 
-        std::tie(uVecCOBMsgBuffer, uVecMsgBuffer, comMsgBuffer) = this->populateOutputMessages(
-            cobMsgBuffer.timeTag, centerOfMass, centerOfBrightness, uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer);
+        std::tie(uVecMsgBuffer, comMsgBuffer) = this->populateOutputMessages(
+            cobMsgBuffer.timeTag, centerOfMass, centerOfBrightness, uVecMsgBuffer, comMsgBuffer);
     }
 
-    return {uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer};
+    return {uVecMsgBuffer, comMsgBuffer};
 }
 
 /**

@@ -74,9 +74,8 @@ class CobConverter : public SysModel {
 
    public:
     // Output messages
-    Message<OpNavUnitVecMsgPayload> opnavUnitVecCOBOutMsg;
-    Message<OpNavUnitVecMsgPayload> opnavUnitVecCOMOutMsg;
-    Message<OpNavCOMMsgPayload> opnavCOMOutMsg;
+    Message<OpNavUnitVecMsgPayload> opnavUnitVecOutMsg;
+    Message<OpNavCOMMsgPayload> comCorrectionOutMsg;
 
     // Input messages
     ReadFunctor<OpNavCOBMsgPayload> opnavCOBInMsg;

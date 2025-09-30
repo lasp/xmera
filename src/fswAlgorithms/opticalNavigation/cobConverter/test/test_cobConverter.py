@@ -233,11 +233,9 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
     sunInMsg = messaging.NavAttMsg().write(inputSun)
     module.sunInMsg.subscribeTo(sunInMsg)
 
-    dataLogUnitVecCOB = module.opnavUnitVecCOBOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLogUnitVecCOB)
-    dataLogUnitVecCOM = module.opnavUnitVecCOMOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLogUnitVecCOM)
-    dataLogCOM = module.opnavCOMOutMsg.recorder()
+    dataLogUnitVec = module.opnavUnitVecOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLogUnitVec)
+    dataLogCOM = module.comCorrectionOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLogCOM)
 
     unitTestSim.InitializeSimulation()
@@ -294,11 +292,6 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
 
     covar_N_true = np.dot(dcm_BN.T, np.dot(covar_B_true, dcm_BN)).flatten() * goodPixels
 
-    if goodPixels and cobErrorCenter < acceptedCobError:
-        valid_COB_true = True
-    else:
-        valid_COB_true = False
-
     # Center of Mass Message and Unit Vector
     if goodPixels and (method == binary or method == lambertian):
         valid_COM_true = True
@@ -308,25 +301,16 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
         rhat_COM_N_true = rhat_COB_N_true
 
     # module output
-    rhat_COB_N = dataLogUnitVecCOB.rhat_BN_N[0]
-    covar_N = dataLogUnitVecCOB.covar_N[0]
-    time_COB = dataLogUnitVecCOB.timeTag[0]
-    valid_COB = dataLogUnitVecCOB.valid[0]
     com = dataLogCOM.centerOfMass[0]
-    time_COM_ns = dataLogCOM.timeTag[0]
+    time_COM = dataLogCOM.timeTag[0]
     valid_COM = dataLogCOM.valid[0]
-    rhat_COM_N = dataLogUnitVecCOM.rhat_BN_N[0]
+    rhat_COM_N = dataLogUnitVec.rhat_BN_N[0]
+    covar_N = dataLogUnitVec.covar_N[0]
 
     # make sure module output data is correct
     tolerance = 1e-9  #atol=1e-9 due to floating point precision limits
     np.testing.assert_((np.linalg.norm(covar_COM_C_true) + tolerance >= np.linalg.norm(covar_COB_C_true)), "Some elements in A are less than in B")
 
-    np.testing.assert_allclose(rhat_COB_N,
-                               rhat_COB_N_true,
-                               rtol=0,
-                               atol=tolerance,
-                               err_msg='Variable: rhat_COB_N',
-                               verbose=True)
 
     np.testing.assert_allclose(covar_N,
                                covar_N_true,
@@ -334,24 +318,13 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
                                atol=tolerance,
                                err_msg='Variable: covar_N',
                                verbose=True)
-
-    np.testing.assert_allclose(time_COB,
-                               timeTag_true,
-                               rtol=0,
-                               atol=tolerance,
-                               err_msg='Variable: time_COB',
-                               verbose=True)
-    np.testing.assert_equal(valid_COB,
-                            valid_COB_true,
-                            err_msg='Variable: valid_COB',
-                            verbose=True)
     np.testing.assert_allclose(com,
                                com_true,
                                rtol=0,
                                atol=tolerance,
                                err_msg='Variable: com',
                                verbose=True)
-    np.testing.assert_allclose(time_COM_ns,
+    np.testing.assert_allclose(time_COM,
                                timeTag_true_ns,
                                rtol=0,
                                atol=tolerance,

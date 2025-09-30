@@ -49,13 +49,12 @@ class CobConverterAlgorithm {
     CobConverterAlgorithm(PhaseAngleCorrectionMethodAlgorithm method, double radiusObject);
     ~CobConverterAlgorithm();
 
-    std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> updateState(
-        const uint64_t currentSimNanos,
-        const CameraModelMsgPayload &cameraSpecs,
-        const OpNavCOBMsgPayload &cobMsgBuffer,
-        const NavAttMsgPayload &navAttBuffer,
-        const NavAttMsgPayload &sunBuffer,
-        const FilterMsgPayload &filterMsgBuffer);
+    std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> updateState(const uint64_t currentSimNanos,
+                                                                       const CameraModelMsgPayload &cameraSpecs,
+                                                                       const OpNavCOBMsgPayload &cobMsgBuffer,
+                                                                       const NavAttMsgPayload &navAttBuffer,
+                                                                       const NavAttMsgPayload &sunBuffer,
+                                                                       const FilterMsgPayload &filterMsgBuffer);
 
     void setRadius(double radius);
     double getRadius() const;
@@ -80,12 +79,11 @@ class CobConverterAlgorithm {
     std::tuple<Eigen::Vector3d, Eigen::Vector3d> computeCentersOfInterest(const OpNavCOBMsgPayload &cobMsgBuffer) const;
     void computeRelevantVectors(const Eigen::Vector3d &centerOfBrightness, const Eigen::Vector3d &centerOfMass);
     void computeCameraFrameUncertainty(const FilterMsgPayload &filterMsgBuffer, double pixelsFound);
-    std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> populateOutputMessages(
+    std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> populateOutputMessages(
         uint64_t timeTag,
         const Eigen::Vector3d &centerOfMass,
         const Eigen::Vector3d &centerOfBrightness,
         OpNavUnitVecMsgPayload &uVecCOBMsgBuffer,
-        OpNavUnitVecMsgPayload &uVecCOMMsgBuffer,
         OpNavCOMMsgPayload &comMsgBuffer);
 
     PhaseAngleCorrectionMethodAlgorithm phaseAngleCorrectionMethod;
