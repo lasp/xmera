@@ -25,7 +25,6 @@
 #include <cstdint>
 
 #include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDef/FilterMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
