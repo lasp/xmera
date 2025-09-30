@@ -19,6 +19,7 @@
 
 #include "linearTranslationOneDOFStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector() {
     this->effProps.mEff = 0.0;
@@ -236,7 +237,7 @@ void linearTranslationOneDOFStateEffector::updateEnergyMomContributions(double i
 
 void linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates() {
     Eigen::Matrix3d dcm_FN = this->dcm_FB * this->dcm_BN;
-    this->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
+    this->sigma_FN = dcmToMrp(dcm_FN);
     this->omega_FN_F = this->dcm_FB.transpose() * this->omega_BN_B;
 
     this->r_FcN_N = (Eigen::Vector3d) * this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;

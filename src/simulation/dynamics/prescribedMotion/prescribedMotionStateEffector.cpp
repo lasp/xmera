@@ -20,6 +20,7 @@
 #include "prescribedMotionStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 #include <string>
 
 /*! The constructor sets the module variables to default values. */
@@ -290,7 +291,7 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double callTime
 void PrescribedMotionStateEffector::computePrescribedMotionInertialStates() {
     // Compute the effector's attitude with respect to the inertial frame
     Eigen::Matrix3d dcm_FN = (this->dcm_BF).transpose() * this->dcm_BN;
-    this->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
+    this->sigma_FN = dcmToMrp(dcm_FN);
 
     // Compute the effector's inertial angular velocity
     this->omega_FN_F = (this->dcm_BF).transpose() * this->omega_FN_B;

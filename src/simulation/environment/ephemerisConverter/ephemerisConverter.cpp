@@ -20,6 +20,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 EphemerisConverter::EphemerisConverter()
 {
@@ -88,7 +89,7 @@ void EphemerisConverter::convertEphemData(uint64_t clockNow)
 
         /* Compute sigma_BN */
         dcm_BN = cArray2EigenMatrix3d(*this->spiceInBuffers.at(c).J20002Pfix);
-        sigma_BN = eigenMRPd2Vector3d(eigenC2MRP(dcm_BN));
+        sigma_BN = dcmToMrp(dcm_BN);
         eigenVector3d2CArray(sigma_BN, this->ephemOutBuffers.at(c).sigma_BN); //sigma_BN
 
         /* Compute omega_BN_B */

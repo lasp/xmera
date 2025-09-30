@@ -19,6 +19,7 @@
 
 #include "hingedRigidBodyStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 #include <string>
 
 /*! This is the constructor, setting variables to default values */
@@ -376,7 +377,7 @@ void HingedRigidBodyStateEffector::computePanelInertialStates() {
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP * dcm_NP.transpose();
-    this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    this->sigma_SN = dcmToMrp(dcm_SN);
 
     // inertial angular velocity
     Eigen::Vector3d omega_BN_B;

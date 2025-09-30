@@ -19,6 +19,7 @@
 
 #include "hillPointCpp.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 
 /*! This method performs the module reset capability. */
@@ -78,7 +79,7 @@ void HillPointCpp::computeHillPointingReference(Eigen::Vector3d r_BN_N,
     dcm_RN.row(1) = dcm_RN.row(2).cross(dcm_RN.row(0));
 
     /*! - Compute R-frame orientation */
-    Eigen::Vector3d sigma_RN = eigenMRPd2Vector3d(eigenC2MRP(dcm_RN));
+    Eigen::Vector3d sigma_RN = dcmToMrp(dcm_RN);
     eigenVector3d2CArray(sigma_RN, attRefOut->sigma_RN);
 
     /*! - Compute R-frame inertial rate and acceleration */
