@@ -18,7 +18,7 @@
  */
 
 #include "stateSpaceStateEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <string>
 
 StateSpaceStateEffector::StateSpaceStateEffector(int n) : sizeOfStateSpace(n)

@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
 
 /*! This method creates a fixed attitude reference message.  The desired orientation is

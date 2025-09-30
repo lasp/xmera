@@ -18,7 +18,7 @@
  */
 
 #include "fswAlgorithms/attControl/thrMomentumManagementCpp/thrMomentumManagementCpp.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 void ThrMomentumManagementCpp::reset(uint64_t currentSimNanos) {

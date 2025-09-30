@@ -18,7 +18,7 @@
  */
 #include "geodeticConversion.h"
 #include "rigidBodyKinematics.h"
-#include "avsEigenSupport.h"
+#include "eigenSupport.h"
 
 
 /*! Converts from a planet-centered inertial position (i.e., J2000 ECI) to a planet-centered, planet-fixed position given a rotation matrix.

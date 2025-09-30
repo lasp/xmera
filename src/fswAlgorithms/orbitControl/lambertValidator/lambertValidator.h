@@ -29,7 +29,7 @@
 #include "architecture/msgPayloadDef/LambertValidatorMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 
 #define NUM_INITIALSTATES 27  // number of initial states

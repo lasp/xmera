@@ -21,7 +21,7 @@
 #define _COB_CONVERT_H_
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <stdint.h>
 #include <Eigen/Dense>
 

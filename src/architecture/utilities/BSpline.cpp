@@ -18,7 +18,7 @@
  */
 
 #include "BSpline.h"
-#include <architecture/utilities/avsEigenSupport.h>
+#include <architecture/utilities/eigenSupport.h>
 #include <iostream>
 #include <math.h>
 

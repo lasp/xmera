@@ -19,7 +19,7 @@
 
 #include "simulation/dynamics/MtbEffector/MtbEffector.h"
 #include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! This is the constructor for the module class.  It sets default variable

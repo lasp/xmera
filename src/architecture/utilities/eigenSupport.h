@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _AVSEIGENSUPPORT_
-#define _AVSEIGENSUPPORT_
+#ifndef EIGENSUPPORT
+#define EIGENSUPPORT
 
 #include "avsEigenMRP.h"
 
@@ -369,4 +369,4 @@ Eigen::Matrix3<typename Eigen::MatrixBase<Derived>::Scalar> eigenTilde(const Eig
     return mOut;
 }
 
-#endif /* _AVSEIGENSUPPORT_ */
+#endif // EIGENSUPPORT

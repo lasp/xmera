@@ -30,7 +30,7 @@
 #include "architecture/msgPayloadDef/AtmoPropsMsgPayload.h"
 
 #include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 
 //! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and

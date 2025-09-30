@@ -18,7 +18,7 @@
  */
 
 #include "sphericalPendulum.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <math.h>
 #include <iostream>
 

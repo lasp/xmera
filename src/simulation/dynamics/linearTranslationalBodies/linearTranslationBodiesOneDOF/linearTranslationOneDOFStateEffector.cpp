@@ -18,7 +18,7 @@
  */
 
 #include "linearTranslationOneDOFStateEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 
 linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector() {

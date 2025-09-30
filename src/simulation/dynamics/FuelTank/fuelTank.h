@@ -28,7 +28,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 
 #include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <math.h>
 #include <vector>
 

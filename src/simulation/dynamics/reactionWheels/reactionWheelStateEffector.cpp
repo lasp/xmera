@@ -18,7 +18,7 @@
  */
 
 #include "reactionWheelStateEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <cmath>
 #include <cstring>
 #include <iostream>

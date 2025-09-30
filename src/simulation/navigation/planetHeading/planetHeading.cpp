@@ -19,7 +19,7 @@
 
 #include "planetHeading.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 
 /*! Customer constructor just sets the spacecraftSTateInMsg by default*/
 PlanetHeading::PlanetHeading() {}

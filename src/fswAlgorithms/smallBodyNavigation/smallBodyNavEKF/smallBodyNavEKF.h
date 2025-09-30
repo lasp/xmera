@@ -28,7 +28,7 @@
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDef/SmallBodyNavMsgPayload.h"
 #include "architecture/msgPayloadDef/THROutputMsgPayload.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/orbitalMotion.h"
 

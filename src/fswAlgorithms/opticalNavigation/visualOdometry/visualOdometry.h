@@ -28,7 +28,7 @@
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <vector>

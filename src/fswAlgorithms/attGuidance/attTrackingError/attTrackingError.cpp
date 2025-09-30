@@ -18,7 +18,7 @@
 
 #include "fswAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
 
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 

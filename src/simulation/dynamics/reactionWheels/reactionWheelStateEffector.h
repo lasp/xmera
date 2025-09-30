@@ -38,7 +38,7 @@
 #include "architecture/utilities/bskLogging.h"
 
 #include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 
 /*! @brief reaction wheel state effector class */
 class ReactionWheelStateEffector : public SysModel, public StateEffector {

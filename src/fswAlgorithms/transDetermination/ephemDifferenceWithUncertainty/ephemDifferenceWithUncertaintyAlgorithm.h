@@ -21,7 +21,7 @@
 #define EPHEM_DIFFERENCE_WITH_UNCERTAINTY_ALGORITHM_H
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <stdint.h>
 #include <Eigen/Dense>
 
