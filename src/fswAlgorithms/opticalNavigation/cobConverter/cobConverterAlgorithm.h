@@ -83,6 +83,7 @@ class CobConverterAlgorithm {
     std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> populateOutputMessages(
         uint64_t timeTag,
         const Eigen::Vector3d &centerOfMass,
+        const Eigen::Vector3d &centerOfBrightness,
         OpNavUnitVecMsgPayload &uVecCOBMsgBuffer,
         OpNavUnitVecMsgPayload &uVecCOMMsgBuffer,
         OpNavCOMMsgPayload &comMsgBuffer);

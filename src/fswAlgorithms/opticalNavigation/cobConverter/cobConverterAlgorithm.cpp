@@ -275,6 +275,7 @@ void CobConverterAlgorithm::computeCameraFrameUncertainty(const FilterMsgPayload
  *
  * @param timeTag Measurement timestamp (nanoseconds).
  * @param centerOfMass COM in pixel coordinates (homogeneous).
+ * @param centerOfBrightness COB in pixel coordinates (homogeneous).
  * @param uVecCOBMsgBuffer Output COB unit-vector payload (to be filled).
  * @param uVecCOMMsgBuffer Output COM unit-vector payload (to be filled).
  * @param comMsgBuffer Output COM metadata payload (to be filled).
@@ -283,6 +284,7 @@ void CobConverterAlgorithm::computeCameraFrameUncertainty(const FilterMsgPayload
 std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload, OpNavCOMMsgPayload>
 CobConverterAlgorithm::populateOutputMessages(const uint64_t timeTag,
                                               const Eigen::Vector3d &centerOfMass,
+                                              const Eigen::Vector3d &centerOfBrightness,
                                               OpNavUnitVecMsgPayload &uVecCOBMsgBuffer,
                                               OpNavUnitVecMsgPayload &uVecCOMMsgBuffer,
                                               OpNavCOMMsgPayload &comMsgBuffer) {
@@ -311,6 +313,8 @@ CobConverterAlgorithm::populateOutputMessages(const uint64_t timeTag,
     uVecCOMMsgBuffer.timeTag = static_cast<double>(timeTag) * NANO2SEC;
     uVecCOMMsgBuffer.valid = (this->validCOM && this->goodOutlierCheck);
 
+    comMsgBuffer.centerOfBrightness[0] = centerOfBrightness[0];
+    comMsgBuffer.centerOfBrightness[1] = centerOfBrightness[1];
     comMsgBuffer.centerOfMass[0] = centerOfMass[0];
     comMsgBuffer.centerOfMass[1] = centerOfMass[1];
     comMsgBuffer.offsetFactor = this->gamma;
@@ -362,8 +366,8 @@ std::tuple<OpNavUnitVecMsgPayload, OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> C
             this->cobOutlierDetection(filterMsgBuffer);
         }
 
-        std::tie(uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer) = this->populateOutputMessages(
-            cobMsgBuffer.timeTag, centerOfMass, uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer);
+        std::tie(uVecCOBMsgBuffer, uVecMsgBuffer, comMsgBuffer) = this->populateOutputMessages(
+            cobMsgBuffer.timeTag, centerOfMass, centerOfBrightness, uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer);
     }
 
     return {uVecCOBMsgBuffer, uVecCOMMsgBuffer, comMsgBuffer};
