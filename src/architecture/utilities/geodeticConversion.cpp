@@ -27,8 +27,7 @@
 @return pcpfPosition: [m] Position vector in PCPF coordinates
 */
 Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3]){
-    // cArrayAsEigenMatrixX expects a column major input, thus the result is transposed
-    Eigen::MatrixXd dcm_PN = cArrayAsEigenMatrixX(*J20002Pfix,3,3).transpose();
+    Eigen::Matrix3d dcm_PN = cArrayAsEigenMatrix3(*J20002Pfix);
     Eigen::Vector3d pcpfPosition = dcm_PN * pciPosition;
 
     return pcpfPosition;
@@ -131,8 +130,7 @@ Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetEqRad, double
 */
 Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3])
 {
-    // cArrayAsEigenMatrixX expects a column major input, thus the result is transposed
-    Eigen::MatrixXd dcm_NP = cArrayAsEigenMatrixX(*J20002Pfix,3,3);
+    Eigen::Matrix3d dcm_NP = cArrayAsEigenMatrix3(*J20002Pfix).transpose();
     Eigen::Vector3d pciPosition = dcm_NP * pcpfPosition;
 
     return pciPosition;

@@ -142,7 +142,7 @@ void SmallBodyNavEKF::predict(uint64_t currentSimNanos) {
     /* Compute the hill frame DCM of the small body */
     double dcm_ON_array[3][3];
     hillFrame(asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, dcm_ON_array);
-    dcm_ON = cArrayAsEigenMatrixX(*dcm_ON_array, 3, 3).transpose();
+    dcm_ON = cArrayAsEigenMatrix3(*dcm_ON_array);
 
     /* Compute the direction of the sun from the asteroid in the small body's hill frame, assumes heliocentric frame
      * centered at the origin of the sun, not the solar system's barycenter*/
@@ -225,7 +225,7 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
     double dcm_BN_meas[3][3];
     MRP2C(this->navAttInMsgBuffer.sigma_BN, dcm_BN_meas);
     Eigen::Matrix3d dcm_OB;
-    dcm_OB = dcm_ON * (cArrayAsEigenMatrixX(*dcm_BN_meas, 3, 3));
+    dcm_OB = dcm_ON * cArrayAsEigenMatrix3(*dcm_BN_meas).transpose();
     /* Now compute x2_dot */
     x_hat_dot_k.segment(3, 3) = -F_ddot * o_hat_3_tilde * x_1 - 2 * F_dot * o_hat_3_tilde * x_2 -
                                 pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x_1 -

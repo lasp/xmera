@@ -244,7 +244,7 @@ void Albedo::updateState(uint64_t currentSimNanos) {
             tmpTot[3] += outData[3];
             idx++;
         }
-        this->albOutData.push_back(cArrayAsEigenMatrixX(tmpTot, 4, 1));
+        this->albOutData.push_back(cArrayAsEigenVector(tmpTot));
     }
     this->writeMessages(currentSimNanos);
 }

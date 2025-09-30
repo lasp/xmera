@@ -48,7 +48,7 @@ CmdTorqueBodyMsgPayload RateControlAlgorithm::update(AttGuidMsgPayload attGuidIn
  @param vehicleConfigIn Vehicle config input
 */
 void RateControlAlgorithm::setSpacecraftInertia(VehicleConfigMsgPayload vehicleConfigIn) {
-    this->ISCPntB_B = cArrayAsEigenMatrixX(vehicleConfigIn.ISCPntB_B, 3, 3);
+    this->ISCPntB_B = cArrayAsEigenMatrix3(vehicleConfigIn.ISCPntB_B);
 }
 
 /*! Setter method for the derivative gain P.

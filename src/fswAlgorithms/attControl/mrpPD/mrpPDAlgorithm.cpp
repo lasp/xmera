@@ -53,7 +53,7 @@ CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayl
  @param vehicleConfigIn Vehicle config input
 */
 void MrpPDAlgorithm::setSpacecraftInertia(VehicleConfigMsgPayload vehicleConfigIn) {
-    this->ISCPntB_B = cArrayAsEigenMatrixX(vehicleConfigIn.ISCPntB_B, 3, 3);
+    this->ISCPntB_B = cArrayAsEigenMatrix3(vehicleConfigIn.ISCPntB_B);
 }
 
 /*! Setter method for the derivative gain P.

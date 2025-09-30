@@ -204,7 +204,7 @@ void CobConverter::updateState(uint64_t currentSimNanos) {
             Eigen::RowVector3d deltaAlpha_delta_R = sr * rr;
 
             /*! Compute Com uncertainty direction */
-            Eigen::Matrix<double, 6, 6> Covariance = cArrayAsEigenMatrixX(filterMsgBuffer.covar, 6, 6);
+            Eigen::Matrix<double, 6, 6> Covariance = cArrayAsEigenMatrix<double, 6, 6>(filterMsgBuffer.covar);
             Eigen::Matrix<double, 3, 3> positionCovariance = Covariance.topLeftCorner(3, 3);
 
             Eigen::RowVector3d deltaBinary_r = deltaBinary_delta_r + (deltaBinary_deltaAlpha * deltaAlpha_delta_R);
