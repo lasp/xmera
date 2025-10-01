@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -125,6 +125,3 @@ def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset)
 
 
     return ansSigma, ansOmega_RN_N, ansdOmega_RN_N
-
-
-

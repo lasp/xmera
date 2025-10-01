@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module mrpRotation
+%module mrpRotation_C
 %{
-   #include "mrpRotation.h"
+   #include "mrpRotation_C.h"
 %}
 
 %pythoncode %{
@@ -27,10 +27,8 @@
 
 %include "sys_model.i"
 %include "swig_conly_data.i"
-%include "swig_eigen.i"
 
-%include "mrpRotation.h"
-%include "mrpRotationAlgorithm.h"
+%include "mrpRotation_C.h"
 
 %include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 %include "architecture/msgPayloadDef/AttStateMsgPayload.h"
