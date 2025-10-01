@@ -59,7 +59,7 @@ void MrpSteering::updateState(uint64_t callTime)
 
     for (uint32_t i=0; i<3; ++i) {
         double sigma_i = sigma_BR[i];
-        double f_i = atan(M_PI_2/this->omega_max*(this->K1*sigma_i + this->K3*pow(sigma_i,3)))/M_PI_2*this->omega_max;
+        double f_i = atan(M_PI_2/this->omegaMax*(this->K1*sigma_i + this->K3*pow(sigma_i,3)))/M_PI_2*this->omegaMax;
         omega_ast[i] = - f_i;
     }
     if (!this->ignoreOuterLoopFeedforward) {
@@ -69,7 +69,7 @@ void MrpSteering::updateState(uint64_t callTime)
         for (uint32_t i=0; i<3; ++i) {
             double sigma_i = sigma_BR[i];
             double f_i = (3*this->K3*pow(sigma_i,2) + this->K1)/
-                         (pow(M_PI_2/this->omega_max*(this->K1*sigma_i + this->K3*pow(sigma_i,3)),2) + 1);
+                         (pow(M_PI_2/this->omegaMax*(this->K1*sigma_i + this->K3*pow(sigma_i,3)),2) + 1);
             omega_ast_p[i] = - f_i * sigmaDot_BR[i];
         }
     }
@@ -81,3 +81,62 @@ void MrpSteering::updateState(uint64_t callTime)
 
     return;
 }
+
+/*! Set the linear feedback gain K1
+ @return void
+ @param gain [-] linear feedback gain K1
+*/
+void MrpSteering::setK1(const double gain) {
+    if (gain < 0.0) {
+        throw std::invalid_argument("mrpSteering feedback gain K1 must not be negative");
+    }
+    this->K1 = gain;
+}
+
+/*! Get the linear feedback gain K1
+ @return double
+*/
+double MrpSteering::getK1() const { return this->K1; }
+
+/*! Set the cubic feedback gain K3
+ @return void
+ @param gain [-] cubic feedback gain K3
+*/
+void MrpSteering::setK3(const double gain) {
+    if (gain < 0.0) {
+        throw std::invalid_argument("mrpSteering feedback gain K3 must not be negative");
+    }
+    this->K3 = gain;
+}
+
+/*! Get the cubic feedback gain K3
+ @return double
+*/
+double MrpSteering::getK3() const { return this->K3; }
+
+/*! Set the maximum rate command of steering control
+ @return void
+ @param omega [-] maximum rate command of steering control
+*/
+void MrpSteering::setOmegaMax(const double omega) {
+    if (omega <= 0.0) {
+        throw std::invalid_argument("mrpSteering maximum rate omegaMax must be positive");
+    }
+    this->omegaMax = omega;
+}
+
+/*! Get the maximum rate command of steering control
+ @return double
+*/
+double MrpSteering::getOmegaMax() const { return this->omegaMax; }
+
+/*! Set whether the outer loop feed-forward is ignored
+ @return void
+ @param ignore boolean whether the outer loop feed-forward should be ignored
+*/
+void MrpSteering::setIgnoreFeedforward(const bool ignore) { this->ignoreOuterLoopFeedforward = ignore; }
+
+/*! Get whether the outer loop feed-forward is ignored
+ @return bool
+*/
+bool MrpSteering::getIgnoreFeedforward() const { return this->ignoreOuterLoopFeedforward; }

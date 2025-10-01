@@ -89,9 +89,9 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.K1 = K1
-    module.K3 = K3
-    module.omega_max = omegaMax
+    module.setK1(K1)
+    module.setK3(K3)
+    module.setOmegaMax(omegaMax)
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -157,10 +157,10 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
 def findTrueValues(guidCmdData, module):
 
-    omegaMax = module.omega_max
+    omegaMax = module.getOmegaMax()
     sigma = np.asarray(guidCmdData.sigma_BR)
-    K1 = np.asarray(module.K1)
-    K3 = np.asarray(module.K3)
+    K1 = np.asarray(module.getK1())
+    K3 = np.asarray(module.getK3())
     Bmat = RigidBodyKinematics.BmatMRP(sigma)
     omegaAst = []   #np.asarray([0, 0, 0])
     omegaAst_P = []
