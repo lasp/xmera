@@ -28,8 +28,9 @@ from Basilisk.utilities import macros
 @pytest.mark.parametrize("K1", [0.15, 0])
 @pytest.mark.parametrize("K3", [1.0, 0])
 @pytest.mark.parametrize("omega_max", [1.5 * macros.D2R, 0.001])
+@pytest.mark.parametrize("ignore_feed_forward", [True, False])
 
-def test_mrp_steering_tracking_integrated(show_plots, K1, K3, omega_max):
+def test_mrp_steering_tracking_integrated(show_plots, K1, K3, omega_max, ignore_feed_forward):
     unit_task_name = "unitTask"
     unit_process_name = "TestProcess"
 
@@ -53,6 +54,7 @@ def test_mrp_steering_tracking_integrated(show_plots, K1, K3, omega_max):
     module.setK1(K1)
     module.setK3(K3)
     module.setOmegaMax(omega_max)
+    module.setIgnoreFeedforward(ignore_feed_forward)
 
     servo.Ki = 0.01
     servo.P = 150.0
@@ -147,7 +149,7 @@ def find_true_values(guid_cmd_data, module):
         steer_rate = -1*(2*omega_max/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omega_max))
         omega_ast.append(steer_rate)
 
-    if 1:#module.ignoreOuterLoopFeedforward: #should be "if not"
+    if not module.getIgnoreFeedforward():
         sigma_p = 0.25*B.dot(omega_ast)
         for i in range(len(sigma)):
             omega_ast_rate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omega_max))**2)*sigma_p[i]
@@ -222,4 +224,4 @@ def find_true_torques(module, servo, guid_cmd_data, rw_speed_message, vehicle_co
     return Lr
 
 if __name__ == "__main__":
-    test_mrp_steering_tracking_integrated(False, 0.15, 1.0, 0.025)
+    test_mrp_steering_tracking_integrated(False, 0.15, 1.0, 0.025, False)
