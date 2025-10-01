@@ -49,44 +49,34 @@ void MrpSteering::reset(uint64_t callTime)
  */
 void MrpSteering::updateState(uint64_t callTime)
 {
-    AttGuidMsgPayload guidCmd;              /* Guidance Message */
-    RateCmdMsgPayload outMsg = {};          /* copy of output message */
-
-    /*! - Read the dynamic input messages */
-    guidCmd = this->guidInMsg();
+    AttGuidMsgPayload guidCmd = this->guidInMsg();
+    RateCmdMsgPayload outMsg{};
 
     Eigen::Vector3d sigma_BR = Eigen::Map<const Eigen::Vector3d>(guidCmd.sigma_BR);
+
     Eigen::Vector3d omega_ast{};
     Eigen::Vector3d omega_ast_p{Eigen::Vector3d::Zero()};
 
-    double  sigma_i;        /* ith component of sigma_B/R */
-    double  value;
-    int     i;
-
-    /* Equation (18): Determine the desired steering rates  */
-    for (i=0;i<3;i++) {
-        sigma_i  = sigma_BR[i];
-        value = atan(M_PI_2/this->omega_max*(this->K1*sigma_i
-                       + this->K3*sigma_i*sigma_i*sigma_i))/M_PI_2*this->omega_max;
-        omega_ast[i] = -value;
+    for (uint32_t i=0; i<3; ++i) {
+        double sigma_i = sigma_BR[i];
+        double f_i = atan(M_PI_2/this->omega_max*(this->K1*sigma_i + this->K3*pow(sigma_i,3)))/M_PI_2*this->omega_max;
+        omega_ast[i] = - f_i;
     }
     if (!this->ignoreOuterLoopFeedforward) {
-        /* Equation (21): Determine the body frame derivative of the steering rates */
         Eigen::Matrix3d B = bmatMrp(sigma_BR);
         Eigen::Vector3d sigmaDot_BR = 0.25 * B * omega_ast;
 
-        for (i=0;i<3;i++) {
-            sigma_i  = sigma_BR[i];
-            value = (3*this->K3*sigma_i*sigma_i + this->K1)/
-                                (pow(M_PI_2/this->omega_max*(this->K1*sigma_i + this->K3*sigma_i*sigma_i*sigma_i),2) + 1);
-            omega_ast_p[i] = - value*sigmaDot_BR[i];
+        for (uint32_t i=0; i<3; ++i) {
+            double sigma_i = sigma_BR[i];
+            double f_i = (3*this->K3*pow(sigma_i,2) + this->K1)/
+                         (pow(M_PI_2/this->omega_max*(this->K1*sigma_i + this->K3*pow(sigma_i,3)),2) + 1);
+            omega_ast_p[i] = - f_i * sigmaDot_BR[i];
         }
     }
 
     eigenVector3d2CArray(omega_ast, outMsg.omega_BastR_B);
     eigenVector3d2CArray(omega_ast_p, outMsg.omegap_BastR_B);
 
-    /*! - Store the output message and pass it to the message bus */
     this->rateCmdOutMsg.write(&outMsg, moduleID, callTime);
 
     return;
