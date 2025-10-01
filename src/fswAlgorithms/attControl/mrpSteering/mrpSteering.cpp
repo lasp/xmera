@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,31 +16,20 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
-    MRP_STEERING Module
-
- */
 
 #include "fswAlgorithms/attControl/mrpSteering/mrpSteering.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include <math.h>
-
-static void MRPSteeringLaw(MrpSteering *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
+#include <stdexcept>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MrpSteering::reset(uint64_t callTime)
-{
+void MrpSteering::reset(uint64_t callTime) {
     // check for required input message
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: mrpSteering.guidInMsg wasn't connected.");
+        throw std::invalid_argument("mrpSteering.guidInMsg wasn't connected.");
     }
-
-    return;
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
@@ -48,59 +37,54 @@ void MrpSteering::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void MrpSteering::updateState(uint64_t callTime)
-{
-    AttGuidMsgPayload guidCmd;              /* Guidance Message */
-    RateCmdMsgPayload outMsg = {};          /* copy of output message */
+void MrpSteering::updateState(uint64_t callTime) {
+    AttGuidMsgPayload guidCmd = this->guidInMsg();
 
-    /*! - Read the dynamic input messages */
-    guidCmd = this->guidInMsg();
+    RateCmdMsgPayload outMsg = this->algorithm.update(guidCmd);
 
-    /*! - evalute MRP kinematic steering law */
-    MRPSteeringLaw(this, guidCmd.sigma_BR, outMsg.omega_BastR_B, outMsg.omegap_BastR_B);
-
-    /*! - Store the output message and pass it to the message bus */
     this->rateCmdOutMsg.write(&outMsg, moduleID, callTime);
-
-    return;
 }
 
-/*! This method computes the MRP Steering law.  A commanded body rate is returned given the MRP
- attitude error measure of the body relative to a reference frame.  The function returns the commanded
- body rate, as well as the body frame derivative of this rate command.
+/*! Set the linear feedback gain K1
  @return void
- @param this  The configuration data associated with this module
- @param sigma_BR    MRP attitude error of B relative to R
- @param omega_ast   Commanded body rates
- @param omega_ast_p Body frame derivative of the commanded body rates
- */
-void MRPSteeringLaw(MrpSteering *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
-{
-    double  sigma_i;        /* ith component of sigma_B/R */
-    double  B[3][3];        /* B-matrix of MRP differential kinematic equations */
-    double  sigma_p[3];     /* MRP rates */
-    double  value;
-    int     i;
+ @param gain [-] linear feedback gain K1
+*/
+void MrpSteering::setK1(const double gain) { this->algorithm.setK1(gain); }
 
-    /* Equation (18): Determine the desired steering rates  */
-    for (i=0;i<3;i++) {
-        sigma_i  = sigma_BR[i];
-        value        = atan(M_PI_2/configData->omega_max*(configData->K1*sigma_i
-                       + configData->K3*sigma_i*sigma_i*sigma_i))/M_PI_2*configData->omega_max;
-        omega_ast[i] = -value;
-    }
-    v3SetZero(omega_ast_p);
-    if (!configData->ignoreOuterLoopFeedforward) {
-        /* Equation (21): Determine the body frame derivative of the steering rates */
-        BmatMRP(sigma_BR, B);
-        m33MultV3(B, omega_ast, sigma_p);
-        v3Scale(0.25, sigma_p, sigma_p);
-        for (i=0;i<3;i++) {
-            sigma_i  = sigma_BR[i];
-            value = (3*configData->K3*sigma_i*sigma_i + configData->K1)/
-                                (pow(M_PI_2/configData->omega_max*(configData->K1*sigma_i + configData->K3*sigma_i*sigma_i*sigma_i),2) + 1);
-            omega_ast_p[i] = - value*sigma_p[i];
-        }
-    }
-    return;
-}
+/*! Get the linear feedback gain K1
+ @return double
+*/
+double MrpSteering::getK1() const { return this->algorithm.getK1(); }
+
+/*! Set the cubic feedback gain K3
+ @return void
+ @param gain [-] cubic feedback gain K3
+*/
+void MrpSteering::setK3(const double gain) { this->algorithm.setK3(gain); }
+
+/*! Get the cubic feedback gain K3
+ @return double
+*/
+double MrpSteering::getK3() const { return this->algorithm.getK3(); }
+
+/*! Set the maximum rate command of steering control
+ @return void
+ @param omega [-] maximum rate command of steering control
+*/
+void MrpSteering::setOmegaMax(const double omega) { this->algorithm.setOmegaMax(omega); }
+
+/*! Get the maximum rate command of steering control
+ @return double
+*/
+double MrpSteering::getOmegaMax() const { return this->algorithm.getOmegaMax(); }
+
+/*! Set whether the outer loop feed-forward is ignored
+ @return void
+ @param ignore boolean whether the outer loop feed-forward should be ignored
+*/
+void MrpSteering::setIgnoreFeedforward(const bool ignore) { this->algorithm.setIgnoreFeedforward(ignore); }
+
+/*! Get whether the outer loop feed-forward is ignored
+ @return bool
+*/
+bool MrpSteering::getIgnoreFeedforward() const { return this->algorithm.getIgnoreFeedforward(); }

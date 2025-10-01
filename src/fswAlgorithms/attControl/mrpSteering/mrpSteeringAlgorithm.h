@@ -17,24 +17,16 @@
 
  */
 
-#ifndef MRP_STEERING_H
-#define MRP_STEERING_H
+#ifndef MRP_STEERING_ALGORITHM_H
+#define MRP_STEERING_ALGORITHM_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
-#include "fswAlgorithms/attControl/mrpSteering/mrpSteeringAlgorithm.h"
-#include <stdint.h>
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
-class MrpSteering : public SysModel {
+class MrpSteeringAlgorithm {
    public:
-    MrpSteering() = default;
-    ~MrpSteering() final = default;
-
-    void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override;
+    RateCmdMsgPayload update(AttGuidMsgPayload& guidInMsg) const;
 
     void setK1(const double gain);
     double getK1() const;
@@ -45,11 +37,11 @@ class MrpSteering : public SysModel {
     void setIgnoreFeedforward(const bool ignore);
     bool getIgnoreFeedforward() const;
 
-    Message<RateCmdMsgPayload> rateCmdOutMsg;  //!< rate command output message
-    ReadFunctor<AttGuidMsgPayload> guidInMsg;  //!< attitude guidance input message
-
    private:
-    MrpSteeringAlgorithm algorithm{};
+    double K1{};                        //!< [rad/sec] Proportional gain applied to MRP errors
+    double K3{};                        //!< [rad/sec] Cubic gain applied to MRP error in steering saturation function
+    double omegaMax{};                  //!< [rad/sec] Maximum rate command of steering control
+    bool ignoreOuterLoopFeedforward{};  //!< [] Boolean flag indicating if outer feedforward term should be included
 };
 
 #endif

@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module mrpSteering
+%module mrpSteering_C
 %{
-   #include "mrpSteering.h"
+   #include "mrpSteering_C.h"
 %}
 
 %pythoncode %{
@@ -28,8 +28,7 @@
 %include "sys_model.i"
 %include "swig_conly_data.i"
 
-%include "mrpSteering.h"
-%include "mrpSteeringAlgorithm.h"
+%include "mrpSteering_C.h"
 
 %include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 %include "architecture/msgPayloadDef/RateCmdMsgPayload.h"

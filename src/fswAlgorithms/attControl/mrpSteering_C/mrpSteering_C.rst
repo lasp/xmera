@@ -30,21 +30,19 @@ provides information on what this message is used for.
 
 Detailed Module Description
 ---------------------------
-
 The following text describes the mathematics behind the ``mrpSteering`` module.  Further information can also be
-found in the journal paper `Speed-Constrained Three-Axes Attitude Control Using Kinematic Steering
-<http://dx.doi.org/10.1016/j.actaastro.2018.03.022>`_.
+found in the journal paper `Speed-Constrained Three-Axes Attitude Control Using Kinematic Steering <http://dx.doi.org/10.1016/j.actaastro.2018.03.022>`_.
 
 Steering Law Goals
 ^^^^^^^^^^^^^^^^^^
-This technical note develops a new MRP based steering law that drives a body frame :math:`{\mathcal B}:\{ \hat{\mathbf b}_1, \hat{\mathbf b}_2, \hat{\mathbf b}_3 \}` towards a time varying reference frame :math:`{\mathcal R}:\{ \hat{\mathbf r}_1, \hat{\mathbf r}_2, \hat{\mathbf r}_3 \}`. The inertial frame is given by :math:`{\mathcal N}:\{ \hat{\mathbf n}_1, \hat{\mathbf n}_2, \hat{\mathbf n}_3 \}`.   The RW coordinate frame is given by :math:`\mathcal{W}_{i}:\{ \hat{\mathbf g}_{s_{i}}, \hat{\mathbf g}_{t_{i}}, \hat{\mathbf g}_{g_{i}} \}`.  Using MRPs, the overall control goal is
+This technical note develops a new MRP based steering law that drives a body frame :math:`{\cal B}:\{ \hat{\bf b}_1, \hat{\bf b}_2, \hat{\bf b}_3 \}` towards a time varying reference frame :math:`{\cal R}:\{ \hat{\bf r}_1, \hat{\bf r}_2, \hat{\bf r}_3 \}`. The inertial frame is given by :math:`{\cal N}:\{ \hat{\bf n}_1, \hat{\bf n}_2, \hat{\bf n}_3 \}`.   The RW coordinate frame is given by :math:`\mathcal{W}_{i}:\{ \hat{\bf g}_{s_{i}}, \hat{\bf g}_{t_{i}}, \hat{\bf g}_{g_{i}} \}`.  Using MRPs, the overall control goal is
 
 .. math::
     :label: eq:MS:1
 
-	\mathbf\sigma_{\mathcal{B}/\mathcal{R}} \rightarrow 0
+	\pmb\sigma_{\mathcal{B}/\mathcal{R}} \rightarrow 0
 
-The reference frame orientation :math:`\mathbf \sigma_{\mathcal{R}/\mathcal{N}}`, angular velocity :math:`\mathbf\omega_{\mathcal{R}/\mathcal{N}}` and inertial angular acceleration :math:`\dot{\mathbf \omega}_{\mathcal{R}/\mathcal{N}}` are assumed to be known.
+The reference frame orientation :math:`\pmb \sigma_{\mathcal{R}/\mathcal{N}}`, angular velocity :math:`\pmb\omega_{\mathcal{R}/\mathcal{N}}` and inertial angular acceleration :math:`\dot{\pmb \omega}_{\mathcal{R}/\mathcal{N}}` are assumed to be known.
 
 The rotational equations of motion of a rigid spacecraft with `N` Reaction Wheels (RWs) attached are
 given by `Analytical Mechanics of Space Systems <http://dx.doi.org/10.2514/4.105210>`_.
@@ -52,32 +50,32 @@ given by `Analytical Mechanics of Space Systems <http://dx.doi.org/10.2514/4.105
 .. math::
 	:label: eq:MS:2
 
-	[I_{RW}] \dot{\mathbf \omega} = - [\tilde{\mathbf \omega}] \left(
-	[I_{RW}] \mathbf\omega + [G_{s}] \mathbf h_{s}
-	\right) - [G_{s}] {\mathbf u}_{s} + {\mathbf L}
+	[I_{RW}] \dot{\pmb \omega} = - [\tilde{\pmb \omega}] \left(
+	[I_{RW}] \pmb\omega + [G_{s}] \pmb h_{s}
+	\right) - [G_{s}] {\bf u}_{s} + {\bf L}
 
 where  the inertia tensor :math:`[I_{RW}]` is defined as
 
 .. math::
     :label: eq:MS:3
 
-    [I_{RW}] = [I_{s}] + \sum_{i=1}^{N} \left (J_{t_{i}} \hat{\mathbf g}_{t_{i}} \hat{\mathbf g}_{t_{i}}^{T} + J_{g_{i}}
-    \hat{\mathbf g}_{g_{i}} \hat{\mathbf g}_{g_{i}}^{T}
+    [I_{RW}] = [I_{s}] + \sum_{i=1}^{N} \left (J_{t_{i}} \hat{\bf g}_{t_{i}} \hat{\bf g}_{t_{i}}^{T} + J_{g_{i}}
+    \hat{\bf g}_{g_{i}} \hat{\bf g}_{g_{i}}^{T}
 	\right)
 
 The spacecraft inertial without the `N` RWs is :math:`[I_{s}]`, while :math:`J_{s_{i}}`, :math:`J_{t_{i}}`
-and :math:`J_{g_{i}}` are the RW inertias about the body fixed RW axis :math:`\hat{\mathbf g}_{s_{i}}`
-(RW spin axis), :math:`\hat{\mathbf g}_{t_{i}}` and :math:`\hat{\mathbf g}_{g_{i}}`.
+and :math:`J_{g_{i}}` are the RW inertias about the body fixed RW axis :math:`\hat{\bf g}_{s_{i}}`
+(RW spin axis), :math:`\hat{\bf g}_{t_{i}}` and :math:`\hat{\bf g}_{g_{i}}`.
 The :math:`3\times N` projection matrix :math:`[G_{s}]` is then defined as
 
 .. math::
 	:label: eq:MS:4
 
 	[G_{s}] = \begin{bmatrix}
-		\cdots {}^{B}{\hat{\mathbf g}}_{s_{i}} \cdots
+		\cdots {}^{B}{\hat{\bf g}}_{s_{i}} \cdots
 	\end{bmatrix}
 
-The RW inertial angular momentum vector :math:`{\mathbf h}_{s}` is defined as
+The RW inertial angular momentum vector :math:`{\bf h}_{s}` is defined as
 
 .. math::
 	:label: eq:MS:5
@@ -90,65 +88,73 @@ angular velocity is written in terms of body and RW frame components as
 .. math::
 	:label: eq:MS:6
 
-	\mathbf\omega = \omega_{1} \hat{\mathbf b}_{1} + \omega_{2} \hat{\mathbf b}_{2} + \omega_{3} \hat{\mathbf b}_{3}
-	= \omega_{s_{i}} \hat{\mathbf g}_{s_{i}} +  \omega_{t_{i}} \hat{\mathbf g}_{t_{i}} +  \omega_{g_{i}} \hat{\mathbf g}_{g_{i}}
+	\pmb\omega = \omega_{1} \hat{\bf b}_{1} + \omega_{2} \hat{\bf b}_{2} + \omega_{3} \hat{\bf b}_{3}
+	= \omega_{s_{i}} \hat{\bf g}_{s_{i}} +  \omega_{t_{i}} \hat{\bf g}_{t_{i}} +  \omega_{g_{i}} \hat{\bf g}_{g_{i}}
+
+
+
+
+
+
+
+
 
 MRP Steering Law
 ^^^^^^^^^^^^^^^^
 Steering Law Stability Requirement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-As is commonly done in robotic applications where the steering laws are of the form :math:`\dot{\mathbf x} = {\mathbf u}`,
+As is commonly done in robotic applications where the steering laws are of the form :math:`\dot{\bf x} = {\bf u}`,
 this section derives a kinematic based attitude steering law.  Let us consider the simple Lyapunov candidate function:
 
 .. math::
     :label: eq:MS:7
 
-	V ( \mathbf\sigma_{\mathcal{B}/\mathcal{R}} ) = 2 \ln \left ( 1 + \mathbf\sigma_{\mathcal{B}/\mathcal{R}} ^{T} \mathbf\sigma_{\mathcal{B}/\mathcal{R}} \right)
+	V ( \pmb\sigma_{\mathcal{B}/\mathcal{R}} ) = 2 \ln \left ( 1 + \pmb\sigma_{\mathcal{B}/\mathcal{R}} ^{T} \pmb\sigma_{\mathcal{B}/\mathcal{R}} \right)
 
-in terms of the MRP attitude tracking error :math:`\mathbf\sigma_{\mathcal{B}/\mathcal{R}}`.
+in terms of the MRP attitude tracking error :math:`\pmb\sigma_{\mathcal{B}/\mathcal{R}}`.
 Using the MRP differential kinematic equations
 
 .. math::
     :label: eq:MS:8
 
-	\dot{\mathbf\sigma}_{\mathcal{B}/\mathcal{R}} &= \frac{1}{4}[B(\mathbf\sigma_{\mathcal{B}/\mathcal{R}})] {}^{B}{\mathbf\omega}_{\mathcal{B}/\mathcal{R}}
+	\dot{\pmb\sigma}_{\mathcal{B}/\mathcal{R}} &= \frac{1}{4}[B(\pmb\sigma_{\mathcal{B}/\mathcal{R}})] {}^{B}{\pmb\omega}_{\mathcal{B}/\mathcal{R}}
     \\
 	&= \frac{1}{4} \left[
-	(1-\sigma_{\mathcal{B}/\mathcal{R}}^{2})[I_{3\times 3} + 2 [\tilde{\mathbf\sigma}_{\mathcal{B}/\mathcal{R}}] + 2 \mathbf\sigma_{\mathcal{B}/\mathcal{R}} \mathbf\sigma_{\mathcal{B}/\mathcal{R}}^{T}
-	\right] {}^{B}{\mathbf\omega}_{\mathcal{B}/\mathcal{R}}
+	(1-\sigma_{\mathcal{B}/\mathcal{R}}^{2})[I_{3\times 3} + 2 [\tilde{\pmb\sigma}_{\mathcal{B}/\mathcal{R}}] + 2 \pmb\sigma_{\mathcal{B}/\mathcal{R}} \pmb\sigma_{\mathcal{B}/\mathcal{R}}^{T}
+	\right] {}^{B}{\pmb\omega}_{\mathcal{B}/\mathcal{R}}
 
-where :math:`\sigma_{\mathcal{B}/\mathcal{R}}^{2} = \mathbf\sigma_{\mathcal{B}/\mathcal{R}}^{T} \mathbf\sigma_{\mathcal{B}/\mathcal{R}}`, the time derivative of :math:`V` is
+where :math:`\sigma_{\mathcal{B}/\mathcal{R}}^{2} = \pmb\sigma_{\mathcal{B}/\mathcal{R}}^{T} \pmb\sigma_{\mathcal{B}/\mathcal{R}}`, the time derivative of :math:`V` is
 
 .. math::
     :label: eq:MS:9
 
-	\dot V =\mathbf\sigma_{\mathcal{B}/\mathcal{R}}^{T} \left(  {}^{B}{ \mathbf\omega}_{\mathcal{B}/\mathcal{R}}  \right)
+	\dot V =\pmb\sigma_{\mathcal{B}/\mathcal{R}}^{T} \left(  {}^{B}{ \pmb\omega}_{\mathcal{B}/\mathcal{R}}  \right)
 
 To create a kinematic steering law, let :math:`{\mathcal{B}}^{\ast}` be the desired body orientation,
-and :math:`\mathbf\omega_{{\mathcal{B}}^{\ast}/\mathcal{R}}` be the desired angular velocity vector of
+and :math:`\pmb\omega_{{\mathcal{B}}^{\ast}/\mathcal{R}}` be the desired angular velocity vector of
 this body orientation relative to the reference frame :math:`\mathcal{R}`.  The steering law requires
-an algorithm for the desired body rates :math:`\mathbf\omega_{{\mathcal{B}}^{\ast}/\mathcal{R}}`
+an algorithm for the desired body rates :math:`\pmb\omega_{{\mathcal{B}}^{\ast}/\mathcal{R}}`
 relative to the reference frame make :math:`\dot V` in Eq. :eq:`eq:MS:9` negative definite.
 For this purpose, let us select
 
 .. math::
     :label: eq:MS:10
 
-	{}^{B}{\mathbf\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}} = - {\mathbf f}(\mathbf\sigma_{\mathcal{B}/\mathcal{R}})
+	{}^{B}{\pmb\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}} = - {\bf f}(\pmb\sigma_{\mathcal{B}/\mathcal{R}})
 
-where :math:`{\mathbf f}(\mathbf\sigma)` is an even function such that
+where :math:`{\bf f}(\pmb\sigma)` is an even function such that
 
 .. math::
     :label: eq:MS:11
 
-	\mathbf\sigma ^{T} {\mathbf f}(\mathbf\sigma) > 0
+	\pmb\sigma ^{T} {\bf f}(\pmb\sigma) > 0
 
 The Lyapunov rate simplifies to the negative definite expression:
 
 .. math::
     :label: eq:MS:12
 
-	\dot V = -  \mathbf\sigma_{\mathcal{B}/\mathcal{R}}^{T} {\mathbf f}(\mathbf\sigma_{\mathcal{B}/\mathcal{R}}) < 0
+	\dot V = -  \pmb\sigma_{\mathcal{B}/\mathcal{R}}^{T} {\bf f}(\pmb\sigma_{\mathcal{B}/\mathcal{R}}) < 0
 
 Saturated  MRP Steering Law
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,16 +163,16 @@ A very simple example would be to set
 .. math::
     :label: eq:MS:13
 
-	{\mathbf f} (\mathbf\sigma_{\mathcal{B}/\mathcal{R}}) =  K_{1} \mathbf\sigma_{\mathcal{B}/\mathcal{R}}
+	{\bf f} (\pmb\sigma_{\mathcal{B}/\mathcal{R}}) =  K_{1} \pmb\sigma_{\mathcal{B}/\mathcal{R}}
 
 where :math:`K_{1}>0`.
 This yields a kinematic control where the desired body rates are proportional to the MRP attitude
-error measure.  If the rate should saturate, then :math:`{\mathbf f}()` could be defined as
+error measure.  If the rate should saturate, then :math:`{\bf f}()` could be defined as
 
 .. math::
     :label: eq:MS:14
 
-	{\mathbf f}(\mathbf\sigma_{\mathcal{B}/\mathcal{R}}) = \begin{cases}
+	{\bf f}(\pmb\sigma_{\mathcal{B}/\mathcal{R}}) = \begin{cases}
 		K_{1} \sigma_{i} 		&\text{if } |K_{1} \sigma_{i}| \le \omega_{\text{max}} \\
 		\omega_{\text{max}} \text{sgn}(\sigma_{i}) &\text{if } |K_{1} \sigma_{i}| > \omega_{\text{max}}
 	\end{cases}
@@ -175,15 +181,15 @@ where
 
 .. math::
 
-    \mathbf\sigma_{\mathcal{B}/\mathcal{R}} = (\sigma_{1}, \sigma_{2}, \sigma_{3})^{T}
+    \pmb\sigma_{\mathcal{B}/\mathcal{R}} = (\sigma_{1}, \sigma_{2}, \sigma_{3})^{T}
 
 A smoothly saturating function is given by
 
 .. math::
     :label: eq:MS:15
 
-    {\mathbf f}(\mathbf\sigma_{\mathcal{B}/\mathcal{R}}) = \arctan \left(
-		\mathbf\sigma_{\mathcal{B}/\mathcal{R}} \frac{K_{1} \pi}{2  \omega_{\text{max}}}
+    {\bf f}(\pmb\sigma_{\mathcal{B}/\mathcal{R}}) = \arctan \left(
+		\pmb\sigma_{\mathcal{B}/\mathcal{R}} \frac{K_{1} \pi}{2  \omega_{\text{max}}}
 	\right) \frac{2 \omega_{\text{max}}}{\pi}
 
 where
@@ -191,21 +197,21 @@ where
 .. math::
     :label: eq:MS:15.0
 
-	{\mathbf f}(\mathbf\sigma_{\mathcal{B}/\mathcal{R}}) = \begin{pmatrix}
+	{\bf f}(\pmb\sigma_{\mathcal{B}/\mathcal{R}}) = \begin{pmatrix}
 		f(\sigma_{1})\\ f(\sigma_{2})\\ f(\sigma_{3})
 		\end{pmatrix}
 
 Here as :math:`\sigma_{i} \rightarrow \infty` then the function :math:`f` smoothly converges to the
-maximum speed rate :math:`\pm  \omega_{\text{max}}`.   For small :math:`|\mathbf\sigma_{\mathcal{B}/\mathcal{R}}|`,
+maximum speed rate :math:`\pm  \omega_{\text{max}}`.   For small :math:`|\pmb\sigma_{\mathcal{B}/\mathcal{R}}|`,
 this function linearizes to
 
 .. math::
 
-	{\mathbf f}(\mathbf\sigma_{\mathcal{B}/\mathcal{R}}) \approx K_{1} \mathbf\sigma_{\mathcal{B}/\mathcal{R}} + \text{ H.O.T}
+	{\bf f}(\pmb\sigma_{\mathcal{B}/\mathcal{R}}) \approx K_{1} \pmb\sigma_{\mathcal{B}/\mathcal{R}} + \text{ H.O.T}
 
 
 If the MRP shadow set parameters are used to avoid the MRP singularity at 360 deg, then
-:math:`|\mathbf\sigma_{\mathcal{B}/\mathcal{R}}|` is upper limited by 1.  To control how rapidly the rate commands
+:math:`|\pmb\sigma_{\mathcal{B}/\mathcal{R}}|` is upper limited by 1.  To control how rapidly the rate commands
 approach the :math:`\omega_{\text{max}}` limit, Eq. :eq:`eq:MS:15` is modified to include a cubic term:
 
 .. math::
@@ -215,7 +221,7 @@ approach the :math:`\omega_{\text{max}}` limit, Eq. :eq:`eq:MS:15` is modified t
 		(K_{1} \sigma_{i} +K_{3} \sigma_{i}^{3}) \frac{ \pi}{2  \omega_{\text{max}}}
 	\right) \frac{2 \omega_{\text{max}}}{\pi}
 
-The order of the polynomial must be odd to keep ${\mathbf f}()$ an even function.  A nice feature of Eq. :eq:`eq:MS:15.1`
+The order of the polynomial must be odd to keep ${\bf f}()$ an even function.  A nice feature of Eq. :eq:`eq:MS:15.1`
 is that the control rate is saturated individually about each axis.  If the smoothing component is removed
 to reduce this to a bang-band rate control, then this would yield a Lyapunov optimal control which
 minimizes :math:`\dot V` subject to the allowable rate constraint :math:`\omega_{\text{max}}`.
@@ -248,32 +254,32 @@ the attitude errors have become small, while :math:`K_{3}` controls how rapidly 
 approaches the speed command limit.
 
 The required velocity servo loop design is aided by knowing the body-frame derivative of
-:math:`{}^{B}{\mathbf\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}}` to implement a feed-forward components.
-Using the :math:`{\mathbf f}()` function definition in Eq. :eq:`eq:MS:15.0`, this requires the time
+:math:`{}^{B}{\pmb\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}}` to implement a feed-forward components.
+Using the :math:`{\bf f}()` function definition in Eq. :eq:`eq:MS:15.0`, this requires the time
 derivatives of :math:`f(\sigma_{i})`.
 
 .. math::
 
-    \frac{{}^{B}{\text{d} ({}^{B}{\mathbf\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}} ) }}{\text{d} t} =
-    {\mathbf\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}} '
-    = - \frac{\partial {\mathbf f}}{\partial \mathbf\sigma_{{\mathcal{B}}^{\ast}/\mathcal{R}}} \dot{\mathbf\sigma}_{{\mathcal{B}}^{\ast}/\mathcal{R}}
-    = - \left[ \begin{matrix}
+    \frac{{}^{B}{\text{d} ({}^{B}{\pmb\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}} ) }}{\text{d} t} =
+    {\pmb\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}} '
+    = - \frac{\partial {\bf f}}{\partial \pmb\sigma_{{\mathcal{B}}^{\ast}/\mathcal{R}}} \dot{\pmb\sigma}_{{\mathcal{B}}^{\ast}/\mathcal{R}}
+    = - \begin{pmatrix}
         \frac{\partial  f}{\partial  \sigma_{1}} \dot{ \sigma}_{1} \\
 		\frac{\partial  f}{\partial  \sigma_{2}} \dot{ \sigma}_{2} \\
 		\frac{\partial  f}{\partial  \sigma_{3}} \dot{ \sigma}_{3}
-    \end{matrix} \right]
+    \end{pmatrix}
 
 where
 
 .. math::
-    \dot{\mathbf\sigma}	_{{\mathcal{B}}^{\ast}/\mathcal{R}} =
-    \left[ \begin{matrix}
+    \dot{\pmb\sigma}	_{{\mathcal{B}}^{\ast}/\mathcal{R}} =
+    \begin{pmatrix}
         \dot\sigma_{1}\\
 		\dot\sigma_{2}\\
 		\dot\sigma_{3}
-    \end{matrix} \right] =
-    \frac{1}{4}[B(\mathbf\sigma_{{\mathcal{B}}^{\ast}/\mathcal{R}})]
-    {}^{B}{\mathbf\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}}
+    \end{pmatrix} =
+    \frac{1}{4}[B(\pmb\sigma_{{\mathcal{B}}^{\ast}/\mathcal{R}})]
+    {}^{B}{\pmb\omega}_{{\mathcal{B}}^{\ast}/\mathcal{R}}
 
 Using the general :math:`f()` definition in Eq. :eq:`eq:MS:15.1`, its sensitivity with respect
 to :math:`\sigma_{i}` is
@@ -297,15 +303,13 @@ This control assumes the spacecraft is rigid, and that a fast enough rate contro
 
 User Guide
 ----------
+The following variables must be specified from Python:
 
-The module is configured by::
+- The gains ``K1``, ``K3``
+- The value of ``omega_max``
 
-    module = mrpSteering.MrpSteering()
-    module.modelTag = "mrpSteering"
-    module.setK1(K1)
-    module.setK3(K3)
-    module.setOmegaMax(omega_max)
+This module returns the values of :math:`\pmb\omega_{\mathcal{B}^{\ast}/\mathcal{R}}` and
+:math:`\pmb\omega_{\mathcal{B}^{\ast}/\mathcal{R}}'`, which are used in the rate servo-level
+controller to compute required torques.
 
-If the outer loop feed-forward term should be ignored::
-
-    module.ignoreFeedforward()
+The control update period :math:`\Delta t` is evaluated automatically.
