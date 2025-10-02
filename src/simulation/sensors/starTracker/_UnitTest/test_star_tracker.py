@@ -110,8 +110,8 @@ def test_starTracker(show_plots, useFlag, testCase):
 
     # This test checks the computed platform rate
     elif testCase == 'angular velocity check':
-        prv_CB = [0.0, 0.0, 10.0 * macros.D2R]
-        dcm_CB = rbk.PRV2C(prv_CB)
+        prv_cb = [10.0 * macros.D2R, 0.0, 0.0]
+        dcm_CB = rbk.PRV2C(prv_cb)
         strTracker.setDcmCB(dcm_CB)
         simStopTime = unitProcRate_s
         sigma_BN = np.array([0, 0, 0])
@@ -136,11 +136,11 @@ def test_starTracker(show_plots, useFlag, testCase):
     sigma_BNList = [np.array([0.0, 0.0, 0.0])]
     if testCase == 'angular velocity check':
         rotAxis_N = np.array([1.0, 0.0, 0.0])  # Hub rotation axis
-        prvAngleList = np.array([0.0, 0.25, 0.6, 1.0, 1.1])  # Truth hub attitudes
+        prv_angle_list = np.array([0.0, 169.0, 169.9, 170.1, 171.2]) * macros.D2R  # Truth hub attitudes
 
-        for idx in range(1, len(prvAngleList)):
+        for idx in range(1, len(prv_angle_list)):
             # Compute hub inertial attitude
-            prv_BN = prvAngleList[idx] * rotAxis_N
+            prv_BN = prv_angle_list[idx] * rotAxis_N
             sigma_BN = np.array(rbk.PRV2MRP(prv_BN))
             sigma_BNList.append(sigma_BN)
 
@@ -239,5 +239,5 @@ if __name__ == "__main__":
     test_starTracker(
         False,  # show_plots
         False,  # useFlag
-        'walk bounds'  # testCase
+        'angular velocity check'  # testCase
     )
