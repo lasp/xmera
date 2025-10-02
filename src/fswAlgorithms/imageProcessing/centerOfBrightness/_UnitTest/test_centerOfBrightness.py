@@ -149,7 +149,7 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
         if image == "half_half.png":
             brightness_raw = int(scaler[i] * 255)*white_width*height + 116*grey_width*height
             brightness_ref[i] = brightness_raw / 255
-            lower_idx = max(0, i-(numberOfPointsBrightnessAverage-1))
+            lower_idx = max(0, i-(int(module_config.getNumberOfPointsBrightnessAverage())-1))
             brightnessAverage_ref[i] = np.mean(brightness_ref[lower_idx:i+1])
 
     center = dataLog.centerOfBrightness[0, :]

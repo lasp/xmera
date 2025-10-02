@@ -280,3 +280,93 @@ void CenterOfBrightness::setRelativeBrightnessIncreaseThreshold(double increaseT
 double CenterOfBrightness::getRelativeBrightnessIncreaseThreshold() const {
     return this->relativeBrightnessIncreaseThreshold;
 }
+
+/*! Set the pixel brightness threshold used for detecting bright pixels
+    @param double pixelThreshold
+    @return void
+    */
+void CenterOfBrightness::setPixelThreshold(double PixelThreshold) {
+    this->pixelThreshold = PixelThreshold;
+}
+
+/*! Get the pixel brightness threshold used for detecting bright pixels
+    @return double pixelThreshold
+    */
+double CenterOfBrightness::getPixelThreshold() const {
+    return this->pixelThreshold;
+}
+
+/*! Set the filename for the module to read an image directly
+    @param std::string fileName
+    @return void
+*/
+void CenterOfBrightness::setFileName(const std::string &fileName) {
+    this->fileName = fileName;
+}
+
+/*! Get the filename for the module to read an image directly
+    @return std::string fileName
+*/
+std::string CenterOfBrightness::getFileName() const {
+    return this->fileName;
+}
+
+/*! Set the blur size for the image processing filter
+    @param int32_t blur
+    @return void
+*/
+void CenterOfBrightness::setBlurSize(int32_t blur) {
+    this->blurSize = blur;
+}
+
+/*! Get the blur size for the image processing filter
+    @return int32_t blur
+*/
+int32_t CenterOfBrightness::getBlurSize() const {
+    return this->blurSize;
+}
+
+/*! Enable or disable saving debug images to file
+    @param bool save
+    @return void
+*/
+void CenterOfBrightness::setSaveImages(bool save) {
+    this->saveImages = save;
+}
+
+/*! Get whether saving debug images is enabled
+    @return bool save
+*/
+bool CenterOfBrightness::getSaveImages() const {
+    return this->saveImages;
+}
+
+/*! Set the directory where images should be saved
+    @param std::string directory
+    @return void
+*/
+void CenterOfBrightness::setSaveDir(const std::string &directory) {
+    this->saveDir = directory;
+}
+
+/*! Get the directory where images are saved
+    @return std::string directory
+*/
+std::string CenterOfBrightness::getSaveDir() const {
+    return this->saveDir;
+}
+
+/*! Set the number of points used for rolling brightness averaging
+    @param int32_t rollingAverage
+    @return void
+*/
+void CenterOfBrightness::setNumberOfPointsBrightnessAverage(int32_t rollingAverage) {
+    this->numberOfPointsBrightnessAverage = rollingAverage;
+}
+
+/*! Get the number of points used for rolling brightness averaging
+    @return int32_t rollingAverage
+*/
+int32_t CenterOfBrightness::getNumberOfPointsBrightnessAverage() const {
+    return this->numberOfPointsBrightnessAverage;
+}

@@ -47,6 +47,18 @@ class CenterOfBrightness : public SysModel {
     Eigen::VectorXi getWindowSize() const;
     void setRelativeBrightnessIncreaseThreshold(double increaseThreshold);
     double getRelativeBrightnessIncreaseThreshold() const;
+    void setPixelThreshold(double PixelThreshold);
+    double getPixelThreshold() const;
+    void setFileName(const std::string &fileName);
+    std::string getFileName() const;
+    void setBlurSize(int32_t blur);
+    int32_t getBlurSize() const;
+    void setSaveImages(bool save);
+    bool getSaveImages() const;
+    void setSaveDir(const std::string &directory);
+    std::string getSaveDir() const;
+    void setNumberOfPointsBrightnessAverage(int32_t rollingAverage);
+    int32_t getNumberOfPointsBrightnessAverage() const;
 
    private:
     std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
