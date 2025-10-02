@@ -70,7 +70,7 @@ class CenterOfBrightness : public SysModel {
     std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
     void computeWindow(cv::Mat const &image);
     void applyWindow(cv::Mat const &image) const;
-    void findCob(const cv::Mat &imageCV, const CameraImageMsgPayload &imageBuffer, OpNavCOBMsgPayload &cobBuffer);
+    OpNavCOBMsgPayload findCob(const cv::Mat &imageCV, const CameraImageMsgPayload &imageBuffer);
     void updateBrightnessHistory(double brightness);
 
     uint64_t sensorTimeTag;                    //!< [ns] Current time tag for sensor out
