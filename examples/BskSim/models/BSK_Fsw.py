@@ -273,7 +273,7 @@ class BSKFswModels:
                                ["self.modeRequest == 'dvBurn'"],
                                ["self.fswProc.disableTasks()",
                                 "from Basilisk.architecture import messaging",
-                                "self.FSWModels.cmdRwMotorMsg.write(messaging.ArrayMotorTorqueMsgPayload())",
+                                "self.FSWModels.cmdRwMotorMsg.write(messaging.RwMotorTorqueMsgPayload())",
                                 "self.enableTask('dvPointTask')",
                                 "self.enableTask('mrpFeedbackTHsTask')",
                                 "self.enableTask('dvBurnTask')",
@@ -603,7 +603,7 @@ class BSKFswModels:
         self.cmdTorqueDirectMsg = messaging.CmdTorqueBodyMsg()
         self.attRefMsg = messaging.AttRefMsg()
         self.attGuidMsg = messaging.AttGuidMsg()
-        self.cmdRwMotorMsg = messaging.ArrayMotorTorqueMsg()
+        self.cmdRwMotorMsg = messaging.RwMotorTorqueMsg()
         self.acsOnTimeCmdMsg = messaging.THRArrayOnTimeCmdMsg()
         self.dvOnTimeCmdMsg = messaging.THRArrayOnTimeCmdMsg()
 
@@ -624,7 +624,7 @@ class BSKFswModels:
         self.cmdTorqueDirectMsg.write(messaging.CmdTorqueBodyMsgPayload())
         self.attRefMsg.write(messaging.AttRefMsgPayload())
         self.attGuidMsg.write(messaging.AttGuidMsgPayload())
-        self.cmdRwMotorMsg.write(messaging.ArrayMotorTorqueMsgPayload())
+        self.cmdRwMotorMsg.write(messaging.RwMotorTorqueMsgPayload())
         self.acsOnTimeCmdMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
         self.dvOnTimeCmdMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
         self.dvBurnCmdMsg.write(messaging.DvBurnCmdMsgPayload())

@@ -172,14 +172,14 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
-    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray = messaging.RwMotorTorqueMsgPayload()
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
         cmdArray.motorTorque = [0.20, 0.10, -0.50] # [Nm]
     if testCase == 'BOE' or testCase == 'FrictionSpinDown':
         cmdArray.motorTorque = [0.0] # [Nm]
     if testCase == 'FrictionSpinUp':
         cmdArray.motorTorque = [0.1, -0.1]
-    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    cmdMsg = messaging.RwMotorTorqueMsg().write(cmdArray)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(cmdMsg)
 
     # Add test module to runtime call list

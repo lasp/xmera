@@ -24,8 +24,8 @@
 #include "architecture/messaging/messaging.h"
 #include <vector>
 
-#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDef/ArrayMotorVoltageMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h"
 
 #include "../../../architecture/utilities/bskLogging.h"
 #include "../../../architecture/utilities/macroDefinitions.h"
@@ -50,18 +50,18 @@ class MotorVoltageInterface : public SysModel {
                                              //!< leaving blanks up to MAX_EFF_COUNT
 
    public:
-    ReadFunctor<ArrayMotorVoltageMsgPayload>
+    ReadFunctor<RwMotorVoltageMsgPayload>
         motorVoltageInMsg;                                  //!< --     Message that contains motor voltage input states
-    Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg;  //!< --     Output Message for motor torques
+    Message<RwMotorTorqueMsgPayload> motorTorqueOutMsg;  //!< --     Output Message for motor torques
     Eigen::VectorXd voltage2TorqueGain;                     //!< Nm/V   gain to convert voltage to motor torque
     Eigen::VectorXd scaleFactor;                            //!<        scale the output - like a constant gain error
     Eigen::VectorXd bias;                                   //!< Nm     A bias to add to the torque output
     BSKLogger bskLogger;                                    //!< -- BSK Logging
 
    private:
-    ArrayMotorTorqueMsgPayload outputTorqueBuffer;   //!< [Nm] copy of module output buffer
+    RwMotorTorqueMsgPayload outputTorqueBuffer;   //!< [Nm] copy of module output buffer
     uint64_t prevTime;                               //!< -- Previous simulation time observed
-    ArrayMotorVoltageMsgPayload inputVoltageBuffer;  //!< [V] One-time allocation for time savings
+    RwMotorVoltageMsgPayload inputVoltageBuffer;  //!< [V] One-time allocation for time savings
 };
 
 #endif

@@ -109,7 +109,7 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     # Set the array of the reaction wheels in RWConstellationFswMsg to the list created above
     inputRWConstellationMsg.reactionWheels = rwConfigElementList
 
-    inputRWCmdMsg = messaging.ArrayMotorTorqueMsgPayload()
+    inputRWCmdMsg = messaging.RwMotorTorqueMsgPayload()
     usControl = [0.1, 0.2, 0.15] # [Nm] RW motor torque array
     if numWheels == 4:
         usControl.append(-0.2) # [Nm]
@@ -119,7 +119,7 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     # Set these messages
     rwSpeedMsg = messaging.RWSpeedMsg().write(inputSpeedMsg)
     rwConfigMsg = messaging.RWConstellationMsg().write(inputRWConstellationMsg)
-    rwCmdMsg = messaging.ArrayMotorTorqueMsg().write(inputRWCmdMsg)
+    rwCmdMsg = messaging.RwMotorTorqueMsg().write(inputRWCmdMsg)
 
     dataLog = module.rwMotorTorqueOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)

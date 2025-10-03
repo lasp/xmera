@@ -22,7 +22,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
@@ -50,13 +50,13 @@ class MtbMomentumManagement : public SysModel {
     ReadFunctor<TAMSensorBodyMsgPayload>
         tamSensorBodyInMsg;                        //!< input message for magnetic field sensor data in the Body frame
     ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;  //!< input message for RW speeds
-    ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< input message for RW motor torques
+    ReadFunctor<RwMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< input message for RW motor torques
 
     /*
      * Outputs.
      */
     Message<MTBCmdMsgPayload> mtbCmdOutMsg;                   //!< output message for MTB dipole commands
-    Message<ArrayMotorTorqueMsgPayload> rwMotorTorqueOutMsg;  //!< output message for RW motor torques
+    Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;  //!< output message for RW motor torques
 
     /*
      * Other.

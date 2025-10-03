@@ -58,8 +58,8 @@ void RwMotorVoltage::updateState(uint64_t callTime)
 {
     /* - Read the input messages */
 //    double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
-    ArrayMotorTorqueMsgPayload torqueCmd;           /*!< copy of RW motor torque input message*/
-    ArrayMotorVoltageMsgPayload voltageOut = {};            /*!< -- copy of the output message */
+    RwMotorTorqueMsgPayload torqueCmd;           /*!< copy of RW motor torque input message*/
+    RwMotorVoltageMsgPayload voltageOut = {};            /*!< -- copy of the output message */
 
     // check if the required input messages are included
     if (!this->torqueInMsg.isLinked()) {

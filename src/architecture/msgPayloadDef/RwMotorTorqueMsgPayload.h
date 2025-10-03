@@ -16,25 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module rwNullSpace
-%{
-   #include "rwNullSpace.h"
-%}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
+#ifndef RW_MOTOR_TORQUE_H
+#define RW_MOTOR_TORQUE_H
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+#include "definitions.h"
 
-%include "rwNullSpace.h"
+/*! @brief Structure used to define the message format of the motor torque */
+typedef struct {
+    double motorTorque[MAX_EFF_CNT];  //!< [Nm]  motor torque array
+} RwMotorTorqueMsgPayload;
 
-%include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
-%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-%include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif

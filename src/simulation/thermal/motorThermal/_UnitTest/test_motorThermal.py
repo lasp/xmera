@@ -157,9 +157,9 @@ def motorThermalTest(show_plots, accuracy):
     rwFactory.addToSpacecraft(rwStateEffector.modelTag, rwStateEffector, scObject)
 
     # set RW torque command
-    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray = messaging.RwMotorTorqueMsgPayload()
     cmdArray.motorTorque = [50, 0, 0]  # [Nm]
-    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    cmdMsg = messaging.RwMotorTorqueMsg().write(cmdArray)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(cmdMsg)
 
     #

@@ -28,7 +28,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/RWCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDef/RWConfigMsgPayload.h"
@@ -72,7 +72,7 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
    public:
     std::vector<RWConfigMsgPayload*> ReactionWheelData;  //!< -- RW information
 
-    ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;  //!< -- RW motor torque array cmd input message
+    ReadFunctor<RwMotorTorqueMsgPayload> rwMotorCmdInMsg;  //!< -- RW motor torque array cmd input message
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;                 //!< -- RW speed array output message
     std::vector<Message<RWConfigLogMsgPayload>*> rwOutMsgs;   //!< -- vector of RW log output messages
 
@@ -85,7 +85,7 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
     BSKLogger bskLogger;                         //!< -- BSK Logging
 
    private:
-    ArrayMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings
+    RwMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                           //!< -- Time for previous valid thruster firing
 
     StateData* hubSigma;     //!< class variable

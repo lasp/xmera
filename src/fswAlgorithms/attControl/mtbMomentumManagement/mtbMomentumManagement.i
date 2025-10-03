@@ -36,7 +36,7 @@
 %include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
 %include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 %include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
-%include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 
 %pythoncode %{
 import sys

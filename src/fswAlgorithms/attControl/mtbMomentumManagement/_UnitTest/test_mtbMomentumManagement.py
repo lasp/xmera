@@ -112,9 +112,9 @@ def mtbMomentumManagementModuleTestFunction():
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
 
     # attControl message
-    rwMotorTorqueInMsgContainer = messaging.ArrayMotorTorqueMsgPayload()
+    rwMotorTorqueInMsgContainer = messaging.RwMotorTorqueMsgPayload()
     rwMotorTorqueInMsgContainer.motorTorque = [0., 0., 0., 0.]
-    rwMotorTorqueInMsg = messaging.ArrayMotorTorqueMsg().write(rwMotorTorqueInMsgContainer)
+    rwMotorTorqueInMsg = messaging.RwMotorTorqueMsg().write(rwMotorTorqueInMsgContainer)
 
     # Setup logging on the test module output message so that we get all the writes to it
     resultMtbCmdOutMsg = module.mtbCmdOutMsg.recorder()

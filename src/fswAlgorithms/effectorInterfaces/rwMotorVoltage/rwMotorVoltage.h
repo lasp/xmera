@@ -24,8 +24,8 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDef/ArrayMotorVoltageMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
@@ -49,8 +49,8 @@ class RwMotorVoltage : public SysModel {
     int resetFlag;                  /*!< []     Flag indicating that a module reset occured */
 
     /* declare module IO interfaces */
-    Message<ArrayMotorVoltageMsgPayload> voltageOutMsg;  /*!< voltage output message*/
-    ReadFunctor<ArrayMotorTorqueMsgPayload> torqueInMsg; /*!< Input torque message*/
+    Message<RwMotorVoltageMsgPayload> voltageOutMsg;  /*!< voltage output message*/
+    ReadFunctor<RwMotorTorqueMsgPayload> torqueInMsg; /*!< Input torque message*/
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;  /*!< RW array input message*/
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;         /*!< [] The name for the reaction wheel speeds message. Must be
                                                             provided to enable speed tracking loop */

@@ -174,7 +174,7 @@ void RwMotorTorque::updateState(uint64_t callTime)
     }
 
     /* store the output message */
-    ArrayMotorTorqueMsgPayload rwMotorTorques = {};
+    RwMotorTorqueMsgPayload rwMotorTorques = {};
     vCopy(us, this->rwConfigParams.numRW, rwMotorTorques.motorTorque);
     this->rwMotorTorqueOutMsg.write(&rwMotorTorques, this->moduleID, callTime);
 

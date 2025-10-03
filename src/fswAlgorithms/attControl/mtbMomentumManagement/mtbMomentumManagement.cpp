@@ -97,9 +97,9 @@ void MtbMomentumManagement::updateState(uint64_t callTime)
      */
     TAMSensorBodyMsgPayload tamSensorBodyInMsgBuffer = this->tamSensorBodyInMsg();
     RWSpeedMsgPayload rwSpeedsInMsgBuffer = this->rwSpeedsInMsg();
-    ArrayMotorTorqueMsgPayload rwMotorTorqueInMsgBuffer = this->rwMotorTorqueInMsg();
+    RwMotorTorqueMsgPayload rwMotorTorqueInMsgBuffer = this->rwMotorTorqueInMsg();
     MTBCmdMsgPayload mtbCmdOutputMsgBuffer = {};
-    ArrayMotorTorqueMsgPayload rwMotorTorqueOutMsgBuffer = rwMotorTorqueInMsgBuffer;
+    RwMotorTorqueMsgPayload rwMotorTorqueOutMsgBuffer = rwMotorTorqueInMsgBuffer;
 
     /*! - Compute the wheel speed feedback.*/
     vSubtract(rwSpeedsInMsgBuffer.wheelSpeeds, numRW, this->wheelSpeedBiases, this->wheelSpeedError_W);

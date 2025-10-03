@@ -24,7 +24,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
@@ -46,7 +46,7 @@ class RwMotorTorque : public SysModel {
     double CGs[3][MAX_EFF_CNT];          //!< [-] Projection matrix that defines the controlled body axes
 
     /* declare module IO interfaces */
-    Message<ArrayMotorTorqueMsgPayload> rwMotorTorqueOutMsg;  //!< RW motor torque output message
+    Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;  //!< RW motor torque output message
     ReadFunctor<CmdTorqueBodyMsgPayload> vehControlInMsg;     //!<  vehicle control (Lr) Input message
     ReadFunctor<CmdTorqueBodyMsgPayload> vehControlIn2Msg;    //!<  optional vehicle control input message
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;       //!<  RW Array input message

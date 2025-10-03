@@ -29,13 +29,13 @@ provides information on what this message is used for.
       - :ref:`RWSpeedMsgPayload`
       - input message for RW speeds
     * - rwMotorTorqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - input message for RW motor torques
     * - mtbCmdOutMsg
       - :ref:`MTBCmdMsgPayload`
       - output message for MTB dipole commands
     * - rwMotorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - output message for RW motor torques
 
 User Guide

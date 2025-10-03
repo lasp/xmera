@@ -18,10 +18,10 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - motorVoltageInMsg
-      - :ref:`ArrayMotorVoltageMsgPayload`
+      - :ref:`RwMotorVoltageMsgPayload`
       - Message that contains motor voltage input states
     * - motorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - Output message for motor torques
 
 Detailed Model Description

@@ -31,7 +31,7 @@
 %include "rwMotorTorque.h"
 
 %include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-%include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 %include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
 %include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
 

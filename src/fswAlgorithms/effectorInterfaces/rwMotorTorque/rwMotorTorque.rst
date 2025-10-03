@@ -21,7 +21,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - rwMotorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - RW motor torque output message
     * - vehControlInMsg
       - :ref:`CmdTorqueBodyMsgPayload`

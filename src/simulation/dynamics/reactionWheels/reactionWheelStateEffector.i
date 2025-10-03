@@ -45,7 +45,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/RWConfigMsgPayload.h"
 %include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
 
-%include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
+%include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 
 
 %include "std_vector.i"

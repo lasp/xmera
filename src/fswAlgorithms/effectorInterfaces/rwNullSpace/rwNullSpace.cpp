@@ -84,10 +84,10 @@ void RwNullSpace::reset(uint64_t callTime)
  */
 void RwNullSpace::updateState(uint64_t callTime)
 {
-    ArrayMotorTorqueMsgPayload cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
+    RwMotorTorqueMsgPayload cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
     RWSpeedMsgPayload rwSpeeds;                    /* [r/s] array of RW speeds */
     RWSpeedMsgPayload rwDesiredSpeeds = {};             /* [r/s] array of RW speeds */
-	ArrayMotorTorqueMsgPayload finalControl = {};       /* [Nm]  array of final RW motor torques containing both
+	RwMotorTorqueMsgPayload finalControl = {};       /* [Nm]  array of final RW motor torques containing both
                                                        the control and null motion torques */
 	double dVector[MAX_EFF_CNT];                   /* [Nm]  null motion wheel speed control array */
     double DeltaOmega[MAX_EFF_CNT];                /* [r/s] difference in RW speeds */
