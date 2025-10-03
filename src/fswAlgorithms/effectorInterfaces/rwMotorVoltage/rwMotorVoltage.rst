@@ -37,6 +37,3 @@ provides information on what this message is used for.
     * - rwSpeedInMsg
       - :ref:`RWSpeedMsgPayload`
       - (optional) RW device speed message
-
- 
-

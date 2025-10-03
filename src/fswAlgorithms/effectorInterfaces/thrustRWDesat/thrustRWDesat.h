@@ -43,7 +43,7 @@ class ThrustRWDesat : public SysModel {
         vecConfigInMsg; /*!< [-] The name of the input spacecraft mass properties message*/
     Message<THRArrayOnTimeCmdMsgPayload> thrCmdOutMsg; /*!< (-) The name of the output thrust command block*/
 
-    double rwAlignMap[3 * RW_EFF_CNT];   /*!< (-) Alignment of the reaction wheel spin axes*/
+    double rwAlignMap[3 * RW_EFF_CNT];    /*!< (-) Alignment of the reaction wheel spin axes*/
     double thrAlignMap[3 * MAX_EFF_CNT];  /*!< (-) Alignment of the vehicle thrusters*/
     double thrTorqueMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thruster torques*/
     double maxFiring;                     /*!< (s) Maximum time to fire a jet for*/

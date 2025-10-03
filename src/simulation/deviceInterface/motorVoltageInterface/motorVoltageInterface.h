@@ -51,16 +51,16 @@ class MotorVoltageInterface : public SysModel {
 
    public:
     ReadFunctor<RwMotorVoltageMsgPayload>
-        motorVoltageInMsg;                                  //!< --     Message that contains motor voltage input states
+        motorVoltageInMsg;                               //!< --     Message that contains motor voltage input states
     Message<RwMotorTorqueMsgPayload> motorTorqueOutMsg;  //!< --     Output Message for motor torques
-    Eigen::VectorXd voltage2TorqueGain;                     //!< Nm/V   gain to convert voltage to motor torque
-    Eigen::VectorXd scaleFactor;                            //!<        scale the output - like a constant gain error
-    Eigen::VectorXd bias;                                   //!< Nm     A bias to add to the torque output
-    BSKLogger bskLogger;                                    //!< -- BSK Logging
+    Eigen::VectorXd voltage2TorqueGain;                  //!< Nm/V   gain to convert voltage to motor torque
+    Eigen::VectorXd scaleFactor;                         //!<        scale the output - like a constant gain error
+    Eigen::VectorXd bias;                                //!< Nm     A bias to add to the torque output
+    BSKLogger bskLogger;                                 //!< -- BSK Logging
 
    private:
     RwMotorTorqueMsgPayload outputTorqueBuffer;   //!< [Nm] copy of module output buffer
-    uint64_t prevTime;                               //!< -- Previous simulation time observed
+    uint64_t prevTime;                            //!< -- Previous simulation time observed
     RwMotorVoltageMsgPayload inputVoltageBuffer;  //!< [V] One-time allocation for time savings
 };
 

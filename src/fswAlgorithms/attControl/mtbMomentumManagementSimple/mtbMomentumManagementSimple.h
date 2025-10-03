@@ -47,7 +47,7 @@ class MtbMomentumManagementSimple : public SysModel {
 
     /* Other. */
     RWArrayConfigMsgPayload rwConfigParams;  //!< configuration for RW's
-    double Gs[3 * RW_EFF_CNT];              //!< transformation from the wheelspace to the Body frame
+    double Gs[3 * RW_EFF_CNT];               //!< transformation from the wheelspace to the Body frame
     BSKLogger bskLogger = {};                //!< BSK Logging
 };
 

@@ -28,11 +28,11 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/RWCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDef/RWConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
@@ -72,9 +72,9 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
    public:
     std::vector<RWConfigMsgPayload*> ReactionWheelData;  //!< -- RW information
 
-    ReadFunctor<RwMotorTorqueMsgPayload> rwMotorCmdInMsg;  //!< -- RW motor torque array cmd input message
-    Message<RWSpeedMsgPayload> rwSpeedOutMsg;                 //!< -- RW speed array output message
-    std::vector<Message<RWConfigLogMsgPayload>*> rwOutMsgs;   //!< -- vector of RW log output messages
+    ReadFunctor<RwMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< -- RW motor torque array cmd input message
+    Message<RWSpeedMsgPayload> rwSpeedOutMsg;                //!< -- RW speed array output message
+    std::vector<Message<RWConfigLogMsgPayload>*> rwOutMsgs;  //!< -- vector of RW log output messages
 
     std::vector<RWCmdMsgPayload> NewRWCmds;      //!< -- Incoming attitude commands
     RWSpeedMsgPayload rwSpeedMsgBuffer = {};     //!< (-) Output data from the reaction wheels
@@ -86,7 +86,7 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
 
    private:
     RwMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings
-    uint64_t prevCommandTime;                           //!< -- Time for previous valid thruster firing
+    uint64_t prevCommandTime;                        //!< -- Time for previous valid thruster firing
 
     StateData* hubSigma;     //!< class variable
     StateData* hubOmega;     //!< class variable

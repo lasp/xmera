@@ -33,17 +33,3 @@ provides information on what this message is used for.
     * - rwOutMsgs
       - :ref:`RWConfigLogMsgPayload`
       - vector of RW log output messages
-
-
-
-
-
-
-
-
-
-
-
-
-
-

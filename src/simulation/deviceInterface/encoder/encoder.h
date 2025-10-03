@@ -41,14 +41,14 @@ class Encoder : public SysModel {
    public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;     //!< [rad/s] reaction wheel speed output message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedInMsg;  //!< [rad/s] reaction wheel speed input message
-    int rwSignalState[RW_EFF_CNT];               //!< vector of reaction wheel signal states
+    int rwSignalState[RW_EFF_CNT];                //!< vector of reaction wheel signal states
     int clicksPerRotation;                        //!< number of clicks per full rotation
     int numRW;                                    //!< number of reaction wheels
     BSKLogger bskLogger;                          //!< -- BSK Logging
 
    private:
-    RWSpeedMsgPayload rwSpeedBuffer;      //!< reaction wheel speed buffer for internal calculations
-    RWSpeedMsgPayload rwSpeedConverted;   //!< reaction wheel speed buffer for converted values
+    RWSpeedMsgPayload rwSpeedBuffer;     //!< reaction wheel speed buffer for internal calculations
+    RWSpeedMsgPayload rwSpeedConverted;  //!< reaction wheel speed buffer for converted values
     double remainingClicks[RW_EFF_CNT];  //!< remaining clicks from the previous iteration
 
     uint64_t prevTime;  //!< -- Previous simulation time observed

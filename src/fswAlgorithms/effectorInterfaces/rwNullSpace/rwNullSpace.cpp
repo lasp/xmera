@@ -21,18 +21,18 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-/*! @brief This resets the module to original states by reading in the RW configuration messages and recreating any module specific variables.  The output message is reset to zero.
+/*! @brief This resets the module to original states by reading in the RW configuration messages and recreating any
+   module specific variables.  The output message is reset to zero.
     @return void
     @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RwNullSpace::reset(uint64_t callTime)
-{
-    double GsMatrix[3*RW_EFF_CNT];                 /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
-    double GsTranspose[3 * RW_EFF_CNT];            /* [-]  [Gs]^T */
-    double GsInvHalf[3 * 3];                        /* [-]  ([Gs][Gs]^T)^-1 */
-    double identMatrix[RW_EFF_CNT*RW_EFF_CNT];    /* [-]  [I_NxN] identity matrix */
-    double GsTemp[RW_EFF_CNT*RW_EFF_CNT];         /* [-]  temp matrix */
-    RWConstellationMsgPayload localRWData;          /*      local copy of RW configuration data */
+void RwNullSpace::reset(uint64_t callTime) {
+    double GsMatrix[3 * RW_EFF_CNT];    /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
+    double GsTranspose[3 * RW_EFF_CNT]; /* [-]  [Gs]^T */
+    double GsInvHalf[3 * 3];            /* [-]  ([Gs][Gs]^T)^-1 */
+    double identMatrix[RW_EFF_CNT * RW_EFF_CNT]; /* [-]  [I_NxN] identity matrix */
+    double GsTemp[RW_EFF_CNT * RW_EFF_CNT];      /* [-]  temp matrix */
+    RWConstellationMsgPayload localRWData;       /*      local copy of RW configuration data */
 
     // check if the required input messages are included
     if (!this->rwConfigInMsg.isLinked()) {
@@ -49,48 +49,46 @@ void RwNullSpace::reset(uint64_t callTime)
     localRWData = this->rwConfigInMsg();
 
     /* create the 3xN [Gs] RW spin axis projection matrix */
-    this->numWheels = (uint32_t) localRWData.numRW;
+    this->numWheels = (uint32_t)localRWData.numRW;
     if (this->numWheels > RW_EFF_CNT) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: rwNullSpace.numWheels is larger that max effector count.");
     }
-    for(uint32_t i=0; i<this->numWheels; i=i+1)
-    {
-        for(int j=0; j<3; j=j+1)
-        {
-            GsMatrix[j*(int) this->numWheels+i] = localRWData.reactionWheels[i].gsHat_B[j];
+    for (uint32_t i = 0; i < this->numWheels; i = i + 1) {
+        for (int j = 0; j < 3; j = j + 1) {
+            GsMatrix[j * (int)this->numWheels + i] = localRWData.reactionWheels[i].gsHat_B[j];
         }
     }
 
     /* find the [tau] null space projection matrix [tau]= ([I] - [Gs]^T.([Gs].[Gs]^T) */
-    mTranspose(GsMatrix, 3, this->numWheels, GsTranspose);            /* find [Gs]^T */
-    mMultM(GsMatrix, 3, this->numWheels, GsTranspose,
-           this->numWheels, 3, GsInvHalf);                            /* find [Gs].[Gs]^T */
-    m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);                   /* find ([Gs].[Gs]^T)^-1 */
-    mMultM(GsInvHalf, 3, 3, GsMatrix, 3, this->numWheels,
-           this->tau);                                                /* find ([Gs].[Gs]^T)^-1.[Gs] */
-    mMultM(GsTranspose, this->numWheels, 3, this->tau, 3,
-           this->numWheels, GsTemp);                                  /* find [Gs]^T.([Gs].[Gs]^T)^-1.[Gs] */
+    mTranspose(GsMatrix, 3, this->numWheels, GsTranspose);                            /* find [Gs]^T */
+    mMultM(GsMatrix, 3, this->numWheels, GsTranspose, this->numWheels, 3, GsInvHalf); /* find [Gs].[Gs]^T */
+    m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);                             /* find ([Gs].[Gs]^T)^-1 */
+    mMultM(GsInvHalf, 3, 3, GsMatrix, 3, this->numWheels, this->tau);                 /* find ([Gs].[Gs]^T)^-1.[Gs] */
+    mMultM(
+        GsTranspose, this->numWheels, 3, this->tau, 3, this->numWheels, GsTemp); /* find [Gs]^T.([Gs].[Gs]^T)^-1.[Gs] */
     mSetIdentity(identMatrix, this->numWheels, this->numWheels);
-    mSubtract(identMatrix, this->numWheels, this->numWheels,    /* find ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
-              GsTemp, this->tau);
-
+    mSubtract(identMatrix,
+              this->numWheels,
+              this->numWheels, /* find ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
+              GsTemp,
+              this->tau);
 }
 
 /*! This method takes the input reaction wheel commands as well as the observed
     reaction wheel speeds and balances the commands so that the overall vehicle
-	momentum is minimized.
+    momentum is minimized.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RwNullSpace::updateState(uint64_t callTime)
-{
-    RwMotorTorqueMsgPayload cntrRequest;        /* [Nm]  array of the RW motor torque solution vector from the control module */
-    RWSpeedMsgPayload rwSpeeds;                    /* [r/s] array of RW speeds */
-    RWSpeedMsgPayload rwDesiredSpeeds = {};             /* [r/s] array of RW speeds */
-	RwMotorTorqueMsgPayload finalControl = {};       /* [Nm]  array of final RW motor torques containing both
-                                                       the control and null motion torques */
-	double dVector[RW_EFF_CNT];                   /* [Nm]  null motion wheel speed control array */
-    double DeltaOmega[RW_EFF_CNT];                /* [r/s] difference in RW speeds */
+void RwNullSpace::updateState(uint64_t callTime) {
+    RwMotorTorqueMsgPayload
+        cntrRequest;            /* [Nm]  array of the RW motor torque solution vector from the control module */
+    RWSpeedMsgPayload rwSpeeds; /* [r/s] array of RW speeds */
+    RWSpeedMsgPayload rwDesiredSpeeds = {};    /* [r/s] array of RW speeds */
+    RwMotorTorqueMsgPayload finalControl = {}; /* [Nm]  array of final RW motor torques containing both
+                                                 the control and null motion torques */
+    double dVector[RW_EFF_CNT];                /* [Nm]  null motion wheel speed control array */
+    double DeltaOmega[RW_EFF_CNT];             /* [r/s] difference in RW speeds */
 
     /* Read the input RW commands to get the raw RW requests*/
     cntrRequest = this->rwMotorTorqueInMsg();
@@ -103,15 +101,13 @@ void RwNullSpace::updateState(uint64_t callTime)
 
     /* compute the wheel speed control vector d = -K.DeltaOmega */
     vSubtract(rwSpeeds.wheelSpeeds, this->numWheels, rwDesiredSpeeds.wheelSpeeds, DeltaOmega);
-	vScale(-this->OmegaGain, DeltaOmega, this->numWheels, dVector);
+    vScale(-this->OmegaGain, DeltaOmega, this->numWheels, dVector);
 
     /* compute the RW null space motor torque solution to reduce the wheel speeds */
-	mMultV(this->tau, this->numWheels, this->numWheels,
-		dVector, finalControl.motorTorque);
+    mMultV(this->tau, this->numWheels, this->numWheels, dVector, finalControl.motorTorque);
 
     /* add the null motion RW torque solution to the RW feedback control torque solution */
-	vAdd(finalControl.motorTorque, this->numWheels,
-		cntrRequest.motorTorque, finalControl.motorTorque);
+    vAdd(finalControl.motorTorque, this->numWheels, cntrRequest.motorTorque, finalControl.motorTorque);
 
     /* write the final RW torque solution to the output message */
     this->rwMotorTorqueOutMsg.write(&finalControl, this->moduleID, callTime);
