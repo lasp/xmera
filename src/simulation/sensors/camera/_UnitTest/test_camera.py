@@ -14,12 +14,6 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-# Unit Test Script
-# Module Name:        Camera
-# Author:             Thibaud Teil
-# Creation Date:      March 13, 2019
-
-
 import inspect
 import os
 
@@ -58,59 +52,39 @@ except ImportError:
 # Provide a unique test method name, starting with 'test_'.
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
-@pytest.mark.parametrize("gauss, darkCurrent, saltPepper, cosmic, blurSize", [
-    (0, 0, 0, 0, 0)
-    , (2, 2, 2, 1, 3)
+@pytest.mark.parametrize("image, gauss, darkCurrent, saltPepper, cosmic, blurSize", [
+    ("mars.jpg", 0, 0, 0, 0, 0),
+    ("mars.jpg", 2, 2, 2, 1, 3)
 ])
-def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
+def test_camera(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize):
     """
-        **Validation Test Description**
+    **Validation Test Description**
 
-        This module tests the proper functioning of the camera module. This is done by first ensuring that the reading
-        and writing of the camera parameters are properly executed. The test then corrupts a test image accordingly.
+    This module tests the proper functioning of the camera module. This is done by first ensuring that the reading
+    and writing of the camera parameters are properly executed. The test then corrupts a test image accordingly.
 
-        **Description of Variables Being Tested**
+    **Description of Variables Being Tested**
 
-        The camera parameters tested are the camera position MRP and the isOn value for the camera. These ensure that
-        the position is properly written and read. The image is also corrupted with the parameterized test information.
-        This is directly tested by differencing the initial and processed image to see a change.
-        and also ensures that the variables are properly read and that all the openCV functions
-        are executing properly.
+    The camera parameters tested are the camera position MRP and the isOn value for the camera. These ensure that
+    the position is properly written and read. The image is also corrupted with the parameterized test information.
+    This is directly tested by differencing the initial and processed image to see a change.
+    and also ensures that the variables are properly read and that all the openCV functions
+    are executing properly.
 
-        - ``camera_MRP``
-        - ``isON``
-        - ``imageNorm Values``
+    - ``camera_MRP``
+    - ``isON``
+    - ``imageNorm Values``
 
-        The comparative value for the test on the image is 1E-2 which depends on the corruptions but is allowed to me small
-        as the relative difference of the images is taken (whereas pixel values can get large).
+    The comparative value for the test on the image is 1E-2 which depends on the corruptions but is allowed to me small
+    as the relative difference of the images is taken (whereas pixel values can get large).
 
-        The two parameterized test are set with and without corruptions.
+    The two parameterized test are set with and without corruptions.
 
-        **General Documentation Comments**
+    **General Documentation Comments**
 
-        The script could benefit from more profound image processing testing. Currently the bulk of the image processing
-        is only tested by the result image.
-        """
-    # each test method requires a single assert method to be called
-    image = "mars.jpg"
-    [testResults, testMessage] = cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize)
-
-    # Clean up
-    imagePath = path + '/' + image
-    savedImage1 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
-                  + str(saltPepper) + str(cosmic) + str(blurSize) + '0.000000.png'
-    savedImage2 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
-                  + str(saltPepper) + str(cosmic) + str(blurSize) + '0.500000.png'
-    try:
-        os.remove(savedImage1)
-        os.remove(savedImage2)
-    except FileNotFoundError:
-        pass
-
-    assert testResults < 1, testMessage
-
-
-def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize):
+    The script could benefit from more profound image processing testing. Currently the bulk of the image processing
+    is only tested by the result image.
+    """
     if importErr:
         print(reasonErr)
         exit()
@@ -122,8 +96,6 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     #################################################
     corrupted = (gauss > 0) or (darkCurrent > 0) or (saltPepper > 0) or (cosmic > 0) or (blurSize > 0)
 
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -273,13 +245,13 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     np.testing.assert_array_equal(dataLogCameraModel.blueQuantumEfficiency[-1, :],
                                   np.array(module.getBlueQuantumEfficiency()).reshape(3),
                                   "Test failed blue QE curve")
-    np.testing.assert_array_equal(np.trim_zeros(dataLogCameraModel.horizontalVignetting[-1, :]),
+    np.testing.assert_array_equal(np.array(dataLogCameraModel.horizontalVignetting[-1, :len(module.getHorizontalVignetting())]),
                                   np.array(module.getHorizontalVignetting()).reshape(-1),
                                   "Test failed horizontal Vignetting coefficients")
-    np.testing.assert_array_equal(np.trim_zeros(dataLogCameraModel.verticalVignetting[-1, :]),
+    np.testing.assert_array_equal(np.array(dataLogCameraModel.verticalVignetting[-1, :len(module.getVerticalVignetting())]),
                                   np.array(module.getVerticalVignetting()).reshape(-1),
                                   "Test failed vertical Vignetting coefficients")
-    np.testing.assert_array_equal(np.trim_zeros(dataLogCameraModel.distortion[-1, :]),
+    np.testing.assert_array_equal(np.array(dataLogCameraModel.distortion[-1, :len(module.getDistortion())]),
                                   np.array(module.getDistortion()).reshape(-1),
                                   "Test failed distortion coefficients")
     np.testing.assert_equal(dataLogCameraModel.transmission, module.getTransmission(),
@@ -289,37 +261,29 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)) / np.linalg.norm(
         np.linalg.norm(input_image, axis=2))
 
-    if (err < 1E-2 and corrupted):
-        testFailCount += 1
-        testMessages.append("Image not corrupted and show be: " + image)
-
-    if (err > 1E-2 and not corrupted):
-        testFailCount += 1
-        testMessages.append("Image corrupted and show not be: " + image)
+    assert (err >= 1E-2) == corrupted, "Image error does not match corruption state for image: " + image
 
     #   print out success message if no error were found
     for i in range(3):
-        if np.abs(pos[-1, i] - module.cameraPos_B[i]) > 1E-10:
-            testFailCount += 1
-            testMessages.append("Test failed position " + image)
+        assert np.abs(pos[-1, i] - module.cameraPos_B[i]) <= 1E-10, "Test failed position " + image
 
-    if np.abs(isOnValues[-1] - module.cameraIsOn) > 1E-10:
-        testFailCount += 1
-        testMessages.append("Test failed isOn " + image)
+    assert np.abs(isOnValues[-1] - module.cameraIsOn) <= 1E-10, "Test failed isOn " + image
 
-    if testFailCount:
-        print(testMessages)
-    else:
-        print("Passed")
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
+    # Clean up
+    imagePath = path + '/' + image
+    savedImage1 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
+                  + str(saltPepper) + str(cosmic) + str(blurSize) + '0.000000.png'
+    savedImage2 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
+                  + str(saltPepper) + str(cosmic) + str(blurSize) + '0.500000.png'
+    try:
+        os.remove(savedImage1)
+        os.remove(savedImage2)
+    except FileNotFoundError:
+        pass
 
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    cameraTest(False, "mars.jpg", 2, 0, 2, 1, 3)
+    test_camera(False, "mars.jpg", 2, 0, 2, 1, 3)

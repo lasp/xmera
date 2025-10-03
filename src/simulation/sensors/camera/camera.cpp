@@ -354,9 +354,18 @@ void Camera::updateState(uint64_t currentSimNanos) {
     eigenVector3d2CArray(this->redQuantumEfficiency, cameraModelMsg.redQuantumEfficiency);
     eigenVector3d2CArray(this->greenQuantumEfficiency, cameraModelMsg.greenQuantumEfficiency);
     eigenVector3d2CArray(this->blueQuantumEfficiency, cameraModelMsg.blueQuantumEfficiency);
-    eigenMatrixXd2CArray(this->horizontalVignetting, cameraModelMsg.horizontalVignetting);
-    eigenMatrixXd2CArray(this->verticalVignetting, cameraModelMsg.verticalVignetting);
-    eigenMatrixXd2CArray(this->distortion, cameraModelMsg.distortion);
+    if (this->horizontalVignetting.size() > 0) {
+        vSetZero(cameraModelMsg.horizontalVignetting, std::size(cameraModelMsg.horizontalVignetting));
+        eigenMatrixXd2CArray(this->horizontalVignetting, cameraModelMsg.horizontalVignetting);
+    }
+    if (this->verticalVignetting.size() > 0) {
+        vSetZero(cameraModelMsg.verticalVignetting, std::size(cameraModelMsg.verticalVignetting));
+        eigenMatrixXd2CArray(this->verticalVignetting, cameraModelMsg.verticalVignetting);
+    }
+    if (this->distortion.size() > 0) {
+        vSetZero(cameraModelMsg.distortion, std::size(cameraModelMsg.distortion));
+        eigenMatrixXd2CArray(this->distortion, cameraModelMsg.distortion);
+    }
     cameraModelMsg.transmission = this->transmission;
 
     /*! - Update the camera config data no matter if an image is present*/
