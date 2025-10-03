@@ -319,10 +319,7 @@ void CoarseSunSensor::scaleSensorValues() {
 }
 
 void CoarseSunSensor::applySaturation() {
-    Eigen::VectorXd sensedEigen;
-    sensedEigen = cArray2EigenMatrixXd(&this->sensedValue, 1, 1);
-    sensedEigen = this->saturateUtility.saturate(sensedEigen);
-    eigenMatrixXd2CArray(sensedEigen, &this->sensedValue);
+    this->sensedValue = this->saturateUtility.saturate(Eigen::Vector<double, 1>{this->sensedValue})[0];
 }
 
 /*! This method writes the output message.  The output message contains the
