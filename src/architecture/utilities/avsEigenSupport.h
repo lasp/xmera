@@ -173,6 +173,49 @@ void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat,
   std::memcpy(&out[0][0], rm.data(), Rows * Cols * sizeof(Scalar));
 }
 
+/*! This function Writes the matrix flattened in row-major order into `out[offset + i*stride]`
+ * @return void
+ * @param inMat The source Eigen matrix that we are converting
+ * @param out The destination array (sized by the user)
+ * @param offset The offset at which writing into the array starts
+ * @param stride The stride between elements in the array (default 1)
+*/
+template <class Derived, std::size_t Size>
+void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
+                              typename Derived::Scalar (&out)[Size],
+                              std::size_t offset,
+                              const std::size_t stride = 1)
+{
+  using Scalar = typename Derived::Scalar;
+
+  const auto count = static_cast<std::size_t>(inMat.size());
+  if (count == 0) return;
+
+  if (stride == 0 && count > 1) {
+    std::terminate();
+  }
+
+  // Capacity check: last index must be < N
+  const std::size_t last_index = offset + (count - 1) * stride;
+  if (last_index >= Size) {
+    std::terminate();
+  }
+
+  // Make a contiguous row-major buffer regardless of input layout
+  Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rm = inMat.derived();
+
+  if (stride == 1) {
+    std::memcpy(out + offset, rm.data(), count * sizeof(Scalar));
+  } else {
+    const Scalar* src = rm.data();
+    std::size_t idx = offset;
+    for (std::size_t i = 0; i < count; ++i) {
+      out[idx] = src[i];
+      idx += stride;
+    }
+  }
+}
+
 /*! This function provides a direct conversion between an Eigen vector and an
 output C array. We are providing this function to save on the inline conversion
 and the transpose that would have been performed by the general case.
