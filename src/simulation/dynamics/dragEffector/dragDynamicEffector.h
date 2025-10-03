@@ -29,7 +29,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AtmoPropsMsgPayload.h"
 
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 

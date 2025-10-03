@@ -18,7 +18,7 @@
  */
 
 #include "simulation/sensors/magnetometer/magnetometer.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <math.h>

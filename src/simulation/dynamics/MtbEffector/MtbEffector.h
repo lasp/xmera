@@ -25,7 +25,7 @@
 #include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBMsgPayload.h"
 #include "architecture/msgPayloadDef/MagneticFieldMsgPayload.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 

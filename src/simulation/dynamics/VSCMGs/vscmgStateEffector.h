@@ -33,7 +33,7 @@
 #include "architecture/msgPayloadDef/VSCMGConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/VSCMGSpeedMsgPayload.h"
 
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/macroDefinitions.h"

@@ -32,7 +32,7 @@
 #include "architecture/msgPayloadDef/OpNavLimbMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief visual limb finding module */

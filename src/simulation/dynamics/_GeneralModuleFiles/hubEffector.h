@@ -23,7 +23,7 @@
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief spaecraft hub effector class */

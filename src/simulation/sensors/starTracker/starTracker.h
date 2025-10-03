@@ -27,7 +27,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/STSensorMsgPayload.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/macroDefinitions.h"

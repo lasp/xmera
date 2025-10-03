@@ -20,7 +20,7 @@
 #include "simulation/dynamics/RadiationPressure/radiationPressure.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include <inttypes.h>
 
 /*! This is the constructor.  It sets some default initializers that can be

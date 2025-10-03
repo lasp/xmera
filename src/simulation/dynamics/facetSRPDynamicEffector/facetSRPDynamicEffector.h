@@ -27,7 +27,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"

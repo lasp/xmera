@@ -18,7 +18,7 @@
 */
 
 #include "simulation/dynamics/MtbEffector/MtbEffector.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 

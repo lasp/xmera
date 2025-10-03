@@ -27,7 +27,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include <math.h>
 #include <vector>

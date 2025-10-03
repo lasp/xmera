@@ -23,7 +23,7 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 
 #include <Eigen/Core>
 
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"

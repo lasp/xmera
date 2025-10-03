@@ -21,7 +21,7 @@
 #define GRAVITY_GRADIENT_DYNAMIC_EFFECTOR_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
