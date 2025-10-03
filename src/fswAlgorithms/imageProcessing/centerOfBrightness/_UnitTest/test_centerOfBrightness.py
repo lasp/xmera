@@ -42,68 +42,74 @@ except ImportError:
     reasonErr = "Center Of Brightness not built---check OpenCV option"
 
 
-def computeWindowCenter(windowPointTopLeft, windowPointBottomRight):
-    center_x = int(windowPointTopLeft[0] + (windowPointBottomRight[0] - windowPointTopLeft[0])/2)
-    center_y = int(windowPointTopLeft[1] + (windowPointBottomRight[1] - windowPointTopLeft[1])/2)
-
-    return np.array([center_x, center_y])
-
-
-def computeWindowSize(windowPointTopLeft, windowPointBottomRight):
-    width = int(windowPointBottomRight[0] - windowPointTopLeft[0])
-    height = int(windowPointBottomRight[1] - windowPointTopLeft[1])
-
-    return [width, height]
-
-
 @pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("image, blur,  saveTest, validImage, saveImage, windowPointTopLeft, windowPointBottomRight",
+@pytest.mark.parametrize("image, blur,  save_test, valid_image, save_image, window_point_top_left, window_point_bottom_right",
                          [("full_circle.png", 1, False, False, False, [0, 0], [0, 0]),
                           ("full_circle.png", 1, False, True, False, [0, 0], [0, 0]),
                           ("test_circle.jpeg", 5, False, True, False, [0, 0], [0, 0]),
                           ("half_half.png", 1, True, True, False, [0, 0], [0, 0]),
                           ("half_half.png", 1, True, True, False, [50, 0], [275, 91])
                           ])
-def test_module(show_plots, image, blur, saveTest, validImage, saveImage, windowPointTopLeft, windowPointBottomRight):
-    centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveImage, windowPointTopLeft,
-                           windowPointBottomRight)
+
+def test_module(show_plots, image, blur, save_test, valid_image, save_image, window_point_top_left, window_point_bottom_right):
+    centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save_image, window_point_top_left,
+                           window_point_bottom_right)
 
 
-def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveImage, windowPointTopLeft,
-                           windowPointBottomRight):
+def compute_window_center(window_point_top_left, window_point_bottom_right):
+    center_x = int(window_point_top_left[0] + (window_point_bottom_right[0] - window_point_top_left[0])/2)
+    center_y = int(window_point_top_left[1] + (window_point_bottom_right[1] - window_point_top_left[1])/2)
+
+    return np.array([center_x, center_y])
+
+
+def compute_window_size(window_point_top_left, window_point_bottom_right):
+    width = int(window_point_bottom_right[0] - window_point_top_left[0])
+    height = int(window_point_bottom_right[1] - window_point_top_left[1])
+
+    return [width, height]
+
+
+def centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save_image, window_point_top_left,
+                           window_point_bottom_right):
     imagePath = path + '/' + image
     imagePath_module = path + '/temp_' + image
     input_image = Image.open(imagePath)
     input_image.load()
 
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
+    # setup simulation environment
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    process_rate = macros.sec2nano(0.5)
+    test_process = unit_test_sim.CreateNewProcess("unit_process")
+    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
 
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+#     # setup center of brightness module
+    window_center = compute_window_center(window_point_top_left, window_point_bottom_right)
+    window_width, window_height = compute_window_size(window_point_top_left, window_point_bottom_right)
+    module_config = centerOfBrightness.CenterOfBrightness()
+    module_config.modelTag = "centerOfBrightness"
+    if window_center.all() != 0 and window_width != 0 and window_height != 0:
+        module_config.setWindowCenter(window_center)
+        module_config.setWindowSize(window_width, window_height)
 
-    testProcessRate = macros.sec2nano(0.5)
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    module_config.setRelativeBrightnessIncreaseThreshold(0.0)
+    np.testing.assert_equal(module_config.getRelativeBrightnessIncreaseThreshold(), 0.0)
+    module_config.setNumberOfPointsBrightnessAverage(3)
+    np.testing.assert_equal(module_config.getNumberOfPointsBrightnessAverage(),3)
+    module_config.setFileName(image_path_module)
+    np.testing.assert_equal(module_config.getFileName(), image_path_module)
+    module_config.setBlurSize(blur)
+    np.testing.assert_equal(module_config.getBlurSize(), blur)
+    module_config.setPixelThreshold(50)
+    np.testing.assert_equal(module_config.getPixelThreshold(), 50)
+    module_config.setSaveDir(path + '/result_save.png')
+    np.testing.assert_equal(module_config.getSaveDir(), path + '/result_save.png')
 
-    windowCenter = computeWindowCenter(windowPointTopLeft, windowPointBottomRight)
-    [windowWidth, windowHeight] = computeWindowSize(windowPointTopLeft, windowPointBottomRight)
-    moduleConfig = centerOfBrightness.CenterOfBrightness()
-    moduleConfig.modelTag = "centerOfBrightness"
-    if windowCenter.all() != 0 and windowWidth != 0 and windowHeight != 0:
-        moduleConfig.setWindowCenter(windowCenter)
-        moduleConfig.setWindowSize(windowWidth, windowHeight)
-    brightnessIncreaseThreshold = 0.0
-    moduleConfig.setRelativeBrightnessIncreaseThreshold(brightnessIncreaseThreshold)
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
+    if save_test:
+        module_config.setSaveImages(True)
+        np.testing.assert_equal(module_config.getSaveImages(), True)
 
-    numberOfPointsBrightnessAverage = 3
-    moduleConfig.numberOfPointsBrightnessAverage = numberOfPointsBrightnessAverage
-    moduleConfig.filename = imagePath_module
-    moduleConfig.blurSize = blur
-    moduleConfig.threshold = 50
-    moduleConfig.saveDir = path + '/result_save.png'
-    if saveTest:
-        moduleConfig.saveImages = True
+    unit_test_sim.AddModelToTask("unit_task", module_config)
 
     cob_ref = [input_image.width/2, input_image.height/2]
     if image == "half_half.png":
@@ -111,23 +117,23 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
         white_width = 138
         grey_width = 1
         height = 183
-        if np.array_equal(windowPointTopLeft, [50, 0]) and np.array_equal(windowPointBottomRight, [275, 91]):
+        if np.array_equal(window_point_top_left, [50, 0]) and np.array_equal(window_point_bottom_right, [275, 91]):
             height = 91
 
         cob_ref = [(3/4 * 1 * white_width + 1/2 * 116/255 * grey_width)/(white_width + grey_width) * input_image.width,
-                   int(height/2)*validImage]
-        pixelNum_ref = ((white_width+grey_width)*height)*validImage
+                   int(height/2)*valid_image]
+        pixelNum_ref = ((white_width+grey_width)*height)*valid_image
 
     inputMessageData = messaging.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    inputMessageData.valid = validImage
+    inputMessageData.valid = valid_image
     imgInMsg = messaging.CameraImageMsg().write(inputMessageData)
-    moduleConfig.imageInMsg.subscribeTo(imgInMsg)
-    dataLog = moduleConfig.opnavCOBOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    module_config.imageInMsg.subscribeTo(imgInMsg)
+    dataLog = module_config.opnavCOBOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unit_task", dataLog)
 
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
     # run simulation for 5 time steps (excluding initial time step at 0 ns), scale brightness each time step
     # necessary to test rolling brightness average
@@ -135,13 +141,12 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
     brightness_ref = np.zeros([len(scaler)])
     brightnessAverage_ref = np.zeros([len(scaler)])
     for i in range(0, len(scaler)):
-        im = cv2.imread(imagePath)
+        im = cv2.imread(image_path)
         th, im_th = cv2.threshold(im, int(scaler[i] * 255), 255, cv2.THRESH_TRUNC)
-        out_image_path = imagePath_module
-        cv2.imwrite(out_image_path, im_th)
+        cv2.imwrite(image_path_module, im_th)
 
-        unitTestSim.ConfigureStopTime(i * testProcessRate)
-        unitTestSim.ExecuteSimulation()
+        unit_test_sim.ConfigureStopTime(i * process_rate)
+        unit_test_sim.ExecuteSimulation()
 
         # true rolling brightness average
         if image == "half_half.png":
@@ -162,9 +167,9 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
         data = [center[0], center[1], np.sqrt(pixelNum)/50]
         draw_result.ellipse((data[0] - data[2], data[1] - data[2], data[0] + data[2], data[1] + data[2]),
                             outline=(255, 0, 0, 0))
-    if windowCenter.all() != 0 and windowWidth != 0 and windowHeight != 0:
-        draw_result.rectangle((windowPointTopLeft[0], windowPointTopLeft[1], windowPointBottomRight[0],
-                               windowPointBottomRight[1]), outline=(0, 255, 0, 0))
+    if window_center.all() != 0 and window_width != 0 and window_height != 0:
+        draw_result.rectangle((window_point_top_left[0], window_point_top_left[1], window_point_bottom_right[0],
+                               window_point_bottom_right[1]), outline=(0, 255, 0, 0))
 
     input_image.close()
 
@@ -173,14 +178,14 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
     for f in files:
         os.remove(f)
     # Save output image with center of brightness
-    if saveImage:
+    if save_image:
         output_image.save("result_" + image)
 
     if show_plots:
         output_image.show()
 
     # Remove temporarily created images
-    files = glob.glob(imagePath_module)
+    files = glob.glob(image_path_module)
     for f in files:
         os.remove(f)
 
