@@ -33,11 +33,10 @@ constexpr T GetTolerance() {
 }
 
 template <typename DerivedA, typename DerivedB>
-void ExpectMatricesApproxEqual(const Eigen::MatrixBase<DerivedA> &expected,
-                               const Eigen::MatrixBase<DerivedB> &actual,
+void ExpectMatricesApproxEqual(const Eigen::MatrixBase<DerivedA>& expected,
+                               const Eigen::MatrixBase<DerivedB>& actual,
                                typename DerivedA::Scalar tolerance) {
-    static_assert(std::is_same_v<typename DerivedA::Scalar, typename DerivedB::Scalar>,
-                  "Scalar types must match");
+    static_assert(std::is_same_v<typename DerivedA::Scalar, typename DerivedB::Scalar>, "Scalar types must match");
     ASSERT_EQ(expected.rows(), actual.rows());
     ASSERT_EQ(expected.cols(), actual.cols());
     for (int i = 0; i < expected.rows(); ++i) {
@@ -107,7 +106,7 @@ TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXToCArrayCopiesInRowMajorOrde
         }
     }
 
-    Scalar output[rows*cols];
+    Scalar output[rows * cols];
     eigenMatrixXToCArray(input, output);
 
     for (int i = 0; i < rows; ++i) {
@@ -145,8 +144,7 @@ TYPED_TEST(EigenSupportConversionsTest, CArrayAsEigenMatrixPreservesColumnMajorO
         }
     }
 
-    Eigen::Matrix<Scalar, rows, cols> reconstructed =
-        cArrayAsEigenMatrix<Scalar, rows, cols>(original.data());
+    Eigen::Matrix<Scalar, rows, cols> reconstructed = cArrayAsEigenMatrix<Scalar, rows, cols>(original.data());
     ExpectMatricesApproxEqual(original, reconstructed, GetTolerance<Scalar>());
 }
 
@@ -201,9 +199,15 @@ TYPED_TEST(EigenSupportConversionsTest, CArrayAsEigenMrpCopiesCoefficients) {
 
 TYPED_TEST(EigenSupportConversionsTest, CArrayAsEigenMatrix3ReadsRowMajorDataCorrectly) {
     using Scalar = TypeParam;
-    std::array<Scalar, 9> raw = {static_cast<Scalar>(1), static_cast<Scalar>(2), static_cast<Scalar>(3),
-                                 static_cast<Scalar>(4), static_cast<Scalar>(5), static_cast<Scalar>(6),
-                                 static_cast<Scalar>(7), static_cast<Scalar>(8), static_cast<Scalar>(9)};
+    std::array<Scalar, 9> raw = {static_cast<Scalar>(1),
+                                 static_cast<Scalar>(2),
+                                 static_cast<Scalar>(3),
+                                 static_cast<Scalar>(4),
+                                 static_cast<Scalar>(5),
+                                 static_cast<Scalar>(6),
+                                 static_cast<Scalar>(7),
+                                 static_cast<Scalar>(8),
+                                 static_cast<Scalar>(9)};
 
     Eigen::Matrix3<Scalar> expected;
     for (int i = 0; i < 3; ++i) {
@@ -288,9 +292,8 @@ TYPED_TEST(EigenSupportConversionsTest, EigenM1MatchesRotationAboutXAxis) {
     const Scalar s = static_cast<Scalar>(std::sin(static_cast<double>(angle)));
 
     Eigen::Matrix3<Scalar> expected;
-    expected << static_cast<Scalar>(1), static_cast<Scalar>(0), static_cast<Scalar>(0),
-                static_cast<Scalar>(0), c, s,
-                static_cast<Scalar>(0), -s, c;
+    expected << static_cast<Scalar>(1), static_cast<Scalar>(0), static_cast<Scalar>(0), static_cast<Scalar>(0), c, s,
+        static_cast<Scalar>(0), -s, c;
 
     Eigen::Matrix3<Scalar> rotation = eigenM1(angle);
     ExpectMatricesApproxEqual(expected, rotation, GetTolerance<Scalar>());
@@ -303,9 +306,8 @@ TYPED_TEST(EigenSupportConversionsTest, EigenM2MatchesRotationAboutYAxis) {
     const Scalar s = static_cast<Scalar>(std::sin(static_cast<double>(angle)));
 
     Eigen::Matrix3<Scalar> expected;
-    expected << c, static_cast<Scalar>(0), -s,
-                static_cast<Scalar>(0), static_cast<Scalar>(1), static_cast<Scalar>(0),
-                s, static_cast<Scalar>(0), c;
+    expected << c, static_cast<Scalar>(0), -s, static_cast<Scalar>(0), static_cast<Scalar>(1), static_cast<Scalar>(0),
+        s, static_cast<Scalar>(0), c;
 
     Eigen::Matrix3<Scalar> rotation = eigenM2(angle);
     ExpectMatricesApproxEqual(expected, rotation, GetTolerance<Scalar>());
@@ -318,9 +320,8 @@ TYPED_TEST(EigenSupportConversionsTest, EigenM3MatchesRotationAboutZAxis) {
     const Scalar s = static_cast<Scalar>(std::sin(static_cast<double>(angle)));
 
     Eigen::Matrix3<Scalar> expected;
-    expected << c, s, static_cast<Scalar>(0),
-                -s, c, static_cast<Scalar>(0),
-                static_cast<Scalar>(0), static_cast<Scalar>(0), static_cast<Scalar>(1);
+    expected << c, s, static_cast<Scalar>(0), -s, c, static_cast<Scalar>(0), static_cast<Scalar>(0),
+        static_cast<Scalar>(0), static_cast<Scalar>(1);
 
     Eigen::Matrix3<Scalar> rotation = eigenM3(angle);
     ExpectMatricesApproxEqual(expected, rotation, GetTolerance<Scalar>());
@@ -363,21 +364,16 @@ TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXToCArrayDiesOnSizeMismatch) 
 
     Scalar out_bad[5];
     // std::terminate() → death test
-    ASSERT_DEATH(
-        {
-            eigenMatrixXToCArray(input, out_bad);
-        },
-        ".*");
+    ASSERT_DEATH({ eigenMatrixXToCArray(input, out_bad); }, ".*");
 }
 
 TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXToCArrayAllowsLargerDestination) {
     using Scalar = TypeParam;
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(2, 2);
-    input << static_cast<Scalar>(1), static_cast<Scalar>(2),
-             static_cast<Scalar>(3), static_cast<Scalar>(4);
+    input << static_cast<Scalar>(1), static_cast<Scalar>(2), static_cast<Scalar>(3), static_cast<Scalar>(4);
 
     Scalar out_large[6];
-    for (Scalar &v : out_large) {
+    for (Scalar& v : out_large) {
         v = static_cast<Scalar>(-1);
     }
 
@@ -420,7 +416,7 @@ TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXToCArray2DDiesOnShapeMismatc
     Scalar out_wrong[3][3] = {};
     ASSERT_DEATH(
         {
-            eigenMatrixXToCArray2D(input, out_wrong); // rows mismatch
+            eigenMatrixXToCArray2D(input, out_wrong);  // rows mismatch
         },
         ".*");
 }
@@ -449,10 +445,10 @@ TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXInsertCArray_OffsetStride1) 
 TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXInsertCArray_StrideGT1) {
     using Scalar = TypeParam;
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(1, 5);
-    for (int j = 0; j < 5; ++j) input(0, j) = static_cast<Scalar>(j + 1); // [1 2 3 4 5]
+    for (int j = 0; j < 5; ++j) input(0, j) = static_cast<Scalar>(j + 1);  // [1 2 3 4 5]
 
     Scalar out[20];
-    for (auto &v : out) v = static_cast<Scalar>(-1);
+    for (auto& v : out) v = static_cast<Scalar>(-1);
 
     eigenMatrixXInsertCArray(input, out, /*offset=*/3, /*stride=*/2);
     // Writes to indices: 3,5,7,9,11
@@ -466,40 +462,31 @@ TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXInsertCArray_StrideGT1) {
 
 TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXInsertCArray_DiesOnOverrun) {
     using Scalar = TypeParam;
-    Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(2, 3); // 6 elems
+    Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(2, 3);  // 6 elems
     input.setZero();
     Scalar out[8] = {};
 
     // last index = offset + (count-1)*stride
     // Choose offset=4, stride=1 → last index = 4+(6-1)*1 = 9 (>=8) → death
-    ASSERT_DEATH(
-        {
-            eigenMatrixXInsertCArray(input, out, /*offset=*/4, /*stride=*/1);
-        },
-        ".*");
+    ASSERT_DEATH({ eigenMatrixXInsertCArray(input, out, /*offset=*/4, /*stride=*/1); }, ".*");
 }
 
 TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXInsertCArray_DiesOnZeroStrideForMultiple) {
     using Scalar = TypeParam;
-    Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(1, 3); // 3 elems
+    Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(1, 3);  // 3 elems
     // Fill with 1..3
     for (int j = 0; j < input.cols(); ++j) {
         input(0, j) = static_cast<Scalar>(j + 1);
     }
     Scalar out[10] = {};
 
-    ASSERT_DEATH(
-        {
-            eigenMatrixXInsertCArray(input, out, /*offset=*/0, /*stride=*/0);
-        },
-        ".*");
+    ASSERT_DEATH({ eigenMatrixXInsertCArray(input, out, /*offset=*/0, /*stride=*/0); }, ".*");
 }
 
 TYPED_TEST(EigenSupportConversionsTest, EigenMatrixXInsertCArray_NoOpOnZeroSize) {
     using Scalar = TypeParam;
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> empty(0, 0);
-    Scalar out[4] = {static_cast<Scalar>(9), static_cast<Scalar>(9),
-                     static_cast<Scalar>(9), static_cast<Scalar>(9)};
+    Scalar out[4] = {static_cast<Scalar>(9), static_cast<Scalar>(9), static_cast<Scalar>(9), static_cast<Scalar>(9)};
 
     // Should return immediately, not touching output
     ASSERT_NO_FATAL_FAILURE(eigenMatrixXInsertCArray(empty, out, /*offset=*/1, /*stride=*/3));

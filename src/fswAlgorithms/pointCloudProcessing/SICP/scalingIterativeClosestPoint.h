@@ -29,9 +29,9 @@
 #include "architecture/msgPayloadDef/SICPMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/bskLogging.h"
 
 /*! @brief Scaling iterative Closest Point Algorithm */
 class ScalingIterativeClosestPoint : public SysModel {

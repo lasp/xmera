@@ -27,7 +27,7 @@ def test_stateData(show_plots):
     stateName = "position"
     newState = stateArchitecture.StateData(stateName, stateUse)
     newState.setState(stateUse)
-    
+
     predictedDerivative = [[0.0], [0.0]]
 
     assert newState.getRowSize() == len(stateUse), "State row sized incorrectly"
@@ -62,7 +62,7 @@ def test_stateData(show_plots):
     assert dummyState.getColumnSize() == 0, "Dummy state column sized incorrectly"
 
     dummyState.setState(newState.getState())
-    
+
     outState = dummyState + newState
     assert outState.getState() == (2.0*stateUpdateNum).tolist(), "Plus operator failed on StateData"
 
@@ -75,7 +75,7 @@ def test_stateProperties(show_plots):
     gravList = [[9.81], [0.0], [0.1]]
     gravName = "g_N"
     newManager.createProperty(gravName, gravList)
-    
+
     propRef = newManager.getPropertyReference(gravName)
     assert propRef == gravList, "Create and property reference matching failed."
 
@@ -105,15 +105,15 @@ def test_stateArchitecture(show_plots):
     __tracebackhide__ = True
 
     newManager = stateArchitecture.DynParamManager()
-    
+
     positionName = "position"
     stateDim = [3, 1]
     posState = newManager.registerState(stateDim[0], stateDim[1], positionName)
-    
+
     velocityName = "velocity"
     stateDim = [3, 1]
     velState = newManager.registerState(stateDim[0], stateDim[1], velocityName)
-    
+
     flexName = "Array1_flex"
     flexDim = [2, 1]
     flexState = newManager.registerState(flexDim[0], flexDim[1], flexName)
@@ -124,7 +124,7 @@ def test_stateArchitecture(show_plots):
         "Failed to return proper state name in overload of call"
 
     newManager.registerState(stateDim[0], stateDim[1]+2, positionName)
-    
+
     positionStateLookup = newManager.getStateObject("Array1_flex")
 
     assert positionStateLookup.getName() == flexName, "State lookup for solar array flex failed"

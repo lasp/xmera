@@ -57,7 +57,7 @@ void Spacecraft::reset(uint64_t currentSimNanos) {
     this->gravField.updateInertialPosAndVel(this->hubR_N->getState(), this->hubV_N->getState());
     this->writeOutputStateMessages(currentSimNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages and write initial state output messages
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Call writeOutputStateMessages for stateEffectors
         (*it)->writeOutputStateMessages(currentSimNanos);
@@ -65,10 +65,10 @@ void Spacecraft::reset(uint64_t currentSimNanos) {
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */
-void Spacecraft::addStateEffector(StateEffector *newStateEffector) { this->states.push_back(newStateEffector); }
+void Spacecraft::addStateEffector(StateEffector* newStateEffector) { this->states.push_back(newStateEffector); }
 
 /*! This method attaches a dynamicEffector to the dynamicObject */
-void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector) {
+void Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector) {
     this->dynEffectors.push_back(newDynamicEffector);
 }
 
@@ -156,7 +156,7 @@ void Spacecraft::updateState(uint64_t currentSimNanos) {
     // - Write the state of the vehicle into messages
     this->writeOutputStateMessages(currentSimNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Call writeOutputStateMessages for stateEffectors
         (*it)->writeOutputStateMessages(currentSimNanos);
@@ -166,7 +166,7 @@ void Spacecraft::updateState(uint64_t currentSimNanos) {
 
 /*! This method allows the spacecraft to have access to the current state of the hub for MRP switching, writing
  messages, and calculating energy and momentum */
-void Spacecraft::linkInStates(DynParamManager &statesIn) {
+void Spacecraft::linkInStates(DynParamManager& statesIn) {
     // - Get access to all hub states
     this->hubR_N = statesIn.getStateObject("hubPosition");
     this->hubV_N = statesIn.getStateObject("hubVelocity");
@@ -212,7 +212,7 @@ void Spacecraft::initializeDynamics() {
     this->hub.registerStates(this->dynManager);
 
     // - Loop through stateEffectors to register their states
-    std::vector<StateEffector *>::iterator stateIt;
+    std::vector<StateEffector*>::iterator stateIt;
     for (stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++) {
         (*stateIt)->registerStates(this->dynManager);
     }
@@ -246,7 +246,7 @@ void Spacecraft::initializeDynamics() {
     }
 
     // - Loop through the dynamicEffectors to link in the states needed
-    std::vector<DynamicEffector *>::iterator dynIt;
+    std::vector<DynamicEffector*>::iterator dynIt;
     for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++) {
         (*dynIt)->linkInStates(this->dynManager);
     }
@@ -277,7 +277,7 @@ void Spacecraft::updateSCMassProps(double time) {
     (*this->c_B) += this->hub.effProps.mEff * this->hub.effProps.rEff_CB_B;
 
     // - Loop through state effectors to get mass props
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         (*it)->updateEffectorMassProps(time);
         // - Add in effectors mass props into mass props of spacecraft
@@ -336,7 +336,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep) {
     this->gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
     // - Loop through dynEffectors to compute force and torque on the s/c
-    std::vector<DynamicEffector *>::iterator dynIt;
+    std::vector<DynamicEffector*>::iterator dynIt;
     for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++) {
         // - Compute the force and torque contributions from the dynamicEffectors
         (*dynIt)->computeForceTorque(integTimeSeconds, timeStep);
@@ -346,7 +346,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep) {
     }
 
     // - Loop through state effectors to get contributions for back-substitution
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         /* - Set the contribution matrices to zero (just in case a stateEffector += on the matrix or the stateEffector
          doesn't have a contribution for a matrix and doesn't set the matrix to zero */
@@ -500,7 +500,7 @@ void Spacecraft::postIntegration(double integrateToThisTime) {
     this->hub.modifyStates(integrateToThisTime);
 
     // - Loop over stateEffectors to call modifyStates
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Call energy and momentum calulations for stateEffectors
         (*it)->modifyStates(integrateToThisTime);
@@ -548,7 +548,7 @@ void Spacecraft::computeEnergyMomentum(double time) {
     this->totRotEnergy += this->rotEnergyContr;
 
     // - Loop over stateEffectors to get their contributions to energy and momentum
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Set the matrices to zero
         this->rotAngMomPntCContr_B.setZero();
@@ -595,7 +595,7 @@ void Spacecraft::computeEnergyMomentum(double time) {
  are calculated in the intergrator calls */
 void Spacecraft::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B) {
     // - Loop over stateEffectors to get their contributions to energy and momentum
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         (*it)->calcForceTorqueOnBody(time, omega_BN_B);
     }

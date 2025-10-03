@@ -36,8 +36,8 @@
 #include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenMRP.h"
 
 /*! @brief visual camera class */
 class Camera : public SysModel {
@@ -47,30 +47,30 @@ class Camera : public SysModel {
 
     void updateState(uint64_t currentSimNanos) override;
     void reset(uint64_t currentSimNanos) override;
-    void hsvAdjust(const cv::Mat &, cv::Mat &mDst);
-    void bgrAdjustPercent(const cv::Mat &, cv::Mat &mDst);
-    void addGaussianNoise(const cv::Mat &, cv::Mat &mDst, double, double);
-    void addSaltPepper(const cv::Mat &, cv::Mat &mDst, float, float);
-    void addCosmicRay(const cv::Mat &, cv::Mat &mDst, float, double, int);
-    void addCosmicRayBurst(const cv::Mat &, cv::Mat &mDst, double);
-    void applyFilters(cv::Mat &mSource, cv::Mat &mDst);
+    void hsvAdjust(const cv::Mat&, cv::Mat& mDst);
+    void bgrAdjustPercent(const cv::Mat&, cv::Mat& mDst);
+    void addGaussianNoise(const cv::Mat&, cv::Mat& mDst, double, double);
+    void addSaltPepper(const cv::Mat&, cv::Mat& mDst, float, float);
+    void addCosmicRay(const cv::Mat&, cv::Mat& mDst, float, double, int);
+    void addCosmicRayBurst(const cv::Mat&, cv::Mat& mDst, double);
+    void applyFilters(cv::Mat& mSource, cv::Mat& mDst);
 
-    void setParentName(const std::string &cameraParentName);
+    void setParentName(const std::string& cameraParentName);
     std::string getParentName() const;
     void setCameraOn();
     void setCameraOff();
     bool isCameraOn() const;
     void setCameraId(int cameraId);
     int getCameraId() const;
-    void setResolution(const Eigen::Vector2i &cameraResolution);
+    void setResolution(const Eigen::Vector2i& cameraResolution);
     Eigen::Vector2i getResolution() const;
-    void setImageCadence(const uint64_t &cameraRenderRate);
+    void setImageCadence(const uint64_t& cameraRenderRate);
     uint64_t getImageCadence() const;
-    void setFieldOfView(const Eigen::Vector2d &fov);
+    void setFieldOfView(const Eigen::Vector2d& fov);
     Eigen::Vector2d getFieldOfView() const;
-    void setCameraBodyFramePosition(const Eigen::Vector3d &cameraPosition_B);
+    void setCameraBodyFramePosition(const Eigen::Vector3d& cameraPosition_B);
     Eigen::Vector3d getCameraBodyFramePosition() const;
-    void setBodyToCameraMrp(const Eigen::Vector3d &cameraMrp_CB);
+    void setBodyToCameraMrp(const Eigen::Vector3d& cameraMrp_CB);
     Eigen::Vector3d getBodyToCameraMrp() const;
     void setFocalLength(double cameraFocalLength);
     double getFocalLength() const;
@@ -98,17 +98,17 @@ class Camera : public SysModel {
     double getIntegrationWeightFactor() const;
     void setFullWellCapacity(double fullWellCapacityValue);
     double getFullWellCapacity() const;
-    void setRedQuantumEfficiency(const Eigen::Vector3d &redQE);
+    void setRedQuantumEfficiency(const Eigen::Vector3d& redQE);
     Eigen::Vector3d getRedQuantumEfficiency() const;
-    void setGreenQuantumEfficiency(const Eigen::Vector3d &greenQE);
+    void setGreenQuantumEfficiency(const Eigen::Vector3d& greenQE);
     Eigen::Vector3d getGreenQuantumEfficiency() const;
-    void setBlueQuantumEfficiency(const Eigen::Vector3d &blueQE);
+    void setBlueQuantumEfficiency(const Eigen::Vector3d& blueQE);
     Eigen::Vector3d getBlueQuantumEfficiency() const;
-    void setHorizontalVignetting(const Eigen::VectorXd &horizontalVignettingCoeffs);
+    void setHorizontalVignetting(const Eigen::VectorXd& horizontalVignettingCoeffs);
     Eigen::VectorXd getHorizontalVignetting() const;
-    void setVerticalVignetting(const Eigen::VectorXd &verticalVignettingCoeffs);
+    void setVerticalVignetting(const Eigen::VectorXd& verticalVignettingCoeffs);
     Eigen::VectorXd getVerticalVignetting() const;
-    void setDistortion(const Eigen::VectorXd &distortionCoeffs);
+    void setDistortion(const Eigen::VectorXd& distortionCoeffs);
     Eigen::VectorXd getDistortion() const;
     void setTransmission(double transmissionValue);
     double getTransmission() const;
@@ -201,7 +201,7 @@ class Camera : public SysModel {
 
    private:
     uint64_t localcurrentSimNanos{};
-    void *pointImageOut{nullptr};  //!< void pointer for image memory passing
+    void* pointImageOut{nullptr};  //!< void pointer for image memory passing
 };
 
 /* @} */

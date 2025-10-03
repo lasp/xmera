@@ -45,8 +45,8 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
    public:
     ReactionWheelStateEffector();
     ~ReactionWheelStateEffector();
-    void registerStates(DynParamManager &states);
-    void linkInStates(DynParamManager &states);
+    void registerStates(DynParamManager& states);
+    void linkInStates(DynParamManager& states);
     void writeOutputStateMessages(uint64_t integTimeNanos);
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
@@ -54,27 +54,27 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
                             Eigen::Vector3d sigma_BN);
     void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
     void updateContributions(double integTime,
-                             BackSubMatrices &backSubContr,
+                             BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N);  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d &rotAngMomPntCContr_B,
-                                      double &rotEnergyContr,
+                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                      double& rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void reset(uint64_t currentSimNanos);
-    void addReactionWheel(RWConfigMsgPayload *NewRW);
+    void addReactionWheel(RWConfigMsgPayload* NewRW);
     void updateState(uint64_t currentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     void ReadInputs();
     void ConfigureRWRequests(double CurrentTime);
 
    public:
-    std::vector<RWConfigMsgPayload *> ReactionWheelData;  //!< -- RW information
+    std::vector<RWConfigMsgPayload*> ReactionWheelData;  //!< -- RW information
 
     ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;  //!< -- RW motor torque array cmd input message
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;                 //!< -- RW speed array output message
-    std::vector<Message<RWConfigLogMsgPayload> *> rwOutMsgs;  //!< -- vector of RW log output messages
+    std::vector<Message<RWConfigLogMsgPayload>*> rwOutMsgs;   //!< -- vector of RW log output messages
 
     std::vector<RWCmdMsgPayload> NewRWCmds;      //!< -- Incoming attitude commands
     RWSpeedMsgPayload rwSpeedMsgBuffer = {};     //!< (-) Output data from the reaction wheels
@@ -88,12 +88,12 @@ class ReactionWheelStateEffector : public SysModel, public StateEffector {
     ArrayMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                           //!< -- Time for previous valid thruster firing
 
-    StateData *hubSigma;     //!< class variable
-    StateData *hubOmega;     //!< class variable
-    StateData *hubVelocity;  //!< class variable
-    StateData *OmegasState;  //!< class variable
-    StateData *thetasState;  //!< class variable
-    Eigen::MatrixXd *g_N;    //!< [m/s^2] Gravitational acceleration in N frame components
+    StateData* hubSigma;     //!< class variable
+    StateData* hubOmega;     //!< class variable
+    StateData* hubVelocity;  //!< class variable
+    StateData* OmegasState;  //!< class variable
+    StateData* thetasState;  //!< class variable
+    Eigen::MatrixXd* g_N;    //!< [m/s^2] Gravitational acceleration in N frame components
 };
 
 #endif /* STATE_EFFECTOR_H */

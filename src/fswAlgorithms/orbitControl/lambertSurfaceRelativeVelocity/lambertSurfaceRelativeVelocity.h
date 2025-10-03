@@ -26,8 +26,8 @@
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <array>
 #include <vector>
 

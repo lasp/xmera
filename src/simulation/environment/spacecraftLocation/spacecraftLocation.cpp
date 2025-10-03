@@ -83,11 +83,11 @@ void SpacecraftLocation::reset(uint64_t currentSimNanos) {
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message
  * output name.
  */
-void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
+void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg) {
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<AccessMsgPayload> *msg;
+    Message<AccessMsgPayload>* msg;
     msg = new Message<AccessMsgPayload>;
     this->accessOutMsgs.push_back(msg);
 

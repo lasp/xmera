@@ -119,7 +119,7 @@ void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
 */
 void SunSafePointAlgorithm::computeHubAngularRateError(NavAttMsgPayload imuInMsg) {
     const Eigen::Vector3d omega_BN_B = cArrayAsEigenVector(imuInMsg.omega_BN_B);  // [rad/s]
-    Eigen::Vector3d omega_BR_B = omega_BN_B - this->omega_RN_B;                    // [rad/s]
+    Eigen::Vector3d omega_BR_B = omega_BN_B - this->omega_RN_B;                   // [rad/s]
 
     eigenVectorToCArray(omega_BR_B, this->attGuidanceOutBuffer.omega_BR_B);
 }

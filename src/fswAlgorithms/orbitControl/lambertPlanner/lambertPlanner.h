@@ -25,8 +25,8 @@
 #include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <vector>
 
 /*! @brief This module creates the LambertProblemMsg to be used for the LambertSolver module

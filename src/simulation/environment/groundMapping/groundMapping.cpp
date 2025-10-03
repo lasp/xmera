@@ -80,12 +80,12 @@ void GroundMapping::ReadMessages() {
 /*! Method to add map points
  * @param r_LP_P_init: mapping point in planet-fixed frame
  */
-void GroundMapping::addPointToModel(Eigen::Vector3d &r_LP_P_init) {
+void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init) {
     /* Add the mapping point */
     this->mappingPoints.push_back(r_LP_P_init);
 
     /* Create buffer output messages */
-    Message<AccessMsgPayload> *msg;
+    Message<AccessMsgPayload>* msg;
     msg = new Message<AccessMsgPayload>;
     this->accessOutMsgs.push_back(msg);
 
@@ -94,7 +94,7 @@ void GroundMapping::addPointToModel(Eigen::Vector3d &r_LP_P_init) {
     this->accessMsgBuffer.push_back(accMsg);
 
     /* Create ground state output message */
-    Message<GroundStateMsgPayload> *msg_2;
+    Message<GroundStateMsgPayload>* msg_2;
     msg_2 = new Message<GroundStateMsgPayload>;
     this->currentGroundStateOutMsgs.push_back(msg_2);
 

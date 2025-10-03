@@ -84,7 +84,7 @@ void SmallBodyNavEKF::reset(uint64_t currentSimNanos) {
 /*! This method is used to add a thruster to the filter.
     @return void
 */
-void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg) {
+void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload>* tmpThrusterMsg) {
     this->thrusterInMsgs.push_back(tmpThrusterMsg->addSubscriber());
     return;
 }

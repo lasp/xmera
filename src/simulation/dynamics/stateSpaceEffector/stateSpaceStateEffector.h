@@ -20,15 +20,15 @@
 #ifndef STATE_SPACE_STATE_EFFECTOR_H
 #define STATE_SPACE_STATE_EFFECTOR_H
 
-#include <Eigen/Dense>
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenMRP.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <Eigen/Dense>
 
-class StateSpaceStateEffector: public StateEffector, public SysModel {
-public:
+class StateSpaceStateEffector : public StateEffector, public SysModel {
+   public:
     explicit StateSpaceStateEffector(int n);
     ~StateSpaceStateEffector() override;
     void registerStates(DynParamManager& statesIn) override;
@@ -43,8 +43,10 @@ public:
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::Vector3d sigma_BN) override;
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_B,
-                                      double &rotEnergyContr, Eigen::Vector3d omega_BN_B) override;
+    void updateEnergyMomContributions(double integTime,
+                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                      double& rotEnergyContr,
+                                      Eigen::Vector3d omega_BN_B) override;
     void prependSpacecraftNameToStates() override;
 
     Eigen::VectorXd XInit;
@@ -62,7 +64,7 @@ public:
     Eigen::Vector3d r_FB_B = Eigen::Vector3d::Zero();
     Eigen::Vector3d r_ScS_F = Eigen::Vector3d::Zero();
 
-private:
+   private:
     static uint64_t effectorID;
 
     int sizeOfStateSpace;
@@ -73,8 +75,8 @@ private:
     Eigen::MatrixXd* c_B = nullptr;
     Eigen::MatrixXd* inertialPositionProperty = nullptr;
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;
-    StateData *XState = nullptr;
-    StateData *XDotState = nullptr;
+    StateData* XState = nullptr;
+    StateData* XDotState = nullptr;
 
     Eigen::VectorXd p;
     Eigen::MatrixXd AEff;

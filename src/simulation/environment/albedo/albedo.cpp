@@ -91,7 +91,7 @@ Config::~Config() { return; }
  */
 void Albedo::addInstrumentConfig(instConfig_t configMsg) {
     // add a albedo output message for this instrument
-    Message<AlbedoMsgPayload> *msg;
+    Message<AlbedoMsgPayload>* msg;
     msg = new Message<AlbedoMsgPayload>;
     this->albOutMsgs.push_back(msg);
 
@@ -127,7 +127,7 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
  */
 void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B) {
     // add a albedo output message for this instrument
-    Message<AlbedoMsgPayload> *msg;
+    Message<AlbedoMsgPayload>* msg;
     msg = new Message<AlbedoMsgPayload>;
     this->albOutMsgs.push_back(msg);
 
@@ -162,7 +162,7 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
 /*! This method subscribes to the planet msg and sets the albedo average model (overloaded function)
  @return void
  */
-void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg) {
+void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* planetSpiceMsg) {
     std::string modelName = "ALBEDO_AVG";
     this->modelNames.push_back(modelName);
     this->fileNames.push_back("");
@@ -183,7 +183,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
 /*! This method subscribes to the  planet msg and sets the albedo average model (overloaded function)
  @return void
  */
-void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg,
+void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* planetSpiceMsg,
                                             double ALB_avg,
                                             int numLat,
                                             int numLon) {
@@ -205,7 +205,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
 /*! This method subscribes to the planet msg and sets the albedo data model
  @return void
  */
-void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg,
+void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload>* planetSpiceMsg,
                                          std::string dataPath,
                                          std::string fileName) {
     std::string modelName = "ALBEDO_DATA";

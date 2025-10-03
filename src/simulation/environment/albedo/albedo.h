@@ -57,15 +57,15 @@ class Albedo : public SysModel {
                              Eigen::Vector3d nHat_B,
                              Eigen::Vector3d r_IB_B);  //!< @brief adds instrument configuration (overloaded function)
     void addPlanetandAlbedoAverageModel(
-        Message<SpicePlanetStateMsgPayload>
-            *msg);  //!< @brief This method adds planet msg and albedo average model name (overloaded function)
+        Message<SpicePlanetStateMsgPayload>*
+            msg);  //!< @brief This method adds planet msg and albedo average model name (overloaded function)
     void addPlanetandAlbedoAverageModel(
-        Message<SpicePlanetStateMsgPayload> *msg,
+        Message<SpicePlanetStateMsgPayload>* msg,
         double ALB_avg,
         int numLat,
         int numLon);  //!< @brief This method adds planet name and albedo average model name (overloaded function)
     void addPlanetandAlbedoDataModel(
-        Message<SpicePlanetStateMsgPayload> *msg,
+        Message<SpicePlanetStateMsgPayload>* msg,
         std::string dataPath,
         std::string fileName);  //!< @brief This method adds planet name and albedo data model
     double getAlbedoAverage(
@@ -86,7 +86,7 @@ class Albedo : public SysModel {
                               Eigen::Vector3d r_SP_N);  //!< computes the shadow factor at dA
 
    public:
-    std::vector<Message<AlbedoMsgPayload> *> albOutMsgs;                //!< vector of output messages for albedo data
+    std::vector<Message<AlbedoMsgPayload>*> albOutMsgs;                 //!< vector of output messages for albedo data
     ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;           //!< input message name for sun data
     ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;               //!< input message name for spacecraft data
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs;  //!< vector of planet data input data

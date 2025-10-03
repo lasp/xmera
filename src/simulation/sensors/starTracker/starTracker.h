@@ -27,8 +27,8 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/STSensorMsgPayload.h"
-#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/macroDefinitions.h"
 
@@ -45,14 +45,14 @@ class StarTracker : public SysModel {
     void computeSensorErrors();
     void applySensorErrors();
     void computeTrueOutput();
-    void computeQuaternion(Eigen::Vector3d *sigma, STSensorMsgPayload *sensorValue);
+    void computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValue);
     void computeAngularVelocity(uint64_t currentSimNanos);
-    void setDcmCB(const Eigen::Matrix3d &dcm_CB);
-    void setPMatrix(const Eigen::Matrix3d &PMatrix);
-    void setWalkBounds(const Eigen::Vector3d &walkBounds);
-    const Eigen::Matrix3d &getDcmCB() const;
-    const Eigen::Matrix3d &getPMatrix() const;
-    const Eigen::Vector3d &getWalkBounds() const;
+    void setDcmCB(const Eigen::Matrix3d& dcm_CB);
+    void setPMatrix(const Eigen::Matrix3d& PMatrix);
+    void setWalkBounds(const Eigen::Vector3d& walkBounds);
+    const Eigen::Matrix3d& getDcmCB() const;
+    const Eigen::Matrix3d& getPMatrix() const;
+    const Eigen::Vector3d& getWalkBounds() const;
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!< Sc input state message
     Message<STSensorMsgPayload> sensorOutMsg;      //!< Sensor output state message

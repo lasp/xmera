@@ -29,8 +29,8 @@
 #include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
 #include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <array>
 #include <vector>

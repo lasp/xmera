@@ -37,8 +37,8 @@ void FlybyPointAlgorithm::reset() {
  @param v_BN_N The relative velocity state
  */
 AttRefMsgPayload FlybyPointAlgorithm::updateState(uint64_t currentSimNanos,
-                                                  const Eigen::Vector3d &r_BN_N,
-                                                  const Eigen::Vector3d &v_BN_N) {
+                                                  const Eigen::Vector3d& r_BN_N,
+                                                  const Eigen::Vector3d& v_BN_N) {
     /*! compute dt from current time and last filter read time and get new states*/
     this->dt = (currentSimNanos - this->lastFilterReadTime) * NANO2SEC;
     if ((this->dt >= this->timeBetweenFilterData) || this->firstRead) {
@@ -71,7 +71,7 @@ AttRefMsgPayload FlybyPointAlgorithm::updateState(uint64_t currentSimNanos,
     return attMsgBuffer;
 }
 
-void FlybyPointAlgorithm::computeFlybyParameters(const Eigen::Vector3d &r_BN_N, const Eigen::Vector3d &v_BN_N) {
+void FlybyPointAlgorithm::computeFlybyParameters(const Eigen::Vector3d& r_BN_N, const Eigen::Vector3d& v_BN_N) {
     this->f0 = v_BN_N.norm() / r_BN_N.norm();
 
     /*! compute radial (ur_N), velocity (uv_N), along-track (ut_N), and out-of-plane (uh_N) unit direction vectors */
@@ -86,8 +86,8 @@ void FlybyPointAlgorithm::computeFlybyParameters(const Eigen::Vector3d &r_BN_N, 
 }
 
 bool FlybyPointAlgorithm::checkValidity(uint64_t currentSimNanos,
-                                        const Eigen::Vector3d &r_BN_N,
-                                        const Eigen::Vector3d &v_BN_N) const {
+                                        const Eigen::Vector3d& r_BN_N,
+                                        const Eigen::Vector3d& v_BN_N) const {
     bool valid = true;
     Eigen::Vector3d ur_N = r_BN_N.normalized();
     Eigen::Vector3d uv_N = v_BN_N.normalized();
@@ -118,7 +118,7 @@ bool FlybyPointAlgorithm::checkValidity(uint64_t currentSimNanos,
     return valid;
 }
 
-void FlybyPointAlgorithm::computeRN(const Eigen::Vector3d &r_BN_N, const Eigen::Vector3d &v_BN_N) {
+void FlybyPointAlgorithm::computeRN(const Eigen::Vector3d& r_BN_N, const Eigen::Vector3d& v_BN_N) {
     /*! compute radial (ur_N), velocity (uv_N), along-track (ut_N), and out-of-plane (uh_N) unit direction vectors */
     Eigen::Vector3d ur_N = r_BN_N.normalized();
     Eigen::Vector3d uv_N = v_BN_N.normalized();

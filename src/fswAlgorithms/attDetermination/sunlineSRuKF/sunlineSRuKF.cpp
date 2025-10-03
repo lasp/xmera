@@ -174,7 +174,7 @@ void SunlineSRuKF::readCssMeasurements() {
     }
 
     std::function<const Eigen::VectorXd(const FilterStateVector)> linearModel =
-        [hMatrix](const FilterStateVector &state) {
+        [hMatrix](const FilterStateVector& state) {
             Eigen::VectorXd observed = hMatrix * state.getPositionStates();
             if (state.hasBias()) {
                 observed = observed * state.getBiasStates().value();
@@ -212,7 +212,7 @@ void SunlineSRuKF::readFilterMeasurements() {
     @return FilterStateVector inputState
     @return FilterStateVector outputState
     */
-FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStateVector &state) {
+FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStateVector& state) {
     FilterStateVector XDot;
     /*! Implement propagation with rate derivatives set to zero */
     Eigen::Vector3d sHat = state.getPositionStates();

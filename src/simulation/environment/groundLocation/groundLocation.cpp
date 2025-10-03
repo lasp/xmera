@@ -85,7 +85,7 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt) {
 /*! Specifies the ground location from planet-centered, planet-fixed coordinates
  * @param r_LP_P_Loc
  */
-void GroundLocation::specifyLocationPCPF(Eigen::Vector3d &r_LP_P_Loc) {
+void GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc) {
     /* Assign to r_LP_P_Init */
     this->r_LP_P_Init = r_LP_P_Loc;
 
@@ -99,11 +99,11 @@ void GroundLocation::specifyLocationPCPF(Eigen::Vector3d &r_LP_P_Loc) {
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message
  * output name.
  */
-void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
+void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg) {
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<AccessMsgPayload> *msg;
+    Message<AccessMsgPayload>* msg;
     msg = new Message<AccessMsgPayload>;
     this->accessOutMsgs.push_back(msg);
 

@@ -86,26 +86,26 @@ class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
     Eigen::Vector3d v_SN_N;                     //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::Vector3d sigma_SN;                   //!< -- MRP attitude of panel frame S relative to inertial frame
     Eigen::Vector3d omega_SN_S;                 //!< [rad/s] inertial panel frame angular velocity vector
-    StateData *sigma_BN;                        //!< Hub/Inertial attitude represented by MRP
-    StateData *omega_BN_B;                      //!< Hub/Inertial angular velocity vector in B frame components
-    StateData *thetaState;                      //!< -- state manager of theta for hinged rigid body
-    Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
-    Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+    StateData* sigma_BN;                        //!< Hub/Inertial attitude represented by MRP
+    StateData* omega_BN_B;                      //!< Hub/Inertial angular velocity vector in B frame components
+    StateData* thetaState;                      //!< -- state manager of theta for hinged rigid body
+    Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
-    StateData *thetaDotState;  //!< -- state manager of thetaDot for hinged rigid body
-    Eigen::MatrixXd *c_B;      //!< [m] Vector from point B to CoM of s/c in B frame components
+    StateData* thetaDotState;  //!< -- state manager of thetaDot for hinged rigid body
+    Eigen::MatrixXd* c_B;      //!< [m] Vector from point B to CoM of s/c in B frame components
 
-    Eigen::MatrixXd *cPrime_B;  //!< [m/s] Body time derivative of vector c_B in B frame components
+    Eigen::MatrixXd* cPrime_B;  //!< [m/s] Body time derivative of vector c_B in B frame components
 
    public:
     HingedRigidBodyStateEffector();   //!< -- Contructor
     ~HingedRigidBodyStateEffector();  //!< -- Destructor
     void writeOutputStateMessages(uint64_t CurrentClock);
     void updateState(uint64_t currentSimNanos);
-    void registerStates(DynParamManager &statesIn);  //!< -- Method for registering the HRB states
-    void linkInStates(DynParamManager &states);      //!< -- Method for getting access to other states
+    void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
+    void linkInStates(DynParamManager& states);      //!< -- Method for getting access to other states
     void updateContributions(double integTime,
-                             BackSubMatrices &backSubContr,
+                             BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N);  //!< -- Method for back-sub contributions
@@ -115,8 +115,8 @@ class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
                             Eigen::Vector3d sigma_BN);  //!< -- Method for HRB to compute its derivatives
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d &rotAngMomPntCContr_B,
-                                      double &rotEnergyContr,
+                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                      double& rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B);  //!< -- Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime,
                                Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to HRBs

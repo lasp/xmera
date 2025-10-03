@@ -130,7 +130,7 @@ and eclipse shadow factor;
 attributes.
  @return void
  */
-void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageSimMsg) {
+void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageSimMsg) {
     this->computeSunData();
     double sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->shadowFactor;
     powerUsageSimMsg->netPower = sunPowerFactor * this->projectedArea * this->panelEfficiency;

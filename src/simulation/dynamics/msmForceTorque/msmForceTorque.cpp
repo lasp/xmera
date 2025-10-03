@@ -75,7 +75,7 @@ void MsmForceTorque::reset(uint64_t currentSimNanos) {
 
 /*!   Subscribe to the spacecraft state message and store the corresponding MSM radii and sphere positions
  */
-void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg,
+void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
                                           std::vector<double> radii,
                                           std::vector<Eigen::Vector3d> r_SB_B) {
     /* add the message reader to the vector of input spacecraft state messages */
@@ -105,15 +105,15 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg,
     this->sigma_BNList.push_back(zeroMRP);
 
     /* create output message objects */
-    Message<CmdTorqueBodyMsgPayload> *msgTorque;
+    Message<CmdTorqueBodyMsgPayload>* msgTorque;
     msgTorque = new Message<CmdTorqueBodyMsgPayload>;
     this->eTorqueOutMsgs.push_back(msgTorque);
 
-    Message<CmdForceInertialMsgPayload> *msgForce;
+    Message<CmdForceInertialMsgPayload>* msgForce;
     msgForce = new Message<CmdForceInertialMsgPayload>;
     this->eForceOutMsgs.push_back(msgForce);
 
-    Message<ChargeMsmMsgPayload> *msmCharge;
+    Message<ChargeMsmMsgPayload>* msmCharge;
     msmCharge = new Message<ChargeMsmMsgPayload>;
     this->chargeMsmOutMsgs.push_back(msmCharge);
 }

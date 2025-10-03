@@ -21,8 +21,8 @@
 #define SpiceInterface_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <map>
 #include <vector>
@@ -42,26 +42,26 @@ class SpiceInterface : public SysModel {
     ~SpiceInterface();
 
     void updateState(uint64_t currentSimNanos);
-    int loadSpiceKernel(char *kernelName, const char *dataPath);
-    int unloadSpiceKernel(char *kernelName, const char *dataPath);
+    int loadSpiceKernel(char* kernelName, const char* dataPath);
+    int unloadSpiceKernel(char* kernelName, const char* dataPath);
     std::string getCurrentTimeString();  //!< class method
     void reset(uint64_t currentSimNanos);
     void initTimeData();
     void computeGPSData();
-    void pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData);
+    void pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spiceData);
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();  //!< class method
     void addPlanetNames(std::vector<std::string> planetNames);
     void addSpacecraftNames(std::vector<std::string> spacecraftNames);
 
    public:
-    Message<SpiceTimeMsgPayload> spiceTimeOutMsg;                           //!< spice time sampling output message
-    ReadFunctor<EpochMsgPayload> epochInMsg;                                //!< (optional) input epoch message
-    std::vector<Message<SpicePlanetStateMsgPayload> *> planetStateOutMsgs;  //!< vector of planet state output messages
-    std::vector<Message<SCStatesMsgPayload> *> scStateOutMsgs;  //!< vector of spacecraft state output messages
-    std::vector<Message<AttRefMsgPayload> *>
+    Message<SpiceTimeMsgPayload> spiceTimeOutMsg;                          //!< spice time sampling output message
+    ReadFunctor<EpochMsgPayload> epochInMsg;                               //!< (optional) input epoch message
+    std::vector<Message<SpicePlanetStateMsgPayload>*> planetStateOutMsgs;  //!< vector of planet state output messages
+    std::vector<Message<SCStatesMsgPayload>*> scStateOutMsgs;  //!< vector of spacecraft state output messages
+    std::vector<Message<AttRefMsgPayload>*>
         attRefStateOutMsgs;  //!< vector of spacecraft attitude reference state output messages
-    std::vector<Message<TransRefMsgPayload> *>
+    std::vector<Message<TransRefMsgPayload>*>
         transRefStateOutMsgs;  //!< vector of spacecraft translational reference state output messages
 
     std::string SPICEDataPath;   //!< -- Path on file to SPICE data
@@ -70,7 +70,7 @@ class SpiceInterface : public SysModel {
     std::string timeOutPicture;  //!< -- Optional parameter used to extract time strings
     bool SPICELoaded;            //!< -- Boolean indicating to reload spice
     int charBufferSize;          //!< -- avert your eyes we're getting SPICE
-    uint8_t *spiceBuffer;        //!< -- General buffer to pass down to spice
+    uint8_t* spiceBuffer;        //!< -- General buffer to pass down to spice
     std::string UTCCalInit;      //!< -- UTC time string for init time
 
     std::vector<std::string>

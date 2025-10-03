@@ -89,13 +89,9 @@ Eigen::Vector3d SingleAxisProfiler::computeSigma_FM(double theta) {
  @return void
  @param rotHat_M Spinning body rotation axis (unit vector)
 */
-void SingleAxisProfiler::setRotHat_M(const Eigen::Vector3d &rotHat_M) {
-    this->rotHat_M = rotHat_M / rotHat_M.norm();
-}
+void SingleAxisProfiler::setRotHat_M(const Eigen::Vector3d& rotHat_M) { this->rotHat_M = rotHat_M / rotHat_M.norm(); }
 
 /*! Getter method for the spinning body rotation axis.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &SingleAxisProfiler::getRotHat_M() const {
-    return this->rotHat_M;
-}
+const Eigen::Vector3d& SingleAxisProfiler::getRotHat_M() const { return this->rotHat_M; }

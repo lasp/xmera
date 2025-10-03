@@ -68,11 +68,11 @@ double RateControl::getDerivativeGainP() const { return this->algorithm.getDeriv
  @return void
  @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
 */
-void RateControl::setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B) {
+void RateControl::setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B) {
     this->algorithm.setKnownTorquePntB_B(knownTorquePntB_B);
 }
 
 /*! Getter method for the known torque about point B.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &RateControl::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }
+const Eigen::Vector3d& RateControl::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }

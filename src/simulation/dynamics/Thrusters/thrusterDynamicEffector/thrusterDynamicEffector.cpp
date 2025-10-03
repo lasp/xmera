@@ -108,7 +108,7 @@ bool ThrusterDynamicEffector::ReadInputs() {
     }
 
     //! - Set the NewThrustCmds vector.  Using the data() method for raw speed
-    double *CmdPtr;
+    double* CmdPtr;
     for (i = 0, CmdPtr = NewThrustCmds.data(); i < this->thrusterData.size(); CmdPtr++, i++) {
         *CmdPtr = this->incomingCmdBuffer.OnTimeRequest[i];
     }
@@ -201,12 +201,12 @@ void ThrusterDynamicEffector::UpdateThrusterProperties() {
  @return void
  @param states The states to link
  */
-void ThrusterDynamicEffector::linkInStates(DynParamManager &states) {
+void ThrusterDynamicEffector::linkInStates(DynParamManager& states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->hubOmega = states.getStateObject("hubOmega");
     this->inertialPositionProperty = states.getPropertyReference("r_BN_N");
 
-    for (const auto &thrusterConfig : this->thrusterData) {
+    for (const auto& thrusterConfig : this->thrusterData) {
         if (this->fuelMass < 0.0 &&
             (!thrusterConfig.thrBlowDownCoeff.empty() || !thrusterConfig.ispBlowDownCoeff.empty())) {
             bskLogger.bskLog(BSK_WARNING,
@@ -250,7 +250,7 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
 
     // Loop variables
     std::vector<THRSimConfig>::iterator it;
-    THROperation *ops;
+    THROperation* ops;
 
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     int index;
@@ -317,11 +317,11 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
     prevFireTime = integTime;
 }
 
-void ThrusterDynamicEffector::addThruster(THRSimConfig *newThruster) {
+void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster) {
     this->thrusterData.push_back(*newThruster);
 
     // Create corresponding output message
-    Message<THROutputMsgPayload> *msg;
+    Message<THROutputMsgPayload>* msg;
     msg = new Message<THROutputMsgPayload>;
     this->thrusterOutMsgs.push_back(msg);
 
@@ -337,11 +337,11 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig *newThruster) {
     this->bodyToHubInfo.push_back(attachedBodyToHub);
 }
 
-void ThrusterDynamicEffector::addThruster(THRSimConfig *newThruster, Message<SCStatesMsgPayload> *bodyStateMsg) {
+void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg) {
     this->thrusterData.push_back(*newThruster);
 
     // Create corresponding output message
-    Message<THROutputMsgPayload> *msg;
+    Message<THROutputMsgPayload>* msg;
     msg = new Message<THROutputMsgPayload>;
     this->thrusterOutMsgs.push_back(msg);
 
@@ -363,8 +363,8 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig *newThruster, Message<SCS
 * tank subject to blow down effects.
  @return void
  */
-void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig *currentThruster) {
-    THROperation *ops = &(currentThruster->ThrustOps);
+void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig* currentThruster) {
+    THROperation* ops = &(currentThruster->ThrustOps);
 
     if (!currentThruster->thrBlowDownCoeff.empty()) {
         double thrustBlowDown = 0.0;
@@ -393,7 +393,7 @@ void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig *currentThruster
 
 void ThrusterDynamicEffector::computeStateContribution(double integTime) {
     std::vector<THRSimConfig>::iterator it;
-    THROperation *ops;
+    THROperation* ops;
     double mDotSingle = 0.0;
     this->mDotTotal = 0.0;
     this->stateDerivContribution.setZero();
@@ -419,9 +419,9 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime) {
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster, double currentTime) {
+void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig* CurrentThruster, double currentTime) {
     std::vector<THRTimePair>::iterator it;
-    THROperation *ops = &(CurrentThruster->ThrustOps);
+    THROperation* ops = &(CurrentThruster->ThrustOps);
     //! - Set the current ramp time for the thruster firing
     if (ops->ThrustOnRampTime == 0.0 && CurrentThruster->ThrusterOnRamp.size() > 0) {
         ops->ThrustOnRampTime = thrFactorToTime(CurrentThruster, &(CurrentThruster->ThrusterOnRamp));
@@ -468,9 +468,9 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster,
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfig *CurrentThruster, double currentTime) {
+void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfig* CurrentThruster, double currentTime) {
     std::vector<THRTimePair>::iterator it;
-    THROperation *ops = &(CurrentThruster->ThrustOps);
+    THROperation* ops = &(CurrentThruster->ThrustOps);
 
     //! - Set the current off-ramp time based on the previous clock time and now
     if (ops->ThrustOffRampTime == 0.0 && CurrentThruster->ThrusterOffRamp.size() > 0) {
@@ -512,7 +512,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfig *CurrentThruster,
  @param thrData The data for the thruster that we are currently firing
  @param thrRamp This just allows us to avoid switching to figure out which ramp
  */
-double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData, std::vector<THRTimePair> *thrRamp) {
+double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig* thrData, std::vector<THRTimePair>* thrRamp) {
     std::vector<THRTimePair>::iterator it;
     //! - Grab the last element in the ramp and determine if it goes up or down
     it = thrRamp->end();

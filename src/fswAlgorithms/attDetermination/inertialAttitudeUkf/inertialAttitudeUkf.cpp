@@ -25,7 +25,7 @@ InertialAttitudeUkf::InertialAttitudeUkf(AttitudeFilterMethod method) { this->me
 void InertialAttitudeUkf::customreset() {
     /*! No custom reset for this module */
     std::function<FilterStateVector(double, const FilterStateVector)> attitudeDynamics =
-        [this](double t, const FilterStateVector &state) {
+        [this](double t, const FilterStateVector& state) {
             Eigen::Vector3d mrp(state.getPositionStates());
             Eigen::Vector3d omega(state.getVelocityStates());
             Eigen::MatrixXd bMat = bmatMrp(mrp);
@@ -182,8 +182,8 @@ void InertialAttitudeUkf::readStarTrackerData() {
                 mrpSwitch(Eigen::Map<Eigen::Vector3d>(starTracker.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold));
             starTrackerMeasurement.setMeasurementModel(MeasurementModel::positionStates);
 
-            std::function<const Eigen::VectorXd(const Eigen::Vector3d &, const Eigen::Vector3d &)> mrpSub =
-                [](Eigen::Vector3d const &observed, const Eigen::Vector3d &predicted) {
+            std::function<const Eigen::VectorXd(const Eigen::Vector3d&, const Eigen::Vector3d&)> mrpSub =
+                [](Eigen::Vector3d const& observed, const Eigen::Vector3d& predicted) {
                     Eigen::Vector3d yMeas = observed - predicted;
                     if (observed.norm() > 0.95 && predicted.norm() > 0.95) {
                         const Eigen::Vector3d predictedShadow = mrpShadow(predicted);
@@ -263,7 +263,7 @@ void InertialAttitudeUkf::readFilterMeasurements() {
     @param Eigen::Matrix3d gyroNoise
     @return void
     */
-void InertialAttitudeUkf::setGyroNoise(const Eigen::Matrix3d &gyroNoiseInput) { this->gyroNoise = gyroNoiseInput; }
+void InertialAttitudeUkf::setGyroNoise(const Eigen::Matrix3d& gyroNoiseInput) { this->gyroNoise = gyroNoiseInput; }
 
 /*! Get the gyro measurement noise matrix
     @return Eigen::Matrix3d gyroNoise
@@ -273,7 +273,7 @@ Eigen::Matrix3d InertialAttitudeUkf::getGyroNoise() const { return this->gyroNoi
 /*! Add a star tracker to the filter solution using the StarTrackerMessage class
     @return StarTrackerMessage starTracker
     */
-void InertialAttitudeUkf::addStarTrackerInput(const StarTrackerMessage &starTracker) {
+void InertialAttitudeUkf::addStarTrackerInput(const StarTrackerMessage& starTracker) {
     this->starTrackerMessages[this->numberOfStarTackers] = starTracker;
     this->numberOfStarTackers += 1;
 }

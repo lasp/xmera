@@ -215,11 +215,11 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     @param tmpScMsg The state output message for the spacecraft for which to compute the eclipse data.
     @return void
  */
-void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
+void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg) {
     this->positionInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<EclipseMsgPayload> *msg;
+    Message<EclipseMsgPayload>* msg;
     msg = new Message<EclipseMsgPayload>;
     this->eclipseOutMsgs.push_back(msg);
 
@@ -236,7 +236,7 @@ void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
  @param tmpSpMsg The planet name
  @return void
  */
-void Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg) {
+void Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg) {
     this->planetInMsgs.push_back(tmpSpMsg->addSubscriber());
 
     SpicePlanetStateMsgPayload tmpMsg;

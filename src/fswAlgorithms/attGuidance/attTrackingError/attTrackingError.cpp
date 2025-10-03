@@ -57,9 +57,9 @@ void AttTrackingError::updateState(uint64_t callTime) {
  @return void
  @param sigma_R0R
 */
-void AttTrackingError::setSigma_R0R(const Eigen::Vector3d &sigma_R0R) { this->algorithm.setSigma_R0R(sigma_R0R); }
+void AttTrackingError::setSigma_R0R(const Eigen::Vector3d& sigma_R0R) { this->algorithm.setSigma_R0R(sigma_R0R); }
 
 /*! Getter method for sigma_R0R.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &AttTrackingError::getSigma_R0R() const { return this->algorithm.getSigma_R0R(); }
+const Eigen::Vector3d& AttTrackingError::getSigma_R0R() const { return this->algorithm.getSigma_R0R(); }

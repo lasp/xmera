@@ -99,7 +99,7 @@ void StarTracker::applySensorErrors() {
     @param sigma
     @param sensorValues
  */
-void StarTracker::computeQuaternion(Eigen::Vector3d *sigma, STSensorMsgPayload *sensorValues) {
+void StarTracker::computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValues) {
     Eigen::Matrix3d dcm_BN; /* dcm, inertial to body frame */
     dcm_BN = mrpToDcm(*sigma);
 
@@ -171,31 +171,31 @@ void StarTracker::updateState(uint64_t currentSimNanos) {
  @return void
  @param dcm_CB
 */
-void StarTracker::setDcmCB(const Eigen::Matrix3d &dcm_CB) { this->dcm_CB = dcm_CB; }
+void StarTracker::setDcmCB(const Eigen::Matrix3d& dcm_CB) { this->dcm_CB = dcm_CB; }
 
 /*! Setter method for PMatrix.
  @return void
  @param PMatrix
 */
-void StarTracker::setPMatrix(const Eigen::Matrix3d &PMatrix) { this->PMatrix = PMatrix; }
+void StarTracker::setPMatrix(const Eigen::Matrix3d& PMatrix) { this->PMatrix = PMatrix; }
 
 /*! Setter method for walkBounds.
  @return void
  @param walkBounds
 */
-void StarTracker::setWalkBounds(const Eigen::Vector3d &walkBounds) { this->walkBounds = walkBounds; }
+void StarTracker::setWalkBounds(const Eigen::Vector3d& walkBounds) { this->walkBounds = walkBounds; }
 
 /*! Getter method for dcm_CB.
  @return const Eigen::Matrix3d
 */
-const Eigen::Matrix3d &StarTracker::getDcmCB() const { return this->dcm_CB; }
+const Eigen::Matrix3d& StarTracker::getDcmCB() const { return this->dcm_CB; }
 
 /*! Getter method for PMatrix.
  @return const Eigen::Matrix3d
 */
-const Eigen::Matrix3d &StarTracker::getPMatrix() const { return this->PMatrix; }
+const Eigen::Matrix3d& StarTracker::getPMatrix() const { return this->PMatrix; }
 
 /*! Getter method for walkBounds.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &StarTracker::getWalkBounds() const { return this->walkBounds; }
+const Eigen::Vector3d& StarTracker::getWalkBounds() const { return this->walkBounds; }

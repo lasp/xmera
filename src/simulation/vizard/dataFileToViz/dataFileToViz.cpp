@@ -140,7 +140,7 @@ void DataFileToViz::reset(uint64_t currentSimNanos) {
 void DataFileToViz::setNumOfSatellites(int numSat) {
     for (int i = 0; i < numSat; i++) {
         /* create output message */
-        Message<SCStatesMsgPayload> *msg;
+        Message<SCStatesMsgPayload>* msg;
         msg = new Message<SCStatesMsgPayload>;
         this->scStateOutMsgs.push_back(msg);
     }
@@ -170,7 +170,7 @@ void DataFileToViz::appendThrForceMax(double forceMax) { this->thrForceMaxList.p
 void DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, std::vector<int> numThrPerCluster) {
     this->thrMsgDataSC.push_back(thrMsgData);
 
-    std::vector<Message<THROutputMsgPayload> *> vecMsgs;
+    std::vector<Message<THROutputMsgPayload>*> vecMsgs;
     // loop over the number of thruster clusters for this spacecraft
     if (thrMsgData.size() > 0) {
         this->numThrPerCluster.push_back(numThrPerCluster);
@@ -178,7 +178,7 @@ void DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, s
             // loop over the number of thrusters in this cluster and create an output message
             for (int i = 0; i < numThrPerCluster[thrClusterCount]; i++) {
                 /* create output message */
-                Message<THROutputMsgPayload> *msg;
+                Message<THROutputMsgPayload>* msg;
                 msg = new Message<THROutputMsgPayload>;
                 vecMsgs.push_back(msg);
             }
@@ -194,10 +194,10 @@ void DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, s
  Add a RW output msg list for each spacecraft
 */
 void DataFileToViz::appendNumOfRWs(int numRW) {
-    std::vector<Message<RWConfigLogMsgPayload> *> vecMsgs;
+    std::vector<Message<RWConfigLogMsgPayload>*> vecMsgs;
     for (int i = 0; i < numRW; i++) {
         /* create output message */
-        Message<RWConfigLogMsgPayload> *msg;
+        Message<RWConfigLogMsgPayload>* msg;
         msg = new Message<RWConfigLogMsgPayload>;
         vecMsgs.push_back(msg);
     }
@@ -357,7 +357,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
 
 /*! pull a 3-d set of double values from the input stream
  */
-void DataFileToViz::pullVector(std::istringstream *iss, double vec[3]) {
+void DataFileToViz::pullVector(std::istringstream* iss, double vec[3]) {
     double x, y, z;
     x = pullScalar(iss);
     y = pullScalar(iss);
@@ -367,7 +367,7 @@ void DataFileToViz::pullVector(std::istringstream *iss, double vec[3]) {
 
 /*! pull a 4-d set of double values from the input stream
  */
-void DataFileToViz::pullVector4(std::istringstream *iss, double *vec) {
+void DataFileToViz::pullVector4(std::istringstream* iss, double* vec) {
     double q0, q1, q2, q3;
     q0 = pullScalar(iss);
     q1 = pullScalar(iss);
@@ -378,7 +378,7 @@ void DataFileToViz::pullVector4(std::istringstream *iss, double *vec) {
 
 /*! pull a double from the input stream
  */
-double DataFileToViz::pullScalar(std::istringstream *iss) {
+double DataFileToViz::pullScalar(std::istringstream* iss) {
     const char delimiterString = *this->delimiter.c_str();
     std::string item;
 

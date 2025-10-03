@@ -21,9 +21,9 @@
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include <Eigen/Dense>
@@ -38,17 +38,17 @@ class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
    public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();
-    void registerStates(DynParamManager &statesIn);  //!< class method
-    void linkInStates(DynParamManager &states);      //!< class method
+    void registerStates(DynParamManager& statesIn);  //!< class method
+    void linkInStates(DynParamManager& states);      //!< class method
     void updateEffectorMassProps(double integTime);  //!< class method
     void updateContributions(double integTime,
-                             BackSubMatrices &backSubContr,
+                             BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N);  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d &rotAngMomPntCContr_B,
-                                      double &rotEnergyContr,
+                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                      double& rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
@@ -87,9 +87,9 @@ class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
     std::string nameOfTheta2DotState;  //!< [-] Identifier for the thetaDot state data container
     BSKLogger bskLogger;               //!< -- BSK Logging
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;  //!< -- (optional) motor torque input message
-    std::vector<Message<HingedRigidBodyMsgPayload> *>
+    std::vector<Message<HingedRigidBodyMsgPayload>*>
         dualHingedRigidBodyOutMsgs;  //!< -- state output message vector for all panels
-    std::vector<Message<SCStatesMsgPayload> *>
+    std::vector<Message<SCStatesMsgPayload>*>
         dualHingedRigidBodyConfigLogOutMsgs;  //!< panel state config log message vector for all panels
 
    private:
@@ -131,20 +131,20 @@ class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
     Eigen::MatrixXd matrixFDHRB;
     Eigen::MatrixXd matrixGDHRB;
     Eigen::Vector2d vectorVDHRB;
-    StateData *theta1State;                     //!< [-] state manager of theta for hinged rigid body
-    StateData *theta1DotState;                  //!< [-] state manager of thetaDot for hinged rigid body
-    StateData *theta2State;                     //!< [-] state manager of theta for hinged rigid body
-    StateData *theta2DotState;                  //!< [-] state manager of thetaDot for hinged rigid body
+    StateData* theta1State;                     //!< [-] state manager of theta for hinged rigid body
+    StateData* theta1DotState;                  //!< [-] state manager of thetaDot for hinged rigid body
+    StateData* theta2State;                     //!< [-] state manager of theta for hinged rigid body
+    StateData* theta2DotState;                  //!< [-] state manager of thetaDot for hinged rigid body
     Eigen::Vector3d r_SN_N[2];                  //!< [m] position vector of hinge CM S relative to inertial frame
     Eigen::Vector3d v_SN_N[2];                  //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::Vector3d sigma_SN[2];                //!< -- MRP attitude of panel frame S relative to inertial frame
     Eigen::Vector3d omega_SN_S[2];              //!< [rad/s] inertial panel frame angular velocity vector
-    StateData *sigma_BNState;                   //!< Hub/Inertial attitude represented by MRP
-    StateData *omega_BN_BState;                 //!< Hub/Inertial angular velocity vector in B frame components
-    StateData *v_BN_NState;                     //!< Hub/Inertial velocity vector in inertial frame components
-    Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
-    Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
-    Eigen::MatrixXd *g_N;                       //!< [m/s^2] Gravitational acceleration in N frame components
+    StateData* sigma_BNState;                   //!< Hub/Inertial attitude represented by MRP
+    StateData* omega_BN_BState;                 //!< Hub/Inertial angular velocity vector in B frame components
+    StateData* v_BN_NState;                     //!< Hub/Inertial velocity vector in inertial frame components
+    Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* g_N;                       //!< [m/s^2] Gravitational acceleration in N frame components
 };
 
 #endif /* DUAL_STATE_EFFECTOR_H */

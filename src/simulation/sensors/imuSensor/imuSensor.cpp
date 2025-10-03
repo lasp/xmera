@@ -299,7 +299,7 @@ void ImuSensor::computePlatformDR() {
     dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose() *
                (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
     eigenMatrixToCArray(dcm_P2P1, dcm_P2P1_cArray);         // makes a 9x1
-    C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray);         // makes it back into a 3x3
+    C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray);        // makes it back into a 3x3
     this->prv_PN_out = cArrayAsEigenVector(prv_PN_cArray);  // writes it back to the variable to be passed along.
 
     // calculate "instantaneous" angular rate
