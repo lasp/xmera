@@ -304,8 +304,8 @@ Eigen::Matrix3<ScalarT> eigenM1(const ScalarT angle) {
 
     mOut(1, 1) = std::cos(angle);
     mOut(1, 2) = std::sin(angle);
-    mOut(2, 1) = -mOut(1, 2);
-    mOut(2, 2) = mOut(1, 1);
+    mOut(2, 1) = -std::sin(angle);
+    mOut(2, 2) = std::cos(angle);
 
     return mOut;
 }
@@ -322,8 +322,8 @@ Eigen::Matrix3<ScalarT> eigenM2(const ScalarT angle) {
 
     mOut(0, 0) = std::cos(angle);
     mOut(0, 2) = -std::sin(angle);
-    mOut(2, 0) = -mOut(0, 2);
-    mOut(2, 2) = mOut(0, 0);
+    mOut(2, 0) = std::sin(angle);
+    mOut(2, 2) = std::cos(angle);
 
     return mOut;
 }
@@ -340,8 +340,8 @@ Eigen::Matrix3<ScalarT> eigenM3(const ScalarT angle) {
 
     mOut(0, 0) = std::cos(angle);
     mOut(0, 1) = std::sin(angle);
-    mOut(1, 0) = -mOut(0, 1);
-    mOut(1, 1) = mOut(0, 0);
+    mOut(1, 0) = -std::sin(angle);
+    mOut(1, 1) = std::cos(angle);
 
     return mOut;
 }
