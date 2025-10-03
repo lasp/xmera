@@ -42,7 +42,7 @@ void RwMotorVoltage::reset(uint64_t callTime)
     this->rwConfigParams = this->rwParamsInMsg();
 
     /* reset variables */
-    memset(this->rwSpeedOld, 0, sizeof(double)*MAX_EFF_CNT);
+    memset(this->rwSpeedOld, 0, sizeof(double)*RW_EFF_CNT);
     this->resetFlag = BOOL_TRUE;
 
     /* Reset the prior time flag state.
@@ -57,7 +57,7 @@ void RwMotorVoltage::reset(uint64_t callTime)
 void RwMotorVoltage::updateState(uint64_t callTime)
 {
     /* - Read the input messages */
-//    double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
+//    double              torqueCmd[RW_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
     RwMotorTorqueMsgPayload torqueCmd;           /*!< copy of RW motor torque input message*/
     RwMotorVoltageMsgPayload voltageOut = {};            /*!< -- copy of the output message */
 
@@ -78,15 +78,15 @@ void RwMotorVoltage::updateState(uint64_t callTime)
     }
 
     /* zero the output voltage vector */
-    double  voltage[MAX_EFF_CNT];       /*!< [V]   RW voltage output commands */
-    memset(voltage, 0, sizeof(double)*MAX_EFF_CNT);
+    double  voltage[RW_EFF_CNT];       /*!< [V]   RW voltage output commands */
+    memset(voltage, 0, sizeof(double)*RW_EFF_CNT);
 
     /* if the torque closed-loop is on, evaluate the feedback term */
     if (this->rwSpeedInMsg.isLinked()) {
         /* make sure the clock didn't just initialize, or the module was recently reset */
         if (this->priorTime != 0) {
             double dt = (callTime - this->priorTime) * NANO2SEC; /*!< [s]   control update period */
-            double              OmegaDot[MAX_EFF_CNT];     /*!< [r/s^2] RW angular acceleration */
+            double              OmegaDot[RW_EFF_CNT];     /*!< [r/s^2] RW angular acceleration */
             for (int i=0; i<this->rwConfigParams.numRW; i++) {
                 if (rwAvailability.wheelAvailability[i] == AVAILABLE && this->resetFlag == BOOL_FALSE) {
                     OmegaDot[i] = (rwSpeed.wheelSpeeds[i] - this->rwSpeedOld[i])/dt;

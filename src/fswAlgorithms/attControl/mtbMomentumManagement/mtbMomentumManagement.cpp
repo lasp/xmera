@@ -73,9 +73,9 @@ void MtbMomentumManagement::updateState(uint64_t callTime)
     double BGt[3*MAX_EFF_CNT];
     double BGtPsuedoInverse[MAX_EFF_CNT*3];
     double uDelta_B[3];
-    double uDelta_W[MAX_EFF_CNT];
-    double GsPsuedoInverse[MAX_EFF_CNT*3];
-    double Gs[3 * MAX_EFF_CNT];
+    double uDelta_W[RW_EFF_CNT];
+    double GsPsuedoInverse[RW_EFF_CNT*3];
+    double Gs[3 * RW_EFF_CNT];
     mSetZero(BTilde_B, 3, 3);
     mSetZero(BGt, 3, numMTB);
     mSetZero(BGtPsuedoInverse, numMTB, 3);

@@ -42,8 +42,8 @@ class RwMotorTorque : public SysModel {
     int numAvailRW;               //!< [-] number of reaction wheels available
     RWArrayConfigMsgPayload
         rwConfigParams;  //!< [-] struct to store message containing RW config parameters in body B frame
-    double GsMatrix_B[3 * MAX_EFF_CNT];  //!< [-] The RW spin axis matrix in body frame components
-    double CGs[3][MAX_EFF_CNT];          //!< [-] Projection matrix that defines the controlled body axes
+    double GsMatrix_B[3 * RW_EFF_CNT];  //!< [-] The RW spin axis matrix in body frame components
+    double CGs[3][RW_EFF_CNT];          //!< [-] Projection matrix that defines the controlled body axes
 
     /* declare module IO interfaces */
     Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;  //!< RW motor torque output message

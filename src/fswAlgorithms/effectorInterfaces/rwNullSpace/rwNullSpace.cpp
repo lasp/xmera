@@ -27,11 +27,11 @@
  */
 void RwNullSpace::reset(uint64_t callTime)
 {
-    double GsMatrix[3*MAX_EFF_CNT];                 /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
-    double GsTranspose[3 * MAX_EFF_CNT];            /* [-]  [Gs]^T */
+    double GsMatrix[3*RW_EFF_CNT];                 /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
+    double GsTranspose[3 * RW_EFF_CNT];            /* [-]  [Gs]^T */
     double GsInvHalf[3 * 3];                        /* [-]  ([Gs][Gs]^T)^-1 */
-    double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];    /* [-]  [I_NxN] identity matrix */
-    double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];         /* [-]  temp matrix */
+    double identMatrix[RW_EFF_CNT*RW_EFF_CNT];    /* [-]  [I_NxN] identity matrix */
+    double GsTemp[RW_EFF_CNT*RW_EFF_CNT];         /* [-]  temp matrix */
     RWConstellationMsgPayload localRWData;          /*      local copy of RW configuration data */
 
     // check if the required input messages are included
@@ -50,7 +50,7 @@ void RwNullSpace::reset(uint64_t callTime)
 
     /* create the 3xN [Gs] RW spin axis projection matrix */
     this->numWheels = (uint32_t) localRWData.numRW;
-    if (this->numWheels > MAX_EFF_CNT) {
+    if (this->numWheels > RW_EFF_CNT) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: rwNullSpace.numWheels is larger that max effector count.");
     }
     for(uint32_t i=0; i<this->numWheels; i=i+1)
@@ -89,8 +89,8 @@ void RwNullSpace::updateState(uint64_t callTime)
     RWSpeedMsgPayload rwDesiredSpeeds = {};             /* [r/s] array of RW speeds */
 	RwMotorTorqueMsgPayload finalControl = {};       /* [Nm]  array of final RW motor torques containing both
                                                        the control and null motion torques */
-	double dVector[MAX_EFF_CNT];                   /* [Nm]  null motion wheel speed control array */
-    double DeltaOmega[MAX_EFF_CNT];                /* [r/s] difference in RW speeds */
+	double dVector[RW_EFF_CNT];                   /* [Nm]  null motion wheel speed control array */
+    double DeltaOmega[RW_EFF_CNT];                /* [r/s] difference in RW speeds */
 
     /* Read the input RW commands to get the raw RW requests*/
     cntrRequest = this->rwMotorTorqueInMsg();

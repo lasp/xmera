@@ -24,7 +24,7 @@
 
 /*! @brief Structure used to define the message format of the motor torque */
 typedef struct {
-    double motorTorque[MAX_EFF_CNT];  //!< [Nm]  motor torque array
+    double motorTorque[RW_EFF_CNT];  //!< [Nm]  motor torque array
 } RwMotorTorqueMsgPayload;
 
 #endif

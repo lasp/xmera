@@ -51,7 +51,7 @@ from Support import results_rwMotorTorque
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("numControlAxes", [0, 1, 2, 3])
-@pytest.mark.parametrize("numWheels", [2, 4, messaging.MAX_EFF_CNT])
+@pytest.mark.parametrize("numWheels", [2, 4, messaging.RW_EFF_CNT])
 @pytest.mark.parametrize("numInputCmdTorques", [1, 2])
 @pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF", "MIXED"])
 
@@ -124,9 +124,9 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
 
     # wheelConfigData message
     rwConfigParams = messaging.RWArrayConfigMsgPayload()
-    MAX_EFF_CNT = messaging.MAX_EFF_CNT
+    RW_EFF_CNT = messaging.RW_EFF_CNT
 
-    if numWheels == MAX_EFF_CNT:
+    if numWheels == RW_EFF_CNT:
         rwConfigParams.GsMatrix_B = [
             0.4835867893995201, 0.7025829597277155, 0.5220354411517549,
             0.6274167231454653, 0.4634123147571517, 0.6257773422303058,
@@ -226,14 +226,14 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
     moduleOutput = dataLog.motorTorque
 
     trueVector = np.array([
-        [0.0] * MAX_EFF_CNT,
-        [0.0] * MAX_EFF_CNT
+        [0.0] * RW_EFF_CNT,
+        [0.0] * RW_EFF_CNT
     ])
 
     # set the output truth states
     trueVector[0] = results_rwMotorTorque.computeTorqueU(np.array(controlAxes_B),
                                                                    np.array(rwConfigParams.GsMatrix_B).reshape((
-                                                                       3, MAX_EFF_CNT), order='F'),
+                                                                       3, RW_EFF_CNT), order='F'),
                                                                    requestedTorque,
                                                                    avail)
     trueVector[1] = trueVector[0]
@@ -241,10 +241,10 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
     # compare the module results to the truth values
     accuracy = 1e-8
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, moduleOutput, accuracy, "rwMotorTorques",
-                                                                 MAX_EFF_CNT, testFailCount, testMessages)
+                                                                 RW_EFF_CNT, testFailCount, testMessages)
 
 
-    GsMatrix = np.transpose(np.reshape(rwConfigParams.GsMatrix_B,(MAX_EFF_CNT,3),"C"))
+    GsMatrix = np.transpose(np.reshape(rwConfigParams.GsMatrix_B,(RW_EFF_CNT,3),"C"))
     F = np.transpose(moduleOutput[0])
     receivedTorque = -1.0*np.array([np.matmul(GsMatrix,F)])
     receivedTorque = np.append(np.array([]), receivedTorque)

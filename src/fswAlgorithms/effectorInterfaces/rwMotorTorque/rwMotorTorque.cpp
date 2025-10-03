@@ -78,12 +78,12 @@ void RwMotorTorque::updateState(uint64_t callTime)
     CmdTorqueBodyMsgPayload LrInput2Msg;            /*!< Msg containing optional Lr control torque */
     double Lr_B[3];                             /*!< [Nm]    commanded ADCS control torque in body frame*/
     double Lr_C[3];                             /*!< [Nm]    commanded ADCS control torque projected onto control axes */
-    double us[MAX_EFF_CNT];                     /*!< [Nm]    commanded ADCS control torque projected onto RWs g_s-Frames */
-    double CGs[3][MAX_EFF_CNT];                 /*!< []      projection matrix from gs_i onto control axes */
+    double us[RW_EFF_CNT];                     /*!< [Nm]    commanded ADCS control torque projected onto RWs g_s-Frames */
+    double CGs[3][RW_EFF_CNT];                 /*!< []      projection matrix from gs_i onto control axes */
 
     /*! - zero control torque and RW motor torque variables */
     v3SetZero(Lr_C);
-    vSetZero(us, MAX_EFF_CNT);
+    vSetZero(us, RW_EFF_CNT);
     // wheelAvailability set to 0 (AVAILABLE) by default
 
     // check if the required input messages are included
@@ -127,7 +127,7 @@ void RwMotorTorque::updateState(uint64_t callTime)
     mMultV(this->controlAxes_B, this->numControlAxes, 3, Lr_B, Lr_C);
 
     /*! - compute [CGs] */
-    mSetZero(CGs, 3, MAX_EFF_CNT);
+    mSetZero(CGs, 3, RW_EFF_CNT);
     for (uint32_t i=0; i<this->numControlAxes; i++) {
         for (int j=0; j<this->numAvailRW; j++) {
             CGs[i][j] = v3Dot(&this->GsMatrix_B[j * 3], &this->controlAxes_B[3 * i]);
@@ -138,7 +138,7 @@ void RwMotorTorque::updateState(uint64_t callTime)
     if (this->numAvailRW >= (int) this->numControlAxes){
         double v3_temp[3]; /* inv([M]) [Lr_C] */
         double M33[3][3]; /* [M] = [CGs][CGs].T */
-        double us_avail[MAX_EFF_CNT];   /* matrix of available RW motor torques */
+        double us_avail[RW_EFF_CNT];   /* matrix of available RW motor torques */
 
         v3SetZero(v3_temp);
         mSetIdentity(M33, 3, 3);
@@ -155,7 +155,7 @@ void RwMotorTorque::updateState(uint64_t callTime)
 
         /*! - compute the desired RW motor torques */
         /* us = [CGs].T v3_temp */
-        vSetZero(us_avail, MAX_EFF_CNT);
+        vSetZero(us_avail, RW_EFF_CNT);
         for (int i=0; i<this->numAvailRW; i++) {
             for (uint32_t j=0; j<this->numControlAxes; j++) {
                 us_avail[i] += CGs[j][i] * v3_temp[j];

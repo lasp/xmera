@@ -52,7 +52,7 @@ def test_mtbMomentumManagement():     # update "module" in this function name to
     variables
 
     - ``mtbDipoleCmds[MAX_EFF_CNT]``
-    - ``motorTorque[MAX_EFF_CNT]``
+    - ``motorTorque[RW_EFF_CNT]``
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes

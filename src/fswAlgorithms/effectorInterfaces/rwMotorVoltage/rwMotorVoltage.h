@@ -44,7 +44,7 @@ class RwMotorVoltage : public SysModel {
     double VMin;                    /*!< [V]    minimum voltage below which the torque is zero */
     double VMax;                    /*!< [V]    maximum output voltage */
     double K;                       /*!< [V/Nm] torque tracking gain for closed loop control.*/
-    double rwSpeedOld[MAX_EFF_CNT]; /*!< [r/s]  the RW spin rates from the prior control step */
+    double rwSpeedOld[RW_EFF_CNT]; /*!< [r/s]  the RW spin rates from the prior control step */
     uint64_t priorTime;             /*!< [ns]   Last time the module control was called */
     int resetFlag;                  /*!< []     Flag indicating that a module reset occured */
 

@@ -39,7 +39,7 @@ class MtbMomentumManagement : public SysModel {
     /*
      * Configs.
      */
-    double wheelSpeedBiases[MAX_EFF_CNT];  //!< [rad/s] reaction wheel speed biases
+    double wheelSpeedBiases[RW_EFF_CNT];  //!< [rad/s] reaction wheel speed biases
     double cGain;                          //!<[1/s]  reaction wheel momentum feedback gain
 
     /*
@@ -64,13 +64,13 @@ class MtbMomentumManagement : public SysModel {
     BSKLogger bskLogger = {};   //!< BSK Logging
     double tauDesiredMTB_B[3];  //!< [N-m] desired torque produced by the magnetic torque bars in the Body frame
     double tauDesiredRW_B[3];   //!< [N-m]  desired torque produced by the reaction wheels in the Body frame
-    double hDeltaWheels_W[MAX_EFF_CNT];  //!<  [N-m-s] momentum of each wheel
+    double hDeltaWheels_W[RW_EFF_CNT];  //!<  [N-m-s] momentum of each wheel
     double hDeltaWheels_B[3];            //!<  [N-m-s] momentum of reaction wheels in the Body frame
-    double tauDesiredRW_W[MAX_EFF_CNT];  //!<  [N-m] Desired individual wheel torques
-    double tauIdealRW_W[MAX_EFF_CNT];    //!<  [N-m-s] Ideal individual wheel torques
-    double tauIdealRW_B[MAX_EFF_CNT];    //!<  [N-m-s] Ideal wheel torque in the body frame
+    double tauDesiredRW_W[RW_EFF_CNT];  //!<  [N-m] Desired individual wheel torques
+    double tauIdealRW_W[RW_EFF_CNT];    //!<  [N-m-s] Ideal individual wheel torques
+    double tauIdealRW_B[RW_EFF_CNT];    //!<  [N-m-s] Ideal wheel torque in the body frame
     double
-        wheelSpeedError_W[MAX_EFF_CNT];  //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
+        wheelSpeedError_W[RW_EFF_CNT];  //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
     RWArrayConfigMsgPayload rwConfigParams;    //!< configuration for RW's
     MTBArrayConfigMsgPayload mtbConfigParams;  //!< configuration for MTB layout
 };

@@ -71,7 +71,7 @@ void MtbMomentumManagementSimple::updateState(uint64_t callTime)
      * Initialize local variables.
      */
     double hWheels_B[3] = {0.0, 0.0, 0.0};                      // the net momentum of the reaction wheels in the body frame
-    double hWheels_W[MAX_EFF_CNT];                              // array of individual wheel momentum values
+    double hWheels_W[RW_EFF_CNT];                              // array of individual wheel momentum values
     vSetZero(hWheels_W, this->rwConfigParams.numRW);
 
     /*

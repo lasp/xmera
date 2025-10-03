@@ -130,7 +130,7 @@ def rwMotorTorqueTest(show_plots):
     # print('\n', moduleOutput)
 
     # set the output truth states
-    ans = [0]*messaging.MAX_EFF_CNT
+    ans = [0]*messaging.RW_EFF_CNT
     ans[0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
     trueVector = [
                    ans,

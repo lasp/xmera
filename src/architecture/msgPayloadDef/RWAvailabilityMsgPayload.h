@@ -25,7 +25,7 @@
 
 /*! @brief Array with availability of RW */
 typedef struct {
-    FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT];  //!< The current state of the wheel
+    FSWdeviceAvailability wheelAvailability[RW_EFF_CNT];  //!< The current state of the wheel
 } RWAvailabilityMsgPayload;
 
 #endif

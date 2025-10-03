@@ -41,7 +41,7 @@ class RwNullSpace : public SysModel {
     ReadFunctor<RWConstellationMsgPayload> rwConfigInMsg;        //!< [-] The name of the RWA configuration message
     Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;     //!< [-] The name of the output message
 
-    double tau[MAX_EFF_CNT * MAX_EFF_CNT];  //!< [-] RW nullspace project matrix
+    double tau[RW_EFF_CNT * RW_EFF_CNT];  //!< [-] RW nullspace project matrix
     double OmegaGain;                       //!< [-] The gain factor applied to the RW speeds
     uint32_t numWheels;                     //!< [-] The number of reaction wheels we have
 
