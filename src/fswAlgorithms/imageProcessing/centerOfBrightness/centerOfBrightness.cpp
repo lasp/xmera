@@ -67,10 +67,10 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
         return;
     }
 
-    std::string dirName;
     /*! - Save image to prescribed path if requested */
+    std::string dirName;
     if (this->saveImages) {
-        dirName = this->saveDir + std::to_string((double)currentSimNanos * NANO2SEC) + ".png";
+        dirName = std::format("{}{}.png", this->saveDir, (double)currentSimNanos * NANO2SEC);
         if (!cv::imwrite(dirName, imageCV)) {
             std::cerr << "Warning: CenterOfBrightness wasn't able to save images." << std::endl;
         }
