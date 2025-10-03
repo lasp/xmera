@@ -34,18 +34,15 @@ void CenterOfBrightness::reset(uint64_t currentSimNanos) {
     }
 }
 
-/*! This module reads an OpNav image and extracts the weighted center of brightness. It performs a grayscale, a blur,
- * and a threshold on the image before summing the weighted pixel intensities in order to average them with the
- * total detected intensity. This provides the center of brightness measurement (as well as the total number of
- * bright pixels)
- @return void
- @param currentSimNanos The clock time at which the function was called (nanoseconds)
+/*! This method retrieves the image data.
+@return OpenCV image or empty if no valid image is found.
+@param imageBuffer Reference to the image payload buffer.
+@param cobBuffer Reference to the COB output buffer.
+@param currentSimNanos Current simulation time in nanoseconds.
  */
-void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
-    CameraImageMsgPayload imageBuffer{};
-
-    OpNavCOBMsgPayload cobBuffer{};
-
+cv::Mat CenterOfBrightness::readImage(CameraImageMsgPayload &imageBuffer,
+                                      OpNavCOBMsgPayload &cobBuffer,
+                                      uint64_t currentSimNanos) {
     cv::Mat imageCV;
 
     /*! - Read in the image*/
@@ -64,7 +61,7 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
     } else {
         /*! - If no image is present, write zeros in message */
         this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
-        return;
+        return cv::Mat();
     }
 
     /*! - Save image to prescribed path if requested */
@@ -76,42 +73,7 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
         }
     }
 
-    this->computeWindow(imageCV);
-    if (this->validWindow) {
-        this->applyWindow(imageCV);
-    }
-
-    std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
-
-    /*!- If no lit pixels are found do not validate the image as a measurement */
-    if (!locations.empty()) {
-        std::pair<Eigen::Vector2d, double> cobData;
-        cobData = this->computeWeightedCenterOfBrightness(locations);
-
-        double averageBrightnessOld = 0.0;
-        if (this->brightnessHistory.rows() > 0) {
-            averageBrightnessOld = this->brightnessHistory.mean();
-        }
-        this->updateBrightnessHistory(cobData.second);
-        double averageBrightnessNew = this->brightnessHistory.mean();
-        double brightnessIncrease = 0.0;
-        if (averageBrightnessOld > 0.0) {
-            brightnessIncrease = (averageBrightnessNew - averageBrightnessOld) / averageBrightnessOld;
-        }
-
-        /*! If brightness increase is less than brightness increase threshold, do not validate image */
-        if (brightnessIncrease >= this->relativeBrightnessIncreaseThreshold) {
-            cobBuffer.valid = true;
-            cobBuffer.timeTag = this->sensorTimeTag;
-            cobBuffer.cameraID = imageBuffer.cameraID;
-            cobBuffer.centerOfBrightness[0] = cobData.first[0] + 0.5;
-            cobBuffer.centerOfBrightness[1] = cobData.first[1] + 0.5;
-            cobBuffer.pixelsFound = static_cast<int32_t>(locations.size());
-        }
-        cobBuffer.rollingAverageBrightness = averageBrightnessNew;
-    }
-
-    this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
+    return imageCV;
 }
 
 /*! Method extracts the bright pixels (above a given threshold) by first grayscaling then bluring image.
@@ -235,6 +197,73 @@ void CenterOfBrightness::computeWindow(cv::Mat const &image) {
     assert(windowPointTopLeft[1] >= 0);
     assert(windowPointBottomRight[0] <= image.size().width);
     assert(windowPointBottomRight[1] <= image.size().height);
+}
+
+/*! This method finds the center of brightness (COB) from the image and updates the COB output buffer.
+ @return void
+ @param imageCV OpenCV matrix of the input image
+ @param imageBuffer Reference to the image payload buffer
+ @param cobBuffer Reference to the COB output buffer.
+ */
+void CenterOfBrightness::findCob(const cv::Mat& imageCV,
+                                 const CameraImageMsgPayload& imageBuffer,
+                                 OpNavCOBMsgPayload& cobBuffer) {
+
+    std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
+
+    /*!- If no lit pixels are found do not validate the image as a measurement */
+    if (!locations.empty()) {
+        std::pair<Eigen::Vector2d, double> cobData;
+        cobData = this->computeWeightedCenterOfBrightness(locations);
+
+        double averageBrightnessOld = 0.0;
+        if (this->brightnessHistory.rows() > 0) {
+            averageBrightnessOld = this->brightnessHistory.mean();
+        }
+        this->updateBrightnessHistory(cobData.second);
+        double averageBrightnessNew = this->brightnessHistory.mean();
+        double brightnessIncrease = 0.0;
+        if (averageBrightnessOld > 0.0) {
+            brightnessIncrease = (averageBrightnessNew - averageBrightnessOld) / averageBrightnessOld;
+        }
+
+        /*! If brightness increase is less than brightness increase threshold, do not validate image */
+        if (brightnessIncrease >= this->relativeBrightnessIncreaseThreshold) {
+            cobBuffer.valid = true;
+            cobBuffer.timeTag = this->sensorTimeTag;
+            cobBuffer.cameraID = imageBuffer.cameraID;
+            cobBuffer.centerOfBrightness[0] = cobData.first[0] + 0.5;
+            cobBuffer.centerOfBrightness[1] = cobData.first[1] + 0.5;
+            cobBuffer.pixelsFound = static_cast<int32_t>(locations.size());
+        }
+        cobBuffer.rollingAverageBrightness = averageBrightnessNew;
+    }
+
+}
+
+/*! This module reads an OpNav image and extracts the weighted center of brightness. It performs a grayscale, a blur,
+ * and a threshold on the image before summing the weighted pixel intensities in order to average them with the
+ * total detected intensity. This provides the center of brightness measurement (as well as the total number of
+ * bright pixels)
+ @return void
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
+ */
+void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
+
+    CameraImageMsgPayload imageBuffer{};
+    OpNavCOBMsgPayload cobBuffer{};
+
+    cv::Mat imageCV = this->readImage(imageBuffer, cobBuffer, currentSimNanos);
+    if (imageCV.empty()) {
+        this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
+        return;
+    }
+    this->computeWindow(imageCV);
+    if (this->validWindow) {
+        this->applyWindow(imageCV);
+    }
+    this->findCob(imageCV, imageBuffer, cobBuffer);
+    this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Set the mask center for windowing
