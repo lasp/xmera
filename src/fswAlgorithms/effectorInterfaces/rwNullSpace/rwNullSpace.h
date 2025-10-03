@@ -26,7 +26,6 @@
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -44,8 +43,6 @@ class RwNullSpace : public SysModel {
     double tau[RW_EFF_CNT * RW_EFF_CNT];  //!< [-] RW nullspace project matrix
     double OmegaGain;                     //!< [-] The gain factor applied to the RW speeds
     uint32_t numWheels;                   //!< [-] The number of reaction wheels we have
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif
