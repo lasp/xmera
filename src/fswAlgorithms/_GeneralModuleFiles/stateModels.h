@@ -27,19 +27,45 @@
 
 /*! @brief State class */
 class State{
-private:
-    Eigen::VectorXd values;
 public:
+    State() = default;
+    explicit State(Eigen::VectorXd initialState) : values(std::move(initialState)){}
+
     void setValues(const Eigen::VectorXd& componentValues);
     Eigen::VectorXd getValues() const;
+    long size() const {
+        return values.size();
+    }
+
+private:
+    Eigen::VectorXd values;
 };
 
-class PositionState : public State{};
-class VelocityState : public State{};
-class AccelerationState : public State{};
-class BiasState : public State{};
-class ConsiderState : public State{};
-
+class PositionState : public State {
+   public:
+    PositionState() = default;
+    explicit PositionState(const Eigen::VectorXd& initialPosition);
+};
+class VelocityState : public State {
+   public:
+    VelocityState() = default;
+    explicit VelocityState(const Eigen::VectorXd& initialVelocity);
+};
+class AccelerationState : public State {
+   public:
+    AccelerationState() = default;
+    explicit AccelerationState(const Eigen::VectorXd& initialAcceleration);
+};
+class BiasState : public State {
+   public:
+    BiasState() = default;
+    explicit BiasState(const Eigen::VectorXd& initialBias);
+};
+class ConsiderState : public State {
+   public:
+    ConsiderState() = default;
+    explicit ConsiderState(const Eigen::VectorXd& initialConsider);
+};
 
 /*! @brief State models used to map a state vector to a measurement */
 class FilterStateVector{
@@ -52,6 +78,8 @@ private:
     Eigen::MatrixXd stm;
 
 public:
+    static FilterStateVector filterStateVectorFromStateStructure(const FilterStateVector &stateVector);
+
     long size() const;
     FilterStateVector add(const FilterStateVector &vector) const;
     FilterStateVector addVector(const Eigen::VectorXd &vector) const;
@@ -78,12 +106,8 @@ public:
     ConsiderState getConsider() const;
     Eigen::VectorXd getConsiderStates() const;
     bool hasConsider() const;
-
     void attachStm(const Eigen::MatrixXd& stm);
     Eigen::MatrixXd detachStm() const;
-
-
-
 };
 
 #endif

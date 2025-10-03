@@ -20,6 +20,16 @@
 
 #include "stateModels.h"
 
+PositionState::PositionState(const Eigen::VectorXd &initialPosition) : State(initialPosition){}
+
+VelocityState::VelocityState(const Eigen::VectorXd &initialVelocity) : State(initialVelocity){}
+
+AccelerationState::AccelerationState(const Eigen::VectorXd &initialAcceleration) : State(initialAcceleration){}
+
+BiasState::BiasState(const Eigen::VectorXd &initialBias) : State(initialBias){}
+
+ConsiderState::ConsiderState(const Eigen::VectorXd &initialConsider) : State(initialConsider){}
+
 /*! Set the values of a given state
    @param Eigen::VectorXd
 */
@@ -34,6 +44,35 @@ Eigen::VectorXd State::getValues() const {
     return this->values;
 }
 
+FilterStateVector FilterStateVector::filterStateVectorFromStateStructure(const FilterStateVector &stateVector) {
+    FilterStateVector emptyStateVector{};
+    if (stateVector.hasPosition()) {
+        Eigen::VectorXd zero(stateVector.getPosition().size());
+        zero.setZero();
+        emptyStateVector.setPosition(PositionState(zero));
+    }
+    if (stateVector.hasVelocity()) {
+        Eigen::VectorXd zero(stateVector.getVelocity().size());
+        zero.setZero();
+        emptyStateVector.setVelocity(VelocityState(zero));
+    }
+    if (stateVector.hasAcceleration()) {
+        Eigen::VectorXd zero(stateVector.getAcceleration().size());
+        zero.setZero();
+        emptyStateVector.setAcceleration(AccelerationState(zero));
+    }
+    if (stateVector.hasBias()) {
+        Eigen::VectorXd zero(stateVector.getBias().size());
+        zero.setZero();
+        emptyStateVector.setBias(BiasState(zero));
+    }
+    if (stateVector.hasConsider()) {
+        Eigen::VectorXd zero(stateVector.getConsider().size());
+        zero.setZero();
+        emptyStateVector.setConsider(ConsiderState(zero));
+    }
+    return emptyStateVector;
+}
 /*! Set the positional components of your state (cartesian position, attitude, etc)
    @param Eigen::VectorXd positionComponents
 */
