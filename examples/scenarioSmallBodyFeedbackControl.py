@@ -401,7 +401,7 @@ def run(show_plots):
     # Inertial pointing
     inertialPoint = inertial3D.Inertial3D()
     inertialPoint.modelTag = "inertialPoint"
-    inertialPoint.sigma_R0N = [0.1, 0.0, 0.0]
+    inertialPoint.setSigmaR0N([0.1, 0.0, 0.0])
 
     # Attitude error configuration
     trackingError = attTrackingError.AttTrackingError()

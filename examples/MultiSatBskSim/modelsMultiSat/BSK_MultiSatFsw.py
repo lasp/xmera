@@ -162,7 +162,7 @@ class BSKFswModels:
         """
         Defines the inertial pointing guidance module.
         """
-        self.inertial3DPoint.sigma_R0N = [0.1, 0.2, -0.3]
+        self.inertial3DPoint.setSigmaR0N([0.1, 0.2, -0.3])
         self.inertial3DPoint.attRefOutMsg = self.attRefMsg
 
     def SetSunPointGuidance(self, SimBase):

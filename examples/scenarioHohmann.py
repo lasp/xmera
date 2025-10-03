@@ -251,7 +251,7 @@ def run(show_plots, rFirst, rSecond):
     firstBurnMRPRotation = mrpRotation.MrpRotation()
     firstBurnMRPRotation.modelTag = "mrpRotation"
     sigma_RR0 = np.array([np.tan(- np.pi / 8), 0, 0])
-    firstBurnMRPRotation.mrpSet = sigma_RR0
+    firstBurnMRPRotation.setSigmaRR0(sigma_RR0)
     scSim.AddModelToTask("firstBurnTask", firstBurnMRPRotation)
     firstBurnMRPRotation.attRefOutMsg = attRefMsg
 

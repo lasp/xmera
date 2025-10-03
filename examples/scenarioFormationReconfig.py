@@ -182,7 +182,7 @@ def run(show_plots, useRefAttitude):
     # inertial 3D target attitude
     inertial3DObj = inertial3D.Inertial3D()
     inertial3DObj.modelTag = "inertial_3D2"
-    inertial3DObj.sigma_R0N = [1.0, 0.0, 0.0]
+    inertial3DObj.setSigmaR0N([1.0, 0.0, 0.0])
     scSim.AddModelToTask(fswTaskName, inertial3DObj, 11)
 
     # thrusterConfigMsg

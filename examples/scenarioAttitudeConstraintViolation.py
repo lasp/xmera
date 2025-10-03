@@ -302,7 +302,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     inertial3DObj = inertial3D.Inertial3D()
     inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = sigma_BN_target[attitudeSetCase]     # change this MRP set to customize final inertial attitude
+    inertial3DObj.setSigmaR0N(sigma_BN_target[attitudeSetCase])     # change this MRP set to customize final inertial attitude
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()
