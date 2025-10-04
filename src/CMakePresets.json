@@ -4,37 +4,39 @@
     {
       "name": "base",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/../dist3",
+      "binaryDir": "${sourceDir}/../build",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE":
           "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_INSTALL_OPTIONS":
+          "--no-print-usage",
         "CMAKE_MODULE_PATH":
           "${sourceDir}/cmake/",
         "CMAKE_PREFIX_PATH":
           "${sourceDir}/cmake/",
         "CMAKE_BUILD_TYPE":
           "Debug",
-        "BUILD_VIZINTERFACE":
-          "ON",
-        "BUILD_OPNAV":
-          "OFF"
-      }
-    },
-    {
-      "name": "full",
-      "inherits": "base",
-      "cacheVariables": {
-        "BUILD_OPNAV":
-          "ON"
+        "CMAKE_INSTALL_MODE":
+          "SYMLINK_OR_COPY",
+        "XMERA_MODULE_ROOTS":
+          "${sourceDir}/fswAlgorithms/;${sourceDir}/simulation/;${sourceDir}/moduleTemplates/",
+        "XMERA_ENABLE_GROUPS":
+          "simulation;fswAlgorithms;moduleTemplates"
       }
     },
     {
       "name": "ci-test",
-      "inherits": "full",
+      "inherits": "base",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":
           "Release"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "base",
+      "configurePreset": "base"
     }
   ]
 }

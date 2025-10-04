@@ -31,7 +31,7 @@
 
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include "simulation/vizard/cielimInterface/zmqConnector.h"
-#include "utilities/vizProtobuffer/cielimMessage.pb.h"
+#include "simulation/vizard/cielimInterface/cielimMessage.pb.h"
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/util/delimited_message_util.h>

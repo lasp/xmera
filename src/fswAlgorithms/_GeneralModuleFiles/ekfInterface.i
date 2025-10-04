@@ -19,16 +19,16 @@
  */
 %module ekfInterface
 %{
-   #include "ekfInterface.h"
+   #include "fswAlgorithms/_GeneralModuleFiles/ekfInterface.h"
 %}
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
 
-%include "kalmanFilter.i"
+%include "fswAlgorithms/_GeneralModuleFiles/kalmanFilter.i"
 
-%include "ekfInterface.h"
+%include "fswAlgorithms/_GeneralModuleFiles/ekfInterface.h"
 
 %pythoncode %{
 import sys

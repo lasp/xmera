@@ -20,7 +20,7 @@
 #ifndef ZMQCONNECTOR_H
 #define ZMQCONNECTOR_H
 
-#include "cielimMessage.pb.h"
+#include "simulation/vizard/cielimInterface/cielimMessage.pb.h"
 #include <Eigen/Core>
 #include <string>
 #include <zmq.hpp>
