@@ -17,7 +17,7 @@
 import tempfile, sys
 from Basilisk import __path__
 bskPath = __path__[0]
-sys.path.append(bskPath + "/../../src/utilities/vizProtobuffer/")
+sys.path.append(bskPath + "/../../build/simulation/vizard/cielimInterface/")
 import cielimMessage_pb2
 import delimited_protobuf
 import numpy as np

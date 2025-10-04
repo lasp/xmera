@@ -18,7 +18,7 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
-#include "utilities/vizProtobuffer/vizMessage.pb.h"
+#include "simulation/vizard/vizInterface/vizMessage.pb.h"
 #include <zmq.h>
 #include <fstream>
 #include <map>

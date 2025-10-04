@@ -1,33 +1,57 @@
-cmake_minimum_required(VERSION 3.14)
+add_library(ArchitectureUtilities STATIC
+  signalCondition.c
+  ukfUtilities.c
+  orbitalMotion.c
+  linearAlgebra.c
+  safeMath.c
+  rigidBodyKinematics.c
+  svd.c
 
-file(GLOB basilisk_src "*.h" "*.cpp" "*.c" "*.i")
+  orbitalMotion.cpp
+  saturate.cpp
+  geodeticConversion.cpp
+  signalProcessing.cpp
+  discretize.cpp
+  bskLogging.cpp
+  gauss_markov.cpp
+  BSpline.cpp
+  keplerianOrbit.cpp
+)
 
-file(GLOB moduleId "moduleIdGenerator/*.h" "moduleIdGenerator/*.cpp" "moduleIdGenerator/*.i")
+target_link_libraries(ArchitectureUtilities PUBLIC
+  Eigen3::Eigen
+)
 
-add_library(ArchitectureUtilities STATIC ${basilisk_src})
-add_library(ModuleIdGenerator SHARED ${moduleId})
-string(LENGTH ${CMAKE_SOURCE_DIR} DIR_NAME_START)
-math(EXPR DIR_NAME_START "${DIR_NAME_START} + 1")
-string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRING)
-set_target_properties(ArchitectureUtilities PROPERTIES FOLDER "${DIR_NAME_STRING}")
-set_target_properties(ModuleIdGenerator PROPERTIES FOLDER "${DIR_NAME_STRING}")
+target_include_directories(ArchitectureUtilities PRIVATE
+  "${CMAKE_SOURCE_DIR}"
+)
 
-if(NOT WIN32)
-  target_compile_options(ArchitectureUtilities PUBLIC "-fPIC")
-  target_compile_options(ModuleIdGenerator PUBLIC "-fPIC")
-endif()
+set_target_properties(ArchitectureUtilities PROPERTIES
+  POSITION_INDEPENDENT_CODE ON
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk"
+)
 
-set_target_properties(ArchitectureUtilities PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
-set_target_properties(ArchitectureUtilities PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
-set_target_properties(ArchitectureUtilities PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
+install(TARGETS ArchitectureUtilities DESTINATION lib)
 
-set_target_properties(ModuleIdGenerator PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
-set_target_properties(ModuleIdGenerator PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
-set_target_properties(ModuleIdGenerator PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
 
-if(WIN32)
-  add_custom_command(
-    TARGET ModuleIdGenerator
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ModuleIdGenerator> "${CMAKE_BINARY_DIR}/Basilisk/")
-endif()
+add_library(ModuleIdGenerator SHARED
+  moduleIdGenerator/moduleIdGenerator.cpp
+)
+
+set_target_properties(ModuleIdGenerator PROPERTIES
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk"
+)
+
+install(TARGETS ModuleIdGenerator DESTINATION lib)
+
+
+xmera_add_swig_module(architecture.bskLogging)
+xmera_add_swig_module(architecture.bskUtilities)
+
+xmera_add_swig_module(architecture.orbitalMotion)
+target_sources(architecture.orbitalMotion PRIVATE orbitalMotion.cpp)
+
+xmera_add_swig_module(architecture.BSpline)
+target_sources(architecture.BSpline PRIVATE BSpline.cpp)
+
+add_subdirectory(tests)

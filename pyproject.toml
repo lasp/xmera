@@ -43,4 +43,4 @@ docs = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["dist3"]
+where = ["dist"]
