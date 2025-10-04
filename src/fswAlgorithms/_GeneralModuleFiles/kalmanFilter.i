@@ -19,7 +19,7 @@
  */
 %module kalmanFilter
 %{
-   #include "kalmanFilter.h"
+   #include "fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h"
 %}
 
 %pythoncode %{
@@ -45,7 +45,7 @@ from Basilisk.architecture.swig_common_model import *
     }
 %}
 
-%include "kalmanFilter.h"
+%include "fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h"
 
 %pythoncode %{
 import sys

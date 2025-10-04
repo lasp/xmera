@@ -43,4 +43,4 @@ import sys
 protectAllClasses(sys.modules[__name__])
 %}
 
-%pythoncode "parseSRPLookup.py"
+%pythoncode "simulation/dynamics/RadiationPressure/parseSRPLookup.py"

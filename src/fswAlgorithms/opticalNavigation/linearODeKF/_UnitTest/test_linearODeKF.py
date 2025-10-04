@@ -21,7 +21,7 @@ import pytest
 import linearODeKF_test_utilities as filter_plots
 
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import linearODeKF, ekfInterface
+from Basilisk.fswAlgorithms import linearODeKF
 from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
@@ -59,8 +59,8 @@ def two_body_gravity(t, x, velocity):
 
 def setup_filter_data(type = "classical", velocity = False):
     # Construct algorithm and associated C++ container
-    ckf = ekfInterface.FilterType_Classical
-    ekf = ekfInterface.FilterType_Extended
+    ckf = linearODeKF.FilterType_Classical
+    ekf = linearODeKF.FilterType_Extended
     if type == "classical":
         filter_object = linearODeKF.LinearODeKF(ckf)
     if type == "extended":

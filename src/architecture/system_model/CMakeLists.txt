@@ -1,0 +1,2 @@
+xmera_add_swig_module(architecture.sim_model)
+xmera_add_swig_module(architecture.sys_model_task)

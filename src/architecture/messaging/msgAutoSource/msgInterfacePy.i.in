@@ -12,12 +12,12 @@
     #include <vector>
     #include <string>
 %}}
-%include "messaging/newMessaging.ih"
+%include "architecture/messaging/newMessaging.ih"
 
 %include "std_vector.i"
 %include "std_string.i"
-%include "_GeneralModuleFiles/swig_eigen.i"
-%include "_GeneralModuleFiles/swig_conly_data.i"
+%include "architecture/_GeneralModuleFiles/swig_eigen.i"
+%include "architecture/_GeneralModuleFiles/swig_conly_data.i"
 %include "stdint.i"
 %template(TimeVector) std::vector<unsigned long long, std::allocator<unsigned long long>>;
 %template(DoubleVector) std::vector<double, std::allocator<double>>;
@@ -34,8 +34,8 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 STRUCTASLIST(THRConfigMsgPayload)
 STRUCTASLIST(ReconfigBurnInfoMsgPayload)
 
-%include "messaging/messaging.h"
-%include "_GeneralModuleFiles/sys_model.h"
+%include "architecture/messaging/messaging.h"
+%include "architecture/_GeneralModuleFiles/sys_model.h"
 
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__is_subscribed_to) isSubscribedTo;  // we want the users to have a unified "isSubscribedTo" interface

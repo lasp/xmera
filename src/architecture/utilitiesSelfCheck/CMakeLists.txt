@@ -1,0 +1,2 @@
+xmera_add_swig_module(architecture.swigDeprecatedCheck)
+xmera_add_swig_module(architecture.swigEigenCheck)
