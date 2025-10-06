@@ -86,7 +86,7 @@ void RwNullSpace::updateState(uint64_t callTime) {
     }
 
     /* compute the wheel speed control vector d = -K.DeltaOmega */
-    Eigen::Vector<double, MAX_EFF_CNT> d = -this->OmegaGain *
+    Eigen::Vector<double, MAX_EFF_CNT> d = -this->omegaGain *
         (cArrayAsEigenVector(rwSpeeds.wheelSpeeds) - cArrayAsEigenVector(rwDesiredSpeeds.wheelSpeeds));
 
     /* compute the RW null space motor torque solution to reduce the wheel speeds */
@@ -102,3 +102,20 @@ void RwNullSpace::updateState(uint64_t callTime) {
 
     return;
 }
+
+/**
+ * @brief Set the gain used for the wheel speed difference.
+ * @param gain The gain used for the wheel speed difference.
+ */
+void RwNullSpace::setOmegaGain(const double gain) {
+    if (gain < 0.0) {
+        throw std::invalid_argument("Feedback gain must not be negative");
+    }
+    this->omegaGain = gain;
+}
+
+/**
+ * @brief Get the gain used for the wheel speed difference.
+ * @return double The gain used for the wheel speed difference.
+ */
+double RwNullSpace::getOmegaGain() const { return this->omegaGain; }

@@ -37,15 +37,17 @@ class RwNullSpace : public SysModel {
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
+    void setOmegaGain(const double gain);
+    double getOmegaGain() const;
+
     ReadFunctor<RwMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< [-] The name of the Input message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;             //!< [-] The name of the input RW speeds
     ReadFunctor<RWSpeedMsgPayload> rwDesiredSpeedsInMsg;      //!< [-] (optional) The name of the desired RW speeds
     ReadFunctor<RWConstellationMsgPayload> rwConfigInMsg;     //!< [-] The name of the RWA configuration message
     Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;     //!< [-] The name of the output message
 
-    double OmegaGain{};                   //!< [-] The gain factor applied to the RW speeds
-
    private:
+    double omegaGain{};                   //!< [-] The gain factor applied to the RW speeds
     Eigen::Matrix<double, RW_EFF_CNT, RW_EFF_CNT> tau{};  //!< [-] RW nullspace project matrix
     uint32_t numWheels{};                 //!< [-] The number of reaction wheels we have
 };

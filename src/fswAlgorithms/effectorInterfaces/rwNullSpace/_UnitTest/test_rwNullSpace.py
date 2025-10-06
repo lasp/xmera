@@ -61,7 +61,7 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     module = rwNullSpace.RwNullSpace()
 
     # Set the necessary data in the module. NOTE: This information is more or less random
-    module.OmegaGain = .5 # The feedback gain value applied for the RW despin control law
+    module.setOmegaGain(.5) # The feedback gain value applied for the RW despin control law
 
     # This calls the algContain to setup the selfInit, update, and reset
     module.modelTag = "rwNullSpace"
@@ -157,7 +157,7 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
         tmp = GsT.dot(inv(tmp))
         tmp = tmp.dot(Gs)
         tau = np.identity(numWheels) - tmp
-        d = - module.OmegaGain * (np.array(rwSpeeds) - np.array(desiredOmega))
+        d = - module.getOmegaGain() * (np.array(rwSpeeds) - np.array(desiredOmega))
         uNull = tau.dot(d)
         trueTorque = np.array(usControl) + uNull
         trueVector = [
