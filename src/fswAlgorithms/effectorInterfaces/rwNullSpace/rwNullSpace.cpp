@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -28,8 +28,6 @@
     @param callTime The clock time at which the function was called (nanoseconds)
  */
 void RwNullSpace::reset(uint64_t callTime) {
-    RWConstellationMsgPayload localRWData;       /*      local copy of RW configuration data */
-
     // check if the required input messages are included
     if (!this->rwConfigInMsg.isLinked()) {
         throw std::invalid_argument("rwNullSpace.rwConfigInMsg wasn't connected.");
@@ -42,7 +40,7 @@ void RwNullSpace::reset(uint64_t callTime) {
     }
 
     /* read in the RW spin axis headings */
-    localRWData = this->rwConfigInMsg();
+    RWConstellationMsgPayload localRWData = this->rwConfigInMsg();  /* local copy of RW configuration data */
 
     /* create the 3xN [Gs] RW spin axis projection matrix */
     this->numWheels = (uint32_t)localRWData.numRW;
@@ -57,7 +55,7 @@ void RwNullSpace::reset(uint64_t callTime) {
         G_s_B.col(i) = cArrayAsEigenVector(localRWData.reactionWheels[i].gsHat_B);
     }
 
-    /* find the [tau] null space projection matrix [tau]= ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
+    /* find the [tau] null space projection matrix [tau] = ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
     this->tau = Eigen::Matrix<double, RW_EFF_CNT, RW_EFF_CNT>::Identity()
                 - G_s_B.transpose() * (G_s_B * G_s_B.transpose()).inverse() * G_s_B;
 }
@@ -69,17 +67,11 @@ void RwNullSpace::reset(uint64_t callTime) {
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void RwNullSpace::updateState(uint64_t callTime) {
-    RwMotorTorqueMsgPayload
-        cntrRequest;            /* [Nm]  array of the RW motor torque solution vector from the control module */
-    RWSpeedMsgPayload rwSpeeds; /* [r/s] array of RW speeds */
-    RWSpeedMsgPayload rwDesiredSpeeds = {};    /* [r/s] array of RW speeds */
-    RwMotorTorqueMsgPayload finalControl = {}; /* [Nm]  array of final RW motor torques containing both
-                                                 the control and null motion torques */
-
-    /* Read the input RW commands to get the raw RW requests*/
-    cntrRequest = this->rwMotorTorqueInMsg();
-    /* Read the RW speeds*/
-    rwSpeeds = this->rwSpeedsInMsg();
+    RwMotorTorqueMsgPayload controlRequest = this->rwMotorTorqueInMsg(); /* [Nm]  array of the RW motor torque solution */
+    RWSpeedMsgPayload rwSpeeds = this->rwSpeedsInMsg(); /* [r/s] array of RW speeds */
+    RWSpeedMsgPayload rwDesiredSpeeds{};    /* [r/s] array of RW speeds */
+    RwMotorTorqueMsgPayload finalControl{}; /* [Nm]  array of final RW motor torques containing both
+                                            the control and null motion torques */
 
     if (this->rwDesiredSpeedsInMsg.isLinked()) {
         rwDesiredSpeeds = this->rwDesiredSpeedsInMsg();
@@ -93,14 +85,12 @@ void RwNullSpace::updateState(uint64_t callTime) {
     Eigen::Vector<double, MAX_EFF_CNT> motorTorqueNullSpace = this->tau * d;
 
     /* add the null motion RW torque solution to the RW feedback control torque solution */
-    Eigen::Vector<double, MAX_EFF_CNT> motorTorque = motorTorqueNullSpace + cArrayAsEigenVector(cntrRequest.motorTorque);
+    Eigen::Vector<double, MAX_EFF_CNT> motorTorque = motorTorqueNullSpace + cArrayAsEigenVector(controlRequest.motorTorque);
 
     eigenVectorToCArray(motorTorque, finalControl.motorTorque);
 
     /* write the final RW torque solution to the output message */
     this->rwMotorTorqueOutMsg.write(&finalControl, this->moduleID, callTime);
-
-    return;
 }
 
 /**

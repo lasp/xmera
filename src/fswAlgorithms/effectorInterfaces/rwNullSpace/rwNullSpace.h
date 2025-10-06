@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _RW_NULL_SPACE_H_
-#define _RW_NULL_SPACE_H_
+#ifndef RW_NULL_SPACE_H
+#define RW_NULL_SPACE_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
