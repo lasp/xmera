@@ -67,7 +67,7 @@ std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> EphemeridesRecenterAlgor
     }
 
     std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> recenteredBodies{};
-    for (auto i = 0; i < this->celestialBodyCount; ++i) {
+    for (size_t i = 0; i < this->celestialBodyCount; ++i) {
         /* Moons get re-centered along with their central body and shouldn't be re-centered in this main loop */
         if (!recenteredBodies[i].isMoon) {
             recenteredBodies[i] = BodyEphemerisPayload{};
@@ -116,7 +116,7 @@ bool EphemeridesRecenterAlgorithm::findMoonOfBody(const BodyEphemerisPayload &ce
     if (this->celestialBodyCount == 0) {
         throw std::invalid_argument("Requesting a body index but the current celestial body count is 0");
     }
-    for (auto i = 0; i < this->celestialBodyCount; ++i) {
+    for (size_t i = 0; i < this->celestialBodyCount; ++i) {
         if (this->celestialBodies[i].originalCentralBodyName == celestialBody.bodySpiceName) {
             *index = i;
             return true;
@@ -133,7 +133,7 @@ size_t EphemeridesRecenterAlgorithm::getBodyIndexFromName(const std::string &cel
     if (this->celestialBodyCount == 0) {
         throw std::invalid_argument("Requesting a body index but the current celestial body count is 0");
     }
-    for (auto i = 0; i < this->celestialBodyCount; ++i) {
+    for (size_t i = 0; i < this->celestialBodyCount; ++i) {
         if (this->bodyNames[i] == celestialBodyName) {
             return i;
         }
@@ -195,7 +195,7 @@ std::array<std::string, MAX_NUM_CHANGE_BODIES> EphemeridesRecenterAlgorithm::get
         throw std::invalid_argument("Requesting all body names but the current celestial body count is 0");
     }
     std::array<std::string, MAX_NUM_CHANGE_BODIES> names{};
-    for (auto i = 0; i < this->celestialBodyCount; ++i) {
+    for (size_t i = 0; i < this->celestialBodyCount; ++i) {
         if (!this->bodyNames[i].empty()) {
             names[i] = this->bodyNames[i];
         }
