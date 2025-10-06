@@ -30,11 +30,10 @@ ChebyshevFitArc OEStateEphemAlgorithm::findCurrentArc(uint64_t callTime,
     this->currentEphTime = callTime * 1e-9 + localTime.ephemerisTime - localTime.vehicleClockTime;
 
     /*! - select the fitting coefficients for the nearest fit interval */
-    signed int nearestArc = 0;
+    uint32_t nearestArc = 0;
     double smallestTimeDifference = fabs(this->currentEphTime - this->fitCoefficients[0].ephemerisTimeMiddle);
-    double timeDifference{}; /* [s] time difference with respect to an interval mid-point */
-    for (int i = 1; i < MAX_OE_RECORDS; i++) {
-        timeDifference = fabs(this->currentEphTime - this->fitCoefficients[i].ephemerisTimeMiddle);
+    for (auto i = 1; i < MAX_OE_RECORDS; ++i) {
+        double timeDifference = fabs(this->currentEphTime - this->fitCoefficients[i].ephemerisTimeMiddle);
         if (timeDifference < smallestTimeDifference) {
             nearestArc = i;
             smallestTimeDifference = timeDifference;
