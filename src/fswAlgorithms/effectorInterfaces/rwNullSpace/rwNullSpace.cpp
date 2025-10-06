@@ -18,8 +18,7 @@
  */
 
 #include "fswAlgorithms/effectorInterfaces/rwNullSpace/rwNullSpace.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/eigenSupport.h"
 
 #include <stdexcept>
 
@@ -29,11 +28,6 @@
     @param callTime The clock time at which the function was called (nanoseconds)
  */
 void RwNullSpace::reset(uint64_t callTime) {
-    double GsMatrix[3 * RW_EFF_CNT];    /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
-    double GsTranspose[3 * RW_EFF_CNT]; /* [-]  [Gs]^T */
-    double GsInvHalf[3 * 3];            /* [-]  ([Gs][Gs]^T)^-1 */
-    double identMatrix[RW_EFF_CNT * RW_EFF_CNT]; /* [-]  [I_NxN] identity matrix */
-    double GsTemp[RW_EFF_CNT * RW_EFF_CNT];      /* [-]  temp matrix */
     RWConstellationMsgPayload localRWData;       /*      local copy of RW configuration data */
 
     // check if the required input messages are included
@@ -55,25 +49,17 @@ void RwNullSpace::reset(uint64_t callTime) {
     if (this->numWheels > RW_EFF_CNT) {
         throw std::invalid_argument("rwNullSpace.numWheels is larger than max effector count.");
     }
-    for (uint32_t i = 0; i < this->numWheels; i = i + 1) {
-        for (int j = 0; j < 3; j = j + 1) {
-            GsMatrix[j * (int)this->numWheels + i] = localRWData.reactionWheels[i].gsHat_B[j];
-        }
+
+    Eigen::Matrix<double, 3, RW_EFF_CNT> G_s_B{};
+    G_s_B.setZero();
+    for(uint32_t i=0; i<this->numWheels; i=i+1)
+    {
+        G_s_B.col(i) = cArrayAsEigenVector(localRWData.reactionWheels[i].gsHat_B);
     }
 
-    /* find the [tau] null space projection matrix [tau]= ([I] - [Gs]^T.([Gs].[Gs]^T) */
-    mTranspose(GsMatrix, 3, this->numWheels, GsTranspose);                            /* find [Gs]^T */
-    mMultM(GsMatrix, 3, this->numWheels, GsTranspose, this->numWheels, 3, GsInvHalf); /* find [Gs].[Gs]^T */
-    m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);                             /* find ([Gs].[Gs]^T)^-1 */
-    mMultM(GsInvHalf, 3, 3, GsMatrix, 3, this->numWheels, this->tau);                 /* find ([Gs].[Gs]^T)^-1.[Gs] */
-    mMultM(
-        GsTranspose, this->numWheels, 3, this->tau, 3, this->numWheels, GsTemp); /* find [Gs]^T.([Gs].[Gs]^T)^-1.[Gs] */
-    mSetIdentity(identMatrix, this->numWheels, this->numWheels);
-    mSubtract(identMatrix,
-              this->numWheels,
-              this->numWheels, /* find ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
-              GsTemp,
-              this->tau);
+    /* find the [tau] null space projection matrix [tau]= ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
+    this->tau = Eigen::Matrix<double, RW_EFF_CNT, RW_EFF_CNT>::Identity()
+                - G_s_B.transpose() * (G_s_B * G_s_B.transpose()).inverse() * G_s_B;
 }
 
 /*! This method takes the input reaction wheel commands as well as the observed
@@ -89,8 +75,6 @@ void RwNullSpace::updateState(uint64_t callTime) {
     RWSpeedMsgPayload rwDesiredSpeeds = {};    /* [r/s] array of RW speeds */
     RwMotorTorqueMsgPayload finalControl = {}; /* [Nm]  array of final RW motor torques containing both
                                                  the control and null motion torques */
-    double dVector[RW_EFF_CNT];                /* [Nm]  null motion wheel speed control array */
-    double DeltaOmega[RW_EFF_CNT];             /* [r/s] difference in RW speeds */
 
     /* Read the input RW commands to get the raw RW requests*/
     cntrRequest = this->rwMotorTorqueInMsg();
@@ -102,14 +86,16 @@ void RwNullSpace::updateState(uint64_t callTime) {
     }
 
     /* compute the wheel speed control vector d = -K.DeltaOmega */
-    vSubtract(rwSpeeds.wheelSpeeds, this->numWheels, rwDesiredSpeeds.wheelSpeeds, DeltaOmega);
-    vScale(-this->OmegaGain, DeltaOmega, this->numWheels, dVector);
+    Eigen::Vector<double, MAX_EFF_CNT> d = -this->OmegaGain *
+        (cArrayAsEigenVector(rwSpeeds.wheelSpeeds) - cArrayAsEigenVector(rwDesiredSpeeds.wheelSpeeds));
 
     /* compute the RW null space motor torque solution to reduce the wheel speeds */
-    mMultV(this->tau, this->numWheels, this->numWheels, dVector, finalControl.motorTorque);
+    Eigen::Vector<double, MAX_EFF_CNT> motorTorqueNullSpace = this->tau * d;
 
     /* add the null motion RW torque solution to the RW feedback control torque solution */
-    vAdd(finalControl.motorTorque, this->numWheels, cntrRequest.motorTorque, finalControl.motorTorque);
+    Eigen::Vector<double, MAX_EFF_CNT> motorTorque = motorTorqueNullSpace + cArrayAsEigenVector(cntrRequest.motorTorque);
+
+    eigenVectorToCArray(motorTorque, finalControl.motorTorque);
 
     /* write the final RW torque solution to the output message */
     this->rwMotorTorqueOutMsg.write(&finalControl, this->moduleID, callTime);

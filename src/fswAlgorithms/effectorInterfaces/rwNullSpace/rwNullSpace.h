@@ -26,6 +26,8 @@
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 
+#include <Eigen/Core>
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -34,7 +36,7 @@ class RwNullSpace : public SysModel {
    public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    
+
     ReadFunctor<RwMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< [-] The name of the Input message
     ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;             //!< [-] The name of the input RW speeds
     ReadFunctor<RWSpeedMsgPayload> rwDesiredSpeedsInMsg;      //!< [-] (optional) The name of the desired RW speeds
@@ -44,7 +46,7 @@ class RwNullSpace : public SysModel {
     double OmegaGain{};                   //!< [-] The gain factor applied to the RW speeds
 
    private:
-    double tau[RW_EFF_CNT * RW_EFF_CNT];  //!< [-] RW nullspace project matrix
+    Eigen::Matrix<double, RW_EFF_CNT, RW_EFF_CNT> tau{};  //!< [-] RW nullspace project matrix
     uint32_t numWheels{};                 //!< [-] The number of reaction wheels we have
 };
 
