@@ -58,7 +58,7 @@ ClassicalElements OEStateEphemAlgorithm::evaluateCoefficients(const double curre
     /* - determine orbit elements from chebychev polynominals */
     double anomalyAngle{}; /* [r] general anomaly angle variable */
     ClassicalElements elements{};
-    elements.radiusPeriapsis =
+    const double radiusPeriapsis =
         calculateChebyValue(arc.radiusPeriapsisCoefficients.data(), arc.numberChebCoefficients, currentScaledValue) *
         1e3;  // coefficients are in km but module operates in meters
     elements.inclination =
@@ -87,7 +87,7 @@ ClassicalElements OEStateEphemAlgorithm::evaluateCoefficients(const double curre
     /*! - determine semi-major axis */
     if (fabs(elements.eccentricity - 1.0) > 1e-12) {
         /* elliptic or hyperbolic case */
-        elements.semiMajorAxis = elements.radiusPeriapsis / (1.0 - elements.eccentricity);
+        elements.semiMajorAxis = radiusPeriapsis / (1.0 - elements.eccentricity);
     } else {
         /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
         elements.semiMajorAxis = 0.0;
