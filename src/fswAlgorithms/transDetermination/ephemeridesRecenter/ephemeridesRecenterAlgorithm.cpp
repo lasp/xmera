@@ -23,7 +23,7 @@
  @param v2 double[3] : vector 2
  @param result double[3] : subtracted vectors
  */
-void vectorSubtraction(const double v1[3], const double v2[3], double result[3]) {
+static void vectorSubtraction(const double v1[3], const double v2[3], double result[3]) {
     for (int i = 0; i < 3; ++i) {
         result[i] = v1[i] - v2[i];
     }
@@ -34,7 +34,7 @@ void vectorSubtraction(const double v1[3], const double v2[3], double result[3])
  @param v2 double[3] : vector 2
  @param result double[3] : added vectors
  */
-void vectorAddition(const double v1[3], const double v2[3], double result[3]) {
+static void vectorAddition(const double v1[3], const double v2[3], double result[3]) {
     for (int i = 0; i < 3; ++i) {
         result[i] = v1[i] + v2[i];
     }

@@ -35,9 +35,6 @@ class BodyEphemerisPayload {
     EphemerisMsgPayload outputEphemerisPayload{EphemerisMsgPayload{}};  //!< Output ephemeris message after recentering
 };
 
-static void vectorSubtraction(const double v1[3], const double v2[3], double result[3]);
-static void vectorAddition(const double v1[3], const double v2[3], double result[3]);
-
 /**
  * @brief Basilisk model to recenter ephemeris data from one central body to another.
  *
