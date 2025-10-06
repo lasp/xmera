@@ -29,6 +29,7 @@
 %include "swig_conly_data.i"
 
 %include "rwNullSpace.h"
+%include "rwNullSpaceAlgorithm.h"
 
 %include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 %include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
