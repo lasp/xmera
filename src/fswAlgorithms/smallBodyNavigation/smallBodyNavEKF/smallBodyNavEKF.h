@@ -28,8 +28,8 @@
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDef/SmallBodyNavMsgPayload.h"
 #include "architecture/msgPayloadDef/THROutputMsgPayload.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief This module estimates relative spacecraft position and velocity with respect to the body and attitude and
@@ -41,7 +41,7 @@ class SmallBodyNavEKF : public SysModel {
 
     void reset(uint64_t currentSimNanos);                                    //!< Resets module
     void updateState(uint64_t currentSimNanos);                              //!< Updates state
-    void addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg);  //!< Adds thruster message
+    void addThrusterToFilter(Message<THROutputMsgPayload>* tmpThrusterMsg);  //!< Adds thruster message
 
    private:
     void readMessages(uint64_t currentSimNanos);        //!< Reads input messages

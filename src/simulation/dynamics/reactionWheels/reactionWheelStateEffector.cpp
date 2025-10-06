@@ -18,7 +18,7 @@
  */
 
 #include "reactionWheelStateEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <cmath>
 #include <cstring>
 #include <iostream>
@@ -46,7 +46,7 @@ ReactionWheelStateEffector::~ReactionWheelStateEffector() {
     return;
 }
 
-void ReactionWheelStateEffector::linkInStates(DynParamManager &statesIn) {
+void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn) {
     //! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
@@ -56,12 +56,12 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager &statesIn) {
     return;
 }
 
-void ReactionWheelStateEffector::registerStates(DynParamManager &states) {
+void ReactionWheelStateEffector::registerStates(DynParamManager& states) {
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
     this->numRW = 0;
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload *RWIt;
+    std::vector<RWConfigMsgPayload*>::iterator RWItp;
+    RWConfigMsgPayload* RWIt;
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(), 1);
 
@@ -99,8 +99,8 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime) {
     this->effProps.IEffPrimePntB_B.setZero();
 
     int thetaCount = 0;
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload *RWIt;
+    std::vector<RWConfigMsgPayload*>::iterator RWItp;
+    RWConfigMsgPayload* RWIt;
     for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
         RWIt = *RWItp;
         RWIt->Omega = this->OmegasState->getState()(RWItp - ReactionWheelData.begin(), 0);
@@ -166,7 +166,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime) {
 }
 
 void ReactionWheelStateEffector::updateContributions(double integTime,
-                                                     BackSubMatrices &backSubContr,
+                                                     BackSubMatrices& backSubContr,
                                                      Eigen::Vector3d sigma_BN,
                                                      Eigen::Vector3d omega_BN_B,
                                                      Eigen::Vector3d g_N) {
@@ -194,8 +194,8 @@ void ReactionWheelStateEffector::updateContributions(double integTime,
 
     omegaLoc_BN_B = this->hubOmega->getState();
 
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload *RWIt;
+    std::vector<RWConfigMsgPayload*>::iterator RWItp;
+    RWConfigMsgPayload* RWIt;
     for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
         RWIt = *RWItp;
         OmegaSquared = RWIt->Omega * RWIt->Omega;
@@ -311,8 +311,8 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime,
     Eigen::Vector3d rDDotBNLoc_B; /*! second time derivative of rBN in B frame */
     int RWi = 0;
     int thetaCount = 0;
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload *RWIt;
+    std::vector<RWConfigMsgPayload*>::iterator RWItp;
+    RWConfigMsgPayload* RWIt;
 
     //! Grab necessarry values from manager
     omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
@@ -346,8 +346,8 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime,
 }
 
 void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime,
-                                                              Eigen::Vector3d &rotAngMomPntCContr_B,
-                                                              double &rotEnergyContr,
+                                                              Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                              double& rotEnergyContr,
                                                               Eigen::Vector3d omega_BN_B) {
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcm_BN; /*! direction cosine matrix from N to B */
@@ -356,8 +356,8 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime,
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload *RWIt;
+    std::vector<RWConfigMsgPayload*>::iterator RWItp;
+    RWConfigMsgPayload* RWIt;
     for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
         RWIt = *RWItp;
         if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
@@ -380,12 +380,12 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime,
 
 /*! add a RW data object to the reactionWheelStateEffector @return void
  */
-void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW) {
+void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload* NewRW) {
     /* store the RW information */
     this->ReactionWheelData.push_back(NewRW);
 
     /* add a RW state log output message for this wheel */
-    Message<RWConfigLogMsgPayload> *msg;
+    Message<RWConfigLogMsgPayload>* msg;
     msg = new Message<RWConfigLogMsgPayload>;
     this->rwOutMsgs.push_back(msg);
 }
@@ -403,8 +403,8 @@ void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos) {
         this->NewRWCmds.push_back(RWCmdInitializer);
     }
 
-    std::vector<RWConfigMsgPayload *>::iterator itp;
-    RWConfigMsgPayload *it;
+    std::vector<RWConfigMsgPayload*>::iterator itp;
+    RWConfigMsgPayload* it;
     for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++) {
         it = *itp;
         if (it->betaStatic == 0.0) {
@@ -431,8 +431,8 @@ void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos) {
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
     RWConfigMsgPayload test;
     RWConfigLogMsgPayload tmpRW;
-    std::vector<RWConfigMsgPayload *>::iterator itp;
-    RWConfigMsgPayload *it;
+    std::vector<RWConfigMsgPayload*>::iterator itp;
+    RWConfigMsgPayload* it;
     int c = 0;
     for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++) {
         it = *itp;
@@ -455,8 +455,8 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
         tmpRW.U_d = it->U_d;
         tmpRW.RWModel = it->RWModel;
         tmpRW.P_max = it->P_max;
-        eigenVector3d2CArray(it->gsHat_B, tmpRW.gsHat_B);
-        eigenVector3d2CArray(it->rWB_B, tmpRW.rWB_B);
+        eigenVectorToCArray(it->gsHat_B, tmpRW.gsHat_B);
+        eigenVectorToCArray(it->rWB_B, tmpRW.rWB_B);
         // Write out config data for eachreaction wheel
         this->rwOutMsgs[c]->write(&tmpRW, this->moduleID, CurrentClock);
         c++;
@@ -471,8 +471,8 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
  @return void
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos) {
-    std::vector<RWConfigMsgPayload *>::iterator itp;
-    RWConfigMsgPayload *it;
+    std::vector<RWConfigMsgPayload*>::iterator itp;
+    RWConfigMsgPayload* it;
     for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++) {
         it = *itp;
         if (numRWJitter > 0) {
@@ -501,7 +501,7 @@ void ReactionWheelStateEffector::ReadInputs() {
     }
 
     //! - Set the NewRWCmds vector.  Using the data() method for raw speed
-    RWCmdMsgPayload *CmdPtr;
+    RWCmdMsgPayload* CmdPtr;
     uint64_t i;
     for (i = 0, CmdPtr = NewRWCmds.data(); i < ReactionWheelData.size(); CmdPtr++, i++) {
         CmdPtr->u_cmd = this->incomingCmdBuffer.motorTorque[i];

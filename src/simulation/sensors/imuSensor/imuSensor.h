@@ -31,8 +31,8 @@
 #include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-#include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <Eigen/Dense>
 

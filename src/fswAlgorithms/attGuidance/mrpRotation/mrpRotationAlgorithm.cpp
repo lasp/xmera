@@ -18,7 +18,7 @@
  */
 
 #include "mrpRotationAlgorithm.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 
@@ -127,9 +127,9 @@ AttRefMsgPayload MrpRotationAlgorithm::computeMRPRotationReference(Eigen::Vector
 
     AttRefMsgPayload attRefOut{};
 
-    eigenVector3d2CArray(sigma_RN, attRefOut.sigma_RN);
-    eigenVector3d2CArray(omega_RN_N, attRefOut.omega_RN_N);
-    eigenVector3d2CArray(domega_RN_N, attRefOut.domega_RN_N);
+    eigenVectorToCArray(sigma_RN, attRefOut.sigma_RN);
+    eigenVectorToCArray(omega_RN_N, attRefOut.omega_RN_N);
+    eigenVectorToCArray(domega_RN_N, attRefOut.domega_RN_N);
 
     return attRefOut;
 }

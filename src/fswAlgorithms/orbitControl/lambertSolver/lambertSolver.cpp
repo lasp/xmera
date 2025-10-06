@@ -87,8 +87,8 @@ void LambertSolver::readMessages() {
         this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
     }
     this->solverMethod = lambertProblemInMsgBuffer.solverMethod;
-    this->r1vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r1vec);
-    this->r2vec = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2vec);
+    this->r1vec = cArrayAsEigenVector(lambertProblemInMsgBuffer.r1vec);
+    this->r2vec = cArrayAsEigenVector(lambertProblemInMsgBuffer.r2vec);
 }
 
 /*! This method writes the output messages each call of updateState
@@ -110,8 +110,8 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos) {
     } else if (this->numberOfRevolutions == 0) {
         // if zero orbits are completed, only one solution exists.
         // Only populate information for 1st solution, 2nd solution remains zero message payload
-        eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1);
-        eigenVector3d2CArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2);
+        eigenVectorToCArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1);
+        eigenVectorToCArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2);
         lambertSolutionOutMsgBuffer.valid = 1;  // solution 1 is valid
 
         lambertPerformanceOutMsgBuffer.x = this->X;
@@ -119,11 +119,11 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos) {
         lambertPerformanceOutMsgBuffer.errX = this->errX;
     } else {
         // if one or more orbits are completed, and the requested time of flight is long enough, two solutions exist
-        eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1);
-        eigenVector3d2CArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2);
+        eigenVectorToCArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1);
+        eigenVectorToCArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2);
         lambertSolutionOutMsgBuffer.valid = 1;  // solution 1 is valid
-        eigenVector3d2CArray(this->vvecsSol2.at(0), lambertSolutionOutMsgBuffer.v1Sol2);
-        eigenVector3d2CArray(this->vvecsSol2.at(1), lambertSolutionOutMsgBuffer.v2Sol2);
+        eigenVectorToCArray(this->vvecsSol2.at(0), lambertSolutionOutMsgBuffer.v1Sol2);
+        eigenVectorToCArray(this->vvecsSol2.at(1), lambertSolutionOutMsgBuffer.v2Sol2);
         lambertSolutionOutMsgBuffer.validSol2 = 1;  // solution 2 is valid
 
         lambertPerformanceOutMsgBuffer.x = this->X;

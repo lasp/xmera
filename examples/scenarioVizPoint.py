@@ -278,7 +278,7 @@ def run(show_plots, missionType, saveVizardFile):
     inertial3DObj = inertial3D.Inertial3D()
     inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = earthPoint.tolist()  # set the desired inertial orientation
+    inertial3DObj.setSigmaR0N(earthPoint.tolist())  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()

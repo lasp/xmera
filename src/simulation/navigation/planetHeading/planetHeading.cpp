@@ -19,7 +19,7 @@
 
 #include "planetHeading.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 
 /*! Customer constructor just sets the spacecraftSTateInMsg by default*/
 PlanetHeading::PlanetHeading() {}
@@ -60,7 +60,7 @@ void PlanetHeading::readMessages() {
 void PlanetHeading::writeMessages(uint64_t currentSimNanos) {
     BodyHeadingMsgPayload planetHeadingOutMsgData;
     planetHeadingOutMsgData = BodyHeadingMsgPayload{};
-    eigenVector3d2CArray(this->rHat_PB_B, planetHeadingOutMsgData.rHat_XB_B);
+    eigenVectorToCArray(this->rHat_PB_B, planetHeadingOutMsgData.rHat_XB_B);
 
     /*! - write the output message */
     this->planetHeadingOutMsg.write(&planetHeadingOutMsgData, this->moduleID, currentSimNanos);

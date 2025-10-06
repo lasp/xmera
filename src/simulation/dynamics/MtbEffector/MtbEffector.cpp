@@ -18,8 +18,8 @@
 */
 
 #include "simulation/dynamics/MtbEffector/MtbEffector.h"
-#include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenMRP.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -113,19 +113,19 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep) {
      */
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     dcm_BN = sigmaBN.toRotationMatrix().transpose();
-    magField_N = cArray2EigenVector3d(this->magInMsgBuffer.magField_N);
+    magField_N = cArrayAsEigenVector(this->magInMsgBuffer.magField_N);
     magField_B = dcm_BN * magField_N;
     bTilde = eigenTilde(magField_B);
 
     /*
      * Compute torque produced by magnetic torque bars in body frame components.
-     * Since cArray2EigenMatrixXd expects a column major input, we need to
+     * Since cArrayAsEigenMatrix expects a column major input, we need to
      * transpose GtMatrix_B.
      */
     double GtColMajor[3 * MAX_EFF_CNT];
     mSetZero(GtColMajor, 3, this->mtbConfigParams.numMTB);
     mTranspose(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB, GtColMajor);
-    GtMatrix_B = cArray2EigenMatrixXd(GtColMajor, 3, this->mtbConfigParams.numMTB);
+    GtMatrix_B = cArrayAsEigenMatrixX(GtColMajor, 3, this->mtbConfigParams.numMTB);
 
     /* check if dipole commands are saturating the effector */
     for (int i = 0; i < this->mtbConfigParams.numMTB; i++) {
@@ -156,7 +156,7 @@ void MtbEffector::WriteOutputMessages(uint64_t CurrentClock) {
     /*
      * Write output message
      */
-    eigenVector3d2CArray(this->torqueExternalPntB_B, mtbOutMsgBuffer.mtbNetTorque_B);
+    eigenVectorToCArray(this->torqueExternalPntB_B, mtbOutMsgBuffer.mtbNetTorque_B);
     this->mtbOutMsg.write(&mtbOutMsgBuffer, this->moduleID, CurrentClock);
 
     return;

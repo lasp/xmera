@@ -20,7 +20,7 @@
 #include "simulation/environment/groundLocation/groundLocation.h"
 
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/geodeticConversion.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/safeMath.h"
@@ -85,7 +85,7 @@ void GroundLocation::specifyLocation(double lat, double longitude, double alt) {
 /*! Specifies the ground location from planet-centered, planet-fixed coordinates
  * @param r_LP_P_Loc
  */
-void GroundLocation::specifyLocationPCPF(Eigen::Vector3d &r_LP_P_Loc) {
+void GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc) {
     /* Assign to r_LP_P_Init */
     this->r_LP_P_Init = r_LP_P_Loc;
 
@@ -99,11 +99,11 @@ void GroundLocation::specifyLocationPCPF(Eigen::Vector3d &r_LP_P_Loc) {
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message
  * output name.
  */
-void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
+void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg) {
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<AccessMsgPayload> *msg;
+    Message<AccessMsgPayload>* msg;
     msg = new Message<AccessMsgPayload>;
     this->accessOutMsgs.push_back(msg);
 
@@ -156,9 +156,9 @@ void GroundLocation::WriteMessages(uint64_t CurrentClock) {
 
 void GroundLocation::updateInertialPositions() {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
-    this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
-    this->dcm_PN_dot = cArray2EigenMatrix3d(*this->planetState.J20002Pfix_dot);
-    this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
+    this->dcm_PN = cArrayAsEigenMatrix3(*this->planetState.J20002Pfix);
+    this->dcm_PN_dot = cArrayAsEigenMatrix3(*this->planetState.J20002Pfix_dot);
+    this->r_PN_N = cArrayAsEigenVector(this->planetState.PositionVector);
     // Then, transpose it to get the planet to inertial frame
     this->r_LP_N = this->dcm_PN.transpose() * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N / this->r_LP_N.norm();
@@ -167,8 +167,8 @@ void GroundLocation::updateInertialPositions() {
     Eigen::Matrix3d w_tilde_PN = -this->dcm_PN_dot * this->dcm_PN.transpose();
     this->w_PN << w_tilde_PN(2, 1), w_tilde_PN(0, 2), w_tilde_PN(1, 0);
     //  Stash updated position in the groundState message
-    eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateBuffer.r_LN_N);
-    eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateBuffer.r_LP_N);
+    eigenVectorToCArray(this->r_LN_N, this->currentGroundStateBuffer.r_LN_N);
+    eigenVectorToCArray(this->r_LP_N, this->currentGroundStateBuffer.r_LP_N);
 }
 
 void GroundLocation::computeAccess() {
@@ -182,7 +182,7 @@ void GroundLocation::computeAccess() {
          scStatesMsgIt != scStatesBuffer.end();
          scStatesMsgIt++, accessMsgIt++) {
         //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
-        Eigen::Vector3d r_BP_N = cArray2EigenVector3d(scStatesMsgIt->r_BN_N) - this->r_PN_N;
+        Eigen::Vector3d r_BP_N = cArrayAsEigenVector(scStatesMsgIt->r_BN_N) - this->r_PN_N;
         Eigen::Vector3d r_BL_N = r_BP_N - this->r_LP_N;
         auto r_BL_mag = r_BL_N.norm();
         Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_mag;
@@ -192,16 +192,16 @@ void GroundLocation::computeAccess() {
         accessMsgIt->slantRange = r_BL_mag;
         accessMsgIt->elevation = viewAngle;
         Eigen::Vector3d r_BL_L = this->dcm_LP * this->dcm_PN * r_BL_N;
-        eigenVector3d2CArray(r_BL_L, accessMsgIt->r_BL_L);
+        eigenVectorToCArray(r_BL_L, accessMsgIt->r_BL_L);
         double cos_az = -r_BL_L[0] / (sqrt(pow(r_BL_L[0], 2) + pow(r_BL_L[1], 2)));
         double sin_az = r_BL_L[1] / (sqrt(pow(r_BL_L[0], 2) + pow(r_BL_L[1], 2)));
         accessMsgIt->azimuth = atan2(sin_az, cos_az);
 
         Eigen::Vector3d v_BL_L =
             this->dcm_LP * this->dcm_PN *
-            (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) -
+            (cArrayAsEigenVector(scStatesMsgIt->v_BN_N) -
              this->w_PN.cross(r_BP_N));  // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
-        eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
+        eigenVectorToCArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L) / r_BL_mag;
         double xy_norm = sqrt(pow(r_BL_L[0], 2) + pow(r_BL_L[1], 2));
         accessMsgIt->az_dot = (-r_BL_L[0] * v_BL_L[1] + r_BL_L[1] * v_BL_L[0]) / pow(xy_norm, 2);

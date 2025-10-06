@@ -26,8 +26,8 @@
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief This module is provides a Lyapunov feedback control law for waypoint to waypoint guidance and control about

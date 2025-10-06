@@ -16,7 +16,7 @@
  */
 
 #include "dataFileToViz.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <sstream>
@@ -140,7 +140,7 @@ void DataFileToViz::reset(uint64_t currentSimNanos) {
 void DataFileToViz::setNumOfSatellites(int numSat) {
     for (int i = 0; i < numSat; i++) {
         /* create output message */
-        Message<SCStatesMsgPayload> *msg;
+        Message<SCStatesMsgPayload>* msg;
         msg = new Message<SCStatesMsgPayload>;
         this->scStateOutMsgs.push_back(msg);
     }
@@ -149,14 +149,14 @@ void DataFileToViz::setNumOfSatellites(int numSat) {
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void DataFileToViz::appendThrPos(double pos_B[3]) { this->thrPosList.push_back(cArray2EigenVector3d(pos_B)); }
+void DataFileToViz::appendThrPos(double pos_B[3]) { this->thrPosList.push_back(cArrayAsEigenVector3(pos_B)); }
 
 /*!
  Add a thruster 3d unit direction vector to the list.  The input vectors gets normalized before being added to the list.
  */
 void DataFileToViz::appendThrDir(double dir_B[3]) {
     v3Normalize(dir_B, dir_B);
-    this->thrDirList.push_back(cArray2EigenVector3d(dir_B));
+    this->thrDirList.push_back(cArrayAsEigenVector3(dir_B));
 }
 
 /*!
@@ -170,7 +170,7 @@ void DataFileToViz::appendThrForceMax(double forceMax) { this->thrForceMaxList.p
 void DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, std::vector<int> numThrPerCluster) {
     this->thrMsgDataSC.push_back(thrMsgData);
 
-    std::vector<Message<THROutputMsgPayload> *> vecMsgs;
+    std::vector<Message<THROutputMsgPayload>*> vecMsgs;
     // loop over the number of thruster clusters for this spacecraft
     if (thrMsgData.size() > 0) {
         this->numThrPerCluster.push_back(numThrPerCluster);
@@ -178,7 +178,7 @@ void DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, s
             // loop over the number of thrusters in this cluster and create an output message
             for (int i = 0; i < numThrPerCluster[thrClusterCount]; i++) {
                 /* create output message */
-                Message<THROutputMsgPayload> *msg;
+                Message<THROutputMsgPayload>* msg;
                 msg = new Message<THROutputMsgPayload>;
                 vecMsgs.push_back(msg);
             }
@@ -194,10 +194,10 @@ void DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, s
  Add a RW output msg list for each spacecraft
 */
 void DataFileToViz::appendNumOfRWs(int numRW) {
-    std::vector<Message<RWConfigLogMsgPayload> *> vecMsgs;
+    std::vector<Message<RWConfigLogMsgPayload>*> vecMsgs;
     for (int i = 0; i < numRW; i++) {
         /* create output message */
-        Message<RWConfigLogMsgPayload> *msg;
+        Message<RWConfigLogMsgPayload>* msg;
         msg = new Message<RWConfigLogMsgPayload>;
         vecMsgs.push_back(msg);
     }
@@ -221,7 +221,7 @@ void DataFileToViz::appendOmegaMax(double OmegaMax) { this->rwOmegaMaxList.push_
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cArray2EigenVector3d(pos_B)); }
+void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cArrayAsEigenVector3(pos_B)); }
 
 /*!
  Add a RW spin axis unit direction vector to the list.  The input vectors gets normalized before being added to the
@@ -229,7 +229,7 @@ void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cAr
  */
 void DataFileToViz::appendRwDir(double dir_B[3]) {
     v3Normalize(dir_B, dir_B);
-    this->rwDirList.push_back(cArray2EigenVector3d(dir_B));
+    this->rwDirList.push_back(cArrayAsEigenVector3(dir_B));
 }
 
 /*! Update this module at the task rate
@@ -312,8 +312,8 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                                 /* fill out the thruster state message */
                                 thrMsg.maxThrust = this->thrForceMaxList[thrCounter];
                                 thrMsg.thrustForce = pullScalar(&iss);
-                                eigenVector3d2CArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
-                                eigenVector3d2CArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
+                                eigenVectorToCArray(this->thrPosList[thrCounter], thrMsg.thrusterLocation);
+                                eigenVectorToCArray(this->thrDirList[thrCounter], thrMsg.thrusterDirection);
 
                                 this->thrScOutMsgs[scCounter]
                                     .at(thrCounter)
@@ -338,8 +338,8 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                             rwOutMsg.Omega_max = this->rwOmegaMaxList[rwCounter];
                             rwOutMsg.u_current = pullScalar(&iss);
                             rwOutMsg.u_max = this->rwUMaxList[rwCounter];
-                            eigenVector3d2CArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
-                            eigenVector3d2CArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
+                            eigenVectorToCArray(this->rwPosList[rwCounter], rwOutMsg.rWB_B);
+                            eigenVectorToCArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
 
                             this->rwScOutMsgs[scCounter].at(rwCounter)->write(
                                 &rwOutMsg, this->moduleID, currentSimNanos);
@@ -357,7 +357,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
 
 /*! pull a 3-d set of double values from the input stream
  */
-void DataFileToViz::pullVector(std::istringstream *iss, double vec[3]) {
+void DataFileToViz::pullVector(std::istringstream* iss, double vec[3]) {
     double x, y, z;
     x = pullScalar(iss);
     y = pullScalar(iss);
@@ -367,7 +367,7 @@ void DataFileToViz::pullVector(std::istringstream *iss, double vec[3]) {
 
 /*! pull a 4-d set of double values from the input stream
  */
-void DataFileToViz::pullVector4(std::istringstream *iss, double *vec) {
+void DataFileToViz::pullVector4(std::istringstream* iss, double* vec) {
     double q0, q1, q2, q3;
     q0 = pullScalar(iss);
     q1 = pullScalar(iss);
@@ -378,7 +378,7 @@ void DataFileToViz::pullVector4(std::istringstream *iss, double *vec) {
 
 /*! pull a double from the input stream
  */
-double DataFileToViz::pullScalar(std::istringstream *iss) {
+double DataFileToViz::pullScalar(std::istringstream* iss) {
     const char delimiterString = *this->delimiter.c_str();
     std::string item;
 

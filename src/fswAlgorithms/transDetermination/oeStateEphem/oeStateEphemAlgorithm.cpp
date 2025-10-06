@@ -18,14 +18,14 @@
  */
 
 #include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphemAlgorithm.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 
-void OEStateEphemAlgorithm::reset(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload &timePayload) {
+void OEStateEphemAlgorithm::reset(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload& timePayload) {
     this->spacecraftTime = timePayload;
 }
 
 ChebyshevFitArc OEStateEphemAlgorithm::findCurrentArc(uint64_t callTime,
-                                                      const TDBVehicleClockCorrelationMsgPayload &localTime) {
+                                                      const TDBVehicleClockCorrelationMsgPayload& localTime) {
     /*! - compute time for fitting interval */
     this->currentEphTime = callTime * 1e-9 + localTime.ephemerisTime - localTime.vehicleClockTime;
 
@@ -45,7 +45,7 @@ ChebyshevFitArc OEStateEphemAlgorithm::findCurrentArc(uint64_t callTime,
     return this->fitCoefficients[nearestArc];
 }
 
-double OEStateEphemAlgorithm::scaleEphemerisTime(const ChebyshevFitArc &arc) const {
+double OEStateEphemAlgorithm::scaleEphemerisTime(const ChebyshevFitArc& arc) const {
     double currentScaledValue = (this->currentEphTime - arc.ephemerisTimeMiddle) / arc.ephemerisTimeRadius;
     if (fabs(currentScaledValue) > 1.0) {
         currentScaledValue = currentScaledValue / fabs(currentScaledValue);
@@ -54,7 +54,7 @@ double OEStateEphemAlgorithm::scaleEphemerisTime(const ChebyshevFitArc &arc) con
 }
 
 ClassicalElements OEStateEphemAlgorithm::evaluateCoefficients(const double currentScaledValue,
-                                                              const ChebyshevFitArc &arc) {
+                                                              const ChebyshevFitArc& arc) {
     /* - determine orbit elements from chebychev polynominals */
     double anomalyAngle{}; /* [r] general anomaly angle variable */
     ClassicalElements elements{};
@@ -118,8 +118,8 @@ EphemerisMsgPayload OEStateEphemAlgorithm::updateState(const uint64_t callTime) 
 
     /*! - Determine position and velocity vectors */
     auto carteisianState = OrbitalMotion::elementsToCartesianState(this->gravitationalParameter, orbitalElements);
-    eigenVector3d2CArray(carteisianState.position, ephmerisMessageOutput.r_BdyZero_N);
-    eigenVector3d2CArray(carteisianState.velocity, ephmerisMessageOutput.v_BdyZero_N);
+    eigenVectorToCArray(carteisianState.position, ephmerisMessageOutput.r_BdyZero_N);
+    eigenVectorToCArray(carteisianState.velocity, ephmerisMessageOutput.v_BdyZero_N);
 
     return ephmerisMessageOutput;
 }
@@ -168,7 +168,7 @@ unsigned int OEStateEphemAlgorithm::getArcAnomalyFlag(unsigned int arcNumber) co
 
 void OEStateEphemAlgorithm::setArcRadiusPeriapsisCoefficients(
     const unsigned int arcNumber,
-    const std::array<double, MAX_OE_COEFF> &radiusPeriapsisCoefficients) {
+    const std::array<double, MAX_OE_COEFF>& radiusPeriapsisCoefficients) {
     this->fitCoefficients[arcNumber].radiusPeriapsisCoefficients = radiusPeriapsisCoefficients;
 };
 
@@ -179,7 +179,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphemAlgorithm::getArcRadiusPeriapsisCoe
 
 void OEStateEphemAlgorithm::setArcEccentricityCoefficients(
     const unsigned int arcNumber,
-    const std::array<double, MAX_OE_COEFF> &eccentricityCoefficients) {
+    const std::array<double, MAX_OE_COEFF>& eccentricityCoefficients) {
     this->fitCoefficients[arcNumber].eccentricityCoefficients = eccentricityCoefficients;
 };
 
@@ -189,7 +189,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphemAlgorithm::getArcEccentricityCoeffi
 
 void OEStateEphemAlgorithm::setArcInclinationCoefficients(
     const unsigned int arcNumber,
-    const std::array<double, MAX_OE_COEFF> &inclinationCoefficients) {
+    const std::array<double, MAX_OE_COEFF>& inclinationCoefficients) {
     this->fitCoefficients[arcNumber].inclinationCoefficients = inclinationCoefficients;
 };
 
@@ -199,7 +199,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphemAlgorithm::getArcInclinationCoeffic
 
 void OEStateEphemAlgorithm::setArcArgPeriapsisCoefficients(
     const unsigned int arcNumber,
-    const std::array<double, MAX_OE_COEFF> &argPeriapsisCoefficients) {
+    const std::array<double, MAX_OE_COEFF>& argPeriapsisCoefficients) {
     this->fitCoefficients[arcNumber].argPeriapsisCoefficients = argPeriapsisCoefficients;
 };
 
@@ -208,7 +208,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphemAlgorithm::getArcArgPeriapsisCoeffi
 };
 
 void OEStateEphemAlgorithm::setArcRaanCoefficients(const unsigned int arcNumber,
-                                                   const std::array<double, MAX_OE_COEFF> &raanCoefficients) {
+                                                   const std::array<double, MAX_OE_COEFF>& raanCoefficients) {
     this->fitCoefficients[arcNumber].raanCoefficients = raanCoefficients;
 };
 
@@ -218,7 +218,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphemAlgorithm::getArcRaanCoefficients(c
 
 void OEStateEphemAlgorithm::setArcTrueAnomalyCoefficients(
     const unsigned int arcNumber,
-    const std::array<double, MAX_OE_COEFF> &trueAnomalyCoefficients) {
+    const std::array<double, MAX_OE_COEFF>& trueAnomalyCoefficients) {
     this->fitCoefficients[arcNumber].trueAnomalyCoefficients = trueAnomalyCoefficients;
 };
 

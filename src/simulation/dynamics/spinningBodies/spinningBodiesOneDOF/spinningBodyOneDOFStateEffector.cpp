@@ -18,8 +18,8 @@
  */
 
 #include "spinningBodyOneDOFStateEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/eigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 #include <string>
 
 /*! This is the constructor, setting variables to default values */
@@ -81,10 +81,10 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         configLogMsg = SCStatesMsgPayload{};
 
         // Logging the S frame is the body frame B of that object
-        eigenVector3d2CArray(this->r_ScN_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_ScN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_ScN_N, configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_ScN_N, configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_SN, configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_SN_S, configLogMsg.omega_BN_B);
         this->spinningBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }
@@ -135,12 +135,9 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime) 
     this->thetaDot = this->thetaDotState->getState()(0, 0);
 
     // Compute the DCM from S frame to B frame and write sHat in B frame
-    double dcm_S0S[3][3];
-    double prv_S0S_array[3];
     Eigen::Vector3d prv_S0S = -this->theta * this->sHat_S;
-    eigenVector3d2CArray(prv_S0S, prv_S0S_array);
-    PRV2C(prv_S0S_array, dcm_S0S);
-    this->dcm_BS = this->dcm_S0B.transpose() * c2DArray2EigenMatrix3d(dcm_S0S);
+    Eigen::Matrix3d dcm_S0S = prvToDcm(prv_S0S);
+    this->dcm_BS = this->dcm_S0B.transpose() * dcm_S0S;
     this->sHat_B = this->dcm_BS * this->sHat_S;
 
     // Compute the effector's CoM with respect to point B
@@ -294,7 +291,7 @@ void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates() {
     // inertial attitude
     Eigen::Matrix3d dcm_SN;
     dcm_SN = (this->dcm_BS).transpose() * this->dcm_BN;
-    this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    this->sigma_SN = dcmToMrp(dcm_SN);
 
     // inertial position vector
     this->r_ScN_N = (Eigen::Vector3d) * this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_ScB_B;

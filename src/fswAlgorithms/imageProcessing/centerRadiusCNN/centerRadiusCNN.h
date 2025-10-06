@@ -32,8 +32,8 @@
 #include "architecture/msgPayloadDef/OpNavCirclesMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenMRP.h"
 
 /*! @brief The CNN based center radius visual tracking module. */
 class CenterRadiusCNN : public SysModel {

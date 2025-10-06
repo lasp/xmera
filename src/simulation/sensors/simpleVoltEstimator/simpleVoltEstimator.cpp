@@ -17,7 +17,7 @@
 
  */
 #include "simulation/sensors/simpleVoltEstimator/simpleVoltEstimator.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <cstring>
 #include <iostream>
 

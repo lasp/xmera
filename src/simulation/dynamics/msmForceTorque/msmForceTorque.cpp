@@ -75,7 +75,7 @@ void MsmForceTorque::reset(uint64_t currentSimNanos) {
 
 /*!   Subscribe to the spacecraft state message and store the corresponding MSM radii and sphere positions
  */
-void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg,
+void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
                                           std::vector<double> radii,
                                           std::vector<Eigen::Vector3d> r_SB_B) {
     /* add the message reader to the vector of input spacecraft state messages */
@@ -105,15 +105,15 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg,
     this->sigma_BNList.push_back(zeroMRP);
 
     /* create output message objects */
-    Message<CmdTorqueBodyMsgPayload> *msgTorque;
+    Message<CmdTorqueBodyMsgPayload>* msgTorque;
     msgTorque = new Message<CmdTorqueBodyMsgPayload>;
     this->eTorqueOutMsgs.push_back(msgTorque);
 
-    Message<CmdForceInertialMsgPayload> *msgForce;
+    Message<CmdForceInertialMsgPayload>* msgForce;
     msgForce = new Message<CmdForceInertialMsgPayload>;
     this->eForceOutMsgs.push_back(msgForce);
 
-    Message<ChargeMsmMsgPayload> *msmCharge;
+    Message<ChargeMsmMsgPayload>* msmCharge;
     msmCharge = new Message<ChargeMsmMsgPayload>;
     this->chargeMsmOutMsgs.push_back(msmCharge);
 }
@@ -130,8 +130,8 @@ void MsmForceTorque::readMessages() {
         this->volt.at(c) = voltInMsgBuffer.voltage;
 
         scStateInMsgsBuffer = this->scStateInMsgs.at(c)();
-        this->r_BN_NList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.r_BN_N);
-        this->sigma_BNList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.sigma_BN);
+        this->r_BN_NList.at(c) = cArrayAsEigenVector(scStateInMsgsBuffer.r_BN_N);
+        this->sigma_BNList.at(c) = cArrayAsEigenVector(scStateInMsgsBuffer.sigma_BN);
     }
 }
 
@@ -250,9 +250,9 @@ void MsmForceTorque::updateState(uint64_t currentSimNanos) {
         }
 
         // store net force and torque acting on body
-        eigenVector3d2CArray(netForce_N, forceMsgBuffer.forceRequestInertial);
+        eigenVectorToCArray(netForce_N, forceMsgBuffer.forceRequestInertial);
         this->eForceOutMsgs.at(c)->write(&forceMsgBuffer, this->moduleID, currentSimNanos);
-        eigenVector3d2CArray(netTorque_B, torqueMsgBuffer.torqueRequestBody);
+        eigenVectorToCArray(netTorque_B, torqueMsgBuffer.torqueRequestBody);
         this->eTorqueOutMsgs.at(c)->write(&torqueMsgBuffer, this->moduleID, currentSimNanos);
 
         // store MSM charges to output message

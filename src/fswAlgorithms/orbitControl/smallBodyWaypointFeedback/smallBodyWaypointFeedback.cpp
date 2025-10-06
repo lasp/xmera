@@ -84,19 +84,19 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t currentSimNanos) {
     /* Compute the hill frame DCM of the small body */
     double dcm_ON_array[3][3];
     hillFrame(asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, dcm_ON_array);
-    dcm_ON = cArray2EigenMatrixXd(*dcm_ON_array, 3, 3).transpose();
+    dcm_ON = cArrayAsEigenMatrix3(*dcm_ON_array);
 
     /* Compute the direction of the sun from the asteroid in the small body's hill frame, assumes heliocentric frame
      * centered at the origin of the sun, not the solar system's barycenter */
-    r_ON_N = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N);
-    r_SN_N = cArray2EigenVector3d(sunEphemerisInMsgBuffer.r_BdyZero_N);
+    r_ON_N = cArrayAsEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N);
+    r_SN_N = cArrayAsEigenVector(sunEphemerisInMsgBuffer.r_BdyZero_N);
     r_SO_O = dcm_ON * (r_SN_N - r_ON_N);  // small body to sun pos vector
 
     /* Compute the dcm from the body frame to the body's hill frame */
     double dcm_BN[3][3];
     MRP2C(navAttInMsgBuffer.sigma_BN, dcm_BN);
     Eigen::Matrix3d dcm_OB;
-    dcm_OB = dcm_ON * (cArray2EigenMatrixXd(*dcm_BN, 3, 3));
+    dcm_OB = dcm_ON * cArrayAsEigenMatrix3(*dcm_BN).transpose();
 
     /* Compute x1, x2 from the input messages */
     double r_BO_O[3];
@@ -107,8 +107,8 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t currentSimNanos) {
             navTransInMsgBuffer.v_BN_N,
             r_BO_O,
             v_BO_O);
-    x1 = cArray2EigenVector3d(r_BO_O);
-    x2 = cArray2EigenVector3d(v_BO_O);
+    x1 = cArrayAsEigenVector(r_BO_O);
+    x2 = cArrayAsEigenVector(v_BO_O);
 
     /* Compute dx1 and dx2 */
     dx1 = x1 - x1_ref;
@@ -153,7 +153,7 @@ void SmallBodyWaypointFeedback::writeMessages(uint64_t currentSimNanos) {
     CmdForceBodyMsgPayload forceOutMsgBuffer{};
 
     /* Assign the force */
-    eigenVector3d2CArray(thrust_B, forceOutMsgBuffer.forceRequestBody);
+    eigenVectorToCArray(thrust_B, forceOutMsgBuffer.forceRequestBody);
 
     /* Write the message */
     this->forceOutMsg.write(&forceOutMsgBuffer, this->moduleID, currentSimNanos);

@@ -27,8 +27,8 @@
 #include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 
-#include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenMRP.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <math.h>
 #include <vector>
 
@@ -118,10 +118,10 @@ class FuelTankModelEmptying : public FuelTankModel {
     @param f Function to find the zero of
     @param fPrime First derivative of the function
     */
-    double newtonRaphsonSolve(const double &initialEstimate,
-                              const double &accuracy,
-                              const std::function<double(double)> &f,
-                              const std::function<double(double)> &fPrime) const {
+    double newtonRaphsonSolve(const double& initialEstimate,
+                              const double& accuracy,
+                              const std::function<double(double)>& f,
+                              const std::function<double(double)>& fPrime) const {
         double currentEstimate = initialEstimate;
         for (int i = 0; i < 100; i++) {
             if (std::abs(f(currentEstimate)) < accuracy) break;
@@ -291,22 +291,22 @@ class FuelTankModelCentrifugalBurn : public FuelTankModel {
 /*! Fuel tank effector model class */
 class FuelTank : public StateEffector, public SysModel {
    public:
-    std::string nameOfMassState{};                           //!< -- name of mass state
-    std::vector<FuelSlosh *> fuelSloshParticles;             //!< -- vector of fuel slosh particles
-    std::vector<ThrusterDynamicEffector *> thrDynEffectors;  //!< -- Vector of dynamic effectors for thrusters
-    std::vector<ThrusterStateEffector *> thrStateEffectors;  //!< -- Vector of state effectors for thrusters
-    Eigen::Matrix3d dcm_TB;                                  //!< -- DCM from body frame to tank frame
-    Eigen::Vector3d r_TB_B;                                  //!< [m] position of tank in B frame
-    bool updateOnly = true;                                  //!< -- Sets whether to use update only mass depletion
-    Message<FuelTankMsgPayload> fuelTankOutMsg{};            //!< -- fuel tank output message name
-    FuelTankMsgPayload fuelTankMassPropMsg{};                //!< instance of messaging system message struct
+    std::string nameOfMassState{};                          //!< -- name of mass state
+    std::vector<FuelSlosh*> fuelSloshParticles;             //!< -- vector of fuel slosh particles
+    std::vector<ThrusterDynamicEffector*> thrDynEffectors;  //!< -- Vector of dynamic effectors for thrusters
+    std::vector<ThrusterStateEffector*> thrStateEffectors;  //!< -- Vector of state effectors for thrusters
+    Eigen::Matrix3d dcm_TB;                                 //!< -- DCM from body frame to tank frame
+    Eigen::Vector3d r_TB_B;                                 //!< [m] position of tank in B frame
+    bool updateOnly = true;                                 //!< -- Sets whether to use update only mass depletion
+    Message<FuelTankMsgPayload> fuelTankOutMsg{};           //!< -- fuel tank output message name
+    FuelTankMsgPayload fuelTankMassPropMsg{};               //!< instance of messaging system message struct
 
    private:
-    StateData *omegaState{};         //!< -- state data for omega_BN of the hub
-    StateData *massState{};          //!< -- state data for mass state
+    StateData* omegaState{};         //!< -- state data for omega_BN of the hub
+    StateData* massState{};          //!< -- state data for mass state
     double fuelConsumption{};        //!< [kg/s] rate of fuel being consumed
     double tankFuelConsumption{};    //!< [kg/s] rate of fuel being consumed from tank
-    FuelTankModel *fuelTankModel{};  //!< -- style of tank to simulate
+    FuelTankModel* fuelTankModel{};  //!< -- style of tank to simulate
     Eigen::Matrix3d ITankPntT_B;
     Eigen::Vector3d r_TcB_B;
     static uint64_t effectorID;  //!< [] ID number of this fuel tank effector
@@ -316,22 +316,22 @@ class FuelTank : public StateEffector, public SysModel {
     ~FuelTank();
     void writeOutputMessages(uint64_t currentClock);
     void updateState(uint64_t currentSimNanos) override;
-    void setTankModel(FuelTankModel *model);
-    void pushFuelSloshParticle(FuelSlosh *particle);             //!< -- Attach fuel slosh particle
-    void registerStates(DynParamManager &states) override;       //!< -- Register mass state with state manager
-    void linkInStates(DynParamManager &states) override;         //!< -- Give the tank access to other states
+    void setTankModel(FuelTankModel* model);
+    void pushFuelSloshParticle(FuelSlosh* particle);             //!< -- Attach fuel slosh particle
+    void registerStates(DynParamManager& states) override;       //!< -- Register mass state with state manager
+    void linkInStates(DynParamManager& states) override;         //!< -- Give the tank access to other states
     void updateEffectorMassProps(double integTime) override;     //!< -- Add contribution mass props from the tank
     void setNameOfMassState(const std::string nameOfMassState);  //!< -- Setter for fuel tank mass state name
-    void addThrusterSet(ThrusterDynamicEffector *dynEff);        //!< -- Add DynamicEffector thruster
-    void addThrusterSet(ThrusterStateEffector *stateEff);        //!< -- Add StateEffector thruster
+    void addThrusterSet(ThrusterDynamicEffector* dynEff);        //!< -- Add DynamicEffector thruster
+    void addThrusterSet(ThrusterStateEffector* stateEff);        //!< -- Add StateEffector thruster
     void updateContributions(double integTime,
-                             BackSubMatrices &backSubContr,
+                             BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N) override;  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d &rotAngMomPntCContr_B,
-                                      double &rotEnergyContr,
+                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                      double& rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;  //!< -- Energy and momentum calculations
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,

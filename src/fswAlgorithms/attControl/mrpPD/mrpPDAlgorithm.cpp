@@ -18,7 +18,7 @@
  */
 
 #include "fswAlgorithms/attControl/mrpPD/mrpPDAlgorithm.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <cmath>
 
 /*! Update method for mrpPD control algorithm. This method takes the attitude and rate errors relative to the
@@ -29,12 +29,12 @@
 */
 CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayload guidInMsg) {
     // Compute hub inertial angular velocity in B-frame components
-    Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(guidInMsg.omega_BR_B);
-    Eigen::Vector3d omega_RN_B = cArray2EigenVector3d(guidInMsg.omega_RN_B);
+    Eigen::Vector3d omega_BR_B = cArrayAsEigenVector(guidInMsg.omega_BR_B);
+    Eigen::Vector3d omega_RN_B = cArrayAsEigenVector(guidInMsg.omega_RN_B);
     Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
 
-    Eigen::Vector3d sigma_BR = cArray2EigenVector3d(guidInMsg.sigma_BR);
-    Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(guidInMsg.domega_RN_B);
+    Eigen::Vector3d sigma_BR = cArrayAsEigenVector(guidInMsg.sigma_BR);
+    Eigen::Vector3d domega_RN_B = cArrayAsEigenVector(guidInMsg.domega_RN_B);
 
     // Compute required attitude control torque vector
     Eigen::Vector3d Lr = -this->K * sigma_BR - this->P * omega_BR_B + omega_RN_B.cross(this->ISCPntB_B * omega_BN_B) +
@@ -43,7 +43,7 @@ CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayl
 
     // Create the output message
     auto torqueCmdMsgPayload = CmdTorqueBodyMsgPayload();
-    eigenVector3d2CArray(Lr, torqueCmdMsgPayload.torqueRequestBody);
+    eigenVectorToCArray(Lr, torqueCmdMsgPayload.torqueRequestBody);
 
     return torqueCmdMsgPayload;
 }
@@ -53,7 +53,7 @@ CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayl
  @param vehicleConfigIn Vehicle config input
 */
 void MrpPDAlgorithm::setSpacecraftInertia(VehicleConfigMsgPayload vehicleConfigIn) {
-    this->ISCPntB_B = cArray2EigenMatrixXd(vehicleConfigIn.ISCPntB_B, 3, 3);
+    this->ISCPntB_B = cArrayAsEigenMatrix3(vehicleConfigIn.ISCPntB_B);
 }
 
 /*! Setter method for the derivative gain P.

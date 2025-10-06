@@ -18,7 +18,7 @@
  */
 
 #include "mrpSteeringAlgorithm.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include <math.h>
 #include <stdint.h>
@@ -55,8 +55,8 @@ RateCmdMsgPayload MrpSteeringAlgorithm::update(AttGuidMsgPayload& guidInMsg) con
     }
     RateCmdMsgPayload outMsg{};
 
-    eigenVector3d2CArray(omega_ast, outMsg.omega_BastR_B);
-    eigenVector3d2CArray(omega_ast_p, outMsg.omegap_BastR_B);
+    eigenVectorToCArray(omega_ast, outMsg.omega_BastR_B);
+    eigenVectorToCArray(omega_ast_p, outMsg.omegap_BastR_B);
 
     return outMsg;
 }

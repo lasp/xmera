@@ -284,7 +284,7 @@ class BSKFswModels:
     # These are module-initialization methods
     def SetInertial3DPointGuidance(self):
         """Define the inertial 3D guidance module"""
-        self.inertial3D.sigma_R0N = [0.2, 0.4, 0.6]
+        self.inertial3D.setSigmaR0N([0.2, 0.4, 0.6])
         self.inertial3D.attRefOutMsg = self.attRefMsg
 
     def SetHillPointGuidance(self, SimBase):

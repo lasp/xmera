@@ -19,8 +19,8 @@
 
 #include "simulation/sensors/coarseSunSensor/coarseSunSensor.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenMRP.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -101,7 +101,7 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
     double q[3] = {yaw, pitch, roll};
     double dcm_PBcArray[9];
     Euler3212C(q, RECAST3X3 dcm_PBcArray);
-    this->dcm_PB = cArray2EigenMatrix3d(dcm_PBcArray);
+    this->dcm_PB = cArrayAsEigenMatrix3(dcm_PBcArray);
 }
 
 /*! This method is used to reset the module.
@@ -199,9 +199,9 @@ void CoarseSunSensor::computeSunData() {
     //! - Get the position from spacecraft to Sun
 
     //! - Read Message data to eigen
-    r_BN_N_eigen = cArray2EigenVector3d(this->stateCurrent.r_BN_N);
-    sunPos = cArray2EigenVector3d(this->sunData.PositionVector);
-    sigma_BN_eigen = cArray2EigenMRPd(this->stateCurrent.sigma_BN);
+    r_BN_N_eigen = cArrayAsEigenVector(this->stateCurrent.r_BN_N);
+    sunPos = cArrayAsEigenVector(this->sunData.PositionVector);
+    sigma_BN_eigen = cArrayAsEigenMrp(this->stateCurrent.sigma_BN);
 
     //! - Find sun heading unit vector
     Sc2Sun_Inrtl = sunPos - r_BN_N_eigen;
@@ -319,10 +319,7 @@ void CoarseSunSensor::scaleSensorValues() {
 }
 
 void CoarseSunSensor::applySaturation() {
-    Eigen::VectorXd sensedEigen;
-    sensedEigen = cArray2EigenMatrixXd(&this->sensedValue, 1, 1);
-    sensedEigen = this->saturateUtility.saturate(sensedEigen);
-    eigenMatrixXd2CArray(sensedEigen, &this->sensedValue);
+    this->sensedValue = this->saturateUtility.saturate(Eigen::Vector<double, 1>{this->sensedValue})[0];
 }
 
 /*! This method writes the output message.  The output message contains the
@@ -348,8 +345,8 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock) {
         if (this->CSSGroupID >= 0) {
             configMsg.CSSGroupID = this->CSSGroupID;
         }
-        eigenVector3d2CArray(this->r_B, configMsg.r_B);
-        eigenVector3d2CArray(this->nHat_B, configMsg.nHat_B);
+        eigenVectorToCArray(this->r_B, configMsg.r_B);
+        eigenVectorToCArray(this->nHat_B, configMsg.nHat_B);
 
         this->cssConfigLogOutMsg.write(&configMsg, this->moduleID, Clock);
     }

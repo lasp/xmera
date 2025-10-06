@@ -180,7 +180,7 @@ def run(show_plots):
     inertial3DObj = inertial3D.Inertial3D()
     inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.setSigmaR0N([0., 0., 0.])  # set the desired inertial orientation
 
     # we create 2 dynamic attitude reference modules as we want to do a 1-2 Euler angle rotation
     # and the modules provide a 3-2-1 sequence.  Thus, we do a 0-0-1 321-rotation and then a 0-1-0 321-rotation

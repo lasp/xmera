@@ -133,21 +133,21 @@ void LambertValidator::readMessages() {
     }
 
     // current spacecraft state
-    this->r_N = cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N);
-    this->v_N = cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N);
+    this->r_N = cArrayAsEigenVector(navTransInMsgBuffer.r_BN_N);
+    this->v_N = cArrayAsEigenVector(navTransInMsgBuffer.v_BN_N);
 
     // targeted position
-    this->r_TN_N = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2vec);
+    this->r_TN_N = cArrayAsEigenVector(lambertProblemInMsgBuffer.r2vec);
 
     // lambert solution and performance message content
     if (this->lambertSolutionSpecifier == 1) {
-        this->vLambert_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v1);
+        this->vLambert_N = cArrayAsEigenVector(lambertSolutionInMsgBuffer.v1);
         this->validLambert = lambertSolutionInMsgBuffer.valid;
         this->xLambert = lambertPerformanceInMsgBuffer.x;
         this->numIterLambert = lambertPerformanceInMsgBuffer.numIter;
         this->errXLambert = lambertPerformanceInMsgBuffer.errX;
     } else if (this->lambertSolutionSpecifier == 2) {
-        this->vLambert_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v1Sol2);
+        this->vLambert_N = cArrayAsEigenVector(lambertSolutionInMsgBuffer.v1Sol2);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
         this->xLambert = lambertPerformanceInMsgBuffer.xSol2;
         this->numIterLambert = lambertPerformanceInMsgBuffer.numIterSol2;
@@ -179,8 +179,8 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos) {
 
     // Write Delta-V message content only if all checks on performance and violations were passed
     if (goodSolution) {
-        eigenVector3d2CArray(this->dv_N, dvBurnCmdOutMsgBuffer.dvInrtlCmd);
-        eigenVector3d2CArray(dvRotVecUnit, dvBurnCmdOutMsgBuffer.dvRotVecUnit);
+        eigenVectorToCArray(this->dv_N, dvBurnCmdOutMsgBuffer.dvInrtlCmd);
+        eigenVectorToCArray(dvRotVecUnit, dvBurnCmdOutMsgBuffer.dvRotVecUnit);
         dvBurnCmdOutMsgBuffer.dvRotVecMag = dvRotVecMag;
         dvBurnCmdOutMsgBuffer.burnStartTime = burnStartTime;
     }
@@ -217,7 +217,7 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos) {
     lambertValidatorMsgBuffer.violationsDistanceTarget = this->violationsDistanceTarget;
     lambertValidatorMsgBuffer.violationsOrbitRadius = this->violationsOrbitRadius;
     // Delta-V vector that would be returned if all checks passed
-    eigenVector3d2CArray(this->dv_N, lambertValidatorMsgBuffer.dv);
+    eigenVectorToCArray(this->dv_N, lambertValidatorMsgBuffer.dv);
 
     // Write to the output messages
     this->dvBurnCmdOutMsg.write(&dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
@@ -235,10 +235,10 @@ std::array<Eigen::VectorXd, NUM_INITIALSTATES> LambertValidator::getInitialState
     double rc_N[3];
     double vc_N[3];
     double HN[3][3];
-    eigenVector3d2CArray(this->rm_N, rc_N);
-    eigenVector3d2CArray(this->vm_N, vc_N);
+    eigenVectorToCArray(this->rm_N, rc_N);
+    eigenVectorToCArray(this->vm_N, vc_N);
     hillFrame(rc_N, vc_N, HN);
-    this->dcm_HN = c2DArray2EigenMatrix3d(HN);
+    this->dcm_HN = c2DArrayAsEigenMatrix3(HN);
 
     // vectors expressed in Hill frame
     Eigen::Vector3d rm_H = this->dcm_HN * this->rm_N;

@@ -91,7 +91,7 @@ Config::~Config() { return; }
  */
 void Albedo::addInstrumentConfig(instConfig_t configMsg) {
     // add a albedo output message for this instrument
-    Message<AlbedoMsgPayload> *msg;
+    Message<AlbedoMsgPayload>* msg;
     msg = new Message<AlbedoMsgPayload>;
     this->albOutMsgs.push_back(msg);
 
@@ -127,7 +127,7 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
  */
 void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B) {
     // add a albedo output message for this instrument
-    Message<AlbedoMsgPayload> *msg;
+    Message<AlbedoMsgPayload>* msg;
     msg = new Message<AlbedoMsgPayload>;
     this->albOutMsgs.push_back(msg);
 
@@ -162,7 +162,7 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
 /*! This method subscribes to the planet msg and sets the albedo average model (overloaded function)
  @return void
  */
-void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg) {
+void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* planetSpiceMsg) {
     std::string modelName = "ALBEDO_AVG";
     this->modelNames.push_back(modelName);
     this->fileNames.push_back("");
@@ -183,7 +183,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
 /*! This method subscribes to the  planet msg and sets the albedo average model (overloaded function)
  @return void
  */
-void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg,
+void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* planetSpiceMsg,
                                             double ALB_avg,
                                             int numLat,
                                             int numLon) {
@@ -205,7 +205,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
 /*! This method subscribes to the planet msg and sets the albedo data model
  @return void
  */
-void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg,
+void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload>* planetSpiceMsg,
                                          std::string dataPath,
                                          std::string fileName) {
     std::string modelName = "ALBEDO_DATA";
@@ -244,7 +244,7 @@ void Albedo::updateState(uint64_t currentSimNanos) {
             tmpTot[3] += outData[3];
             idx++;
         }
-        this->albOutData.push_back(cArray2EigenMatrixXd(tmpTot, 4, 1));
+        this->albOutData.push_back(cArrayAsEigenVector(tmpTot));
     }
     this->writeMessages(currentSimNanos);
 }
@@ -656,8 +656,8 @@ void Albedo::computeAlbedo(int idx,
             num1[i] = albLon1[i];
             num2[i] = albLat1[i];
         }
-        this->albLon = cArray2EigenMatrixXd(num1, 1, IIdx);
-        this->albLat = cArray2EigenMatrixXd(num2, 1, IIdx);
+        this->albLon = cArrayAsEigenMatrixX(num1, 1, IIdx);
+        this->albLat = cArrayAsEigenMatrixX(num2, 1, IIdx);
         //! - Total albedo flux ratio [-]
         auto albedoAtInstrumentMax = alb_Imax;
         auto albedoAtInstrument = alb_I;

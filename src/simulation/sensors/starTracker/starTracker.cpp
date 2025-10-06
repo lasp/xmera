@@ -18,7 +18,7 @@
  */
 #include "simulation/sensors/starTracker/starTracker.h"
 
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -85,10 +85,10 @@ void StarTracker::applySensorErrors() {
     this->mrpErrors = prvToMrp(this->navErrors);
 
     Eigen::Vector3d sigmaSensed;
-    sigmaSensed = addMrp(cArray2EigenVector3d(this->scState.sigma_BN), this->mrpErrors);
+    sigmaSensed = addMrp(cArrayAsEigenVector(this->scState.sigma_BN), this->mrpErrors);
 
     // Save the previous sensed quaternion before computing the current sensed quaternion
-    this->betaPrevious_CN = cArray2EigenVector4d(this->sensedValues.qInrtl2Case);
+    this->betaPrevious_CN = cArrayAsEigenVector(this->sensedValues.qInrtl2Case);
 
     this->computeQuaternion(&sigmaSensed, &this->sensedValues);
     this->sensedValues.timeTag = this->sensorTimeTag;
@@ -99,7 +99,7 @@ void StarTracker::applySensorErrors() {
     @param sigma
     @param sensorValues
  */
-void StarTracker::computeQuaternion(Eigen::Vector3d *sigma, STSensorMsgPayload *sensorValues) {
+void StarTracker::computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValues) {
     Eigen::Matrix3d dcm_BN; /* dcm, inertial to body frame */
     dcm_BN = mrpToDcm(*sigma);
 
@@ -107,7 +107,7 @@ void StarTracker::computeQuaternion(Eigen::Vector3d *sigma, STSensorMsgPayload *
     dcm_CN = this->dcm_CB * dcm_BN;
 
     Eigen::Vector4d beta_CN = dcmToEp(dcm_CN);
-    eigenVector4d2CArray(beta_CN, sensorValues->qInrtl2Case);
+    eigenVectorToCArray(beta_CN, sensorValues->qInrtl2Case);
 }
 
 /*!
@@ -134,7 +134,7 @@ void StarTracker::computeAngularVelocity(uint64_t currentSimNanos) {
     Eigen::Matrix3d qTilde_CN = eigenTilde(q_CN);
     Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
     Eigen::Vector3d omega_CN_C = (2.0 / (1.0 + q_CN.transpose() * q_CN)) * (I - qTilde_CN) * qDot_CN;
-    eigenVector3d2CArray(omega_CN_C, this->sensedValues.omega_CN_C);
+    eigenVectorToCArray(omega_CN_C, this->sensedValues.omega_CN_C);
 }
 
 /*!
@@ -142,7 +142,7 @@ void StarTracker::computeAngularVelocity(uint64_t currentSimNanos) {
  */
 void StarTracker::computeTrueOutput() {
     this->trueValues.timeTag = this->sensorTimeTag;
-    Eigen::Vector3d sigma_BN = cArray2EigenVector3d(this->scState.sigma_BN);
+    Eigen::Vector3d sigma_BN = cArrayAsEigenVector(this->scState.sigma_BN);
     this->computeQuaternion(&sigma_BN, &this->trueValues);
 }
 
@@ -171,31 +171,31 @@ void StarTracker::updateState(uint64_t currentSimNanos) {
  @return void
  @param dcm_CB
 */
-void StarTracker::setDcmCB(const Eigen::Matrix3d &dcm_CB) { this->dcm_CB = dcm_CB; }
+void StarTracker::setDcmCB(const Eigen::Matrix3d& dcm_CB) { this->dcm_CB = dcm_CB; }
 
 /*! Setter method for PMatrix.
  @return void
  @param PMatrix
 */
-void StarTracker::setPMatrix(const Eigen::Matrix3d &PMatrix) { this->PMatrix = PMatrix; }
+void StarTracker::setPMatrix(const Eigen::Matrix3d& PMatrix) { this->PMatrix = PMatrix; }
 
 /*! Setter method for walkBounds.
  @return void
  @param walkBounds
 */
-void StarTracker::setWalkBounds(const Eigen::Vector3d &walkBounds) { this->walkBounds = walkBounds; }
+void StarTracker::setWalkBounds(const Eigen::Vector3d& walkBounds) { this->walkBounds = walkBounds; }
 
 /*! Getter method for dcm_CB.
  @return const Eigen::Matrix3d
 */
-const Eigen::Matrix3d &StarTracker::getDcmCB() const { return this->dcm_CB; }
+const Eigen::Matrix3d& StarTracker::getDcmCB() const { return this->dcm_CB; }
 
 /*! Getter method for PMatrix.
  @return const Eigen::Matrix3d
 */
-const Eigen::Matrix3d &StarTracker::getPMatrix() const { return this->PMatrix; }
+const Eigen::Matrix3d& StarTracker::getPMatrix() const { return this->PMatrix; }
 
 /*! Getter method for walkBounds.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &StarTracker::getWalkBounds() const { return this->walkBounds; }
+const Eigen::Vector3d& StarTracker::getWalkBounds() const { return this->walkBounds; }

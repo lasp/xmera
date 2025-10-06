@@ -239,7 +239,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     inertial3DObj = inertial3D.Inertial3D()
     inertial3DObj.modelTag = "inertial3D"
     scSim.AddModelToTask(fswTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.setSigmaR0N([0., 0., 0.])  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()

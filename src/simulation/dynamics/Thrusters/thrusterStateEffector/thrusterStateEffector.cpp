@@ -20,7 +20,7 @@
 #include <iostream>
 
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "thrusterStateEffector.h"
@@ -126,8 +126,8 @@ void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock) {
     THROutputMsgPayload tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it) {
         tmpThruster = THROutputMsgPayload{};
-        eigenVector3d2CArray(it->thrLoc_B, tmpThruster.thrusterLocation);
-        eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection);
+        eigenVectorToCArray(it->thrLoc_B, tmpThruster.thrusterLocation);
+        eigenVectorToCArray(it->thrDir_B, tmpThruster.thrusterDirection);
         tmpThruster.maxThrust = it->MaxThrust;
         tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
         tmpThruster.thrustForce = v3Norm(it->ThrustOps.opThrustForce_B);
@@ -203,9 +203,9 @@ void ThrusterStateEffector::UpdateThrusterProperties() {
             this->attachedBodyBuffer = this->attachedBodyInMsgs.at(index)();
 
             // Grab attached body variables
-            sigma_FN = cArray2EigenMRPd(attachedBodyBuffer.sigma_BN);
-            omega_FN_F = cArray2EigenVector3d(attachedBodyBuffer.omega_BN_B);
-            r_FN_N = cArray2EigenVector3d(attachedBodyBuffer.r_BN_N);
+            sigma_FN = cArrayAsEigenMrp(attachedBodyBuffer.sigma_BN);
+            omega_FN_F = cArrayAsEigenVector(attachedBodyBuffer.omega_BN_B);
+            r_FN_N = cArrayAsEigenVector(attachedBodyBuffer.r_BN_N);
 
             // Compute the DCM between the attached body and the hub
             dcm_FN = (sigma_FN.toRotationMatrix()).transpose();
@@ -407,8 +407,8 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
                                         (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
         }
         // - Save force and torque values for messages
-        eigenVector3d2CArray(SingleThrusterForce, it->ThrustOps.opThrustForce_B);
-        eigenVector3d2CArray(SingleThrusterTorque, it->ThrustOps.opThrustTorquePntB_B);
+        eigenVectorToCArray(SingleThrusterForce, it->ThrustOps.opThrustForce_B);
+        eigenVectorToCArray(SingleThrusterTorque, it->ThrustOps.opThrustTorquePntB_B);
     }
 
     return;

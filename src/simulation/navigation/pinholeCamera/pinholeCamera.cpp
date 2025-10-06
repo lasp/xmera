@@ -19,7 +19,7 @@
 
 #include "pinholeCamera.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/safeMath.h"
@@ -209,21 +209,21 @@ void PinholeCamera::processInputs() {
     /* Extract planet dcm */
     double dcm_PN_array[3][3];
     MRP2C(this->ephemerisPlanet.sigma_BN, dcm_PN_array);
-    this->dcm_PN = cArray2EigenMatrix3d(*dcm_PN_array);
+    this->dcm_PN = cArrayAsEigenMatrix3(*dcm_PN_array);
 
     /* Compute planet to Sun line e_SP on the planet rotating frame P */
     Eigen::Vector3d r_PS_N;
-    r_PS_N = cArray2EigenVector3d(this->ephemerisPlanet.r_BdyZero_N);
+    r_PS_N = cArrayAsEigenVector(this->ephemerisPlanet.r_BdyZero_N);
     this->e_SP_P = this->dcm_PN * (-r_PS_N / r_PS_N.norm());
 
     /* Compute spacecraft position in the planet rotating frame P */
-    this->r_BP_P = this->dcm_PN * (cArray2EigenVector3d(this->spacecraftState.r_BN_N) -
-                                   cArray2EigenVector3d(this->ephemerisPlanet.r_BdyZero_N));
+    this->r_BP_P = this->dcm_PN * (cArrayAsEigenVector(this->spacecraftState.r_BN_N) -
+                                   cArrayAsEigenVector(this->ephemerisPlanet.r_BdyZero_N));
 
     /* Compute spacecraft dcm with respect to planet rotating frame */
     double dcm_BN_array[3][3];
     MRP2C(this->spacecraftState.sigma_BN, dcm_BN_array);
-    this->dcm_BP = cArray2EigenMatrix3d(*dcm_BN_array) * this->dcm_PN.transpose();
+    this->dcm_BP = cArrayAsEigenMatrix3(*dcm_BN_array) * this->dcm_PN.transpose();
 
     /* Camera focal direction in planet frame */
     this->eC_P = (this->dcm_CB * this->dcm_BP).transpose() * this->eC_C;
@@ -247,7 +247,7 @@ void PinholeCamera::writeOutputMessages(uint64_t CurrentClock) {
 
         /* Fill landmark output messages */
         this->landmarkMsgBuffer.at(i).isVisible = this->isvisibleLmk(i);
-        eigenMatrixXi2CArray(this->pixelLmk.row(i), this->landmarkMsgBuffer.at(i).pL);
+        eigenMatrixXToCArray(this->pixelLmk.row(i), this->landmarkMsgBuffer.at(i).pL);
         this->landmarkOutMsgs.at(i)->write(&this->landmarkMsgBuffer.at(i), this->moduleID, CurrentClock);
     }
 }
@@ -315,9 +315,9 @@ void PinholeCamera::processBatch(Eigen::MatrixXd rBatch_BP_P,
         this->e_SP_P = eBatch_SP_P.row(i).transpose();
 
         /* Compute spacecraft dcm w.r.t. planet frame */
-        eigenMatrixXd2CArray(mrpBatch_BP.row(i).transpose(), mrp_BP);
+        eigenMatrixXToCArray(mrpBatch_BP.row(i).transpose(), mrp_BP);
         MRP2C(mrp_BP, dcm_BP_array);
-        this->dcm_BP = cArray2EigenMatrix3d(*dcm_BP_array);
+        this->dcm_BP = cArrayAsEigenMatrix3(*dcm_BP_array);
 
         /* Compute camera focal direction in planet frame */
         this->eC_P = (this->dcm_CB * this->dcm_BP).transpose() * this->eC_C;

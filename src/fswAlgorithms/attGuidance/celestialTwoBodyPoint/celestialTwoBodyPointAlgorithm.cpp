@@ -18,7 +18,7 @@
  */
 
 #include "fswAlgorithms/attGuidance/celestialTwoBodyPoint/celestialTwoBodyPointAlgorithm.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include "architecture/utilities/safeMath.h"
 
@@ -79,7 +79,7 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
 
     /* - MRP computation */
     Eigen::Vector3d sigma_RN = dcmToMrp(dcm_RN);
-    eigenVector3d2CArray(sigma_RN, attRefOut.sigma_RN);
+    eigenVectorToCArray(sigma_RN, attRefOut.sigma_RN);
 
     /* - Reference base-vectors first time-derivative */
     Eigen::Vector3d dr1_N_hat =
@@ -93,7 +93,7 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
     omega_RN_R[1] = r1_N_hat.dot(dr3_N_hat);
     omega_RN_R[2] = r2_N_hat.dot(dr1_N_hat);
     Eigen::Vector3d omega_RN_N = dcm_RN.transpose() * omega_RN_R;
-    eigenVector3d2CArray(omega_RN_N, attRefOut.omega_RN_N);
+    eigenVectorToCArray(omega_RN_N, attRefOut.omega_RN_N);
 
     /* - Reference base-vectors second time-derivative */
     Eigen::Vector3d ddr1_N_hat =
@@ -110,7 +110,7 @@ AttRefMsgPayload CelestialTwoBodyPointAlgorithm::update(EphemerisMsgPayload& cel
     domega_RN_R[1] = dr1_N_hat.dot(dr3_N_hat) + r1_N_hat.dot(ddr3_N_hat) - omega_RN_R.dot(dr2_N_hat);
     domega_RN_R[2] = dr2_N_hat.dot(dr1_N_hat) + r2_N_hat.dot(ddr1_N_hat) - omega_RN_R.dot(dr3_N_hat);
     Eigen::Vector3d domega_RN_N = dcm_RN.transpose() * domega_RN_R;
-    eigenVector3d2CArray(domega_RN_N, attRefOut.domega_RN_N);
+    eigenVectorToCArray(domega_RN_N, attRefOut.domega_RN_N);
 
     return attRefOut;
 }

@@ -18,7 +18,7 @@
  */
 
 #include "fswAlgorithms/attControl/thrMomentumManagementCpp/thrMomentumManagementCpp.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 void ThrMomentumManagementCpp::reset(uint64_t currentSimNanos) {
@@ -45,7 +45,7 @@ void ThrMomentumManagementCpp::updateState(uint64_t currentSimNanos) {
         Eigen::Vector3d hs_B = Eigen::Vector3d::Zero();
         for (int i = 0; i < this->rwConfigParams.numRW; i++) {
             hs_B += this->rwConfigParams.JsList[i] * rwSpeedMsg.wheelSpeeds[i] *
-                    cArray2EigenVector3d(&this->rwConfigParams.GsMatrix_B[i * 3]);
+                    cArrayAsEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
         }
 
         if (this->hd_B.norm() > 0) {
@@ -60,6 +60,6 @@ void ThrMomentumManagementCpp::updateState(uint64_t currentSimNanos) {
     }
 
     CmdTorqueBodyMsgPayload controlOutMsg{};
-    eigenVector3d2CArray(Delta_H_B, controlOutMsg.torqueRequestBody);
+    eigenVectorToCArray(Delta_H_B, controlOutMsg.torqueRequestBody);
     this->deltaHOutMsg.write(&controlOutMsg, this->moduleID, currentSimNanos);
 }

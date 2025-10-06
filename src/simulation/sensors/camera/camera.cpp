@@ -29,7 +29,7 @@
 /* modify the path to reflect the new module names */
 #include "camera.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string.h>
@@ -336,8 +336,8 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.fieldOfView[0] = this->cameraFieldOfView[0];
     cameraModelMsg.fieldOfView[1] = this->cameraFieldOfView[1];
     cameraModelMsg.isOn = this->cameraIsImaging;
-    eigenVector3d2CArray(this->cameraBodyFramePosition, cameraModelMsg.cameraBodyFramePosition);
-    eigenVector3d2CArray(this->bodyToCameraMrp, cameraModelMsg.bodyToCameraMrp);
+    eigenVectorToCArray(this->cameraBodyFramePosition, cameraModelMsg.cameraBodyFramePosition);
+    eigenVectorToCArray(this->bodyToCameraMrp, cameraModelMsg.bodyToCameraMrp);
     cameraModelMsg.focalLength = this->focalLength;
     cameraModelMsg.gaussianPointSpreadFunction = this->gaussianPointSpreadFunction;
     cameraModelMsg.readNoise = this->readNoise;
@@ -351,12 +351,21 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.sensorHeight = this->sensorHeight;
     cameraModelMsg.fullWellCapacity = this->fullWellCapacity;
     cameraModelMsg.integrationWeightFactor = this->integrationWeightFactor;
-    eigenVector3d2CArray(this->redQuantumEfficiency, cameraModelMsg.redQuantumEfficiency);
-    eigenVector3d2CArray(this->greenQuantumEfficiency, cameraModelMsg.greenQuantumEfficiency);
-    eigenVector3d2CArray(this->blueQuantumEfficiency, cameraModelMsg.blueQuantumEfficiency);
-    eigenMatrixXd2CArray(this->horizontalVignetting, cameraModelMsg.horizontalVignetting);
-    eigenMatrixXd2CArray(this->verticalVignetting, cameraModelMsg.verticalVignetting);
-    eigenMatrixXd2CArray(this->distortion, cameraModelMsg.distortion);
+    eigenVectorToCArray(this->redQuantumEfficiency, cameraModelMsg.redQuantumEfficiency);
+    eigenVectorToCArray(this->greenQuantumEfficiency, cameraModelMsg.greenQuantumEfficiency);
+    eigenVectorToCArray(this->blueQuantumEfficiency, cameraModelMsg.blueQuantumEfficiency);
+    if (this->horizontalVignetting.size() > 0) {
+        vSetZero(cameraModelMsg.horizontalVignetting, std::size(cameraModelMsg.horizontalVignetting));
+        eigenMatrixXToCArray(this->horizontalVignetting, cameraModelMsg.horizontalVignetting);
+    }
+    if (this->verticalVignetting.size() > 0) {
+        vSetZero(cameraModelMsg.verticalVignetting, std::size(cameraModelMsg.verticalVignetting));
+        eigenMatrixXToCArray(this->verticalVignetting, cameraModelMsg.verticalVignetting);
+    }
+    if (this->distortion.size() > 0) {
+        vSetZero(cameraModelMsg.distortion, std::size(cameraModelMsg.distortion));
+        eigenMatrixXToCArray(this->distortion, cameraModelMsg.distortion);
+    }
     cameraModelMsg.transmission = this->transmission;
 
     /*! - Update the camera config data no matter if an image is present*/

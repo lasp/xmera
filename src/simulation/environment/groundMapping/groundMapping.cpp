@@ -18,7 +18,7 @@
 */
 
 #include "simulation/environment//groundMapping/groundMapping.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/safeMath.h"
@@ -80,12 +80,12 @@ void GroundMapping::ReadMessages() {
 /*! Method to add map points
  * @param r_LP_P_init: mapping point in planet-fixed frame
  */
-void GroundMapping::addPointToModel(Eigen::Vector3d &r_LP_P_init) {
+void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init) {
     /* Add the mapping point */
     this->mappingPoints.push_back(r_LP_P_init);
 
     /* Create buffer output messages */
-    Message<AccessMsgPayload> *msg;
+    Message<AccessMsgPayload>* msg;
     msg = new Message<AccessMsgPayload>;
     this->accessOutMsgs.push_back(msg);
 
@@ -94,7 +94,7 @@ void GroundMapping::addPointToModel(Eigen::Vector3d &r_LP_P_init) {
     this->accessMsgBuffer.push_back(accMsg);
 
     /* Create ground state output message */
-    Message<GroundStateMsgPayload> *msg_2;
+    Message<GroundStateMsgPayload>* msg_2;
     msg_2 = new Message<GroundStateMsgPayload>;
     this->currentGroundStateOutMsgs.push_back(msg_2);
 
@@ -117,8 +117,8 @@ void GroundMapping::computeAccess(uint64_t c) {
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
 
     //!  Stash updated position in the groundState message
-    eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateMsgBuffer.at(c).r_LN_N);
-    eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateMsgBuffer.at(c).r_LP_N);
+    eigenVectorToCArray(this->r_LN_N, this->currentGroundStateMsgBuffer.at(c).r_LN_N);
+    eigenVectorToCArray(this->r_LP_N, this->currentGroundStateMsgBuffer.at(c).r_LP_N);
 
     //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
     Eigen::Vector3d r_BL_N = r_BP_N - this->r_LP_N;
@@ -130,16 +130,16 @@ void GroundMapping::computeAccess(uint64_t c) {
     this->accessMsgBuffer.at(c).slantRange = r_BL_mag;
     this->accessMsgBuffer.at(c).elevation = viewAngle;
     Eigen::Vector3d r_BL_L = this->dcm_LP * this->dcm_PN * r_BL_N;
-    eigenVector3d2CArray(r_BL_L, this->accessMsgBuffer.at(c).r_BL_L);
+    eigenVectorToCArray(r_BL_L, this->accessMsgBuffer.at(c).r_BL_L);
     double cos_az = -r_BL_L[0] / (sqrt(pow(r_BL_L[0], 2) + pow(r_BL_L[1], 2)));
     double sin_az = r_BL_L[1] / (sqrt(pow(r_BL_L[0], 2) + pow(r_BL_L[1], 2)));
     this->accessMsgBuffer.at(c).azimuth = atan2(sin_az, cos_az);
 
     Eigen::Vector3d v_BL_L =
         this->dcm_LP * this->dcm_PN *
-        (cArray2EigenVector3d(scStateInMsgBuffer.v_BN_N) -
+        (cArrayAsEigenVector(scStateInMsgBuffer.v_BN_N) -
          this->w_PN.cross(r_BP_N));  // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
-    eigenVector3d2CArray(v_BL_L, this->accessMsgBuffer.at(c).v_BL_L);
+    eigenVectorToCArray(v_BL_L, this->accessMsgBuffer.at(c).v_BL_L);
     this->accessMsgBuffer.at(c).range_dot = v_BL_L.dot(r_BL_L) / r_BL_mag;
     double xy_norm = sqrt(pow(r_BL_L[0], 2) + pow(r_BL_L[1], 2));
     this->accessMsgBuffer.at(c).az_dot = (-r_BL_L[0] * v_BL_L[1] + r_BL_L[1] * v_BL_L[0]) / pow(xy_norm, 2);
@@ -161,15 +161,15 @@ void GroundMapping::computeAccess(uint64_t c) {
  */
 void GroundMapping::updateInertialPositions() {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
-    this->dcm_PN = cArray2EigenMatrix3d(*this->planetInMsgBuffer.J20002Pfix);
-    this->dcm_PN_dot = cArray2EigenMatrix3d(*this->planetInMsgBuffer.J20002Pfix_dot);
-    this->r_PN_N = cArray2EigenVector3d(this->planetInMsgBuffer.PositionVector);
+    this->dcm_PN = cArrayAsEigenMatrix3(*this->planetInMsgBuffer.J20002Pfix);
+    this->dcm_PN_dot = cArrayAsEigenMatrix3(*this->planetInMsgBuffer.J20002Pfix_dot);
+    this->r_PN_N = cArrayAsEigenVector(this->planetInMsgBuffer.PositionVector);
 
     // Compute the position of the body frame to the planet in the inertial frame
-    this->r_BP_N = cArray2EigenVector3d(scStateInMsgBuffer.r_BN_N) - this->r_PN_N;
+    this->r_BP_N = cArrayAsEigenVector(scStateInMsgBuffer.r_BN_N) - this->r_PN_N;
     double dcm_BN[3][3];
     MRP2C(scStateInMsgBuffer.sigma_BN, dcm_BN);
-    this->dcm_NB = cArray2EigenMatrixXd(*dcm_BN, 3, 3);
+    this->dcm_NB = cArrayAsEigenMatrix3(*dcm_BN).transpose();
 
     // Get planet frame angular velocity vector
     Eigen::Matrix3d w_tilde_PN = -this->dcm_PN_dot * this->dcm_PN.transpose();

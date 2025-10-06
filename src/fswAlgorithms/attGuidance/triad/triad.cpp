@@ -23,8 +23,8 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 
 #include <Eigen/Core>
 
-#include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenMRP.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 
@@ -108,12 +108,12 @@ void Triad::updateState(uint64_t callTime) {
         hReqHat_N = this->hHat_N.normalized();
     } else if (this->inertialAxisInput == InertialAxisInput::inputInertialHeadingMsg) {
         InertialHeadingMsgPayload inertialHeadingIn = this->inertialHeadingInMsg();
-        hReqHat_N = cArray2EigenVector3d(inertialHeadingIn.rHat_XN_N).normalized();
+        hReqHat_N = cArrayAsEigenVector(inertialHeadingIn.rHat_XN_N).normalized();
     } else if (this->inertialAxisInput == InertialAxisInput::inputEphemerisMsg) {
         EphemerisMsgPayload ephemerisIn = this->ephemerisInMsg();
         NavTransMsgPayload transNavIn = this->transNavInMsg();
         hReqHat_N =
-            (cArray2EigenVector3d(ephemerisIn.r_BdyZero_N) - cArray2EigenVector3d(transNavIn.r_BN_N)).normalized();
+            (cArrayAsEigenVector(ephemerisIn.r_BdyZero_N) - cArrayAsEigenVector(transNavIn.r_BN_N)).normalized();
     }
 
     /*! get body frame heading */
@@ -122,10 +122,10 @@ void Triad::updateState(uint64_t callTime) {
         hRefHat_B = this->h1Hat_B.normalized();
     } else if (this->bodyAxisInput == BodyAxisInput::inputBodyHeadingMsg) {
         BodyHeadingMsgPayload bodyHeadingIn = this->bodyHeadingInMsg();
-        hRefHat_B = cArray2EigenVector3d(bodyHeadingIn.rHat_XB_B).normalized();
+        hRefHat_B = cArrayAsEigenVector(bodyHeadingIn.rHat_XB_B).normalized();
     }
 
-    Eigen::MRPd sigma_BN(cArray2EigenVector3d(attNavIn.sigma_BN));
+    Eigen::MRPd sigma_BN(cArrayAsEigenVector(attNavIn.sigma_BN));
     /*! define the body frame orientation DCM BN */
     Eigen::Matrix3d BN = sigma_BN.toRotationMatrix().transpose();
 
@@ -133,7 +133,7 @@ void Triad::updateState(uint64_t callTime) {
     Eigen::Vector3d a1Hat_B = this->a1Hat_B.normalized();
 
     /*! read Sun direction in B frame from the attNav message */
-    Eigen::Vector3d rHat_SB_B = cArray2EigenVector3d(attNavIn.vehSunPntBdy).normalized();
+    Eigen::Vector3d rHat_SB_B = cArrayAsEigenVector(attNavIn.vehSunPntBdy).normalized();
 
     Eigen::Vector3d rHat_SB_N;
     rHat_SB_N = BN.transpose() * rHat_SB_B;
@@ -167,7 +167,7 @@ void Triad::updateState(uint64_t callTime) {
     sigma_RN = dcmToMrp(RN);
 
     double Sigma_RN[3];
-    eigenVector3d2CArray(sigma_RN, Sigma_RN);
+    eigenVectorToCArray(sigma_RN, Sigma_RN);
     v3Copy(Sigma_RN, attRefOut.sigma_RN);
 
     /*! write output message */

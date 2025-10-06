@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include "architecture/utilities/tests/rbk_float_wrappers.h"

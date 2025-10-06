@@ -25,22 +25,20 @@
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ThrustCMEstimation::reset(uint64_t currentSimNanos)
-{
+void ThrustCMEstimation::reset(uint64_t currentSimNanos) {
     /*! - Check if the required message has not been connected */
     if (!this->thrusterConfigBInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,  " thrusterConfigInMsg wasn't connected.");
+        bskLogger.bskLog(BSK_ERROR, " thrusterConfigInMsg wasn't connected.");
     }
     if (!this->intFeedbackTorqueInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,  " intFeedbackTorqueInMsg wasn't connected.");
+        bskLogger.bskLog(BSK_ERROR, " intFeedbackTorqueInMsg wasn't connected.");
     }
     if (!this->attGuidInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,  " attGuidInMsg wasn't connected.");
+        bskLogger.bskLog(BSK_ERROR, " attGuidInMsg wasn't connected.");
     }
     if (this->vehConfigInMsg.isLinked()) {
         this->cmKnowledge = true;
-    }
-    else {
+    } else {
         this->cmKnowledge = false;
     }
 
@@ -48,10 +46,10 @@ void ThrustCMEstimation::reset(uint64_t currentSimNanos)
     this->P.setZero();
     this->R.setZero();
     this->I.setZero();
-    for (int i=0; i<3; ++i) {
-        this->P(i,i) = this->P0[i];
-        this->R(i,i) = this->R0[i];
-        this->I(i,i) = 1;
+    for (int i = 0; i < 3; ++i) {
+        this->P(i, i) = this->P0[i];
+        this->R(i, i) = this->R0[i];
+        this->I(i, i) = 1;
     }
     this->r_CB_est = this->r_CB_B;
 }
@@ -61,8 +59,7 @@ void ThrustCMEstimation::reset(uint64_t currentSimNanos)
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ThrustCMEstimation::updateState(uint64_t currentSimNanos)
-{
+void ThrustCMEstimation::updateState(uint64_t currentSimNanos) {
     /*! create output message buffers */
     VehicleConfigMsgPayload vehConfigOutBuffer = {};
     CMEstDataMsgPayload cmEstDataBuffer = {};
@@ -71,32 +68,31 @@ void ThrustCMEstimation::updateState(uint64_t currentSimNanos)
     THRConfigMsgPayload thrConfigBuffer = this->thrusterConfigBInMsg();
 
     /*! compute thruster information in B-frame coordinates */
-    Eigen::Vector3d r_TB_B = cArray2EigenVector3d(thrConfigBuffer.rThrust_B);
-    Eigen::Vector3d T_B = thrConfigBuffer.maxThrust * cArray2EigenVector3d(thrConfigBuffer.tHatThrust_B);
+    Eigen::Vector3d r_TB_B = cArrayAsEigenVector(thrConfigBuffer.rThrust_B);
+    Eigen::Vector3d T_B = thrConfigBuffer.maxThrust * cArrayAsEigenVector(thrConfigBuffer.tHatThrust_B);
 
     /*! compute error w.r.t. target attitude */
     AttGuidMsgPayload attGuidBuffer = this->attGuidInMsg();
-    Eigen::Vector3d sigma_BR   = cArray2EigenVector3d(attGuidBuffer.sigma_BR);
-    Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(attGuidBuffer.omega_BR_B);
+    Eigen::Vector3d sigma_BR = cArrayAsEigenVector(attGuidBuffer.sigma_BR);
+    Eigen::Vector3d omega_BR_B = cArrayAsEigenVector(attGuidBuffer.omega_BR_B);
     double attError = pow(sigma_BR.squaredNorm() + omega_BR_B.squaredNorm(), 0.5);
 
     /*! read commanded torque msg */
     CmdTorqueBodyMsgPayload cmdTorqueBuffer = this->intFeedbackTorqueInMsg();
-    Eigen::Vector3d L_B = -cArray2EigenVector3d(cmdTorqueBuffer.torqueRequestBody);
+    Eigen::Vector3d L_B = -cArrayAsEigenVector(cmdTorqueBuffer.torqueRequestBody);
 
-    Eigen::Vector3d y;       // measurement
-    Eigen::Vector3d preFit;  // pre-fit residual
-    Eigen::Vector3d postFit; // post-fit residual
-    Eigen::Matrix3d H;       // linear model
-    Eigen::Matrix3d K;       // kalman gain
+    Eigen::Vector3d y;        // measurement
+    Eigen::Vector3d preFit;   // pre-fit residual
+    Eigen::Vector3d postFit;  // post-fit residual
+    Eigen::Matrix3d H;        // linear model
+    Eigen::Matrix3d K;        // kalman gain
     Eigen::Matrix3d S;
 
     /*! assign preFit and postFit residuals to NaN, rewrite them in case of measurement update */
-    preFit  = {nan("1"), nan("1"), nan("1")};
+    preFit = {nan("1"), nan("1"), nan("1")};
     postFit = {nan("1"), nan("1"), nan("1")};
 
     if ((this->attGuidInMsg.isWritten()) && (attError < this->attitudeTol)) {
-
         /*! subtract torque about point B from measurement model */
         y = L_B - r_TB_B.cross(T_B);
         /*! H is the skew-symmetric matrix obtained from T_B */
@@ -120,32 +116,31 @@ void ThrustCMEstimation::updateState(uint64_t currentSimNanos)
 
     /*! compute state 1-sigma covariance */
     Eigen::Vector3d sigma;
-    for (int i=0; i<3; ++i) {
-        sigma[i] = pow(this->P(i,i), 0.5);
+    for (int i = 0; i < 3; ++i) {
+        sigma[i] = pow(this->P(i, i), 0.5);
     }
 
     /*! write estimation data to msg buffer */
     cmEstDataBuffer.attError = attError;
-    eigenVector3d2CArray(this->r_CB_est, cmEstDataBuffer.state);
-    eigenVector3d2CArray(sigma, cmEstDataBuffer.covariance);
-    eigenVector3d2CArray(preFit, cmEstDataBuffer.preFitRes);
-    eigenVector3d2CArray(postFit, cmEstDataBuffer.postFitRes);
+    eigenVectorToCArray(this->r_CB_est, cmEstDataBuffer.state);
+    eigenVectorToCArray(sigma, cmEstDataBuffer.covariance);
+    eigenVectorToCArray(preFit, cmEstDataBuffer.preFitRes);
+    eigenVectorToCArray(postFit, cmEstDataBuffer.postFitRes);
     Eigen::Vector3d r_CB_error;
     if (this->cmKnowledge) {
         VehicleConfigMsgPayload vehConfigBuffer = this->vehConfigInMsg();
-        Eigen::Vector3d r_CB_B_true = cArray2EigenVector3d(vehConfigBuffer.CoM_B);
+        Eigen::Vector3d r_CB_B_true = cArrayAsEigenVector(vehConfigBuffer.CoM_B);
         r_CB_error = this->r_CB_est - r_CB_B_true;
-        eigenVector3d2CArray(r_CB_error, cmEstDataBuffer.stateError);
-    }
-    else {
+        eigenVectorToCArray(r_CB_error, cmEstDataBuffer.stateError);
+    } else {
         r_CB_error = {nan("1"), nan("1"), nan("1")};
     }
-    eigenVector3d2CArray(r_CB_error, cmEstDataBuffer.stateError);
+    eigenVectorToCArray(r_CB_error, cmEstDataBuffer.stateError);
     /*! write output msg */
     this->cmEstDataOutMsg.write(&cmEstDataBuffer, this->moduleID, currentSimNanos);
 
     /*! write CM location to vehicle config buffer msg */
-    eigenVector3d2CArray(this->r_CB_est, vehConfigOutBuffer.CoM_B);
+    eigenVectorToCArray(this->r_CB_est, vehConfigOutBuffer.CoM_B);
     /*! write output msg */
     this->vehConfigOutMsg.write(&vehConfigOutBuffer, this->moduleID, currentSimNanos);
 }

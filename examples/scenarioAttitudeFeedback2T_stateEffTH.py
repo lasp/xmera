@@ -436,7 +436,7 @@ def run(show_plots, useDVThrusters):
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.Inertial3D()
     inertial3DObj.modelTag = "inertial3D"
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.setSigmaR0N([0., 0., 0.])  # set the desired inertial orientation
     scSim.AddModelToTask(fswTaskName, inertial3DObj)
 
     # setup the attitude tracking error evaluation module

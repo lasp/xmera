@@ -18,7 +18,8 @@
  */
 
 #include "dualHingedRigidBodyStateEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 #include <string>
 
 DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector() {
@@ -438,10 +439,10 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     // Note, logging the hinge frame S is the body frame B of that object
     for (int i = 0; i < 2; i++) {
         configLogMsg = SCStatesMsgPayload{};
-        eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_SN_N[i], configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_SN_N[i], configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_SN[i], configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
         this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }
@@ -475,8 +476,8 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates() {
     Eigen::MRPd sigmaPN;
     sigmaPN = (Eigen::Vector3d)this->sigma_BNState->getState();
     Eigen::Matrix3d dcm_NP = sigmaPN.toRotationMatrix();
-    this->sigma_SN[0] = eigenMRPd2Vector3d(eigenC2MRP(this->dcm_S1P * dcm_NP.transpose()));
-    this->sigma_SN[1] = eigenMRPd2Vector3d(eigenC2MRP(this->dcm_S2P * dcm_NP.transpose()));
+    this->sigma_SN[0] = dcmToMrp<double>(this->dcm_S1P * dcm_NP.transpose());
+    this->sigma_SN[1] = dcmToMrp<double>(this->dcm_S2P * dcm_NP.transpose());
 
     // inertial angular velocities
     Eigen::Vector3d omega_PN_P;

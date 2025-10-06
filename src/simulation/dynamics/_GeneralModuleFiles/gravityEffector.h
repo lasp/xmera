@@ -23,8 +23,8 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "dynamicEffector.h"
 #include "gravityModel.h"
 #include "pointMassGravityModel.h"
@@ -77,7 +77,7 @@ class GravBodyData {
      * are initialized to the values stored in `this->localPlanet`. This usually means that
      * `J20002Pfix` is initialized to the identity matrix and `J20002Pfix_dot` to zero.
      */
-    void registerProperties(DynParamManager &statesIn);
+    void registerProperties(DynParamManager& statesIn);
 
    public:
     bool isCentralBody = false; /**< Flag indicating that object is center */
@@ -101,11 +101,11 @@ class GravBodyData {
     BSKLogger bskLogger; /**< -- BSK Logging */
 
    private:
-    Eigen::MatrixXd *r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
-    Eigen::MatrixXd *v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
-    Eigen::MatrixXd *muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */
-    Eigen::MatrixXd *J20002Pfix;     /**< [m/s]    (state engine property) planet attitude [PN] */
-    Eigen::MatrixXd *J20002Pfix_dot; /**< [m/s]    (state engine property) planet attitude rate [PN_dot] */
+    Eigen::MatrixXd* r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
+    Eigen::MatrixXd* v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
+    Eigen::MatrixXd* muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */
+    Eigen::MatrixXd* J20002Pfix;     /**< [m/s]    (state engine property) planet attitude [PN] */
+    Eigen::MatrixXd* J20002Pfix_dot; /**< [m/s]    (state engine property) planet attitude rate [PN_dot] */
 
     uint64_t timeWritten = 0; /**< [ns]     time the input planet state message was written */
 };
@@ -121,12 +121,12 @@ class GravityEffector : public SysModel {
     void updateState(uint64_t currentSimNanos);
 
     /** Links the correlation between times property */
-    void linkInStates(DynParamManager &statesIn);
+    void linkInStates(DynParamManager& statesIn);
 
     /** Registers the gravity, inertial position, and inertial velocity properties.
      * It also calls `registerProperties` for every associated `GravBodyData`.
      */
-    void registerProperties(DynParamManager &statesIn);
+    void registerProperties(DynParamManager& statesIn);
 
     /** Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
      *
@@ -139,7 +139,7 @@ class GravityEffector : public SysModel {
     void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
 
     /** Computes the Potential Energy Contributions from every associated `GravBodyData` */
-    void updateEnergyContributions(Eigen::Vector3d r_CN_N, double &orbPotEnergyContr);
+    void updateEnergyContributions(Eigen::Vector3d r_CN_N, double& orbPotEnergyContr);
 
     /** Sets the `GravBodyData` associated with this effector */
     void setGravBodies(std::vector<std::shared_ptr<GravBodyData>> gravBodies);
@@ -179,11 +179,11 @@ class GravityEffector : public SysModel {
     BSKLogger bskLogger; /**< -- BSK Logging */
 
    private:
-    Eigen::MatrixXd *gravProperty;             /**< [-] g_N property for output */
-    Eigen::MatrixXd *timeCorr;                 /**< [-] Time correlation property */
-    Eigen::MatrixXd *inertialPositionProperty; /**< [m] r_N inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* gravProperty;             /**< [-] g_N property for output */
+    Eigen::MatrixXd* timeCorr;                 /**< [-] Time correlation property */
+    Eigen::MatrixXd* inertialPositionProperty; /**< [m] r_N inertial position relative to system spice zeroBase/refBase
                                                   coordinate frame, property for output. */
-    Eigen::MatrixXd *inertialVelocityProperty; /**< [m/s] v_N inertial velocity relative to system spice
+    Eigen::MatrixXd* inertialVelocityProperty; /**< [m/s] v_N inertial velocity relative to system spice
                                                   zeroBase/refBase coordinate frame, property for output. */
 };
 

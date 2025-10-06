@@ -19,7 +19,7 @@
 
 #include "rateControl.h"
 
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 
 /*! This method takes the attitude and rate errors relative to the reference frame, as well as
 the reference frame angular rates and acceleration, and computes the required control torque Lr.
@@ -30,15 +30,15 @@ CmdTorqueBodyMsgPayload RateControlAlgorithm::update(AttGuidMsgPayload attGuidIn
     CmdTorqueBodyMsgPayload torqueCmdOut{};
 
     // Compute required attitude control torque vector
-    Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(attGuidIn.omega_BR_B);
-    Eigen::Vector3d omega_RN_B = cArray2EigenVector3d(attGuidIn.omega_RN_B);
+    Eigen::Vector3d omega_BR_B = cArrayAsEigenVector(attGuidIn.omega_BR_B);
+    Eigen::Vector3d omega_RN_B = cArrayAsEigenVector(attGuidIn.omega_RN_B);
     Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
-    Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(attGuidIn.domega_RN_B);
+    Eigen::Vector3d domega_RN_B = cArrayAsEigenVector(attGuidIn.domega_RN_B);
     Eigen::Vector3d Lr = -this->P * omega_BR_B + omega_RN_B.cross(this->ISCPntB_B * omega_BN_B) +
                          this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B)) -
                          this->knownTorquePntB_B;  // [Nm]
 
-    eigenVector3d2CArray(Lr, torqueCmdOut.torqueRequestBody);
+    eigenVectorToCArray(Lr, torqueCmdOut.torqueRequestBody);
 
     return torqueCmdOut;
 }
@@ -48,7 +48,7 @@ CmdTorqueBodyMsgPayload RateControlAlgorithm::update(AttGuidMsgPayload attGuidIn
  @param vehicleConfigIn Vehicle config input
 */
 void RateControlAlgorithm::setSpacecraftInertia(VehicleConfigMsgPayload vehicleConfigIn) {
-    this->ISCPntB_B = cArray2EigenMatrixXd(vehicleConfigIn.ISCPntB_B, 3, 3);
+    this->ISCPntB_B = cArrayAsEigenMatrix3(vehicleConfigIn.ISCPntB_B);
 }
 
 /*! Setter method for the derivative gain P.

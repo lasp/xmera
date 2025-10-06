@@ -22,7 +22,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/_GeneralModuleFiles/dynamicModels.h"
 #include "fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h"
@@ -47,23 +47,23 @@ class EkfInterface : public KalmanFilter {
     void reset(uint64_t currentSimNanos) override;
 
     void setFilterDynamicsMatrix(
-        const std::function<const Eigen::MatrixXd(const double, const FilterStateVector &)> &dynamicsMatrixCalculator);
+        const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>& dynamicsMatrixCalculator);
     void setMinimumCovarianceNormForEkf(double infiniteNorm);
     double getMinimumCovarianceNormForEkf() const;
 
    private:
     void timeUpdate(double updateTime) final;
-    void measurementUpdate(const MeasurementModel &measurement) final;
+    void measurementUpdate(const MeasurementModel& measurement) final;
 
-    Eigen::VectorXd computeResiduals(const MeasurementModel &measurement) final;
-    Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd &covar,
-                                      const Eigen::MatrixXd &measurementMatrix,
-                                      const Eigen::MatrixXd &measurementNoise) const;
-    void updateCovariance(const Eigen::MatrixXd &measMat,
-                          const Eigen::MatrixXd &noise,
-                          const Eigen::MatrixXd &kalmanGain);
-    void ckfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &residual);
-    void ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &yMeas);
+    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) final;
+    Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd& covar,
+                                      const Eigen::MatrixXd& measurementMatrix,
+                                      const Eigen::MatrixXd& measurementNoise) const;
+    void updateCovariance(const Eigen::MatrixXd& measMat,
+                          const Eigen::MatrixXd& noise,
+                          const Eigen::MatrixXd& kalmanGain);
+    void ckfUpdate(const Eigen::MatrixXd& kalmanGain, const Eigen::VectorXd& residual);
+    void ekfUpdate(const Eigen::MatrixXd& kalmanGain, const Eigen::VectorXd& yMeas);
 
     Eigen::MatrixXd stateTransitionMatrix;  //!< [-] State Transition Matrix
     double minCovarNorm = 1E-5; /*!< [-] Infinite norm after which the filter will begin processing measurements as

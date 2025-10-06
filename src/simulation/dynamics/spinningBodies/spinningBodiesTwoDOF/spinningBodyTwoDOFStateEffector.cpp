@@ -18,8 +18,8 @@
  */
 
 #include "spinningBodyTwoDOFStateEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/eigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 #include <string>
 
 /*! This is the constructor, setting variables to default values */
@@ -104,10 +104,10 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         configLogMsg = SCStatesMsgPayload{};
 
         // Logging the S frame is the body frame B of that object
-        eigenVector3d2CArray(this->r_Sc1N_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_Sc1N_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_S1N, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_S1N_S1, configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_Sc1N_N, configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_Sc1N_N, configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_S1N, configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_S1N_S1, configLogMsg.omega_BN_B);
         this->spinningBodyConfigLogOutMsgs[0]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 
@@ -116,10 +116,10 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         configLogMsg = SCStatesMsgPayload{};
 
         // Logging the S frame is the body frame B of that object
-        eigenVector3d2CArray(this->r_Sc2N_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_Sc2N_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_S2N, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_S2N_S2, configLogMsg.omega_BN_B);
+        eigenVectorToCArray(this->r_Sc2N_N, configLogMsg.r_BN_N);
+        eigenVectorToCArray(this->v_Sc2N_N, configLogMsg.v_BN_N);
+        eigenVectorToCArray(this->sigma_S2N, configLogMsg.sigma_BN);
+        eigenVectorToCArray(this->omega_S2N_S2, configLogMsg.omega_BN_B);
         this->spinningBodyConfigLogOutMsgs[1]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }
@@ -183,17 +183,14 @@ void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime) 
     this->theta2Dot = this->theta2DotState->getState()(0, 0);
 
     // Compute the DCM from both S frames to B frame
-    double dcm_S0S[3][3];
-    double prv_S0S_array[3];
     Eigen::Vector3d prv_S0S;
+    Eigen::Matrix3d dcm_S0S;
     prv_S0S = -this->theta1 * this->s1Hat_S1;
-    eigenVector3d2CArray(prv_S0S, prv_S0S_array);
-    PRV2C(prv_S0S_array, dcm_S0S);
-    this->dcm_BS1 = this->dcm_S10B.transpose() * c2DArray2EigenMatrix3d(dcm_S0S);
+    dcm_S0S = prvToDcm(prv_S0S);
+    this->dcm_BS1 = this->dcm_S10B.transpose() * dcm_S0S;
     prv_S0S = -this->theta2 * this->s2Hat_S2;
-    eigenVector3d2CArray(prv_S0S, prv_S0S_array);
-    PRV2C(prv_S0S_array, dcm_S0S);
-    this->dcm_BS2 = this->dcm_BS1 * this->dcm_S20S1.transpose() * c2DArray2EigenMatrix3d(dcm_S0S);
+    dcm_S0S = prvToDcm(prv_S0S);
+    this->dcm_BS2 = this->dcm_BS1 * this->dcm_S20S1.transpose() * dcm_S0S;
 
     // Write the spinning axis in B frame
     this->s1Hat_B = this->dcm_BS1 * this->s1Hat_S1;
@@ -470,8 +467,8 @@ void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates() {
     Eigen::Matrix3d dcm_S2N;
     dcm_S1N = (this->dcm_BS1).transpose() * this->dcm_BN;
     dcm_S2N = (this->dcm_BS2).transpose() * this->dcm_BN;
-    this->sigma_S1N = eigenMRPd2Vector3d(eigenC2MRP(dcm_S1N));
-    this->sigma_S2N = eigenMRPd2Vector3d(eigenC2MRP(dcm_S2N));
+    this->sigma_S1N = dcmToMrp(dcm_S1N);
+    this->sigma_S2N = dcmToMrp(dcm_S2N);
 
     // Convert the angular velocity to the corresponding frame
     this->omega_S1N_S1 = dcm_BS1.transpose() * this->omega_S1N_B;

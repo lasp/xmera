@@ -95,15 +95,15 @@ void PointCloudTriangulation::readMessages() {
 
     /* velocity information either from ephemeris message or nav message */
     if (this->initialPhase) {
-        this->vScaleFactor = cArray2EigenVector3d(ephemerisInMsgBuffer.v_BdyZero_N).norm();
+        this->vScaleFactor = cArrayAsEigenVector(ephemerisInMsgBuffer.v_BdyZero_N).norm();
     } else {
-        this->vScaleFactor = cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N).norm();
+        this->vScaleFactor = cArrayAsEigenVector(navTransInMsgBuffer.v_BN_N).norm();
     }
 
     /* direction of motion message */
     bool validDOM = directionOfMotionInMsgBuffer.valid;
     uint64_t timeTagDOM = directionOfMotionInMsgBuffer.timeOfDirectionEstimate;
-    this->v_C1_hat = cArray2EigenVector3d(directionOfMotionInMsgBuffer.v_C_hat);
+    this->v_C1_hat = cArrayAsEigenVector(directionOfMotionInMsgBuffer.v_C_hat);
 
     /* key points message */
     bool validKeyPoints = keyPointsInMsgBuffer.valid;
@@ -112,7 +112,7 @@ void PointCloudTriangulation::readMessages() {
 
     // stacked vector with all pixel locations of key points for 1st camera location
     Eigen::VectorXd keyPointsStacked1(2 * this->numberKeyPoints);
-    keyPointsStacked1 = cArray2EigenMatrixXd(keyPointsInMsgBuffer.keyPoints_firstImage, 2 * this->numberKeyPoints, 1);
+    keyPointsStacked1 = cArrayAsEigenMatrixX(keyPointsInMsgBuffer.keyPoints_firstImage, 2 * this->numberKeyPoints, 1);
     // convert to std vector that includes all key point pixel locations
     this->keyPoints1.clear();
     for (int c = 0; c < this->numberKeyPoints; c++) {
@@ -121,12 +121,12 @@ void PointCloudTriangulation::readMessages() {
     }
     this->timeTag1 = keyPointsInMsgBuffer.timeTag_firstImage;
     // dcm from inertial frame N to body frame B
-    Eigen::MRPd sigma_B1N = cArray2EigenMRPd(keyPointsInMsgBuffer.sigma_BN_firstImage);
+    Eigen::MRPd sigma_B1N = cArrayAsEigenMrp(keyPointsInMsgBuffer.sigma_BN_firstImage);
     Eigen::Matrix3d dcm_B1N = sigma_B1N.toRotationMatrix().transpose();
 
     // stacked vector with all pixel locations of key points for 2nd camera location
     Eigen::VectorXd keyPointsStacked2(2 * this->numberKeyPoints);
-    keyPointsStacked2 = cArray2EigenMatrixXd(keyPointsInMsgBuffer.keyPoints_secondImage, 2 * this->numberKeyPoints, 1);
+    keyPointsStacked2 = cArrayAsEigenMatrixX(keyPointsInMsgBuffer.keyPoints_secondImage, 2 * this->numberKeyPoints, 1);
     // convert to std vector that includes all key point pixel locations
     this->keyPoints2.clear();
     for (int c = 0; c < this->numberKeyPoints; c++) {
@@ -135,13 +135,13 @@ void PointCloudTriangulation::readMessages() {
     }
     this->timeTag2 = keyPointsInMsgBuffer.timeTag_secondImage;
     // dcm from inertial frame N to body frame B
-    Eigen::MRPd sigma_B2N = cArray2EigenMRPd(keyPointsInMsgBuffer.sigma_BN_secondImage);
+    Eigen::MRPd sigma_B2N = cArrayAsEigenMrp(keyPointsInMsgBuffer.sigma_BN_secondImage);
     Eigen::Matrix3d dcm_B2N = sigma_B2N.toRotationMatrix().transpose();
 
     /* camera config message */
     int64_t cameraIDconfig = cameraConfigInMsgBuffer.cameraID;
     // dcm from body frame B to camera frame C
-    Eigen::MRPd sigma_CB = cArray2EigenMRPd(cameraConfigInMsgBuffer.sigma_CB);
+    Eigen::MRPd sigma_CB = cArrayAsEigenMrp(cameraConfigInMsgBuffer.sigma_CB);
     Eigen::Matrix3d dcm_CB = sigma_CB.toRotationMatrix().transpose();
     // camera parameters
     double alpha = 0;
@@ -195,7 +195,7 @@ void PointCloudTriangulation::writeMessages(uint64_t currentSimNanos) {
     pointCloudOutMsgBuffer.valid = this->valid;
     pointCloudOutMsgBuffer.numberOfPoints = this->pointCloudSize;
 
-    eigenMatrixXd2CArray(this->measuredPointCloud.transpose(), pointCloudOutMsgBuffer.points);
+    eigenMatrixXToCArray(this->measuredPointCloud.transpose(), pointCloudOutMsgBuffer.points);
     this->pointCloudOutMsg.write(&pointCloudOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 

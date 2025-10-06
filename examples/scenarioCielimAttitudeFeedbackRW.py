@@ -235,7 +235,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
     inertial3DWrap.modelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DConfig.setSigmaR0N([0., 0., 0.])  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attErrorConfig = attTrackingError.AttTrackingError()

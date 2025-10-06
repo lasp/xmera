@@ -25,7 +25,7 @@
 #include "architecture/msgPayloadDef/FilterMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDef/TimeClosestApproachMsgPayload.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 
 #include <Eigen/Core>
 

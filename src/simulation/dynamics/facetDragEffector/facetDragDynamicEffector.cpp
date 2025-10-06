@@ -20,8 +20,8 @@
 #include "facetDragDynamicEffector.h"
 
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenMRP.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 FacetDragDynamicEffector::FacetDragDynamicEffector() {

@@ -104,8 +104,8 @@ void LambertPlanner::readMessages() {
     } else {
         this->time = navTransInMsgBuffer.timeTag;
     }
-    this->r_N = cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N);
-    this->v_N = cArray2EigenVector3d(navTransInMsgBuffer.v_BN_N);
+    this->r_N = cArrayAsEigenVector(navTransInMsgBuffer.r_BN_N);
+    this->v_N = cArrayAsEigenVector(navTransInMsgBuffer.v_BN_N);
 }
 
 /*! This method writes the output messages each call of updateState
@@ -117,8 +117,8 @@ void LambertPlanner::writeMessages(uint64_t currentSimNanos) {
 
     // Write message content
     lambertProblemOutMsgBuffer.solverMethod = this->solverMethod;
-    eigenVector3d2CArray(this->rm_N, lambertProblemOutMsgBuffer.r1vec);
-    eigenVector3d2CArray(this->r_TN_N, lambertProblemOutMsgBuffer.r2vec);
+    eigenVectorToCArray(this->rm_N, lambertProblemOutMsgBuffer.r1vec);
+    eigenVectorToCArray(this->r_TN_N, lambertProblemOutMsgBuffer.r2vec);
     lambertProblemOutMsgBuffer.transferTime = this->finalTime - this->maneuverTime;
     lambertProblemOutMsgBuffer.mu = this->mu;
     lambertProblemOutMsgBuffer.numRevolutions = this->numRevolutions;

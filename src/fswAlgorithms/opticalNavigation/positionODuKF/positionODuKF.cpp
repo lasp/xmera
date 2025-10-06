@@ -162,18 +162,18 @@ void PositionODuKF::writeOutputMessages(uint64_t currentSimNanos) {
     this->navTransOutMsgBuffer = NavTransMsgPayload{};
 
     /*! - Write the position estimate into the copy of the navigation message structure*/
-    eigenMatrixXd2CArray(1e3 * this->state.head(3), this->navTransOutMsgBuffer.r_BN_N);
-    eigenMatrixXd2CArray(1e3 * this->state.tail(3), this->navTransOutMsgBuffer.v_BN_N);
+    eigenMatrixXToCArray(1e3 * this->state.head(3), this->navTransOutMsgBuffer.r_BN_N);
+    eigenMatrixXToCArray(1e3 * this->state.tail(3), this->navTransOutMsgBuffer.v_BN_N);
 
     /*! - Populate the filter states output buffer and write the output message*/
     this->opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
     this->opNavFilterMsgBuffer.numberOfStates = this->state.size();
-    eigenMatrixXd2CArray(1e3 * this->state, &this->opNavFilterMsgBuffer.state[0]);
-    eigenMatrixXd2CArray(1e3 * this->xBar, &this->opNavFilterMsgBuffer.stateError[0]);
-    eigenMatrixXd2CArray(1e6 * this->covar, &this->opNavFilterMsgBuffer.covar[0]);
+    eigenMatrixXToCArray(1e3 * this->state, this->opNavFilterMsgBuffer.state);
+    eigenMatrixXToCArray(1e3 * this->xBar, this->opNavFilterMsgBuffer.stateError);
+    eigenMatrixXToCArray(1e6 * this->covar, this->opNavFilterMsgBuffer.covar);
 
     if (this->measurementRead) {
-        eigenMatrixXd2CArray(1e3 * this->postFits, this->opNavResidualMsgBuffer.postFits);
+        eigenMatrixXToCArray(1e3 * this->postFits, this->opNavResidualMsgBuffer.postFits);
         this->opNavResidualMsgBuffer.numberOfObservations = 1;
         this->opNavResidualMsgBuffer.sizeOfObservations = 3;
     }
@@ -192,7 +192,7 @@ void PositionODuKF::readFilterMeasurements() {
     this->measurementRead = false;
     if (this->cameraPosBuffer.valid) {
         /*! - Read measurement and cholesky decomposition its noise*/
-        this->obs = cArray2EigenVector3d(this->cameraPosBuffer.cameraPos_N) * 1E-3;  // Change units to km
+        this->obs = cArrayAsEigenVector(this->cameraPosBuffer.cameraPos_N) * 1E-3;  // Change units to km
         this->measurementNoise.resize(this->obs.size(), this->obs.size());
         this->measurementNoise << this->measNoiseSD * this->measNoiseSD, 0, 0, 0, this->measNoiseSD * this->measNoiseSD,
             0, 0, 0, this->measNoiseSD * this->measNoiseSD;

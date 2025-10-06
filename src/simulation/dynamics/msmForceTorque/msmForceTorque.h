@@ -27,8 +27,8 @@
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/VoltMsgPayload.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/eigenSupport.h"
 #include <Eigen/Dense>
 #include <vector>
 
@@ -45,7 +45,7 @@ class MsmForceTorque : public SysModel {
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
-    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg,
+    void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
                               std::vector<double> radii,
                               std::vector<Eigen::Vector3d> r_SB_B);
 
@@ -56,10 +56,10 @@ class MsmForceTorque : public SysModel {
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs;  //!< vector of spacecraft state input messages
     std::vector<ReadFunctor<VoltMsgPayload>> voltInMsgs;         //!< vector of voltage input messages
 
-    std::vector<Message<CmdTorqueBodyMsgPayload> *> eTorqueOutMsgs;  //!< vector of E-torques in body frame components
-    std::vector<Message<CmdForceInertialMsgPayload> *>
-        eForceOutMsgs;                                             //!< vector of E-forces in inertial frame components
-    std::vector<Message<ChargeMsmMsgPayload> *> chargeMsmOutMsgs;  //!< vector of spacecraft MSM charge values
+    std::vector<Message<CmdTorqueBodyMsgPayload>*> eTorqueOutMsgs;  //!< vector of E-torques in body frame components
+    std::vector<Message<CmdForceInertialMsgPayload>*>
+        eForceOutMsgs;                                            //!< vector of E-forces in inertial frame components
+    std::vector<Message<ChargeMsmMsgPayload>*> chargeMsmOutMsgs;  //!< vector of spacecraft MSM charge values
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 

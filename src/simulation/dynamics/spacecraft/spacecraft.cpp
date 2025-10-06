@@ -19,8 +19,8 @@
 
 #include "spacecraft.h"
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
-#include "architecture/utilities/avsEigenMRP.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenMRP.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
 
@@ -57,7 +57,7 @@ void Spacecraft::reset(uint64_t currentSimNanos) {
     this->gravField.updateInertialPosAndVel(this->hubR_N->getState(), this->hubV_N->getState());
     this->writeOutputStateMessages(currentSimNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages and write initial state output messages
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Call writeOutputStateMessages for stateEffectors
         (*it)->writeOutputStateMessages(currentSimNanos);
@@ -65,10 +65,10 @@ void Spacecraft::reset(uint64_t currentSimNanos) {
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */
-void Spacecraft::addStateEffector(StateEffector *newStateEffector) { this->states.push_back(newStateEffector); }
+void Spacecraft::addStateEffector(StateEffector* newStateEffector) { this->states.push_back(newStateEffector); }
 
 /*! This method attaches a dynamicEffector to the dynamicObject */
-void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector) {
+void Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector) {
     this->dynEffectors.push_back(newDynamicEffector);
 }
 
@@ -77,31 +77,31 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime) {
     // - Populate state output message
     SCStatesMsgPayload stateOut;
     stateOut = SCStatesMsgPayload{};
-    eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
-    eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
+    eigenMatrixXToCArray(*this->inertialPositionProperty, stateOut.r_BN_N);
+    eigenMatrixXToCArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     Eigen::MRPd sigmaLocal_BN;
     sigmaLocal_BN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
     Eigen::Vector3d rLocal_CN_N = (*this->inertialPositionProperty) + dcm_NB * (*this->c_B);
     Eigen::Vector3d vLocal_CN_N = (*this->inertialVelocityProperty) + dcm_NB * (*this->cDot_B);
-    eigenVector3d2CArray(rLocal_CN_N, stateOut.r_CN_N);
-    eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
-    eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
-    eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
-    eigenMatrixXd2CArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
+    eigenVectorToCArray(rLocal_CN_N, stateOut.r_CN_N);
+    eigenVectorToCArray(vLocal_CN_N, stateOut.v_CN_N);
+    eigenMatrixXToCArray(this->hubSigma->getState(), stateOut.sigma_BN);
+    eigenMatrixXToCArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
+    eigenMatrixToCArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
-    eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
-    eigenMatrixXd2CArray(this->dvAccum_CN_N, stateOut.TotalAccumDV_CN_N);
-    eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
-    eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
+    eigenMatrixToCArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
+    eigenMatrixToCArray(this->dvAccum_CN_N, stateOut.TotalAccumDV_CN_N);
+    eigenVectorToCArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
+    eigenVectorToCArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
     this->scStateOutMsg.write(&stateOut, this->moduleID, clockTime);
 
     // - Populate mass state output message
     SCMassPropsMsgPayload massStateOut;
     massStateOut = SCMassPropsMsgPayload{};
     massStateOut.massSC = (*this->m_SC)(0, 0);
-    eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
-    eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
+    eigenMatrixXToCArray(*this->c_B, massStateOut.c_B);
+    eigenMatrixXToCArray2D(*this->ISCPntB_B, massStateOut.ISC_PntB_B);
     this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
 }
 
@@ -112,12 +112,12 @@ void Spacecraft::readOptionalRefMsg() {
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
         attRefMsgBuffer = this->attRefInMsg();
-        Eigen::MRPd sigma_BN = cArray2EigenMRPd(attRefMsgBuffer.sigma_RN);
-        Eigen::Vector3d omega_BN_N = cArray2EigenVector3d(attRefMsgBuffer.omega_RN_N);
+        Eigen::MRPd sigma_BN = cArrayAsEigenMrp(attRefMsgBuffer.sigma_RN);
+        Eigen::Vector3d omega_BN_N = cArrayAsEigenVector(attRefMsgBuffer.omega_RN_N);
         Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
         omega_BN_B = dcm_BN * omega_BN_N;
 
-        this->hubSigma->setState(eigenMRPd2Vector3d(sigma_BN));
+        this->hubSigma->setState(eigenMrpToVector3(sigma_BN));
         this->hubOmega_BN_B->setState(omega_BN_B);
     }
 
@@ -127,8 +127,8 @@ void Spacecraft::readOptionalRefMsg() {
         TransRefMsgPayload transRefMsgBuffer;
         transRefMsgBuffer = this->transRefInMsg();
 
-        r_RN_N = cArray2EigenVector3d(transRefMsgBuffer.r_RN_N);
-        v_RN_N = cArray2EigenVector3d(transRefMsgBuffer.v_RN_N);
+        r_RN_N = cArrayAsEigenVector(transRefMsgBuffer.r_RN_N);
+        v_RN_N = cArrayAsEigenVector(transRefMsgBuffer.v_RN_N);
 
         this->hubR_N->setState(r_RN_N);
         this->hubV_N->setState(v_RN_N);
@@ -156,7 +156,7 @@ void Spacecraft::updateState(uint64_t currentSimNanos) {
     // - Write the state of the vehicle into messages
     this->writeOutputStateMessages(currentSimNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Call writeOutputStateMessages for stateEffectors
         (*it)->writeOutputStateMessages(currentSimNanos);
@@ -166,7 +166,7 @@ void Spacecraft::updateState(uint64_t currentSimNanos) {
 
 /*! This method allows the spacecraft to have access to the current state of the hub for MRP switching, writing
  messages, and calculating energy and momentum */
-void Spacecraft::linkInStates(DynParamManager &statesIn) {
+void Spacecraft::linkInStates(DynParamManager& statesIn) {
     // - Get access to all hub states
     this->hubR_N = statesIn.getStateObject("hubPosition");
     this->hubV_N = statesIn.getStateObject("hubVelocity");
@@ -212,7 +212,7 @@ void Spacecraft::initializeDynamics() {
     this->hub.registerStates(this->dynManager);
 
     // - Loop through stateEffectors to register their states
-    std::vector<StateEffector *>::iterator stateIt;
+    std::vector<StateEffector*>::iterator stateIt;
     for (stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++) {
         (*stateIt)->registerStates(this->dynManager);
     }
@@ -246,7 +246,7 @@ void Spacecraft::initializeDynamics() {
     }
 
     // - Loop through the dynamicEffectors to link in the states needed
-    std::vector<DynamicEffector *>::iterator dynIt;
+    std::vector<DynamicEffector*>::iterator dynIt;
     for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++) {
         (*dynIt)->linkInStates(this->dynManager);
     }
@@ -277,7 +277,7 @@ void Spacecraft::updateSCMassProps(double time) {
     (*this->c_B) += this->hub.effProps.mEff * this->hub.effProps.rEff_CB_B;
 
     // - Loop through state effectors to get mass props
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         (*it)->updateEffectorMassProps(time);
         // - Add in effectors mass props into mass props of spacecraft
@@ -336,7 +336,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep) {
     this->gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
     // - Loop through dynEffectors to compute force and torque on the s/c
-    std::vector<DynamicEffector *>::iterator dynIt;
+    std::vector<DynamicEffector*>::iterator dynIt;
     for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++) {
         // - Compute the force and torque contributions from the dynamicEffectors
         (*dynIt)->computeForceTorque(integTimeSeconds, timeStep);
@@ -346,7 +346,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep) {
     }
 
     // - Loop through state effectors to get contributions for back-substitution
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         /* - Set the contribution matrices to zero (just in case a stateEffector += on the matrix or the stateEffector
          doesn't have a contribution for a matrix and doesn't set the matrix to zero */
@@ -500,7 +500,7 @@ void Spacecraft::postIntegration(double integrateToThisTime) {
     this->hub.modifyStates(integrateToThisTime);
 
     // - Loop over stateEffectors to call modifyStates
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Call energy and momentum calulations for stateEffectors
         (*it)->modifyStates(integrateToThisTime);
@@ -548,7 +548,7 @@ void Spacecraft::computeEnergyMomentum(double time) {
     this->totRotEnergy += this->rotEnergyContr;
 
     // - Loop over stateEffectors to get their contributions to energy and momentum
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Set the matrices to zero
         this->rotAngMomPntCContr_B.setZero();
@@ -595,7 +595,7 @@ void Spacecraft::computeEnergyMomentum(double time) {
  are calculated in the intergrator calls */
 void Spacecraft::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B) {
     // - Loop over stateEffectors to get their contributions to energy and momentum
-    std::vector<StateEffector *>::iterator it;
+    std::vector<StateEffector*>::iterator it;
     for (it = this->states.begin(); it != this->states.end(); it++) {
         (*it)->calcForceTorqueOnBody(time, omega_BN_B);
     }

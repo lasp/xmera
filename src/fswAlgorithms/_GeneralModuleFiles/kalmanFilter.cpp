@@ -26,6 +26,8 @@ void KalmanFilter::reset(uint64_t currentSimNanos) {
            this->stateInitial.size() == this->covarInitial.cols());
 
     this->state = this->stateInitial.scale(this->unitConversion);
+    this->xBar = FilterStateVector::filterStateVectorFromStateStructure(this->stateInitial);
+    this->stateError = Eigen::VectorXd::Zero(this->state.size());
     this->stateLogged = this->state;
     this->covar = this->unitConversion * this->unitConversion * this->covarInitial;
     this->covar.resize(this->state.size(), this->state.size());
@@ -96,7 +98,7 @@ void KalmanFilter::orderMeasurementsChronologically() {
     @param Eigen::VectorXd initial position vector
     @return void
     */
-void KalmanFilter::setInitialPosition(const Eigen::VectorXd &initialPositionInput) {
+void KalmanFilter::setInitialPosition(const Eigen::VectorXd& initialPositionInput) {
     PositionState positionState;
     positionState.setValues(initialPositionInput);
     this->stateInitial.setPosition(positionState);
@@ -117,7 +119,7 @@ std::optional<Eigen::VectorXd> KalmanFilter::getInitialPosition() const {
     @param Eigen::VectorXd  initial velocity vector
     @return void
     */
-void KalmanFilter::setInitialVelocity(const Eigen::VectorXd &initialVelocityInput) {
+void KalmanFilter::setInitialVelocity(const Eigen::VectorXd& initialVelocityInput) {
     VelocityState velocityState;
     velocityState.setValues(initialVelocityInput);
     this->stateInitial.setVelocity(velocityState);
@@ -138,7 +140,7 @@ std::optional<Eigen::VectorXd> KalmanFilter::getInitialVelocity() const {
     @param  Eigen::VectorXd initial acceleration vector
     @return void
     */
-void KalmanFilter::setInitialAcceleration(const Eigen::VectorXd &initialAccelerationInput) {
+void KalmanFilter::setInitialAcceleration(const Eigen::VectorXd& initialAccelerationInput) {
     AccelerationState accelerationState;
     accelerationState.setValues(initialAccelerationInput);
     this->stateInitial.setAcceleration(accelerationState);
@@ -159,7 +161,7 @@ std::optional<Eigen::VectorXd> KalmanFilter::getInitialAcceleration() const {
     @param Eigen::VectorXd  initial bias vector
     @return void
     */
-void KalmanFilter::setInitialBias(const Eigen::VectorXd &initialBiasInput) {
+void KalmanFilter::setInitialBias(const Eigen::VectorXd& initialBiasInput) {
     BiasState biasState;
     biasState.setValues(initialBiasInput);
     this->stateInitial.setBias(biasState);
@@ -180,7 +182,7 @@ std::optional<Eigen::VectorXd> KalmanFilter::getInitialBias() const {
     @param Eigen::VectorXd initial consider parameter vector
     @return void
     */
-void KalmanFilter::setInitialConsiderParameters(const Eigen::VectorXd &initialConsiderInput) {
+void KalmanFilter::setInitialConsiderParameters(const Eigen::VectorXd& initialConsiderInput) {
     ConsiderState considerState;
     considerState.setValues(initialConsiderInput);
     this->stateInitial.setConsider(considerState);
@@ -202,7 +204,7 @@ std::optional<Eigen::VectorXd> KalmanFilter::getInitialConsiderParameters() cons
     @return void
     */
 void KalmanFilter::setFilterDynamics(
-    const std::function<const FilterStateVector(const double, const FilterStateVector &)> &dynamicsPropagator) {
+    const std::function<const FilterStateVector(const double, const FilterStateVector&)>& dynamicsPropagator) {
     this->dynamics.setDynamics(dynamicsPropagator);
 }
 
@@ -210,7 +212,7 @@ void KalmanFilter::setFilterDynamics(
     @param Eigen::MatrixXd initialCovarianceInput
     @return void
     */
-void KalmanFilter::setInitialCovariance(const Eigen::MatrixXd &initialCovarianceInput) {
+void KalmanFilter::setInitialCovariance(const Eigen::MatrixXd& initialCovarianceInput) {
     this->covarInitial.resize(initialCovarianceInput.rows(), initialCovarianceInput.cols());
     this->covarInitial << initialCovarianceInput;
 }
@@ -224,7 +226,7 @@ Eigen::MatrixXd KalmanFilter::getInitialCovariance() const { return this->covarI
     @param Eigen::MatrixXd processNoiseInput
     @return void
     */
-void KalmanFilter::setProcessNoise(const Eigen::MatrixXd &processNoiseInput) {
+void KalmanFilter::setProcessNoise(const Eigen::MatrixXd& processNoiseInput) {
     this->processNoise.resize(processNoiseInput.rows(), processNoiseInput.cols());
     this->processNoise << processNoiseInput;
 }

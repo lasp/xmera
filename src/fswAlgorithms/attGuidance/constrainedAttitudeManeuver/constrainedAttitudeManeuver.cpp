@@ -17,7 +17,7 @@
 
  */
 #include "fswAlgorithms/attGuidance/constrainedAttitudeManeuver/constrainedAttitudeManeuver.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -85,7 +85,7 @@ Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct b
 Node::~Node() { return; }
 
 /*! This method appends a pointer to neighboring node to the neighbors class variable */
-void Node::appendNeighbor(Node *node) {
+void Node::appendNeighbor(Node* node) {
     this->neighbors[this->neighborCount] = node;
     this->neighborCount += 1;
     return;
@@ -101,7 +101,7 @@ NodeList::NodeList() {
 NodeList::~NodeList() { return; }
 
 /*! This method appends a pointer to the node list. */
-void NodeList::append(Node *node) {
+void NodeList::append(Node* node) {
     this->list[this->N] = node;
     this->N += 1;
 }
@@ -119,8 +119,8 @@ void NodeList::clear() { this->N = 0; }
 
 /*! This method swaps the two pointers at indices m and n. */
 void NodeList::swap(int m, int n) {
-    Node *p1 = this->list[m];
-    Node *p2 = this->list[n];
+    Node* p1 = this->list[m];
+    Node* p2 = this->list[n];
     this->list[m] = p2;
     this->list[n] = p1;
 }
@@ -143,7 +143,7 @@ void NodeList::sort() {
 }
 
 /*! This method returns true if a node is contained in the list, false otherwise. */
-bool NodeList::contains(Node *node) {
+bool NodeList::contains(Node* node) {
     bool flag = false;
     for (int n = 0; n < this->N; n++) {
         if (node == this->list[n]) {
@@ -542,7 +542,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode) {
  variable path
  @return void
  */
-void ConstrainedAttitudeManeuver::backtrack(Node *p) {
+void ConstrainedAttitudeManeuver::backtrack(Node* p) {
     if (p == &NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]) {
         this->path.append(p);
         return;
@@ -568,7 +568,7 @@ void ConstrainedAttitudeManeuver::AStar() {
     int Nmax = 4 * this->N * this->N;
     int n = 0;
     double p;
-    Node *key;
+    Node* key;
     NodeList O, C;
     O.append(&NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]);
 
@@ -615,7 +615,7 @@ void ConstrainedAttitudeManeuver::effortBasedAStar() {
     int Nmax = 100;
     int n = 0;
     double p;
-    Node *key;
+    Node* key;
     NodeList O, C;
     O.append(&NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]);
 
