@@ -20,7 +20,6 @@
 #ifndef _COB_CONVERT_ALGORITHM_H_
 #define _COB_CONVERT_ALGORITHM_H_
 
-#include "architecture/utilities/avsEigenSupport.h"
 #include <Eigen/Dense>
 #include <cstdint>
 

@@ -18,6 +18,7 @@
  */
 
 #include "cobConverterAlgorithm.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 
@@ -72,7 +73,7 @@ CobConverterAlgorithm::~CobConverterAlgorithm() = default;
 void CobConverterAlgorithm::computeCameraParameters(const CameraModelMsgPayload &cameraSpecs) {
     double sigma_camera[3];
     std::ranges::copy(cameraSpecs.bodyToCameraMrp, std::begin(sigma_camera));
-    this->dcm_CB = mrpToDcm(cArray2EigenVector3d(sigma_camera));
+    this->dcm_CB = mrpToDcm(cArrayAsEigenVector3(sigma_camera));
 
     // Camera parameters
     double alpha = 0;
@@ -110,7 +111,7 @@ void CobConverterAlgorithm::computeRotations(const NavAttMsgPayload &navAttBuffe
     double sigma_BN[3];
     std::ranges::copy(navAttBuffer.sigma_BN, std::begin(sigma_BN));
     // Extract rotations from relevant messages
-    this->dcm_BN = mrpToDcm(cArray2EigenVector3d(sigma_BN));
+    this->dcm_BN = mrpToDcm(cArrayAsEigenVector3(sigma_BN));
     this->dcm_NC = this->dcm_BN.transpose() * this->dcm_CB.transpose();
 }
 
@@ -132,9 +133,9 @@ void CobConverterAlgorithm::computePhaseAngleCorrection(const FilterMsgPayload &
     std::ranges::copy(filterMsgBuffer.state, std::begin(filter_state));
     std::ranges::copy(sunBuffer.vehSunPntBdy, std::begin(sun_B));
 
-    this->sc_position = cArray2EigenMatrixXd(filter_state, 6, 1).col(0).head(3);
+    this->sc_position = cArrayAsEigenMatrix<double, 6, 1>(filter_state).col(0).head(3);
     Eigen::Vector3d rhat_N = this->sc_position.normalized();
-    Eigen::Vector3d shat_B = cArray2EigenVector3d(sun_B).normalized();
+    Eigen::Vector3d shat_B = cArrayAsEigenVector3(sun_B).normalized();
     this->shat_N = dcm_BN.transpose() * shat_B;
     Eigen::Vector3d shat_C = dcm_CB * shat_B;
 
@@ -234,7 +235,7 @@ void CobConverterAlgorithm::computeCameraFrameUncertainty(const FilterMsgPayload
 
         // Compute COM uncertainty direction
         const Eigen::Matrix<double, 6, 6> Covariance =
-            cArray2EigenMatrixXd(covariance, filterMsgBuffer.numberOfStates, filterMsgBuffer.numberOfStates);
+            cArrayAsEigenMatrixX(covariance, filterMsgBuffer.numberOfStates, filterMsgBuffer.numberOfStates);
         const Eigen::Matrix3d positionCovariance = Covariance.topLeftCorner(3, 3);
 
         const Eigen::RowVector3d deltaBinary_r = deltaBinary_delta_r + (deltaBinary_deltaAlpha * deltaAlpha_delta_R);
@@ -290,12 +291,12 @@ std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::po
     Eigen::Matrix3d covar_N = this->dcm_BN.transpose() * this->covar_B * this->dcm_BN;
     Eigen::Matrix3d covar_C = this->dcm_NC.transpose() * covar_N * this->dcm_NC;
 
-    eigenMatrix3d2CArray(covar_N, uVecMsgBuffer.covar_N);
-    eigenMatrix3d2CArray(covar_C, uVecMsgBuffer.covar_C);
-    eigenMatrix3d2CArray(this->covar_B, uVecMsgBuffer.covar_B);
-    eigenVector3d2CArray(rhatCOM_N, uVecMsgBuffer.rhat_BN_N);
-    eigenVector3d2CArray(this->rhatCOM_C, uVecMsgBuffer.rhat_BN_C);
-    eigenVector3d2CArray(rhatCOM_B, uVecMsgBuffer.rhat_BN_B);
+    eigenMatrixToCArray(covar_N, uVecMsgBuffer.covar_N);
+    eigenMatrixToCArray(covar_C, uVecMsgBuffer.covar_C);
+    eigenMatrixToCArray(this->covar_B, uVecMsgBuffer.covar_B);
+    eigenVectorToCArray(rhatCOM_N, uVecMsgBuffer.rhat_BN_N);
+    eigenVectorToCArray(this->rhatCOM_C, uVecMsgBuffer.rhat_BN_C);
+    eigenVectorToCArray(rhatCOM_B, uVecMsgBuffer.rhat_BN_B);
     uVecMsgBuffer.timeTag = static_cast<double>(timeTag) * NANO2SEC;
     uVecMsgBuffer.valid = (this->validCOM && this->goodOutlierCheck);
 
@@ -399,10 +400,10 @@ void CobConverterAlgorithm::cobOutlierDetection(const FilterMsgPayload &filterMs
     std::ranges::copy(filterMsgBuffer.covar, std::begin(covariance));
 
     int numberOfStates = filterMsgBuffer.numberOfStates;
-    Eigen::VectorXd filterState = cArray2EigenMatrixXd(state, numberOfStates, 1);
+    Eigen::VectorXd filterState = cArrayAsEigenMatrixX(state, numberOfStates, 1);
     Eigen::Vector3d rNav_BN_N = filterState.segment(0, 3);
     Eigen::Vector3d rhatNav_N = rNav_BN_N.normalized();
-    Eigen::MatrixXd filterCovariance = cArray2EigenMatrixXd(covariance, numberOfStates, numberOfStates);
+    Eigen::MatrixXd filterCovariance = cArrayAsEigenMatrixX(covariance, numberOfStates, numberOfStates);
     Eigen::Matrix3d covarNav_N = filterCovariance.block(0, 0, 3, 3) / pow(rNav_BN_N.norm(), 2);
 
     Eigen::Vector3d rhatCOB_C =
