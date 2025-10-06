@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -21,7 +21,6 @@
 #define _AVSEIGENSUPPORT_
 
 #include "avsEigenMRP.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 #include <Eigen/Core>
 #include <cstring>
@@ -35,47 +34,6 @@ template <class Derived>
 inline constexpr bool is_fixed_v =
     (Derived::RowsAtCompileTime != Eigen::Dynamic) &&
     (Derived::ColsAtCompileTime != Eigen::Dynamic);
-
-//!@brief General conversion between any Eigen matrix and output array
-void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray);
-//!@brief General conversion between any Eigen matrix and output array
-void eigenMatrixXi2CArray(Eigen::MatrixXi inMat, int *outArray);
-//!@brief Conversion between 3-float-vector and output array
-void eigenVector3f2CArray(Eigen::Vector3f &inMat, float *outArray);
-//!@brief Rapid conversion between 3-vector and output array
-void eigenVector3d2CArray(Eigen::Vector3d &inMat, double *outArray);
-//!@brief Rapid conversion between 4-vector and output array
-void eigenVector4d2CArray(Eigen::Vector4d &inMat, double *outArray);
-//!@brief Rapid conversion between MRP and output array
-void eigenMRPd2CArray(Eigen::Vector3d &inMat, double *outArray);
-//!@brief Rapid conversion between 3x3 matrix and output array
-void eigenMatrix3d2CArray(Eigen::Matrix3d &inMat, double *outArray);
-//!@brief General conversion between a C array and an Eigen matrix
-Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols);
-//!@brief Specific conversion between a C array and an Eigen 3-vector
-Eigen::Vector3d cArray2EigenVector3d(double *inArray);
-//!@brief Specific conversion between a float C array and an Eigen float 3-vector
-Eigen::Vector3f cArray2EigenVector3f(float *inArray);
-//!@brief Specific conversion between a C array and an Eigen 4-vector
-Eigen::Vector4d cArray2EigenVector4d(double *inArray);
-//!@brief Specific conversion between a C array and an Eigen MRPs
-Eigen::MRPd cArray2EigenMRPd(double *inArray);
-//!@brief Specfici conversion between a C array and an Eigen 3x3 matrix
-Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray);
-//!@brief Specfici conversion between a C 2D array and an Eigen 3x3 matrix
-Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3]);
-//!@brief returns the first axis DCM with the input angle
-Eigen::Matrix3d eigenM1(double angle);
-//!@brief returns the second axis DCM with the input angle
-Eigen::Matrix3d eigenM2(double angle);
-//!@brief returns the third axis DCM with the input angle
-Eigen::Matrix3d eigenM3(double angle);
-//!@brief returns the tilde matrix representation of a vector (equivalent to a vector cross product)
-Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec);
-//!@brief converts MRPd to an Vector3d variable
-Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd vec);
-//!@brief maps the DCM to MRPs using Eigen variables
-Eigen::MRPd eigenC2MRP(const Eigen::Matrix3d dcm_Eigen);
 
 /*! This function provides a general conversion between an Eigen matrix and
 an output C array. Note that this routine would convert an inbound type
