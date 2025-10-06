@@ -67,12 +67,12 @@ MagneticFieldBase::~MagneticFieldBase() {
  @return void
  @param tmpScMsg A spacecraft state message name.
  */
-void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
+void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg) {
     /* add input message */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<MagneticFieldMsgPayload> *msg;
+    Message<MagneticFieldMsgPayload>* msg;
     msg = new Message<MagneticFieldMsgPayload>;
     this->envOutMsgs.push_back(msg);
 
@@ -217,7 +217,7 @@ void MagneticFieldBase::updateLocalMagField(double currentTime) {
  @param scState A spacecraft states message struct.
  @return void
  */
-void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState) {
+void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCStatesMsgPayload* scState) {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());
 

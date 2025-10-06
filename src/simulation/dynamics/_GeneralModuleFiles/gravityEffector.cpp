@@ -172,7 +172,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
     uint64_t systemClock = (uint64_t)this->timeCorr->data()[0];
     Eigen::Vector3d r_cN_N = Eigen::Vector3d::Zero();  // position of s/c CoM wrt N
     Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero();  // inertial position of central body if there is one. Big C is
-                             // central body. Little c is CoM of s/c
+                                                       // central body. Little c is CoM of s/c
 
     if (this->centralBody)  // If there is a central body
     {

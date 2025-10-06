@@ -45,7 +45,7 @@ VSCMGStateEffector::~VSCMGStateEffector() {
     return;
 }
 
-void VSCMGStateEffector::linkInStates(DynParamManager &statesIn) {
+void VSCMGStateEffector::linkInStates(DynParamManager& statesIn) {
     //! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
@@ -55,7 +55,7 @@ void VSCMGStateEffector::linkInStates(DynParamManager &statesIn) {
     return;
 }
 
-void VSCMGStateEffector::registerStates(DynParamManager &states) {
+void VSCMGStateEffector::registerStates(DynParamManager& states) {
     //! - Find number of VSCMGs and number of VSCMGs with jitter
     this->numVSCMGJitter = 0;
     this->numVSCMG = 0;
@@ -244,7 +244,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime) {
 }
 
 void VSCMGStateEffector::updateContributions(double integTime,
-                                             BackSubMatrices &backSubContr,
+                                             BackSubMatrices& backSubContr,
                                              Eigen::Vector3d sigma_BN,
                                              Eigen::Vector3d omega_BN_B,
                                              Eigen::Vector3d g_N) {
@@ -487,8 +487,8 @@ void VSCMGStateEffector::computeDerivatives(double integTime,
 }
 
 void VSCMGStateEffector::updateEnergyMomContributions(double integTime,
-                                                      Eigen::Vector3d &rotAngMomPntCContr_B,
-                                                      double &rotEnergyContr,
+                                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                      double& rotEnergyContr,
                                                       Eigen::Vector3d omega_BN_B) {
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcm_BN; /* direction cosine matrix from N to B */
@@ -630,7 +630,7 @@ void VSCMGStateEffector::ReadInputs() {
     uint64_t i;
 
     /* zero the incoming commands */
-    VSCMGCmdMsgPayload *CmdPtr;
+    VSCMGCmdMsgPayload* CmdPtr;
     for (i = 0, CmdPtr = this->newVSCMGCmds.data(); i < this->VSCMGData.size(); CmdPtr++, i++) {
         CmdPtr->u_s_cmd = 0.0;
         CmdPtr->u_g_cmd = 0.0;
@@ -786,11 +786,11 @@ void VSCMGStateEffector::updateState(uint64_t currentSimNanos) {
  @return void
  @param NewVSCMG VSCMG device to be added
  */
-void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG) {
+void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload* NewVSCMG) {
     this->VSCMGData.push_back(*NewVSCMG);
 
     /* add a VSCMG output message for this device */
-    Message<VSCMGConfigMsgPayload> *msg;
+    Message<VSCMGConfigMsgPayload>* msg;
     msg = new Message<VSCMGConfigMsgPayload>;
     this->vscmgOutMsgs.push_back(msg);
 }

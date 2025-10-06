@@ -181,14 +181,14 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
     auto visPayload = cielimMessage::CielimMessage();
 
     /*! Write timestamp output msg */
-    auto *time = new cielimMessage::TimeStamp();
+    auto* time = new cielimMessage::TimeStamp();
     time->set_framenumber(this->frameNumber);
     time->set_simtimeelapsed((double)currentSimNanos);
     visPayload.set_allocated_currenttime(time);
 
     /*! write epoch msg */
     if (this->epochMessageStatus.dataFresh) {
-        auto *epoch = new cielimMessage::EpochDateTime();
+        auto* epoch = new cielimMessage::EpochDateTime();
         epoch->set_year(this->epochPayload.year);
         epoch->set_month(this->epochPayload.month);
         epoch->set_day(this->epochPayload.day);
@@ -202,7 +202,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
     /*! Write spice output msgs */
     for (size_t k = 0; k < this->spiceBodyMessageStatus.size(); ++k) {
         if (this->spiceBodyMessageStatus[k].dataFresh) {
-            cielimMessage::CelestialBody *celestialBody = visPayload.add_celestialbodies();
+            cielimMessage::CelestialBody* celestialBody = visPayload.add_celestialbodies();
             celestialBody->set_bodyname(this->celestialBodiesList.at(k).name);
             for (int i = 0; i < 3; i++) {
                 celestialBody->add_position(this->celestialBodiesList.at(k).spiceStatePayload.PositionVector[i]);
@@ -215,9 +215,9 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
             celestialBody->set_centralbody(this->celestialBodiesList.at(k).isCentralBody);
             if (this->celestialBodiesList.at(k).celestialParametersMessage.isLinked() &&
                 this->celestialParametersMessageStatus[k].dataFresh) {
-                auto *meshModel = new cielimMessage::MeshModel();
-                auto *perlinNoise = new cielimMessage::PerlinNoise();
-                auto *reflectanceModel = new cielimMessage::ReflectanceModel();
+                auto* meshModel = new cielimMessage::MeshModel();
+                auto* perlinNoise = new cielimMessage::PerlinNoise();
+                auto* reflectanceModel = new cielimMessage::ReflectanceModel();
                 celestialBody->set_geometricalbedo(
                     this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo);
                 perlinNoise->set_octavecount(
@@ -255,7 +255,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
 
     /*! Write spacecraft state output msg */
     if (this->spacecraftMessage.isLinked() && this->spacecraftMessageStatus.dataFresh) {
-        auto *spacecraft = new cielimMessage::Spacecraft();
+        auto* spacecraft = new cielimMessage::Spacecraft();
         spacecraft->set_spacecraftname("cielim_sat");
         for (int i = 0; i < 3; i++) {
             spacecraft->add_position(this->spacecraftPayload.r_BN_N[i]);
@@ -270,10 +270,10 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         /*! This corrective attitude allows UE to place the camera as is expected by the python setting.
          * UE5 has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame:
          * z point, x horizontal, y vertical (down) */
-        auto *camera = new cielimMessage::CameraModel();
-        auto *lensModel = new cielimMessage::LensModel();
-        auto *sensorModel = new cielimMessage::SensorModel();
-        auto *quantumEfficiency = new cielimMessage::QuantumEfficiency();
+        auto* camera = new cielimMessage::CameraModel();
+        auto* lensModel = new cielimMessage::LensModel();
+        auto* sensorModel = new cielimMessage::SensorModel();
+        auto* quantumEfficiency = new cielimMessage::QuantumEfficiency();
 
         camera->set_cameraid(this->cameraModelPayload.cameraId);
         camera->set_parentname(this->cameraModelPayload.parentName);
@@ -327,7 +327,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
     }
 
     if (this->cameraRenderingMessage.isLinked() && this->cameraRenderingMessageStatus.dataFresh) {
-        auto *rendering = new cielimMessage::RenderingModel();
+        auto* rendering = new cielimMessage::RenderingModel();
         rendering->set_wavelength1(this->cameraRenderingPayload.wavelengths[0]);
         rendering->set_wavelength2(this->cameraRenderingPayload.wavelengths[1]);
         rendering->set_wavelength3(this->cameraRenderingPayload.wavelengths[2]);
@@ -439,7 +439,7 @@ int64_t CielimInterface::getFrameNumber() const { return this->frameNumber; }
 /*! Set the save file path
  * @param std::string path and name to data destination
  */
-void CielimInterface::setSaveFile(const std::string &saveProtobufferFile) {
+void CielimInterface::setSaveFile(const std::string& saveProtobufferFile) {
     assert(saveProtobufferFile != "");
     this->protoFilename = saveProtobufferFile;
     this->saveFile = true;
@@ -462,7 +462,7 @@ void CielimInterface::setLiveStream(bool liveStreaming) { this->liveStream = liv
 /*! Add a celestial body to the interface
 @param SpiceBody class containing celestial body information
 */
-void CielimInterface::addCelestialBody(const SpiceBody &celestialBodyNames) {
+void CielimInterface::addCelestialBody(const SpiceBody& celestialBodyNames) {
     this->celestialBodiesList.push_back(celestialBodyNames);
 }
 
@@ -475,4 +475,4 @@ std::vector<SpiceBody> CielimInterface::getCelestialBodies() const { return this
  @param data The current sim time in nanoseconds
  @param hint
  */
-void message_buffer_deallocate(void *data, void *hint) { free(data); }
+void message_buffer_deallocate(void* data, void* hint) { free(data); }
