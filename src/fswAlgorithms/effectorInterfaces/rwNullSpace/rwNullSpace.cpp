@@ -39,7 +39,7 @@ void RwNullSpace::reset(uint64_t callTime) {
     }
 
     /* read in the RW spin axis headings */
-    RWConstellationMsgPayload localRWData = this->rwConfigInMsg();  /* local copy of RW configuration data */
+    RWConstellationMsgPayload localRWData = this->rwConfigInMsg(); /* local copy of RW configuration data */
 
     /* create the 3xN [Gs] RW spin axis projection matrix */
     uint32_t numWheels = (uint32_t)localRWData.numRW;
@@ -57,9 +57,10 @@ void RwNullSpace::reset(uint64_t callTime) {
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void RwNullSpace::updateState(uint64_t callTime) {
-    RwMotorTorqueMsgPayload controlRequest = this->rwMotorTorqueInMsg(); /* [Nm]  array of the RW motor torque solution */
+    RwMotorTorqueMsgPayload controlRequest =
+        this->rwMotorTorqueInMsg();                     /* [Nm]  array of the RW motor torque solution */
     RWSpeedMsgPayload rwSpeeds = this->rwSpeedsInMsg(); /* [r/s] array of RW speeds */
-    RWSpeedMsgPayload rwDesiredSpeeds{};    /* [r/s] array of RW speeds */
+    RWSpeedMsgPayload rwDesiredSpeeds{};                /* [r/s] array of RW speeds */
 
     if (this->rwDesiredSpeedsInMsg.isLinked()) {
         rwDesiredSpeeds = this->rwDesiredSpeedsInMsg();

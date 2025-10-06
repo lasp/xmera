@@ -32,14 +32,13 @@ void RwNullSpaceAlgorithm::reset(RWConstellationMsgPayload& rwConfigInMsg) {
 
     Eigen::Matrix<double, 3, RW_EFF_CNT> G_s_B{};
     G_s_B.setZero();
-    for(uint32_t i=0; i<this->numWheels; i=i+1)
-    {
+    for (uint32_t i = 0; i < this->numWheels; i = i + 1) {
         G_s_B.col(i) = cArrayAsEigenVector(rwConfigInMsg.reactionWheels[i].gsHat_B);
     }
 
     /* find the [tau] null space projection matrix [tau] = ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
-    this->tau = Eigen::Matrix<double, RW_EFF_CNT, RW_EFF_CNT>::Identity()
-                - G_s_B.transpose() * (G_s_B * G_s_B.transpose()).inverse() * G_s_B;
+    this->tau = Eigen::Matrix<double, RW_EFF_CNT, RW_EFF_CNT>::Identity() -
+                G_s_B.transpose() * (G_s_B * G_s_B.transpose()).inverse() * G_s_B;
 }
 
 /*! This method takes the input reaction wheel commands as well as the observed
@@ -57,14 +56,15 @@ RwMotorTorqueMsgPayload RwNullSpaceAlgorithm::update(RwMotorTorqueMsgPayload& co
                                             the control and null motion torques */
 
     /* compute the wheel speed control vector d = -K.DeltaOmega */
-    Eigen::Vector<double, MAX_EFF_CNT> d = -this->omegaGain *
-        (cArrayAsEigenVector(rwSpeeds.wheelSpeeds) - cArrayAsEigenVector(rwDesiredSpeeds.wheelSpeeds));
+    Eigen::Vector<double, MAX_EFF_CNT> d = -this->omegaGain * (cArrayAsEigenVector(rwSpeeds.wheelSpeeds) -
+                                                               cArrayAsEigenVector(rwDesiredSpeeds.wheelSpeeds));
 
     /* compute the RW null space motor torque solution to reduce the wheel speeds */
     Eigen::Vector<double, MAX_EFF_CNT> motorTorqueNullSpace = this->tau * d;
 
     /* add the null motion RW torque solution to the RW feedback control torque solution */
-    Eigen::Vector<double, MAX_EFF_CNT> motorTorque = motorTorqueNullSpace + cArrayAsEigenVector(controlRequest.motorTorque);
+    Eigen::Vector<double, MAX_EFF_CNT> motorTorque =
+        motorTorqueNullSpace + cArrayAsEigenVector(controlRequest.motorTorque);
 
     eigenVectorToCArray(motorTorque, finalControl.motorTorque);
 
