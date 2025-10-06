@@ -1,7 +1,19 @@
 #
-#   Unit Test Script
-#   Module Name:        rwNullSpace
-#   Creation Date:      October 5, 2018
+#  ISC License
+#
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
 import inspect
@@ -11,45 +23,24 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import rwNullSpace
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import SimulationBaseClass, macros
 from numpy.linalg import inv
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("numWheels, defaultDesired", [
-     (3, True)
-    , (4, True)
-    , (3, False)
-    , (4, False)
-])
+@pytest.mark.parametrize("numWheels, defaultDesired", [(3, True),
+                                                       (4, True),
+                                                       (3, False),
+                                                       (4, False)])
 
 
 def test_rwNullSpace(numWheels, defaultDesired):
-    """ Test rwNullSpace. """
-    [testResults, testMessage] = rwNullSpaceTestFunction(numWheels, defaultDesired)
-    assert testResults < 1, testMessage
-
-def rwNullSpaceTestFunction(numWheels, defaultDesired):
-    """ Test the rwNullSpace module. Setup a simulation, """
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-
-    # This is needed if multiple unit test scripts are run
-    # This create a fresh and consistent simulation environment for each test run
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
@@ -57,16 +48,9 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # Add a new task to the process
 
     # Construct the rwNullSpace module
-    # Set the names for the input messages
     module = rwNullSpace.RwNullSpace()
-
-    # Set the necessary data in the module. NOTE: This information is more or less random
     module.setOmegaGain(.5) # The feedback gain value applied for the RW despin control law
-
-    # This calls the algContain to setup the selfInit, update, and reset
     module.modelTag = "rwNullSpace"
-
-    # Add the module to the task
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     numRW = numWheels
@@ -115,7 +99,6 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
         usControl.append(-0.2) # [Nm]
     inputRWCmdMsg.motorTorque = usControl
 
-
     # Set these messages
     rwSpeedMsg = messaging.RWSpeedMsg().write(inputSpeedMsg)
     rwConfigMsg = messaging.RWConstellationMsg().write(inputRWConstellationMsg)
@@ -139,16 +122,11 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    outputCrtlData = dataLog.motorTorque[:, :numRW]
-    print(outputCrtlData)
+    motorTorque = dataLog.motorTorque[:, :numRW]
 
     if numWheels == 3:
         # in this case there is no nullspace of the RW configuration.  The output torque should be the input torque
-        trueVector = [inputRWCmdMsg.motorTorque,
-                     inputRWCmdMsg.motorTorque,
-                     inputRWCmdMsg.motorTorque,
-                     inputRWCmdMsg.motorTorque,
-                     inputRWCmdMsg.motorTorque]
+        trueVector = [inputRWCmdMsg.motorTorque[:numRW]]
     elif numWheels == 4:
         # in this case there is a 1D nullspace of [Gs]
         GsT = np.array(gsHat)
@@ -160,38 +138,14 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
         d = - module.getOmegaGain() * (np.array(rwSpeeds) - np.array(desiredOmega))
         uNull = tau.dot(d)
         trueTorque = np.array(usControl) + uNull
-        trueVector = [
-            trueTorque.tolist(),
-            trueTorque.tolist(),
-            trueTorque.tolist(),
-            trueTorque.tolist(),
-            trueTorque.tolist()
-        ]
+        trueVector = [trueTorque.tolist()]
+
+    motorTorqueTrue = trueVector * 5
 
 
-    accuracy = 1e-6
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    accuracy = 1e-12
+    np.testing.assert_allclose(motorTorque, motorTorqueTrue, atol=accuracy, rtol=0, verbose=True)
 
-    # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, outputCrtlData,
-                                                                 accuracy,
-                                                                 "numWheels = " + str(numWheels),
-                                                                 2, testFailCount, testMessages)
-
-
-    snippentName = "passFail" + str(numWheels)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-
-    return [testFailCount, ''.join(testMessages)]
 
 if __name__ == '__main__':
     test_rwNullSpace(4, True)
