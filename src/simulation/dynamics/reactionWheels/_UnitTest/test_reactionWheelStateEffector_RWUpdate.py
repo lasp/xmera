@@ -140,9 +140,9 @@ def RWUpdateTest(show_plots, accuracy):
     rwFactory.addToSpacecraft(rwStateEffector.modelTag, rwStateEffector, scObject)
 
     # set RW torque command
-    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray = messaging.RwMotorTorqueMsgPayload()
     cmdArray.motorTorque = [0.4, 0.1, -0.5]  # [Nm]
-    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    cmdMsg = messaging.RwMotorTorqueMsg().write(cmdArray)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(cmdMsg)
     trueTorque = [[0.4, 0., -0.5]]
 

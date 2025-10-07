@@ -29,13 +29,13 @@ provides information on what this message is used for.
       - :ref:`RWSpeedMsgPayload`
       - input message for RW speeds
     * - rwMotorTorqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - input message for RW motor torques
     * - mtbCmdOutMsg
       - :ref:`MTBCmdMsgPayload`
       - output message for MTB dipole commands
     * - rwMotorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - output message for RW motor torques
 
 User Guide
@@ -47,4 +47,3 @@ The optional module list ``wheelSpeedBiases`` can be set to desired RW spin rate
 the default values are zero rates.
 
 Note that the MTB input configuration message variable ``GtMatrix_B`` must be provided in a row major format.
-

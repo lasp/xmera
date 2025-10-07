@@ -18,9 +18,9 @@
  */
 
 #include "mtbMomentumManagement.h"
-#include "string.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/svd.h"
+#include "string.h"
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
@@ -28,24 +28,23 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void MtbMomentumManagement::reset(uint64_t callTime)
-{
+void MtbMomentumManagement::reset(uint64_t callTime) {
     /*
      * Check if the required input messages are linked.
      */
-    if (!this->rwParamsInMsg.isLinked()){
+    if (!this->rwParamsInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
     }
-    if(!this->mtbParamsInMsg.isLinked()){
+    if (!this->mtbParamsInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.mtbParamsInMsg is not connected.");
     }
-    if (!this->tamSensorBodyInMsg.isLinked()){
+    if (!this->tamSensorBodyInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.tamSensorBodyInMsg is not connected.");
     }
-    if (!this->rwSpeedsInMsg.isLinked()){
+    if (!this->rwSpeedsInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
     }
-    if (!this->rwMotorTorqueInMsg.isLinked()){
+    if (!this->rwMotorTorqueInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwMotorTorqueInMsg is not connected.");
     }
 
@@ -56,26 +55,24 @@ void MtbMomentumManagement::reset(uint64_t callTime)
     return;
 }
 
-
 /*! Computes the appropriate wheel torques and magnetic torque bar dipoles to bias the wheels to their desired speeds.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MtbMomentumManagement::updateState(uint64_t callTime)
-{
+void MtbMomentumManagement::updateState(uint64_t callTime) {
     /*
      * Declare and initialize local variables.
      */
     int numRW = this->rwConfigParams.numRW;
     int numMTB = this->mtbConfigParams.numMTB;
     int j = 0;
-    double BTilde_B[3*3];
-    double BGt[3*MAX_EFF_CNT];
-    double BGtPsuedoInverse[MAX_EFF_CNT*3];
+    double BTilde_B[3 * 3];
+    double BGt[3 * MAX_EFF_CNT];
+    double BGtPsuedoInverse[MAX_EFF_CNT * 3];
     double uDelta_B[3];
-    double uDelta_W[MAX_EFF_CNT];
-    double GsPsuedoInverse[MAX_EFF_CNT*3];
-    double Gs[3 * MAX_EFF_CNT];
+    double uDelta_W[RW_EFF_CNT];
+    double GsPsuedoInverse[RW_EFF_CNT * 3];
+    double Gs[3 * RW_EFF_CNT];
     mSetZero(BTilde_B, 3, 3);
     mSetZero(BGt, 3, numMTB);
     mSetZero(BGtPsuedoInverse, numMTB, 3);
@@ -97,9 +94,9 @@ void MtbMomentumManagement::updateState(uint64_t callTime)
      */
     TAMSensorBodyMsgPayload tamSensorBodyInMsgBuffer = this->tamSensorBodyInMsg();
     RWSpeedMsgPayload rwSpeedsInMsgBuffer = this->rwSpeedsInMsg();
-    ArrayMotorTorqueMsgPayload rwMotorTorqueInMsgBuffer = this->rwMotorTorqueInMsg();
+    RwMotorTorqueMsgPayload rwMotorTorqueInMsgBuffer = this->rwMotorTorqueInMsg();
     MTBCmdMsgPayload mtbCmdOutputMsgBuffer = {};
-    ArrayMotorTorqueMsgPayload rwMotorTorqueOutMsgBuffer = rwMotorTorqueInMsgBuffer;
+    RwMotorTorqueMsgPayload rwMotorTorqueOutMsgBuffer = rwMotorTorqueInMsgBuffer;
 
     /*! - Compute the wheel speed feedback.*/
     vSubtract(rwSpeedsInMsgBuffer.wheelSpeeds, numRW, this->wheelSpeedBiases, this->wheelSpeedError_W);
@@ -117,8 +114,7 @@ void MtbMomentumManagement::updateState(uint64_t callTime)
     /*
      * Saturate dipoles.
      */
-    for (j = 0; j < numMTB; j++)
-    {
+    for (j = 0; j < numMTB; j++) {
         if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] > this->mtbConfigParams.maxMtbDipoles[j])
             mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] = this->mtbConfigParams.maxMtbDipoles[j];
 
@@ -153,8 +149,7 @@ void MtbMomentumManagement::updateState(uint64_t callTime)
 /*
  * Returns the tilde matrix in the form of a 1-D array.
  */
-void v3TildeM(double v[3], double *m_result)
-{
+void v3TildeM(double v[3], double *m_result) {
     m_result[MXINDEX(3, 0, 0)] = 0.0;
     m_result[MXINDEX(3, 0, 1)] = -v[2];
     m_result[MXINDEX(3, 0, 2)] = v[1];

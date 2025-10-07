@@ -22,11 +22,11 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/definitions.h"
 
@@ -39,8 +39,8 @@ class MtbMomentumManagement : public SysModel {
     /*
      * Configs.
      */
-    double wheelSpeedBiases[MAX_EFF_CNT];  //!< [rad/s] reaction wheel speed biases
-    double cGain;                          //!<[1/s]  reaction wheel momentum feedback gain
+    double wheelSpeedBiases[RW_EFF_CNT];  //!< [rad/s] reaction wheel speed biases
+    double cGain;                         //!<[1/s]  reaction wheel momentum feedback gain
 
     /*
      * Inputs.
@@ -50,27 +50,27 @@ class MtbMomentumManagement : public SysModel {
     ReadFunctor<TAMSensorBodyMsgPayload>
         tamSensorBodyInMsg;                        //!< input message for magnetic field sensor data in the Body frame
     ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;  //!< input message for RW speeds
-    ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< input message for RW motor torques
+    ReadFunctor<RwMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< input message for RW motor torques
 
     /*
      * Outputs.
      */
-    Message<MTBCmdMsgPayload> mtbCmdOutMsg;                   //!< output message for MTB dipole commands
-    Message<ArrayMotorTorqueMsgPayload> rwMotorTorqueOutMsg;  //!< output message for RW motor torques
+    Message<MTBCmdMsgPayload> mtbCmdOutMsg;                //!< output message for MTB dipole commands
+    Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;  //!< output message for RW motor torques
 
     /*
      * Other.
      */
-    BSKLogger bskLogger = {};   //!< BSK Logging
-    double tauDesiredMTB_B[3];  //!< [N-m] desired torque produced by the magnetic torque bars in the Body frame
-    double tauDesiredRW_B[3];   //!< [N-m]  desired torque produced by the reaction wheels in the Body frame
-    double hDeltaWheels_W[MAX_EFF_CNT];  //!<  [N-m-s] momentum of each wheel
-    double hDeltaWheels_B[3];            //!<  [N-m-s] momentum of reaction wheels in the Body frame
-    double tauDesiredRW_W[MAX_EFF_CNT];  //!<  [N-m] Desired individual wheel torques
-    double tauIdealRW_W[MAX_EFF_CNT];    //!<  [N-m-s] Ideal individual wheel torques
-    double tauIdealRW_B[MAX_EFF_CNT];    //!<  [N-m-s] Ideal wheel torque in the body frame
+    BSKLogger bskLogger = {};           //!< BSK Logging
+    double tauDesiredMTB_B[3];          //!< [N-m] desired torque produced by the magnetic torque bars in the Body frame
+    double tauDesiredRW_B[3];           //!< [N-m]  desired torque produced by the reaction wheels in the Body frame
+    double hDeltaWheels_W[RW_EFF_CNT];  //!<  [N-m-s] momentum of each wheel
+    double hDeltaWheels_B[3];           //!<  [N-m-s] momentum of reaction wheels in the Body frame
+    double tauDesiredRW_W[RW_EFF_CNT];  //!<  [N-m] Desired individual wheel torques
+    double tauIdealRW_W[RW_EFF_CNT];    //!<  [N-m-s] Ideal individual wheel torques
+    double tauIdealRW_B[RW_EFF_CNT];    //!<  [N-m-s] Ideal wheel torque in the body frame
     double
-        wheelSpeedError_W[MAX_EFF_CNT];  //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
+        wheelSpeedError_W[RW_EFF_CNT];  //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
     RWArrayConfigMsgPayload rwConfigParams;    //!< configuration for RW's
     MTBArrayConfigMsgPayload mtbConfigParams;  //!< configuration for MTB layout
 };

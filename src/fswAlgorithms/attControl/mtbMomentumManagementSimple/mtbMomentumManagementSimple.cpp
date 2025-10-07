@@ -17,7 +17,6 @@
 
 */
 
-
 #include "mtbMomentumManagementSimple.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <stdio.h>
@@ -28,15 +27,14 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void MtbMomentumManagementSimple::reset(uint64_t callTime)
-{
+void MtbMomentumManagementSimple::reset(uint64_t callTime) {
     /*
      * Check if the required input messages are connected.
      */
-    if (!this->rwParamsInMsg.isLinked()){
+    if (!this->rwParamsInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
     }
-    if (!this->rwSpeedsInMsg.isLinked()){
+    if (!this->rwSpeedsInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
     }
 
@@ -54,24 +52,21 @@ void MtbMomentumManagementSimple::reset(uint64_t callTime)
     /*
      * Sanity check configs.
      */
-    if (this->Kp < 0.0)
-        this->bskLogger.bskLog(BSK_ERROR, "Error: k < 0.0");
+    if (this->Kp < 0.0) this->bskLogger.bskLog(BSK_ERROR, "Error: k < 0.0");
 
     return;
 }
-
 
 /*! This routine calculate the current desired torque in the Body frame to meet the momentum target.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MtbMomentumManagementSimple::updateState(uint64_t callTime)
-{
+void MtbMomentumManagementSimple::updateState(uint64_t callTime) {
     /*
      * Initialize local variables.
      */
-    double hWheels_B[3] = {0.0, 0.0, 0.0};                      // the net momentum of the reaction wheels in the body frame
-    double hWheels_W[MAX_EFF_CNT];                              // array of individual wheel momentum values
+    double hWheels_B[3] = {0.0, 0.0, 0.0};  // the net momentum of the reaction wheels in the body frame
+    double hWheels_W[RW_EFF_CNT];           // array of individual wheel momentum values
     vSetZero(hWheels_W, this->rwConfigParams.numRW);
 
     /*
@@ -82,7 +77,8 @@ void MtbMomentumManagementSimple::updateState(uint64_t callTime)
 
     /*! - Compute wheel momentum in Body frame components by calculating it first in the wheel frame and then
          transforming it from the wheel space into the body frame using Gs.*/
-    vElementwiseMult(rwSpeedsInMsgBuffer.wheelSpeeds, this->rwConfigParams.numRW, this->rwConfigParams.JsList, hWheels_W);
+    vElementwiseMult(
+        rwSpeedsInMsgBuffer.wheelSpeeds, this->rwConfigParams.numRW, this->rwConfigParams.JsList, hWheels_W);
     mMultV(this->Gs, 3, this->rwConfigParams.numRW, hWheels_W, hWheels_B);
 
     /*! - Compute the feedback torque command by multiplying the wheel momentum in the Body frame by the proportional

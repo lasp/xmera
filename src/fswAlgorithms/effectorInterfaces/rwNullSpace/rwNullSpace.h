@@ -22,9 +22,9 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
@@ -35,15 +35,15 @@ class RwNullSpace : public SysModel {
    public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< [-] The name of the Input message
-    ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;                //!< [-] The name of the input RW speeds
-    ReadFunctor<RWSpeedMsgPayload> rwDesiredSpeedsInMsg;         //!< [-] (optional) The name of the desired RW speeds
-    ReadFunctor<RWConstellationMsgPayload> rwConfigInMsg;        //!< [-] The name of the RWA configuration message
-    Message<ArrayMotorTorqueMsgPayload> rwMotorTorqueOutMsg;     //!< [-] The name of the output message
+    ReadFunctor<RwMotorTorqueMsgPayload> rwMotorTorqueInMsg;  //!< [-] The name of the Input message
+    ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;             //!< [-] The name of the input RW speeds
+    ReadFunctor<RWSpeedMsgPayload> rwDesiredSpeedsInMsg;      //!< [-] (optional) The name of the desired RW speeds
+    ReadFunctor<RWConstellationMsgPayload> rwConfigInMsg;     //!< [-] The name of the RWA configuration message
+    Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;     //!< [-] The name of the output message
 
-    double tau[MAX_EFF_CNT * MAX_EFF_CNT];  //!< [-] RW nullspace project matrix
-    double OmegaGain;                       //!< [-] The gain factor applied to the RW speeds
-    uint32_t numWheels;                     //!< [-] The number of reaction wheels we have
+    double tau[RW_EFF_CNT * RW_EFF_CNT];  //!< [-] RW nullspace project matrix
+    double OmegaGain;                     //!< [-] The gain factor applied to the RW speeds
+    uint32_t numWheels;                   //!< [-] The number of reaction wheels we have
 
     BSKLogger bskLogger = {};  //!< BSK Logging
 };

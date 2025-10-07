@@ -119,9 +119,9 @@ def run(show_plots, voltage):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    voltageData = messaging.ArrayMotorVoltageMsgPayload()
+    voltageData = messaging.RwMotorVoltageMsgPayload()
     voltageData.voltage = [voltage, voltage+1.0, voltage+1.5]
-    voltageMsg = messaging.ArrayMotorVoltageMsg().write(voltageData)
+    voltageMsg = messaging.RwMotorVoltageMsg().write(voltageData)
     testModule.motorVoltageInMsg.subscribeTo(voltageMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it

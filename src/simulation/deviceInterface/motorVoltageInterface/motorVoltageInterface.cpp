@@ -22,11 +22,11 @@
     values and initializes the various parts of the model */
 MotorVoltageInterface::MotorVoltageInterface() {
     this->prevTime = 0;
-    this->bias.resize(MAX_EFF_CNT);
+    this->bias.resize(RW_EFF_CNT);
     this->bias.fill(0.0);
-    this->scaleFactor.resize(MAX_EFF_CNT);
+    this->scaleFactor.resize(RW_EFF_CNT);
     this->scaleFactor.fill(1.0);
-    this->voltage2TorqueGain.resize(MAX_EFF_CNT);
+    this->voltage2TorqueGain.resize(RW_EFF_CNT);
     this->voltage2TorqueGain.fill(1.0);
     return;
 }
@@ -57,8 +57,8 @@ void MotorVoltageInterface::readInputMessages() {
  @return void
  */
 void MotorVoltageInterface::computeMotorTorque() {
-    this->outputTorqueBuffer = ArrayMotorTorqueMsgPayload{};
-    for (uint64_t i = 0; i < MAX_EFF_CNT; i++) {
+    this->outputTorqueBuffer = RwMotorTorqueMsgPayload{};
+    for (uint64_t i = 0; i < RW_EFF_CNT; i++) {
         this->outputTorqueBuffer.motorTorque[i] =
             this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
     }

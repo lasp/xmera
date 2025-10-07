@@ -497,7 +497,7 @@ void ReactionWheelStateEffector::ReadInputs() {
         this->incomingCmdBuffer = this->rwMotorCmdInMsg();
         this->prevCommandTime = this->rwMotorCmdInMsg.timeWritten();
     } else {
-        this->incomingCmdBuffer = ArrayMotorTorqueMsgPayload{};
+        this->incomingCmdBuffer = RwMotorTorqueMsgPayload{};
     }
 
     //! - Set the NewRWCmds vector.  Using the data() method for raw speed

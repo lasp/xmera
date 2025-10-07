@@ -16,25 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module rwNullSpace
-%{
-   #include "rwNullSpace.h"
-%}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
+#ifndef SIM_RW_VOLTAGE_INPUT_H
+#define SIM_RW_VOLTAGE_INPUT_H
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+#include "definitions.h"
 
-%include "rwNullSpace.h"
+/*! @brief Structure used to define the message format of the motor voltage input  */
+typedef struct {
+    double voltage[RW_EFF_CNT];  //!< [V]     Motor voltage input value
+} RwMotorVoltageMsgPayload;
 
-%include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
-%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-%include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif

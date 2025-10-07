@@ -121,18 +121,18 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     numRW = fswSetupRW.getNumOfDevices()
 
     # Create RW motor torque input message
-    usMessageData = messaging.ArrayMotorTorqueMsgPayload()
+    usMessageData = messaging.RwMotorTorqueMsgPayload()
     if useLargeVoltage:
         usMessageData.motorTorque = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
     else:
         usMessageData.motorTorque = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
-    rwMotorTorqueInMsg = messaging.ArrayMotorTorqueMsg().write(usMessageData)
+    rwMotorTorqueInMsg = messaging.RwMotorTorqueMsg().write(usMessageData)
     module.torqueInMsg.subscribeTo(rwMotorTorqueInMsg)
 
     # create RW availability message
     if useAvailability:
         rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
-        rwAvailArray = np.zeros(messaging.MAX_EFF_CNT, dtype=int)
+        rwAvailArray = np.zeros(messaging.RW_EFF_CNT, dtype=int)
         rwAvailArray.fill(messaging.AVAILABLE)
         rwAvailArray[2] = messaging.UNAVAILABLE        # make 3rd RW unavailable
         rwAvailabilityMessage.wheelAvailability = rwAvailArray

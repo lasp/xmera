@@ -52,7 +52,7 @@ def test_mtbMomentumManagement():     # update "module" in this function name to
     variables
 
     - ``mtbDipoleCmds[MAX_EFF_CNT]``
-    - ``motorTorque[MAX_EFF_CNT]``
+    - ``motorTorque[RW_EFF_CNT]``
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
@@ -112,9 +112,9 @@ def mtbMomentumManagementModuleTestFunction():
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
 
     # attControl message
-    rwMotorTorqueInMsgContainer = messaging.ArrayMotorTorqueMsgPayload()
+    rwMotorTorqueInMsgContainer = messaging.RwMotorTorqueMsgPayload()
     rwMotorTorqueInMsgContainer.motorTorque = [0., 0., 0., 0.]
-    rwMotorTorqueInMsg = messaging.ArrayMotorTorqueMsg().write(rwMotorTorqueInMsgContainer)
+    rwMotorTorqueInMsg = messaging.RwMotorTorqueMsg().write(rwMotorTorqueInMsgContainer)
 
     # Setup logging on the test module output message so that we get all the writes to it
     resultMtbCmdOutMsg = module.mtbCmdOutMsg.recorder()

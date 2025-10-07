@@ -253,8 +253,8 @@ class BSKFswModels():
         self.attRef2Msg = messaging.AttRefMsg()
         self.attGuidMsg = messaging.AttGuidMsg()
         self.attGuid2Msg = messaging.AttGuidMsg()
-        self.cmdRwMotorMsg = messaging.ArrayMotorTorqueMsg()
-        self.cmdRwMotor2Msg = messaging.ArrayMotorTorqueMsg()
+        self.cmdRwMotorMsg = messaging.RwMotorTorqueMsg()
+        self.cmdRwMotor2Msg = messaging.RwMotorTorqueMsg()
 
         self.zeroGateWayMsgs()
 
@@ -272,5 +272,5 @@ class BSKFswModels():
         self.attRef2Msg.write(messaging.AttRefMsgPayload())
         self.attGuidMsg.write(messaging.AttGuidMsgPayload())
         self.attGuid2Msg.write(messaging.AttGuidMsgPayload())
-        self.cmdRwMotorMsg.write(messaging.ArrayMotorTorqueMsgPayload())
-        self.cmdRwMotor2Msg.write(messaging.ArrayMotorTorqueMsgPayload())
+        self.cmdRwMotorMsg.write(messaging.RwMotorTorqueMsgPayload())
+        self.cmdRwMotor2Msg.write(messaging.RwMotorTorqueMsgPayload())

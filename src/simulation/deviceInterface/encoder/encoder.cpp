@@ -60,7 +60,7 @@ void Encoder::reset(uint64_t currentSimNanos) {
     this->rwSpeedConverted = RWSpeedMsgPayload{};
 
     // Loop through the RW to set some internal parameters to default
-    for (int i = 0; i < MAX_EFF_CNT; i++) {
+    for (int i = 0; i < RW_EFF_CNT; i++) {
         // set all reaction wheels signal to nominal
         this->rwSignalState[i] = SIGNAL_NOMINAL;
         // set the remaining clicks to zero

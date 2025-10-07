@@ -23,10 +23,10 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - voltageOutMsg
-      - :ref:`ArrayMotorVoltageMsgPayload`
+      - :ref:`RwMotorVoltageMsgPayload`
       - RW motor voltage output message
     * - torqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - commanded RW motor torque input message
     * - rwParamsInMsg
       - :ref:`RWArrayConfigMsgPayload`
@@ -37,6 +37,3 @@ provides information on what this message is used for.
     * - rwSpeedInMsg
       - :ref:`RWSpeedMsgPayload`
       - (optional) RW device speed message
-
- 
-

@@ -25,7 +25,7 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - rwMotorTorqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - RW motor torque input message
     * - rwSpeedsInMsg
       - :ref:`RWSpeedMsgPayload`
@@ -37,10 +37,5 @@ provides information on what this message is used for.
       - :ref:`RWConstellationMsgPayload`
       - RW constellation configuration input message
     * - rwMotorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
+      - :ref:`RwMotorTorqueMsgPayload`
       - RW motor torque output message
-
-
-
-
-

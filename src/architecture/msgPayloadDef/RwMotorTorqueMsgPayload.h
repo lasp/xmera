@@ -17,14 +17,14 @@
 
  */
 
-#ifndef SIM_RW_VOLTAGE_INPUT_H
-#define SIM_RW_VOLTAGE_INPUT_H
+#ifndef RW_MOTOR_TORQUE_H
+#define RW_MOTOR_TORQUE_H
 
 #include "definitions.h"
 
-/*! @brief Structure used to define the message format of the motor voltage input  */
+/*! @brief Structure used to define the message format of the motor torque */
 typedef struct {
-    double voltage[MAX_EFF_CNT];  //!< [V]     Motor voltage input value
-} ArrayMotorVoltageMsgPayload;
+    double motorTorque[RW_EFF_CNT];  //!< [Nm]  motor torque array
+} RwMotorTorqueMsgPayload;
 
 #endif
