@@ -21,7 +21,9 @@
         "XMERA_MODULE_ROOTS":
           "${sourceDir}/fswAlgorithms/;${sourceDir}/simulation/;${sourceDir}/moduleTemplates/",
         "XMERA_ENABLE_GROUPS":
-          "simulation;fswAlgorithms;moduleTemplates"
+          "simulation;fswAlgorithms;moduleTemplates",
+        "XMERA_ENABLE_INTERNAL":
+          "YES"
       }
     },
     {
