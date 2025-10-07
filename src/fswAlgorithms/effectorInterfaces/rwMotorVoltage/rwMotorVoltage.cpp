@@ -22,9 +22,7 @@
  */
 
 #include "fswAlgorithms/effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string.h>
 
 #include <stdexcept>
 
@@ -43,7 +41,7 @@ void RwMotorVoltage::reset(uint64_t callTime) {
     this->rwConfigParams = this->rwParamsInMsg();
 
     /* reset variables */
-    memset(this->rwSpeedOld, 0, sizeof(double) * RW_EFF_CNT);
+    this->rwSpeedOld.setZero();
     this->resetFlag = BOOL_TRUE;
 
     /* Reset the prior time flag state.
@@ -79,15 +77,16 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
     }
 
     /* zero the output voltage vector */
-    double voltage[RW_EFF_CNT]; /*!< [V]   RW voltage output commands */
-    memset(voltage, 0, sizeof(double) * RW_EFF_CNT);
+    Eigen::Vector<double, RW_EFF_CNT> voltage{};
+    voltage.setZero();
 
     /* if the torque closed-loop is on, evaluate the feedback term */
     if (this->rwSpeedInMsg.isLinked()) {
         /* make sure the clock didn't just initialize, or the module was recently reset */
         if (this->priorTime != 0) {
             double dt = (callTime - this->priorTime) * NANO2SEC; /*!< [s]   control update period */
-            double OmegaDot[RW_EFF_CNT];                         /*!< [r/s^2] RW angular acceleration */
+            Eigen::Vector<double, RW_EFF_CNT> OmegaDot{};
+            OmegaDot.setZero();
             for (int i = 0; i < this->rwConfigParams.numRW; i++) {
                 if (rwAvailability.wheelAvailability[i] == AVAILABLE && this->resetFlag == BOOL_FALSE) {
                     OmegaDot[i] = (rwSpeed.wheelSpeeds[i] - this->rwSpeedOld[i]) / dt;

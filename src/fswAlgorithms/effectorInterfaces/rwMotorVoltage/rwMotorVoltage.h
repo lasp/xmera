@@ -31,6 +31,8 @@
 #include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h"
 
+#include <Eigen/Core>
+
 /*!@brief module configuration message
  */
 
@@ -52,7 +54,7 @@ class RwMotorVoltage : public SysModel {
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg; /*!< [-] The name of the RWs availability message*/
 
    private:
-    double rwSpeedOld[RW_EFF_CNT]; /*!< [r/s]  the RW spin rates from the prior control step */
+    Eigen::Vector<double, RW_EFF_CNT> rwSpeedOld{}; /*!< [r/s]  the RW spin rates from the prior control step */
     uint64_t priorTime{};            /*!< [ns]   Last time the module control was called */
     int resetFlag{};                 /*!< []     Flag indicating that a module reset occurred */
     RWArrayConfigMsgPayload
