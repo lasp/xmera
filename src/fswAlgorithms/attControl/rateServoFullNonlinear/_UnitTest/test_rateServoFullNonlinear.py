@@ -82,7 +82,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     module.Ki = intGain
     module.P = 150.0
     module.integralLimit = integralLimit
-    module.knownTorquePntB_B = (1,1,1)
+    module.knownTorquePntB_B = [1,1,1]
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -216,7 +216,7 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
     Lr = []
 
     #Read in variables
-    L = np.asarray(module.knownTorquePntB_B)
+    L = np.asarray(module.knownTorquePntB_B).flatten()
     steps = [0, 0, .5, 0, .5]
     omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
     omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
@@ -271,7 +271,7 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
         Lr4 = Lr3 + L
         Lr4 = -Lr4
         Lr.append(np.ndarray.tolist(Lr4))
-    return Lr
+    return np.array(Lr)
 
 
 
@@ -279,7 +279,7 @@ if __name__ == "__main__":
     test_rate_servo_full_nonlinear(False, #show plots T/F
                                    4,           # Number of RW
                                    0.01,        # Integral Gain
-                                   (0, 0, 0),   # omegap_BastR_B
-                                   (0, 0, 0),   # omega_BastR_B
+                                   [0, 0, 0],   # omegap_BastR_B
+                                   [0, 0, 0],   # omega_BastR_B
                                    20,          # integraLimit
                                    "ON")        # useRwAvailability

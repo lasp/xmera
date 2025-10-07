@@ -32,6 +32,8 @@
 
 #include <stdint.h>
 
+#include <Eigen/Core>
+
 /*! @brief The configuration structure for the rateServoFullNonlinear module.  */
 class RateServoFullNonlinear : public SysModel {
    public:
@@ -40,7 +42,7 @@ class RateServoFullNonlinear : public SysModel {
 
     double P;                     //!< [N*m*s]   Rate error feedback gain applied
     double Ki;                    //!< [N*m]     Integration feedback error on rate error
-    double knownTorquePntB_B[3];  //!< [N*m]     known external torque in body frame vector components
+    Eigen::Vector3d knownTorquePntB_B{Eigen::Vector3d::Zero()};  //!< [N*m]     known external torque in body frame vector components
     double integralLimit;         //!< [N*m]     Integration limit to avoid wind-up issue
 
     /* declare module IO interfaces */
@@ -54,8 +56,8 @@ class RateServoFullNonlinear : public SysModel {
 
    private:
     uint64_t priorTime{};   //!< [ns]      Last time the attitude control is called
-    double z[3];          //!< [rad]     integral state of delta_omega
-    double ISCPntB_B[9];  //!< [kg m^2] Spacecraft Inertia
+    Eigen::Vector3d z{};          //!< [rad]     integral state of delta_omega
+    Eigen::Matrix3d ISCPntB_B{};  //!< [kg m^2] Spacecraft Inertia
     RWArrayConfigMsgPayload
         rwConfigParams{};  //!< [-] struct to store message containing RW config parameters in body B frame
 };

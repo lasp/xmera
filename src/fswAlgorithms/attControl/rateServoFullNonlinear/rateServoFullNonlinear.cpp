@@ -22,8 +22,7 @@
  */
 
 #include "fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinear.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
@@ -41,7 +40,6 @@
 void RateServoFullNonlinear::reset(uint64_t callTime)
 {
     /*! - Read the input messages */
-    int i;
     VehicleConfigMsgPayload sc;
 
     /* make sure option msg connections are correctly done */
@@ -66,9 +64,7 @@ void RateServoFullNonlinear::reset(uint64_t callTime)
 
 
     sc = this->vehConfigInMsg();
-    for (i=0; i < 9; i++){
-        this->ISCPntB_B[i] = sc.ISCPntB_B[i];
-    };
+    this->ISCPntB_B = cArrayAsEigenMatrix3(sc.ISCPntB_B);
 
     this->rwConfigParams.numRW = 0;
     if (this->rwParamsInMsg.isLinked()) {
@@ -76,7 +72,7 @@ void RateServoFullNonlinear::reset(uint64_t callTime)
     }
 
     /* Reset the integral measure of the rate tracking error */
-    v3SetZero(this->z);
+    this->z = Eigen::Vector3d::Zero();
 
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
@@ -101,22 +97,6 @@ void RateServoFullNonlinear::updateState(uint64_t callTime)
 
     double              dt;                 /* [s] control update period */
 
-    double              Lr[3];              /* required control torque vector [Nm] */
-    double              omega_BastN_B[3];   /* angular velocity of B^ast relative to inertial N, in body frame components */
-    double              omega_BBast_B[3];   /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
-    double              omega_BN_B[3];      /* angular rate of the body B relative to inertial N, in body frame compononents */
-    double              *wheelGs;           /* Reaction wheel spin axis pointer */
-    /* Temporary variables */
-    double              v3_1[3];
-    double              v3_2[3];
-    double              v3_3[3];
-    double              v3_4[3];
-    double              v3_5[3];
-    double              v3_6[3];
-    double              v3_7[3];
-    int                 i;
-    double              intLimCheck;
-
     /*! - compute control update time */
     if (this->priorTime == 0) {
         dt = 0.0;
@@ -137,62 +117,59 @@ void RateServoFullNonlinear::updateState(uint64_t callTime)
         }
     }
 
+    Eigen::Vector3d omega_BR_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.omega_BR_B);
+    Eigen::Vector3d omega_RN_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.omega_RN_B);
+    Eigen::Vector3d domega_RN_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.domega_RN_B);
+
+    Eigen::Vector3d omega_BastR_B = Eigen::Map<const Eigen::Vector3d>(rateGuid.omega_BastR_B);
+    Eigen::Vector3d omegap_BastR_B = Eigen::Map<const Eigen::Vector3d>(rateGuid.omegap_BastR_B);
+
     /*! - compute body rate */
-    v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
+    Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
 
     /*! - compute the rate tracking error */
-    v3Add(rateGuid.omega_BastR_B, guidCmd.omega_RN_B, omega_BastN_B);
-    v3Subtract(omega_BN_B, omega_BastN_B, omega_BBast_B);
+    Eigen::Vector3d omega_BastN_B = omega_BastR_B + omega_RN_B;
+    Eigen::Vector3d omega_BBast_B = omega_BN_B - omega_BastN_B;
 
     /*! - integrate rate tracking error  */
     if (this->Ki > 0) {   /* check if integral feedback is turned on  */
-        v3Scale(dt, omega_BBast_B, v3_1);
-        v3Add(v3_1, this->z, this->z);             /* z = integral(del_omega) */
-        for (i=0;i<3;i++) {
-            intLimCheck = fabs(this->z[i]);
+        this->z += omega_BBast_B * dt;
+        for (uint32_t i=0; i<3; i++) {
+            double intLimCheck = fabs(this->z[i]);
             if (intLimCheck > this->integralLimit) {
                 this->z[i] *= this->integralLimit/intLimCheck;
             }
         }
     } else {
         /* integral feedback is turned off through a negative gain setting */
-        v3SetZero(this->z);
+        this->z = Eigen::Vector3d::Zero();
     }
 
     /*! - evaluate required attitude control torque Lr */
-    v3Scale(this->P, omega_BBast_B, Lr);              /* +P delta_omega */
-    v3Scale(this->Ki, this->z, v3_2);
-    v3Add(v3_2, Lr, Lr);                                      /* +Ki*z */
+    Eigen::Vector3d Lr = this->P * omega_BBast_B + this->Ki * this->z;
 
-    /* Lr += - omega_BastN x ([I]omega + [Gs]h_s) */
-    m33MultV3(RECAST3X3 this->ISCPntB_B, omega_BN_B, v3_3);
-    for(i = 0; i < this->rwConfigParams.numRW; i++)
+    Eigen::Matrix<double, RW_EFF_CNT, 3> G_s_B{};
+    G_s_B = (Eigen::Map<const Eigen::Matrix<double, 3, RW_EFF_CNT>>(this->rwConfigParams.GsMatrix_B, G_s_B.rows(), G_s_B.cols())).transpose();
+
+    Eigen::Vector3d H_B = this->ISCPntB_B * omega_BN_B;
+    for(uint32_t i = 0; i < this->rwConfigParams.numRW; i++)
     {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){ /* check if wheel is available */
-            wheelGs = &(this->rwConfigParams.GsMatrix_B[i*3]);
-            v3Scale(this->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
-                    wheelGs, v3_4);
-            v3Add(v3_4, v3_3, v3_3);
+            Eigen::Vector3d G_s_B_i = G_s_B.row(i);
+            Eigen::Vector3d h_s_i = this->rwConfigParams.JsList[i] * (omega_BN_B.dot(G_s_B_i) + wheelSpeeds.wheelSpeeds[i]) * G_s_B_i;
+            H_B += h_s_i;
+
         }
     }
-    v3Cross(omega_BastN_B, v3_3, v3_4);
-    v3Subtract(Lr, v3_4, Lr);
+    Lr -= omega_BastN_B.cross(H_B);
 
-    /* Lr +=  - [I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
-    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_5);
-    v3Subtract(guidCmd.domega_RN_B, v3_5, v3_6);
-    v3Add(v3_6, rateGuid.omegap_BastR_B, v3_6);
-    m33MultV3(RECAST3X3 this->ISCPntB_B, v3_6, v3_7);
-    v3Subtract(Lr, v3_7, Lr);
-
-    /* Add external torque: Lr += L */
-    v3Add(this->knownTorquePntB_B, Lr, Lr);
+    Lr += - this->ISCPntB_B * (omegap_BastR_B + domega_RN_B - omega_BN_B.cross(omega_RN_B)) + this->knownTorquePntB_B;
 
     /* Change sign to compute the net positive control torque onto the spacecraft */
-    v3Scale(-1.0, Lr, Lr);
+    Eigen::Vector3d u_s = -Lr;
 
     /*! - Set output message and pass it to the message bus */
-    v3Copy(Lr, controlOut.torqueRequestBody);
+    eigenVectorToCArray(u_s, controlOut.torqueRequestBody);
     this->cmdTorqueOutMsg.write(&controlOut, moduleID, callTime);
 
     return;
