@@ -234,7 +234,7 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
     Lr = []
 
     #Read in variables
-    L = np.asarray(module.knownTorquePntB_B)
+    L = np.asarray(module.knownTorquePntB_B).flatten()
     steps = [0, 0, .5, 0, .5]
     omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
     omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
@@ -289,7 +289,7 @@ def findTrueTorques(module,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,nu
         Lr5 = Lr4 + L
         Lr5 = -Lr5
         Lr.append(np.ndarray.tolist(Lr5))
-    return Lr
+    return np.array(Lr)
 
 
 
@@ -302,5 +302,6 @@ if __name__ == "__main__":
                       0.01,     # intGain
                       0,        # rwNum
                       0.0,      # integralLimit
+                      1,            # ctrlLaw
                       "NO"      # useRwAvailability ("NO", "ON", "OFF")
                       )
