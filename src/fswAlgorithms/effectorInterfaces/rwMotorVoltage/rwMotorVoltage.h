@@ -31,8 +31,6 @@
 #include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
-
 /*!@brief module configuration message
  */
 
@@ -58,8 +56,6 @@ class RwMotorVoltage : public SysModel {
 
     RWArrayConfigMsgPayload
         rwConfigParams; /*!< [-] struct to store message containing RW config parameters in body B frame */
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

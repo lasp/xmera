@@ -26,6 +26,8 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
 
+#include <stdexcept>
+
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that
  retain time varying states between function calls are reset to their default values.
  @return void
@@ -34,7 +36,7 @@
 void RwMotorVoltage::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->rwParamsInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwMotorVoltage.rwParamsInMsg wasn't connected.");
+        throw std::invalid_argument("rwMotorVoltage.rwParamsInMsg wasn't connected.");
     }
 
     /*! - Read static RW config data message and store it in module variables*/
@@ -62,7 +64,7 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
 
     // check if the required input messages are included
     if (!this->torqueInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rwMotorVoltage.torqueInMsg wasn't connected.");
+        throw std::invalid_argument("rwMotorVoltage.torqueInMsg wasn't connected.");
     }
 
     torqueCmd = this->torqueInMsg();
