@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -47,28 +47,32 @@ class CenterOfBrightness : public SysModel {
     Eigen::VectorXi getWindowSize() const;
     void setRelativeBrightnessIncreaseThreshold(double increaseThreshold);
     double getRelativeBrightnessIncreaseThreshold() const;
+    void setPixelThreshold(double PixelThreshold);
+    double getPixelThreshold() const;
+    void setFileName(const std::string &fileName);
+    std::string getFileName() const;
+    void setBlurSize(int32_t blur);
+    int32_t getBlurSize() const;
+    void setSaveImages(bool save);
+    bool getSaveImages() const;
+    void setSaveDir(const std::string &directory);
+    std::string getSaveDir() const;
+    void setNumberOfPointsBrightnessAverage(int32_t rollingAverage);
+    int32_t getNumberOfPointsBrightnessAverage() const;
 
-   private:
-    std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
-    std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
-    void computeWindow(cv::Mat const &image);
-    void applyWindow(cv::Mat const &image) const;
-    void updateBrightnessHistory(double brightness);
-
-   public:
     Message<OpNavCOBMsgPayload> opnavCOBOutMsg;     //!< The name of the OpNav center of brightness output message
     ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< The name of the camera output message
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
-    /* Fields that can be initialized*/
-    std::string filename = "";                    //!< Filename for module to read an image directly
-    int32_t blurSize = 5;                         //!< [px] Size of the blurring box in pixels
-    int32_t threshold = 50;                       //!< [px] Threshold value on whether or not to include the solution
-    bool saveImages = false;                      //!< [-] 1 to save images to file for debugging
-    std::string saveDir = "./";                   //!< The name of the directory to save images
-    int32_t numberOfPointsBrightnessAverage = 5;  //!< [-] number of points to be used for rolling average of brightness
-
    private:
+    cv::Mat readImage(CameraImageMsgPayload &imageBuffer, OpNavCOBMsgPayload &cobBuffer, uint64_t currentSimNanos);
+    std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
+    std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
+    void computeWindow(cv::Mat const &image);
+    void applyWindow(cv::Mat const &image) const;
+    OpNavCOBMsgPayload findCob(const cv::Mat &imageCV, const CameraImageMsgPayload &imageBuffer);
+    void updateBrightnessHistory(double brightness);
+
     uint64_t sensorTimeTag;                    //!< [ns] Current time tag for sensor out
     Eigen::VectorXi windowCenter{};            //!< [px] center of mask to be used for windowing
     int32_t windowWidth{};                     //!< [px] width of mask to be used for windowing
@@ -78,6 +82,12 @@ class CenterOfBrightness : public SysModel {
     bool validWindow = false;             //!< [px] true if window is set, false if center, height, or width equal 0
     Eigen::VectorXd brightnessHistory{};  //!< [-] brightness history to be used for rolling average
     double relativeBrightnessIncreaseThreshold{};  //!< [-] minimum relative brightness increase (if less, invalidated)
+    double pixelThreshold{};  ////!< [-] minimum pixel brightness threshold used for detecting bright pixels
+    std::string fileName{};   //!< Filename for module to read an image directly
+    int32_t blurSize{};       //!< [px] Size of the blurring box in pixels
+    bool saveImages{};        //!< [-] 1 to save images to file for debugging
+    std::string saveDir{};    //!< The name of the directory to save images
+    int32_t numberOfPointsBrightnessAverage{};  //!< [-] number of points to be used for rolling average of brightness
     /* OpenCV specific arguments needed for finding all non-zero pixels*/
     cv::Mat imageGray;  //!< [cv mat] Gray scale image for weighting
 };

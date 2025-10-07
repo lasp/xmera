@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -19,8 +19,10 @@
 
 #include "centerOfBrightness.h"
 
+/*! Module constructor */
 CenterOfBrightness::CenterOfBrightness() = default;
 
+/*! Module destructor */
 CenterOfBrightness::~CenterOfBrightness() = default;
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
@@ -30,7 +32,7 @@ CenterOfBrightness::~CenterOfBrightness() = default;
  */
 void CenterOfBrightness::reset(uint64_t currentSimNanos) {
     if (!this->imageInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CenterOfBrightness.imageInMsg wasn't connected.");
+        throw std::invalid_argument("CenterOfBrightness.imageInMsg wasn't connected.");
     }
 }
 
@@ -43,9 +45,30 @@ void CenterOfBrightness::reset(uint64_t currentSimNanos) {
  */
 void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
     CameraImageMsgPayload imageBuffer{};
-
     OpNavCOBMsgPayload cobBuffer{};
 
+    cv::Mat imageCV = this->readImage(imageBuffer, cobBuffer, currentSimNanos);
+    if (imageCV.empty()) {
+        this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
+        return;
+    }
+    this->computeWindow(imageCV);
+    if (this->validWindow) {
+        this->applyWindow(imageCV);
+    }
+    cobBuffer = this->findCob(imageCV, imageBuffer);
+    this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
+}
+
+/*! This method retrieves the image data.
+@return OpenCV image or empty if no valid image is found.
+@param imageBuffer Reference to the image payload buffer.
+@param cobBuffer Reference to the COB output buffer.
+@param currentSimNanos Current simulation time in nanoseconds.
+ */
+cv::Mat CenterOfBrightness::readImage(CameraImageMsgPayload &imageBuffer,
+                                      OpNavCOBMsgPayload &cobBuffer,
+                                      uint64_t currentSimNanos) {
     cv::Mat imageCV;
 
     /*! - Read in the image*/
@@ -54,64 +77,29 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
         this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
-    if (!this->filename.empty()) {
-        imageCV = cv::imread(this->filename, cv::IMREAD_COLOR);
+    if (!this->fileName.empty()) {
+        imageCV = cv::imread(this->fileName, cv::IMREAD_COLOR);
     } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char *)imageBuffer.imagePointer,
                                                 (char *)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-    } else {
-        /*! - If no image is present, write zeros in message */
-        this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
-        return;
+    }
+    /*! - If no image is present, write zeros in message */
+    else {
+        return cv::Mat();
     }
 
-    std::string dirName;
     /*! - Save image to prescribed path if requested */
+    std::string dirName;
     if (this->saveImages) {
-        dirName = this->saveDir + std::to_string((double)currentSimNanos * NANO2SEC) + ".png";
+        dirName = std::format("{}{}.png", this->saveDir, (double)currentSimNanos * NANO2SEC);
         if (!cv::imwrite(dirName, imageCV)) {
-            bskLogger.bskLog(BSK_WARNING, "CenterOfBrightness: wasn't able to save images.");
+            std::cerr << "Warning: CenterOfBrightness wasn't able to save images." << std::endl;
         }
     }
 
-    this->computeWindow(imageCV);
-    if (this->validWindow) {
-        this->applyWindow(imageCV);
-    }
-
-    std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
-
-    /*!- If no lit pixels are found do not validate the image as a measurement */
-    if (!locations.empty()) {
-        std::pair<Eigen::Vector2d, double> cobData;
-        cobData = this->computeWeightedCenterOfBrightness(locations);
-
-        double averageBrightnessOld = 0.0;
-        if (this->brightnessHistory.rows() > 0) {
-            averageBrightnessOld = this->brightnessHistory.mean();
-        }
-        this->updateBrightnessHistory(cobData.second);
-        double averageBrightnessNew = this->brightnessHistory.mean();
-        double brightnessIncrease = 0.0;
-        if (averageBrightnessOld > 0.0) {
-            brightnessIncrease = (averageBrightnessNew - averageBrightnessOld) / averageBrightnessOld;
-        }
-
-        /*! If brightness increase is less than brightness increase threshold, do not validate image */
-        if (brightnessIncrease >= this->relativeBrightnessIncreaseThreshold) {
-            cobBuffer.valid = true;
-            cobBuffer.timeTag = this->sensorTimeTag;
-            cobBuffer.cameraID = imageBuffer.cameraID;
-            cobBuffer.centerOfBrightness[0] = cobData.first[0] + 0.5;
-            cobBuffer.centerOfBrightness[1] = cobData.first[1] + 0.5;
-            cobBuffer.pixelsFound = static_cast<int32_t>(locations.size());
-        }
-        cobBuffer.rollingAverageBrightness = averageBrightnessNew;
-    }
-
-    this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
+    return imageCV;
 }
 
 /*! Method extracts the bright pixels (above a given threshold) by first grayscaling then bluring image.
@@ -125,7 +113,7 @@ std::vector<cv::Vec2i> CenterOfBrightness::extractBrightPixels(cv::Mat image) {
     /*! - Grayscale, blur, and threshold iamge*/
     cv::cvtColor(image, this->imageGray, cv::COLOR_BGR2GRAY);
     cv::blur(this->imageGray, blured, cv::Size(this->blurSize, this->blurSize));
-    cv::threshold(blured, image, this->threshold, 255, cv::THRESH_BINARY);
+    cv::threshold(blured, image, this->pixelThreshold, 255, cv::THRESH_BINARY);
 
     /*! - Find all the non-zero pixels in the image*/
     cv::findNonZero(image, locations);
@@ -237,6 +225,47 @@ void CenterOfBrightness::computeWindow(cv::Mat const &image) {
     assert(windowPointBottomRight[1] <= image.size().height);
 }
 
+/*! This method finds the center of brightness (COB) from the image and updates the COB output buffer.
+ @return void
+ @param imageCV OpenCV matrix of the input image
+ @param imageBuffer Reference to the image payload buffer
+
+ */
+OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat &imageCV, const CameraImageMsgPayload &imageBuffer) {
+    OpNavCOBMsgPayload cobBuffer{};
+    std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
+
+    /*!- If no lit pixels are found do not validate the image as a measurement */
+    if (!locations.empty()) {
+        std::pair<Eigen::Vector2d, double> cobData;
+        cobData = this->computeWeightedCenterOfBrightness(locations);
+
+        double averageBrightnessOld = 0.0;
+        if (this->brightnessHistory.rows() > 0) {
+            averageBrightnessOld = this->brightnessHistory.mean();
+        }
+        this->updateBrightnessHistory(cobData.second);
+        double averageBrightnessNew = this->brightnessHistory.mean();
+        double brightnessIncrease = 0.0;
+        if (averageBrightnessOld > 0.0) {
+            brightnessIncrease = (averageBrightnessNew - averageBrightnessOld) / averageBrightnessOld;
+        }
+
+        /*! If brightness increase is less than brightness increase threshold, do not validate image */
+        if (brightnessIncrease >= this->relativeBrightnessIncreaseThreshold) {
+            cobBuffer.valid = true;
+            cobBuffer.timeTag = this->sensorTimeTag;
+            cobBuffer.cameraID = imageBuffer.cameraID;
+            cobBuffer.centerOfBrightness[0] = cobData.first[0] + 0.5;
+            cobBuffer.centerOfBrightness[1] = cobData.first[1] + 0.5;
+            cobBuffer.pixelsFound = static_cast<int32_t>(locations.size());
+        }
+        cobBuffer.rollingAverageBrightness = averageBrightnessNew;
+    }
+
+    return cobBuffer;
+}
+
 /*! Set the mask center for windowing
     @param Eigen::Vector2i center [px]
     @return void
@@ -280,3 +309,71 @@ void CenterOfBrightness::setRelativeBrightnessIncreaseThreshold(double increaseT
 double CenterOfBrightness::getRelativeBrightnessIncreaseThreshold() const {
     return this->relativeBrightnessIncreaseThreshold;
 }
+
+/*! Set the pixel brightness threshold used for detecting bright pixels
+    @param double pixelThreshold
+    @return void
+    */
+void CenterOfBrightness::setPixelThreshold(double PixelThreshold) { this->pixelThreshold = PixelThreshold; }
+
+/*! Get the pixel brightness threshold used for detecting bright pixels
+    @return double pixelThreshold
+    */
+double CenterOfBrightness::getPixelThreshold() const { return this->pixelThreshold; }
+
+/*! Set the filename for the module to read an image directly
+    @param std::string fileName
+    @return void
+*/
+void CenterOfBrightness::setFileName(const std::string &fileName) { this->fileName = fileName; }
+
+/*! Get the filename for the module to read an image directly
+    @return std::string fileName
+*/
+std::string CenterOfBrightness::getFileName() const { return this->fileName; }
+
+/*! Set the blur size for the image processing filter
+    @param int32_t blur
+    @return void
+*/
+void CenterOfBrightness::setBlurSize(int32_t blur) { this->blurSize = blur; }
+
+/*! Get the blur size for the image processing filter
+    @return int32_t blur
+*/
+int32_t CenterOfBrightness::getBlurSize() const { return this->blurSize; }
+
+/*! Enable or disable saving debug images to file
+    @param bool save
+    @return void
+*/
+void CenterOfBrightness::setSaveImages(bool save) { this->saveImages = save; }
+
+/*! Get whether saving debug images is enabled
+    @return bool save
+*/
+bool CenterOfBrightness::getSaveImages() const { return this->saveImages; }
+
+/*! Set the directory where images should be saved
+    @param std::string directory
+    @return void
+*/
+void CenterOfBrightness::setSaveDir(const std::string &directory) { this->saveDir = directory; }
+
+/*! Get the directory where images are saved
+    @return std::string directory
+*/
+std::string CenterOfBrightness::getSaveDir() const { return this->saveDir; }
+
+/*! Set the number of points used for rolling brightness averaging
+    @param int32_t rollingAverage
+    @return void
+*/
+void CenterOfBrightness::setNumberOfPointsBrightnessAverage(int32_t rollingAverage) {
+    this->numberOfPointsBrightnessAverage = rollingAverage;
+}
+
+/*! Get the number of points used for rolling brightness averaging
+    @return int32_t rollingAverage
+*/
+int32_t CenterOfBrightness::getNumberOfPointsBrightnessAverage() const { return this->numberOfPointsBrightnessAverage; }
