@@ -11,6 +11,11 @@ set(XMERA_ENABLE_GROUPS ""
   "Semicolon-separated group names or globs to enable."
 )
 
+set(XMERA_ENABLE_INTERNAL "NO"
+  CACHE STRING
+  "Whether to enable modules that are marked as INTERNAL (default NO)"
+)
+
 if(APPLE)
   set(XMERA_RPATH_ORIGIN "@loader_path")
 else()
@@ -35,15 +40,19 @@ function(_xmera_is_prefix prefix value out_var)
 endfunction()
 
 function(xmera_is_module_enabled module_path out_var)
+  cmake_parse_arguments(PARSE_ARGV 2 arg "INTERNAL" "" "")
+
   set("${out_var}" OFF PARENT_SCOPE)
 
-  foreach(_prefix IN LISTS XMERA_ENABLE_GROUPS)
-    _xmera_is_prefix("${_prefix}." "${module_path}." _result)
-    if(_result)
-      set("${out_var}" "${_result}" PARENT_SCOPE)
-      return()
-    endif()
-  endforeach()
+  if((NOT arg_INTERNAL) OR XMERA_ENABLE_INTERNAL)
+    foreach(_prefix IN LISTS XMERA_ENABLE_GROUPS)
+      _xmera_is_prefix("${_prefix}." "${module_path}." _result)
+      if(_result)
+        set("${out_var}" "${_result}" PARENT_SCOPE)
+        return()
+      endif()
+    endforeach()
+  endif()
 endfunction(xmera_is_module_enabled)
 
 function(xmera_add_swig_module module)

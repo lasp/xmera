@@ -51,7 +51,9 @@ xmera_add_swig_module(architecture.bskUtilities)
 xmera_add_swig_module(architecture.orbitalMotion)
 target_sources(architecture.orbitalMotion PRIVATE orbitalMotion.cpp)
 
-xmera_add_swig_module(architecture.BSpline)
-target_sources(architecture.BSpline PRIVATE BSpline.cpp)
+if(XMERA_ENABLE_INTERNAL)
+  xmera_add_swig_module(architecture.BSpline)
+  target_sources(architecture.BSpline PRIVATE BSpline.cpp)
+endif()
 
 add_subdirectory(tests)
