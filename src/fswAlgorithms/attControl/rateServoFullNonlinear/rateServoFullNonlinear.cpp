@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,183 +16,119 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
-    rateServoFullNonlinear Module
-
- */
 
 #include "fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinear.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
-#include <string.h>
-#include <math.h>
+#include <stdexcept>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param this The configuration data associated with the servo rate control
  @param callTime The clock time at which the function was called (nanoseconds)
- @param moduleID The module identifier
  */
-void RateServoFullNonlinear::reset(uint64_t callTime)
-{
-    /*! - Read the input messages */
-    int i;
-    VehicleConfigMsgPayload sc;
-
+void RateServoFullNonlinear::reset(uint64_t callTime) {
     /* make sure option msg connections are correctly done */
     if (this->rwParamsInMsg.isLinked()) {
         if (!this->rwSpeedsInMsg.isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR,"The rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+            throw std::invalid_argument(
+                "rateServoFullNonlinear.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
     }
 
     // check if essential messages are connected
     if (!this->guidInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.guidInMsg wasn't connected.");
+        throw std::invalid_argument("rateServoFullNonlinear.guidInMsg wasn't connected.");
     }
 
     if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
+        throw std::invalid_argument("rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
     }
 
     if (!this->rateSteeringInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
+        throw std::invalid_argument("rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
     }
 
+    VehicleConfigMsgPayload sc = this->vehConfigInMsg();
+    RWArrayConfigMsgPayload rwConfigParams{};
+    bool rwParamsIsLinked{};
 
-    sc = this->vehConfigInMsg();
-    for (i=0; i < 9; i++){
-        this->ISCPntB_B[i] = sc.ISCPntB_B[i];
-    };
-
-    this->rwConfigParams.numRW = 0;
     if (this->rwParamsInMsg.isLinked()) {
-        this->rwConfigParams = this->rwParamsInMsg();
+        rwConfigParams = this->rwParamsInMsg();
+        rwParamsIsLinked = true;
     }
+    this->numRW = rwConfigParams.numRW;
 
-    /* Reset the integral measure of the rate tracking error */
-    v3SetZero(this->z);
-
-    /* Reset the prior time flag state.
-     If zero, control time step not evaluated on the first function call */
-    this->priorTime = 0;
-
+    this->algorithm.reset(sc, rwConfigParams, rwParamsIsLinked);
 }
 
 /*! This method takes and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
  @return void
- @param this The configuration data associated with the servo rate control
  @param callTime The clock time at which the function was called (nanoseconds)
- @param moduleID The module identifier
  */
-void RateServoFullNonlinear::updateState(uint64_t callTime)
-{
-    AttGuidMsgPayload   guidCmd;                    /*!< Guidance input Message */
-    RWSpeedMsgPayload   wheelSpeeds = {};           /*!< Reaction wheel speed estimates input message */
-    RWAvailabilityMsgPayload wheelsAvailability = {};/*!< Reaction wheel availability input message */
-    RateCmdMsgPayload   rateGuid;                   /*!< rate steering law message input message */
-    CmdTorqueBodyMsgPayload controlOut = {};        /*!< commanded torque output message */
+void RateServoFullNonlinear::updateState(uint64_t callTime) {
+    AttGuidMsgPayload guidCmd{};                   /*!< Guidance input Message */
+    RWSpeedMsgPayload wheelSpeeds{};               /*!< Reaction wheel speed estimates input message */
+    RWAvailabilityMsgPayload wheelsAvailability{}; /*!< Reaction wheel availability input message */
+    RateCmdMsgPayload rateGuid{};                  /*!< rate steering law message input message */
 
-    double              dt;                 /* [s] control update period */
-
-    double              Lr[3];              /* required control torque vector [Nm] */
-    double              omega_BastN_B[3];   /* angular velocity of B^ast relative to inertial N, in body frame components */
-    double              omega_BBast_B[3];   /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
-    double              omega_BN_B[3];      /* angular rate of the body B relative to inertial N, in body frame compononents */
-    double              *wheelGs;           /* Reaction wheel spin axis pointer */
-    /* Temporary variables */
-    double              v3_1[3];
-    double              v3_2[3];
-    double              v3_3[3];
-    double              v3_4[3];
-    double              v3_5[3];
-    double              v3_6[3];
-    double              v3_7[3];
-    int                 i;
-    double              intLimCheck;
-
-    /*! - compute control update time */
-    if (this->priorTime == 0) {
-        dt = 0.0;
-    } else {
-        dt = (callTime - this->priorTime) * NANO2SEC;
-    }
-    this->priorTime = callTime;
-
-    /*! - Zero and read the dynamic input messages */
     guidCmd = this->guidInMsg();
     rateGuid = this->rateSteeringInMsg();
 
-
-    if(this->rwConfigParams.numRW > 0) {
+    if (this->numRW > 0) {
         wheelSpeeds = this->rwSpeedsInMsg();
         if (this->rwAvailInMsg.isLinked()) {
             wheelsAvailability = this->rwAvailInMsg();
         }
     }
 
-    /*! - compute body rate */
-    v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
+    CmdTorqueBodyMsgPayload controlOut = algorithm.update(callTime, guidCmd, rateGuid, wheelSpeeds, wheelsAvailability);
 
-    /*! - compute the rate tracking error */
-    v3Add(rateGuid.omega_BastR_B, guidCmd.omega_RN_B, omega_BastN_B);
-    v3Subtract(omega_BN_B, omega_BastN_B, omega_BBast_B);
-
-    /*! - integrate rate tracking error  */
-    if (this->Ki > 0) {   /* check if integral feedback is turned on  */
-        v3Scale(dt, omega_BBast_B, v3_1);
-        v3Add(v3_1, this->z, this->z);             /* z = integral(del_omega) */
-        for (i=0;i<3;i++) {
-            intLimCheck = fabs(this->z[i]);
-            if (intLimCheck > this->integralLimit) {
-                this->z[i] *= this->integralLimit/intLimCheck;
-            }
-        }
-    } else {
-        /* integral feedback is turned off through a negative gain setting */
-        v3SetZero(this->z);
-    }
-
-    /*! - evaluate required attitude control torque Lr */
-    v3Scale(this->P, omega_BBast_B, Lr);              /* +P delta_omega */
-    v3Scale(this->Ki, this->z, v3_2);
-    v3Add(v3_2, Lr, Lr);                                      /* +Ki*z */
-
-    /* Lr += - omega_BastN x ([I]omega + [Gs]h_s) */
-    m33MultV3(RECAST3X3 this->ISCPntB_B, omega_BN_B, v3_3);
-    for(i = 0; i < this->rwConfigParams.numRW; i++)
-    {
-        if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){ /* check if wheel is available */
-            wheelGs = &(this->rwConfigParams.GsMatrix_B[i*3]);
-            v3Scale(this->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
-                    wheelGs, v3_4);
-            v3Add(v3_4, v3_3, v3_3);
-        }
-    }
-    v3Cross(omega_BastN_B, v3_3, v3_4);
-    v3Subtract(Lr, v3_4, Lr);
-
-    /* Lr +=  - [I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
-    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_5);
-    v3Subtract(guidCmd.domega_RN_B, v3_5, v3_6);
-    v3Add(v3_6, rateGuid.omegap_BastR_B, v3_6);
-    m33MultV3(RECAST3X3 this->ISCPntB_B, v3_6, v3_7);
-    v3Subtract(Lr, v3_7, Lr);
-
-    /* Add external torque: Lr += L */
-    v3Add(this->knownTorquePntB_B, Lr, Lr);
-
-    /* Change sign to compute the net positive control torque onto the spacecraft */
-    v3Scale(-1.0, Lr, Lr);
-
-    /*! - Set output message and pass it to the message bus */
-    v3Copy(Lr, controlOut.torqueRequestBody);
     this->cmdTorqueOutMsg.write(&controlOut, moduleID, callTime);
-
-    return;
 }
+
+/*! Setter method for the gain P.
+ @return void
+ @param gain [N*m*s] Rate error feedback gain
+*/
+void RateServoFullNonlinear::setP(const double gain) { this->algorithm.setP(gain); }
+
+/*! Getter method for the gain P.
+ @return const double
+*/
+double RateServoFullNonlinear::getP() const { return this->algorithm.getP(); }
+
+/*! Setter method for the gain Ki.
+ @return void
+ @param gain [N*m] Integral feedback gain
+*/
+void RateServoFullNonlinear::setKi(const double gain) { this->algorithm.setKi(gain); }
+
+/*! Getter method for the gain Ki.
+ @return const double
+*/
+double RateServoFullNonlinear::getKi() const { return this->algorithm.getKi(); }
+
+/*! Setter method for the integral limit.
+ @return void
+ @param limit [N*m*s] Integral limit
+*/
+void RateServoFullNonlinear::setIntegralLimit(const double limit) { this->algorithm.setIntegralLimit(limit); }
+
+/*! Getter method for the integral limit.
+ @return const double
+*/
+double RateServoFullNonlinear::getIntegralLimit() const { return this->algorithm.getIntegralLimit(); }
+
+/*! Setter method for the known external torque about point B.
+ @return void
+ @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
+*/
+void RateServoFullNonlinear::setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B) {
+    this->algorithm.setKnownTorquePntB_B(knownTorquePntB_B);
+}
+
+/*! Getter method for the known torque about point B.
+ @return const Eigen::Vector3d
+*/
+Eigen::Vector3d RateServoFullNonlinear::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }

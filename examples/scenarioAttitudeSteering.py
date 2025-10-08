@@ -390,12 +390,12 @@ def run(show_plots, simCase):
     servo.modelTag = "rate_servo"
 
     if simCase == 1:
-        servo.Ki = -1
+        servo.setKi(-1)
     else:
-        servo.Ki = 5.
-    servo.P = 150.0
-    servo.integralLimit = 2. / servo.Ki * 0.1
-    servo.knownTorquePntB_B = [0., 0., 0.]
+        servo.setKi(5.)
+    servo.setP(150.0)
+    servo.setIntegralLimit(2. / servo.getKi() * 0.1)
+    servo.setKnownTorquePntB_B([0., 0., 0.])
 
     scSim.AddModelToTask(simTaskName, servo)
 

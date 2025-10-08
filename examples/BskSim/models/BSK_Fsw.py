@@ -402,10 +402,10 @@ class BSKFswModels:
         self.rateServo.rateSteeringInMsg.subscribeTo(self.mrpSteering.rateCmdOutMsg)
         self.rateServo.cmdTorqueOutMsg = self.cmdTorqueMsg
 
-        self.rateServo.Ki = 5.0
-        self.rateServo.P = 150.0
-        self.rateServo.integralLimit = 2. / self.rateServo.Ki * 0.1
-        self.rateServo.knownTorquePntB_B = [0., 0., 0.]
+        self.rateServo.setKi(5.0)
+        self.rateServo.setP(150.0)
+        self.rateServo.setIntegralLimit(2. / self.rateServo.getKi() * 0.1)
+        self.rateServo.setKnownTorquePntB_B([0., 0., 0.])
 
     def SetVehicleConfiguration(self):
         """Set the spacecraft configuration information"""

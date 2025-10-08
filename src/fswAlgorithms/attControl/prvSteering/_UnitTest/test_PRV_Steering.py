@@ -77,10 +77,10 @@ def subModuleTestFunction(show_plots, simCase):
     module.K1 = 0.15
     module.K3 = 1.0
     module.omega_max = 1.5*macros.D2R
-    servo.Ki = 0.01
-    servo.P = 150.0
-    servo.integralLimit = 2./servo.Ki * 0.1
-    servo.knownTorquePntB_B = [0., 0., 0.]
+    servo.setKi(0.01)
+    servo.setP(150.0)
+    servo.setIntegralLimit(2./servo.getKi() * 0.1)
+    servo.setKnownTorquePntB_B([0., 0., 0.])
 
 
     #   Create input message and size it because the regular creator of that message

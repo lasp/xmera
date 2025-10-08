@@ -17,10 +17,8 @@
 
  */
 
-#ifndef RATE_SERVO_FULL_NONLINEAR_H
-#define RATE_SERVO_FULL_NONLINEAR_H
-
-#include <stdint.h>
+#ifndef RATE_SERVO_FULL_NONLINEAR_C_H
+#define RATE_SERVO_FULL_NONLINEAR_C_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
@@ -31,24 +29,27 @@
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinearAlgorithm.h"
 
-#include <Eigen/Core>
+#include <stdint.h>
 
 /*! @brief The configuration structure for the rateServoFullNonlinear module.  */
-class RateServoFullNonlinear : public SysModel {
+class RateServoFullNonlinear_C : public SysModel {
    public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    void setP(const double gain);
-    double getP() const;
-    void setKi(const double gain);
-    double getKi() const;
-    void setIntegralLimit(const double limit);
-    double getIntegralLimit() const;
-    void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
-    Eigen::Vector3d getKnownTorquePntB_B() const;
+    /* declare module public variables */
+    double P;                     //!< [N*m*s]   Rate error feedback gain applied
+    double Ki;                    //!< [N*m]     Integration feedback error on rate error
+    double knownTorquePntB_B[3];  //!< [N*m]     known external torque in body frame vector components
+    double integralLimit;         //!< [N*m]     Integration limit to avoid wind-up issue
+
+    /* declare module private variables */
+    uint64_t priorTime;   //!< [ns]      Last time the attitude control is called
+    double z[3];          //!< [rad]     integral state of delta_omega
+    double ISCPntB_B[9];  //!< [kg m^2] Spacecraft Inertia
+    RWArrayConfigMsgPayload
+        rwConfigParams;  //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module IO interfaces */
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;     //!< commanded torque output message
@@ -59,9 +60,7 @@ class RateServoFullNonlinear : public SysModel {
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;   //!< (optional) RW configuration parameter input message
     ReadFunctor<RateCmdMsgPayload> rateSteeringInMsg;     //!< commanded rate input message
 
-   private:
-    RateServoFullNonlinearAlgorithm algorithm{};
-    uint32_t numRW{};  //!< number of reaction wheels
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif
