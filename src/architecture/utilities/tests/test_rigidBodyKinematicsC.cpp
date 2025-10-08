@@ -31,7 +31,6 @@ extern "C" {
 
 constexpr double kAccuracy = 1e-10;
 
-
 TEST(RigidBodyKinematicsC, AllTests) {
     double C[3][3];
     double C2[3][3];
