@@ -36,6 +36,9 @@ void RwMotorVoltage::reset(uint64_t callTime) {
     if (!this->rwParamsInMsg.isLinked()) {
         throw std::invalid_argument("rwMotorVoltage.rwParamsInMsg wasn't connected.");
     }
+    if (!this->torqueInMsg.isLinked()) {
+        throw std::invalid_argument("rwMotorVoltage.torqueInMsg wasn't connected.");
+    }
 
     /*! - Read static RW config data message and store it in module variables*/
     this->rwConfigParams = this->rwParamsInMsg();
@@ -59,11 +62,6 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
     //    double              torqueCmd[RW_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
     RwMotorTorqueMsgPayload torqueCmd;        /*!< copy of RW motor torque input message*/
     RwMotorVoltageMsgPayload voltageOut = {}; /*!< -- copy of the output message */
-
-    // check if the required input messages are included
-    if (!this->torqueInMsg.isLinked()) {
-        throw std::invalid_argument("rwMotorVoltage.torqueInMsg wasn't connected.");
-    }
 
     torqueCmd = this->torqueInMsg();
 
