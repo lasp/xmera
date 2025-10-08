@@ -34,6 +34,7 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
+import Basilisk.architecture.messaging
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk

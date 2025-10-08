@@ -36,6 +36,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk import __path__
 bskPath = __path__[0]
 
+import Basilisk.architecture.messaging
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import spiceInterface

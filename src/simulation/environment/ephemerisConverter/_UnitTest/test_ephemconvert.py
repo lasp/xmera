@@ -24,6 +24,7 @@
 #
 
 import numpy as np
+import Basilisk.architecture.messaging
 from Basilisk import __path__
 from Basilisk.simulation import ephemerisConverter
 from Basilisk.simulation import spiceInterface
