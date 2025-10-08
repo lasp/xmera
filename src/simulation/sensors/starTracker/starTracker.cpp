@@ -114,26 +114,18 @@ void StarTracker::computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* 
     compute platform angular velocity from sensed quaternions
  */
 void StarTracker::computeAngularVelocity(uint64_t currentSimNanos) {
-    // Group quaternion components without beta_0
-    Eigen::Vector3d epsilon_CN = {
-        this->sensedValues.qInrtl2Case[1], this->sensedValues.qInrtl2Case[2], this->sensedValues.qInrtl2Case[3]};
-    Eigen::Vector3d epsilonPrevious_CN = this->betaPrevious_CN.tail<3>();
+    Eigen::Vector4d beta_CN = cArrayAsEigenVector(this->sensedValues.qInrtl2Case);
 
-    // Determine CRPs (Gibbs Vector)
-    Eigen::Vector3d q_CN = (1 / this->sensedValues.qInrtl2Case[0]) * epsilon_CN;
-    Eigen::Vector3d qPrevious_CN = (1 / this->betaPrevious_CN[0]) * epsilonPrevious_CN;
-
-    // Determine qDot_CN
-    Eigen::Vector3d qDot_CN = Eigen::Vector3d::Zero();
+    // Determine betaDot_CN
+    Eigen::Vector4d betaDot_CN = Eigen::Vector4d::Zero();
     if (currentSimNanos != this->previousSimTime) {
         double dt = (currentSimNanos - this->previousSimTime) * NANO2SEC;
-        qDot_CN = (q_CN - qPrevious_CN) / dt;
+        betaDot_CN = (beta_CN - this->betaPrevious_CN) / dt;
     }
 
-    // Solve for platform rate using Eq. 3.137 from Schaub and Junkins Pg 120
-    Eigen::Matrix3d qTilde_CN = eigenTilde(q_CN);
-    Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
-    Eigen::Vector3d omega_CN_C = (2.0 / (1.0 + q_CN.transpose() * q_CN)) * (I - qTilde_CN) * qDot_CN;
+    Eigen::Matrix<double, 3, 4> bInv = binvEp(beta_CN);
+
+    Eigen::Vector3d omega_CN_C = 2 * bInv * betaDot_CN;
     eigenVectorToCArray(omega_CN_C, this->sensedValues.omega_CN_C);
 }
 
