@@ -1,6 +1,6 @@
 # ISC License
 #
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -14,14 +14,6 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-
-#
-#   Unit Test Script
-#   Module Name:        rwMotorVoltage
-#   Author:             Hanspeter Schaub
-#   Creation Date:      January 16, 2017
-#
-
 import inspect
 import os
 
@@ -30,51 +22,25 @@ import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import rwMotorVoltage
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
-
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-def addTimeColumn(time, data):
-    return np.transpose(np.vstack([[time], np.transpose(data)]))
+@pytest.mark.parametrize("useLargeVoltage, useAvailability, useTorqueLoop", [(False, False, False),
+                                                                             (True, False, False),
+                                                                             (False, True, False),
+                                                                             (False, False, True)])
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("useLargeVoltage, useAvailability, useTorqueLoop, testName", [
-       (False, False, False, "One")
-     , (True, False, False, "Two")
-     , (False, True, False, "Three")
-     , (False, False, True, "Four")
-])
-
-# update "module" in this function name to reflect the module name
-def test_module(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName)
-    assert testResults < 1, testMessage
-
-
-def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+def test_rw_motor_voltage(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
-    # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
@@ -82,12 +48,8 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     # Construct algorithm and associated C++ container
     module = rwMotorVoltage.RwMotorVoltage(1.0, 10.0)
     module.modelTag = "rwMotorVoltage"
-
-    # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    # Initialize the test module configuration data
-    # set module parameters
     module.setVoltageRange(1.0, 11.0)  # test setter method
 
     if useTorqueLoop:
@@ -96,20 +58,14 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
         rwSpeedMessage.wheelSpeeds = [1.0, 2.0, 1.5, -3.0]      # rad/sec Omega's
         rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
         module.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
-        unitTestSupport.writeTeXSnippet("Omega1", r"$\bm\Omega = " \
-                                        + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
-                                        , path)
 
-    #
-    #   create BSK messages
-    #
     # Create RW configuration parameter input message
     GsMatrix_B = [
         [1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, 0.0, 1.0],
-        [1.0, 1.0, 1.0]         # the create routine below normalizes these vectors
-    ]
+        [1.0, 1.0, 1.0]
+    ]  # the create routine below normalizes these vectors
     fswSetupRW.clearSetup()
     for i in range(4):
         fswSetupRW.create(GsMatrix_B[i],    #           spin axis
@@ -142,24 +98,14 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     dataLog = module.voltageOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-
-    # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
-
-    # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
     if useTorqueLoop:
         rwSpeedMessage.wheelSpeeds = [1.1, 2.1, 1.1, -4.1]  # rad/sec Omega's
         rwSpeedInMsg.write(rwSpeedMessage)
-        unitTestSupport.writeTeXSnippet("Omega2", r"$\bm\Omega = " \
-                                        + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
-                                        , path)
+
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
@@ -170,16 +116,13 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-
     # This pulls the actual data log from the simulation run.
-    moduleOutput = dataLog.voltage[:, :numRW]
-    print(moduleOutput)
-
+    voltage = dataLog.voltage[:, :numRW]
 
     # set the filtered output truth states
-    trueVector=[];
+    voltageTrue=[]
     if not useLargeVoltage and not useAvailability and not useTorqueLoop:
-        trueVector = [
+        voltageTrue = [
                    [3.5, 0., -8.5, -11.]
                  , [3.5, 0., -8.5, -11.]
                  , [3.5, 0., -8.5, -11.]
@@ -189,7 +132,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
                  , [3.5, 0., -8.5, -11.]
                    ]
     if useLargeVoltage and not useAvailability and not useTorqueLoop:
-        trueVector = [
+        voltageTrue = [
                    [11., 0., -8.5, -11.]
                  , [11., 0., -8.5, -11.]
                  , [11., 0., -8.5, -11.]
@@ -199,7 +142,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
                  , [11., 0., -8.5, -11.]
                    ]
     if not useLargeVoltage and useAvailability and not useTorqueLoop:
-        trueVector = [
+        voltageTrue = [
                    [3.5, 0., 0., -11.]
                  , [3.5, 0., 0., -11.]
                  , [3.5, 0., 0., -11.]
@@ -209,7 +152,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
                  , [3.5, 0., 0., -11.]
                    ]
     if not useLargeVoltage and not useAvailability and useTorqueLoop:
-        trueVector = [
+        voltageTrue = [
                    [3.5, 0., -8.5, -11.]
                  , [3.5, 0., -8.5, -11.]
                  , [3.5, 0., -8.5, -11.]
@@ -222,73 +165,12 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     # compare the module results to the truth values
     accuracy = 1e-10
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "Output Vector",
-                                                               testFailCount, testMessages)
+    np.testing.assert_allclose(voltage, voltageTrue, atol=accuracy, rtol=0, verbose=True)
 
 
-
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # plot a sample variable.
-    # plt.close("all")    # close all prior figures so we start with a clean slate
-    # plt.figure(1)
-    # plt.plot(variableState[:, 0]*macros.NANO2SEC, variableState[:, 1],
-    #          label='Case useLargeVoltage = ' + str(useLargeVoltage))
-    # plt.legend(loc='upper left')
-    # plt.xlabel('Time [s]')
-    # plt.ylabel('Variable Description [unit]')
-    # if show_plots:
-    #     plt.show()
-    #     plt.close('all')
-
-    #   print out success message if no error were found
-    snippentName = "passFail" + testName
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-    # write TeX Tables for documentation
-    moduleOutput = addTimeColumn(dataLog.times(), dataLog.voltage)[:, :numRW+1]
-    resultTable = moduleOutput
-    resultTable[:, 0] = macros.NANO2SEC * resultTable[:, 0]
-    diff = np.delete(moduleOutput, 0, 1) - trueVector
-    resultTable = np.insert(resultTable, list(range(2, 2 + len(diff.transpose()))), diff, axis=1)
-
-    tableName = "test" + str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
-    tableHeaders = ["time [s]", "$V_{s,1}$", "Error", "$V_{s,2}$", "Error", "$V_{s,3}$", "Error", "$V_{s,4}$", "Error"]
-    caption = 'RW voltage output for case {\\tt useLargeVoltage = ' + str(useLargeVoltage) \
-              + ', useAvailability = ' + str(useAvailability) \
-              + ', useTorqueLoop = ' + str(useTorqueLoop) + '}.'
-    unitTestSupport.writeTableLaTeX(
-        tableName,
-        tableHeaders,
-        caption,
-        resultTable,
-        path)
-    unitTestSupport.writeTeXSnippet("us"+ str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
-                                    , "$\\bm u_s = " + str(usMessageData.motorTorque[0:numRW]) + "$"
-                                    , path)
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
-
-#
-# This statement below ensures that the unitTestScript can be run as a
-# stand-along python script
-#
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                  False
-                 ,False       # useLargeVoltage
-                 ,False       # useAvailability
-                 ,True        # useTorqueLoop
-                 ,"Four"      # testName
-               )
+    test_rw_motor_voltage(False,
+                          False,
+                          False,
+                          True,
+                          "Four")
