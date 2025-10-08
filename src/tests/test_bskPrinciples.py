@@ -34,6 +34,7 @@ import os
 import sys
 
 import pytest
+import Basilisk.architecture.messaging
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import unitTestSupport
 
