@@ -24,9 +24,10 @@
 #include "unitTestComparators.h"
 #include <gtest/gtest.h>
 
+#include <numbers>
 
-const double orbitalEnvironmentAccuracy = 1e-10;
-const double orbitalElementsAccuracy = 1e-11;
+constexpr double orbitalEnvironmentAccuracy = 1e-10;
+constexpr double orbitalElementsAccuracy = 1e-11;
 
 TEST(OrbitalMotion, atmosphericDensity_200km) {
     double alt = 200.0;
@@ -530,4 +531,133 @@ TEST(OrbitalMotion, classicElementsToEquinoctialElements) {
     EXPECT_NEAR(elements_eq.Q2, 0.09920802187229026125603326136115, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements_eq.l, 0.78093005232114087732497864635661, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements_eq.L, 0.85000000000000008881784197001252, orbitalElementsAccuracy);
+}
+
+
+namespace {
+constexpr double kHillOrbitAccuracy = 1e-4;
+}
+
+TEST(OrbitalMotion, hillFrame) {
+    double rc_N[3];
+    double vc_N[3];
+    double HN[3][3];
+    double HNtrue[3][3];
+
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    hillFrame(rc_N, vc_N, HN);
+    m33Set(0.0506938, 0.931702, 0.35967, -0.93404, -0.0832604, 0.347329, 0.353553, -0.353553, 0.866025, HNtrue);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_TRUE(v3IsEqualRel(HN[i], HNtrue[i], kHillOrbitAccuracy)) << "hillFrame axis " << i;
+    }
+}
+
+TEST(OrbitalMotion, hill2rv) {
+    double rc_N[3];
+    double vc_N[3];
+    double rd_N[3];
+    double vd_N[3];
+    double rho_H[3];
+    double rhoPrime_H[3];
+    double expected[3];
+
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    v3Set(-0.286371, 0.012113, 0.875157, rho_H);
+    v3Set(0.000689358, 0.000620362, 0.000927434, rhoPrime_H);
+
+    hill2rv(rc_N, vc_N, rho_H, rhoPrime_H, rd_N, vd_N);
+
+    v3Set(353.6672082996106, 6494.264242564805, 2507.898786238764, expected);
+    EXPECT_TRUE(v3IsEqualRel(rd_N, expected, kHillOrbitAccuracy)) << "hill2rv position";
+
+    v3Set(-7.073766857682589, -0.5663665778237081, 2.65770594819381, expected);
+    EXPECT_TRUE(v3IsEqualRel(vd_N, expected, kHillOrbitAccuracy)) << "hill2rv velocity";
+}
+
+TEST(OrbitalMotion, rv2hill) {
+    double rc_N[3];
+    double vc_N[3];
+    double rd_N[3];
+    double vd_N[3];
+    double rho_H[3];
+    double rhoPrime_H[3];
+    double expected[3];
+
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    v3Set(353.6672082996106, 6494.264242564805, 2507.898786238764, rd_N);
+    v3Set(-7.073766857682589, -0.5663665778237081, 2.65770594819381, vd_N);
+
+    rv2hill(rc_N, vc_N, rd_N, vd_N, rho_H, rhoPrime_H);
+
+    v3Set(-0.286371, 0.012113, 0.875157, expected);
+    EXPECT_TRUE(v3IsEqualRel(rho_H, expected, kHillOrbitAccuracy)) << "rv2hill rho_H";
+
+    v3Set(0.000689358, 0.000620362, 0.000927434, expected);
+    EXPECT_TRUE(v3IsEqualRel(rhoPrime_H, expected, kHillOrbitAccuracy)) << "rv2hill rhoPrime_H";
+}
+
+constexpr double kAnomolyConversionsAccuracy = 1e-10;
+
+TEST(OrbitalMotion, E2f) {
+    double Ecc = 0.3;
+    double e = 0.1;
+    double f = E2f(Ecc, e);
+    EXPECT_NEAR(f, 0.33111382522243943, kAnomolyConversionsAccuracy) << "E2f forward";
+
+    Ecc = 0.3 + std::numbers::pi;
+    e = 0.1;
+    f = E2f(Ecc, e);
+    EXPECT_NEAR(f, 3.413322139966247, kAnomolyConversionsAccuracy) << "E2f offset";
+}
+
+TEST(OrbitalMotion, E2M) {
+    constexpr double Ecc = 0.3 + std::numbers::pi;
+    constexpr double e = 0.1;
+    const double M = E2M(Ecc, e);
+    EXPECT_NEAR(M, 3.471144674255927, kAnomolyConversionsAccuracy) << "E2M";
+}
+
+TEST(OrbitalMotion, f2E) {
+    constexpr double f = 0.3;
+    constexpr double e = 0.1;
+    const double Ecc = f2E(f, e);
+    EXPECT_NEAR(Ecc, 0.2717294863764543, kAnomolyConversionsAccuracy) << "f2E";
+}
+
+TEST(OrbitalMotion, f2H) {
+    constexpr double f = 0.3;
+    constexpr double e = 2.1;
+    const double H = f2H(f, e);
+    EXPECT_NEAR(H, 0.18054632550895094, kAnomolyConversionsAccuracy) << "f2H";
+}
+
+TEST(OrbitalMotion, H2f) {
+    constexpr double H = 0.3;
+    constexpr double e = 2.1;
+    const double f = H2f(H, e);
+    EXPECT_NEAR(f, 0.4898441475256363, kAnomolyConversionsAccuracy) << "H2f";
+}
+
+TEST(OrbitalMotion, H2N) {
+    constexpr double H = 0.3;
+    constexpr double e = 2.1;
+    const double N = H2N(H, e);
+    EXPECT_NEAR(N, 0.33949261623899946, kAnomolyConversionsAccuracy) << "H2N";
+}
+
+TEST(OrbitalMotion, M2E) {
+    constexpr double M = 2.0;
+    constexpr double e = 0.3;
+    const double Ecc = M2E(M, e);
+    EXPECT_NEAR(Ecc, 2.2360314951724365, kAnomolyConversionsAccuracy) << "M2E";
+}
+
+TEST(OrbitalMotion, N2H) {
+    constexpr double N = 2.0;
+    constexpr double e = 2.3;
+    const double H = N2H(N, e);
+    EXPECT_NEAR(H, 1.1098189302932016, kAnomolyConversionsAccuracy) << "N2H";
 }
