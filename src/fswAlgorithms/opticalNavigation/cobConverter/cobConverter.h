@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -21,12 +21,8 @@
 #define _COB_CONVERT_H_
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/eigenSupport.h"
-#include <stdint.h>
-#include <Eigen/Dense>
 
 #include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/FilterMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
@@ -34,70 +30,62 @@
 #include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "fswAlgorithms/opticalNavigation/cobConverter/cobConverterAlgorithm.h"
 
+/**
+ * @enum PhaseAngleCorrectionMethod
+ * @brief Phase-angle correction models for converting COB to COM.
+ */
 enum class PhaseAngleCorrectionMethod { NoCorrection, Lambertian, Binary };
 
-/*! @brief visual limb finding module */
+const std::map<PhaseAngleCorrectionMethod, PhaseAngleCorrectionMethodAlgorithm> enumMap = {
+    {PhaseAngleCorrectionMethod::NoCorrection, PhaseAngleCorrectionMethodAlgorithm::NoCorrectionAlg},
+    {PhaseAngleCorrectionMethod::Lambertian, PhaseAngleCorrectionMethodAlgorithm::LambertianAlg},
+    {PhaseAngleCorrectionMethod::Binary, PhaseAngleCorrectionMethodAlgorithm::BinaryAlg}};
+
+/**
+ * @class CobConverter
+ * @brief Converts center-of-brightness (COB) pixel measurements into unit vectors
+ *        (camera, body, inertial frames), with optional phase-angle correction
+ *        and outlier detection.
+ */
 class CobConverter : public SysModel {
    public:
     CobConverter(PhaseAngleCorrectionMethod method, double radiusObject);
-    ~CobConverter();
+    ~CobConverter() final;
 
-    void updateState(uint64_t currentSimNanos);
-    void reset(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos) override;
+    void reset(uint64_t currentSimNanos) override;
 
-    void setRadius(const double radius);
+    void setRadius(double radius);
     double getRadius() const;
-    void setRadiusUncertainty(const double radiusUncertainty);
+    void setRadiusUncertainty(double radiusUncertainty);
     double getRadiusUncertainty() const;
-    void setAttitudeCovariance(const Eigen::Matrix3d covAtt_BN_B);
+    void setAttitudeCovariance(const Eigen::Matrix3d &covAtt_BN_B);
     Eigen::Matrix3d getAttitudeCovariance() const;
-    void setNumStandardDeviations(const double num);
+    void setNumStandardDeviations(double num);
     double getNumStandardDeviations() const;
-    void setStandardDeviation(const double num);
+    void setStandardDeviation(double num);
     double getStandardDeviation() const;
     bool isStandardDeviationSpecified() const;
     void enableOutlierDetection();
     void disableOutlierDetection();
     bool isOutlierDetectionEnabled() const;
 
-   private:
-    bool cobOutlierDetection(Eigen::Vector3d& rhatCOB_C,
-                             const Eigen::Vector3d& rhatNav_N,
-                             const Eigen::Matrix3d& covarNav_N,
-                             const Eigen::Matrix3d& covarCob_C,
-                             const Eigen::Matrix3d& dcm_CN,
-                             const Eigen::Matrix3d& dcm_CB,
-                             const Eigen::Matrix3d& cameraCalibrationMatrix) const;
-
    public:
-    Message<OpNavUnitVecMsgPayload> opnavUnitVecCOBOutMsg;
-    Message<OpNavUnitVecMsgPayload> opnavUnitVecCOMOutMsg;
-    Message<OpNavCOMMsgPayload> opnavCOMOutMsg;
+    // Output messages
+    Message<OpNavUnitVecMsgPayload> opnavUnitVecOutMsg;
+    Message<OpNavCOMMsgPayload> comCorrectionOutMsg;
+
+    // Input messages
     ReadFunctor<OpNavCOBMsgPayload> opnavCOBInMsg;
     ReadFunctor<FilterMsgPayload> opnavFilterInMsg;
     ReadFunctor<CameraModelMsgPayload> cameraConfigInMsg;
     ReadFunctor<NavAttMsgPayload> navAttInMsg;
-    ReadFunctor<EphemerisMsgPayload> ephemInMsg;
     ReadFunctor<NavAttMsgPayload> sunInMsg;
 
-    uint64_t sensorTimeTag;
-    BSKLogger bskLogger;
-
    private:
-    PhaseAngleCorrectionMethod phaseAngleCorrectionMethod;
-    double objectRadius{};
-    double objectRadiusUncertainty{};
-    Eigen::Matrix3d covarAtt_BN_B{};
-    double numStandardDeviations = 3;
-    double standardDeviation{};
-    bool specifiedStandardDeviation{};
-    bool performOutlierDetection{};
+    CobConverterAlgorithm algorithm;
 };
 
 #endif

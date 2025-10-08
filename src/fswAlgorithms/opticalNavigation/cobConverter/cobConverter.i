@@ -1,7 +1,7 @@
  /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -35,8 +35,6 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-
 %include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
 %include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
 %include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"

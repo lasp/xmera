@@ -29,14 +29,15 @@ typedef struct
     OpNavCOMMsgPayload
 //@endcond
 {
-    uint64_t timeTag;           //!< --[ns] Current vehicle time-tag associated with measurements
-    bool valid;                 //!< -- Quality of measurement
-    int64_t cameraID;           //!< -- [-] ID of the camera that took the image
-    double centerOfMass[2];     //!< -- [-] Center x, y of bright pixels
-    double offsetFactor;        //!< -- [-] COM/COB offset factor as a fraction of object radius
-    int32_t objectPixelRadius;  //!< -- [-] radius of object in pixels
-    double phaseAngle;          //!< -- [rad] angle between Sun-Object-Camera
-    double sunDirection;        //!< -- [rad] Sun direction in the image
+    uint64_t timeTag;              //!< --[ns] Current vehicle time-tag associated with measurements
+    bool valid;                    //!< -- Quality of measurement
+    int64_t cameraID;              //!< -- [-] ID of the camera that took the image
+    double centerOfMass[2];        //!< -- [-] Center x, y of bright pixels after correction
+    double centerOfBrightness[2];  //!< -- [-] Center x, y of bright pixels
+    double offsetFactor;           //!< -- [-] COM/COB offset factor as a fraction of object radius
+    int32_t objectPixelRadius;     //!< -- [-] radius of object in pixels
+    double phaseAngle;             //!< -- [rad] angle between Sun-Object-Camera
+    double sunDirection;           //!< -- [rad] Sun direction in the image
 } OpNavCOMMsgPayload;
 
 #endif /* COMOPNAVMSG_H */
