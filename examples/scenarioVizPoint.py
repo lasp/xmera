@@ -294,10 +294,10 @@ def run(show_plots, missionType, saveVizardFile):
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
-    mrpControl.K = 3.5
-    mrpControl.Ki = -1  # make value negative to turn off integral feedback
-    mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.setK(3.5)
+    mrpControl.setKi(-1)  # make value negative to turn off integral feedback
+    mrpControl.setP(30.0)
+    mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
 
     #
     #   Setup data logging before the simulation is initialized

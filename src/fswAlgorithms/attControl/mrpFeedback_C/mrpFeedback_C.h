@@ -17,8 +17,8 @@
 
  */
 
-#ifndef MRP_FEEDBACK_H
-#define MRP_FEEDBACK_H
+#ifndef MRP_FEEDBACK_CONTROL_C_H
+#define MRP_FEEDBACK_CONTROL_C_H
 
 #include <stdint.h>
 
@@ -30,31 +30,26 @@
 #include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "fswAlgorithms/attControl/mrpFeedback/mrpFeedbackAlgorithm.h"
-
-#include <Eigen/Core>
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
-class MrpFeedback : public SysModel {
+class MrpFeedback_C : public SysModel {
    public:
-    MrpFeedback() = default;
-    ~MrpFeedback() final = default;
-
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    void setK(const double gain);
-    double getK() const;
-    void setP(const double gain);
-    double getP() const;
-    void setKi(const double gain);
-    double getKi() const;
-    void setIntegralLimit(const double limit);
-    double getIntegralLimit() const;
-    void setControlLawType(const int type);
-    int getControlLawType() const;
-    void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
-    Eigen::Vector3d getKnownTorquePntB_B() const;
+    double K;                     //!< [rad/sec] Proportional gain applied to MRP errors
+    double P;                     //!< [N*m*s]   Rate error feedback gain applied
+    double Ki;                    //!< [N*m]     Integration feedback error on rate error
+    double integralLimit;         //!< [N*m]     Integration limit to avoid wind-up issue
+    int controlLawType;           //!<           Flag to choose between the two control laws available
+    uint64_t priorTime;           //!< [ns]      Last time the attitude control is called
+    double z[3];                  //!< [rad]     integral state of delta_omega
+    double int_sigma[3];          //!< [s]       integral of the MPR attitude error
+    double knownTorquePntB_B[3];  //!< [N*m]     known external torque in body frame vector components
+
+    double ISCPntB_B[9];  //!< [kg m^2]  Spacecraft Inertia
+    RWArrayConfigMsgPayload
+        rwConfigParams;  //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module IO interfaces */
     ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;        //!< RW speed input message (Optional)
@@ -66,9 +61,7 @@ class MrpFeedback : public SysModel {
     ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< vehicle configuration input message
 
-   private:
-    MrpFeedbackAlgorithm algorithm{};
-    uint32_t numRW{};  //!< number of reaction wheels
+    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif

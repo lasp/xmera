@@ -248,10 +248,10 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
-    mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
+    mrpControlConfig.setK(3.5)
+    mrpControlConfig.setKi(-1)  # make value negative to turn off integral feedback
+    mrpControlConfig.setP(30.0)
+    mrpControlConfig.setIntegralLimit(2. / mrpControlConfig.getKi() * 0.1)
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueConfig = rwMotorTorque.RwMotorTorque()

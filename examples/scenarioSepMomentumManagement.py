@@ -508,11 +508,11 @@ def run(momentumManagement, cmEstimation, showPlots):
     # Set up the MRP Feedback control module
     mrpControl = mrpFeedback.MrpFeedback()
     mrpControl.modelTag = "mrpFeedback"
-    mrpControl.Ki = 1e-5
-    mrpControl.P = 275
-    mrpControl.K = 9
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
-    mrpControl.controlLawType = 1
+    mrpControl.setKi(1e-5)
+    mrpControl.setP(275)
+    mrpControl.setK(9)
+    mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
+    mrpControl.setControlLawType(1)
     scSim.AddModelToTask(fswTask, mrpControl, 21)
 
     # add module that maps the Lr control torque into the RW motor torques

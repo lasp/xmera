@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module mrpFeedback
+%module mrpFeedback_C
 %{
-   #include "mrpFeedback.h"
+   #include "mrpFeedback_C.h"
 %}
 
 %pythoncode %{
@@ -27,10 +27,8 @@
 
 %include "sys_model.i"
 %include "swig_conly_data.i"
-%include "swig_eigen.i"
 
-%include "mrpFeedback.h"
-%include "mrpFeedbackAlgorithm.h"
+%include "mrpFeedback_C.h"
 
 %include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 %include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"

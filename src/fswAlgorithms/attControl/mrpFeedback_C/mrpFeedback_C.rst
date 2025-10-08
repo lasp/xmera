@@ -196,21 +196,3 @@ The ``controlLawType`` is an input that enables the user to choose between two d
     \left([I_{\text{RW}}]\pmb\omega + [G_{s}]{\bf h}_{s} \right).
 
 This control law is also asymptotically stable. The advantage when compared to :eq:`eq:Lr` is that in this one, the integral control feedback, which may contain integration errors, only appears once. On the downside, this control law depends quadratically on the angular rates of the spacecraft, and could cause a large control torque when the spacecraft is tumbling at a high rate. When unspecified, this parameter defaults to ``controlLawType = 0``.
-
-Module Setup
-------------
-
-The module is configured by::
-
-    module = mrpFeedback.mrpFeedback()
-    module.modelTag = "mrpFeedback"
-    module.setK(0.15)
-    module.setKi(0.01)
-    module.setP(150.0)
-    module.setIntegralLimit(20)
-    module.setControlLawType(0)
-    module.setKnownTorquePntB_B([1., 1., 1.])
-
-Finally, the module is added to the simulation using::
-
-    unitTestSim.AddModelToTask(unitTaskName, module)

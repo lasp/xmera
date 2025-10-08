@@ -109,10 +109,10 @@ def test_momentumBiasIntegrated(show_plots):
     scSim.AddModelToTask(fswTask, mrpControl)
     decayTime = 10.0
     xi = 1.0
-    mrpControl.Ki = -1
-    mrpControl.P = 3 * np.max(I)/decayTime
-    mrpControl.K = (mrpControl.P / xi) * (mrpControl.P / xi) / np.max(I)
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.setKi(-1)
+    mrpControl.setP(3 * np.max(I)/decayTime)
+    mrpControl.setK((mrpControl.getP() / xi) * (mrpControl.getP() / xi) / np.max(I))
+    mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
 
     # Add the module that maps the control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()

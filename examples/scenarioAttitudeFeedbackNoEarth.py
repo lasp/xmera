@@ -219,15 +219,15 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     mrpControl = mrpFeedback.MrpFeedback()
     mrpControl.modelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
-    mrpControl.K = 3.5
+    mrpControl.setK(3.5)
     if useIntGain:
-        mrpControl.Ki = 0.0002  # make value negative to turn off integral feedback
+        mrpControl.setKi(0.0002)  # make value negative to turn off integral feedback
     else:
-        mrpControl.Ki = -1  # make value negative to turn off integral feedback
-    mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+        mrpControl.setKi(-1)  # make value negative to turn off integral feedback
+    mrpControl.setP(30.0)
+    mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
     if useKnownTorque:
-        mrpControl.knownTorquePntB_B = [0.25, -0.25, 0.1]
+        mrpControl.setKnownTorquePntB_B([0.25, -0.25, 0.1])
 
     #
     #   Setup data logging before the simulation is initialized

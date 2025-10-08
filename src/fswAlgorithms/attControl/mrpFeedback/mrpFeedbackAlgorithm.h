@@ -17,31 +17,34 @@
 
  */
 
-#ifndef MRP_FEEDBACK_H
-#define MRP_FEEDBACK_H
+#ifndef MRP_FEEDBACK_ALGORITHM_H
+#define MRP_FEEDBACK_ALGORITHM_H
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "fswAlgorithms/attControl/mrpFeedback/mrpFeedbackAlgorithm.h"
 
 #include <Eigen/Core>
 
-/*! @brief Data configuration structure for the MRP feedback attitude control routine. */
-class MrpFeedback : public SysModel {
-   public:
-    MrpFeedback() = default;
-    ~MrpFeedback() final = default;
+/*! structure containing the MRP feedback algorithm output */
+typedef struct {
+    CmdTorqueBodyMsgPayload controlOut;     /*!< control torque output */
+    CmdTorqueBodyMsgPayload intFeedbackOut; /*!< integral feedback torque output */
+} MrpFeedbackOutput;
 
-    void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override;
+/*! @brief Data configuration structure for the MRP feedback attitude control routine. */
+class MrpFeedbackAlgorithm {
+   public:
+    void reset(VehicleConfigMsgPayload vehConfigMsg, RWArrayConfigMsgPayload rwConfigMsg, bool rwIsLinked);
+    MrpFeedbackOutput update(uint64_t callTime,
+                             AttGuidMsgPayload guidCmd,
+                             RWSpeedMsgPayload wheelSpeeds,
+                             RWAvailabilityMsgPayload wheelsAvailability);
 
     void setK(const double gain);
     double getK() const;
@@ -56,19 +59,19 @@ class MrpFeedback : public SysModel {
     void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
     Eigen::Vector3d getKnownTorquePntB_B() const;
 
-    /* declare module IO interfaces */
-    ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;        //!< RW speed input message (Optional)
-    ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;  //!< RW availability input message (Optional)
-    ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;  //!< RW parameter input message.  (Optional)
-    Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;  //!< commanded spacecraft external control torque output message
-    Message<CmdTorqueBodyMsgPayload>
-        intFeedbackTorqueOutMsg;                          //!< commanded integral feedback control torque output message
-    ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< attitude guidance input message
-    ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< vehicle configuration input message
-
    private:
-    MrpFeedbackAlgorithm algorithm{};
-    uint32_t numRW{};  //!< number of reaction wheels
+    double K{};              //!< [rad/sec] Proportional gain applied to MRP errors
+    double P{};              //!< [N*m*s]   Rate error feedback gain applied
+    double Ki{};             //!< [N*m]     Integration feedback error on rate error
+    double integralLimit{};  //!< [N*m]     Integration limit to avoid wind-up issue
+    int controlLawType{};    //!<           Flag to choose between the two control laws available
+    Eigen::Vector3d knownTorquePntB_B{
+        Eigen::Vector3d::Zero()};  //!< [N*m]     known external torque in body frame vector components
+    uint64_t priorTime{};          //!< [ns]      Last time the attitude control is called
+    Eigen::Vector3d int_sigma{};   //!< [s] integral of the MPR attitude error
+    Eigen::Matrix3d ISCPntB_B{};   //!< [kg m^2] Spacecraft Inertia
+    RWArrayConfigMsgPayload
+        rwConfigParams{};  //!< [-] struct to store message containing RW config parameters in body B frame
 };
 
 #endif
