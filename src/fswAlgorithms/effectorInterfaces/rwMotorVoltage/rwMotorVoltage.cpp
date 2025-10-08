@@ -103,19 +103,19 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
     /* evaluate the feedforward mapping of torque into voltage */
     for (int i = 0; i < this->rwConfigParams.numRW; i++) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
-            voltage[i] = (this->VMax - this->VMin) / this->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
-            if (voltage[i] > 0.0) voltage[i] += this->VMin;
-            if (voltage[i] < 0.0) voltage[i] -= this->VMin;
+            voltage[i] = (this->voltageMax - this->voltageMin) / this->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
+            if (voltage[i] > 0.0) voltage[i] += this->voltageMin;
+            if (voltage[i] < 0.0) voltage[i] -= this->voltageMin;
         }
     }
 
     /* check for voltage saturation */
     for (int i = 0; i < this->rwConfigParams.numRW; i++) {
-        if (voltage[i] > this->VMax) {
-            voltage[i] = this->VMax;
+        if (voltage[i] > this->voltageMax) {
+            voltage[i] = this->voltageMax;
         }
-        if (voltage[i] < -this->VMax) {
-            voltage[i] = -this->VMax;
+        if (voltage[i] < -this->voltageMax) {
+            voltage[i] = -this->voltageMax;
         }
         voltageOut.voltage[i] = voltage[i];
     }
@@ -127,3 +127,48 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
 
     return;
 }
+
+/**
+ * @brief Set the minimum and maximum voltage.
+ * @param minVoltageMagnitude minimum voltage below which the torque is zero.
+ * @param maxVoltageMagnitude maximum output voltage
+ */
+void RwMotorVoltage::setVoltageRange(const double minVoltageMagnitude, const double maxVoltageMagnitude) {
+    if (minVoltageMagnitude < 0.0) {
+        throw std::invalid_argument("minVoltageMagnitude must not be negative.");
+    }
+    if (maxVoltageMagnitude < 0.0) {
+        throw std::invalid_argument("maxVoltageMagnitude must not be negative.");
+    }
+    if (maxVoltageMagnitude <= minVoltageMagnitude) {
+        throw std::invalid_argument("maxVoltageMagnitude must be greater than minVoltageMagnitude.");
+    }
+    this->voltageMin = minVoltageMagnitude;
+    this->voltageMax = maxVoltageMagnitude;
+}
+
+/**
+ * @brief Get the minimum and maximum voltage.
+ * @return Eigen::Vector2d minimum and maximum voltage
+ */
+Eigen::Vector2d RwMotorVoltage::getVoltageRange() const {
+    return Eigen::Vector2d {this->voltageMin, this->voltageMax};
+}
+
+/**
+ * @brief Set the feedback gain.
+ * @param gain feedback gain.
+ */
+void RwMotorVoltage::setGainK(const double gain) {
+    if (gain < 0.0) {
+        throw std::invalid_argument("Feedback gain must not be negative");
+    }
+    this->K = gain;
+}
+
+/**
+ * @brief Get the feedback gain.
+ * @return double feedback gain.
+ */
+double RwMotorVoltage::getGainK() const { return this->K; }
+

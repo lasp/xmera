@@ -88,11 +88,10 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
 
     # Initialize the test module configuration data
     # set module parameters
-    module.VMin = 1.0     # Volts
-    module.VMax = 11.0    # Volts
+    module.setVoltageRange(1.0, 11.0)
 
     if useTorqueLoop:
-        module.K = 1.5
+        module.setGainK(1.5)
         rwSpeedMessage = messaging.RWSpeedMsgPayload()
         rwSpeedMessage.wheelSpeeds = [1.0, 2.0, 1.5, -3.0]      # rad/sec Omega's
         rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)

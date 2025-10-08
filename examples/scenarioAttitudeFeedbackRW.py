@@ -522,8 +522,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
         scSim.AddModelToTask(simTaskName, fswRWVoltage)
 
         # set module parameters
-        fswRWVoltage.VMin = 0.0  # Volts
-        fswRWVoltage.VMax = 10.0  # Volts
+        fswRWVoltage.setVoltageRange(0.0, 10.0)
 
     #
     #   Setup data logging before the simulation is initialized

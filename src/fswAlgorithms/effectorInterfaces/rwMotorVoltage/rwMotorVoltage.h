@@ -41,9 +41,10 @@ class RwMotorVoltage : public SysModel {
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    double VMin;                   /*!< [V]    minimum voltage below which the torque is zero */
-    double VMax;                   /*!< [V]    maximum output voltage */
-    double K;                      /*!< [V/Nm] torque tracking gain for closed loop control.*/
+    void setVoltageRange(const double minVoltageMagnitude, const double maxVoltageMagnitude);
+    Eigen::Vector2d getVoltageRange() const;
+    void setGainK(const double gain);
+    double getGainK() const;
 
     /* declare module IO interfaces */
     Message<RwMotorVoltageMsgPayload> voltageOutMsg;    /*!< voltage output message*/
@@ -54,6 +55,9 @@ class RwMotorVoltage : public SysModel {
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg; /*!< [-] The name of the RWs availability message*/
 
    private:
+    double voltageMin{};             /*!< [V]    minimum voltage below which the torque is zero */
+    double voltageMax{};             /*!< [V]    maximum output voltage */
+    double K{};                      /*!< [V/Nm] torque tracking gain for closed loop control.*/
     Eigen::Vector<double, RW_EFF_CNT> rwSpeedOld{}; /*!< [r/s]  the RW spin rates from the prior control step */
     uint64_t priorTime{};            /*!< [ns]   Last time the module control was called */
     int resetFlag{};                 /*!< []     Flag indicating that a module reset occurred */

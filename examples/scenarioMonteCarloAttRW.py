@@ -570,8 +570,7 @@ def createScenarioAttitudeFeedbackRW():
     fswRWVoltage.rwParamsInMsg.subscribeTo(fswRwConfMsg)
     rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltage.voltageOutMsg)
     # set module parameters
-    fswRWVoltage.VMin = 0.0  # Volts
-    fswRWVoltage.VMax = 10.0  # Volts
+    fswRWVoltage.setVoltageRange(0.0, 10.0)
 
     #
     #   set initial Spacecraft States
