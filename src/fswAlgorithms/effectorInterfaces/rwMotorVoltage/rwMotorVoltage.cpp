@@ -55,8 +55,8 @@ void RwMotorVoltage::reset(uint64_t callTime) {
  */
 void RwMotorVoltage::updateState(uint64_t callTime) {
     /* - Read the input messages */
-    RwMotorTorqueMsgPayload torqueCmd = this->torqueInMsg();   /*!< copy of RW motor torque input message*/
-    RWSpeedMsgPayload rwSpeed{}; /*!< [r/s] Reaction wheel speed estimates */
+    RwMotorTorqueMsgPayload torqueCmd = this->torqueInMsg(); /*!< copy of RW motor torque input message*/
+    RWSpeedMsgPayload rwSpeed{};                             /*!< [r/s] Reaction wheel speed estimates */
     RWAvailabilityMsgPayload rwAvailability{};
 
     bool rwSpeedMsgIsLinked{};
@@ -68,11 +68,8 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
         rwAvailability = this->rwAvailInMsg();
     }
 
-    RwMotorVoltageMsgPayload voltageOut = this->algorithm.update(callTime,
-                                                                 torqueCmd,
-                                                                 rwAvailability,
-                                                                 rwSpeed,
-                                                                 rwSpeedMsgIsLinked);
+    RwMotorVoltageMsgPayload voltageOut =
+        this->algorithm.update(callTime, torqueCmd, rwAvailability, rwSpeed, rwSpeedMsgIsLinked);
 
     this->voltageOutMsg.write(&voltageOut, this->moduleID, callTime);
 }

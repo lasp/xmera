@@ -93,7 +93,8 @@ RwMotorVoltageMsgPayload RwMotorVoltageAlgorithm::update(uint64_t callTime,
     /* evaluate the feedforward mapping of torque into voltage */
     for (int i = 0; i < this->rwConfigParams.numRW; ++i) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
-            voltage[i] = (this->voltageMax - this->voltageMin) / this->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
+            voltage[i] =
+                (this->voltageMax - this->voltageMin) / this->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
             if (voltage[i] > 0.0) voltage[i] += this->voltageMin;
             if (voltage[i] < 0.0) voltage[i] -= this->voltageMin;
         }
@@ -130,7 +131,7 @@ void RwMotorVoltageAlgorithm::setVoltageRange(const double minVoltageMagnitude, 
  * @return Eigen::Vector2d minimum and maximum voltage
  */
 Eigen::Vector2d RwMotorVoltageAlgorithm::getVoltageRange() const {
-    return Eigen::Vector2d {this->voltageMin, this->voltageMax};
+    return Eigen::Vector2d{this->voltageMin, this->voltageMax};
 }
 
 /**

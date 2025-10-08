@@ -49,12 +49,12 @@ class RwMotorVoltageAlgorithm {
     double getGainK() const;
 
    private:
-    double voltageMin{};             /*!< [V]    minimum voltage below which the torque is zero */
-    double voltageMax{};             /*!< [V]    maximum output voltage */
-    double K{};                      /*!< [V/Nm] torque tracking gain for closed loop control.*/
+    double voltageMin{};                            /*!< [V]    minimum voltage below which the torque is zero */
+    double voltageMax{};                            /*!< [V]    maximum output voltage */
+    double K{};                                     /*!< [V/Nm] torque tracking gain for closed loop control.*/
     Eigen::Vector<double, RW_EFF_CNT> rwSpeedOld{}; /*!< [r/s]  the RW spin rates from the prior control step */
-    uint64_t priorTime{};            /*!< [ns]   Last time the module control was called */
-    bool resetFlag{};                /*!< []     Flag indicating that a module reset occurred */
+    uint64_t priorTime{};                           /*!< [ns]   Last time the module control was called */
+    bool resetFlag{};                               /*!< []     Flag indicating that a module reset occurred */
     RWArrayConfigMsgPayload
         rwConfigParams{}; /*!< [-] struct to store message containing RW config parameters in body B frame */
 };
