@@ -18,6 +18,7 @@
 
 from numpy import testing
 
+import Basilisk.architecture.messaging
 from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
