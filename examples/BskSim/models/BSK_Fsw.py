@@ -357,17 +357,17 @@ class BSKFswModels:
         self.mrpFeedbackControl.vehConfigInMsg.subscribeTo(self.vcMsg)
         self.mrpFeedbackControl.cmdTorqueOutMsg = self.cmdTorqueDirectMsg
 
-        self.mrpFeedbackControl.K = 3.5
-        self.mrpFeedbackControl.Ki = -1.0  # Note: make value negative to turn off integral feedback
-        self.mrpFeedbackControl.P = 30.0
-        self.mrpFeedbackControl.integralLimit = 2. / self.mrpFeedbackControl.Ki * 0.1
+        self.mrpFeedbackControl.setK(3.5)
+        self.mrpFeedbackControl.setKi(-1.0)  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackControl.setP(30.0)
+        self.mrpFeedbackControl.setIntegralLimit(2. / self.mrpFeedbackControl.getKi() * 0.1)
 
     def SetMRPFeedbackRWA(self, SimBase):
         """Set the MRP feedback information if RWs are considered"""
-        self.mrpFeedbackRWs.K = 3.5
-        self.mrpFeedbackRWs.Ki = -1  # Note: make value negative to turn off integral feedback
-        self.mrpFeedbackRWs.P = 30.0
-        self.mrpFeedbackRWs.integralLimit = 2. / self.mrpFeedbackRWs.Ki * 0.1
+        self.mrpFeedbackRWs.setK(3.5)
+        self.mrpFeedbackRWs.setKi(-1)  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackRWs.setP(30.0)
+        self.mrpFeedbackRWs.setIntegralLimit(2. / self.mrpFeedbackRWs.getKi() * 0.1)
 
         self.mrpFeedbackRWs.vehConfigInMsg.subscribeTo(self.vcMsg)
         self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
@@ -377,10 +377,10 @@ class BSKFswModels:
 
     def SetMRPFeedbackTH(self, SimBase):
         """Set the MRP feedback information if Thrusters are considered"""
-        self.mrpFeedbackTHs.K = 3.5*10
-        self.mrpFeedbackTHs.Ki = 0.0002  # Note: make value negative to turn off integral feedback
-        self.mrpFeedbackTHs.P = 30.0*10
-        self.mrpFeedbackTHs.integralLimit = 2. / self.mrpFeedbackTHs.Ki * 0.1
+        self.mrpFeedbackTHs.setK(3.5*10)
+        self.mrpFeedbackTHs.setKi(0.0002)  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackTHs.setP(30.0*10)
+        self.mrpFeedbackTHs.setIntegralLimit(2. / self.mrpFeedbackTHs.getKi() * 0.1)
 
         self.mrpFeedbackTHs.vehConfigInMsg.subscribeTo(self.vcMsg)
         self.mrpFeedbackTHs.guidInMsg.subscribeTo(self.attGuidMsg)
