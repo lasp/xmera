@@ -34,6 +34,7 @@
 %include "swig_conly_data.i"
 
 %include "thrFiringRemainder.h"
+%include "thrFiringRemainderAlgorithm.h"
 
 %include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
 %include "architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h"
