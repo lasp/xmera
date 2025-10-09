@@ -13,46 +13,43 @@ from xmera.architecture import messaging
 
 import numpy as np
 
-@pytest.mark.parametrize("resetCheck, dvOn", [
+@pytest.mark.parametrize("reset_check, dv_on", [
     (False,False),
     (True,False),
     (False,True),
     (True,True)
 ])
+def test_thrFiringRemainder(show_plots, reset_check, dv_on):
 
-def test_thrFiringRemainder(show_plots, resetCheck, dvOn):
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
 
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
-    # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-
-    # Create test thread
-    fswRate = 0.5
-    defaultControlPeriod = 3.0
-    testProcessRate = macros.sec2nano(fswRate)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    fsw_rate = 0.5
+    default_control_period = 3.0
+    test_process_rate = macros.sec2nano(fsw_rate)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Construct algorithm and associated C++ container
     module = thrFiringRemainder.ThrFiringRemainder()
     module.modelTag = "thrFiringRemainder"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, module)
+    unit_test_sim.AddModelToTask(unit_task_name, module)
 
     # Initialize the test module configuration data
     module.thrMinFireTime = 0.2
-    module.defaultControlPeriod = defaultControlPeriod
-    if dvOn == 1:
+    module.defaultControlPeriod = default_control_period
+    if dv_on == 1:
         module.baseThrustState = 1
     else:
         module.baseThrustState = 0
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
-    rcsLocationData = [
+    rcs_location_data = [
         [-0.86360, -0.82550, 1.79070],
         [-0.82550, -0.86360, 1.79070],
         [0.82550, 0.86360, 1.79070],
@@ -62,7 +59,7 @@ def test_thrFiringRemainder(show_plots, resetCheck, dvOn):
         [0.82550, 0.86360, -1.79070],
         [0.86360, 0.82550, -1.79070]
         ]
-    rcsDirectionData = [
+    rcs_direction_data = [
         [1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, -1.0, 0.0],
@@ -72,84 +69,82 @@ def test_thrFiringRemainder(show_plots, resetCheck, dvOn):
         [0.0, 1.0, 0.0],
         [1.0, 0.0, 0.0]
         ]
-    maxThrust = 0.5
+    max_thrust = 0.5
 
-    for i in range(len(rcsLocationData)):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
-    thrConfigMsg = fswSetupThrusters.writeConfigMessage()
-    numThrusters = fswSetupThrusters.getNumOfDevices()
+    for i in range(len(rcs_location_data)):
+        fswSetupThrusters.create(rcs_location_data[i], rcs_direction_data[i], max_thrust)
+    thr_config_msg = fswSetupThrusters.writeConfigMessage()
+    num_thrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    thrMessageData = messaging.THRArrayCmdForceMsgPayload()
-    if dvOn:
-        thrMessageData.thrForce = [-0.5, 0.0, -0.1, -0.2, -0.3, -0.34, -0.39, -0.44]
+    thr_message_data = messaging.THRArrayCmdForceMsgPayload()
+    if dv_on:
+        thr_message_data.thrForce = [-0.5, 0.0, -0.1, -0.2, -0.3, -0.34, -0.39, -0.44]
     else:
-        thrMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
-    thrForceMsg = messaging.THRArrayCmdForceMsg().write(thrMessageData)
+        thr_message_data.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
+    thr_force_msg = messaging.THRArrayCmdForceMsg().write(thr_message_data)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = module.onTimeOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = module.onTimeOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # connect messages
-    module.thrConfInMsg.subscribeTo(thrConfigMsg)
-    module.thrForceInMsg.subscribeTo(thrForceMsg)
+    module.thrConfInMsg.subscribeTo(thr_config_msg)
+    module.thrForceInMsg.subscribeTo(thr_force_msg)
 
     # Need to call the self-init and cross-init methods
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    finalTime = 3.0
-    unitTestSim.ConfigureStopTime(macros.sec2nano(finalTime))  # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
+    final_time = 3.0
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(final_time))  # seconds to stop simulation
+    unit_test_sim.ExecuteSimulation()
 
-    if resetCheck:
+    if reset_check:
         # reset the module to test this functionality
-        module.reset(macros.sec2nano(finalTime))  # this module reset function needs a time input (in NanoSeconds)
+        module.reset(macros.sec2nano(final_time))  # this module reset function needs a time input (in NanoSeconds)
 
         # run the module again for an additional 2.5 seconds
-        unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))  # seconds to stop simulation
-        unitTestSim.ExecuteSimulation()
+        unit_test_sim.ConfigureStopTime(macros.sec2nano(5.5))  # seconds to stop simulation
+        unit_test_sim.ExecuteSimulation()
 
-    moduleOutput = dataLog.OnTimeRequest[:, :numThrusters]
+    module_output = data_log.OnTimeRequest[:, :num_thrusters]
 
     # compute true values
-    thrForce = thrMessageData.thrForce
-    pulseRemainder = np.zeros([numThrusters])
-    trueVector = np.empty([len(moduleOutput), numThrusters])
-    idxReset = finalTime / fswRate + 1
-    for idx in range(0, len(moduleOutput)):
-        onTimes = np.empty([numThrusters])
+    thr_force = thr_message_data.thrForce
+    pulse_remainder = np.zeros([num_thrusters])
+    true_vector = np.empty([len(module_output), num_thrusters])
+    idx_reset = final_time / fsw_rate + 1
+    for idx in range(0, len(module_output)):
+        on_times = np.empty([num_thrusters])
         # reset at corresponding idx if resetCheck is true,
         # or at idx 0 and 1 as output is the same for time 0 and first time step
-        if (resetCheck and idx == idxReset) or idx <= 1:
-            controlPeriod = defaultControlPeriod
-            pulseRemainder = np.zeros([numThrusters])  # reset pulse remainder
+        if (reset_check and idx == idx_reset) or idx <= 1:
+            control_period = default_control_period
+            pulse_remainder = np.zeros([num_thrusters])  # reset pulse remainder
         else:
-            controlPeriod = fswRate
+            control_period = fsw_rate
 
-        for thrIdx in range(0, numThrusters):
-            thrust = thrForce[thrIdx]
-            if dvOn:
-                thrust += maxThrust
+        for thr_idx in range(0, num_thrusters):
+            thrust = thr_force[thr_idx]
+            if dv_on:
+                thrust += max_thrust
             thrust = max(thrust, 0.0)  # Do not allow thrust requests less than zero
-            onTime = thrust / maxThrust * controlPeriod
-            onTime += pulseRemainder[thrIdx] * module.thrMinFireTime
-            pulseRemainder[thrIdx] = 0.0
-            if onTime < module.thrMinFireTime:
-                pulseRemainder[thrIdx] = onTime / module.thrMinFireTime
-                onTime = 0.0
-            elif onTime >= controlPeriod:
-                onTime = 1.1 * controlPeriod
-            onTimes[thrIdx] = onTime
-        trueVector[idx] = onTimes
+            on_time = thrust / max_thrust * control_period
+            on_time += pulse_remainder[thr_idx] * module.thrMinFireTime
+            pulse_remainder[thr_idx] = 0.0
+            if on_time < module.thrMinFireTime:
+                pulse_remainder[thr_idx] = on_time / module.thrMinFireTime
+                on_time = 0.0
+            elif on_time >= control_period:
+                on_time = 1.1 * control_period
+            on_times[thr_idx] = on_time
+        true_vector[idx] = on_times
 
-    # compare the module results to the truth values
-    accuracy = 1e-12
-    np.testing.assert_allclose(trueVector, moduleOutput, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(true_vector, module_output, atol=1e-12, verbose=True)
 
 
 #
@@ -157,8 +152,4 @@ def test_thrFiringRemainder(show_plots, resetCheck, dvOn):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_thrFiringRemainder(
-                 True,            # show plots
-                 False,           #
-                 False
-               )
+    test_thrFiringRemainder(True, False, False)
