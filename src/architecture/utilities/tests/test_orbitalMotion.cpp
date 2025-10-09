@@ -17,16 +17,17 @@
 
  */
 
-#include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "unitTestComparators.h"
 #include <gtest/gtest.h>
 
+#include <numbers>
 
-const double orbitalEnvironmentAccuracy = 1e-10;
-const double orbitalElementsAccuracy = 1e-11;
+constexpr double orbitalEnvironmentAccuracy = 1e-10;
+constexpr double orbitalElementsAccuracy = 1e-11;
 
 TEST(OrbitalMotion, atmosphericDensity_200km) {
     double alt = 200.0;
@@ -40,22 +41,19 @@ TEST(OrbitalMotion, atmosphericDensity_2000km) {
     EXPECT_NEAR(result, 2.48885731828e-15, orbitalEnvironmentAccuracy);
 }
 
-class DebeyeLengthTests :public ::testing::TestWithParam<std::tuple<double, double>> {};
+class DebeyeLengthTests : public ::testing::TestWithParam<std::tuple<double, double>> {};
 
 TEST_P(DebeyeLengthTests, checksDebeyeLengthAtAltitude) {
     auto [altitude, expected] = GetParam();
     EXPECT_NEAR(expected, debyeLength(altitude), orbitalEnvironmentAccuracy);
 }
 
-INSTANTIATE_TEST_SUITE_P(
-        OrbitalMotion,
-        DebeyeLengthTests,
-        ::testing::Values(
-                std::make_tuple(400.0, 0.00404),
-                std::make_tuple(1000.0, 0.0159),
-                std::make_tuple(10000.0, 0.0396),
-                std::make_tuple(34000.0, 400.30000000000018))
-                );
+INSTANTIATE_TEST_SUITE_P(OrbitalMotion,
+                         DebeyeLengthTests,
+                         ::testing::Values(std::make_tuple(400.0, 0.00404),
+                                           std::make_tuple(1000.0, 0.0159),
+                                           std::make_tuple(10000.0, 0.0396),
+                                           std::make_tuple(34000.0, 400.30000000000018)));
 
 TEST(OrbitalMotion, atmosphericDrag) {
     double check[3];
@@ -95,8 +93,7 @@ TEST(OrbitalMotion, solarRadiationPressure) {
     EXPECT_TRUE(v3IsEqual(ans, check, 11));
 }
 
-TEST(OrbitalMotion, elem2rv1DEccentric)
-{
+TEST(OrbitalMotion, elem2rv1DEccentric) {
     double r[3];
     double v[3];
     double r2[3];
@@ -109,16 +106,15 @@ TEST(OrbitalMotion, elem2rv1DEccentric)
     elements.omega = 113.0 * D2R;
     elements.f = 23.0 * D2R;
     elements.alpha = 1.0 / elements.a;
-    elements.rPeriap = elements.a*(1.-elements.e);
-    elements.rApoap = elements.a*(1.+elements.e);
+    elements.rPeriap = elements.a * (1. - elements.e);
+    elements.rApoap = elements.a * (1. + elements.e);
     elem2rv(MU_EARTH, &elements, r, v);
     v3Set(-148.596902253492, -457.100381534593, 352.773096481799, r2);
     v3Set(-8.93065944520745, -27.4716886950712, 21.2016289595043, v3_2);
     EXPECT_TRUE(v3IsEqualRel(r, r2, orbitalElementsAccuracy) || !v3IsEqualRel(v, v3_2, orbitalElementsAccuracy));
 }
 
-TEST(OrbitalMotion, elem2rv1DHyperbolic)
-{
+TEST(OrbitalMotion, elem2rv1DHyperbolic) {
     double r[3];
     double v[3];
     double r2[3];
@@ -131,8 +127,8 @@ TEST(OrbitalMotion, elem2rv1DHyperbolic)
     elements.omega = 113.0 * D2R;
     elements.f = 23.0 * D2R;
     elements.alpha = 1.0 / elements.a;
-    elements.rPeriap = elements.a*(1.-elements.e);
-    elements.rApoap = elements.a*(1.+elements.e);
+    elements.rPeriap = elements.a * (1. - elements.e);
+    elements.rApoap = elements.a * (1. + elements.e);
     elem2rv(MU_EARTH, &elements, r, v);
     v3Set(-152.641873349816, -469.543156608544, 362.375968124408, r2);
     v3Set(-9.17378720883851, -28.2195763820421, 21.7788208976681, v3_2);
@@ -140,7 +136,7 @@ TEST(OrbitalMotion, elem2rv1DHyperbolic)
 }
 
 class TwoDimensionHyperbolic : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -155,16 +151,15 @@ protected:
         elements.omega = 113.0 * D2R;
         elements.f = 23.0 * D2R;
         elements.alpha = 1.0 / elements.a;
-        elements.rPeriap = elements.a*(1.-elements.e);
-        elements.rApoap = elements.a*(1.+elements.e);
+        elements.rPeriap = elements.a * (1. - elements.e);
+        elements.rApoap = elements.a * (1. + elements.e);
 
         v3Set(319.013136281857, -2796.71958333493, 1404.6919948109, r2);
         v3Set(15.3433051336115, -5.87012423567412, -6.05659420479213, v3_2);
     }
 };
 
-TEST_F(TwoDimensionHyperbolic, elem2rv)
-{
+TEST_F(TwoDimensionHyperbolic, elem2rv) {
     elem2rv(MU_EARTH, &elements, r, v);
     EXPECT_TRUE(v3IsEqualRel(r, r2, orbitalElementsAccuracy) && v3IsEqualRel(v, v3_2, orbitalElementsAccuracy));
 }
@@ -178,12 +173,12 @@ TEST_F(TwoDimensionHyperbolic, rv2elem) {
     EXPECT_PRED3(isEqualRel, elements.omega, 113.0 * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.f, 23.0 * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rmag, 3145.881340612725, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.rPeriap,3000.0, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.rPeriap, 3000.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rApoap, -18000., orbitalElementsAccuracy);
 }
 
 class TwoDimensionParabolic : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -219,12 +214,12 @@ TEST_F(TwoDimensionParabolic, rv2elem) {
     EXPECT_PRED3(isEqualRel, elements.omega, 113.0 * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.f, 123.0 * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rmag, 32940.89997480352, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.rPeriap,7500.0, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.rPeriap, 7500.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rApoap, 0.0, orbitalElementsAccuracy);
 }
 
 class TwoDimensionElliptical : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -232,15 +227,15 @@ protected:
     ClassicElements elements;
 
     void SetUp() override {
-        elements.a     = 7500.0;
-        elements.e     = 0.5;
-        elements.i     = 40.0 * D2R;
+        elements.a = 7500.0;
+        elements.e = 0.5;
+        elements.i = 40.0 * D2R;
         elements.Omega = 133.0 * D2R;
         elements.omega = 113.0 * D2R;
-        elements.f     = 123.0 * D2R;    /* true anomaly */
+        elements.f = 123.0 * D2R; /* true anomaly */
         elements.alpha = 1.0 / elements.a;
-        elements.rPeriap = elements.a*(1.-elements.e);
-        elements.rApoap = elements.a*(1.+elements.e);
+        elements.rPeriap = elements.a * (1. - elements.e);
+        elements.rApoap = elements.a * (1. + elements.e);
 
         v3Set(6538.3506963942027, 186.7227227879431, -4119.3008399778619, r2);
         v3Set(1.4414106130924005, 5.588901415902356, -4.0828931566657038, v3_2);
@@ -266,7 +261,7 @@ TEST_F(TwoDimensionElliptical, rv2elem) {
 }
 
 class NonCircularEquitorial : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -296,15 +291,15 @@ TEST_F(NonCircularEquitorial, rv2elem) {
     EXPECT_PRED3(isEqualRel, elements.e, 0.5, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.i, 0.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.Omega, 0.0, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.omega, (133+113)*D2R, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.omega, (133 + 113) * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.f, 123.0 * D2R, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.rmag,   7730.041048693483, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.rPeriap,3750.0, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.rmag, 7730.041048693483, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.rPeriap, 3750.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rApoap, 11250.0, orbitalElementsAccuracy);
 }
 
 class NonCircularNearEquitorial : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -334,15 +329,16 @@ TEST_F(NonCircularNearEquitorial, rv2elem) {
     EXPECT_PRED3(isEqualRel, elements.a, 7500.00, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.e, 0.5, orbitalElementsAccuracy);
     EXPECT_NEAR(elements.i, eps2, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, wrapToPi(elements.Omega+elements.omega), (133+113-360.)*D2R, orbitalElementsAccuracy);
+    EXPECT_PRED3(
+        isEqualRel, wrapToPi(elements.Omega + elements.omega), (133 + 113 - 360.) * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.f, 123.0 * D2R, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.rmag,   7730.041048693483, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.rPeriap,3750.0, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.rmag, 7730.041048693483, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.rPeriap, 3750.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rApoap, 11250.0, orbitalElementsAccuracy);
 }
 
 class NonCircularNearEquitorial180Degree : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -372,15 +368,16 @@ TEST_F(NonCircularNearEquitorial180Degree, rv2elem) {
     EXPECT_PRED3(isEqualRel, elements.a, 7500.00, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.e, 0.5, orbitalElementsAccuracy);
     EXPECT_NEAR(elements.i, eps2, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, wrapToPi(elements.Omega+elements.omega), (133+113-360.)*D2R, orbitalElementsAccuracy);
+    EXPECT_PRED3(
+        isEqualRel, wrapToPi(elements.Omega + elements.omega), (133 + 113 - 360.) * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.f, 123.0 * D2R, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.rmag,   7730.041048693483, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.rPeriap,3750.0, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.rmag, 7730.041048693483, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.rPeriap, 3750.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rApoap, 11250.0, orbitalElementsAccuracy);
 }
 
 class CircularInclined : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -389,7 +386,7 @@ protected:
 
     void SetUp() override {
         elements.a = 7500.0;
-        elements.e  = 0.0;
+        elements.e = 0.0;
         elements.i = 40.0 * D2R;
         elements.Omega = 133.0 * D2R;
         elements.omega = 113.0 * D2R;
@@ -410,14 +407,14 @@ TEST_F(CircularInclined, rv2elem) {
     EXPECT_NEAR(elements.e, 0.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.i, 40. * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.Omega, 133. * D2R, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, wrapToPi(elements.omega+elements.f), (113+123-360.)*D2R, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, wrapToPi(elements.omega + elements.f), (113 + 123 - 360.) * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rmag, 7500.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rPeriap, 7500.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rApoap, 7500.0, orbitalElementsAccuracy);
 }
 
 class CircularEquitorial : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -426,7 +423,7 @@ protected:
 
     void SetUp() override {
         elements.a = 7500.0;
-        elements.e  = 0.0;
+        elements.e = 0.0;
         elements.i = 0.0;
         elements.Omega = 133.0 * D2R;
         elements.omega = 113.0 * D2R;
@@ -448,14 +445,14 @@ TEST_F(CircularEquitorial, rv2elem) {
     EXPECT_NEAR(elements.i, 0.0, orbitalElementsAccuracy);
     EXPECT_NEAR(elements.Omega, 0.0, orbitalElementsAccuracy);
     EXPECT_NEAR(elements.omega, 0.0, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.f, (133+113+123-360)*D2R, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.f, (133 + 113 + 123 - 360) * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rmag, 7500.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rPeriap, 7500.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rApoap, 7500.0, orbitalElementsAccuracy);
 }
 
 class CircularEquitorialRetrograde : public ::testing::Test {
-protected:
+   protected:
     double r[3];
     double v[3];
     double r2[3];
@@ -464,7 +461,7 @@ protected:
 
     void SetUp() override {
         elements.a = 7500.0;
-        elements.e  = 0.0;
+        elements.e = 0.0;
         elements.i = M_PI;
         elements.Omega = 133.0 * D2R;
         elements.omega = 113.0 * D2R;
@@ -486,7 +483,7 @@ TEST_F(CircularEquitorialRetrograde, rv2elem) {
     EXPECT_PRED3(isEqualRel, elements.i, M_PI, orbitalElementsAccuracy);
     EXPECT_NEAR(elements.Omega, 0.0, orbitalElementsAccuracy);
     EXPECT_NEAR(elements.omega, 0.0, orbitalElementsAccuracy);
-    EXPECT_PRED3(isEqualRel, elements.f, (-133+113+123)*D2R, orbitalElementsAccuracy);
+    EXPECT_PRED3(isEqualRel, elements.f, (-133 + 113 + 123) * D2R, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rmag, 7500.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rPeriap, 7500.0, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements.rApoap, 7500.0, orbitalElementsAccuracy);
@@ -494,12 +491,12 @@ TEST_F(CircularEquitorialRetrograde, rv2elem) {
 
 TEST(OrbitalMotion, classicElementsToMeanElements) {
     ClassicElements elements;
-    elements.a     = 1000.0;
-    elements.e     = 0.2;
-    elements.i     = 0.2;
+    elements.a = 1000.0;
+    elements.e = 0.2;
+    elements.i = 0.2;
     elements.Omega = 0.15;
     elements.omega = 0.5;
-    elements.f     = 0.2;
+    elements.f = 0.2;
     double req = 300.0;
     double J2 = 1e-3;
     ClassicElements elements_p;
@@ -514,12 +511,12 @@ TEST(OrbitalMotion, classicElementsToMeanElements) {
 
 TEST(OrbitalMotion, classicElementsToEquinoctialElements) {
     ClassicElements elements;
-    elements.a     = 1000.0;
-    elements.e     = 0.2;
-    elements.i     = 0.2;
+    elements.a = 1000.0;
+    elements.e = 0.2;
+    elements.i = 0.2;
     elements.Omega = 0.15;
     elements.omega = 0.5;
-    elements.f     = 0.2;
+    elements.f = 0.2;
     equinoctialElements elements_eq;
     clElem2eqElem(&elements, &elements_eq);
 
@@ -530,4 +527,132 @@ TEST(OrbitalMotion, classicElementsToEquinoctialElements) {
     EXPECT_NEAR(elements_eq.Q2, 0.09920802187229026125603326136115, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements_eq.l, 0.78093005232114087732497864635661, orbitalElementsAccuracy);
     EXPECT_PRED3(isEqualRel, elements_eq.L, 0.85000000000000008881784197001252, orbitalElementsAccuracy);
+}
+
+namespace {
+constexpr double kHillOrbitAccuracy = 1e-4;
+}
+
+TEST(OrbitalMotion, hillFrame) {
+    double rc_N[3];
+    double vc_N[3];
+    double HN[3][3];
+    double HNtrue[3][3];
+
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    hillFrame(rc_N, vc_N, HN);
+    m33Set(0.0506938, 0.931702, 0.35967, -0.93404, -0.0832604, 0.347329, 0.353553, -0.353553, 0.866025, HNtrue);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_TRUE(v3IsEqualRel(HN[i], HNtrue[i], kHillOrbitAccuracy)) << "hillFrame axis " << i;
+    }
+}
+
+TEST(OrbitalMotion, hill2rv) {
+    double rc_N[3];
+    double vc_N[3];
+    double rd_N[3];
+    double vd_N[3];
+    double rho_H[3];
+    double rhoPrime_H[3];
+    double expected[3];
+
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    v3Set(-0.286371, 0.012113, 0.875157, rho_H);
+    v3Set(0.000689358, 0.000620362, 0.000927434, rhoPrime_H);
+
+    hill2rv(rc_N, vc_N, rho_H, rhoPrime_H, rd_N, vd_N);
+
+    v3Set(353.6672082996106, 6494.264242564805, 2507.898786238764, expected);
+    EXPECT_TRUE(v3IsEqualRel(rd_N, expected, kHillOrbitAccuracy)) << "hill2rv position";
+
+    v3Set(-7.073766857682589, -0.5663665778237081, 2.65770594819381, expected);
+    EXPECT_TRUE(v3IsEqualRel(vd_N, expected, kHillOrbitAccuracy)) << "hill2rv velocity";
+}
+
+TEST(OrbitalMotion, rv2hill) {
+    double rc_N[3];
+    double vc_N[3];
+    double rd_N[3];
+    double vd_N[3];
+    double rho_H[3];
+    double rhoPrime_H[3];
+    double expected[3];
+
+    v3Set(353.38362479494975, 6494.841478640714, 2507.239669788398, rc_N);
+    v3Set(-7.073840333019544, -0.5666429544308719, 2.6565522055197555, vc_N);
+    v3Set(353.6672082996106, 6494.264242564805, 2507.898786238764, rd_N);
+    v3Set(-7.073766857682589, -0.5663665778237081, 2.65770594819381, vd_N);
+
+    rv2hill(rc_N, vc_N, rd_N, vd_N, rho_H, rhoPrime_H);
+
+    v3Set(-0.286371, 0.012113, 0.875157, expected);
+    EXPECT_TRUE(v3IsEqualRel(rho_H, expected, kHillOrbitAccuracy)) << "rv2hill rho_H";
+
+    v3Set(0.000689358, 0.000620362, 0.000927434, expected);
+    EXPECT_TRUE(v3IsEqualRel(rhoPrime_H, expected, kHillOrbitAccuracy)) << "rv2hill rhoPrime_H";
+}
+
+constexpr double kAnomolyConversionsAccuracy = 1e-10;
+
+TEST(OrbitalMotion, E2f) {
+    double Ecc = 0.3;
+    double e = 0.1;
+    double f = E2f(Ecc, e);
+    EXPECT_NEAR(f, 0.33111382522243943, kAnomolyConversionsAccuracy) << "E2f forward";
+
+    Ecc = 0.3 + std::numbers::pi;
+    e = 0.1;
+    f = E2f(Ecc, e);
+    EXPECT_NEAR(f, 3.413322139966247, kAnomolyConversionsAccuracy) << "E2f offset";
+}
+
+TEST(OrbitalMotion, E2M) {
+    constexpr double Ecc = 0.3 + std::numbers::pi;
+    constexpr double e = 0.1;
+    const double M = E2M(Ecc, e);
+    EXPECT_NEAR(M, 3.471144674255927, kAnomolyConversionsAccuracy) << "E2M";
+}
+
+TEST(OrbitalMotion, f2E) {
+    constexpr double f = 0.3;
+    constexpr double e = 0.1;
+    const double Ecc = f2E(f, e);
+    EXPECT_NEAR(Ecc, 0.2717294863764543, kAnomolyConversionsAccuracy) << "f2E";
+}
+
+TEST(OrbitalMotion, f2H) {
+    constexpr double f = 0.3;
+    constexpr double e = 2.1;
+    const double H = f2H(f, e);
+    EXPECT_NEAR(H, 0.18054632550895094, kAnomolyConversionsAccuracy) << "f2H";
+}
+
+TEST(OrbitalMotion, H2f) {
+    constexpr double H = 0.3;
+    constexpr double e = 2.1;
+    const double f = H2f(H, e);
+    EXPECT_NEAR(f, 0.4898441475256363, kAnomolyConversionsAccuracy) << "H2f";
+}
+
+TEST(OrbitalMotion, H2N) {
+    constexpr double H = 0.3;
+    constexpr double e = 2.1;
+    const double N = H2N(H, e);
+    EXPECT_NEAR(N, 0.33949261623899946, kAnomolyConversionsAccuracy) << "H2N";
+}
+
+TEST(OrbitalMotion, M2E) {
+    constexpr double M = 2.0;
+    constexpr double e = 0.3;
+    const double Ecc = M2E(M, e);
+    EXPECT_NEAR(Ecc, 2.2360314951724365, kAnomolyConversionsAccuracy) << "M2E";
+}
+
+TEST(OrbitalMotion, N2H) {
+    constexpr double N = 2.0;
+    constexpr double e = 2.3;
+    const double H = N2H(N, e);
+    EXPECT_NEAR(H, 1.1098189302932016, kAnomolyConversionsAccuracy) << "N2H";
 }
