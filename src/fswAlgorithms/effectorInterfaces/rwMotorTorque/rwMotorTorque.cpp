@@ -36,6 +36,9 @@ void RwMotorTorque::reset(uint64_t callTime) {
     if (!this->rwParamsInMsg.isLinked()) {
         throw std::invalid_argument("rwMotorTorque.rwParamsInMsg wasn't connected.");
     }
+    if (!this->vehControlInMsg.isLinked()) {
+        throw std::invalid_argument("rwMotorTorque.vehControlInMsg wasn't connected.");
+    }
 
     /*! - Read static RW config data message and store it in module variables */
     this->rwConfigParams = this->rwParamsInMsg();
@@ -60,11 +63,6 @@ void RwMotorTorque::updateState(uint64_t callTime) {
     /*! - zero control torque and RW motor torque variables */
     Eigen::Vector<double, RW_EFF_CNT> us = Eigen::Vector<double, RW_EFF_CNT>::Zero();
     // wheelAvailability set to 0 (AVAILABLE) by default
-
-    // check if the required input messages are included
-    if (!this->vehControlInMsg.isLinked()) {
-        throw std::invalid_argument("rwMotorTorque.vehControlInMsg wasn't connected.");
-    }
 
     /*! - Read the input messages */
     LrInputMsg = this->vehControlInMsg();
