@@ -1,5 +1,5 @@
-#ifndef RW_MOTOR_TORQUE_H
-#define RW_MOTOR_TORQUE_H
+#ifndef RW_MOTOR_TORQUE_MESSAGE_H
+#define RW_MOTOR_TORQUE_MESSAGE_H
 
 #include "definitions.h"
 
