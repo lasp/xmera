@@ -177,9 +177,9 @@ def run(show_plots):
 
     # add spacecraft to state
     MSMmodule.addSpacecraftToModel(scObjectServicer.scStateOutMsg, messaging.DoubleVector(rListServicer),
-                                   unitTestSupport.npList2EigenXdVector(spPosListServicer))
+                                   msmForceTorque.npList2EigenXdVector(spPosListServicer))
     MSMmodule.addSpacecraftToModel(scObjectDebris.scStateOutMsg, messaging.DoubleVector(rListDebris),
-                                   unitTestSupport.npList2EigenXdVector(spPosListDebris))
+                                   msmForceTorque.npList2EigenXdVector(spPosListDebris))
 
     # subscribe input messages to module
     MSMmodule.voltInMsgs[0].subscribeTo(voltServicerInMsg)
