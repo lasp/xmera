@@ -14,6 +14,17 @@ enable_testing()
 
 include(XmeraFramework)
 
+# Patch the Python3::Module interface link options to be more selective,
+# so that all symbols must be resolved at link time *except* those that we know
+# will be supplied by the Python environment at load time.
+# This ensures that any *other* missing symbols are reported during build.
+if(APPLE)
+  get_property(_PYTHON_INTERFACE_LINK_OPTIONS TARGET Python3::Module PROPERTY INTERFACE_LINK_OPTIONS)
+  list(REMOVE_ITEM _PYTHON_INTERFACE_LINK_OPTIONS "LINKER:-undefined,dynamic_lookup")
+  list(APPEND _PYTHON_INTERFACE_LINK_OPTIONS "-Wl,@${CMAKE_SOURCE_DIR}/cmake/cpython-exported-symbols")
+  set_property(TARGET Python3::Module PROPERTY INTERFACE_LINK_OPTIONS "${_PYTHON_INTERFACE_LINK_OPTIONS}")
+endif()
+
 # Check if the large Spice files are present.  If not, download from JPL site directly
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp")
   message(STATUS "File de430.bsp not found, downloading file:")
