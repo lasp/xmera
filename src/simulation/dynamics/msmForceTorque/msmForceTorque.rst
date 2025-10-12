@@ -59,7 +59,7 @@ To add a spacecraft, along with the associated list of MSM sphere body-fixed loc
 
     module.addSpacecraftToModel(scStateMsg,
                                 , messaging.DoubleVector(radii_List)
-                                , unitTestSupport.npList2EigenXdVector(r_SB_B_List)
+                                , msmForceTorque.npList2EigenXdVector(r_SB_B_List)
                                 )
 
 where ``radii_list`` is a list of sphere radii, and ``r_SB_B_List`` is a list of body-fixed MSM sphere locations.

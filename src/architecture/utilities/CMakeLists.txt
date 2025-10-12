@@ -46,7 +46,6 @@ install(TARGETS ModuleIdGenerator DESTINATION lib)
 
 
 xmera_add_swig_module(architecture.bskLogging)
-xmera_add_swig_module(architecture.bskUtilities)
 
 xmera_add_swig_module(architecture.orbitalMotion)
 target_sources(architecture.orbitalMotion PRIVATE orbitalMotion.cpp)
