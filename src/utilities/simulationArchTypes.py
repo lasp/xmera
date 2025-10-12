@@ -19,7 +19,6 @@
 
 
 from Basilisk.architecture import sim_model
-from Basilisk.architecture import sys_model_task
 
 
 class ProcessBaseClass(object):
@@ -54,7 +53,7 @@ class ProcessBaseClass(object):
 class TaskBaseClass(object):
     def __init__(self, TaskName, TaskRate, FirstStart=0):
         self.Name = TaskName
-        self.TaskData = sys_model_task.SysModelTask(TaskRate, FirstStart)
+        self.TaskData = sim_model.SysModelTask(TaskRate, FirstStart)
         self.TaskData.TaskName = TaskName
         self.TaskModels = []
 
