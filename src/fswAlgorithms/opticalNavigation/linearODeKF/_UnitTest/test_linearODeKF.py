@@ -23,7 +23,7 @@ import linearODeKF_test_utilities as filter_plots
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import linearODeKF, ekfInterface
 from Basilisk.utilities import SimulationBaseClass, macros
-from Basilisk.architecture import rigidBodyKinematics as rbk
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
 def add_time_column(time, data):
@@ -74,7 +74,7 @@ def setup_filter_data(type = "classical", velocity = False):
     r_F = [-v_inf * dT, -closest, 0]
     v_F = [v_inf, 0, 0]
 
-    dcm_FN = np.array(rbk.eulerAngles321ToDcm([-30*np.pi/180, 10*np.pi/180, 0.0]))
+    dcm_FN = np.array(rbk.euler3212C([-30*np.pi/180, 10*np.pi/180, 0.0]))
     dcm_NF = dcm_FN.transpose()
 
     r_N = np.dot(dcm_NF, np.array(r_F)).tolist()
