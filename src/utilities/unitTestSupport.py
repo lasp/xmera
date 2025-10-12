@@ -23,7 +23,6 @@ from datetime import datetime, timedelta
 import matplotlib as mpl
 import numpy as np
 import pytest
-from Basilisk.architecture import bskUtilities
 
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
@@ -447,13 +446,6 @@ def np2EigenVectorXd(vec):
         npVec.extend([[item]])
 
     return npVec
-
-def npList2EigenXdVector(list):
-    """Conver a list of arrays to a list of eigen values"""
-    eigenList = bskUtilities.Eigen3dVector()
-    for pos in list:
-        eigenList.push_back(pos)
-    return eigenList
 
 def EigenVector3d2np(eig):
     """convert Eigen vector3d to numpy"""

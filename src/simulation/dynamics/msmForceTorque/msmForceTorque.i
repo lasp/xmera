@@ -30,6 +30,16 @@
 %include "std_vector.i"
 %include "swig_eigen.i"
 
+%template(Eigen3dVector) std::vector<Eigen::Vector3d, std::allocator<Eigen::Vector3d>>;
+%pythoncode %{
+    def npList2EigenXdVector(list):
+        """Convert a list of arrays to a list of eigen values"""
+        eigenList = Eigen3dVector()
+        for pos in list:
+            eigenList.push_back(pos)
+        return eigenList
+%}
+
 %include "sys_model.i"
 %include "msmForceTorque.h"
 
