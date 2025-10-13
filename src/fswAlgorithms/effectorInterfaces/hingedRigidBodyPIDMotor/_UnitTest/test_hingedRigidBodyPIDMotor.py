@@ -43,7 +43,7 @@ from Basilisk.utilities import unitTestSupport                   # general suppo
 from Basilisk.fswAlgorithms import hingedRigidBodyPIDMotor       # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -106,7 +106,7 @@ def hingedRigidBodyPIDMotorTestFunction(show_plots, thetaR, thetaDotR, theta, th
     testMessages = []                        # create empty array to store test log messages
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

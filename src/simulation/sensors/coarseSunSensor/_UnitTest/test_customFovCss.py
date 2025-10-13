@@ -26,7 +26,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 
 from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.simulation import coarseSunSensor
 from Basilisk.utilities import astroFunctions
 from Basilisk.utilities import macros
@@ -42,7 +42,7 @@ def test_customFovCss(show_plots, xi, eta, zeta, sunLocation, accuracy):
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

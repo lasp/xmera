@@ -39,7 +39,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.simulation import ReactionWheelPower
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
@@ -99,7 +99,7 @@ def test_module(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue
 
 def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy):
     if not setRwMsg:
-        bskLogging.setDefaultLogLevel(bskLogging.BSK_ERROR)
+        sim_model.setDefaultLogLevel(sim_model.BSK_ERROR)
 
     """Module Unit Test"""
     testFailCount = 0                       # zero unit test result counter
