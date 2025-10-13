@@ -22,9 +22,6 @@
     #include "lambertValidator.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "std_vector.i"
@@ -45,8 +42,3 @@ struct LambertPerformanceMsg_C;
 struct DvBurnCmdMsg_C;
 %include "architecture/msgPayloadDef/LambertValidatorMsgPayload.h"
 struct LambertValidatorMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

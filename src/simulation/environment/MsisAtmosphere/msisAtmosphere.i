@@ -23,9 +23,6 @@
    #include "msisAtmosphere.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "sys_model.i"
 %include "swig_eigen.i"
@@ -53,8 +50,3 @@ GEN_SIZEOF(ap_array)
 GEN_SIZEOF(nrlmsise_input)
 GEN_SIZEOF(nrlmsise_flags)
 GEN_SIZEOF(nrlmsise_output)
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

@@ -24,7 +24,6 @@
 %}
 
 %pythoncode %{
-from Basilisk.architecture.swig_common_model import *
 from Basilisk.simulation.gravityEffector import GravBodyVector
 %}
 %include "std_string.i"
@@ -50,8 +49,3 @@ from Basilisk.simulation.gravityEffector import GravBodyVector
 
 
 %include "../_GeneralModuleFiles/hubEffector.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

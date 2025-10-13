@@ -47,7 +47,7 @@ Because Spice will not be used to generate the ephemeris information for Bennu, 
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.modelTag = 'planetEphemeris'
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["Bennu"]))
+    gravBodyEphem.setPlanetNames(["Bennu"])
 
 Next, the module is configured by specifying the orbital parameters of Bennu::
 
@@ -249,7 +249,7 @@ def run(show_plots):
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.modelTag = 'planetEphemeris'
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
+    gravBodyEphem.setPlanetNames(["bennu"])
 
     # Specify orbital parameters of the asteroid
     timeInitString = "2011 January 1 0:00:00.0"

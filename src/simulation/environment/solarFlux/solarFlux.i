@@ -21,10 +21,6 @@
    #include "solarFlux.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "std_string.i"
 %include "sys_model.i"
 %include "solarFlux.h"
@@ -37,9 +33,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
 %include "architecture/msgPayloadDef/EclipseMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

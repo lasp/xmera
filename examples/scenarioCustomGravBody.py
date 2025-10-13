@@ -127,7 +127,7 @@ def run(show_plots):
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.modelTag = 'planetEphemeris'
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["Itokawa", "earth"]))
+    gravBodyEphem.setPlanetNames(["Itokawa", "earth"])
 
     # specify orbits of gravitational bodies
     oeAsteroid = planetEphemeris.ClassicElements()

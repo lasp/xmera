@@ -350,7 +350,7 @@ def polyGravityBody(show_plots):
     # setup celestial object ephemeris module
     polyBodyEphem = planetEphemeris.PlanetEphemeris()
     polyBodyEphem.modelTag = 'erosEphemeris'
-    polyBodyEphem.setPlanetNames(planetEphemeris.StringVector(["eros"]))
+    polyBodyEphem.setPlanetNames(["eros"])
 
     # specify celestial objects orbit
     polyBodyEphem.planetElements = planetEphemeris.classicElementVector([oePolyBody])

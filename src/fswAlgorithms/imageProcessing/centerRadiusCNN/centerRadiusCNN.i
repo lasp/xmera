@@ -21,9 +21,6 @@
    #include "centerRadiusCNN.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "stdint.i"
 %include "std_string.i"
 %include "swig_conly_data.i"
@@ -34,8 +31,3 @@ from Basilisk.architecture.swig_common_model import *
 struct OpNavCirclesMsg_C;
 %include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 struct CameraImageMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

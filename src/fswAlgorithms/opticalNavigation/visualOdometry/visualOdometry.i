@@ -22,9 +22,6 @@
     #include "visualOdometry.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "std_vector.i"
@@ -36,8 +33,3 @@
 %include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
 %include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

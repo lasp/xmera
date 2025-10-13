@@ -21,10 +21,6 @@
    #include "thrustCMEstimation.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "stdint.i"
 %include "std_string.i"
 %include "sys_model.h"
@@ -38,8 +34,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 %include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 %include "architecture/msgPayloadDef/CMEstDataMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

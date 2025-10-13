@@ -284,7 +284,7 @@ def run(show_plots, useBatch):
     # Setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.modelTag = 'erosEphemeris'
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["eros"]))
+    gravBodyEphem.setPlanetNames(["eros"])
 
     # Specify asteroid orbit elements and rotational state January 21st, 2022
     # https://ssd.jpl.nasa.gov/horizons.cgi#results

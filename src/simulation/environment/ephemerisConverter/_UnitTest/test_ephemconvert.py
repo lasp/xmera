@@ -69,7 +69,7 @@ def unitephemeris_converter(show_plots):
     spiceObject = spiceInterface.SpiceInterface()
     spiceObject.modelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    spiceObject.addPlanetNames(spiceInterface.StringVector(planets))
+    spiceObject.addPlanetNames(planets)
     spiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
     sim.AddModelToTask(unitTaskName, spiceObject)
 

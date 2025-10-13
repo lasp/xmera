@@ -21,9 +21,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
@@ -49,6 +46,8 @@ namespace std {
     %template(GenericStorageVector) vector<GenericStorage *>;
     %template(MultiSphereVector) vector<MultiSphere *>;
     %template(EllipsoidVector) vector<Ellipsoid *>;
+    %template(IntVector) vector<int>;
+    %template(StringVector) vector<string>;
 }
 
 %include "vizInterface.h"
@@ -64,8 +63,3 @@ namespace std {
 %include "architecture/msgPayloadDef/CSSConfigLogMsgPayload.h"
 %include "architecture/msgPayloadDef/THROutputMsgPayload.h"
 %include "architecture/msgPayloadDef/ChargeMsmMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

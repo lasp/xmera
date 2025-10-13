@@ -23,9 +23,6 @@
     #include "groundLocation.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
@@ -42,9 +39,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/AccessMsgPayload.h"
 
 %include "architecture/msgPayloadDef/GroundStateMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

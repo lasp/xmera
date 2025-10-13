@@ -21,9 +21,6 @@
    #include "spiceInterface.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "swig_conly_data.i"
 %include "std_string.i"
 %include "std_vector.i"
@@ -55,10 +52,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 
 %include "architecture/msgPayloadDef/TransRefMsgPayload.h"
-
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

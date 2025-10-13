@@ -22,10 +22,6 @@
    #include "opticalFlow.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "stdint.i"
 %include "std_string.i"
 %include "sys_model.h"
@@ -43,8 +39,3 @@ struct OpNavLimbMsg_C;
 struct EphemerisMsg_C;
 
 %include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

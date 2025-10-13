@@ -23,9 +23,6 @@
    #include "thrusterDynamicEffector.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
@@ -50,9 +47,3 @@ namespace std {
 
 %include "architecture/msgPayloadDef/THROutputMsgPayload.h"
 %include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
