@@ -21,10 +21,6 @@
    #include "oeStateEphem.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "sys_model.i"
 %include "std_array.i"
 %template(DoubleArray20) std::array<double, 20>;
@@ -32,8 +28,3 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
 %include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

@@ -21,10 +21,6 @@
    #include "lowPassFilterTorqueCommand.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "sys_model.i"
 %include "swig_conly_data.i"
 
@@ -32,8 +28,3 @@
 
 // sample Module support file to be included in this sub-module
 %include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

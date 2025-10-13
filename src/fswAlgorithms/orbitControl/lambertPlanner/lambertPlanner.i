@@ -22,9 +22,6 @@
     #include "lambertPlanner.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "std_vector.i"
@@ -37,8 +34,3 @@
 struct NavTransMsg_C;
 %include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
 struct LambertProblemMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

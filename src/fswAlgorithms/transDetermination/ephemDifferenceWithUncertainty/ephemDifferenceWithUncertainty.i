@@ -19,11 +19,6 @@
 %module ephemDifferenceWithUncertainty
 %{
    #include "ephemDifferenceWithUncertainty.h"
-
- %}
-
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "stdint.i"
@@ -40,9 +35,3 @@ struct EphemerisMsg_C;
 struct NavTransMsg_C;
 
 %include "architecture/msgPayloadDef/FilterMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

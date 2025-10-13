@@ -21,10 +21,6 @@
    #include "timeClosestApproach.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "std_string.i"
 %include "sys_model.h"
 %include "swig_eigen.i"
@@ -36,8 +32,3 @@ from Basilisk.architecture.swig_common_model import *
 struct NavTransMsg_C;
 %include "architecture/msgPayloadDef/FilterMsgPayload.h"
 %include "architecture/msgPayloadDef/TimeClosestApproachMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

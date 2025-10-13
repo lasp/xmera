@@ -21,14 +21,6 @@
    #include "BSpline.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "swig_eigen.i"
 
 %include "BSpline.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

@@ -23,8 +23,6 @@
 %}
 
 %pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-
 from Basilisk.simulation.pointMassGravityModel import PointMassGravityModel
 from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
 from Basilisk.simulation.sphericalHarmonicsGravityModel import SphericalHarmonicsGravityModel
@@ -188,10 +186,5 @@ from typing import Optional, Union
 
     %}
 }
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
 
 %pythoncode "simulation/dynamics/gravityEffector/gravCoeffOps.py"

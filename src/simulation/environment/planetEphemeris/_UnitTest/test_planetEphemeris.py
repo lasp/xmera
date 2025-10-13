@@ -91,7 +91,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
 
     # Initialize the test module configuration data
     planetNames = ["earth", "venus"]
-    module.setPlanetNames(planetEphemeris.StringVector(planetNames))
+    module.setPlanetNames(planetNames)
 
     # set gravitational constant of the sun
 

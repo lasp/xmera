@@ -43,9 +43,6 @@
     #include "simplePowerMonitor.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "sys_model.i"
@@ -56,9 +53,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
 
 %include "architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

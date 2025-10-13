@@ -22,10 +22,6 @@
 #include "simpleStorageUnit.h"
 %}
 
-
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
@@ -45,8 +41,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
 
 %include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

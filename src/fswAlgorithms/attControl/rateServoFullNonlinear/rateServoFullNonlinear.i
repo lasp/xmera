@@ -21,10 +21,6 @@
    #include "rateServoFullNonlinear.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "sys_model.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
@@ -39,8 +35,3 @@
 %include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 %include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
 %include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

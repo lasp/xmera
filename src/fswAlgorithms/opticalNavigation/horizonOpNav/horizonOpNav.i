@@ -21,10 +21,6 @@
    #include "horizonOpNav.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "sys_model.i"
 %include "swig_conly_data.i"
 STRUCTASLIST(HorizonOpNavData)
@@ -35,8 +31,3 @@ STRUCTASLIST(HorizonOpNavData)
 %include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 %include "architecture/msgPayloadDef/OpNavMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

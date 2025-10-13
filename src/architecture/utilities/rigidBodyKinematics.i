@@ -172,12 +172,3 @@
 
 %template(rotationMatrix) rotationMatrix<double>;
 %template(rotationMatrixFloat) rotationMatrix<float>;
-
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
