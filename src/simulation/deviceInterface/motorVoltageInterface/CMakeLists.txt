@@ -8,3 +8,7 @@ xmera_add_swig_module("${module}")
 target_sources("${module}" PRIVATE
   motorVoltageInterface.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  Eigen3::Eigen
+)

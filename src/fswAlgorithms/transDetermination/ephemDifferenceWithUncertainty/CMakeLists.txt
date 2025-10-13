@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   ephemDifferenceWithUncertainty.cpp
   ephemDifferenceWithUncertaintyAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  Eigen3::Eigen
+)

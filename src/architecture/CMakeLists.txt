@@ -1,5 +1,3 @@
-add_subdirectory(utilities)
-
 # Build a linkable core library for C++ modules
 add_library(xmera_core SHARED
   _GeneralModuleFiles/sys_model.cpp
@@ -7,10 +5,6 @@ add_library(xmera_core SHARED
   system_model/sys_model_task.cpp
   system_model/sys_process.cpp
   utilities/bskLogging.cpp
-)
-
-target_link_libraries(xmera_core PUBLIC
-  Eigen3::Eigen
 )
 
 # TODO: Organize per-artifact includes in a sane way.
@@ -29,6 +23,7 @@ install(TARGETS xmera_core DESTINATION lib)
 add_library(Xmera::Core ALIAS xmera_core)
 
 
+add_subdirectory(utilities)
 add_subdirectory(system_model)
 add_subdirectory(msgPayloadDef)
 

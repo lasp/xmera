@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   rateControl.cpp
   rateControlAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  Eigen3::Eigen
+)

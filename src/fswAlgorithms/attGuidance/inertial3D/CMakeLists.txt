@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   inertial3D.cpp
   inertial3DAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  Eigen3::Eigen
+)
