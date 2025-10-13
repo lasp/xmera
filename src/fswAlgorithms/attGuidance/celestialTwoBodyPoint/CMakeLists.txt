@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   celestialTwoBodyPoint.cpp
   celestialTwoBodyPointAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  ArchitectureUtilities
+)

@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   navAggregate.cpp
   navAggregateAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  ArchitectureUtilities
+)

@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   thrForceMapping.cpp
   thrForceMappingAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  ArchitectureUtilities
+)

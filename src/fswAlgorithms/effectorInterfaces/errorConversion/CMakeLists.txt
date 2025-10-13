@@ -5,6 +5,10 @@ if(_is_enabled)
   target_sources("${module}" PRIVATE
     dvAttEffect.cpp
   )
+
+  target_link_libraries("${module}" PRIVATE
+    ArchitectureUtilities
+  )
 endif()
 
 set(module "fswAlgorithms.effectorInterfaces.sunSafeACS")
@@ -14,5 +18,9 @@ if(_is_enabled)
   target_sources("${module}" PRIVATE
     sunSafeACS.cpp
     dvAttEffect.cpp
+  )
+
+  target_link_libraries("${module}" PRIVATE
+    ArchitectureUtilities
   )
 endif()

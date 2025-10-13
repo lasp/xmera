@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   sunSafePoint.cpp
   sunSafePointAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  ArchitectureUtilities
+)

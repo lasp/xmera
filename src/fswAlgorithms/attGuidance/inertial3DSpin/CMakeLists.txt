@@ -8,3 +8,7 @@ xmera_add_swig_module("${module}")
 target_sources("${module}" PRIVATE
   inertial3DSpin.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  ArchitectureUtilities
+)
