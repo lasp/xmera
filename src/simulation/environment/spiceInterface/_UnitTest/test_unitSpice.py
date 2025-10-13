@@ -173,7 +173,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     SpiceObject.modelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     planetNames = ["earth", "mars barycenter", "sun"]
-    SpiceObject.addPlanetNames(spiceInterface.StringVector(planetNames))
+    SpiceObject.addPlanetNames(planetNames)
     SpiceObject.UTCCalInit = DateSpice
 
     if useMsg:      # in this case check that the planet frame names can be set as well
@@ -181,7 +181,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
         for planet in planetNames:
             planetFrames.append("IAU_" + planet)
         planetFrames[1] = ""    # testing that default IAU values are used here
-        SpiceObject.planetFrames = spiceInterface.StringVector(planetFrames)
+        SpiceObject.planetFrames = planetFrames
 
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 

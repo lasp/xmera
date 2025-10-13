@@ -21,10 +21,6 @@
    #include "cobConverter.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "stdint.i"
 %include "std_string.i"
 %include "sys_model.h"
@@ -39,9 +35,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
 %include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"
 %include "architecture/msgPayloadDef/FilterMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

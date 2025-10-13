@@ -21,10 +21,6 @@
    #include "positionODuKF.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "stdint.i"
 %include "std_string.i"
 %include "sys_model.h"
@@ -39,8 +35,3 @@ struct NavTransMsg_C;
 struct CameraLocalizationMsg_C;
 %include "architecture/msgPayloadDef/FilterMsgPayload.h"
 %include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

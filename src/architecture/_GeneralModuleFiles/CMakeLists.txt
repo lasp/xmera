@@ -1,2 +1,1 @@
-xmera_add_swig_module(architecture.swig_common_model)
 xmera_add_swig_module(architecture.sysModel)

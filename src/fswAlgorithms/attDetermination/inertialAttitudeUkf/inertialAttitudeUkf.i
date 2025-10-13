@@ -22,10 +22,6 @@
    #include "inertialAttitudeUkf.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
 
 %include "inertialAttitudeUkf.h"
@@ -39,8 +35,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 %include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

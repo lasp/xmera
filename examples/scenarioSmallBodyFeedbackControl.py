@@ -247,7 +247,7 @@ def run(show_plots):
     # Setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.modelTag = 'planetEphemeris'
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
+    gravBodyEphem.setPlanetNames(["bennu"])
 
     # specify orbits of gravitational bodies
     # https://ssd.jpl.nasa.gov/horizons.cgi#results

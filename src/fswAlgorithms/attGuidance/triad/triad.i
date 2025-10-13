@@ -21,10 +21,6 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
    #include "triad.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "sys_model.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
@@ -37,8 +33,3 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 %include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 %include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 %include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

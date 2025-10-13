@@ -34,9 +34,3 @@
 
 %include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
 %include "architecture/msgPayloadDef/AccessMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

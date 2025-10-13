@@ -310,7 +310,7 @@ def run(show_plots):
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.modelTag = 'vestaEphemeris'
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["vesta"]))
+    gravBodyEphem.setPlanetNames(["vesta"])
 
     # specify small body o.e. and rotational state January 21st, 2022
     # https://ssd.jpl.nasa.gov/horizons.cgi#results

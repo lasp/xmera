@@ -21,10 +21,6 @@
    #include "inertial3D.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "sys_model.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
@@ -33,8 +29,3 @@
 %include "inertial3DAlgorithm.h"
 
 %include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

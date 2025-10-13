@@ -21,9 +21,6 @@
    #include "simpleVoltEstimator.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
@@ -32,9 +29,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "simpleVoltEstimator.h"
 
 %include "architecture/msgPayloadDef/VoltMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

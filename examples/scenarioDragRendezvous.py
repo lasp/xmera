@@ -278,7 +278,7 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     # hillToAtt guidance law w/ static gain
     depAttRef = hillToAttRef.HillToAttRef()
     depAttRef.modelTag = 'dep_att_ref'
-    depAttRef.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
+    depAttRef.gainMatrix = lqr_gain_set
     #   Configure parameters common to relative attitude guidance modules
     depAttRef.hillStateInMsg.subscribeTo(hillStateNavObj.hillStateOutMsg)
     # depAttRef.attStateInMsg.subscribeTo(chiefNav.attOutMsg)

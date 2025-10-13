@@ -54,7 +54,7 @@ def runner(show_plots, use_limits, msg_type):
     #   Set up the hillStateConverter
     depAttRef = hillToAttRef.HillToAttRef()
     depAttRef.modelTag = "dep_hillControl"
-    depAttRef.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
+    depAttRef.gainMatrix = lqr_gain_set
     depAttRef.hillStateInMsg.subscribeTo(hillStateMsg)
     if msg_type == 'NavAttMsg':
         attRefMsgData = messaging.NavAttMsgPayload()

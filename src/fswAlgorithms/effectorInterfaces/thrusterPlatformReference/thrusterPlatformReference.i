@@ -21,10 +21,6 @@
    #include "thrusterPlatformReference.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "sys_model.i"
 %include "swig_conly_data.i"
 
@@ -37,8 +33,3 @@
 %include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 %include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 %include "architecture/msgPayloadDef/BodyHeadingMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

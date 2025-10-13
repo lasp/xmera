@@ -22,15 +22,6 @@
    #include "fswAlgorithms/_GeneralModuleFiles/ekfInterface.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "fswAlgorithms/_GeneralModuleFiles/kalmanFilter.i"
 
 %include "fswAlgorithms/_GeneralModuleFiles/ekfInterface.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

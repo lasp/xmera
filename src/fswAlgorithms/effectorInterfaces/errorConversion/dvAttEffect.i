@@ -21,10 +21,6 @@
    #include "dvAttEffect.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "sys_model.i"
 %include "swig_conly_data.i"
 STRUCTASLIST(ThrustGroupData)
@@ -35,8 +31,3 @@ STRUCTASLIST(ThrustGroupData)
 %include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 struct ThrustGroupData;
 struct effPairs;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

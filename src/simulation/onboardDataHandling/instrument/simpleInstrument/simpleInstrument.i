@@ -22,9 +22,6 @@
 #include "simpleInstrument.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "std_string.i"
 %include "sys_model.i"
 %include "../../_GeneralModuleFiles/dataNodeBase.h"
@@ -36,8 +33,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
 
 %include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

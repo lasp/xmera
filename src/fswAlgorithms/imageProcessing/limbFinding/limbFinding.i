@@ -21,10 +21,6 @@
    #include "limbFinding.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "stdint.i"
 %include "std_string.i"
 %include "sys_model.i"
@@ -36,8 +32,3 @@ from Basilisk.architecture.swig_common_model import *
 struct CameraImageMsg_C;
 %include "architecture/msgPayloadDef/OpNavLimbMsgPayload.h"
 struct OpNavLimbMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

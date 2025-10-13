@@ -22,10 +22,6 @@
    #include "scalingIterativeClosestPoint.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "stdint.i"
 %include "sys_model.h"
 %include "std_array.i"
@@ -36,8 +32,3 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDef/SICPMsgPayload.h"
 %include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

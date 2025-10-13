@@ -22,10 +22,6 @@
    #include "sunlineSRuKF.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
 
 %include "sunlineSRuKF.h"
@@ -36,8 +32,3 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
 %include "architecture/msgPayloadDef/FilterMsgPayload.h"
 %include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

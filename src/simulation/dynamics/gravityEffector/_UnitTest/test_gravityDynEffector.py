@@ -223,7 +223,7 @@ def sphericalHarmonics(show_plots):
 
     testHarm = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
-    spherHarm.cBar = gravityEffector.MultiArray(testHarm)
+    spherHarm.cBar = testHarm
 
     vecCheckSuccess = True
     for i in range(len(spherHarm.cBar)):
@@ -308,7 +308,7 @@ def singleGravityBody(show_plots):
 
     SpiceObject.modelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    SpiceObject.addPlanetNames(spiceInterface.StringVector(["earth", "mars barycenter", "sun"]))
+    SpiceObject.addPlanetNames(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"

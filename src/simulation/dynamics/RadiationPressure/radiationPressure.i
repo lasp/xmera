@@ -21,10 +21,6 @@
    #include "radiationPressure.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
 %include "std_string.i"
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
@@ -37,10 +33,5 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDef/EclipseMsgPayload.h"
 
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
 
 %pythoncode "simulation/dynamics/RadiationPressure/parseSRPLookup.py"
