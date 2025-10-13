@@ -48,7 +48,7 @@ public:
     std::string modelTag = "";     //!< -- name for the algorithm to base off of
     uint64_t CallCounts = 0;       //!< -- Counts on the model being called
     uint32_t RNGSeed = 0x1badcad1; //!< -- Giving everyone a random seed for ease of MC
-    int64_t moduleID;              //!< -- Module ID for this module  (handed out by module_id_generator)
+    int64_t moduleID;              //!< -- Dynamically generated unique ID for this module
 };
 
 // The following code helps users who defined their own module classes
