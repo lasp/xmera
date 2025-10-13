@@ -99,7 +99,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
-from Basilisk.architecture import sysModel
+from Basilisk.architecture import sim_model
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -282,9 +282,9 @@ def run(show_plots):
     return figureList
 
 
-class PythonMRPPD(sysModel.SysModel):
+class PythonMRPPD(sim_model.SysModel):
     """
-    This class inherits from the `SysModel` available in the ``Basilisk.architecture.sysModel`` module.
+    This class inherits from the `SysModel` available in the ``Basilisk.architecture.sim_model`` module.
     The `SysModel` is the parent class which your Python BSK modules must inherit.
     The class uses the following
     virtual functions:
@@ -352,13 +352,13 @@ class PythonMRPPD(sysModel.SysModel):
 
         # All Python SysModels have self.bskLogger available
         # The logger level flags (i.e. BSK_INFORMATION) may be
-        # accessed from sysModel
+        # accessed from sim_model
         if False:
             """Sample Python module method"""
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"Time: {currentSimNanos * 1.0E-9} s")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")
+            self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"Time: {currentSimNanos * 1.0E-9} s")
+            self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
+            self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}")
+            self.bskLogger.bskLog(sim_model.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")
 
         return
 
