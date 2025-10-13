@@ -1,7 +1,4 @@
 add_subdirectory(utilities)
-add_subdirectory(utilitiesSelfCheck)
-add_subdirectory(msgPayloadDef)
-
 
 # Build a linkable core library for C++ modules
 add_library(xmera_core SHARED
@@ -14,7 +11,6 @@ add_library(xmera_core SHARED
 
 target_link_libraries(xmera_core PUBLIC
   Eigen3::Eigen
-  ArchitectureUtilities
 )
 
 # TODO: Organize per-artifact includes in a sane way.
@@ -34,3 +30,6 @@ add_library(Xmera::Core ALIAS xmera_core)
 
 
 add_subdirectory(system_model)
+add_subdirectory(msgPayloadDef)
+
+add_subdirectory(utilitiesSelfCheck)

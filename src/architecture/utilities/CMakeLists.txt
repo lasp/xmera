@@ -12,7 +12,6 @@ add_library(ArchitectureUtilities STATIC
   geodeticConversion.cpp
   signalProcessing.cpp
   discretize.cpp
-  bskLogging.cpp
   gauss_markov.cpp
   BSpline.cpp
   keplerianOrbit.cpp
@@ -20,19 +19,16 @@ add_library(ArchitectureUtilities STATIC
 
 target_link_libraries(ArchitectureUtilities PUBLIC
   Eigen3::Eigen
+  Xmera::Core
 )
 
 target_include_directories(ArchitectureUtilities PRIVATE
   "${CMAKE_SOURCE_DIR}"
 )
 
-set_target_properties(ArchitectureUtilities PROPERTIES
-  POSITION_INDEPENDENT_CODE ON
-  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk"
-)
+set_target_properties(ArchitectureUtilities PROPERTIES C_EXTENSIONS ON)
 
 install(TARGETS ArchitectureUtilities DESTINATION lib)
-
 
 xmera_add_swig_module(architecture.bskLogging)
 
