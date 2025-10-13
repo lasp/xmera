@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   rateServoFullNonlinear.cpp
   rateServoFullNonlinearAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  ArchitectureUtilities
+)
