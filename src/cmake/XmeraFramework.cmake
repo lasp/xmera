@@ -56,6 +56,8 @@ function(xmera_is_module_enabled module_path out_var)
 endfunction()
 
 function(xmera_add_swig_module module)
+  cmake_parse_arguments(PARSE_ARGV 1 arg "" "INTERFACE" "PROVIDES;REQUIRES")
+
   # separate "a.b.c" into "a" and "c"
   #  ... yes, ignore intermediate packages. everything just collapses. :(
   # TODO: separate "a.b.c" into "a/b" and "c"
@@ -64,12 +66,44 @@ function(xmera_add_swig_module module)
   list(POP_FRONT _package_components _package_path)
   # list(JOIN _package_components "/" _package_path)
 
+  # If no .i file is provided explicitly, infer its location from ${module}.
+  if(DEFINED arg_INTERFACE)
+    set(_interface_path "${arg_INTERFACE}")
+    get_filename_component(_interface_basename "${arg_INTERFACE}" NAME_WE)
+  else()
+    set(_interface_path "${_module_basename}.i")
+    set(_interface_basename "${_module_basename}")
+  endif()
+
+  # TODO: ew ew ew ew ew ew ew ew ew ew ew ew
+  #   find a better way to bootstrap the base model without hardcoding
+  #   its existence
+  if(TARGET architecture.sim_model)
+    list(PREPEND arg_REQUIRES architecture.sim_model)
+  endif()
+
+  # Collect the .i include directories from upstream SWIG dependencies,
+  # add in the one this module provides, and attach the combined list
+  # to this module for further downstream use.
+  list(TRANSFORM arg_PROVIDES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+  set(_swig_interface_includes ${arg_PROVIDES})
+
+  foreach(_upstream IN LISTS arg_REQUIRES)
+    get_target_property(_upstream_provides "${_upstream}" XMERA_SWIG_INCLUDE_DIRECTORIES)
+    list(APPEND _swig_interface_includes ${_upstream_provides})
+  endforeach()
+
+  list(REMOVE_DUPLICATES _swig_interface_includes)
+
+  # Gather up all .i and .h include paths and prepend -I to each one
   set(_gen_target_includes "$<TARGET_PROPERTY:${module},INCLUDE_DIRECTORIES>")
-  set(_gen_swig_include_flags "$<LIST:TRANSFORM,${_gen_target_includes},PREPEND,-I>")
+  set(_gen_all_includes "${_gen_target_includes};${_swig_interface_includes}")
+  set(_gen_swig_include_flags "$<LIST:TRANSFORM,${_gen_all_includes},PREPEND,-I>")
+
   add_custom_command(
     COMMENT "Generating SWIG Python/C++ wrapper: ${module}"
     OUTPUT
-      "${CMAKE_CURRENT_BINARY_DIR}/${_module_basename}_wrap.cxx"
+      "${CMAKE_CURRENT_BINARY_DIR}/${_interface_basename}_wrap.cxx"
       "${CMAKE_CURRENT_BINARY_DIR}/${_module_basename}.py"
     COMMAND
       "${SWIG_EXECUTABLE}"
@@ -77,21 +111,22 @@ function(xmera_add_swig_module module)
       -c++
       -MD
       -outcurrentdir
+      -module "${_module_basename}"
       "${_gen_swig_include_flags}"
-      "${CMAKE_CURRENT_SOURCE_DIR}/${_module_basename}.i"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${_interface_path}"
     WORKING_DIRECTORY
       "${CMAKE_CURRENT_BINARY_DIR}"
     MAIN_DEPENDENCY
-      "${CMAKE_CURRENT_SOURCE_DIR}/${_module_basename}.i"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${_interface_path}"
     DEPFILE
-      "${CMAKE_CURRENT_BINARY_DIR}/${_module_basename}_wrap.d"
+      "${CMAKE_CURRENT_BINARY_DIR}/${_interface_basename}_wrap.d"
     VERBATIM
     COMMAND_EXPAND_LISTS
     DEPENDS_EXPLICIT_ONLY
   )
 
   add_library("${module}" MODULE
-    "${CMAKE_CURRENT_BINARY_DIR}/${_module_basename}_wrap.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/${_interface_basename}_wrap.cxx"
   )
 
   target_include_directories("${module}" PRIVATE
@@ -132,6 +167,7 @@ function(xmera_add_swig_module module)
     PREFIX "_"
     OUTPUT_NAME "${_module_basename}"
     INSTALL_RPATH "${XMERA_RPATH_ORIGIN}/${_rpath}"
+    XMERA_SWIG_INCLUDE_DIRECTORIES "${_swig_interface_includes}"
   )
 
   install(
