@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   sunlineEphem.cpp
   sunlineEphemAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  Eigen3::Eigen
+)
