@@ -20,11 +20,11 @@
 #ifndef EPHEM_NAV_CONVERTER_H
 #define EPHEM_NAV_CONVERTER_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverterAlgorithm.h"
 
 /*! @brief The ephemNavConverter class.*/

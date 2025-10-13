@@ -29,7 +29,7 @@
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief simple solar panel class */
 class SimpleSolarPanel : public PowerNodeBase {

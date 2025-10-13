@@ -26,7 +26,7 @@
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include <xmera/sys_model.h>
 %include "rateDamp.h"
 
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"

@@ -24,13 +24,13 @@
 #include <string>
 #include <vector>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AccessMsgPayload.h"
 #include "architecture/msgPayloadDef/GroundStateMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/geodeticConversion.h"

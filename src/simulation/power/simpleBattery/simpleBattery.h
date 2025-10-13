@@ -23,7 +23,7 @@
 
 #include "simulation/power/_GeneralModuleFiles/powerStorageBase.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 
 /*! @brief simple battery class */

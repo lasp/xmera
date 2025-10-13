@@ -22,11 +22,11 @@
 
 #define MAX_NUM_CHEBY_POLYS 32
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/

@@ -20,11 +20,11 @@
 #ifndef HINGEDRIGIDBODYMOTOR_H
 #define HINGEDRIGIDBODYMOTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief Calculates a motor torque to drive a hinged panel to a reference angle state. A sensed and reference hinged
    rigid body angle drives a simple PD control law.

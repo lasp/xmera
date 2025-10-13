@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <string>
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 class GravBodyData;
 

@@ -20,11 +20,11 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/definitions.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief wheel speed encoder module class */
 class Encoder : public SysModel {

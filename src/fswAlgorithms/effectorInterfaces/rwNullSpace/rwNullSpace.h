@@ -20,13 +20,13 @@
 #ifndef _RW_NULL_SPACE_H_
 #define _RW_NULL_SPACE_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <stdint.h>
 #include <stdlib.h>
 

@@ -20,7 +20,7 @@
 #ifndef _SysModel_HH_
 #define _SysModel_HH_
 
-#include <architecture/utilities/bskLogging.h>
+#include <xmera/bskLogging.h>
 #include <string>
 #include <stdint.h>
 
@@ -62,7 +62,7 @@ public:
             raise TypeError(
                 f"The 'logger' function is not supported for this type ('{type(self).__qualname__}'). "
                 "To fix this, update the SWIG file for this module. Change "
-                """'%include "sys_model.h"' to '%include "sys_model.i"'"""
+                """'%include <xmera/sys_model.h>' to '%include "sys_model.i"'"""
             )
     %}
 }

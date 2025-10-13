@@ -18,7 +18,7 @@
  */
 
 #include "sphericalHarmonicsGravityModel.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 
 namespace {

@@ -20,12 +20,12 @@
 #ifndef _CHEBY_POS_EPHEM_H_
 #define _CHEBY_POS_EPHEM_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4

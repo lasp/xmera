@@ -20,12 +20,12 @@
 #ifndef _ST_COMM_H_
 #define _ST_COMM_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/STAttMsgPayload.h"
 #include "architecture/msgPayloadDef/STSensorMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief Module configuration message.  */
 class StComm : public SysModel {

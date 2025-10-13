@@ -20,7 +20,7 @@
 #ifndef SPACECRAFT_PLUS_H
 #define SPACECRAFT_PLUS_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
@@ -37,7 +37,7 @@
 
 #include "../_GeneralModuleFiles/hubEffector.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief spacecraft dynamic effector */
 class Spacecraft : public DynamicObject {

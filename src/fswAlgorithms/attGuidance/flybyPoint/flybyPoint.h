@@ -20,7 +20,7 @@
 #ifndef FLYBY_POINT_H
 #define FLYBY_POINT_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"

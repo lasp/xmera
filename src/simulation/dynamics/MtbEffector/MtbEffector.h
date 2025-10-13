@@ -20,7 +20,7 @@
 #ifndef MTBEFFECTOR_H
 #define MTBEFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBMsgPayload.h"
@@ -30,7 +30,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief This module converts magnetic torque bar dipoles to body torques.
  */

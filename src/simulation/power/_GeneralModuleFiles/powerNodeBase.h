@@ -20,7 +20,7 @@
 #ifndef BASILISK_POWERNODEBASE_H
 #define BASILISK_POWERNODEBASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include <Eigen/Dense>
 #include <string>
@@ -29,7 +29,7 @@
 #include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
 #include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief power node base class */
 class PowerNodeBase : public SysModel {

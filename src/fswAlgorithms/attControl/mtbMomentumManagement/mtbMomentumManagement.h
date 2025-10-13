@@ -20,7 +20,7 @@
 #ifndef MTB_MOMENTUM_MANAGEMENT_H
 #define MTB_MOMENTUM_MANAGEMENT_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"

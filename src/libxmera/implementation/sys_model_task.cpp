@@ -17,7 +17,7 @@
 
  */
 
-#include "sys_model_task.h"
+#include <xmera/sys_model_task.h>
 
 /*! A construction option that allows the user to set some task parameters.
  Note that the only required argument is InputPeriod.

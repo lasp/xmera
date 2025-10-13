@@ -30,7 +30,7 @@
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief sensor thermal class */
 class SensorThermal : public SysModel {

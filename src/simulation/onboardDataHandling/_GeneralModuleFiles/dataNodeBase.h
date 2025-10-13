@@ -20,7 +20,7 @@
 #ifndef BASILISK_DATANODEBASE_H
 #define BASILISK_DATANODEBASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>

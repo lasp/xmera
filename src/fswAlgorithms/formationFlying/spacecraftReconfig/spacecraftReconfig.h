@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
@@ -31,7 +31,7 @@
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */

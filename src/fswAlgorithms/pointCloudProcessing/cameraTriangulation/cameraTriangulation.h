@@ -20,14 +20,14 @@
 #ifndef CAMERATRIANGULATION_H
 #define CAMERATRIANGULATION_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/CameraLocalizationMsgPayload.h"
 #include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
 #include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <array>

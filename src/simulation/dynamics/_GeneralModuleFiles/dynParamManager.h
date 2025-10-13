@@ -26,7 +26,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include "stateData.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 
 /*! state vector class */

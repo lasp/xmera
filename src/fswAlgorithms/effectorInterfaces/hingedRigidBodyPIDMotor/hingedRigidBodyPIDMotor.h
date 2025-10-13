@@ -20,11 +20,11 @@
 #ifndef _HINGED_RIGID_BODY_PID_MOTOR_
 #define _HINGED_RIGID_BODY_PID_MOTOR_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
 #include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */

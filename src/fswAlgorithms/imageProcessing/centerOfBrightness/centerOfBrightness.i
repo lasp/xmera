@@ -24,7 +24,7 @@
 
 %include "stdint.i"
 %include "std_string.i"
-%include "sys_model.h"
+%include <xmera/sys_model.h>
 %include "swig_conly_data.i"
 %include "std_array.i"
 %include "swig_eigen.i"

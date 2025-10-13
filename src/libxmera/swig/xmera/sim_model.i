@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module(directors="1") sim_model
+%module(package="Basilisk.architecture", directors="1") sim_model
 %{
-   #include "sim_model.h"
+   #include <xmera/sim_model.h>
 %}
 
 %include "std_vector.i"
@@ -74,11 +74,11 @@ namespace std {
     self.__super_init_called__ = True%}
 %rename("_SysModel") SysModel;
 
-%include "cSysModel.i"
-%include "sys_model_task.h"
-%include "sys_process.h"
-%include "sim_model.h"
-%include "architecture/utilities/bskLogging.h"
+%include <xmera/cSysModel.i>
+%include <xmera/sys_model_task.h>
+%include <xmera/sys_process.h>
+%include <xmera/sim_model.h>
+%include <xmera/bskLogging.h>
 
 %pythoncode %{
 class SuperInitChecker(type):

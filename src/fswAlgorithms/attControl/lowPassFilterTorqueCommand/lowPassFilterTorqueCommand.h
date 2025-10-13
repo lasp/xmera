@@ -20,7 +20,7 @@
 #ifndef _LOW_PASS_FILTER_TORQUE_COMMAND_
 #define _LOW_PASS_FILTER_TORQUE_COMMAND_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include <stdint.h>

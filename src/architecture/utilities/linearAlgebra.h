@@ -20,7 +20,7 @@
 #ifndef _LINEARALGEBRA_H_
 #define _LINEARALGEBRA_H_
 
-#include <architecture/utilities/bskLogging.h>
+#include <xmera/bskLogging.h>
 #include <stdio.h>
 
 /* Divide by zero epsilon value */

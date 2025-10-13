@@ -20,7 +20,7 @@
 #ifndef STATE_EFFECTOR_H
 #define STATE_EFFECTOR_H
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenMRP.h"
 #include "dynParamManager.h"
 #include <Eigen/Dense>

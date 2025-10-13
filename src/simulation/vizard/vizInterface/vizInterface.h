@@ -24,7 +24,7 @@
 #include <map>
 #include <vector>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
 #include "architecture/messaging/messaging.h"
@@ -34,7 +34,7 @@
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/simDefinitions.h"
 
 #define VIZ_MAX_SIZE 100000

@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AccessMsgPayload.h"
 #include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"

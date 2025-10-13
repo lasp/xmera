@@ -1,13 +1,13 @@
 %module cSysModel
 %{
-   #include "sys_model.h"
+   #include <xmera/sys_model.h>
 %}
 
 %include "std_string.i"
 %include "swig_conly_data.i"
-%include "architecture/utilities/bskLogging.h"
+%include <xmera/bskLogging.h>
 
-%include "sys_model.h"
+%include <xmera/sys_model.h>
 
 %pythonbegin %{
 from typing import Union, Iterable

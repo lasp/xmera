@@ -20,12 +20,12 @@
 #ifndef _DV_GUIDANCE_POINT_H_
 #define _DV_GUIDANCE_POINT_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the nominal delta-V guidance

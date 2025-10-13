@@ -27,7 +27,7 @@
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include <xmera/sys_model.h>
 %include "pinholeCamera.h"
 %include "std_vector.i"
 

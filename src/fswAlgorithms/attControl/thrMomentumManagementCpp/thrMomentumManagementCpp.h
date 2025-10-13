@@ -20,9 +20,9 @@
 #ifndef _THR_MOMENTUM_MANAGEMENT_CPP_H_
 #define _THR_MOMENTUM_MANAGEMENT_CPP_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"

@@ -29,7 +29,7 @@
 #include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"
 #include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "fswAlgorithms/opticalNavigation/cobConverter/cobConverterAlgorithm.h"
 
 /**

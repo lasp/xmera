@@ -25,7 +25,7 @@
 #include <vector>
 #include <random>
 #include <Eigen/Dense>
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 
 /*! @brief This module is used to apply a second-order bounded Gauss-Markov random walk

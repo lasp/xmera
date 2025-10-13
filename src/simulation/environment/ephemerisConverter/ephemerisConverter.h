@@ -20,14 +20,14 @@
 #ifndef EPHEMERIS_CONVERTER_H
 #define EPHEMERIS_CONVERTER_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <vector>
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief ephemeric converter class */
 class EphemerisConverter : public SysModel {

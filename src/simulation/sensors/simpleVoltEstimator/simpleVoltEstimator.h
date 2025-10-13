@@ -20,10 +20,10 @@
 #ifndef SIMPLE_VOLT_ESTIMATOR_H
 #define SIMPLE_VOLT_ESTIMATOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/VoltMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/gauss_markov.h"
 #include <Eigen/Dense>
 #include <vector>

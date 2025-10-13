@@ -20,8 +20,8 @@
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/sys_model.h>
+#include <xmera/bskLogging.h>
 #include "dynamicEffector.h"
 #include "dynParamManager.h"
 #include "stateEffector.h"

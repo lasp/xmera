@@ -20,10 +20,10 @@
 #ifndef _SIMPLE_DEADBAND_
 #define _SIMPLE_DEADBAND_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */

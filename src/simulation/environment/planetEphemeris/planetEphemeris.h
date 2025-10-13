@@ -20,13 +20,13 @@
 #ifndef planetEphemeris_H
 #define planetEphemeris_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <vector>
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief planet ephemeris class */

@@ -20,7 +20,7 @@
 #ifndef MTBFEEDFORWARD_H
 #define MTBFEEDFORWARD_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"

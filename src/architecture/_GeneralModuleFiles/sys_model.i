@@ -1,1 +1,1 @@
-%include "cSysModel.i"
+%include <xmera/cSysModel.i>

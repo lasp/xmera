@@ -23,7 +23,7 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 
 #include <Eigen/Core>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDef/BodyHeadingMsgPayload.h"
@@ -31,7 +31,7 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 #include "architecture/msgPayloadDef/InertialHeadingMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 enum class CelestialBody { NotSun = 0, Sun = 1 };
 

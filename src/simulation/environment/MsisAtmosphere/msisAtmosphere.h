@@ -20,7 +20,7 @@
 #ifndef MSIS_ATMOSPHERE_H
 #define MSIS_ATMOSPHERE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <time.h>
 #include <Eigen/Dense>
 #include <string>
@@ -30,7 +30,7 @@
 
 #include "architecture/msgPayloadDef/SwDataMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 extern "C" {
 #include "nrlmsise-00.h"

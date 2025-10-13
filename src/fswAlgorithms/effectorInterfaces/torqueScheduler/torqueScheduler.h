@@ -20,11 +20,11 @@
 #ifndef _TORQUE_SCHEDULER_
 #define _TORQUE_SCHEDULER_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h"
 #include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */

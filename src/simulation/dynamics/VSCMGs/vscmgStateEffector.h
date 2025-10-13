@@ -24,7 +24,7 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateEffector.h"
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <Eigen/Dense>
 
 #include "architecture/messaging/messaging.h"
@@ -33,7 +33,7 @@
 #include "architecture/msgPayloadDef/VSCMGConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/VSCMGSpeedMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"

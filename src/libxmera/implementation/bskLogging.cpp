@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 logLevel_t LogLevel = BSK_DEBUG;
 

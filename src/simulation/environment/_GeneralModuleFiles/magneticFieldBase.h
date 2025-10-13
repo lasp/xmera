@@ -20,7 +20,7 @@
 #ifndef MAGNETIC_FIELD_BASE_H
 #define MAGNETIC_FIELD_BASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <time.h>
 #include <Eigen/Dense>
 #include <string>
@@ -32,7 +32,7 @@
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief magnetic field base class */
 class MagneticFieldBase : public SysModel {

@@ -20,14 +20,14 @@
 #ifndef MSMFORCETORQUE_H
 #define MSMFORCETORQUE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/ChargeMsmMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/VoltMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenSupport.h"
 #include <Eigen/Dense>
 #include <vector>

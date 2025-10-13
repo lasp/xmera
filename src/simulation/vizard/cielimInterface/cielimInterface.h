@@ -18,7 +18,7 @@
 #ifndef CIELIM_INTERFACE_H
 #define CIELIM_INTERFACE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 #include "architecture/msgPayloadDef/CameraModelMsgPayload.h"

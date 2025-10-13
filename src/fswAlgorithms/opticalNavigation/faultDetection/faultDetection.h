@@ -20,7 +20,7 @@
 #ifndef _FAULT_DETECTION_H_
 #define _FAULT_DETECTION_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"

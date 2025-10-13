@@ -20,7 +20,7 @@
 #ifndef SIMPLE_NAV_H
 #define SIMPLE_NAV_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AccDataMsgPayload.h"
 #include "architecture/msgPayloadDef/AccPktDataMsgPayload.h"
@@ -29,7 +29,7 @@
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/gauss_markov.h"
 #include <Eigen/Dense>
 #include <random>

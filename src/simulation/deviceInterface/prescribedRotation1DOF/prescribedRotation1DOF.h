@@ -19,11 +19,11 @@
 #ifndef _PRESCRIBEDROTATION1DOF_
 #define _PRESCRIBEDROTATION1DOF_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <Eigen/Dense>
 #include <cstdint>
 

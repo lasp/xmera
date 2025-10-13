@@ -19,7 +19,7 @@
 #ifndef BASILISK_ATMOSPHEREBASE_H
 #define BASILISK_ATMOSPHEREBASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <time.h>
 #include <Eigen/Dense>
 #include <string>
@@ -31,7 +31,7 @@
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief atmospheric density base class */
 class AtmosphereBase : public SysModel {

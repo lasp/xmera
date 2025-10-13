@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 
 static int64_t nextModuleID = 1;
 

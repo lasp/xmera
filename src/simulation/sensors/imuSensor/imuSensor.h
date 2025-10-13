@@ -20,7 +20,7 @@
 #ifndef IMU_SENSOR_H
 #define IMU_SENSOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/utilities/discretize.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/saturate.h"
@@ -31,7 +31,7 @@
 #include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <Eigen/Dense>

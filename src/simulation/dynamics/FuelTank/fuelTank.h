@@ -19,7 +19,7 @@
 #ifndef FUEL_TANK_H
 #define FUEL_TANK_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/FuelTankMsgPayload.h"
 #include "simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.h"

@@ -18,6 +18,7 @@ add_library(ArchitectureUtilities STATIC
 )
 
 target_link_libraries(ArchitectureUtilities PUBLIC
+  Xmera::Core
   Eigen3::Eigen
 )
 
@@ -30,7 +31,7 @@ install(TARGETS ArchitectureUtilities DESTINATION lib)
 
 xmera_add_swig_module(architecture.orbitalMotion)
 target_sources(architecture.orbitalMotion PRIVATE orbitalMotion.cpp)
-target_link_libraries(architecture.orbitalMotion PUBLIC Eigen3::Eigen)
+target_link_libraries(architecture.orbitalMotion PUBLIC Xmera::Core Eigen3::Eigen)
 
 if(XMERA_ENABLE_INTERNAL)
   xmera_add_swig_module(architecture.BSpline)

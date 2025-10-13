@@ -35,8 +35,8 @@
 #include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
 #include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/sys_model.h>
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenMRP.h"
 
 /*! @brief visual camera class */

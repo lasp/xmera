@@ -20,7 +20,7 @@
 #ifndef _MRP_PD_CONTROL_C_H_
 #define _MRP_PD_CONTROL_C_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"

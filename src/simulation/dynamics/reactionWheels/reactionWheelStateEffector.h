@@ -20,7 +20,7 @@
 #ifndef REACTIONWHEELSTATEEFFECTOR_H
 #define REACTIONWHEELSTATEEFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/utilities/macroDefinitions.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
@@ -35,7 +35,7 @@
 #include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"

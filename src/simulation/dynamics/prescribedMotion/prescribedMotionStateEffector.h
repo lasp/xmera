@@ -20,7 +20,7 @@
 #ifndef PRESCRIBED_MOTION_STATE_EFFECTOR_H
 #define PRESCRIBED_MOTION_STATE_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
 #include "architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h"

@@ -19,7 +19,7 @@
 
 #ifndef MAGNETOMETER_H
 #define MAGNETOMETER_H
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <random>
 #include <vector>
 
@@ -28,7 +28,7 @@
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/TAMSensorMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/saturate.h"
 #include <Eigen/Dense>

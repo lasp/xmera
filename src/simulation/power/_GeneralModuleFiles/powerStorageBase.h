@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
@@ -26,7 +26,7 @@
 #include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
 #include "architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 #ifndef BASILISK_SIMPOWERSTORAGEBASE_H
 #define BASILISK_SIMPOWERSTORAGEBASE_H

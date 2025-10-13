@@ -20,8 +20,8 @@
 #ifndef _SysModelTask_HH_
 #define _SysModelTask_HH_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/sys_model.h>
+#include <xmera/bskLogging.h>
 #include <stdint.h>
 #include <vector>
 

@@ -20,7 +20,7 @@
 #ifndef HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/utilities/eigenMRP.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
@@ -31,7 +31,7 @@
 #include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief hinged rigid body state effector class */
 class HingedRigidBodyStateEffector : public StateEffector, public SysModel {

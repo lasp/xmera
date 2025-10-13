@@ -25,7 +25,7 @@
 
 #include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief reaction wheel power class */
 class ReactionWheelPower : public PowerNodeBase {

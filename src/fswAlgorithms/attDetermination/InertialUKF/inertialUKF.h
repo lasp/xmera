@@ -20,7 +20,7 @@
 #ifndef _INERTIAL_UKF_H_
 #define _INERTIAL_UKF_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AccDataMsgPayload.h"
 #include "architecture/msgPayloadDef/InertialFilterMsgPayload.h"

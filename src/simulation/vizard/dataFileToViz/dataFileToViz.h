@@ -22,8 +22,8 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/sys_model.h>
+#include <xmera/bskLogging.h>
 #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 #include <Eigen/Dense>
 

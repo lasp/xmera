@@ -25,7 +25,7 @@
 #ifndef INERTIAL_ATTITUDE_UKF_H
 #define INERTIAL_ATTITUDE_UKF_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/FilterMsgPayload.h"
 #include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"

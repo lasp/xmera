@@ -25,7 +25,7 @@
 
 %include "swig_conly_data.i"
 
-%include "sys_model.h"
+%include <xmera/sys_model.h>
 %include "flybyPoint.h"
 
 %include "architecture/msgPayloadDef/NavTransMsgPayload.h"

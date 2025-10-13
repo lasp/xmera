@@ -17,7 +17,7 @@
 
  */
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <Eigen/Dense>
 #include <cstring>
 #include <string>
@@ -27,7 +27,7 @@
 #include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
 #include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 #ifndef BASILISK_DATASTORAGEUNITBASE_H
 #define BASILISK_DATASTORAGEUNITBASE_H

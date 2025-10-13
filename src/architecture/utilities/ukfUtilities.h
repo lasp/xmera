@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include<architecture/utilities/bskLogging.h>
+#include <xmera/bskLogging.h>
 
 #define UKF_MAX_DIM 20
 

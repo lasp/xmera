@@ -20,13 +20,13 @@
 #ifndef LAMBERTSECONDDV_H
 #define LAMBERTSECONDDV_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/DesiredVelocityMsgPayload.h"
 #include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/LambertSolutionMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenSupport.h"
 
 /*! @brief This module computes the second Delta-V maneuver for the Lambert problem

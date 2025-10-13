@@ -20,7 +20,7 @@
 #ifndef HUB_EFFECTOR_H
 #define HUB_EFFECTOR_H
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenMRP.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"

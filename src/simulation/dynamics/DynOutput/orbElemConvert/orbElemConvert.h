@@ -20,7 +20,7 @@
 #ifndef ORB_ELEM_CONVERT_H
 #define ORB_ELEM_CONVERT_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <vector>
 
 #include "architecture/messaging/messaging.h"
@@ -28,7 +28,7 @@
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief orbit element converter module class */

@@ -17,7 +17,7 @@
 
  */
 
-#include "sim_model.h"
+#include <xmera/sim_model.h>
 #include <iostream>
 
 void activateNewThread(void *threadData)

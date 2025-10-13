@@ -289,7 +289,7 @@ class moduleGenerator:
         headerFile += '#ifndef ' + name.upper() + '_H\n'
         headerFile += '#define ' + name.upper() + '_H\n'
         headerFile += '\n'
-        headerFile += '#include "architecture/_GeneralModuleFiles/sys_model.h"\n'
+        headerFile += '#include <xmera/sys_model.h>\n'
         # loop over message definition includes
         includedMsgs = []
         for msg in inMsgList + outMsgList:
@@ -300,7 +300,7 @@ class moduleGenerator:
                 if msg['wrap'] == 'C++':
                     headerFile += '#include "architecture/msgPayloadDef/' + msg['type'] + 'Payload.h"\n'
                 includedMsgs.append(msg['type'])
-        headerFile += '#include "architecture/utilities/bskLogging.h"\n'
+        headerFile += '#include <xmera/bskLogging.h>\n'
         headerFile += '#include "architecture/messaging/messaging.h"\n'
         headerFile += '\n'
         headerFile += '/*! @brief ' + briefDescription + '\n */\n'

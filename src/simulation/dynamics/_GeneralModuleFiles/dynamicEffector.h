@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 #include "dynParamManager.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief dynamic effector class */
 class DynamicEffector {

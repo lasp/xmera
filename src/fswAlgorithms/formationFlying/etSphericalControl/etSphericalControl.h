@@ -20,7 +20,7 @@
 #ifndef _ET_SPHERICAL_CONTROL_H_
 #define _ET_SPHERICAL_CONTROL_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
@@ -29,7 +29,7 @@
 #include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
 #include <stdint.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class EtSphericalControl : public SysModel {

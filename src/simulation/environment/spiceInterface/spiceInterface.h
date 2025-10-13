@@ -20,8 +20,8 @@
 #ifndef SpiceInterface_H
 #define SpiceInterface_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/sys_model.h>
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <map>

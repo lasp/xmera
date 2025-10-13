@@ -20,7 +20,7 @@
 #ifndef DRAG_DYNAMIC_EFFECTOR_H
 #define DRAG_DYNAMIC_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include <Eigen/Dense>
@@ -29,7 +29,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AtmoPropsMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 

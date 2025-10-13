@@ -20,7 +20,7 @@
 #ifndef GROUND_LOCATION_H
 #define GROUND_LOCATION_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
@@ -30,7 +30,7 @@
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief ground location class */
 class SpacecraftLocation : public SysModel {

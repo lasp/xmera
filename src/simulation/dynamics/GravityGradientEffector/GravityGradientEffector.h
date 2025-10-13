@@ -20,8 +20,8 @@
 #ifndef GRAVITY_GRADIENT_DYNAMIC_EFFECTOR_H
 #define GRAVITY_GRADIENT_DYNAMIC_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/sys_model.h>
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"

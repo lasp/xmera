@@ -27,7 +27,7 @@
    #include "svIntegratorRK2.h"
    #include "svIntegratorRKF45.h"
    #include "svIntegratorRKF78.h"
-   #include "architecture/_GeneralModuleFiles/sys_model.h"
+   #include <xmera/sys_model.h>
    #include "../_GeneralModuleFiles/dynamicObject.h"
 %}
 

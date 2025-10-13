@@ -20,12 +20,12 @@
 #ifndef DENTONFLUXMODEL_H
 #define DENTONFLUXMODEL_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/PlasmaFluxMsgPayload.h"
 #include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 #define MAX_NUM_KPS 28
 #define MAX_NUM_ENERGIES 40

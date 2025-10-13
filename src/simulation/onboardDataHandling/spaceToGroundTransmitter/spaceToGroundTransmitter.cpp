@@ -18,7 +18,7 @@
  */
 
 #include "spaceToGroundTransmitter.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <array>
 #include <iostream>
 

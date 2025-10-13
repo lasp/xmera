@@ -20,13 +20,13 @@
 #ifndef SCANNINGINSTRUMENTCONTROLLER_H
 #define SCANNINGINSTRUMENTCONTROLLER_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/AccessMsgPayload.h"
 #include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
 #include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Module to perform continuous instrument control

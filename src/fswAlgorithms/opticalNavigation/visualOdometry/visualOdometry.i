@@ -27,7 +27,7 @@
 %include "std_vector.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include <xmera/sys_model.h>
 %include "visualOdometry.h"
 
 %include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"

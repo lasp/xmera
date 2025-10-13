@@ -24,10 +24,10 @@
 #include <stdint.h>
 
 //  Support imports
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 //  Message type imports
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/HillRelStateMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"

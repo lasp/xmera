@@ -20,7 +20,7 @@
 #ifndef ALBEDO_H
 #define ALBEDO_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/utilities/eigenMRP.h"
 #include "architecture/utilities/eigenSupport.h"
 

@@ -20,7 +20,7 @@
 #ifndef THRUSTER_STATE_EFFECTOR_H
 #define THRUSTER_STATE_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
@@ -32,7 +32,7 @@
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 #include "architecture/msgPayloadDef/THROutputMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include <Eigen/Dense>
 #include <vector>
 

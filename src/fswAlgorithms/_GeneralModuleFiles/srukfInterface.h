@@ -20,7 +20,7 @@
 #ifndef SRUKF_INTERFACE_HPP
 #define SRUKF_INTERFACE_HPP
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/eigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"

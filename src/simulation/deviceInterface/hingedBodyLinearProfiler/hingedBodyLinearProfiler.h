@@ -20,10 +20,10 @@
 #ifndef HINGEDBODYLINEARPROFILER_H
 #define HINGEDBODYLINEARPROFILER_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief Linear deployment profiler for single hinged rigid body.
  */

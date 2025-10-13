@@ -25,7 +25,7 @@
 #ifndef LINEAR_OD_EKF_H
 #define LINEAR_OD_EKF_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/FilterMsgPayload.h"
 #include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"

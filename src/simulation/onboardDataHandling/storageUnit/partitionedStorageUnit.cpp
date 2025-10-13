@@ -21,7 +21,7 @@
 
 
 #include "partitionedStorageUnit.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 
 /*! The constructor creates a partitionedStorageUnit instance with zero stored data

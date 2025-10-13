@@ -29,7 +29,7 @@
 #include "architecture/msgPayloadDef/FilterMsgPayload.h"
 #include "architecture/msgPayloadDef/NavTransMsgPayload.h"
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "fswAlgorithms/transDetermination/ephemDifferenceWithUncertainty/ephemDifferenceWithUncertaintyAlgorithm.h"
 
 /*! @brief This module computes the difference between two ephemeris messages, and outputs the relative states into a

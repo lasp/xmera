@@ -20,7 +20,7 @@
 #ifndef _PIXEL_LINE_CONVERTER_H_
 #define _PIXEL_LINE_CONVERTER_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/NavAttMsgPayload.h"
@@ -28,7 +28,7 @@
 #include "architecture/msgPayloadDef/OpNavMsgPayload.h"
 
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"

@@ -24,7 +24,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
-%include "sys_model.h"
+%include <xmera/sys_model.h>
 %include "std_vector.i"
 
 %include "cielimInterface.h"

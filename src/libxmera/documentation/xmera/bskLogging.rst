@@ -72,7 +72,7 @@ The first step is to include the ``bskLogging`` support file with the module `*.
 
 .. code-block:: cpp
 
-    #include "architecture/utilities/bskLogging.h"
+    #include <xmera/bskLogging.h>
 
 Next, the module class must contain the following public variable:
 
@@ -93,7 +93,7 @@ The first step is to include the ``bskLogging`` support file with the module ``*
 
 .. code-block:: c
 
-    #include "architecture/utilities/bskLogging.h"
+    #include <xmera/bskLogging.h>
 
 The C-module configuration structure must contain a pointer to the ``BSKLogger`` type using:
 

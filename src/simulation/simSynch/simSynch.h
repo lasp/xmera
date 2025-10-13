@@ -20,7 +20,7 @@
 #ifndef CLOCK_SYNCH_H
 #define CLOCK_SYNCH_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include <chrono>
 #include <string>
 #include <vector>
@@ -28,7 +28,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/SynchClockMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief clock sync model class */
 class ClockSynch : public SysModel {

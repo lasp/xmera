@@ -47,6 +47,7 @@ endif()
 include(XmeraFramework)
 
 # Xmera core libraries
+add_subdirectory(libxmera)
 add_subdirectory(architecture)
 
 # Modules (and associated helper libraries)

@@ -20,12 +20,12 @@
 #ifndef _IMU_COMM_H_
 #define _IMU_COMM_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <xmera/sys_model.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDef/IMUSensorBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
 
-#include "architecture/utilities/bskLogging.h"
+#include <xmera/bskLogging.h>
 
 /*! @brief module configuration message */
 class ImuComm : public SysModel {
