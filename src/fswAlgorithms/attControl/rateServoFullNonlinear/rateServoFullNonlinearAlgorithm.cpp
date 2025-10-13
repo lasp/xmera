@@ -106,15 +106,13 @@ CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(uint64_t callTim
     /*! - evaluate required attitude control torque Lr */
     Eigen::Vector3d Lr = this->P * omega_BBast_B + this->Ki * this->z;
 
-    Eigen::Matrix<double, RW_EFF_CNT, 3> G_s_B{};
-    G_s_B = (Eigen::Map<const Eigen::Matrix<double, 3, RW_EFF_CNT>>(
-                 this->rwConfigParams.GsMatrix_B, G_s_B.rows(), G_s_B.cols()))
-                .transpose();
+    Eigen::Matrix<double, 3, RW_EFF_CNT> G_s_B =
+        cArrayAsEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
 
     Eigen::Vector3d H_B = this->ISCPntB_B * omega_BN_B;
     for (uint32_t i = 0; i < this->rwConfigParams.numRW; i++) {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) { /* check if wheel is available */
-            Eigen::Vector3d G_s_B_i = G_s_B.row(i);
+            Eigen::Vector3d G_s_B_i = G_s_B.col(i);
             Eigen::Vector3d h_s_i =
                 this->rwConfigParams.JsList[i] * (omega_BN_B.dot(G_s_B_i) + wheelSpeeds.wheelSpeeds[i]) * G_s_B_i;
             H_B += h_s_i;
