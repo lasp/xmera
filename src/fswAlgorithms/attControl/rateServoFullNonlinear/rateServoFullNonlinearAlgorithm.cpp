@@ -108,7 +108,7 @@ CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(uint64_t callTim
 
     Eigen::Matrix<double, RW_EFF_CNT, 3> G_s_B{};
     G_s_B = (Eigen::Map<const Eigen::Matrix<double, 3, RW_EFF_CNT>>(
-                 this->rwConfigParams.GsMatrix_B, G_s_B.rows(), G_s_B.cols()))
+                 this->rwConfigParams.GsMatrix_B, G_s_B.cols(), G_s_B.rows()))
                 .transpose();
 
     Eigen::Vector3d H_B = this->ISCPntB_B * omega_BN_B;
