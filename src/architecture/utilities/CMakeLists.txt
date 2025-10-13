@@ -30,8 +30,6 @@ set_target_properties(ArchitectureUtilities PROPERTIES C_EXTENSIONS ON)
 
 install(TARGETS ArchitectureUtilities DESTINATION lib)
 
-xmera_add_swig_module(architecture.bskLogging)
-
 xmera_add_swig_module(architecture.orbitalMotion)
 target_sources(architecture.orbitalMotion PRIVATE orbitalMotion.cpp)
 target_link_libraries(architecture.orbitalMotion PUBLIC Eigen3::Eigen)

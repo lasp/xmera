@@ -35,7 +35,7 @@ import sys
 
 import pytest
 import Basilisk.architecture.messaging
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -56,7 +56,7 @@ files = fnmatch.filter(os.listdir(path + '/../../docs/source/codeSamples'), "*.p
 @pytest.mark.scenarioTest
 def test_scenarioBskPrinciples(show_plots, bskScript):
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     # import the bskSim script to be tested

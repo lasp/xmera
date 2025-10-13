@@ -38,7 +38,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import simpleInstrumentController
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 from matplotlib import pyplot as plt
 
@@ -89,7 +89,7 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

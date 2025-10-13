@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pytest
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.architecture import messaging
 from Basilisk.simulation import singleAxisProfiler
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -77,7 +77,7 @@ def test_singleAxisProfiler(show_plots, theta, thetaDot, thetaDDot, rotAxis_MAng
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

@@ -21,7 +21,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.utilities import unitTestSupport
 
 # Get current file path
@@ -38,7 +38,7 @@ def test_simplePowerDemo(show_plots, attType):
     """This function is called by the py.test environment."""
 
     # suppress printing out BSK_INFORMATION states
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

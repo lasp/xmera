@@ -25,7 +25,7 @@
 #
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.architecture import messaging  # import the message definitions
 from Basilisk.fswAlgorithms import torque2Dipole  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
@@ -65,7 +65,7 @@ def torque2DipoleModuleTestFunction():
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

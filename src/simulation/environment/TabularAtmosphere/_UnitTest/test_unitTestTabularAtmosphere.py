@@ -38,7 +38,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import tabularAtmosphere
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities.readAtmTable import readAtmTable
 
@@ -89,7 +89,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
     testFailCount = 0                       # zero unit test result counter
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

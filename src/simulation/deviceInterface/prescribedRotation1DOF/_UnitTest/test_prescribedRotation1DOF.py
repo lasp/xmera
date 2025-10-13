@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.architecture import messaging
 from Basilisk.simulation import prescribedRotation1DOF
 from Basilisk.utilities import SimulationBaseClass
@@ -95,7 +95,7 @@ def test_prescribedRotation1DOF(show_plots,
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
