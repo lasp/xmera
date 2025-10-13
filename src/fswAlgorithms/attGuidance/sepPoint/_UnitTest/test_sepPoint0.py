@@ -34,7 +34,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.fswAlgorithms import sepPoint
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 
 def computeGamma(alpha, delta):
@@ -127,7 +127,7 @@ def test_(show_plots, alpha, delta, alignmentPriority, accuracy):
 
     unitTaskName = "unitTask"                                # arbitrary name (don't change)
     unitProcessName = "TestProcess"                          # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

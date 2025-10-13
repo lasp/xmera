@@ -39,7 +39,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.utilities import macros
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.architecture import messaging
 
 def run(case):
@@ -62,7 +62,7 @@ def run(case):
         # here the verbosity is set globally to WARNING or higher.
         # This call must be made at the beginning of the script, certainly before
         # SimulationBaseClass.SimBaseClass() is called.
-        bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+        sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
@@ -95,18 +95,18 @@ def run(case):
     # setup the bskLog verbosity
     if case == 0:
         # default case = 0 does not set the bskLog verbosity within Python, but uses the default verbosity
-        bskLogging.printDefaultLogLevel()
-        level = bskLogging.getDefaultLogLevel()
+        sim_model.printDefaultLogLevel()
+        level = sim_model.getDefaultLogLevel()
     elif case == 1:
         # here the verbosity was set globally to WARNING or higher at the beginning of the script
-        bskLogging.printDefaultLogLevel()
+        sim_model.printDefaultLogLevel()
         print("The verbosity was globally changed.")
-        level = bskLogging.getDefaultLogLevel()
+        level = sim_model.getDefaultLogLevel()
 
     elif case == 2:
         # here the bskLog verbosity is only changed for this module by setting a custom bskLog instance
-        logger = bskLogging.BSKLogger()
-        logger.setLogLevel(bskLogging.BSK_ERROR)
+        logger = sim_model.BSKLogger()
+        logger.setLogLevel(sim_model.BSK_ERROR)
         print("The verbosity is only changed for this module.")
         logger.printLogLevel()
         module.bskLogger = logger

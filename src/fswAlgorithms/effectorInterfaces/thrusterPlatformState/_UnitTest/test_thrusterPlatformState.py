@@ -33,7 +33,7 @@ from Basilisk.fswAlgorithms import thrusterPlatformState
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 
 @pytest.mark.parametrize("theta1", [0, np.pi/36, np.pi/18])
@@ -81,7 +81,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
 
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

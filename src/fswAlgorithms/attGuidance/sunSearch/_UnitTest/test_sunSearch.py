@@ -30,7 +30,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.fswAlgorithms import sunSearch
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 
 def computeKinematicProperties(theta_R, T_R, u_M, I, omega_M):
@@ -67,7 +67,7 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B):
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
