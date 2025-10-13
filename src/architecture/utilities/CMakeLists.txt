@@ -34,17 +34,6 @@ set_target_properties(ArchitectureUtilities PROPERTIES
 install(TARGETS ArchitectureUtilities DESTINATION lib)
 
 
-add_library(ModuleIdGenerator SHARED
-  moduleIdGenerator/moduleIdGenerator.cpp
-)
-
-set_target_properties(ModuleIdGenerator PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk"
-)
-
-install(TARGETS ModuleIdGenerator DESTINATION lib)
-
-
 xmera_add_swig_module(architecture.bskLogging)
 
 xmera_add_swig_module(architecture.orbitalMotion)

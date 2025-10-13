@@ -18,14 +18,15 @@
  */
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/moduleIdGenerator/moduleIdGenerator.h"
+
+static int64_t nextModuleID = 1;
 
 SysModel::SysModel()
-    : moduleID(ModuleIdGenerator::GetInstance()->checkoutModuleID())
+    : moduleID(nextModuleID++)
 {}
 
 SysModel::SysModel(const SysModel &obj)
     : modelTag{obj.modelTag},
     RNGSeed{obj.RNGSeed},
-    moduleID{ModuleIdGenerator::GetInstance()->checkoutModuleID()}
+    moduleID{nextModuleID++}
 {}

@@ -15,7 +15,6 @@ add_library(xmera_core SHARED
 target_link_libraries(xmera_core PUBLIC
   Eigen3::Eigen
   ArchitectureUtilities
-  ModuleIdGenerator
 )
 
 # TODO: Organize per-artifact includes in a sane way.
