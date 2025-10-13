@@ -1,5 +1,6 @@
-from Basilisk.architecture import sysModel
-class TickerModule(sysModel.SysModel):
+from Basilisk.architecture import sim_model
+
+class TickerModule(sim_model.SysModel):
 
     def __init__(self):
         super(TickerModule, self).__init__()

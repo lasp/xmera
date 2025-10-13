@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module sim_model
+%module(directors="1") sim_model
 %{
    #include "sim_model.h"
 %}
@@ -31,10 +31,6 @@
 %include "cdata.i"
 %include "swig_eigen.i"
 
-%array_functions(double, doubleArray);
-%array_functions(long, longArray);
-%array_functions(int, intArray);
-%array_functions(short, shortArray);
 %array_functions(bool, boolArray);
 %array_functions(uint8_t, cByteArray);
 
@@ -73,10 +69,35 @@ namespace std {
     }
 }
 
+%feature("director") SysModel;
+%feature("pythonappend") SysModel::SysModel %{
+    self.__super_init_called__ = True%}
+%rename("_SysModel") SysModel;
+
+%include "cSysModel.i"
 %include "sys_model_task.h"
-%include "sys_model.h"
 %include "sys_process.h"
 %include "sim_model.h"
+
+%pythoncode %{
+class SuperInitChecker(type):
+
+    def __call__(cls, *a, **kw):
+        rv = super(SuperInitChecker, cls).__call__(*a, **kw)
+        if not getattr(rv, "__super_init_called__", False):
+            error_msg = (
+               "Need to call parent __init__ in SysModel subclasses:\n"
+               f"class {cls.__name__}(sim_model.SysModel):\n"
+               "    def __init__(...):\n"
+               "        super().__init__()"
+            )
+            raise SyntaxError(error_msg)
+        return rv
+
+class SysModel(_SysModel, metaclass=SuperInitChecker):
+    bskLogger: BSKLogger = None
+%}
+
 
 %pythoncode %{
     from Basilisk.utilities import deprecated

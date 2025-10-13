@@ -34,5 +34,4 @@ install(TARGETS xmera_core DESTINATION lib)
 add_library(Xmera::Core ALIAS xmera_core)
 
 
-add_subdirectory(_GeneralModuleFiles)
 add_subdirectory(system_model)
