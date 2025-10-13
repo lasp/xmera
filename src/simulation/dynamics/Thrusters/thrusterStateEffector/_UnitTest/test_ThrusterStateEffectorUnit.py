@@ -28,7 +28,7 @@ splitPath = path.split('simulation')
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraft, thrusterStateEffector
 from Basilisk.architecture import messaging
-from Basilisk.architecture import sysModel
+from Basilisk.architecture import sim_model
 import matplotlib.pyplot as plt
 
 
@@ -363,7 +363,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     return [testFailCount, ''.join(testMessages)]
 
 
-class attachedBodyModule(sysModel.SysModel):
+class attachedBodyModule(sim_model.SysModel):
     def __init__(self, dcm_BF, r_FB_B, modelActive=True, modelPriority=-1):
         super(attachedBodyModule, self).__init__()
 

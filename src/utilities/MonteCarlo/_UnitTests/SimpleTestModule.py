@@ -1,6 +1,6 @@
+from Basilisk.architecture import sim_model
 
-from Basilisk.architecture import sysModel
-class SimpleTestModule(sysModel.SysModel):
+class SimpleTestModule(sim_model.SysModel):
 
     def __init__(self):
         super(SimpleTestModule, self).__init__()

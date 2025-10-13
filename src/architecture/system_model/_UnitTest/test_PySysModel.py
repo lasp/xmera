@@ -18,7 +18,7 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.moduleTemplates import cppModuleTemplate
-from Basilisk.architecture import sysModel
+from Basilisk.architecture import sim_model
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture.messaging import ModuleTemplateMsg, ModuleTemplateMsgPayload
 
@@ -80,7 +80,7 @@ def test_PySysModel():
 
     assert testResults < 1, testMessage
 
-class PythonModule(sysModel.SysModel):
+class PythonModule(sim_model.SysModel):
 
     def __init__(self, *args):
         super().__init__(*args)
