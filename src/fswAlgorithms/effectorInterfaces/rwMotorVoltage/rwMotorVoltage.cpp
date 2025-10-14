@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,15 +16,12 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
-    FSW MODULE: RW motor voltage command
-
- */
 
 #include "fswAlgorithms/effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 #include <stdexcept>
+#include <ranges>
 
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that
  retain time varying states between function calls are reset to their default values.
@@ -59,17 +56,14 @@ void RwMotorVoltage::reset(uint64_t callTime) {
  */
 void RwMotorVoltage::updateState(uint64_t callTime) {
     /* - Read the input messages */
-    //    double              torqueCmd[RW_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
-    RwMotorTorqueMsgPayload torqueCmd;        /*!< copy of RW motor torque input message*/
-    RwMotorVoltageMsgPayload voltageOut = {}; /*!< -- copy of the output message */
+    RwMotorTorqueMsgPayload torqueCmd = this->torqueInMsg();   /*!< copy of RW motor torque input message*/
+    RwMotorVoltageMsgPayload voltageOut{}; /*!< -- copy of the output message */
 
-    torqueCmd = this->torqueInMsg();
-
-    RWSpeedMsgPayload rwSpeed = {}; /*!< [r/s] Reaction wheel speed estimates */
+    RWSpeedMsgPayload rwSpeed{}; /*!< [r/s] Reaction wheel speed estimates */
     if (this->rwSpeedInMsg.isLinked()) {
         rwSpeed = this->rwSpeedInMsg();
     }
-    RWAvailabilityMsgPayload rwAvailability = {};
+    RWAvailabilityMsgPayload rwAvailability{};
     if (this->rwAvailInMsg.isLinked()) {
         rwAvailability = this->rwAvailInMsg();
     }
@@ -99,31 +93,19 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
     }
 
     /* evaluate the feedforward mapping of torque into voltage */
-    for (int i = 0; i < this->rwConfigParams.numRW; i++) {
+    for (int i = 0; i < this->rwConfigParams.numRW; ++i) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
             voltage[i] = (this->voltageMax - this->voltageMin) / this->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
             if (voltage[i] > 0.0) voltage[i] += this->voltageMin;
             if (voltage[i] < 0.0) voltage[i] -= this->voltageMin;
         }
-    }
+        /* check for voltage saturation */
+        voltage[i] = std::ranges::clamp(voltage[i], -this->voltageMax, this->voltageMax);
 
-    /* check for voltage saturation */
-    for (int i = 0; i < this->rwConfigParams.numRW; i++) {
-        if (voltage[i] > this->voltageMax) {
-            voltage[i] = this->voltageMax;
-        }
-        if (voltage[i] < -this->voltageMax) {
-            voltage[i] = -this->voltageMax;
-        }
         voltageOut.voltage[i] = voltage[i];
     }
 
-    /*
-     store the output message
-     */
     this->voltageOutMsg.write(&voltageOut, this->moduleID, callTime);
-
-    return;
 }
 
 /**
@@ -169,4 +151,3 @@ void RwMotorVoltage::setGainK(const double gain) {
  * @return double feedback gain.
  */
 double RwMotorVoltage::getGainK() const { return this->K; }
-

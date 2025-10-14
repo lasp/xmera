@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,14 +17,13 @@
 
  */
 
-#ifndef _RW_MOTOR_VOLTAGE_H_
-#define _RW_MOTOR_VOLTAGE_H_
+#ifndef RW_MOTOR_VOLTAGE_H
+#define RW_MOTOR_VOLTAGE_H
 
 #include <stdint.h>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
 #include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
@@ -32,9 +31,6 @@
 #include "architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h"
 
 #include <Eigen/Core>
-
-/*!@brief module configuration message
- */
 
 class RwMotorVoltage : public SysModel {
    public:
