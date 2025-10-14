@@ -18,10 +18,8 @@
  */
 
 #include "fswAlgorithms/effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 #include <stdexcept>
-#include <ranges>
 
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that
  retain time varying states between function calls are reset to their default values.
@@ -37,16 +35,9 @@ void RwMotorVoltage::reset(uint64_t callTime) {
         throw std::invalid_argument("rwMotorVoltage.torqueInMsg wasn't connected.");
     }
 
-    /*! - Read static RW config data message and store it in module variables*/
-    this->rwConfigParams = this->rwParamsInMsg();
+    RWArrayConfigMsgPayload rwParams = this->rwParamsInMsg();
 
-    /* reset variables */
-    this->rwSpeedOld.setZero();
-    this->resetFlag = BOOL_TRUE;
-
-    /* Reset the prior time flag state.
-     If zero, control time step not evaluated on the first function call */
-    this->priorTime = 0;
+    this->algorithm.reset(rwParams);
 }
 
 /*! Update performs the torque to voltage conversion. If a wheel speed message was provided, it also does closed loop
@@ -57,53 +48,23 @@ void RwMotorVoltage::reset(uint64_t callTime) {
 void RwMotorVoltage::updateState(uint64_t callTime) {
     /* - Read the input messages */
     RwMotorTorqueMsgPayload torqueCmd = this->torqueInMsg();   /*!< copy of RW motor torque input message*/
-    RwMotorVoltageMsgPayload voltageOut{}; /*!< -- copy of the output message */
-
     RWSpeedMsgPayload rwSpeed{}; /*!< [r/s] Reaction wheel speed estimates */
+    RWAvailabilityMsgPayload rwAvailability{};
+
+    bool rwSpeedMsgIsLinked{};
     if (this->rwSpeedInMsg.isLinked()) {
         rwSpeed = this->rwSpeedInMsg();
+        rwSpeedMsgIsLinked = true;
     }
-    RWAvailabilityMsgPayload rwAvailability{};
     if (this->rwAvailInMsg.isLinked()) {
         rwAvailability = this->rwAvailInMsg();
     }
 
-    /* zero the output voltage vector */
-    Eigen::Vector<double, RW_EFF_CNT> voltage{};
-    voltage.setZero();
-
-    /* if the torque closed-loop is on, evaluate the feedback term */
-    if (this->rwSpeedInMsg.isLinked()) {
-        /* make sure the clock didn't just initialize, or the module was recently reset */
-        if (this->priorTime != 0) {
-            double dt = (callTime - this->priorTime) * NANO2SEC; /*!< [s]   control update period */
-            Eigen::Vector<double, RW_EFF_CNT> OmegaDot{};
-            OmegaDot.setZero();
-            for (int i = 0; i < this->rwConfigParams.numRW; i++) {
-                if (rwAvailability.wheelAvailability[i] == AVAILABLE && this->resetFlag == BOOL_FALSE) {
-                    OmegaDot[i] = (rwSpeed.wheelSpeeds[i] - this->rwSpeedOld[i]) / dt;
-                    torqueCmd.motorTorque[i] -=
-                        this->K * (this->rwConfigParams.JsList[i] * OmegaDot[i] - torqueCmd.motorTorque[i]);
-                }
-                this->rwSpeedOld[i] = rwSpeed.wheelSpeeds[i];
-            }
-            this->resetFlag = BOOL_FALSE;
-        }
-        this->priorTime = callTime;
-    }
-
-    /* evaluate the feedforward mapping of torque into voltage */
-    for (int i = 0; i < this->rwConfigParams.numRW; ++i) {
-        if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
-            voltage[i] = (this->voltageMax - this->voltageMin) / this->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
-            if (voltage[i] > 0.0) voltage[i] += this->voltageMin;
-            if (voltage[i] < 0.0) voltage[i] -= this->voltageMin;
-        }
-        /* check for voltage saturation */
-        voltage[i] = std::ranges::clamp(voltage[i], -this->voltageMax, this->voltageMax);
-
-        voltageOut.voltage[i] = voltage[i];
-    }
+    RwMotorVoltageMsgPayload voltageOut = this->algorithm.update(callTime,
+                                                                 torqueCmd,
+                                                                 rwAvailability,
+                                                                 rwSpeed,
+                                                                 rwSpeedMsgIsLinked);
 
     this->voltageOutMsg.write(&voltageOut, this->moduleID, callTime);
 }
@@ -114,40 +75,23 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
  * @param maxVoltageMagnitude maximum output voltage
  */
 void RwMotorVoltage::setVoltageRange(const double minVoltageMagnitude, const double maxVoltageMagnitude) {
-    if (minVoltageMagnitude < 0.0) {
-        throw std::invalid_argument("minVoltageMagnitude must not be negative.");
-    }
-    if (maxVoltageMagnitude < 0.0) {
-        throw std::invalid_argument("maxVoltageMagnitude must not be negative.");
-    }
-    if (maxVoltageMagnitude <= minVoltageMagnitude) {
-        throw std::invalid_argument("maxVoltageMagnitude must be greater than minVoltageMagnitude.");
-    }
-    this->voltageMin = minVoltageMagnitude;
-    this->voltageMax = maxVoltageMagnitude;
+    this->algorithm.setVoltageRange(minVoltageMagnitude, maxVoltageMagnitude);
 }
 
 /**
  * @brief Get the minimum and maximum voltage.
  * @return Eigen::Vector2d minimum and maximum voltage
  */
-Eigen::Vector2d RwMotorVoltage::getVoltageRange() const {
-    return Eigen::Vector2d {this->voltageMin, this->voltageMax};
-}
+Eigen::Vector2d RwMotorVoltage::getVoltageRange() const { return this->algorithm.getVoltageRange(); }
 
 /**
  * @brief Set the feedback gain.
  * @param gain feedback gain.
  */
-void RwMotorVoltage::setGainK(const double gain) {
-    if (gain < 0.0) {
-        throw std::invalid_argument("Feedback gain must not be negative");
-    }
-    this->K = gain;
-}
+void RwMotorVoltage::setGainK(const double gain) { this->algorithm.setGainK(gain); }
 
 /**
  * @brief Get the feedback gain.
  * @return double feedback gain.
  */
-double RwMotorVoltage::getGainK() const { return this->K; }
+double RwMotorVoltage::getGainK() const { return this->algorithm.getGainK(); }

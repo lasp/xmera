@@ -30,6 +30,7 @@
 %include "swig_eigen.i"
 
 %include "rwMotorVoltage.h"
+%include "rwMotorVoltageAlgorithm.h"
 
 %include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 %include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
