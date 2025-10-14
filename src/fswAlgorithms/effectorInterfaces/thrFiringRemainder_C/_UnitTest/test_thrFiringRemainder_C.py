@@ -25,14 +25,6 @@ from xmera.architecture import messaging
 
 import numpy as np
 
-
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
 @pytest.mark.parametrize("resetCheck, dvOn", [
     (False,False),
     (True,False),
@@ -44,7 +36,6 @@ def test_thrFiringRemainderC(show_plots, resetCheck, dvOn):
     unitProcessName = "TestProcess"
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    # Create test thread
     fswRate = 0.5
     defaultControlPeriod = 3.0
     testProcessRate = macros.sec2nano(fswRate)  # update process rate update time
@@ -54,7 +45,6 @@ def test_thrFiringRemainderC(show_plots, resetCheck, dvOn):
     module = thrFiringRemainder_C.ThrFiringRemainder_C()
     module.modelTag = "thrFiringRemainder_C"
 
-    # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
@@ -102,7 +92,6 @@ def test_thrFiringRemainderC(show_plots, resetCheck, dvOn):
         thrMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
     thrForceMsg = messaging.THRArrayCmdForceMsg().write(thrMessageData)
 
-    # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.onTimeOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
@@ -110,7 +99,6 @@ def test_thrFiringRemainderC(show_plots, resetCheck, dvOn):
     module.thrConfInMsg.subscribeTo(thrConfigMsg)
     module.thrForceInMsg.subscribeTo(thrForceMsg)
 
-    # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
     # Set the simulation time.
@@ -133,20 +121,20 @@ def test_thrFiringRemainderC(show_plots, resetCheck, dvOn):
 
     # compute true values
     thrForce = thrMessageData.thrForce
-    pulseRemainder = np.zeros([numThrusters])
+    pulseRemainder = np.zeros(numThrusters)
     trueVector = np.empty([len(moduleOutput), numThrusters])
     idxReset = finalTime / fswRate + 1
-    for idx in range(0, len(moduleOutput)):
-        onTimes = np.empty([numThrusters])
+    for idx in range(len(moduleOutput)):
+        onTimes = np.empty(numThrusters)
         # reset at corresponding idx if resetCheck is true,
         # or at idx 0 and 1 as output is the same for time 0 and first time step
         if (resetCheck and idx == idxReset) or idx <= 1:
             controlPeriod = defaultControlPeriod
-            pulseRemainder = np.zeros([numThrusters])  # reset pulse remainder
+            pulseRemainder = np.zeros(numThrusters)  # reset pulse remainder
         else:
             controlPeriod = fswRate
 
-        for thrIdx in range(0, numThrusters):
+        for thrIdx in range(numThrusters):
             thrust = thrForce[thrIdx]
             if dvOn:
                 thrust += maxThrust
@@ -165,9 +153,6 @@ def test_thrFiringRemainderC(show_plots, resetCheck, dvOn):
     np.testing.assert_allclose(moduleOutput, trueVector, atol=1e-12, err_msg="OnTimeRequest does not match")
 
 
-#
-# This statement below ensures that the unitTestScript can be run as a
-# stand-along python script
-#
+# This statement below ensures that the unitTestScript can be run as a stand-along python script
 if __name__ == "__main__":
     test_thrFiringRemainderC(True, False, False)

@@ -1,9 +1,5 @@
-import inspect
-import os
-
 import pytest
 
-# Import all of the modules that we are going to be called in this simulation
 from xmera.utilities import SimulationBaseClass
 from xmera.fswAlgorithms import thrFiringRemainder
 from xmera.utilities import macros
