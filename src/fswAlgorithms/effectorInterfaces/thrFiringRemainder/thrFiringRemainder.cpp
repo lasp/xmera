@@ -21,7 +21,7 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
+#include "thrFiringRemainder.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 
@@ -68,34 +68,33 @@ void ThrFiringRemainder::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrFiringRemainder::updateState(uint64_t callTime)
-{
+void ThrFiringRemainder::updateState(uint64_t callTime) {
 	int 				i;
 	double				controlPeriod;			/* [s] control period */
 	double				onTime[MAX_EFF_CNT];	/* [s] array of commanded on time for thrusters */
-    THRArrayCmdForceMsgPayload thrForceIn;          /* [-] copy of the thruster force input message */
-    THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {};       /* [-] copy of the thruster on-time output message */
+	THRArrayCmdForceMsgPayload thrForceIn;          /* [-] copy of the thruster force input message */
+	THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {};       /* [-] copy of the thruster on-time output message */
 
-    /*! - The first time update() is called there is no information on the time step.
-     *    Pick 2 seconds for the control period */
+	/*! - The first time update() is called there is no information on the time step.
+	 *    Pick 2 seconds for the control period */
 	if(this->prevCallTime == 0) {
-        controlPeriod = this->defaultControlPeriod;
+		controlPeriod = this->defaultControlPeriod;
 	} else {
-        /*! - compute control time period Delta_t */
-        controlPeriod = ((double)(callTime - this->prevCallTime)) * NANO2SEC;
-    }
+		/*! - compute control time period Delta_t */
+		controlPeriod = ((double)(callTime - this->prevCallTime)) * NANO2SEC;
+	}
 
 	this->prevCallTime = callTime;
 
 	/*! - Read the input thruster force message */
-    thrForceIn = this->thrForceInMsg();
+	thrForceIn = this->thrForceInMsg();
 
 	/*! - Loop through thrusters */
 	for(i = 0; i < this->numThrusters; i++) {
 
 		/*! - Correct for off-pulsing if necessary.  Here the requested force is negative, and the maximum thrust
-         needs to be added.  If not control force is requested in off-pulsing mode, then the thruster force should
-         be set to the maximum thrust value */
+		 needs to be added.  If not control force is requested in off-pulsing mode, then the thruster force should
+		 be set to the maximum thrust value */
 		if (this->baseThrustState == 1) {
 			thrForceIn.thrForce[i] += this->maxThrust[i];
 		}
@@ -127,9 +126,53 @@ void ThrFiringRemainder::updateState(uint64_t callTime)
 
 	}
 
-    /*! - write the moduel output message */
-    this->onTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
+	/*! - write the moduel output message */
+	this->onTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
 
 	return;
+}
 
+/*! Setter method for thrMinFireTime.
+ @return void
+ @param thrMinFireTime
+*/
+void ThrFiringRemainder::setThrMinFireTime(const double thrMinFireTime) {
+    this->thrMinFireTime = thrMinFireTime;
+}
+
+/*! Getter method for thrMinFireTime.
+ @return const double
+*/
+double ThrFiringRemainder::getThrMinFireTime() const {
+	return this->thrMinFireTime;
+}
+
+/*! Setter method for baseThrustState.
+ @return void
+ @param baseThrustState
+*/
+void ThrFiringRemainder::setBaseThrustState(const int baseThrustState) {
+    this->baseThrustState = baseThrustState;
+}
+
+/*! Getter method for baseThrustState.
+ @return const int
+*/
+int ThrFiringRemainder::getBaseThrustState() const {
+	return this->baseThrustState;
+}
+
+/*! Setter method for defaultControlPeriod.
+ @return void
+ @param defaultControlPeriod
+*/
+void ThrFiringRemainder::setDefaultControlPeriod(const double defaultControlPeriod) {
+    this->defaultControlPeriod = defaultControlPeriod;
+}
+
+/*! Getter method for defaultControlPeriod.
+ @return const double
+*/
+double ThrFiringRemainder::getDefaultControlPeriod() const {
+	return this->defaultControlPeriod;
 }
