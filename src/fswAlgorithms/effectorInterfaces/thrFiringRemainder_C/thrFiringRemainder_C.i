@@ -25,6 +25,11 @@
     from Basilisk.architecture.swig_common_model import *
 %}
 
+%include <attribute.i>
+%attribute(ThrFiringRemainderC, double, thrMinFireTime, getThrMinFireTime, setThrMinFireTime)
+%attribute(ThrFiringRemainderC, double, baseThrustState, getBaseThrustState, setBaseThrustState)
+%attribute(ThrFiringRemainderC, double, defaultControlPeriod, getDefaultControlPeriod, setDefaultControlPeriod)
+
 %include "sys_model.i"
 %include "swig_conly_data.i"
 
