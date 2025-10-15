@@ -11,6 +11,7 @@
 %include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
 %include "rwMotorTorque.h"
+%include "rwMotorTorqueAlgorithm.h"
 
 %include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 %include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>

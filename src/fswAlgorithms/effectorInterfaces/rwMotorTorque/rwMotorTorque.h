@@ -9,12 +9,16 @@
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
+#include "rwMotorTorqueAlgorithm.h"
 
 #include <Eigen/Core>
 
 /*! @brief Top level structure for the sub-module routines. */
 class RwMotorTorque : public SysModel {
    public:
+    RwMotorTorque() = default;
+    ~RwMotorTorque() final = default;
+
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -29,12 +33,7 @@ class RwMotorTorque : public SysModel {
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;     //!< optional RWs availability input message
 
    private:
-    Eigen::Matrix3d controlAxes_B{Eigen::Matrix3d::Zero()};  //!< [-] array of the control unit axes
-    uint32_t numControlAxes{};      //!< [-] counter indicating how many orthogonal axes are controlled
-    uint32_t numAvailRW{};               //!< [-] number of reaction wheels available
-    RWArrayConfigMsgPayload
-        rwConfigParams{};               //!< [-] struct to store message containing RW config parameters in body B frame
-    Eigen::Matrix<double, 3, RW_EFF_CNT> G_s_B{};  //!< [-] The RW spin axis matrix in body frame components
+    RwMotorTorqueAlgorithm algorithm{};
 };
 
 #endif
