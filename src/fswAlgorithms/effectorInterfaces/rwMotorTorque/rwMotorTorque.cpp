@@ -20,6 +20,11 @@ void RwMotorTorque::reset(uint64_t callTime) {
     this->numControlAxes = 0;
     for (uint32_t i = 0; i < 3; i++) {
         if (this->controlAxes_B.row(i).norm() > 0.0) {
+            if (this->numControlAxes < i) {
+                throw std::invalid_argument("rwMotorTorque: found empty control axis. "
+                                            "Make sure to fill controlAxes matrix from top to bottom, "
+                                            "with zero axes (no control) at the bottom.");
+            }
             this->numControlAxes += 1;
         }
     }
