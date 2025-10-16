@@ -10,8 +10,6 @@
 #include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 
-#include <architecture/utilities/bskLogging.h>
-
 /*! @brief Top level structure for the sub-module routines. */
 class RwMotorTorque : public SysModel {
    public:
@@ -32,8 +30,6 @@ class RwMotorTorque : public SysModel {
     ReadFunctor<CmdTorqueBodyMsgPayload> vehControlIn2Msg;  //!<  optional vehicle control input message
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;     //!<  RW Array input message
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;     //!< optional RWs availability input message
-
-    BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
 #endif
