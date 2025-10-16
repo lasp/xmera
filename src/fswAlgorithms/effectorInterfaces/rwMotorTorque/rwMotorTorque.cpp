@@ -32,9 +32,9 @@ void RwMotorTorque::reset(uint64_t callTime) {
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void RwMotorTorque::updateState(uint64_t callTime) {
-    CmdTorqueBodyMsgPayload LrInputMsg = this->vehControlInMsg();  /*!< Msg containing Lr control torque */
-    CmdTorqueBodyMsgPayload LrInput2Msg{};  /*!< Msg containing optional Lr control torque */
-    RWAvailabilityMsgPayload wheelsAvailability{}; /*!< Msg containing RW availability */
+    CmdTorqueBodyMsgPayload LrInputMsg = this->vehControlInMsg(); /*!< Msg containing Lr control torque */
+    CmdTorqueBodyMsgPayload LrInput2Msg{};                        /*!< Msg containing optional Lr control torque */
+    RWAvailabilityMsgPayload wheelsAvailability{};                /*!< Msg containing RW availability */
     bool cmdTorque2IsLinked{};
     bool rwAvailIsLinked{};
 
@@ -50,11 +50,8 @@ void RwMotorTorque::updateState(uint64_t callTime) {
         rwAvailIsLinked = true;
     }
 
-    RwMotorTorqueMsgPayload rwMotorTorques = algorithm.update(LrInputMsg,
-                                                              LrInput2Msg,
-                                                              wheelsAvailability,
-                                                              cmdTorque2IsLinked,
-                                                              rwAvailIsLinked);
+    RwMotorTorqueMsgPayload rwMotorTorques =
+        algorithm.update(LrInputMsg, LrInput2Msg, wheelsAvailability, cmdTorque2IsLinked, rwAvailIsLinked);
 
     this->rwMotorTorqueOutMsg.write(&rwMotorTorques, this->moduleID, callTime);
 }

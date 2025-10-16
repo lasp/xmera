@@ -44,10 +44,10 @@ class RwMotorTorqueAlgorithm {
 
    private:
     Eigen::Matrix3d controlAxes_B{Eigen::Matrix3d::Zero()};  //!< [-] array of the control unit axes
-    uint32_t numControlAxes{};      //!< [-] counter indicating how many orthogonal axes are controlled
-    uint32_t numAvailRW{};               //!< [-] number of reaction wheels available
+    uint32_t numControlAxes{};  //!< [-] counter indicating how many orthogonal axes are controlled
+    uint32_t numAvailRW{};      //!< [-] number of reaction wheels available
     RWArrayConfigMsgPayload
-        rwConfigParams{};               //!< [-] struct to store message containing RW config parameters in body B frame
+        rwConfigParams{};  //!< [-] struct to store message containing RW config parameters in body B frame
     Eigen::Matrix<double, 3, RW_EFF_CNT> G_s_B{};  //!< [-] The RW spin axis matrix in body frame components
 };
 

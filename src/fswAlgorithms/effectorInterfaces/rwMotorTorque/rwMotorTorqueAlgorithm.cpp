@@ -35,9 +35,10 @@ void RwMotorTorqueAlgorithm::reset(RWArrayConfigMsgPayload& rwParamsInMsg, bool 
     for (uint32_t i = 0; i < 3; ++i) {
         if (this->controlAxes_B.row(i).norm() > 0.0) {
             if (this->numControlAxes < i) {
-                throw std::invalid_argument("rwMotorTorque: found empty control axis. "
-                                            "Make sure to fill controlAxes matrix from top to bottom, "
-                                            "with zero axes (no control) at the bottom.");
+                throw std::invalid_argument(
+                    "rwMotorTorque: found empty control axis. "
+                    "Make sure to fill controlAxes matrix from top to bottom, "
+                    "with zero axes (no control) at the bottom.");
             }
             this->numControlAxes += 1;
         }
@@ -111,7 +112,10 @@ RwMotorTorqueMsgPayload RwMotorTorqueAlgorithm::update(CmdTorqueBodyMsgPayload& 
         Eigen::Matrix<double, 3, RW_EFF_CNT> CGs = this->controlAxes_B * this->G_s_B;
 
         Eigen::Vector<double, RW_EFF_CNT> us_avail{Eigen::Vector<double, RW_EFF_CNT>::Zero()};
-        us_avail.topRows(numCols) = CGs.topLeftCorner(numRows, numCols).transpose() * (CGs.topLeftCorner(numRows, numCols) * CGs.topLeftCorner(numRows, numCols).transpose()).inverse() * Lr_C.topRows(numRows);
+        us_avail.topRows(numCols) =
+            CGs.topLeftCorner(numRows, numCols).transpose() *
+            (CGs.topLeftCorner(numRows, numCols) * CGs.topLeftCorner(numRows, numCols).transpose()).inverse() *
+            Lr_C.topRows(numRows);
 
         /*! - map the desired RW motor torques to the available RWs */
         uint32_t j = 0;
