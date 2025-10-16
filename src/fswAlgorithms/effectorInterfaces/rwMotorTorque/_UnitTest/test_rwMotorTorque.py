@@ -11,51 +11,30 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from xmera.utilities import SimulationBaseClass
-from xmera.utilities import unitTestSupport
 from xmera.fswAlgorithms import rwMotorTorque
 from xmera.utilities import macros
 from xmera.architecture import messaging
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
 @pytest.mark.parametrize("num_control_axes", [0, 1, 2, 3])
 @pytest.mark.parametrize("num_wheels", [2, 4, messaging.RW_EFF_CNT])
 @pytest.mark.parametrize("num_input_cmd_torques", [1, 2])
 @pytest.mark.parametrize("rw_avail_msg",["NO", "ON", "OFF", "MIXED"])
 
-
-# update "module" in this function name to reflect the module name
 def test_rw_motor_torque(show_plots, num_control_axes, num_wheels, num_input_cmd_torques, rw_avail_msg):
-    """Module Unit Test"""
-
     # @TODO With the current implementation of throwing an exception when zero control axes are specified, Python quits
     #  and causes all unit tests to fail. Until a different way of handling exceptions or errors is implemented, the
     #  test with 0 control axes is skipped.
     if num_control_axes == 0:
         pytest.skip("Zero control axes can currently not be tested.")
 
-    # each test method requires a single assert method to be called
-    [test_results, test_message] = rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd_torques, rw_avail_msg)
-    assert test_results < 1, test_message
+    # In case compile-time max RW number is less than parametrized number of wheels, skip test
+    if num_wheels > messaging.RW_EFF_CNT:
+        pytest.skip("Number of reaction wheels greater than compile time RW_EFF_CNT.")
 
-
-def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd_torques, rw_avail_msg):
-    test_fail_count = 0                       # zero unit test result counter
-    test_messages = []                       # create empty array to store test log messages
-    unit_task_name = "unitTask"               # arbitrary name (don't change)
-    unit_process_name = "TestProcess"         # arbitrary name (don't change)
-
-    # Create a sim module as an empty container
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
@@ -63,11 +42,8 @@ def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
-
-    # Construct algorithm and associated C++ container
     module = rwMotorTorque.RwMotorTorque()
     module.modelTag = "rwMotorTorque"
-
 
     # Initialize module variables
     if num_control_axes == 3:
@@ -81,22 +57,23 @@ def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd
 
     module.controlAxes_B = control_axes_B
 
-
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, module)
 
-
     # attControl message
-    input_message_data = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
-    requested_torque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
-    input_message_data.torqueRequestBody = requested_torque # write torque request to input message
+    input_message_data = messaging.CmdTorqueBodyMsgPayload()
+    requested_torque1 = [1.0, -0.5, 0.7]
+    input_message_data.torqueRequestBody = requested_torque1
     cmd_torque_in_msg = messaging.CmdTorqueBodyMsg().write(input_message_data)
 
+    requested_torque = np.array(requested_torque1)
+
     if num_input_cmd_torques == 2:
-        input_message_data2 = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
-        requested_torque2 = [0.0, 0.0, 0.0]                       # Set up a list as a 3-vector
-        input_message_data2.torqueRequestBody = requested_torque2   # write torque request to input message
+        input_message_data2 = messaging.CmdTorqueBodyMsgPayload()
+        requested_torque2 = [0.5, 1.0, 3.0]
+        input_message_data2.torqueRequestBody = requested_torque2
         cmd_torque_in2_msg = messaging.CmdTorqueBodyMsg().write(input_message_data2)
+        requested_torque += np.array(requested_torque2)
 
     # wheelConfigData message
     rw_config_params = messaging.RWArrayConfigMsgPayload()
@@ -147,8 +124,8 @@ def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd
             0.0, 0.0, 1.0,
             0.5773502691896258, 0.5773502691896258, 0.5773502691896258
         ]
-        rw_config_params.JsList = [0.1] * num_wheels
 
+    rw_config_params.JsList = [0.1] * num_wheels
     rw_config_params.numRW = num_wheels
     rw_config_in_msg = messaging.RWArrayConfigMsg().write(rw_config_params)
 
@@ -169,7 +146,6 @@ def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd
 
         rw_avail_in_msg = messaging.RWAvailabilityMsg().write(rw_availability_message)
         module.rwAvailInMsg.subscribeTo(rw_avail_in_msg)
-
     else:
         avail = [rwMotorTorque.AVAILABLE] * num_wheels  # this is used purely for the python level solution
 
@@ -183,81 +159,40 @@ def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd
         module.vehControlIn2Msg.subscribeTo(cmd_torque_in2_msg)
     module.rwParamsInMsg.subscribeTo(rw_config_in_msg)
 
-    # Need to call the self-init and cross-init methods
     unit_test_sim.InitializeSimulation()
-
     module.reset(0)
 
     # Set the simulation time.
-    # NOTE: the total simulation time may be longer than this value. The
-    # simulation is stopped at the next logging event on or after the
-    # simulation end time.
-    unit_test_sim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(0.5))
 
     # Begin the simulation time run set above
     unit_test_sim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    module_output = data_log.motorTorque
-
-    true_vector = np.array([
-        [0.0] * RW_EFF_CNT,
-        [0.0] * RW_EFF_CNT
-    ])
+    motor_torque = data_log.motorTorque
 
     # set the output truth states
-    true_vector[0] = compute_true_torque(np.array(control_axes_B),
-                                         np.array(rw_config_params.GsMatrix_B).reshape((
-                                                    3, RW_EFF_CNT), order='F'),
-                                         requested_torque,
-                                         avail)
-    true_vector[1] = true_vector[0]
+    u_s = compute_true_torque(np.array(control_axes_B),
+                              np.array(rw_config_params.GsMatrix_B).reshape((3, RW_EFF_CNT), order='F'),
+                              requested_torque,
+                              avail)
+
+    true_motor_torque = [u_s] * 2
 
     # compare the module results to the truth values
     accuracy = 1e-8
-    test_fail_count, test_messages = unitTestSupport.compareArrayND(true_vector, module_output, accuracy, "rwMotorTorques",
-                                                                 RW_EFF_CNT, test_fail_count, test_messages)
+    np.testing.assert_allclose(motor_torque, true_motor_torque, rtol=0, atol=accuracy, verbose=True)
 
+    G_s_B =np.array( rw_config_params.GsMatrix_B).reshape((3, RW_EFF_CNT), order='F')
+    F = np.transpose(motor_torque[0])
+    received_torque = -(G_s_B @ F).flatten()
 
-    G_s_B = np.transpose(np.reshape(rw_config_params.GsMatrix_B,(RW_EFF_CNT,3),"C"))
-    F = np.transpose(module_output[0])
-    received_torque = -1.0*np.array([np.matmul(G_s_B,F)])
-    received_torque = np.append(np.array([]), received_torque)
-
-    if num_wheels >= num_control_axes and num_control_axes > 0:
+    if num_wheels >= num_control_axes > 0:
         if (len(avail) - np.sum(avail)) > num_control_axes:
-            test_fail_count, test_messages = unitTestSupport.compareArrayND(np.array([requested_torque]),
-                                                                         np.array([received_torque]), accuracy,
-                                                                         "CompareTorques",
-                                                                         num_control_axes, test_fail_count, test_messages)
-
-    snippet_name = "LrBReq_LrBRec_" + str(num_control_axes) + "_" + str(num_wheels) + "_" + rw_avail_msg
-    requested_tex = str(requested_torque)
-    received_tex = str(received_torque[1:4])
-    snippet_tex = "Requested:\t" + requested_tex + "\n"
-    snippet_tex += "Received:\t" + received_tex + "\n"
-
-    unitTestSupport.writeTeXSnippet(snippet_name, snippet_tex, path)
-
-    #   print out success message if no error were found
-    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
-
-    snippent_name = "passFail_" + str(num_control_axes) + str(num_wheels) + rw_avail_msg
-    if test_fail_count == 0:
-        color_text = 'ForestGreen'
-        print("PASSED: " + module.modelTag)
-        passed_text = r'\textcolor{' + color_text + '}{' + "PASSED" + '}'
-    else:
-        color_text = 'Red'
-        print("Failed: " + module.modelTag)
-        passed_text = r'\textcolor{' + color_text + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippent_name, passed_text, path)
-
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [test_fail_count, ''.join(test_messages)]
+            np.testing.assert_allclose(received_torque[:num_control_axes], requested_torque[:num_control_axes],
+                                       rtol=0,
+                                       atol=accuracy,
+                                       verbose=True)
 
 
 def compute_true_torque(C, Gs_B, Lr, avail_msg):
@@ -269,7 +204,7 @@ def compute_true_torque(C, Gs_B, Lr, avail_msg):
     # Remove wheels that are deemed unavailable
     for i in range(len(Gs_B[0])): #
         if num_wheels > i:
-            if avail_msg[i] is not rwMotorTorque.AVAILABLE:
+            if avail_msg[i] != messaging.AVAILABLE:
                 Gs_B[:,i] = [0.0, 0.0, 0.0]
                 non_avail_wheels += 1
         else:
@@ -278,7 +213,6 @@ def compute_true_torque(C, Gs_B, Lr, avail_msg):
     # If fewer wheels than number of control axes, output no torque
     if (num_wheels-non_avail_wheels) < num_control_axes:
         return [0.0]*len(Gs_B[0])
-
 
     Lr_C = np.dot(C,Lr) # Project torque onto control axes
     CGs = np.dot(C, Gs_B) # Map the control axes onto the wheels
@@ -296,22 +230,18 @@ def compute_true_torque(C, Gs_B, Lr, avail_msg):
         M_inv[i][i] = 0.0
 
     # Determine the solution
-    v3_temp = np.dot(M_inv, Lr_C)
+    L = np.dot(M_inv, Lr_C)
 
     # Map the solution to the wheels
-    u_s = np.dot(CGs.T, v3_temp)
+    u_s = np.dot(CGs.T, L)
 
     return -u_s
 
 
-#
-# This statement below ensures that the unitTestScript can be run as a
-# stand-along python script
-#
 if __name__ == "__main__":
     test_rw_motor_torque(False,
                          3,  # numControlAxes
                          36,  # numWheels
                          2,  # numInputCmdTorques
-                "NO"  # RWAvailMsg ("NO", "ON", "OFF")
+                         "NO"  # RWAvailMsg ("NO", "ON", "OFF")
                          )
