@@ -29,40 +29,40 @@ from Support import results_rwMotorTorque
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("numControlAxes", [0, 1, 2, 3])
-@pytest.mark.parametrize("numWheels", [2, 4, messaging.RW_EFF_CNT])
-@pytest.mark.parametrize("numInputCmdTorques", [1, 2])
-@pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF", "MIXED"])
+@pytest.mark.parametrize("num_control_axes", [0, 1, 2, 3])
+@pytest.mark.parametrize("num_wheels", [2, 4, messaging.RW_EFF_CNT])
+@pytest.mark.parametrize("num_input_cmd_torques", [1, 2])
+@pytest.mark.parametrize("rw_avail_msg",["NO", "ON", "OFF", "MIXED"])
 
 
 # update "module" in this function name to reflect the module name
-def test_rwMotorTorque(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg):
+def test_rw_motor_torque(show_plots, num_control_axes, num_wheels, num_input_cmd_torques, rw_avail_msg):
     """Module Unit Test"""
 
     # @TODO With the current implementation of throwing an exception when zero control axes are specified, Python quits
     #  and causes all unit tests to fail. Until a different way of handling exceptions or errors is implemented, the
     #  test with 0 control axes is skipped.
-    if numControlAxes == 0:
+    if num_control_axes == 0:
         pytest.skip("Zero control axes can currently not be tested.")
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg)
-    assert testResults < 1, testMessage
+    [test_results, test_message] = rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd_torques, rw_avail_msg)
+    assert test_results < 1, test_message
 
 
-def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd_torques, rw_avail_msg):
+    test_fail_count = 0                       # zero unit test result counter
+    test_messages = []                       # create empty array to store test log messages
+    unit_task_name = "unitTask"               # arbitrary name (don't change)
+    unit_process_name = "TestProcess"         # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(0.5)     # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
 
     # Construct algorithm and associated C++ container
@@ -71,40 +71,40 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
 
 
     # Initialize module variables
-    if numControlAxes == 3:
-        controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-    elif numControlAxes == 2:
-        controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 0]]
-    elif numControlAxes == 1:
-        controlAxes_B = [[1, 0, 0], [0, 0, 0], [0, 0, 0]]
+    if num_control_axes == 3:
+        control_axes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    elif num_control_axes == 2:
+        control_axes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 0]]
+    elif num_control_axes == 1:
+        control_axes_B = [[1, 0, 0], [0, 0, 0], [0, 0, 0]]
     else:
-        controlAxes_B = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        control_axes_B = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
-    module.controlAxes_B = controlAxes_B
+    module.controlAxes_B = control_axes_B
 
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, module)
+    unit_test_sim.AddModelToTask(unit_task_name, module)
 
 
     # attControl message
-    inputMessageData = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
-    requestedTorque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
-    inputMessageData.torqueRequestBody = requestedTorque # write torque request to input message
-    cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(inputMessageData)
+    input_message_data = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
+    requested_torque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
+    input_message_data.torqueRequestBody = requested_torque # write torque request to input message
+    cmd_torque_in_msg = messaging.CmdTorqueBodyMsg().write(input_message_data)
 
-    if numInputCmdTorques == 2:
-        inputMessageData2 = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
-        requestedTorque2 = [0.0, 0.0, 0.0]                       # Set up a list as a 3-vector
-        inputMessageData2.torqueRequestBody = requestedTorque2   # write torque request to input message
-        cmdTorqueIn2Msg = messaging.CmdTorqueBodyMsg().write(inputMessageData2)
+    if num_input_cmd_torques == 2:
+        input_message_data2 = messaging.CmdTorqueBodyMsgPayload()  # Create a structure for the input message
+        requested_torque2 = [0.0, 0.0, 0.0]                       # Set up a list as a 3-vector
+        input_message_data2.torqueRequestBody = requested_torque2   # write torque request to input message
+        cmd_torque_in2_msg = messaging.CmdTorqueBodyMsg().write(input_message_data2)
 
     # wheelConfigData message
-    rwConfigParams = messaging.RWArrayConfigMsgPayload()
+    rw_config_params = messaging.RWArrayConfigMsgPayload()
     RW_EFF_CNT = messaging.RW_EFF_CNT
 
-    if numWheels == RW_EFF_CNT:
-        rwConfigParams.GsMatrix_B = [
+    if num_wheels == RW_EFF_CNT:
+        rw_config_params.GsMatrix_B = [
             0.4835867893995201, 0.7025829597277155, 0.5220354411517549,
             0.6274167231454653, 0.4634123147571517, 0.6257773422303058,
             0.4927675437195689, 0.3909468277672152, 0.7773935462269635,
@@ -142,50 +142,50 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
             0.8124751056450826, 0.35669421673672336, 0.46114362020262967,
             0.04721328350343224, 0.8901899787392832, 0.45313652204714083]
     else:
-        rwConfigParams.GsMatrix_B = [
+        rw_config_params.GsMatrix_B = [
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
             0.0, 0.0, 1.0,
             0.5773502691896258, 0.5773502691896258, 0.5773502691896258
         ]
-        rwConfigParams.JsList = [0.1]*numWheels
+        rw_config_params.JsList = [0.1] * num_wheels
 
-    rwConfigParams.numRW = numWheels
-    rwConfigInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
+    rw_config_params.numRW = num_wheels
+    rw_config_in_msg = messaging.RWArrayConfigMsg().write(rw_config_params)
 
-    if RWAvailMsg != "NO":
-        rwAvailabilityMessage = messaging.RWAvailabilityMsgPayload()
+    if rw_avail_msg != "NO":
+        rw_availability_message = messaging.RWAvailabilityMsgPayload()
 
-        avail = [messaging.UNAVAILABLE] * numWheels
-        for i in range(numWheels):
-            if RWAvailMsg == "ON":
+        avail = [messaging.UNAVAILABLE] * num_wheels
+        for i in range(num_wheels):
+            if rw_avail_msg == "ON":
                 avail[i] = messaging.AVAILABLE
-            elif RWAvailMsg == "OFF":
+            elif rw_avail_msg == "OFF":
                 avail[i] = messaging.UNAVAILABLE
             else:
-                if i < int(numWheels / 2):
+                if i < int(num_wheels / 2):
                     avail[i] = messaging.AVAILABLE
 
-        rwAvailabilityMessage.wheelAvailability = avail
+        rw_availability_message.wheelAvailability = avail
 
-        rwAvailInMsg = messaging.RWAvailabilityMsg().write(rwAvailabilityMessage)
-        module.rwAvailInMsg.subscribeTo(rwAvailInMsg)
+        rw_avail_in_msg = messaging.RWAvailabilityMsg().write(rw_availability_message)
+        module.rwAvailInMsg.subscribeTo(rw_avail_in_msg)
 
     else:
-        avail = [rwMotorTorque.AVAILABLE] * numWheels  # this is used purely for the python level solution
+        avail = [rwMotorTorque.AVAILABLE] * num_wheels  # this is used purely for the python level solution
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = module.rwMotorTorqueOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = module.rwMotorTorqueOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # connect messages
-    module.vehControlInMsg.subscribeTo(cmdTorqueInMsg)
-    if numInputCmdTorques == 2:
-        module.vehControlIn2Msg.subscribeTo(cmdTorqueIn2Msg)
-    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+    module.vehControlInMsg.subscribeTo(cmd_torque_in_msg)
+    if num_input_cmd_torques == 2:
+        module.vehControlIn2Msg.subscribeTo(cmd_torque_in2_msg)
+    module.rwParamsInMsg.subscribeTo(rw_config_in_msg)
 
     # Need to call the self-init and cross-init methods
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
     module.reset(0)
 
@@ -193,72 +193,72 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
 
     # Begin the simulation time run set above
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutput = dataLog.motorTorque
+    module_output = data_log.motorTorque
 
-    trueVector = np.array([
+    true_vector = np.array([
         [0.0] * RW_EFF_CNT,
         [0.0] * RW_EFF_CNT
     ])
 
     # set the output truth states
-    trueVector[0] = results_rwMotorTorque.computeTorqueU(np.array(controlAxes_B),
-                                                                   np.array(rwConfigParams.GsMatrix_B).reshape((
+    true_vector[0] = results_rwMotorTorque.compute_torque_u(np.array(control_axes_B),
+                                                            np.array(rw_config_params.GsMatrix_B).reshape((
                                                                        3, RW_EFF_CNT), order='F'),
-                                                                   requestedTorque,
-                                                                   avail)
-    trueVector[1] = trueVector[0]
+                                                            requested_torque,
+                                                            avail)
+    true_vector[1] = true_vector[0]
 
     # compare the module results to the truth values
     accuracy = 1e-8
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, moduleOutput, accuracy, "rwMotorTorques",
-                                                                 RW_EFF_CNT, testFailCount, testMessages)
+    test_fail_count, test_messages = unitTestSupport.compareArrayND(true_vector, module_output, accuracy, "rwMotorTorques",
+                                                                 RW_EFF_CNT, test_fail_count, test_messages)
 
 
-    GsMatrix = np.transpose(np.reshape(rwConfigParams.GsMatrix_B,(RW_EFF_CNT,3),"C"))
-    F = np.transpose(moduleOutput[0])
-    receivedTorque = -1.0*np.array([np.matmul(GsMatrix,F)])
-    receivedTorque = np.append(np.array([]), receivedTorque)
+    G_s_B = np.transpose(np.reshape(rw_config_params.GsMatrix_B,(RW_EFF_CNT,3),"C"))
+    F = np.transpose(module_output[0])
+    received_torque = -1.0*np.array([np.matmul(G_s_B,F)])
+    received_torque = np.append(np.array([]), received_torque)
 
-    if numWheels >= numControlAxes and numControlAxes > 0:
-        if (len(avail) - np.sum(avail)) > numControlAxes:
-            testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]),
-                                                                         np.array([receivedTorque]), accuracy,
+    if num_wheels >= num_control_axes and num_control_axes > 0:
+        if (len(avail) - np.sum(avail)) > num_control_axes:
+            test_fail_count, test_messages = unitTestSupport.compareArrayND(np.array([requested_torque]),
+                                                                         np.array([received_torque]), accuracy,
                                                                          "CompareTorques",
-                                                                         numControlAxes, testFailCount, testMessages)
+                                                                         num_control_axes, test_fail_count, test_messages)
 
-    snippetName = "LrBReq_LrBRec_"+str(numControlAxes) + "_" + str(numWheels) + "_" + RWAvailMsg
-    requestedTex = str(requestedTorque)
-    receivedTex = str(receivedTorque[1:4])
-    snippetTex = "Requested:\t" + requestedTex + "\n"
-    snippetTex += "Received:\t" + receivedTex + "\n"
+    snippet_name = "LrBReq_LrBRec_" + str(num_control_axes) + "_" + str(num_wheels) + "_" + rw_avail_msg
+    requested_tex = str(requested_torque)
+    received_tex = str(received_torque[1:4])
+    snippet_tex = "Requested:\t" + requested_tex + "\n"
+    snippet_tex += "Received:\t" + received_tex + "\n"
 
-    unitTestSupport.writeTeXSnippet(snippetName, snippetTex, path)
+    unitTestSupport.writeTeXSnippet(snippet_name, snippet_tex, path)
 
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
 
-    snippentName = "passFail_"+str(numControlAxes) + str(numWheels) + RWAvailMsg
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
+    snippent_name = "passFail_" + str(num_control_axes) + str(num_wheels) + rw_avail_msg
+    if test_fail_count == 0:
+        color_text = 'ForestGreen'
         print("PASSED: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passed_text = r'\textcolor{' + color_text + '}{' + "PASSED" + '}'
     else:
-        colorText = 'Red'
+        color_text = 'Red'
         print("Failed: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+        passed_text = r'\textcolor{' + color_text + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippent_name, passed_text, path)
 
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [test_fail_count, ''.join(test_messages)]
 
 
 #
@@ -266,9 +266,9 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_rwMotorTorque(False,
-                3,      # numControlAxes
-                36,      # numWheels
-                2,      # numInputCmdTorques
-                "NO"    # RWAvailMsg ("NO", "ON", "OFF")
-               )
+    test_rw_motor_torque(False,
+                         3,  # numControlAxes
+                         36,  # numWheels
+                         2,  # numInputCmdTorques
+                "NO"  # RWAvailMsg ("NO", "ON", "OFF")
+                         )
