@@ -20,7 +20,6 @@ from xmera.utilities import unitTestSupport
 from xmera.fswAlgorithms import rwMotorTorque
 from xmera.utilities import macros
 from xmera.architecture import messaging
-from Support import results_rwMotorTorque
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -208,11 +207,11 @@ def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd
     ])
 
     # set the output truth states
-    true_vector[0] = results_rwMotorTorque.compute_torque_u(np.array(control_axes_B),
-                                                            np.array(rw_config_params.GsMatrix_B).reshape((
-                                                                       3, RW_EFF_CNT), order='F'),
-                                                            requested_torque,
-                                                            avail)
+    true_vector[0] = compute_true_torque(np.array(control_axes_B),
+                                         np.array(rw_config_params.GsMatrix_B).reshape((
+                                                    3, RW_EFF_CNT), order='F'),
+                                         requested_torque,
+                                         avail)
     true_vector[1] = true_vector[0]
 
     # compare the module results to the truth values
@@ -259,6 +258,50 @@ def rw_motor_torque_test(show_plots, num_control_axes, num_wheels, num_input_cmd
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [test_fail_count, ''.join(test_messages)]
+
+
+def compute_true_torque(C, Gs_B, Lr, avail_msg):
+
+    num_control_axes = (np.linalg.norm(C, axis=1) > 0.0).sum()
+    num_wheels = len(avail_msg)
+    non_avail_wheels = 0
+
+    # Remove wheels that are deemed unavailable
+    for i in range(len(Gs_B[0])): #
+        if num_wheels > i:
+            if avail_msg[i] is not rwMotorTorque.AVAILABLE:
+                Gs_B[:,i] = [0.0, 0.0, 0.0]
+                non_avail_wheels += 1
+        else:
+            Gs_B[:,i] = [0.0, 0.0, 0.0]
+
+    # If fewer wheels than number of control axes, output no torque
+    if (num_wheels-non_avail_wheels) < num_control_axes:
+        return [0.0]*len(Gs_B[0])
+
+
+    Lr_C = np.dot(C,Lr) # Project torque onto control axes
+    CGs = np.dot(C, Gs_B) # Map the control axes onto the wheels
+
+    # Build minimum norm framework
+    M = np.dot(CGs, CGs.T)
+    M_rep = np.identity(3) # Need to keep the matrix non-singular for inversion
+    for i in range(0,num_control_axes):
+        for j in range(0,num_control_axes):
+            M_rep[i][j] = M[i][j]
+    M_inv = np.linalg.inv(M_rep)
+
+    # Remove projection to any non-defined control axes
+    for i in range(num_control_axes,3):
+        M_inv[i][i] = 0.0
+
+    # Determine the solution
+    v3_temp = np.dot(M_inv, Lr_C)
+
+    # Map the solution to the wheels
+    u_s = np.dot(CGs.T, v3_temp)
+
+    return -u_s
 
 
 #
