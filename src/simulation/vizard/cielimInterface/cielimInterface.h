@@ -30,8 +30,8 @@
 #include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
 
 #include "architecture/utilities/rigidBodyKinematics.hpp"
-#include "simulation/vizard/cielimInterface/zmqConnector.h"
 #include "simulation/vizard/cielimInterface/cielimMessage.pb.h"
+#include "simulation/vizard/cielimInterface/zmqConnector.h"
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/util/delimited_message_util.h>
@@ -72,12 +72,12 @@ class CielimInterface : public SysModel {
     void setOpNavMode(ClosedLoopMode mode);
     ClosedLoopMode getOpNavMode() const;
     int64_t getFrameNumber() const;
-    void setSaveFile(const std::string &pathAndFilename);
+    void setSaveFile(const std::string& pathAndFilename);
     std::string getSaveFilename() const;
     void closeProtobufFile();
     void setLiveStream(bool liveStreaming);
     void setPortNumber(std::string port);
-    void addCelestialBody(const SpiceBody &celestialBodiesList);
+    void addCelestialBody(const SpiceBody& celestialBodiesList);
     std::vector<SpiceBody> getCelestialBodies() const;
 
     ReadFunctor<SCStatesMsgPayload> spacecraftMessage;              //!< [-] vector of spacecraft data containers
@@ -94,7 +94,7 @@ class CielimInterface : public SysModel {
 
     bool saveFile{false};    //!< [Bool] Set True if Vizard should save a file of the data.
     bool liveStream{false};  //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
-    void *imagePointer;      /*!< [RUN] permanent pointers for the images to be used
+    void* imagePointer;      /*!< [RUN] permanent pointers for the images to be used
                                   without relying on ZMQ because ZMQ will free it (whenever, who knows) */
     ZmqConnector connector{};
     ClosedLoopMode opNavMode{ClosedLoopMode::ALL_FRAMES}; /*!< [int] Set if Unity/Viz couple in direct communication. */
