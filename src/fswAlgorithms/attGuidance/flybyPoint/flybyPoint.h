@@ -5,6 +5,7 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/FlybyDiagnosticMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include "flybyPointAlgorithm.h"
 #include <Eigen/Dense>
@@ -29,9 +30,10 @@ class FlybyPoint : public SysModel {
     double getPositionKnowledgeSigma() const;
     void setPositionKnowledgeSigma(double positionKnowledgeStd);
 
-    ReadFunctor<NavTransMsgPayload> filterInMsg;              //!< input msg relative position w.r.t. asteroid
-    ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;  //!< input asteroid ephemeris msg
-    Message<AttRefMsgPayload> attRefOutMsg;                   //!< Attitude reference output message
+    ReadFunctor<NavTransMsgPayload> filterInMsg;               //!< input msg relative position w.r.t. asteroid
+    ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;   //!< input asteroid ephemeris msg
+    Message<AttRefMsgPayload> attRefOutMsg;                    //!< Attitude reference output message
+    Message<FlybyDiagnosticMsgPayload> flybyDiagnosticOutMsg;  //!< Flyby diagnostic output message
 
    private:
     FlybyPointAlgorithm algorithm;
