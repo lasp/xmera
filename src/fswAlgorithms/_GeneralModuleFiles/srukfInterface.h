@@ -60,7 +60,7 @@ class SRukfInterface : public KalmanFilter {
 
     Eigen::MatrixXd sBar;                                                  //!< [-] Time updated covariance
     std::array<FilterStateVector, 2 * MAX_STATES_VECTOR + 1> sigmaPoints;  //!< [-]    sigma point vector
-    int numberSigmaPoints = 0;                                             //!< [-] number of sigma points
+    size_t numberSigmaPoints = 0;                                          //!< [-] number of sigma points
     Eigen::MatrixXd cholProcessNoise;                                      //!< [-] cholesky of Qnoise
     Eigen::MatrixXd cholMeasNoise;                                         //!< [-] cholesky of Measurement noise
 

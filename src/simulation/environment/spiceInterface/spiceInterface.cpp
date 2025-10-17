@@ -100,16 +100,16 @@ void SpiceInterface::reset(uint64_t CurrenSimNanos) {
     }
     //!- Load the SPICE kernels if they haven't already been loaded
     if (!this->SPICELoaded) {
-        if (loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
+        if (loadSpiceKernel((char*)"naif0012.tls", this->SPICEDataPath.c_str())) {
             bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "naif0012.tls");
         }
-        if (loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
+        if (loadSpiceKernel((char*)"pck00010.tpc", this->SPICEDataPath.c_str())) {
             bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "pck00010.tpc");
         }
-        if (loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
+        if (loadSpiceKernel((char*)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
             bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de-403-masses.tpc");
         }
-        if (loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
+        if (loadSpiceKernel((char*)"de430.bsp", this->SPICEDataPath.c_str())) {
             bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de430.tpc");
         }
         this->SPICELoaded = true;
@@ -121,9 +121,9 @@ void SpiceInterface::reset(uint64_t CurrenSimNanos) {
     this->timeDataInit = true;
 
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
-    int c = 0;      // celestial object counter
+    size_t c = 0;   // celestial object counter
     int autoFrame;  // flag to set the frame automatically
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    SpiceChar* name = new SpiceChar[this->charBufferSize];
     SpiceBoolean frmFound;
     SpiceInt frmCode;
     for (planit = this->planetData.begin(); planit != planetData.end(); planit++) {
@@ -161,7 +161,7 @@ void SpiceInterface::initTimeData() {
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
-        EpochMsgPayload epochMsg;
+        EpochMsgPayload epochMsg{};
         epochMsg = this->epochInMsg();
         if (!this->epochInMsg.isWritten()) {
             bskLogger.bskLog(BSK_ERROR,
@@ -218,7 +218,7 @@ void SpiceInterface::computeGPSData() {
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void SpiceInterface::writeOutputMessages(uint64_t CurrentClock) {
-    SpiceTimeMsgPayload OutputData;
+    SpiceTimeMsgPayload OutputData{};
 
     //! - Set the members of the time output message structure and write
     OutputData.J2000Current = this->J2000Current;
@@ -265,8 +265,8 @@ void SpiceInterface::updateState(uint64_t currentSimNanos) {
     this->J2000Current = this->J2000ETInit + currentSimNanos * NANO2SEC;
 
     //! - Compute the current Julian Date string and cast it over to the double
-    et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar *>(this->spiceBuffer));
-    std::string localString = reinterpret_cast<char *>(&this->spiceBuffer[3]);
+    et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>(this->spiceBuffer));
+    std::string localString = reinterpret_cast<char*>(&this->spiceBuffer[3]);
     this->julianDateCurrent = std::stod(localString);
     //! Get GPS and Planet data and then write the message outputs
     this->computeGPSData();
@@ -288,7 +288,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     this->planetData.clear();
 
     for (it = planetNames.begin(); it != planetNames.end(); it++) {
-        Message<SpicePlanetStateMsgPayload> *spiceOutMsg;
+        Message<SpicePlanetStateMsgPayload>* spiceOutMsg;
         spiceOutMsg = new Message<SpicePlanetStateMsgPayload>;
         this->planetStateOutMsgs.push_back(spiceOutMsg);
 
@@ -312,7 +312,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     spacecraft state output messages and the vector of spacecraft state message payloads */
 void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames) {
     std::vector<std::string>::iterator it;
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    SpiceChar* name = new SpiceChar[this->charBufferSize];
     SpiceBoolean frmFound;
     SpiceInt frmCode;
 
@@ -333,15 +333,15 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
 
     for (it = spacecraftNames.begin(); it != spacecraftNames.end(); it++) {
         /* append to spacecraft related output messages */
-        Message<SCStatesMsgPayload> *scStateOutMsg;
+        Message<SCStatesMsgPayload>* scStateOutMsg;
         scStateOutMsg = new Message<SCStatesMsgPayload>;
         this->scStateOutMsgs.push_back(scStateOutMsg);
 
-        Message<AttRefMsgPayload> *attRefOutMsg;
+        Message<AttRefMsgPayload>* attRefOutMsg;
         attRefOutMsg = new Message<AttRefMsgPayload>;
         this->attRefStateOutMsgs.push_back(attRefOutMsg);
 
-        Message<TransRefMsgPayload> *transRefOutMsg;
+        Message<TransRefMsgPayload>* transRefOutMsg;
         transRefOutMsg = new Message<TransRefMsgPayload>;
         this->transRefStateOutMsgs.push_back(transRefOutMsg);
 
@@ -369,7 +369,7 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
  and saves the information off into the array.
  @return void
  */
-void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData) {
+void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spiceData) {
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
 
     /*! - Loop over the vector of Spice objects and compute values.
@@ -379,7 +379,7 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
      -# Convert the pos/vel over to meters.
      -# Time stamp the message appropriately
      */
-    int c = 0;  // celestial body counter
+    size_t c = 0;  // celestial body counter
     for (planit = spiceData->begin(); planit != spiceData->end(); planit++) {
         double lighttime;
         double localState[6];
@@ -439,9 +439,9 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
  @param kernelName The name of the kernel we are loading
  @param dataPath The path to the data area on the filesystem
  */
-int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath) {
-    char *fileName = new char[this->charBufferSize];
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
+int SpiceInterface::loadSpiceKernel(char* kernelName, const char* dataPath) {
+    char* fileName = new char[this->charBufferSize];
+    SpiceChar* name = new SpiceChar[this->charBufferSize];
 
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
@@ -470,9 +470,9 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath) {
  @param kernelName The name of the kernel we are unloading
  @param dataPath The path to the data area on the filesystem
  */
-int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath) {
-    char *fileName = new char[this->charBufferSize];
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
+int SpiceInterface::unloadSpiceKernel(char* kernelName, const char* dataPath) {
+    char* fileName = new char[this->charBufferSize];
+    SpiceChar* name = new SpiceChar[this->charBufferSize];
 
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
@@ -490,7 +490,7 @@ int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath) {
 }
 
 std::string SpiceInterface::getCurrentTimeString() {
-    char *spiceOutputBuffer;
+    char* spiceOutputBuffer;
     int64_t allowedOutputLength;
 
     allowedOutputLength = (int64_t)this->timeOutPicture.size() - 5;

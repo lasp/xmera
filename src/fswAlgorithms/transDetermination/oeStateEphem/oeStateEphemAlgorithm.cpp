@@ -30,11 +30,10 @@ ChebyshevFitArc OEStateEphemAlgorithm::findCurrentArc(uint64_t callTime,
     this->currentEphTime = callTime * 1e-9 + localTime.ephemerisTime - localTime.vehicleClockTime;
 
     /*! - select the fitting coefficients for the nearest fit interval */
-    signed int nearestArc = 0;
+    uint32_t nearestArc = 0;
     double smallestTimeDifference = fabs(this->currentEphTime - this->fitCoefficients[0].ephemerisTimeMiddle);
-    double timeDifference{}; /* [s] time difference with respect to an interval mid-point */
-    for (int i = 1; i < MAX_OE_RECORDS; i++) {
-        timeDifference = fabs(this->currentEphTime - this->fitCoefficients[i].ephemerisTimeMiddle);
+    for (auto i = 1; i < MAX_OE_RECORDS; ++i) {
+        double timeDifference = fabs(this->currentEphTime - this->fitCoefficients[i].ephemerisTimeMiddle);
         if (timeDifference < smallestTimeDifference) {
             nearestArc = i;
             smallestTimeDifference = timeDifference;
@@ -58,7 +57,7 @@ ClassicalElements OEStateEphemAlgorithm::evaluateCoefficients(const double curre
     /* - determine orbit elements from chebychev polynominals */
     double anomalyAngle{}; /* [r] general anomaly angle variable */
     ClassicalElements elements{};
-    elements.radiusPeriapsis =
+    const double radiusPeriapsis =
         calculateChebyValue(arc.radiusPeriapsisCoefficients.data(), arc.numberChebCoefficients, currentScaledValue) *
         1e3;  // coefficients are in km but module operates in meters
     elements.inclination =
@@ -87,7 +86,7 @@ ClassicalElements OEStateEphemAlgorithm::evaluateCoefficients(const double curre
     /*! - determine semi-major axis */
     if (fabs(elements.eccentricity - 1.0) > 1e-12) {
         /* elliptic or hyperbolic case */
-        elements.semiMajorAxis = elements.radiusPeriapsis / (1.0 - elements.eccentricity);
+        elements.semiMajorAxis = radiusPeriapsis / (1.0 - elements.eccentricity);
     } else {
         /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
         elements.semiMajorAxis = 0.0;

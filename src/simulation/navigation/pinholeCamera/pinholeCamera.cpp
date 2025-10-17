@@ -81,8 +81,7 @@ void PinholeCamera::addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal) {
     this->landmarkOutMsgs.push_back(msg);
 
     /* Expand the landmark buffer vectors */
-    LandmarkMsgPayload lmkMsg;
-    this->landmarkMsgBuffer.push_back(lmkMsg);
+    this->landmarkMsgBuffer.emplace_back();
 }
 
 /*! Loop through landmarks

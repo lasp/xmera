@@ -92,14 +92,14 @@ void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpSc
     this->accessOutMsgs.push_back(msg);
 
     /* expand the buffer vector */
-    AccessMsgPayload accMsg;
+    AccessMsgPayload accMsg{};
     this->accessMsgBuffer.push_back(accMsg);
 }
 
 /*! Read module messages
  */
 bool SpacecraftLocation::ReadMessages() {
-    SCStatesMsgPayload scMsg;
+    SCStatesMsgPayload scMsg{};
 
     /* clear out the vector of spacecraft states.  This is created freshly below. */
     this->scStatesBuffer.clear();

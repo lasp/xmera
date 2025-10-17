@@ -35,9 +35,6 @@ class BodyEphemerisPayload {
     EphemerisMsgPayload outputEphemerisPayload{EphemerisMsgPayload{}};  //!< Output ephemeris message after recentering
 };
 
-static void vectorSubtraction(const double v1[3], const double v2[3], double result[3]);
-static void vectorAddition(const double v1[3], const double v2[3], double result[3]);
-
 /**
  * @brief Basilisk model to recenter ephemeris data from one central body to another.
  *
@@ -48,22 +45,22 @@ class EphemeridesRecenterAlgorithm {
    public:
     void reset();
     std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> updateState(
-        const std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> &newBody);
-    size_t getBodyIndexFromName(const std::string &celestialBodyName) const;
-    void setNewZeroBaseName(const std::string &bodyName);
-    size_t findNewZeroBaseIndex(const std::string &bodyName);
+        const std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES>& newBody);
+    size_t getBodyIndexFromName(const std::string& celestialBodyName) const;
+    void setNewZeroBaseName(const std::string& bodyName);
+    size_t findNewZeroBaseIndex(const std::string& bodyName);
     std::string getNewZeroBase() const;
-    void setPreviousCommonZeroBase(const std::string &bodyName);
+    void setPreviousCommonZeroBase(const std::string& bodyName);
     std::string getPreviousCommonZeroBase() const;
     size_t getNumberOfBodies() const;
     std::array<std::string, MAX_NUM_CHANGE_BODIES> getAllNames() const;
-    void addBodyEphemerisToRecenter(const std::string &bodyName);
+    void addBodyEphemerisToRecenter(const std::string& bodyName);
     void clearAllBodies();
 
     ReadFunctor<EphemerisMsgPayload> ephBaseInMsg;  //!< Base ephemeris input message
 
    private:
-    bool findMoonOfBody(const BodyEphemerisPayload &celestialBody, size_t *index) const;
+    bool findMoonOfBody(const BodyEphemerisPayload& celestialBody, size_t* index) const;
 
     std::string newCentralBodyName{};
     std::array<std::string, MAX_NUM_CHANGE_BODIES> bodyNames{};

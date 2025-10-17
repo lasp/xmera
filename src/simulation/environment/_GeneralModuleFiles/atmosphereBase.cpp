@@ -74,17 +74,17 @@ AtmosphereBase::~AtmosphereBase() {
  @return void
  @param tmpScMsg A spacecraft state message name.
  */
-void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg) {
+void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg) {
     /* add input message */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<AtmoPropsMsgPayload> *msg;
+    Message<AtmoPropsMsgPayload>* msg;
     msg = new Message<AtmoPropsMsgPayload>;
     this->envOutMsgs.push_back(msg);
 
     /* create buffer message copies*/
-    AtmoPropsMsgPayload msgAtmoBuffer;
+    AtmoPropsMsgPayload msgAtmoBuffer{};
     this->envOutBuffer.push_back(msgAtmoBuffer);
 
     return;
@@ -201,7 +201,7 @@ bool AtmosphereBase::customReadMessages() { return true; }
  @param scState A spacecraft states message struct.
  @return void
  */
-void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState) {
+void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCStatesMsgPayload* scState) {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());
 

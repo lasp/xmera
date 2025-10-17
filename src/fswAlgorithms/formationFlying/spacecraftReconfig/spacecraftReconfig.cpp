@@ -28,7 +28,7 @@
 #include <stdlib.h>
 
 static double AdjustRange(double lower, double upper, double angle);
-static int CompareTime(const void *n1, const void *n2);
+static int CompareTime(const void* n1, const void* n2);
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
@@ -133,8 +133,8 @@ void SpacecraftReconfig::UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
                                         AttRefMsgPayload attRefInMsgBuffer,
                                         THRArrayConfigMsgPayload thrustConfigMsgBuffer,
                                         VehicleConfigMsgPayload vehicleConfigMsgBuffer,
-                                        AttRefMsgPayload *attRefOutMsgBuffer,
-                                        THRArrayOnTimeCmdMsgPayload *thrustOnMsgBuffer,
+                                        AttRefMsgPayload* attRefOutMsgBuffer,
+                                        THRArrayOnTimeCmdMsgPayload* thrustOnMsgBuffer,
                                         uint64_t callTime) {
     /* conversion from r,v to classical orbital elements */
     ClassicElements oe_c, oe_d;
@@ -171,8 +171,7 @@ void SpacecraftReconfig::UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
             this->thrustOnFlag = 1;  // thrustOnFlag is ON
             this->burnArrayInfoOutMsgBuffer.burnArray[0].flag =
                 2;  // first burn is regarded as finished by setting this to 2
-            int i = 0;
-            for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
+            for (uint32_t i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
                 thrustOnMsgBuffer->OnTimeRequest[i] =
                     this->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
             }
@@ -200,8 +199,7 @@ void SpacecraftReconfig::UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
             this->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 1) {
             this->thrustOnFlag = 1;
             this->burnArrayInfoOutMsgBuffer.burnArray[1].flag = 2;
-            int i = 0;
-            for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
+            for (uint32_t i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
                 thrustOnMsgBuffer->OnTimeRequest[i] =
                     this->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
             }
@@ -235,8 +233,7 @@ void SpacecraftReconfig::UpdateManeuver(NavTransMsgPayload chiefTransMsgBuffer,
             this->burnArrayInfoOutMsgBuffer.burnArray[2].flag == 1) {
             this->thrustOnFlag = 1;
             this->burnArrayInfoOutMsgBuffer.burnArray[2].flag = 2;
-            int i = 0;
-            for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
+            for (uint32_t i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
                 thrustOnMsgBuffer->OnTimeRequest[i] =
                     this->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
             }
@@ -318,10 +315,10 @@ static double AdjustRange(double lower, double upper, double angle) {
  @param n1
  @param n2
  */
-static int CompareTime(const void *n1, const void *n2) {
-    if (((ReconfigBurnInfoMsgPayload *)n1)->t > ((ReconfigBurnInfoMsgPayload *)n2)->t) {
+static int CompareTime(const void* n1, const void* n2) {
+    if (((ReconfigBurnInfoMsgPayload*)n1)->t > ((ReconfigBurnInfoMsgPayload*)n2)->t) {
         return 1;
-    } else if (((ReconfigBurnInfoMsgPayload *)n1)->t < ((ReconfigBurnInfoMsgPayload *)n2)->t) {
+    } else if (((ReconfigBurnInfoMsgPayload*)n1)->t < ((ReconfigBurnInfoMsgPayload*)n2)->t) {
         return -1;
     } else {
         return 0;

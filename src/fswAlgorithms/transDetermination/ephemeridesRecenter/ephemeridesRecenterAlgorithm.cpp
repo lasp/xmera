@@ -23,7 +23,7 @@
  @param v2 double[3] : vector 2
  @param result double[3] : subtracted vectors
  */
-void vectorSubtraction(const double v1[3], const double v2[3], double result[3]) {
+static void vectorSubtraction(const double v1[3], const double v2[3], double result[3]) {
     for (int i = 0; i < 3; ++i) {
         result[i] = v1[i] - v2[i];
     }
@@ -34,7 +34,7 @@ void vectorSubtraction(const double v1[3], const double v2[3], double result[3])
  @param v2 double[3] : vector 2
  @param result double[3] : added vectors
  */
-void vectorAddition(const double v1[3], const double v2[3], double result[3]) {
+static void vectorAddition(const double v1[3], const double v2[3], double result[3]) {
     for (int i = 0; i < 3; ++i) {
         result[i] = v1[i] + v2[i];
     }
@@ -49,7 +49,7 @@ void EphemeridesRecenterAlgorithm::reset() {
  @return std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> : re-centered bodies
  */
 std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> EphemeridesRecenterAlgorithm::updateState(
-    const std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> &newBodies) {
+    const std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES>& newBodies) {
     this->celestialBodies = newBodies;
 
     auto newCentralBody = this->celestialBodies[this->newCentralIndex];
@@ -67,7 +67,7 @@ std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> EphemeridesRecenterAlgor
     }
 
     std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> recenteredBodies{};
-    for (auto i = 0; i < this->celestialBodyCount; ++i) {
+    for (size_t i = 0; i < this->celestialBodyCount; ++i) {
         /* Moons get re-centered along with their central body and shouldn't be re-centered in this main loop */
         if (!recenteredBodies[i].isMoon) {
             recenteredBodies[i] = BodyEphemerisPayload{};
@@ -112,11 +112,11 @@ std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> EphemeridesRecenterAlgor
  @param index size_t* : index
  @return bool : whether the index was found
  */
-bool EphemeridesRecenterAlgorithm::findMoonOfBody(const BodyEphemerisPayload &celestialBody, size_t *index) const {
+bool EphemeridesRecenterAlgorithm::findMoonOfBody(const BodyEphemerisPayload& celestialBody, size_t* index) const {
     if (this->celestialBodyCount == 0) {
         throw std::invalid_argument("Requesting a body index but the current celestial body count is 0");
     }
-    for (auto i = 0; i < this->celestialBodyCount; ++i) {
+    for (size_t i = 0; i < this->celestialBodyCount; ++i) {
         if (this->celestialBodies[i].originalCentralBodyName == celestialBody.bodySpiceName) {
             *index = i;
             return true;
@@ -129,11 +129,11 @@ bool EphemeridesRecenterAlgorithm::findMoonOfBody(const BodyEphemerisPayload &ce
  @param celestialBodyName std::string : celestial body name
  @return size_t : index
  */
-size_t EphemeridesRecenterAlgorithm::getBodyIndexFromName(const std::string &celestialBodyName) const {
+size_t EphemeridesRecenterAlgorithm::getBodyIndexFromName(const std::string& celestialBodyName) const {
     if (this->celestialBodyCount == 0) {
         throw std::invalid_argument("Requesting a body index but the current celestial body count is 0");
     }
-    for (auto i = 0; i < this->celestialBodyCount; ++i) {
+    for (size_t i = 0; i < this->celestialBodyCount; ++i) {
         if (this->bodyNames[i] == celestialBodyName) {
             return i;
         }
@@ -144,14 +144,14 @@ size_t EphemeridesRecenterAlgorithm::getBodyIndexFromName(const std::string &cel
 /*! @brief Set the new zero base body type by name
  @param bodyName std::string : the new zero base
  */
-void EphemeridesRecenterAlgorithm::setNewZeroBaseName(const std::string &bodyName) {
+void EphemeridesRecenterAlgorithm::setNewZeroBaseName(const std::string& bodyName) {
     this->newCentralBodyName = bodyName;
 }
 
 /*! @brief Find the new zero base body type by name
  @param bodyName std::string : the new zero base
  */
-size_t EphemeridesRecenterAlgorithm::findNewZeroBaseIndex(const std::string &bodyName) {
+size_t EphemeridesRecenterAlgorithm::findNewZeroBaseIndex(const std::string& bodyName) {
     if (auto indexOfNewZeroBase = std::find(this->bodyNames.begin(), this->bodyNames.end(), bodyName);
         indexOfNewZeroBase == this->bodyNames.end()) {
         throw std::invalid_argument("New zero base body was not in the list of existing bodies");
@@ -168,7 +168,7 @@ std::string EphemeridesRecenterAlgorithm::getNewZeroBase() const { return this->
 /*! @brief Set the previous common zero base of all the celestial bodies entered
  @param bodyName std::string : the new zero base
  */
-void EphemeridesRecenterAlgorithm::setPreviousCommonZeroBase(const std::string &bodyName) {
+void EphemeridesRecenterAlgorithm::setPreviousCommonZeroBase(const std::string& bodyName) {
     if (auto indexOfPreviousZeroBase = std::find(this->bodyNames.begin(), this->bodyNames.end(), bodyName);
         indexOfPreviousZeroBase == this->bodyNames.end()) {
         throw std::invalid_argument("Previous zero base body was not in the list of existing bodies");
@@ -195,7 +195,7 @@ std::array<std::string, MAX_NUM_CHANGE_BODIES> EphemeridesRecenterAlgorithm::get
         throw std::invalid_argument("Requesting all body names but the current celestial body count is 0");
     }
     std::array<std::string, MAX_NUM_CHANGE_BODIES> names{};
-    for (auto i = 0; i < this->celestialBodyCount; ++i) {
+    for (size_t i = 0; i < this->celestialBodyCount; ++i) {
         if (!this->bodyNames[i].empty()) {
             names[i] = this->bodyNames[i];
         }
@@ -206,7 +206,7 @@ std::array<std::string, MAX_NUM_CHANGE_BODIES> EphemeridesRecenterAlgorithm::get
 /*! @brief Add celestial body by name
  @param bodyName std::string : the body name to add
  */
-void EphemeridesRecenterAlgorithm::addBodyEphemerisToRecenter(const std::string &bodyName) {
+void EphemeridesRecenterAlgorithm::addBodyEphemerisToRecenter(const std::string& bodyName) {
     if (this->celestialBodyCount + 1 > MAX_NUM_CHANGE_BODIES) {
         throw std::invalid_argument("Adding one body too many to the list");
     }

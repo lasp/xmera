@@ -204,7 +204,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
     Eigen::VectorXd y(3 * numLocations);
     Eigen::Matrix3d covarianceSumTerm = Eigen::Matrix3d::Zero();
 
-    for (int c = 0; c < numLocations; ++c) {
+    for (size_t c = 0; c < numLocations; ++c) {
         // update dcm in case they are different for each image point
         if (dcmCamera.size() != 1) {
             dcm_CF = dcmCamera.at(c);
@@ -228,7 +228,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
         if (this->uncertaintyImageMeasurement != 0.) {
             // Choose index for "companion measurement"
             // According to https://doi.org/10.2514/1.G006989, this can be done arbitrarily, so simply choose next index
-            int c2 = c + 1;
+            size_t c2 = c + 1;
             if (c2 > numLocations - 1) {
                 // if c is already the last measurement, choose c2 = 0
                 c2 = 0;

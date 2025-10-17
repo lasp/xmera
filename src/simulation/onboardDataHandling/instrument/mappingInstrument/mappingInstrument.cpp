@@ -55,7 +55,7 @@ void MappingInstrument::updateState(uint64_t currentSimNanos) {
         this->dataNodeOutMsgBuffer.at(c) = DataNodeUsageMsgPayload{};
 
         /* Read the access message */
-        AccessMsgPayload accessMsg;
+        AccessMsgPayload accessMsg{};
         accessMsg = this->accessInMsgs.at(c)();
 
         /* Check for access, set the data rate */
@@ -77,7 +77,7 @@ void MappingInstrument::updateState(uint64_t currentSimNanos) {
 /*! Adds a mapping point (access message and name) to the module
  * @return void
  */
-void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName) {
+void MappingInstrument::addMappingPoint(Message<AccessMsgPayload>* tmpAccessMsg, std::string dataName) {
     /* Add the name of the mapping point */
     this->mappingPoints.push_back(dataName);
 
@@ -85,13 +85,12 @@ void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg,
     this->accessInMsgs.push_back(tmpAccessMsg->addSubscriber());
 
     /* Create buffer output messages */
-    Message<DataNodeUsageMsgPayload> *msg;
+    Message<DataNodeUsageMsgPayload>* msg;
     msg = new Message<DataNodeUsageMsgPayload>;
     this->dataNodeOutMsgs.push_back(msg);
 
     /* Expand the data node usage buffer vectors */
-    DataNodeUsageMsgPayload dataNodeUsageMsg;
-    this->dataNodeOutMsgBuffer.push_back(dataNodeUsageMsg);
+    this->dataNodeOutMsgBuffer.emplace_back();
 
     return;
 }
