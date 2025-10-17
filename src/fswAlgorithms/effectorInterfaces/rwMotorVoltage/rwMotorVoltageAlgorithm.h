@@ -33,6 +33,9 @@
 /*! @brief module configuration message */
 class RwMotorVoltageAlgorithm {
    public:
+    RwMotorVoltageAlgorithm(const double minVoltageMagnitude, const double maxVoltageMagnitude);
+    ~RwMotorVoltageAlgorithm() = default;
+
     void reset(RWArrayConfigMsgPayload& rwParamsInMsg);
     RwMotorVoltageMsgPayload update(uint64_t callTime,
                                     RwMotorTorqueMsgPayload& torqueCmd,

@@ -23,6 +23,15 @@
 #include <ranges>
 #include <stdexcept>
 
+/**
+ * @brief Construct RwMotorVoltageAlgorithm
+ * @param minVoltageMagnitude minimum voltage below which the torque is zero.
+ * @param maxVoltageMagnitude maximum output voltage
+ */
+RwMotorVoltageAlgorithm::RwMotorVoltageAlgorithm(const double minVoltageMagnitude, const double maxVoltageMagnitude) {
+    this->setVoltageRange(minVoltageMagnitude, maxVoltageMagnitude);
+}
+
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that
  retain time varying states between function calls are reset to their default values.
  @return void

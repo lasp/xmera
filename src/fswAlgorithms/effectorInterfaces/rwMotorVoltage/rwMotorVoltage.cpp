@@ -21,6 +21,14 @@
 
 #include <stdexcept>
 
+/**
+ * @brief Construct RwMotorVoltage
+ * @param minVoltageMagnitude minimum voltage below which the torque is zero.
+ * @param maxVoltageMagnitude maximum output voltage
+ */
+RwMotorVoltage::RwMotorVoltage(const double minVoltageMagnitude, const double maxVoltageMagnitude)
+    : algorithm(minVoltageMagnitude, maxVoltageMagnitude) {}
+
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that
  retain time varying states between function calls are reset to their default values.
  @return void

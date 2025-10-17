@@ -515,14 +515,11 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     if useRWVoltageIO:
-        fswRWVoltage = rwMotorVoltage.RwMotorVoltage()
+        fswRWVoltage = rwMotorVoltage.RwMotorVoltage(0.0, 10.0)
         fswRWVoltage.modelTag = "rwMotorVoltage"
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, fswRWVoltage)
-
-        # set module parameters
-        fswRWVoltage.setVoltageRange(0.0, 10.0)
 
     #
     #   Setup data logging before the simulation is initialized

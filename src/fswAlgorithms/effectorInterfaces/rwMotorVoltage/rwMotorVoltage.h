@@ -35,6 +35,9 @@
 
 class RwMotorVoltage : public SysModel {
    public:
+    RwMotorVoltage(const double minVoltageMagnitude, const double maxVoltageMagnitude);
+    ~RwMotorVoltage() final = default;
+
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -52,7 +55,7 @@ class RwMotorVoltage : public SysModel {
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg; /*!< [-] The name of the RWs availability message*/
 
    private:
-    RwMotorVoltageAlgorithm algorithm{};
+    RwMotorVoltageAlgorithm algorithm;
 };
 
 #endif
