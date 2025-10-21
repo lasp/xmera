@@ -140,11 +140,6 @@ def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, lo
 
 # Run the test
 def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)

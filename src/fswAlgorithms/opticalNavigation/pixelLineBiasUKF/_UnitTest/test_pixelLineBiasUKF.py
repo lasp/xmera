@@ -104,11 +104,6 @@ def test_propagation_kf(show_plots):
 
 
 def relOD_method_test(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -236,11 +231,6 @@ def relOD_method_test(show_plots):
 
 
 def StatePropRelOD(show_plots, dt):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 

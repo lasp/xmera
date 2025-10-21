@@ -40,7 +40,6 @@ def test_times():
 
 
 def test_logging():
-    __tracebackhide__ = True
 
     simulation = SimulationBaseClass.SimBaseClass()
     simTime = 2.0

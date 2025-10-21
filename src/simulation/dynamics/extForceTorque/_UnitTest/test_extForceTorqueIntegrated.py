@@ -42,11 +42,6 @@ def test_ForceBodyAndTorqueAllTest(show_plots, function):
 
 def extForceBodyAndTorque():
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -135,11 +130,6 @@ def extForceBodyAndTorque():
     return [testFailCount, ''.join(testMessages)]
 
 def extForceInertialAndTorque():
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 

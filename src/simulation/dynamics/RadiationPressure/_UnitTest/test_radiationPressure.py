@@ -63,11 +63,6 @@ def test_unitRadiationPressure(show_plots, modelType, eclipseOn):
 
 
 def unitRadiationPressure(show_plots, modelType, eclipseOn):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0
     testMessages = []
     testTaskName = "unitTestTask"

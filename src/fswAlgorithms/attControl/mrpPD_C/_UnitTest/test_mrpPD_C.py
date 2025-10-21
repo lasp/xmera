@@ -68,11 +68,6 @@ def test_mrp_PD_C_tracking(show_plots, setExtTorque):
 
 
 def mrp_PD_C_tracking(show_plots, setExtTorque):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_PD_C_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)

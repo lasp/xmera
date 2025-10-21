@@ -70,7 +70,6 @@ def test_PrescribedMotionStateEffector_Rotation(show_plots, theta_init, theta_re
     and the spacecraft rotational angular momentum match the final simulation values to a reasonable extent.
     """
 
-    __tracebackhide__ = True
 
     unit_task_name = "unitTask"
     unit_process_name = "testProcess"
@@ -242,7 +241,6 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     and the spacecraft rotational angular momentum match the final simulation values to a reasonable extent.
     """
 
-    __tracebackhide__ = True
 
     unit_task_name = "unitTask"
     unit_process_name = "test_processess"

@@ -131,7 +131,6 @@ def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions,
 
 # Run the test
 def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody):
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages

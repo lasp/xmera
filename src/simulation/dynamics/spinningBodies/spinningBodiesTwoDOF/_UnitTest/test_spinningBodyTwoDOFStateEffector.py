@@ -78,7 +78,6 @@ def test_spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock
 
 
 def spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, theta2Ref):
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages

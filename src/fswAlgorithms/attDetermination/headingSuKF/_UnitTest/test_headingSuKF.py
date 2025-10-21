@@ -100,11 +100,6 @@ def test_all_heading_kf(show_plots):
     assert testResults < 1, testMessage
 
 def heading_utilities_test(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -364,7 +359,6 @@ def heading_utilities_test(show_plots):
 
 def StateUpdateSunLine(show_plots):
 
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -476,7 +470,6 @@ def StateUpdateSunLine(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def StatePropSunLine(show_plots):
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages

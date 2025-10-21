@@ -75,7 +75,6 @@ def test_unitAlbedo(show_plots, planetCase, modelType, useEclipse):
 
 
 def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
-    __tracebackhide__ = True
     testFailCount = 0
     testMessages = []
     testTaskName = "unitTestTask"

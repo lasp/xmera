@@ -70,11 +70,6 @@ def test_spacecraftAllTest(show_plots, function):
 
 def SCTranslation(show_plots):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -202,11 +197,6 @@ def SCTranslation(show_plots):
 
 def SCTransAndRotation(show_plots):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -381,11 +371,6 @@ def SCTransAndRotation(show_plots):
 
 def SCRotation(show_plots):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -606,11 +591,6 @@ def SCRotation(show_plots):
 
 def SCTransBOE(show_plots):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -753,11 +733,6 @@ def SCTransBOE(show_plots):
 
 def SCPointBVsPointC(show_plots):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -917,11 +892,6 @@ def SCPointBVsPointC(show_plots):
 @pytest.mark.parametrize("accuracy", [1e-3])
 def scOptionalRef(show_plots, accuracy):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -1023,11 +993,6 @@ def scOptionalRef(show_plots, accuracy):
 
 def scAccumDV():
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -1106,11 +1071,6 @@ def scAccumDV():
 
 def scAccumDVExtForce():
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 

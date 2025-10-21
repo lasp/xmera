@@ -127,8 +127,6 @@ is pulled from the log data and compared to the expected truth value.
 
 
 def unitEclipse(show_plots, eclipseCondition, planet):
-    __tracebackhide__ = True
-
     testFailCount = 0
     testMessages = []
     testTaskName = "unitTestTask"
@@ -318,7 +316,6 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     return [testFailCount, ''.join(testMessages)]
 
 def unitEclipseCustom(show_plots):
-    __tracebackhide__ = True
 
     testFailCount = 0
     testMessages = []

@@ -64,11 +64,6 @@ def test_mrp_steering_tracking(show_plots,K1, K3, omegaMax):
 
 
 def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)

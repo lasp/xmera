@@ -38,11 +38,6 @@ path = os.path.dirname(os.path.abspath(filename))
                                                  thrusterStateEffector.ThrusterStateEffector])
 def test_massDepletionTest(show_plots, thrusterConstructor):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 

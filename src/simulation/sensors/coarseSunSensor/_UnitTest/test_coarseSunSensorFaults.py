@@ -58,8 +58,6 @@ def test_coarseSunSensor(cssFault):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(cssFault)
     assert testResults < 1, testMessage
-    __tracebackhide__ = True
-
 
 def run(cssFault):
     # np.random.seed(10)

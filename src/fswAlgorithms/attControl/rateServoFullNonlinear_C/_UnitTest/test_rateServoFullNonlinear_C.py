@@ -53,11 +53,6 @@ def test_rate_servo_full_nonlinear(show_plots, rwNum, intGain, omegap_BastR_B, o
 
 def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_BastR_B, integralLimit,
                               useRwAvailability):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    #__tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)

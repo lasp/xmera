@@ -79,11 +79,6 @@ def test_all_sunline_kf(show_plots, kellyOn):
 
 
 def SwitchMethods():
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     ###################################################################################
@@ -222,11 +217,6 @@ def SwitchMethods():
     return [testFailCount, ''.join(testMessages)]
 
 def StateUpdateSunLine(show_plots, kellyOn):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -393,11 +383,6 @@ def StateUpdateSunLine(show_plots, kellyOn):
     return [testFailCount, ''.join(testMessages)]
 
 def StatePropSunLine(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -459,11 +444,6 @@ def StatePropSunLine(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def FaultScenarios():
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
