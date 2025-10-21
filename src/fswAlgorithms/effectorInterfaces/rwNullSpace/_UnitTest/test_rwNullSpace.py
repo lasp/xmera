@@ -1,7 +1,19 @@
 #
-#   Unit Test Script
-#   Module Name:        rwNullSpace
-#   Creation Date:      October 5, 2018
+#  ISC License
+#
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
 import inspect
@@ -11,187 +23,127 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import rwNullSpace
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import SimulationBaseClass, macros
 from numpy.linalg import inv
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("numWheels, defaultDesired", [
-     (3, True)
-    , (4, True)
-    , (3, False)
-    , (4, False)
-])
+@pytest.mark.parametrize("num_wheels, default_desired", [(3, True),
+                                                         (4, True),
+                                                         (3, False),
+                                                         (4, False)])
 
-
-def test_rwNullSpace(numWheels, defaultDesired):
-    """ Test rwNullSpace. """
-    [testResults, testMessage] = rwNullSpaceTestFunction(numWheels, defaultDesired)
-    assert testResults < 1, testMessage
-
-def rwNullSpaceTestFunction(numWheels, defaultDesired):
-    """ Test the rwNullSpace module. Setup a simulation, """
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+def test_rw_null_space(num_wheels, default_desired):
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-
-    # This is needed if multiple unit test scripts are run
-    # This create a fresh and consistent simulation environment for each test run
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # Add a new task to the process
+    test_process_rate = macros.sec2nano(0.5)  # update process rate update time
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))  # Add a new task to the process
 
     # Construct the rwNullSpace module
-    # Set the names for the input messages
     module = rwNullSpace.RwNullSpace()
-
-    # Set the necessary data in the module. NOTE: This information is more or less random
-    module.OmegaGain = .5 # The feedback gain value applied for the RW despin control law
-
-    # This calls the algContain to setup the selfInit, update, and reset
+    module.setOmegaGain(.5) # The feedback gain value applied for the RW despin control law
     module.modelTag = "rwNullSpace"
+    unit_test_sim.AddModelToTask(unit_task_name, module)
 
-    # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, module)
+    num_rw = num_wheels
 
-    numRW = numWheels
-
-    inputRWConstellationMsg = messaging.RWConstellationMsgPayload()
-    inputRWConstellationMsg.numRW = numRW
+    input_rw_constellation_msg = messaging.RWConstellationMsgPayload()
+    input_rw_constellation_msg.numRW = num_rw
 
     # Initialize the msg that gives the speed of the reaction wheels
-    inputSpeedMsg = messaging.RWSpeedMsgPayload()
+    input_speed_msg = messaging.RWSpeedMsgPayload()
 
-    if defaultDesired:
-        desiredOmega = [0]*numRW
+    if default_desired:
+        desired_omega = [0]*num_rw
     else:
-        desiredOmega = [5]*numRW
-        inputDesiredSpeedMsg = messaging.RWSpeedMsgPayload()
-        inputDesiredSpeedMsg.wheelSpeeds = desiredOmega
+        desired_omega = [5]*num_rw
+        input_desired_speed_msg = messaging.RWSpeedMsgPayload()
+        input_desired_speed_msg.wheelSpeeds = desired_omega
 
-    gsHat = [[1, 0, 0], [0,1,0], [0, 0, 1]]
-    if numWheels == 4:
-        gs4Hat = np.array([1,1,1])
-        gs4Hat = gs4Hat/np.sqrt(gs4Hat.dot(gs4Hat))
-        gsHat.append(gs4Hat.tolist())
+    gs_hat = [[1, 0, 0], [0,1,0], [0, 0, 1]]
+    if num_wheels == 4:
+        gs4_hat = np.array([1,1,1])
+        gs4_hat = gs4_hat/np.sqrt(gs4_hat.dot(gs4_hat))
+        gs_hat.append(gs4_hat.tolist())
 
     # Iterate over all of the reaction wheels, create a rwConfigElementFswMsg, and add them to the rwConstellationFswMsg
-    rwConfigElementList = list()
-    for rw in range(numRW):
-        rwConfigElementMsg = messaging.RWConfigElementMsgPayload()
-        rwConfigElementMsg.gsHat_B = gsHat[rw] # Spin axis unit vector of the wheel in structure
-        rwConfigElementMsg.Js = 0.08 # Spin axis inertia of wheel [kgm2]
-        rwConfigElementMsg.uMax = 0.2 # maximum RW motor torque [Nm]
+    rw_config_element_list = list()
+    for rw in range(num_rw):
+        rw_config_element_msg = messaging.RWConfigElementMsgPayload()
+        rw_config_element_msg.gsHat_B = gs_hat[rw] # Spin axis unit vector of the wheel in structure
+        rw_config_element_msg.Js = 0.08 # Spin axis inertia of wheel [kgm2]
+        rw_config_element_msg.uMax = 0.2 # maximum RW motor torque [Nm]
 
         # Add this to the list
-        rwConfigElementList.append(rwConfigElementMsg)
+        rw_config_element_list.append(rw_config_element_msg)
 
-    rwSpeeds = [10, 20, 30] # [rad/sec] The current angular velocities of the RW wheel
-    if numWheels == 4:
-        rwSpeeds.append(40)  # [rad/sec]
-    inputSpeedMsg.wheelSpeeds = rwSpeeds
+    rw_speeds = [10, 20, 30] # [rad/sec] The current angular velocities of the RW wheel
+    if num_wheels == 4:
+        rw_speeds.append(40)  # [rad/sec]
+    input_speed_msg.wheelSpeeds = rw_speeds
 
     # Set the array of the reaction wheels in RWConstellationFswMsg to the list created above
-    inputRWConstellationMsg.reactionWheels = rwConfigElementList
+    input_rw_constellation_msg.reactionWheels = rw_config_element_list
 
-    inputRWCmdMsg = messaging.RwMotorTorqueMsgPayload()
-    usControl = [0.1, 0.2, 0.15] # [Nm] RW motor torque array
-    if numWheels == 4:
-        usControl.append(-0.2) # [Nm]
-    inputRWCmdMsg.motorTorque = usControl
-
+    input_rw_cmd_msg = messaging.RwMotorTorqueMsgPayload()
+    us_control = [0.1, 0.2, 0.15] # [Nm] RW motor torque array
+    if num_wheels == 4:
+        us_control.append(-0.2) # [Nm]
+    input_rw_cmd_msg.motorTorque = us_control
 
     # Set these messages
-    rwSpeedMsg = messaging.RWSpeedMsg().write(inputSpeedMsg)
-    rwConfigMsg = messaging.RWConstellationMsg().write(inputRWConstellationMsg)
-    rwCmdMsg = messaging.RwMotorTorqueMsg().write(inputRWCmdMsg)
+    rw_speed_msg = messaging.RWSpeedMsg().write(input_speed_msg)
+    rw_config_msg = messaging.RWConstellationMsg().write(input_rw_constellation_msg)
+    rw_cmd_msg = messaging.RwMotorTorqueMsg().write(input_rw_cmd_msg)
 
-    dataLog = module.rwMotorTorqueOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    data_log = module.rwMotorTorqueOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
 
     # connect messages
-    module.rwMotorTorqueInMsg.subscribeTo(rwCmdMsg)
-    module.rwSpeedsInMsg.subscribeTo(rwSpeedMsg)
-    module.rwConfigInMsg.subscribeTo(rwConfigMsg)
-    if not defaultDesired:
-        rwDesiredMsg = messaging.RWSpeedMsg().write(inputDesiredSpeedMsg)
-        module.rwDesiredSpeedsInMsg.subscribeTo(rwDesiredMsg)
+    module.rwMotorTorqueInMsg.subscribeTo(rw_cmd_msg)
+    module.rwSpeedsInMsg.subscribeTo(rw_speed_msg)
+    module.rwConfigInMsg.subscribeTo(rw_config_msg)
+    if not default_desired:
+        rw_desired_msg = messaging.RWSpeedMsg().write(input_desired_speed_msg)
+        module.rwDesiredSpeedsInMsg.subscribeTo(rw_desired_msg)
 
     # Initialize the simulation
-    unitTestSim.InitializeSimulation()
+    unit_test_sim.InitializeSimulation()
 
     #   Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
+    unit_test_sim.ExecuteSimulation()
 
-    outputCrtlData = dataLog.motorTorque[:, :numRW]
-    print(outputCrtlData)
+    motor_torque = data_log.motorTorque[:, :num_rw]
 
-    if numWheels == 3:
+    if num_wheels == 3:
         # in this case there is no nullspace of the RW configuration.  The output torque should be the input torque
-        trueVector = [inputRWCmdMsg.motorTorque,
-                     inputRWCmdMsg.motorTorque,
-                     inputRWCmdMsg.motorTorque,
-                     inputRWCmdMsg.motorTorque,
-                     inputRWCmdMsg.motorTorque]
-    elif numWheels == 4:
+        true_vector = [input_rw_cmd_msg.motorTorque[:num_rw]]
+    elif num_wheels == 4:
         # in this case there is a 1D nullspace of [Gs]
-        GsT = np.array(gsHat)
+        GsT = np.array(gs_hat)
         Gs = GsT.transpose()
         tmp = Gs.dot(GsT)
         tmp = GsT.dot(inv(tmp))
         tmp = tmp.dot(Gs)
-        tau = np.identity(numWheels) - tmp
-        d = - module.OmegaGain * (np.array(rwSpeeds) - np.array(desiredOmega))
-        uNull = tau.dot(d)
-        trueTorque = np.array(usControl) + uNull
-        trueVector = [
-            trueTorque.tolist(),
-            trueTorque.tolist(),
-            trueTorque.tolist(),
-            trueTorque.tolist(),
-            trueTorque.tolist()
-        ]
+        tau = np.identity(num_wheels) - tmp
+        d = - module.getOmegaGain() * (np.array(rw_speeds) - np.array(desired_omega))
+        u_null = tau.dot(d)
+        true_torque = np.array(us_control) + u_null
+        true_vector = [true_torque.tolist()]
 
+    motor_torque_true = true_vector * 5
 
-    accuracy = 1e-6
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    accuracy = 1e-12
+    np.testing.assert_allclose(motor_torque, motor_torque_true, atol=accuracy, rtol=0, verbose=True)
 
-    # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, outputCrtlData,
-                                                                 accuracy,
-                                                                 "numWheels = " + str(numWheels),
-                                                                 2, testFailCount, testMessages)
-
-
-    snippentName = "passFail" + str(numWheels)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + module.modelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-
-    return [testFailCount, ''.join(testMessages)]
 
 if __name__ == '__main__':
-    test_rwNullSpace(4, True)
+    test_rw_null_space(4, True)

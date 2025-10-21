@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module rwNullSpace
+%module rwNullSpace_C
 %{
-   #include "rwNullSpace.h"
+   #include "rwNullSpace_C.h"
 %}
 
 %pythoncode %{
@@ -28,8 +28,7 @@
 %include "sys_model.i"
 %include "swig_conly_data.i"
 
-%include "rwNullSpace.h"
-%include "rwNullSpaceAlgorithm.h"
+%include "rwNullSpace_C.h"
 
 %include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 %include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
