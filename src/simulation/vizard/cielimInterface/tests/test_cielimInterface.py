@@ -74,6 +74,7 @@ def read_write_test():
     asteroid_parameter_payload.brdf = "Lambertian"
     asteroid_parameter_payload.reflectanceParameters = [0.5]
     asteroid_parameter_payload.meanRadius = 10000
+    asteroid_parameter_payload.geometricAlbedo = 0.1
     asteroid_parameter_payload.principalAxisDistortion = [1, 0.9, 1.1]
     asteroid_parameter_payload.sigma_BN = [0, 0, 0.5]
 
@@ -239,7 +240,7 @@ def read_write_test():
         np.testing.assert_equal(cielim_message.celestialBodies[i].attitude, np.array(message.J20002Pfix).flatten())
         np.testing.assert_equal(cielim_message.celestialBodies[i].centralBody, central)
         if (name == asteroid_parameter_payload.bodyName):
-            np.testing.assert_equal(cielim_message.celestialBodies[i].geometricAlbedo, asteroid_parameter_payload.geometricAlbedo)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.geometricAlbedo, asteroid_parameter_payload.geometricAlbedo)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.meanRadius, asteroid_parameter_payload.meanRadius)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.shapeModel, asteroid_parameter_payload.shapeModel)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.octaveCount, asteroid_parameter_payload.perlinNoiseOctaveCount)
