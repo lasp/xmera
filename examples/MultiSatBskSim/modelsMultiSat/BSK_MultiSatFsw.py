@@ -218,12 +218,12 @@ class BSKFswModels:
         """
         self.decayTime = 50
         self.xi = 0.9
-        self.mrpFeedbackRWs.Ki = -1  # make value negative to turn off integral feedback
-        self.mrpFeedbackRWs.P = 2 * np.max(SimBase.DynModels[self.spacecraftIndex].I_sc) / self.decayTime
-        self.mrpFeedbackRWs.K = (self.mrpFeedbackRWs.P / self.xi) * \
-                                    (self.mrpFeedbackRWs.P / self.xi) / np.max(
-            SimBase.DynModels[self.spacecraftIndex].I_sc)
-        self.mrpFeedbackRWs.integralLimit = 2. / self.mrpFeedbackRWs.Ki * 0.1
+        self.mrpFeedbackRWs.setKi(-1)  # make value negative to turn off integral feedback
+        self.mrpFeedbackRWs.setP(2 * np.max(SimBase.DynModels[self.spacecraftIndex].I_sc) / self.decayTime)
+        self.mrpFeedbackRWs.setK((self.mrpFeedbackRWs.getP() / self.xi) * \
+                                    (self.mrpFeedbackRWs.getP() / self.xi) / np.max(
+            SimBase.DynModels[self.spacecraftIndex].I_sc))
+        self.mrpFeedbackRWs.setIntegralLimit(2. / self.mrpFeedbackRWs.getKi() * 0.1)
 
         self.mrpFeedbackRWs.vehConfigInMsg.subscribeTo(SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
         self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(

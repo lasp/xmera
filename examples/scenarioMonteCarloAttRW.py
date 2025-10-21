@@ -559,7 +559,7 @@ def createScenarioAttitudeFeedbackRW():
         ]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
-    fswRWVoltage = rwMotorVoltage.RwMotorVoltage()
+    fswRWVoltage = rwMotorVoltage.RwMotorVoltage(0.0, 10.0)
     fswRWVoltage.modelTag = "rwMotorVoltage"
 
     # Add test module to runtime call list
@@ -569,9 +569,6 @@ def createScenarioAttitudeFeedbackRW():
     fswRWVoltage.torqueInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     fswRWVoltage.rwParamsInMsg.subscribeTo(fswRwConfMsg)
     rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltage.voltageOutMsg)
-    # set module parameters
-    fswRWVoltage.VMin = 0.0  # Volts
-    fswRWVoltage.VMax = 10.0  # Volts
 
     #
     #   set initial Spacecraft States

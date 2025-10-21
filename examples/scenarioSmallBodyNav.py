@@ -637,10 +637,10 @@ def run(show_plots):
     mrpFeedbackControl.modelTag = "mrpFeedbackControl"
     mrpFeedbackControl.guidInMsg.subscribeTo(trackingError.attGuidOutMsg)
     mrpFeedbackControl.vehConfigInMsg.subscribeTo(vcConfigMsg)
-    mrpFeedbackControl.K = 7.
-    mrpFeedbackControl.Ki = -1.0
-    mrpFeedbackControl.P = 35.
-    mrpFeedbackControl.integralLimit = 2. / mrpFeedbackControl.Ki * 0.1
+    mrpFeedbackControl.setK(7.)
+    mrpFeedbackControl.setKi(-1.0)
+    mrpFeedbackControl.setP(35.)
+    mrpFeedbackControl.setIntegralLimit(2. / mrpFeedbackControl.getKi() * 0.1)
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()

@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module rwMotorVoltage
+%module rwMotorVoltage_C
 %{
-   #include "rwMotorVoltage.h"
+   #include "rwMotorVoltage_C.h"
 %}
 
 %pythoncode %{
@@ -27,10 +27,8 @@
 
 %include "sys_model.i"
 %include "swig_conly_data.i"
-%include "swig_eigen.i"
 
-%include "rwMotorVoltage.h"
-%include "rwMotorVoltageAlgorithm.h"
+%include "rwMotorVoltage_C.h"
 
 %include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
 %include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"

@@ -159,20 +159,20 @@ class BSKFswModels():
         self.trackingError2.attGuidOutMsg = self.attGuid2Msg
 
     def SetMRPFeedbackRWA(self, SimBase):
-        self.mrpFeedbackRWs.K = 3.5
-        self.mrpFeedbackRWs.Ki = -1
-        self.mrpFeedbackRWs.P = 30.0
-        self.mrpFeedbackRWs.integralLimit = 2. / self.mrpFeedbackRWs.Ki * 0.1
+        self.mrpFeedbackRWs.setK(3.5)
+        self.mrpFeedbackRWs.setKi(-1)
+        self.mrpFeedbackRWs.setP(30.0)
+        self.mrpFeedbackRWs.setIntegralLimit(2. / self.mrpFeedbackRWs.getKi() * 0.1)
         self.mrpFeedbackRWs.vehConfigInMsg.subscribeTo(self.vcMsg)
         self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
         self.mrpFeedbackRWs.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
         self.mrpFeedbackRWs.guidInMsg.subscribeTo(self.attGuidMsg)
         self.mrpFeedbackRWs.cmdTorqueOutMsg = self.cmdTorqueMsg
 
-        self.mrpFeedbackRWs2.K = 3.5
-        self.mrpFeedbackRWs2.Ki = -1  # TURN OFF IN CASE OF RUNNING Inertial3D!!!
-        self.mrpFeedbackRWs2.P = 30.0
-        self.mrpFeedbackRWs2.integralLimit = 2. / self.mrpFeedbackRWs2.Ki * 0.1
+        self.mrpFeedbackRWs2.setK(3.5)
+        self.mrpFeedbackRWs2.setKi(-1)  # TURN OFF IN CASE OF RUNNING Inertial3D!!!
+        self.mrpFeedbackRWs2.setP(30.0)
+        self.mrpFeedbackRWs2.setIntegralLimit(2. / self.mrpFeedbackRWs2.getKi() * 0.1)
         self.mrpFeedbackRWs2.vehConfigInMsg.subscribeTo(self.vcMsg)
         self.mrpFeedbackRWs2.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector2.rwSpeedOutMsg)
         self.mrpFeedbackRWs2.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
@@ -227,10 +227,10 @@ class BSKFswModels():
         self.mrpFeedbackControl.vehConfigInMsg.subscribeTo(self.vcMsg)
         self.mrpFeedbackControl.cmdTorqueOutMsg = self.cmdTorqueDirectMsg
 
-        self.mrpFeedbackControl.K = 10.0
-        self.mrpFeedbackControl.Ki = 0.0001  # Note: make value negative to turn off integral feedback
-        self.mrpFeedbackControl.P = 30.0
-        self.mrpFeedbackControl.integralLimit = 2. / self.mrpFeedbackControl.Ki * 0.1
+        self.mrpFeedbackControl.setK(10.0)
+        self.mrpFeedbackControl.setKi(0.0001)  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackControl.setP(30.0)
+        self.mrpFeedbackControl.setIntegralLimit(2. / self.mrpFeedbackControl.getKi() * 0.1)
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
