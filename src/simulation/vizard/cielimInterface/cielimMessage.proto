@@ -40,15 +40,17 @@ message ReflectanceModel{
     repeated double reflectanceParameters = 3; // [-] Parameter to apply to BRDF
 }
 
-message MeshModel{
-    string shapeModel = 1; // [string] Name of the shape model to apply to the body (default is a sphere)
-    double meanRadius = 2; // [m] Length of the mean asteroid radius
-    repeated double principalAxisDistortion = 3; // Ratio distortions to apply to principal axes (none by default)
-    repeated double inertialToBodyMrp = 4; // Attitude of mesh relative to inertial
-    ReflectanceModel refModel = 5; // [-] reflectance model to apply
-    PerlinNoise perlinNoise = 6;  //[-] Perlin noise to apply (none by default)
-    double proceduralRocks = 7;  //[-] Parameter to generate procedural rocks on the base mesh (none by default)
-}
+ message MeshModel{
+     string shapeModel = 1; // [string] Name of the shape model to apply to the body (default is a sphere)
+     double meanRadius = 2; // [m] Length of the mean asteroid radius
+     double geometricAlbedo = 3; // [-] Geometric albedo of the celestial body
+     repeated double principalAxisDistortion = 4; // Ratio distortions to apply to principal axes (none by default)
+     repeated double inertialToBodyMrp = 5; // Attitude of mesh relative to inertial
+     ReflectanceModel refModel = 6; // [-] reflectance model to apply
+     PerlinNoise perlinNoise = 7;  //[-] Perlin noise to apply (none by default)
+     double proceduralRocks = 8;  //[-] Parameter to generate procedural rocks on the base mesh (none by default)
+ }
+
 
 //CelestialBody messages will carry position, velocity, and rotation data for all celestial bodies
 message CelestialBody{
@@ -58,7 +60,6 @@ message CelestialBody{
     repeated double attitude = 4;  //SpicePlanetStateSimMsg.J20002Pfix
     MeshModel model = 5; // Model for rendering
     bool centralBody = 6;  // Central body for all positions and velocities
-    double geometricAlbedo = 7; // [-] Geometric albedo of the celestial body
 }
 
 //Spacecraft position, velocity, and attitude data

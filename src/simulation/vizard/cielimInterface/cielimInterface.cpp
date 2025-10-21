@@ -201,8 +201,6 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                 auto* meshModel = new cielimMessage::MeshModel();
                 auto* perlinNoise = new cielimMessage::PerlinNoise();
                 auto* reflectanceModel = new cielimMessage::ReflectanceModel();
-                celestialBody->set_geometricalbedo(
-                    this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo);
                 perlinNoise->set_octavecount(
                     this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseOctaveCount);
                 perlinNoise->set_baseamplitude(
@@ -220,6 +218,8 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                         this->celestialBodiesList.at(k).celestialParametersPayload.reflectanceParameters[i]);
                 }
                 meshModel->set_meanradius(this->celestialBodiesList.at(k).celestialParametersPayload.meanRadius);
+                meshModel->set_geometricalbedo(
+                    this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo);
                 meshModel->set_allocated_perlinnoise(perlinNoise);
                 meshModel->set_allocated_refmodel(reflectanceModel);
                 for (int i = 0; i < 3; ++i) {
