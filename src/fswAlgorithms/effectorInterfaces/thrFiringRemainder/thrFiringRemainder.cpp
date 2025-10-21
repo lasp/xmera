@@ -5,12 +5,11 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrFiringRemainder::reset(uint64_t callTime)
-{
-	// check if the required input messages are included
-	if (!this->thrConfInMsg.isLinked()) {
-		this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringRemainder.thrConfInMsg wasn't connected.");
-	}
+void ThrFiringRemainder::reset(uint64_t callTime) {
+    // check if the required input messages are included
+    if (!this->thrConfInMsg.isLinked()) {
+        this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringRemainder.thrConfInMsg wasn't connected.");
+    }
     if (!this->thrForceInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringRemainder.thrForceInMsg wasn't connected.");
     }
@@ -42,9 +41,7 @@ void ThrFiringRemainder::setThrMinFireTime(const double thrMinFireTime) {
 /*! Getter method for thrMinFireTime.
  @return const double
 */
-double ThrFiringRemainder::getThrMinFireTime() const {
-	return this->algorithm.getThrMinFireTime();
-}
+double ThrFiringRemainder::getThrMinFireTime() const { return this->algorithm.getThrMinFireTime(); }
 
 /*! Setter method for thrustPulsingRegime.
  @return void
@@ -72,6 +69,4 @@ void ThrFiringRemainder::setDefaultControlPeriod(const double defaultControlPeri
 /*! Getter method for defaultControlPeriod.
  @return const double
 */
-double ThrFiringRemainder::getDefaultControlPeriod() const {
-	return this->algorithm.getDefaultControlPeriod();
-}
+double ThrFiringRemainder::getDefaultControlPeriod() const { return this->algorithm.getDefaultControlPeriod(); }

@@ -38,4 +38,4 @@ THRArrayOnTimeCmdMsgPayload updateState(ThrFiringRemainderInternalState* moduleS
 }
 #endif
 
-#endif //THRFIRINGREMAINDERALGORITHM_C_H
+#endif  // THRFIRINGREMAINDERALGORITHM_C_H

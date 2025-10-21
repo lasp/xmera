@@ -53,8 +53,7 @@ void ThrFiringRemainderAlgorithm::reset(const THRArrayConfigMsgPayload& thrConfi
  @param thrForceInMsgPayload The commanded thruster forces
  */
 THRArrayOnTimeCmdMsgPayload ThrFiringRemainderAlgorithm::update(const uint64_t callTime,
-                                                                THRArrayCmdForceMsgPayload thrForceInMsgPayload)
-{
+                                                                THRArrayCmdForceMsgPayload thrForceInMsgPayload) {
     double controlPeriod{};                        /* [s] control period */
     std::array<double, MAX_EFF_CNT> onTime{};      /* [s] array of commanded on time for thrusters */
     THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {}; /* [-] copy of the thruster on-time output message */

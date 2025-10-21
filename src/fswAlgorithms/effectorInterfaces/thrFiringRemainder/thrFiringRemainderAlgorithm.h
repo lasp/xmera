@@ -26,8 +26,8 @@
 #include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 
-#include <array>
 #include <stdint.h>
+#include <array>
 
 class ThrFiringRemainderAlgorithm {
    public:
