@@ -16,10 +16,10 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/environment/spiceInterface/spiceInterface.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/simDefinitions.h"
+#include "spiceInterface.h"
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/simDefinitions.h>
 #include <SpiceUsr.h>
 #include <string.h>
 #include <sstream>

@@ -20,15 +20,15 @@
 #ifndef BASILISK_DATANODEBASE_H
 #define BASILISK_DATANODEBASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
-#include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
+#include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>
+#include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
 
 /*! @brief data node base class */
 class DataNodeBase : public SysModel {

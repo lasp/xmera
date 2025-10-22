@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/rwNullSpace_C/rwNullSpace_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "rwNullSpace_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! @brief This resets the module to original states by reading in the RW configuration messages and recreating any
    module specific variables.  The output message is reset to zero.

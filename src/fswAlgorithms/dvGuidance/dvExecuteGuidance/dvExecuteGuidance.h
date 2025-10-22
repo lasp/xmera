@@ -20,14 +20,14 @@
 #ifndef _DV_EXECUTE_GUIDANCE_H_
 #define _DV_EXECUTE_GUIDANCE_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/DvExecutionDataMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/DvBurnCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/DvExecutionDataMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the execution of a Delta-V maneuver */

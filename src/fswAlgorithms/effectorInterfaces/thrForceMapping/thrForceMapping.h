@@ -24,14 +24,14 @@
 
 #include <Eigen/Dense>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMappingAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include "thrForceMappingAlgorithm.h"
 
 /*!@brief Thruster force mapping class. */
 class ThrForceMapping : public SysModel {

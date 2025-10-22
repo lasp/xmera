@@ -19,13 +19,13 @@
 
 %module(package="Basilisk.simulation") gravityModel
 %{
-   #include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
+   #include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
    #include <memory>
 %}
 
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include <std_shared_ptr.i>
 %shared_ptr(GravityModel)
@@ -39,4 +39,4 @@
     }
 }
 
-%include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
+%include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>

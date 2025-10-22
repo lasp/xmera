@@ -20,19 +20,19 @@
 #ifndef MAGNETIC_FIELD_BASE_H
 #define MAGNETIC_FIELD_BASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <time.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/EpochMsgPayload.h"
-#include "architecture/msgPayloadDef/MagneticFieldMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/EpochMsgPayload.h>
+#include <architecture/msgPayloadDef/MagneticFieldMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief magnetic field base class */
 class MagneticFieldBase : public SysModel {

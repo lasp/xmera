@@ -19,10 +19,10 @@
 
 #include "facetDragDynamicEffector.h"
 
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
 
 FacetDragDynamicEffector::FacetDragDynamicEffector() {
     this->forceExternal_B.fill(0.0);

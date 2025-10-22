@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/dvGuidance/dvExecuteGuidance/dvExecuteGuidance.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "dvExecuteGuidance.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <string.h>
 
 /*! @brief This resets the module.

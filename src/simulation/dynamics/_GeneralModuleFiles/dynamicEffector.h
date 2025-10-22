@@ -21,8 +21,8 @@
 #define DYNAMIC_EFFECTOR_H
 
 #include <Eigen/Dense>
-#include "dynParamManager.h"
-#include "architecture/utilities/bskLogging.h"
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief dynamic effector class */
 class DynamicEffector {

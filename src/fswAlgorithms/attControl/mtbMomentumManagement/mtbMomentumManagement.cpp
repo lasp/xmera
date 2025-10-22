@@ -18,9 +18,9 @@
  */
 
 #include "mtbMomentumManagement.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/svd.h"
-#include "string.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/svd.h>
+#include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the

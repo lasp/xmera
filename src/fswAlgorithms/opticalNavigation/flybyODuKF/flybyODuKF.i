@@ -22,12 +22,11 @@
    #include "flybyODuKF.h"
 %}
 
-%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
+%include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.i>
 
 %include "flybyODuKF.h"
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/FilterMsgPayload.h"
-%include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-%include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>

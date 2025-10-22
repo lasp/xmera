@@ -18,7 +18,7 @@
  */
 
 #include "polyhedralGravityModel.h"
-#include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
+#include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 
 std::optional<std::string> PolyhedralGravityModel::initializeParameters()
 {

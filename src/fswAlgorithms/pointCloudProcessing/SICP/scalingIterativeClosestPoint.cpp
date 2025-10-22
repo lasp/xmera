@@ -53,10 +53,10 @@ void ScalingIterativeClosestPoint::computePointCorrespondance(const Eigen::Matri
                                                               const double s_kmin1,
                                                               const Eigen::MatrixXd& measuredPoints,
                                                               const Eigen::MatrixXd& referencePoints) {
-    this->correspondingPoints.setZero(POINT_DIM, this->Np);
+    this->correspondingPoints.setZero(SICP_POINT_DIM, this->Np);
     for (int i = 0; i < this->Np; i++) {
         Eigen::Index index;
-        Eigen::VectorXd displacedMeasuredPoint = Eigen::VectorXd::Zero(POINT_DIM);
+        Eigen::VectorXd displacedMeasuredPoint = Eigen::VectorXd::Zero(SICP_POINT_DIM);
         displacedMeasuredPoint = (s_kmin1 * (R_kmin1 * measuredPoints.col(i)) + t_kmin1);
 
         (referencePoints.colwise() - displacedMeasuredPoint).colwise().squaredNorm().minCoeff(&index);
@@ -70,10 +70,10 @@ void ScalingIterativeClosestPoint::computePointCorrespondance(const Eigen::Matri
  @param Eigen::MatrixXd referencePoints : The reference point cloud
  */
 void ScalingIterativeClosestPoint::centerCloud(const Eigen::MatrixXd& measuredPoints) {
-    this->q.setZero(POINT_DIM, this->Np);
-    this->n.setZero(POINT_DIM, this->Np);
-    Eigen::VectorXd measAvg = Eigen::VectorXd::Zero(POINT_DIM);
-    Eigen::VectorXd refAvg = Eigen::VectorXd::Zero(POINT_DIM);
+    this->q.setZero(SICP_POINT_DIM, this->Np);
+    this->n.setZero(SICP_POINT_DIM, this->Np);
+    Eigen::VectorXd measAvg = Eigen::VectorXd::Zero(SICP_POINT_DIM);
+    Eigen::VectorXd refAvg = Eigen::VectorXd::Zero(SICP_POINT_DIM);
 
     for (int i = 0; i < this->Np; i++) {
         measAvg += measuredPoints.col(i);
@@ -94,8 +94,8 @@ void ScalingIterativeClosestPoint::centerCloud(const Eigen::MatrixXd& measuredPo
 @param double R_kmin1 : The previous rotation
 */
 Eigen::MatrixXd ScalingIterativeClosestPoint::computeRk(const double s_kmin1, const Eigen::MatrixXd& R_kmin1) {
-    Eigen::MatrixXd R_k = Eigen::MatrixXd::Identity(POINT_DIM, POINT_DIM);
-    Eigen::MatrixXd H(POINT_DIM, POINT_DIM);
+    Eigen::MatrixXd R_k = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
+    Eigen::MatrixXd H(SICP_POINT_DIM, SICP_POINT_DIM);
 
     H.setZero();
     for (int i = 0; i < this->Np; i++) {
@@ -119,7 +119,7 @@ Eigen::MatrixXd ScalingIterativeClosestPoint::computeRk(const double s_kmin1, co
             }
         }
         if (idxs.size() == 1) {
-            Eigen::MatrixXd Ireflection = Eigen::MatrixXd::Identity(POINT_DIM, POINT_DIM);
+            Eigen::MatrixXd Ireflection = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
             Ireflection(idxs.at(0), idxs.at(0)) = -1;
             R_k = Vmat * Ireflection * Umat.transpose();
         } else {
@@ -166,8 +166,8 @@ double ScalingIterativeClosestPoint::computeSk(const Eigen::MatrixXd& R_kmin1) {
 Eigen::MatrixXd ScalingIterativeClosestPoint::computeTk(const double s_k,
                                                         const Eigen::MatrixXd& R_k,
                                                         const Eigen::MatrixXd& measuredPoints) {
-    Eigen::VectorXd tkSum1 = Eigen::VectorXd::Zero(POINT_DIM);
-    Eigen::VectorXd tkSum2 = Eigen::VectorXd::Zero(POINT_DIM);
+    Eigen::VectorXd tkSum1 = Eigen::VectorXd::Zero(SICP_POINT_DIM);
+    Eigen::VectorXd tkSum2 = Eigen::VectorXd::Zero(SICP_POINT_DIM);
     for (int i = 0; i < this->Np; i++) {
         tkSum1 += this->correspondingPoints.col(i);
         tkSum2 += s_k * R_k * measuredPoints.col(i);
@@ -196,12 +196,12 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
 
     //! - If initial condition message exists populate the initial conditions, otherwise use defaults
     if (initicalConditionValidity) {
-        this->R_init = cArrayAsEigenMatrixX(this->initialConditionBuffer.rotationMatrix, POINT_DIM, POINT_DIM);
-        this->t_init = Eigen::Map<Eigen::VectorXd>(this->initialConditionBuffer.translation, POINT_DIM, 1);
+        this->R_init = cArrayAsEigenMatrixX(this->initialConditionBuffer.rotationMatrix, SICP_POINT_DIM, SICP_POINT_DIM);
+        this->t_init = Eigen::Map<Eigen::VectorXd>(this->initialConditionBuffer.translation, SICP_POINT_DIM, 1);
         this->s_init = this->initialConditionBuffer.scaleFactor[0];
     } else {
-        this->R_init = Eigen::MatrixXd::Identity(POINT_DIM, POINT_DIM);
-        this->t_init = Eigen::VectorXd::Zero(POINT_DIM);
+        this->R_init = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
+        this->t_init = Eigen::VectorXd::Zero(SICP_POINT_DIM);
         this->s_init = 1;
     }
 
@@ -212,13 +212,13 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
         this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, currentSimNanos);
     } else {
         Eigen::MatrixXd measuredPoints =
-            cArrayAsEigenMatrixX(this->measuredCloudBuffer.points, POINT_DIM, this->measuredCloudBuffer.numberOfPoints);
+            cArrayAsEigenMatrixX(this->measuredCloudBuffer.points, SICP_POINT_DIM, this->measuredCloudBuffer.numberOfPoints);
         Eigen::MatrixXd referencePoints = cArrayAsEigenMatrixX(
-            this->referenceCloudBuffer.points, POINT_DIM, this->referenceCloudBuffer.numberOfPoints);
+            this->referenceCloudBuffer.points, SICP_POINT_DIM, this->referenceCloudBuffer.numberOfPoints);
         //! - Initialize R (rotation matrix), t (translation vector) and s (scale factor).
         //! k and kmin1 refer to the iteration
-        Eigen::MatrixXd R_k = Eigen::MatrixXd::Identity(POINT_DIM, POINT_DIM);
-        Eigen::MatrixXd t_k = Eigen::VectorXd::Zero(POINT_DIM);
+        Eigen::MatrixXd R_k = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
+        Eigen::MatrixXd t_k = Eigen::VectorXd::Zero(SICP_POINT_DIM);
         double s_k = 1;
         Eigen::MatrixXd R_kmin1 = this->R_init;
         Eigen::MatrixXd t_kmin1 = this->t_init;
@@ -259,8 +259,8 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
             }
             //! - Save intermediate algorithm data
             this->sicpBuffer.scaleFactor[iteration] = s_k;
-            eigenMatrixXInsertCArray(R_k, this->sicpBuffer.rotationMatrix, iteration * POINT_DIM * POINT_DIM);
-            eigenMatrixXInsertCArray(R_k, this->sicpBuffer.translation, iteration * POINT_DIM);
+            eigenMatrixXInsertCArray(R_k, this->sicpBuffer.rotationMatrix, iteration * SICP_POINT_DIM * SICP_POINT_DIM);
+            eigenMatrixXInsertCArray(R_k, this->sicpBuffer.translation, iteration * SICP_POINT_DIM);
             this->sicpBuffer.numberOfIteration += 1;
 
             R_kmin1 = R_k;

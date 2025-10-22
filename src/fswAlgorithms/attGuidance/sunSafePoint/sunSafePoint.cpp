@@ -19,7 +19,7 @@
 
 #include "sunSafePoint.h"
 
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/utilities/eigenSupport.h>
 #include <cassert>
 
 /*! Reset method for the BSK module adapter interface. This method also calls the algorithm reset method.

@@ -21,8 +21,8 @@
 
 #include <cmath>
 
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 const double speedLight = 299792458.0;  // [m/s] Speed of light
 const double AstU = 149597870700.0;     // [m] Astronomical unit

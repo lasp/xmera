@@ -20,8 +20,8 @@
 #ifndef _SUN_SAFE_POINT_ALGORITHM_H_
 #define _SUN_SAFE_POINT_ALGORITHM_H_
 
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <stdint.h>
 #include <Eigen/Dense>
 

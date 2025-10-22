@@ -21,10 +21,10 @@
    #include "stComm.h"
 %}
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "stComm.h"
 
-%include "architecture/msgPayloadDef/STSensorMsgPayload.h"
-%include "architecture/msgPayloadDef/STAttMsgPayload.h"
+%include <architecture/msgPayloadDef/STSensorMsgPayload.h>
+%include <architecture/msgPayloadDef/STAttMsgPayload.h>

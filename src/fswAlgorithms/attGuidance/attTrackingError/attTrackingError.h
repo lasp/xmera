@@ -24,13 +24,13 @@
 
 #include <Eigen/Dense>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/attGuidance/attTrackingError/attTrackingErrorAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include "attTrackingErrorAlgorithm.h"
 
 /*!@brief Data structure for module to compute the attitude tracking error between the spacecraft attitude and the
  * reference.

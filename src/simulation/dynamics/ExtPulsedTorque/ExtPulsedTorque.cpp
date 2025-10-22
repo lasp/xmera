@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
+#include "ExtPulsedTorque.h"
 #include <iostream>
 
 /*! This is the constructor.  It sets some default initializers that can be

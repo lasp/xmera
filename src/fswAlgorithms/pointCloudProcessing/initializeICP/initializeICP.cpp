@@ -50,8 +50,8 @@ void InitializeICP::normalizePointCloud() {
     PointCloudMsgPayload measuredCloudBuffer = this->inputMeasuredPointCloud();
     this->normalizedCloudBuffer = PointCloudMsgPayload{};
     Eigen::MatrixXd measuredPoints =
-        cArrayAsEigenMatrixX(measuredCloudBuffer.points, POINT_DIM, measuredCloudBuffer.numberOfPoints);
-    Eigen::MatrixXd normalizedPoints = Eigen::MatrixXd::Zero(POINT_DIM, measuredCloudBuffer.numberOfPoints);
+        cArrayAsEigenMatrixX(measuredCloudBuffer.points, SICP_POINT_DIM, measuredCloudBuffer.numberOfPoints);
+    Eigen::MatrixXd normalizedPoints = Eigen::MatrixXd::Zero(SICP_POINT_DIM, measuredCloudBuffer.numberOfPoints);
     //! If there is a valid point cloud present, average the point norms to normalize each point
     if (measuredCloudBuffer.valid && measuredCloudBuffer.numberOfPoints > 0) {
         this->averageNorm = 0;
@@ -82,18 +82,18 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
     SICPMsgPayload sicpBuffer = this->inputSICPData();
 
     //!< Allocate appropriate memory to the arrays that will be populated
-    Eigen::MatrixXd R_prev = Eigen::MatrixXd::Identity(POINT_DIM, POINT_DIM);
-    Eigen::MatrixXd t_prev = Eigen::VectorXd::Zero(POINT_DIM);
+    Eigen::MatrixXd R_prev = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
+    Eigen::MatrixXd t_prev = Eigen::VectorXd::Zero(SICP_POINT_DIM);
     double s_prev = 1;
 
     //!< When a valid ICP solution has been computed, use that instead of ephemeris information as a priority
     if (sicpBuffer.valid) {
         this->R_logged =
-            cArrayAsEigenMatrixX(&sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * POINT_DIM * POINT_DIM],
-                                 POINT_DIM,
-                                 POINT_DIM);
+            cArrayAsEigenMatrixX(&sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM * SICP_POINT_DIM],
+                                 SICP_POINT_DIM,
+                                 SICP_POINT_DIM);
         this->t_logged =
-            cArrayAsEigenMatrixX(&sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * POINT_DIM], 1, POINT_DIM);
+            cArrayAsEigenMatrixX(&sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM], 1, SICP_POINT_DIM);
         this->s_logged = sicpBuffer.scaleFactor[sicpBuffer.numberOfIteration - 1];
         this->initialPhase = false;
         this->previousTimeTag = sicpBuffer.timeTag;

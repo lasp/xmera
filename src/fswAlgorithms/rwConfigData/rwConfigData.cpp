@@ -22,8 +22,8 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "fswAlgorithms/rwConfigData/rwConfigData.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "rwConfigData.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <string.h>
 
 /*

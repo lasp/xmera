@@ -20,21 +20,21 @@
 #ifndef COARSE_SUN_SENSOR_H
 #define COARSE_SUN_SENSOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AlbedoMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSRawDataMsgPayload.h"
-#include "architecture/msgPayloadDef/EclipseMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AlbedoMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSConfigLogMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSRawDataMsgPayload.h>
+#include <architecture/msgPayloadDef/EclipseMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/gauss_markov.h"
-#include "architecture/utilities/saturate.h"
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/gauss_markov.h>
+#include <architecture/utilities/saturate.h>
 
 #include <Eigen/Dense>
 

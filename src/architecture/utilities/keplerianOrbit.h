@@ -21,7 +21,7 @@
 
 #include <Eigen/Dense>
 #include <architecture/utilities/orbitalMotion.h>
-#include "architecture/utilities/astroConstants.h"
+#include <architecture/utilities/astroConstants.h>
 
 
 //! @brief The KeplerianOrbit class represents an elliptical orbit and provides a coherent set of

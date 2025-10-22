@@ -22,10 +22,10 @@
 
  */
 
-#include "fswAlgorithms/attControl/mrpFeedback_C/mrpFeedback_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "mrpFeedback_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
 #include <string.h>

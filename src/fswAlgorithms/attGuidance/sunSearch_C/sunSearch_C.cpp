@@ -18,7 +18,7 @@
  */
 
 #include "sunSearch_C.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/macroDefinitions.h>
 #include <cmath>
 
 /*! This method is used to reset the module.

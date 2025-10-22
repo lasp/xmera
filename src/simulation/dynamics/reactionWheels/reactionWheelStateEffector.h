@@ -20,25 +20,25 @@
 #ifndef REACTIONWHEELSTATEEFFECTOR_H
 #define REACTIONWHEELSTATEEFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/RWCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDef/RWConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
+#include <architecture/msgPayloadDef/RWCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
+#include <architecture/msgPayloadDef/RWConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/utilities/bskLogging.h>
 
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
 
 /*! @brief reaction wheel state effector class */
 class ReactionWheelStateEffector : public SysModel, public StateEffector {

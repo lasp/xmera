@@ -19,13 +19,13 @@
 
 
 #include "solarArrayReference.h"
-#include "string.h"
+#include <string.h>
 #include <math.h>
 
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 const double epsilon = 1e-12;                           // module tolerance for zero
 

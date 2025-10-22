@@ -18,8 +18,8 @@
  */
 
 #include "dragDynamicEffector.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/astroConstants.h>
 
 /*! This method is used to reset the module.
  @return void

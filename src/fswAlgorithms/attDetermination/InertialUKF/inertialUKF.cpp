@@ -19,11 +19,11 @@
 
 #include <string.h>
 #include <math.h>
-#include "fswAlgorithms/attDetermination/InertialUKF/inertialUKF.h"
-#include "architecture/utilities/ukfUtilities.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "inertialUKF.h"
+#include <architecture/utilities/ukfUtilities.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This method resets the inertial inertial filter to an initial state and
  initializes the internal estimation matrices.

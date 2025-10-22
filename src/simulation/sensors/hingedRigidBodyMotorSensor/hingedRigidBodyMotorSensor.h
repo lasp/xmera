@@ -20,11 +20,11 @@
 #ifndef HINGEDRIGIDBODYMOTORSENSOR_H
 #define HINGEDRIGIDBODYMOTORSENSOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/discretize.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/discretize.h>
 #include <stdint.h>
 #include <random>
 /*! @brief Outputs measured angle and angle rate for a hinged rigid body, adding optional noise, bias, and

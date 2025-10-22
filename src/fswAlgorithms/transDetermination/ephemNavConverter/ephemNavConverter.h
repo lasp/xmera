@@ -20,12 +20,12 @@
 #ifndef EPHEM_NAV_CONVERTER_H
 #define EPHEM_NAV_CONVERTER_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverterAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include "ephemNavConverterAlgorithm.h"
 
 /*! @brief The ephemNavConverter class.*/
 class EphemNavConverter : public SysModel {

@@ -20,12 +20,12 @@
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "dynamicEffector.h"
-#include "dynParamManager.h"
-#include "stateEffector.h"
-#include "stateVecIntegrator.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
 #include <stdint.h>
 #include <vector>
 

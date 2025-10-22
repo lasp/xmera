@@ -19,7 +19,7 @@
 
 #include <cstdint>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 #include "partitionedStorageUnit.h"
 
 /*! The constructor creates a partitionedStorageUnit instance with zero stored data

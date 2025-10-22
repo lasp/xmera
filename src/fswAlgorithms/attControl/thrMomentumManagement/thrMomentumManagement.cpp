@@ -21,8 +21,8 @@
 
  */
 
-#include "fswAlgorithms/attControl/thrMomentumManagement/thrMomentumManagement.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "thrMomentumManagement.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

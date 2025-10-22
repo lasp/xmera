@@ -20,14 +20,14 @@
 #ifndef FORCETORQUETHRFORCEMAPPING_H
 #define FORCETORQUETHRFORCEMAPPING_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief This module maps thruster forces for arbitrary forces and torques

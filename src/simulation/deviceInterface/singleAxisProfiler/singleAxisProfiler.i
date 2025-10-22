@@ -21,12 +21,12 @@
    #include "singleAxisProfiler.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "singleAxisProfiler.h"
 
-%include "architecture/msgPayloadDef/StepperMotorMsgPayload.h"
-%include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
+%include <architecture/msgPayloadDef/StepperMotorMsgPayload.h>
+%include <architecture/msgPayloadDef/PrescribedRotationMsgPayload.h>

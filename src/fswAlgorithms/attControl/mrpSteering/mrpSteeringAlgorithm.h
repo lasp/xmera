@@ -20,8 +20,8 @@
 #ifndef MRP_STEERING_ALGORITHM_H
 #define MRP_STEERING_ALGORITHM_H
 
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 class MrpSteeringAlgorithm {

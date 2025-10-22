@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinearAlgorithm.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include "rateServoFullNonlinearAlgorithm.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 
 #include <math.h>
 #include <stdexcept>

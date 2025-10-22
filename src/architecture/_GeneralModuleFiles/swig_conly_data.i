@@ -19,7 +19,7 @@
 
 %module swig_conly_data
 
-%include "stdint.i"
+%include <stdint.i>
 %define ARRAYASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
     int i;
@@ -256,8 +256,8 @@ ARRAY2ASLIST(unsigned int)
 }
 %enddef
 
-%include "carrays.i"
-%include "cmalloc.i"
+%include <carrays.i>
+%include <cmalloc.i>
 #define GEN_SIZEOF(type) %sizeof(type, type)
 
 %array_functions(double, doubleArray);

@@ -20,10 +20,10 @@
 #ifndef svIntegratorRungeKutta_h
 #define svIntegratorRungeKutta_h
 
-#include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
-#include "../_GeneralModuleFiles/stateVecIntegrator.h"
-#include "extendedStateVector.h"
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
+#include <simulation/dynamics/_GeneralModuleFiles/extendedStateVector.h>
 #include <array>
 #include <functional>
 #include <memory>

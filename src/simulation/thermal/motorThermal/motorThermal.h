@@ -20,11 +20,11 @@
 #ifndef MOTOR_THERMAL_H
 #define MOTOR_THERMAL_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
+#include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Motor temperature module.  It simulates the heating and cooling of a motor based on ambient temperature, as
  * well as heat generated during spin-up or breaking. */

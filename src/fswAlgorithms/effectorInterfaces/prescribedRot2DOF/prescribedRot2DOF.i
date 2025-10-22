@@ -21,11 +21,11 @@
    #include "prescribedRot2DOF.h"
 %}
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "prescribedRot2DOF.h"
 
-%include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
+%include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 
-%include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
+%include <architecture/msgPayloadDef/PrescribedRotationMsgPayload.h>

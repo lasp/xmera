@@ -19,9 +19,9 @@
 
 #include "magneticFieldWMM.h"
 #include "EGM9615.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/safeMath.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/safeMath.h>
 
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by
  default.

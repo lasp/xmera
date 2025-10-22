@@ -17,11 +17,11 @@
 
  */
 
-#include "fswAlgorithms/attDetermination/sunlineUKF/sunlineUKF.h"
-#include "architecture/utilities/ukfUtilities.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "sunlineUKF.h"
+#include <architecture/utilities/ukfUtilities.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <string.h>
 #include <math.h>
 

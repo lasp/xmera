@@ -22,10 +22,10 @@
     #include "msmForceTorque.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
 %template(Eigen3dVector) std::vector<Eigen::Vector3d, std::allocator<Eigen::Vector3d>>;
 %pythoncode %{
@@ -37,15 +37,15 @@
         return eigenList
 %}
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "msmForceTorque.h"
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/VoltMsgPayload.h"
+%include <architecture/msgPayloadDef/VoltMsgPayload.h>
 
-%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 
-%include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
+%include <architecture/msgPayloadDef/CmdForceInertialMsgPayload.h>
 
-%include "architecture/msgPayloadDef/ChargeMsmMsgPayload.h"
+%include <architecture/msgPayloadDef/ChargeMsmMsgPayload.h>

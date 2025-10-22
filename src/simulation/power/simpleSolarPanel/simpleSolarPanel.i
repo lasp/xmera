@@ -23,20 +23,20 @@
     #include "simpleSolarPanel.h"
 %}
 
-%include "swig_conly_data.i"
-%include "std_string.i"
-%include "swig_eigen.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.i"
-%include "../_GeneralModuleFiles/powerNodeBase.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 %include "simpleSolarPanel.h"
 
-%include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
+%include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/EclipseMsgPayload.h"
+%include <architecture/msgPayloadDef/EclipseMsgPayload.h>

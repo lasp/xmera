@@ -23,12 +23,12 @@
 #include <Eigen/Dense>
 #include <cstdint>
 
-#include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
+#include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCOMMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
 
 /**
  * @enum PhaseAngleCorrectionMethodAlgorithm

@@ -19,10 +19,10 @@
 #ifndef _STEPPERMOTOR_
 #define _STEPPERMOTOR_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/MotorStepCommandMsgPayload.h"
-#include "architecture/msgPayloadDef/StepperMotorMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>
+#include <architecture/msgPayloadDef/StepperMotorMsgPayload.h>
 #include <stdint.h>
 
 /*! @brief Stepper motor class. */

@@ -17,11 +17,11 @@
 
 */
 
-#include "fswAlgorithms/attGuidance/locationPointing/locationPointing.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/safeMath.h"
+#include "locationPointing.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/safeMath.h>
 
 #include <math.h>
 

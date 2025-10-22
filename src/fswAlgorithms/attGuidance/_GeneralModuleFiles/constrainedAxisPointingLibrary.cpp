@@ -18,10 +18,10 @@
  */
 
 #include "constrainedAxisPointingLibrary.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! This constructor initializes an SolutionSpace class for the solution
     of the second order inequality (At^2+Bt+C)/(1+t^2) >= 0 */

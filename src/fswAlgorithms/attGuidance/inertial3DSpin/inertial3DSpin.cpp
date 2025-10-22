@@ -25,8 +25,8 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "fswAlgorithms/attGuidance/inertial3DSpin/inertial3DSpin.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "inertial3DSpin.h"
+#include <architecture/utilities/macroDefinitions.h>
 
 
 
@@ -34,8 +34,8 @@
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.

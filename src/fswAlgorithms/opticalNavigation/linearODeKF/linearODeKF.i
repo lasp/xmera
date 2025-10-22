@@ -23,12 +23,11 @@
    #include "linearODeKF.h"
 %}
 
-%include "fswAlgorithms/_GeneralModuleFiles/ekfInterface.i"
+%include <fswAlgorithms/_GeneralModuleFiles/ekfInterface.i>
 
 %include "linearODeKF.h"
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/FilterMsgPayload.h"
-%include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-%include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>

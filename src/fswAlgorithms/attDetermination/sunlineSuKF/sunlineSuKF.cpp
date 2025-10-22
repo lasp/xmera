@@ -17,14 +17,14 @@
 
  */
 
-#include "fswAlgorithms/attDetermination/sunlineSuKF/sunlineSuKF.h"
+#include "sunlineSuKF.h"
 
 #include <math.h>
 #include <string.h>
 
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/ukfUtilities.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/ukfUtilities.h>
 
 /*! This method resets the sunline attitude filter to an initial state and
  initializes the internal estimation matrices.

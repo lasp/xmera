@@ -1,5 +1,5 @@
 #include "miruLowPassFilterConverter.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/utilities/eigenSupport.h>
 
 /*! This method checks the input message to ensure it is linked.
  @return void

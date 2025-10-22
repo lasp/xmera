@@ -20,17 +20,17 @@
 #ifndef MSIS_ATMOSPHERE_H
 #define MSIS_ATMOSPHERE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <time.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
 
-#include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
+#include <simulation/environment/_GeneralModuleFiles/atmosphereBase.h>
 
-#include "architecture/msgPayloadDef/SwDataMsgPayload.h"
+#include <architecture/msgPayloadDef/SwDataMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 extern "C" {
 #include "nrlmsise-00.h"

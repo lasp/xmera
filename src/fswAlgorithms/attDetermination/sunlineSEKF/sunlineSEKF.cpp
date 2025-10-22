@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/attDetermination/sunlineSEKF/sunlineSEKF.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "sunlineSEKF.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <string.h>
 #include <math.h>
 

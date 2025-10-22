@@ -26,7 +26,7 @@
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/effectorInterfaces/_GeneralModuleFiles/thrustGroupData.h"
+#include "../_GeneralModuleFiles/thrustGroupData.h"
 #include <stdint.h>
 #include <stdlib.h>
 

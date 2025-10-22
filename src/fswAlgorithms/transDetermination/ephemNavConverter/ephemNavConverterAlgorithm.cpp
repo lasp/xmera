@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverterAlgorithm.h"
+#include "ephemNavConverterAlgorithm.h"
 
 inline void v3Copy(double const v[3], double result[3]) {
     result[0] = v[0];

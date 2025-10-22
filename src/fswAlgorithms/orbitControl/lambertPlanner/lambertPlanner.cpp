@@ -17,8 +17,8 @@
 
 */
 
-#include "fswAlgorithms/orbitControl/lambertPlanner/lambertPlanner.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "lambertPlanner.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <array>
 #include <cmath>
 

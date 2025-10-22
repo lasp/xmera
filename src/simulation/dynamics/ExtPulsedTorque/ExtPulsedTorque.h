@@ -20,9 +20,9 @@
 #ifndef EXT_PULSED_TORQUE_H
 #define EXT_PULSED_TORQUE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <architecture/utilities/bskLogging.h>
 
 
 /*! @brief external pulsed torque module class */

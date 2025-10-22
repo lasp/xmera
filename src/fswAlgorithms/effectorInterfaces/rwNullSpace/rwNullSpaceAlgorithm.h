@@ -20,9 +20,9 @@
 #ifndef RW_NULL_SPACE_ALGORITHM_H
 #define RW_NULL_SPACE_ALGORITHM_H
 
-#include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
+#include <architecture/msgPayloadDef/RWConstellationMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 
 #include <Eigen/Core>
 

@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/dvAccumulation/dvAccumulation.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "dvAccumulation.h"
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/linearAlgebra.h>
 #include <assert.h>
 #include <string.h>
 

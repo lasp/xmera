@@ -18,7 +18,7 @@
  */
 
 #include "linearSpringMassDamper.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/utilities/eigenSupport.h>
 
 /*! This is the constructor, setting variables to default values */
 LinearSpringMassDamper::LinearSpringMassDamper() {

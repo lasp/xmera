@@ -21,7 +21,7 @@
 #ifndef POINT_MASS_GRAVITY_MODEL_H
 #define POINT_MASS_GRAVITY_MODEL_H
 
-#include "gravityModel.h"
+#include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
 
 /**
  * The point mass gravity model

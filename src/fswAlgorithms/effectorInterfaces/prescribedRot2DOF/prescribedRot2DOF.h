@@ -20,11 +20,11 @@
 #define _PRESCRIBEDROT2DOF_
 
 /*! Include the required files. */
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/PrescribedRotationMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <stdbool.h>
 #include <stdint.h>
 

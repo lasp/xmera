@@ -20,19 +20,19 @@
 #ifndef THRUSTER_STATE_EFFECTOR_H
 #define THRUSTER_STATE_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h>
+#include <simulation/dynamics/_GeneralModuleFiles/THROperation.h>
+#include <simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/THROutputMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/THROutputMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 #include <Eigen/Dense>
 #include <vector>
 

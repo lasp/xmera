@@ -18,8 +18,8 @@
  */
 
 #include "sphericalHarmonicsGravityModel.h"
-#include "architecture/utilities/bskLogging.h"
-#include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
+#include <architecture/utilities/bskLogging.h>
+#include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 
 namespace {
 // Computes the term (2 - d_l), where d_l is the kronecker delta.

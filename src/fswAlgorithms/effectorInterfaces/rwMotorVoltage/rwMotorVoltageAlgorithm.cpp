@@ -17,8 +17,8 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/rwMotorVoltage/rwMotorVoltageAlgorithm.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "rwMotorVoltageAlgorithm.h"
+#include <architecture/utilities/macroDefinitions.h>
 
 #include <ranges>
 #include <stdexcept>

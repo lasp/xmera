@@ -21,12 +21,10 @@
    #include "spacecraftPointing.h"
 %}
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "spacecraftPointing.h"
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-struct AttRefMsg_C;
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/AttRefMsgPayload.h>

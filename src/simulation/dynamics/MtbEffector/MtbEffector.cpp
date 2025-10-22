@@ -17,10 +17,10 @@
 
 */
 
-#include "simulation/dynamics/MtbEffector/MtbEffector.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "MtbEffector.h"
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */

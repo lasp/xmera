@@ -17,8 +17,8 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/navAggregate/navAggregateAlgorithm.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "navAggregateAlgorithm.h"
+#include <architecture/utilities/linearAlgebra.h>
 
 /*! This method takes the navigation message snippets created by the various
     navigation components in the FSW and aggregates them into a single complete

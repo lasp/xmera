@@ -20,12 +20,12 @@
 #ifndef MTBFEEDFORWARD_H
 #define MTBFEEDFORWARD_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/MTBCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */

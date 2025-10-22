@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/sensorInterfaces/TAMSensorData/tamComm.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "tamComm.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

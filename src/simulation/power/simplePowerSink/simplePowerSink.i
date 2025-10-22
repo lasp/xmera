@@ -23,14 +23,14 @@
     #include "simplePowerSink.h"
 %}
 
-%include "std_string.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.i"
-%include "../_GeneralModuleFiles/powerNodeBase.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 %include "simplePowerSink.h"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
+%include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>

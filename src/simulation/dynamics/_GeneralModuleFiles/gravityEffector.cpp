@@ -19,8 +19,8 @@
 
 #include <functional>
 
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include "gravityEffector.h"
 
 namespace {

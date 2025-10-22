@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/attControl/thrMomentumManagementCpp/thrMomentumManagementCpp.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "thrMomentumManagementCpp.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
 
 void ThrMomentumManagementCpp::reset(uint64_t currentSimNanos) {
     // Check if the required input messages are included

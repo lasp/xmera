@@ -22,16 +22,16 @@
    #include "inertialAttitudeUkf.h"
 %}
 
-%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
+%include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.i>
 
 %include "inertialAttitudeUkf.h"
 
-%include "architecture/msgPayloadDef/FilterMsgPayload.h"
-%include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
+%include <architecture/msgPayloadDef/FilterMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
 
-%include "architecture/msgPayloadDef/STAttMsgPayload.h"
-%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-%include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
-%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+%include <architecture/msgPayloadDef/STAttMsgPayload.h>
+%include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+%include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
+%include <architecture/msgPayloadDef/NavAttMsgPayload.h>

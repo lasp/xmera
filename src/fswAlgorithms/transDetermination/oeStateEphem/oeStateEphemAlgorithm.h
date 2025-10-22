@@ -20,10 +20,10 @@
 #ifndef _OE_STATE_EPHEM_ALGORITHM_H_
 #define _OE_STATE_EPHEM_ALGORITHM_H_
 
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
-#include "architecture/utilities/orbitalMotion.hpp"
-#include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h>
+#include <architecture/utilities/orbitalMotion.hpp>
+#include <fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h>
 #include <array>
 
 #define MAX_OE_RECORDS 10

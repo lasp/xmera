@@ -22,14 +22,13 @@
     #include "visualOdometry.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "visualOdometry.h"
 
-%include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
-%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-struct CameraConfigMsg_C;
+%include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>

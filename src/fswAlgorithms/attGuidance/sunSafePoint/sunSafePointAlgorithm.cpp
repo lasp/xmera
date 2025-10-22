@@ -17,11 +17,11 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/sunSafePoint/sunSafePointAlgorithm.h"
+#include "sunSafePointAlgorithm.h"
 
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/safeMath.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/safeMath.h>
 #include <cassert>
 #include <cmath>
 

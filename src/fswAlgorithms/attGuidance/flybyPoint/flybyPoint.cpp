@@ -17,8 +17,8 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/flybyPoint/flybyPoint.h"
-#include "architecture/utilities/eigenSupport.h"
+#include "flybyPoint.h"
+#include <architecture/utilities/eigenSupport.h>
 
 FlybyPoint::FlybyPoint() { this->algorithm = FlybyPointAlgorithm(); }
 

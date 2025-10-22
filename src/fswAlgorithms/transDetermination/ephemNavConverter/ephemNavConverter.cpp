@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/ephemNavConverter/ephemNavConverter.h"
+#include "ephemNavConverter.h"
 
 /*! Reset method for the module adapter interface.
  @return void

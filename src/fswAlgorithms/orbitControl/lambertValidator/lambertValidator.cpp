@@ -17,10 +17,10 @@
 
 */
 
-#include "fswAlgorithms/orbitControl/lambertValidator/lambertValidator.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/orbitalMotion.h"
+#include "lambertValidator.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/orbitalMotion.h>
 #include <array>
 #include <cmath>
 #include <unsupported/Eigen/MatrixFunctions>

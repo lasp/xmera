@@ -22,8 +22,8 @@
 
 #include <vector>
 #include <Eigen/Dense>
-#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
+#include <simulation/dynamics/_GeneralModuleFiles/THROperation.h>
+#include <simulation/dynamics/_GeneralModuleFiles/THRTimePair.h>
 
 
 //! @brief Container for overall thruster configuration data for single thruster

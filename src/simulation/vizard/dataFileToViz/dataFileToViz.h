@@ -22,9 +22,9 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include "../_GeneralModuleFiles/vizStructures.h"
 #include <Eigen/Dense>
 
 

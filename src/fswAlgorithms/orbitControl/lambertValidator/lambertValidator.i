@@ -22,23 +22,17 @@
     #include "lambertValidator.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "lambertValidator.h"
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
-struct LambertProblemMsg_C;
-%include "architecture/msgPayloadDef/LambertSolutionMsgPayload.h"
-struct LambertSolutionMsg_C;
-%include "architecture/msgPayloadDef/LambertPerformanceMsgPayload.h"
-struct LambertPerformanceMsg_C;
-%include "architecture/msgPayloadDef/DvBurnCmdMsgPayload.h"
-struct DvBurnCmdMsg_C;
-%include "architecture/msgPayloadDef/LambertValidatorMsgPayload.h"
-struct LambertValidatorMsg_C;
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/LambertProblemMsgPayload.h>
+%include <architecture/msgPayloadDef/LambertSolutionMsgPayload.h>
+%include <architecture/msgPayloadDef/LambertPerformanceMsgPayload.h>
+%include <architecture/msgPayloadDef/DvBurnCmdMsgPayload.h>
+%include <architecture/msgPayloadDef/LambertValidatorMsgPayload.h>

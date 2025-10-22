@@ -22,12 +22,12 @@
  */
 
 
-#include "fswAlgorithms/attGuidance/hillPoint/hillPoint.h"
+#include "hillPoint.h"
 #include <string.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 
 static void computeHillPointingReference(double r_BN_N[3],

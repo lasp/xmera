@@ -20,15 +20,15 @@
 
 %{
    #include <vector>
-   #include "../_GeneralModuleFiles/stateVecIntegrator.h"
-   #include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
-   #include "../_GeneralModuleFiles/svIntegratorRK4.h"
+   #include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
+   #include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h>
+   #include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
    #include "svIntegratorEuler.h"
    #include "svIntegratorRK2.h"
    #include "svIntegratorRKF45.h"
    #include "svIntegratorRKF78.h"
-   #include "architecture/_GeneralModuleFiles/sys_model.h"
-   #include "../_GeneralModuleFiles/dynamicObject.h"
+   #include <architecture/_GeneralModuleFiles/sys_model.h>
+   #include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
 %}
 
 %pythoncode %{
@@ -50,11 +50,11 @@ _rk_adaptive_base_classes = {}
     }
 }
 
-%include "sys_model.i"
-%include "../_GeneralModuleFiles/stateVecIntegrator.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
 
-%include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
-%include "../_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
+%include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h>
+%include <simulation/dynamics/_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h>
 
 // We add a constructor for svIntegratorRungeKutta and svIntegratorAdaptiveRungeKutta
 // These are useful for us to build these classes on the Python side without having
@@ -121,7 +121,7 @@ TEMPLATE_HELPER(7)
 TEMPLATE_HELPER(9)
 TEMPLATE_HELPER(13)
 
-%include "../_GeneralModuleFiles/svIntegratorRK4.h"
+%include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
 
 %include "svIntegratorEuler.h"
 %include "svIntegratorRK2.h"

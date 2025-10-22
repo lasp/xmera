@@ -18,9 +18,9 @@
  */
 
 #include "msisAtmosphere.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/geodeticConversion.h"
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/geodeticConversion.h>
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 
 /*! This method initializes some basic parameters for the module.
  @return void

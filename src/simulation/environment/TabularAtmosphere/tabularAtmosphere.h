@@ -24,10 +24,10 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 
-#include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
-#include "architecture/utilities/bskLogging.h"
+#include <simulation/environment/_GeneralModuleFiles/atmosphereBase.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief tabular atmosphere model */
 class TabularAtmosphere:  public AtmosphereBase {

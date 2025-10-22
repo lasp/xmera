@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/sunSearch/sunSearchAlgorithm.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "sunSearchAlgorithm.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <cmath>
 
 /*! This method is used to reset the module.

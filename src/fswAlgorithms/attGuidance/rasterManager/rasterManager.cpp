@@ -24,11 +24,11 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/rasterManager/rasterManager.h"
+#include "rasterManager.h"
 #include <stdio.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "architecture/utilities/linearAlgebra.h"
+#include <architecture/utilities/linearAlgebra.h>
 
 void RasterManager::reset(uint64_t callTime)
 {

@@ -18,8 +18,8 @@
  */
 
 #include "linearTranslationOneDOFStateEffector.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 
 linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector() {
     this->effProps.mEff = 0.0;

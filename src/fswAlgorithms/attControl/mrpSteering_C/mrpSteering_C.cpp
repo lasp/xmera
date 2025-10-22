@@ -21,9 +21,9 @@
 
  */
 
-#include "fswAlgorithms/attControl/mrpSteering_C/mrpSteering_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "mrpSteering_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <math.h>
 
 static void MRPSteeringLaw(MrpSteering_C *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);

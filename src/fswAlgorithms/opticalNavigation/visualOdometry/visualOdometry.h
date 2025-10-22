@@ -20,17 +20,17 @@
 #ifndef VIS_ODOMETRY_H
 #define VIS_ODOMETRY_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/DirectionOfMotionMsgPayload.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/DirectionOfMotionMsgPayload.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <vector>
 
 /*! @brief Odometry module which reads key-point pairs and outputs a spacecraft direction of motion

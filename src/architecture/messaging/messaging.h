@@ -22,9 +22,9 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <typeinfo>
 #include <vector>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/msgHeader.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/msgHeader.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*! forward-declare sim message for use by read functor */
 template <typename messageType>

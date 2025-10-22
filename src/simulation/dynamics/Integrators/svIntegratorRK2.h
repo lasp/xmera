@@ -20,7 +20,7 @@
 #ifndef svIntegratorRK2_h
 #define svIntegratorRK2_h
 
-#include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
+#include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h"
 
 /*! @brief 2nd order Runge-Kutta integrator */
 class svIntegratorRK2 : public svIntegratorRungeKutta<2> {

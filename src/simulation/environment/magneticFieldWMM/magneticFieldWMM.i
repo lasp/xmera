@@ -23,17 +23,17 @@
     #include "magneticFieldWMM.h"
 %}
 
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "std_string.i"
-%include "sys_model.i"
-%include "simulation/environment/_GeneralModuleFiles/magneticFieldBase.h"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/environment/_GeneralModuleFiles/magneticFieldBase.h>
 %include "magneticFieldWMM.h"
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/MagneticFieldMsgPayload.h"
+%include <architecture/msgPayloadDef/MagneticFieldMsgPayload.h>
 
-%include "architecture/msgPayloadDef/EpochMsgPayload.h"
+%include <architecture/msgPayloadDef/EpochMsgPayload.h>

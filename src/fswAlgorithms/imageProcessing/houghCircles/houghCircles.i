@@ -21,14 +21,12 @@
    #include "houghCircles.h"
 %}
 
-%include "stdint.i"
-%include "std_string.i"
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <stdint.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "houghCircles.h"
 
-%include "architecture/msgPayloadDef/OpNavCirclesMsgPayload.h"
-struct OpNavCirclesMsg_C;
-%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-struct CameraImageMsg_C;
+%include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraImageMsgPayload.h>

@@ -17,8 +17,8 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/errorConversion/sunSafeACS.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "sunSafeACS.h"
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <string.h>
 
 /*! This method resets the module.

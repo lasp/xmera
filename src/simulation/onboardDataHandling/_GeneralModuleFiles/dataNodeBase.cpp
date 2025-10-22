@@ -18,8 +18,8 @@
  */
 
 #include "dataNodeBase.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "string.h"
+#include <architecture/utilities/macroDefinitions.h>
+#include <string.h>
 
 /*! Constructor.
  @return void

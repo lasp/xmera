@@ -22,15 +22,13 @@
     #include "lambertPlanner.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "lambertPlanner.h"
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
-struct LambertProblemMsg_C;
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/LambertProblemMsgPayload.h>

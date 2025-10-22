@@ -20,15 +20,15 @@
 #ifndef PRESCRIBED_MOTION_STATE_EFFECTOR_H
 #define PRESCRIBED_MOTION_STATE_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
-#include "architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/PrescribedRotationMsgPayload.h>
+#include <architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 
 /*! @brief Prescribed motion state effector class */
 class PrescribedMotionStateEffector : public StateEffector, public SysModel {

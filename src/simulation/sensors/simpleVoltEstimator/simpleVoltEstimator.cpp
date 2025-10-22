@@ -16,8 +16,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/sensors/simpleVoltEstimator/simpleVoltEstimator.h"
-#include "architecture/utilities/eigenSupport.h"
+#include "simpleVoltEstimator.h"
+#include <architecture/utilities/eigenSupport.h>
 #include <cstring>
 #include <iostream>
 

@@ -21,9 +21,9 @@
 
  */
 
-#include "fswAlgorithms/attControl/mrpPD_C/mrpPD_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "mrpPD_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

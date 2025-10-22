@@ -24,13 +24,13 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/eulerRotation/eulerRotation.h"
+#include "eulerRotation.h"
 #include <math.h>
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/macroDefinitions.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! @brief This function computes the analytical derivative of the B_inv matrix for the 3-2-1 Euler Angle set.
  @return void

@@ -20,24 +20,24 @@
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
-#include "opencv2/core/mat.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/opencv.hpp"
+#include <opencv2/core/mat.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/opencv.hpp>
 #include <math.h>
 #include <stdint.h>
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <string_view>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
 
 /*! @brief visual camera class */
 class Camera : public SysModel {

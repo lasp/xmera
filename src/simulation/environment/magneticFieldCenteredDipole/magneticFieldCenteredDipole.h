@@ -24,11 +24,11 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 
-#include "simulation/environment/_GeneralModuleFiles/magneticFieldBase.h"
+#include <simulation/environment/_GeneralModuleFiles/magneticFieldBase.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief magnetic field centered dipole class */
 class MagneticFieldCenteredDipole:  public MagneticFieldBase {

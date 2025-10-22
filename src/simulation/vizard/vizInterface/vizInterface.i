@@ -18,15 +18,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %module vizInterface
 %{
     #include "vizInterface.h"
-    #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
+    #include "../_GeneralModuleFiles/vizStructures.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.i"
-%include "std_vector.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <std_vector.i>
 
 // Instantiate templates used by example
 namespace std {
@@ -51,15 +51,15 @@ namespace std {
 }
 
 %include "vizInterface.h"
-%include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
+%include "../_GeneralModuleFiles/vizStructures.h"
 
-%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-%include "architecture/msgPayloadDef/EpochMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSConfigLogMsgPayload.h"
-%include "architecture/msgPayloadDef/THROutputMsgPayload.h"
-%include "architecture/msgPayloadDef/ChargeMsmMsgPayload.h"
+%include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
+%include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+%include <architecture/msgPayloadDef/EpochMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSConfigLogMsgPayload.h>
+%include <architecture/msgPayloadDef/THROutputMsgPayload.h>
+%include <architecture/msgPayloadDef/ChargeMsmMsgPayload.h>

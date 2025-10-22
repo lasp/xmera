@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/attDetermination/okeefeEKF/okeefeEKF.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/safeMath.h"
+#include "okeefeEKF.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/safeMath.h>
 #include <string.h>
 
 /*! This method resets the sunline attitude filter to an initial state and

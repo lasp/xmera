@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/attControl/mrpSteering/mrpSteering.h"
+#include "mrpSteering.h"
 #include <stdexcept>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

@@ -18,20 +18,20 @@
 #ifndef CIELIM_INTERFACE_H
 #define CIELIM_INTERFACE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
-#include "architecture/msgPayloadDef/CameraRenderingMsgPayload.h"
-#include "architecture/msgPayloadDef/CelestialBodyParametersMsgPayload.h"
-#include "architecture/msgPayloadDef/EpochMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
+#include <architecture/msgPayloadDef/CameraRenderingMsgPayload.h>
+#include <architecture/msgPayloadDef/CelestialBodyParametersMsgPayload.h>
+#include <architecture/msgPayloadDef/EpochMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/rigidBodyKinematics.hpp"
-#include "simulation/vizard/cielimInterface/cielimMessage.pb.h"
-#include "simulation/vizard/cielimInterface/zmqConnector.h"
+#include <architecture/utilities/rigidBodyKinematics.hpp>
+#include "cielimMessage.pb.h"
+#include "zmqConnector.h"
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/util/delimited_message_util.h>

@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/attDetermination/CSSEst/cssWlsEst.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/safeMath.h"
+#include "cssWlsEst.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/safeMath.h>
 #include <string.h>
 
 int computeWlsmn(int numActiveCss, double *H, double *W, double *y, double x[3]);

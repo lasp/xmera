@@ -21,7 +21,7 @@
 #include "hillStateConverter.h"
 
 // Internal utilities
-#include "architecture/utilities/orbitalMotion.h"
+#include <architecture/utilities/orbitalMotion.h>
 
 /*! This message checks to see that both of the input translational state messages were connected; if not, it errors.
  @return void

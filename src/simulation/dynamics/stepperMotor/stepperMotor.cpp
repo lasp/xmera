@@ -17,7 +17,7 @@
  */
 
 #include "stepperMotor.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/macroDefinitions.h>
 #include <cassert>
 #include <cmath>
 

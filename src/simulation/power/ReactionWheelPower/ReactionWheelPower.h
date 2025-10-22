@@ -20,12 +20,12 @@
 #ifndef BASILISK_POWERRW_H
 #define BASILISK_POWERRW_H
 
-#include "architecture/messaging/messaging.h"
-#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
+#include <architecture/messaging/messaging.h>
+#include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 
-#include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
+#include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief reaction wheel power class */
 class ReactionWheelPower : public PowerNodeBase {

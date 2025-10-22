@@ -20,7 +20,7 @@
 #ifndef _FLYBY_POINT_ALGORITHM_H
 #define _FLYBY_POINT_ALGORITHM_H
 
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <Eigen/Dense>
 
 /*! @brief A class to perform flyby pointing */

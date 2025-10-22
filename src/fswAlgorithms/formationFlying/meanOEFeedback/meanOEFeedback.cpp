@@ -21,10 +21,10 @@
 
 #include <math.h>
 
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/orbitalMotion.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/orbitalMotion.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
 static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);

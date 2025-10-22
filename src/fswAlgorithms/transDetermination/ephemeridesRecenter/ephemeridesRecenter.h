@@ -20,9 +20,9 @@
 #ifndef _EPHEM_RECENTER_H_
 #define _EPHEM_RECENTER_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "fswAlgorithms/transDetermination/ephemeridesRecenter/ephemeridesRecenterAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include "ephemeridesRecenterAlgorithm.h"
 #include <assert.h>
 #include <Eigen/Core>
 #include <array>

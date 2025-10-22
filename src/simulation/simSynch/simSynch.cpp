@@ -16,11 +16,11 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/simSynch/simSynch.h"
+#include "simSynch.h"
 #include <iostream>
 #include <cstring>
 #include <thread>
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This is the constructor for the clock synch model.  It sets default variable
     values and initializes the various parts of the model */

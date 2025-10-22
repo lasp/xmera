@@ -23,19 +23,19 @@
     #include "sensorThermal.h"
 %}
 
-%include "swig_conly_data.i"
-%include "std_string.i"
-%include "swig_eigen.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "sensorThermal.h"
 
-%include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
+%include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/EclipseMsgPayload.h"
+%include <architecture/msgPayloadDef/EclipseMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
+%include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>

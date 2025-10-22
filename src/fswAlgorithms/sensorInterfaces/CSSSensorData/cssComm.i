@@ -21,9 +21,9 @@
    #include "cssComm.h"
 %}
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "cssComm.h"
 
-%include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
+%include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>

@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/sensorInterfaces/STSensorData/stComm.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "stComm.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This method resets the module.
  @return void

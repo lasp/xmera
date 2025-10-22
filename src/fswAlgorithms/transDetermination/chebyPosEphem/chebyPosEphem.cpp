@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/chebyPosEphem/chebyPosEphem.h"
-#include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "chebyPosEphem.h"
+#include <fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/linearAlgebra.h>
 #include <math.h>
 #include <string.h>
 

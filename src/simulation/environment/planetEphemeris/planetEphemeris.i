@@ -21,10 +21,10 @@
    #include "planetEphemeris.h"
 %}
 
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
 
 namespace std {
     %template(classicElementVector) vector<ClassicElements>;
@@ -32,10 +32,10 @@ namespace std {
     %template(DoubleVector) vector<double, allocator<double>>;
 }
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "planetEphemeris.h"
-%include "architecture/utilities/orbitalMotion.h"
-%include "architecture/utilities/astroConstants.h"
+%include <architecture/utilities/orbitalMotion.h>
+%include <architecture/utilities/astroConstants.h>
 
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>

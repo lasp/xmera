@@ -3,13 +3,13 @@
 
 #include <Eigen/Core>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AccDataMsgPayload.h"
-#include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/signalProcessing.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AccDataMsgPayload.h>
+#include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/signalProcessing.h>
 
 /*! @brief Convert AccDataMsgPayload to IMUSensorMsgPayload Class */
 class MiruLowPassFilterConverter : public SysModel {

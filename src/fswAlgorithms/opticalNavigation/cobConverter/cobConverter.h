@@ -20,17 +20,17 @@
 #ifndef _COB_CONVERT_H_
 #define _COB_CONVERT_H_
 
-#include "architecture/messaging/messaging.h"
+#include <architecture/messaging/messaging.h>
 
-#include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
+#include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCOMMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "fswAlgorithms/opticalNavigation/cobConverter/cobConverterAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include "cobConverterAlgorithm.h"
 
 /**
  * @enum PhaseAngleCorrectionMethod

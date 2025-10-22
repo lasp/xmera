@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/sensorInterfaces/IMUSensorData/imuComm.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "imuComm.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This method resets the module.
  @return void

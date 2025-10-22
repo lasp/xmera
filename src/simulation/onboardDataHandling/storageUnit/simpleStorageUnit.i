@@ -22,12 +22,12 @@
 #include "simpleStorageUnit.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
-%include "std_vector.i"
-%include "sys_model.i"
-%include "stdint.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <swig_eigen.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <stdint.i>
 
 //When using scientific notation in Python (1E9), it is interpreted as float
 // giving a type error when assigning storageCapacity or using setDataBuffer.
@@ -36,8 +36,8 @@
     $1 = static_cast<int64_t>(PyFloat_AsDouble($input));
 }
 
-%include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
+%include <simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h>
 %include "simpleStorageUnit.h"
-%include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
+%include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>

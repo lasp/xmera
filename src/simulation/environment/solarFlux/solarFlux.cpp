@@ -18,7 +18,7 @@
  */
 
 #include "solarFlux.h"
-#include "architecture/utilities/astroConstants.h"
+#include <architecture/utilities/astroConstants.h>
 
 
 /*! This method is used to reset the module. Currently no tasks are required.

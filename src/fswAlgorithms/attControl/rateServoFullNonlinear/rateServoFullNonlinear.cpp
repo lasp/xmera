@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinear.h"
+#include "rateServoFullNonlinear.h"
 
 #include <stdexcept>
 

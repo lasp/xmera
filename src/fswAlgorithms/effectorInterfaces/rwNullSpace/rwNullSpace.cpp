@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/rwNullSpace/rwNullSpace.h"
+#include "rwNullSpace.h"
 
 #include <stdexcept>
 

@@ -20,9 +20,9 @@
 #ifndef _THRUST_GROUP_DATA_
 #define _THRUST_GROUP_DATA_
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/definitions.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/definitions.h>
 
 #include <cstdint>
 

@@ -31,4 +31,3 @@
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"
 struct NavAttMsg_C;
 %include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-struct AttGuidMsg_C;

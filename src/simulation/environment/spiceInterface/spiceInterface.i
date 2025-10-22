@@ -21,9 +21,9 @@
    #include "spiceInterface.h"
 %}
 
-%include "swig_conly_data.i"
-%include "std_string.i"
-%include "std_vector.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_string.i>
+%include <std_vector.i>
 
 %template() std::vector<std::string>;
 
@@ -37,18 +37,18 @@
 // this raises an error because mySpiceInterface.planetFrames is returned by value
 %naturalvar SpiceInterface::planetFrames;
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 
 %include "spiceInterface.h"
 
-%include "architecture/msgPayloadDef/EpochMsgPayload.h"
+%include <architecture/msgPayloadDef/EpochMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SpiceTimeMsgPayload.h"
+%include <architecture/msgPayloadDef/SpiceTimeMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+%include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 
-%include "architecture/msgPayloadDef/TransRefMsgPayload.h"
+%include <architecture/msgPayloadDef/TransRefMsgPayload.h>

@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/ephemDifference/ephemDifference.h"
+#include "ephemDifference.h"
 
 /*! @brief This method resets the module.
  @return void

@@ -20,9 +20,9 @@
 #ifndef _SUNLINE_EPHEM_H_
 #define _SUNLINE_EPHEM_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "fswAlgorithms/attDetermination/sunlineEphem/sunlineEphemAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include "sunlineEphemAlgorithm.h"
 
 class SunlineEphem : public SysModel {
    public:

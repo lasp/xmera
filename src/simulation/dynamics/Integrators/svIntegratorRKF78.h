@@ -20,7 +20,7 @@
 #ifndef svIntegratorRKF78_h
 #define svIntegratorRKF78_h
 
-#include "../_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
+#include "simulation/dynamics/_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
 
 /*! @brief 7/8 order Runge-Kutta integrator */
 class svIntegratorRKF78 : public svIntegratorAdaptiveRungeKutta<13> {

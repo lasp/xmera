@@ -18,10 +18,10 @@
  */
 
 #include "spacecraft.h"
-#include "../_GeneralModuleFiles/svIntegratorRK4.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */

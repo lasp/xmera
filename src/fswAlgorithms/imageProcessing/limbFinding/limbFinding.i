@@ -21,14 +21,12 @@
    #include "limbFinding.h"
 %}
 
-%include "stdint.i"
-%include "std_string.i"
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <stdint.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "limbFinding.h"
 
-%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-struct CameraImageMsg_C;
-%include "architecture/msgPayloadDef/OpNavLimbMsgPayload.h"
-struct OpNavLimbMsg_C;
+%include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavLimbMsgPayload.h>

@@ -22,10 +22,10 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "fswAlgorithms/attGuidance/inertial3D_C/inertial3D_C.h"
+#include "inertial3D_C.h"
 
 /* Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "architecture/utilities/linearAlgebra.h"
+#include <architecture/utilities/linearAlgebra.h>
 
 /*! Generate attitude reference associated with Intertial 3D Pointing.  In this case this is a fixed attitude
     with zero angular rate and acceleration vectors

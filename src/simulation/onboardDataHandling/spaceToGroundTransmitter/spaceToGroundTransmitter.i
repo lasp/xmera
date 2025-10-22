@@ -22,15 +22,15 @@
 #include "spaceToGroundTransmitter.h"
 %}
 
-%include "swig_common_model.i"
-%include "carrays.i"
-%include "sys_model.i"
-%include "../_GeneralModuleFiles/dataNodeBase.h"
+%include <architecture/_GeneralModuleFiles/swig_common_model.i>
+%include <carrays.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 %include "spaceToGroundTransmitter.h"
 
-%include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
+%include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
-%include "architecture/msgPayloadDef/AccessMsgPayload.h"
+%include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>
+%include <architecture/msgPayloadDef/AccessMsgPayload.h>

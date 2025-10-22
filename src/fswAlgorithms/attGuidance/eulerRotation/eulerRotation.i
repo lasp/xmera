@@ -21,10 +21,10 @@
    #include "eulerRotation.h"
 %}
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "eulerRotation.h"
 
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-%include "architecture/msgPayloadDef/AttStateMsgPayload.h"
+%include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+%include <architecture/msgPayloadDef/AttStateMsgPayload.h>

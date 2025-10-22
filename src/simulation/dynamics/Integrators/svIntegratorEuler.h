@@ -20,7 +20,7 @@
 #ifndef svIntegratorEuler_h
 #define svIntegratorEuler_h
 
-#include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
+#include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h>
 
 /*! @brief Euler integrator */
 class svIntegratorEuler : public svIntegratorRungeKutta<1> {

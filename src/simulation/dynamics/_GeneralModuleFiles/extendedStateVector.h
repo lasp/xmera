@@ -20,8 +20,8 @@
 #ifndef extendedStateVector_h
 #define extendedStateVector_h
 
-#include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 
 #include <Eigen/Dense>
 #include <functional>

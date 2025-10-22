@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "vehicleConfigData.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 void VehicleConfigData::reset(uint64_t callTime)
 {

@@ -17,7 +17,7 @@
 
 */
 
-#include "fswAlgorithms/pointCloudProcessing/pointCloudTriangulation/pointCloudTriangulation.h"
+#include "pointCloudTriangulation.h"
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -67,7 +67,7 @@ void PointCloudTriangulation::updateState(uint64_t currentSimNanos) {
         std::vector<Eigen::Vector3d> cameraLocations = {p1_C1, p2_C1};
         std::vector<Eigen::Matrix3d> dcmCamera = {Eigen::Matrix3d::Identity(), this->dcm_C2C1};
 
-        this->measuredPointCloud = Eigen::MatrixXd::Zero(POINT_DIM, this->numberKeyPoints);
+        this->measuredPointCloud = Eigen::MatrixXd::Zero(SICP_POINT_DIM, this->numberKeyPoints);
         for (int c = 0; c < this->numberKeyPoints; ++c) {
             std::vector<Eigen::Vector2d> imagePoints = {this->keyPoints1.at(c), this->keyPoints2.at(c)};
             Eigen::Vector3d featureLocation =

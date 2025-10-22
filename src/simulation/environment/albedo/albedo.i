@@ -21,15 +21,15 @@
    #include "albedo.h"
 %}
 
-%include "std_string.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
-%include "sys_model.i"
+%include <std_string.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "albedo.h"
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/AlbedoMsgPayload.h"
+%include <architecture/msgPayloadDef/AlbedoMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>

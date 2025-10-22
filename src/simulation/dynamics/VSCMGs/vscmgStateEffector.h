@@ -20,23 +20,23 @@
 #ifndef VSCMGSTATEEFFECTOR_H
 #define VSCMGSTATEEFFECTOR_H
 
-#include "../_GeneralModuleFiles/dynParamManager.h"
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/stateEffector.h"
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <Eigen/Dense>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/VSCMGArrayTorqueMsgPayload.h"
-#include "architecture/msgPayloadDef/VSCMGCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/VSCMGConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/VSCMGSpeedMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/VSCMGArrayTorqueMsgPayload.h>
+#include <architecture/msgPayloadDef/VSCMGCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/VSCMGConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/VSCMGSpeedMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! @brief VSCMG state effector class */
 class VSCMGStateEffector : public SysModel, public StateEffector {

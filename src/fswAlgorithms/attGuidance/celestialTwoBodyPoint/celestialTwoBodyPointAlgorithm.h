@@ -20,9 +20,9 @@
 #ifndef CELESTIAL_BODY_POINT_ALGORITHM_H
 #define CELESTIAL_BODY_POINT_ALGORITHM_H
 
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <Eigen/Core>
 
 /*!@brief Data structure for module to compute the two-body celestial pointing navigation solution.

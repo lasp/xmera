@@ -19,9 +19,9 @@
 #ifndef _SimModel_HH_
 #define _SimModel_HH_
 
-#include "architecture/system_model/sys_process.h"
-#include "architecture/utilities/bskLogging.h"
-#include "bskSemaphore.h"
+#include <architecture/system_model/sys_process.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/system_model/bskSemaphore.h>
 #include <stdint.h>
 #include <condition_variable>
 #include <iostream>

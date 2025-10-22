@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
+#include "rwMotorVoltage.h"
 
 #include <stdexcept>
 

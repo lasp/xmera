@@ -21,15 +21,12 @@
    #include "hillPointCpp.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "hillPointCpp.h"
 
-%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-struct EphemerisMsg_C;
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-struct AttRefMsg_C;
+%include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/AttRefMsgPayload.h>

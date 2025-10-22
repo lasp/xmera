@@ -31,6 +31,10 @@ target_sources("${module}" PRIVATE
   vizInterface.cpp
 )
 
+target_include_directories("${module}" PRIVATE
+  "${CMAKE_CURRENT_BINARY_DIR}"
+)
+
 target_link_libraries("${module}" PRIVATE
   ArchitectureUtilities
   cppzmq

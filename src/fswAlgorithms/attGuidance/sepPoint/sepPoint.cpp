@@ -18,8 +18,8 @@
  */
 
 #include "sepPoint.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 const double epsilon = 1e-12;  // module tolerance for zero
 

@@ -21,12 +21,12 @@
    #include "rwNullSpace.h"
 %}
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "rwNullSpace.h"
 %include "rwNullSpaceAlgorithm.h"
 
-%include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
-%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-%include "architecture/msgPayloadDef/RWConstellationMsgPayload.h"
+%include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
+%include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+%include <architecture/msgPayloadDef/RWConstellationMsgPayload.h>

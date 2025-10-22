@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphem.h"
+#include "oeStateEphem.h"
 
 /*!
  @return void

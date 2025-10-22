@@ -18,8 +18,8 @@
 
  */
 
-#include "fswAlgorithms/sensorInterfaces/simpleInstrumentController/simpleInstrumentController.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "simpleInstrumentController.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <stdio.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

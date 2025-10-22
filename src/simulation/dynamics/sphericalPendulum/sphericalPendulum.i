@@ -23,14 +23,14 @@
 	#include "sphericalPendulum.h"
 %}
 
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "sys_model.i"
-%include "../_GeneralModuleFiles/fuelSlosh.h"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/stateEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h>
+%include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+%include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+%include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 
 %include "sphericalPendulum.h"

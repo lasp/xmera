@@ -23,9 +23,9 @@
 /* Other required files to import */
 #include <stdbool.h>
 #include <math.h>
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
  @return void

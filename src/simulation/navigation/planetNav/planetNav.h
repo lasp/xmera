@@ -20,11 +20,11 @@
 #ifndef PLANETNAV_H
 #define PLANETNAV_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/gauss_markov.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/gauss_markov.h>
 #include <Eigen/Dense>
 
 /*! @brief This is an auto-created sample C++ module.  The description is included with the module class definition

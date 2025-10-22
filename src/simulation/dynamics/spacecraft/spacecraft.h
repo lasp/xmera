@@ -20,24 +20,24 @@
 #ifndef SPACECRAFT_PLUS_H
 #define SPACECRAFT_PLUS_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
-#include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
 #include <stdint.h>
 #include <vector>
 
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/SCMassPropsMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/TransRefMsgPayload.h"
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/SCMassPropsMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/TransRefMsgPayload.h>
 
-#include "../_GeneralModuleFiles/hubEffector.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
+#include <simulation/dynamics/_GeneralModuleFiles/hubEffector.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief spacecraft dynamic effector */
 class Spacecraft : public DynamicObject {

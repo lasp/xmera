@@ -19,16 +19,16 @@
 #ifndef FUEL_TANK_H
 #define FUEL_TANK_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/FuelTankMsgPayload.h"
-#include "simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.h"
-#include "simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/FuelTankMsgPayload.h>
+#include "../Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.h"
+#include "../Thrusters/thrusterStateEffector/thrusterStateEffector.h"
+#include <simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
 #include <math.h>
 #include <vector>
 

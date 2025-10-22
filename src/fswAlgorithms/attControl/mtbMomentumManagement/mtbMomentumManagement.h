@@ -20,15 +20,15 @@
 #ifndef MTB_MOMENTUM_MANAGEMENT_H
 #define MTB_MOMENTUM_MANAGEMENT_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/definitions.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/MTBCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
+#include <architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/definitions.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class MtbMomentumManagement : public SysModel {

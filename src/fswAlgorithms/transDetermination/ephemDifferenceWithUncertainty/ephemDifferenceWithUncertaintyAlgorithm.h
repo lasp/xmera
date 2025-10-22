@@ -20,14 +20,14 @@
 #ifndef EPHEM_DIFFERENCE_WITH_UNCERTAINTY_ALGORITHM_H
 #define EPHEM_DIFFERENCE_WITH_UNCERTAINTY_ALGORITHM_H
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/utilities/eigenSupport.h>
 #include <stdint.h>
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 
 /*! @brief This module computes the difference between two ephemeris messages, and outputs the relative states into a
  * navigation and filter message */

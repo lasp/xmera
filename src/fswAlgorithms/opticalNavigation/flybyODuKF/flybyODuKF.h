@@ -25,18 +25,18 @@
 #ifndef FLYBYODUKF_H
 #define FLYBYODUKF_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/FilterMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/orbitalMotion.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/FilterMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/orbitalMotion.h>
 
-#include "fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h"
-#include "fswAlgorithms/_GeneralModuleFiles/measurementModels.h"
-#include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.h"
+#include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>
+#include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
+#include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 
 class FlybyODuKF : public SRukfInterface {
    public:

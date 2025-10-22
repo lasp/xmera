@@ -17,7 +17,7 @@
 
 */
 
-#include "fswAlgorithms/opticalNavigation/visualOdometry/visualOdometry.h"
+#include "visualOdometry.h"
 #include <cmath>
 
 VisualOdometry::VisualOdometry() = default;

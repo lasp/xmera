@@ -17,8 +17,8 @@
 
 */
 
-#include "fswAlgorithms/sensorInterfaces/scanningInstrumentController/scanningInstrumentController.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "scanningInstrumentController.h"
+#include <architecture/utilities/linearAlgebra.h>
 
 /*! This method checks if required input messages (accessInMsg and attGuidInMsg) are connected.
  @return void

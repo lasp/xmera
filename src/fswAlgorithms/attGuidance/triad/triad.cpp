@@ -23,10 +23,10 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 
 #include <Eigen/Core>
 
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 
 const double epsilon = 1e-12;
 

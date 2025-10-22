@@ -20,11 +20,11 @@
 #ifndef _OE_STATE_EPHEM_H_
 #define _OE_STATE_EPHEM_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
-#include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphemAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h>
+#include "oeStateEphemAlgorithm.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20

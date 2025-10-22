@@ -20,10 +20,10 @@
 #ifndef WAYPOINTREFERENCE_H
 #define WAYPOINTREFERENCE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <fstream>
 #include <iostream>
 

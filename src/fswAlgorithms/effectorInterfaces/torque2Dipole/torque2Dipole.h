@@ -20,12 +20,12 @@
 #ifndef TORQUE2DIPOLE_H
 #define TORQUE2DIPOLE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */

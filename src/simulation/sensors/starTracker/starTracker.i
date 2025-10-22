@@ -21,14 +21,14 @@
    #include "starTracker.h"
 %}
 
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "stdint.i"
-%include "sys_model.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <stdint.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "starTracker.h"
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/STSensorMsgPayload.h"
+%include <architecture/msgPayloadDef/STSensorMsgPayload.h>

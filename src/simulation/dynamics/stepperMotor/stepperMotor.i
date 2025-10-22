@@ -21,12 +21,12 @@
    #include "stepperMotor.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "stepperMotor.h"
 
-%include "architecture/msgPayloadDef/MotorStepCommandMsgPayload.h"
+%include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>
 
-%include "architecture/msgPayloadDef/StepperMotorMsgPayload.h"
+%include <architecture/msgPayloadDef/StepperMotorMsgPayload.h>

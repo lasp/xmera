@@ -18,7 +18,7 @@
  */
 
 #include "tabularAtmosphere.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <iostream>
 
 /*! The constructor method initializes data list lengths to zero.

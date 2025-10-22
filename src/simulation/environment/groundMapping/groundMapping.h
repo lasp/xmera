@@ -24,16 +24,16 @@
 #include <string>
 #include <vector>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AccessMsgPayload.h"
-#include "architecture/msgPayloadDef/GroundStateMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AccessMsgPayload.h>
+#include <architecture/msgPayloadDef/GroundStateMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/geodeticConversion.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/geodeticConversion.h>
 
 /*! @brief This module checks that a vector of mapping points are visible to a spacecraft's imager, outputting a vector
  * of accessMessages for each mapping point

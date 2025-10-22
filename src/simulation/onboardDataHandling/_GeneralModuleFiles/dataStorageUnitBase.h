@@ -17,17 +17,17 @@
 
  */
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <Eigen/Dense>
 #include <cstring>
 #include <string>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
+#include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 #ifndef BASILISK_DATASTORAGEUNITBASE_H
 #define BASILISK_DATASTORAGEUNITBASE_H

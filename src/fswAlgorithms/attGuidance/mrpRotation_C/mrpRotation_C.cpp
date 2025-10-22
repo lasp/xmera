@@ -21,12 +21,12 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/mrpRotation_C/mrpRotation_C.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "mrpRotation_C.h"
+#include <architecture/utilities/macroDefinitions.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! @brief This resets the module to original states.
  @return void

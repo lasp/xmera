@@ -21,8 +21,8 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "thrFiringRemainder.h"
+#include <architecture/utilities/macroDefinitions.h>
 
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

@@ -19,11 +19,11 @@
 #ifndef _SINGLEAXISPROFILER_
 #define _SINGLEAXISPROFILER_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/PrescribedRotationMsgPayload.h"
-#include "architecture/msgPayloadDef/StepperMotorMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/PrescribedRotationMsgPayload.h>
+#include <architecture/msgPayloadDef/StepperMotorMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <Eigen/Dense>
 #include <cstdint>
 

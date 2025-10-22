@@ -10,20 +10,20 @@
 
 #include <vector>
 
-#include "architecture/msgPayloadDef/ColorMsgPayload.h"
-#include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
-#include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/FuelTankMsgPayload.h"
-#include "architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h"
-#include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include <architecture/msgPayloadDef/ColorMsgPayload.h>
+#include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
+#include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>
+#include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/FuelTankMsgPayload.h>
+#include <architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h>
+#include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-#include "architecture/msgPayloadDef/CSSConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDef/ChargeMsmMsgPayload.h"
-#include "architecture/msgPayloadDef/THROutputMsgPayload.h"
+#include <architecture/msgPayloadDef/CSSConfigLogMsgPayload.h>
+#include <architecture/msgPayloadDef/ChargeMsmMsgPayload.h>
+#include <architecture/msgPayloadDef/THROutputMsgPayload.h>
 
-#include "architecture/messaging/messaging.h"
+#include <architecture/messaging/messaging.h>
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */
 typedef struct

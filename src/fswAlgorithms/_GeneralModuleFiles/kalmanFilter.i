@@ -19,14 +19,14 @@
  */
 %module kalmanFilter
 %{
-   #include "fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h"
+   #include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>
 %}
 
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 
 %typemap(out) std::optional<Eigen::VectorXd> %{
     if ($1.has_value()) {
@@ -41,4 +41,4 @@
     }
 %}
 
-%include "fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h"
+%include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>

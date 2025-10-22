@@ -18,9 +18,9 @@
 */
 
 #include "prescribedLinearTranslation.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <cmath>
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.

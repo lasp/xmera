@@ -20,7 +20,7 @@
 #ifndef POLY_GRAVITY_MODEL_H
 #define POLY_GRAVITY_MODEL_H
 
-#include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
+#include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
 
 /** The Polyhedral gravity model.
  *

@@ -17,8 +17,8 @@
 
 */
 
-#include "simulation/deviceInterface/hingedBodyLinearProfiler/hingedBodyLinearProfiler.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "hingedBodyLinearProfiler.h"
+#include <architecture/utilities/macroDefinitions.h>
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable

@@ -21,9 +21,9 @@
    #include "simpleDeadband.h"
 %}
 
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "simpleDeadband.h"
 
-%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
+%include <architecture/msgPayloadDef/AttGuidMsgPayload.h>

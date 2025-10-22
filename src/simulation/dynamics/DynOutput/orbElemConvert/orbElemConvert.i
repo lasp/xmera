@@ -21,15 +21,15 @@
    #include "orbElemConvert.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "sys_model.i"
-%include "architecture/utilities/orbitalMotion.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/utilities/orbitalMotion.h>
 %include "orbElemConvert.h"
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/ClassicElementsMsgPayload.h"
+%include <architecture/msgPayloadDef/ClassicElementsMsgPayload.h>

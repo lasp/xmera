@@ -22,8 +22,8 @@
 
 #include <stdint.h>
 
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/AttStateMsgPayload.h"
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/AttStateMsgPayload.h>
 #include <Eigen/Core>
 
 /*! @brief MRP Rotation class */

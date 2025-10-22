@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/opNavPoint/opNavPoint.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/safeMath.h"
+#include "opNavPoint.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/safeMath.h>
 
 #include <math.h>
 

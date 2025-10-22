@@ -20,14 +20,14 @@
 #ifndef GRAVITY_DYN_EFFECTOR_H
 #define GRAVITY_DYN_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "dynamicEffector.h"
-#include "gravityModel.h"
-#include "pointMassGravityModel.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
+#include <simulation/dynamics/_GeneralModuleFiles/pointMassGravityModel.h>
 #include <Eigen/Dense>
 #include <memory>
 #include <vector>

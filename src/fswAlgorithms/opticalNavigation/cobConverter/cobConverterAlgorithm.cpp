@@ -18,9 +18,9 @@
  */
 
 #include "cobConverterAlgorithm.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 
 /**
  * @brief Compute total COB covariance in image space given unit-vector covariances.

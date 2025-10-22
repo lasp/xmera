@@ -18,8 +18,8 @@
  */
 
 #include "simulation/dynamics/DynOutput/boreAngCalc/boreAngCalc.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/safeMath.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/safeMath.h>
 
 //! The constructor.  Note that you have to overwrite the message names.
 BoreAngCalc::BoreAngCalc() {

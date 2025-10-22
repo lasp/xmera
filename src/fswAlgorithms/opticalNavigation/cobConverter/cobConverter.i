@@ -21,17 +21,17 @@
    #include "cobConverter.h"
 %}
 
-%include "stdint.i"
-%include "std_string.i"
-%include "sys_model.h"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
+%include <stdint.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
 %include "cobConverter.h"
 
-%include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
-%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
-%include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
-%include "architecture/msgPayloadDef/OpNavCOMMsgPayload.h"
-%include "architecture/msgPayloadDef/FilterMsgPayload.h"
+%include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
+%include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavCOMMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterMsgPayload.h>

@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/errorConversion/dvAttEffect.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "dvAttEffect.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <string.h>
 
 void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);

@@ -20,16 +20,16 @@
 #ifndef BASILISK_POWERNODEBASE_H
 #define BASILISK_POWERNODEBASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
 
-#include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
-#include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
+#include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
+#include <architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief power node base class */
 class PowerNodeBase : public SysModel {

@@ -22,14 +22,14 @@
 #include "simpleInstrument.h"
 %}
 
-%include "std_string.i"
-%include "sys_model.i"
-%include "../../_GeneralModuleFiles/dataNodeBase.h"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 %include "simpleInstrument.h"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
+%include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
+%include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>

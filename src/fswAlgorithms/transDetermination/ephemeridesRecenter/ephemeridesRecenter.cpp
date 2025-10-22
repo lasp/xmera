@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/ephemeridesRecenter/ephemeridesRecenter.h"
+#include "ephemeridesRecenter.h"
 
 /*! @brief This method resets the module.
  @return void

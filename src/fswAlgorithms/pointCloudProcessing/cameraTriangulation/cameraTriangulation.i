@@ -22,17 +22,15 @@
     #include "cameraTriangulation.h"
 %}
 
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
-%include "sys_model.h"
+%include <std_string.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 
 %include "cameraTriangulation.h"
 
-%include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
-%include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
-%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-struct CameraConfigMsg_C;
-%include "architecture/msgPayloadDef/CameraLocalizationMsgPayload.h"
-struct CameraLocalizationMsg_C;
+%include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
+%include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraLocalizationMsgPayload.h>

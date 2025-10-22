@@ -17,13 +17,13 @@
 
  */
 
-#include "simulation/sensors/coarseSunSensor/coarseSunSensor.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "coarseSunSensor.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <inttypes.h>
 #include <math.h>
 #include <algorithm>

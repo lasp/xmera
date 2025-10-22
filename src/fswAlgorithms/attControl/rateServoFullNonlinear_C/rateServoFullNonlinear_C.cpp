@@ -21,11 +21,11 @@
 
  */
 
-#include "fswAlgorithms/attControl/rateServoFullNonlinear_C/rateServoFullNonlinear_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include "rateServoFullNonlinear_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 
 #include <math.h>
 #include <string.h>

@@ -22,7 +22,7 @@
 #define FILTER_DYN_MODELS_H
 
 #include <Eigen/Core>
-#include "fswAlgorithms/_GeneralModuleFiles/stateModels.h"
+#include <fswAlgorithms/_GeneralModuleFiles/stateModels.h>
 
 /*! @brief Measurement models used to map a state vector to a measurement */
 class DynamicsModel{

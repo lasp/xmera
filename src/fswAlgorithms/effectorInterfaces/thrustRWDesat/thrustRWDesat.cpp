@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "thrustRWDesat.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <string.h>
 
 void ThrustRWDesat::reset(uint64_t callTime)

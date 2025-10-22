@@ -20,15 +20,15 @@
 #ifndef MOTOR_VOLTAGE_INTERFACE_H
 #define MOTOR_VOLTAGE_INTERFACE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
 #include <vector>
 
-#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h"
+#include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
+#include <architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h>
 
-#include "../../../architecture/utilities/bskLogging.h"
-#include "../../../architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <Eigen/Dense>
 
 /*! @brief RW voltage interface class */

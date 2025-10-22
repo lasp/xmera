@@ -19,10 +19,10 @@
 
 #include "eclipse.h"
 
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/safeMath.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/safeMath.h>
 
 Eclipse::Eclipse() {
     rEqCustom = -1.0;

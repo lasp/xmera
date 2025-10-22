@@ -20,9 +20,9 @@
 #ifndef svIntegratorAdaptiveRungeKutta_h
 #define svIntegratorAdaptiveRungeKutta_h
 
-#include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
-#include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h>
 #include <cmath>
 #include <memory>
 #include <optional>

@@ -22,11 +22,11 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/AttStateMsgPayload.h"
-#include "fswAlgorithms/attGuidance/mrpRotation/mrpRotationAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/AttStateMsgPayload.h>
+#include "mrpRotationAlgorithm.h"
 #include <Eigen/Core>
 
 /*! @brief MRP Rotation class */

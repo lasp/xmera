@@ -25,8 +25,8 @@
 #include <map>
 #include <vector>
 #include <Eigen/Dense>
-#include "stateData.h"
-#include "architecture/utilities/bskLogging.h"
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+#include <architecture/utilities/bskLogging.h>
 
 
 /*! state vector class */

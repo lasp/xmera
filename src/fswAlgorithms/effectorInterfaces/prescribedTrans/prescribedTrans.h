@@ -19,11 +19,11 @@
 #ifndef _PRESCRIBEDTRANS_
 #define _PRESCRIBEDTRANS_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <stdbool.h>
 #include <stdint.h>
 

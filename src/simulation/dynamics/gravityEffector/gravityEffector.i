@@ -19,7 +19,7 @@
 
 %module(package="Basilisk.simulation") gravityEffector
 %{
-   #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
+   #include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 %}
 
 %pythoncode %{
@@ -36,14 +36,14 @@ from typing import Optional, Union
 
 %}
 
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include <std_shared_ptr.i>
 %shared_ptr(GravBodyData)
 
-%include "std_vector.i"
+%include <std_vector.i>
 %template(GravBodyVector) std::vector<std::shared_ptr<GravBodyData>>;
 
 // The central body should be changed by changing the isCentralBody flag
@@ -64,15 +64,15 @@ from typing import Optional, Union
     object.__setattr__(self, "_pyGravityModel", None) # Enable setting _pyGravityModel
     self.gravityModel = PointMassGravityModel() # Re-set gravityModel to populate the _pyGravityModel%}
 
-%import "simulation/dynamics/gravityEffector/gravityModel.i"
+%import <simulation/dynamics/gravityEffector/gravityModel.i>
 
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "sys_model.i"
+%include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+%include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 #pragma SWIG nowarn=362
-%include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
+%include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
 
 %extend GravBodyData {

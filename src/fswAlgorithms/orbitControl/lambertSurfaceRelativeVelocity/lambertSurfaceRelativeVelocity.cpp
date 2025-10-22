@@ -17,8 +17,8 @@
 
 */
 
-#include "fswAlgorithms/orbitControl/lambertSurfaceRelativeVelocity/lambertSurfaceRelativeVelocity.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "lambertSurfaceRelativeVelocity.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable

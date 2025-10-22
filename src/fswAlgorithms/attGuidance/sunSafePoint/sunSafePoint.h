@@ -20,12 +20,12 @@
 #ifndef _BASILISK_SUN_SAFE_POINT_H_
 #define _BASILISK_SUN_SAFE_POINT_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/attGuidance/sunSafePoint/sunSafePointAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include "sunSafePointAlgorithm.h"
 #include <stdint.h>
 #include <Eigen/Dense>
 

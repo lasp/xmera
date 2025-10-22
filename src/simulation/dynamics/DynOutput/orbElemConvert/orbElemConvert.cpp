@@ -16,8 +16,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/dynamics/DynOutput/orbElemConvert/orbElemConvert.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "orbElemConvert.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <iostream>
 
 //! The constructor.  Note that you may want to overwrite the message names.

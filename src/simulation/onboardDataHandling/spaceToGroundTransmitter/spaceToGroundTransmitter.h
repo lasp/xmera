@@ -21,10 +21,10 @@
 #ifndef BASILISK_SPACETOGROUNDTRANSMITTER_H
 #define BASILISK_SPACETOGROUNDTRANSMITTER_H
 
-#include "architecture/msgPayloadDef/AccessMsgPayload.h"
-#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+#include <architecture/msgPayloadDef/AccessMsgPayload.h>
+#include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief space to ground data transmitter class */
 class SpaceToGroundTransmitter : public DataNodeBase {

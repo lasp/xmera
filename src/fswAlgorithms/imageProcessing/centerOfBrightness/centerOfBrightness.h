@@ -20,17 +20,17 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 #ifndef _IMAGE_PROC_COB_H_
 #define _IMAGE_PROC_COB_H_
 
-#include "architecture/messaging/messaging.h"
-#include "opencv2/core/mat.hpp"
-#include "opencv2/opencv.hpp"
+#include <architecture/messaging/messaging.h>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/opencv.hpp>
 #include <stdint.h>
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
+#include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief visual object tracking using center of brightness detection */
 class CenterOfBrightness : public SysModel {

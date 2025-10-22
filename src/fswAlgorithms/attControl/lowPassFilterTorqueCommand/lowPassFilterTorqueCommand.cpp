@@ -22,10 +22,10 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "fswAlgorithms/attControl/lowPassFilterTorqueCommand/lowPassFilterTorqueCommand.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "math.h"
+#include "lowPassFilterTorqueCommand.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
+#include <math.h>
 
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

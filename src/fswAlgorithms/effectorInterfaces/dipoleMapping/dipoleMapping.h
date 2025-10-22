@@ -20,12 +20,12 @@
 #ifndef DIPOLEMAPPING_H
 #define DIPOLEMAPPING_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/MTBCmdMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */

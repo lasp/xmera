@@ -18,9 +18,9 @@
  */
 
 #include "prescribedMotionStateEffector.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 #include <string>
 
 /*! The constructor sets the module variables to default values. */

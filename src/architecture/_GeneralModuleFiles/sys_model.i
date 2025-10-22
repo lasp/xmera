@@ -1,1 +1,1 @@
-%include "cSysModel.i"
+%include <architecture/_GeneralModuleFiles/cSysModel.i>
