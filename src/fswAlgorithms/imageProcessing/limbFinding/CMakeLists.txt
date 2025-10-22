@@ -13,6 +13,7 @@ target_sources("${module}" PRIVATE
 
 target_link_libraries("${module}" PRIVATE
   opencv_imgcodecs
+  Xmera::Messaging
 )
 
 # Suppress OpenCV warnings on clang due to its vcpkg distribution

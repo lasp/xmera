@@ -12,6 +12,5 @@ target_sources("${module}" PRIVATE
 )
 
 target_link_libraries("${module}" PRIVATE
-  ArchitectureUtilities
   environmentCommon
 )

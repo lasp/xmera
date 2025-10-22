@@ -8,6 +8,7 @@ if(_is_enabled)
 
   target_link_libraries("${module}" PRIVATE
     ArchitectureUtilities
+    Xmera::Messaging
   )
 endif()
 
@@ -22,5 +23,6 @@ if(_is_enabled)
 
   target_link_libraries("${module}" PRIVATE
     ArchitectureUtilities
+    Xmera::Messaging
   )
 endif()

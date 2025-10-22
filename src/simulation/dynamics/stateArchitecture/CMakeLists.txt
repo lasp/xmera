@@ -7,6 +7,5 @@ endif()
 xmera_add_swig_module("${module}")
 
 target_link_libraries("${module}" PRIVATE
-  ArchitectureUtilities
   dynamicsCommon
 )

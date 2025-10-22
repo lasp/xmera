@@ -80,3 +80,8 @@ xmera_generate_messaging_init()
 
 install(DIRECTORY utilities DESTINATION Basilisk)
 install(DIRECTORY ../supportData DESTINATION Basilisk)
+
+install(EXPORT xmera
+  DESTINATION cmake
+  NAMESPACE xmera::
+)

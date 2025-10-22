@@ -10,6 +10,7 @@ target_sources("${module}" PRIVATE
 )
 
 target_link_libraries("${module}" PRIVATE
-  ArchitectureUtilities
   dynamicsCommon
+  # Implicit dependency on `simulation.dynamics.Thrusters.thrusterDynamicEffector`
+  # Implicit dependency on `simulation.dynamics.Thrusters.thrusterStateEffector`
 )

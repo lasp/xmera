@@ -1,12 +1,22 @@
-add_library(fswAlgorithmsAttGuidanceCommon OBJECT
-  constrainedAxisPointingLibrary.cpp
-)
+add_library(fswAlgorithmsAttGuidanceCommon STATIC)
 
-target_include_directories(fswAlgorithmsAttGuidanceCommon PRIVATE
-  "${CMAKE_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles"
+target_sources(fswAlgorithmsAttGuidanceCommon
+  PRIVATE
+    constrainedAxisPointingLibrary.cpp
+
+  PUBLIC FILE_SET HEADERS
+  BASE_DIRS "${CMAKE_SOURCE_DIR}"
+  FILES
+    constrainedAxisPointingLibrary.h
 )
 
 target_link_libraries(fswAlgorithmsAttGuidanceCommon PUBLIC
   Xmera::Core
+)
+
+install(TARGETS fswAlgorithmsAttGuidanceCommon
+  EXPORT xmera
+  DESTINATION lib
+  FILE_SET HEADERS
+    DESTINATION include
 )

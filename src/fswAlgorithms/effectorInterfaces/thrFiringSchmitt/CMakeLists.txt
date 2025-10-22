@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   thrFiringSchmitt.cpp
   thrFiringSchmittAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  Xmera::Messaging
+)

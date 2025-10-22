@@ -36,6 +36,7 @@ target_include_directories("${module}" PRIVATE
 )
 
 target_link_libraries("${module}" PRIVATE
+  Xmera::Messaging
   ArchitectureUtilities
   cppzmq
   protobuf::libprotobuf

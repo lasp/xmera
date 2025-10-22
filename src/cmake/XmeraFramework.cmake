@@ -144,8 +144,13 @@ function(xmera_add_swig_module module)
   )
 endfunction()
 
-function(xmera_add_swig_message message)
+function(xmera_add_swig_message headers_target message)
   set_property(GLOBAL APPEND PROPERTY XMERA_REGISTERED_MESSAGES "${message}")
+
+  target_sources("${headers_target}"
+    PUBLIC FILE_SET HEADERS
+    FILES "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDef/${message}.h"
+  )
 
   add_custom_command(
     COMMENT "Generating SWIG message interface: ${message}"
@@ -157,11 +162,11 @@ function(xmera_add_swig_message message)
       "${CMAKE_CURRENT_BINARY_DIR}/${message}.i"
       "${CMAKE_CURRENT_SOURCE_DIR}/${message}.h"
       "${message}"
-      "${CMAKE_CURRENT_SOURCE_DIR}"
+      "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDef"
     WORKING_DIRECTORY
       "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource"
     MAIN_DEPENDENCY
-      "${CMAKE_CURRENT_SOURCE_DIR}/${message}.h"
+      "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDef/${message}.h"
     DEPENDS
       "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/generateSWIGModules.py"
       "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/msgInterfacePy.i.in"

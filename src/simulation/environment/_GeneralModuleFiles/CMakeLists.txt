@@ -1,13 +1,27 @@
-add_library(environmentCommon OBJECT
-  atmosphereBase.cpp
-  magneticFieldBase.cpp
-)
+add_library(environmentCommon STATIC)
 
-target_include_directories(environmentCommon PRIVATE
-  "${CMAKE_SOURCE_DIR}"
+target_sources(environmentCommon
+  PRIVATE
+    atmosphereBase.cpp
+    magneticFieldBase.cpp
+
+  PUBLIC FILE_SET HEADERS
+  BASE_DIRS "${CMAKE_SOURCE_DIR}"
+  FILES
+    atmosphereBase.h
+    magneticFieldBase.h
 )
 
 target_link_libraries(environmentCommon PUBLIC
   Xmera::Core
+  Xmera::Messaging
+  ArchitectureUtilities
   Eigen3::Eigen
+)
+
+install(TARGETS environmentCommon
+  EXPORT xmera
+  DESTINATION lib
+  FILE_SET HEADERS
+    DESTINATION include
 )

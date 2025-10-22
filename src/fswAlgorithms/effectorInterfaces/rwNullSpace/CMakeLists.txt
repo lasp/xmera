@@ -16,4 +16,5 @@ target_link_libraries("${module}" PRIVATE
 
 target_link_libraries("${module}" PRIVATE
   ArchitectureUtilities
+  Xmera::Messaging
 )

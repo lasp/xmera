@@ -1,14 +1,27 @@
-add_library(powerCommon OBJECT
-  powerNodeBase.cpp
-  powerStorageBase.cpp
-)
+add_library(powerCommon STATIC)
 
-target_include_directories(powerCommon PRIVATE
-  "${CMAKE_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles"
+target_sources(powerCommon
+  PRIVATE
+    powerNodeBase.cpp
+    powerStorageBase.cpp
+
+  PUBLIC FILE_SET HEADERS
+  BASE_DIRS "${CMAKE_SOURCE_DIR}"
+  FILES
+    powerNodeBase.h
+    powerStorageBase.h
 )
 
 target_link_libraries(powerCommon PUBLIC
   Xmera::Core
+  Xmera::Messaging
+  ArchitectureUtilities
   Eigen3::Eigen
+)
+
+install(TARGETS powerCommon
+  EXPORT xmera
+  DESTINATION lib
+  FILE_SET HEADERS
+    DESTINATION include
 )

@@ -12,6 +12,7 @@ target_sources("${module}" PRIVATE
 )
 
 target_link_libraries("${module}" PRIVATE
+  Xmera::Messaging
   ArchitectureUtilities
   opencv_imgcodecs
 )

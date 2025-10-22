@@ -9,3 +9,7 @@ target_sources("${module}" PRIVATE
   ephemNavConverter.cpp
   ephemNavConverterAlgorithm.cpp
 )
+
+target_link_libraries("${module}" PRIVATE
+  Xmera::Messaging
+)
