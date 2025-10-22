@@ -24,9 +24,9 @@
 
 /*! @brief 2nd order Runge-Kutta integrator */
 class svIntegratorRK2 : public svIntegratorRungeKutta<2> {
-  public:
-    svIntegratorRK2(DynamicObject* dyn); //!< class method
-  private:
+   public:
+    svIntegratorRK2(DynamicObject* dyn);  //!< class method
+   private:
     static RKCoefficients<2> getCoefficients();
 };
 

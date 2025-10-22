@@ -61,7 +61,7 @@ class CobConverter : public SysModel {
     double getRadius() const;
     void setRadiusUncertainty(double radiusUncertainty);
     double getRadiusUncertainty() const;
-    void setAttitudeCovariance(const Eigen::Matrix3d &covAtt_BN_B);
+    void setAttitudeCovariance(const Eigen::Matrix3d& covAtt_BN_B);
     Eigen::Matrix3d getAttitudeCovariance() const;
     void setNumStandardDeviations(double num);
     double getNumStandardDeviations() const;

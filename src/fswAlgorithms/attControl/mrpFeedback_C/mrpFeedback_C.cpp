@@ -108,7 +108,7 @@ void MrpFeedback_C::updateState(uint64_t callTime) {
     double v3_12[3];
     double intCheck; /* Check magnitude of integrated attitude error */
     int i;
-    double *wheelGs; /* Reaction wheel spin axis pointer */
+    double* wheelGs; /* Reaction wheel spin axis pointer */
 
     /*! - Read the attitude tracking error message */
     guidCmd = this->guidInMsg();

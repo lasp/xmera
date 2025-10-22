@@ -41,7 +41,7 @@ class SimpleSolarPanel : public PowerNodeBase {
     void setPanelParameters(Eigen::Vector3d nHat_B, double panelArea, double panelEfficiency);
 
    private:
-    void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
+    void evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageMsg);
     void computeSunData();
 
    public:

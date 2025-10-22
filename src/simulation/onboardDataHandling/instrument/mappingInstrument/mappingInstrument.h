@@ -39,14 +39,14 @@ class MappingInstrument : public SysModel {
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
-    void addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg,
+    void addMappingPoint(Message<AccessMsgPayload>* tmpAccessMsg,
                          std::string dataName);  //!< connects accessMsgPayload to instrument
 
    public:
-    std::vector<Message<DataNodeUsageMsgPayload> *> dataNodeOutMsgs;  //!< vector of data node output messages
-    std::vector<ReadFunctor<AccessMsgPayload>> accessInMsgs;          //!< vector of ground location access messages
-    BSKLogger bskLogger;                                              //!< -- BSK Logging
-    double nodeBaudRate = -1;                                         //!< [baud] Data provided (+).
+    std::vector<Message<DataNodeUsageMsgPayload>*> dataNodeOutMsgs;  //!< vector of data node output messages
+    std::vector<ReadFunctor<AccessMsgPayload>> accessInMsgs;         //!< vector of ground location access messages
+    BSKLogger bskLogger;                                             //!< -- BSK Logging
+    double nodeBaudRate = -1;                                        //!< [baud] Data provided (+).
 
    private:
     std::vector<std::string> mappingPoints;

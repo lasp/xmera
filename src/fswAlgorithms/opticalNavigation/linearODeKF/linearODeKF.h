@@ -46,7 +46,7 @@ class LinearODeKF : public EkfInterface {
     void customreset() final;
     void readFilterMeasurements() final;
     void writeOutputMessages(uint64_t currentSimNanos) final;
-    static Eigen::MatrixXd measurementMatrix(const FilterStateVector &state);
+    static Eigen::MatrixXd measurementMatrix(const FilterStateVector& state);
 
    public:
     ReadFunctor<OpNavUnitVecMsgPayload> opNavHeadingMsg;
@@ -55,7 +55,7 @@ class LinearODeKF : public EkfInterface {
     Message<FilterMsgPayload> opNavFilterMsg;
     Message<FilterResidualsMsgPayload> opNavResidualMsg;
 
-    void setConstantVelocity(const Eigen::Vector3d &velocity);
+    void setConstantVelocity(const Eigen::Vector3d& velocity);
     std::optional<Eigen::Vector3d> getConstantVelocity() const;
 
    private:

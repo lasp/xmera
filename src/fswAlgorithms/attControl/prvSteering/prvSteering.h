@@ -45,6 +45,6 @@ class PrvSteering : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-void PRVSteeringLaw(PrvSteering *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
+void PRVSteeringLaw(PrvSteering* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
 #endif

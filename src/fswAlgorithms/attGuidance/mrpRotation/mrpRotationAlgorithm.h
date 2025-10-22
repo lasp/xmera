@@ -38,10 +38,10 @@ class MrpRotationAlgorithm {
                                                  Eigen::Vector3d omega_R0N_N,
                                                  Eigen::Vector3d domega_R0N_N);
 
-    void setSigmaRR0(const Eigen::Vector3d &sigma);
-    const Eigen::Vector3d &getSigmaRR0() const;
-    void setOmegaRR0(const Eigen::Vector3d &omega);
-    const Eigen::Vector3d &getOmegaRR0() const;
+    void setSigmaRR0(const Eigen::Vector3d& sigma);
+    const Eigen::Vector3d& getSigmaRR0() const;
+    void setOmegaRR0(const Eigen::Vector3d& omega);
+    const Eigen::Vector3d& getOmegaRR0() const;
     void enableDynamicReference();
     const bool isDynamicReferenceEnabled() const;
 

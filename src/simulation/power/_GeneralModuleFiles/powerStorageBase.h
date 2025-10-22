@@ -37,7 +37,7 @@ class PowerStorageBase : public SysModel {
     PowerStorageBase();
     ~PowerStorageBase();
     void reset(uint64_t currentSimNanos);
-    void addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tmpNodeMsg);
+    void addPowerNodeToModel(Message<PowerNodeUsageMsgPayload>* tmpNodeMsg);
     void updateState(uint64_t currentSimNanos);
 
    protected:
@@ -47,7 +47,7 @@ class PowerStorageBase : public SysModel {
         double currentTime);  //!< Integrates the net power given the current time using a simple Euler method.
     double sumAllInputs();    //!< Sums over the input power consumption messages.
     virtual void evaluateBatteryModel(
-        PowerStorageStatusMsgPayload *msg) = 0;  //!< Virtual function to represent power storage computation or losses.
+        PowerStorageStatusMsgPayload* msg) = 0;  //!< Virtual function to represent power storage computation or losses.
     virtual void customreset(uint64_t CurrentClock);             //!< Custom reset() method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t currentSimNanos);  //!< Custom Write() method, similar to customSelfInit.
     virtual bool customReadMessages();                           //!< Custom Read() method, similar to customSelfInit.

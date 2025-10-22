@@ -30,9 +30,9 @@
 
 class SunlineEphemAlgorithm {
    public:
-    NavAttMsgPayload updateState(const EphemerisMsgPayload &sunPos,
-                                 const NavTransMsgPayload &scPos,
-                                 const NavAttMsgPayload &scAtt) const;
+    NavAttMsgPayload updateState(const EphemerisMsgPayload& sunPos,
+                                 const NavTransMsgPayload& scPos,
+                                 const NavAttMsgPayload& scAtt) const;
 };
 
 #endif

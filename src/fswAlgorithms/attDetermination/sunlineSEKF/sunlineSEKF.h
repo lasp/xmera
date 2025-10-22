@@ -88,28 +88,28 @@ class SunlineSEKF : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-void sunlineTimeUpdate(SunlineSEKF *data, double updateTime);
-void sunlineMeasUpdate(SunlineSEKF *data, double updateTime);
+void sunlineTimeUpdate(SunlineSEKF* data, double updateTime);
+void sunlineMeasUpdate(SunlineSEKF* data, double updateTime);
 void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
                          double bVec[SKF_N_STATES],
                          double dt,
-                         double *stateInOut,
-                         double *stateTransition);
+                         double* stateInOut,
+                         double* stateTransition);
 void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH],
                          size_t numCSS,
                          double cssSensorCos[MAX_N_CSS_MEAS],
                          double sensorUseThresh,
                          double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
-                         double *obs,
-                         double *yMeas,
-                         int *numObs,
-                         double *measMat);
+                         double* obs,
+                         double* yMeas,
+                         int* numObs,
+                         double* measMat);
 void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
                        double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
                        double qObsVal,
                        size_t numObs,
-                       double *kalmanGain);
-void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *dynMat);
+                       double* kalmanGain);
+void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double* dynMat);
 void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH],
                       double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
                       double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
@@ -117,18 +117,18 @@ void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH],
                       size_t numObs,
                       double yObs[MAX_N_CSS_MEAS],
                       double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
-                      double *x,
-                      double *covar);
+                      double* x,
+                      double* covar);
 void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
                        double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
                        double qObsVal,
                        size_t numObs,
                        double yObs[MAX_N_CSS_MEAS],
                        double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
-                       double *states,
-                       double *x,
-                       double *covar);
-void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar);
-void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
+                       double* states,
+                       double* x,
+                       double* covar);
+void sunlineSEKFSwitch(double* bVec_B, double* states, double* covar);
+void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double* dcm);
 
 #endif

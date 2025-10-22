@@ -43,7 +43,7 @@ class SunlineSRuKF : public SRukfInterface {
     void readFilterMeasurements() final;
     void customFinalizeUpdate() final;
     void writeOutputMessages(uint64_t currentSimNanos) final;
-    static FilterStateVector stateDerivative(double t, const FilterStateVector &state);
+    static FilterStateVector stateDerivative(double t, const FilterStateVector& state);
 
     int filterMeasurement = 0;    //!< [-] Number of measurements of different types being read
     int numActiveCss = 0;         //!< [-] Number of currently active CSS sensors

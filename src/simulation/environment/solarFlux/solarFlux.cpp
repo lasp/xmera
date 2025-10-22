@@ -20,12 +20,10 @@
 #include "solarFlux.h"
 #include <architecture/utilities/astroConstants.h>
 
-
 /*! This method is used to reset the module. Currently no tasks are required.
  @return void
  */
-void SolarFlux::reset(uint64_t currentSimNanos)
-{
+void SolarFlux::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "solarFlux.sunPositionInMsg was not linked.");
@@ -40,8 +38,7 @@ void SolarFlux::reset(uint64_t currentSimNanos)
 /*! Read Messages and scale the solar flux then write it out
  @return void
  */
-void SolarFlux::updateState(uint64_t currentSimNanos)
-{
+void SolarFlux::updateState(uint64_t currentSimNanos) {
     this->readMessages();
 
     /*! - evaluate spacecraft position relative to the sun in N frame components */
@@ -59,8 +56,7 @@ void SolarFlux::updateState(uint64_t currentSimNanos)
 /*! This method is used to  read messages and save values to member attributes
  @return void
  */
-void SolarFlux::readMessages()
-{
+void SolarFlux::readMessages() {
     /*! - read in planet state message (required) */
     SpicePlanetStateMsgPayload sunPositionMsgData;
     sunPositionMsgData = this->sunPositionInMsg();
@@ -77,7 +73,6 @@ void SolarFlux::readMessages()
         eclipseInMsgData = this->eclipseInMsg();
         this->eclipseFactor = eclipseInMsgData.shadowFactor;
     }
-
 }
 
 /*! This method is used to write the output flux message

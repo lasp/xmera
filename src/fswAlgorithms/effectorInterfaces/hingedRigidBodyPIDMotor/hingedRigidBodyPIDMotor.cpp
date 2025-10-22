@@ -17,7 +17,6 @@
 
  */
 
-
 /* modify the path to reflect the new module names */
 #include "hingedRigidBodyPIDMotor.h"
 
@@ -29,8 +28,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void HingedRigidBodyPIDMotor::reset(uint64_t callTime)
-{
+void HingedRigidBodyPIDMotor::reset(uint64_t callTime) {
     if (!this->hingedRigidBodyInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: solarArrayAngle.hingedRigidBodyInMsg wasn't connected.");
     }
@@ -48,15 +46,14 @@ void HingedRigidBodyPIDMotor::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void HingedRigidBodyPIDMotor::updateState(uint64_t callTime)
-{
+void HingedRigidBodyPIDMotor::updateState(uint64_t callTime) {
     /*! - Create and assign buffer messages */
     ArrayMotorTorqueMsgPayload motorTorqueOut = {};
-    HingedRigidBodyMsgPayload  hingedRigidBodyIn = this->hingedRigidBodyInMsg();
-    HingedRigidBodyMsgPayload  hingedRigidBodyRefIn = this->hingedRigidBodyRefInMsg();
+    HingedRigidBodyMsgPayload hingedRigidBodyIn = this->hingedRigidBodyInMsg();
+    HingedRigidBodyMsgPayload hingedRigidBodyRefIn = this->hingedRigidBodyRefInMsg();
 
     /*! compute angle error and error rate */
-    double thetaError    = hingedRigidBodyRefIn.theta - hingedRigidBodyIn.theta;
+    double thetaError = hingedRigidBodyRefIn.theta - hingedRigidBodyIn.theta;
     double thetaErrorDot = hingedRigidBodyRefIn.thetaDot - hingedRigidBodyIn.thetaDot;
 
     /*! extract gains from input */

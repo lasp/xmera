@@ -22,43 +22,41 @@
 #include "relativeODuKF.h"
 #include <architecture/utilities/ukfUtilities.h>
 
-/*! Function for two body dynamics solvers in order to use in the RK4. Only two body dynamics is used currently, but SRP, Solar Gravity, spherical harmonics can be added here.
+/*! Function for two body dynamics solvers in order to use in the RK4. Only two body dynamics is used currently, but
+ SRP, Solar Gravity, spherical harmonics can be added here.
  @return double Next state
  @param state The starting state
  @param muPlanet Planet gravity constant
  @param stateDeriv State derivative vector
  */
-static void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double *stateDeriv)
-{
+static void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double* stateDeriv) {
     double rNorm;
     double dvdt[3];
 
     rNorm = v3Norm(state);
     v3Copy(&state[3], stateDeriv);
     v3Copy(state, dvdt);
-    v3Scale(-muPlanet/pow(rNorm, 3), dvdt, &stateDeriv[3]);
+    v3Scale(-muPlanet / pow(rNorm, 3), dvdt, &stateDeriv[3]);
     return;
 }
-
 
 /*! This method resets the relative OD filter to an initial state and
  initializes the internal estimation matrices.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RelODuKF::reset(uint64_t callTime)
-{
+void RelODuKF::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->opNavInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: relativeODuKF.opNavInMsg wasn't connected.");
     }
 
     size_t i;
-    int32_t badUpdate=0; /* Negative badUpdate is faulty, */
-    double tempMatrix[ODUKF_N_STATES*ODUKF_N_STATES];
+    int32_t badUpdate = 0; /* Negative badUpdate is faulty, */
+    double tempMatrix[ODUKF_N_STATES * ODUKF_N_STATES];
 
     /*! - Initialize filter parameters to max values */
-    this->timeTag = callTime*NANO2SEC;
+    this->timeTag = callTime * NANO2SEC;
     this->dt = 0.0;
     this->numStates = ODUKF_N_STATES;
     this->countHalfSPs = ODUKF_N_STATES;
@@ -71,53 +69,41 @@ void RelODuKF::reset(uint64_t callTime)
     vSetZero(this->wM, this->countHalfSPs * 2 + 1);
     vSetZero(this->wC, this->countHalfSPs * 2 + 1);
     mSetZero(this->sBar, this->numStates, this->numStates);
-    mSetZero(this->SP, this->countHalfSPs * 2 + 1,
-             this->numStates);
+    mSetZero(this->SP, this->countHalfSPs * 2 + 1, this->numStates);
     mSetZero(this->sQnoise, this->numStates, this->numStates);
     mSetZero(this->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS);
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
-    this->lambdaVal = this->alpha*this->alpha*
-    (this->numStates + this->kappa) - this->numStates;
+    this->lambdaVal = this->alpha * this->alpha * (this->numStates + this->kappa) - this->numStates;
     this->gamma = sqrt(this->numStates + this->lambdaVal);
 
-
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    this->wM[0] = this->lambdaVal / (this->numStates +
-                                                 this->lambdaVal);
-    this->wC[0] = this->lambdaVal / (this->numStates +
-                                                 this->lambdaVal) + (1 - this->alpha*this->alpha + this->beta);
-    for (i = 1; i<this->countHalfSPs * 2 + 1; i++)
-    {
-        this->wM[i] = 1.0 / 2.0*1.0 / (this->numStates + this->lambdaVal);
+    this->wM[0] = this->lambdaVal / (this->numStates + this->lambdaVal);
+    this->wC[0] = this->lambdaVal / (this->numStates + this->lambdaVal) + (1 - this->alpha * this->alpha + this->beta);
+    for (i = 1; i < this->countHalfSPs * 2 + 1; i++) {
+        this->wM[i] = 1.0 / 2.0 * 1.0 / (this->numStates + this->lambdaVal);
         this->wC[i] = this->wM[i];
     }
 
     vCopy(this->stateInit, this->numStates, this->state);
-    v6Scale(1E-3, this->state, this->state); // Convert to km
+    v6Scale(1E-3, this->state, this->state);  // Convert to km
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in filter at runtime*/
-    mCopy(this->covarInit, this->numStates, this->numStates,
-          this->sBar);
-    vScale(1E-6, this->sBar, ODUKF_N_STATES*ODUKF_N_STATES, this->sBar); // Convert to km
-    mCopy(this->covarInit, this->numStates, this->numStates,
-          this->covar);
-    vScale(1E-6, this->covar, ODUKF_N_STATES*ODUKF_N_STATES, this->covar); // Convert to km
+    mCopy(this->covarInit, this->numStates, this->numStates, this->sBar);
+    vScale(1E-6, this->sBar, ODUKF_N_STATES * ODUKF_N_STATES, this->sBar);  // Convert to km
+    mCopy(this->covarInit, this->numStates, this->numStates, this->covar);
+    vScale(1E-6, this->covar, ODUKF_N_STATES * ODUKF_N_STATES, this->covar);  // Convert to km
 
     mSetZero(tempMatrix, this->numStates, this->numStates);
-    badUpdate += ukfCholDecomp(this->sBar, (int) this->numStates,
-                               (int) this->numStates, tempMatrix);
+    badUpdate += ukfCholDecomp(this->sBar, (int)this->numStates, (int)this->numStates, tempMatrix);
 
-    badUpdate += ukfCholDecomp(this->qNoise, (int) this->numStates,
-                               (int) this->numStates, this->sQnoise);
+    badUpdate += ukfCholDecomp(this->qNoise, (int)this->numStates, (int)this->numStates, this->sQnoise);
 
-    mCopy(tempMatrix, this->numStates, this->numStates,
-          this->sBar);
-    mTranspose(this->sQnoise, this->numStates,
-               this->numStates, this->sQnoise);
+    mCopy(tempMatrix, this->numStates, this->numStates, this->sBar);
+    mTranspose(this->sQnoise, this->numStates, this->numStates, this->sQnoise);
 
     this->timeTagOut = this->timeTag;
 
-    if (badUpdate <0){
+    if (badUpdate < 0) {
         this->bskLogger.bskLog(BSK_WARNING, "relODuKF: Reset method contained bad update");
     }
 
@@ -133,9 +119,8 @@ void RelODuKF::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RelODuKF::updateState(uint64_t callTime)
-{
-    double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
+void RelODuKF::updateState(uint64_t callTime) {
+    double newTimeTag = 0.0; /* [s] Local Time-tag variable*/
     double yBar[3], tempYVec[3];
     uint32_t i;
     int computePostFits;
@@ -149,13 +134,12 @@ void RelODuKF::updateState(uint64_t callTime)
     // read input message
     inputRelOD = this->opNavInMsg();
     v3Scale(1E-3, inputRelOD.r_BN_N, inputRelOD.r_BN_N);
-    vScale(1E-6, inputRelOD.covar_N, ODUKF_N_MEAS*ODUKF_N_MEAS,inputRelOD.covar_N);
+    vScale(1E-6, inputRelOD.covar_N, ODUKF_N_MEAS * ODUKF_N_MEAS, inputRelOD.covar_N);
     /*! - Handle initializing time in filter and discard initial messages*/
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
     newTimeTag = this->opNavInMsg.timeWritten() * NANO2SEC;
-    if(newTimeTag >= this->timeTag && this->opNavInMsg.isWritten() && inputRelOD.valid ==1)
-    {
+    if (newTimeTag >= this->timeTag && this->opNavInMsg.isWritten() && inputRelOD.valid == 1) {
         this->opNavInBuffer = inputRelOD;
         this->planetId = inputRelOD.planetID;
         this->relODuKFTimeUpdate(newTimeTag);
@@ -164,50 +148,45 @@ void RelODuKF::updateState(uint64_t callTime)
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    newTimeTag = callTime*NANO2SEC;
-    if(newTimeTag >= this->timeTag)
-    {
+    newTimeTag = callTime * NANO2SEC;
+    if (newTimeTag >= this->timeTag) {
         this->relODuKFTimeUpdate(newTimeTag);
     }
 
-
-    /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit residuals*/
-    if(computePostFits == 1){
+    /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit
+     * residuals*/
+    if (computePostFits == 1) {
         /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
         this->relODuKFMeasModel();
 
         /*! - Compute the value for the yBar parameter (equation 23)*/
         vSetZero(yBar, this->numObs);
-        for(i=0; i<this->countHalfSPs*2+1; i++)
-        {
-            vCopy(&(this->yMeas[i*this->numObs]), this->numObs,
-                  tempYVec);
+        for (i = 0; i < this->countHalfSPs * 2 + 1; i++) {
+            vCopy(&(this->yMeas[i * this->numObs]), this->numObs, tempYVec);
             vScale(this->wM[i], tempYVec, this->numObs, tempYVec);
             vAdd(yBar, this->numObs, tempYVec, yBar);
         }
         mSubtract(this->obs, ODUKF_N_MEAS, 1, yBar, this->postFits);
     }
 
-
     /*! - Write the relative OD estimate into the copy of the navigation message structure*/
     v3Copy(this->state, outputRelOD.r_BN_N);
     outputRelOD.timeTag = this->timeTag;
-    v3Scale(1E3, outputRelOD.r_BN_N, outputRelOD.r_BN_N); // Convert to m
+    v3Scale(1E3, outputRelOD.r_BN_N, outputRelOD.r_BN_N);  // Convert to m
     v3Copy(&this->state[3], outputRelOD.v_BN_N);
-    v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N); // Convert to m
+    v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N);  // Convert to m
     outputRelOD.timeTag = this->timeTagOut;
 
     this->navStateOutMsg.write(&outputRelOD, this->moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = this->timeTag;
-    memmove(opNavOutBuffer.covar, this->covar,
-            ODUKF_N_STATES*ODUKF_N_STATES*sizeof(double));
-    memmove(opNavOutBuffer.state, this->state, ODUKF_N_STATES*sizeof(double));
-    memmove(opNavOutBuffer.postFitRes, this->postFits, ODUKF_N_MEAS*sizeof(double));
-    v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state); // Convert to m
-    v3Scale(1E3, opNavOutBuffer.postFitRes, opNavOutBuffer.postFitRes); // Convert to m
-    vScale(1E6, opNavOutBuffer.covar, ODUKF_N_STATES*ODUKF_N_STATES, opNavOutBuffer.covar); // Convert to m
+    memmove(opNavOutBuffer.covar, this->covar, ODUKF_N_STATES * ODUKF_N_STATES * sizeof(double));
+    memmove(opNavOutBuffer.state, this->state, ODUKF_N_STATES * sizeof(double));
+    memmove(opNavOutBuffer.postFitRes, this->postFits, ODUKF_N_MEAS * sizeof(double));
+    v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state);                                  // Convert to m
+    v3Scale(1E3, opNavOutBuffer.postFitRes, opNavOutBuffer.postFitRes);                        // Convert to m
+    vScale(1E6, opNavOutBuffer.covar, ODUKF_N_STATES * ODUKF_N_STATES, opNavOutBuffer.covar);  // Convert to m
 
     this->filtDataOutMsg.write(&opNavOutBuffer, this->moduleID, callTime);
 
@@ -220,24 +199,28 @@ void RelODuKF::updateState(uint64_t callTime)
  @param stateInOut The state that is propagated
  @param dt Time step (s)
  */
-void RelODuKF::relODStateProp(double *stateInOut, double dt)
-{
-
+void RelODuKF::relODStateProp(double* stateInOut, double dt) {
     double muPlanet;
     double k1[ODUKF_N_STATES], k2[ODUKF_N_STATES], k3[ODUKF_N_STATES], k4[ODUKF_N_STATES];
     double states1[ODUKF_N_STATES], states2[ODUKF_N_STATES], states3[ODUKF_N_STATES];
-    if(this->planetId ==1){muPlanet = MU_EARTH;} //in km
-    if(this->planetId ==2){muPlanet = MU_MARS;} //in km
-    if(this->planetId ==3){muPlanet = MU_JUPITER;} //in km
+    if (this->planetId == 1) {
+        muPlanet = MU_EARTH;
+    }  // in km
+    if (this->planetId == 2) {
+        muPlanet = MU_MARS;
+    }  // in km
+    if (this->planetId == 3) {
+        muPlanet = MU_JUPITER;
+    }  // in km
 
     /*! Start RK4 */
     /*! - Compute k1 */
     relODuKFTwoBodyDyn(stateInOut, muPlanet, &k1[0]);
-    vScale(dt/2, k1, ODUKF_N_STATES, k1); // k1 is now k1/2
+    vScale(dt / 2, k1, ODUKF_N_STATES, k1);  // k1 is now k1/2
     /*! - Compute k2 */
     vAdd(stateInOut, ODUKF_N_STATES, k1, states1);
     relODuKFTwoBodyDyn(states1, muPlanet, &k2[0]);
-    vScale(dt/2, k2, ODUKF_N_STATES, k2); // k2 is now k2/2
+    vScale(dt / 2, k2, ODUKF_N_STATES, k2);  // k2 is now k2/2
     /*! - Compute k3 */
     vAdd(stateInOut, ODUKF_N_STATES, k2, states2);
     relODuKFTwoBodyDyn(states2, muPlanet, &k3[0]);
@@ -247,10 +230,10 @@ void RelODuKF::relODStateProp(double *stateInOut, double dt)
     relODuKFTwoBodyDyn(states3, muPlanet, &k4[0]);
     vScale(dt, k4, ODUKF_N_STATES, k4);
     /*! - Gather all terms with proper scales */
-    vScale(1./3., k1, ODUKF_N_STATES, k1); // k1 is now k1/6
-    vScale(2./3., k2, ODUKF_N_STATES, k2); // k2 is now k2/3
-    vScale(1./3., k3, ODUKF_N_STATES, k3); // k3 is now k2/3
-    vScale(1./6., k4, ODUKF_N_STATES, k4); // k4 is now k2/6
+    vScale(1. / 3., k1, ODUKF_N_STATES, k1);  // k1 is now k1/6
+    vScale(2. / 3., k2, ODUKF_N_STATES, k2);  // k2 is now k2/3
+    vScale(1. / 3., k3, ODUKF_N_STATES, k3);  // k3 is now k2/3
+    vScale(1. / 6., k4, ODUKF_N_STATES, k4);  // k4 is now k2/6
 
     vAdd(stateInOut, ODUKF_N_STATES, k1, stateInOut);
     vAdd(stateInOut, ODUKF_N_STATES, k2, stateInOut);
@@ -266,16 +249,17 @@ void RelODuKF::relODStateProp(double *stateInOut, double dt)
  @return void
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int RelODuKF::relODuKFTimeUpdate(double updateTime)
-{
+int RelODuKF::relODuKFTimeUpdate(double updateTime) {
     uint64_t i, Index;
-    double sBarT[ODUKF_N_STATES*ODUKF_N_STATES]; // Sbar transpose (chol decomp of covar)
-    double xComp[ODUKF_N_STATES], AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES)*ODUKF_N_STATES]; // Intermediate state, process noise chol decomp
-    double aRow[ODUKF_N_STATES], rAT[ODUKF_N_STATES*ODUKF_N_STATES], xErr[ODUKF_N_STATES]; //Row of A mat, R of QR decomp of A, state error
-    double sBarUp[ODUKF_N_STATES*ODUKF_N_STATES]; // S bar cholupdate
-    double *spPtr; //sigma point intermediate varaible
-    double procNoise[ODUKF_N_STATES*ODUKF_N_STATES]; //process noise
-    int32_t badUpdate=0;
+    double sBarT[ODUKF_N_STATES * ODUKF_N_STATES];  // Sbar transpose (chol decomp of covar)
+    double xComp[ODUKF_N_STATES],
+        AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES) * ODUKF_N_STATES];  // Intermediate state, process noise chol decomp
+    double aRow[ODUKF_N_STATES], rAT[ODUKF_N_STATES * ODUKF_N_STATES],
+        xErr[ODUKF_N_STATES];                           // Row of A mat, R of QR decomp of A, state error
+    double sBarUp[ODUKF_N_STATES * ODUKF_N_STATES];     // S bar cholupdate
+    double* spPtr;                                      // sigma point intermediate varaible
+    double procNoise[ODUKF_N_STATES * ODUKF_N_STATES];  // process noise
+    int32_t badUpdate = 0;
 
     this->dt = updateTime - this->timeTag;
     vCopy(this->state, this->numStates, this->statePrev);
@@ -283,30 +267,25 @@ int RelODuKF::relODuKFTimeUpdate(double updateTime)
     mCopy(this->covar, this->numStates, this->numStates, this->covarPrev);
 
     /*! - Read the planet ID from the message*/
-    if(this->planetId == 0)
-    {
-      this->bskLogger.bskLog(BSK_ERROR, "relODuKF: Need a planet to navigate");
+    if (this->planetId == 0) {
+        this->bskLogger.bskLog(BSK_ERROR, "relODuKF: Need a planet to navigate");
     }
 
     mCopy(this->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
-    vCopy(this->state, this->numStates,
-          &(this->SP[0 * this->numStates + 0]));
+    vCopy(this->state, this->numStates, &(this->SP[0 * this->numStates + 0]));
     this->relODStateProp(&(this->SP[0]), this->dt);
     /*! - Scale that Sigma point by the appropriate scaling factor (Wm[0])*/
-    vScale(this->wM[0], &(this->SP[0]),
-           this->numStates, this->xBar);
+    vScale(this->wM[0], &(this->SP[0]), this->numStates, this->xBar);
     /*! - Get the transpose of the sBar matrix because it is easier to extract Rows vs columns*/
-    mTranspose(this->sBar, this->numStates, this->numStates,
-               sBarT);
+    mTranspose(this->sBar, this->numStates, this->numStates, sBarT);
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
      Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-    for (i = 0; i<this->countHalfSPs; i++)
-    {
+    for (i = 0; i < this->countHalfSPs; i++) {
         /*! - Adding covariance columns from sigma points*/
         Index = i + 1;
-        spPtr = &(this->SP[Index*this->numStates]);
-        vCopy(&sBarT[i*this->numStates], this->numStates, spPtr);
+        spPtr = &(this->SP[Index * this->numStates]);
+        vCopy(&sBarT[i * this->numStates], this->numStates, spPtr);
         vScale(this->gamma, spPtr, this->numStates, spPtr);
         vAdd(spPtr, this->numStates, this->state, spPtr);
         this->relODStateProp(spPtr, this->dt);
@@ -314,8 +293,8 @@ int RelODuKF::relODuKFTimeUpdate(double updateTime)
         vAdd(xComp, this->numStates, this->xBar, this->xBar);
         /*! - Subtracting covariance columns from sigma points*/
         Index = i + 1 + this->countHalfSPs;
-        spPtr = &(this->SP[Index*this->numStates]);
-        vCopy(&sBarT[i*this->numStates], this->numStates, spPtr);
+        spPtr = &(this->SP[Index * this->numStates]);
+        vCopy(&sBarT[i * this->numStates], this->numStates, spPtr);
         vScale(-this->gamma, spPtr, this->numStates, spPtr);
         vAdd(spPtr, this->numStates, this->state, spPtr);
         this->relODStateProp(spPtr, this->dt);
@@ -323,82 +302,65 @@ int RelODuKF::relODuKFTimeUpdate(double updateTime)
         vAdd(xComp, this->numStates, this->xBar, this->xBar);
     }
     /*! - Zero the AT matrix prior to assembly*/
-    mSetZero(AT, (2 * this->countHalfSPs + this->numStates),
-             this->countHalfSPs);
+    mSetZero(AT, (2 * this->countHalfSPs + this->numStates), this->countHalfSPs);
     /*! - Assemble the AT matrix.  Note that this matrix is the internals of
      the qr decomposition call in the source design documentation.  It is
      the inside of equation 20 in that document*/
-    for (i = 0; i<2 * this->countHalfSPs; i++)
-    {
+    for (i = 0; i < 2 * this->countHalfSPs; i++) {
         vScale(-1.0, this->xBar, this->numStates, aRow);
-        vAdd(aRow, this->numStates,
-             &(this->SP[(i+1)*this->numStates]), aRow);
+        vAdd(aRow, this->numStates, &(this->SP[(i + 1) * this->numStates]), aRow);
         /*Check sign of wC to know if the sqrt will fail*/
-        if (this->wC[i+1]<=0){
+        if (this->wC[i + 1] <= 0) {
             this->relODuKFCleanUpdate();
-            return -1;}
-        vScale(sqrt(this->wC[i+1]), aRow, this->numStates, aRow);
-        memcpy((void *)&AT[(size_t)i*this->numStates], (void *)aRow,
-               this->numStates*sizeof(double));
-
+            return -1;
+        }
+        vScale(sqrt(this->wC[i + 1]), aRow, this->numStates, aRow);
+        memcpy((void*)&AT[(size_t)i * this->numStates], (void*)aRow, this->numStates * sizeof(double));
     }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
-    memcpy(&AT[2 * this->countHalfSPs*this->numStates],
-           procNoise, this->numStates*this->numStates
-           *sizeof(double));
+    memcpy(
+        &AT[2 * this->countHalfSPs * this->numStates], procNoise, this->numStates * this->numStates * sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, (int) (2 * this->countHalfSPs + this->numStates),
-                (int) this->countHalfSPs, rAT);
+    ukfQRDJustR(AT, (int)(2 * this->countHalfSPs + this->numStates), (int)this->countHalfSPs, rAT);
 
     mCopy(rAT, this->numStates, this->numStates, sBarT);
-    mTranspose(sBarT, this->numStates, this->numStates,
-               this->sBar);
+    mTranspose(sBarT, this->numStates, this->numStates, this->sBar);
 
     /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight
      like in equation 21 in design document.*/
     vScale(-1.0, this->xBar, this->numStates, xErr);
     vAdd(xErr, this->numStates, &this->SP[0], xErr);
-    badUpdate += ukfCholDownDate(this->sBar, xErr, this->wC[0],
-                                 (int) this->numStates, sBarUp);
-
+    badUpdate += ukfCholDownDate(this->sBar, xErr, this->wC[0], (int)this->numStates, sBarUp);
 
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, this->numStates, this->numStates, this->sBar);
-    mTranspose(this->sBar, this->numStates, this->numStates,
-               this->covar);
-    mMultM(this->sBar, this->numStates, this->numStates,
-           this->covar, this->numStates, this->numStates,
-           this->covar);
+    mTranspose(this->sBar, this->numStates, this->numStates, this->covar);
+    mMultM(this->sBar, this->numStates, this->numStates, this->covar, this->numStates, this->numStates, this->covar);
     vCopy(&(this->SP[0]), this->numStates, this->state);
 
-    if (badUpdate<0){
+    if (badUpdate < 0) {
         this->relODuKFCleanUpdate();
-        return(-1);}
-    else{
+        return (-1);
+    } else {
         this->timeTag = updateTime;
     }
-    return(0);
+    return (0);
 }
 
 /*! This method computes the measurement model.  Given that the data is coming from
  the pixelLine Converter, the transformation has already taken place from pixel data to spacecraft position.
  @return void
  */
-void RelODuKF::relODuKFMeasModel()
-{
+void RelODuKF::relODuKFMeasModel() {
     size_t i, j;
     v3Copy(this->opNavInBuffer.r_BN_N, this->obs);
-    for(j=0; j<this->countHalfSPs*2+1; j++)
-    {
-        for(i=0; i<3; i++)
-            this->yMeas[i*((int) this->countHalfSPs*2+1) + j] =
-            this->SP[i + j*ODUKF_N_STATES];
+    for (j = 0; j < this->countHalfSPs * 2 + 1; j++) {
+        for (i = 0; i < 3; i++)
+            this->yMeas[i * ((int)this->countHalfSPs * 2 + 1) + j] = this->SP[i + j * ODUKF_N_STATES];
     }
 
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
-    mTranspose(this->yMeas, ODUKF_N_MEAS, this->countHalfSPs*2+1,
-               this->yMeas);
-
+    mTranspose(this->yMeas, ODUKF_N_MEAS, this->countHalfSPs * 2 + 1, this->yMeas);
 }
 
 /*! This method performs the measurement update for the kalman filter.
@@ -406,17 +368,18 @@ void RelODuKF::relODuKFMeasModel()
  updates the state/covariance with that information.
  @return void
  */
-int RelODuKF::relODuKFMeasUpdate()
-{
+int RelODuKF::relODuKFMeasUpdate() {
     uint32_t i;
-    double yBar[3], syInv[3*3]; //measurement, Sy inv
-    double kMat[ODUKF_N_STATES*3], cholNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];//Kalman Gain, chol decomp of noise
-    double xHat[ODUKF_N_STATES], Ucol[ODUKF_N_STATES], sBarT[ODUKF_N_STATES*ODUKF_N_STATES], tempYVec[3];// state error, U column eq 28, intermediate variables
-    double AT[(2 * ODUKF_N_STATES + 3)*3]; //Process noise matrix
-    double rAT[3*3], syT[3*3]; //QR R decomp, Sy transpose
-    double sy[3*3]; // Chol of covariance
-    double updMat[3*3], pXY[ODUKF_N_STATES*3], Umat[ODUKF_N_STATES*3]; // Intermediate variable, covariance eq 26, U eq 28
-    int32_t badUpdate=0;
+    double yBar[3], syInv[3 * 3];                                             // measurement, Sy inv
+    double kMat[ODUKF_N_STATES * 3], cholNoise[ODUKF_N_MEAS * ODUKF_N_MEAS];  // Kalman Gain, chol decomp of noise
+    double xHat[ODUKF_N_STATES], Ucol[ODUKF_N_STATES], sBarT[ODUKF_N_STATES * ODUKF_N_STATES],
+        tempYVec[3];                          // state error, U column eq 28, intermediate variables
+    double AT[(2 * ODUKF_N_STATES + 3) * 3];  // Process noise matrix
+    double rAT[3 * 3], syT[3 * 3];            // QR R decomp, Sy transpose
+    double sy[3 * 3];                         // Chol of covariance
+    double updMat[3 * 3], pXY[ODUKF_N_STATES * 3],
+        Umat[ODUKF_N_STATES * 3];  // Intermediate variable, covariance eq 26, U eq 28
+    int32_t badUpdate = 0;
 
     vCopy(this->state, this->numStates, this->statePrev);
     mCopy(this->sBar, this->numStates, this->numStates, this->sBarPrev);
@@ -427,10 +390,8 @@ int RelODuKF::relODuKFMeasUpdate()
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
      time update section of the reference document*/
     vSetZero(yBar, this->numObs);
-    for(i=0; i<this->countHalfSPs*2+1; i++)
-    {
-        vCopy(&(this->yMeas[i*this->numObs]), this->numObs,
-              tempYVec);
+    for (i = 0; i < this->countHalfSPs * 2 + 1; i++) {
+        vCopy(&(this->yMeas[i * this->numObs]), this->numObs, tempYVec);
         vScale(this->wM[i], tempYVec, this->numObs, tempYVec);
         vAdd(yBar, this->numObs, tempYVec, yBar);
     }
@@ -438,17 +399,15 @@ int RelODuKF::relODuKFMeasUpdate()
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement
      update section of the code.  This is based on the differenence between the yBar
      parameter and the calculated measurement models.  Equation 24 in driving doc. */
-    mSetZero(AT, this->countHalfSPs*2+this->numObs,
-             this->numObs);
-    for(i=0; i<this->countHalfSPs*2; i++)
-    {
+    mSetZero(AT, this->countHalfSPs * 2 + this->numObs, this->numObs);
+    for (i = 0; i < this->countHalfSPs * 2; i++) {
         vScale(-1.0, yBar, this->numObs, tempYVec);
-        vAdd(tempYVec, this->numObs,
-             &(this->yMeas[(i+1)*this->numObs]), tempYVec);
-        if (this->wC[i+1]<0){return -1;}
-        vScale(sqrt(this->wC[i+1]), tempYVec, this->numObs, tempYVec);
-        memcpy(&(AT[i*this->numObs]), tempYVec,
-               this->numObs*sizeof(double));
+        vAdd(tempYVec, this->numObs, &(this->yMeas[(i + 1) * this->numObs]), tempYVec);
+        if (this->wC[i + 1] < 0) {
+            return -1;
+        }
+        vScale(sqrt(this->wC[i + 1]), tempYVec, this->numObs, tempYVec);
+        memcpy(&(AT[i * this->numObs]), tempYVec, this->numObs * sizeof(double));
     }
 
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
@@ -456,14 +415,12 @@ int RelODuKF::relODuKFMeasUpdate()
      of observations*/
     mSetIdentity(this->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS);
     mCopy(this->opNavInBuffer.covar_N, ODUKF_N_MEAS, ODUKF_N_MEAS, this->measNoise);
-    mScale(this->noiseSF, &AT, 2*this->countHalfSPs, this->numObs, &AT);
+    mScale(this->noiseSF, &AT, 2 * this->countHalfSPs, this->numObs, &AT);
     badUpdate += ukfCholDecomp(this->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS, cholNoise);
-    memcpy(&(AT[2*this->countHalfSPs*this->numObs]),
-           cholNoise, this->numObs*this->numObs*sizeof(double));
+    memcpy(&(AT[2 * this->countHalfSPs * this->numObs]), cholNoise, this->numObs * this->numObs * sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
      current Sy matrix*/
-    ukfQRDJustR(AT, (int) (2*this->countHalfSPs+this->numObs),
-                (int) this->numObs, rAT);
+    ukfQRDJustR(AT, (int)(2 * this->countHalfSPs + this->numObs), (int)this->numObs, rAT);
 
     mCopy(rAT, this->numObs, this->numObs, syT);
     mTranspose(syT, this->numObs, this->numObs, sy);
@@ -471,8 +428,7 @@ int RelODuKF::relODuKFMeasUpdate()
      model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, this->numObs, tempYVec);
     vAdd(tempYVec, this->numObs, &(this->yMeas[0]), tempYVec);
-    badUpdate += ukfCholDownDate(sy, tempYVec, this->wC[0],
-                                 (int) this->numObs, updMat);
+    badUpdate += ukfCholDownDate(sy, tempYVec, this->wC[0], (int)this->numObs, updMat);
 
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, this->numObs, this->numObs, sy);
@@ -481,16 +437,12 @@ int RelODuKF::relODuKFMeasUpdate()
     /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud
      by the measurement model cloud (weighted) to get the total Pxy matrix*/
     mSetZero(pXY, this->numStates, this->numObs);
-    for(i=0; i<2*this->countHalfSPs+1; i++)
-    {
+    for (i = 0; i < 2 * this->countHalfSPs + 1; i++) {
         vScale(-1.0, yBar, this->numObs, tempYVec);
-        vAdd(tempYVec, this->numObs,
-             &(this->yMeas[i*this->numObs]), tempYVec);
-        vSubtract(&(this->SP[i*this->numStates]), this->numStates,
-                  this->xBar, xHat);
+        vAdd(tempYVec, this->numObs, &(this->yMeas[i * this->numObs]), tempYVec);
+        vSubtract(&(this->SP[i * this->numStates]), this->numStates, this->xBar, xHat);
         vScale(this->wC[i], xHat, this->numStates, xHat);
-        mMultM(xHat, this->numStates, 1, tempYVec, 1, this->numObs,
-               kMat);
+        mMultM(xHat, this->numStates, 1, tempYVec, 1, this->numObs, kMat);
         mAdd(pXY, this->numStates, this->numObs, kMat, pXY);
     }
 
@@ -498,48 +450,39 @@ int RelODuKF::relODuKFMeasUpdate()
      The Sy matrix is lower triangular, we can do a back-sub inversion instead of
      a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that
      multiplication is done (equation 27), we have the Kalman Gain.*/
-    ukfUInv(syT, (int) this->numObs, (int) this->numObs, syInv);
+    ukfUInv(syT, (int)this->numObs, (int)this->numObs, syInv);
 
-    mMultM(pXY, this->numStates, this->numObs, syInv,
-           this->numObs, this->numObs, kMat);
-    ukfLInv(sy, (int) this->numObs, (int) this->numObs, syInv);
-    mMultM(kMat, this->numStates, this->numObs, syInv,
-           this->numObs, this->numObs, kMat);
-
+    mMultM(pXY, this->numStates, this->numObs, syInv, this->numObs, this->numObs, kMat);
+    ukfLInv(sy, (int)this->numObs, (int)this->numObs, syInv);
+    mMultM(kMat, this->numStates, this->numObs, syInv, this->numObs, this->numObs, kMat);
 
     /*! - Difference the yBar and the observations to get the observed error and
      multiply by the Kalman Gain to get the state update.  Add the state update
      to the state to get the updated state value (equation 27).*/
     vSubtract(this->obs, this->numObs, yBar, tempYVec);
-    mMultM(kMat, this->numStates, this->numObs, tempYVec,
-           this->numObs, 1, xHat);
+    mMultM(kMat, this->numStates, this->numObs, tempYVec, this->numObs, 1, xHat);
     vAdd(this->state, this->numStates, xHat, this->state);
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it
      so that I can extract "columns" from adjacent memory*/
-    mMultM(kMat, this->numStates, this->numObs, sy,
-           this->numObs, this->numObs, Umat);
+    mMultM(kMat, this->numStates, this->numObs, sy, this->numObs, this->numObs, Umat);
     mTranspose(Umat, this->numStates, this->numObs, Umat);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to
      get the total shifted S matrix (called sBar in internal parameters*/
-    for(i=0; i<this->numObs; i++)
-    {
-        vCopy(&(Umat[i*this->numStates]), this->numStates, Ucol);
-        badUpdate += ukfCholDownDate(this->sBar, Ucol, -1.0, (int) this->numStates, sBarT);
-        mCopy(sBarT, this->numStates, this->numStates,
-              this->sBar);
+    for (i = 0; i < this->numObs; i++) {
+        vCopy(&(Umat[i * this->numStates]), this->numStates, Ucol);
+        badUpdate += ukfCholDownDate(this->sBar, Ucol, -1.0, (int)this->numStates, sBarT);
+        mCopy(sBarT, this->numStates, this->numStates, this->sBar);
     }
 
     /*! - Compute equivalent covariance based on updated sBar matrix*/
-    mTranspose(this->sBar, this->numStates, this->numStates,
-               this->covar);
-    mMultM(this->sBar, this->numStates, this->numStates,
-           this->covar, this->numStates, this->numStates,
-           this->covar);
+    mTranspose(this->sBar, this->numStates, this->numStates, this->covar);
+    mMultM(this->sBar, this->numStates, this->numStates, this->covar, this->numStates, this->numStates, this->covar);
 
-    if (badUpdate<0){
+    if (badUpdate < 0) {
         this->relODuKFCleanUpdate();
-        return(-1);}
-    return(0);
+        return (-1);
+    }
+    return (0);
 }
 
 /*! This method cleans the filter states after a bad upadate on the fly.
@@ -547,7 +490,7 @@ int RelODuKF::relODuKFMeasUpdate()
  back to a working state.
  @return void
  */
-void RelODuKF::relODuKFCleanUpdate(){
+void RelODuKF::relODuKFCleanUpdate() {
     size_t i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/
     vSetZero(this->obs, this->numObs);
@@ -556,14 +499,10 @@ void RelODuKF::relODuKFCleanUpdate(){
     mCopy(this->covarPrev, this->numStates, this->numStates, this->covar);
 
     /*! - Reset the wM/wC vectors to standard values for unscented kalman filters*/
-    this->wM[0] = this->lambdaVal / (this->numStates +
-                                                 this->lambdaVal);
-    this->wC[0] = this->lambdaVal / (this->numStates +
-                                                 this->lambdaVal) + (1 - this->alpha*this->alpha + this->beta);
-    for (i = 1; i<this->countHalfSPs * 2 + 1; i++)
-    {
-        this->wM[i] = 1.0 / 2.0*1.0 / (this->numStates +
-                                             this->lambdaVal);
+    this->wM[0] = this->lambdaVal / (this->numStates + this->lambdaVal);
+    this->wC[0] = this->lambdaVal / (this->numStates + this->lambdaVal) + (1 - this->alpha * this->alpha + this->beta);
+    for (i = 1; i < this->countHalfSPs * 2 + 1; i++) {
+        this->wM[i] = 1.0 / 2.0 * 1.0 / (this->numStates + this->lambdaVal);
         this->wC[i] = this->wM[i];
     }
 

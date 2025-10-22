@@ -27,8 +27,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvExecuteGuidance::reset(uint64_t callTime)
-{
+void DvExecuteGuidance::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->navDataInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: dvExecuteGuidance.navDataInMsg wasn't connected.");
@@ -41,12 +40,8 @@ void DvExecuteGuidance::reset(uint64_t callTime)
     /*! - use default value of 2 seconds for control period of first call if not specified.
      * Control period (FSW rate) is computed dynamically for any subsequent calls.
      */
-    this->defaultControlPeriod = (0.0 == this->defaultControlPeriod) ?
-                                        2.0 : this->defaultControlPeriod;
+    this->defaultControlPeriod = (0.0 == this->defaultControlPeriod) ? 2.0 : this->defaultControlPeriod;
 }
-
-
-
 
 /*! This method takes its own internal variables and creates an output attitude
     command to use for burn execution.  It also flags whether the burn should
@@ -54,8 +49,7 @@ void DvExecuteGuidance::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void DvExecuteGuidance::updateState(uint64_t callTime)
-{
+void DvExecuteGuidance::updateState(uint64_t callTime) {
     double burnAccum[3];
     double dvExecuteMag;
     double burnDt;
@@ -72,24 +66,21 @@ void DvExecuteGuidance::updateState(uint64_t callTime)
 
     /*! - The first time update() is called there is no information on the time step.
      *    Use control period (FSW time step) as burn time delta-t */
-	if(this->prevCallTime == 0) {
+    if (this->prevCallTime == 0) {
         burnDt = this->defaultControlPeriod;
-	} else {
+    } else {
         /*! - compute burn time delta-t (control time period) */
-        burnDt = (double) ((int64_t) callTime - (int64_t) this->prevCallTime)*NANO2SEC;
+        burnDt = (double)((int64_t)callTime - (int64_t)this->prevCallTime) * NANO2SEC;
     }
     this->prevCallTime = callTime;
     v3SetZero(burnAccum);
-    if((this->burnExecuting == 0 && callTime >= localBurnData.burnStartTime)
-       && this->burnComplete != 1)
-    {
+    if ((this->burnExecuting == 0 && callTime >= localBurnData.burnStartTime) && this->burnComplete != 1) {
         this->burnExecuting = 1;
         v3Copy(navData.vehAccumDV, this->dvInit);
         this->burnComplete = 0;
     }
 
-    if(this->burnExecuting)
-    {
+    if (this->burnExecuting) {
         this->burnTime += burnDt;
     }
 
@@ -102,8 +93,7 @@ void DvExecuteGuidance::updateState(uint64_t callTime)
     this->burnComplete |= (this->maxTime != 0.0 && this->burnTime > this->maxTime);
     this->burnExecuting = this->burnComplete != 1 && this->burnExecuting == 1;
 
-    if(this->burnComplete || this->burnExecuting != 1)
-    {
+    if (this->burnComplete || this->burnExecuting != 1) {
         effCmd = {};
         this->thrCmdOutMsg.write(&effCmd, this->moduleID, callTime);
     }

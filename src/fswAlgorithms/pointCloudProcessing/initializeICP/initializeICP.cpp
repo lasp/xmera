@@ -88,12 +88,12 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
 
     //!< When a valid ICP solution has been computed, use that instead of ephemeris information as a priority
     if (sicpBuffer.valid) {
-        this->R_logged =
-            cArrayAsEigenMatrixX(&sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM * SICP_POINT_DIM],
-                                 SICP_POINT_DIM,
-                                 SICP_POINT_DIM);
-        this->t_logged =
-            cArrayAsEigenMatrixX(&sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM], 1, SICP_POINT_DIM);
+        this->R_logged = cArrayAsEigenMatrixX(
+            &sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM * SICP_POINT_DIM],
+            SICP_POINT_DIM,
+            SICP_POINT_DIM);
+        this->t_logged = cArrayAsEigenMatrixX(
+            &sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM], 1, SICP_POINT_DIM);
         this->s_logged = sicpBuffer.scaleFactor[sicpBuffer.numberOfIteration - 1];
         this->initialPhase = false;
         this->previousTimeTag = sicpBuffer.timeTag;

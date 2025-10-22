@@ -36,7 +36,7 @@ class ReactionWheelPower : public PowerNodeBase {
     bool customReadMessages();  //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
    private:
-    void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
+    void evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageMsg);
 
    public:
     ReadFunctor<RWConfigLogMsgPayload> rwStateInMsg;  //!< Reaction wheel state input message name

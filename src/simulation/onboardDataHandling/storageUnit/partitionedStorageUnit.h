@@ -24,18 +24,16 @@
 #include <architecture/utilities/macroDefinitions.h>
 
 /*! @brief partioned storage unit class */
-class PartitionedStorageUnit: public DataStorageUnitBase {
-
-public:
+class PartitionedStorageUnit : public DataStorageUnitBase {
+   public:
     PartitionedStorageUnit();
     ~PartitionedStorageUnit();
     void addPartition(std::string dataName);
-    void setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data); //!< Adds/removes the data from the partitionNames partitions
+    void setDataBuffer(std::vector<std::string> partitionNames,
+                       std::vector<long long int> data);  //!< Adds/removes the data from the partitionNames partitions
 
-private:
+   private:
     void customreset(uint64_t CurrentClock) override;
-
-
 };
 
-#endif //BASILISK_PARTITIONEDSTORAGEUNIT_H
+#endif  // BASILISK_PARTITIONEDSTORAGEUNIT_H

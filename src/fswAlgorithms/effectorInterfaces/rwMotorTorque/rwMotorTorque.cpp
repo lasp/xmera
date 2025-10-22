@@ -31,7 +31,7 @@
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void RwMotorTorque::reset(uint64_t callTime) {
-    double *pAxis; /* pointer to the current control axis */
+    double* pAxis; /* pointer to the current control axis */
     int i;
 
     /*!- configure the number of axes that are controlled.

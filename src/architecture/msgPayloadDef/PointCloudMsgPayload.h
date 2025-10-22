@@ -31,9 +31,9 @@ typedef struct
     PointCloudMsgPayload
 //@endcond
 {
-    uint64_t timeTag;                       //!< --[ns]   Current vehicle time-tag associated with cloud
-    bool valid;                             //!< --  Quality of measurement
-    int numberOfPoints;                     //!< -- [-] Number of points detected
+    uint64_t timeTag;                                 //!< --[ns]   Current vehicle time-tag associated with cloud
+    bool valid;                                       //!< --  Quality of measurement
+    int numberOfPoints;                               //!< -- [-] Number of points detected
     double points[MAX_SICP_POINTS * SICP_POINT_DIM];  //!< -- [-]  Point cloud array
 } PointCloudMsgPayload;
 

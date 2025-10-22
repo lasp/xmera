@@ -78,7 +78,7 @@ void MagneticFieldWMM::customSetEpochFromVariable() {
 /*! Convert a fraction year double value into a time structure with gregorian date/time information
  @return void
  */
-void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *gregorian) {
+void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm* gregorian) {
     //! -Use the WMM routine to get the year, month and day information
     MAGtype_Date calendar;
     char Error[255];
@@ -117,8 +117,8 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *g
  @return double
  */
 double MagneticFieldWMM::gregorian2DecimalYear(double currentTime) {
-    double decimalYear;          // [years] fraction year date/time format
-    struct tm localDateTime {};  // []      date/time structure
+    double decimalYear;         // [years] fraction year date/time format
+    struct tm localDateTime{};  // []      date/time structure
 
     //! - compute current decimalYear value
     MAGtype_Date calendar;
@@ -151,7 +151,7 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime) {
  @param currentTime current time (s)
  @return void
  */
-void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime) {
+void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload* msg, double currentTime) {
     Eigen::Vector3d rHat_P;  // []    normalized position vector in E frame components
     double phi;              // [rad] latitude
     double lambda;           // [rad] longitude
@@ -230,7 +230,7 @@ void MagneticFieldWMM::initializeWmm() {
     int nTerms;
     auto fileName = this->dataPath + "WMM.COF";
 
-    if (!MAG_robustReadMagModels(const_cast<char *>(fileName.c_str()), &(this->magneticModels), 1)) {
+    if (!MAG_robustReadMagModels(const_cast<char*>(fileName.c_str()), &(this->magneticModels), 1)) {
         bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", fileName.c_str());
         return;
     }

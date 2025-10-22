@@ -24,47 +24,39 @@
 #include <math.h>
 #include <string.h>
 
-
 /*! This method takes the chebyshev coefficients loaded for the position
     estimator and computes the coefficients needed to estimate the time
     derivative of that position vector (velocity).
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ChebyPosEphem::reset(uint64_t callTime)
-{
+void ChebyPosEphem::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->clockCorrInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
     }
 
     int i, j, k, n;
-    ChebyEphemRecord *currRec;
+    ChebyEphemRecord* currRec;
     double tempCVec[MAX_CHEB_COEFF];
-    memset(tempCVec, 0x0, MAX_CHEB_COEFF*sizeof(double));
-    for(i=0; i< MAX_CHEB_RECORDS; i++)
-    {
+    memset(tempCVec, 0x0, MAX_CHEB_COEFF * sizeof(double));
+    for (i = 0; i < MAX_CHEB_RECORDS; i++) {
         currRec = &(this->ephArray[i]);
-        n=currRec->nChebCoeff;
-        for(k=0; k<3; k++)
-        {
-            memset(tempCVec, 0x0, MAX_CHEB_COEFF*sizeof(double));
-            vCopy(&(currRec->posChebyCoeff[k*currRec->nChebCoeff]), currRec->nChebCoeff, tempCVec);
-            for(j=n-2;j>=2;j--)
-            {
-                currRec->velChebyCoeff[k*n+j]=2*(j+1)*tempCVec[j+1];
-                tempCVec[j - 1] += ((j+1)*tempCVec[j+1])/(j - 1);
+        n = currRec->nChebCoeff;
+        for (k = 0; k < 3; k++) {
+            memset(tempCVec, 0x0, MAX_CHEB_COEFF * sizeof(double));
+            vCopy(&(currRec->posChebyCoeff[k * currRec->nChebCoeff]), currRec->nChebCoeff, tempCVec);
+            for (j = n - 2; j >= 2; j--) {
+                currRec->velChebyCoeff[k * n + j] = 2 * (j + 1) * tempCVec[j + 1];
+                tempCVec[j - 1] += ((j + 1) * tempCVec[j + 1]) / (j - 1);
             }
-            currRec->velChebyCoeff[k*n+1] = 4.0*tempCVec[2];
-            currRec->velChebyCoeff[k*n+0] = tempCVec[1];
-            for(j=0; j<n; j++)
-            {
-                currRec->velChebyCoeff[k*n+j] *= 1.0/currRec->ephemTimeRad;
+            currRec->velChebyCoeff[k * n + 1] = 4.0 * tempCVec[2];
+            currRec->velChebyCoeff[k * n + 0] = tempCVec[1];
+            for (j = 0; j < n; j++) {
+                currRec->velChebyCoeff[k * n + j] *= 1.0 / currRec->ephemTimeRad;
             }
         }
-
     }
-
 }
 
 /*! This method takes the current time and computes the state of the object
@@ -73,55 +65,43 @@ void ChebyPosEphem::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ChebyPosEphem::updateState(uint64_t callTime)
-{
-
+void ChebyPosEphem::updateState(uint64_t callTime) {
     double currentEphTime;
     double currentScaledValue;
-    ChebyEphemRecord *currRec;
+    ChebyEphemRecord* currRec;
     int i;
 
     // read input msg
     TDBVehicleClockCorrelationMsgPayload localCorr = this->clockCorrInMsg();
     this->outputState = EphemerisMsgPayload();
 
-    currentEphTime = callTime*NANO2SEC;
+    currentEphTime = callTime * NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
 
     this->coeffSelector = 0;
-    for(i=0; i<MAX_CHEB_RECORDS; i++)
-    {
-        if(fabs(currentEphTime - this->ephArray[i].ephemTimeMid) <=
-            this->ephArray[i].ephemTimeRad)
-        {
+    for (i = 0; i < MAX_CHEB_RECORDS; i++) {
+        if (fabs(currentEphTime - this->ephArray[i].ephemTimeMid) <= this->ephArray[i].ephemTimeRad) {
             this->coeffSelector = i;
             break;
         }
     }
 
     currRec = &(this->ephArray[this->coeffSelector]);
-    currentScaledValue = (currentEphTime - currRec->ephemTimeMid)
-        /currRec->ephemTimeRad;
-    if(fabs(currentScaledValue) > 1.0)
-    {
-        currentScaledValue = currentScaledValue/fabs(currentScaledValue);
+    currentScaledValue = (currentEphTime - currRec->ephemTimeMid) / currRec->ephemTimeRad;
+    if (fabs(currentScaledValue) > 1.0) {
+        currentScaledValue = currentScaledValue / fabs(currentScaledValue);
     }
 
-    this->outputState.timeTag = callTime*NANO2SEC;
+    this->outputState.timeTag = callTime * NANO2SEC;
 
-    for(i=0; i<3; i++)
-    {
+    for (i = 0; i < 3; i++) {
         this->outputState.r_BdyZero_N[i] = calculateChebyValue(
-            &(currRec->posChebyCoeff[i*currRec->nChebCoeff]),
-            currRec->nChebCoeff, currentScaledValue);
+            &(currRec->posChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
         this->outputState.v_BdyZero_N[i] = calculateChebyValue(
-            &(currRec->velChebyCoeff[i*currRec->nChebCoeff]),
-            currRec->nChebCoeff, currentScaledValue);
-
+            &(currRec->velChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
     }
 
     this->posFitOutMsg.write(&outputState, this->moduleID, callTime);
 
     return;
-
 }

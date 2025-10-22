@@ -235,7 +235,7 @@ void SunlineSuKF::updateState(uint64_t callTime) {
     @param b_Vec b vector
     @param dt time step (s)
 */
-void sunlineStateProp(double *stateInOut, double *b_Vec, double dt) {
+void sunlineStateProp(double* stateInOut, double* b_Vec, double dt) {
     double propagatedVel[SKF_N_STATES_HALF];
     double omegaCrossd[SKF_N_STATES_HALF];
     double omega_BN_S[SKF_N_STATES_HALF] = {0, -stateInOut[3], -stateInOut[4]};
@@ -267,13 +267,13 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt) {
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-int sunlineSuKFTimeUpdate(SunlineSuKF *data, double updateTime) {
+int sunlineSuKFTimeUpdate(SunlineSuKF* data, double updateTime) {
     int Index, badUpdate;
     double sBarT[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];
     double xComp[SKF_N_STATES_SWITCH], AT[(2 * SKF_N_STATES_SWITCH + SKF_N_STATES_SWITCH) * SKF_N_STATES_SWITCH];
     double aRow[SKF_N_STATES_SWITCH], rAT[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH], xErr[SKF_N_STATES_SWITCH];
     double sBarUp[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];
-    double *spPtr;
+    double* spPtr;
     double procNoise[SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH];
     badUpdate = 0;
 
@@ -323,7 +323,7 @@ int sunlineSuKFTimeUpdate(SunlineSuKF *data, double updateTime) {
             return -1;
         }
         vScale(sqrt(data->wC[i + 1]), aRow, data->numStates, aRow);
-        memcpy((void *)&AT[i * (int)data->numStates], (void *)aRow, data->numStates * sizeof(double));
+        memcpy((void*)&AT[i * (int)data->numStates], (void*)aRow, data->numStates * sizeof(double));
     }
 
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
@@ -363,7 +363,7 @@ int sunlineSuKFTimeUpdate(SunlineSuKF *data, double updateTime) {
  @param configData The configuration data associated with the CSS estimator
 
  */
-void sunlineSuKFMeasModel(SunlineSuKF *data) {
+void sunlineSuKFMeasModel(SunlineSuKF* data) {
     uint32_t i, j, obsCounter;
     double sensorNormal[3];
     double normalizedState[3];
@@ -420,7 +420,7 @@ void sunlineSuKFMeasModel(SunlineSuKF *data) {
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int sunlineSuKFMeasUpdate(SunlineSuKF *data, double updateTime) {
+int sunlineSuKFMeasUpdate(SunlineSuKF* data, double updateTime) {
     uint32_t i;
     int32_t badUpdate;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];
@@ -543,7 +543,7 @@ int sunlineSuKFMeasUpdate(SunlineSuKF *data, double updateTime) {
  @param covar Pointer to the covariance
  */
 
-void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar) {
+void sunlineSuKFSwitch(double* bVec_B, double* states, double* covar) {
     double dcm_BSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_BSnew_T[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_SnewSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
@@ -596,7 +596,7 @@ void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar) {
     return;
 }
 
-void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm) {
+void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double* dcm) {
     double s1_B[SKF_N_STATES_HALF];
     double s2_B[SKF_N_STATES_HALF];
     double s3_B[SKF_N_STATES_HALF];
@@ -627,7 +627,7 @@ void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
  @return void
  @param configData The configuration data associated with the CSS estimator
  */
-void sunlineSuKFCleanUpdate(SunlineSuKF *data) {
+void sunlineSuKFCleanUpdate(SunlineSuKF* data) {
     int i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/
     vSetZero(data->obs, data->numObs);

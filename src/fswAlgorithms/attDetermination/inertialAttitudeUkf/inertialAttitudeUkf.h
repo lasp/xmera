@@ -79,9 +79,9 @@ class InertialAttitudeUkf : public SRukfInterface {
     Message<FilterResidualsMsgPayload> starTrackerResidualMsg;
     Message<FilterResidualsMsgPayload> gyroResidualMsg;
 
-    void setGyroNoise(const Eigen::Matrix3d &gyroNoise);
+    void setGyroNoise(const Eigen::Matrix3d& gyroNoise);
     Eigen::Matrix3d getGyroNoise() const;
-    void addStarTrackerInput(const StarTrackerMessage &starTracker);
+    void addStarTrackerInput(const StarTrackerMessage& starTracker);
     Eigen::Matrix3d getStarTrackerNoise(int starTrackerNumber) const;
 
    private:

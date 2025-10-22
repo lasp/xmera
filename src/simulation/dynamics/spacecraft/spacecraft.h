@@ -68,11 +68,11 @@ class Spacecraft : public DynamicObject {
     Eigen::Vector3d totOrbAngMomPntN_N;  //!< [kg m^2/s] Total orbital angular momentum about N in N frame compenents
     Eigen::Vector3d totRotAngMomPntC_N;  //!< [kg m^2/s] Total rotational angular momentum about C in N frame compenents
     Eigen::Vector3d
-        rotAngMomPntCContr_B;             //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.
-    HubEffector hub;                      //!< -- The spacecraft plus needs access to the spacecraft hub
-    GravityEffector gravField;            //!< -- Gravity effector for gravitational field experienced by spacecraft
-    std::vector<StateEffector *> states;  //!< -- Vector of state effectors attached to dynObject
-    std::vector<DynamicEffector *> dynEffectors;  //!< -- Vector of dynamic effectors attached to dynObject
+        rotAngMomPntCContr_B;            //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.
+    HubEffector hub;                     //!< -- The spacecraft plus needs access to the spacecraft hub
+    GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
+    std::vector<StateEffector*> states;  //!< -- Vector of state effectors attached to dynObject
+    std::vector<DynamicEffector*> dynEffectors;   //!< -- Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                          //!< -- BSK Logging
     Message<SCStatesMsgPayload> scStateOutMsg;    //!< spacecraft state output message
     Message<SCMassPropsMsgPayload> scMassOutMsg;  //!< spacecraft mass properties output message
@@ -89,33 +89,33 @@ class Spacecraft : public DynamicObject {
     void reset(uint64_t currentSimNanos);
     void writeOutputStateMessages(uint64_t clockTime);  //!< -- Method to write all of the class output messages
     void updateState(uint64_t currentSimNanos);         //!< -- Runtime hook back into Basilisk arch
-    void linkInStates(DynParamManager &statesIn);       //!< Method to get access to the hub's states
+    void linkInStates(DynParamManager& statesIn);       //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds,
                            double timeStep);  //!< -- This method computes the equations of motion for the whole system
-    void addStateEffector(StateEffector *newSateEffector);         //!< -- Attaches a stateEffector to the system
-    void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
+    void addStateEffector(StateEffector* newSateEffector);         //!< -- Attaches a stateEffector to the system
+    void addDynamicEffector(DynamicEffector* newDynamicEffector);  //!< -- Attaches a dynamicEffector
     void preIntegration(double callTime) final;                    //!< -- method to perform pre-integration steps
     void postIntegration(double callTime) final;                   //!< -- method to perform post-integration steps
 
    private:
-    StateData *hubR_N;           //!< -- State data accesss to inertial position for the hub
-    StateData *hubV_N;           //!< -- State data access to inertial velocity for the hub
-    StateData *hubOmega_BN_B;    //!< -- State data access to the attitude rate of the hub
-    StateData *hubSigma;         //!< -- State data access to sigmaBN for the hub
-    StateData *hubGravVelocity;  //!< -- State data access to the gravity-accumulated DV on the Body frame
-    StateData *BcGravVelocity;   //!< -- State data access to the gravity-accumulated DV on point Bc
-    Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
-    Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+    StateData* hubR_N;           //!< -- State data accesss to inertial position for the hub
+    StateData* hubV_N;           //!< -- State data access to inertial velocity for the hub
+    StateData* hubOmega_BN_B;    //!< -- State data access to the attitude rate of the hub
+    StateData* hubSigma;         //!< -- State data access to sigmaBN for the hub
+    StateData* hubGravVelocity;  //!< -- State data access to the gravity-accumulated DV on the Body frame
+    StateData* BcGravVelocity;   //!< -- State data access to the gravity-accumulated DV on point Bc
+    Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
-    Eigen::MatrixXd *m_SC;            //!< [kg] spacecrafts total mass
-    Eigen::MatrixXd *mDot_SC;         //!< [kg/s] Time derivative of spacecrafts total mass
-    Eigen::MatrixXd *ISCPntB_B;       //!< [kg m^2] Inertia of s/c about point B in B frame components
-    Eigen::MatrixXd *c_B;             //!< [m] Vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd *cPrime_B;        //!< [m/s] Body time derivative of c_B
-    Eigen::MatrixXd *cDot_B;          //!< [m/s] Inertial time derivative of c_B
-    Eigen::MatrixXd *ISCPntBPrime_B;  //!< [kg m^2/s] Body time derivative of ISCPntB_B
-    Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
-    Eigen::MatrixXd *sysTime;         //!< [s] System time
+    Eigen::MatrixXd* m_SC;            //!< [kg] spacecrafts total mass
+    Eigen::MatrixXd* mDot_SC;         //!< [kg/s] Time derivative of spacecrafts total mass
+    Eigen::MatrixXd* ISCPntB_B;       //!< [kg m^2] Inertia of s/c about point B in B frame components
+    Eigen::MatrixXd* c_B;             //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd* cPrime_B;        //!< [m/s] Body time derivative of c_B
+    Eigen::MatrixXd* cDot_B;          //!< [m/s] Inertial time derivative of c_B
+    Eigen::MatrixXd* ISCPntBPrime_B;  //!< [kg m^2/s] Body time derivative of ISCPntB_B
+    Eigen::MatrixXd* g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
+    Eigen::MatrixXd* sysTime;         //!< [s] System time
 
     Eigen::Vector3d oldOmega_BN_B;  //!< [r/s] prior angular rate of B wrt N in the Body frame
 

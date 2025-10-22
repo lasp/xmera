@@ -107,12 +107,12 @@ class SunlineSuKF : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-int sunlineSuKFTimeUpdate(SunlineSuKF *data, double updateTime);
-int sunlineSuKFMeasUpdate(SunlineSuKF *data, double updateTime);
-void sunlineStateProp(double *stateInOut, double *b_vec, double dt);
-void sunlineSuKFMeasModel(SunlineSuKF *data);
-void sunlineSuKFCleanUpdate(SunlineSuKF *data);
-void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
-void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar);
+int sunlineSuKFTimeUpdate(SunlineSuKF* data, double updateTime);
+int sunlineSuKFMeasUpdate(SunlineSuKF* data, double updateTime);
+void sunlineStateProp(double* stateInOut, double* b_vec, double dt);
+void sunlineSuKFMeasModel(SunlineSuKF* data);
+void sunlineSuKFCleanUpdate(SunlineSuKF* data);
+void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double* dcm);
+void sunlineSuKFSwitch(double* bVec_B, double* states, double* covar);
 
 #endif

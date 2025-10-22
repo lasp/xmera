@@ -42,16 +42,16 @@ class EphemeridesRecenter : public SysModel {
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 
-    void addBodyEphemerisToRecenter(const BodyEphemeris &ephemerisBody);
-    void setNewZeroBase(const std::string &bodyName);
+    void addBodyEphemerisToRecenter(const BodyEphemeris& ephemerisBody);
+    void setNewZeroBase(const std::string& bodyName);
     std::string getNewZeroBase() const;
-    void setPreviousCommonZeroBase(const std::string &bodyName);
+    void setPreviousCommonZeroBase(const std::string& bodyName);
     std::string getPreviousCommonZeroBase() const;
     std::array<std::string, MAX_NUM_CHANGE_BODIES> getAllNames() const;
-    size_t getBodyIndexFromName(const std::string &celestialBodyName) const;
+    size_t getBodyIndexFromName(const std::string& celestialBodyName) const;
     size_t getNumberOfBodies() const;
     void clearAllBodies();
-    std::vector<Message<EphemerisMsgPayload> *> recenteredEphemerisOutputMsgs{};
+    std::vector<Message<EphemerisMsgPayload>*> recenteredEphemerisOutputMsgs{};
 
    private:
     size_t ephemeridesNumber{};

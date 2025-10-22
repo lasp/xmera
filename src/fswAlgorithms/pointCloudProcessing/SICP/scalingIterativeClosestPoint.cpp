@@ -196,7 +196,8 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
 
     //! - If initial condition message exists populate the initial conditions, otherwise use defaults
     if (initicalConditionValidity) {
-        this->R_init = cArrayAsEigenMatrixX(this->initialConditionBuffer.rotationMatrix, SICP_POINT_DIM, SICP_POINT_DIM);
+        this->R_init =
+            cArrayAsEigenMatrixX(this->initialConditionBuffer.rotationMatrix, SICP_POINT_DIM, SICP_POINT_DIM);
         this->t_init = Eigen::Map<Eigen::VectorXd>(this->initialConditionBuffer.translation, SICP_POINT_DIM, 1);
         this->s_init = this->initialConditionBuffer.scaleFactor[0];
     } else {
@@ -211,8 +212,8 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
         this->outputSICPData.write(&this->sicpBuffer, this->moduleID, currentSimNanos);
         this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, currentSimNanos);
     } else {
-        Eigen::MatrixXd measuredPoints =
-            cArrayAsEigenMatrixX(this->measuredCloudBuffer.points, SICP_POINT_DIM, this->measuredCloudBuffer.numberOfPoints);
+        Eigen::MatrixXd measuredPoints = cArrayAsEigenMatrixX(
+            this->measuredCloudBuffer.points, SICP_POINT_DIM, this->measuredCloudBuffer.numberOfPoints);
         Eigen::MatrixXd referencePoints = cArrayAsEigenMatrixX(
             this->referenceCloudBuffer.points, SICP_POINT_DIM, this->referenceCloudBuffer.numberOfPoints);
         //! - Initialize R (rotation matrix), t (translation vector) and s (scale factor).

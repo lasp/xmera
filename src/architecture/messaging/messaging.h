@@ -46,11 +46,11 @@ class ReadFunctor {
     BSKLogger bskLogger;  //!< -- bsk logging instance
 
     //! constructor
-    ReadFunctor() : initialized(false){};
+    ReadFunctor() : initialized(false) {};
 
     //! constructor
     ReadFunctor(messageType* payloadPtr, MsgHeader* headerPtr)
-        : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
+        : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true) {};
 
     //! constructor
     const messageType& operator()() {
@@ -133,10 +133,10 @@ class WriteFunctor {
     MsgHeader* headerPointer;     //!< pointer to the message header
    public:
     //! write functor constructor
-    WriteFunctor(){};
+    WriteFunctor() {};
     //! write functor constructor
     WriteFunctor(messageType* payloadPointer, MsgHeader* headerPointer)
-        : payloadPointer(payloadPointer), headerPointer(headerPointer){};
+        : payloadPointer(payloadPointer), headerPointer(headerPointer) {};
     //! write functor constructor
     void operator()(messageType* payload, int64_t moduleID, uint64_t callTime) {
         *this->payloadPointer = *payload;
@@ -211,7 +211,7 @@ MsgHeader* Message<messageType>::getMsgHeaderPointer() {
 template <typename messageType>
 class Recorder : public SysModel {
    public:
-    Recorder(){};
+    Recorder() {};
     //! -- Use this to record cpp messages
     Recorder(Message<messageType>* message, uint64_t timeDiff = 0) {
         this->timeInterval = timeDiff;
@@ -245,7 +245,7 @@ class Recorder : public SysModel {
         }
         this->modelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
     }
-    ~Recorder(){};
+    ~Recorder() {};
 
     //! -- self initialization
     void selfInit() {};

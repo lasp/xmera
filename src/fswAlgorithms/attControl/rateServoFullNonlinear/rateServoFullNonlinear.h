@@ -47,7 +47,7 @@ class RateServoFullNonlinear : public SysModel {
     double getKi() const;
     void setIntegralLimit(const double limit);
     double getIntegralLimit() const;
-    void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
+    void setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B);
     Eigen::Vector3d getKnownTorquePntB_B() const;
 
     /* declare module IO interfaces */

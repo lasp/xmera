@@ -40,7 +40,7 @@ class EulerRotation : public SysModel {
     void computeEulerRotationReference(double sigma_R0N[3],
                                        double omega_R0N_N[3],
                                        double domega_R0N_N[3],
-                                       AttRefMsgPayload *attRefOut);
+                                       AttRefMsgPayload* attRefOut);
 
     /* Declare module public variables */
     double angleSet[3];    //!< [-] current euler angle 321 set R/R0  with respect to the input reference

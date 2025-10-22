@@ -32,14 +32,14 @@ class SingleAxisProfiler : public SysModel {
    public:
     void reset(uint64_t currentSimNanos) override;        //!< Reset member function
     void updateState(uint64_t currentSimNanos) override;  //!< Update member function
-    void setRotHat_M(const Eigen::Vector3d &rotHat_M);    //!< Setter for the spinning body rotation axis
-    const Eigen::Vector3d &getRotHat_M() const;           //!< Getter for the spinning body rotation axis
+    void setRotHat_M(const Eigen::Vector3d& rotHat_M);    //!< Setter for the spinning body rotation axis
+    const Eigen::Vector3d& getRotHat_M() const;           //!< Getter for the spinning body rotation axis
 
     ReadFunctor<StepperMotorMsgPayload> stepperMotorInMsg;  //!< Input msg for the stepper motor state information
     Message<PrescribedRotationMsgPayload>
         prescribedRotationOutMsg;  //!< Output msg for the hub-relative prescribed rotational states
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger* bskLogger;  //!< BSK Logging
 
    private:
     Eigen::Vector3d computeSigma_FM(double theta);  //!< Method for computing the current spinning body MRP attitude

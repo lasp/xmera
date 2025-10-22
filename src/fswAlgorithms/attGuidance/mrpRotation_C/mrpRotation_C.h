@@ -39,7 +39,7 @@ class MrpRotation_C : public SysModel {
     void computeMRPRotationReference(double sigma_R0N[3],
                                      double omega_R0N_N[3],
                                      double domega_R0N_N[3],
-                                     AttRefMsgPayload *attRefOut);
+                                     AttRefMsgPayload* attRefOut);
     /* Declare module public variables */
     double mrpSet[3];       //!< [-] current MRP attitude coordinate set with respect to the input reference
     double omega_RR0_R[3];  //!< [rad/s] angular velocity vector relative to input reference

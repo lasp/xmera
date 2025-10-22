@@ -30,7 +30,6 @@ static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
 static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
 static double adjust_range(double lower, double upper, double angle);
 
-
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
  message output buffer should be cleared.
@@ -89,7 +88,8 @@ void MeanOEFeedback::updateState(uint64_t callTime) {
  @param forceMsg force output (3-axis)
  */
 void MeanOEFeedback::calcLyapunovFeedback(NavTransMsgPayload chiefTransMsg,
-                                  NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg) {
+                                          NavTransMsgPayload deputyTransMsg,
+                                          CmdForceInertialMsgPayload* forceMsg) {
     // position&velocity to osculating classic orbital elements
     ClassicElements oe_cl_osc_c, oe_cl_osc_d;
     rv2elem(this->mu, chiefTransMsg.r_BN_N, chiefTransMsg.v_BN_N, &oe_cl_osc_c);
@@ -166,7 +166,7 @@ static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]) {
     double a = oe_cl.a;
     double e = oe_cl.e;
     double i = oe_cl.i;
-//    double Omega = oe_cl.Omega;
+    //    double Omega = oe_cl.Omega;
     double omega = oe_cl.omega;
     double f = oe_cl.f;
     double theta = omega + f;
@@ -259,7 +259,8 @@ static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]) {
 }
 
 /*! This function is used to adjust a certain value in a certain range between lower threshold and upper threshold.
- This function is particularily used to adjsut angles used in orbital motions such as True Anomaly, Mean Anomaly, and so on.
+ This function is particularily used to adjsut angles used in orbital motions such as True Anomaly, Mean Anomaly, and so
+ on.
  @return double
  @param lower lower threshold
  @param upper upper threshold

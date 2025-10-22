@@ -25,34 +25,30 @@
 
 /*! This constructor initializes an SolutionSpace class for the solution
     of the second order inequality (At^2+Bt+C)/(1+t^2) >= 0 */
-SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
-{
+SolutionSpace::SolutionSpace(double A, double B, double C, double tol) {
     if (fabs(A) < tol) {
         if (fabs(B) < tol) {
             solveZerothOrder(C);
-        }
-        else {
+        } else {
             solveFirstOrder(B, C);
         }
-    }
-    else {
+    } else {
         solveSecondOrder(A, B, C);
     }
     // compute max and min of the function
-    double psi1;    // PRA #1
-    double psi2;    // PRA #2
-    double y1;      // fcn value #1
-    double y2;      // fcn value #2
+    double psi1;  // PRA #1
+    double psi2;  // PRA #2
+    double y1;    // fcn value #1
+    double y2;    // fcn value #2
     if (fabs(B) > tol) {
         double q = (A - C) / B;
-        double t1 = q - sqrt(q*q + 1);
-        double t2 = q + sqrt(q*q + 1);
-        y1 = (A*t1*t1 + B*t1 + C) / (1+t1*t1);
-        y2 = (A*t2*t2 + B*t2 + C) / (1+t2*t2);
+        double t1 = q - sqrt(q * q + 1);
+        double t2 = q + sqrt(q * q + 1);
+        y1 = (A * t1 * t1 + B * t1 + C) / (1 + t1 * t1);
+        y2 = (A * t2 * t2 + B * t2 + C) / (1 + t2 * t2);
         psi1 = 2 * atan(t1);
         psi2 = 2 * atan(t2);
-    }
-    else {
+    } else {
         psi1 = 0;
         psi2 = MPI;
         y1 = C;
@@ -63,8 +59,7 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
         this->psiMax = psi2;
         this->yMin = y1;
         this->yMax = y2;
-    }
-    else {
+    } else {
         this->psiMin = psi2;
         this->psiMax = psi1;
         this->yMin = y2;
@@ -76,29 +71,25 @@ SolutionSpace::SolutionSpace(double A, double B, double C, double tol)
 SolutionSpace::~SolutionSpace() = default;
 
 /*! Solves C / (1+x^2) >= 0 */
-void SolutionSpace::solveZerothOrder(double C)
-{
+void SolutionSpace::solveZerothOrder(double C) {
     this->zeros = false;
     if (C < 0) {
         this->emptySet = true;
-    }
-    else {
+    } else {
         this->emptySet = false;
         this->inf = -M_PI;
-        this->sup =  M_PI;
+        this->sup = M_PI;
     }
 }
 
 /*! Solves (Bx + C) / (1+x^2) >= 0 */
-void SolutionSpace::solveFirstOrder(double B, double C)
-{
+void SolutionSpace::solveFirstOrder(double B, double C) {
     this->zeros = true;
     this->emptySet = false;
     if (B > 0) {
         this->inf = 2 * atan(-C / B);
         this->sup = M_PI;
-    }
-    else {
+    } else {
         this->inf = -M_PI;
         this->sup = 2 * atan(-C / B);
     }
@@ -107,55 +98,49 @@ void SolutionSpace::solveFirstOrder(double B, double C)
 }
 
 /*! Solves (Ax^2 + Bx + C) / (1+x^2) >= 0 */
-void SolutionSpace::solveSecondOrder(double A, double B, double C)
-{
-    double Delta = B*B - 4*A*C;
+void SolutionSpace::solveSecondOrder(double A, double B, double C) {
+    double Delta = B * B - 4 * A * C;
     if (Delta >= 0) {
         this->emptySet = false;
         this->zeros = true;
-        double t1 = (-B - sqrt(Delta)) / (2*A);
-        double t2 = (-B + sqrt(Delta)) / (2*A);
+        double t1 = (-B - sqrt(Delta)) / (2 * A);
+        double t2 = (-B + sqrt(Delta)) / (2 * A);
         if (A > 0) {
             this->inf = 2 * atan(t2);
             this->sup = 2 * (atan(t1) + M_PI);
-        }
-        else {
+        } else {
             this->inf = 2 * atan(t2);
             this->sup = 2 * atan(t1);
         }
         this->zero[0] = this->inf;
         this->zero[1] = this->sup;
-    }
-    else {
+    } else {
         this->zeros = false;
         if (A > 0) {
             this->emptySet = false;
             this->inf = -M_PI;
-            this->sup =  M_PI;
-        }
-        else {
+            this->sup = M_PI;
+        } else {
             this->emptySet = true;
         }
     }
 }
 
 /*! Define this method that returns the number of zeros method */
-bool SolutionSpace::isEmpty() const {return this->emptySet;}
+bool SolutionSpace::isEmpty() const { return this->emptySet; }
 
 /*! Define this method that returns the zeros bool class variable */
-bool SolutionSpace::hasZeros() const {return this->zeros;}
+bool SolutionSpace::hasZeros() const { return this->zeros; }
 
 /*! Define this method that returns the absolute minimum of the function method */
-double SolutionSpace::returnAbsMin(int idx) const
-{
+double SolutionSpace::returnAbsMin(int idx) const {
     if (this->zeros) {
         if (idx < 2) {
             return this->zero[0];
         } else {
             return this->zero[1];
         }
-    }
-    else {
+    } else {
         if (fabs(this->yMin) < fabs(this->yMax)) {
             return this->psiMin;
         } else {
@@ -165,12 +150,11 @@ double SolutionSpace::returnAbsMin(int idx) const
 }
 
 /*! Define this method that returns whether the input is contained in the solution space */
-bool SolutionSpace::contains(double psi) const
-{
+bool SolutionSpace::contains(double psi) const {
     if (this->emptySet) {
         return false;
     }
-    if (psi < this->inf && psi+2*MPI > this->sup) {
+    if (psi < this->inf && psi + 2 * MPI > this->sup) {
         return false;
     }
     if (psi > this->sup) {
@@ -180,13 +164,11 @@ bool SolutionSpace::contains(double psi) const
 }
 
 /*! Define this method the closest value in the solution space to the input */
-double SolutionSpace::passThrough(double psi) const
-{
+double SolutionSpace::passThrough(double psi) const {
     if (!this->emptySet) {
         if (psi > this->sup) {
             return this->sup;
-        }
-        else if (psi < this->inf && psi + 2 * MPI > this->sup) {
+        } else if (psi < this->inf && psi + 2 * MPI > this->sup) {
             double dt1 = this->inf - psi;
             double dt2 = psi + 2 * MPI - this->sup;
             if (dt1 < dt2) {
@@ -194,29 +176,25 @@ double SolutionSpace::passThrough(double psi) const
             } else {
                 return this->sup;
             }
-        }
-        else {
+        } else {
             return psi;
         }
-    }
-    else {
+    } else {
         return this->returnAbsMin(1);
     }
 }
 
 /*! This function computes the DCM DB that aligns direction hRefHat to a requested direction hReqHat */
-void boresightAlignment(double hRefHat[3], double hReqHat[3], double tol, double DB[3][3])
-{
+void boresightAlignment(double hRefHat[3], double hReqHat[3], double tol, double DB[3][3]) {
     /*! compute principal rotation angle (phi) and vector (e_phi) */
-    double phi = acos( fmin( fmax( v3Dot(hRefHat, hReqHat), -1 ), 1 ) );
+    double phi = acos(fmin(fmax(v3Dot(hRefHat, hReqHat), -1), 1));
     double e_phi[3];
     v3Cross(hRefHat, hReqHat, e_phi);
     // If phi = PI, e_phi can be any vector perpendicular to hRefHat_B
-    if (fabs(phi-MPI) < tol) {
+    if (fabs(phi - MPI) < tol) {
         phi = MPI;
         v3Perpendicular(hRefHat, e_phi);
-    }
-    else if (fabs(phi) < tol) {
+    } else if (fabs(phi) < tol) {
         phi = 0;
     }
     // normalize e_phi
@@ -228,10 +206,16 @@ void boresightAlignment(double hRefHat[3], double hReqHat[3], double tol, double
     PRV2C(PRV_phi, DB);
 }
 
-void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat_SB_B[3],
-                           double a1Hat_B[3], double a2Hat_B[3], double beta, double BN[3][3],
-                           AlignmentPriority alignmentPriority, double epsilon, double RN[3][3])
-{
+void computeReferenceFrame(double hRefHat_B[3],
+                           double hReqHat_N[3],
+                           double rHat_SB_B[3],
+                           double a1Hat_B[3],
+                           double a2Hat_B[3],
+                           double beta,
+                           double BN[3][3],
+                           AlignmentPriority alignmentPriority,
+                           double epsilon,
+                           double RN[3][3]) {
     /*! map requested heading into current B frame */
     double hReqHat_B[3];
     m33MultV3(BN, hReqHat_N, hReqHat_B);
@@ -263,8 +247,7 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
 
     double PRV_psi[3];
     switch (alignmentPriority) {
-
-        case AlignmentPriority::SolarArrayAlign :
+        case AlignmentPriority::SolarArrayAlign:
             if (solarArraySolutions.hasZeros()) {
                 double psi1 = solarArraySolutions.returnAbsMin(1);
                 double psi2 = solarArraySolutions.returnAbsMin(2);
@@ -282,25 +265,22 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
                 m33MultV3(P2D, rHat_SB_D, rHat_SB_P2);
                 if (v3Dot(a2Hat_B, rHat_SB_P2) - v3Dot(a2Hat_B, rHat_SB_P1) > epsilon) {
                     v3Scale(psi2, e_psi, PRV_psi);
-                }
-                else {
+                } else {
                     v3Scale(psi1, e_psi, PRV_psi);
                 }
-            }
-            else {
+            } else {
                 double psi = solarArraySolutions.returnAbsMin(1);
                 v3Scale(psi, e_psi, PRV_psi);
             }
             break;
 
-        case AlignmentPriority::SunConstrAxisAlign :
+        case AlignmentPriority::SunConstrAxisAlign:
             double k = cos(beta);
             SolutionSpace sunConstAxisSolutions(D - k, E, F - k, epsilon);
             if (bool empty = sunConstAxisSolutions.isEmpty(); empty) {
                 double psi = sunConstAxisSolutions.returnAbsMin(1);
                 v3Scale(psi, e_psi, PRV_psi);
-            }
-            else {
+            } else {
                 if (solarArraySolutions.hasZeros()) {
                     double psi1 = solarArraySolutions.returnAbsMin(1);
                     double psi2 = solarArraySolutions.returnAbsMin(2);
@@ -308,12 +288,10 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
                     double deltaPsi2 = psi2 - sunConstAxisSolutions.passThrough(psi2);
                     if (fabs(deltaPsi2) - fabs(deltaPsi1) > epsilon) {
                         v3Scale(psi1, e_psi, PRV_psi);
-                    }
-                    else {
+                    } else {
                         v3Scale(psi2, e_psi, PRV_psi);
                     }
-                }
-                else {
+                } else {
                     double psi = solarArraySolutions.returnAbsMin(1);
                     psi = sunConstAxisSolutions.passThrough(psi);
                     v3Scale(psi, e_psi, PRV_psi);
@@ -330,14 +308,17 @@ void computeReferenceFrame(double hRefHat_B[3], double hReqHat_N[3], double rHat
     m33MultM33(RB, BN, RN);
 }
 
-
-
 /*! This function implements second-order finite differences to compute reference angular
     rates and accelerations */
-void finiteDifferencesRatesAndAcc(double sigma_RN[3], double sigma_RN_1[3], double sigma_RN_2[3],
-                                  uint64_t *TNanos, uint64_t *T1Nanos, uint64_t *T2Nanos, int *callCount,
-                                  double omega_RN_R[3], double omegaDot_RN_R[3])
-{
+void finiteDifferencesRatesAndAcc(double sigma_RN[3],
+                                  double sigma_RN_1[3],
+                                  double sigma_RN_2[3],
+                                  uint64_t* TNanos,
+                                  uint64_t* T1Nanos,
+                                  uint64_t* T2Nanos,
+                                  int* callCount,
+                                  double omega_RN_R[3],
+                                  double omegaDot_RN_R[3]) {
     // switch sigma_RN_1 and sigma_RN_2 if needed
     double delSigma[3];
     v3Subtract(sigma_RN, sigma_RN_1, delSigma);
@@ -360,7 +341,7 @@ void finiteDifferencesRatesAndAcc(double sigma_RN[3], double sigma_RN_1[3], doub
     }
     // if second update call, derivatives are computed with first order finite differences
     else if (*callCount == 1) {
-        T1Seconds = double (*T1Nanos - *TNanos) * NANO2SEC;
+        T1Seconds = double(*T1Nanos - *TNanos) * NANO2SEC;
         for (int j = 0; j < 3; j++) {
             sigmaDot_RN[j] = (sigma_RN_1[j] - sigma_RN[j]) / T1Seconds;
         }
@@ -373,11 +354,16 @@ void finiteDifferencesRatesAndAcc(double sigma_RN[3], double sigma_RN_1[3], doub
     }
     // if third update call or higher, derivatives are computed with second order finite differences
     else {
-        T1Seconds = double (*T1Nanos - *TNanos) * NANO2SEC;
-        T2Seconds = double (*T2Nanos - *TNanos) * NANO2SEC;
+        T1Seconds = double(*T1Nanos - *TNanos) * NANO2SEC;
+        T2Seconds = double(*T2Nanos - *TNanos) * NANO2SEC;
         for (int j = 0; j < 3; j++) {
-            sigmaDot_RN[j] = ((sigma_RN_1[j]*T2Seconds*T2Seconds - sigma_RN_2[j]*T1Seconds*T1Seconds) / (T2Seconds - T1Seconds) - sigma_RN[j] * (T2Seconds + T1Seconds)) / T1Seconds / T2Seconds;
-            sigmaDDot_RN[j] = 2 * ((sigma_RN_1[j]*T2Seconds - sigma_RN_2[j]*T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) / T1Seconds / T2Seconds;
+            sigmaDot_RN[j] = ((sigma_RN_1[j] * T2Seconds * T2Seconds - sigma_RN_2[j] * T1Seconds * T1Seconds) /
+                                  (T2Seconds - T1Seconds) -
+                              sigma_RN[j] * (T2Seconds + T1Seconds)) /
+                             T1Seconds / T2Seconds;
+            sigmaDDot_RN[j] =
+                2 * ((sigma_RN_1[j] * T2Seconds - sigma_RN_2[j] * T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) /
+                T1Seconds / T2Seconds;
         }
         // store information for next time step
         *T2Nanos = *T1Nanos;

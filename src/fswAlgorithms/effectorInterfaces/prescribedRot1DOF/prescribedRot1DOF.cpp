@@ -31,11 +31,9 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot1DOF::reset(uint64_t callTime)
-{
+void PrescribedRot1DOF::reset(uint64_t callTime) {
     // Check if the required input message is linked
-    if (!this->spinningBodyInMsg.isLinked())
-    {
+    if (!this->spinningBodyInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: prescribedRot1DOF.spinningBodyInMsg wasn't connected.");
     }
 
@@ -46,28 +44,24 @@ void PrescribedRot1DOF::reset(uint64_t callTime)
     this->convergence = true;
 }
 
-
 /*! This method profiles the prescribed trajectory and updates the prescribed states as a function of time.
 The prescribed states are then written to the output message.
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot1DOF::updateState(uint64_t callTime)
-{
+void PrescribedRot1DOF::updateState(uint64_t callTime) {
     // Create the buffer messages
     HingedRigidBodyMsgPayload spinningBodyIn = {};
     HingedRigidBodyMsgPayload spinningBodyOut = {};
     PrescribedRotationMsgPayload prescribedRotationOut = {};
 
-    if (this->spinningBodyInMsg.isWritten())
-    {
+    if (this->spinningBodyInMsg.isWritten()) {
         spinningBodyIn = this->spinningBodyInMsg();
     }
 
-    /* This loop is entered (a) initially and (b) when each attitude maneuver is complete. The reference angle is updated
-    even if a new message is not written */
-    if (this->spinningBodyInMsg.timeWritten() <= callTime && this->convergence)
-    {
+    /* This loop is entered (a) initially and (b) when each attitude maneuver is complete. The reference angle is
+    updated even if a new message is not written */
+    if (this->spinningBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Store the initial time as the current simulation time
         this->tInit = callTime * NANO2SEC;
 
@@ -103,19 +97,19 @@ void PrescribedRot1DOF::updateState(uint64_t callTime)
     double theta;
 
     // Compute the prescribed scalar states at the current simulation time
-    if ((t < this->ts || t == this->ts) && this->tf - this->tInit != 0) // Entered during the first half of the maneuver
+    if ((t < this->ts || t == this->ts) &&
+        this->tf - this->tInit != 0)  // Entered during the first half of the maneuver
     {
         thetaDDot = this->thetaDDotMax;
         thetaDot = thetaDDot * (t - this->tInit) + this->thetaDotInit;
         theta = this->a * (t - this->tInit) * (t - this->tInit) + this->thetaInit;
-    }
-    else if ( t > this->ts && t <= this->tf && this->tf - this->tInit != 0) // Entered during the second half of the maneuver
+    } else if (t > this->ts && t <= this->tf &&
+               this->tf - this->tInit != 0)  // Entered during the second half of the maneuver
     {
         thetaDDot = -1 * this->thetaDDotMax;
         thetaDot = thetaDDot * (t - this->tInit) + this->thetaDotInit - thetaDDot * (this->tf - this->tInit);
         theta = this->b * (t - this->tf) * (t - this->tf) + this->thetaRef;
-    }
-    else // Entered when the maneuver is complete
+    } else  // Entered when the maneuver is complete
     {
         thetaDDot = 0.0;
         thetaDot = this->thetaDotRef;

@@ -34,7 +34,7 @@ class GravBodyData;
  * point in space.
  */
 class GravityModel {
-  public:
+   public:
     // Core Guidelines C.67 and C.127
     virtual ~GravityModel() = default;
     GravityModel() = default;
@@ -83,8 +83,8 @@ class GravityModel {
      */
     virtual double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const = 0;
 
-  public:
-    BSKLogger *bskLogger;  /*!< pointer to bsk logging instance */
+   public:
+    BSKLogger* bskLogger; /*!< pointer to bsk logging instance */
 };
 
 #endif /* GRAVITY_MODEL_H */

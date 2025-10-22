@@ -149,7 +149,7 @@ void MtbMomentumManagement::updateState(uint64_t callTime) {
 /*
  * Returns the tilde matrix in the form of a 1-D array.
  */
-void v3TildeM(double v[3], double *m_result) {
+void v3TildeM(double v[3], double* m_result) {
     m_result[MXINDEX(3, 0, 0)] = 0.0;
     m_result[MXINDEX(3, 0, 1)] = -v[2];
     m_result[MXINDEX(3, 0, 2)] = v[1];

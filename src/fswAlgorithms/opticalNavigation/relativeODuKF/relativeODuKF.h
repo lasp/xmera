@@ -44,7 +44,7 @@ class RelODuKF : public SysModel {
     int relODuKFTimeUpdate(double updateTime);
     int relODuKFMeasUpdate();
     void relODuKFCleanUpdate();
-    void relODStateProp(double *stateInOut, double dt);
+    void relODStateProp(double* stateInOut, double dt);
     void relODuKFMeasModel();
 
     Message<NavTransMsgPayload> navStateOutMsg;     //!< navigation output message

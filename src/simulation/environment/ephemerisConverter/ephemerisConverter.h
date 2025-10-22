@@ -40,10 +40,10 @@ class EphemerisConverter : public SysModel {
     void readInputMessages();  //!< class method
     void convertEphemData(uint64_t clockNow);
     void writeOutputMessages(uint64_t Clock);
-    void addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *msg);
+    void addSpiceInputMsg(Message<SpicePlanetStateMsgPayload>* msg);
 
    public:
-    std::vector<Message<EphemerisMsgPayload> *> ephemOutMsgs;          //!< vector of planet ephemeris output messages
+    std::vector<Message<EphemerisMsgPayload>*> ephemOutMsgs;           //!< vector of planet ephemeris output messages
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;  //!< vector of planet spice state input messages
 
     BSKLogger bskLogger;  //!< -- BSK Logging

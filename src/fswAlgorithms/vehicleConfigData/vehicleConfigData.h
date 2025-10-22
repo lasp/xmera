@@ -34,7 +34,7 @@ class VehicleConfigData : public SysModel {
     double massSC;                                    /*!< [kg] Spacecraft mass */
     Message<VehicleConfigMsgPayload> vecConfigOutMsg; /*!< [-] Name of the output properties message*/
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger* bskLogger;  //!< BSK Logging
 };
 
 #endif  // VEHICLECONFIGDATACPP_H

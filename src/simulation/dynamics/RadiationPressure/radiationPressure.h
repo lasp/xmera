@@ -44,7 +44,7 @@ class RadiationPressure : public SysModel, public DynamicEffector {
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
-    void linkInStates(DynParamManager &statesIn);
+    void linkInStates(DynParamManager& statesIn);
     void readInputMessages();
     void computeForceTorque(double integTime, double timeStep);
     void setUseCannonballModel();
@@ -72,8 +72,8 @@ class RadiationPressure : public SysModel, public DynamicEffector {
     SpicePlanetStateMsgPayload sunEphmInBuffer;  //!< -- Buffer for incoming ephemeris message data
     bool stateRead;                              //!< -- Indicates a succesful read of incoming SC state message data
     EclipseMsgPayload sunVisibilityFactor;       //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
-    StateData *hubR_N;                           //!< -- State data accesss to inertial position for the hub
-    StateData *hubSigma;                         //!< -- Hub/Inertial attitude represented by MRP
+    StateData* hubR_N;                           //!< -- State data accesss to inertial position for the hub
+    StateData* hubSigma;                         //!< -- Hub/Inertial attitude represented by MRP
 };
 
 #endif

@@ -27,8 +27,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void SimpleInstrumentController::reset(uint64_t callTime)
-{
+void SimpleInstrumentController::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->locationAccessInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");
@@ -46,13 +45,12 @@ void SimpleInstrumentController::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void SimpleInstrumentController::updateState(uint64_t callTime)
-{
-    double sigma_BR_norm; //!< Norm of sigma_BR
-    double omega_BR_norm; //!< Norm of omega_BR
+void SimpleInstrumentController::updateState(uint64_t callTime) {
+    double sigma_BR_norm;  //!< Norm of sigma_BR
+    double omega_BR_norm;  //!< Norm of omega_BR
 
     /* Local copies of the msg buffers*/
-    DeviceStatusMsgPayload deviceStatusInMsgBuffer = {}; //!< local copy of input message buffer
+    DeviceStatusMsgPayload deviceStatusInMsgBuffer = {};  //!< local copy of input message buffer
 
     // zero output buffer
     DeviceCmdMsgPayload deviceCmdOutMsgBuffer = {};
@@ -75,12 +73,12 @@ void SimpleInstrumentController::updateState(uint64_t callTime)
     if (this->controllerStatus) {
         // If the target has not been imaged
         if (!this->imaged) {
-            /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate
-            error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
-            if ((sigma_BR_norm <= this->attErrTolerance)
-                && (!this->useRateTolerance || (omega_BR_norm <= this->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
-                && (accessInMsgBuffer.hasAccess))
-            {
+            /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the
+            rate error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
+            if ((sigma_BR_norm <= this->attErrTolerance) &&
+                (!this->useRateTolerance ||
+                 (omega_BR_norm <= this->rateErrTolerance))  // Check rate tolerance if useRateTolerance enabled
+                && (accessInMsgBuffer.hasAccess)) {
                 deviceCmdOutMsgBuffer.deviceCmd = 1;
                 this->imaged = 1;
                 // Otherwise, turn off the instrument

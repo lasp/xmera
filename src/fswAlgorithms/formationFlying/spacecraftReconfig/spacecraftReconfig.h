@@ -44,8 +44,8 @@ class SpacecraftReconfig : public SysModel {
                         AttRefMsgPayload attRefInMsgBuffer,
                         THRArrayConfigMsgPayload thrustConfigMsgBuffer,
                         VehicleConfigMsgPayload vehicleConfigMsgBuffer,
-                        AttRefMsgPayload *attRefOutMsgBuffer,
-                        THRArrayOnTimeCmdMsgPayload *thrustOnMsgBuffer,
+                        AttRefMsgPayload* attRefOutMsgBuffer,
+                        THRArrayOnTimeCmdMsgPayload* thrustOnMsgBuffer,
                         uint64_t callTime);
 
     void ScheduleDV(ClassicElements oe_c,

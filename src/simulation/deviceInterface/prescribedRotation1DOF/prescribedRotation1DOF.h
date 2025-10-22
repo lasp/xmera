@@ -36,14 +36,14 @@ class PrescribedRotation1DOF : public SysModel {
     void reset(uint64_t currentSimNanos) override;               //!< Reset member function
     void updateState(uint64_t currentSimNanos) override;         //!< Update member function
     void setCoastOptionBangDuration(const double bangDuration);  //!< Setter for the coast option bang duration
-    void setRotHat_M(const Eigen::Vector3d &rotHat_M);           //!< Setter for the spinning body rotation axis
+    void setRotHat_M(const Eigen::Vector3d& rotHat_M);           //!< Setter for the spinning body rotation axis
     void setSmoothingDuration(
         const double smoothingDuration);  //!< Setter method for the duration the acceleration is smoothed until
                                           //!< reaching the given maximum acceleration value
     void setThetaDDotMax(const double thetaDDotMax);  //!< Setter for the bang segment scalar angular acceleration
     void setThetaInit(const double thetaInit);        //!< Setter for the initial spinning body angle
     double getCoastOptionBangDuration() const;        //!< Getter for the coast option bang duration
-    const Eigen::Vector3d &getRotHat_M() const;       //!< Getter for the spinning body rotation axis
+    const Eigen::Vector3d& getRotHat_M() const;       //!< Getter for the spinning body rotation axis
     double getSmoothingDuration() const;  //!< Getter method for the duration the acceleration is smoothed until
                                           //!< reaching the given maximum acceleration value
     double getThetaDDotMax() const;       //!< Getter for the bang segment scalar angular acceleration
@@ -55,7 +55,7 @@ class PrescribedRotation1DOF : public SysModel {
     Message<PrescribedRotationMsgPayload>
         prescribedRotationOutMsg;  //!< Output msg for the spinning body prescribed rotational states
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger* bskLogger;  //!< BSK Logging
 
    private:
     /* Methods for computing the required rotational parameters */

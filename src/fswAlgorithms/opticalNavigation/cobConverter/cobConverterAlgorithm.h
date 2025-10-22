@@ -48,17 +48,17 @@ class CobConverterAlgorithm {
     ~CobConverterAlgorithm();
 
     std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> updateState(const uint64_t currentSimNanos,
-                                                                       const CameraModelMsgPayload &cameraSpecs,
-                                                                       const OpNavCOBMsgPayload &cobMsgBuffer,
-                                                                       const NavAttMsgPayload &navAttBuffer,
-                                                                       const NavAttMsgPayload &sunBuffer,
-                                                                       const FilterMsgPayload &filterMsgBuffer);
+                                                                       const CameraModelMsgPayload& cameraSpecs,
+                                                                       const OpNavCOBMsgPayload& cobMsgBuffer,
+                                                                       const NavAttMsgPayload& navAttBuffer,
+                                                                       const NavAttMsgPayload& sunBuffer,
+                                                                       const FilterMsgPayload& filterMsgBuffer);
 
     void setRadius(double radius);
     double getRadius() const;
     void setRadiusUncertainty(double radiusUncertainty);
     double getRadiusUncertainty() const;
-    void setAttitudeCovariance(const Eigen::Matrix3d &covAtt_BN_B);
+    void setAttitudeCovariance(const Eigen::Matrix3d& covAtt_BN_B);
     Eigen::Matrix3d getAttitudeCovariance() const;
     void setNumStandardDeviations(double num);
     double getNumStandardDeviations() const;
@@ -70,19 +70,19 @@ class CobConverterAlgorithm {
     bool isOutlierDetectionEnabled() const;
 
    private:
-    void cobOutlierDetection(const FilterMsgPayload &filterMsgBuffer);
-    void computeCameraParameters(const CameraModelMsgPayload &cameraSpecs);
-    void computeRotations(const NavAttMsgPayload &navAttBuffer);
-    void computePhaseAngleCorrection(const FilterMsgPayload &filterBuffer, const NavAttMsgPayload &sunBuffer);
-    std::tuple<Eigen::Vector3d, Eigen::Vector3d> computeCentersOfInterest(const OpNavCOBMsgPayload &cobMsgBuffer) const;
-    void computeRelevantVectors(const Eigen::Vector3d &centerOfBrightness, const Eigen::Vector3d &centerOfMass);
-    void computeCameraFrameUncertainty(const FilterMsgPayload &filterMsgBuffer, double pixelsFound);
+    void cobOutlierDetection(const FilterMsgPayload& filterMsgBuffer);
+    void computeCameraParameters(const CameraModelMsgPayload& cameraSpecs);
+    void computeRotations(const NavAttMsgPayload& navAttBuffer);
+    void computePhaseAngleCorrection(const FilterMsgPayload& filterBuffer, const NavAttMsgPayload& sunBuffer);
+    std::tuple<Eigen::Vector3d, Eigen::Vector3d> computeCentersOfInterest(const OpNavCOBMsgPayload& cobMsgBuffer) const;
+    void computeRelevantVectors(const Eigen::Vector3d& centerOfBrightness, const Eigen::Vector3d& centerOfMass);
+    void computeCameraFrameUncertainty(const FilterMsgPayload& filterMsgBuffer, double pixelsFound);
     std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> populateOutputMessages(
         uint64_t timeTag,
-        const Eigen::Vector3d &centerOfMass,
-        const Eigen::Vector3d &centerOfBrightness,
-        OpNavUnitVecMsgPayload &uVecCOBMsgBuffer,
-        OpNavCOMMsgPayload &comMsgBuffer);
+        const Eigen::Vector3d& centerOfMass,
+        const Eigen::Vector3d& centerOfBrightness,
+        OpNavUnitVecMsgPayload& uVecCOBMsgBuffer,
+        OpNavCOMMsgPayload& comMsgBuffer);
 
     PhaseAngleCorrectionMethodAlgorithm phaseAngleCorrectionMethod;
     double objectRadius{};

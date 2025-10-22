@@ -45,7 +45,7 @@ class ThrMomentumManagementCpp : public SysModel {
     ReadFunctor<RWSpeedMsgPayload> rwSpeedsInMsg;            //!< [] The name for the reaction wheel speeds message
     ReadFunctor<RWArrayConfigMsgPayload> rwConfigDataInMsg;  //!< [-] The name of the RWA configuration message
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger* bskLogger;  //!< BSK Logging
    private:
     int initRequest = 1;  //!< [-] status flag of the momentum dumping management
 };

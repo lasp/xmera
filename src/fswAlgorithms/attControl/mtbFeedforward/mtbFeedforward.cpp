@@ -17,7 +17,6 @@
 
 */
 
-
 #include "mtbFeedforward.h"
 #include <string.h>
 #include <architecture/utilities/linearAlgebra.h>
@@ -28,21 +27,20 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void MtbFeedforward::reset(uint64_t callTime)
-{
+void MtbFeedforward::reset(uint64_t callTime) {
     /*
      * Check if the required input messages are connected.
      */
-    if (!this->dipoleRequestMtbInMsg.isLinked()){
+    if (!this->dipoleRequestMtbInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbFeedForward.dipoleRequestMtbInMsg is not connected.");
     }
-    if (!this->vehControlInMsg.isLinked()){
+    if (!this->vehControlInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbFeedForward.vehControlInMsg is not connected.");
     }
-    if (!this->tamSensorBodyInMsg.isLinked()){
+    if (!this->tamSensorBodyInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbFeedForward.tamSensorBodyInMsg is not connected.");
     }
-    if (!this->mtbArrayConfigParamsInMsg.isLinked()){
+    if (!this->mtbArrayConfigParamsInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbFeedForward.mtbArrayConfigParamsInMsg is not connected.");
     }
 
@@ -51,19 +49,16 @@ void MtbFeedforward::reset(uint64_t callTime)
     this->mtbArrayConfigParams = this->mtbArrayConfigParamsInMsg();
 }
 
-
 /*! Computes the feedforward torque rod torque.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void MtbFeedforward::updateState(uint64_t callTime)
-{
-
+void MtbFeedforward::updateState(uint64_t callTime) {
     /*
      * Initialize local variables.
      */
-    double mtbDipoleCmd_B[3] = {0.0, 0.0, 0.0};     // the commanded dipole in the Body frame
-    double tauMtbFF_B[3] = {0.0, 0.0, 0.0};         // the torque rod feedforward term in the Body frame
+    double mtbDipoleCmd_B[3] = {0.0, 0.0, 0.0};  // the commanded dipole in the Body frame
+    double tauMtbFF_B[3] = {0.0, 0.0, 0.0};      // the torque rod feedforward term in the Body frame
 
     /*
      * Read the input messages and initialize output message.
@@ -73,7 +68,11 @@ void MtbFeedforward::updateState(uint64_t callTime)
     CmdTorqueBodyMsgPayload vehControlOutMsgBuffer = this->vehControlInMsg();
 
     /*! -  Compute net torque produced on the vehicle from the torque bars.*/
-    mMultV(this->mtbArrayConfigParams.GtMatrix_B, 3, this->mtbArrayConfigParams.numMTB, dipoleRequestMtbInMsgBuffer.mtbDipoleCmds, mtbDipoleCmd_B);
+    mMultV(this->mtbArrayConfigParams.GtMatrix_B,
+           3,
+           this->mtbArrayConfigParams.numMTB,
+           dipoleRequestMtbInMsgBuffer.mtbDipoleCmds,
+           mtbDipoleCmd_B);
     v3Cross(mtbDipoleCmd_B, tamSensorBodyInMsgBuffer.tam_B, tauMtbFF_B);
 
     /*! -  Negate the net rod torque to spin wheels in appropriate direction. */

@@ -21,8 +21,7 @@
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 
-void VehicleConfigData::reset(uint64_t callTime)
-{
+void VehicleConfigData::reset(uint64_t callTime) {
     /*! - Zero the output message data */
     auto localConfigData = VehicleConfigMsgPayload();
 

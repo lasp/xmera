@@ -63,10 +63,10 @@ class Node {
     bool isFree;          //!< If true, the node is constraint-compliant
     double heuristic;     //!< Heuristic value used by cartesian distance A*
     double priority;      //!< Priority of the node in A*
-    Node *neighbors[52];  //!< Container of pointers to neighboring nodes
+    Node* neighbors[52];  //!< Container of pointers to neighboring nodes
     int neighborCount;    //!< Number of neighboring nodes
-    Node *backPointer;    //!< Pointer to the previous node in the path computer by A*
-    void appendNeighbor(Node *node);
+    Node* backPointer;    //!< Pointer to the previous node in the path computer by A*
+    void appendNeighbor(Node* node);
 };
 
 //! @brief The NodeList class is used in the A* algorithm to handle Open and Closed lists O and C
@@ -75,14 +75,14 @@ class NodeList {
     NodeList();
     ~NodeList();
 
-    Node *list[10000];  //!< Container of pointers to the nodes in the list
+    Node* list[10000];  //!< Container of pointers to the nodes in the list
     int N;              //!< Number of nodes in the list
-    void append(Node *node);
+    void append(Node* node);
     void pop(int M);
     void clear();
     void swap(int m, int n);
     void sort();
-    bool contains(Node *node);
+    bool contains(Node* node);
 };
 
 /*! @brief waypoint reference module class */
@@ -99,7 +99,7 @@ class ConstrainedAttitudeManeuver : public SysModel {
     void appendKeepInDirection(double direction[3], double Fov);
     void AStar();
     void effortBasedAStar();
-    void backtrack(Node *p);
+    void backtrack(Node* p);
     void pathHandle();
     void spline();
     void computeTorque(int n, double I[9], double L[3]);

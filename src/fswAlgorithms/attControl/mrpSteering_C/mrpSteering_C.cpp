@@ -26,7 +26,7 @@
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <math.h>
 
-static void MRPSteeringLaw(MrpSteering_C *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
+static void MRPSteeringLaw(MrpSteering_C* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -72,7 +72,7 @@ void MrpSteering_C::updateState(uint64_t callTime) {
  @param omega_ast   Commanded body rates
  @param omega_ast_p Body frame derivative of the commanded body rates
  */
-void MRPSteeringLaw(MrpSteering_C *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]) {
+void MRPSteeringLaw(MrpSteering_C* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]) {
     double sigma_i;    /* ith component of sigma_B/R */
     double B[3][3];    /* B-matrix of MRP differential kinematic equations */
     double sigma_p[3]; /* MRP rates */

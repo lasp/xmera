@@ -39,8 +39,8 @@ class Eclipse : public SysModel {
     void reset(uint64_t CurrenSimNanos);
     void updateState(uint64_t currentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
-    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
-    void addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
+    void addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg);
 
    public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;  //!< sun ephemeris input message name
@@ -49,7 +49,7 @@ class Eclipse : public SysModel {
                        //!< added to the module
     std::vector<ReadFunctor<SCStatesMsgPayload>> positionInMsgs;  //!< vector of msgs for each spacecraft position state
                                                                   //!< for which to evaluate eclipse conditions.
-    std::vector<Message<EclipseMsgPayload> *> eclipseOutMsgs;     //!< vector of eclispe output msg names
+    std::vector<Message<EclipseMsgPayload>*> eclipseOutMsgs;      //!< vector of eclispe output msg names
     BSKLogger bskLogger;                                          //!< BSK Logging
     double rEqCustom;                                             //!< [m] Custom radius
 

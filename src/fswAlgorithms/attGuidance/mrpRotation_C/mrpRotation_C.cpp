@@ -127,7 +127,7 @@ void MrpRotation_C::computeTimeStep(uint64_t callTime) {
 void MrpRotation_C::computeMRPRotationReference(double sigma_R0N[3],
                                                 double omega_R0N_N[3],
                                                 double domega_R0N_N[3],
-                                                AttRefMsgPayload *attRefOut) {
+                                                AttRefMsgPayload* attRefOut) {
     double attIncrement[3]; /* [] increment in MRP attitude coordinates  */
     double RR0[3][3];       /* [] DCM rotating from R0 to R */
     double R0N[3][3];       /* [] DCM rotating from N to R0 */

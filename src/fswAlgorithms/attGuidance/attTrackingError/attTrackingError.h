@@ -41,8 +41,8 @@ class AttTrackingError : public SysModel {
     ~AttTrackingError() = default;  //!< Destructor
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    void setSigma_R0R(const Eigen::Vector3d &sigma_R0R);
-    const Eigen::Vector3d &getSigma_R0R() const;
+    void setSigma_R0R(const Eigen::Vector3d& sigma_R0R);
+    const Eigen::Vector3d& getSigma_R0R() const;
 
     Message<AttGuidMsgPayload> attGuidOutMsg;   //!< Output attitude guidance message
     ReadFunctor<NavAttMsgPayload> attNavInMsg;  //!< Input msg measured attitude

@@ -32,7 +32,7 @@
  @return void
  @param attRefOut Output message
  */
-static void computeInertialPointingReference(double sigma_R0N[3], AttRefMsgPayload *attRefOut) {
+static void computeInertialPointingReference(double sigma_R0N[3], AttRefMsgPayload* attRefOut) {
     v3Copy(sigma_R0N, attRefOut->sigma_RN);
     v3SetZero(attRefOut->omega_RN_N);
     v3SetZero(attRefOut->domega_RN_N);

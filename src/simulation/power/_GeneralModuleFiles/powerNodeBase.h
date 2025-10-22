@@ -44,8 +44,8 @@ class PowerNodeBase : public SysModel {
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     virtual void evaluatePowerModel(
-        PowerNodeUsageMsgPayload
-            *powerUsageMsg) = 0;  //!< Virtual void method used to compute module-wise power usage/generation.
+        PowerNodeUsageMsgPayload*
+            powerUsageMsg) = 0;  //!< Virtual void method used to compute module-wise power usage/generation.
     virtual void customreset(uint64_t CurrentClock);          //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock);  //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages();  //!< Custom read method, similar to customSelfInit; returns `true' by default.

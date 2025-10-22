@@ -38,10 +38,10 @@ class MrpRotation : public SysModel {
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    void setSigmaRR0(const Eigen::Vector3d &sigma);
-    const Eigen::Vector3d &getSigmaRR0() const;
-    void setOmegaRR0(const Eigen::Vector3d &omega);
-    const Eigen::Vector3d &getOmegaRR0() const;
+    void setSigmaRR0(const Eigen::Vector3d& sigma);
+    const Eigen::Vector3d& getSigmaRR0() const;
+    void setOmegaRR0(const Eigen::Vector3d& omega);
+    const Eigen::Vector3d& getOmegaRR0() const;
 
     Message<AttRefMsgPayload> attRefOutMsg;           //!< output message containing the Reference
     ReadFunctor<AttRefMsgPayload> attRefInMsg;        //!< guidance reference input message

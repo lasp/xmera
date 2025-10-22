@@ -75,6 +75,6 @@ class MtbMomentumManagement : public SysModel {
     MTBArrayConfigMsgPayload mtbConfigParams;  //!< configuration for MTB layout
 };
 
-void v3TildeM(double v[3], double *result);
+void v3TildeM(double v[3], double* result);
 
 #endif

@@ -24,7 +24,7 @@ class MiruLowPassFilterConverter : public SysModel {
     ReadFunctor<AccDataMsgPayload> imuAccelDataInMsg;  //!< Input msg for the imu data
     Message<IMUSensorMsgPayload> imuSensorOutMsg;      //!< Output msg for the imu data
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger* bskLogger;  //!< BSK Logging
 
    private:
     double cutOffFrequency = 15.0 / (2 * M_PI);  //!< Low pass filter parameter

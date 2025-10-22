@@ -31,8 +31,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedTrans::reset(uint64_t callTime)
-{
+void PrescribedTrans::reset(uint64_t callTime) {
     // Check if the input message is connected
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: prescribedTrans.linearTranslationRigidBodyInMsg wasn't connected.");
@@ -51,20 +50,17 @@ motion output message.
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedTrans::updateState(uint64_t callTime)
-{
+void PrescribedTrans::updateState(uint64_t callTime) {
     // Create the buffer messages
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn = {};
     PrescribedTranslationMsgPayload prescribedTranslationOut = {};
 
-    if (this->linearTranslationRigidBodyInMsg.isWritten())
-    {
+    if (this->linearTranslationRigidBodyInMsg.isWritten()) {
         linearTranslationRigidBodyIn = this->linearTranslationRigidBodyInMsg();
     }
 
     // This loop is entered when a new maneuver is requested after all previous maneuvers are completed
-    if (this->linearTranslationRigidBodyInMsg.timeWritten() <= callTime && this->convergence)
-    {
+    if (this->linearTranslationRigidBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Store the initial information
         this->tInit = callTime * NANO2SEC;
         this->scalarPosInit = v3Norm(this->r_FM_M);
@@ -80,7 +76,8 @@ void PrescribedTrans::updateState(uint64_t callTime)
         this->ts = this->tInit + convTime / 2;
 
         // Define the parabolic constants for the maneuver
-        this->a = 0.5 * (this->scalarPosRef - this->scalarPosInit) / ((this->ts - this->tInit) * (this->ts - this->tInit));
+        this->a =
+            0.5 * (this->scalarPosRef - this->scalarPosInit) / ((this->ts - this->tInit) * (this->ts - this->tInit));
         this->b = -0.5 * (this->scalarPosRef - this->scalarPosInit) / ((this->ts - this->tf) * (this->ts - this->tf));
 
         // Set the convergence to false to execute the maneuver
@@ -96,19 +93,19 @@ void PrescribedTrans::updateState(uint64_t callTime)
     double scalarPos;
 
     // Compute the prescribed scalar states: scalarAccel, scalarVel, and scalarPos
-    if ((t < this->ts || t == this->ts) && this->tf - this->tInit != 0)  // Entered during the first half of the maneuver
+    if ((t < this->ts || t == this->ts) &&
+        this->tf - this->tInit != 0)  // Entered during the first half of the maneuver
     {
         scalarAccel = this->scalarAccelMax;
         scalarVel = scalarAccel * (t - this->tInit) + this->scalarVelInit;
         scalarPos = this->a * (t - this->tInit) * (t - this->tInit) + this->scalarPosInit;
-    }
-    else if ( t > this->ts && t <= this->tf && this->tf - this->tInit != 0)  // Entered during the second half of the maneuver
+    } else if (t > this->ts && t <= this->tf &&
+               this->tf - this->tInit != 0)  // Entered during the second half of the maneuver
     {
         scalarAccel = -1 * this->scalarAccelMax;
         scalarVel = scalarAccel * (t - this->tInit) + this->scalarVelInit - scalarAccel * (this->tf - this->tInit);
         scalarPos = this->b * (t - this->tf) * (t - this->tf) + this->scalarPosRef;
-    }
-    else  // Entered when the maneuver is complete
+    } else  // Entered when the maneuver is complete
     {
         scalarAccel = 0.0;
         scalarVel = this->scalarVelRef;

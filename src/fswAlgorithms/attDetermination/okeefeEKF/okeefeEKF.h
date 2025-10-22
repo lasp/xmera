@@ -91,9 +91,9 @@ class OkeefeEKF : public SysModel {
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
                          double dt,
                          double omega[SKF_N_STATES_HALF],
-                         double *stateInOut,
-                         double *prevstates,
-                         double *stateTransition);
+                         double* stateInOut,
+                         double* prevstates,
+                         double* stateTransition);
 
 void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
                          size_t numCSS,
@@ -101,23 +101,23 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
                          double sensorUseThresh,
                          double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
                          double CBias[MAX_NUM_CSS_SENSORS],
-                         double *obs,
-                         double *yMeas,
-                         int *numObs,
-                         double *measMat);
+                         double* obs,
+                         double* yMeas,
+                         int* numObs,
+                         double* measMat);
 
 void sunlineKalmanGainOkeefe(double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
                              double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
                              double qObsVal,
                              int numObsInt,
-                             double *kalmanGain);
+                             double* kalmanGain);
 
 void sunlineRateCompute(double states[SKF_N_STATES_HALF],
                         double dt,
                         double prev_states[SKF_N_STATES_HALF],
-                        double *omega);
+                        double* omega);
 
-void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double *dynMat);
+void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double* dynMat);
 
 void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
                             double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
@@ -126,8 +126,8 @@ void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
                             int numObsInt,
                             double yObs[MAX_N_CSS_MEAS],
                             double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                            double *x,
-                            double *covar);
+                            double* x,
+                            double* covar);
 
 void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
                      double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
@@ -135,8 +135,8 @@ void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
                      int numObsInt,
                      double yObs[MAX_N_CSS_MEAS],
                      double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                     double *states,
-                     double *x,
-                     double *covar);
+                     double* states,
+                     double* x,
+                     double* covar);
 
 #endif

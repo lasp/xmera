@@ -89,7 +89,7 @@ void SunSearch_C::updateState(uint64_t currentSimNanos) {
     @return void
     */
 void SunSearch_C::computeKinematicProperties(int const index) {
-    SlewProperties *SP = &this->slewProperties[index];
+    SlewProperties* SP = &this->slewProperties[index];
     int axis = SP->slewRotAxis - 1;
     double maxAcc = this->slewMaxTorque[axis] / this->principleInertias[axis];
 
@@ -125,8 +125,8 @@ void SunSearch_C::computeKinematicProperties(int const index) {
     */
 void SunSearch_C::computeReferenceMotion(uint64_t const currentSimNanos,
                                          int const index,
-                                         double *omega_RN,
-                                         double *domega_RN) {
+                                         double* omega_RN,
+                                         double* domega_RN) {
     double zeroTime = 0;
     for (int i = 0; i < index; ++i) {
         zeroTime += this->slewProperties[i].slewTotalTime;

@@ -43,7 +43,7 @@ class PixelLineBiasUKF : public SysModel {
     int pixelLineBiasUKFTimeUpdate(double updateTime);
     int pixelLineBiasUKFMeasUpdate();
     void pixelLineBiasUKFCleanUpdate();
-    void relODStateProp(double *stateInOut, double dt);
+    void relODStateProp(double* stateInOut, double dt);
     void pixelLineBiasUKFMeasModel();
 
     Message<NavTransMsgPayload> navStateOutMsg;             //!< navigation translation output message

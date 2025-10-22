@@ -143,8 +143,8 @@ void EtSphericalControl::calcRelativeMotionControl(NavTransMsgPayload servicerTr
                                                    VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
                                                    VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
                                                    CmdForceInertialMsgPayload eForceInMsgBuffer,
-                                                   CmdForceInertialMsgPayload *forceInertialOutMsgBuffer,
-                                                   CmdForceBodyMsgPayload *forceBodyOutMsgBuffer) {
+                                                   CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
+                                                   CmdForceBodyMsgPayload* forceBodyOutMsgBuffer) {
     // relative motion control according to "Relative Motion Control For Two-Spacecraft Electrostatic Orbit Corrections"
     // https://doi.org/10.2514/1.56118
 

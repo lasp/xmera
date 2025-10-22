@@ -30,8 +30,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrMomentumManagement::reset(uint64_t callTime)
-{
+void ThrMomentumManagement::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->rwConfigDataInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: thrMomentumManagement.rwConfigDataInMsg wasn't connected.");
@@ -53,26 +52,26 @@ void ThrMomentumManagement::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void ThrMomentumManagement::updateState(uint64_t callTime)
-{
-    RWSpeedMsgPayload   rwSpeedMsg;         /* Reaction wheel speed estimate message */
-    CmdTorqueBodyMsgPayload controlOutMsg = {};  /* Control torque output message */
-    double              hs;                 /* net RW cluster angular momentum magnitude */
-    double              hs_B[3];            /* RW angular momentum */
-    double              vec3[3];            /* temp vector */
-    double              Delta_H_B[3];       /* [Nms]  net desired angular momentum change */
+void ThrMomentumManagement::updateState(uint64_t callTime) {
+    RWSpeedMsgPayload rwSpeedMsg;               /* Reaction wheel speed estimate message */
+    CmdTorqueBodyMsgPayload controlOutMsg = {}; /* Control torque output message */
+    double hs;                                  /* net RW cluster angular momentum magnitude */
+    double hs_B[3];                             /* RW angular momentum */
+    double vec3[3];                             /* temp vector */
+    double Delta_H_B[3];                        /* [Nms]  net desired angular momentum change */
     int i;
 
     /*! - check if a momentum dumping check has been requested */
     if (this->initRequest == 1) {
-
         /*! - Read the input messages */
         rwSpeedMsg = this->rwSpeedsInMsg();
 
         /*! - compute net RW momentum magnitude */
         v3SetZero(hs_B);
-        for (i=0;i<this->rwConfigParams.numRW;i++) {
-            v3Scale(this->rwConfigParams.JsList[i]*rwSpeedMsg.wheelSpeeds[i],&this->rwConfigParams.GsMatrix_B[i*3],vec3);
+        for (i = 0; i < this->rwConfigParams.numRW; i++) {
+            v3Scale(this->rwConfigParams.JsList[i] * rwSpeedMsg.wheelSpeeds[i],
+                    &this->rwConfigParams.GsMatrix_B[i * 3],
+                    vec3);
             v3Add(hs_B, vec3, hs_B);
         }
         hs = v3Norm(hs_B);
@@ -82,16 +81,14 @@ void ThrMomentumManagement::updateState(uint64_t callTime)
             /* Momentum dumping not required */
             v3SetZero(Delta_H_B);
         } else {
-            v3Scale(-(hs - this->hs_min)/hs, hs_B, Delta_H_B);
+            v3Scale(-(hs - this->hs_min) / hs, hs_B, Delta_H_B);
         }
         this->initRequest = 0;
-
 
         /*! - write out the output message */
         v3Copy(Delta_H_B, controlOutMsg.torqueRequestBody);
 
         this->deltaHOutMsg.write(&controlOutMsg, moduleID, callTime);
-
     }
 
     return;

@@ -61,21 +61,21 @@ class OEStateEphem : public SysModel {
     unsigned int getArcAnomalyFlag(unsigned int arcNumber) const;
 
     void setArcRadiusPeriapsisCoefficients(unsigned int arcNumber,
-                                           const std::array<double, MAX_OE_COEFF> &radiusPeriapsisCoefficients);
+                                           const std::array<double, MAX_OE_COEFF>& radiusPeriapsisCoefficients);
     std::array<double, MAX_OE_COEFF> getArcRadiusPeriapsisCoefficients(unsigned int arcNumber);
     void setArcEccentricityCoefficients(unsigned int arcNumber,
-                                        const std::array<double, MAX_OE_COEFF> &eccentricityCoefficients);
+                                        const std::array<double, MAX_OE_COEFF>& eccentricityCoefficients);
     std::array<double, MAX_OE_COEFF> getArcEccentricityCoefficients(unsigned int arcNumber);
     void setArcInclinationCoefficients(unsigned int arcNumber,
-                                       const std::array<double, MAX_OE_COEFF> &inclinationCoefficients);
+                                       const std::array<double, MAX_OE_COEFF>& inclinationCoefficients);
     std::array<double, MAX_OE_COEFF> getArcInclinationCoefficients(unsigned int arcNumber);
     void setArcArgPeriapsisCoefficients(unsigned int arcNumber,
-                                        const std::array<double, MAX_OE_COEFF> &argPeriapsisCoefficients);
+                                        const std::array<double, MAX_OE_COEFF>& argPeriapsisCoefficients);
     std::array<double, MAX_OE_COEFF> getArcArgPeriapsisCoefficients(unsigned int arcNumber);
-    void setArcRaanCoefficients(unsigned int arcNumber, const std::array<double, MAX_OE_COEFF> &raanCoefficients);
+    void setArcRaanCoefficients(unsigned int arcNumber, const std::array<double, MAX_OE_COEFF>& raanCoefficients);
     std::array<double, MAX_OE_COEFF> getArcRaanCoefficients(unsigned int arcNumber);
     void setArcTrueAnomalyCoefficients(unsigned int arcNumber,
-                                       const std::array<double, MAX_OE_COEFF> &trueAnomalyCoefficients);
+                                       const std::array<double, MAX_OE_COEFF>& trueAnomalyCoefficients);
     std::array<double, MAX_OE_COEFF> getArcTrueAnomalyCoefficients(unsigned int arcNumber);
 
    private:

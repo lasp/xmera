@@ -125,12 +125,12 @@ class InertialUKF : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-void Read_STMessages(InertialUKF *configData);
-void inertialUKFAggGyrData(InertialUKF *configData, double prevTime, double propTime, AccDataMsgPayload *gyrData);
-int inertialUKFTimeUpdate(InertialUKF *configData, double updateTime);
-int inertialUKFMeasUpdate(InertialUKF *configData, int currentST);
-void inertialUKFCleanUpdate(InertialUKF *configData);
-void inertialStateProp(InertialUKF *configData, double *stateInOut, double dt);
-void inertialUKFMeasModel(InertialUKF *configData, int currentST);
+void Read_STMessages(InertialUKF* configData);
+void inertialUKFAggGyrData(InertialUKF* configData, double prevTime, double propTime, AccDataMsgPayload* gyrData);
+int inertialUKFTimeUpdate(InertialUKF* configData, double updateTime);
+int inertialUKFMeasUpdate(InertialUKF* configData, int currentST);
+void inertialUKFCleanUpdate(InertialUKF* configData);
+void inertialStateProp(InertialUKF* configData, double* stateInOut, double dt);
+void inertialUKFMeasModel(InertialUKF* configData, int currentST);
 
 #endif

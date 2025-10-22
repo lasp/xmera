@@ -44,6 +44,6 @@ class DVAccumulation : public SysModel {
     BSKLogger bskLogger{};  //!< BSK Logging
 };
 
-void dvAccumulation_QuickSort(AccPktDataMsgPayload *A, int start, int end);
+void dvAccumulation_QuickSort(AccPktDataMsgPayload* A, int start, int end);
 
 #endif

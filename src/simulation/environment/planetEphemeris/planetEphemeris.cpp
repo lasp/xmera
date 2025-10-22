@@ -42,7 +42,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names) {
 
     /* create corresponding output messages */
     for (long unsigned int c = 0; c < this->planetNames.size(); c++) {
-        Message<SpicePlanetStateMsgPayload> *spMsg;
+        Message<SpicePlanetStateMsgPayload>* spMsg;
         spMsg = new Message<SpicePlanetStateMsgPayload>;
         this->planetOutMsgs.push_back(spMsg);
     }

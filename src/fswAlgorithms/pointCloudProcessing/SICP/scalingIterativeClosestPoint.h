@@ -49,11 +49,11 @@ class ScalingIterativeClosestPoint : public SysModel {
     ReadFunctor<PointCloudMsgPayload> referencePointCloud;  //!< The input reference data
     BSKLogger bskLogger;                                    //!< -- BSK Logging
 
-    double scalingMax = 1.1;             //!< Scaling maximums
-    double scalingMin = 0.9;             //!< Scaling minimums
-    double errorTolerance = 1e-10;       //!< Error tolerance for convergence
+    double scalingMax = 1.1;                  //!< Scaling maximums
+    double scalingMin = 0.9;                  //!< Scaling minimums
+    double errorTolerance = 1e-10;            //!< Error tolerance for convergence
     int maxIterations = MAX_SICP_ITERATIONS;  //!< Max iterations
-    int numberScalePoints = 100;         //!< Number of points in order to find the scale factor
+    int numberScalePoints = 100;              //!< Number of points in order to find the scale factor
 
     //!< Initial conditions that could be set by user to better start off the SICP apgorithm
     Eigen::MatrixXd R_init = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);

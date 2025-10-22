@@ -24,9 +24,9 @@
 
 /*! @brief Euler integrator */
 class svIntegratorEuler : public svIntegratorRungeKutta<1> {
-  public:
-    svIntegratorEuler(DynamicObject* dyn); //!< class method
-  private:
+   public:
+    svIntegratorEuler(DynamicObject* dyn);  //!< class method
+   private:
     static RKCoefficients<1> getCoefficients();
 };
 

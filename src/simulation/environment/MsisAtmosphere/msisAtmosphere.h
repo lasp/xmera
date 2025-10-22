@@ -49,7 +49,7 @@ class MsisAtmosphere : public AtmosphereBase {
     bool ReadInputs();
     void updateInputParams();
     void updateSwIndices();
-    void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
+    void evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime);
     void customSetEpochFromVariable();
 
    public:

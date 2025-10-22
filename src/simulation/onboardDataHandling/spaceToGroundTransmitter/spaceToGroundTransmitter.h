@@ -31,11 +31,11 @@ class SpaceToGroundTransmitter : public DataNodeBase {
    public:
     SpaceToGroundTransmitter();
     ~SpaceToGroundTransmitter();
-    void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg);
-    void addAccessMsgToTransmitter(Message<AccessMsgPayload> *tmpAccessMsg);
+    void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg);
+    void addAccessMsgToTransmitter(Message<AccessMsgPayload>* tmpAccessMsg);
 
    private:
-    void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime);
+    void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime);
     bool customReadMessages();
 
    public:

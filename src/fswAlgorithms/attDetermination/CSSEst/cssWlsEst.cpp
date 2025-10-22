@@ -23,8 +23,8 @@
 #include <architecture/utilities/safeMath.h>
 #include <string.h>
 
-int computeWlsmn(int numActiveCss, double *H, double *W, double *y, double x[3]);
-void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig, double *wlsEst, double *cssResiduals);
+int computeWlsmn(int numActiveCss, double* H, double* W, double* y, double x[3]);
+void computeWlsResiduals(double* cssMeas, CSSConfigMsgPayload* cssConfig, double* wlsEst, double* cssResiduals);
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -186,7 +186,7 @@ void CssWlsEst::updateState(uint64_t callTime) {
     @param wlsEst The WLS estimate computed for the CSS measurements
     @param cssResiduals The measurement residuals output by this function
 */
-void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig, double *wlsEst, double *cssResiduals) {
+void computeWlsResiduals(double* cssMeas, CSSConfigMsgPayload* cssConfig, double* wlsEst, double* cssResiduals) {
     double cssDotProd;
 
     memset(cssResiduals, 0x0, cssConfig->nCSS * sizeof(double));
@@ -211,7 +211,7 @@ void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig, double
  @param y the observation vector for the valid sensors
  @param x The output least squares fit for the observations
  */
-int computeWlsmn(int numActiveCss, double *H, double *W, double *y, double x[3]) {
+int computeWlsmn(int numActiveCss, double* H, double* W, double* y, double x[3]) {
     double m22[2 * 2];
     double m32[3 * 2];
     int status = 0;

@@ -26,14 +26,12 @@
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <math.h>
 
-
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void PrvSteering::reset(uint64_t callTime)
-{
+void PrvSteering::reset(uint64_t callTime) {
     if (!this->guidInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: prvSteering.guidInMsg wasn't connected.");
     }
@@ -46,10 +44,9 @@ void PrvSteering::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void PrvSteering::updateState(uint64_t callTime)
-{
-    AttGuidMsgPayload   guidCmd;            /*!< Guidance Message */
-    RateCmdMsgPayload   outMsgBuffer = {};  /*!< -- copy of output message */
+void PrvSteering::updateState(uint64_t callTime) {
+    AttGuidMsgPayload guidCmd;           /*!< Guidance Message */
+    RateCmdMsgPayload outMsgBuffer = {}; /*!< -- copy of output message */
 
     /*! - Read the dynamic input messages */
     guidCmd = this->guidInMsg();
@@ -63,7 +60,6 @@ void PrvSteering::updateState(uint64_t callTime)
     return;
 }
 
-
 /*! This method computes the PRV Steering law.  A commanded body rate is returned given the PRV
  attitude error measure of the body relative to a reference frame.  The function returns the commanded
  body rate, as well as the body frame derivative of this rate command.
@@ -73,28 +69,29 @@ void PrvSteering::updateState(uint64_t callTime)
  @param omega_ast   Commanded body rates
  @param omega_ast_p Body frame derivative of the commanded body rates
  */
-void PRVSteeringLaw(PrvSteering *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
-{
-    double e_hat[3];        /*!< principal rotation axis of MRP */
-    double phi;             /*!< principal rotation angle of MRP */
-    double sigma_Norm;      /*!< norm of the MRP attitude error */
+void PRVSteeringLaw(PrvSteering* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]) {
+    double e_hat[3];   /*!< principal rotation axis of MRP */
+    double phi;        /*!< principal rotation angle of MRP */
+    double sigma_Norm; /*!< norm of the MRP attitude error */
     double value;
 
     sigma_Norm = v3Norm(sigma_BR);
     if (sigma_Norm > 0.00000000001) {
-        v3Scale(1./sigma_Norm, sigma_BR, e_hat);
+        v3Scale(1. / sigma_Norm, sigma_BR, e_hat);
     } else {
         e_hat[0] = 1.;
         e_hat[1] = 0.;
         e_hat[2] = 0.;
     }
-    phi = 4.*atan(sigma_Norm);
+    phi = 4. * atan(sigma_Norm);
 
-    value = atan(M_PI_2/configData->omega_max*(configData->K1*phi + configData->K3*phi*phi*phi))/M_PI_2*configData->omega_max;
+    value = atan(M_PI_2 / configData->omega_max * (configData->K1 * phi + configData->K3 * phi * phi * phi)) / M_PI_2 *
+            configData->omega_max;
 
     v3Scale(-value, e_hat, omega_ast);
 
-    value *= (3*configData->K3*phi*phi + configData->K1)/(pow(M_PI_2/configData->omega_max*(configData->K1*phi + configData->K3*phi*phi*phi),2) + 1);
+    value *= (3 * configData->K3 * phi * phi + configData->K1) /
+             (pow(M_PI_2 / configData->omega_max * (configData->K1 * phi + configData->K3 * phi * phi * phi), 2) + 1);
 
     v3Scale(value, e_hat, omega_ast_p);
 

@@ -42,8 +42,8 @@ class EtSphericalControl : public SysModel {
                                    VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
                                    VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
                                    CmdForceInertialMsgPayload eForceInMsgBuffer,
-                                   CmdForceInertialMsgPayload *forceInertialOutMsgBuffer,
-                                   CmdForceBodyMsgPayload *forceBodyOutMsgBuffer);
+                                   CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
+                                   CmdForceBodyMsgPayload* forceBodyOutMsgBuffer);
     // declare module IO interfaces
     ReadFunctor<NavTransMsgPayload> servicerTransInMsg;  //!< servicer orbit input message
     ReadFunctor<NavTransMsgPayload> debrisTransInMsg;    //!< debris orbit input message

@@ -39,7 +39,7 @@ class VelocityPoint : public SysModel {
                                           double v_BN_N[3],
                                           double celBdyPositonVector[3],
                                           double celBdyVelocityVector[3],
-                                          AttRefMsgPayload *attRefOut);
+                                          AttRefMsgPayload* attRefOut);
 
     /* declare module private variables */
     double mu;  //!< Planet gravitational parameter

@@ -131,11 +131,11 @@ class CSSConstellation : public SysModel {
     ~CSSConstellation();                         //!< @brief [-] Default Destructor
     void reset(uint64_t CurrentClock);           //!< Method for reseting the module
     void updateState(uint64_t currentSimNanos);  //!< @brief [-] Main update method for CSS constellation
-    void appendCSS(CoarseSunSensor *newSensor);  //!< @brief [-] Method for adding sensor to list
+    void appendCSS(CoarseSunSensor* newSensor);  //!< @brief [-] Method for adding sensor to list
 
    public:
     Message<CSSArraySensorMsgPayload> constellationOutMsg;  //!< [-] CSS constellation output message
-    std::vector<CoarseSunSensor *> sensorList;              //!< [-] List of coarse sun sensors in constellation
+    std::vector<CoarseSunSensor*> sensorList;               //!< [-] List of coarse sun sensors in constellation
    private:
     CSSArraySensorMsgPayload outputBuffer;  //!< [-] buffer used to write output message
 };

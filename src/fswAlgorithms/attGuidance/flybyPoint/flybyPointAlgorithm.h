@@ -28,11 +28,11 @@ class FlybyPointAlgorithm {
    public:
     void reset();
     AttRefMsgPayload updateState(uint64_t currentSimNanos,
-                                 const Eigen::Vector3d &r_BN_N,
-                                 const Eigen::Vector3d &v_BN_N);
-    bool checkValidity(uint64_t currentSimNanos, const Eigen::Vector3d &r_BN_N, const Eigen::Vector3d &v_BN_N) const;
-    void computeFlybyParameters(const Eigen::Vector3d &r_BN_N, const Eigen::Vector3d &v_BN_N);
-    void computeRN(const Eigen::Vector3d &r_BN_N, const Eigen::Vector3d &v_BN_N);
+                                 const Eigen::Vector3d& r_BN_N,
+                                 const Eigen::Vector3d& v_BN_N);
+    bool checkValidity(uint64_t currentSimNanos, const Eigen::Vector3d& r_BN_N, const Eigen::Vector3d& v_BN_N) const;
+    void computeFlybyParameters(const Eigen::Vector3d& r_BN_N, const Eigen::Vector3d& v_BN_N);
+    void computeRN(const Eigen::Vector3d& r_BN_N, const Eigen::Vector3d& v_BN_N);
     std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d> computeGuidanceSolution() const;
     double getTimeBetweenFilterData() const;
     void setTimeBetweenFilterData(double timeBetweenFilterData);

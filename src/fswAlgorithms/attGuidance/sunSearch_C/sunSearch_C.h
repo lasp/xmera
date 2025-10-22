@@ -64,7 +64,7 @@ class SunSearch_C : public SysModel {
     BSKLogger bskLogger;          //!< BSK Logging
 
     void computeKinematicProperties(int const index);
-    void computeReferenceMotion(uint64_t const currentSimNanos, int const index, double *omega_RN, double *domega_RN);
+    void computeReferenceMotion(uint64_t const currentSimNanos, int const index, double* omega_RN, double* domega_RN);
 };
 
 #endif

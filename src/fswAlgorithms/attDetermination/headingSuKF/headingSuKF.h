@@ -90,11 +90,11 @@ class HeadingSuKF : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-void headingSuKFTimeUpdate(HeadingSuKF *configData, double updateTime);
-void headingSuKFMeasUpdate(HeadingSuKF *configData, double updateTime);
-void headingStateProp(double *stateInOut, double *b_vec, double dt);
-void headingSuKFMeasModel(HeadingSuKF *configData);
-void headingSuKFComputeDCM_BS(double heading[HEAD_N_STATES], double bVec[HEAD_N_STATES], double *dcm);
-void headingSuKFSwitch(double *bVec_B, double *states, double *covar);
+void headingSuKFTimeUpdate(HeadingSuKF* configData, double updateTime);
+void headingSuKFMeasUpdate(HeadingSuKF* configData, double updateTime);
+void headingStateProp(double* stateInOut, double* b_vec, double dt);
+void headingSuKFMeasModel(HeadingSuKF* configData);
+void headingSuKFComputeDCM_BS(double heading[HEAD_N_STATES], double bVec[HEAD_N_STATES], double* dcm);
+void headingSuKFSwitch(double* bVec_B, double* states, double* covar);
 
 #endif

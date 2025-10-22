@@ -26,8 +26,7 @@
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void ScanningInstrumentController::reset(uint64_t callTime)
-{
+void ScanningInstrumentController::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->accessInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: scanningInstrumentController.accessInMsg was not connected.");
@@ -37,15 +36,15 @@ void ScanningInstrumentController::reset(uint64_t callTime)
     }
 }
 
-/*! This method checks the status of the device and if there is access to target, as well if the magnitude of the attitude
-error and attitude rate are within the tolerance. If so, the instrument is turned on, otherwise it is turned off.
+/*! This method checks the status of the device and if there is access to target, as well if the magnitude of the
+attitude error and attitude rate are within the tolerance. If so, the instrument is turned on, otherwise it is turned
+off.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void ScanningInstrumentController::updateState(uint64_t callTime)
-{
-    double sigma_BR_norm; //!< Norm of sigma_BR
-    double omega_BR_norm; //!< Norm of omega_BR
+void ScanningInstrumentController::updateState(uint64_t callTime) {
+    double sigma_BR_norm;  //!< Norm of sigma_BR
+    double omega_BR_norm;  //!< Norm of omega_BR
 
     // always zero the output message buffers before assigning values
     DeviceCmdMsgPayload deviceCmdOutMsgBuffer = {};
@@ -69,10 +68,10 @@ void ScanningInstrumentController::updateState(uint64_t callTime)
     if (this->controllerStatus) {
         /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate
         error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
-        if ((sigma_BR_norm <= this->attErrTolerance)
-            && (!this->useRateTolerance || (omega_BR_norm <= this->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
-            && (accessInMsgBuffer.hasAccess))
-        {
+        if ((sigma_BR_norm <= this->attErrTolerance) &&
+            (!this->useRateTolerance ||
+             (omega_BR_norm <= this->rateErrTolerance))  // Check rate tolerance if useRateTolerance enabled
+            && (accessInMsgBuffer.hasAccess)) {
             deviceCmdOutMsgBuffer.deviceCmd = 1;
         }
     }

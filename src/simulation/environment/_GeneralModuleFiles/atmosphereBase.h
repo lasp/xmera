@@ -39,15 +39,15 @@ class AtmosphereBase : public SysModel {
     AtmosphereBase();
     ~AtmosphereBase();
     void reset(uint64_t currentSimNanos);
-    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
     void updateState(uint64_t currentSimNanos);
 
    protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void updateLocalAtmosphere(double currentTime);
-    void updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState);
-    virtual void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime) = 0;  //!< class method
+    void updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCStatesMsgPayload* scState);
+    virtual void evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime) = 0;  //!< class method
     virtual void customreset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();
@@ -56,7 +56,7 @@ class AtmosphereBase : public SysModel {
    public:
     std::vector<ReadFunctor<SCStatesMsgPayload>>
         scStateInMsgs;  //!< Vector of the spacecraft position/velocity input message
-    std::vector<Message<AtmoPropsMsgPayload> *>
+    std::vector<Message<AtmoPropsMsgPayload>*>
         envOutMsgs;  //!< Vector of message names to be written out by the environment
     ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg;  //!< Message name for the planet's SPICE position message
     ReadFunctor<EpochMsgPayload> epochInMsg;                 //!< (optional) epoch date/time input message

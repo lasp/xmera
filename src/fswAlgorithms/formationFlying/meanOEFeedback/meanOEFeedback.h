@@ -36,7 +36,7 @@ class MeanOEFeedback : public SysModel {
     void updateState(uint64_t callTime) override;
     void calcLyapunovFeedback(NavTransMsgPayload chiefTransMsg,
                               NavTransMsgPayload deputyTransMsg,
-                              CmdForceInertialMsgPayload *forceMsg);
+                              CmdForceInertialMsgPayload* forceMsg);
     ReadFunctor<NavTransMsgPayload> chiefTransInMsg;   //!< chief orbit input message
     ReadFunctor<NavTransMsgPayload> deputyTransInMsg;  //!< deputy orbit input message
     Message<CmdForceInertialMsgPayload> forceOutMsg;   //!< deputy control force output message

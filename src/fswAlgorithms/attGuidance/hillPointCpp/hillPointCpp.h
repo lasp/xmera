@@ -41,7 +41,7 @@ class HillPointCpp : public SysModel {
     ReadFunctor<EphemerisMsgPayload> celBodyInMsg;  //!< The name of the celestial body message
     Message<AttRefMsgPayload> attRefOutMsg;         //!< The name of the output message
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger* bskLogger;  //!< BSK Logging
 
    private:
     int planetMsgIsLinked;  //!< flag if the planet message is linked
@@ -50,7 +50,7 @@ class HillPointCpp : public SysModel {
                                              Eigen::Vector3d v_BN_N,
                                              Eigen::Vector3d celBdyPositionVector,
                                              Eigen::Vector3d celBdyVelocityVector,
-                                             AttRefMsgPayload *attRefOut);
+                                             AttRefMsgPayload* attRefOut);
 };
 
 #endif

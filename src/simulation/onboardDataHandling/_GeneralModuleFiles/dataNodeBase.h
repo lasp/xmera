@@ -43,7 +43,7 @@ class DataNodeBase : public SysModel {
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     virtual void evaluateDataModel(
-        DataNodeUsageMsgPayload *dataUsageMsg,
+        DataNodeUsageMsgPayload* dataUsageMsg,
         double currentTime) = 0;  //!< Virtual void method used to compute module-wise data usage/generation.
     virtual void customreset(uint64_t CurrentClock);          //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock);  //!< custom Write method, similar to customSelfInit.

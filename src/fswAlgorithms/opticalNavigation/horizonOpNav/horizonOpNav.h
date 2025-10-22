@@ -50,7 +50,7 @@ class HorizonOpNav : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-void BackSub(double *R, double *inVec, int32_t nRow, double *n);
-void QRDecomp(double *inMat, int32_t nRow, double *Q, double *R);
+void BackSub(double* R, double* inVec, int32_t nRow, double* n);
+void QRDecomp(double* inMat, int32_t nRow, double* Q, double* R);
 
 #endif
