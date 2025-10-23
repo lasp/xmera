@@ -31,7 +31,7 @@ parameters and capture rates. This stems for an attitude detumble scenario, but 
 pointing towards a celestial body in order to display the visualization Vizard, and show
 the camera capabilities.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioVizPoint.py
 
@@ -85,7 +85,7 @@ The second control scenario points the spacecraft towards Mars on a Mars orbit.
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the vizInterface, spacecraft, simpleNav, mrpFeedback. and inertial3D modules.
 # Illustrates a spacecraft pointing with visualization.

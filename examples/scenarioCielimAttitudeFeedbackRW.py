@@ -21,7 +21,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 from xmera.architecture import messaging

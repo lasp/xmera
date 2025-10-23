@@ -82,7 +82,7 @@ has not converged it. At all subsequent time steps, the flag is equal to 0.
 .. image:: /_images/Scenarios/scenarioLambertSolver9.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioLambertSolver.py
 
@@ -90,7 +90,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing how to use the Lambert Planner, Lambert Solver and Lambert Validator modules for
 #           autonomous Delta-V guidance
@@ -116,7 +116,7 @@ try:
 except ImportError:
     vizFound = False
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

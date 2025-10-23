@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and mrpFeedback()
 #           and boreAngCalc() modules.  Illustrates the compliance of several keep-in and

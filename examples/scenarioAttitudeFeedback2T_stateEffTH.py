@@ -80,7 +80,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(), thrusterDynamicEffector() and
 #           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit, while using thrusters
@@ -93,7 +93,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

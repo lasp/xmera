@@ -22,7 +22,7 @@ Overview
 
 This scenario demonstrates mapping several points on the surface of the Earth.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioGroundMapping.py
 
@@ -55,7 +55,7 @@ points expressed in the planet-centered, planet-fixed frame, and the number of p
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the groundMapping(), mappingInstrument(), partitionedStorageUnit() modules.
 # Author:   Adam Herrmann
@@ -104,7 +104,7 @@ try:
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 

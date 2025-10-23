@@ -30,7 +30,7 @@ is to illustrate how to start and stop the Basilisk simulation to apply
 some :math:`\Delta v`'s for simple orbit maneuvers.  Read :ref:`scenarioBasicOrbit`
 to learn how to setup an orbit simulation.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioOrbitManeuver.py
 
@@ -84,7 +84,7 @@ in textbooks such as `Analytical Mechanics of Space Systems
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() and gravity modules illustrating
 #           how impulsive Delta_v maneuver can be simulated with stopping and starting the
@@ -98,7 +98,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 from xmera.simulation import spacecraft

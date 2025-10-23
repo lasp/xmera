@@ -25,7 +25,7 @@ material with an insulated backing. An optional power input can be used if the s
 to heat. The sensor radiates heat to the outside environment, and takes in heat from the sun based on its incidence
 angle.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioSensorThermal.py
 
@@ -50,7 +50,7 @@ The following plots illustrate the temperature of the sensor.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  The purpose of this scenario script is to demonstrate the use of the sensorThermal module, which models
 #           the temperature of a sensor.
@@ -88,7 +88,7 @@ from xmera.architecture import messaging
 # attempt to import vizard
 from xmera.utilities import vizSupport
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 

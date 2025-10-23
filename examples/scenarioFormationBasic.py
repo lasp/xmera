@@ -31,7 +31,7 @@ Note, this scenario also illustrates how to ensure that the differential equatio
 the servicer and debris object are integrated at the same time.  This is not required in this scenario
 as there are no direct satellite-to-satellite dynamic interactions.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioFormationBasic.py
 
@@ -94,7 +94,7 @@ saturated, and the attitude still eventually stabilizes.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing a servicer (3-axis attitude controlled) and a tumbling debris object.
 # Author:   Hanspeter Schaub
@@ -119,7 +119,7 @@ try:
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 bskPath = __path__[0]

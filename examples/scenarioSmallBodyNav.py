@@ -66,7 +66,7 @@ In the next four plots, the attitude and rate estimates and error plots of the s
 .. image:: /_images/Scenarios/scenarioSmallBodyNav8.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSmallBodyNav.py
 
@@ -74,7 +74,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Example simulation to demonstrate the use of the smallBodyNavEKF
 # Author:   Adam Herrmann
@@ -107,7 +107,7 @@ from xmera.utilities import simIncludeRW
 from xmera.utilities import unitTestSupport
 
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

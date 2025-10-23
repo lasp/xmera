@@ -25,7 +25,7 @@ This scenario demonstrates how to set up a Walker-Delta constellation of satelli
 uses the stand-alone Basilisk architecture rather than using the ''examples/FormationBskSim`` or ``examples/MultiSatBskSim``
 architectures for simultaneously simulating multiple spacecraft.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioSatelliteConstellation.py
 
@@ -73,7 +73,7 @@ is created through the ``vizInterface``::
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrates how to use the stand alone Basilisk architecture to automate
 #           the setup of a Walker constellation.

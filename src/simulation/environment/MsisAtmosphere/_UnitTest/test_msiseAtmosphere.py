@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Test the validity of a simple exponential atmosphere model.
 # Author:   Andrew Harris

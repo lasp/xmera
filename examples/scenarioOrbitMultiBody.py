@@ -29,7 +29,7 @@ This script sets up a 3-DOF spacecraft which is traveling in a multi-gravity env
 is to illustrate how to attach a multiple gravity model, and compare the output to SPICE generated
 trajectories.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioOrbitMultiBody.py
 
@@ -86,7 +86,7 @@ resulting position coordinates and trajectories differences are shown below.
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 # how to setup an orbital simulation that uses multiple gravitational bodies.

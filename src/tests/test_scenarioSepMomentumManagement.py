@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the scenarioSepMomentumManagement script. Illustrates how to perform continuum momentum
 #           management on a spacecraft equipped with a dual-gimbaled solar electric thruster.

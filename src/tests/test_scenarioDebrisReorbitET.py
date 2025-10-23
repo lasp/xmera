@@ -19,7 +19,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing a servicer that reorbits a debris using electrostatic forces.
 # Author:   Julian Hammerl

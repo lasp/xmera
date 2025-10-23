@@ -28,7 +28,7 @@ message is connected to :ref:`simpleSolarPanel`.
 .. image:: /_images/static/test_scenario_RotatingPanel.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioRotatingPanel.py
 
@@ -75,7 +75,7 @@ found with the predicted times when the rotating panel will yield CSS signals an
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 #           connected the hingedRigidBody panel state message to a CSS and solar power module

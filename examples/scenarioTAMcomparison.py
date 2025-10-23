@@ -25,7 +25,7 @@ The purpose is to demonstrate how to add multiple Three-Axis Magnetometers (TAM)
 magnetic field representations, biases, and bounds to each.
 The orbit setup is similar to that used in :ref:`scenarioBasicOrbit`.
 
-The script is found in the folder ``Basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioTAMcomparison.py
 
@@ -104,7 +104,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Compares TAM results using the WMM and centered Dipole Model
 # Author:   Kaylee Champion
@@ -115,7 +115,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 

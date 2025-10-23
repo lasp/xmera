@@ -30,7 +30,7 @@ input message.  The benefit here is that the attitude dynamics is over-written t
 follow the given input message.  This can lead to must faster simulation times as larger integration
 time steps can be taken.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudePrescribed.py
 
@@ -72,7 +72,7 @@ and the spacecraft is prescribed to have a different orientation relative to the
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() undergoing orbital motion subject to a
 #           prescribed orientation.
@@ -85,7 +85,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 from xmera.fswAlgorithms import attRefCorrection

@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test for the TAM sensor on a rigid spacecraft
 # Author:   Demet Cilden-Guler

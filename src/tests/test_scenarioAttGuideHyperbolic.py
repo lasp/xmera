@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
 #           mrpFeedback() with attitude navigation modules.  This script is a

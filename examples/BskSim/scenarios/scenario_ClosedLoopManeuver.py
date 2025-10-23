@@ -28,7 +28,7 @@ the modules :ref:`dvGuidance`, :ref:`mrpFeedback`, :ref:`thrForceMapping` and :r
 maneuver is executed using the :ref:`dvExecuteGuidance` module. The maneuver starts at a specified burn start time and
 ends once the desired DV has been accumulated.
 
-The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``xmera/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_ClosedLoopManeuver.py
 

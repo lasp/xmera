@@ -24,7 +24,7 @@ This script sets up a 6-DOF spacecraft in deep space without any gravitational
 bodies. Only rotational motion is simulated.  The script illustrates how to
 setup attitude filters that use measurements from the Coarse Sun Sensors (CSS).
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioCSSFilters.py
 
@@ -251,7 +251,7 @@ The post fit residuals, show a fully functional filter, with no issues of observ
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrates how to setup and use sun heading filters
 # Author:   Thibaud Teil

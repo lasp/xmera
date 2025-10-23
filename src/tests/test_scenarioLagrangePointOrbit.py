@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  This scenario illustrates the orbit of a spacecraft near the Earth-Sun Lagrange points.
 # Author:   Scott McKinley

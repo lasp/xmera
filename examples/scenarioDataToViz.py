@@ -26,7 +26,7 @@ compatible data play for offline playback and analysis.  In this simulation a se
 position with respect to an uncontrolled satellite.  Custom spacecraft models are specified for Vizard
 in the folder ``dataForExamples``.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioDataToViz.py
 
@@ -61,7 +61,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing a servicer (3-axis attitude controlled) and a tumbling debris object.
 # Author:   Hanspeter Schaub
@@ -82,7 +82,7 @@ try:
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

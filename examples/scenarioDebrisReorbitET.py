@@ -59,7 +59,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing a servicer that reorbits a debris using electrostatic forces.
 # Author:   Julian Hammerl
@@ -83,7 +83,7 @@ try:
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 

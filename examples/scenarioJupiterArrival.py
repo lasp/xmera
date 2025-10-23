@@ -49,7 +49,7 @@ while providing pseudo-SPICE messages is laid out in :ref:`scenarioCSS`.
 
 This simulation combines all these techniques as well as implementing custom gravitational bodies (Leah future work).
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioJupiterArrival.py
 
@@ -74,7 +74,7 @@ Plots below illustrate the scenario results for the inertial position states and
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose: Hyperbolic Jupiter arrival to a circular final orbit
 # Author:   Leah Kiner

@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrate the performance of different integrators.
 # Author:   Juan Garcia Bonilla

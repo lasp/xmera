@@ -32,7 +32,7 @@ attitude pointing modes 1) Hill pointing, 2) spacecraft point at the debris obje
 To do relative motion maneuvers, methods are used to change the instantaneous relative
 velocity.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioRendezVous.py
 
@@ -75,7 +75,7 @@ saturated, and the attitude still eventually stabilizes.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Simulation of a servicer approaching a LEO spacecraft target
 #
@@ -101,7 +101,7 @@ try:
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 bskPath = __path__[0]

@@ -27,7 +27,7 @@ In contrast with :ref:`scenarioAttitudeConstraintViolation` the goal of this sce
 how to set up a Basilisk simulation using the :ref:`constrainedAttitudeManeuver` module to perform a
 slew maneuver while ensuring constraint compliance.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioAttitudeConstrainedManeuver.py
 

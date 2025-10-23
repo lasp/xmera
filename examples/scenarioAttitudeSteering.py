@@ -26,7 +26,7 @@ This script sets up a spacecraft with 3 RWs which is orbiting the Earth.  The go
 illustrate how to use the :ref:`mrpSteering` module with a rate sub-servo system to control
 the attitude.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudeSteering.py
 
@@ -125,7 +125,7 @@ similar in performance to a standard proportional-derivative or PD feedback cont
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
 #           MRP_Steering() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
@@ -138,7 +138,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

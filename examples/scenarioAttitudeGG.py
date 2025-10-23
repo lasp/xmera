@@ -25,7 +25,7 @@ control solution is active.  This script expands on :ref:`scenarioAttitudeGuidan
 up a 6-DOF spacecraft which is orbiting the Earth.  More illustrations on using the gravity gradient
 torque effector can be found in the modules :ref:`UnitTestGravityGradientEffector` folder.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudeGG.py
 
@@ -57,7 +57,7 @@ gravity gradient torque the closed loop dynamics is now only Lagrange stable or 
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
 #           mrpFeedback() with attitude navigation modules.  Illustrates how
@@ -70,7 +70,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

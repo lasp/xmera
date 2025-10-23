@@ -23,7 +23,7 @@ Overview
 Demonstrates using :ref:`spacecraftLocation` to check for times where the antenna axis on the primary spacecraft
 has access to another spacecraft.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSpacecraftLocation.py
 
@@ -36,7 +36,7 @@ When the simulation completes a plot is shown with the access times illustrated.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing a servicer (3-axis attitude controlled) and a tumbling debris object.
 # Author:   Hanspeter Schaub
@@ -58,7 +58,7 @@ from xmera.utilities import (SimulationBaseClass, macros,
                                 unitTestSupport, vizSupport)
 
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 bskPath = __path__[0]

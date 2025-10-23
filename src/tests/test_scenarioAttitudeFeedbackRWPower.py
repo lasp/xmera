@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  test script for scenarioAttitudeFeedbackRWPower.py
 # Author:   Hanspeter Schaub

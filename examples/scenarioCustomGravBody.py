@@ -35,7 +35,7 @@ is created using custom values, and the asteroid Itokawa is created with custom 
 Further, the Vizard binary file is setup to load up a custom CAD model for the asteroid. The spacecraft
 orbit is defined relative to the asteroid.  Note, this feature requires :ref:`Vizard <vizard>` version 1.8 or higher.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioCustomGravBody.py
 
@@ -72,7 +72,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing how to setup a custom gravity object
 # Author:   Hanspeter Schaub
@@ -89,7 +89,7 @@ from xmera.utilities import orbitalMotion
 from xmera.utilities import unitTestSupport
 
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

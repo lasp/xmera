@@ -24,7 +24,7 @@ Demonstrates how to use guidance modules to align the spacecraft frame to the ve
 This script sets up a 6-DOF spacecraft which is on a hyperbolic trajectory near Earth.
 It aligns the spacecraft to point along the velocity vector throughout the orbit.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudeGuidance.py
 
@@ -106,7 +106,7 @@ to point the correct face of the spacecraft along the negative V-bar.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
 #           mrpFeedback() with attitude navigation modules.  This script is a
@@ -120,7 +120,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 from xmera.architecture import messaging

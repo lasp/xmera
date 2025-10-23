@@ -17,7 +17,7 @@
 #
 
 #
-# Basilisk Integrated Test
+# Xmera Integrated Test
 #
 # Purpose:  Integrated test of the MonteCarlo module with Spice usage.
 #

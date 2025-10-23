@@ -17,7 +17,7 @@
 #
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrates how to setup CSS sensors on a rigid spacecraft
 # Author:   Hanspeter Schaub

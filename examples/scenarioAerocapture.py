@@ -24,7 +24,7 @@ Demonstrates a spacecraft performing aerocapture.  :ref:`tabularAtmosphere` is u
 to read in a table of atmospheric density value for the planet.  A cannonball
 drag effector (:ref:`dragDynamicEffector`) is used to simulate the atmospheric drag force.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioAerocapture.py
 
@@ -81,7 +81,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 from xmera.simulation import dragDynamicEffector
@@ -98,7 +98,7 @@ from xmera.utilities import vizSupport
 from xmera.utilities.readAtmTable import readAtmTable
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Aerocapture with cannonball drag and tabular atmosphere modules
 # Author:   Mikaela Felix and Hanspeter Schaub

@@ -66,7 +66,7 @@ The spacecraft trajectories as seen from the inertial and asteroid fixed frame m
 .. image:: /_images/Scenarios/scenarioSmallBodyNavUKF2.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSmallBodyNavUKF.py
 
@@ -74,7 +74,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Example simulation to demonstrate the use of the smallBodyNavUKF
 # Author:   Julio C. Sanchez
@@ -97,7 +97,7 @@ from xmera.utilities import (SimulationBaseClass, macros, simIncludeGravBody)
 from xmera.utilities import orbitalMotion
 from xmera.utilities import unitTestSupport
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

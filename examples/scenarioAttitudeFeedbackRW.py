@@ -34,7 +34,7 @@ The first setup runs the RW control to produce a desired set of RW motor torques
 which are then connected directly to the RW device input states.  The second setup illustrates
 how to setup voltage based I/O modules to the RW devices, both on the FSW and SIM side.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioAttitudeFeedbackRW.py
 
@@ -266,7 +266,7 @@ the balanced RW case.  But there is a distinct numerical difference.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
 #           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
@@ -279,7 +279,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 from xmera.architecture import messaging

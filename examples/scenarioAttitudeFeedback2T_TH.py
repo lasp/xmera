@@ -30,7 +30,7 @@ in which the dynamics and the FSW algorithms are run at different time steps.  T
 as in :ref:`scenarioAttitudeFeedbackRW`, but here the RW actuation is replaced with
 thruster based control torque solution.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudeFeedback2T_TH.py
 
@@ -195,7 +195,7 @@ is 'on', the requested thruster force is always negative, as it can be seen in t
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(), thrusterDynamicEffector() and
 #           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit, while using thrusters
@@ -208,7 +208,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

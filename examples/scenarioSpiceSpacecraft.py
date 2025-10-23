@@ -31,7 +31,7 @@ to specify the spacecraft motion.  With this approach the spacecraft attitude is
 dynamic and can achieve the same inertial pointing goal as setup in
 :ref:`scenarioAttitudeFeedback`.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSpiceSpacecraft.py
 
@@ -66,7 +66,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
 #           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
@@ -103,7 +103,7 @@ from xmera.architecture import messaging
 from xmera.utilities import vizSupport
 
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 bskPath = __path__[0]

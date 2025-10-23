@@ -22,7 +22,7 @@ Overview
 
 Demonstrates the interaction between two charged spacecraft in a leader/follower configuration, the effect electrostatic forces/torques have on the separation of the two spacecrafts and how to visualize the simulation data in :ref:`Vizard <vizard>`. The scenario demonstrates how to use :ref:`msmForceTorque` to calculate the electrostatic forces using the Multi-Sphere Method. Each spacecraft is represented by multiple spheres each with a designated location and radius. The locations and radii data is stored in ``GOESR_bus_80_sphs.csv``, however any appropriate csv file can be used. Both spacecraft have a negative charged potential. The purpose of this script is to show how to set up the Multi-Sphere Method for charged spacecraft and apply the external forces/torques to the spacecrafts as well as to show how to store the Basilisk simulation data to be able to visualize both satellite's motions within the :ref:`Vizard <vizard>` application.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioTwoChargedSC.py
 
@@ -56,7 +56,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing two charged spacecraft interacting based on the Multisphere Sphere Method.
 # Author:   James Walker
@@ -76,7 +76,7 @@ from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, RigidBodyKinematics, vizSupport, SpherePlot)
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 

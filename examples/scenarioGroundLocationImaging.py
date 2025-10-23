@@ -24,7 +24,7 @@ This scenario demonstrates imaging a target on the surface of the Earth based on
 Simulated data generated from this image is stored in an on-board storage device and then downlinked to a ground
 station.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioGroundLocationImaging.py
 
@@ -64,7 +64,7 @@ The following plots illustrate the 2D pointing error, access data, image command
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque(), simpleNav(), locationPoint(), groundLocation(),
 #           simpleInstrumentController(), simpleInstrument(), partitionedStorageUnit(), and spaceToGroundTransmitter()
@@ -114,7 +114,7 @@ try:
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 

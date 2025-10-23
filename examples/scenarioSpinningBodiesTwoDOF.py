@@ -30,7 +30,7 @@ panel that rotates about two axis in a universal-joint configuration. The panel 
 two-panel formulation uses two flat cuboid panels that rotate about perpendicular hinges. The first panel connects
 directly to the hub, whereas the second connects to the first.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioSpinningBodiesTwoDOF.py
 
@@ -87,7 +87,7 @@ angular velocity states match the motion of the panels.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Illustrates the different simulation capabilities of the 2DOF modules
 # Author:   João Vaz Carneiro

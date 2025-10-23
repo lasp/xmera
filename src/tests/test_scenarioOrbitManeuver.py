@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() and gravity modules illustrating
 #           how impulsive Delta_v maneuver can be simulated with stoping and starting the

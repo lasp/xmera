@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  integrated test of a script that uses a Python BSK module
 # Author:   Hanspeter Schaub

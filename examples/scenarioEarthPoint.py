@@ -26,7 +26,7 @@ the following:
 
 - :ref:`triad`: computes the reference attitude for a spacecraft using the triad method to statisfy the requirements of the state.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioEarthPoint.py
 

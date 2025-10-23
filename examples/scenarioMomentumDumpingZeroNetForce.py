@@ -51,7 +51,7 @@ it is 0.1 seconds. This is necessary because the :ref:`thrMomentumDumping` autom
 control period for the firing. However, if the dynamics is integrated at the same frequency, this does not give
 enough time resolution to appreciate the variation in the momentum.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioMomentumDumpingZeroNetForce.py
 

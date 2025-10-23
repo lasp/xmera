@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() and gravity modules with live Vizard streaming.  Illustrates
 #           a 3-DOV spacecraft on a range of orbit types.

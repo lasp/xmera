@@ -47,14 +47,14 @@ Finally, the attitude and attitude rate is given in the plots below.
 .. image:: /_images/Scenarios/scenarioSmallBodyFeedbackControl5.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSmallBodyFeedbackControl.py
 
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Example simulation to demonstrate the use of the smallBodyWaypointFeedback module
 # Author:   Adam Herrmann
@@ -91,7 +91,7 @@ try:
 except ImportError:
     vizFound = False
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

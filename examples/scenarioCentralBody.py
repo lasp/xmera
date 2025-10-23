@@ -27,7 +27,7 @@ demonstrated.
 .. image:: /_images/static/test_scenarioBasicOrbit.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioCentralBody.py
 
@@ -67,7 +67,7 @@ Running this example script will yield the following results.
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrate sim set up using isCentralBody=True and isCentralBody=False
 # Author:   Scott Carnahan
@@ -78,7 +78,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 
@@ -96,7 +96,7 @@ from numpy.linalg import norm
 # attempt to import vizard
 from xmera.utilities import vizSupport
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

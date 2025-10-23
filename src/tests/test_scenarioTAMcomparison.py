@@ -19,7 +19,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Test file for scenarioTAMcomparison
 # Author:   Hanspeter Schaub

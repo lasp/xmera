@@ -20,7 +20,7 @@ r"""
 Overview
 --------
 
-Demonstrates how to add albedo module to coarse sun sensor. The script is found in the folder ``basilisk/examples`` and
+Demonstrates how to add albedo module to coarse sun sensor. The script is found in the folder ``xmera/examples`` and
 executed by using::
 
       python3 scenarioAlbedo.py
@@ -126,7 +126,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrates how to setup albedo for CSS
 # Author:   Demet Cilden-Guler
@@ -137,7 +137,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

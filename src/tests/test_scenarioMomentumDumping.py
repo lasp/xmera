@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), RWs, thrusters, thrMomentumManagement(),
 #           thrForceMapping() and thrMomentumDumping() modules. Illustrates how to dump momentum

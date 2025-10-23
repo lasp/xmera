@@ -27,7 +27,7 @@ star tracker aligned with the x body axis and two sun sensors aligned with the y
 The goal is to illustrate how to set up a Basilisk simulation to check whether certain slew
 maneuvers cause violations in the positional constraints of the spacecraft.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioAttitudeConstraintViolation.py
 

@@ -16,7 +16,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #
-# Basilisk Integrated Test of the Solar Radiation Pressure Evaluation
+# Xmera Integrated Test of the Solar Radiation Pressure Evaluation
 #
 # Purpose:  Integrated test of the spacecraft(), gravity modules and the solar
 #           radiation pressure modeling.  Currently the cannonball model is only tested.

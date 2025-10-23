@@ -57,7 +57,7 @@ Finally, note that in order to exclusively use the 1 DOF rotational profiler mod
 the translational position of the array elements must be updated at the start of the main deployment phase for each
 array. The array element frames are shifted outwards to each array's deployed center of mass location.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioDeployingSolarArrays.py
 

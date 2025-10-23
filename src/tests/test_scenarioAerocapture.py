@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 # Author:   Hanspeter Schaub
 # Creation Date:  May 17, 2022
 #

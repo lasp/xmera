@@ -19,7 +19,7 @@ r"""
 Overview
 --------
 
-This script demonstrates how to use event handlers to add reaction wheel faults. The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
+This script demonstrates how to use event handlers to add reaction wheel faults. The script is found in the folder ``xmera/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_AddRWFault.py
 

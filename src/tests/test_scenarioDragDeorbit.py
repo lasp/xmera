@@ -16,7 +16,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstration of deorbit using exponentialAtmosphere and dragDynamicEffector modules.
 # Author:   Mark Stephenson

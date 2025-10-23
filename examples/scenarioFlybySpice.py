@@ -25,7 +25,7 @@ Spice file for planetary flybys. This allows the user to easily visualize a miss
 Attitude pointing modes are also implemented in this script to enhance the mission simulation and illustrate
 other capabilities in Basilisk.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioFlybySpice.py
 
@@ -228,7 +228,7 @@ The following image illustrates the expected visualization of this simulation sc
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose: This simulation illustrates how to use a custom Spice file to specify a spacecraft's translation motion.
 # Attitude pointing modes are also implemented for enhanced visualization.

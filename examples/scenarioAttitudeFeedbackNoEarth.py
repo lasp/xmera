@@ -27,7 +27,7 @@ This script sets up a 6-DOF spacecraft which is hovering in deep space.  The sce
 the scenario in :ref:`scenarioAttitudeFeedback` without adding
 Earth gravity body to the simulation.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioAttitudeFeedbackNoEarth.py
 
@@ -96,7 +96,7 @@ hovering in deep space.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
 #           mrpFeedback() modules.  Illustrates spacecraft attitude control in deep
@@ -108,7 +108,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

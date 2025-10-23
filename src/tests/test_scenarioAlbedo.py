@@ -17,7 +17,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test for the albedo module
 # Author:   Demet Cilden-Guler

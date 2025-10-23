@@ -46,7 +46,7 @@ To ensure that attitude convergence is reached, in order for :ref:`thrustCMEstim
 measurements, :ref:`thrusterPlatformReference` is run at the frequency of one update per hour, as opposed to the
 frequency of one update every other second (0.5 Hz) for every other flight software module. Dynamics frequency is 2 Hz.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSepMomentumManagement.py
 

@@ -33,7 +33,7 @@ but here the dynamics
 simulation and the Flight Software (FSW) algorithms are run at different time steps
 using two separate task groups (also called processes).
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioAttitudeFeedback2T.py
 
@@ -107,7 +107,7 @@ to settle on a value that matches the un-modeled external torque.
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
 #           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit.
@@ -123,7 +123,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

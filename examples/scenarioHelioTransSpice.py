@@ -23,7 +23,7 @@ Overview
 The purpose of this simulation is to illustrate how to set a spacecraft's heliocentric translational motion using
 custom Spice files. This allows the user to easily visualize a mission trajectory using Vizard.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioHelioTransSpice.py
 
@@ -66,7 +66,7 @@ The following image illustrates the expected visualization of this simulation sc
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose: This simulation shows how to specify a spacecraft's heliocentric translational motion through loading custom Spice files.
 # Author:   Leah Kiner

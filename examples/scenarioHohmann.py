@@ -47,7 +47,7 @@ and that of the circular orbit, defined as
 The delta V is then added to the current spacecraft velocity. This calculation is done at each transfer point using the
 respective radius (inner or outer).
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioHohmann.py
 
@@ -75,7 +75,7 @@ Plots below illustrate
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing how to set up a Hohmann transfer and use reaction wheels to change the spacecraft's
 #           reference attitude
@@ -88,7 +88,7 @@ import os
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d as plt3
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 from xmera.architecture import messaging

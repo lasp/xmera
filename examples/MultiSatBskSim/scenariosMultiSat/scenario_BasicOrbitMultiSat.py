@@ -26,7 +26,7 @@ This script sets up three spacecraft orbiting a planet (Earth or Mercury). The g
 #. demonstrate how to create a formation flying scenario with any number of spacecraft, and
 #. show how to customize the environment, dynamics and flight software files.
 
-The script is found in the folder ``basilisk/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::
+The script is found in the folder ``xmera/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::
 
       python3 scenario_BasicOrbitMultiSat.py
 

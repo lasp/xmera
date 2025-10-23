@@ -26,7 +26,7 @@ are set up with individual profilers and motors as shown in the following diagra
 .. image:: /_images/static/test_scenario_DeployingPanel.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioDeployingPanel.py
 
@@ -72,7 +72,7 @@ The second panel also generates power, but stops short of full deployment and th
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Scenario script and test of the hingedRigidBodyStateEffector with changes
 #           made to permit deployment.

@@ -23,7 +23,7 @@ setup.  Note that the Python Spice setup is separate from the BSK c++ Spice modu
 a very simple simulation is shown to showcase how to correctly perform Python-based Spice function calls with a
 Basilisk Monte Carlo run.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioMonteCarloSpice.py
 

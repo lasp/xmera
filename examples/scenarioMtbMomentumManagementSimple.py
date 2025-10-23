@@ -39,7 +39,7 @@ in :ref:`scenarioAttitudeFeedbackRW`.  A magnetic field is simulated, and a thre
 sensor device is added. The spacecraft is setup to stabilize
 and point in a fixed inertial direction while this RW momentum control is engaged.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioMtbMomentumManagementSimple.py
 
@@ -76,7 +76,7 @@ momentum and then settle to zero.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft with RWs, TAMs and MTBs to perform RW momentum dumping.
 # Author:   Henry Macanas and Hanspeter Schaub
@@ -87,7 +87,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 from xmera.architecture import messaging

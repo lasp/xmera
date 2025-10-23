@@ -32,7 +32,7 @@ Basilisk components are interconnected.
 .. image:: /_images/static/test_scenarioBasicOrbit.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioBasicOrbit.py
 
@@ -187,7 +187,7 @@ In this simulation setup the planet's spherical harmonics are turned on.
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 #           a 3-DOV spacecraft on a range of orbit types.

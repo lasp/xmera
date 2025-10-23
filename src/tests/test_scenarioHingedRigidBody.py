@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated tutorial of the spacecraft(), gravity, and hinged rigid body modules illustrating
 #           how Delta_v maneuver from test_scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.

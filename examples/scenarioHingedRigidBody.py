@@ -36,7 +36,7 @@ This scenario does not have multiple maneuver types, so nothing needs to
 be changed to run the scenario as was necessary
 in the orbit maneuvers tutorial
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioBasicOrbit.py
 
@@ -131,7 +131,7 @@ similar to a weight hanging from a spring on Earth.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated tutorial of the spacecraft(), gravity, and hinged rigid body modules illustrating
 #           how Delta_v maneuver from scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
@@ -146,7 +146,7 @@ import os
 # import non-basilisk libraries
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # Allows for forces to act on the spacecraft without adding an effector like a thruster

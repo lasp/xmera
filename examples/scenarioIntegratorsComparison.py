@@ -22,7 +22,7 @@ Overview
 This scenario illustrates how different integrators compare in terms of
 accuracy and computational cost.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioIntegratorsComparison.py
 

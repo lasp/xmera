@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Test Hohmann transfer and attitude change scenario.
 # Author:   João Vaz Carneiro

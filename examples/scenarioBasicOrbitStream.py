@@ -24,7 +24,7 @@ This script duplicates the basic orbit simulation in the scenario :ref:`scenario
 The difference is that this version allows for the Basilisk simulation data to be live streamed to the
 :ref:`vizard` visualization program.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioBasicOrbitStream.py
 
@@ -62,7 +62,7 @@ This way a 10s simulation time step will take 0.2 seconds with the 50x speed up 
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 #           a 3-DOV spacecraft on a range of orbit types with live Vizard data streaming.
@@ -74,7 +74,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 

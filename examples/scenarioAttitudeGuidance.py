@@ -28,7 +28,7 @@ Overview
 Discusses how to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudeGuidance.py
 
@@ -120,7 +120,7 @@ is achieved.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
 #           mrpFeedback() with attitude navigation modules.  Illustrates how
@@ -133,7 +133,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

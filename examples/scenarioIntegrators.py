@@ -22,7 +22,7 @@ Overview
 
 This script illustrates how to setup different integration methods for a basic 3-DOF orbit scenario.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioIntegrators.py
 
@@ -126,7 +126,7 @@ folder within the ``dynamics`` folder.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstration of how to setup and use different integrators in
 #           Basilisk.  The simulation performs a 3-DOF orbit scenario.
@@ -139,7 +139,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 

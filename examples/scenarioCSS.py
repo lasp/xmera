@@ -25,7 +25,7 @@ Only rotational  motion is simulated.  The script illustrates how to setup CSS
 sensor units and log their data.  It is possible  to setup individual CSS sensors,
 or setup a constellation or array of CSS sensors.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioCSS.py
 
@@ -152,7 +152,7 @@ The resulting simulation results are shown below to be identical to the first se
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrates how to setup CSS sensors on a rigid spacecraft
 # Author:   Hanspeter Schaub
@@ -163,7 +163,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations

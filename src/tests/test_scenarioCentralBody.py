@@ -19,7 +19,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstration of using planetStates.planetPositionVelocity and isCentralBody to set
 #           spacecraft initial states in an absolute or relative frame

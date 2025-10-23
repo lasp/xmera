@@ -38,7 +38,7 @@ The second maneuver at time tm2 is performed at the end of the Lambert transfer 
 point. In the case of this scenario, the desired velocity is obtained from the ``lambertSurfaceRelativeVelocity()``
 module to such that the relative velocity to the central body surface is zero.
 
-The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``xmera/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_LambertGuidance.py
 

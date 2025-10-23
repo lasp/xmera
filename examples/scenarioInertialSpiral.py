@@ -28,7 +28,7 @@ Overview
 This scenario demonstrates how to layer attitude references. It starts with an inertial pointing attitude and then
 adds a spiral scanning motion on top of it.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioInertialSpiral.py
 
@@ -69,7 +69,7 @@ against time as well as against each other to show the resulting spiral.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the attitude navigation modules with eulerRotation()
 #           module to demonstrate layering attitude references.
@@ -106,7 +106,7 @@ from xmera.fswAlgorithms import eulerRotation
 # import message declarations
 from xmera.architecture import messaging
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 bskPath = __path__[0]

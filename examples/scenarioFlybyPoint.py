@@ -28,7 +28,7 @@ primary gravity body. To align a specific body-frame direction with the directio
  :ref:`attTrackingError`: this allows to introduce an offset rotation that aligns the desired axis with the celestial
  body, rather than the  body's :math:`x` axis. The script is run with the following input arguments:
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioFlybyPoint.py
 

@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
 #           MRP_Steering() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit

@@ -28,7 +28,7 @@ this scenario simulates the spacecraft translating in deep space.  The scenario 
 version of :ref:`scenarioAttitudePointing` where the :ref:`mrpPD` feedback control
 module is replaced with an equivalent python based BSK MRP PD control module.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudePointingPy.py
 
@@ -69,7 +69,7 @@ regains a stable orientation without tumbling past 180 degrees.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test showing how to setup and run a Python BSK module with C/C++ modules
 # Author:   Hanspeter Schaub
@@ -80,7 +80,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 from xmera import __path__
 # import message declarations
