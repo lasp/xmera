@@ -23,14 +23,14 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/SunlineFilterMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Top level structure for the CSS-based Extended Kalman Filter.
  Used to estimate the sun state in the vehicle body frame. */
@@ -87,24 +87,24 @@ class SunlineEKF : public SysModel {
 
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES * SKF_N_STATES],
                          double dt,
-                         double *stateInOut,
-                         double *stateTransition);
+                         double* stateInOut,
+                         double* stateTransition);
 void sunlineHMatrixYMeas(double states[SKF_N_STATES],
                          int numCSS,
                          double cssSensorCos[MAX_N_CSS_MEAS],
                          double sensorUseThresh,
                          double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
                          double CBias[MAX_NUM_CSS_SENSORS],
-                         double *obs,
-                         double *yMeas,
-                         int *numObs,
-                         double *measMat);
+                         double* obs,
+                         double* yMeas,
+                         int* numObs,
+                         double* measMat);
 void sunlineKalmanGain(double covarBar[SKF_N_STATES * SKF_N_STATES],
                        double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
                        double qObsVal,
                        int numObs,
-                       double *kalmanGain);
-void sunlineDynMatrix(double stateInOut[SKF_N_STATES], double dt, double *dynMat);
+                       double* kalmanGain);
+void sunlineDynMatrix(double stateInOut[SKF_N_STATES], double dt, double* dynMat);
 void sunlineCKFUpdate(double xBar[SKF_N_STATES],
                       double kalmanGain[SKF_N_STATES * MAX_N_CSS_MEAS],
                       double covarBar[SKF_N_STATES * SKF_N_STATES],
@@ -112,15 +112,15 @@ void sunlineCKFUpdate(double xBar[SKF_N_STATES],
                       int numObs,
                       double yObs[MAX_N_CSS_MEAS],
                       double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
-                      double *x,
-                      double *covar);
+                      double* x,
+                      double* covar);
 void sunlineEKFUpdate(double kalmanGain[SKF_N_STATES * MAX_N_CSS_MEAS],
                       double covarBar[SKF_N_STATES * SKF_N_STATES],
                       double qObsVal,
                       int numObs,
                       double yObs[MAX_N_CSS_MEAS],
                       double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
-                      double *states,
-                      double *x,
-                      double *covar);
+                      double* states,
+                      double* x,
+                      double* covar);
 #endif

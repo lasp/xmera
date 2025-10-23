@@ -21,20 +21,11 @@
    #include "solarArrayReference.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "solarArrayReference.h"
 
-%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-%include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+%include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+%include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>

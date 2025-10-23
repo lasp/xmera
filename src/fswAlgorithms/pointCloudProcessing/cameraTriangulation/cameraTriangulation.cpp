@@ -17,7 +17,7 @@
 
 */
 
-#include "fswAlgorithms/pointCloudProcessing/cameraTriangulation/cameraTriangulation.h"
+#include "cameraTriangulation.h"
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -80,7 +80,7 @@ void CameraTriangulation::readMessages() {
     /* point cloud message */
     bool validPointCloud = pointCloudInMsgBuffer.valid;
     int pointCloudSize = pointCloudInMsgBuffer.numberOfPoints;
-    this->pointCloud = cArrayAsEigenMatrixX(pointCloudInMsgBuffer.points, POINT_DIM, pointCloudSize);
+    this->pointCloud = cArrayAsEigenMatrixX(pointCloudInMsgBuffer.points, SICP_POINT_DIM, pointCloudSize);
     uint64_t timeTagPointCloud = pointCloudInMsgBuffer.timeTag;
 
     /* key points message */

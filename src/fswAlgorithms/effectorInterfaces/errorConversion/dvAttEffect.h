@@ -26,7 +26,7 @@
 #include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/effectorInterfaces/_GeneralModuleFiles/thrustGroupData.h"
+#include "../_GeneralModuleFiles/thrustGroupData.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -38,9 +38,9 @@ typedef struct {
     uint32_t thrustIndex; /*!< -  The actual thruster index associated with on-time*/
 } effPairs;
 
-void computeSingleThrustBlock(ThrustGroupData *thrData,
+void computeSingleThrustBlock(ThrustGroupData* thrData,
                               uint64_t callTime,
-                              CmdTorqueBodyMsgPayload *contrReq,
+                              CmdTorqueBodyMsgPayload* contrReq,
                               int64_t moduleID);
 
 /*! @brief module configuration message */

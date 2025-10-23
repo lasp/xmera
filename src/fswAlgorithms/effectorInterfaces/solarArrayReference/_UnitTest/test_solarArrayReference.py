@@ -36,7 +36,7 @@ from Basilisk.fswAlgorithms import solarArrayReference           # import the mo
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 
 # this python function computes the same reference angle as the tested module
@@ -126,7 +126,7 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     testMessages = []                        # create empty array to store test log messages
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

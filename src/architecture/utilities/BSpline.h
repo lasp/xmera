@@ -17,8 +17,8 @@
 
  */
 
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <Eigen/Dense>
 
 //! @brief The InputDataSet class contains the information about the points that must be interpolated.

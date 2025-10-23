@@ -23,25 +23,16 @@
     #include "exponentialAtmosphere.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "std_string.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <std_string.i>
 
-%include "sys_model.i"
-%include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/environment/_GeneralModuleFiles/atmosphereBase.h>
 %include "exponentialAtmosphere.h"
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/AtmoPropsMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/AtmoPropsMsgPayload.h>

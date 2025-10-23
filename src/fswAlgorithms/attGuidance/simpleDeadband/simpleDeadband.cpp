@@ -22,23 +22,20 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "fswAlgorithms/attGuidance/simpleDeadband/simpleDeadband.h"
+#include "simpleDeadband.h"
 #include <math.h>
-
-
 
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
-#include "architecture/utilities/linearAlgebra.h"
+#include <architecture/utilities/linearAlgebra.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SimpleDeadband::reset(uint64_t callTime)
-{
+void SimpleDeadband::reset(uint64_t callTime) {
     // check if the required input messages are included
     if (!this->guidInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: simpleDeadband.guidInMsg wasn't connected.");
@@ -51,8 +48,7 @@ void SimpleDeadband::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void SimpleDeadband::updateState(uint64_t callTime)
-{
+void SimpleDeadband::updateState(uint64_t callTime) {
     /*! - Read the input message and set it as the output by default */
     this->attGuidOut = this->guidInMsg();
 
@@ -68,20 +64,18 @@ void SimpleDeadband::updateState(uint64_t callTime)
     return;
 }
 
-
-/*! This method applies a two-level deadbanding logic (according to the current average simple compared with the set threshold)
- and decides whether control should be switched ON/OFF or not.
+/*! This method applies a two-level deadbanding logic (according to the current average simple compared with the set
+ threshold) and decides whether control should be switched ON/OFF or not.
  @return void
  */
-void SimpleDeadband::applyDBLogic_simpleDeadband()
-{
-    uint32_t areErrorsBelowUpperThresh = (this->attError < this->outerAttThresh && this->rateError < this->outerRateThresh);
-    uint32_t areErrorsBelowLowerThresh = (this->attError < this->innerAttThresh && this->rateError < this->innerRateThresh);
+void SimpleDeadband::applyDBLogic_simpleDeadband() {
+    uint32_t areErrorsBelowUpperThresh =
+        (this->attError < this->outerAttThresh && this->rateError < this->outerRateThresh);
+    uint32_t areErrorsBelowLowerThresh =
+        (this->attError < this->innerAttThresh && this->rateError < this->innerRateThresh);
 
-    if (areErrorsBelowUpperThresh)
-    {
-        if ((areErrorsBelowLowerThresh == 1) || ((areErrorsBelowLowerThresh == 0) && this->wasControlOff))
-        {
+    if (areErrorsBelowUpperThresh) {
+        if ((areErrorsBelowLowerThresh == 1) || ((areErrorsBelowLowerThresh == 0) && this->wasControlOff)) {
             /* Set simples to zero in order to turn off control */
             v3SetZero(this->attGuidOut.sigma_BR);
             v3SetZero(this->attGuidOut.omega_BR_B);
@@ -89,5 +83,7 @@ void SimpleDeadband::applyDBLogic_simpleDeadband()
         } else {
             this->wasControlOff = 0;
         }
-    } else { this->wasControlOff = 0; }
+    } else {
+        this->wasControlOff = 0;
+    }
 }

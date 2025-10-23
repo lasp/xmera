@@ -19,7 +19,7 @@
 
 %module(package="Basilisk.simulation") sphericalHarmonicsGravityModel
 %{
-   #include "simulation/dynamics/gravityEffector/sphericalHarmonicsGravityModel.h"
+   #include "sphericalHarmonicsGravityModel.h"
    #include <memory>
 %}
 
@@ -33,11 +33,11 @@
   }
 }
 
-%include "swig_eigen.i"
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%import "simulation/dynamics/gravityEffector/gravityModel.i"
+%import "gravityModel.i"
 
-%include "std_vector.i"
+%include <std_vector.i>
 %template() std::vector<double>;
 %template() std::vector<std::vector<double>>;
 
@@ -52,7 +52,7 @@
 %naturalvar SphericalHarmonicsGravityModel::cBar;
 %naturalvar SphericalHarmonicsGravityModel::sBar;
 
-%include "simulation/dynamics/gravityEffector/sphericalHarmonicsGravityModel.h"
+%include "sphericalHarmonicsGravityModel.h"
 
 %extend SphericalHarmonicsGravityModel {
    %pythoncode %{

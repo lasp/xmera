@@ -20,16 +20,16 @@
 #ifndef BASILISK_POWERNODEBASE_H
 #define BASILISK_POWERNODEBASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
 
-#include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
-#include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
+#include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
+#include <architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief power node base class */
 class PowerNodeBase : public SysModel {
@@ -44,8 +44,8 @@ class PowerNodeBase : public SysModel {
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     virtual void evaluatePowerModel(
-        PowerNodeUsageMsgPayload
-            *powerUsageMsg) = 0;  //!< Virtual void method used to compute module-wise power usage/generation.
+        PowerNodeUsageMsgPayload*
+            powerUsageMsg) = 0;  //!< Virtual void method used to compute module-wise power usage/generation.
     virtual void customreset(uint64_t CurrentClock);          //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock);  //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages();  //!< Custom read method, similar to customSelfInit; returns `true' by default.

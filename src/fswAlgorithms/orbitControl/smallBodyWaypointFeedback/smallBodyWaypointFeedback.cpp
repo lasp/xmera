@@ -17,9 +17,9 @@
 
 */
 
-#include "fswAlgorithms/orbitControl/smallBodyWaypointFeedback/smallBodyWaypointFeedback.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "smallBodyWaypointFeedback.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable

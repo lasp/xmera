@@ -22,12 +22,12 @@
 
 #include <stdint.h>
 
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 
 #include <Eigen/Core>
 
@@ -56,7 +56,7 @@ class MrpFeedbackAlgorithm {
     double getIntegralLimit() const;
     void setControlLawType(const int type);
     int getControlLawType() const;
-    void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
+    void setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B);
     Eigen::Vector3d getKnownTorquePntB_B() const;
 
    private:

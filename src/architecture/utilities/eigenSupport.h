@@ -20,7 +20,7 @@
 #ifndef EIGENSUPPORT
 #define EIGENSUPPORT
 
-#include "eigenMRP.h"
+#include <architecture/utilities/eigenMRP.h>
 
 #include <Eigen/Core>
 #include <cstring>

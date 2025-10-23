@@ -17,7 +17,7 @@
 
 */
 
-#include "simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.h"
+#include "hingedRigidBodyMotor.h"
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable

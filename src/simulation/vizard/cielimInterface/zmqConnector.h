@@ -27,7 +27,7 @@
 
 struct ImageData {
     int32_t imageBufferLength;
-    void *imageBuffer;
+    void* imageBuffer;
     std::optional<Eigen::Vector2d> centerOfBrightness;
 };
 
@@ -38,9 +38,9 @@ class ZmqConnector {
 
     void connect();
     [[nodiscard]] bool isConnected() const;
-    void send(const cielimMessage::CielimMessage &messagePayload);
+    void send(const cielimMessage::CielimMessage& messagePayload);
     ImageData requestImage(size_t cameraId, bool shoudReturnImage = true);
-    void setComPortNumber(std::string &portNumber);
+    void setComPortNumber(std::string& portNumber);
     void ping();
     void init();
 
@@ -51,7 +51,7 @@ class ZmqConnector {
     std::string comAddress = "127.0.0.1";
     std::string comPortNumber = "5556";
 
-    static void message_buffer_deallocate(void *data, void *hint);
+    static void message_buffer_deallocate(void* data, void* hint);
 };
 
 #endif  // ZMQCONNECTOR_H

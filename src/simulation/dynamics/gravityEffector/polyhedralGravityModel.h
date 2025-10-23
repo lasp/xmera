@@ -20,7 +20,7 @@
 #ifndef POLY_GRAVITY_MODEL_H
 #define POLY_GRAVITY_MODEL_H
 
-#include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
+#include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
 
 /** The Polyhedral gravity model.
  *
@@ -30,8 +30,7 @@
  * mass of the body.
  */
 class PolyhedralGravityModel : public GravityModel {
-  public:
-
+   public:
     /** Initialize all parameters necessary for the computation of gravity.
      *
      * The attribute `muBody` must be set separately.
@@ -68,8 +67,8 @@ class PolyhedralGravityModel : public GravityModel {
      */
     double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
 
-  public:
-    double muBody = 0;  /**< [m^3/s^2] Gravitation parameter for the planet */
+   public:
+    double muBody = 0; /**< [m^3/s^2] Gravitation parameter for the planet */
 
     /**
      * This matrix contains the position of every vertex of this
@@ -89,9 +88,9 @@ class PolyhedralGravityModel : public GravityModel {
      */
     Eigen::MatrixX3i orderFacet;
 
-  private:
-    double volPoly = 0;  /**< [m^3] Volume of the polyhedral */
-    Eigen::MatrixX3d normalFacet;  /**< [-] Normal of a facet */
+   private:
+    double volPoly = 0;           /**< [m^3] Volume of the polyhedral */
+    Eigen::MatrixX3d normalFacet; /**< [-] Normal of a facet */
 };
 
 #endif /* POLY_GRAVITY_MODEL_H */

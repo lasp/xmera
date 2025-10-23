@@ -17,6 +17,7 @@
 
  */
 
+#include <string>
 #include <vector>
 
 #ifndef BASILISK_DATASTORAGESTATUSSIMMSG_H

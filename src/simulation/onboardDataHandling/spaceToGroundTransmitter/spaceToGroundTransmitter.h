@@ -21,21 +21,21 @@
 #ifndef BASILISK_SPACETOGROUNDTRANSMITTER_H
 #define BASILISK_SPACETOGROUNDTRANSMITTER_H
 
-#include "architecture/msgPayloadDef/AccessMsgPayload.h"
-#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+#include <architecture/msgPayloadDef/AccessMsgPayload.h>
+#include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief space to ground data transmitter class */
 class SpaceToGroundTransmitter : public DataNodeBase {
    public:
     SpaceToGroundTransmitter();
     ~SpaceToGroundTransmitter();
-    void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg);
-    void addAccessMsgToTransmitter(Message<AccessMsgPayload> *tmpAccessMsg);
+    void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg);
+    void addAccessMsgToTransmitter(Message<AccessMsgPayload>* tmpAccessMsg);
 
    private:
-    void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime);
+    void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime);
     bool customReadMessages();
 
    public:

@@ -21,23 +21,21 @@
 
 #include <Eigen/Dense>
 #include <architecture/utilities/orbitalMotion.h>
-#include "architecture/utilities/astroConstants.h"
-
+#include <architecture/utilities/astroConstants.h>
 
 //! @brief The KeplerianOrbit class represents an elliptical orbit and provides a coherent set of
 //! common outputs such as position and velocity, orbital period, semi-parameter, etc. It uses the
 //! utility orbitalMotion to do orbital element to position and velocity conversion.
 class KeplerianOrbit {
-public:
+   public:
     KeplerianOrbit();
     KeplerianOrbit(ClassicElements oe, const double mu);
-    KeplerianOrbit(const KeplerianOrbit &orig);
+    KeplerianOrbit(const KeplerianOrbit& orig);
     ~KeplerianOrbit();
 
-
-    Eigen::Vector3d r_BP_P() const;              //!< body position vector relative to planet
-    Eigen::Vector3d v_BP_P() const;              //!< body velocity vector relative to planet
-    Eigen::Vector3d h_BP_P() const; //!< angular momentum of body relative to planet
+    Eigen::Vector3d r_BP_P() const;  //!< body position vector relative to planet
+    Eigen::Vector3d v_BP_P() const;  //!< body velocity vector relative to planet
+    Eigen::Vector3d h_BP_P() const;  //!< angular momentum of body relative to planet
     double M() const;
     double n() const;
     double P() const;
@@ -68,7 +66,7 @@ public:
     void set_RAAN(double RAAN);
     void set_f(double f);
 
-private:
+   private:
     double mu = MU_EARTH;
     double semi_major_axis = 1E5;
     double eccentricity = 1E-5;
@@ -92,7 +90,8 @@ private:
     Eigen::Vector3d orbital_angular_momentum_P;
     Eigen::Vector3d position_BP_P;
     Eigen::Vector3d velocity_BP_P;
-private:
+
+   private:
     void change_orbit();
     void change_f();
 };

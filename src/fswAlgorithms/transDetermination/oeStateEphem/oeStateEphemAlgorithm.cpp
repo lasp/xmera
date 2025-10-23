@@ -17,8 +17,8 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphemAlgorithm.h"
-#include "architecture/utilities/eigenSupport.h"
+#include "oeStateEphemAlgorithm.h"
+#include <architecture/utilities/eigenSupport.h>
 
 void OEStateEphemAlgorithm::reset(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload& timePayload) {
     this->spacecraftTime = timePayload;

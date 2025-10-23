@@ -22,20 +22,12 @@
     #include "mappingInstrument.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "sys_model.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "mappingInstrument.h"
 
-%include "architecture/msgPayloadDef/AccessMsgPayload.h"
+%include <architecture/msgPayloadDef/AccessMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>

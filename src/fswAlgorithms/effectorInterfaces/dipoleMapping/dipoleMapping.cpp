@@ -17,9 +17,8 @@
 
 */
 
-
-#include "fswAlgorithms/effectorInterfaces/dipoleMapping/dipoleMapping.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "dipoleMapping.h"
+#include <architecture/utilities/linearAlgebra.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -27,15 +26,14 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void DipoleMapping::reset(uint64_t callTime)
-{
+void DipoleMapping::reset(uint64_t callTime) {
     /*
      * Check if the required input messages are connected.
      */
-    if (!this->dipoleRequestBodyInMsg.isLinked()){
+    if (!this->dipoleRequestBodyInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: dipoleMapping.dipoleRequestBodyInMsg is not connected.");
     }
-    if (!this->mtbArrayConfigParamsInMsg.isLinked()){
+    if (!this->mtbArrayConfigParamsInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: mtbMomentumManagement.mtbArrayConfigParamsInMsg is not connected.");
     }
 
@@ -44,14 +42,12 @@ void DipoleMapping::reset(uint64_t callTime)
     this->mtbArrayConfigParams = this->mtbArrayConfigParamsInMsg();
 }
 
-
 /*! This method computes takes a requested Body frame dipole into individual torque rod dipole commands using a
     psuedoinverse taking into account saturation limits of the torque rods.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void DipoleMapping::updateState(uint64_t callTime)
-{
+void DipoleMapping::updateState(uint64_t callTime) {
     /*
      * Initialize local variables.
      */
@@ -64,11 +60,14 @@ void DipoleMapping::updateState(uint64_t callTime)
     MTBCmdMsgPayload dipoleRequestMtbOutMsgBuffer = {};
 
     /*! - Map the requested Body frame dipole request to individual torque rod dipoles.*/
-    mMultV(this->steeringMatrix, this->mtbArrayConfigParams.numMTB, 3, dipoleRequestBodyInMsgBuffer.dipole_B, dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds);
+    mMultV(this->steeringMatrix,
+           this->mtbArrayConfigParams.numMTB,
+           3,
+           dipoleRequestBodyInMsgBuffer.dipole_B,
+           dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds);
 
     /*! - Saturate the dipole commands if necesarry.*/
-    for (j = 0; j < this->mtbArrayConfigParams.numMTB; j++)
-    {
+    for (j = 0; j < this->mtbArrayConfigParams.numMTB; j++) {
         if (dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] > this->mtbArrayConfigParams.maxMtbDipoles[j])
             dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] = this->mtbArrayConfigParams.maxMtbDipoles[j];
 

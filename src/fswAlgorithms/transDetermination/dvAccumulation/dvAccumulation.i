@@ -21,19 +21,10 @@
    #include "dvAccumulation.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 %include "dvAccumulation.h"
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-%include "architecture/msgPayloadDef/AccDataMsgPayload.h"
-%include "architecture/msgPayloadDef/AccPktDataMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/AccDataMsgPayload.h>
+%include <architecture/msgPayloadDef/AccPktDataMsgPayload.h>

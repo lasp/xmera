@@ -25,7 +25,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import scanningInstrumentController
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -100,7 +100,7 @@ def scanningInstrumentControllerTestFunction(att_limit = 0.1, att_mag = 0.1,
     """Test method"""
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(1.0)

@@ -22,20 +22,11 @@
     #include "dipoleMapping.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "dipoleMapping.h"
 
-%include "architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h"
-%include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/DipoleRequestBodyMsgPayload.h>
+%include <architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/MTBCmdMsgPayload.h>

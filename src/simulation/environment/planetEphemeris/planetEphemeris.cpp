@@ -16,11 +16,11 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/environment/planetEphemeris/planetEphemeris.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "planetEphemeris.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <string.h>
 #include <iostream>
 
@@ -42,7 +42,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names) {
 
     /* create corresponding output messages */
     for (long unsigned int c = 0; c < this->planetNames.size(); c++) {
-        Message<SpicePlanetStateMsgPayload> *spMsg;
+        Message<SpicePlanetStateMsgPayload>* spMsg;
         spMsg = new Message<SpicePlanetStateMsgPayload>;
         this->planetOutMsgs.push_back(spMsg);
     }

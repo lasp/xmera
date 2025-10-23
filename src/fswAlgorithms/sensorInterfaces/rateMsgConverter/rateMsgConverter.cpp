@@ -28,15 +28,14 @@
 
 #include <string.h>
 #include "rateMsgConverter.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include <architecture/utilities/linearAlgebra.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RateMsgConverter::reset(uint64_t callTime)
-{
+void RateMsgConverter::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->imuRateInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");
@@ -47,8 +46,7 @@ void RateMsgConverter::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void RateMsgConverter::updateState(uint64_t callTime)
-{
+void RateMsgConverter::updateState(uint64_t callTime) {
     /*! - read in the message of type IMUSensorBodyMsgPayload */
     IMUSensorBodyMsgPayload inMsg = this->imuRateInMsg();
 

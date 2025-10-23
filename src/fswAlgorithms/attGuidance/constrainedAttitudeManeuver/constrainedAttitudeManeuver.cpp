@@ -16,11 +16,11 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "fswAlgorithms/attGuidance/constrainedAttitudeManeuver/constrainedAttitudeManeuver.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "constrainedAttitudeManeuver.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <math.h>
 #include <map>
 

@@ -22,28 +22,19 @@
     #include "MtbEffector.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_conly_data.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+%include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+%include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 %include "MtbEffector.h"
 
-%include "architecture/msgPayloadDef/MTBCmdMsgPayload.h"
+%include <architecture/msgPayloadDef/MTBCmdMsgPayload.h>
 
-%include "architecture/msgPayloadDef/MagneticFieldMsgPayload.h"
+%include <architecture/msgPayloadDef/MagneticFieldMsgPayload.h>
 
-%include "architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h"
+%include <architecture/msgPayloadDef/MTBArrayConfigMsgPayload.h>
 
-%include "architecture/msgPayloadDef/MTBMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/MTBMsgPayload.h>

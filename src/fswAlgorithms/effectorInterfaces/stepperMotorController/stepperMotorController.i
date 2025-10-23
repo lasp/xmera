@@ -21,21 +21,13 @@
    #include "stepperMotorController.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
-%include "sys_model.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 
 %include "stepperMotorController.h"
 %include "stepperMotorControllerAlgorithm.h"
 
-%include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-%include "architecture/msgPayloadDef/MotorStepCommandMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
+%include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>

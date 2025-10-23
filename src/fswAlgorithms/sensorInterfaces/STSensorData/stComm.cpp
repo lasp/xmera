@@ -17,17 +17,16 @@
 
  */
 
-#include "fswAlgorithms/sensorInterfaces/STSensorData/stComm.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "stComm.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This method resets the module.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void StComm::reset(uint64_t callTime)
-{
+void StComm::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->stSensorInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: stComm.stSensorInMsg wasn't connected.");
@@ -39,10 +38,9 @@ void StComm::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void StComm::updateState(uint64_t callTime)
-{
-    double dcm_CN[3][3];            /* dcm, inertial to case frame */
-    double dcm_BN[3][3];            /* dcm, inertial to body frame */
+void StComm::updateState(uint64_t callTime) {
+    double dcm_CN[3][3]; /* dcm, inertial to case frame */
+    double dcm_BN[3][3]; /* dcm, inertial to body frame */
 
     // read input msg
     STSensorMsgPayload localInput = this->stSensorInMsg();

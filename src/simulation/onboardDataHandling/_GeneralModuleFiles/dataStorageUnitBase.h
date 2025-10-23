@@ -17,17 +17,17 @@
 
  */
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <Eigen/Dense>
 #include <cstring>
 #include <string>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
+#include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 #ifndef BASILISK_DATASTORAGEUNITBASE_H
 #define BASILISK_DATASTORAGEUNITBASE_H
@@ -43,7 +43,7 @@ class DataStorageUnitBase : public SysModel {
     DataStorageUnitBase();
     ~DataStorageUnitBase();
     void reset(uint64_t currentSimNanos);
-    void addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg);  //!< Adds dataNode to the storageUnit
+    void addDataNodeToModel(Message<DataNodeUsageMsgPayload>* tmpNodeMsg);  //!< Adds dataNode to the storageUnit
     void updateState(uint64_t currentSimNanos);
     void setDataBuffer(std::string partitionName,
                        int64_t data);  //!< Adds/removes the data from the partitionName partition once
@@ -56,7 +56,7 @@ class DataStorageUnitBase : public SysModel {
     virtual void customWriteMessages(uint64_t CurrentClock);  //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages();  //!< Custom read method, similar to customSelfInit; returns `true' by default.
     int messageInStoredData(
-        DataNodeUsageMsgPayload *tmpNodeMsg);  //!< Returns index of the dataName if it's already in storedData
+        DataNodeUsageMsgPayload* tmpNodeMsg);  //!< Returns index of the dataName if it's already in storedData
     int64_t sumAllData();                      //!< Sums all of the data in the storedData vector
 
    public:

@@ -24,6 +24,7 @@
 #
 
 import numpy as np
+import Basilisk.architecture.messaging
 from Basilisk import __path__
 from Basilisk.simulation import ephemerisConverter
 from Basilisk.simulation import spiceInterface
@@ -68,7 +69,7 @@ def unitephemeris_converter(show_plots):
     spiceObject = spiceInterface.SpiceInterface()
     spiceObject.modelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    spiceObject.addPlanetNames(spiceInterface.StringVector(planets))
+    spiceObject.addPlanetNames(planets)
     spiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
     sim.AddModelToTask(unitTaskName, spiceObject)
 

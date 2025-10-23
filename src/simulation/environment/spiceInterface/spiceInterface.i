@@ -21,12 +21,9 @@
    #include "spiceInterface.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "swig_conly_data.i"
-%include "std_string.i"
-%include "std_vector.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_string.i>
+%include <std_vector.i>
 
 %template() std::vector<std::string>;
 
@@ -40,25 +37,18 @@ from Basilisk.architecture.swig_common_model import *
 // this raises an error because mySpiceInterface.planetFrames is returned by value
 %naturalvar SpiceInterface::planetFrames;
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 
 %include "spiceInterface.h"
 
-%include "architecture/msgPayloadDef/EpochMsgPayload.h"
+%include <architecture/msgPayloadDef/EpochMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SpiceTimeMsgPayload.h"
+%include <architecture/msgPayloadDef/SpiceTimeMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+%include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 
-%include "architecture/msgPayloadDef/TransRefMsgPayload.h"
-
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/TransRefMsgPayload.h>

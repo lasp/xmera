@@ -20,17 +20,17 @@ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of 
 #ifndef _IMAGE_PROC_COB_H_
 #define _IMAGE_PROC_COB_H_
 
-#include "architecture/messaging/messaging.h"
-#include "opencv2/core/mat.hpp"
-#include "opencv2/opencv.hpp"
+#include <architecture/messaging/messaging.h>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/opencv.hpp>
 #include <stdint.h>
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
+#include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief visual object tracking using center of brightness detection */
 class CenterOfBrightness : public SysModel {
@@ -41,7 +41,7 @@ class CenterOfBrightness : public SysModel {
     void updateState(uint64_t currentSimNanos);
     void reset(uint64_t currentSimNanos);
 
-    void setWindowCenter(const Eigen::VectorXi &center);
+    void setWindowCenter(const Eigen::VectorXi& center);
     Eigen::VectorXi getWindowCenter() const;
     void setWindowSize(int32_t width, int32_t height);
     Eigen::VectorXi getWindowSize() const;
@@ -49,13 +49,13 @@ class CenterOfBrightness : public SysModel {
     double getRelativeBrightnessIncreaseThreshold() const;
     void setPixelThreshold(double PixelThreshold);
     double getPixelThreshold() const;
-    void setFileName(const std::string &fileName);
+    void setFileName(const std::string& fileName);
     std::string getFileName() const;
     void setBlurSize(int32_t blur);
     int32_t getBlurSize() const;
     void setSaveImages(bool save);
     bool getSaveImages() const;
-    void setSaveDir(const std::string &directory);
+    void setSaveDir(const std::string& directory);
     std::string getSaveDir() const;
     void setNumberOfPointsBrightnessAverage(int32_t rollingAverage);
     int32_t getNumberOfPointsBrightnessAverage() const;
@@ -65,12 +65,12 @@ class CenterOfBrightness : public SysModel {
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
    private:
-    cv::Mat readImage(CameraImageMsgPayload &imageBuffer, OpNavCOBMsgPayload &cobBuffer, uint64_t currentSimNanos);
+    cv::Mat readImage(CameraImageMsgPayload& imageBuffer, OpNavCOBMsgPayload& cobBuffer, uint64_t currentSimNanos);
     std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
     std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
-    void computeWindow(cv::Mat const &image);
-    void applyWindow(cv::Mat const &image) const;
-    OpNavCOBMsgPayload findCob(const cv::Mat &imageCV, const CameraImageMsgPayload &imageBuffer);
+    void computeWindow(cv::Mat const& image);
+    void applyWindow(cv::Mat const& image) const;
+    OpNavCOBMsgPayload findCob(const cv::Mat& imageCV, const CameraImageMsgPayload& imageBuffer);
     void updateBrightnessHistory(double brightness);
 
     uint64_t sensorTimeTag;                    //!< [ns] Current time tag for sensor out

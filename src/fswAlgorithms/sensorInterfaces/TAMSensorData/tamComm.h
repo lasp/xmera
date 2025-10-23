@@ -20,12 +20,12 @@
 #ifndef _TAM_COMM_H_
 #define _TAM_COMM_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/TAMSensorMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/TAMSensorBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/TAMSensorMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! module configuration message definition */
 class TamComm : public SysModel {

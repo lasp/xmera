@@ -19,8 +19,8 @@
 #ifndef STEPPERMOTORCONTROLLERALGORITHM_H
 #define STEPPERMOTORCONTROLLERALGORITHM_H
 
-#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/MotorStepCommandMsgPayload.h"
+#include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>
 #include <cmath>
 #include <cstdint>
 

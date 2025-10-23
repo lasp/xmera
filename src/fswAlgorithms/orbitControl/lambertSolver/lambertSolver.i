@@ -22,25 +22,14 @@
     #include "lambertSolver.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "lambertSolver.h"
 
-%include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
-struct LambertProblemMsg_C;
-%include "architecture/msgPayloadDef/LambertSolutionMsgPayload.h"
-struct LambertSolutionMsg_C;
-%include "architecture/msgPayloadDef/LambertPerformanceMsgPayload.h"
-struct LambertPerformanceMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/LambertProblemMsgPayload.h>
+%include <architecture/msgPayloadDef/LambertSolutionMsgPayload.h>
+%include <architecture/msgPayloadDef/LambertPerformanceMsgPayload.h>

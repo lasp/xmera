@@ -20,19 +20,19 @@
 #ifndef SPINNING_BODY_ONE_DOF_STATE_EFFECTOR_H
 #define SPINNING_BODY_ONE_DOF_STATE_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 #include <Eigen/Dense>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h"
-#include "architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h>
+#include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
+#include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief spinning body state effector class */
 class SpinningBodyOneDOFStateEffector : public StateEffector, public SysModel {

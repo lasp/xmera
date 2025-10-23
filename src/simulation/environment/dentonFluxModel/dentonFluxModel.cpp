@@ -17,8 +17,8 @@
 
 */
 
-#include "simulation/environment/dentonFluxModel/dentonFluxModel.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "dentonFluxModel.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <cmath>
 #include <fstream>
 

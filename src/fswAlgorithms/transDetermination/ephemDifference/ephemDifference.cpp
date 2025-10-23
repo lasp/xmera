@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/ephemDifference/ephemDifference.h"
+#include "ephemDifference.h"
 
 /*! @brief This method resets the module.
  @return void
@@ -30,7 +30,7 @@ void EphemDifference::reset(uint64_t callTime) {
     }
 
     this->ephBdyCount = 0;
-    for (const auto &cfg : this->changeBodies) {
+    for (const auto& cfg : this->changeBodies) {
         if (cfg.ephInMsg.isLinked()) {
             this->ephBdyCount++;
         } else {

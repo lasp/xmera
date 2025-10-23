@@ -21,9 +21,9 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/rwMotorVoltage_C/rwMotorVoltage_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "rwMotorVoltage_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <string.h>
 
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that

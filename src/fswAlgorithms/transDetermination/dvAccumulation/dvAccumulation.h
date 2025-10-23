@@ -20,11 +20,11 @@
 #ifndef _DV_ACCUMULATION_H_
 #define _DV_ACCUMULATION_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AccDataMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AccDataMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
@@ -44,6 +44,6 @@ class DVAccumulation : public SysModel {
     BSKLogger bskLogger{};  //!< BSK Logging
 };
 
-void dvAccumulation_QuickSort(AccPktDataMsgPayload *A, int start, int end);
+void dvAccumulation_QuickSort(AccPktDataMsgPayload* A, int start, int end);
 
 #endif

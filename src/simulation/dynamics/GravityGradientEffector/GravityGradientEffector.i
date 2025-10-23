@@ -23,26 +23,16 @@
    #include "GravityGradientEffector.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "stdint.i"
-%include "std_string.i"
-%include "swig_conly_data.i"
+%include <stdint.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 // Instantiate templates used by example
-%include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+%include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+%include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 
 %include "GravityGradientEffector.h"
 
-%include "architecture/msgPayloadDef/GravityGradientMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/GravityGradientMsgPayload.h>

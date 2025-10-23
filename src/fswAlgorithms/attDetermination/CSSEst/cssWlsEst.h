@@ -20,15 +20,15 @@
 #ifndef _CSS_WLS_EST_H_
 #define _CSS_WLS_EST_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/SunlineFilterMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the CSS weighted least squares estimator.

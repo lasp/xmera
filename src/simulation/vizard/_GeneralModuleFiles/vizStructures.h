@@ -10,20 +10,20 @@
 
 #include <vector>
 
-#include "architecture/msgPayloadDef/ColorMsgPayload.h"
-#include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
-#include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
-#include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/FuelTankMsgPayload.h"
-#include "architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h"
-#include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include <architecture/msgPayloadDef/ColorMsgPayload.h>
+#include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
+#include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>
+#include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/FuelTankMsgPayload.h>
+#include <architecture/msgPayloadDef/PowerStorageStatusMsgPayload.h>
+#include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-#include "architecture/msgPayloadDef/CSSConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDef/ChargeMsmMsgPayload.h"
-#include "architecture/msgPayloadDef/THROutputMsgPayload.h"
+#include <architecture/msgPayloadDef/CSSConfigLogMsgPayload.h>
+#include <architecture/msgPayloadDef/ChargeMsmMsgPayload.h>
+#include <architecture/msgPayloadDef/THROutputMsgPayload.h>
 
-#include "architecture/messaging/messaging.h"
+#include <architecture/messaging/messaging.h>
 
 /*! Structure to store that status of a Basilisk message being read in by ``vizInterface``. */
 typedef struct
@@ -269,7 +269,7 @@ typedef struct
     MultiSphereInfo
 //@endcond
 {
-    std::vector<MultiSphere *> msmList;               //!< list of MSM configuration information
+    std::vector<MultiSphere*> msmList;                //!< list of MSM configuration information
     ReadFunctor<ChargeMsmMsgPayload> msmChargeInMsg;  //!< [-] input message to read current MSM charges.  If not
                                                       //!< connected, currentValue can be set directly from python
 } MultiSphereInfo;
@@ -351,13 +351,13 @@ typedef struct
 
     std::vector<ThrClusterMap> thrInfo;  //!< [-] thruster tagging info
 
-    std::vector<GenericSensor *> genericSensorList;  //!< [-] (Optional) Vector of generic sensor configuration info
+    std::vector<GenericSensor*> genericSensorList;  //!< [-] (Optional) Vector of generic sensor configuration info
 
-    std::vector<Transceiver *> transceiverList;  //!< [-] (Optional) Vector of transceiver configuration info
+    std::vector<Transceiver*> transceiverList;  //!< [-] (Optional) Vector of transceiver configuration info
 
-    std::vector<GenericStorage *> genericStorageList;  //!< [-] (Optional) Vector of generic storage configuration info
+    std::vector<GenericStorage*> genericStorageList;  //!< [-] (Optional) Vector of generic storage configuration info
 
-    std::vector<Light *> lightList;  //!<[-] (Optional) Vector of spacecraft light devices
+    std::vector<Light*> lightList;  //!<[-] (Optional) Vector of spacecraft light devices
 
     std::string spacecraftSprite = "";  //!< Set sprite for this spacecraft only through shape name and optional int RGB
                                         //!< color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR",
@@ -374,7 +374,7 @@ typedef struct
         trueTrajectoryLineColorInMsg;  //!< (Optional) Messages specifying true trajectory orbit line RGBA colors.  If
                                        //!< connected, this replaces the values set in trueTrajectoryLineColor
     MultiSphereInfo msmInfo;           //!< (Optional) MSM configuration information
-    std::vector<Ellipsoid *> ellipsoidList;  //!< (Optional) ellipsoid about the spacecraft location
+    std::vector<Ellipsoid*> ellipsoidList;  //!< (Optional) ellipsoid about the spacecraft location
 } VizSpacecraftData;
 
 /*! Structure defining various Vizard options

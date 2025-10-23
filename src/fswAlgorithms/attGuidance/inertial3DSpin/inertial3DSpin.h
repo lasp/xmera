@@ -20,12 +20,12 @@
 #ifndef _INERTIAL3D_SPIN_
 #define _INERTIAL3D_SPIN_
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 
 /*!@brief module configuration structure definition.
  */

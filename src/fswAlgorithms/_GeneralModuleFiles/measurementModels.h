@@ -18,8 +18,8 @@
 
  */
 
-#include "architecture/utilities/rigidBodyKinematics.hpp"
-#include "fswAlgorithms/_GeneralModuleFiles/stateModels.h"
+#include <architecture/utilities/rigidBodyKinematics.hpp>
+#include <fswAlgorithms/_GeneralModuleFiles/stateModels.h>
 #include <Eigen/Core>
 #include <string_view>
 

@@ -23,25 +23,15 @@
     #include "ReactionWheelPower.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
+%include <stdint.i>
+%include <std_string.i>
 
-%include "stdint.i"
-%include "std_string.i"
-
-%include "sys_model.i"
-%include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 %include "ReactionWheelPower.h"
 
-%include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
+%include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
 
-%include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>

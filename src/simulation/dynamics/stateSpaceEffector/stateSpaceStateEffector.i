@@ -23,22 +23,13 @@
    #include "stateSpaceStateEffector.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
+%include <std_string.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "std_string.i"
-%include "std_vector.i"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
-
-%include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+%include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+%include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 %include "stateSpaceStateEffector.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

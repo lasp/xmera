@@ -28,12 +28,3 @@
 %include "swig_eigen.i"
 %include "orbitalMotion.hpp"
 EIGEN_MAT_WRAP(Vector6d, 170)
-
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

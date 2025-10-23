@@ -17,25 +17,19 @@
 
  */
 
-
 #ifndef BASILISK_SIMPLEPOWERSINK_H
 #define BASILISK_SIMPLEPOWERSINK_H
 
-#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
-
-
+#include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 
 /*! @brief simple power sink class */
-class SimplePowerSink: public PowerNodeBase {
-
-public:
+class SimplePowerSink : public PowerNodeBase {
+   public:
     SimplePowerSink();
     ~SimplePowerSink();
 
-private:
-    void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
-
+   private:
+    void evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageMsg);
 };
 
-
-#endif //BASILISK_SIMPLEPOWERSINK_H
+#endif  // BASILISK_SIMPLEPOWERSINK_H

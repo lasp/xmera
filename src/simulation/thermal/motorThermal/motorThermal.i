@@ -21,22 +21,13 @@
    #include "motorThermal.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_conly_data.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "motorThermal.h"
 
-%include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
+%include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
 
 
-%include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>

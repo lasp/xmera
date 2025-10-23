@@ -24,11 +24,11 @@
 
 #include <array>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "fswAlgorithms/transDetermination/navAggregate/navAggregateAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include "navAggregateAlgorithm.h"
 
 /*! structure containing the attitude navigation message name, ID and local buffer*/
 typedef struct {

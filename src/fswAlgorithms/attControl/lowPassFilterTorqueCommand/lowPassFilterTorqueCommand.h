@@ -20,9 +20,9 @@
 #ifndef _LOW_PASS_FILTER_TORQUE_COMMAND_
 #define _LOW_PASS_FILTER_TORQUE_COMMAND_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <stdint.h>
 
 #define NUM_LPF 2 /*            number of states to track, including current state */

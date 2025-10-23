@@ -22,24 +22,19 @@
     #include "simpleTransmitter.h"
 %}
 
-%include "swig_common_model.i"
+%include <architecture/_GeneralModuleFiles/swig_common_model.i>
 
-%include "std_string.i"
-%include "carrays.i"
-%include "std_vector.i"
-%include "sys_model.i"
-%include "stdint.i"
+%include <std_string.i>
+%include <carrays.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <stdint.i>
 
-%include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+%include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 %include "simpleTransmitter.h"
 
-%include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DeviceCmdMsgPayload.h"
+%include <architecture/msgPayloadDef/DeviceCmdMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>

@@ -20,15 +20,15 @@
 #ifndef GROUND_LOCATION_H
 #define GROUND_LOCATION_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AccessMsgPayload.h"
-#include "architecture/msgPayloadDef/GroundStateMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AccessMsgPayload.h>
+#include <architecture/msgPayloadDef/GroundStateMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 #include <Eigen/Dense>
 #include <string>

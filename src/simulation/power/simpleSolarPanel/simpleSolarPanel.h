@@ -20,16 +20,16 @@
 #ifndef BASILISK_SIMPLESOLARPANEL_H
 #define BASILISK_SIMPLESOLARPANEL_H
 
-#include "architecture/messaging/messaging.h"
-#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
+#include <architecture/messaging/messaging.h>
+#include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 #include <Eigen/Dense>
 #include <vector>
 
-#include "architecture/msgPayloadDef/EclipseMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/msgPayloadDef/EclipseMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief simple solar panel class */
 class SimpleSolarPanel : public PowerNodeBase {
@@ -41,7 +41,7 @@ class SimpleSolarPanel : public PowerNodeBase {
     void setPanelParameters(Eigen::Vector3d nHat_B, double panelArea, double panelEfficiency);
 
    private:
-    void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
+    void evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageMsg);
     void computeSunData();
 
    public:

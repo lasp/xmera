@@ -22,17 +22,17 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDef/ReconfigBurnArrayInfoMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/msgPayloadDef/ReconfigBurnArrayInfoMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/orbitalMotion.h"
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/orbitalMotion.h>
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
 class SpacecraftReconfig : public SysModel {
@@ -44,8 +44,8 @@ class SpacecraftReconfig : public SysModel {
                         AttRefMsgPayload attRefInMsgBuffer,
                         THRArrayConfigMsgPayload thrustConfigMsgBuffer,
                         VehicleConfigMsgPayload vehicleConfigMsgBuffer,
-                        AttRefMsgPayload *attRefOutMsgBuffer,
-                        THRArrayOnTimeCmdMsgPayload *thrustOnMsgBuffer,
+                        AttRefMsgPayload* attRefOutMsgBuffer,
+                        THRArrayOnTimeCmdMsgPayload* thrustOnMsgBuffer,
                         uint64_t callTime);
 
     void ScheduleDV(ClassicElements oe_c,

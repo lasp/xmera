@@ -16,10 +16,10 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "fswAlgorithms/attGuidance/waypointReference/waypointReference.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "waypointReference.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <sstream>
 #include <string>
 
@@ -153,7 +153,7 @@ void WaypointReference::updateState(uint64_t currentSimNanos) {
 }
 
 /*! Pull one line of dataFileName and stores time t and relative attitude in attRefMsg_t */
-void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t) {
+void WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t) {
     std::string line;
 
     /* read in next line, if line is not empty, stores the information ;
@@ -238,7 +238,7 @@ void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
 
 /*! pull a 3-d set of double values from the input stream
  */
-void WaypointReference::pullVector(std::istringstream *iss, double vec[3]) {
+void WaypointReference::pullVector(std::istringstream* iss, double vec[3]) {
     double x, y, z;
     x = pullScalar(iss);
     y = pullScalar(iss);
@@ -248,7 +248,7 @@ void WaypointReference::pullVector(std::istringstream *iss, double vec[3]) {
 
 /*! pull a 4-d set of double values from the input stream
  */
-void WaypointReference::pullVector4(std::istringstream *iss, double *vec) {
+void WaypointReference::pullVector4(std::istringstream* iss, double* vec) {
     double q0, q1, q2, q3;
     q0 = pullScalar(iss);
     q1 = pullScalar(iss);
@@ -259,7 +259,7 @@ void WaypointReference::pullVector4(std::istringstream *iss, double *vec) {
 
 /*! pull a double from the input stream
  */
-double WaypointReference::pullScalar(std::istringstream *iss) {
+double WaypointReference::pullScalar(std::istringstream* iss) {
     const char delimiterString = *this->delimiter.c_str();
     std::string item;
 
@@ -275,7 +275,7 @@ void WaypointReference::linearInterpolation(uint64_t t_a,
                                             uint64_t t_b,
                                             double v_b[3],
                                             uint64_t t,
-                                            double *v) {
+                                            double* v) {
     for (int i = 0; i < 3; i++) {
         *(v + i) = v_a[i] + (v_b[i] - v_a[i]) / (t_b - t_a) * (t - t_a);
     }

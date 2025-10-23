@@ -19,12 +19,12 @@
 
 #include "pixelLineBiasUKF.h"
 
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/safeMath.h"
-#include "architecture/utilities/ukfUtilities.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/safeMath.h>
+#include <architecture/utilities/ukfUtilities.h>
 
 #include <math.h>
 #include <string.h>
@@ -36,7 +36,7 @@
  @param muPlanet planet gravity constant
  @param stateDeriv derivative of state set
  */
-static void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlanet, double *stateDeriv) {
+static void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlanet, double* stateDeriv) {
     double rNorm;
     double dvdt[3];
 
@@ -210,7 +210,7 @@ void PixelLineBiasUKF::updateState(uint64_t callTime) {
  @param stateInOut The state that is propagated
  @param dt Time step (s)
  */
-void PixelLineBiasUKF::relODStateProp(double *stateInOut, double dt) {
+void PixelLineBiasUKF::relODStateProp(double* stateInOut, double dt) {
     double muPlanet;
     double k1[PIXLINE_DYN_STATES], k2[PIXLINE_DYN_STATES], k3[PIXLINE_DYN_STATES], k4[PIXLINE_DYN_STATES];
     double states1[PIXLINE_DYN_STATES], states2[PIXLINE_DYN_STATES], states3[PIXLINE_DYN_STATES];
@@ -268,7 +268,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFTimeUpdate(double updateTime) {
     double aRow[PIXLINE_N_STATES], rAT[PIXLINE_N_STATES * PIXLINE_N_STATES],
         xErr[PIXLINE_N_STATES];                             // Row of A mat, R of QR decomp of A, state error
     double sBarUp[PIXLINE_N_STATES * PIXLINE_N_STATES];     // S bar cholupdate
-    double *spPtr;                                          // sigma point intermediate varaible
+    double* spPtr;                                          // sigma point intermediate varaible
     double procNoise[PIXLINE_N_STATES * PIXLINE_N_STATES];  // process noise
     int32_t badUpdate = 0;
 
@@ -326,7 +326,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFTimeUpdate(double updateTime) {
             return -1;
         }
         vScale(sqrt(this->wC[i + 1]), aRow, this->numStates, aRow);
-        memcpy((void *)&AT[i * this->numStates], (void *)aRow, this->numStates * sizeof(double));
+        memcpy((void*)&AT[i * this->numStates], (void*)aRow, this->numStates * sizeof(double));
     }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
     memcpy(

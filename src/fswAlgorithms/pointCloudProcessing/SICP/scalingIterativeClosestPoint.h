@@ -20,18 +20,18 @@
 #ifndef _SICP_H_
 #define _SICP_H_
 
-#include "architecture/messaging/messaging.h"
-#include "sicpDefinitions.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/definitions.h>
 #include <stdint.h>
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
-#include "architecture/msgPayloadDef/SICPMsgPayload.h"
+#include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
+#include <architecture/msgPayloadDef/SICPMsgPayload.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
 
 /*! @brief Scaling iterative Closest Point Algorithm */
 class ScalingIterativeClosestPoint : public SysModel {
@@ -49,15 +49,15 @@ class ScalingIterativeClosestPoint : public SysModel {
     ReadFunctor<PointCloudMsgPayload> referencePointCloud;  //!< The input reference data
     BSKLogger bskLogger;                                    //!< -- BSK Logging
 
-    double scalingMax = 1.1;             //!< Scaling maximums
-    double scalingMin = 0.9;             //!< Scaling minimums
-    double errorTolerance = 1e-10;       //!< Error tolerance for convergence
-    int maxIterations = MAX_ITERATIONS;  //!< Max iterations
-    int numberScalePoints = 100;         //!< Number of points in order to find the scale factor
+    double scalingMax = 1.1;                  //!< Scaling maximums
+    double scalingMin = 0.9;                  //!< Scaling minimums
+    double errorTolerance = 1e-10;            //!< Error tolerance for convergence
+    int maxIterations = MAX_SICP_ITERATIONS;  //!< Max iterations
+    int numberScalePoints = 100;              //!< Number of points in order to find the scale factor
 
     //!< Initial conditions that could be set by user to better start off the SICP apgorithm
-    Eigen::MatrixXd R_init = Eigen::MatrixXd::Identity(POINT_DIM, POINT_DIM);
-    Eigen::MatrixXd t_init = Eigen::VectorXd::Zero(POINT_DIM);
+    Eigen::MatrixXd R_init = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
+    Eigen::MatrixXd t_init = Eigen::VectorXd::Zero(SICP_POINT_DIM);
     double s_init = 1;
 
    private:

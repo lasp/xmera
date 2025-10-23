@@ -19,11 +19,11 @@
 #ifndef STEPPERMOTORCONTROLLER_H
 #define STEPPERMOTORCONTROLLER_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/MotorStepCommandMsgPayload.h"
-#include "fswAlgorithms/effectorInterfaces/stepperMotorController/stepperMotorControllerAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>
+#include "stepperMotorControllerAlgorithm.h"
 
 /*! @brief Stepper Motor Controller Class */
 class StepperMotorController : public SysModel {

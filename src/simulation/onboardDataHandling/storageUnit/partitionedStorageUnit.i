@@ -22,18 +22,15 @@
     #include "partitionedStorageUnit.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
-%include "carrays.i"
-%include "sys_model.i"
-%include "std_vector.i"
-%include "cstring.i"
-%include "swig_common_model.i"
-%include "stdint.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <carrays.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <std_vector.i>
+%include <cstring.i>
+%include <architecture/_GeneralModuleFiles/swig_common_model.i>
+%include <stdint.i>
 
 //When using scientific notation in Python (1E9), it is interpreted as float
 // giving a type error when assigning storageCapacity or adding data through
@@ -52,13 +49,8 @@ from Basilisk.architecture.swig_common_model import *
     $1 = temp;
 }
 
-%include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
+%include <simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h>
 %include "partitionedStorageUnit.h"
-%include "architecture/msgPayloadDef/DataNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/DataNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DataStorageStatusMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/DataStorageStatusMsgPayload.h>

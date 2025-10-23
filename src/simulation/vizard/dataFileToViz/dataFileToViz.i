@@ -20,22 +20,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "dataFileToViz.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "swig_conly_data.i"
-%include "std_string.i"
-%include "sys_model.i"
-%include "std_vector.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <std_vector.i>
 
 
 %include "dataFileToViz.h"
-%include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
+%include <simulation/vizard/_GeneralModuleFiles/vizStructures.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-%include "architecture/msgPayloadDef/RWConfigLogMsgPayload.h"
-%include "architecture/msgPayloadDef/THROutputMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+%include <architecture/msgPayloadDef/RWConfigLogMsgPayload.h>
+%include <architecture/msgPayloadDef/THROutputMsgPayload.h>
 
 
 // Instantiate templates used by example
@@ -50,9 +46,5 @@ namespace std {
     %template(RWConfigLogMsgOutMsgsPtrVector) vector<Message<RWConfigLogMsgPayload>*, allocator<Message<RWConfigLogMsgPayload>*> >;
     %template(RWConfigLogMsgInMsgsVector) vector<ReadFunctor<RWConfigLogMsgPayload>, allocator<ReadFunctor<RWConfigLogMsgPayload>> >;
     %template(RWConfigLogMsgInMsgsVectorVector) vector <vector <Message<RWConfigLogMsgPayload>*, allocator<Message<RWConfigLogMsgPayload>*> >, allocator<vector <Message<RWConfigLogMsgPayload>*>> >;
+    %template(IntVector) std::vector<int, std::allocator<int>>;
 }
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

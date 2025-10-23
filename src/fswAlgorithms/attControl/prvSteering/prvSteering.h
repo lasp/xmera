@@ -20,10 +20,10 @@
 #ifndef _PRV_STEERING_CONTROL_H_
 #define _PRV_STEERING_CONTROL_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
 #include <stdint.h>
 
 /*! module configuration message definition */
@@ -45,6 +45,6 @@ class PrvSteering : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-void PRVSteeringLaw(PrvSteering *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
+void PRVSteeringLaw(PrvSteering* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
 #endif

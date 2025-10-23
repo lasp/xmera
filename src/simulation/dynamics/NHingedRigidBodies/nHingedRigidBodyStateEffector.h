@@ -20,11 +20,11 @@
 #ifndef N_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define N_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 #include <Eigen/Dense>
 
 /*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of

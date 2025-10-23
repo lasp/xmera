@@ -20,18 +20,18 @@
 #ifndef _HORIZON_OPNAV_H_
 #define _HORIZON_OPNAV_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavLimbMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavLimbMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavMsgPayload.h>
 
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! @brief The configuration structure for the horizon OpNav module.*/
 class HorizonOpNav : public SysModel {
@@ -50,7 +50,7 @@ class HorizonOpNav : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-void BackSub(double *R, double *inVec, int32_t nRow, double *n);
-void QRDecomp(double *inMat, int32_t nRow, double *Q, double *R);
+void BackSub(double* R, double* inVec, int32_t nRow, double* n);
+void QRDecomp(double* inMat, int32_t nRow, double* Q, double* R);
 
 #endif

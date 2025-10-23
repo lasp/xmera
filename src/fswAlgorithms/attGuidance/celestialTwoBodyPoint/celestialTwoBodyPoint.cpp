@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
+#include "celestialTwoBodyPoint.h"
 
 void CelestialTwoBodyPoint::reset(uint64_t callTime) {
     this->secCelBodyIsLinked = this->secCelBodyInMsg.isLinked();

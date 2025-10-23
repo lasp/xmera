@@ -25,37 +25,31 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "fswAlgorithms/attGuidance/inertial3DSpin/inertial3DSpin.h"
-#include "architecture/utilities/macroDefinitions.h"
-
-
-
+#include "inertial3DSpin.h"
+#include <architecture/utilities/macroDefinitions.h>
 
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Inertial3DSpin::reset(uint64_t callTime)
-{
-
-    this->priorTime = 0;              /* reset the prior time flag state.  If set
-                                             to zero, the control time step is not evaluated on the
-                                             first function call */
+void Inertial3DSpin::reset(uint64_t callTime) {
+    this->priorTime = 0; /* reset the prior time flag state.  If set
+                                to zero, the control time step is not evaluated on the
+                                first function call */
 }
 
 /*! This method performs all the main computations of the module
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Inertial3DSpin::updateState(uint64_t callTime)
-{
+void Inertial3DSpin::updateState(uint64_t callTime) {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer = {};
 
@@ -65,8 +59,7 @@ void Inertial3DSpin::updateState(uint64_t callTime)
 
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
-    if (this->priorTime == 0)
-    {
+    if (this->priorTime == 0) {
         dt = 0.0;
         v3Copy(attRefInMsgBuffer.sigma_RN, this->sigma_RN);
     } else {
@@ -75,9 +68,7 @@ void Inertial3DSpin::updateState(uint64_t callTime)
 
     /*! - Generate inertial 3D Spinning Reference */
     this->attRefOutBuffer = {};
-    this->computeReference_inertial3DSpin(attRefInMsgBuffer.omega_RN_N,
-                                    attRefInMsgBuffer.domega_RN_N,
-                                    dt);
+    this->computeReference_inertial3DSpin(attRefInMsgBuffer.omega_RN_N, attRefInMsgBuffer.domega_RN_N, dt);
     /*! - Write output message */
     this->attRefOutMsg.write(&this->attRefOutBuffer, this->moduleID, callTime);
 
@@ -85,10 +76,7 @@ void Inertial3DSpin::updateState(uint64_t callTime)
     this->priorTime = callTime;
 }
 
-void Inertial3DSpin::computeReference_inertial3DSpin(double omega_R0N_N[3],
-                                                     double domega_R0N_N[3],
-                                                     double dt)
-{
+void Inertial3DSpin::computeReference_inertial3DSpin(double omega_R0N_N[3], double domega_R0N_N[3], double dt) {
     double omega_RN_N[3];
     double domega_RN_N[3];
 
@@ -105,7 +93,7 @@ void Inertial3DSpin::computeReference_inertial3DSpin(double omega_R0N_N[3],
     v3Add(v3Temp, domega_R0N_N, domega_RN_N);
 
     /*! Integrate Attitude */
-    double B[3][3]; /* MRP rate matrix */
+    double B[3][3];       /* MRP rate matrix */
     double omega_RN_R[3]; /* inertial angular rate of ref R in R frame components */
     m33MultV3(dcm_RN, omega_RN_N, omega_RN_R);
     BmatMRP(this->sigma_RN, B);

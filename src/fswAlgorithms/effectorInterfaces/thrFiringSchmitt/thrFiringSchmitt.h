@@ -22,14 +22,14 @@
 
 #include <cstdint>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmittAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include "thrFiringSchmittAlgorithm.h"
 
 class ThrFiringSchmitt : public SysModel {
    public:

@@ -21,13 +21,13 @@
 #ifndef POINT_MASS_GRAVITY_MODEL_H
 #define POINT_MASS_GRAVITY_MODEL_H
 
-#include "gravityModel.h"
+#include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
 
 /**
  * The point mass gravity model
  */
 class PointMassGravityModel : public GravityModel {
-  public:
+   public:
     /** Does nothing, as the point-mass gravity model has no parameters other than
      * `muBody`, which must be set separately */
     std::optional<std::string> initializeParameters() override { return {}; };
@@ -50,7 +50,7 @@ class PointMassGravityModel : public GravityModel {
      */
     double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
 
-  public:
+   public:
     double muBody = 0; /**< [m^3/s^2] Gravitation parameter for the planet */
 };
 

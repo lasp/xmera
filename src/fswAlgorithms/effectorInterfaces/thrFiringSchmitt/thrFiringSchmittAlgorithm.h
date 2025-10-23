@@ -24,10 +24,10 @@
 
 #include <array>
 
-#include "architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/definitions.h"
+#include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/definitions.h>
 
 enum class PulsingRegime { ONPULSING = 0, OFFPULSING = 1 };
 

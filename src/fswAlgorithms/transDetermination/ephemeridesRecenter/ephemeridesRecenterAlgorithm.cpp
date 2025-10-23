@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "fswAlgorithms/transDetermination/ephemeridesRecenter/ephemeridesRecenterAlgorithm.h"
+#include "ephemeridesRecenterAlgorithm.h"
 
 /*! @brief Subtract two C-array vectors
  @param v1 double[3] : vector 1

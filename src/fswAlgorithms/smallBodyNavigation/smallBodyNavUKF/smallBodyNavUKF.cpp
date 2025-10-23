@@ -17,9 +17,9 @@
 
 */
 
-#include "fswAlgorithms/smallBodyNavigation/smallBodyNavUKF/smallBodyNavUKF.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "smallBodyNavUKF.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable

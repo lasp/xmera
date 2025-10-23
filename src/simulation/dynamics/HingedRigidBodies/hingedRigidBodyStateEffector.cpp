@@ -18,8 +18,8 @@
  */
 
 #include "hingedRigidBodyStateEffector.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 #include <string>
 
 /*! This is the constructor, setting variables to default values */

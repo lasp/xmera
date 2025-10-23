@@ -18,7 +18,7 @@
  */
 
 #include "nHingedRigidBodyStateEffector.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/utilities/eigenSupport.h>
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */

@@ -20,10 +20,10 @@
 #ifndef _OE_STATE_EPHEM_ALGORITHM_H_
 #define _OE_STATE_EPHEM_ALGORITHM_H_
 
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h"
-#include "architecture/utilities/orbitalMotion.hpp"
-#include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h>
+#include <architecture/utilities/orbitalMotion.hpp>
+#include <fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h>
 #include <array>
 
 #define MAX_OE_RECORDS 10
@@ -59,7 +59,7 @@ class ChebyshevFitArc {
 */
 class OEStateEphemAlgorithm {
    public:
-    void reset(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload &vehicleTimePayload);
+    void reset(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload& vehicleTimePayload);
     EphemerisMsgPayload updateState(uint64_t callTime);
 
     void setCentralBodyGravitationalParameter(double gravitationalParameter);
@@ -78,27 +78,27 @@ class OEStateEphemAlgorithm {
     unsigned int getArcAnomalyFlag(unsigned int arcNumber) const;
 
     void setArcRadiusPeriapsisCoefficients(const unsigned int arcNumber,
-                                           const std::array<double, MAX_OE_COEFF> &radiusPeriapsisCoefficients);
+                                           const std::array<double, MAX_OE_COEFF>& radiusPeriapsisCoefficients);
     std::array<double, MAX_OE_COEFF> getArcRadiusPeriapsisCoefficients(const unsigned int arcNumber);
     void setArcEccentricityCoefficients(const unsigned int arcNumber,
-                                        const std::array<double, MAX_OE_COEFF> &eccentricityCoefficients);
+                                        const std::array<double, MAX_OE_COEFF>& eccentricityCoefficients);
     std::array<double, MAX_OE_COEFF> getArcEccentricityCoefficients(const unsigned int arcNumber);
     void setArcInclinationCoefficients(const unsigned int arcNumber,
-                                       const std::array<double, MAX_OE_COEFF> &inclinationCoefficients);
+                                       const std::array<double, MAX_OE_COEFF>& inclinationCoefficients);
     std::array<double, MAX_OE_COEFF> getArcInclinationCoefficients(const unsigned int arcNumber);
     void setArcArgPeriapsisCoefficients(const unsigned int arcNumber,
-                                        const std::array<double, MAX_OE_COEFF> &argPeriapsisCoefficients);
+                                        const std::array<double, MAX_OE_COEFF>& argPeriapsisCoefficients);
     std::array<double, MAX_OE_COEFF> getArcArgPeriapsisCoefficients(const unsigned int arcNumber);
-    void setArcRaanCoefficients(const unsigned int arcNumber, const std::array<double, MAX_OE_COEFF> &raanCoefficients);
+    void setArcRaanCoefficients(const unsigned int arcNumber, const std::array<double, MAX_OE_COEFF>& raanCoefficients);
     std::array<double, MAX_OE_COEFF> getArcRaanCoefficients(const unsigned int arcNumber);
     void setArcTrueAnomalyCoefficients(const unsigned int arcNumber,
-                                       const std::array<double, MAX_OE_COEFF> &trueAnomalyCoefficients);
+                                       const std::array<double, MAX_OE_COEFF>& trueAnomalyCoefficients);
     std::array<double, MAX_OE_COEFF> getArcTrueAnomalyCoefficients(const unsigned int arcNumber);
 
    private:
-    ChebyshevFitArc findCurrentArc(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload &localTime);
-    double scaleEphemerisTime(const ChebyshevFitArc &arc) const;
-    static ClassicalElements evaluateCoefficients(const double currentScaledValue, const ChebyshevFitArc &arc);
+    ChebyshevFitArc findCurrentArc(uint64_t callTime, const TDBVehicleClockCorrelationMsgPayload& localTime);
+    double scaleEphemerisTime(const ChebyshevFitArc& arc) const;
+    static ClassicalElements evaluateCoefficients(const double currentScaledValue, const ChebyshevFitArc& arc);
     double currentEphTime{};
     double gravitationalParameter{};  //!< [m3/s^2] Gravitational parameter for center of orbital elements
     std::array<ChebyshevFitArc, MAX_OE_RECORDS> fitCoefficients{};  //!< [-] Array of Chebyshev records for ephemeris

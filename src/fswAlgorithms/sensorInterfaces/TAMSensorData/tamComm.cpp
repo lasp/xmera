@@ -17,9 +17,9 @@
 
  */
 
-#include "fswAlgorithms/sensorInterfaces/TAMSensorData/tamComm.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "tamComm.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -27,8 +27,7 @@
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void TamComm::reset(uint64_t callTime)
-{
+void TamComm::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->tamInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: tamComm.tamInMsg wasn't connected.");
@@ -46,13 +45,11 @@ void TamComm::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void TamComm::updateState(uint64_t callTime)
-{
+void TamComm::updateState(uint64_t callTime) {
     // read input msg
     TAMSensorMsgPayload localInput = this->tamInMsg();
 
-    m33MultV3(RECAST3X3 this->dcm_BS, localInput.tam_S,
-              this->tamLocalOutput.tam_B);
+    m33MultV3(RECAST3X3 this->dcm_BS, localInput.tam_S, this->tamLocalOutput.tam_B);
 
     /*! - Write aggregate output into output message */
     this->tamOutMsg.write(&tamLocalOutput, moduleID, callTime);

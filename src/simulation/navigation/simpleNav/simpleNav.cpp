@@ -16,11 +16,11 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/navigation/simpleNav/simpleNav.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "simpleNav.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <cstring>
 #include <iostream>
 

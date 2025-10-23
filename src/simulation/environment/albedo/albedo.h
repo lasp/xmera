@@ -20,14 +20,14 @@
 #ifndef ALBEDO_H
 #define ALBEDO_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AlbedoMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AlbedoMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
 #include <Eigen/Core>
 #include <string>

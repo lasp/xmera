@@ -18,7 +18,7 @@
  */
 
 #include "stepperMotorController.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/macroDefinitions.h>
 #include <stdexcept>
 
 /*! This method performs a complete reset of the module. The input message is checked to ensure it is linked.

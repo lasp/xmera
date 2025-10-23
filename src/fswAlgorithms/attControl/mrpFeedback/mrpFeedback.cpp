@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/attControl/mrpFeedback/mrpFeedback.h"
+#include "mrpFeedback.h"
 
 #include <stdexcept>
 

@@ -22,22 +22,13 @@
    #include "sunlineSRuKF.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
+%include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.i>
 
 %include "sunlineSRuKF.h"
 
-%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-%include "architecture/msgPayloadDef/FilterMsgPayload.h"
-%include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>

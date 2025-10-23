@@ -20,15 +20,15 @@
 #ifndef SMALLBODYWAYPOINTFEEDBACK_H
 #define SMALLBODYWAYPOINTFEEDBACK_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/orbitalMotion.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/orbitalMotion.h>
 
 /*! @brief This module is provides a Lyapunov feedback control law for waypoint to waypoint guidance and control about
  * a small body. The waypoints are defined in the Hill frame of the body.

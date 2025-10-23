@@ -18,9 +18,9 @@
  */
 
 #include "mtbMomentumManagement.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/svd.h"
-#include "string.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/svd.h>
+#include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
@@ -149,7 +149,7 @@ void MtbMomentumManagement::updateState(uint64_t callTime) {
 /*
  * Returns the tilde matrix in the form of a 1-D array.
  */
-void v3TildeM(double v[3], double *m_result) {
+void v3TildeM(double v[3], double* m_result) {
     m_result[MXINDEX(3, 0, 0)] = 0.0;
     m_result[MXINDEX(3, 0, 1)] = -v[2];
     m_result[MXINDEX(3, 0, 2)] = v[1];

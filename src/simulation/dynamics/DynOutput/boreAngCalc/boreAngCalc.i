@@ -21,27 +21,17 @@
    #include "boreAngCalc.h"
 %}
 
-%include "cmalloc.i"
-%include "std_string.i"
-%include "swig_eigen.i"
+%include <cmalloc.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "boreAngCalc.h"
 
-%include "architecture/msgPayloadDef/BoreAngleMsgPayload.h"
+%include <architecture/msgPayloadDef/BoreAngleMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>

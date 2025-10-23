@@ -22,12 +22,12 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 
 /*!@brief Data structure for module to compute the orbital velocity spinning pointing navigation solution.
  */
@@ -39,7 +39,7 @@ class VelocityPoint : public SysModel {
                                           double v_BN_N[3],
                                           double celBdyPositonVector[3],
                                           double celBdyVelocityVector[3],
-                                          AttRefMsgPayload *attRefOut);
+                                          AttRefMsgPayload* attRefOut);
 
     /* declare module private variables */
     double mu;  //!< Planet gravitational parameter

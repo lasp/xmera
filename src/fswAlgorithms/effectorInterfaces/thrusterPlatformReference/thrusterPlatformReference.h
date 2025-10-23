@@ -20,16 +20,16 @@
 #ifndef _THRUSTER_PLATFORM_REFERENCE_
 #define _THRUSTER_PLATFORM_REFERENCE_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/BodyHeadingMsgPayload.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/THRConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/BodyHeadingMsgPayload.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/THRConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 enum momentumDumping { Yes = 0, No = 1 };

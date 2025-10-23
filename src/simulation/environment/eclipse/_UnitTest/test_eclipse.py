@@ -347,7 +347,7 @@ def unitEclipseCustom(show_plots):
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
     gravBodyEphem.modelTag = 'planetEphemeris'
-    gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["custom"]))
+    gravBodyEphem.setPlanetNames(["custom"])
 
     # Specify bennu orbit
     oeAsteroid = planetEphemeris.ClassicElements()

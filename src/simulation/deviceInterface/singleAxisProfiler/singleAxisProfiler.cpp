@@ -18,9 +18,9 @@
 */
 
 #include "singleAxisProfiler.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <cmath>
 
 /*! This method checks the input message to ensure it is linked.

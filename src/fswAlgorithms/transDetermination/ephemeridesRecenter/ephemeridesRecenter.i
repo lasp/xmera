@@ -21,21 +21,12 @@
    #include "ephemeridesRecenter.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "std_string.i"
-%include "std_array.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <std_string.i>
+%include <std_array.i>
 %template(StringArray10) std::array<std::string, MAX_NUM_CHANGE_BODIES>;
 
 %include "ephemeridesRecenter.h"
-%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/EphemerisMsgPayload.h>

@@ -24,7 +24,6 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 
-
 @pytest.mark.parametrize("accuracy", [1e-4])
 def test_msmForceTorque(show_plots, accuracy):
     r"""
@@ -106,13 +105,13 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
     # add spacecraft to state
     module.addSpacecraftToModel(sc0StateInMsg
                                 , messaging.DoubleVector(rList[:-1])
-                                , unitTestSupport.npList2EigenXdVector(spPosList[:-1]))
+                                , msmForceTorque.npList2EigenXdVector(spPosList[:-1]))
     module.addSpacecraftToModel(sc1StateInMsg
                                 , messaging.DoubleVector(rList)
-                                , unitTestSupport.npList2EigenXdVector(spPosList))
+                                , msmForceTorque.npList2EigenXdVector(spPosList))
     module.addSpacecraftToModel(sc2StateInMsg
                                 , messaging.DoubleVector(rList[:-1])
-                                , unitTestSupport.npList2EigenXdVector(spPosList[:-1]))
+                                , msmForceTorque.npList2EigenXdVector(spPosList[:-1]))
 
     # subscribe input messages to module
     module.voltInMsgs[0].subscribeTo(volt0InMsg)

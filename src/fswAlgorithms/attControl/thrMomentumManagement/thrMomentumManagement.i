@@ -21,20 +21,11 @@
    #include "thrMomentumManagement.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "thrMomentumManagement.h"
 
-%include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+%include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>

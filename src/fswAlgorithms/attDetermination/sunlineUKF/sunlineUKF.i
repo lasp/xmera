@@ -19,26 +19,17 @@
 %module sunlineUKF
 %{
    #include "sunlineUKF.h"
-   #include "architecture/utilities/ukfUtilities.h"
+   #include <architecture/utilities/ukfUtilities.h>
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "sunlineUKF.h"
 
-%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-%include "architecture/msgPayloadDef/SunlineFilterMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSConfigMsgPayload.h"
+%include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
+%include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
 
-%include "architecture/utilities/ukfUtilities.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/utilities/ukfUtilities.h>

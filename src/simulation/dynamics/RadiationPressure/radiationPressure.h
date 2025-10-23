@@ -20,18 +20,18 @@
 #ifndef RADIATION_PRESSURE_H
 #define RADIATION_PRESSURE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/EclipseMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/EclipseMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 typedef enum { SRP_CANNONBALL_MODEL, SRP_FACETED_CPU_MODEL } srpModel_t;
 
@@ -44,7 +44,7 @@ class RadiationPressure : public SysModel, public DynamicEffector {
 
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
-    void linkInStates(DynParamManager &statesIn);
+    void linkInStates(DynParamManager& statesIn);
     void readInputMessages();
     void computeForceTorque(double integTime, double timeStep);
     void setUseCannonballModel();
@@ -72,8 +72,8 @@ class RadiationPressure : public SysModel, public DynamicEffector {
     SpicePlanetStateMsgPayload sunEphmInBuffer;  //!< -- Buffer for incoming ephemeris message data
     bool stateRead;                              //!< -- Indicates a succesful read of incoming SC state message data
     EclipseMsgPayload sunVisibilityFactor;       //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
-    StateData *hubR_N;                           //!< -- State data accesss to inertial position for the hub
-    StateData *hubSigma;                         //!< -- Hub/Inertial attitude represented by MRP
+    StateData* hubR_N;                           //!< -- State data accesss to inertial position for the hub
+    StateData* hubSigma;                         //!< -- Hub/Inertial attitude represented by MRP
 };
 
 #endif

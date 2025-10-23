@@ -18,9 +18,9 @@
  */
 
 #include "powerStorageBase.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -44,7 +44,7 @@ PowerStorageBase::~PowerStorageBase() { return; }
  @return void
  @param tmpNodeMsg Message name corresponding to a PowerNodeUsageMsgPayload.
  */
-void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tmpNodeMsg) {
+void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload>* tmpNodeMsg) {
     this->nodePowerUseInMsgs.push_back(tmpNodeMsg->addSubscriber());
     return;
 }

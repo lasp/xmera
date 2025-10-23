@@ -22,14 +22,14 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 class MrpFeedback_C : public SysModel {

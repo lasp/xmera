@@ -17,10 +17,10 @@
 
 */
 
-#include "fswAlgorithms/smallBodyNavigation/smallBodyNavEKF/smallBodyNavEKF.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "smallBodyNavEKF.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable

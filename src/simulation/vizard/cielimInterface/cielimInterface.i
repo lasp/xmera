@@ -18,31 +18,23 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %module cielimInterface
 %{
     #include "cielimInterface.h"
-    #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
+    #include "../_GeneralModuleFiles/vizStructures.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "swig_eigen.i"
-%include "sys_model.h"
-%include "std_vector.i"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <std_vector.i>
 
 %include "cielimInterface.h"
 
-%include "architecture/msgPayloadDef/CameraModelMsgPayload.h"
-%include "architecture/msgPayloadDef/OpNavCOBMsgPayload.h"
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-%include "architecture/msgPayloadDef/EpochMsgPayload.h"
+%include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
+%include <architecture/msgPayloadDef/EpochMsgPayload.h>
 
-%include "architecture/msgPayloadDef/CelestialBodyParametersMsgPayload.h"
-%include "architecture/msgPayloadDef/CameraRenderingMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/CelestialBodyParametersMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraRenderingMsgPayload.h>

@@ -20,12 +20,12 @@
 #ifndef TIME_CA_H
 #define TIME_CA_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/FilterMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDef/TimeClosestApproachMsgPayload.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/FilterMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/msgPayloadDef/TimeClosestApproachMsgPayload.h>
+#include <architecture/utilities/eigenSupport.h>
 
 #include <Eigen/Core>
 

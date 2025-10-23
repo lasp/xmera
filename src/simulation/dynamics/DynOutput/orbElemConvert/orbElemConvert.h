@@ -20,16 +20,16 @@
 #ifndef ORB_ELEM_CONVERT_H
 #define ORB_ELEM_CONVERT_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/ClassicElementsMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/ClassicElementsMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/orbitalMotion.h"
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/orbitalMotion.h>
 
 /*! @brief orbit element converter module class */
 class OrbElemConvert : public SysModel {

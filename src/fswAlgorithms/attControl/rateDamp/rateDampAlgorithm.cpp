@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/attControl/rateDamp/rateDampAlgorithm.h"
+#include "rateDampAlgorithm.h"
 #include <cassert>
 #include <cmath>
 

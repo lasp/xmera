@@ -22,29 +22,17 @@
    #include "opticalFlow.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "stdint.i"
-%include "std_string.i"
-%include "sys_model.h"
-%include "swig_conly_data.i"
-%include "std_array.i"
-%include "swig_eigen.i"
+%include <stdint.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_array.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
 %include "opticalFlow.h"
 
-%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-struct CameraImageMsg_C;
-%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-struct OpNavLimbMsg_C;
-%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-struct EphemerisMsg_C;
+%include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+%include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+%include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 
-%include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>

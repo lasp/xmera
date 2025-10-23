@@ -20,17 +20,17 @@
 #ifndef GRAVITY_GRADIENT_DYNAMIC_EFFECTOR_H
 #define GRAVITY_GRADIENT_DYNAMIC_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
 #include <Eigen/Dense>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/GravityGradientMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/GravityGradientMsgPayload.h>
 
 /*! @brief gravity gradient gradient module */
 class GravityGradientEffector : public SysModel, public DynamicEffector {

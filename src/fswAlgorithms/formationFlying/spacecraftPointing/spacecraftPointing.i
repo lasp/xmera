@@ -21,21 +21,10 @@
    #include "spacecraftPointing.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "spacecraftPointing.h"
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-struct AttRefMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/AttRefMsgPayload.h>

@@ -21,9 +21,9 @@
 
 #include <math.h>
 
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3]);
 void oasapComputeSecondRotation(double hRefHat_B[3],
@@ -31,7 +31,7 @@ void oasapComputeSecondRotation(double hRefHat_B[3],
                                 double a1Hat_B[3],
                                 double a2Hat_B[3],
                                 double R2R1[3][3],
-                                RefFrameSolution *refFrameSolution);
+                                RefFrameSolution* refFrameSolution);
 void oasapComputeThirdRotation(int alignmentPriority,
                                double hRefHat_B[3],
                                double rHat_SB_R2[3],
@@ -232,7 +232,7 @@ void oasapComputeSecondRotation(double hRefHat_B[3],
                                 double a1Hat_B[3],
                                 double a2Hat_B[3],
                                 double R2R1[3][3],
-                                RefFrameSolution *refFrameSolution) {
+                                RefFrameSolution* refFrameSolution) {
     /*! define second rotation vector to coincide with the thrust direction in B coordinates */
     double e_psi[3];
     v3Copy(hRefHat_B, e_psi);

@@ -22,12 +22,12 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CmdForceInertialMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class MeanOEFeedback : public SysModel {
@@ -36,7 +36,7 @@ class MeanOEFeedback : public SysModel {
     void updateState(uint64_t callTime) override;
     void calcLyapunovFeedback(NavTransMsgPayload chiefTransMsg,
                               NavTransMsgPayload deputyTransMsg,
-                              CmdForceInertialMsgPayload *forceMsg);
+                              CmdForceInertialMsgPayload* forceMsg);
     ReadFunctor<NavTransMsgPayload> chiefTransInMsg;   //!< chief orbit input message
     ReadFunctor<NavTransMsgPayload> deputyTransInMsg;  //!< deputy orbit input message
     Message<CmdForceInertialMsgPayload> forceOutMsg;   //!< deputy control force output message

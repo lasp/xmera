@@ -22,14 +22,14 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h"
-#include "architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h"
-#include "fswAlgorithms/effectorInterfaces/rwMotorVoltage/rwMotorVoltageAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
+#include <architecture/msgPayloadDef/RwMotorVoltageMsgPayload.h>
+#include "rwMotorVoltageAlgorithm.h"
 
 #include <Eigen/Core>
 

@@ -20,21 +20,21 @@
 #ifndef COARSE_SUN_SENSOR_H
 #define COARSE_SUN_SENSOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AlbedoMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSConfigLogMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSRawDataMsgPayload.h"
-#include "architecture/msgPayloadDef/EclipseMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AlbedoMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSConfigLogMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSRawDataMsgPayload.h>
+#include <architecture/msgPayloadDef/EclipseMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/gauss_markov.h"
-#include "architecture/utilities/saturate.h"
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/gauss_markov.h>
+#include <architecture/utilities/saturate.h>
 
 #include <Eigen/Dense>
 
@@ -131,11 +131,11 @@ class CSSConstellation : public SysModel {
     ~CSSConstellation();                         //!< @brief [-] Default Destructor
     void reset(uint64_t CurrentClock);           //!< Method for reseting the module
     void updateState(uint64_t currentSimNanos);  //!< @brief [-] Main update method for CSS constellation
-    void appendCSS(CoarseSunSensor *newSensor);  //!< @brief [-] Method for adding sensor to list
+    void appendCSS(CoarseSunSensor* newSensor);  //!< @brief [-] Method for adding sensor to list
 
    public:
     Message<CSSArraySensorMsgPayload> constellationOutMsg;  //!< [-] CSS constellation output message
-    std::vector<CoarseSunSensor *> sensorList;              //!< [-] List of coarse sun sensors in constellation
+    std::vector<CoarseSunSensor*> sensorList;               //!< [-] List of coarse sun sensors in constellation
    private:
     CSSArraySensorMsgPayload outputBuffer;  //!< [-] buffer used to write output message
 };

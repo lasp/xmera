@@ -22,9 +22,9 @@
 
 /* Import other required files. */
 #include <math.h>
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values. A check is also
@@ -32,8 +32,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot2DOF::reset(uint64_t callTime)
-{
+void PrescribedRot2DOF::reset(uint64_t callTime) {
     // Check if the required input messages are linked */
     if (!this->spinningBodyRef1InMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.spinningBodyRef1InMsg wasn't connected.");
@@ -73,29 +72,25 @@ are updated in this routine as a function of time and written to the prescribedM
  @return void
  @param callTime [ns] Time the method is called
 */
-void PrescribedRot2DOF::updateState(uint64_t callTime)
-{
+void PrescribedRot2DOF::updateState(uint64_t callTime) {
     // Create buffer messages
     HingedRigidBodyMsgPayload spinningBodyRef1In = {};
     HingedRigidBodyMsgPayload spinningBodyRef2In = {};
     PrescribedRotationMsgPayload prescribedRotationOut = {};
 
     // Read the input messages
-    if (this->spinningBodyRef1InMsg.isWritten())
-    {
+    if (this->spinningBodyRef1InMsg.isWritten()) {
         spinningBodyRef1In = this->spinningBodyRef1InMsg();
     }
 
-    if (this->spinningBodyRef2InMsg.isWritten())
-    {
+    if (this->spinningBodyRef2InMsg.isWritten()) {
         spinningBodyRef2In = this->spinningBodyRef2InMsg();
     }
 
     /* This loop is entered when the spinning body attitude converges to the reference attitude. The PRV angle and axis
      reference parameters are updated along with the profiled trajectory parameters. */
-    if ((this->spinningBodyRef1InMsg.isWritten() <= callTime || this->spinningBodyRef2InMsg.isWritten() <= callTime )
-        && this->isManeuverComplete)
-    {
+    if ((this->spinningBodyRef1InMsg.isWritten() <= callTime || this->spinningBodyRef2InMsg.isWritten() <= callTime) &&
+        this->isManeuverComplete) {
         // Define the initial time
         this->maneuverStartTime = callTime * NANO2SEC;
 
@@ -109,33 +104,35 @@ void PrescribedRot2DOF::updateState(uint64_t callTime)
         double theta2Ref = spinningBodyRef2In.theta;
 
         // Convert the reference angles and their associated rotation axes to PRVs
-        double prv_F1M_array[3];                    // 1st PRV representing the intermediate frame relative to the M frame
-        double prv_F2F1_array[3];                   // 2nd PRV representing the final reference frame relative to the intermediate frame
+        double prv_F1M_array[3];   // 1st PRV representing the intermediate frame relative to the M frame
+        double prv_F2F1_array[3];  // 2nd PRV representing the final reference frame relative to the intermediate frame
         v3Normalize(this->rotAxis1_M, this->rotAxis1_M);
         v3Normalize(this->rotAxis2_F1, this->rotAxis2_F1);
         v3Scale(theta1Ref, this->rotAxis1_M, prv_F1M_array);
         v3Scale(theta2Ref, this->rotAxis2_F1, prv_F2F1_array);
 
         // Convert the reference PRVs to DCMs
-        double dcm_F1M[3][3];                       // 1st DCM representing the intermediate frame relative to the M frame
-        double dcm_F2F1[3][3];                      // 2nd DCM representing the final reference frame relative to the intermediate frame
+        double dcm_F1M[3][3];   // 1st DCM representing the intermediate frame relative to the M frame
+        double dcm_F2F1[3][3];  // 2nd DCM representing the final reference frame relative to the intermediate frame
         PRV2C(prv_F1M_array, dcm_F1M);
         PRV2C(prv_F2F1_array, dcm_F2F1);
 
         // Combine the two reference DCMs to a single reference DCM
-        double dcm_F2M[3][3];                       // DCM representing the final reference frame relative to the M frame
+        double dcm_F2M[3][3];  // DCM representing the final reference frame relative to the M frame
         m33MultM33(dcm_F2F1, dcm_F1M, dcm_F2M);
 
         // Convert dcm_F2M to a PRV
-        double prv_F2M_array[3];                    // PRV representing the final reference frame relative to the M frame
+        double prv_F2M_array[3];  // PRV representing the final reference frame relative to the M frame
         C2PRV(dcm_F2M, prv_F2M_array);
 
-        // Determine dcm_F2F. This DCM represents the final reference attitude with respect to the current spinning body body frame
+        // Determine dcm_F2F. This DCM represents the final reference attitude with respect to the current spinning body
+        // body frame
         double dcm_F2F[3][3];
         m33MultM33t(dcm_F2M, dcm_FM, dcm_F2F);
 
         // Convert dcm_F2F to a PRV
-        double prv_F2F_array[3];                    // PRV representing the final reference frame relative to the current spinning body body frame
+        double prv_F2F_array[3];  // PRV representing the final reference frame relative to the current spinning body
+                                  // body frame
         C2PRV(dcm_F2F, prv_F2F_array);
 
         // Compute the single PRV reference angle for the attitude maneuver.
@@ -146,39 +143,44 @@ void PrescribedRot2DOF::updateState(uint64_t callTime)
         this->phiRefAccum = this->phiAccum;
 
         // Define temporal information
-        double convTime = sqrt(fabs(this->phiRef) * 4 / this->phiDDotMax); // Time for the individual attitude maneuver
+        double convTime = sqrt(fabs(this->phiRef) * 4 / this->phiDDotMax);  // Time for the individual attitude maneuver
         this->maneuverEndTime = this->maneuverStartTime + convTime;
         this->maneuverSwitchTime = convTime / 2 + this->maneuverStartTime;
 
         // Define the maneuver parabolic constants
-        this->a = 0.5 * this->phiRef / ((this->maneuverSwitchTime - this->maneuverStartTime) * (this->maneuverSwitchTime - this->maneuverStartTime));
-        this->b = -0.5 * this->phiRef / ((this->maneuverSwitchTime - this->maneuverEndTime) * (this->maneuverSwitchTime - this->maneuverEndTime));
+        this->a = 0.5 * this->phiRef /
+                  ((this->maneuverSwitchTime - this->maneuverStartTime) *
+                   (this->maneuverSwitchTime - this->maneuverStartTime));
+        this->b =
+            -0.5 * this->phiRef /
+            ((this->maneuverSwitchTime - this->maneuverEndTime) * (this->maneuverSwitchTime - this->maneuverEndTime));
 
         // Set the convergence to false until the attitude maneuver is complete
         this->isManeuverComplete = false;
     }
 
     // Store the current simulation time
-    double t = callTime * NANO2SEC; // [s]
+    double t = callTime * NANO2SEC;  // [s]
 
     // Define the other scalar module states locally
     double phiDDot;
     double phiDot;
 
     // Compute the prescribed states at the current time for the profiled trajectory
-    if ((t < this->maneuverSwitchTime || t == this->maneuverSwitchTime) && this->maneuverEndTime != this->maneuverStartTime) // Entered during the first half of the attitude maneuver
+    if ((t < this->maneuverSwitchTime || t == this->maneuverSwitchTime) &&
+        this->maneuverEndTime != this->maneuverStartTime)  // Entered during the first half of the attitude maneuver
     {
         phiDDot = this->phiDDotMax;
         phiDot = phiDDot * (t - this->maneuverStartTime);
         this->phi = this->a * (t - this->maneuverStartTime) * (t - this->maneuverStartTime);
-    }
-    else if ( t > this->maneuverSwitchTime && t <= this->maneuverEndTime && this->maneuverEndTime != this->maneuverStartTime) // Entered during the second half of the attitude maneuver
+    } else if (t > this->maneuverSwitchTime && t <= this->maneuverEndTime &&
+               this->maneuverEndTime !=
+                   this->maneuverStartTime)  // Entered during the second half of the attitude maneuver
     {
         phiDDot = -1 * this->phiDDotMax;
-        phiDot = phiDDot * (t - this->maneuverEndTime );
+        phiDot = phiDDot * (t - this->maneuverEndTime);
         this->phi = this->b * (t - this->maneuverEndTime) * (t - this->maneuverEndTime) + this->phiRef;
-    }
-    else // Entered if the maneuver is complete
+    } else  // Entered if the maneuver is complete
     {
         phiDDot = 0.0;
         phiDot = 0.0;

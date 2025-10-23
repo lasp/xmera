@@ -18,10 +18,9 @@
  */
 
 #include "polyhedralGravityModel.h"
-#include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
+#include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 
-std::optional<std::string> PolyhedralGravityModel::initializeParameters()
-{
+std::optional<std::string> PolyhedralGravityModel::initializeParameters() {
     // If data hasn't been loaded, quit and return failure
     if (this->xyzVertex.size() == 0 || this->orderFacet.size() == 0) {
         return "Could not initialize polyhedral data: the vertex (xyzVertex) or facet (orderFacet) "
@@ -60,15 +59,12 @@ std::optional<std::string> PolyhedralGravityModel::initializeParameters()
     return {};
 }
 
-std::optional<std::string> PolyhedralGravityModel::initializeParameters(const GravBodyData& body)
-{
+std::optional<std::string> PolyhedralGravityModel::initializeParameters(const GravBodyData& body) {
     this->muBody = body.mu;
     return this->initializeParameters();
 }
 
-Eigen::Vector3d
-PolyhedralGravityModel::computeField(const Eigen::Vector3d& position_planetFixed) const
-{
+Eigen::Vector3d PolyhedralGravityModel::computeField(const Eigen::Vector3d& position_planetFixed) const {
     int i, j, k;
     Eigen::Vector3i v;
     Eigen::Vector3d ri, rj, rk;
@@ -106,33 +102,33 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& position_planetFixed
         /* Loop through each facet edge */
         for (unsigned int n = 0; n <= 2; n++) {
             switch (n) {
-            case 0:
-                idx_min = std::min(i, j);
-                r1 = ri;
-                r2 = rj;
-                re = this->xyzVertex.row(idx_min).transpose() - position_planetFixed;
+                case 0:
+                    idx_min = std::min(i, j);
+                    r1 = ri;
+                    r2 = rj;
+                    re = this->xyzVertex.row(idx_min).transpose() - position_planetFixed;
 
-                a = ri.norm();
-                b = rj.norm();
-                break;
-            case 1:
-                idx_min = std::min(j, k);
-                r1 = rj;
-                r2 = rk;
-                re = this->xyzVertex.row(idx_min).transpose() - position_planetFixed;
+                    a = ri.norm();
+                    b = rj.norm();
+                    break;
+                case 1:
+                    idx_min = std::min(j, k);
+                    r1 = rj;
+                    r2 = rk;
+                    re = this->xyzVertex.row(idx_min).transpose() - position_planetFixed;
 
-                a = rj.norm();
-                b = rk.norm();
-                break;
-            case 2:
-                idx_min = std::min(i, k);
-                r1 = rk;
-                r2 = ri;
-                re = this->xyzVertex.row(idx_min).transpose() - position_planetFixed;
+                    a = rj.norm();
+                    b = rk.norm();
+                    break;
+                case 2:
+                    idx_min = std::min(i, k);
+                    r1 = rk;
+                    r2 = ri;
+                    re = this->xyzVertex.row(idx_min).transpose() - position_planetFixed;
 
-                a = rk.norm();
-                b = ri.norm();
-                break;
+                    a = rk.norm();
+                    b = ri.norm();
+                    break;
             }
 
             /* Compute along edge vector and norm */
@@ -152,8 +148,8 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& position_planetFixed
 
         /* Compute solid angle for the current facet */
         wy = ri.transpose() * rj.cross(rk);
-        wx = ri.norm() * rj.norm() * rk.norm() + ri.norm() * rj.transpose() * rk +
-             rj.norm() * rk.transpose() * ri + rk.norm() * ri.transpose() * rj;
+        wx = ri.norm() * rj.norm() * rk.norm() + ri.norm() * rj.transpose() * rk + rj.norm() * rk.transpose() * ri +
+             rk.norm() * ri.transpose() * rj;
         wf = 2 * atan2(wy, wx);
 
         /* Add current solid angle facet */
@@ -164,8 +160,6 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& position_planetFixed
     return (this->muBody / this->volPoly) * (-dUe + dUf);
 }
 
-double
-PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const
-{
+double PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const {
     return -this->muBody / positionWrtPlanet_N.norm();
 }

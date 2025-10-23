@@ -179,11 +179,12 @@ jobs:
 
       - name: Build
         working-directory: src
-        run: cmake --build ../dist3/ --parallel
+        run: cmake --build ../build --parallel
 
       - name: Install Basilisk (editable)
         run: |
           source .venv/bin/activate
+          cmake --install build --prefix $(pwd)/dist
           python -m pip install -e .
 
       - name: Run Python tests
@@ -201,7 +202,7 @@ jobs:
           retention-days: 7
 
       - name: Run C/C++ tests
-        working-directory: ./dist3
+        working-directory: ./build
         run: ctest --output-on-failure
 
       - name: Upload CMake & test logs on failure

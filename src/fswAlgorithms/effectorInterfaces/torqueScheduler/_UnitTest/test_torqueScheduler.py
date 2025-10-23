@@ -25,7 +25,7 @@
 #
 
 import pytest
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.architecture import messaging  # import the message definitions
 from Basilisk.fswAlgorithms import torqueScheduler  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
@@ -83,7 +83,7 @@ def torqueSchedulerTestFunction(lockFlag, tSwitch, accuracy):
     testMessages = []                        # create empty array to store test log messages
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

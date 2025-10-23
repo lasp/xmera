@@ -34,13 +34,14 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
+import Basilisk.architecture.messaging
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import planetEphemeris
 from Basilisk.utilities import macros
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -65,7 +66,7 @@ def test_module(show_plots, setRAN, setDEC, setLST, setRate):
 
 
 def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_SILENT)
+    sim_model.setDefaultLogLevel(sim_model.BSK_SILENT)
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -90,7 +91,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
 
     # Initialize the test module configuration data
     planetNames = ["earth", "venus"]
-    module.setPlanetNames(planetEphemeris.StringVector(planetNames))
+    module.setPlanetNames(planetNames)
 
     # set gravitational constant of the sun
 

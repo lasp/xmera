@@ -17,25 +17,23 @@
 
  */
 
-
 #include "solarArrayReference.h"
-#include "string.h"
+#include <string.h>
 #include <math.h>
 
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/macroDefinitions.h>
 
-const double epsilon = 1e-12;                           // module tolerance for zero
+const double epsilon = 1e-12;  // module tolerance for zero
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime [ns] time the method is called
 */
-void SolarArrayReference::reset(uint64_t callTime)
-{
+void SolarArrayReference::reset(uint64_t callTime) {
     if (!this->attNavInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "solarArrayReference.attNavInMsg wasn't connected.");
     }
@@ -48,27 +46,26 @@ void SolarArrayReference::reset(uint64_t callTime)
     this->count = 0;
 }
 
-/*! This method computes the updated rotation angle reference based on current attitude, reference attitude, and current rotation angle
+/*! This method computes the updated rotation angle reference based on current attitude, reference attitude, and current
+ rotation angle
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void SolarArrayReference::updateState(uint64_t callTime)
-{
-     /*! - Create and assign buffer messages */
-    NavAttMsgPayload            attNavIn = this->attNavInMsg();
-    AttRefMsgPayload            attRefIn = this->attRefInMsg();
-    HingedRigidBodyMsgPayload   hingedRigidBodyIn     = this->hingedRigidBodyInMsg();
-    HingedRigidBodyMsgPayload   hingedRigidBodyRefOut = {};
+void SolarArrayReference::updateState(uint64_t callTime) {
+    /*! - Create and assign buffer messages */
+    NavAttMsgPayload attNavIn = this->attNavInMsg();
+    AttRefMsgPayload attRefIn = this->attRefInMsg();
+    HingedRigidBodyMsgPayload hingedRigidBodyIn = this->hingedRigidBodyInMsg();
+    HingedRigidBodyMsgPayload hingedRigidBodyRefOut = {};
 
     /*! read Sun direction in B frame from the attNav message and map it to R frame */
-    double rHat_SB_B[3];    // Sun direction in body-frame coordinates
-    double rHat_SB_R[3];    // Sun direction in reference-frame coordinates
-    double BN[3][3];   // inertial to body frame DCM
-    double RN[3][3];   // inertial to reference frame DCM
-    double RB[3][3];   // body to reference DCM
+    double rHat_SB_B[3];  // Sun direction in body-frame coordinates
+    double rHat_SB_R[3];  // Sun direction in reference-frame coordinates
+    double BN[3][3];      // inertial to body frame DCM
+    double RN[3][3];      // inertial to reference frame DCM
+    double RB[3][3];      // body to reference DCM
     v3Normalize(attNavIn.vehSunPntBdy, rHat_SB_B);
     switch (this->attitudeFrame) {
-
         case referenceFrame:
             MRP2C(attNavIn.sigma_BN, BN);
             MRP2C(attRefIn.sigma_RN, RN);
@@ -85,9 +82,9 @@ void SolarArrayReference::updateState(uint64_t callTime)
     }
 
     /*! compute solar array frame axes at zero rotation */
-    double a1Hat_B[3];      // solar array axis drive
-    double a2Hat_B[3];      // solar array axis surface normal
-    double a3Hat_B[3];      // third axis according to right-hand rule
+    double a1Hat_B[3];  // solar array axis drive
+    double a2Hat_B[3];  // solar array axis surface normal
+    double a3Hat_B[3];  // third axis according to right-hand rule
     v3Normalize(this->a1Hat_B, a1Hat_B);
     v3Cross(a1Hat_B, this->a2Hat_B, a3Hat_B);
     v3Normalize(a3Hat_B, a3Hat_B);
@@ -106,27 +103,24 @@ void SolarArrayReference::updateState(uint64_t callTime)
     /*! compute current rotation angle thetaC from input msg */
     double sinThetaC = sin(hingedRigidBodyIn.theta);
     double cosThetaC = cos(hingedRigidBodyIn.theta);
-    double thetaC = atan2(sinThetaC, cosThetaC);      // clip theta current between 0 and 2*pi
+    double thetaC = atan2(sinThetaC, cosThetaC);  // clip theta current between 0 and 2*pi
 
     /*! compute reference angle and store in buffer msg */
     if (v3Norm(a2Hat_R) < epsilon) {
         // if norm(a2Hat_R) = 0, reference coincides with current angle
         hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta;
-    }
-    else {
-        double thetaR = acos( fmin(fmax(v3Dot(a2Hat_B, a2Hat_R),-1),1) );
+    } else {
+        double thetaR = acos(fmin(fmax(v3Dot(a2Hat_B, a2Hat_R), -1), 1));
         // if a1Hat_B and a1Hat_R are opposite, take the negative of thetaR
         if (v3Dot(a1Hat_B, a1Hat_R) < 0) {
             thetaR = -thetaR;
         }
         // always make the absolute difference |thetaR-thetaC| smaller that 2*pi
         if (thetaR - thetaC > MPI) {
-            hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC - 2*MPI;
-        }
-        else if (thetaR - thetaC < - MPI) {
-            hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC + 2*MPI;
-        }
-        else {
+            hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC - 2 * MPI;
+        } else if (thetaR - thetaC < -MPI) {
+            hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC + 2 * MPI;
+        } else {
             hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC;
         }
     }
@@ -135,9 +129,8 @@ void SolarArrayReference::updateState(uint64_t callTime)
     double dt;
     if (this->count == 0) {
         hingedRigidBodyRefOut.thetaDot = 0;
-    }
-    else {
-        dt = (double) (callTime - this->priorT) * NANO2SEC;
+    } else {
+        dt = (double)(callTime - this->priorT) * NANO2SEC;
         hingedRigidBodyRefOut.thetaDot = (hingedRigidBodyRefOut.theta - this->priorThetaR) / dt;
     }
     // update stored variables

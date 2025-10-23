@@ -18,16 +18,15 @@
  */
 
 #include "thrusterPlatformState.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime [ns] time the method is called
 */
-void ThrusterPlatformState::reset(uint64_t callTime)
-{
+void ThrusterPlatformState::reset(uint64_t callTime) {
     if (!this->thrusterConfigFInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, " thrusterPlatformState.thrusterConfigFInMsg wasn't connected.");
     }
@@ -39,24 +38,22 @@ void ThrusterPlatformState::reset(uint64_t callTime)
     }
 }
 
-
 /*! This method updates the platformAngles message based on the updated information about the system center of mass
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void ThrusterPlatformState::updateState(uint64_t callTime)
-{
+void ThrusterPlatformState::updateState(uint64_t callTime) {
     /*! - Create and assign message buffers */
-    THRConfigMsgPayload        thrusterConfigFIn = this->thrusterConfigFInMsg();
-    HingedRigidBodyMsgPayload  hingedRigidBody1In = this->hingedRigidBody1InMsg();
-    HingedRigidBodyMsgPayload  hingedRigidBody2In = this->hingedRigidBody2InMsg();
-    THRConfigMsgPayload        thrusterConfigBOut = {};
+    THRConfigMsgPayload thrusterConfigFIn = this->thrusterConfigFInMsg();
+    HingedRigidBodyMsgPayload hingedRigidBody1In = this->hingedRigidBody1InMsg();
+    HingedRigidBodyMsgPayload hingedRigidBody2In = this->hingedRigidBody2InMsg();
+    THRConfigMsgPayload thrusterConfigBOut = {};
 
     /*! compute CM position w.r.t. M frame origin, in M coordinates */
     double MB[3][3];
-    MRP2C(this->sigma_MB, MB);                                 // B to M DCM
+    MRP2C(this->sigma_MB, MB);  // B to M DCM
     double r_TM_F[3];
-    v3Add(this->r_FM_F, thrusterConfigFIn.rThrust_B, r_TM_F);   // position of T w.r.t. M in F-frame coordinates
+    v3Add(this->r_FM_F, thrusterConfigFIn.rThrust_B, r_TM_F);  // position of T w.r.t. M in F-frame coordinates
     double T_F[3];
     v3Copy(thrusterConfigFIn.tHatThrust_B, T_F);
     v3Scale(thrusterConfigFIn.maxThrust, T_F, T_F);

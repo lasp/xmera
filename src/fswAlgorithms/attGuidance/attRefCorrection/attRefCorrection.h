@@ -20,10 +20,10 @@
 #ifndef ATTREFCORRECTION_H
 #define ATTREFCORRECTION_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief This module reads in the attitude reference message and adjusts it by a fixed rotation.  This allows a

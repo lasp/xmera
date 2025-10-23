@@ -19,7 +19,7 @@
 
 %module swig_conly_data
 
-%include "stdint.i"
+%include <stdint.i>
 %define ARRAYASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
     int i;
@@ -64,7 +64,7 @@
     PyObject *locOutObj = 0;
     for (i = 0; i < $1_dim0; i++) {
         locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
-        
+
         if(PyNumber_Check(locOutObj)){
             PyObject *outObject = PyFloat_FromDouble((double) $1[i]);
             PyList_Append($result,outObject);
@@ -128,7 +128,7 @@ ARRAYASLIST(unsigned int)
     PyObject *locOutObj = 0;
     for (i = 0; i < $1_dim0; i++) {
         locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
-        
+
         if(PyNumber_Check(locOutObj)){
             PyObject *outObject = PyInt_FromLong((long) $1[i]);
             PyList_Append($result,outObject);
@@ -234,7 +234,7 @@ ARRAY2ASLIST(unsigned int)
             return NULL;
         }
         memcpy(&(temp[i]), blankPtr, sizeof(type));
-        
+
     }
     $1 = temp;
 }
@@ -256,8 +256,8 @@ ARRAY2ASLIST(unsigned int)
 }
 %enddef
 
-%include "carrays.i"
-%include "cmalloc.i"
+%include <carrays.i>
+%include <cmalloc.i>
 #define GEN_SIZEOF(type) %sizeof(type, type)
 
 %array_functions(double, doubleArray);
@@ -272,9 +272,9 @@ def getStructSize(self):
         return eval('sizeof_' + repr(self).split(';')[0].split('.')[-1])
     except (NameError) as e:
         typeString = 'sizeof_' + repr(self).split(';')[0].split('.')[-1]
-        raise NameError(e.message + '\nYou tried to get this size macro: ' + typeString + 
-            '\n It appears to be undefined.  \nYou need to run the SWIG GEN_SIZEOF' +  
-            ' SWIG macro against the class/struct in your SWIG file if you want to ' + 
+        raise NameError(e.message + '\nYou tried to get this size macro: ' + typeString +
+            '\n It appears to be undefined.  \nYou need to run the SWIG GEN_SIZEOF' +
+            ' SWIG macro against the class/struct in your SWIG file if you want to ' +
             ' make this call.\n')
 
 
@@ -282,20 +282,6 @@ def protectSetAttr(self, name, value):
     if(hasattr(self, name) or name == 'this' or name.find('swig') >= 0):
         object.__setattr__(self, name, value)
     else:
-        raise ValueError('You tried to add this variable: ' + name + '\n' + 
+        raise ValueError('You tried to add this variable: ' + name + '\n' +
             'To this class: ' + str(self))
-
-def protectAllClasses(moduleType):
-    import inspect
-    import sys
-    clsmembers = inspect.getmembers(sys.modules[__name__], inspect.isclass)
-    for member in clsmembers:
-        try:
-            exec(str(member[0]) + '.__setattr__ = protectSetAttr')
-            exec(str(member[0]) + '.getStructSize = getStructSize') 
-        except (AttributeError, TypeError) as e:
-            pass
-    
 %}
-
-

@@ -22,10 +22,10 @@
 
  */
 
-#include "fswAlgorithms/attControl/mrpFeedback_C/mrpFeedback_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "mrpFeedback_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 #include <math.h>
 #include <string.h>
@@ -108,7 +108,7 @@ void MrpFeedback_C::updateState(uint64_t callTime) {
     double v3_12[3];
     double intCheck; /* Check magnitude of integrated attitude error */
     int i;
-    double *wheelGs; /* Reaction wheel spin axis pointer */
+    double* wheelGs; /* Reaction wheel spin axis pointer */
 
     /*! - Read the attitude tracking error message */
     guidCmd = this->guidInMsg();

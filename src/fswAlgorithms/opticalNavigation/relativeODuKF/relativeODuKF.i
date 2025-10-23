@@ -19,29 +19,16 @@
 %module relativeODuKF
 %{
    #include "relativeODuKF.h"
-   #include "architecture/utilities/ukfUtilities.h"
+   #include <architecture/utilities/ukfUtilities.h>
 %}
 
-
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "relativeODuKF.h"
 
-%include "architecture/utilities/ukfUtilities.h"
+%include <architecture/utilities/ukfUtilities.h>
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/OpNavMsgPayload.h"
-struct OpNavMsg_C;
-%include "architecture/msgPayloadDef/OpNavFilterMsgPayload.h"
-struct OpNavFilterMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavFilterMsgPayload.h>

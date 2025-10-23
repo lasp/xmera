@@ -16,13 +16,13 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/sensors/starTracker/starTracker.h"
+#include "starTracker.h"
 
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/gauss_markov.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/gauss_markov.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 
 StarTracker::StarTracker() {
     this->dcm_CB.setIdentity();

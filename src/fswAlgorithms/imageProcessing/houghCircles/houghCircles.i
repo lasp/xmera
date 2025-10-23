@@ -21,24 +21,12 @@
    #include "houghCircles.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "stdint.i"
-%include "std_string.i"
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <stdint.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "houghCircles.h"
 
-%include "architecture/msgPayloadDef/OpNavCirclesMsgPayload.h"
-struct OpNavCirclesMsg_C;
-%include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-struct CameraImageMsg_C;
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraImageMsgPayload.h>

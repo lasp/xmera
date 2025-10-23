@@ -21,20 +21,11 @@
    #include "mrpSteering.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "mrpSteering.h"
 %include "mrpSteeringAlgorithm.h"
 
-%include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-%include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+%include <architecture/msgPayloadDef/RateCmdMsgPayload.h>

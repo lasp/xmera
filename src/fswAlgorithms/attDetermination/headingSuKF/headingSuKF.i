@@ -19,27 +19,18 @@
 %module headingSuKF
 %{
    #include "headingSuKF.h"
-   #include "architecture/utilities/ukfUtilities.h"
+   #include <architecture/utilities/ukfUtilities.h>
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "headingSuKF.h"
 
 
-%include "architecture/utilities/ukfUtilities.h"
+%include <architecture/utilities/ukfUtilities.h>
 
-%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/HeadingFilterMsgPayload.h"
-%include "architecture/msgPayloadDef/OpNavMsgPayload.h"
-%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/HeadingFilterMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>

@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphem.h"
+#include "oeStateEphem.h"
 
 /*!
  @return void
@@ -83,7 +83,7 @@ unsigned int OEStateEphem::getArcAnomalyFlag(unsigned int arcNumber) const {
 
 void OEStateEphem::setArcRadiusPeriapsisCoefficients(
     const unsigned int arcNumber,
-    const std::array<double, MAX_OE_COEFF> &radiusPeriapsisCoefficients) {
+    const std::array<double, MAX_OE_COEFF>& radiusPeriapsisCoefficients) {
     this->algorithm.setArcRadiusPeriapsisCoefficients(arcNumber, radiusPeriapsisCoefficients);
 };
 
@@ -92,7 +92,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRadiusPeriapsisCoefficients
 };
 
 void OEStateEphem::setArcEccentricityCoefficients(const unsigned int arcNumber,
-                                                  const std::array<double, MAX_OE_COEFF> &eccentricityCoefficients) {
+                                                  const std::array<double, MAX_OE_COEFF>& eccentricityCoefficients) {
     this->algorithm.setArcEccentricityCoefficients(arcNumber, eccentricityCoefficients);
 };
 
@@ -101,7 +101,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphem::getArcEccentricityCoefficients(co
 };
 
 void OEStateEphem::setArcInclinationCoefficients(const unsigned int arcNumber,
-                                                 const std::array<double, MAX_OE_COEFF> &inclinationCoefficients) {
+                                                 const std::array<double, MAX_OE_COEFF>& inclinationCoefficients) {
     this->algorithm.setArcInclinationCoefficients(arcNumber, inclinationCoefficients);
 };
 
@@ -110,7 +110,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphem::getArcInclinationCoefficients(con
 };
 
 void OEStateEphem::setArcArgPeriapsisCoefficients(const unsigned int arcNumber,
-                                                  const std::array<double, MAX_OE_COEFF> &argPeriapsisCoefficients) {
+                                                  const std::array<double, MAX_OE_COEFF>& argPeriapsisCoefficients) {
     this->algorithm.setArcArgPeriapsisCoefficients(arcNumber, argPeriapsisCoefficients);
 };
 
@@ -119,7 +119,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphem::getArcArgPeriapsisCoefficients(co
 };
 
 void OEStateEphem::setArcRaanCoefficients(const unsigned int arcNumber,
-                                          const std::array<double, MAX_OE_COEFF> &raanCoefficients) {
+                                          const std::array<double, MAX_OE_COEFF>& raanCoefficients) {
     this->algorithm.setArcRaanCoefficients(arcNumber, raanCoefficients);
 };
 
@@ -128,7 +128,7 @@ std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRaanCoefficients(const unsi
 };
 
 void OEStateEphem::setArcTrueAnomalyCoefficients(const unsigned int arcNumber,
-                                                 const std::array<double, MAX_OE_COEFF> &trueAnomalyCoefficients) {
+                                                 const std::array<double, MAX_OE_COEFF>& trueAnomalyCoefficients) {
     this->algorithm.setArcTrueAnomalyCoefficients(arcNumber, trueAnomalyCoefficients);
 };
 

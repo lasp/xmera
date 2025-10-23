@@ -18,24 +18,24 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
-#include "utilities/vizProtobuffer/vizMessage.pb.h"
+#include "vizMessage.pb.h"
 #include <zmq.h>
 #include <fstream>
 #include <map>
 #include <vector>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include "../_GeneralModuleFiles/vizStructures.h"
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDef/EpochMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/EpochMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/simDefinitions.h"
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/simDefinitions.h>
 
 #define VIZ_MAX_SIZE 100000
 

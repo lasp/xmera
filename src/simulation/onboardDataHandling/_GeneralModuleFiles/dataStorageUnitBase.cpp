@@ -18,7 +18,7 @@
  */
 
 #include "dataStorageUnitBase.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/macroDefinitions.h>
 #include <iostream>
 
 /*! This method initializes some basic parameters for the module.
@@ -58,7 +58,7 @@ void DataStorageUnitBase::reset(uint64_t currentSimNanos) {
  @param tmpNodeMsg
  @return void
  */
-void DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload> *tmpNodeMsg) {
+void DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload>* tmpNodeMsg) {
     this->nodeDataUseInMsgs.push_back(tmpNodeMsg->addSubscriber());
 
     return;
@@ -187,7 +187,7 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime) {
  * @param tmpNodeMsg
  * @return index
  */
-int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg) {
+int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload* tmpNodeMsg) {
     // Initialize index as -1 (indicates data is not in storedData)
     int index = -1;
 

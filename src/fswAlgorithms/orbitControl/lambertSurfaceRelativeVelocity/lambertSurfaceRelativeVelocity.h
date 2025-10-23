@@ -20,14 +20,14 @@
 #ifndef LAMBERTSURFACERELATIVEVELOCITY_H
 #define LAMBERTSURFACERELATIVEVELOCITY_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/DesiredVelocityMsgPayload.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/LambertProblemMsgPayload.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenSupport.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/DesiredVelocityMsgPayload.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/LambertProblemMsgPayload.h>
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenSupport.h>
 #include <array>
 #include <vector>
 

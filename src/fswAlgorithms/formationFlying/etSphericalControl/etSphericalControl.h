@@ -20,13 +20,13 @@
 #ifndef _ET_SPHERICAL_CONTROL_H_
 #define _ET_SPHERICAL_CONTROL_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/CmdForceInertialMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 #include <stdint.h>
 
 #include "architecture/utilities/bskLogging.h"
@@ -42,8 +42,8 @@ class EtSphericalControl : public SysModel {
                                    VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
                                    VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
                                    CmdForceInertialMsgPayload eForceInMsgBuffer,
-                                   CmdForceInertialMsgPayload *forceInertialOutMsgBuffer,
-                                   CmdForceBodyMsgPayload *forceBodyOutMsgBuffer);
+                                   CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
+                                   CmdForceBodyMsgPayload* forceBodyOutMsgBuffer);
     // declare module IO interfaces
     ReadFunctor<NavTransMsgPayload> servicerTransInMsg;  //!< servicer orbit input message
     ReadFunctor<NavTransMsgPayload> debrisTransInMsg;    //!< debris orbit input message

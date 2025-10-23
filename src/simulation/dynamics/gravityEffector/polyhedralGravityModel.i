@@ -19,18 +19,18 @@
 
 %module(package="Basilisk.simulation") polyhedralGravityModel
 %{
-   #include "simulation/dynamics/gravityEffector/polyhedralGravityModel.h"
+   #include "polyhedralGravityModel.h"
    #include <memory>
 %}
 
-%include "swig_eigen.i"
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%import "simulation/dynamics/gravityEffector/gravityModel.i"
+%import "gravityModel.i"
 
 %include <std_shared_ptr.i>
 %shared_ptr(PolyhedralGravityModel)
 
-%include "simulation/dynamics/gravityEffector/polyhedralGravityModel.h"
+%include "polyhedralGravityModel.h"
 
 %extend PolyhedralGravityModel {
    %pythoncode %{

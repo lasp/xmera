@@ -21,18 +21,18 @@
 #ifndef SUNLINESRUKF_H
 #define SUNLINESRUKF_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/orbitalMotion.h"
-#include "fswAlgorithms/_GeneralModuleFiles/measurementModels.h"
-#include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/orbitalMotion.h>
+#include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
+#include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 
 class SunlineSRuKF : public SRukfInterface {
    public:
@@ -43,7 +43,7 @@ class SunlineSRuKF : public SRukfInterface {
     void readFilterMeasurements() final;
     void customFinalizeUpdate() final;
     void writeOutputMessages(uint64_t currentSimNanos) final;
-    static FilterStateVector stateDerivative(double t, const FilterStateVector &state);
+    static FilterStateVector stateDerivative(double t, const FilterStateVector& state);
 
     int filterMeasurement = 0;    //!< [-] Number of measurements of different types being read
     int numActiveCss = 0;         //!< [-] Number of currently active CSS sensors

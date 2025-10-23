@@ -16,8 +16,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/sensors/simpleMassProps/simpleMassProps.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "simpleMassProps.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <iostream>
 
 /*! This is the constructor for the module class. */

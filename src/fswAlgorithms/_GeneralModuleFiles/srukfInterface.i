@@ -19,18 +19,9 @@
  */
 %module srukfInterface
 %{
-   #include "srukfInterface.h"
+   #include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
+%include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.i>
 
-%include "kalmanFilter.i"
-
-%include "srukfInterface.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>

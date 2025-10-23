@@ -20,17 +20,17 @@
 #ifndef GROUND_LOCATION_H
 #define GROUND_LOCATION_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AccessMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AccessMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief ground location class */
 class SpacecraftLocation : public SysModel {
@@ -41,7 +41,7 @@ class SpacecraftLocation : public SysModel {
     void reset(uint64_t currentSimNanos);
     bool ReadMessages();
     void WriteMessages(uint64_t CurrentClock);
-    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
 
    private:
     void computeAccess();
@@ -56,7 +56,7 @@ class SpacecraftLocation : public SysModel {
 
     ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;         //!< primary spacecraft input message
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;         //!< planet state input message
-    std::vector<Message<AccessMsgPayload> *> accessOutMsgs;      //!< vector of ground location access messages
+    std::vector<Message<AccessMsgPayload>*> accessOutMsgs;       //!< vector of ground location access messages
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs;  //!< vector of other sc state input messages
     Eigen::Vector3d
         r_LB_B;  //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components

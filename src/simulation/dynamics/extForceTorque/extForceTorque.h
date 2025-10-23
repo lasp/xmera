@@ -20,15 +20,15 @@
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 
-#include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+#include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/CmdForceInertialMsgPayload.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief external force and torque dynamic efector class */
 class ExtForceTorque : public SysModel, public DynamicEffector {

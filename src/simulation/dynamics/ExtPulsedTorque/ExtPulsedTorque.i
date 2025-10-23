@@ -21,19 +21,10 @@
    #include "ExtPulsedTorque.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "stdint.i"
-%include "swig_eigen.i"
+%include <std_string.i>
+%include <stdint.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 %include "ExtPulsedTorque.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

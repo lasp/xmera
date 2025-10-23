@@ -25,8 +25,8 @@
 
 #include <array>
 
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 
 #define MAX_AGG_NAV_MSG 10
 

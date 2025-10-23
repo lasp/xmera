@@ -36,6 +36,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk import __path__
 bskPath = __path__[0]
 
+import Basilisk.architecture.messaging
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import spiceInterface
@@ -71,7 +72,7 @@ def unitSpiceSc(show_plots):
     spiceObject.modelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     scNames = ["HUBBLE SPACE TELESCOPE"]
-    spiceObject.addSpacecraftNames(spiceInterface.StringVector(scNames))
+    spiceObject.addSpacecraftNames(scNames)
     spiceObject.UTCCalInit = dateSpice
     spiceObject.zeroBase = "earth"
     spiceObject.loadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')

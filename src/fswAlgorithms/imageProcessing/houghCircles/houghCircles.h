@@ -20,22 +20,22 @@
 #ifndef _IMAGE_PROC_HOUGH_H_
 #define _IMAGE_PROC_HOUGH_H_
 
-#include "architecture/messaging/messaging.h"
-#include "opencv2/core/mat.hpp"
-#include "opencv2/dnn.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/opencv.hpp"
+#include <architecture/messaging/messaging.h>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/dnn.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/opencv.hpp>
 #include <stdint.h>
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/CameraImageMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavCirclesMsgPayload.h"
+#include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavCirclesMsgPayload.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
 
 /*! @brief visual planet tracking with Hough circles */
 class HoughCircles : public SysModel {

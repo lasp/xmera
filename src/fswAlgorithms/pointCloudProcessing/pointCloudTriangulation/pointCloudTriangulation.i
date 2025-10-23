@@ -22,28 +22,17 @@
     #include "pointCloudTriangulation.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
-%include "sys_model.h"
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 
 %include "pointCloudTriangulation.h"
 
-%include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
-%include "architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h"
-%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-struct EphemerisMsg_C;
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/DirectionOfMotionMsgPayload.h"
-%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-struct CameraConfigMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
+%include <architecture/msgPayloadDef/PairedKeyPointsMsgPayload.h>
+%include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/DirectionOfMotionMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>

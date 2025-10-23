@@ -20,10 +20,10 @@
 #ifndef VEHICLECONFIGDATACPP_H
 #define VEHICLECONFIGDATACPP_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 class VehicleConfigData : public SysModel {
    public:
@@ -34,7 +34,7 @@ class VehicleConfigData : public SysModel {
     double massSC;                                    /*!< [kg] Spacecraft mass */
     Message<VehicleConfigMsgPayload> vecConfigOutMsg; /*!< [-] Name of the output properties message*/
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger* bskLogger;  //!< BSK Logging
 };
 
 #endif  // VEHICLECONFIGDATACPP_H

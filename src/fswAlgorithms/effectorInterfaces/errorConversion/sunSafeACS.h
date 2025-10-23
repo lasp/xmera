@@ -20,7 +20,7 @@
 #ifndef _SUN_SAFE_ACS_H_
 #define _SUN_SAFE_ACS_H_
 
-#include "fswAlgorithms/effectorInterfaces/_GeneralModuleFiles/thrustGroupData.h"
+#include "../_GeneralModuleFiles/thrustGroupData.h"
 #include "fswAlgorithms/effectorInterfaces/errorConversion/dvAttEffect.h"
 #include <stdint.h>
 #include <stdlib.h>

@@ -20,7 +20,7 @@
 #ifndef INERTIAL3DALGORITHM_H
 #define INERTIAL3DALGORITHM_H
 
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <Eigen/Core>
 
 /*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.

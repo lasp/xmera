@@ -20,16 +20,16 @@
 #ifndef LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H
 #define LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h"
-#include "architecture/msgPayloadDef/ArrayMotorForceMsgPayload.h"
-#include "architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h>
+#include <architecture/msgPayloadDef/ArrayMotorForceMsgPayload.h>
+#include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
 /*! @brief linear spring mass damper state effector class */
 class linearTranslationOneDOFStateEffector : public StateEffector, public SysModel {

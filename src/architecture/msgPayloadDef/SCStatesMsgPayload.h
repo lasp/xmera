@@ -20,6 +20,8 @@
 #ifndef SC_STATE_MESSAGE_H
 #define SC_STATE_MESSAGE_H
 
+#include <cstdint>
+
 /*! @brief This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/
 typedef struct {

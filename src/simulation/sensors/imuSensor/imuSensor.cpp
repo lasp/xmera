@@ -16,16 +16,16 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/sensors/imuSensor/imuSensor.h"
+#include "imuSensor.h"
 
 #include <inttypes.h>
 
 #include <cstring>
 
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/gauss_markov.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/gauss_markov.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 ImuSensor::ImuSensor() {
     this->numStates = 3;

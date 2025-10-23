@@ -17,9 +17,9 @@
 
 */
 
-#include "fswAlgorithms/orbitControl/lambertSecondDV/lambertSecondDV.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include "lambertSecondDV.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <cmath>
 #include <unsupported/Eigen/MatrixFunctions>
 

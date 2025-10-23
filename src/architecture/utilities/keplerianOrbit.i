@@ -21,15 +21,7 @@
    #include "keplerianOrbit.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
 %include "swig_eigen.i"
 
 %include "keplerianOrbit.h"
 %include "orbitalMotion.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

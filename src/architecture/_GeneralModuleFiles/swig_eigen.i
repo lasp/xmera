@@ -19,7 +19,7 @@
 %module swig_eigen
 %{
     #include <Eigen/Dense>
-    #include "architecture/utilities/eigenMRP.h"
+    #include <architecture/utilities/eigenMRP.h>
     #include <type_traits>
     #include <limits>
     #include <optional>

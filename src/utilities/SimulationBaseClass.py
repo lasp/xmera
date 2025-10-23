@@ -29,7 +29,7 @@ from collections import OrderedDict
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import bskLogging, sim_model
+from Basilisk.architecture import sim_model
 from Basilisk.utilities import deprecated, simulationArchTypes
 from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
 from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
@@ -179,7 +179,7 @@ class SimBaseClass:
         self.indexParsed = False
         self.simulationInitialized = False
         self.simulationFinished = False
-        self.bskLogger = bskLogging.BSKLogger()
+        self.bskLogger = sim_model.BSKLogger()
         self.showProgressBar = False
         self.allModules = set()
 

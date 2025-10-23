@@ -23,15 +23,15 @@
 #include <Eigen/Dense>
 #include <vector>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
 
 /*! @brief Spacecraft Geometry Data */
 typedef struct {

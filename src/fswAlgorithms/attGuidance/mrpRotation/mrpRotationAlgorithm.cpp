@@ -18,9 +18,9 @@
  */
 
 #include "mrpRotationAlgorithm.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 
 /*! @brief This resets the module to original states.
  @return void

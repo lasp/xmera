@@ -33,7 +33,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -46,7 +46,7 @@ r"""
 Skip the following tests if all necessary modules do not exist
 Requirements:
     - Vizard downloaded and app path set properly (in basilisk/examples/OpNavScenarios/BSK_OpNav.py)
-    - Basilisk built with ZMQ, protobuffers, and OpenCV 
+    - Basilisk built with ZMQ, protobuffers, and OpenCV
 """
 
 import BSK_OpNav
@@ -77,7 +77,7 @@ except ImportError:
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
 def test_opnavBskScenarios(show_plots):
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_SILENT)
+    sim_model.setDefaultLogLevel(sim_model.BSK_SILENT)
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

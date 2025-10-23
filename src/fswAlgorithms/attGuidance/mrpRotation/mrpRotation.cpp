@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/mrpRotation/mrpRotation.h"
+#include "mrpRotation.h"
 #include <stdexcept>
 
 /*! @brief This resets the module to original states.

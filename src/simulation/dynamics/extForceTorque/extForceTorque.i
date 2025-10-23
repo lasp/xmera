@@ -21,28 +21,17 @@
    #include "extForceTorque.h"
 %}
 
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
-
-%include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 
 %include "extForceTorque.h"
 
-%include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
+%include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 
-%include "architecture/msgPayloadDef/CmdForceBodyMsgPayload.h"
+%include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
 
-%include "architecture/msgPayloadDef/CmdForceInertialMsgPayload.h"
-
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/CmdForceInertialMsgPayload.h>

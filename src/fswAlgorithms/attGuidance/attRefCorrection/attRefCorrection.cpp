@@ -17,10 +17,9 @@
 
 */
 
-
-#include "fswAlgorithms/attGuidance/attRefCorrection/attRefCorrection.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "attRefCorrection.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -28,23 +27,20 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void AttRefCorrection::reset(uint64_t callTime)
-{
+void AttRefCorrection::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->attRefInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: attRefCorrection.attRefInMsg was not connected.");
     }
 }
 
-
 /*! Corrects the reference attitude message by a fixed rotation
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void AttRefCorrection::updateState(uint64_t callTime)
-{
-    AttRefMsgPayload attRefMsgBuffer;     //!< local copy of message buffer
-    double sigma_BBc[3];                    //!< MRP from corrected body frame to body frame
+void AttRefCorrection::updateState(uint64_t callTime) {
+    AttRefMsgPayload attRefMsgBuffer;  //!< local copy of message buffer
+    double sigma_BBc[3];               //!< MRP from corrected body frame to body frame
 
     // read in the input messages
     attRefMsgBuffer = this->attRefInMsg();

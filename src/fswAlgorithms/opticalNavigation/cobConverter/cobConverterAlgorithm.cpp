@@ -18,9 +18,9 @@
  */
 
 #include "cobConverterAlgorithm.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 
 /**
  * @brief Compute total COB covariance in image space given unit-vector covariances.
@@ -37,12 +37,12 @@
  * @param cameraCalibrationMatrix Camera calibration matrix K
  * @return Image-space covariance matrix in pixel units
  */
-static Eigen::Matrix3d computeTotalCobCovariance(const Eigen::Matrix3d &covarNav_N,
-                                                 const Eigen::Matrix3d &covarAtt_B,
-                                                 const Eigen::Matrix3d &covarCob_C,
-                                                 const Eigen::Matrix3d &dcm_CN,
-                                                 const Eigen::Matrix3d &dcm_CB,
-                                                 const Eigen::Matrix3d &cameraCalibrationMatrix);
+static Eigen::Matrix3d computeTotalCobCovariance(const Eigen::Matrix3d& covarNav_N,
+                                                 const Eigen::Matrix3d& covarAtt_B,
+                                                 const Eigen::Matrix3d& covarCob_C,
+                                                 const Eigen::Matrix3d& dcm_CN,
+                                                 const Eigen::Matrix3d& dcm_CB,
+                                                 const Eigen::Matrix3d& cameraCalibrationMatrix);
 
 /**
  * @brief Construct a CobConverterAlgorithm.
@@ -70,7 +70,7 @@ CobConverterAlgorithm::~CobConverterAlgorithm() = default;
  *
  * @param cameraSpecs Camera model specifications.
  */
-void CobConverterAlgorithm::computeCameraParameters(const CameraModelMsgPayload &cameraSpecs) {
+void CobConverterAlgorithm::computeCameraParameters(const CameraModelMsgPayload& cameraSpecs) {
     double sigma_camera[3];
     std::ranges::copy(cameraSpecs.bodyToCameraMrp, std::begin(sigma_camera));
     this->dcm_CB = mrpToDcm(cArrayAsEigenVector3(sigma_camera));
@@ -107,7 +107,7 @@ void CobConverterAlgorithm::computeCameraParameters(const CameraModelMsgPayload 
  *
  * @param navAttBuffer Navigation attitude buffer containing MRP sigma_BN.
  */
-void CobConverterAlgorithm::computeRotations(const NavAttMsgPayload &navAttBuffer) {
+void CobConverterAlgorithm::computeRotations(const NavAttMsgPayload& navAttBuffer) {
     double sigma_BN[3];
     std::ranges::copy(navAttBuffer.sigma_BN, std::begin(sigma_BN));
     // Extract rotations from relevant messages
@@ -126,8 +126,8 @@ void CobConverterAlgorithm::computeRotations(const NavAttMsgPayload &navAttBuffe
  * @param sunBuffer Sun-pointing attitude buffer with vehSunPntBdy.
  * @note Computes and stores: @c alphaPA, @c phi, @c gamma, @c spacecraftRange, @c Rc.
  */
-void CobConverterAlgorithm::computePhaseAngleCorrection(const FilterMsgPayload &filterMsgBuffer,
-                                                        const NavAttMsgPayload &sunBuffer) {
+void CobConverterAlgorithm::computePhaseAngleCorrection(const FilterMsgPayload& filterMsgBuffer,
+                                                        const NavAttMsgPayload& sunBuffer) {
     double filter_state[MAX_STATES_VECTOR];
     double sun_B[3];
     std::ranges::copy(filterMsgBuffer.state, std::begin(filter_state));
@@ -161,7 +161,7 @@ void CobConverterAlgorithm::computePhaseAngleCorrection(const FilterMsgPayload &
  * @return Tuple of (centerOfBrightness, centerOfMass) as 3-vectors in homogeneous pixel coords.
  */
 std::tuple<Eigen::Vector3d, Eigen::Vector3d> CobConverterAlgorithm::computeCentersOfInterest(
-    const OpNavCOBMsgPayload &cobMsgBuffer) const {
+    const OpNavCOBMsgPayload& cobMsgBuffer) const {
     // Center of Brightness in pixel space
     Eigen::Vector3d centerOfBrightness;
     centerOfBrightness[0] = cobMsgBuffer.centerOfBrightness[0];
@@ -182,8 +182,8 @@ std::tuple<Eigen::Vector3d, Eigen::Vector3d> CobConverterAlgorithm::computeCente
  * @param centerOfMass 3-vector (homogeneous) pixel coordinates of COM.
  * @note Populates @c rhatCOB_C, @c rhatCOM_C and caches @c rhatCOBNorm.
  */
-void CobConverterAlgorithm::computeRelevantVectors(const Eigen::Vector3d &centerOfBrightness,
-                                                   const Eigen::Vector3d &centerOfMass) {
+void CobConverterAlgorithm::computeRelevantVectors(const Eigen::Vector3d& centerOfBrightness,
+                                                   const Eigen::Vector3d& centerOfMass) {
     // Retrieve the vector from target to camera and normalize
     this->rhatCOB_C = -this->cameraCalibrationMatrixInverse * centerOfBrightness;
     this->rhatCOM_C = -this->cameraCalibrationMatrixInverse * centerOfMass;
@@ -203,7 +203,7 @@ void CobConverterAlgorithm::computeRelevantVectors(const Eigen::Vector3d &center
  * @param filterMsgBuffer Filter state and covariance.
  * @param pixelsFound Number of detected pixels (for scale factor).
  */
-void CobConverterAlgorithm::computeCameraFrameUncertainty(const FilterMsgPayload &filterMsgBuffer, double pixelsFound) {
+void CobConverterAlgorithm::computeCameraFrameUncertainty(const FilterMsgPayload& filterMsgBuffer, double pixelsFound) {
     double covariance[MAX_STATES_VECTOR * MAX_STATES_VECTOR];
     std::ranges::copy(filterMsgBuffer.covar, std::begin(covariance));
 
@@ -282,10 +282,10 @@ void CobConverterAlgorithm::computeCameraFrameUncertainty(const FilterMsgPayload
  */
 std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::populateOutputMessages(
     const uint64_t timeTag,
-    const Eigen::Vector3d &centerOfMass,
-    const Eigen::Vector3d &centerOfBrightness,
-    OpNavUnitVecMsgPayload &uVecMsgBuffer,
-    OpNavCOMMsgPayload &comMsgBuffer) {
+    const Eigen::Vector3d& centerOfMass,
+    const Eigen::Vector3d& centerOfBrightness,
+    OpNavUnitVecMsgPayload& uVecMsgBuffer,
+    OpNavCOMMsgPayload& comMsgBuffer) {
     Eigen::Vector3d rhatCOM_N = this->dcm_NC * this->rhatCOM_C;
     Eigen::Vector3d rhatCOM_B = this->dcm_BN * rhatCOM_N;
     Eigen::Matrix3d covar_N = this->dcm_BN.transpose() * this->covar_B * this->dcm_BN;
@@ -326,11 +326,11 @@ std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::po
  */
 std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::updateState(
     const uint64_t currentSimNanos,
-    const CameraModelMsgPayload &cameraSpecs,
-    const OpNavCOBMsgPayload &cobMsgBuffer,
-    const NavAttMsgPayload &navAttBuffer,
-    const NavAttMsgPayload &sunBuffer,
-    const FilterMsgPayload &filterMsgBuffer) {
+    const CameraModelMsgPayload& cameraSpecs,
+    const OpNavCOBMsgPayload& cobMsgBuffer,
+    const NavAttMsgPayload& navAttBuffer,
+    const NavAttMsgPayload& sunBuffer,
+    const FilterMsgPayload& filterMsgBuffer) {
     OpNavUnitVecMsgPayload uVecMsgBuffer{};
     OpNavCOMMsgPayload comMsgBuffer{};
 
@@ -370,12 +370,12 @@ std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::up
  * @param cameraCalibrationMatrix Camera calibration matrix K.
  * @return Image-space covariance (pixels).
  */
-static Eigen::Matrix3d computeTotalCobCovariance(const Eigen::Matrix3d &covarNav_N,
-                                                 const Eigen::Matrix3d &covarAtt_B,
-                                                 const Eigen::Matrix3d &covarCob_C,
-                                                 const Eigen::Matrix3d &dcm_CN,
-                                                 const Eigen::Matrix3d &dcm_CB,
-                                                 const Eigen::Matrix3d &cameraCalibrationMatrix) {
+static Eigen::Matrix3d computeTotalCobCovariance(const Eigen::Matrix3d& covarNav_N,
+                                                 const Eigen::Matrix3d& covarAtt_B,
+                                                 const Eigen::Matrix3d& covarCob_C,
+                                                 const Eigen::Matrix3d& dcm_CN,
+                                                 const Eigen::Matrix3d& dcm_CB,
+                                                 const Eigen::Matrix3d& cameraCalibrationMatrix) {
     Eigen::Matrix3d covarAtt_C = dcm_CB * covarAtt_B * dcm_CB.transpose();
     Eigen::Matrix3d covarNav_C = dcm_CN * covarNav_N * dcm_CN.transpose();
     Eigen::Matrix3d covarTotal_C = covarCob_C + covarAtt_C + covarNav_C;
@@ -393,7 +393,7 @@ static Eigen::Matrix3d computeTotalCobCovariance(const Eigen::Matrix3d &covarNav
  *
  * @param filterMsgBuffer Filter message buffer containing state and covariance.
  */
-void CobConverterAlgorithm::cobOutlierDetection(const FilterMsgPayload &filterMsgBuffer) {
+void CobConverterAlgorithm::cobOutlierDetection(const FilterMsgPayload& filterMsgBuffer) {
     double state[MAX_STATES_VECTOR];
     double covariance[MAX_STATES_VECTOR * MAX_STATES_VECTOR];
     std::ranges::copy(filterMsgBuffer.state, std::begin(state));
@@ -469,7 +469,7 @@ double CobConverterAlgorithm::getRadiusUncertainty() const { return this->object
  * @brief Set the attitude error covariance matrix in body frame (for unit vector measurements).
  * @param covAtt_BN_B 3x3 attitude covariance in body frame.
  */
-void CobConverterAlgorithm::setAttitudeCovariance(const Eigen::Matrix3d &covAtt_BN_B) {
+void CobConverterAlgorithm::setAttitudeCovariance(const Eigen::Matrix3d& covAtt_BN_B) {
     this->covarAtt_BN_B = covAtt_BN_B;
 }
 

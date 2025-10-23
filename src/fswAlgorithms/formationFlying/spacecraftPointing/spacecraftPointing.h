@@ -20,12 +20,12 @@
 #ifndef _SPACECRAFTPOINTING_H_
 #define _SPACECRAFTPOINTING_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the spacecraft pointing module.*/

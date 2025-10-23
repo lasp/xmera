@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.h"
+#include "thrForceMapping.h"
 
 /*! Reset method for the BSK module adapter interface. This method also calls the algorithm reset method.
  @return void

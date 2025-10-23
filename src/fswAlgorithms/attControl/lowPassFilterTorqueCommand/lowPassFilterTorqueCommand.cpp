@@ -22,29 +22,27 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "fswAlgorithms/attControl/lowPassFilterTorqueCommand/lowPassFilterTorqueCommand.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "math.h"
-
+#include "lowPassFilterTorqueCommand.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
+#include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void LowPassFilterTorqueCommand::reset(uint64_t callTime)
-{
+void LowPassFilterTorqueCommand::reset(uint64_t callTime) {
     int i;
 
-    this->shouldBeReset  = BOOL_TRUE;         /* reset the first run flag */
+    this->shouldBeReset = BOOL_TRUE; /* reset the first run flag */
 
     // check if the required input message is included
     if (!this->cmdTorqueInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: lowPassFilterTorqueCommand.cmdTorqueInMsg wasn't connected.");
     }
 
-    for (i=0;i<NUM_LPF;i++) {
+    for (i = 0; i < NUM_LPF; i++) {
         v3SetZero(this->Lr[i]);
         v3SetZero(this->LrF[i]);
     }
@@ -55,11 +53,10 @@ void LowPassFilterTorqueCommand::reset(uint64_t callTime)
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void LowPassFilterTorqueCommand::updateState(uint64_t callTime)
-{
-    double      v3[3];                      /*!<      3d vector sub-result */
-    int         i;
-    CmdTorqueBodyMsgPayload controlOut = {};             /*!< -- Control output message */
+void LowPassFilterTorqueCommand::updateState(uint64_t callTime) {
+    double v3[3]; /*!<      3d vector sub-result */
+    int i;
+    CmdTorqueBodyMsgPayload controlOut = {}; /*!< -- Control output message */
 
     /* - Read the input messages */
     CmdTorqueBodyMsgPayload msgBuffer = this->cmdTorqueInMsg();
@@ -70,17 +67,17 @@ void LowPassFilterTorqueCommand::updateState(uint64_t callTime)
      */
     if (this->shouldBeReset) {
         /* populate the filter history with 1st input */
-        for (i=1;i<NUM_LPF;i++) {
+        for (i = 1; i < NUM_LPF; i++) {
             v3Copy(this->Lr[0], this->Lr[i]);
         }
 
         /* zero the history of filtered outputs */
-        for (i=0;i<NUM_LPF;i++) {
+        for (i = 0; i < NUM_LPF; i++) {
             v3SetZero(this->LrF[i]);
         }
 
         /* compute h times the prewarped critical filter frequency */
-        this->hw = tan(this->wc * this->h / 2.0)*2.0;
+        this->hw = tan(this->wc * this->h / 2.0) * 2.0;
 
         /* determine 1st order low-pass filter coefficients */
         this->a[0] = 2.0 + this->hw;
@@ -90,7 +87,6 @@ void LowPassFilterTorqueCommand::updateState(uint64_t callTime)
 
         /* turn off first run flag */
         this->shouldBeReset = BOOL_FALSE;
-
     }
 
     /*
@@ -98,21 +94,20 @@ void LowPassFilterTorqueCommand::updateState(uint64_t callTime)
      */
 
     v3SetZero(this->LrF[0]);
-    for (i=0;i<NUM_LPF;i++) {
+    for (i = 0; i < NUM_LPF; i++) {
         v3Scale(this->b[i], this->Lr[i], v3);
         v3Add(v3, this->LrF[0], this->LrF[0]);
     }
-    for (i=1;i<NUM_LPF;i++) {
+    for (i = 1; i < NUM_LPF; i++) {
         v3Scale(this->a[i], this->LrF[i], v3);
         v3Add(v3, this->LrF[0], this->LrF[0]);
     }
-    v3Scale(1.0/this->a[0], this->LrF[0], this->LrF[0]);
-
+    v3Scale(1.0 / this->a[0], this->LrF[0], this->LrF[0]);
 
     /* reset the filter state history */
-    for (i=1;i<NUM_LPF;i++) {
-        v3Copy(this->Lr[NUM_LPF-1-i],  this->Lr[NUM_LPF-i]);
-        v3Copy(this->LrF[NUM_LPF-1-i], this->LrF[NUM_LPF-i]);
+    for (i = 1; i < NUM_LPF; i++) {
+        v3Copy(this->Lr[NUM_LPF - 1 - i], this->Lr[NUM_LPF - i]);
+        v3Copy(this->LrF[NUM_LPF - 1 - i], this->LrF[NUM_LPF - i]);
     }
 
     /*

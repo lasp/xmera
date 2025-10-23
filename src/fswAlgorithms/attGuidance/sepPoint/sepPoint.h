@@ -20,14 +20,14 @@
 #ifndef _SEP_POINT_
 #define _SEP_POINT_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/BodyHeadingMsgPayload.h"
-#include "architecture/msgPayloadDef/InertialHeadingMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "fswAlgorithms/attGuidance/_GeneralModuleFiles/constrainedAxisPointingLibrary.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/BodyHeadingMsgPayload.h>
+#include <architecture/msgPayloadDef/InertialHeadingMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <fswAlgorithms/attGuidance/_GeneralModuleFiles/constrainedAxisPointingLibrary.h>
 
 /*! @brief A class to perform EMA SEP pointing */
 class SepPoint : public SysModel {

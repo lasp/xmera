@@ -20,19 +20,19 @@
 #ifndef MAGNETIC_FIELD_BASE_H
 #define MAGNETIC_FIELD_BASE_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <time.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/EpochMsgPayload.h"
-#include "architecture/msgPayloadDef/MagneticFieldMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/EpochMsgPayload.h>
+#include <architecture/msgPayloadDef/MagneticFieldMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief magnetic field base class */
 class MagneticFieldBase : public SysModel {
@@ -40,15 +40,15 @@ class MagneticFieldBase : public SysModel {
     MagneticFieldBase();
     ~MagneticFieldBase();
     void reset(uint64_t currentSimNanos);
-    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
     void updateState(uint64_t currentSimNanos);
 
    protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void updateLocalMagField(double currentTime);
-    void updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState);
-    virtual void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime) = 0;  //!< class method
+    void updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCStatesMsgPayload* scState);
+    virtual void evaluateMagneticFieldModel(MagneticFieldMsgPayload* msg, double currentTime) = 0;  //!< class method
     virtual void customreset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();
@@ -57,7 +57,7 @@ class MagneticFieldBase : public SysModel {
    public:
     std::vector<ReadFunctor<SCStatesMsgPayload>>
         scStateInMsgs;  //!< Vector of the spacecraft position/velocity input message
-    std::vector<Message<MagneticFieldMsgPayload> *>
+    std::vector<Message<MagneticFieldMsgPayload>*>
         envOutMsgs;  //!< Vector of message names to be written out by the environment
     ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg;  //!< Message name for the planet's SPICE position message
     ReadFunctor<EpochMsgPayload> epochInMsg;                 //!< (optional) epoch date/time input message

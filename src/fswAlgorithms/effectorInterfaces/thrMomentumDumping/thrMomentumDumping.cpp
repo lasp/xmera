@@ -21,12 +21,12 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
+#include "thrMomentumDumping.h"
 
 #include <string.h>
 
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -94,8 +94,8 @@ void ThrMomentumDumping::reset(uint64_t callTime) {
  */
 void ThrMomentumDumping::updateState(uint64_t callTime) {
     double dt;             /* [s]    control update period */
-    double *Delta_P_input; /* []     pointer to vector of requested net thruster impulses */
-    double *tOnOut;        /*        pointer to vector of requested thruster on times per dumping cycle */
+    double* Delta_P_input; /* []     pointer to vector of requested net thruster impulses */
+    double* tOnOut;        /*        pointer to vector of requested thruster on times per dumping cycle */
     THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {};   /* []     output message container */
     THRArrayCmdForceMsgPayload thrusterImpulseInMsg; /* []     thruster inpulse input message */
     CmdTorqueBodyMsgPayload DeltaHInMsg;             /* []     commanded Delta_H input message */

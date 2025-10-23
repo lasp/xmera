@@ -16,8 +16,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/thermal/motorThermal/motorThermal.h"
-#include "architecture/utilities/linearAlgebra.h"
+#include "motorThermal.h"
+#include <architecture/utilities/linearAlgebra.h>
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable

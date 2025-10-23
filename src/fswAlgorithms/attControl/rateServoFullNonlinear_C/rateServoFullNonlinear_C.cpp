@@ -21,11 +21,11 @@
 
  */
 
-#include "fswAlgorithms/attControl/rateServoFullNonlinear_C/rateServoFullNonlinear_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include "rateServoFullNonlinear_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 
 #include <math.h>
 #include <string.h>
@@ -100,7 +100,7 @@ void RateServoFullNonlinear_C::updateState(uint64_t callTime) {
     double omega_BastN_B[3]; /* angular velocity of B^ast relative to inertial N, in body frame components */
     double omega_BBast_B[3]; /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
     double omega_BN_B[3];    /* angular rate of the body B relative to inertial N, in body frame compononents */
-    double *wheelGs;         /* Reaction wheel spin axis pointer */
+    double* wheelGs;         /* Reaction wheel spin axis pointer */
     /* Temporary variables */
     double v3_1[3];
     double v3_2[3];

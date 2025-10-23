@@ -19,18 +19,14 @@
  */
 %module kalmanFilter
 %{
-   #include "kalmanFilter.h"
+   #include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "sys_model.i"
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 
 %typemap(out) std::optional<Eigen::VectorXd> %{
     if ($1.has_value()) {
@@ -45,9 +41,4 @@ from Basilisk.architecture.swig_common_model import *
     }
 %}
 
-%include "kalmanFilter.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>

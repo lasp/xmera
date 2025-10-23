@@ -20,20 +20,20 @@
 #ifndef _INITSICP_H_
 #define _INITSICP_H_
 
-#include "architecture/messaging/messaging.h"
-#include "fswAlgorithms/pointCloudProcessing/SICP/sicpDefinitions.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/definitions.h>
 #include <stdint.h>
 #include <Eigen/Dense>
 
-#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
-#include "architecture/msgPayloadDef/SICPMsgPayload.h"
+#include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
+#include <architecture/msgPayloadDef/SICPMsgPayload.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! @brief Scaling iterative Closest Point Algorithm */
 class InitializeICP : public SysModel {
@@ -69,8 +69,8 @@ class InitializeICP : public SysModel {
     bool initialPhase = true;
 
     //!< Logged results that will be used when this module is called again
-    Eigen::MatrixXd R_logged = Eigen::MatrixXd::Identity(POINT_DIM, POINT_DIM);
-    Eigen::MatrixXd t_logged = Eigen::VectorXd::Zero(POINT_DIM);
+    Eigen::MatrixXd R_logged = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
+    Eigen::MatrixXd t_logged = Eigen::VectorXd::Zero(SICP_POINT_DIM);
     double s_logged = 1;
     uint64_t previousTimeTag = 0;
 };

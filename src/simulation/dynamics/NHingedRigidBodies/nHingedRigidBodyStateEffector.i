@@ -23,21 +23,13 @@
    #include "nHingedRigidBodyStateEffector.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "swig_eigen.i"
-%include "std_string.i"
-%include "stdint.i"
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <std_string.i>
+%include <stdint.i>
 
 
-%include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+%include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+%include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 %include "nHingedRigidBodyStateEffector.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}

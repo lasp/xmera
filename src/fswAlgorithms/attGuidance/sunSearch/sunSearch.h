@@ -20,12 +20,12 @@
 #ifndef SUN_SEARCH_H
 #define SUN_SEARCH_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "fswAlgorithms/attGuidance/sunSearch/sunSearchAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+#include "sunSearchAlgorithm.h"
 
 class SunSearch : public SysModel {
    public:

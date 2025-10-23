@@ -21,22 +21,13 @@
    #include "cssWlsEst.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "cssWlsEst.h"
 
-%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/SunlineFilterMsgPayload.h"
-%include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSUnitConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
+%include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>

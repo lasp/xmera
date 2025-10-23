@@ -20,10 +20,10 @@
 #ifndef INERTIAL3D_H
 #define INERTIAL3D_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "fswAlgorithms/attGuidance/inertial3D/inertial3DAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include "inertial3DAlgorithm.h"
 #include <stdint.h>
 #include <Eigen/Core>
 

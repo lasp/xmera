@@ -18,8 +18,8 @@
  */
 
 #include "powerNodeBase.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/macroDefinitions.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/macroDefinitions.h>
 
 /*! This method initializes the messaging parameters to either empty strings for message names or -1 for message IDs.
  @return void

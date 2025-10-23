@@ -22,26 +22,15 @@
    #include "initializeICP.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "stdint.i"
-%include "sys_model.h"
-%include "std_array.i"
-%include "std_string.i"
-%include "swig_conly_data.i"
+%include <stdint.i>
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <std_array.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "initializeICP.h"
 
-%include "architecture/msgPayloadDef/SICPMsgPayload.h"
-%include "architecture/msgPayloadDef/PointCloudMsgPayload.h"
-%include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-struct EphemerisMsg_C;
-%include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-struct CameraConfigMsg_C;
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/SICPMsgPayload.h>
+%include <architecture/msgPayloadDef/PointCloudMsgPayload.h>
+%include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+%include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>

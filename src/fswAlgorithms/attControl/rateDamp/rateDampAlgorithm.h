@@ -20,8 +20,8 @@
 #ifndef _RATE_DAMP_ALGORITHM_H
 #define _RATE_DAMP_ALGORITHM_H
 
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <cstdint>
 
 /*! @brief Rate damp algorithm class */

@@ -22,21 +22,11 @@
    #include "flybyODuKF.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
+%include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.i>
 
 %include "flybyODuKF.h"
 
-%include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDef/FilterMsgPayload.h"
-%include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-%include "architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
+%include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>

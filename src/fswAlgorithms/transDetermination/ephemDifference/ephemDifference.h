@@ -20,10 +20,10 @@
 #ifndef _EPHEM_DIFFERENCE_H_
 #define _EPHEM_DIFFERENCE_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <array>
 #include <cstdint>
 

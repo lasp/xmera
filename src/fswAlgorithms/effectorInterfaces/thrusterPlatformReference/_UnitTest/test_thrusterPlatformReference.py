@@ -32,7 +32,7 @@ from Basilisk.fswAlgorithms import thrusterPlatformReference
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
@@ -103,7 +103,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
 
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

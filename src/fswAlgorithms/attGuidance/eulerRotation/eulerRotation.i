@@ -21,19 +21,10 @@
    #include "eulerRotation.h"
 %}
 
-%pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "sys_model.i"
-%include "swig_conly_data.i"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include "eulerRotation.h"
 
-%include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-%include "architecture/msgPayloadDef/AttStateMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+%include <architecture/msgPayloadDef/AttStateMsgPayload.h>

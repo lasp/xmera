@@ -22,17 +22,17 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavFilterMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavFilterMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavMsgPayload.h>
 
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! @brief Top level structure for the relative OD unscented kalman filter.
  Used to estimate the spacecraft's inertial position relative to a body.
@@ -44,7 +44,7 @@ class RelODuKF : public SysModel {
     int relODuKFTimeUpdate(double updateTime);
     int relODuKFMeasUpdate();
     void relODuKFCleanUpdate();
-    void relODStateProp(double *stateInOut, double dt);
+    void relODStateProp(double* stateInOut, double dt);
     void relODuKFMeasModel();
 
     Message<NavTransMsgPayload> navStateOutMsg;     //!< navigation output message

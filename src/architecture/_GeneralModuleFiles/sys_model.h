@@ -21,34 +21,33 @@
 #define _SysModel_HH_
 
 #include <architecture/utilities/bskLogging.h>
-#include <string>
 #include <stdint.h>
+#include <string>
 
 /*! @brief Simulation System Model Class */
-class SysModel
-{
-public:
+class SysModel {
+   public:
     SysModel();
-    SysModel(const SysModel &obj);
+    SysModel(const SysModel& obj);
 
-    virtual ~SysModel(){};
+    virtual ~SysModel() {};
 
     /** Initializes the module, create messages */
-    virtual void selfInit(){};
+    virtual void selfInit() {};
 
     /** ??? */
-    virtual void integratedInit(){};
+    virtual void integratedInit() {};
 
     /** Reads incoming messages, performs module actions, writes output messages */
-    virtual void updateState(uint64_t currentSimNanos){};
+    virtual void updateState(uint64_t currentSimNanos) {};
 
     /** Called at simulation initialization, resets module to specified time */
-    virtual void reset(uint64_t currentSimNanos){};
+    virtual void reset(uint64_t currentSimNanos) {};
 
-    std::string modelTag = "";     //!< -- name for the algorithm to base off of
-    uint64_t CallCounts = 0;       //!< -- Counts on the model being called
-    uint32_t RNGSeed = 0x1badcad1; //!< -- Giving everyone a random seed for ease of MC
-    int64_t moduleID;              //!< -- Module ID for this module  (handed out by module_id_generator)
+    std::string modelTag = "";      //!< -- name for the algorithm to base off of
+    uint64_t CallCounts = 0;        //!< -- Counts on the model being called
+    uint32_t RNGSeed = 0x1badcad1;  //!< -- Giving everyone a random seed for ease of MC
+    int64_t moduleID;               //!< -- Dynamically generated unique ID for this module
 };
 
 // The following code helps users who defined their own module classes

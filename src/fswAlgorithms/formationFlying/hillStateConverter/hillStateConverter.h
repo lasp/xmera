@@ -24,13 +24,13 @@
 #include <stdint.h>
 
 //  Support imports
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 //  Message type imports
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/HillRelStateMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/HillRelStateMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class HillStateConverter : public SysModel {

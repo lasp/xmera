@@ -17,7 +17,7 @@
 
  */
 
-#include "fswAlgorithms/attDetermination/sunlineEphem/sunlineEphem.h"
+#include "sunlineEphem.h"
 
 SunlineEphem::SunlineEphem() { this->algorithm = SunlineEphemAlgorithm(); }
 

@@ -23,14 +23,14 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CSSArraySensorMsgPayload.h"
-#include "architecture/msgPayloadDef/CSSConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/SunlineFilterMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
+#include <architecture/msgPayloadDef/CSSConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/SunlineFilterMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! structure containing the fitting parameters
  */
@@ -107,12 +107,12 @@ class SunlineSuKF : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-int sunlineSuKFTimeUpdate(SunlineSuKF *data, double updateTime);
-int sunlineSuKFMeasUpdate(SunlineSuKF *data, double updateTime);
-void sunlineStateProp(double *stateInOut, double *b_vec, double dt);
-void sunlineSuKFMeasModel(SunlineSuKF *data);
-void sunlineSuKFCleanUpdate(SunlineSuKF *data);
-void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
-void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar);
+int sunlineSuKFTimeUpdate(SunlineSuKF* data, double updateTime);
+int sunlineSuKFMeasUpdate(SunlineSuKF* data, double updateTime);
+void sunlineStateProp(double* stateInOut, double* b_vec, double dt);
+void sunlineSuKFMeasModel(SunlineSuKF* data);
+void sunlineSuKFCleanUpdate(SunlineSuKF* data);
+void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double* dcm);
+void sunlineSuKFSwitch(double* bVec_B, double* states, double* covar);
 
 #endif

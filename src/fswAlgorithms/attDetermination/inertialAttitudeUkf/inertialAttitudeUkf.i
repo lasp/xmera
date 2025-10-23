@@ -22,25 +22,16 @@
    #include "inertialAttitudeUkf.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-
-%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
+%include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.i>
 
 %include "inertialAttitudeUkf.h"
 
-%include "architecture/msgPayloadDef/FilterMsgPayload.h"
-%include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
+%include <architecture/msgPayloadDef/FilterMsgPayload.h>
+%include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
 
-%include "architecture/msgPayloadDef/STAttMsgPayload.h"
-%include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-%include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-%include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
-%include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/STAttMsgPayload.h>
+%include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+%include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+%include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
+%include <architecture/msgPayloadDef/NavAttMsgPayload.h>

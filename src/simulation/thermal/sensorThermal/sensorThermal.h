@@ -20,17 +20,17 @@
 #ifndef BASILISK_SENSORTHERMAL_H
 #define BASILISK_SENSORTHERMAL_H
 
-#include "architecture/messaging/messaging.h"
+#include <architecture/messaging/messaging.h>
 #include <Eigen/Dense>
 #include <vector>
 
-#include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
-#include "architecture/msgPayloadDef/EclipseMsgPayload.h"
-#include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
+#include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
+#include <architecture/msgPayloadDef/EclipseMsgPayload.h>
+#include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
+#include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief sensor thermal class */
 class SensorThermal : public SysModel {

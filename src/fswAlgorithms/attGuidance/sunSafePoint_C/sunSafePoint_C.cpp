@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/attGuidance/sunSafePoint_C/sunSafePoint_C.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/safeMath.h"
+#include "sunSafePoint_C.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/safeMath.h>
 #include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain

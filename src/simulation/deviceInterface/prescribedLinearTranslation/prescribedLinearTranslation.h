@@ -19,11 +19,11 @@
 #ifndef _PRESCRIBEDTRANS_
 #define _PRESCRIBEDTRANS_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/PrescribedTranslationMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
 #include <Eigen/Dense>
 #include <cstdint>
 
@@ -42,14 +42,14 @@ class PrescribedLinearTranslation : public SysModel {
     void setTransAccelMax(
         const double transAccelMax);  //!< Setter method for the bang segment scalar linear acceleration
     void setTransHat_M(
-        const Eigen::Vector3d &transHat_M);  //!< Setter method for the translating body axis of translation
+        const Eigen::Vector3d& transHat_M);  //!< Setter method for the translating body axis of translation
     void setTransPosInit(
         const double transPosInit);  //!< Setter method for the initial translating body hub-relative position
     double getCoastOptionBangDuration() const;  //!< Getter method for the coast option bang duration
     double getSmoothingDuration() const;        //!< Getter method for the duration the acceleration is smoothed until
                                                 //!< reaching the given maximum acceleration value
     double getTransAccelMax() const;            //!< Getter method for the bang segment scalar linear acceleration
-    const Eigen::Vector3d &getTransHat_M() const;  //!< Getter method for the translating body axis of translation
+    const Eigen::Vector3d& getTransHat_M() const;  //!< Getter method for the translating body axis of translation
     double getTransPosInit() const;                //!< Getter method for the initial translating body position
 
     ReadFunctor<LinearTranslationRigidBodyMsgPayload>
@@ -57,7 +57,7 @@ class PrescribedLinearTranslation : public SysModel {
     Message<PrescribedTranslationMsgPayload>
         prescribedTranslationOutMsg;  //!< Output msg for the translational body prescribed states
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger* bskLogger;  //!< BSK Logging
 
    private:
     /* Methods for computing the required translation parameters */

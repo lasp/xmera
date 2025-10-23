@@ -17,8 +17,8 @@
 
  */
 
-#include "fswAlgorithms/effectorInterfaces/rwNullSpace/rwNullSpaceAlgorithm.h"
-#include "architecture/utilities/eigenSupport.h"
+#include "rwNullSpaceAlgorithm.h"
+#include <architecture/utilities/eigenSupport.h>
 
 #include <stdexcept>
 

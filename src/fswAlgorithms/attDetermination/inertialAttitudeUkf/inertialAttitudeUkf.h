@@ -25,17 +25,17 @@
 #ifndef INERTIAL_ATTITUDE_UKF_H
 #define INERTIAL_ATTITUDE_UKF_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/FilterMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-#include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/STAttMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
-#include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/FilterMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
+#include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/STAttMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
+#include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 
 #define MAX_ST_VEH_COUNT 4
 
@@ -79,9 +79,9 @@ class InertialAttitudeUkf : public SRukfInterface {
     Message<FilterResidualsMsgPayload> starTrackerResidualMsg;
     Message<FilterResidualsMsgPayload> gyroResidualMsg;
 
-    void setGyroNoise(const Eigen::Matrix3d &gyroNoise);
+    void setGyroNoise(const Eigen::Matrix3d& gyroNoise);
     Eigen::Matrix3d getGyroNoise() const;
-    void addStarTrackerInput(const StarTrackerMessage &starTracker);
+    void addStarTrackerInput(const StarTrackerMessage& starTracker);
     Eigen::Matrix3d getStarTrackerNoise(int starTrackerNumber) const;
 
    private:

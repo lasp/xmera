@@ -407,9 +407,6 @@ class moduleGenerator:
         swigFile += '    #include "' + name + '.h"\n'
         swigFile += '%}\n'
         swigFile += '\n'
-        swigFile += '%pythoncode %{\n'
-        swigFile += '    from Basilisk.architecture.swig_common_model import *\n'
-        swigFile += '%}\n'
         swigFile += '%include "std_string.i"\n'
         swigFile += '%include "swig_conly_data.i"\n'
         swigFile += '\n'
@@ -426,12 +423,6 @@ class moduleGenerator:
                 if msg['wrap'] == 'C++':
                     swigFile += '%include "architecture/msgPayloadDef/' + msg['type'] + 'Payload.h"\n'
                 includedMsgs.append(msg['type'])
-        swigFile += '\n'
-        swigFile += '%pythoncode %{\n'
-        swigFile += 'import sys\n'
-        swigFile += 'protectAllClasses(sys.modules[__name__])\n'
-        swigFile += '%}\n'
-        swigFile += '\n'
 
         with open(swigFileName, 'w') as w:
             w.write(swigFile)

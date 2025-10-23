@@ -23,11 +23,11 @@
 #include <Eigen/Dense>
 #include <random>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/TemperatureMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/gauss_markov.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/TemperatureMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/gauss_markov.h>
 
 typedef enum {
     TEMP_FAULT_STUCK_CURRENT, /*!< temp measurement is set to current value for all future time */

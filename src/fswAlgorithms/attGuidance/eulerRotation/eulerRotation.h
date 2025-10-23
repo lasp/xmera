@@ -22,12 +22,12 @@
 
 #include <stdint.h>
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/AttRefMsgPayload.h"
-#include "architecture/msgPayloadDef/AttStateMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+#include <architecture/msgPayloadDef/AttStateMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Top level structure for the sub-module routines. */
 class EulerRotation : public SysModel {
@@ -40,7 +40,7 @@ class EulerRotation : public SysModel {
     void computeEulerRotationReference(double sigma_R0N[3],
                                        double omega_R0N_N[3],
                                        double domega_R0N_N[3],
-                                       AttRefMsgPayload *attRefOut);
+                                       AttRefMsgPayload* attRefOut);
 
     /* Declare module public variables */
     double angleSet[3];    //!< [-] current euler angle 321 set R/R0  with respect to the input reference

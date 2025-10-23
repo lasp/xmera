@@ -16,8 +16,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "simulation/dynamics/extForceTorque/extForceTorque.h"
-#include "architecture/utilities/eigenSupport.h"
+#include "extForceTorque.h"
+#include <architecture/utilities/eigenSupport.h>
 #include <iostream>
 
 /*! This is the constructor.  It sets some default initializers that can be

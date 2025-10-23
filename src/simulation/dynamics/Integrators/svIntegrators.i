@@ -20,20 +20,18 @@
 
 %{
    #include <vector>
-   #include "../_GeneralModuleFiles/stateVecIntegrator.h"
-   #include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
-   #include "../_GeneralModuleFiles/svIntegratorRK4.h"
+   #include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
+   #include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h>
+   #include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
    #include "svIntegratorEuler.h"
    #include "svIntegratorRK2.h"
    #include "svIntegratorRKF45.h"
    #include "svIntegratorRKF78.h"
-   #include "architecture/_GeneralModuleFiles/sys_model.h"
-   #include "../_GeneralModuleFiles/dynamicObject.h"
+   #include <architecture/_GeneralModuleFiles/sys_model.h>
+   #include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
 %}
 
 %pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-
 # The following maps store the RK base classes w.r.t their stage number
 _rk_base_classes = {}
 _rk_adaptive_base_classes = {}
@@ -52,11 +50,11 @@ _rk_adaptive_base_classes = {}
     }
 }
 
-%include "sys_model.i"
-%include "../_GeneralModuleFiles/stateVecIntegrator.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
 
-%include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
-%include "../_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
+%include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h>
+%include <simulation/dynamics/_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h>
 
 // We add a constructor for svIntegratorRungeKutta and svIntegratorAdaptiveRungeKutta
 // These are useful for us to build these classes on the Python side without having
@@ -67,7 +65,7 @@ _rk_adaptive_base_classes = {}
       std::vector<std::vector<double>> aMatrix,
       std::vector<double> bArray,
       std::vector<double> cArray
-   ) 
+   )
    {
       RKCoefficients<numberStages> coefficients;
       for (size_t i = 0; i < numberStages; i++)
@@ -89,7 +87,7 @@ _rk_adaptive_base_classes = {}
       std::vector<double> bStarArray,
       std::vector<double> cArray,
       double largestOrder
-   ) 
+   )
    {
       RKAdaptiveCoefficients<numberStages> coefficients;
       for (size_t i = 0; i < numberStages; i++)
@@ -123,7 +121,7 @@ TEMPLATE_HELPER(7)
 TEMPLATE_HELPER(9)
 TEMPLATE_HELPER(13)
 
-%include "../_GeneralModuleFiles/svIntegratorRK4.h"
+%include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
 
 %include "svIntegratorEuler.h"
 %include "svIntegratorRK2.h"
@@ -142,7 +140,7 @@ def _validate_coefficients(a_coefficients, **array_coefficients):
         assert a_coefficients.ndim == 2
     except:
         raise ValueError("a_coefficients must be a square matrix or a non-ragged sequence of sequences")
-    
+
     if a_coefficients.shape[0] != a_coefficients.shape[1]:
         raise ValueError("a_coefficients must be a square matrix")
 
@@ -170,11 +168,11 @@ def svIntegratorRungeKutta(
     left side.
 
     Args:
-        a_coefficients (Sequence[Sequence[float]] | np.ndarray): 
+        a_coefficients (Sequence[Sequence[float]] | np.ndarray):
             "a" matrix in the Butcher table.
-        b_coefficients (Sequence[float] | np.ndarray): 
+        b_coefficients (Sequence[float] | np.ndarray):
             "b" array in the Butcher table
-        c_coefficients (Sequence[float] | np.ndarray): 
+        c_coefficients (Sequence[float] | np.ndarray):
             "c" array in the Butcher table
 
     Returns:
@@ -208,25 +206,22 @@ def svIntegratorAdaptiveRungeKutta(
         largest_order (float): The order of the higher-order RK method
             used in this adaptive RK method. For example, for RKF45,
             largest_order should be 5.
-        a_coefficients (Sequence[Sequence[float]] | np.ndarray): 
+        a_coefficients (Sequence[Sequence[float]] | np.ndarray):
             "a" matrix in the Butcher table.
-        b_coefficients (Sequence[float] | np.ndarray): 
+        b_coefficients (Sequence[float] | np.ndarray):
             "b" array in the Butcher table
-        b_star_coefficients (Sequence[float] | np.ndarray): 
+        b_star_coefficients (Sequence[float] | np.ndarray):
             "b" array for the lower order method in the Butcher table
-        c_coefficients (Sequence[float] | np.ndarray): 
+        c_coefficients (Sequence[float] | np.ndarray):
             "c" array in the Butcher table
 
     Returns:
         StateVecIntegrator: A Runge-Kutta integrator object
     """
     _validate_coefficients(
-      a_coefficients, b_coefficients=b_coefficients, 
+      a_coefficients, b_coefficients=b_coefficients,
       b_star_coefficients=b_star_coefficients, c_coefficients=c_coefficients)
     stages = len(b_coefficients)
 
     return _rk_adaptive_base_classes[stages](dynamic_object, a_coefficients, b_coefficients, b_star_coefficients, c_coefficients, largest_order)
-
-import sys
-protectAllClasses(sys.modules[__name__])
 %}

@@ -2,10 +2,10 @@
 // Created by andrew on 7/12/19.
 //
 #include "simpleSolarPanel.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/eigenMRP.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 #include <math.h>
 
 SimpleSolarPanel::SimpleSolarPanel() {

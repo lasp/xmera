@@ -20,8 +20,8 @@
 #ifndef SH_GRAVITY_MODEL_H
 #define SH_GRAVITY_MODEL_H
 
-#include "architecture/utilities/bskLogging.h"
-#include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
+#include <architecture/utilities/bskLogging.h>
+#include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
 
 #include <vector>
 
@@ -29,7 +29,7 @@
  * The Spherical Harmonics gravity model
  */
 class SphericalHarmonicsGravityModel : public GravityModel {
-  public:
+   public:
     /** Initialize all parameters necessary for the computation of gravity.
      *
      * The attributes `muBody`and `radEquator` must be set separately.
@@ -69,7 +69,8 @@ class SphericalHarmonicsGravityModel : public GravityModel {
      * If include_zero_degree is false the degree that corresponds to the spherical
      * term (point-mass) of the gravity is ignored.
      */
-    Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed, size_t degree,
+    Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed,
+                                 size_t degree,
                                  bool include_zero_degree) const;
 
     /** Returns the gravitational potential energy at a position around this body.
@@ -82,9 +83,9 @@ class SphericalHarmonicsGravityModel : public GravityModel {
      */
     double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
 
-  public:
-    double radEquator = 0;  /**< [m] Reference radius for the planet */
-    double muBody = 0;      /**< [m^3/s^2] Gravitation parameter for the planet */
+   public:
+    double radEquator = 0; /**< [m] Reference radius for the planet */
+    double muBody = 0;     /**< [m^3/s^2] Gravitation parameter for the planet */
 
     /** The maximum degree of Spherical Harmonics to use
      *
@@ -100,18 +101,18 @@ class SphericalHarmonicsGravityModel : public GravityModel {
     /** The normalized "S" spherical harmonics coefficients */
     std::vector<std::vector<double>> sBar;
 
-  private:
+   private:
     /**
      * The following parameters are used internally to compute the gravity.
      *
      * They are coefficients used in the method of Pines for the gravity due to SH.
      * For their definition, see the 'Basilisk-GravityEffector' documentation.
      */
-    mutable std::vector<std::vector<double>> aBar;  /**< [-] Eq. 61 */
-    std::vector<std::vector<double>> n1;            /**< [-] Eq. 63 */
-    std::vector<std::vector<double>> n2;            /**< [-] Eq. 64 */
-    std::vector<std::vector<double>> nQuot1;        /**< [-] Eq. 79 */
-    std::vector<std::vector<double>> nQuot2;        /**< [-] Eq. 80 */
+    mutable std::vector<std::vector<double>> aBar; /**< [-] Eq. 61 */
+    std::vector<std::vector<double>> n1;           /**< [-] Eq. 63 */
+    std::vector<std::vector<double>> n2;           /**< [-] Eq. 64 */
+    std::vector<std::vector<double>> nQuot1;       /**< [-] Eq. 79 */
+    std::vector<std::vector<double>> nQuot2;       /**< [-] Eq. 80 */
 };
 
 #endif /* SH_GRAVITY_MODEL_H */

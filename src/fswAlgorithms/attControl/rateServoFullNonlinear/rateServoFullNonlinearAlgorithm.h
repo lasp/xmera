@@ -22,13 +22,13 @@
 
 #include <stdint.h>
 
-#include "architecture/msgPayloadDef/AttGuidMsgPayload.h"
-#include "architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h"
-#include "architecture/msgPayloadDef/RWArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/RWAvailabilityMsgPayload.h"
-#include "architecture/msgPayloadDef/RWSpeedMsgPayload.h"
-#include "architecture/msgPayloadDef/RateCmdMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
+#include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
+#include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
+#include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
+#include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 
 #include <Eigen/Core>
 
@@ -48,7 +48,7 @@ class RateServoFullNonlinearAlgorithm {
     double getKi() const;
     void setIntegralLimit(const double limit);
     double getIntegralLimit() const;
-    void setKnownTorquePntB_B(const Eigen::Vector3d &knownTorquePntB_B);
+    void setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B);
     Eigen::Vector3d getKnownTorquePntB_B() const;
 
    private:

@@ -29,7 +29,7 @@ import inspect
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import prescribedRot2DOF  # import the module that is to be tested
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -94,7 +94,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    sim_model.setDefaultLogLevel(sim_model.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

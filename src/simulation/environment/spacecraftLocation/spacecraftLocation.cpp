@@ -17,11 +17,11 @@
 
  */
 
-#include "simulation/environment/spacecraftLocation/spacecraftLocation.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/safeMath.h"
+#include "spacecraftLocation.h"
+#include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/safeMath.h>
 
 /*! @brief Creates an instance of the SpacecraftLocation class
  @return void

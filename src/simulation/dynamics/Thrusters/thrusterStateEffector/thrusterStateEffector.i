@@ -23,30 +23,20 @@
    #include "thrusterStateEffector.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+%include <std_vector.i>
 
-%include "std_vector.i"
-
-%include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-%include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+%include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+%include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+%include <simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h>
 %include "thrusterStateEffector.h"
 
-%include "architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h"
+%include <architecture/msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h>
 
-%include "architecture/msgPayloadDef/THROutputMsgPayload.h"
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/THROutputMsgPayload.h>
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>

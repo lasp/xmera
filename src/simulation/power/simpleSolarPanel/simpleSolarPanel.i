@@ -23,30 +23,20 @@
     #include "simpleSolarPanel.h"
 %}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include "swig_conly_data.i"
-%include "std_string.i"
-%include "swig_eigen.i"
-
-%include "sys_model.i"
-%include "../_GeneralModuleFiles/powerNodeBase.h"
+%include <architecture/_GeneralModuleFiles/sys_model.i>
+%include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 %include "simpleSolarPanel.h"
 
-%include "architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h"
+%include <architecture/msgPayloadDef/PowerNodeUsageMsgPayload.h>
 
-%include "architecture/msgPayloadDef/DeviceStatusMsgPayload.h"
+%include <architecture/msgPayloadDef/DeviceStatusMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SCStatesMsgPayload.h"
+%include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 
-%include "architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h"
+%include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 
-%include "architecture/msgPayloadDef/EclipseMsgPayload.h"
-
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include <architecture/msgPayloadDef/EclipseMsgPayload.h>

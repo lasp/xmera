@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module sim_model
+%module(directors="1") sim_model
 %{
    #include "sim_model.h"
 %}
@@ -31,10 +31,6 @@
 %include "cdata.i"
 %include "swig_eigen.i"
 
-%array_functions(double, doubleArray);
-%array_functions(long, longArray);
-%array_functions(int, intArray);
-%array_functions(short, shortArray);
 %array_functions(bool, boolArray);
 %array_functions(uint8_t, cByteArray);
 
@@ -73,10 +69,36 @@ namespace std {
     }
 }
 
+%feature("director") SysModel;
+%feature("pythonappend") SysModel::SysModel %{
+    self.__super_init_called__ = True%}
+%rename("_SysModel") SysModel;
+
+%include "cSysModel.i"
 %include "sys_model_task.h"
-%include "sys_model.h"
 %include "sys_process.h"
 %include "sim_model.h"
+%include "architecture/utilities/bskLogging.h"
+
+%pythoncode %{
+class SuperInitChecker(type):
+
+    def __call__(cls, *a, **kw):
+        rv = super(SuperInitChecker, cls).__call__(*a, **kw)
+        if not getattr(rv, "__super_init_called__", False):
+            error_msg = (
+               "Need to call parent __init__ in SysModel subclasses:\n"
+               f"class {cls.__name__}(sim_model.SysModel):\n"
+               "    def __init__(...):\n"
+               "        super().__init__()"
+            )
+            raise SyntaxError(error_msg)
+        return rv
+
+class SysModel(_SysModel, metaclass=SuperInitChecker):
+    bskLogger: BSKLogger = None
+%}
+
 
 %pythoncode %{
     from Basilisk.utilities import deprecated
@@ -128,5 +150,81 @@ namespace std {
                     "Using prevRouteTime is deprecated. Use: getPrevRouteTime()\n"
             )
             return self.getPrevRouteTime()
+    %}
+}
+
+%extend SysModelTask {
+    %pythoncode %{
+        @property
+        def NextStartTime(self):
+            deprecated.deprecationWarn(
+                "NextStartTime",
+                "2025/08/01",
+                "Using NextStartTime is deprecated. Use: getNextStartTime()\n"
+            )
+            return self.getNextStartTime()
+
+        @NextStartTime.setter
+        def NextStartTime(self, value):
+            deprecated.deprecationWarn(
+                "NextStartTime",
+                "2025/08/01",
+                "Using NextStartTime is deprecated. Use: setNextStartTime()\n"
+            )
+            self.setNextStartTime(value)
+
+        @property
+        def TaskPeriod(self):
+            deprecated.deprecationWarn(
+                "TaskPeriod",
+                "2025/08/01",
+                "Using TaskPeriod is deprecated. Use: getTaskPeriod()\n"
+            )
+            return self.getTaskPeriod()
+
+        @TaskPeriod.setter
+        def TaskPeriod(self, value):
+            deprecated.deprecationWarn(
+                "TaskPeriod",
+                "2025/08/01",
+                "Using TaskPeriod is deprecated. Use: setTaskPeriod()\n"
+            )
+            self.setTaskPeriod(value)
+
+        @property
+        def NextPickupTime(self):
+            deprecated.deprecationWarn(
+                "NextPickupTime",
+                "2025/08/01",
+                "Using NextPickupTime is deprecated. Use: getNextPickupTime()\n"
+            )
+            return self.getNextPickupTime()
+
+        @NextPickupTime.setter
+        def NextPickupTime(self, value):
+            deprecated.deprecationWarn(
+                "NextPickupTime",
+                "2025/08/01",
+                "Using NextPickupTime is deprecated. Use: setNextPickupTime()\n"
+            )
+            self.setNextPickupTime(value)
+
+        @property
+        def FirstTaskTime(self):
+            deprecated.deprecationWarn(
+                "FirstTaskTime",
+                "2025/08/01",
+                "Using FirstTaskTime is deprecated. Use: getFirstTaskTime()\n"
+            )
+            return self.getFirstTaskTime()
+
+        @FirstTaskTime.setter
+        def FirstTaskTime(self, value):
+            deprecated.deprecationWarn(
+                "FirstTaskTime",
+                "2025/08/01",
+                "Using FirstTaskTime is deprecated. Use: setFirstTaskTime()\n"
+            )
+            self.setFirstTaskTime(value)
     %}
 }

@@ -16,8 +16,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/EphemerisMsgPayload.h"
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <Eigen/Core>
 #include <array>
 

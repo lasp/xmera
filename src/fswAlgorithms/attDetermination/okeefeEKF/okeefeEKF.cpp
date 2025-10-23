@@ -17,10 +17,10 @@
 
  */
 
-#include "fswAlgorithms/attDetermination/okeefeEKF/okeefeEKF.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/safeMath.h"
+#include "okeefeEKF.h"
+#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/safeMath.h>
 #include <string.h>
 
 /*! This method resets the sunline attitude filter to an initial state and
@@ -250,7 +250,7 @@ void OkeefeEKF::sunlineMeasUpdate(double updateTime) {
 void sunlineRateCompute(double states[SKF_N_STATES_HALF],
                         double dt,
                         double prev_states[SKF_N_STATES_HALF],
-                        double *omega) {
+                        double* omega) {
     double dk_dot_dkmin1_normal, dk_cross_dkmin1_normal[SKF_N_STATES_HALF];
     double dk_hat[SKF_N_STATES_HALF], dkmin1_hat[SKF_N_STATES_HALF];
 
@@ -303,9 +303,9 @@ void sunlineRateCompute(double states[SKF_N_STATES_HALF],
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
                          double dt,
                          double omega[SKF_N_STATES_HALF],
-                         double *stateInOut,
-                         double *prevstates,
-                         double *stateTransition) {
+                         double* stateInOut,
+                         double* prevstates,
+                         double* stateTransition) {
     double propagatedVel[SKF_N_STATES_HALF];
     double omegaCrossd[SKF_N_STATES_HALF];
     double deltatASTM[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
@@ -342,7 +342,7 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double *dynMat) {
+void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double* dynMat) {
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double negskewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
 
@@ -373,8 +373,8 @@ void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
                             int numObsInt,
                             double yObs[MAX_N_CSS_MEAS],
                             double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                            double *x,
-                            double *covar) {
+                            double* x,
+                            double* covar) {
     double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[SKF_N_STATES_HALF];
     double eye[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kH[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double eyeKalH[SKF_N_STATES_HALF * SKF_N_STATES_HALF], eyeKalHT[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
@@ -439,9 +439,9 @@ void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
                      int numObsInt,
                      double yObs[MAX_N_CSS_MEAS],
                      double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                     double *states,
-                     double *x,
-                     double *covar) {
+                     double* states,
+                     double* x,
+                     double* covar) {
     double eye[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kH[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double eyeKalH[SKF_N_STATES_HALF * SKF_N_STATES_HALF], eyeKalHT[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double eyeKalHCovarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kalR[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];
@@ -509,10 +509,10 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
                          double sensorUseThresh,
                          double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
                          double CBias[MAX_NUM_CSS_SENSORS],
-                         double *obs,
-                         double *yMeas,
-                         int *numObs,
-                         double *measMat) {
+                         double* obs,
+                         double* yMeas,
+                         int* numObs,
+                         double* measMat) {
     uint32_t i, obsCounter;
     double sensorNormal[3];
 
@@ -548,7 +548,7 @@ void sunlineKalmanGainOkeefe(double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HA
                              double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
                              double qObsVal,
                              int numObsInt,
-                             double *kalmanGain) {
+                             double* kalmanGain) {
     double hObsT[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];
     double covHT[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];
     double hCovar[MAX_N_CSS_MEAS * SKF_N_STATES_HALF], hCovarHT[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];

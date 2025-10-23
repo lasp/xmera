@@ -20,15 +20,15 @@
 #ifndef _HEADING_UKF_H_
 #define _HEADING_UKF_H_
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CameraConfigMsgPayload.h"
-#include "architecture/msgPayloadDef/HeadingFilterMsgPayload.h"
-#include "architecture/msgPayloadDef/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDef/OpNavMsgPayload.h"
-#include "architecture/msgPayloadDef/VehicleConfigMsgPayload.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
+#include <architecture/msgPayloadDef/HeadingFilterMsgPayload.h>
+#include <architecture/msgPayloadDef/NavAttMsgPayload.h>
+#include <architecture/msgPayloadDef/OpNavMsgPayload.h>
+#include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 
-#include "architecture/utilities/bskLogging.h"
+#include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
 
 /*! @brief Top level structure for the SuKF heading module data */
@@ -90,11 +90,11 @@ class HeadingSuKF : public SysModel {
     BSKLogger bskLogger = {};  //!< BSK Logging
 };
 
-void headingSuKFTimeUpdate(HeadingSuKF *configData, double updateTime);
-void headingSuKFMeasUpdate(HeadingSuKF *configData, double updateTime);
-void headingStateProp(double *stateInOut, double *b_vec, double dt);
-void headingSuKFMeasModel(HeadingSuKF *configData);
-void headingSuKFComputeDCM_BS(double heading[HEAD_N_STATES], double bVec[HEAD_N_STATES], double *dcm);
-void headingSuKFSwitch(double *bVec_B, double *states, double *covar);
+void headingSuKFTimeUpdate(HeadingSuKF* configData, double updateTime);
+void headingSuKFMeasUpdate(HeadingSuKF* configData, double updateTime);
+void headingStateProp(double* stateInOut, double* b_vec, double dt);
+void headingSuKFMeasModel(HeadingSuKF* configData);
+void headingSuKFComputeDCM_BS(double heading[HEAD_N_STATES], double bVec[HEAD_N_STATES], double* dcm);
+void headingSuKFSwitch(double* bVec_B, double* states, double* covar);
 
 #endif

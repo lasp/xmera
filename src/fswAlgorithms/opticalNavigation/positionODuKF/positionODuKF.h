@@ -24,16 +24,16 @@
 #ifndef POSODUKF_H
 #define POSODUKF_H
 
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/msgPayloadDef/CameraLocalizationMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterMsgPayload.h"
-#include "architecture/msgPayloadDef/FilterResidualsMsgPayload.h"
-#include "architecture/msgPayloadDef/NavTransMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/eigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/orbitalMotion.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/messaging/messaging.h>
+#include <architecture/msgPayloadDef/CameraLocalizationMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterMsgPayload.h>
+#include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
+#include <architecture/msgPayloadDef/NavTransMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/orbitalMotion.h>
 
 #include <math.h>
 #include <string.h>
