@@ -25,21 +25,16 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <vector>
 %}
 
-%define INSTANTIATE_TEMPLATES(messageType, messageTypePayload, folder)
-%{
-#include "folder/messageTypePayload.h"
-%}
-%include "folder/messageTypePayload.h"
-
-%template(messageType ## Reader) ReadFunctor<messageTypePayload>;
-%extend ReadFunctor<messageTypePayload> {
+%define INSTANTIATE_TEMPLATES(messageType)
+%template(messageType ## Reader) ReadFunctor<messageType ## Payload>;
+%extend ReadFunctor<messageType ## Payload> {
     %pythoncode %{
         def subscribeTo(self, source):
             if type(source) == messageType:
                 self.__subscribe_to(source)
                 return
 
-            raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type'
+            raise Exception('tried to subscribe ReadFunctor<messageType ## Payload> to output message type'
                             + str(type(source)))
 
         def isSubscribedTo(self, source):
@@ -48,10 +43,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     %}
 };
 
-%template(messageType ## Writer) WriteFunctor<messageTypePayload>;
+%template(messageType ## Writer) WriteFunctor<messageType ## Payload>;
 
-%template(messageType) Message<messageTypePayload>;
-%extend Message<messageTypePayload>{
+%template(messageType) Message<messageType ## Payload>;
+%extend Message<messageType ## Payload>{
     %pythoncode %{
         def write(self, payload, time=0, moduleID=0):
             """Write the message payload.

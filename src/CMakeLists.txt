@@ -76,8 +76,6 @@ foreach(d IN LISTS XMERA_MODULE_ROOTS)
   add_subdirectory("${d}")
 endforeach()
 
-xmera_generate_messaging_init()
-
 install(DIRECTORY utilities DESTINATION Basilisk)
 install(DIRECTORY ../supportData DESTINATION Basilisk)
 

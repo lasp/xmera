@@ -22,8 +22,8 @@ else()
   set(XMERA_RPATH_ORIGIN "$ORIGIN")
 endif()
 
-define_property(GLOBAL PROPERTY XMERA_REGISTERED_MESSAGES BRIEF_DOCS
-  "An accumulated list of messages registered via xmera_add_swig_message()"
+define_property(SOURCE PROPERTY XMERA_SWIG_MESSAGE_TEMPLATE BRIEF_DOCS
+  "The path to the templated .i file to use when generating a SWIG interface for this file"
 )
 
 function(_xmera_is_prefix prefix value out_var)
@@ -144,13 +144,11 @@ function(xmera_add_swig_module module)
   )
 endfunction()
 
-function(xmera_add_swig_message headers_target message)
-  set_property(GLOBAL APPEND PROPERTY XMERA_REGISTERED_MESSAGES "${message}")
-
-  target_sources("${headers_target}"
-    PUBLIC FILE_SET HEADERS
-    FILES "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDef/${message}.h"
-  )
+function(xmera_add_swig_message message header)
+  get_property(_template SOURCE "${header}" PROPERTY XMERA_SWIG_MESSAGE_TEMPLATE)
+  if(NOT (DEFINED _template))
+    set(_template "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/msgInterfacePy.i.in")
+  endif()
 
   add_custom_command(
     COMMENT "Generating SWIG message interface: ${message}"
@@ -160,16 +158,16 @@ function(xmera_add_swig_message headers_target message)
       "${Python3_EXECUTABLE}"
       "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/generateSWIGModules.py"
       "${CMAKE_CURRENT_BINARY_DIR}/${message}.i"
-      "${CMAKE_CURRENT_SOURCE_DIR}/${message}.h"
+      "${_template}"
       "${message}"
-      "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDef"
+      "${header}"
     WORKING_DIRECTORY
-      "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource"
+      "${CMAKE_CURRENT_SOURCE_DIR}"
     MAIN_DEPENDENCY
-      "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDef/${message}.h"
+      "${header}"
     DEPENDS
       "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/generateSWIGModules.py"
-      "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/msgInterfacePy.i.in"
+      "${_template}"
     VERBATIM
     DEPENDS_EXPLICIT_ONLY
   )
@@ -220,7 +218,7 @@ function(xmera_add_swig_message headers_target message)
 
   set_target_properties("${message}" PROPERTIES
     PREFIX "_"
-    OUTPUT_NAME ${message}
+    OUTPUT_NAME "${message}"
     INSTALL_RPATH "${XMERA_RPATH_ORIGIN}/../../../lib"
   )
 
@@ -231,23 +229,5 @@ function(xmera_add_swig_message headers_target message)
   install(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/${message}.py"
     DESTINATION "Basilisk/architecture/messaging"
-  )
-endfunction()
-
-function(xmera_generate_messaging_init)
-  get_property(_file_contents GLOBAL PROPERTY XMERA_REGISTERED_MESSAGES)
-  list(TRANSFORM _file_contents PREPEND "from Basilisk.architecture.messaging.")
-  list(TRANSFORM _file_contents APPEND " import *")
-  list(JOIN _file_contents "\n" _file_contents)
-
-  file(GENERATE
-    OUTPUT "${CMAKE_BINARY_DIR}/messaging__init__.py"
-    CONTENT "${_file_contents}"
-  )
-
-  install(
-    FILES "${CMAKE_BINARY_DIR}/messaging__init__.py"
-    DESTINATION Basilisk/architecture/messaging/
-    RENAME __init__.py
   )
 endfunction()

@@ -2,7 +2,7 @@
 
 %module {type}Payload
 %{{
-    #include "{baseDir}/{type}Payload.h"
+    #include "{header}"
     #include "architecture/messaging/messaging.h"
     #include "architecture/msgPayloadDef/ReconfigBurnInfoMsgPayload.h"
     #include "architecture/msgPayloadDef/RWConfigElementMsgPayload.h"
@@ -46,8 +46,8 @@ STRUCTASLIST(ReconfigBurnInfoMsgPayload)
 %pythoncode %{{
 import numpy as np
 %}};
-%include "{baseDir}/{type}Payload.h"
-INSTANTIATE_TEMPLATES({type}, {type}Payload, {baseDir})
+%include "{header}"
+INSTANTIATE_TEMPLATES({type})
 %template({type}OutMsgsVector) std::vector<Message<{type}Payload>, std::allocator<Message<{type}Payload>> >;
 %template({type}OutMsgsPtrVector) std::vector<Message<{type}Payload>*, std::allocator<Message<{type}Payload>*> >;
 %template({type}InMsgsVector) std::vector<ReadFunctor<{type}Payload>, std::allocator<ReadFunctor<{type}Payload>> >;

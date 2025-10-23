@@ -8,7 +8,144 @@ target_sources(messaging
     messaging.h
     msgHeader.h
     ../msgPayloadDef/definitions.h
-    # ... and more added later via `xmera_add_swig_message`
+
+  PUBLIC FILE_SET message_headers
+  TYPE HEADERS
+  BASE_DIRS "${CMAKE_SOURCE_DIR}"
+  FILES
+    ../msgPayloadDef/AccDataMsgPayload.h
+    ../msgPayloadDef/AccPktDataMsgPayload.h
+    ../msgPayloadDef/AccessMsgPayload.h
+    ../msgPayloadDef/AlbedoMsgPayload.h
+    ../msgPayloadDef/ArrayEffectorLockMsgPayload.h
+    ../msgPayloadDef/ArrayMotorForceMsgPayload.h
+    ../msgPayloadDef/ArrayMotorTorqueMsgPayload.h
+    ../msgPayloadDef/AtmoPropsMsgPayload.h
+    ../msgPayloadDef/AttGuidMsgPayload.h
+    ../msgPayloadDef/AttRefMsgPayload.h
+    ../msgPayloadDef/AttStateMsgPayload.h
+    ../msgPayloadDef/BodyHeadingMsgPayload.h
+    ../msgPayloadDef/BoreAngleMsgPayload.h
+    ../msgPayloadDef/CMEstDataMsgPayload.h
+    ../msgPayloadDef/CSSArraySensorMsgPayload.h
+    ../msgPayloadDef/CSSConfigLogMsgPayload.h
+    ../msgPayloadDef/CSSConfigMsgPayload.h
+    ../msgPayloadDef/CSSRawDataMsgPayload.h
+    ../msgPayloadDef/CSSUnitConfigMsgPayload.h
+    ../msgPayloadDef/CameraConfigMsgPayload.h
+    ../msgPayloadDef/CameraImageMsgPayload.h
+    ../msgPayloadDef/CameraLocalizationMsgPayload.h
+    ../msgPayloadDef/CameraModelMsgPayload.h
+    ../msgPayloadDef/CameraRenderingMsgPayload.h
+    ../msgPayloadDef/CelestialBodyParametersMsgPayload.h
+    ../msgPayloadDef/ChargeMsmMsgPayload.h
+    ../msgPayloadDef/ClassicElementsMsgPayload.h
+    ../msgPayloadDef/CmdForceBodyMsgPayload.h
+    ../msgPayloadDef/CmdForceInertialMsgPayload.h
+    ../msgPayloadDef/CmdTorqueBodyMsgPayload.h
+    ../msgPayloadDef/ColorMsgPayload.h
+    ../msgPayloadDef/DataNodeUsageMsgPayload.h
+    ../msgPayloadDef/DataStorageStatusMsgPayload.h
+    ../msgPayloadDef/DesiredVelocityMsgPayload.h
+    ../msgPayloadDef/DeviceCmdMsgPayload.h
+    ../msgPayloadDef/DeviceStatusMsgPayload.h
+    ../msgPayloadDef/DipoleRequestBodyMsgPayload.h
+    ../msgPayloadDef/DirectionOfMotionMsgPayload.h
+    ../msgPayloadDef/DvBurnCmdMsgPayload.h
+    ../msgPayloadDef/DvExecutionDataMsgPayload.h
+    ../msgPayloadDef/EclipseMsgPayload.h
+    ../msgPayloadDef/EphemerisMsgPayload.h
+    ../msgPayloadDef/EpochMsgPayload.h
+    ../msgPayloadDef/FilterMsgPayload.h
+    ../msgPayloadDef/FilterResidualsMsgPayload.h
+    ../msgPayloadDef/FuelTankMsgPayload.h
+    ../msgPayloadDef/GravityGradientMsgPayload.h
+    ../msgPayloadDef/GroundStateMsgPayload.h
+    ../msgPayloadDef/HeadingFilterMsgPayload.h
+    ../msgPayloadDef/HillRelStateMsgPayload.h
+    ../msgPayloadDef/HingedRigidBodyMsgPayload.h
+    ../msgPayloadDef/IMUSensorBodyMsgPayload.h
+    ../msgPayloadDef/IMUSensorMsgPayload.h
+    ../msgPayloadDef/InertialFilterMsgPayload.h
+    ../msgPayloadDef/InertialHeadingMsgPayload.h
+    ../msgPayloadDef/LambertPerformanceMsgPayload.h
+    ../msgPayloadDef/LambertProblemMsgPayload.h
+    ../msgPayloadDef/LambertSolutionMsgPayload.h
+    ../msgPayloadDef/LambertValidatorMsgPayload.h
+    ../msgPayloadDef/LandmarkMsgPayload.h
+    ../msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h
+    ../msgPayloadDef/MTBArrayConfigMsgPayload.h
+    ../msgPayloadDef/MTBCmdMsgPayload.h
+    ../msgPayloadDef/MTBMsgPayload.h
+    ../msgPayloadDef/MagneticFieldMsgPayload.h
+    ../msgPayloadDef/ModuleTemplateMsgPayload.h
+    ../msgPayloadDef/MotorStepCommandMsgPayload.h
+    ../msgPayloadDef/NavAttMsgPayload.h
+    ../msgPayloadDef/NavTransMsgPayload.h
+    ../msgPayloadDef/OpNavCOBMsgPayload.h
+    ../msgPayloadDef/OpNavCOMMsgPayload.h
+    ../msgPayloadDef/OpNavCirclesMsgPayload.h
+    ../msgPayloadDef/OpNavFilterMsgPayload.h
+    ../msgPayloadDef/OpNavLimbMsgPayload.h
+    ../msgPayloadDef/OpNavMsgPayload.h
+    ../msgPayloadDef/OpNavUnitVecMsgPayload.h
+    ../msgPayloadDef/PairedKeyPointsMsgPayload.h
+    ../msgPayloadDef/PixelLineFilterMsgPayload.h
+    ../msgPayloadDef/PlasmaFluxMsgPayload.h
+    ../msgPayloadDef/PointCloudMsgPayload.h
+    ../msgPayloadDef/PowerNodeStatusMsgPayload.h
+    ../msgPayloadDef/PowerNodeUsageMsgPayload.h
+    ../msgPayloadDef/PowerStorageStatusMsgPayload.h
+    ../msgPayloadDef/PrescribedMotionMsgPayload.h
+    ../msgPayloadDef/PrescribedRotationMsgPayload.h
+    ../msgPayloadDef/PrescribedTranslationMsgPayload.h
+    ../msgPayloadDef/PyBatteryMsgPayload.h
+    ../msgPayloadDef/RWArrayConfigMsgPayload.h
+    ../msgPayloadDef/RWAvailabilityMsgPayload.h
+    ../msgPayloadDef/RWCmdMsgPayload.h
+    ../msgPayloadDef/RWConfigElementMsgPayload.h
+    ../msgPayloadDef/RWConfigLogMsgPayload.h
+    ../msgPayloadDef/RWConfigMsgPayload.h
+    ../msgPayloadDef/RWConstellationMsgPayload.h
+    ../msgPayloadDef/RwMotorTorqueMsgPayload.h
+    ../msgPayloadDef/RwMotorVoltageMsgPayload.h
+    ../msgPayloadDef/RWSpeedMsgPayload.h
+    ../msgPayloadDef/RateCmdMsgPayload.h
+    ../msgPayloadDef/RealTimeFactorMsgPayload.h
+    ../msgPayloadDef/ReconfigBurnArrayInfoMsgPayload.h
+    ../msgPayloadDef/ReconfigBurnInfoMsgPayload.h
+    ../msgPayloadDef/SCEnergyMomentumMsgPayload.h
+    ../msgPayloadDef/SCMassPropsMsgPayload.h
+    ../msgPayloadDef/SCStatesMsgPayload.h
+    ../msgPayloadDef/SICPMsgPayload.h
+    ../msgPayloadDef/STAttMsgPayload.h
+    ../msgPayloadDef/STSensorMsgPayload.h
+    ../msgPayloadDef/SmallBodyNavMsgPayload.h
+    ../msgPayloadDef/SmallBodyNavUKFMsgPayload.h
+    ../msgPayloadDef/SolarFluxMsgPayload.h
+    ../msgPayloadDef/SpicePlanetStateMsgPayload.h
+    ../msgPayloadDef/SpiceTimeMsgPayload.h
+    ../msgPayloadDef/StepperMotorMsgPayload.h
+    ../msgPayloadDef/SunlineFilterMsgPayload.h
+    ../msgPayloadDef/SwDataMsgPayload.h
+    ../msgPayloadDef/SynchClockMsgPayload.h
+    ../msgPayloadDef/TAMSensorBodyMsgPayload.h
+    ../msgPayloadDef/TAMSensorMsgPayload.h
+    ../msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h
+    ../msgPayloadDef/THRArrayCmdForceMsgPayload.h
+    ../msgPayloadDef/THRArrayConfigMsgPayload.h
+    ../msgPayloadDef/THRArrayOnTimeCmdMsgPayload.h
+    ../msgPayloadDef/THRConfigMsgPayload.h
+    ../msgPayloadDef/THROutputMsgPayload.h
+    ../msgPayloadDef/TemperatureMsgPayload.h
+    ../msgPayloadDef/TimeClosestApproachMsgPayload.h
+    ../msgPayloadDef/TransRefMsgPayload.h
+    ../msgPayloadDef/VSCMGArrayTorqueMsgPayload.h
+    ../msgPayloadDef/VSCMGCmdMsgPayload.h
+    ../msgPayloadDef/VSCMGConfigMsgPayload.h
+    ../msgPayloadDef/VSCMGSpeedMsgPayload.h
+    ../msgPayloadDef/VehicleConfigMsgPayload.h
+    ../msgPayloadDef/VoltMsgPayload.h
 )
 
 target_link_libraries(messaging INTERFACE
@@ -19,6 +156,8 @@ install(TARGETS messaging
   EXPORT xmera
   DESTINATION lib
   FILE_SET HEADERS
+    DESTINATION include
+  FILE_SET message_headers
     DESTINATION include
 )
 
@@ -31,138 +170,39 @@ install(FILES "msgAutoSource/msgInterfacePy.i.in"
 )
 
 install(FILES "newMessaging.ih"
-  DESTINATION include/architecture/messaging)
+  DESTINATION include/architecture/messaging
+)
 
-xmera_add_swig_message(messaging AccDataMsgPayload)
-xmera_add_swig_message(messaging AccPktDataMsgPayload)
-xmera_add_swig_message(messaging AccessMsgPayload)
-xmera_add_swig_message(messaging AlbedoMsgPayload)
-xmera_add_swig_message(messaging ArrayEffectorLockMsgPayload)
-xmera_add_swig_message(messaging ArrayMotorForceMsgPayload)
-xmera_add_swig_message(messaging ArrayMotorTorqueMsgPayload)
-xmera_add_swig_message(messaging AtmoPropsMsgPayload)
-xmera_add_swig_message(messaging AttGuidMsgPayload)
-xmera_add_swig_message(messaging AttRefMsgPayload)
-xmera_add_swig_message(messaging AttStateMsgPayload)
-xmera_add_swig_message(messaging BodyHeadingMsgPayload)
-xmera_add_swig_message(messaging BoreAngleMsgPayload)
-xmera_add_swig_message(messaging CMEstDataMsgPayload)
-xmera_add_swig_message(messaging CSSArraySensorMsgPayload)
-xmera_add_swig_message(messaging CSSConfigLogMsgPayload)
-xmera_add_swig_message(messaging CSSConfigMsgPayload)
-xmera_add_swig_message(messaging CSSRawDataMsgPayload)
-xmera_add_swig_message(messaging CSSUnitConfigMsgPayload)
-xmera_add_swig_message(messaging CameraConfigMsgPayload)
-xmera_add_swig_message(messaging CameraImageMsgPayload)
-xmera_add_swig_message(messaging CameraLocalizationMsgPayload)
-xmera_add_swig_message(messaging CameraModelMsgPayload)
-xmera_add_swig_message(messaging CameraRenderingMsgPayload)
-xmera_add_swig_message(messaging CelestialBodyParametersMsgPayload)
-xmera_add_swig_message(messaging ChargeMsmMsgPayload)
-xmera_add_swig_message(messaging ClassicElementsMsgPayload)
-xmera_add_swig_message(messaging CmdForceBodyMsgPayload)
-xmera_add_swig_message(messaging CmdForceInertialMsgPayload)
-xmera_add_swig_message(messaging CmdTorqueBodyMsgPayload)
-xmera_add_swig_message(messaging ColorMsgPayload)
-xmera_add_swig_message(messaging DataNodeUsageMsgPayload)
-xmera_add_swig_message(messaging DataStorageStatusMsgPayload)
-xmera_add_swig_message(messaging DesiredVelocityMsgPayload)
-xmera_add_swig_message(messaging DeviceCmdMsgPayload)
-xmera_add_swig_message(messaging DeviceStatusMsgPayload)
-xmera_add_swig_message(messaging DipoleRequestBodyMsgPayload)
-xmera_add_swig_message(messaging DirectionOfMotionMsgPayload)
-xmera_add_swig_message(messaging DvBurnCmdMsgPayload)
-xmera_add_swig_message(messaging DvExecutionDataMsgPayload)
-xmera_add_swig_message(messaging EclipseMsgPayload)
-xmera_add_swig_message(messaging EphemerisMsgPayload)
-xmera_add_swig_message(messaging EpochMsgPayload)
-xmera_add_swig_message(messaging FilterMsgPayload)
-xmera_add_swig_message(messaging FilterResidualsMsgPayload)
-xmera_add_swig_message(messaging FuelTankMsgPayload)
-xmera_add_swig_message(messaging GravityGradientMsgPayload)
-xmera_add_swig_message(messaging GroundStateMsgPayload)
-xmera_add_swig_message(messaging HeadingFilterMsgPayload)
-xmera_add_swig_message(messaging HillRelStateMsgPayload)
-xmera_add_swig_message(messaging HingedRigidBodyMsgPayload)
-xmera_add_swig_message(messaging IMUSensorBodyMsgPayload)
-xmera_add_swig_message(messaging IMUSensorMsgPayload)
-xmera_add_swig_message(messaging InertialFilterMsgPayload)
-xmera_add_swig_message(messaging InertialHeadingMsgPayload)
-xmera_add_swig_message(messaging LambertPerformanceMsgPayload)
-xmera_add_swig_message(messaging LambertProblemMsgPayload)
-xmera_add_swig_message(messaging LambertSolutionMsgPayload)
-xmera_add_swig_message(messaging LambertValidatorMsgPayload)
-xmera_add_swig_message(messaging LandmarkMsgPayload)
-xmera_add_swig_message(messaging LinearTranslationRigidBodyMsgPayload)
-xmera_add_swig_message(messaging MTBArrayConfigMsgPayload)
-xmera_add_swig_message(messaging MTBCmdMsgPayload)
-xmera_add_swig_message(messaging MTBMsgPayload)
-xmera_add_swig_message(messaging MagneticFieldMsgPayload)
-xmera_add_swig_message(messaging ModuleTemplateMsgPayload)
-xmera_add_swig_message(messaging MotorStepCommandMsgPayload)
-xmera_add_swig_message(messaging NavAttMsgPayload)
-xmera_add_swig_message(messaging NavTransMsgPayload)
-xmera_add_swig_message(messaging OpNavCOBMsgPayload)
-xmera_add_swig_message(messaging OpNavCOMMsgPayload)
-xmera_add_swig_message(messaging OpNavCirclesMsgPayload)
-xmera_add_swig_message(messaging OpNavFilterMsgPayload)
-xmera_add_swig_message(messaging OpNavLimbMsgPayload)
-xmera_add_swig_message(messaging OpNavMsgPayload)
-xmera_add_swig_message(messaging OpNavUnitVecMsgPayload)
-xmera_add_swig_message(messaging PairedKeyPointsMsgPayload)
-xmera_add_swig_message(messaging PixelLineFilterMsgPayload)
-xmera_add_swig_message(messaging PlasmaFluxMsgPayload)
-xmera_add_swig_message(messaging PointCloudMsgPayload)
-xmera_add_swig_message(messaging PowerNodeStatusMsgPayload)
-xmera_add_swig_message(messaging PowerNodeUsageMsgPayload)
-xmera_add_swig_message(messaging PowerStorageStatusMsgPayload)
-xmera_add_swig_message(messaging PrescribedMotionMsgPayload)
-xmera_add_swig_message(messaging PrescribedRotationMsgPayload)
-xmera_add_swig_message(messaging PrescribedTranslationMsgPayload)
-xmera_add_swig_message(messaging PyBatteryMsgPayload)
-xmera_add_swig_message(messaging RWArrayConfigMsgPayload)
-xmera_add_swig_message(messaging RWAvailabilityMsgPayload)
-xmera_add_swig_message(messaging RWCmdMsgPayload)
-xmera_add_swig_message(messaging RWConfigElementMsgPayload)
-xmera_add_swig_message(messaging RWConfigLogMsgPayload)
-xmera_add_swig_message(messaging RWConfigMsgPayload)
-xmera_add_swig_message(messaging RWConstellationMsgPayload)
-xmera_add_swig_message(messaging RwMotorTorqueMsgPayload)
-xmera_add_swig_message(messaging RwMotorVoltageMsgPayload)
-xmera_add_swig_message(messaging RWSpeedMsgPayload)
-xmera_add_swig_message(messaging RateCmdMsgPayload)
-xmera_add_swig_message(messaging RealTimeFactorMsgPayload)
-xmera_add_swig_message(messaging ReconfigBurnArrayInfoMsgPayload)
-xmera_add_swig_message(messaging ReconfigBurnInfoMsgPayload)
-xmera_add_swig_message(messaging SCEnergyMomentumMsgPayload)
-xmera_add_swig_message(messaging SCMassPropsMsgPayload)
-xmera_add_swig_message(messaging SCStatesMsgPayload)
-xmera_add_swig_message(messaging SICPMsgPayload)
-xmera_add_swig_message(messaging STAttMsgPayload)
-xmera_add_swig_message(messaging STSensorMsgPayload)
-xmera_add_swig_message(messaging SmallBodyNavMsgPayload)
-xmera_add_swig_message(messaging SmallBodyNavUKFMsgPayload)
-xmera_add_swig_message(messaging SolarFluxMsgPayload)
-xmera_add_swig_message(messaging SpicePlanetStateMsgPayload)
-xmera_add_swig_message(messaging SpiceTimeMsgPayload)
-xmera_add_swig_message(messaging StepperMotorMsgPayload)
-xmera_add_swig_message(messaging SunlineFilterMsgPayload)
-xmera_add_swig_message(messaging SwDataMsgPayload)
-xmera_add_swig_message(messaging SynchClockMsgPayload)
-xmera_add_swig_message(messaging TAMSensorBodyMsgPayload)
-xmera_add_swig_message(messaging TAMSensorMsgPayload)
-xmera_add_swig_message(messaging TDBVehicleClockCorrelationMsgPayload)
-xmera_add_swig_message(messaging THRArrayCmdForceMsgPayload)
-xmera_add_swig_message(messaging THRArrayConfigMsgPayload)
-xmera_add_swig_message(messaging THRArrayOnTimeCmdMsgPayload)
-xmera_add_swig_message(messaging THRConfigMsgPayload)
-xmera_add_swig_message(messaging THROutputMsgPayload)
-xmera_add_swig_message(messaging TemperatureMsgPayload)
-xmera_add_swig_message(messaging TimeClosestApproachMsgPayload)
-xmera_add_swig_message(messaging TransRefMsgPayload)
-xmera_add_swig_message(messaging VSCMGArrayTorqueMsgPayload)
-xmera_add_swig_message(messaging VSCMGCmdMsgPayload)
-xmera_add_swig_message(messaging VSCMGConfigMsgPayload)
-xmera_add_swig_message(messaging VSCMGSpeedMsgPayload)
-xmera_add_swig_message(messaging VehicleConfigMsgPayload)
-xmera_add_swig_message(messaging VoltMsgPayload)
+
+# Create and build a Python SWIG extension for every message header
+get_property(_message_headers TARGET messaging PROPERTY HEADER_SET_message_headers)
+foreach(_header IN LISTS _message_headers)
+  get_filename_component(_message "${_header}" NAME_WE)
+  set_property(TARGET messaging APPEND PROPERTY XMERA_REGISTERED_MESSAGES "${_message}")
+
+  xmera_add_swig_message("${_message}" "${_header}")
+endforeach()
+
+
+# Generate a summary __init__.py exporting all messages in one place
+set(_file_content)
+
+foreach(_header IN LISTS _message_headers)
+  get_filename_component(_message "${_header}" NAME_WE)
+  set_property(TARGET messaging APPEND PROPERTY XMERA_REGISTERED_MESSAGES "${_message}")
+
+  list(APPEND _file_contents "from Basilisk.architecture.messaging.${_message} import *")
+endforeach()
+
+list(JOIN _file_contents "\n" _file_contents)
+
+file(GENERATE
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/messaging__init__.py"
+  CONTENT "${_file_contents}"
+)
+
+install(
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/messaging__init__.py"
+  DESTINATION Basilisk/architecture/messaging/
+  RENAME __init__.py
+)
