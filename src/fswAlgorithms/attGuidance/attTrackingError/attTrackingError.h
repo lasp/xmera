@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_ATT_TRACKING_ERROR_H
-#define BASILISK_ATT_TRACKING_ERROR_H
+#ifndef XMERA_ATT_TRACKING_ERROR_H
+#define XMERA_ATT_TRACKING_ERROR_H
 
 #include <stdint.h>
 

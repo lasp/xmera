@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_SIMPLESOLARPANEL_H
-#define BASILISK_SIMPLESOLARPANEL_H
+#ifndef XMERA_SIMPLESOLARPANEL_H
+#define XMERA_SIMPLESOLARPANEL_H
 
 #include <architecture/messaging/messaging.h>
 #include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
@@ -61,4 +61,4 @@ class SimpleSolarPanel : public PowerNodeBase {
     double shadowFactor;  //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
 };
 
-#endif  // BASILISK_SIMPLESOLARPANEL_H
+#endif  // XMERA_SIMPLESOLARPANEL_H

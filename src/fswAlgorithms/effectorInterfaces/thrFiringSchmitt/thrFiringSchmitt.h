@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_THRFIRINGSCHMITT_H
-#define BASILISK_THRFIRINGSCHMITT_H
+#ifndef XMERA_THRFIRINGSCHMITT_H
+#define XMERA_THRFIRINGSCHMITT_H
 
 #include <cstdint>
 
@@ -57,4 +57,4 @@ class ThrFiringSchmitt : public SysModel {
     ThrFiringSchmittAlgorithm algorithm;
 };
 
-#endif  // BASILISK_THRFIRINGSCHMITT_H
+#endif  // XMERA_THRFIRINGSCHMITT_H

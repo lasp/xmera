@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_DATANODEUSAGESIMMSG_H
-#define BASILISK_DATANODEUSAGESIMMSG_H
+#ifndef XMERA_DATANODEUSAGESIMMSG_H
+#define XMERA_DATANODEUSAGESIMMSG_H
 
 /*! @brief Message for reporting the science or telemetry data produced or consumed by a module.*/
 typedef struct {
@@ -28,4 +28,4 @@ typedef struct {
         baudRate;  //!< [bits/s] Data usage by the message writer; positive for data generators, negative for data sinks
 } DataNodeUsageMsgPayload;
 
-#endif  // BASILISK_DATANODEUSAGESIMMSG_H
+#endif  // XMERA_DATANODEUSAGESIMMSG_H

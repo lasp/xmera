@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_SENSORTHERMAL_H
-#define BASILISK_SENSORTHERMAL_H
+#ifndef XMERA_SENSORTHERMAL_H
+#define XMERA_SENSORTHERMAL_H
 
 #include <architecture/messaging/messaging.h>
 #include <Eigen/Dense>
@@ -80,4 +80,4 @@ class SensorThermal : public SysModel {
     uint64_t CurrentSimSecondsOld;  //!< [s] Seconds at last iteration
 };
 
-#endif  // BASILISK_SENSORTHERMAL_H
+#endif  // XMERA_SENSORTHERMAL_H

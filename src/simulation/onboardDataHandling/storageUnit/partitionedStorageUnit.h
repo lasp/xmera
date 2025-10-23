@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_PARTITIONEDSTORAGEUNIT_H
-#define BASILISK_PARTITIONEDSTORAGEUNIT_H
+#ifndef XMERA_PARTITIONEDSTORAGEUNIT_H
+#define XMERA_PARTITIONEDSTORAGEUNIT_H
 
 #include <simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -36,4 +36,4 @@ class PartitionedStorageUnit : public DataStorageUnitBase {
     void customreset(uint64_t CurrentClock) override;
 };
 
-#endif  // BASILISK_PARTITIONEDSTORAGEUNIT_H
+#endif  // XMERA_PARTITIONEDSTORAGEUNIT_H

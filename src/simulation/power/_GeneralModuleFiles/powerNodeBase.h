@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_POWERNODEBASE_H
-#define BASILISK_POWERNODEBASE_H
+#ifndef XMERA_POWERNODEBASE_H
+#define XMERA_POWERNODEBASE_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
@@ -65,4 +65,4 @@ class PowerNodeBase : public SysModel {
     double previousTime;                    //!< Previous time used for integration
 };
 
-#endif  // BASILISK_POWERNODEBASE_H
+#endif  // XMERA_POWERNODEBASE_H

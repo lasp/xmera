@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_DEVICESTATUSMSGPAYLOAD_H
-#define BASILISK_DEVICESTATUSMSGPAYLOAD_H
+#ifndef XMERA_DEVICESTATUSMSGPAYLOAD_H
+#define XMERA_DEVICESTATUSMSGPAYLOAD_H
 
 enum deviceState { On = 1, Off = 0 };
 
@@ -27,4 +27,4 @@ typedef struct {
     enum deviceState deviceStatus;  //!< device status indicator; 0 is off, 1 is on
 } DeviceStatusMsgPayload;
 
-#endif  // BASILISK_DEVICESTATUSMSGPAYLOAD_H
+#endif  // XMERA_DEVICESTATUSMSGPAYLOAD_H

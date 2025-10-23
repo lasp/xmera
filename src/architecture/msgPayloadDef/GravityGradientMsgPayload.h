@@ -25,4 +25,4 @@ typedef struct {
     double gravityGradientTorque_B[3];  //!< [Nm] Gravity Gradient torque in body frame components
 } GravityGradientMsgPayload;
 
-#endif  // BASILISK_DATANODEUSAGESIMMSG_H
+#endif  // gravityGradientSimMsg_H

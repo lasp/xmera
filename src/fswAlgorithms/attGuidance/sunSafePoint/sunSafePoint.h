@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _BASILISK_SUN_SAFE_POINT_H_
-#define _BASILISK_SUN_SAFE_POINT_H_
+#ifndef _XMERA_SUN_SAFE_POINT_H_
+#define _XMERA_SUN_SAFE_POINT_H_
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>

@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_SIMPLEBATTERY_H
-#define BASILISK_SIMPLEBATTERY_H
+#ifndef XMERA_SIMPLEBATTERY_H
+#define XMERA_SIMPLEBATTERY_H
 
 #include <simulation/power/_GeneralModuleFiles/powerStorageBase.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -39,4 +39,4 @@ class SimpleBattery : public PowerStorageBase {
     BSKLogger bskLogger;     //!< -- BSK Logging
 };
 
-#endif  // BASILISK_SIMPLEBATTERY_H
+#endif  // XMERA_SIMPLEBATTERY_H

@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_SIMPLEPOWERMONITOR_H
-#define BASILISK_SIMPLEPOWERMONITOR_H
+#ifndef XMERA_SIMPLEPOWERMONITOR_H
+#define XMERA_SIMPLEPOWERMONITOR_H
 
 #include <simulation/power/_GeneralModuleFiles/powerStorageBase.h>
 
@@ -32,4 +32,4 @@ class SimplePowerMonitor : public PowerStorageBase {
     void evaluateBatteryModel(PowerStorageStatusMsgPayload* msg);
 };
 
-#endif  // BASILISK_SIMPLEPOWERMONITOR_H
+#endif  // XMERA_SIMPLEPOWERMONITOR_H

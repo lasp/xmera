@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_POWERRW_H
-#define BASILISK_POWERRW_H
+#ifndef XMERA_POWERRW_H
+#define XMERA_POWERRW_H
 
 #include <architecture/messaging/messaging.h>
 #include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
@@ -49,4 +49,4 @@ class ReactionWheelPower : public PowerNodeBase {
     RWConfigLogMsgPayload rwStatus;  //!< copy of the RW status message
 };
 
-#endif  // BASILISK_POWERRW_H
+#endif  // XMERA_POWERRW_H

@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_RATE_DAMP_H
-#define BASILISK_RATE_DAMP_H
+#ifndef XMERA_RATE_DAMP_H
+#define XMERA_RATE_DAMP_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
