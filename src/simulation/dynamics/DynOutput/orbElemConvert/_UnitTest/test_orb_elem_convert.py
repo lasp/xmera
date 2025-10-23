@@ -38,13 +38,13 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import orbElemConvert
-from Basilisk.utilities import macros
-from Basilisk.utilities import macros as mc
-from Basilisk.utilities import unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
+from xmera.utilities import SimulationBaseClass
+from xmera.simulation import orbElemConvert
+from xmera.utilities import macros
+from xmera.utilities import macros as mc
+from xmera.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.utilities.pythonVariableLogger import PythonVariableLogger
 
 # Class in order to plot using data across the different parameterized scenarios
 class DataStore:

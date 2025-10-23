@@ -26,12 +26,12 @@ import math
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import locationPointing
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import locationPointing
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])

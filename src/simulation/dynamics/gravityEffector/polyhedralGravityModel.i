@@ -17,7 +17,7 @@
 
  */
 
-%module(package="Basilisk.simulation") polyhedralGravityModel
+%module(package="xmera.simulation") polyhedralGravityModel
 %{
    #include "polyhedralGravityModel.h"
    #include <memory>
@@ -36,7 +36,7 @@
    %pythoncode %{
       def loadFromFile(self, fileName: str):
           """Loads the vertices and facet data from the given file."""
-          from Basilisk.simulation.gravityEffector import loadPolyFromFile
+          from xmera.simulation.gravityEffector import loadPolyFromFile
           loadPolyFromFile(fileName, self)
           return self
    %}

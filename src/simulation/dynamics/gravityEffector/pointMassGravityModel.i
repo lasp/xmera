@@ -17,7 +17,7 @@
 
  */
 
-%module(package="Basilisk.simulation") pointMassGravityModel
+%module(package="xmera.simulation") pointMassGravityModel
 %{
    #include <simulation/dynamics/_GeneralModuleFiles/pointMassGravityModel.h>
    #include <memory>

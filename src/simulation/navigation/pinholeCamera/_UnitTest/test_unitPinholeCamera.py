@@ -19,20 +19,20 @@ import numpy as np
 import pytest
 from matplotlib import pyplot as plt
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.architecture import messaging
-from Basilisk.simulation import pinholeCamera
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import unitTestSupport
-from Basilisk import __path__
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.architecture import messaging
+from xmera.simulation import pinholeCamera
+from xmera.simulation import spacecraft
+from xmera.utilities import unitTestSupport
+from xmera import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 bskPath = __path__[0]
 

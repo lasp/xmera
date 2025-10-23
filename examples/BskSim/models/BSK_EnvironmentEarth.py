@@ -18,10 +18,10 @@
 
 import spiceypy
 
-from Basilisk.utilities import macros as mc, simIncludeGravBody
-from Basilisk.simulation import ephemerisConverter
+from xmera.utilities import macros as mc, simIncludeGravBody
+from xmera.simulation import ephemerisConverter
 
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 

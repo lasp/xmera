@@ -70,22 +70,22 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import etSphericalControl
-from Basilisk.simulation import simpleNav, spacecraft, extForceTorque, msmForceTorque
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import etSphericalControl
+from xmera.simulation import simpleNav, spacecraft, extForceTorque, msmForceTorque
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, vizSupport)
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 
 except ImportError:
     pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

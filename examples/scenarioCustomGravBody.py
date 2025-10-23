@@ -82,11 +82,11 @@ Illustration of Simulation Results
 import os
 
 import matplotlib.pyplot as plt
-from Basilisk.simulation import planetEphemeris
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
+from xmera.simulation import planetEphemeris
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from xmera.utilities import orbitalMotion
+from xmera.utilities import unitTestSupport
 
 
 # The path to the location of Basilisk

@@ -106,22 +106,22 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft, svIntegrators
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.simulation import reactionWheelStateEffector, simpleNav, spacecraft, svIntegrators
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 except ImportError:
     pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

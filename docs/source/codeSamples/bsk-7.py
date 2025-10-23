@@ -16,10 +16,10 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from Basilisk.architecture import messaging
-from Basilisk.moduleTemplates import cppModuleTemplate
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.moduleTemplates import cppModuleTemplate
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 
 def run():

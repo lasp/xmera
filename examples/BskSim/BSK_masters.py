@@ -22,7 +22,7 @@ import os
 import sys
 
 # Import architectural modules
-from Basilisk.utilities import SimulationBaseClass
+from xmera.utilities import SimulationBaseClass
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

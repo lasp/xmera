@@ -37,14 +37,14 @@ mpl.rc('legend', loc='lower right')
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 
-from Basilisk.utilities import macros
+from xmera.utilities import macros
 
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 
 try:
-    from Basilisk.utilities import tabulate as T
+    from xmera.utilities import tabulate as T
 
     # '''
     # del(T.LATEX_ESCAPE_RULES['$'])
@@ -59,7 +59,7 @@ try:
     del (T.LATEX_ESCAPE_RULES[u'_'])
     del (T.LATEX_ESCAPE_RULES[u'{'])
     del (T.LATEX_ESCAPE_RULES[u'}'])
-    from Basilisk.utilities.tabulate import *
+    from xmera.utilities.tabulate import *
 except:
     pass
 

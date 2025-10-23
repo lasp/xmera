@@ -51,8 +51,8 @@ installed location of Basilisk by opening a python interpreter and running the c
 
 .. code-block:: python
 
-   import Basilisk
-   basiliskPath = Basilisk.__path__[0]
+   import xmera
+   basiliskPath = xmera.__path__[0]
    print basiliskPath
 
 Copy the folder ``{basiliskPath}/examples`` into a new folder in a different directory.
@@ -206,7 +206,7 @@ import numpy as np
 # To copy them, first find the location of the Basilisk installation.
 # After installing, you can find the installed location of Basilisk by opening a python interpreter and
 # running the commands:
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -216,10 +216,10 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
 # always import the Basilisk messaging support

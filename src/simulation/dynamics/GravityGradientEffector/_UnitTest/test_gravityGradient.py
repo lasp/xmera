@@ -28,15 +28,15 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from Basilisk import __path__
-from Basilisk.simulation import GravityGradientEffector
+from xmera import __path__
+from xmera.simulation import GravityGradientEffector
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import simIncludeGravBody, orbitalMotion, RigidBodyKinematics
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import simIncludeGravBody, orbitalMotion, RigidBodyKinematics
+from xmera.utilities import unitTestSupport
 
 bskPath = __path__[0]
 

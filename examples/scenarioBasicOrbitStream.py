@@ -76,18 +76,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
-from Basilisk.simulation import simSynch
+from xmera.simulation import simSynch
 
 
 def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):

@@ -24,7 +24,7 @@
 %}
 
 %pythoncode %{
-from Basilisk.simulation.gravityEffector import GravBodyVector
+from xmera.simulation.gravityEffector import GravBodyVector
 %}
 %include <std_string.i>
 %include <architecture/_GeneralModuleFiles/swig_eigen.i>

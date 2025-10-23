@@ -32,14 +32,14 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 except ImportError:
     pytestmark = pytest.mark.skip(reason="viz interface not built without required libraries")
 

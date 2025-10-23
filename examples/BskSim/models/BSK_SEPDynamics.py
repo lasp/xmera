@@ -17,13 +17,13 @@
 #
 
 import numpy as np
-from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk, simIncludeRW)
-from Basilisk.simulation import (spacecraft, simpleNav, simpleMassProps, reactionWheelStateEffector,
+from xmera.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk, simIncludeRW)
+from xmera.simulation import (spacecraft, simpleNav, simpleMassProps, reactionWheelStateEffector,
                                  ReactionWheelPower, boreAngCalc, spinningBodyOneDOFStateEffector,
                                  spinningBodyTwoDOFStateEffector, thrusterStateEffector, facetSRPDynamicEffector)
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 

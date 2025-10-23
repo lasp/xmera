@@ -24,12 +24,12 @@
 import math
 
 import matplotlib.pyplot as plt
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import lowPassFilterTorqueCommand  # import the module that is to be tested
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import lowPassFilterTorqueCommand  # import the module that is to be tested
 #   Import all of the modules that we are going to call in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.

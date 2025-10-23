@@ -74,17 +74,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import svIntegrators
+from xmera import __path__
+from xmera.simulation import spacecraft
+from xmera.simulation import svIntegrators
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

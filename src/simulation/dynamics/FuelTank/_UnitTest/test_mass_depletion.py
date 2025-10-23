@@ -20,15 +20,15 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import fuelTank
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.simulation import fuelTank
+from xmera.simulation import gravityEffector
+from xmera.simulation import spacecraft
+from xmera.simulation import thrusterDynamicEffector, thrusterStateEffector
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import simIncludeThruster
+from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

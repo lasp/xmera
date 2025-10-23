@@ -28,16 +28,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pytest
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging
-from Basilisk.simulation import singleAxisProfiler
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import sim_model
+from xmera.architecture import messaging
+from xmera.simulation import singleAxisProfiler
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 @pytest.mark.parametrize("theta", [0.0 * macros.D2R, 5.2 * macros.D2R, -10.1 * macros.D2R]) # [rad]

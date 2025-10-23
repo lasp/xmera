@@ -17,9 +17,9 @@ import os
 import tempfile
 
 import numpy as np
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 import spiceypy
-from Basilisk.utilities import (
+from xmera.utilities import (
     SimulationBaseClass,
     macros,
     spice_utilities,

@@ -90,11 +90,11 @@ from mpl_toolkits import mplot3d as plt3
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, hillPoint, mrpRotation, rwMotorTorque
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft, ephemerisConverter
-from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros, orbitalMotion, simIncludeGravBody,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, hillPoint, mrpRotation, rwMotorTorque
+from xmera.simulation import reactionWheelStateEffector, simpleNav, spacecraft, ephemerisConverter
+from xmera.utilities import (SimulationBaseClass, fswSetupRW, macros, orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
 
 bskPath = __path__[0]

@@ -2,15 +2,15 @@
 #   3rd party / std lib imports
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 #   Modules to test
-from Basilisk.fswAlgorithms import hillToAttRef
+from xmera.fswAlgorithms import hillToAttRef
 #   Utilities/macros
-from Basilisk.utilities import SimulationBaseClass as sbc
-from Basilisk.utilities import macros
+from xmera.utilities import SimulationBaseClass as sbc
+from xmera.utilities import macros
 
 
-#from Basilisk.simulation import simFswInterfaceMessages
+#from xmera.simulation import simFswInterfaceMessages
 
 @pytest.mark.parametrize("msg_type", ['AttRefMsg','NavAttMsg'])
 @pytest.mark.parametrize("use_limits", [True, False])

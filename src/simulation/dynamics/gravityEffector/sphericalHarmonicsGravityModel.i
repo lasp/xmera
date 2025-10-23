@@ -17,7 +17,7 @@
 
  */
 
-%module(package="Basilisk.simulation") sphericalHarmonicsGravityModel
+%module(package="xmera.simulation") sphericalHarmonicsGravityModel
 %{
    #include "sphericalHarmonicsGravityModel.h"
    #include <memory>
@@ -58,7 +58,7 @@
    %pythoncode %{
       def loadFromFile(self, fileName: str, maxDeg: int):
           """Loads the C and S coefficients from a file."""
-          from Basilisk.simulation.gravityEffector import loadGravFromFile
+          from xmera.simulation.gravityEffector import loadGravFromFile
           loadGravFromFile(fileName, self, maxDeg)
           return self
    %}

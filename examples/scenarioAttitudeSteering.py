@@ -140,31 +140,31 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 # import message declarations
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import hillPoint
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import hillPoint
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpSteering
-from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.fswAlgorithms import rwMotorTorque
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import simpleNav
+from xmera.fswAlgorithms import mrpSteering
+from xmera.fswAlgorithms import rateServoFullNonlinear
+from xmera.fswAlgorithms import rwMotorTorque
+from xmera.simulation import extForceTorque
+from xmera.simulation import reactionWheelStateEffector
+from xmera.simulation import simpleNav
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import RigidBodyKinematics as rb
+from xmera.simulation import spacecraft
+from xmera.utilities import RigidBodyKinematics as rb
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import fswSetupRW
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import simIncludeRW
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import fswSetupRW
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion as om
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import simIncludeRW
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

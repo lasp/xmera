@@ -27,14 +27,14 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import celestialTwoBodyPoint_C  # module that is to be tested
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import celestialTwoBodyPoint_C  # module that is to be tested
+from xmera.utilities import RigidBodyKinematics as rbk
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import astroFunctions as af
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import astroFunctions as af
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 from numpy import linalg as la
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

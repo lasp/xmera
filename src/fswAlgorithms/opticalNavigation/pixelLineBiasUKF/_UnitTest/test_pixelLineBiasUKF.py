@@ -17,10 +17,10 @@
 
 
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import SimulationBaseClass, macros, orbitalMotion
 
 import pixelLineBias_test_utilities as FilterPlots
 

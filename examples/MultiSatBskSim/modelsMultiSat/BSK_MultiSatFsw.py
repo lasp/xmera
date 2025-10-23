@@ -19,11 +19,11 @@
 import itertools
 
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (inertial3D, locationPointing, attTrackingError, mrpFeedback,
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (inertial3D, locationPointing, attTrackingError, mrpFeedback,
                                     rwMotorTorque, spacecraftReconfig)
-from Basilisk.utilities import (macros as mc, fswSetupThrusters)
-from Basilisk.utilities import deprecated
+from xmera.utilities import (macros as mc, fswSetupThrusters)
+from xmera.utilities import deprecated
 
 
 class BSKFswModels:

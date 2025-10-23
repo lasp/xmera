@@ -21,10 +21,10 @@ import math
 
 import matplotlib.pyplot as plt
 import numpy
-from Basilisk.architecture import messaging
-from Basilisk.simulation import planetNav
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.simulation import planetNav
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 
 def test_planetNav(show_plots):

@@ -17,10 +17,10 @@
 #
 
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import planetHeading
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import orbitalMotion as om
+from xmera.architecture import messaging
+from xmera.simulation import planetHeading
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import orbitalMotion as om
 
 
 def test_planetHeading(show_plots=False, relTol=1e-8):

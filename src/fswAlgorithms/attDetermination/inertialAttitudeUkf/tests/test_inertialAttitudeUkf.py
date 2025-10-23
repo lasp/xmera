@@ -19,10 +19,10 @@ from numba.core.cgutils import printf
 import uKF_test_utilities as filter_plots
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import inertialAttitudeUkf
-from Basilisk.utilities import SimulationBaseClass, macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import inertialAttitudeUkf
+from xmera.utilities import SimulationBaseClass, macros
+from xmera.utilities import RigidBodyKinematics as rbk
 from scipy.stats import chi2
 
 starOnly = inertialAttitudeUkf.AttitudeFilterMethod_StarOnly

@@ -1,10 +1,10 @@
 import numpy as np
 
-from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
-from Basilisk.utilities import macros
-from Basilisk.utilities import SimulationBaseClass
+from xmera.utilities.pythonVariableLogger import PythonVariableLogger
+from xmera.utilities import macros
+from xmera.utilities import SimulationBaseClass
 
-from Basilisk.utilities.tests.TickerModule import TickerModule
+from xmera.utilities.tests.TickerModule import TickerModule
 
 
 def test_constructor():

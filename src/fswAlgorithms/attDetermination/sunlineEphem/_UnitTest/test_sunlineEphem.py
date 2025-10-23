@@ -18,10 +18,10 @@
 
 import numpy as np
 
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import sunlineEphem
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import sunlineEphem
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 def test_sunlineEphem():
     unitTaskName = "unitTask"               # arbitrary name (don't change)

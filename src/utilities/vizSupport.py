@@ -19,15 +19,15 @@
 
 import numpy as np
 import os
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import unitTestSupport
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.simulation import spacecraft
+from xmera.utilities import unitTestSupport
 from matplotlib import colors
 from matplotlib.colors import is_color_like
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
     vizFound = True
 except ImportError:
     vizFound = False

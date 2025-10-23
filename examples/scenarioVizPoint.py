@@ -96,7 +96,7 @@ The second control scenario points the spacecraft towards Mars on a Mars orbit.
 import os
 
 import numpy as np
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -104,28 +104,28 @@ fileNamePath = os.path.abspath(__file__)
 
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros, orbitalMotion
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import macros, orbitalMotion
+from xmera.utilities import RigidBodyKinematics as rbk
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simpleNav
+from xmera.simulation import spacecraft
+from xmera.simulation import extForceTorque
+from xmera.utilities import simIncludeGravBody
+from xmera.simulation import simpleNav
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import inertial3D
+from xmera.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 
 def run(show_plots, missionType, saveVizardFile):

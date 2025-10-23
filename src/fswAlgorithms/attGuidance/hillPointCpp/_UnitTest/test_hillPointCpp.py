@@ -18,11 +18,11 @@
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import hillPointCpp  # import the module that is to be tested
-from Basilisk.utilities import astroFunctions as af
-from Basilisk.utilities import macros
-from Basilisk.utilities import SimulationBaseClass
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import hillPointCpp  # import the module that is to be tested
+from xmera.utilities import astroFunctions as af
+from xmera.utilities import macros
+from xmera.utilities import SimulationBaseClass
 
 
 @pytest.mark.parametrize("celMsgSet", [True, False])

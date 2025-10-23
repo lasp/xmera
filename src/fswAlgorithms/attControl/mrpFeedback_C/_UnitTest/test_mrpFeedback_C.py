@@ -24,11 +24,11 @@
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import mrpFeedback_C
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import mrpFeedback_C
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 #   Import all of the modules that we are going to call in this simulation

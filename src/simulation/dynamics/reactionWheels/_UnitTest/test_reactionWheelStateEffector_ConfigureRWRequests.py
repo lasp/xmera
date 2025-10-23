@@ -32,10 +32,10 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.architecture import messaging
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
+from xmera.simulation import reactionWheelStateEffector
+from xmera.architecture import messaging
 
 
 # methods

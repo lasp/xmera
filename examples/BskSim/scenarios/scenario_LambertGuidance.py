@@ -89,7 +89,7 @@ import sys
 
 import numpy as np
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport, unitTestSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport, unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -104,7 +104,7 @@ import os
 import sys
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -143,9 +143,9 @@ import os
 import sys
 
 import numpy as np
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
+from xmera.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

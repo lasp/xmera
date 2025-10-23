@@ -240,27 +240,27 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk import __path__
+from xmera import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from Basilisk.simulation import spacecraft, gravityEffector, extForceTorque, simpleNav, ephemerisConverter
-from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities import vizSupport
+from xmera.simulation import spacecraft, gravityEffector, extForceTorque, simpleNav, ephemerisConverter
+from xmera.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
+from xmera.architecture import messaging
+from xmera.utilities import vizSupport
 
 # import general simulation support files
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 except ImportError:
     pass
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import hillPoint
-from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
+from xmera.fswAlgorithms import hillPoint
+from xmera.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
 
 
 def run(planetCase):

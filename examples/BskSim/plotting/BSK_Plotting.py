@@ -17,10 +17,10 @@
 #
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import macros as mc
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import macros as mc
+from xmera.utilities import orbitalMotion
+from xmera.utilities import unitTestSupport
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
 color_x = 'dodgerblue'

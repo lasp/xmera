@@ -17,7 +17,7 @@
 #
 
 
-from Basilisk import __path__
+from xmera import __path__
 import spiceypy
 
 bskPath = __path__[0]

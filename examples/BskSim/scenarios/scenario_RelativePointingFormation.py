@@ -127,7 +127,7 @@ the Earth's shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with 
 
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport
 
 # Get current file path
 import sys, os, inspect

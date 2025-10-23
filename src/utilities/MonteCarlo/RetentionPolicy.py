@@ -1,6 +1,6 @@
 import numpy as np
 from dataclasses import dataclass
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 @dataclass
 class VariableRetentionParameters:

@@ -25,13 +25,13 @@ import matplotlib.pyplot as plt
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import prvSteering
-from Basilisk.fswAlgorithms import rateServoFullNonlinear
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import prvSteering
+from xmera.fswAlgorithms import rateServoFullNonlinear
 #   Import all of the modules that we are going to call in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

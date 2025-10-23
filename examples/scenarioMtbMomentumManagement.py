@@ -81,16 +81,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque,
                                     tamComm, mtbMomentumManagement)
-from Basilisk.simulation import (reactionWheelStateEffector,
+from xmera.simulation import (reactionWheelStateEffector,
                                  simpleNav,
                                  magneticFieldWMM, magnetometer, MtbEffector,
                                  spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, spice_utilities, vizSupport)
 

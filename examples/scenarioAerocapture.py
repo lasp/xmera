@@ -83,19 +83,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
-from Basilisk.simulation import dragDynamicEffector
+from xmera import __path__
+from xmera.simulation import dragDynamicEffector
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import tabularAtmosphere, simpleNav
+from xmera.simulation import spacecraft
+from xmera.simulation import tabularAtmosphere, simpleNav
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import vizSupport
-from Basilisk.utilities.readAtmTable import readAtmTable
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport
+from xmera.utilities import vizSupport
+from xmera.utilities.readAtmTable import readAtmTable
 
 #
 # Basilisk Scenario Script and Integrated Test

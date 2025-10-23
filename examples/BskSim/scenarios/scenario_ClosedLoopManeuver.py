@@ -95,8 +95,8 @@ import sys
 
 import numpy as np
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics, unitTestSupport
-from Basilisk.architecture import messaging
+from xmera.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics, unitTestSupport
+from xmera.architecture import messaging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

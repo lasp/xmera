@@ -72,13 +72,13 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.simulation import dataFileToViz
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import unitTestSupport
+from xmera.simulation import dataFileToViz
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from xmera.utilities import unitTestSupport
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 except ImportError:
     pass
 

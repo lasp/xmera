@@ -21,11 +21,11 @@ from datetime import datetime
 
 import numpy
 import spiceypy
-from Basilisk import __path__
-from Basilisk.utilities import RigidBodyKinematics, macros
+from xmera import __path__
+from xmera.utilities import RigidBodyKinematics, macros
 
 bskPath = __path__[0]
-from Basilisk.architecture.messaging import EpochMsgPayload, EpochMsg
+from xmera.architecture.messaging import EpochMsgPayload, EpochMsg
 
 def ckWrite(handle, time, mrp_array, av_array, start_seg, spacecraft_id=-62, reference_frame="J2000"):
     """

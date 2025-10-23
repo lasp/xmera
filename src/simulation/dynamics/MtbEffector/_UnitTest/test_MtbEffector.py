@@ -24,14 +24,14 @@ import numpy as np
 import pytest
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.simulation import MtbEffector
-from Basilisk.simulation import spacecraft, magneticFieldWMM
-from Basilisk.utilities import SimulationBaseClass, simIncludeGravBody, orbitalMotion, RigidBodyKinematics
-from Basilisk.utilities import macros
-from Basilisk.utilities import spice_utilities
-from Basilisk.utilities import unitTestSupport
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.simulation import MtbEffector
+from xmera.simulation import spacecraft, magneticFieldWMM
+from xmera.utilities import SimulationBaseClass, simIncludeGravBody, orbitalMotion, RigidBodyKinematics
+from xmera.utilities import macros
+from xmera.utilities import spice_utilities
+from xmera.utilities import unitTestSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

@@ -25,9 +25,9 @@
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import vscmgStateEffector
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.simulation import vscmgStateEffector
+from xmera.utilities import macros
 
 
 # methods

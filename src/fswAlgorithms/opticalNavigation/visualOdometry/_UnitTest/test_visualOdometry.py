@@ -21,10 +21,10 @@ import itertools
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import visualOdometry
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import visualOdometry
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 from odometry_support import odometry
 # parameters
 def test_visualOdometryGeneral(show_plots):

@@ -71,9 +71,9 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import spiceypy
-from Basilisk import __path__
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera import __path__
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
 bskPath = __path__[0]

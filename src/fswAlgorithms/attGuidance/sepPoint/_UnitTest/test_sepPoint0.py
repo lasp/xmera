@@ -24,17 +24,17 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 
 # Import all the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.fswAlgorithms import sepPoint
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
-from Basilisk.architecture import sim_model
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.fswAlgorithms import sepPoint
+from xmera.utilities import macros
+from xmera.architecture import messaging
+from xmera.architecture import sim_model
 
 
 def computeGamma(alpha, delta):

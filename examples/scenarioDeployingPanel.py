@@ -84,16 +84,16 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
-from Basilisk.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
-from Basilisk.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
+from xmera.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
+from xmera.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
 import math
 
 

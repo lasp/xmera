@@ -165,18 +165,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 # import message declarations
-from Basilisk.architecture import messaging
-from Basilisk.simulation import coarseSunSensor
+from xmera.architecture import messaging
+from xmera.simulation import coarseSunSensor
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import vizSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion as om
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 

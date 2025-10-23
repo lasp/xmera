@@ -17,9 +17,9 @@
 
 
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import relativeODuKF  # import the module that is to be tested
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import relativeODuKF  # import the module that is to be tested
+from xmera.utilities import SimulationBaseClass, macros, orbitalMotion
 
 import relativeODuKF_test_utilities as FilterPlots
 

@@ -30,18 +30,18 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-import Basilisk.architecture.messaging
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import planetEphemeris
-from Basilisk.utilities import macros
-from Basilisk.architecture import sim_model
+import xmera.architecture.messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import orbitalMotion
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import unitTestSupport                  # general support file with common unit test functions
+from xmera.simulation import planetEphemeris
+from xmera.utilities import macros
+from xmera.architecture import sim_model
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.

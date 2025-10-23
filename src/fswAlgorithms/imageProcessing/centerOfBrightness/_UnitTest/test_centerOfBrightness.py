@@ -20,7 +20,7 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 importErr = False
@@ -31,12 +31,12 @@ except ImportError:
     importErr = True
     reasonErr = "python Pillow package not installed---can't test CenterOfBrightness module"
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 try:
-    from Basilisk.fswAlgorithms import centerOfBrightness
+    from xmera.fswAlgorithms import centerOfBrightness
 except ImportError:
     importErr = True
     reasonErr = "Center Of Brightness not built---check OpenCV option"

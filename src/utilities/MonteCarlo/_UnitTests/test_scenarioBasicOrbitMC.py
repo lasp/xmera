@@ -21,24 +21,24 @@ import tempfile
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-# bskName = 'Basilisk'
+# bskName = 'xmera'
 # splitPath = path.split(bskName)
 # bskPath = splitPath[0] + '/' + bskName + '/'
 # sys.path.append(bskPath + 'modules')
 # sys.path.append(bskPath + 'PythonModules')
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, OrbitalElementDispersion
+from xmera.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from xmera.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, OrbitalElementDispersion
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import macros
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities.MonteCarlo._UnitTests.SimpleTestModule import SimpleTestModule
+from xmera.simulation import spacecraft
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import macros
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities.MonteCarlo._UnitTests.SimpleTestModule import SimpleTestModule
 import shutil
 import matplotlib.pyplot as plt
 import numpy as np

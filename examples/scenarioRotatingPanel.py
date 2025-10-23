@@ -93,22 +93,22 @@ import numpy as np
 # To copy them, first find the location of the Basilisk installation.
 # After installing, you can find the installed location of Basilisk by opening a python interpreter and
 # running the commands:
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
-from Basilisk.simulation import hingedRigidBodyStateEffector
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
-from Basilisk.simulation import simpleSolarPanel
-from Basilisk.simulation import coarseSunSensor
+from xmera.simulation import hingedRigidBodyStateEffector
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
+from xmera.simulation import simpleSolarPanel
+from xmera.simulation import coarseSunSensor
 import math
 
 def run(show_plots):

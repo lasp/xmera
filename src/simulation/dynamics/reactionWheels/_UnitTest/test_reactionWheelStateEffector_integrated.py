@@ -26,16 +26,16 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import macros
-from Basilisk.simulation import gravityEffector
-from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.architecture import messaging
+from xmera.simulation import spacecraft
+from xmera.utilities import macros
+from xmera.simulation import gravityEffector
+from xmera.utilities import simIncludeRW
+from xmera.simulation import reactionWheelStateEffector
+from xmera.architecture import messaging
 
 mpl.rc("figure", figsize=(5.75, 4))
 

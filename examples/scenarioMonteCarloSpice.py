@@ -61,15 +61,15 @@ fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 # @endcond
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 
-from Basilisk.utilities.MonteCarlo.Controller import Controller
+from xmera.utilities.MonteCarlo.Controller import Controller
 
 
 class MyController(Controller):

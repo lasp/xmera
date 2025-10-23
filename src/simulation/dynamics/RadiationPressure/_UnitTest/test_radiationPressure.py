@@ -40,13 +40,13 @@ splitPath = path.split('simulation')
 
 
 #Import all of the modules that we are going to call in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import radiationPressure
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.simulation import spacecraft
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport
+from xmera.simulation import radiationPressure
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion as om
+from xmera.simulation import spacecraft
+from xmera.architecture import messaging
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)

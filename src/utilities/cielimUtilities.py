@@ -2,12 +2,12 @@ import numpy as np
 import os
 from matplotlib import colors
 from matplotlib.colors import is_color_like
-from Basilisk.architecture import messaging
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.simulation import spacecraft
+from xmera.utilities import unitTestSupport
 
 try:
-    from Basilisk.simulation import cielimInterface
+    from xmera.simulation import cielimInterface
     cielimFound = True
 except ImportError:
     cielimFound = False

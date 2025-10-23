@@ -23,17 +23,17 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import spaceToGroundTransmitter
-from Basilisk.simulation import simpleInstrument
-from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport                  # general support file with common unit test functions
+from xmera.simulation import spaceToGroundTransmitter
+from xmera.simulation import simpleInstrument
+from xmera.simulation import partitionedStorageUnit
+from xmera.architecture import messaging
+from xmera.utilities import macros
 
 
 @pytest.mark.parametrize("deviceStatus", [0,1])

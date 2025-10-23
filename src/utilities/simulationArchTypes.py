@@ -18,7 +18,7 @@
 
 
 
-from Basilisk.architecture import sim_model
+from xmera.architecture import sim_model
 
 
 class ProcessBaseClass(object):

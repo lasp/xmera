@@ -17,7 +17,7 @@
 #
 
 import numpy as np
-from Basilisk.utilities import macros
+from xmera.utilities import macros
 
 
 def exponentialAtmosphere(atmosModule, name):

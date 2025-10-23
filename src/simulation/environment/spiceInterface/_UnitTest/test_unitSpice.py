@@ -33,17 +33,17 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
 
 import datetime
-from Basilisk.utilities import spice_utilities
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import SimulationBaseClass
+from xmera.utilities import spice_utilities
+from xmera.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
 import numpy
-from Basilisk.simulation import spiceInterface
-from Basilisk.utilities import macros
+from xmera.simulation import spiceInterface
+from xmera.utilities import macros
 import matplotlib.pyplot as plt
 
 

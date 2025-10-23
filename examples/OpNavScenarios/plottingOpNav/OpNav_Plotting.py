@@ -28,8 +28,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 # import scipy.optimize
-from Basilisk.utilities import macros as mc
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import macros as mc
+from xmera.utilities import unitTestSupport
 from matplotlib.patches import Ellipse
 
 color_x = 'dodgerblue'

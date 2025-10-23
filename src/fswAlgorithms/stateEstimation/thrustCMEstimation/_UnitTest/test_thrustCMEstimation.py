@@ -21,10 +21,10 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import thrustCMEstimation
-from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import thrustCMEstimation
+from xmera.utilities import SimulationBaseClass, macros, unitTestSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

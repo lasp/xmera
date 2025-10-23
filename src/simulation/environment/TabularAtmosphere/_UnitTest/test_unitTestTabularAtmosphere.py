@@ -28,19 +28,19 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.simulation import tabularAtmosphere
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
-from Basilisk.architecture import sim_model
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities.readAtmTable import readAtmTable
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport
+from xmera.simulation import tabularAtmosphere
+from xmera.utilities import macros
+from xmera.architecture import messaging
+from xmera.architecture import sim_model
+from xmera.utilities import orbitalMotion
+from xmera.utilities.readAtmTable import readAtmTable
 
 @pytest.mark.parametrize("accuracy", [1e-12])
 @pytest.mark.parametrize("altitude", [42.0, 33.33333, 10000.0, -10.0]) # exact, interpolate, above, below

@@ -29,16 +29,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pytest
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import prescribedTrans  # import the module that is to be tested
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import sim_model
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import prescribedTrans  # import the module that is to be tested
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 

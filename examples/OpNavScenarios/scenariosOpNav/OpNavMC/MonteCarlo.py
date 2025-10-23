@@ -42,13 +42,13 @@ viz_path = Sim.vizPath
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import OrbitalElementDispersion, UniformDispersion
+from xmera.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from xmera.utilities.MonteCarlo.Dispersions import OrbitalElementDispersion, UniformDispersion
 # import simulation related support
-from Basilisk.utilities import macros
+from xmera.utilities import macros
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np

@@ -49,7 +49,7 @@ class PythonTest:
 """
 
 # The following is the code with all elements deprecated
-from Basilisk.utilities import deprecated
+from xmera.utilities import deprecated
 
 
 @deprecated.deprecated("2099/05/05", "Use standaloneFun_new() instead!")

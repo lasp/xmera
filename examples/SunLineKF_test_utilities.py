@@ -19,7 +19,7 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -26,14 +26,14 @@ import spiceypy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import chebyPosEphem
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.fswAlgorithms import chebyPosEphem
 import matplotlib.pyplot as plt
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 orbitPosAccuracy = 1.0
 orbitVelAccuracy = 0.01

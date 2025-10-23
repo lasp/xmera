@@ -33,9 +33,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.simulation import spacecraft, spinningBodyOneDOFStateEffector, gravityEffector
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros
+from xmera.simulation import spacecraft, spinningBodyOneDOFStateEffector, gravityEffector
+from xmera.architecture import messaging
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

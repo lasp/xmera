@@ -128,7 +128,7 @@ Illustration of Simulation Results
 """
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport
 
 # Get current file path
 import sys, os, inspect

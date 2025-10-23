@@ -17,7 +17,7 @@
 #
 import csv
 
-from Basilisk import __path__
+from xmera import __path__
 
 def loadGravFromFile(
         fileName: str, 
@@ -60,12 +60,12 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
         
         if not coefficientsNormalized:
             raise ValueError("Coefficients in given file are not normalized. This is "
-                            "not currently supported in Basilisk.")
+                            "not currently supported in xmera.")
 
         if refLong != 0 or refLat != 0:
             raise ValueError("Coefficients in given file use a reference longitude"
                              " or latitude that is not zero. This is not currently "
-                             "supported in Basilisk.")
+                             "supported in xmera.")
 
         clmRow = []
         slmRow = []

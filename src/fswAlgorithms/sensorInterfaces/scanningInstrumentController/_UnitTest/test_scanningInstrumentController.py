@@ -21,15 +21,15 @@ import os
 import inspect
 import numpy as np
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import scanningInstrumentController
-from Basilisk.architecture import sim_model
+from xmera.utilities import SimulationBaseClass
+from xmera.architecture import messaging
+from xmera.utilities import macros
+from xmera.fswAlgorithms import scanningInstrumentController
+from xmera.architecture import sim_model
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 #Test cases:

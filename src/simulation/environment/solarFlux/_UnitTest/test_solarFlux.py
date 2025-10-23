@@ -19,10 +19,10 @@
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import solarFlux
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import orbitalMotion as om
+from xmera.architecture import messaging
+from xmera.simulation import solarFlux
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import orbitalMotion as om
 
 
 @pytest.mark.parametrize("positionFactor, shadowFactor, eclipseMsgName, relTol", [(np.sqrt(2), 0.5, "eclipse_data_0", 1e-8), (np.sqrt(2), 0.5, "", 1e-8)])

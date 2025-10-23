@@ -69,44 +69,44 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # import message declarations
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import locationPointing
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import locationPointing
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import groundMapping
-from Basilisk.simulation import mappingInstrument
-from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.simulation import simpleNav
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.simulation import ephemerisConverter
+from xmera.simulation import extForceTorque
+from xmera.simulation import groundMapping
+from xmera.simulation import mappingInstrument
+from xmera.simulation import partitionedStorageUnit
+from xmera.simulation import simpleNav
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import astroFunctions
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import planetStates
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import (
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import astroFunctions
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import planetStates
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import (
     unitTestSupport,
 )  # general support file with common unit test functions
 
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 
 except ImportError:
     pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

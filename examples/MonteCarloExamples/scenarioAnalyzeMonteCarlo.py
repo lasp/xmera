@@ -103,18 +103,18 @@ bokeh server will keep running until stopped.
 import inspect
 import os
 
-from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
+from xmera.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
 from bokeh.palettes import RdYlBu9
-from Basilisk.utilities.dataframe_utilities import curve_per_df_column, pull_and_format_df
-from Basilisk.utilities.DS_Plot import DS_Plot
+from xmera.utilities.dataframe_utilities import curve_per_df_column, pull_and_format_df
+from xmera.utilities.DS_Plot import DS_Plot
 
-import Basilisk.utilities.macros as macros
+import xmera.utilities.macros as macros
 
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 

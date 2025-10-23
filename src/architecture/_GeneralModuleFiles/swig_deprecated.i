@@ -36,7 +36,7 @@ See src\architecture\utilitiesSelfCheck\swigDeprecatedCheck.i
 */
 %define %deprecated_function(function, removal_date, message)
 %pythonprepend function %{
-    from Basilisk.utilities import deprecated
+    from xmera.utilities import deprecated
     deprecated.deprecationWarn(f"{__name__}.function".replace("::","."), `removal_date`, `message`)
 %}
 %enddef
@@ -60,7 +60,7 @@ See src\architecture\utilitiesSelfCheck\swigDeprecatedCheck.i
 %define %deprecated_variable(class, variable, removal_date, message)
 %extend class {
     %pythoncode %{
-    from Basilisk.utilities import deprecated
+    from xmera.utilities import deprecated
     variable = deprecated.DeprecatedProperty(`removal_date`, `message`, variable)
     %}
 }

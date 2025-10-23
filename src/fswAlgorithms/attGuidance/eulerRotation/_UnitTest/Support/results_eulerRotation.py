@@ -20,8 +20,8 @@ from numpy import sin, cos
 
 np.set_printoptions(precision=12)
 
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import macros as mc
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import macros as mc
 
 
 

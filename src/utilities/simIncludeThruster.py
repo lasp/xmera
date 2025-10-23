@@ -25,8 +25,8 @@ import sys
 from collections import OrderedDict
 
 import numpy
-from Basilisk.architecture import messaging
-from Basilisk.simulation import thrusterDynamicEffector
+from xmera.architecture import messaging
+from xmera.simulation import thrusterDynamicEffector
 
 
 class thrusterFactory(object):

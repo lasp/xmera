@@ -62,35 +62,35 @@ import os
 import numpy as np
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import (
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import (
     unitTestSupport,
 )  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import sensorThermal
+from xmera.simulation import spacecraft
+from xmera.simulation import extForceTorque
+from xmera.utilities import simIncludeGravBody
+from xmera.simulation import simpleNav
+from xmera.simulation import ephemerisConverter
+from xmera.simulation import sensorThermal
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import locationPointing
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import locationPointing
 
 # import message declarations
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

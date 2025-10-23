@@ -85,14 +85,14 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from Basilisk.simulation import spacecraft, gravityEffector
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
-from Basilisk.utilities import vizSupport
+from xmera.simulation import spacecraft, gravityEffector
+from xmera.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
+from xmera.utilities import vizSupport
 
 def run(show_plots):
     """

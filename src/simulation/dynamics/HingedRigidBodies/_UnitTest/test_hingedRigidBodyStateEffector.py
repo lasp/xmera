@@ -24,16 +24,16 @@ import numpy
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import hingedRigidBodyStateEffector
-from Basilisk.utilities import macros
-from Basilisk.utilities import pythonVariableLogger
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import extForceTorque
-from Basilisk.architecture import messaging
+from xmera.simulation import spacecraft
+from xmera.simulation import hingedRigidBodyStateEffector
+from xmera.utilities import macros
+from xmera.utilities import pythonVariableLogger
+from xmera.simulation import gravityEffector
+from xmera.simulation import extForceTorque
+from xmera.architecture import messaging
 
 
 def test_hingedRigidBodyGravity(show_plots):

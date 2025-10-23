@@ -20,12 +20,12 @@ import itertools
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import lambertSurfaceRelativeVelocity
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import lambertSurfaceRelativeVelocity
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
 
 # parameters
 relativeVelocities = np.array([[0., 0., 0.], [100., -300., 200.]])

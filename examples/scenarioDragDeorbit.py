@@ -128,14 +128,14 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk, used to get the location of supporting data
-from Basilisk import __path__
+from xmera import __path__
 # always import the Basilisk messaging support
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 # import atmosphere and drag modules
-from Basilisk.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector
+from xmera.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport, simSetPlanetEnvironment)
 
 bskPath = __path__[0]

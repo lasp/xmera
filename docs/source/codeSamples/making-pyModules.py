@@ -16,18 +16,18 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.moduleTemplates import cppModuleTemplate
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.moduleTemplates import cppModuleTemplate
+from xmera.architecture import sim_model
+from xmera.architecture import messaging
 
 import numpy as np
 
 
 def run():
     """
-    Illustration of adding Basilisk Python modules to a task
+    Illustration of adding xmera Python modules to a task
     """
 
     #  Create a sim module as an empty container
@@ -39,7 +39,7 @@ def run():
     # create the dynamics task and specify the integration update time
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.0)))
 
-    # create copies of the Basilisk modules
+    # create copies of the xmera modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
     mod1.modelTag = "module1"
     scSim.AddModelToTask("dynamicsTask", mod1, 0)

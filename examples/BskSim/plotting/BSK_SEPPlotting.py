@@ -19,8 +19,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #

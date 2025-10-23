@@ -15,20 +15,20 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import tempfile, sys
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 sys.path.append(bskPath + "/../../build/simulation/vizard/cielimInterface/")
 import cielimMessage_pb2
 import delimited_protobuf
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.utilities import SimulationBaseClass
+from xmera.architecture import messaging
+from xmera.utilities import SimulationBaseClass
 
 importErr = False
 reasonErr = ""
 try:
-    from Basilisk.simulation import cielimInterface
+    from xmera.simulation import cielimInterface
 except ImportError:
     importErr = True
     reasonErr = "\nCielim Interface not built ---check build option"

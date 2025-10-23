@@ -17,8 +17,8 @@
 #
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
 

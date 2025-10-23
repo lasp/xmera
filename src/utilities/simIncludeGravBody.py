@@ -26,19 +26,19 @@ from typing import runtime_checkable
 from typing import Any
 from dataclasses import dataclass
 
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spiceInterface
-from Basilisk.simulation.gravityEffector import (
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.simulation import gravityEffector
+from xmera.simulation import spiceInterface
+from xmera.simulation.gravityEffector import (
     loadGravFromFile as loadGravFromFile_python,
 )
-from Basilisk.simulation.gravityEffector import (
+from xmera.simulation.gravityEffector import (
     loadPolyFromFile as loadPolyFromFile_python,
 )
-from Basilisk.utilities import spice_utilities
+from xmera.utilities import spice_utilities
 
-from Basilisk.utilities.deprecated import deprecationWarn
+from xmera.utilities.deprecated import deprecationWarn
 
 @dataclass
 class BodyData:

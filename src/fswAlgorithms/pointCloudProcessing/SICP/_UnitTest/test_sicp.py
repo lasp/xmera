@@ -25,10 +25,10 @@ import testFunctions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import RigidBodyKinematics as rbk
 
 @pytest.mark.parametrize("mrp, scale, translations" ,[
     ([0.01, -0.005, 0.1], 0.92, [0.02, 0.01, 0.05]),

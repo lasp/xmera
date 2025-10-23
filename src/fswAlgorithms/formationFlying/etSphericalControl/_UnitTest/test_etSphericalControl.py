@@ -26,13 +26,13 @@
 
 import numpy as np
 import pytest
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging  # import the message definitions
-from Basilisk.fswAlgorithms import etSphericalControl  # import the module that is to be tested
+from xmera.architecture import sim_model
+from xmera.architecture import messaging  # import the message definitions
+from xmera.fswAlgorithms import etSphericalControl  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros, RigidBodyKinematics, orbitalMotion
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros, RigidBodyKinematics, orbitalMotion
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.

@@ -19,7 +19,7 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk.simulation import fuelTank
+from xmera.simulation import fuelTank
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

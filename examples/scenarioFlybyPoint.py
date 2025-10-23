@@ -64,13 +64,13 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (flybyPoint, attTrackingError, mrpFeedback, rwMotorTorque)
-from Basilisk.simulation import (simpleNav, spacecraft, reactionWheelStateEffector, planetEphemeris)
-from Basilisk.utilities import (SimulationBaseClass, simIncludeRW, macros, unitTestSupport, orbitalMotion,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (flybyPoint, attTrackingError, mrpFeedback, rwMotorTorque)
+from xmera.simulation import (simpleNav, spacecraft, reactionWheelStateEffector, planetEphemeris)
+from xmera.utilities import (SimulationBaseClass, simIncludeRW, macros, unitTestSupport, orbitalMotion,
                                 simIncludeGravBody)
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import RigidBodyKinematics as rbk
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

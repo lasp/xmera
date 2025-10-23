@@ -116,35 +116,35 @@ import numpy as np
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 # import message declarations
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import hillPoint
-from Basilisk.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import hillPoint
+from xmera.fswAlgorithms import mrpFeedback
 
 # import simulation related support
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import pinholeCamera
-from Basilisk.simulation import planetEphemeris
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation.gravityEffector import loadPolyFromFileToList
+from xmera.simulation import ephemerisConverter
+from xmera.simulation import extForceTorque
+from xmera.simulation import pinholeCamera
+from xmera.simulation import planetEphemeris
+from xmera.simulation import simpleNav
+from xmera.simulation import spacecraft
+from xmera.simulation.gravityEffector import loadPolyFromFileToList
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

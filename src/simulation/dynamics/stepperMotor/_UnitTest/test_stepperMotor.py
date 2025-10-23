@@ -20,10 +20,10 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import stepperMotor
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.simulation import stepperMotor
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 
 @pytest.mark.parametrize("motor_theta_init", [0.0 * macros.D2R, 10.0 * macros.D2R, -5.0 * macros.D2R])

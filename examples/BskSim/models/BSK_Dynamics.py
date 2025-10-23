@@ -17,16 +17,16 @@
 #
 
 import numpy as np
-from Basilisk import __path__
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
+from xmera import __path__
+from xmera.simulation import ephemerisConverter
+from xmera.simulation import (spacecraft, extForceTorque, simpleNav,
                                  reactionWheelStateEffector, coarseSunSensor, eclipse)
-from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import macros as mc
-from Basilisk.utilities import simIncludeRW, simIncludeGravBody
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport as sp
+from xmera.simulation import thrusterDynamicEffector
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import macros as mc
+from xmera.utilities import simIncludeRW, simIncludeGravBody
+from xmera.utilities import simIncludeThruster
+from xmera.utilities import unitTestSupport as sp
 
 bskPath = __path__[0]
 

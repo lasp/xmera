@@ -22,8 +22,8 @@ import collections
 import random
 
 import numpy as np
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import orbitalMotion
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import orbitalMotion
 
 
 class SingleVariableDispersion(object):

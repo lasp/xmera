@@ -26,18 +26,18 @@ import spiceypy
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spiceInterface
-from Basilisk.simulation import stateArchitecture
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.architecture import messaging
-from Basilisk.simulation.gravityEffector import loadGravFromFileToList
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import macros
+from xmera.simulation import gravityEffector
+from xmera.simulation import spiceInterface
+from xmera.simulation import stateArchitecture
+from xmera.utilities import orbitalMotion as om
+from xmera.architecture import messaging
+from xmera.simulation.gravityEffector import loadGravFromFileToList
 
 #script to check spherical harmonics calcs out to 20th degree
 #Uses coefficient from Vallado tables D-1

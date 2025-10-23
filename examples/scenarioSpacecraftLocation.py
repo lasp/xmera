@@ -48,19 +48,19 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, hillPoint)
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simpleNav, spacecraft
-from Basilisk.simulation import spacecraftLocation
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError, hillPoint)
+from xmera.simulation import extForceTorque
+from xmera.simulation import simpleNav, spacecraft
+from xmera.simulation import spacecraftLocation
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 unitTestSupport, vizSupport)
 
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

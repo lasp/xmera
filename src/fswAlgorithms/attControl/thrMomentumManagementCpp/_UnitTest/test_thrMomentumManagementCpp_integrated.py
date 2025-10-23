@@ -21,11 +21,11 @@ import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Basilisk import __path__
-from Basilisk.simulation import spacecraft, reactionWheelStateEffector, extForceTorque, simpleNav
-from Basilisk.fswAlgorithms import thrMomentumManagementCpp, inertial3D, attTrackingError, mrpFeedback, rwMotorTorque
-from Basilisk.utilities import SimulationBaseClass, macros, fswSetupRW, simIncludeRW, unitTestSupport
-from Basilisk.architecture import messaging
+from xmera import __path__
+from xmera.simulation import spacecraft, reactionWheelStateEffector, extForceTorque, simpleNav
+from xmera.fswAlgorithms import thrMomentumManagementCpp, inertial3D, attTrackingError, mrpFeedback, rwMotorTorque
+from xmera.utilities import SimulationBaseClass, macros, fswSetupRW, simIncludeRW, unitTestSupport
+from xmera.architecture import messaging
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

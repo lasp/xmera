@@ -19,10 +19,10 @@
 import numpy as np
 import pytest
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import rateDamp
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.fswAlgorithms import rateDamp
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 @pytest.mark.parametrize("P", [0.1, 2.0])
 def test_rateDamp(show_plots, P):

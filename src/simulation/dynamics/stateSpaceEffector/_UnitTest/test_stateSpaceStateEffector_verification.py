@@ -24,8 +24,8 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk, pythonVariableLogger
-from Basilisk.simulation import spacecraft, stateSpaceStateEffector
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk, pythonVariableLogger
+from xmera.simulation import spacecraft, stateSpaceStateEffector
 
 
 @pytest.mark.parametrize("frequency", [1e3, 1e4, 1e5])

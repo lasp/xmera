@@ -28,13 +28,13 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
-from Basilisk.simulation import spacecraft, radiationPressure
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.simulation import spacecraft, radiationPressure
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 unitTestSupport)
-from Basilisk.utilities.simIncludeGravBody import gravBodyFactory
+from xmera.utilities.simIncludeGravBody import gravBodyFactory
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

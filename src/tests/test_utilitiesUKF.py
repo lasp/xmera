@@ -21,8 +21,8 @@ import math
 import numpy
 import pytest
 
-from Basilisk.fswAlgorithms import inertialUKF
-from Basilisk.fswAlgorithms import sunlineSuKF
+from xmera.fswAlgorithms import inertialUKF
+from xmera.fswAlgorithms import sunlineSuKF
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

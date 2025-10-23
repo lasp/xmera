@@ -34,9 +34,9 @@ import os
 import sys
 
 import pytest
-import Basilisk.architecture.messaging
-from Basilisk.architecture import sim_model
-from Basilisk.utilities import unitTestSupport
+import xmera.architecture.messaging
+from xmera.architecture import sim_model
+from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

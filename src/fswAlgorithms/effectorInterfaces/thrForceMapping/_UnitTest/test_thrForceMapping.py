@@ -17,9 +17,9 @@
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import thrForceMapping
-from Basilisk.utilities import (macros, fswSetupThrusters, SimulationBaseClass)
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import thrForceMapping
+from xmera.utilities import (macros, fswSetupThrusters, SimulationBaseClass)
 from .Support.thruster_force_mapping_test_oracle import ThrForceMappingTestOracle
 
 

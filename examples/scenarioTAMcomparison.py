@@ -117,25 +117,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import magneticFieldCenteredDipole
-from Basilisk.simulation import magneticFieldWMM
-from Basilisk.simulation import magnetometer
+from xmera.simulation import spacecraft
+from xmera.simulation import magneticFieldCenteredDipole
+from xmera.simulation import magneticFieldWMM
+from xmera.simulation import magnetometer
 
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, spice_utilities)
-from Basilisk.utilities import simSetPlanetEnvironment
+from xmera.utilities import simSetPlanetEnvironment
 
 #attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     """

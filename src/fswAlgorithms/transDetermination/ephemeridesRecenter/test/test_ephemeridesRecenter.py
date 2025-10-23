@@ -21,9 +21,9 @@ import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import ephemeridesRecenter
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.fswAlgorithms import ephemeridesRecenter
+from xmera.architecture import messaging
 
 def test_body_recenter():
     """ Test ephemeridesRecenter. """

@@ -29,14 +29,14 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import BSpline
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import constrainedAttitudeManeuver
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import BSpline
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import constrainedAttitudeManeuver
+from xmera.utilities import RigidBodyKinematics as rbk
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 dataFileName = None

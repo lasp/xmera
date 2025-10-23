@@ -174,17 +174,17 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.simulation import fuelTank
-from Basilisk.simulation import linearSpringMassDamper
+from xmera.simulation import fuelTank
+from xmera.simulation import linearSpringMassDamper
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import pythonVariableLogger
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport
+from xmera.utilities import pythonVariableLogger
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

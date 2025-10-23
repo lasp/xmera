@@ -30,13 +30,13 @@ import numpy as np
 
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                   # general support file with common unit test functions
-from Basilisk.fswAlgorithms import solarArrayReference           # import the module that is to be tested
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.architecture import sim_model
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport                   # general support file with common unit test functions
+from xmera.fswAlgorithms import solarArrayReference           # import the module that is to be tested
+from xmera.utilities import macros
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging                      # import the message definitions
+from xmera.architecture import sim_model
 
 
 # this python function computes the same reference angle as the tested module

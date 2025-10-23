@@ -36,11 +36,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import rwMotorTorque
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport
+from xmera.fswAlgorithms import rwMotorTorque
+from xmera.utilities import macros
+from xmera.architecture import messaging
 from Support import results_rwMotorTorque
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.

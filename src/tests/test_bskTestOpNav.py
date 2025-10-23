@@ -33,8 +33,8 @@ import os
 import sys
 
 import pytest
-from Basilisk.architecture import sim_model
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import sim_model
+from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -68,8 +68,8 @@ testScripts = [
 
 
 try:
-    from Basilisk.simulation import vizInterface, camera
-    from Basilisk.fswAlgorithms import houghCircles, limbFinding
+    from xmera.simulation import vizInterface, camera
+    from xmera.fswAlgorithms import houghCircles, limbFinding
 except ImportError:
     pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use opNav behavior in build")
 

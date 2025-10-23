@@ -20,7 +20,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

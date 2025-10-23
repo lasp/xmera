@@ -95,12 +95,12 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque,
                                     thrMomentumManagement, forceTorqueThrForceMapping, thrMomentumDumping)
-from Basilisk.simulation import (reactionWheelStateEffector, thrusterDynamicEffector, simpleNav, spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.simulation import (reactionWheelStateEffector, thrusterDynamicEffector, simpleNav, spacecraft)
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, simIncludeThruster, unitTestSupport, vizSupport)
 

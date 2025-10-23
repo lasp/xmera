@@ -98,11 +98,11 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Basilisk.utilities import SimulationBaseClass, vizSupport, simIncludeGravBody
-from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector
-from Basilisk.utilities import macros, orbitalMotion, unitTestSupport
+from xmera.utilities import SimulationBaseClass, vizSupport, simIncludeGravBody
+from xmera.simulation import spacecraft, spinningBodyTwoDOFStateEffector
+from xmera.utilities import macros, orbitalMotion, unitTestSupport
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

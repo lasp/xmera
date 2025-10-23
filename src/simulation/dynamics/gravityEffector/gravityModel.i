@@ -17,7 +17,7 @@
 
  */
 
-%module(package="Basilisk.simulation") gravityModel
+%module(package="xmera.simulation") gravityModel
 %{
    #include <simulation/dynamics/_GeneralModuleFiles/gravityModel.h>
    #include <memory>

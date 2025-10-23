@@ -10,8 +10,8 @@ with warnings.catch_warnings():
     from holoviews.operation.datashader import datashade, dynspread
     from holoviews.streams import RangeXY
     from datashader.colors import Sets1to3
-from Basilisk.utilities import macros
-from Basilisk.utilities.dataframe_utilities import curve_per_df_column
+from xmera.utilities import macros
+from xmera.utilities.dataframe_utilities import curve_per_df_column
 
 class DS_Plot():
     '''

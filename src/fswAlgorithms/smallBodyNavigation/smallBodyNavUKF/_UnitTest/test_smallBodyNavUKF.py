@@ -18,11 +18,11 @@
 #
 
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import smallBodyNavUKF
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros, orbitalMotion
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import smallBodyNavUKF
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros, orbitalMotion
+from xmera.utilities import unitTestSupport
 from matplotlib import pyplot as plt
 
 

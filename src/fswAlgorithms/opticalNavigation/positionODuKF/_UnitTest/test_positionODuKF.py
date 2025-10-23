@@ -20,9 +20,9 @@
 import positionODuKF_test_utilities as filter_plots
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import positionODuKF  # import the module that is to be tested
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import positionODuKF  # import the module that is to be tested
+from xmera.utilities import SimulationBaseClass, macros, orbitalMotion
 
 
 def add_time_column(time, data):

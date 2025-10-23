@@ -22,8 +22,8 @@ import os
 import sys
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import RigidBodyKinematics as rbk
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

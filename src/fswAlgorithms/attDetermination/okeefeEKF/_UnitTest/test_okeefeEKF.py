@@ -29,11 +29,11 @@ sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
 import SunLineOEKF_test_utilities as FilterPlots
-from Basilisk.fswAlgorithms import okeefeEKF
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.architecture import messaging
+from xmera.fswAlgorithms import okeefeEKF
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.architecture import messaging
 
 
 def setupFilterData(filterObject):

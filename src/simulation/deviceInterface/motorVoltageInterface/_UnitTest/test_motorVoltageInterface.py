@@ -31,15 +31,15 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import motorVoltageInterface           # import the module that is to be tested
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport                  # general support file with common unit test functions
+from xmera.simulation import motorVoltageInterface           # import the module that is to be tested
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 
 def addTimeColumn(time, data):

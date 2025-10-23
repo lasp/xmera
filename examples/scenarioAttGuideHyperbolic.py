@@ -122,12 +122,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint
-from Basilisk.simulation import extForceTorque, simpleNav, spacecraft
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
-from Basilisk.utilities import vizSupport
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint
+from xmera.simulation import extForceTorque, simpleNav, spacecraft
+from xmera.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

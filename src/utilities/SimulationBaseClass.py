@@ -29,10 +29,10 @@ from collections import OrderedDict
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import sim_model
-from Basilisk.utilities import deprecated, simulationArchTypes
-from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
-from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
+from xmera.architecture import sim_model
+from xmera.utilities import deprecated, simulationArchTypes
+from xmera.utilities.pythonVariableLogger import PythonVariableLogger
+from xmera.utilities.simulationProgessBar import SimulationProgressBar
 
 # Point the path to the module storage area
 
