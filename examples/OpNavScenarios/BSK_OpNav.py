@@ -212,8 +212,3 @@ class BSKScenario(object):
         if self.showPlots:
             figureList = self.pull_outputs(self.showPlots)
         return figureList
-
-
-
-
-

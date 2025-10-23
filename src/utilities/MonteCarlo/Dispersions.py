@@ -108,7 +108,7 @@ class NormalDispersion(SingleVariableDispersion):
 
 class VectorVariableDispersion(object):
     __metaclass__ = abc.ABCMeta
-    
+
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds

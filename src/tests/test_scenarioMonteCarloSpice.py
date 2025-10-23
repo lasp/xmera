@@ -55,5 +55,3 @@ def test_MonteCarloSimulationDatashader(show_plots):
     assert testFailCount < 1, testMessages
 
     return
-
-

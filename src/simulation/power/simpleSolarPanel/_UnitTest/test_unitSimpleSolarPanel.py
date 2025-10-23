@@ -79,9 +79,9 @@ def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
 def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     #   Test initialization
-    testFailCount = 0                      
-    testMessages = []                      
-    unitTaskName = "unitTask"             
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
     #   Specify test-against parameter
@@ -120,14 +120,14 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     panel.sunInMsg.subscribeTo(sunMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, panel)
-    
+
     dataLog = panel.nodePowerOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     #   Execute the sim for 1 second.
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
-    
+
     unitTestSim.ExecuteSimulation()
 
     powerData = dataLog.netPower
@@ -137,7 +137,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     if not unitTestSupport.isDoubleEqual(powerData[1], referencePower*referenceMultiplier, tol):
         testFailCount += 1
         testMessages.append('Error: simpleSolarPanel did not compute power correctly.')
-    
+
     return [testFailCount, ''.join(testMessages)]
 
 

@@ -59,7 +59,7 @@ def test_pythonComparison():
     return
 
 """
-The following three tests isolate each transformation 
+The following three tests isolate each transformation
 1. The first test only translates the data, all three outputs must be within a percent of the inputs
 2. The second test only rotates the data, all three outputs must be within a percent of the inputs
 3. The third test only scales the data, all three outputs must be within a percent of the inputs

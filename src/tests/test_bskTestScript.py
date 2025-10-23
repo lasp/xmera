@@ -87,4 +87,3 @@ def test_scenarioBskScenarios(show_plots, bskSimCase):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-
