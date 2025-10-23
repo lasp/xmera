@@ -145,6 +145,12 @@ function(xmera_add_swig_module module)
 endfunction()
 
 function(xmera_add_swig_message message)
+  cmake_parse_arguments(PARSE_ARGV 1 arg "" "TEMPLATE" "")
+
+  if(NOT (DEFINED arg_TEMPLATE))
+    set(arg_TEMPLATE "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/msgInterfacePy.i.in")
+  endif()
+
   set_property(GLOBAL APPEND PROPERTY XMERA_REGISTERED_MESSAGES "${message}")
 
   add_custom_command(
@@ -155,7 +161,7 @@ function(xmera_add_swig_message message)
       "${Python3_EXECUTABLE}"
       "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/generateSWIGModules.py"
       "${CMAKE_CURRENT_BINARY_DIR}/${message}.i"
-      "${CMAKE_CURRENT_SOURCE_DIR}/${message}.h"
+      "${arg_TEMPLATE}"
       "${message}"
       "${CMAKE_CURRENT_SOURCE_DIR}"
     WORKING_DIRECTORY
@@ -164,7 +170,7 @@ function(xmera_add_swig_message message)
       "${CMAKE_CURRENT_SOURCE_DIR}/${message}.h"
     DEPENDS
       "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/generateSWIGModules.py"
-      "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/msgInterfacePy.i.in"
+      "${arg_TEMPLATE}"
     VERBATIM
     DEPENDS_EXPLICIT_ONLY
   )
