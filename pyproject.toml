@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "basilisk"
+name = "xmera"
 version = "0.1.0"
-description = "Basilisk: Flexible, Fast, and Reconfigurable Space Simulation Framework"
+description = "Xmera: Flexible, Fast, and Reconfigurable Space Simulation Framework"
 requires-python = ">=3.9, <3.12"
 dependencies = [
     "bokeh",
