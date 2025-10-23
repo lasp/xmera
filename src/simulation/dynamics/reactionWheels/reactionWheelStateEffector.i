@@ -31,7 +31,7 @@
 %include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 %include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 %include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
-%include <simulation/dynamics/reactionWheels/reactionWheelSupport.h>
+%include <architecture/msgPayloadDef/definitions.h>
 %include "reactionWheelStateEffector.h"
 %include <architecture/utilities/macroDefinitions.h>
 

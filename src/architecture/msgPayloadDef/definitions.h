@@ -10,4 +10,6 @@
 #define SICP_POINT_DIM 3
 #define MAX_SICP_ITERATIONS 250
 
+enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
+
 #endif  // MSG_DEFINITIONS_H

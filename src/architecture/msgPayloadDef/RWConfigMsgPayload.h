@@ -20,7 +20,7 @@
 #ifndef SIM_RW_CONFIG_MESSAGE_H
 #define SIM_RW_CONFIG_MESSAGE_H
 
-#include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
+#include <architecture/msgPayloadDef/definitions.h>
 #include <Eigen/Dense>
 
 /*! @brief Structure used to define the individual RW configuration data message*/
