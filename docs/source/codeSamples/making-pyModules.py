@@ -19,8 +19,7 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.moduleTemplates import cppModuleTemplate
-from Basilisk.architecture import sysModel
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import sim_model
 from Basilisk.architecture import messaging
 
 import numpy as np
@@ -81,7 +80,7 @@ def run():
     return
 
 
-class TestPythonModule(sysModel.SysModel):
+class TestPythonModule(sim_model.SysModel):
     def __init__(self, *args):
         super().__init__(*args)
         self.dataInMsg = messaging.ModuleTemplateMsgReader()
@@ -91,7 +90,7 @@ class TestPythonModule(sysModel.SysModel):
         # Ensure that self.dataInMsg is linked
         if not self.dataInMsg.isLinked():
             self.bskLogger.bskLog(
-                bskLogging.BSK_ERROR, "TestPythonModule.dataInMsg is not linked."
+                sim_model.BSK_ERROR, "TestPythonModule.dataInMsg is not linked."
             )
 
         # Initialiazing self.dataOutMsg
@@ -99,7 +98,7 @@ class TestPythonModule(sysModel.SysModel):
         payload.dataVector = np.array([0, 0, 0])
         self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
 
-        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
+        self.bskLogger.bskLog(sim_model.BSK_INFORMATION, "Reset in TestPythonModule")
 
     def updateState(self, currentSimNanos):
         # Read input message
@@ -114,7 +113,7 @@ class TestPythonModule(sysModel.SysModel):
         self.dataOutMsg.write(payload, currentSimNanos, self.moduleID)
 
         self.bskLogger.bskLog(
-            bskLogging.BSK_INFORMATION,
+            sim_model.BSK_INFORMATION,
             f"Python Module ID {self.moduleID} ran Update at {currentSimNanos*1e-9}s",
         )
 

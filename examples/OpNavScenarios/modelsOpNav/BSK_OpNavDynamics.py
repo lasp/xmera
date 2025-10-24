@@ -32,12 +32,13 @@ import math
 import os
 
 import numpy as np
+import spiceypy as spice
+
 from Basilisk import __path__
 from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
                                  reactionWheelStateEffector, coarseSunSensor, eclipse,
                                  thrusterDynamicEffector, ephemerisConverter, vizInterface,
                                  camera)
-from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody
@@ -223,10 +224,10 @@ class BSKDynamicModels():
         self.gravFactory.spiceObject.referenceBase = "J2000"
         self.gravFactory.spiceObject.zeroBase = 'mars barycenter'
 
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
+        spice.furnsh(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+        spice.furnsh(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+        spice.furnsh(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+        spice.furnsh(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
 
     def SetEclipseObject(self):
         self.eclipseObject.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
