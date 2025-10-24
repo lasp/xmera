@@ -10,13 +10,15 @@
 #include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
 
+#include <Eigen/Core>
+
 /*! @brief Top level structure for the sub-module routines. */
 class RwMotorTorque : public SysModel {
    public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    double controlAxes_B[3 * 3];  //!< [-] array of the control unit axes
+    Eigen::Matrix3d controlAxes_B{};  //!< [-] array of the control unit axes
 
     /* declare module IO interfaces */
     Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;   //!< RW motor torque output message
@@ -30,8 +32,7 @@ class RwMotorTorque : public SysModel {
     int numAvailRW{};               //!< [-] number of reaction wheels available
     RWArrayConfigMsgPayload
         rwConfigParams{};               //!< [-] struct to store message containing RW config parameters in body B frame
-    double GsMatrix_B[3 * RW_EFF_CNT];  //!< [-] The RW spin axis matrix in body frame components
-    double CGs[3][RW_EFF_CNT];          //!< [-] Projection matrix that defines the controlled body axes
+    Eigen::Matrix<double, 3, RW_EFF_CNT> G_s_B{};  //!< [-] The RW spin axis matrix in body frame components
 };
 
 #endif

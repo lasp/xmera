@@ -72,22 +72,13 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
 
     # Initialize module variables
     if numControlAxes == 3:
-        controlAxes_B = [
-            1, 0, 0
-            , 0, 1, 0
-            , 0, 0, 1
-        ]
+        controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     elif numControlAxes == 2:
-        controlAxes_B = [
-             1,0,0
-            ,0,1,0
-        ]
+        controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 0]]
     elif numControlAxes == 1:
-        controlAxes_B = [
-            1, 0, 0
-        ]
+        controlAxes_B = [[1, 0, 0], [0, 0, 0], [0, 0, 0]]
     else:
-        controlAxes_B = []
+        controlAxes_B = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
     module.controlAxes_B = controlAxes_B
 

@@ -4,7 +4,7 @@
  */
 
 #include "rwMotorTorque.h"
-#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <stdexcept>
@@ -15,15 +15,11 @@
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void RwMotorTorque::reset(uint64_t callTime) {
-    double* pAxis; /* pointer to the current control axis */
-    int i;
-
     /*!- configure the number of axes that are controlled.
      This is determined by checking for a zero row to determinate search */
     this->numControlAxes = 0;
-    for (i = 0; i < 3; i++) {
-        pAxis = this->controlAxes_B + 3 * this->numControlAxes;
-        if (v3Norm(pAxis) > 0.0) {
+    for (uint32_t i = 0; i < 3; i++) {
+        if (this->controlAxes_B.row(i).norm() > 0.0) {
             this->numControlAxes += 1;
         }
     }
@@ -43,9 +39,7 @@ void RwMotorTorque::reset(uint64_t callTime) {
      and create the [Gs] projection matrix once */
     if (!this->rwAvailInMsg.isLinked()) {
         this->numAvailRW = this->rwConfigParams.numRW;
-        for (i = 0; i < this->rwConfigParams.numRW; i++) {
-            v3Copy(&this->rwConfigParams.GsMatrix_B[i * 3], &this->GsMatrix_B[i * 3]);
-        }
+        this->G_s_B = cArrayAsEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
     }
 }
 
@@ -57,14 +51,9 @@ void RwMotorTorque::updateState(uint64_t callTime) {
     RWAvailabilityMsgPayload wheelsAvailability = {}; /*!< Msg containing RW availability */
     CmdTorqueBodyMsgPayload LrInputMsg;               /*!< Msg containing Lr control torque */
     CmdTorqueBodyMsgPayload LrInput2Msg;              /*!< Msg containing optional Lr control torque */
-    double Lr_B[3];                                   /*!< [Nm]    commanded ADCS control torque in body frame*/
-    double Lr_C[3];            /*!< [Nm]    commanded ADCS control torque projected onto control axes */
-    double us[RW_EFF_CNT];     /*!< [Nm]    commanded ADCS control torque projected onto RWs g_s-Frames */
-    double CGs[3][RW_EFF_CNT]; /*!< []      projection matrix from gs_i onto control axes */
 
     /*! - zero control torque and RW motor torque variables */
-    v3SetZero(Lr_C);
-    vSetZero(us, RW_EFF_CNT);
+    Eigen::Vector<double, RW_EFF_CNT> us = Eigen::Vector<double, RW_EFF_CNT>::Zero();
     // wheelAvailability set to 0 (AVAILABLE) by default
 
     // check if the required input messages are included
@@ -74,73 +63,45 @@ void RwMotorTorque::updateState(uint64_t callTime) {
 
     /*! - Read the input messages */
     LrInputMsg = this->vehControlInMsg();
-    v3Copy(LrInputMsg.torqueRequestBody, Lr_B);
+    Eigen::Vector3d Lr_B = cArrayAsEigenVector(LrInputMsg.torqueRequestBody);
 
     /*! - Check if the optional second message is provided */
     if (this->vehControlIn2Msg.isLinked()) {
         LrInput2Msg = this->vehControlIn2Msg();
-        v3Add(Lr_B, LrInput2Msg.torqueRequestBody, Lr_B);
+        Lr_B += cArrayAsEigenVector(LrInput2Msg.torqueRequestBody);
     }
 
     /*! - Check if RW availability message is available */
     if (this->rwAvailInMsg.isLinked()) {
-        int numAvailRW = 0;
+        int numAvailWheels = 0;
+        this->G_s_B.setZero();
 
         /*! - Read in current RW availabilit Msg */
         wheelsAvailability = this->rwAvailInMsg();
         /*! - create the current [Gs] projection matrix with the available RWs */
         for (int i = 0; i < this->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) {
-                v3Copy(&this->rwConfigParams.GsMatrix_B[i * 3], &this->GsMatrix_B[numAvailRW * 3]);
-                numAvailRW += 1;
+                this->G_s_B.col(numAvailWheels) = cArrayAsEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
+                numAvailWheels += 1;
             }
         }
         /*! - update the number of currently available RWs */
-        this->numAvailRW = numAvailRW;
+        this->numAvailRW = numAvailWheels;
     }
 
-    /*! - Lr is assumed to be a positive torque onto the body, the [Gs]us must generate -Lr */
-    v3Scale(-1.0, Lr_B, Lr_B);
+    Eigen::Vector3d Lr_C{Eigen::Vector3d::Zero()};
+    Lr_C.head(this->numControlAxes) = -this->controlAxes_B.topRows(this->numControlAxes) * Lr_B;
 
-    /*! - compute [Lr_C] = [C]Lr */
-    mMultV(this->controlAxes_B, this->numControlAxes, 3, Lr_B, Lr_C);
+    Eigen::Matrix<double, 3, RW_EFF_CNT> CGs = this->controlAxes_B * this->G_s_B;
 
-    /*! - compute [CGs] */
-    mSetZero(CGs, 3, RW_EFF_CNT);
-    for (uint32_t i = 0; i < this->numControlAxes; i++) {
-        for (int j = 0; j < this->numAvailRW; j++) {
-            CGs[i][j] = v3Dot(&this->GsMatrix_B[j * 3], &this->controlAxes_B[3 * i]);
-        }
-    }
     /*! - Compute minimum norm inverse for us = [CGs].T inv([CGs][CGs].T) [Lr_C]
      Having at least the same # of RW as # of control axes is necessary condition to guarantee inverse matrix exists. If
      matrix to invert it not full rank, the control torque output is zero. */
     if (this->numAvailRW >= (int)this->numControlAxes) {
-        double v3_temp[3];           /* inv([M]) [Lr_C] */
-        double M33[3][3];            /* [M] = [CGs][CGs].T */
-        double us_avail[RW_EFF_CNT]; /* matrix of available RW motor torques */
-
-        v3SetZero(v3_temp);
-        mSetIdentity(M33, 3, 3);
-        for (uint32_t i = 0; i < this->numControlAxes; i++) {
-            for (uint32_t j = 0; j < this->numControlAxes; j++) {
-                M33[i][j] = 0.0;
-                for (int k = 0; k < this->numAvailRW; k++) {
-                    M33[i][j] += CGs[i][k] * CGs[j][k];
-                }
-            }
-        }
-        m33Inverse(M33, M33);
-        m33MultV3(M33, Lr_C, v3_temp);
-
-        /*! - compute the desired RW motor torques */
-        /* us = [CGs].T v3_temp */
-        vSetZero(us_avail, RW_EFF_CNT);
-        for (int i = 0; i < this->numAvailRW; i++) {
-            for (uint32_t j = 0; j < this->numControlAxes; j++) {
-                us_avail[i] += CGs[j][i] * v3_temp[j];
-            }
-        }
+        uint32_t numRows = this->numControlAxes;
+        uint32_t numCols = this->numAvailRW;
+        Eigen::Vector<double, RW_EFF_CNT> us_avail{Eigen::Vector<double, RW_EFF_CNT>::Zero()};
+        us_avail.topRows(numCols) = CGs.topLeftCorner(numRows, numCols).transpose() * (CGs.topLeftCorner(numRows, numCols) * CGs.topLeftCorner(numRows, numCols).transpose()).inverse() * Lr_C.topRows(numRows);
 
         /*! - map the desired RW motor torques to the available RWs */
         int j = 0;
@@ -154,7 +115,8 @@ void RwMotorTorque::updateState(uint64_t callTime) {
 
     /* store the output message */
     RwMotorTorqueMsgPayload rwMotorTorques = {};
-    vCopy(us, this->rwConfigParams.numRW, rwMotorTorques.motorTorque);
+    eigenVectorToCArray(us, rwMotorTorques.motorTorque);
+
     this->rwMotorTorqueOutMsg.write(&rwMotorTorques, this->moduleID, callTime);
 
     return;

@@ -24,19 +24,11 @@ def controlAxes1D():
 
 
 
-def computeTorqueU(CArray, Gs_B, Lr, availMsg):
+def computeTorqueU(C, Gs_B, Lr, availMsg):
 
-    numControlAxes = len(CArray)//3
+    numControlAxes = (np.linalg.norm(C, axis=1) > 0.0).sum()
     numWheels = len(availMsg)
     nonAvailWheels = 0
-
-    # Build Control Frame (doesn't need to be a complete frame)
-    C = np.zeros((3,3))
-    for i in range(3):
-        if numControlAxes > i:
-            C[i,:] = CArray[3*i:3*(i+1)]
-        else:
-            C[i,:] = [0.0, 0.0, 0.0]
 
     # Remove wheels that are deemed unavailable
     for i in range(len(Gs_B[0])): #

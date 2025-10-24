@@ -41,11 +41,7 @@ def rwMotorTorqueTest(show_plots):
     module.modelTag = "rwMotorTorque"
 
     # Initialize module variables
-    controlAxes_B = [
-             1,0,0
-            ,0,1,0
-            ,0,0,1
-    ]
+    controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     module.controlAxes_B = controlAxes_B
 
 
