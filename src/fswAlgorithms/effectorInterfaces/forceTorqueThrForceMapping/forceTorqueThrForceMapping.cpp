@@ -1,6 +1,8 @@
 #include "forceTorqueThrForceMapping.h"
 #include <architecture/utilities/linearAlgebra.h>
 
+#include <stdexcept>
+
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
     Check if required input messages are connected.
@@ -9,10 +11,10 @@
 */
 void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
     if (!this->thrConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: forceTorqueThrForceMapping.thrConfigInMsg was not connected.");
+        throw std::invalid_argument("forceTorqueThrForceMapping.thrConfigInMsg was not connected.");
     }
     if (!this->vehConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: forceTorqueThrForceMapping.vehConfigInMsg was not connected.");
+        throw std::invalid_argument("forceTorqueThrForceMapping.vehConfigInMsg was not connected.");
     }
 
     VehicleConfigMsgPayload vehConfigInMsgBuffer;   //!< local copy of message buffer
@@ -26,9 +28,8 @@ void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
     this->numThrusters = (uint32_t)thrConfigInMsgBuffer.numThrusters;
     v3Copy(vehConfigInMsgBuffer.CoM_B, this->CoM_B);
     if (this->numThrusters > MAX_EFF_CNT) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "Error: forceTorqueThrForceMapping thruster configuration input message has a number of "
-                               "thrusters that is larger than MAX_EFF_CNT");
+        throw std::invalid_argument("forceTorqueThrForceMapping thruster configuration input message has a number of "
+                                    "thrusters that is larger than MAX_EFF_CNT");
     }
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
@@ -36,9 +37,8 @@ void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
         v3Copy(thrConfigInMsgBuffer.thrusters[i].rThrust_B, this->rThruster_B[i]);
         v3Copy(thrConfigInMsgBuffer.thrusters[i].tHatThrust_B, this->gtThruster_B[i]);
         if (thrConfigInMsgBuffer.thrusters[i].maxThrust <= 0.0) {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                   "Error: forceTorqueThrForceMapping: A configured thruster has a non-sensible "
-                                   "saturation limit of <= 0 N!");
+            throw std::invalid_argument("forceTorqueThrForceMapping: A configured thruster has a non-sensible "
+                                        "saturation limit of <= 0 N!");
         }
     }
 }
