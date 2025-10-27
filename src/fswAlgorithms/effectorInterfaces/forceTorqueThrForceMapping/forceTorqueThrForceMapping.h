@@ -16,13 +16,6 @@ class ForceTorqueThrForceMapping : public SysModel {
    public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    /* declare module public variables */
-    double rThruster_B[MAX_EFF_CNT][3];   //!< [m]     local copy of the thruster locations
-    double gtThruster_B[MAX_EFF_CNT][3];  //!< []      local copy of the thruster force unit direction vectors
-
-    /* declare module private variables */
-    uint32_t numThrusters;  //!< []      The number of thrusters available on vehicle
-    double CoM_B[3];        //!< [m]     CoM of the s/c
 
     /* declare module IO interfaces */
     ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;    //!< (optional) vehicle control (Lr) input message
@@ -30,6 +23,12 @@ class ForceTorqueThrForceMapping : public SysModel {
     ReadFunctor<THRArrayConfigMsgPayload> thrConfigInMsg;   //!< thruster cluster configuration input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;    //!< vehicle config input message
     Message<THRArrayCmdForceMsgPayload> thrForceCmdOutMsg;  //!< thruster force command output message
+
+   private:
+    uint32_t numThrusters{};              //!< []      The number of thrusters available on vehicle
+    double CoM_B[3];                      //!< [m]     CoM of the s/c
+    double rThruster_B[MAX_EFF_CNT][3];   //!< [m]     local copy of the thruster locations
+    double gtThruster_B[MAX_EFF_CNT][3];  //!< []      local copy of the thruster force unit direction vectors
 };
 
 #endif
