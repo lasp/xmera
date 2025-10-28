@@ -7,6 +7,7 @@ endif()
 xmera_add_swig_module("${module}")
 target_sources("${module}" PRIVATE
   forceTorqueThrForceMapping.cpp
+  forceTorqueThrForceMappingAlgorithm.cpp
 )
 
 target_link_libraries("${module}" PRIVATE
