@@ -43,7 +43,8 @@ def test_force_torque_thr_force_mapping1():
 
     CoM_B = [0.1, 0.1, 0.1]
 
-    truth = np.array([[0.7082, 0.5500, 0.0810, 0.1772, 0.6272, 0.6310, 0., 0.2582]])
+    truth = compute_thrust_mapping_truth(rcs_location_data, rcs_direction_data, requested_torque, requested_force,
+                                         CoM_B)
 
     force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
                                                  requested_force, CoM_B, truth, True)
@@ -84,7 +85,8 @@ def test_force_torque_thr_force_mapping2():
 
     requested_torque = [0.0, 0.0, 0.0]
 
-    truth = np.array([[0.5340, 0.5807, 0., 0.0588, 0.5088, 0.5500, 0.0307, 0.0840]])
+    truth = compute_thrust_mapping_truth(rcs_location_data, rcs_direction_data, requested_torque, requested_force,
+                                         CoM_B)
 
     force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
                                                  requested_force, CoM_B, truth, True)
@@ -125,7 +127,8 @@ def test_force_torque_thr_force_mapping3():
 
     requested_torque = [0.0, 0.0, 0.0]
 
-    truth = np.array([[0.5340, 0.5807, 0., 0.0588, 0.5088, 0.5500, 0.0307, 0.0840]])
+    truth = compute_thrust_mapping_truth(rcs_location_data, rcs_direction_data, requested_torque, requested_force,
+                                         CoM_B)
 
     force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
                                                  requested_force, CoM_B, truth, False)
@@ -171,7 +174,8 @@ def test_force_torque_thr_force_mapping4():
     requested_torque = [0.0, 0.0, 0.0]
     requested_force = [0.9, 1.1, 1.]
 
-    truth = np.array([[0.5050, 0.5550, 0.0300, 0.0300, 0., 0.0600, 0.0050, 0.0550, 0.5300, 0.5100, 0.5500, 0.5300]])
+    truth = compute_thrust_mapping_truth(rcs_location_data, rcs_direction_data, requested_torque, requested_force,
+                                         CoM_B)
 
     force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
                                                  requested_force, CoM_B, truth, True)
@@ -232,8 +236,36 @@ def force_torque_thr_force_mapping_test_function(rcs_location, rcs_direction, re
     unit_test_sim.ExecuteSimulation()
 
     accuracy = 1e-12
-    np.testing.assert_allclose(np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcs_location)]]), truth,
+    np.testing.assert_allclose(np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcs_location)]]).flatten(), truth,
                                atol=accuracy, rtol=0, verbose=True)
+
+
+def compute_thrust_mapping_truth(rcs_location, rcs_direction, requested_torque, requested_force, CoM_B):
+    F = np.array([requested_torque, requested_force]).flatten()
+
+    r_thr_B = np.array(rcs_location)
+    r_M_B = np.array(CoM_B)
+    r_thrM_B = r_thr_B - r_M_B
+    gt_thr_B = np.array(rcs_direction)
+
+    tau_B = np.cross(r_thrM_B, gt_thr_B, axis=1)
+
+    DG = np.vstack([tau_B.T, gt_thr_B.T])
+
+    DG_nonzero = []
+    F_nonzero = []
+    for i in range(6):
+        if np.any(abs(DG[i]) > 1e-7):
+            DG_nonzero.append(DG[i].tolist())
+            F_nonzero.append(F[i].tolist())
+
+    DG_nonzero = np.array(DG_nonzero)
+    F_nonzero = np.array(F_nonzero)
+
+    thr_force = DG_nonzero.T @ np.linalg.inv(DG_nonzero @ DG_nonzero.T) @ F_nonzero
+    thr_force -= np.min(thr_force)
+
+    return thr_force
 
 
 if __name__ == "__main__":
