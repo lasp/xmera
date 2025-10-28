@@ -33,7 +33,7 @@
 class ForceTorqueThrForceMappingAlgorithm {
    public:
     void reset(VehicleConfigMsgPayload& vehConfigMsg, THRArrayConfigMsgPayload& thrConfigMsg);
-    THRArrayCmdForceMsgPayload update(CmdTorqueBodyMsgPayload& cmdTorqueMsg, CmdForceBodyMsgPayload& cmdForceMsg);
+    THRArrayCmdForceMsgPayload update(CmdTorqueBodyMsgPayload& cmdTorqueMsg, CmdForceBodyMsgPayload& cmdForceMsg) const;
 
    private:
     uint32_t numThrusters{};              //!< []      The number of thrusters available on vehicle

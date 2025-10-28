@@ -56,7 +56,7 @@ void ForceTorqueThrForceMappingAlgorithm::reset(VehicleConfigMsgPayload& vehConf
  @param cmdForceMsg commanded force message
 */
 THRArrayCmdForceMsgPayload ForceTorqueThrForceMappingAlgorithm::update(CmdTorqueBodyMsgPayload& cmdTorqueMsg,
-                                                                       CmdForceBodyMsgPayload& cmdForceMsg) {
+                                                                       CmdForceBodyMsgPayload& cmdForceMsg) const {
     THRArrayCmdForceMsgPayload thrForceCmdOutMsg{};
 
     /* Create the torque and force vector */
@@ -89,8 +89,8 @@ THRArrayCmdForceMsgPayload ForceTorqueThrForceMappingAlgorithm::update(CmdTorque
     }
 
     /* Compute the force for each thruster */
-    uint32_t numRows = nonZeroRows;
-    uint32_t numCols = this->numThrusters;
+    const uint32_t numRows = nonZeroRows;
+    const uint32_t numCols = this->numThrusters;
 
     Eigen::Vector<double, MAX_EFF_CNT> force_B{Eigen::Vector<double, MAX_EFF_CNT>::Zero()};
     force_B.topRows(numCols) = DG_nonzero.topLeftCorner(numRows, numCols).transpose() *
@@ -98,7 +98,7 @@ THRArrayCmdForceMsgPayload ForceTorqueThrForceMappingAlgorithm::update(CmdTorque
             forceTorque_B_nonzero.topRows(numRows);
 
     /* Find the minimum force */
-    double minForce = force_B.topRows(this->numThrusters).minCoeff();
+    const double minForce = force_B.topRows(this->numThrusters).minCoeff();
 
     /* Subtract the minimum force */
     Eigen::Vector<double, MAX_EFF_CNT> forceSubtracted_B{Eigen::Vector<double, MAX_EFF_CNT>::Zero()};

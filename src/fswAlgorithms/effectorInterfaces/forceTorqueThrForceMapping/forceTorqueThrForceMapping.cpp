@@ -8,7 +8,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
+void ForceTorqueThrForceMapping::reset(const uint64_t callTime) {
     if (!this->thrConfigInMsg.isLinked()) {
         throw std::invalid_argument("forceTorqueThrForceMapping.thrConfigInMsg was not connected.");
     }
@@ -26,7 +26,7 @@ void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void ForceTorqueThrForceMapping::updateState(uint64_t callTime) {
+void ForceTorqueThrForceMapping::updateState(const uint64_t callTime) {
     CmdTorqueBodyMsgPayload cmdTorqueInMsgBuffer{};
     CmdForceBodyMsgPayload cmdForceInMsgBuffer{};
 
