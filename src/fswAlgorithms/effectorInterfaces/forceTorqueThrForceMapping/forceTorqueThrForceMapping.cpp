@@ -17,15 +17,11 @@ void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
         throw std::invalid_argument("forceTorqueThrForceMapping.vehConfigInMsg was not connected.");
     }
 
-    VehicleConfigMsgPayload vehConfigInMsgBuffer;   //!< local copy of message buffer
-    THRArrayConfigMsgPayload thrConfigInMsgBuffer;  //!< local copy of message buffer
-
-    //!< read the rest of the input messages
-    thrConfigInMsgBuffer = this->thrConfigInMsg();
-    vehConfigInMsgBuffer = this->vehConfigInMsg();
+    VehicleConfigMsgPayload vehConfigInMsgBuffer = this->vehConfigInMsg();
+    THRArrayConfigMsgPayload thrConfigInMsgBuffer = this->thrConfigInMsg();
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
-    this->numThrusters = (uint32_t)thrConfigInMsgBuffer.numThrusters;
+    this->numThrusters = thrConfigInMsgBuffer.numThrusters;
     this->CoM_B = cArrayAsEigenVector(vehConfigInMsgBuffer.CoM_B);
     if (this->numThrusters > MAX_EFF_CNT) {
         throw std::invalid_argument("forceTorqueThrForceMapping thruster configuration input message has a number of "
@@ -33,7 +29,7 @@ void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
     }
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
-    for (uint32_t i = 0; i < this->numThrusters; i++) {
+    for (uint32_t i = 0; i < this->numThrusters; ++i) {
         this->rThruster_B.col(i) = cArrayAsEigenVector(thrConfigInMsgBuffer.thrusters[i].rThrust_B);
         this->gtThruster_B.col(i) = cArrayAsEigenVector(thrConfigInMsgBuffer.thrusters[i].tHatThrust_B);
         if (thrConfigInMsgBuffer.thrusters[i].maxThrust <= 0.0) {
@@ -48,9 +44,9 @@ void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
  @param callTime The clock time at which the function was called (nanoseconds)
 */
 void ForceTorqueThrForceMapping::updateState(uint64_t callTime) {
-    CmdTorqueBodyMsgPayload cmdTorqueInMsgBuffer = {};        //!< local copy of message buffer
-    CmdForceBodyMsgPayload cmdForceInMsgBuffer = {};          //!< local copy of message buffer
-    THRArrayCmdForceMsgPayload thrForceCmdOutMsgBuffer = {};  //!< local copy of message buffer
+    CmdTorqueBodyMsgPayload cmdTorqueInMsgBuffer{};
+    CmdForceBodyMsgPayload cmdForceInMsgBuffer{};
+    THRArrayCmdForceMsgPayload thrForceCmdOutMsgBuffer{};
 
     /* Check if torque message is linked and read, zero out if not*/
     if (this->cmdTorqueInMsg.isLinked()) {
@@ -96,7 +92,9 @@ void ForceTorqueThrForceMapping::updateState(uint64_t callTime) {
     uint32_t numCols = this->numThrusters;
 
     Eigen::Vector<double, MAX_EFF_CNT> force_B{Eigen::Vector<double, MAX_EFF_CNT>::Zero()};
-    force_B.topRows(numCols) = DG_nonzero.topLeftCorner(numRows, numCols).transpose() * (DG_nonzero.topLeftCorner(numRows, numCols) * DG_nonzero.topLeftCorner(numRows, numCols).transpose()).inverse() * forceTorque_B_nonzero.topRows(numRows);
+    force_B.topRows(numCols) = DG_nonzero.topLeftCorner(numRows, numCols).transpose() *
+        (DG_nonzero.topLeftCorner(numRows, numCols) * DG_nonzero.topLeftCorner(numRows, numCols).transpose()).inverse() *
+            forceTorque_B_nonzero.topRows(numRows);
 
     /* Find the minimum force */
     double minForce = force_B.topRows(this->numThrusters).minCoeff();

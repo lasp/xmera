@@ -1,5 +1,5 @@
-#ifndef FORCETORQUETHRFORCEMAPPING_H
-#define FORCETORQUETHRFORCEMAPPING_H
+#ifndef FORCE_TORQUE_THR_FORCE_MAPPING_H
+#define FORCE_TORQUE_THR_FORCE_MAPPING_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
