@@ -7,7 +7,6 @@ from xmera.fswAlgorithms import forceTorqueThrForceMapping
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import fswSetupThrusters
 from xmera.utilities import macros
-from xmera.utilities import unitTestSupport
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
 def test_force_torque_thr_force_mapping1():
@@ -46,11 +45,9 @@ def test_force_torque_thr_force_mapping1():
 
     truth = np.array([[0.7082, 0.5500, 0.0810, 0.1772, 0.6272, 0.6310, 0., 0.2582]])
 
-    [test_results, test_message] = force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data,
-                                                                                requested_torque, requested_force, CoM_B,
-                                                                                truth, True)
+    force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
+                                                 requested_force, CoM_B, truth, True)
 
-    assert test_results < 1, test_message
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
 def test_force_torque_thr_force_mapping2():
@@ -89,11 +86,9 @@ def test_force_torque_thr_force_mapping2():
 
     truth = np.array([[0.5340, 0.5807, 0., 0.0588, 0.5088, 0.5500, 0.0307, 0.0840]])
 
-    [test_results, test_message] = force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data,
-                                                                                requested_torque, requested_force, CoM_B,
-                                                                                truth, True)
+    force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
+                                                 requested_force, CoM_B, truth, True)
 
-    assert test_results < 1, test_message
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
 def test_force_torque_thr_force_mapping3():
@@ -132,11 +127,9 @@ def test_force_torque_thr_force_mapping3():
 
     truth = np.array([[0.5340, 0.5807, 0., 0.0588, 0.5088, 0.5500, 0.0307, 0.0840]])
 
-    [test_results, test_message] = force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data,
-                                                                                requested_torque, requested_force, CoM_B,
-                                                                                truth, False)
+    force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
+                                                 requested_force, CoM_B, truth, False)
 
-    assert test_results < 1, test_message
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
 def test_force_torque_thr_force_mapping4():
@@ -180,17 +173,12 @@ def test_force_torque_thr_force_mapping4():
 
     truth = np.array([[0.5050, 0.5550, 0.0300, 0.0300, 0., 0.0600, 0.0050, 0.0550, 0.5300, 0.5100, 0.5500, 0.5300]])
 
-    [test_results, test_message] = force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data,
-                                                                                requested_torque, requested_force, CoM_B,
-                                                                                truth, True)
-    assert test_results < 1, test_message
+    force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
+                                                 requested_force, CoM_B, truth, True)
 
 
 def force_torque_thr_force_mapping_test_function(rcs_location, rcs_direction, requested_torque, requested_force, CoM_B,
                                                  truth, torque_in_msg_flag):
-    """Test method"""
-    test_fail_count = 0
-    test_messages = []
     unit_task_name = "unitTask"
     unit_process_name = "TestProcess"
 
@@ -243,15 +231,9 @@ def force_torque_thr_force_mapping_test_function(rcs_location, rcs_direction, re
     unit_test_sim.ConfigureStopTime(macros.sec2nano(0.5))
     unit_test_sim.ExecuteSimulation()
 
-    test_fail_count, test_messages = unitTestSupport.compareArray(truth, np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcs_location)]]), 1e-3,
-                                                                 "CompareForces", test_fail_count, test_messages)
-
-    if test_fail_count == 0:
-        print("PASSED: " + module.modelTag)
-    else:
-        print(test_messages)
-
-    return [test_fail_count, "".join(test_messages)]
+    accuracy = 1e-12
+    np.testing.assert_allclose(np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcs_location)]]), truth,
+                               atol=accuracy, rtol=0, verbose=True)
 
 
 if __name__ == "__main__":
