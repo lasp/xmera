@@ -10,7 +10,7 @@ from xmera.utilities import macros
 from xmera.utilities import unitTestSupport
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_forceTorqueThrForceMapping1():
+def test_force_torque_thr_force_mapping1():
     r"""
     **Test Description**
 
@@ -20,7 +20,7 @@ def test_forceTorqueThrForceMapping1():
     """
 
     # Test 1 - No thrusters pointing in one direction, CoM offset
-    rcsLocationData = [[-0.86360, -0.82550, 1.79070],
+    rcs_location_data = [[-0.86360, -0.82550, 1.79070],
                             [-0.82550, -0.86360, 1.79070],
                             [0.82550, 0.86360, 1.79070],
                             [0.86360, 0.82550, 1.79070],
@@ -29,7 +29,7 @@ def test_forceTorqueThrForceMapping1():
                             [0.82550, 0.86360, -1.79070],
                             [0.86360, 0.82550, -1.79070]]
 
-    rcsDirectionData = [[1.0, 0.0, 0.0],
+    rcs_direction_data = [[1.0, 0.0, 0.0],
                              [0.0, 1.0, 0.0],
                              [0.0, -1.0, 0.0],
                              [-1.0, 0.0, 0.0],
@@ -46,14 +46,14 @@ def test_forceTorqueThrForceMapping1():
 
     truth = np.array([[0.7082, 0.5500, 0.0810, 0.1772, 0.6272, 0.6310, 0., 0.2582]])
 
-    [testResults, testMessage] = forceTorqueThrForceMappingTestFunction(rcsLocationData, rcsDirectionData,
-                                                                        requested_torque, requested_force, CoM_B,
-                                                                        truth, True)
+    [test_results, test_message] = force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data,
+                                                                                requested_torque, requested_force, CoM_B,
+                                                                                truth, True)
 
-    assert testResults < 1, testMessage
+    assert test_results < 1, test_message
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_forceTorqueThrForceMapping2():
+def test_force_torque_thr_force_mapping2():
     r"""
     **Test Description**
 
@@ -63,7 +63,7 @@ def test_forceTorqueThrForceMapping2():
     """
 
     # Test 1 - No thrusters pointing in one direction, CoM offset
-    rcsLocationData = [[-0.86360, -0.82550, 1.79070],
+    rcs_location_data = [[-0.86360, -0.82550, 1.79070],
                        [-0.82550, -0.86360, 1.79070],
                        [0.82550, 0.86360, 1.79070],
                        [0.86360, 0.82550, 1.79070],
@@ -72,7 +72,7 @@ def test_forceTorqueThrForceMapping2():
                        [0.82550, 0.86360, -1.79070],
                        [0.86360, 0.82550, -1.79070]]
 
-    rcsDirectionData = [[1.0, 0.0, 0.0],
+    rcs_direction_data = [[1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
                         [0.0, -1.0, 0.0],
                         [-1.0, 0.0, 0.0],
@@ -89,14 +89,14 @@ def test_forceTorqueThrForceMapping2():
 
     truth = np.array([[0.5340, 0.5807, 0., 0.0588, 0.5088, 0.5500, 0.0307, 0.0840]])
 
-    [testResults, testMessage] = forceTorqueThrForceMappingTestFunction(rcsLocationData, rcsDirectionData,
-                                                                        requested_torque, requested_force, CoM_B,
-                                                                        truth, True)
+    [test_results, test_message] = force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data,
+                                                                                requested_torque, requested_force, CoM_B,
+                                                                                truth, True)
 
-    assert testResults < 1, testMessage
+    assert test_results < 1, test_message
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_forceTorqueThrForceMapping3():
+def test_force_torque_thr_force_mapping3():
     r"""
     **Test Description**
 
@@ -106,7 +106,7 @@ def test_forceTorqueThrForceMapping3():
     """
 
     # Test 1 - No thrusters pointing in one direction, CoM offset
-    rcsLocationData = [[-0.86360, -0.82550, 1.79070],
+    rcs_location_data = [[-0.86360, -0.82550, 1.79070],
                        [-0.82550, -0.86360, 1.79070],
                        [0.82550, 0.86360, 1.79070],
                        [0.86360, 0.82550, 1.79070],
@@ -115,7 +115,7 @@ def test_forceTorqueThrForceMapping3():
                        [0.82550, 0.86360, -1.79070],
                        [0.86360, 0.82550, -1.79070]]
 
-    rcsDirectionData = [[1.0, 0.0, 0.0],
+    rcs_direction_data = [[1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
                         [0.0, -1.0, 0.0],
                         [-1.0, 0.0, 0.0],
@@ -132,14 +132,14 @@ def test_forceTorqueThrForceMapping3():
 
     truth = np.array([[0.5340, 0.5807, 0., 0.0588, 0.5088, 0.5500, 0.0307, 0.0840]])
 
-    [testResults, testMessage] = forceTorqueThrForceMappingTestFunction(rcsLocationData, rcsDirectionData,
-                                                                        requested_torque, requested_force, CoM_B,
-                                                                        truth, False)
+    [test_results, test_message] = force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data,
+                                                                                requested_torque, requested_force, CoM_B,
+                                                                                truth, False)
 
-    assert testResults < 1, testMessage
+    assert test_results < 1, test_message
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_forceTorqueThrForceMapping4():
+def test_force_torque_thr_force_mapping4():
     r"""
     **Test Description**
 
@@ -148,7 +148,7 @@ def test_forceTorqueThrForceMapping4():
 
     """
 
-    rcsLocationData = [[-1, -1, 1],
+    rcs_location_data = [[-1, -1, 1],
                         [-1, -1, 1],
                         [-1, -1, 1],
                         [1, 1, 1],
@@ -161,7 +161,7 @@ def test_forceTorqueThrForceMapping4():
                         [-1, -1, -1],
                         [-1, -1, -1]]
 
-    rcsDirectionData = [[1.0, 0.0, 0.0],
+    rcs_direction_data = [[1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
                         [0.0, 0.0, -1.0],
                         [0.0, 0.0, -1.0],
@@ -180,79 +180,79 @@ def test_forceTorqueThrForceMapping4():
 
     truth = np.array([[0.5050, 0.5550, 0.0300, 0.0300, 0., 0.0600, 0.0050, 0.0550, 0.5300, 0.5100, 0.5500, 0.5300]])
 
-    [testResults, testMessage] = forceTorqueThrForceMappingTestFunction(rcsLocationData, rcsDirectionData,
-                                                                        requested_torque, requested_force, CoM_B,
-                                                                        truth, True)
-    assert testResults < 1, testMessage
+    [test_results, test_message] = force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data,
+                                                                                requested_torque, requested_force, CoM_B,
+                                                                                truth, True)
+    assert test_results < 1, test_message
 
 
-def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_torque, requested_force, CoM_B,
-                                           truth, torqueInMsgFlag):
+def force_torque_thr_force_mapping_test_function(rcs_location, rcs_direction, requested_torque, requested_force, CoM_B,
+                                                 truth, torque_in_msg_flag):
     """Test method"""
-    testFailCount = 0
-    testMessages = []
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
+    test_fail_count = 0
+    test_messages = []
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
 
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    testProcessRate = macros.sec2nano(0.5)
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process_rate = macros.sec2nano(0.5)
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # setup module to be tested
     module = forceTorqueThrForceMapping.ForceTorqueThrForceMapping()
     module.modelTag = "forceTorqueThrForceMappingTag"
-    unitTestSim.AddModelToTask(unitTaskName, module)
+    unit_test_sim.AddModelToTask(unit_task_name, module)
 
     # Configure blank module input messages
-    cmdTorqueInMsgData = messaging.CmdTorqueBodyMsgPayload()
-    cmdTorqueInMsgData.torqueRequestBody = requested_torque
-    cmdTorqueInMsg = messaging.CmdTorqueBodyMsg().write(cmdTorqueInMsgData)
+    cmd_torque_in_msg_data = messaging.CmdTorqueBodyMsgPayload()
+    cmd_torque_in_msg_data.torqueRequestBody = requested_torque
+    cmd_torque_in_msg = messaging.CmdTorqueBodyMsg().write(cmd_torque_in_msg_data)
 
-    cmdForceInMsgData = messaging.CmdForceBodyMsgPayload()
-    cmdForceInMsgData.forceRequestBody = requested_force
-    cmdForceInMsg = messaging.CmdForceBodyMsg().write(cmdForceInMsgData)
+    cmd_force_in_msg_data = messaging.CmdForceBodyMsgPayload()
+    cmd_force_in_msg_data.forceRequestBody = requested_force
+    cmd_force_in_msg = messaging.CmdForceBodyMsg().write(cmd_force_in_msg_data)
 
-    numThrusters = len(rcsLocation)
-    maxThrust = 3.0  # N
+    num_thrusters = len(rcs_location)
+    max_thrust = 3.0  # N
     MAX_EFF_CNT = messaging.MAX_EFF_CNT
-    rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
-    rcsDirectionData = np.zeros((MAX_EFF_CNT, 3))
+    rcs_location_data = np.zeros((MAX_EFF_CNT, 3))
+    rcs_direction_data = np.zeros((MAX_EFF_CNT, 3))
 
-    rcsLocationData[0:len(rcsLocation)] = rcsLocation
+    rcs_location_data[0:len(rcs_location)] = rcs_location
 
-    rcsDirectionData[0:len(rcsLocation)] = rcsDirection
+    rcs_direction_data[0:len(rcs_location)] = rcs_direction
 
     fswSetupThrusters.clearSetup()
-    for i in range(numThrusters):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
-    thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
+    for i in range(num_thrusters):
+        fswSetupThrusters.create(rcs_location_data[i], rcs_direction_data[i], max_thrust)
+    thr_config_in_msg = fswSetupThrusters.writeConfigMessage()
 
-    vehConfigInMsgData = messaging.VehicleConfigMsgPayload()
-    vehConfigInMsgData.CoM_B = CoM_B
-    vehConfigInMsg = messaging.VehicleConfigMsg().write(vehConfigInMsgData)
+    veh_config_in_msg_data = messaging.VehicleConfigMsgPayload()
+    veh_config_in_msg_data.CoM_B = CoM_B
+    veh_config_in_msg = messaging.VehicleConfigMsg().write(veh_config_in_msg_data)
 
     # subscribe input messages to module
-    if torqueInMsgFlag:
-        module.cmdTorqueInMsg.subscribeTo(cmdTorqueInMsg)
-    module.cmdForceInMsg.subscribeTo(cmdForceInMsg)
-    module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
-    module.vehConfigInMsg.subscribeTo(vehConfigInMsg)
+    if torque_in_msg_flag:
+        module.cmdTorqueInMsg.subscribeTo(cmd_torque_in_msg)
+    module.cmdForceInMsg.subscribeTo(cmd_force_in_msg)
+    module.thrConfigInMsg.subscribeTo(thr_config_in_msg)
+    module.vehConfigInMsg.subscribeTo(veh_config_in_msg)
 
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(0.5))
+    unit_test_sim.ExecuteSimulation()
 
-    testFailCount, testMessages = unitTestSupport.compareArray(truth, np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcsLocation)]]), 1e-3,
-                                                                 "CompareForces", testFailCount, testMessages)
+    test_fail_count, test_messages = unitTestSupport.compareArray(truth, np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcs_location)]]), 1e-3,
+                                                                 "CompareForces", test_fail_count, test_messages)
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: " + module.modelTag)
     else:
-        print(testMessages)
+        print(test_messages)
 
-    return [testFailCount, "".join(testMessages)]
+    return [test_fail_count, "".join(test_messages)]
 
 
 if __name__ == "__main__":
-    test_forceTorqueThrForceMapping1()
+    test_force_torque_thr_force_mapping1()
