@@ -8,60 +8,7 @@ from xmera.utilities import SimulationBaseClass
 from xmera.utilities import fswSetupThrusters
 from xmera.utilities import macros
 
-@pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_force_torque_thr_force_mapping1():
-    r"""
-    **Test Description**
-
-    This pytest ensures that the forceTorqueThrForce module can compute a valid solution for cases where:
-    1. There is a direction where no thrusters point - ensures matrix invertibility is handled
-
-    """
-
-    # Test 1 - No thrusters pointing in one direction, CoM offset
-    rcs_location_data = [[-0.86360, -0.82550, 1.79070],
-                            [-0.82550, -0.86360, 1.79070],
-                            [0.82550, 0.86360, 1.79070],
-                            [0.86360, 0.82550, 1.79070],
-                            [-0.86360, -0.82550, -1.79070],
-                            [-0.82550, -0.86360, -1.79070],
-                            [0.82550, 0.86360, -1.79070],
-                            [0.86360, 0.82550, -1.79070]]
-
-    rcs_direction_data = [[1.0, 0.0, 0.0],
-                             [0.0, 1.0, 0.0],
-                             [0.0, -1.0, 0.0],
-                             [-1.0, 0.0, 0.0],
-                             [1.0, 0.0, 0.0],
-                             [0.0, 1.0, 0.0],
-                             [0.0, -1.0, 0.0],
-                             [-1.0, 0.0, 0.0]]
-
-    requested_torque = [0.4, 0.2, 0.4]
-
-    requested_force = [0.9, 1.1, 0.]
-
-    CoM_B = [0.1, 0.1, 0.1]
-
-    truth = compute_thrust_mapping_truth(rcs_location_data, rcs_direction_data, requested_torque, requested_force,
-                                         CoM_B)
-
-    force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
-                                                 requested_force, CoM_B, truth, True)
-
-
-@pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_force_torque_thr_force_mapping2():
-    r"""
-    **Test Description**
-
-    This pytest ensures that the forceTorqueThrForce module can compute a valid solution for the case
-    where there is zero requested torque in a connected input message, but a requested non-zero force
-
-    """
-
-    # Test 1 - No thrusters pointing in one direction, CoM offset
-    rcs_location_data = [[-0.86360, -0.82550, 1.79070],
+rcs_location_data_1 = [[-0.86360, -0.82550, 1.79070],
                        [-0.82550, -0.86360, 1.79070],
                        [0.82550, 0.86360, 1.79070],
                        [0.86360, 0.82550, 1.79070],
@@ -70,7 +17,20 @@ def test_force_torque_thr_force_mapping2():
                        [0.82550, 0.86360, -1.79070],
                        [0.86360, 0.82550, -1.79070]]
 
-    rcs_direction_data = [[1.0, 0.0, 0.0],
+rcs_location_data_2 = [[-1, -1, 1],
+                       [-1, -1, 1],
+                       [-1, -1, 1],
+                       [1, 1, 1],
+                       [1, 1, 1],
+                       [1, 1, 1],
+                       [1, 1, -1],
+                       [1, 1, -1],
+                       [1, 1, -1],
+                       [-1, -1, -1],
+                       [-1, -1, -1],
+                       [-1, -1, -1]]
+
+rcs_direction_data_1 = [[1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
                         [0.0, -1.0, 0.0],
                         [-1.0, 0.0, 0.0],
@@ -79,85 +39,7 @@ def test_force_torque_thr_force_mapping2():
                         [0.0, -1.0, 0.0],
                         [-1.0, 0.0, 0.0]]
 
-    requested_force = [0.9, 1.1, 0.]
-
-    CoM_B = [0.1, 0.1, 0.1]
-
-    requested_torque = [0.0, 0.0, 0.0]
-
-    truth = compute_thrust_mapping_truth(rcs_location_data, rcs_direction_data, requested_torque, requested_force,
-                                         CoM_B)
-
-    force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
-                                                 requested_force, CoM_B, truth, True)
-
-
-@pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_force_torque_thr_force_mapping3():
-    r"""
-    **Test Description**
-
-    This pytest ensures that the forceTorqueThrForce module can compute a valid solution for the case
-    where there is no torque input message, but a requested non-zero force
-
-    """
-
-    # Test 1 - No thrusters pointing in one direction, CoM offset
-    rcs_location_data = [[-0.86360, -0.82550, 1.79070],
-                       [-0.82550, -0.86360, 1.79070],
-                       [0.82550, 0.86360, 1.79070],
-                       [0.86360, 0.82550, 1.79070],
-                       [-0.86360, -0.82550, -1.79070],
-                       [-0.82550, -0.86360, -1.79070],
-                       [0.82550, 0.86360, -1.79070],
-                       [0.86360, 0.82550, -1.79070]]
-
-    rcs_direction_data = [[1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [-1.0, 0.0, 0.0]]
-
-    requested_force = [0.9, 1.1, 0.]
-
-    CoM_B = [0.1, 0.1, 0.1]
-
-    requested_torque = [0.0, 0.0, 0.0]
-
-    truth = compute_thrust_mapping_truth(rcs_location_data, rcs_direction_data, requested_torque, requested_force,
-                                         CoM_B)
-
-    force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
-                                                 requested_force, CoM_B, truth, False)
-
-
-@pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
-def test_force_torque_thr_force_mapping4():
-    r"""
-    **Test Description**
-
-    This pytest ensures that the forceTorqueThrForce module can compute a valid solution for the case where
-    Thrusters point in each direction
-
-    """
-
-    rcs_location_data = [[-1, -1, 1],
-                        [-1, -1, 1],
-                        [-1, -1, 1],
-                        [1, 1, 1],
-                        [1, 1, 1],
-                        [1, 1, 1],
-                        [1, 1, -1],
-                        [1, 1, -1],
-                        [1, 1, -1],
-                        [-1, -1, -1],
-                        [-1, -1, -1],
-                        [-1, -1, -1]]
-
-    rcs_direction_data = [[1.0, 0.0, 0.0],
+rcs_direction_data_2 = [[1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
                         [0.0, 0.0, -1.0],
                         [0.0, 0.0, -1.0],
@@ -170,19 +52,26 @@ def test_force_torque_thr_force_mapping4():
                         [0.0, 1.0, 0.0],
                         [0.0, 0.0, 1.0]]
 
-    CoM_B = [0.1, 0.1, 0.1]
-    requested_torque = [0.0, 0.0, 0.0]
-    requested_force = [0.9, 1.1, 1.]
+r"""
+Test 1: Ensures that the forceTorqueThrForce module can compute a valid solution for cases where there is a direction 
+        where no thrusters point - ensures matrix invertibility is handled.
+Test 2: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where there is zero 
+        requested torque in a connected input message, but a requested non-zero force.
+Test 3: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where there is no torque 
+        input message, but a requested non-zero force.
+Test 4: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where Thrusters point in 
+        each direction.
+"""
 
-    truth = compute_thrust_mapping_truth(rcs_location_data, rcs_direction_data, requested_torque, requested_force,
-                                         CoM_B)
+@pytest.mark.parametrize("rcs_location, rcs_direction, requested_torque, requested_force, torque_in_msg_flag",
+                         [(rcs_location_data_1, rcs_direction_data_1, [0.4, 0.2, 0.4], [0.9, 1.1, 0.], True),
+                          (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], True),
+                          (rcs_location_data_1, rcs_direction_data_1, [0.0, 0.0, 0.0], [0.9, 1.1, 0.], False),
+                          (rcs_location_data_2, rcs_direction_data_2, [0.0, 0.0, 0.0], [0.9, 1.1, 1.], True)])
 
-    force_torque_thr_force_mapping_test_function(rcs_location_data, rcs_direction_data, requested_torque,
-                                                 requested_force, CoM_B, truth, True)
-
-
-def force_torque_thr_force_mapping_test_function(rcs_location, rcs_direction, requested_torque, requested_force, CoM_B,
-                                                 truth, torque_in_msg_flag):
+@pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
+def test_force_torque_thr_force_mapping(rcs_location, rcs_direction, requested_torque, requested_force,
+                                        torque_in_msg_flag):
     unit_task_name = "unitTask"
     unit_process_name = "TestProcess"
 
@@ -220,6 +109,8 @@ def force_torque_thr_force_mapping_test_function(rcs_location, rcs_direction, re
         fswSetupThrusters.create(rcs_location_data[i], rcs_direction_data[i], max_thrust)
     thr_config_in_msg = fswSetupThrusters.writeConfigMessage()
 
+    CoM_B = [0.1, 0.1, 0.1]
+
     veh_config_in_msg_data = messaging.VehicleConfigMsgPayload()
     veh_config_in_msg_data.CoM_B = CoM_B
     veh_config_in_msg = messaging.VehicleConfigMsg().write(veh_config_in_msg_data)
@@ -234,6 +125,8 @@ def force_torque_thr_force_mapping_test_function(rcs_location, rcs_direction, re
     unit_test_sim.InitializeSimulation()
     unit_test_sim.ConfigureStopTime(macros.sec2nano(0.5))
     unit_test_sim.ExecuteSimulation()
+
+    truth = compute_thrust_mapping_truth(rcs_location, rcs_direction, requested_torque, requested_force, CoM_B)
 
     accuracy = 1e-12
     np.testing.assert_allclose(np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcs_location)]]).flatten(), truth,
@@ -269,4 +162,8 @@ def compute_thrust_mapping_truth(rcs_location, rcs_direction, requested_torque, 
 
 
 if __name__ == "__main__":
-    test_force_torque_thr_force_mapping1()
+    test_force_torque_thr_force_mapping(rcs_location_data_1,
+                                        rcs_direction_data_1,
+                                        [0.4, 0.2, 0.4],
+                                        [0.9, 1.1, 0.],
+                                        True)
