@@ -36,8 +36,9 @@ void ForceTorqueThrForceMappingAlgorithm::reset(VehicleConfigMsgPayload& vehConf
     this->numThrusters = thrConfigMsg.numThrusters;
     this->CoM_B = cArrayAsEigenVector(vehConfigMsg.CoM_B);
     if (this->numThrusters > MAX_EFF_CNT) {
-        throw std::invalid_argument("forceTorqueThrForceMapping thruster configuration input message has a number of "
-                                    "thrusters that is larger than MAX_EFF_CNT");
+        throw std::invalid_argument(
+            "forceTorqueThrForceMapping thruster configuration input message has a number of "
+            "thrusters that is larger than MAX_EFF_CNT");
     }
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
@@ -45,8 +46,9 @@ void ForceTorqueThrForceMappingAlgorithm::reset(VehicleConfigMsgPayload& vehConf
         this->rThruster_B.col(i) = cArrayAsEigenVector(thrConfigMsg.thrusters[i].rThrust_B);
         this->gtThruster_B.col(i) = cArrayAsEigenVector(thrConfigMsg.thrusters[i].tHatThrust_B);
         if (thrConfigMsg.thrusters[i].maxThrust <= 0.0) {
-            throw std::invalid_argument("forceTorqueThrForceMapping: A configured thruster has a non-sensible "
-                                        "saturation limit of <= 0 N!");
+            throw std::invalid_argument(
+                "forceTorqueThrForceMapping: A configured thruster has a non-sensible "
+                "saturation limit of <= 0 N!");
         }
     }
 }
@@ -67,7 +69,8 @@ THRArrayCmdForceMsgPayload ForceTorqueThrForceMappingAlgorithm::update(CmdTorque
 
     /* - compute thruster locations relative to COM */
     Eigen::Matrix<double, 3, MAX_EFF_CNT> rThrusterRelCOM_B{Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero()};
-    rThrusterRelCOM_B.leftCols(this->numThrusters) = this->rThruster_B.leftCols(this->numThrusters).colwise() - this->CoM_B;
+    rThrusterRelCOM_B.leftCols(this->numThrusters) =
+        this->rThruster_B.leftCols(this->numThrusters).colwise() - this->CoM_B;
 
     /* Fill DG with thruster directions and moment arms */
     Eigen::Matrix<double, 3, MAX_EFF_CNT> rCrossGt{Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero()};
@@ -94,8 +97,9 @@ THRArrayCmdForceMsgPayload ForceTorqueThrForceMappingAlgorithm::update(CmdTorque
     const uint32_t numCols = this->numThrusters;
 
     Eigen::Vector<double, MAX_EFF_CNT> force_B{Eigen::Vector<double, MAX_EFF_CNT>::Zero()};
-    force_B.topRows(numCols) = DG_nonzero.topLeftCorner(numRows, numCols).completeOrthogonalDecomposition().pseudoInverse() *
-            forceTorque_B_nonzero.topRows(numRows);
+    force_B.topRows(numCols) =
+        DG_nonzero.topLeftCorner(numRows, numCols).completeOrthogonalDecomposition().pseudoInverse() *
+        forceTorque_B_nonzero.topRows(numRows);
 
     /* Find the minimum force */
     const double minForce = force_B.topRows(this->numThrusters).minCoeff();

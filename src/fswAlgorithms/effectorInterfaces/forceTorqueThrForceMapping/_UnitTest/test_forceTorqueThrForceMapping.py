@@ -69,13 +69,13 @@ torque_rand = np.random.rand(3)
 force_rand = np.random.rand(3)
 
 r"""
-Test 1: Ensures that the forceTorqueThrForce module can compute a valid solution for cases where there is a direction 
+Test 1: Ensures that the forceTorqueThrForce module can compute a valid solution for cases where there is a direction
         where no thrusters point - ensures matrix invertibility is handled.
-Test 2: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where there is zero 
+Test 2: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where there is zero
         requested torque in a connected input message, but a requested non-zero force.
-Test 3: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where there is no torque 
+Test 3: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where there is no torque
         input message, but a requested non-zero force.
-Test 4: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where Thrusters point in 
+Test 4: Ensures that the forceTorqueThrForce module can compute a valid solution for the case where Thrusters point in
         each direction.
 """
 

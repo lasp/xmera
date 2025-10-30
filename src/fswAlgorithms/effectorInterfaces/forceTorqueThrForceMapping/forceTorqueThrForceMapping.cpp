@@ -40,8 +40,8 @@ void ForceTorqueThrForceMapping::updateState(const uint64_t callTime) {
         cmdForceInMsgBuffer = this->cmdForceInMsg();
     }
 
-    THRArrayCmdForceMsgPayload thrForceCmdOutMsgBuffer = this->algorithm.update(cmdTorqueInMsgBuffer,
-                                                                                cmdForceInMsgBuffer);
+    THRArrayCmdForceMsgPayload thrForceCmdOutMsgBuffer =
+        this->algorithm.update(cmdTorqueInMsgBuffer, cmdForceInMsgBuffer);
 
     this->thrForceCmdOutMsg.write(&thrForceCmdOutMsgBuffer, this->moduleID, callTime);
 }
