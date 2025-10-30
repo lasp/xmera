@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -40,7 +40,7 @@ void AttRefCorrection::reset(uint64_t callTime) {
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void AttRefCorrection::updateState(uint64_t callTime) {
+void AttRefCorrection::updateState(uint64_t const callTime) {
     // read in the input messages
     AttRefMsgPayload attRefMsgBuffer = this->attRefInMsg();
     Eigen::Vector3d sigma_RN_local = cArrayAsEigenVector3(attRefMsgBuffer.sigma_RN);

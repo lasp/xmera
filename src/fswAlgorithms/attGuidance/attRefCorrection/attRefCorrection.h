@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
+ Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-*/
+ */
 
 #ifndef ATTREFCORRECTION_H
 #define ATTREFCORRECTION_H
@@ -27,21 +27,20 @@
 #include <stdint.h>
 
 /*! @brief This module reads in the attitude reference message and adjusts it by a fixed rotation.  This allows a
- * general body-fixed frame B to align with this corrected reference frame Rc.
+ * general body-fixed frame B to align with this corrected reference frame.
  */
 class AttRefCorrection : public SysModel {
    public:
-    void reset(uint64_t callTime) override;
-    void updateState(uint64_t callTime) override;
+    void reset(uint64_t callTime) final;
+    void updateState(uint64_t callTime) final;
+
     void setSigmaRR0(const Eigen::Vector3d& sigma);
     const Eigen::Vector3d getSigmaRR0() const;
 
-    /* declare module IO interfaces */
     ReadFunctor<AttRefMsgPayload> attRefInMsg;  //!< attitude reference input message
     Message<AttRefMsgPayload> attRefOutMsg;     //!< corrected attitude reference input message
 
-
-private:
+   private:
     Eigen::Vector3d sigma_RR0{
         Eigen::Vector3d::Zero()};  //!< [-] current MRP attitude coordinate set with respect to the input reference
 };
