@@ -29,7 +29,7 @@ from xmera.utilities import unitTestSupport
 
 @pytest.mark.parametrize("accuracy", [1e-12])
 
-def test_attRefCorrection(show_plots, accuracy):
+def test_att_ref_correction(show_plots, accuracy):
     r"""
     **Validation Test Description**
 
@@ -44,66 +44,66 @@ def test_attRefCorrection(show_plots, accuracy):
 
     The ``sigma_RN`` variable of the output message is tested
     """
-    [testResults, testMessage] = attRefCorrectionTestFunction(show_plots, accuracy)
-    assert testResults < 1, testMessage
+    [test_results, test_message] = att_ref_correction_test_function(show_plots, accuracy)
+    assert test_results < 1, test_message
 
 
-def attRefCorrectionTestFunction(show_plots, accuracy):
+def att_ref_correction_test_function(show_plots, accuracy):
     """Test method"""
-    testFailCount = 0
-    testMessages = []
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
+    test_fail_count = 0
+    test_messages = []
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
 
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    testProcessRate = macros.sec2nano(0.5)
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process_rate = macros.sec2nano(0.5)
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # setup module to be tested
     module = attRefCorrection.AttRefCorrection()
     module.modelTag = "attRefCorrectionTag"
-    unitTestSim.AddModelToTask(unitTaskName, module)
+    unit_test_sim.AddModelToTask(unit_task_name, module)
     module.sigma_BcB = [math.tan(math.pi/4), 0.0, 0.0]
 
     # Configure blank module input messages
-    attRefInMsgData = messaging.AttRefMsgPayload()
-    attRefInMsgData.sigma_RN = [math.tan(math.pi/8), 0.0, 0.0]
-    attRefInMsg = messaging.AttRefMsg().write(attRefInMsgData)
+    att_ref_in_msg_data = messaging.AttRefMsgPayload()
+    att_ref_in_msg_data.sigma_RN = [math.tan(math.pi/8), 0.0, 0.0]
+    att_ref_in_msg = messaging.AttRefMsg().write(att_ref_in_msg_data)
 
     # subscribe input messages to module
-    module.attRefInMsg.subscribeTo(attRefInMsg)
+    module.attRefInMsg.subscribeTo(att_ref_in_msg)
 
     # setup output message recorder objects
-    attRefOutMsgRec = module.attRefOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, attRefOutMsgRec)
+    att_ref_out_msg_rec = module.attRefOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, att_ref_out_msg_rec)
 
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(1.0))
+    unit_test_sim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
-    trueVector = [
+    true_vector = [
         [-math.tan(math.pi / 8), 0.0, 0.0],
         [-math.tan(math.pi / 8), 0.0, 0.0],
         [-math.tan(math.pi / 8), 0.0, 0.0]
     ]
     # compare the module results to the truth values
-    for i in range(0, len(trueVector)):
+    for i in range(0, len(true_vector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], trueVector[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
-                                str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
+        if not unitTestSupport.isArrayEqual(att_ref_out_msg_rec.sigma_RN[i], true_vector[i], 3, accuracy):
+            test_fail_count += 1
+            test_messages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
+                                str(att_ref_out_msg_rec.times()[i] * macros.NANO2SEC) +
                                 "sec\n")
 
-    if testFailCount == 0:
+    if test_fail_count == 0:
         print("PASSED: " + module.modelTag)
     else:
-        print(testMessages)
+        print(test_messages)
 
-    return [testFailCount, "".join(testMessages)]
+    return [test_fail_count, "".join(test_messages)]
 
 
 if __name__ == "__main__":
-    test_attRefCorrection(False, 1e-12)
+    test_att_ref_correction(False, 1e-12)
