@@ -207,7 +207,7 @@ def run(show_plots, useAltBodyFrame):
         attRefCor = attRefCorrection.AttRefCorrection()
         attRefCor.modelTag = "attRefCor"
         scSim.AddModelToTask(simTaskName, attRefCor)
-        attRefCor.sigma_BcB = [0.0, 0.0, math.tan(math.pi/8)]
+        attRefCor.sigma_RR0 = [0.0, 0.0, -math.tan(math.pi/8)]
         attRefCor.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
         scObject.attRefInMsg.subscribeTo(attRefCor.attRefOutMsg)
     else:

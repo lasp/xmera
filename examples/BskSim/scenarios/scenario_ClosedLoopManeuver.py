@@ -136,8 +136,8 @@ class scenario_ClosedLoopManeuver(BSKSim, BSKScenario):
         dcm_BcB = np.array([[0., 0., 1.],
                             [0., 1., 0.],
                             [-1., 0., 0.]])
-        sigma_BcB = RigidBodyKinematics.C2MRP(dcm_BcB)
-        FswModel.attRefCorrection.sigma_BcB = sigma_BcB
+        sigma_RR0 = -RigidBodyKinematics.C2MRP(dcm_BcB)
+        FswModel.attRefCorrection.sigma_RR0 = sigma_RR0
 
         tManeuver = 15.
         # use stand-alone message to write DvBurnCmdMsg
