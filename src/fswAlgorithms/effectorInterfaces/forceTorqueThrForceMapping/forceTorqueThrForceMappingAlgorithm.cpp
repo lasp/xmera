@@ -21,6 +21,7 @@
 #include <architecture/utilities/eigenSupport.h>
 
 #include <stdexcept>
+#include <Eigen/QR>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -93,8 +94,7 @@ THRArrayCmdForceMsgPayload ForceTorqueThrForceMappingAlgorithm::update(CmdTorque
     const uint32_t numCols = this->numThrusters;
 
     Eigen::Vector<double, MAX_EFF_CNT> force_B{Eigen::Vector<double, MAX_EFF_CNT>::Zero()};
-    force_B.topRows(numCols) = DG_nonzero.topLeftCorner(numRows, numCols).transpose() *
-        (DG_nonzero.topLeftCorner(numRows, numCols) * DG_nonzero.topLeftCorner(numRows, numCols).transpose()).inverse() *
+    force_B.topRows(numCols) = DG_nonzero.topLeftCorner(numRows, numCols).completeOrthogonalDecomposition().pseudoInverse() *
             forceTorque_B_nonzero.topRows(numRows);
 
     /* Find the minimum force */

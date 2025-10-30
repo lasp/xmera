@@ -172,7 +172,7 @@ def compute_thrust_mapping_truth(rcs_location, rcs_direction, requested_torque, 
     DG_nonzero = np.array(DG_nonzero)
     F_nonzero = np.array(F_nonzero)
 
-    thr_force = DG_nonzero.T @ np.linalg.inv(DG_nonzero @ DG_nonzero.T) @ F_nonzero
+    thr_force = np.linalg.pinv(DG_nonzero) @ F_nonzero
     thr_force -= np.min(thr_force)
 
     return thr_force
