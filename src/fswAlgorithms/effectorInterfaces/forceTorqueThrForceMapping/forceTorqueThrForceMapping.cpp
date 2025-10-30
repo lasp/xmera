@@ -1,5 +1,5 @@
 #include "forceTorqueThrForceMapping.h"
-#include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/eigenSupport.h>
 
 #include <stdexcept>
 
@@ -26,7 +26,7 @@ void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
     this->numThrusters = (uint32_t)thrConfigInMsgBuffer.numThrusters;
-    v3Copy(vehConfigInMsgBuffer.CoM_B, this->CoM_B);
+    this->CoM_B = cArrayAsEigenVector(vehConfigInMsgBuffer.CoM_B);
     if (this->numThrusters > MAX_EFF_CNT) {
         throw std::invalid_argument("forceTorqueThrForceMapping thruster configuration input message has a number of "
                                     "thrusters that is larger than MAX_EFF_CNT");
@@ -34,8 +34,8 @@ void ForceTorqueThrForceMapping::reset(uint64_t callTime) {
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
     for (uint32_t i = 0; i < this->numThrusters; i++) {
-        v3Copy(thrConfigInMsgBuffer.thrusters[i].rThrust_B, this->rThruster_B[i]);
-        v3Copy(thrConfigInMsgBuffer.thrusters[i].tHatThrust_B, this->gtThruster_B[i]);
+        this->rThruster_B.col(i) = cArrayAsEigenVector(thrConfigInMsgBuffer.thrusters[i].rThrust_B);
+        this->gtThruster_B.col(i) = cArrayAsEigenVector(thrConfigInMsgBuffer.thrusters[i].tHatThrust_B);
         if (thrConfigInMsgBuffer.thrusters[i].maxThrust <= 0.0) {
             throw std::invalid_argument("forceTorqueThrForceMapping: A configured thruster has a non-sensible "
                                         "saturation limit of <= 0 N!");
@@ -62,98 +62,50 @@ void ForceTorqueThrForceMapping::updateState(uint64_t callTime) {
         cmdForceInMsgBuffer = this->cmdForceInMsg();
     }
 
-    /* Initialize variables */
-    double DG[6][MAX_EFF_CNT];
-    double rThrusterRelCOM_B[MAX_EFF_CNT][3];
-    double rCrossGt[3];
-    double zeroVector[MAX_EFF_CNT];
-    uint32_t zeroRows[6];
-    uint32_t numZeroes;
-    double force_B[MAX_EFF_CNT];
-    double forceTorque_B[6];
-    double forceSubtracted_B[MAX_EFF_CNT];
-    vSetZero(force_B, (size_t)MAX_EFF_CNT);
-    vSetZero(forceSubtracted_B, (size_t)MAX_EFF_CNT);
-
-    for (uint32_t i = 0; i < 6; i++) {
-        for (uint32_t j = 0; j < MAX_EFF_CNT; j++) {
-            DG[i][j] = 0.0;
-        }
-    }
-
     /* Create the torque and force vector */
-    for (uint32_t i = 0; i < 3; i++) {
-        forceTorque_B[i] = cmdTorqueInMsgBuffer.torqueRequestBody[i];
-        forceTorque_B[i + 3] = cmdForceInMsgBuffer.forceRequestBody[i];
-    }
+    Eigen::Vector<double, 6> forceTorque_B{};
+    forceTorque_B.head(3) = cArrayAsEigenVector(cmdTorqueInMsgBuffer.torqueRequestBody);
+    forceTorque_B.tail(3) = cArrayAsEigenVector(cmdForceInMsgBuffer.forceRequestBody);
 
     /* - compute thruster locations relative to COM */
-    for (uint32_t i = 0; i < this->numThrusters; i++) {
-        v3Subtract(this->rThruster_B[i], this->CoM_B, rThrusterRelCOM_B[i]);
-    }
+    Eigen::Matrix<double, 3, MAX_EFF_CNT> rThrusterRelCOM_B{Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero()};
+    rThrusterRelCOM_B.leftCols(this->numThrusters) = this->rThruster_B.leftCols(this->numThrusters).colwise() - this->CoM_B;
 
     /* Fill DG with thruster directions and moment arms */
-    for (uint32_t i = 0; i < this->numThrusters; i++) {
-        /* Compute moment arm and fill in */
-        v3Cross(rThrusterRelCOM_B[i], this->gtThruster_B[i], rCrossGt);
-        for (uint32_t j = 0; j < 3; j++) {
-            DG[j][i] = rCrossGt[j];
-        }
-
-        /* Fill in control axes */
-        for (uint32_t j = 0; j < 3; j++) {
-            DG[j + 3][i] = this->gtThruster_B[i][j];
-        }
+    Eigen::Matrix<double, 3, MAX_EFF_CNT> rCrossGt{Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero()};
+    for (uint32_t i = 0; i < this->numThrusters; ++i) {
+        rCrossGt.col(i) = rThrusterRelCOM_B.col(i).cross(this->gtThruster_B.col(i));
     }
-
-    /* Check DG for zero rows */
-    vSetZero(zeroVector, this->numThrusters);
-    numZeroes = 0;
-    for (uint32_t j = 0; j < 6; j++) {
-        if (vIsEqual(zeroVector, 6, DG[j], 0.0000001)) {
-            zeroRows[j] = 1;
-            numZeroes += 1;
-        } else {
-            zeroRows[j] = 0;
-        }
-    }
+    Eigen::Matrix<double, 6, MAX_EFF_CNT> DG{};
+    DG << rCrossGt, this->gtThruster_B;
 
     /* Create the DG w/ zero rows removed */
-    double DG_full[6 * MAX_EFF_CNT];
-    vSetZero(DG_full, (size_t)6 * MAX_EFF_CNT);
-    uint32_t zeroesPassed;
-    zeroesPassed = 0;
-    for (uint32_t i = 0; i < 6; i++) {
-        if (!zeroRows[i]) {
-            for (uint32_t j = 0; j < MAX_EFF_CNT; j++) {
-                DG_full[MXINDEX(MAX_EFF_CNT, i - zeroesPassed, j)] = DG[i][j];
-            }
-        } else {
-            zeroesPassed += 1;
+    uint32_t nonZeroRows = 0;
+    Eigen::Matrix<double, 6, MAX_EFF_CNT> DG_nonzero{Eigen::Matrix<double, 6, MAX_EFF_CNT>::Zero()};
+    Eigen::Vector<double, 6> forceTorque_B_nonzero{Eigen::Vector<double, 6>::Zero()};
+    for (uint32_t i = 0; i < 6; ++i) {
+        if ((DG.row(i).array().abs() > 1e-7).any()) {
+            DG_nonzero.row(nonZeroRows) = DG.row(i);
+            forceTorque_B_nonzero.row(nonZeroRows) = forceTorque_B.row(i);
+            nonZeroRows += 1;
         }
     }
-
-    /* Compute the minimum norm inverse of DG*/
-    double DGT_DGDGT_inv[6 * 6];
-    mMinimumNormInverse(DG_full, (size_t)6 - numZeroes, (size_t)MAX_EFF_CNT, DGT_DGDGT_inv);
 
     /* Compute the force for each thruster */
-    mMultV(DGT_DGDGT_inv, (size_t)this->numThrusters, (size_t)6 - numZeroes, forceTorque_B, force_B);
+    uint32_t numRows = nonZeroRows;
+    uint32_t numCols = this->numThrusters;
+
+    Eigen::Vector<double, MAX_EFF_CNT> force_B{Eigen::Vector<double, MAX_EFF_CNT>::Zero()};
+    force_B.topRows(numCols) = DG_nonzero.topLeftCorner(numRows, numCols).transpose() * (DG_nonzero.topLeftCorner(numRows, numCols) * DG_nonzero.topLeftCorner(numRows, numCols).transpose()).inverse() * forceTorque_B_nonzero.topRows(numRows);
 
     /* Find the minimum force */
-    double min_force = force_B[0];
-    for (uint32_t i = 1; i < this->numThrusters; i++) {
-        if (force_B[i] < min_force) {
-            min_force = force_B[i];
-        }
-    }
+    double minForce = force_B.topRows(this->numThrusters).minCoeff();
 
     /* Subtract the minimum force */
-    for (uint32_t i = 0; i < this->numThrusters; i++) {
-        forceSubtracted_B[i] = force_B[i] - min_force;
-    }
+    Eigen::Vector<double, MAX_EFF_CNT> forceSubtracted_B{Eigen::Vector<double, MAX_EFF_CNT>::Zero()};
+    forceSubtracted_B.topRows(this->numThrusters) = force_B.topRows(this->numThrusters).array() - minForce;
 
     /* Write to the output messages */
-    vCopy(forceSubtracted_B, this->numThrusters, thrForceCmdOutMsgBuffer.thrForce);
+    eigenVectorToCArray(forceSubtracted_B, thrForceCmdOutMsgBuffer.thrForce);
     this->thrForceCmdOutMsg.write(&thrForceCmdOutMsgBuffer, this->moduleID, callTime);
 }
