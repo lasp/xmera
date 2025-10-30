@@ -23,7 +23,6 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
-#include <architecture/utilities/bskLogging.h>
 #include <Eigen/Core>
 #include <stdint.h>
 
@@ -42,7 +41,6 @@ class AttRefCorrection : public SysModel {
     Message<AttRefMsgPayload> attRefOutMsg;     //!< corrected attitude reference input message
 
 
-    BSKLogger bskLogger = {};  //!< BSK Logging
 private:
     Eigen::Vector3d sigma_RR0{
         Eigen::Vector3d::Zero()};  //!< [-] current MRP attitude coordinate set with respect to the input reference

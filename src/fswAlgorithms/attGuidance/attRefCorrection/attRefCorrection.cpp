@@ -32,7 +32,7 @@
 void AttRefCorrection::reset(uint64_t callTime) {
     // check if the required message has not been connected
     if (!this->attRefInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Error: attRefCorrection.attRefInMsg was not connected.");
+        throw std::invalid_argument("attRefCorrection.attRefInMsg wasn't connected.");
     }
 }
 
