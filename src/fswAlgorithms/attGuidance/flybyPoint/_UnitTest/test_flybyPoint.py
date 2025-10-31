@@ -35,6 +35,259 @@ def test_flybyPoint(show_plots, initial_position, initial_velocity, filter_dt, o
                            max_rate, max_acceleration, pos_knowledge)
 
 
+def test_flybyPoint_diagnostic_collinearity(
+        initial_position=[-5E7, 7.5E6, 5E5],
+        initial_velocity=[2E4, 0, 0],
+        filter_dt=1,
+        orbit_normal_sign=-1,
+        max_rate=0.01,
+        max_acceleration=1E-7,
+        pos_knowledge=1E5
+):
+    # setup simulation environment
+    sim_dt = 10
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    process_rate = macros.sec2nano(sim_dt)
+    test_process = unit_test_sim.CreateNewProcess("unit_process")
+    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+
+    # setup flybyPoint guidance module
+    flyby_guidance = flybyPoint.FlybyPoint()
+    flyby_guidance.modelTag = "flybyPoint"
+    flyby_guidance.setTimeBetweenFilterData(filter_dt)
+    flyby_guidance.setToleranceForCollinearity(1E-5)
+    flyby_guidance.setSignOfOrbitNormalFrameVector(orbit_normal_sign)
+    flyby_guidance.setMaximumRateThreshold(max_rate)
+    flyby_guidance.setMaximumAccelerationThreshold(max_acceleration)
+    flyby_guidance.setPositionKnowledgeSigma(pos_knowledge)
+    unit_test_sim.AddModelToTask("unit_task", flyby_guidance)
+
+    input_data = messaging.NavTransMsgPayload()
+    input_data.v_BN_N = np.array(initial_velocity)
+    filter_msg = messaging.NavTransMsg()
+    flyby_guidance.filterInMsg.subscribeTo(filter_msg)
+
+    # Setup data logging before the simulation is initialized
+    attitude_reference_log = flyby_guidance.attRefOutMsg.recorder()
+    flyby_diagnostic_log = flyby_guidance.flybyDiagnosticOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unit_task", attitude_reference_log)
+    unit_test_sim.AddModelToTask("unit_task", flyby_diagnostic_log)
+
+    unit_test_sim.InitializeSimulation()
+    position_data = []
+    velocity_data = []
+    trigger_indices = [1, 3, 8, 10, 11, 12, 13, 14, 15, 23, 24, 25, 26, 27, 28]
+    vel_mag = np.linalg.norm(np.array(initial_velocity))
+    for i in range(round(600 / sim_dt)):
+        if(i in trigger_indices):
+            pos_vec = np.array(initial_position) + np.array(initial_velocity) * (i * sim_dt)
+            position_data.append(pos_vec)
+            vel_vec = (pos_vec / np.linalg.norm(pos_vec)) * vel_mag # set velocity vector to be collinear to position vector
+            velocity_data.append(vel_vec)
+        else:
+            position_data.append(np.array(initial_position) + np.array(initial_velocity) * (i * sim_dt))
+            velocity_data.append(np.array(initial_velocity))
+        input_data.timeTag = macros.sec2nano(i * sim_dt)
+        input_data.r_BN_N = position_data[i]
+        input_data.v_BN_N = velocity_data[i]
+        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
+        unit_test_sim.ExecuteSimulation()
+
+    flyby_diagnostic_trigger_indices = [i for i, val in enumerate(flyby_diagnostic_log.collinearityTrigger) if val]
+    np.testing.assert_equal(flyby_diagnostic_trigger_indices, trigger_indices)
+
+
+def test_flybyPoint_maxrate(
+        initial_position=[-5E7, 7.5E6, 5E5],
+        initial_velocity=[2E4, 0, 0],
+        filter_dt=1,
+        orbit_normal_sign=-1,
+        max_rate=0.1,
+        max_acceleration=1E-7,
+        pos_knowledge=1E5
+):
+    # setup simulation environment
+    sim_dt = 10
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    process_rate = macros.sec2nano(sim_dt)
+    test_process = unit_test_sim.CreateNewProcess("unit_process")
+    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+
+    # setup flybyPoint guidance module
+    flyby_guidance = flybyPoint.FlybyPoint()
+    flyby_guidance.modelTag = "flybyPoint"
+    flyby_guidance.setTimeBetweenFilterData(filter_dt)
+    flyby_guidance.setToleranceForCollinearity(1E-5)
+    flyby_guidance.setSignOfOrbitNormalFrameVector(orbit_normal_sign)
+    flyby_guidance.setMaximumRateThreshold(max_rate)
+    flyby_guidance.setMaximumAccelerationThreshold(max_acceleration)
+    flyby_guidance.setPositionKnowledgeSigma(pos_knowledge)
+    unit_test_sim.AddModelToTask("unit_task", flyby_guidance)
+
+    input_data = messaging.NavTransMsgPayload()
+    input_data.v_BN_N = np.array(initial_velocity)
+    filter_msg = messaging.NavTransMsg()
+    flyby_guidance.filterInMsg.subscribeTo(filter_msg)
+
+    # Setup data logging before the simulation is initialized
+    attitude_reference_log = flyby_guidance.attRefOutMsg.recorder()
+    flyby_diagnostic_log = flyby_guidance.flybyDiagnosticOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unit_task", attitude_reference_log)
+    unit_test_sim.AddModelToTask("unit_task", flyby_diagnostic_log)
+
+    unit_test_sim.InitializeSimulation()
+    position_data = []
+    velocity_data = []
+    trigger_indices = [1, 3, 8, 10, 11, 12, 13, 14, 15, 23, 24, 25, 26, 27, 28]
+    fac = 1000.0
+    for i in range(round(600 / sim_dt)):
+        if(i in trigger_indices):
+            pos_vec = np.array(initial_position) + np.array(initial_velocity) * (i * sim_dt) * fac
+            position_data.append(pos_vec)
+            vel_vec = np.array(initial_velocity) * fac # use large velocity
+            velocity_data.append(vel_vec)
+        else:
+            position_data.append(np.array(initial_position) + np.array(initial_velocity) * (i * sim_dt))
+            velocity_data.append(np.array(initial_velocity))
+        input_data.timeTag = macros.sec2nano(i * sim_dt)
+        input_data.r_BN_N = position_data[i]
+        input_data.v_BN_N = velocity_data[i]
+        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
+        unit_test_sim.ExecuteSimulation()
+
+    flyby_diagnostic_trigger_indices = [i for i, val in enumerate(flyby_diagnostic_log.maxRateTrigger) if val]
+    np.testing.assert_equal(flyby_diagnostic_trigger_indices, trigger_indices)
+
+
+def test_flybyPoint_maxacc(
+        initial_position=[-5E7, 7.5E6, 5E5],
+        initial_velocity=[2E4, 0, 0],
+        filter_dt=1,
+        orbit_normal_sign=-1,
+        max_rate=0.1,
+        max_acceleration=1E-4,
+        pos_knowledge=1E5
+):
+    # setup simulation environment
+    sim_dt = 10
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    process_rate = macros.sec2nano(sim_dt)
+    test_process = unit_test_sim.CreateNewProcess("unit_process")
+    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+
+    # setup flybyPoint guidance module
+    flyby_guidance = flybyPoint.FlybyPoint()
+    flyby_guidance.modelTag = "flybyPoint"
+    flyby_guidance.setTimeBetweenFilterData(filter_dt)
+    flyby_guidance.setToleranceForCollinearity(1E-5)
+    flyby_guidance.setSignOfOrbitNormalFrameVector(orbit_normal_sign)
+    flyby_guidance.setMaximumRateThreshold(max_rate)
+    flyby_guidance.setMaximumAccelerationThreshold(max_acceleration)
+    flyby_guidance.setPositionKnowledgeSigma(pos_knowledge)
+    unit_test_sim.AddModelToTask("unit_task", flyby_guidance)
+
+    input_data = messaging.NavTransMsgPayload()
+    input_data.v_BN_N = np.array(initial_velocity)
+    filter_msg = messaging.NavTransMsg()
+    flyby_guidance.filterInMsg.subscribeTo(filter_msg)
+
+    # Setup data logging before the simulation is initialized
+    attitude_reference_log = flyby_guidance.attRefOutMsg.recorder()
+    flyby_diagnostic_log = flyby_guidance.flybyDiagnosticOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unit_task", attitude_reference_log)
+    unit_test_sim.AddModelToTask("unit_task", flyby_diagnostic_log)
+
+    unit_test_sim.InitializeSimulation()
+    position_data = []
+    velocity_data = []
+    trigger_indices = [1, 3, 8, 10, 11, 12, 13, 14, 15, 23, 24, 25, 26, 27, 28]
+    for i in range(round(600 / sim_dt)):
+        if(i in trigger_indices):
+            flyby_guidance.setMaximumAccelerationThreshold(1E-20) # use small maxAcc threshold
+            pos_vec = np.array(initial_position) + np.array(initial_velocity) * (i * sim_dt)
+            position_data.append(pos_vec)
+            vel_vec = np.array(initial_velocity)
+            velocity_data.append(vel_vec)
+        else:
+            flyby_guidance.setMaximumAccelerationThreshold(max_acceleration)
+            position_data.append(np.array(initial_position) + np.array(initial_velocity) * (i * sim_dt))
+            velocity_data.append(np.array(initial_velocity))
+        input_data.timeTag = macros.sec2nano(i * sim_dt)
+        input_data.r_BN_N = position_data[i]
+        input_data.v_BN_N = velocity_data[i]
+        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
+        unit_test_sim.ExecuteSimulation()
+
+    flyby_diagnostic_trigger_indices = [i for i, val in enumerate(flyby_diagnostic_log.maxAccelerationTrigger) if val]
+    np.testing.assert_equal(flyby_diagnostic_trigger_indices, trigger_indices)
+
+
+def test_flybyPoint_diagnostic_positionknowledge(
+        initial_position=[-5E7, 7.5E6, 5E5],
+        initial_velocity=[2E4, 0, 0],
+        filter_dt=1,
+        orbit_normal_sign=-1,
+        max_rate=0.01,
+        max_acceleration=1E-7,
+        pos_knowledge=1E5
+):
+    # setup simulation environment
+    sim_dt = 10
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    process_rate = macros.sec2nano(sim_dt)
+    test_process = unit_test_sim.CreateNewProcess("unit_process")
+    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+
+    # setup flybyPoint guidance module
+    flyby_guidance = flybyPoint.FlybyPoint()
+    flyby_guidance.modelTag = "flybyPoint"
+    flyby_guidance.setTimeBetweenFilterData(filter_dt)
+    flyby_guidance.setToleranceForCollinearity(1E-5)
+    flyby_guidance.setSignOfOrbitNormalFrameVector(orbit_normal_sign)
+    flyby_guidance.setMaximumRateThreshold(max_rate)
+    flyby_guidance.setMaximumAccelerationThreshold(max_acceleration)
+    flyby_guidance.setPositionKnowledgeSigma(pos_knowledge)
+    unit_test_sim.AddModelToTask("unit_task", flyby_guidance)
+
+    input_data = messaging.NavTransMsgPayload()
+    input_data.v_BN_N = np.array(initial_velocity)
+    filter_msg = messaging.NavTransMsg()
+    flyby_guidance.filterInMsg.subscribeTo(filter_msg)
+
+    # Setup data logging before the simulation is initialized
+    attitude_reference_log = flyby_guidance.attRefOutMsg.recorder()
+    flyby_diagnostic_log = flyby_guidance.flybyDiagnosticOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unit_task", attitude_reference_log)
+    unit_test_sim.AddModelToTask("unit_task", flyby_diagnostic_log)
+
+    unit_test_sim.InitializeSimulation()
+    position_data = []
+    velocity_data = []
+    trigger_indices = [1, 3, 8, 10, 11, 12, 13, 14, 15, 23, 24, 25, 26, 27, 28]
+    fac = 100000.
+    for i in range(round(600 / sim_dt)):
+        if(i in trigger_indices):
+            pos_vec = np.array(initial_position) + np.array(initial_velocity) * (i * sim_dt) * fac # use large position magnitude
+            position_data.append(pos_vec)
+            vel_vec = initial_velocity
+            velocity_data.append(vel_vec)
+        else:
+            position_data.append(np.array(initial_position) + np.array(initial_velocity) * (i * sim_dt))
+            velocity_data.append(np.array(initial_velocity))
+        input_data.timeTag = macros.sec2nano(i * sim_dt)
+        input_data.r_BN_N = position_data[i]
+        input_data.v_BN_N = velocity_data[i]
+        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
+        unit_test_sim.ExecuteSimulation()
+
+    flyby_diagnostic_trigger_indices = [i for i, val in enumerate(flyby_diagnostic_log.collinearityTrigger) if val]
+    np.testing.assert_equal(flyby_diagnostic_trigger_indices, trigger_indices)
+
+
 def flybyPointTestFunction(show_plots, initial_position, initial_velocity, filter_dt, orbit_normal_sign,
                            max_rate, max_acceleration, pos_knowledge):
     # setup simulation environment
