@@ -54,14 +54,16 @@ void CobConverter::updateState(const uint64_t currentSimNanos) {
 
     OpNavUnitVecMsgPayload uVecOutMsgBuffer{};
     OpNavCOMMsgPayload comMsgBuffer{};
+    CobConverterDiagnosticMsgPayload diagnosticMsgBuffer{};
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0) {
-        std::tie(uVecOutMsgBuffer, comMsgBuffer) = this->algorithm.updateState(
+        std::tie(uVecOutMsgBuffer, comMsgBuffer, diagnosticMsgBuffer) = this->algorithm.updateState(
             currentSimNanos, cameraModelInMsg, cobMsgBuffer, navAttBuffer, sunBuffer, filterMsgBuffer);
     }
 
     this->opnavUnitVecOutMsg.write(&uVecOutMsgBuffer, this->moduleID, currentSimNanos);
     this->comCorrectionOutMsg.write(&comMsgBuffer, this->moduleID, currentSimNanos);
+    this->cobConverterDiagnosticOutMsg.write(&diagnosticMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /**

@@ -10,6 +10,7 @@
 #include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCOMMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
+#include <architecture/msgPayloadDef/CobConverterDiagnosticMsgPayload.h>
 
 /**
  * @enum PhaseAngleCorrectionMethodAlgorithm
@@ -28,12 +29,13 @@ class CobConverterAlgorithm {
     CobConverterAlgorithm(PhaseAngleCorrectionMethodAlgorithm method, double radiusObject);
     ~CobConverterAlgorithm();
 
-    std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> updateState(const uint64_t currentSimNanos,
-                                                                       const CameraModelMsgPayload& cameraSpecs,
-                                                                       const OpNavCOBMsgPayload& cobMsgBuffer,
-                                                                       const NavAttMsgPayload& navAttBuffer,
-                                                                       const NavAttMsgPayload& sunBuffer,
-                                                                       const FilterMsgPayload& filterMsgBuffer);
+    std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload, CobConverterDiagnosticMsgPayload> updateState(
+        const uint64_t currentSimNanos,
+        const CameraModelMsgPayload& cameraSpecs,
+        const OpNavCOBMsgPayload& cobMsgBuffer,
+        const NavAttMsgPayload& navAttBuffer,
+        const NavAttMsgPayload& sunBuffer,
+        const FilterMsgPayload& filterMsgBuffer);
 
     void setRadius(double radius);
     double getRadius() const;
@@ -51,7 +53,8 @@ class CobConverterAlgorithm {
     bool isOutlierDetectionEnabled() const;
 
    private:
-    void cobOutlierDetection(const FilterMsgPayload& filterMsgBuffer);
+    void cobOutlierDetection(const FilterMsgPayload& filterMsgBuffer,
+                             CobConverterDiagnosticMsgPayload& cobConverterDiagnosticBuffer);
     void computeCameraParameters(const CameraModelMsgPayload& cameraSpecs);
     void computeRotations(const NavAttMsgPayload& navAttBuffer);
     void computePhaseAngleCorrection(const FilterMsgPayload& filterBuffer, const NavAttMsgPayload& sunBuffer);

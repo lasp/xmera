@@ -126,11 +126,9 @@ void CobConverterAlgorithm::computePhaseAngleCorrection(const FilterMsgPayload& 
         // Using phase angle correction assuming Lambertian reflectance sphere (Bhaskaran 1998)
         this->gamma = 3.0 * M_PI / 16.0 * ((cos(this->alphaPA) + 1.0) * sin(this->alphaPA)) /
                       (sin(this->alphaPA) + (M_PI - this->alphaPA) * cos(this->alphaPA));
-        validCOM = true;
     } else if (this->phaseAngleCorrectionMethod == PhaseAngleCorrectionMethodAlgorithm::BinaryAlg) {
         // Using phase angle correction assuming a binarized image (brightness either 0 or 1)
         this->gamma = 4.0 / (3.0 * M_PI) * (1.0 - cos(this->alphaPA));
-        validCOM = true;
     }
     this->spacecraftRange = this->sc_position.norm();
     this->Rc = this->objectRadius * this->dX / this->spacecraftRange;  // object radius in pixels
@@ -305,15 +303,16 @@ std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::po
  *
  * @param currentSimNanos Current simulation time in nanoseconds.
  */
-std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::updateState(
-    const uint64_t currentSimNanos,
-    const CameraModelMsgPayload& cameraSpecs,
-    const OpNavCOBMsgPayload& cobMsgBuffer,
-    const NavAttMsgPayload& navAttBuffer,
-    const NavAttMsgPayload& sunBuffer,
-    const FilterMsgPayload& filterMsgBuffer) {
+std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload, CobConverterDiagnosticMsgPayload>
+CobConverterAlgorithm::updateState(const uint64_t currentSimNanos,
+                                   const CameraModelMsgPayload& cameraSpecs,
+                                   const OpNavCOBMsgPayload& cobMsgBuffer,
+                                   const NavAttMsgPayload& navAttBuffer,
+                                   const NavAttMsgPayload& sunBuffer,
+                                   const FilterMsgPayload& filterMsgBuffer) {
     OpNavUnitVecMsgPayload uVecMsgBuffer{};
     OpNavCOMMsgPayload comMsgBuffer{};
+    CobConverterDiagnosticMsgPayload cobConverterDiagnosticBuffer{false};
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0) {
         this->computeCameraParameters(cameraSpecs);
@@ -330,14 +329,14 @@ std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> CobConverterAlgorithm::up
         this->computeCameraFrameUncertainty(filterMsgBuffer, cobMsgBuffer.pixelsFound);
 
         if (this->performOutlierDetection) {
-            this->cobOutlierDetection(filterMsgBuffer);
+            this->cobOutlierDetection(filterMsgBuffer, cobConverterDiagnosticBuffer);
         }
 
         std::tie(uVecMsgBuffer, comMsgBuffer) = this->populateOutputMessages(
             cobMsgBuffer.timeTag, centerOfMass, centerOfBrightness, uVecMsgBuffer, comMsgBuffer);
     }
 
-    return {uVecMsgBuffer, comMsgBuffer};
+    return {uVecMsgBuffer, comMsgBuffer, cobConverterDiagnosticBuffer};
 }
 
 /**
@@ -374,7 +373,8 @@ static Eigen::Matrix3d computeTotalCobCovariance(const Eigen::Matrix3d& covarNav
  *
  * @param filterMsgBuffer Filter message buffer containing state and covariance.
  */
-void CobConverterAlgorithm::cobOutlierDetection(const FilterMsgPayload& filterMsgBuffer) {
+void CobConverterAlgorithm::cobOutlierDetection(const FilterMsgPayload& filterMsgBuffer,
+                                                CobConverterDiagnosticMsgPayload& cobConverterDiagnosticBuffer) {
     double state[MAX_STATES_VECTOR];
     double covariance[MAX_STATES_VECTOR * MAX_STATES_VECTOR];
     std::ranges::copy(filterMsgBuffer.state, std::begin(state));
@@ -413,7 +413,12 @@ void CobConverterAlgorithm::cobOutlierDetection(const FilterMsgPayload& filterMs
         sigma = sqrt(std::max(covarImage(0, 0), covarImage(1, 1)));
     }
 
-    this->goodOutlierCheck = cobErrorPrediction < this->numStandardDeviations * sigma;
+    if (cobErrorPrediction < this->numStandardDeviations * sigma) {
+        this->goodOutlierCheck = true;
+        cobConverterDiagnosticBuffer.coberrorOutlierTrigger = false;
+    } else {
+        cobConverterDiagnosticBuffer.coberrorOutlierTrigger = true;
+    }
 }
 
 /**
