@@ -12,9 +12,8 @@ defaults:
     shell: bash --noprofile --norc -euo pipefail {0}
 
 env:
-  USERNAME: ${{ github.repository_owner }}
   FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite"
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,read"
   VCPKG_FEATURE_FLAGS: "manifests,registries,binarycaching"
   CMAKE_BUILD_PARALLEL_LEVEL: 4
   CTEST_PARALLEL_LEVEL: 4
@@ -67,7 +66,7 @@ jobs:
         python-version: ["3.9", "3.10", "3.11"]
     permissions:
       contents: read
-      packages: write
+      packages: read
       actions: read
       security-events: write
     steps:
@@ -132,18 +131,18 @@ jobs:
             ${{ runner.workspace }}/b/vcpkg/buildtrees
           key: vcpkg-${{ runner.os }}-${{ hashFiles('src/vcpkg.json', 'src/vcpkg-configuration.json') }}
 
-      - name: Add NuGet sources for vcpkg binary cache (portable)
+      - name: Add NuGet sources for vcpkg binary cache (read-only)
         env:
           VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
+          NUGET_USER: ${{ github.repository_owner }}
+          NUGET_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           NUGET="$(${VCPKG_EXE} fetch nuget | tail -n 1)"
 
-          # Build the command invocation safely (handles paths with spaces)
           if [[ "$NUGET" == *.exe ]]; then
             NUGET_CMD=(mono "$NUGET")
           else
-            # e.g., "nuget" shim from Mono on macOS, or a native path
             NUGET_CMD=("$NUGET")
           fi
 
@@ -151,12 +150,12 @@ jobs:
 
           "${NUGET_CMD[@]}" sources add \
             -Source "${FEED_URL}" \
-            -StorePasswordInClearText \
             -Name GitHubPackages \
-            -UserName "${USERNAME}" \
-            -Password "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}"
+            -UserName "${NUGET_USER}" \
+            -Password "${NUGET_TOKEN}" \
+            -StorePasswordInClearText
 
-          "${NUGET_CMD[@]}" setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
+          "${NUGET_CMD[@]}" setapikey "${NUGET_TOKEN}" \
             -Source "${FEED_URL}"
 
       - name: Create virtual environment
