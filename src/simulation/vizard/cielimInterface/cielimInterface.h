@@ -7,6 +7,7 @@
 #include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraRenderingMsgPayload.h>
 #include <architecture/msgPayloadDef/CelestialBodyParametersMsgPayload.h>
+#include <architecture/msgPayloadDef/ImageDiagnosticsPayload.h>
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
@@ -65,6 +66,7 @@ class CielimInterface : public SysModel {
 
     ReadFunctor<SCStatesMsgPayload> spacecraftMessage;              //!< [-] vector of spacecraft data containers
     ReadFunctor<CameraModelMsgPayload> cameraModelMessage;          //!< [-] incoming camera data message
+    ReadFunctor<ImageDiagnosticsPayload> imageDiagnosticsMessage;   //!< [-] incoming image diagnostics message
     ReadFunctor<CameraRenderingMsgPayload> cameraRenderingMessage;  //!< [-] camera rendering message
     ReadFunctor<EpochMsgPayload> epochMessage;                      //!< [-] simulation epoch date/time input msg
 
@@ -97,6 +99,9 @@ class CielimInterface : public SysModel {
 
     CameraModelMsgPayload cameraModelPayload{};  //!< [-] camera config buffers
     MessageStatus cameraModelMessageStatus{};    //!< [-] message status of incoming camera data
+
+    ImageDiagnosticsPayload imageDiagnosticsPayload{};  //!< [-] image diagnostics
+    MessageStatus imageDiagnosticsMessageStatus{};      //!< [-] image diagnostics
 
     CameraRenderingMsgPayload cameraRenderingPayload{};  //!< [-] buffer for camera rendering settings
     MessageStatus cameraRenderingMessageStatus{};        //!< [-] message status of the camera rendering message

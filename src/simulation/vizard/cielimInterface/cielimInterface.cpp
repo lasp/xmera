@@ -21,6 +21,12 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
         this->cameraModelMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     }
 
+    /*! Check diagnostic input messages */
+    if (this->imageDiagnosticsMessage.isLinked()) {
+        this->imageDiagnosticsMessageStatus.dataFresh = false;
+        this->imageDiagnosticsMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    }
+
     /*! Check Camera rendering information messages */
     if (this->cameraRenderingMessage.isLinked()) {
         this->cameraRenderingMessageStatus.dataFresh = false;
@@ -100,6 +106,16 @@ void CielimInterface::readBskMessages() {
             this->cameraModelMessageStatus.dataFresh = true;
         }
         this->cameraModelPayload = localCameraConfigArray;
+
+        /*! Read image diagnostics message */
+        if (this->imageDiagnosticsMessage.isLinked()) {
+            if (this->imageDiagnosticsMessage.isWritten() &&
+                this->imageDiagnosticsMessage.timeWritten() != this->imageDiagnosticsMessageStatus.lastTimeTag) {
+                this->imageDiagnosticsMessageStatus.lastTimeTag = this->imageDiagnosticsMessage.timeWritten();
+                this->imageDiagnosticsMessageStatus.dataFresh = true;
+            }
+            this->imageDiagnosticsPayload = this->imageDiagnosticsMessage();
+        }
     }
 
     /*! Read camera rendering message */
@@ -305,6 +321,18 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
 
         camera->set_allocated_lensmodel(lensModel);
         camera->set_allocated_sensormodel(sensorModel);
+
+        /*! Write diagnostics msg */
+        if (this->imageDiagnosticsMessage.isLinked() && this->imageDiagnosticsMessageStatus.dataFresh) {
+            auto* areaOfInterest = new cielimMessage::AreaOfInterest();
+            areaOfInterest->set_centerx(this->imageDiagnosticsPayload.areaOfInterestCenter[0]);
+            areaOfInterest->set_centery(this->imageDiagnosticsPayload.areaOfInterestCenter[1]);
+            areaOfInterest->set_width(this->imageDiagnosticsPayload.areaOfInterestWidthHeight[0]);
+            areaOfInterest->set_height(this->imageDiagnosticsPayload.areaOfInterestWidthHeight[1]);
+            areaOfInterest->set_threshold(this->imageDiagnosticsPayload.threshold);
+
+            camera->set_allocated_areaofinterest(areaOfInterest);
+        }
 
         visPayload.set_allocated_camera(camera);
     }

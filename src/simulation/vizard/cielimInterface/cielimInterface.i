@@ -15,6 +15,7 @@
 %include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
 %include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 %include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+%include <architecture/msgPayloadDef/ImageDiagnosticsPayload.h>
 %include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 %include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 %include <architecture/msgPayloadDef/EpochMsgPayload.h>
