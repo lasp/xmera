@@ -18,40 +18,14 @@
 #
 
 import math
+import numpy as np
 
-import pytest
 from xmera.architecture import messaging
 from xmera.fswAlgorithms import attRefCorrection
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
-from xmera.utilities import unitTestSupport
 
-
-@pytest.mark.parametrize("accuracy", [1e-12])
-
-def test_att_ref_correction(show_plots, accuracy):
-    r"""
-    **Validation Test Description**
-
-    Checks the output of the module that the correct orientation adjustment is applied
-
-    **Test Parameters**
-
-    Args:
-        accuracy (float): absolute accuracy value used in the validation tests
-
-    **Description of Variables Being Tested**
-
-    The ``sigma_RN`` variable of the output message is tested
-    """
-    [test_results, test_message] = att_ref_correction_test_function(show_plots, accuracy)
-    assert test_results < 1, test_message
-
-
-def att_ref_correction_test_function(show_plots, accuracy):
-    """Test method"""
-    test_fail_count = 0
-    test_messages = []
+def test_att_ref_correction():
     unit_task_name = "unitTask"
     unit_process_name = "TestProcess"
 
@@ -88,22 +62,11 @@ def att_ref_correction_test_function(show_plots, accuracy):
         [-math.tan(math.pi / 8), 0.0, 0.0],
         [-math.tan(math.pi / 8), 0.0, 0.0]
     ]
+
     # compare the module results to the truth values
-    for i in range(0, len(true_vector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(att_ref_out_msg_rec.sigma_RN[i], true_vector[i], 3, accuracy):
-            test_fail_count += 1
-            test_messages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
-                                str(att_ref_out_msg_rec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
-
-    if test_fail_count == 0:
-        print("PASSED: " + module.modelTag)
-    else:
-        print(test_messages)
-
-    return [test_fail_count, "".join(test_messages)]
+    accuracy = 1e-12
+    np.testing.assert_allclose(att_ref_out_msg_rec.sigma_RN, true_vector, atol=accuracy, rtol=0, verbose=True)
 
 
 if __name__ == "__main__":
-    test_att_ref_correction(False, 1e-12)
+    test_att_ref_correction()
