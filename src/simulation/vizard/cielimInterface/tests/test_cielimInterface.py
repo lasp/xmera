@@ -50,6 +50,14 @@ def read_write_test():
     epoch_message = messaging.EpochMsg().write(epoch_payload)
     module.epochMessage.subscribeTo(epoch_message)
 
+    # Create diagnostic message
+    diagnostics_payload = messaging.ImageDiagnosticsPayload()
+    diagnostics_payload.areaOfInterestCenter = [0,0]
+    diagnostics_payload.areaOfInterestWidthHeight = [100,200]
+    diagnostics_payload.threshold = 15/255
+    diagnostic_message = messaging.ImageDiagnostics().write(diagnostics_payload)
+    module.imageDiagnosticsMessage.subscribeTo(diagnostic_message)
+
     # Create camera rendering message
     rendering_payload = messaging.CameraRenderingMsgPayload()
     rendering_payload.cameraId = 1
@@ -188,6 +196,12 @@ def read_write_test():
     np.testing.assert_equal(cielim_message.camera.parentName, "cielim_sat")
     np.testing.assert_equal(cielim_message.camera.cameraPositionInBody, camera_payload.cameraBodyFramePosition)
     np.testing.assert_equal(cielim_message.camera.bodyFrameToCameraMrp, camera_payload.bodyToCameraMrp)
+
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.threshold, diagnostics_payload.threshold)
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.centerX, diagnostics_payload.areaOfInterestCenter[0])
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.centerY, diagnostics_payload.areaOfInterestCenter[1])
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.width, diagnostics_payload.areaOfInterestWidthHeight[0])
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.height, diagnostics_payload.areaOfInterestWidthHeight[1])
 
     np.testing.assert_equal(cielim_message.camera.lensModel.fieldOfView,camera_payload.fieldOfView)
     np.testing.assert_equal(cielim_message.camera.lensModel.focalLength, camera_payload.focalLength)
