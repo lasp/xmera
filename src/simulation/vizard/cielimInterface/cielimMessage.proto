@@ -109,6 +109,14 @@ message SensorModel{
     QuantumEfficiency qeCurve = 12; // [-] Quantum Efficiency curve information
 }
 
+message AreaOfInterest{
+    double centerX=1;  //!< [pix] x coordinate of the center of the area of interest
+    double centerY=2;  //!< [pix] y coordinate of the center of the area of interest
+    double width =3;  //!< [pix] Width of the area of interest
+    double height =4;  //!< [pix] Height of the area of interest
+    double threshold = 5;  //!< [0-255] threshold for a bright pixel to count (values below threshold are zeroed)
+}
+
 //Camera parameters
 message CameraModel{
     int64 cameraId = 1;  //[-] ID of the camera
@@ -117,6 +125,7 @@ message CameraModel{
     repeated double bodyFrameToCameraMrp = 4;  //[-] Rotation to the camera frame MRP
     LensModel lensModel = 5; // [-] Parameters to model the optics of the camera
     SensorModel sensorModel = 6; // [-] Parameters to model the camera sensor
+    AreaOfInterest areaOfInterest = 7; // [-] Sub-fov of interest for diagnostics
 }
 
 /*! Cielim Message containing relevant data for image generation*/
