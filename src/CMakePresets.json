@@ -18,6 +18,8 @@
           "Debug",
         "CMAKE_INSTALL_MODE":
           "SYMLINK_OR_COPY",
+        "CMAKE_INSTALL_PREFIX":
+          "${sourceDir}/../dist",
         "XMERA_MODULE_ROOTS":
           "${sourceDir}/fswAlgorithms/;${sourceDir}/simulation/;${sourceDir}/moduleTemplates/",
         "XMERA_ENABLE_GROUPS":
