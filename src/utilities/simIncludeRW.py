@@ -24,8 +24,8 @@ import sys
 from collections import OrderedDict
 
 import numpy
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.utilities import macros
 
 
 class rwFactory(object):

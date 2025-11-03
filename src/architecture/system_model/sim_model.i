@@ -101,7 +101,7 @@ class SysModel(_SysModel, metaclass=SuperInitChecker):
 
 
 %pythoncode %{
-    from Basilisk.utilities import deprecated
+    from xmera.utilities import deprecated
 %}
 
 %extend SimModel{

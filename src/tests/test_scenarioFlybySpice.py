@@ -19,7 +19,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test for importing a custom Spice file to specifiy translational motion with attitude pointing modes.
 # Author:   Leah Kiner

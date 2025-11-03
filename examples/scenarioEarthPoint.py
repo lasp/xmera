@@ -26,7 +26,7 @@ the following:
 
 - :ref:`triad`: computes the reference attitude for a spacecraft using the triad method to statisfy the requirements of the state.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioEarthPoint.py
 
@@ -36,15 +36,15 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, triad, rwMotorTorque,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError, triad, rwMotorTorque,
                                     hingedRigidBodyPIDMotor, solarArrayReference, thrusterPlatformReference,
                                     thrusterPlatformState, thrustCMEstimation, torqueScheduler)
-from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
+from xmera.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
                                  spinningBodyOneDOFStateEffector,
                                  spinningBodyTwoDOFStateEffector, thrusterStateEffector, facetSRPDynamicEffector, ephemerisConverter, boreAngCalc)
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
                                 unitTestSupport, vizSupport, RigidBodyKinematics as rbk)
 
 bskPath = __path__[0]

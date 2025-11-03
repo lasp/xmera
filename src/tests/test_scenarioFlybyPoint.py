@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the attitude Hill point guidance of a spacecraft during a flyby.
 # Author:   Riccardo Calaon
@@ -31,7 +31,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -80,4 +80,3 @@ def test_bskFlybyPoint(show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-

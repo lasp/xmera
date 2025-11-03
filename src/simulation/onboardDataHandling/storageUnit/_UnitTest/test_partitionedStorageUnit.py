@@ -23,14 +23,14 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
+from xmera.utilities import SimulationBaseClass
+from xmera.simulation import partitionedStorageUnit
+from xmera.architecture import messaging
+from xmera.utilities import macros
 
 
 params_storage_limits = [(1200, 1200, 2400, 2400),
@@ -43,9 +43,9 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
     """
     Tests:
 
-    1. Whether the partitionedStorageUnit can add multiple nodes (core base class 
+    1. Whether the partitionedStorageUnit can add multiple nodes (core base class
         functionality);
-    2. That the partitionedStorageUnit correctly evaluates how much stored data it 
+    2. That the partitionedStorageUnit correctly evaluates how much stored data it
         should have given a pair of baud input messages.
 
     :return:
@@ -105,7 +105,7 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
 
     #   Check 3 - is the amount of data more than zero and less than the capacity?
     for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind], 
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
             capacityLog[ind]), (
                 "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
 
@@ -128,14 +128,14 @@ params_set_data = [(1200, 1200, ['test'], [1200], 2400, 2400),
 @pytest.mark.parametrize(
     "baudRate_1, baudRate_2, partitionName, add_data, storageCapacity, expectedStorage",
     params_set_data)
-def test_set_data_buffer(baudRate_1, baudRate_2, partitionName, 
+def test_set_data_buffer(baudRate_1, baudRate_2, partitionName,
                          add_data, storageCapacity, expectedStorage):
     """
     Tests:
 
-    1. Whether the partitionedStorageUnit properly adds data in different partitions 
+    1. Whether the partitionedStorageUnit properly adds data in different partitions
         using the setDataBuffer method;
-    2. That the partitionedStorageUnit correctly evaluates how much stored data it 
+    2. That the partitionedStorageUnit correctly evaluates how much stored data it
         should have given a pair of input messages and using setDataBuffer.
 
     :return:
@@ -203,7 +203,7 @@ def test_set_data_buffer(baudRate_1, baudRate_2, partitionName,
 
     #   Check 3 - is the amount of data more than zero and less than the capacity?
     for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind], 
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
             capacityLog[ind]), (
                 "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
 
@@ -222,13 +222,13 @@ params_set_data = [(600, 600, ['test'], [0], 1E4),
 @pytest.mark.parametrize(
     "baudRate_1, baudRate_2, partitionName, add_data, storageCapacity",
     params_set_data)
-def test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName, 
+def test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
                                    add_data, storageCapacity):
 
     """
     Tests:
 
-    1. Whether the partitionedStorageUnit manages the data in already existing 
+    1. Whether the partitionedStorageUnit manages the data in already existing
         and new partitions correctly;
 
     :return:
@@ -298,8 +298,8 @@ def test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
             baudRate = baudRate_2
 
         # Check 2 - if partition exists, does it added data to the correct partition?
-        np.testing.assert_allclose(dataVec[-1][partIndex], 
-            add_data[dataIndex] + baudRate*sim_time, 
+        np.testing.assert_allclose(dataVec[-1][partIndex],
+            add_data[dataIndex] + baudRate*sim_time,
             err_msg = (
             "FAILED: PartitionedStorageUnit did not use the correct partition."))
 
@@ -312,8 +312,8 @@ if __name__ == "__main__":
     test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage)
     add_data = [1200, 200]
     partitionName = ["test", "node_1_msg"]
-    test_set_data_buffer(baudRate_1, baudRate_2, partitionName, 
+    test_set_data_buffer(baudRate_1, baudRate_2, partitionName,
                          add_data, storageCapacity, expectedStorage)
     storageCapacity = 20000
-    test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName, 
+    test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
                          add_data, storageCapacity)

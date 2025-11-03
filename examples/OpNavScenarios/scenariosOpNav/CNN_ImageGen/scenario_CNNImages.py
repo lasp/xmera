@@ -28,9 +28,9 @@ import os
 import subprocess
 import sys
 
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import RigidBodyKinematics as rbk
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from xmera.utilities import orbitalMotion, macros, unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

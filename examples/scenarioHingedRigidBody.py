@@ -36,7 +36,7 @@ This scenario does not have multiple maneuver types, so nothing needs to
 be changed to run the scenario as was necessary
 in the orbit maneuvers tutorial
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioBasicOrbit.py
 
@@ -131,7 +131,7 @@ similar to a weight hanging from a spring on Earth.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated tutorial of the spacecraft(), gravity, and hinged rigid body modules illustrating
 #           how Delta_v maneuver from scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
@@ -146,23 +146,23 @@ import os
 # import non-basilisk libraries
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 # Allows for forces to act on the spacecraft without adding an effector like a thruster
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import hingedRigidBodyStateEffector
+from xmera.simulation import extForceTorque
+from xmera.simulation import hingedRigidBodyStateEffector
 # import simulation related support
-from Basilisk.simulation import \
+from xmera.simulation import \
     spacecraft  # The base of any spacecraft simulation which deals with spacecraft dynamics
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass  # The class which contains the basilisk simuation environment
-from Basilisk.utilities import macros  # Some unit conversions
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass  # The class which contains the basilisk simuation environment
+from xmera.utilities import macros  # Some unit conversions
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

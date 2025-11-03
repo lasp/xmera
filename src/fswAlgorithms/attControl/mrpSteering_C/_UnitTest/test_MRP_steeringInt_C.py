@@ -18,13 +18,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import mrpSteering_C  # import the module that is to be tested
-from Basilisk.fswAlgorithms import rateServoFullNonlinear_C
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import mrpSteering_C  # import the module that is to be tested
+from xmera.fswAlgorithms import rateServoFullNonlinear_C
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

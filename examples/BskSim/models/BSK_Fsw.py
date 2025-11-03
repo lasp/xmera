@@ -19,18 +19,18 @@
 import math
 
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrpFeedback,
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrpFeedback,
                                     rwMotorTorque,
                                     velocityPoint, mrpSteering, rateServoFullNonlinear,
                                     sunSafePoint, cssWlsEst, lambertPlanner, lambertSolver, lambertValidator,
                                     lambertSurfaceRelativeVelocity, lambertSecondDV,
                                     dvGuidance, thrForceMapping, thrFiringRemainder,
                                     attRefCorrection, dvExecuteGuidance)
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import (fswSetupRW, fswSetupThrusters)
-from Basilisk.utilities import deprecated
-from Basilisk.utilities import macros as mc
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import (fswSetupRW, fswSetupThrusters)
+from xmera.utilities import deprecated
+from xmera.utilities import macros as mc
 
 
 class BSKFswModels:
@@ -272,7 +272,7 @@ class BSKFswModels:
         SimBase.createNewEvent("initiateDvBurn", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'dvBurn'"],
                                ["self.fswProc.disableTasks()",
-                                "from Basilisk.architecture import messaging",
+                                "from xmera.architecture import messaging",
                                 "self.FSWModels.cmdRwMotorMsg.write(messaging.RwMotorTorqueMsgPayload())",
                                 "self.enableTask('dvPointTask')",
                                 "self.enableTask('mrpFeedbackTHsTask')",

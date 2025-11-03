@@ -23,7 +23,7 @@ setup.  Note that the Python Spice setup is separate from the BSK c++ Spice modu
 a very simple simulation is shown to showcase how to correctly perform Python-based Spice function calls with a
 Basilisk Monte Carlo run.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioMonteCarloSpice.py
 
@@ -61,15 +61,15 @@ fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 # @endcond
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 
-from Basilisk.utilities.MonteCarlo.Controller import Controller
+from xmera.utilities.MonteCarlo.Controller import Controller
 
 
 class MyController(Controller):

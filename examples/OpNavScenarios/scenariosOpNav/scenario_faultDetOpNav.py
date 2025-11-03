@@ -37,9 +37,9 @@ import os
 import sys
 import time
 
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import RigidBodyKinematics as rbk
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from xmera.utilities import orbitalMotion, macros, unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -55,7 +55,7 @@ import numpy as np
 sys.path.append(path + '/../plottingOpNav')
 import OpNav_Plotting as BSK_plt
 
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 
 # Create your own scenario child class

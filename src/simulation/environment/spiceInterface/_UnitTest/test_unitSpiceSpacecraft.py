@@ -33,14 +33,14 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-import Basilisk.architecture.messaging
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import spiceInterface
-from Basilisk.utilities import macros
+import xmera.architecture.messaging
+from xmera.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.simulation import spiceInterface
+from xmera.utilities import macros
 
 # provide a unique test method name, starting with test_
 def test_unitSpiceSc(show_plots):

@@ -181,7 +181,7 @@ jobs:
         working-directory: src
         run: cmake --build ../build --parallel
 
-      - name: Install Basilisk (editable)
+      - name: Install Xmera (editable)
         run: |
           source .venv/bin/activate
           cmake --install build --prefix $(pwd)/dist

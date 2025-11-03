@@ -26,7 +26,7 @@ This script sets up three 6-DOF spacecraft orbiting the Earth in formation. The 
 #. evidence how the module can conciliate attitude requests with thruster requirements, and
 #. show how one can choose whether the chief of the formation is a spacecraft or the formation's barycenter.
 
-The script is found in the folder ``basilisk/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::
+The script is found in the folder ``xmera/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::
 
       python3 scenario_StationKeepingMultiSat.py
 
@@ -143,9 +143,9 @@ import os
 import sys
 
 import numpy as np
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
+from xmera.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

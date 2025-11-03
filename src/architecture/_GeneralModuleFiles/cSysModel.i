@@ -32,7 +32,7 @@ from typing import Union, Iterable
                     raise ValueError(f"Cannot log {variable_name} as it is not a "
                                     f"variable of {type(self).__name__}")
 
-            from Basilisk.utilities import pythonVariableLogger
+            from xmera.utilities import pythonVariableLogger
             return pythonVariableLogger.PythonVariableLogger(logging_functions, recordingTime)
     %}
 }

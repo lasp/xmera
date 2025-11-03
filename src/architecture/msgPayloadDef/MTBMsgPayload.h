@@ -25,4 +25,4 @@ typedef struct {
     double mtbNetTorque_B[3];  //!< [Nm]  net torque contribution of all magnetic torque bars in Body frame components
 } MTBMsgPayload;
 
-#endif  // BASILISK_DATANODEUSAGESIMMSG_H
+#endif  // MTB_MSG_H

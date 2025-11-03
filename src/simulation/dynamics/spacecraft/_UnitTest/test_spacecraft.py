@@ -26,17 +26,17 @@ from random import random
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import macros
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import GravityGradientEffector
-from Basilisk.architecture import messaging
+from xmera.simulation import spacecraft
+from xmera.utilities import macros
+from xmera.simulation import gravityEffector
+from xmera.simulation import extForceTorque
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import simIncludeGravBody
+from xmera.simulation import GravityGradientEffector
+from xmera.architecture import messaging
 
 def addTimeColumn(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))

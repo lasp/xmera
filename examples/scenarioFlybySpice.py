@@ -25,7 +25,7 @@ Spice file for planetary flybys. This allows the user to easily visualize a miss
 Attitude pointing modes are also implemented in this script to enhance the mission simulation and illustrate
 other capabilities in Basilisk.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioFlybySpice.py
 
@@ -228,7 +228,7 @@ The following image illustrates the expected visualization of this simulation sc
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose: This simulation illustrates how to use a custom Spice file to specify a spacecraft's translation motion.
 # Attitude pointing modes are also implemented for enhanced visualization.
@@ -240,27 +240,27 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk import __path__
+from xmera import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from Basilisk.simulation import spacecraft, gravityEffector, extForceTorque, simpleNav, ephemerisConverter
-from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
-from Basilisk.architecture import messaging
-from Basilisk.utilities import vizSupport
+from xmera.simulation import spacecraft, gravityEffector, extForceTorque, simpleNav, ephemerisConverter
+from xmera.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
+from xmera.architecture import messaging
+from xmera.utilities import vizSupport
 
 # import general simulation support files
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 except ImportError:
     pass
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import hillPoint
-from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
+from xmera.fswAlgorithms import hillPoint
+from xmera.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
 
 
 def run(planetCase):

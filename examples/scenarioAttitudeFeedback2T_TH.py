@@ -30,7 +30,7 @@ in which the dynamics and the FSW algorithms are run at different time steps.  T
 as in :ref:`scenarioAttitudeFeedbackRW`, but here the RW actuation is replaced with
 thruster based control torque solution.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudeFeedback2T_TH.py
 
@@ -195,7 +195,7 @@ is 'on', the requested thruster force is always negative, as it can be seen in t
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(), thrusterDynamicEffector() and
 #           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit, while using thrusters
@@ -208,32 +208,32 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 # import message declarations
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import inertial3D
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import inertial3D
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import thrFiringSchmitt
-from Basilisk.fswAlgorithms import thrForceMapping
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simpleNav
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import thrFiringSchmitt
+from xmera.fswAlgorithms import thrForceMapping
+from xmera.simulation import extForceTorque
+from xmera.simulation import simpleNav
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import thrusterDynamicEffector
+from xmera.simulation import spacecraft
+from xmera.simulation import thrusterDynamicEffector
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import fswSetupThrusters
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import fswSetupThrusters
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import simIncludeThruster
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

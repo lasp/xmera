@@ -23,7 +23,7 @@ Overview
 The purpose of this simulation is to illustrate how to set a spacecraft's heliocentric translational motion using
 custom Spice files. This allows the user to easily visualize a mission trajectory using Vizard.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioHelioTransSpice.py
 
@@ -66,7 +66,7 @@ The following image illustrates the expected visualization of this simulation sc
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose: This simulation shows how to specify a spacecraft's heliocentric translational motion through loading custom Spice files.
 # Author:   Leah Kiner
@@ -75,15 +75,15 @@ The following image illustrates the expected visualization of this simulation sc
 
 import inspect
 import os
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import vizSupport
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.simulation import gravityEffector
+from xmera.simulation import spacecraft
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport
+from xmera.utilities import vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

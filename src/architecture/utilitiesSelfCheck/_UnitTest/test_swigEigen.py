@@ -16,8 +16,8 @@
 import pytest
 import numpy as np
 
-from Basilisk.architecture.swigEigenCheck import SwigEigenTestClass
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture.swigEigenCheck import SwigEigenTestClass
+from xmera.utilities import RigidBodyKinematics as rbk
 
 
 def getData(type: str):

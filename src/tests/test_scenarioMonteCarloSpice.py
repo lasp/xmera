@@ -17,7 +17,7 @@
 #
 
 #
-# Basilisk Integrated Test
+# Xmera Integrated Test
 #
 # Purpose:  Integrated test of the MonteCarlo module with Spice usage.
 #
@@ -55,5 +55,3 @@ def test_MonteCarloSimulationDatashader(show_plots):
     assert testFailCount < 1, testMessages
 
     return
-
-

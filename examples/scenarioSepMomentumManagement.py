@@ -46,7 +46,7 @@ To ensure that attitude convergence is reached, in order for :ref:`thrustCMEstim
 measurements, :ref:`thrusterPlatformReference` is run at the frequency of one update per hour, as opposed to the
 frequency of one update every other second (0.5 Hz) for every other flight software module. Dynamics frequency is 2 Hz.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSepMomentumManagement.py
 
@@ -99,15 +99,15 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, oneAxisSolarArrayPoint, rwMotorTorque,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError, oneAxisSolarArrayPoint, rwMotorTorque,
                                     hingedRigidBodyPIDMotor, solarArrayReference, thrusterPlatformReference,
                                     thrusterPlatformState, thrustCMEstimation, torqueScheduler)
-from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
+from xmera.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
                                  spinningBodyOneDOFStateEffector,
                                  spinningBodyTwoDOFStateEffector, thrusterStateEffector, facetSRPDynamicEffector)
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
                                 unitTestSupport, vizSupport, RigidBodyKinematics as rbk)
 
 bskPath = __path__[0]

@@ -17,11 +17,11 @@
 #
 import csv
 
-from Basilisk import __path__
+from xmera import __path__
 
 def loadGravFromFile(
-        fileName: str, 
-        spherHarm: "SphericalHarmonicsGravityModel", 
+        fileName: str,
+        spherHarm: "SphericalHarmonicsGravityModel",
         maxDeg: int = 2
     ):
 
@@ -57,15 +57,15 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
             raise ValueError(f"Requested using Spherical Harmonics of degree {maxDeg}"
                              f", but file '{fileName}' has maximum degree/order of"
                              f"{min(maxDegreeFile, maxOrderFile)}")
-        
+
         if not coefficientsNormalized:
             raise ValueError("Coefficients in given file are not normalized. This is "
-                            "not currently supported in Basilisk.")
+                            "not currently supported in xmera.")
 
         if refLong != 0 or refLat != 0:
             raise ValueError("Coefficients in given file use a reference longitude"
                              " or latitude that is not zero. This is not currently "
-                             "supported in Basilisk.")
+                             "supported in xmera.")
 
         clmRow = []
         slmRow = []
@@ -84,8 +84,8 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
             slmRow.append(float(gravRow[3]))
 
         return [clmList, slmList, mu, radEquator]
-        
-        
+
+
 def loadPolyFromFile(fileName: str, poly: "PolyhedralGravityModel"):
     [vertList, faceList, _, _] = loadPolyFromFileToList(fileName)
     poly.xyzVertex = vertList

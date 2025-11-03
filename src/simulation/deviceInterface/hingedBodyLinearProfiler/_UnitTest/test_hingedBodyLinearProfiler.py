@@ -21,10 +21,10 @@ from math import pi
 
 import numpy as np
 import pytest
-from Basilisk.simulation import hingedBodyLinearProfiler
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.simulation import hingedBodyLinearProfiler
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("startTime, endTime, startTheta, endTheta", [

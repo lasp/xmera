@@ -26,9 +26,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass, macros, fswSetupRW
-from Basilisk.fswAlgorithms import thrMomentumManagementCpp
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass, macros, fswSetupRW
+from xmera.fswAlgorithms import thrMomentumManagementCpp
+from xmera.architecture import messaging
 
 
 @pytest.mark.parametrize("hsMinCheck", [(0), (1)])

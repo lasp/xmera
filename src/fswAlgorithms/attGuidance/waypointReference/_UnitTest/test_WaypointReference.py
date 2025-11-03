@@ -29,13 +29,13 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import sim_model
-from Basilisk.fswAlgorithms import waypointReference
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import sim_model
+from xmera.fswAlgorithms import waypointReference
+from xmera.utilities import RigidBodyKinematics as rbk
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 dataFileName = None

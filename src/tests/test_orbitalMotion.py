@@ -18,7 +18,7 @@
 
 
 import numpy as np
-from Basilisk.utilities import orbitalMotion
+from xmera.utilities import orbitalMotion
 
 a_tol = 1e-14  # array tolerance
 s_tol = 1e-6  # scale tolerance

@@ -17,7 +17,7 @@
 #
 import numpy
 
-from Basilisk.simulation import stateArchitecture
+from xmera.simulation import stateArchitecture
 
 
 def test_stateData(show_plots):

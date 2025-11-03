@@ -34,16 +34,16 @@ import os
 import numpy as np
 import spiceypy as spice
 
-from Basilisk import __path__
-from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
+from xmera import __path__
+from xmera.simulation import (spacecraft, extForceTorque, simpleNav,
                                  reactionWheelStateEffector, coarseSunSensor, eclipse,
                                  thrusterDynamicEffector, ephemerisConverter, vizInterface,
                                  camera)
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import macros as mc
-from Basilisk.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import vizSupport
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import macros as mc
+from xmera.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody
+from xmera.utilities import unitTestSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 filename = inspect.getframeinfo(inspect.currentframe()).filename

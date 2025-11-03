@@ -29,7 +29,7 @@ algorithm module is used to control these RWs. The scenario is run in a single c
 by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
 to the variables in between each MC run.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioMonteCarloAttRW.py
 
@@ -155,36 +155,36 @@ fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport                  # general support file with common unit test functions
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import motorVoltageInterface
+from xmera.simulation import spacecraft
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import simIncludeRW
+from xmera.simulation import simpleNav
+from xmera.simulation import reactionWheelStateEffector
+from xmera.simulation import motorVoltageInterface
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import rwMotorTorque
-from Basilisk.utilities import fswSetupRW
-from Basilisk.fswAlgorithms import rwMotorVoltage
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import inertial3D
+from xmera.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import rwMotorTorque
+from xmera.utilities import fswSetupRW
+from xmera.fswAlgorithms import rwMotorVoltage
 
 # import message declarations
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
-from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
+from xmera.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from xmera.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
 

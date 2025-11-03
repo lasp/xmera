@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import time as pytime
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import inertialAttitudeUkf, inertialUKF
-from Basilisk.utilities import SimulationBaseClass, macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import inertialAttitudeUkf, inertialUKF
+from xmera.utilities import SimulationBaseClass, macros
+from xmera.utilities import RigidBodyKinematics as rbk
 
 starOnly = inertialAttitudeUkf.AttitudeFilterMethod_StarOnly
 

@@ -17,7 +17,7 @@
 #
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrates how to setup and use sun heading filters
 # Author:   Thibaud Teil
@@ -71,5 +71,3 @@ def test_Filters(show_plots, FilterType, simTime):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-
-

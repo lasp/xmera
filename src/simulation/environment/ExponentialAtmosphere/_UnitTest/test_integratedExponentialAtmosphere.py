@@ -27,15 +27,15 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport                  # general support file with common unit test functions
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import exponentialAtmosphere
-from Basilisk.utilities import simIncludeGravBody
+from xmera.simulation import spacecraft
+from xmera.simulation import exponentialAtmosphere
+from xmera.utilities import simIncludeGravBody
 
 
 def test_unitExponentialAtmosphere():

@@ -43,7 +43,7 @@ import os
 import sys
 
 import numpy as np
-from Basilisk.utilities import orbitalMotion, macros
+from xmera.utilities import orbitalMotion, macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

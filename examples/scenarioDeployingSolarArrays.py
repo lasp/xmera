@@ -57,7 +57,7 @@ Finally, note that in order to exclusively use the 1 DOF rotational profiler mod
 the translational position of the array elements must be updated at the start of the main deployment phase for each
 array. The array element frames are shifted outwards to each array's deployed center of mass location.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioDeployingSolarArrays.py
 
@@ -118,13 +118,13 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import prescribedMotionStateEffector
-from Basilisk.simulation import prescribedRotation1DOF
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros, RigidBodyKinematics as rbk
-from Basilisk.utilities import vizSupport
+from xmera.architecture import messaging
+from xmera.simulation import spacecraft
+from xmera.simulation import prescribedMotionStateEffector
+from xmera.simulation import prescribedRotation1DOF
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros, RigidBodyKinematics as rbk
+from xmera.utilities import vizSupport
 
 filename = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))

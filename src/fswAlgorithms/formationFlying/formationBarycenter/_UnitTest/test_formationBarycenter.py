@@ -21,9 +21,9 @@ import copy
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import formationBarycenter
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, astroFunctions, orbitalMotion
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import formationBarycenter
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros, astroFunctions, orbitalMotion
 
 
 @pytest.mark.parametrize("accuracy", [1e-8])

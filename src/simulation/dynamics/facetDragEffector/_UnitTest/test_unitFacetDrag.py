@@ -34,23 +34,23 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import RigidBodyKinematics as rbk
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import exponentialAtmosphere
-from Basilisk.simulation import facetDragDynamicEffector
-from Basilisk.simulation import simpleNav
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import simIncludeGravBody
+from xmera.simulation import spacecraft
+from xmera.simulation import exponentialAtmosphere
+from xmera.simulation import facetDragDynamicEffector
+from xmera.simulation import simpleNav
+from xmera.utilities import unitTestSupport
+from xmera.utilities import simIncludeGravBody
 
 
 test_drag = [([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])]),

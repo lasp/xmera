@@ -40,16 +40,16 @@ import scenario_CNNImages as scenario
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import OrbitalElementDispersion, MRPDispersionPerAxis, UniformDispersion
+from xmera.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from xmera.utilities.MonteCarlo.Dispersions import OrbitalElementDispersion, MRPDispersionPerAxis, UniformDispersion
 
 # import simulation related support
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import macros
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import unitTestSupport
+from xmera.utilities import macros
 import matplotlib.pyplot as plt
 import numpy as np
 

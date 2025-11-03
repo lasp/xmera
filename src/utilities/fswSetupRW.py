@@ -16,7 +16,7 @@
 
 
 import numpy
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 #
 #   FSW Setup Utilities for RW

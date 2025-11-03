@@ -27,7 +27,7 @@ magnetic field, as well as determine the
 magnetic field at a spacecraft location.  The orbit setup is similar to that used in
 :ref:`scenarioBasicOrbit`.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioMagneticFieldCenteredDipole.py
 
@@ -140,7 +140,7 @@ fields are attached. One model acts above 1.3 Earth radius, and the other below 
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test illustrating how to use a centered dipole magnetic fields attached to a planet.
 # Author:   Hanspeter Schaub
@@ -151,22 +151,22 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import magneticFieldCenteredDipole
+from xmera.simulation import spacecraft
+from xmera.simulation import magneticFieldCenteredDipole
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
-from Basilisk.utilities import simSetPlanetEnvironment
+from xmera.utilities import simSetPlanetEnvironment
 
 #attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 

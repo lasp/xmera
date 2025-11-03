@@ -1,15 +1,15 @@
 
 #   3rd party / std lib imports
 import pytest
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 #   Modules to test
-from Basilisk.fswAlgorithms import hillStateConverter
+from xmera.fswAlgorithms import hillStateConverter
 #   Utilities/macros
-from Basilisk.utilities import SimulationBaseClass as sbc
-from Basilisk.utilities import macros
+from xmera.utilities import SimulationBaseClass as sbc
+from xmera.utilities import macros
 
 
-#from Basilisk.simulation import simFswInterfaceMessages
+#from xmera.simulation import simFswInterfaceMessages
 
 def test_hillStateConverter(show_plots):
     """

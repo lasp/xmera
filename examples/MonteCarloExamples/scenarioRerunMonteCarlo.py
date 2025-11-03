@@ -30,14 +30,14 @@ import inspect
 import os
 import sys
 
-from Basilisk.utilities.MonteCarlo.Controller import Controller
-from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
+from xmera.utilities.MonteCarlo.Controller import Controller
+from xmera.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
 sys.path.append(path+"/../BskSim/scenarios/")
@@ -88,7 +88,7 @@ def run(time=None):
     # Step 4: Add any additional retention policies desired
     retentionPolicy = RetentionPolicy()
     retentionPolicy.logRate = int(2E9)
-    retentionPolicy.addMessageLog("attGuidMsg", ["sigma_BR"]) 
+    retentionPolicy.addMessageLog("attGuidMsg", ["sigma_BR"])
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
 
@@ -99,4 +99,3 @@ def run(time=None):
 
 if __name__ == "__main__":
     run()
-

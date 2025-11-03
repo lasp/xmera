@@ -15,7 +15,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# xmera Scenario Script and Integrated Test
 #
 # Purpose:  Test the validity of a simple exponential atmosphere model.
 # Author:   Andrew Harris
@@ -29,16 +29,16 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 # print dir(exponentialAtmosphere)
-from Basilisk.simulation import dragDynamicEffector
-from Basilisk.simulation import exponentialAtmosphere, simpleNav
+from xmera.simulation import dragDynamicEffector
+from xmera.simulation import exponentialAtmosphere, simpleNav
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport, RigidBodyKinematics
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport, RigidBodyKinematics
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

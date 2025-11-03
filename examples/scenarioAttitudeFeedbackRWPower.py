@@ -24,7 +24,7 @@ Illustrates how to add a :ref:`ReactionWheelPower` to the simulation to track th
 a the RW power modules are connected to a battery to illustrate the energy usage during this maneuver.
 This script expands on :ref:`scenarioAttitudeFeedbackRW`.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudeFeedbackRWPower.py
 
@@ -72,7 +72,7 @@ how this will reduce the overall maneuver energy requirements.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated scenario using a RW feedback control law where the RW devices power consumption
 #           is modeled, as well as the battery drain.
@@ -84,16 +84,16 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque)
-from Basilisk.simulation import ReactionWheelPower
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
-from Basilisk.simulation import simpleBattery
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.simulation import ReactionWheelPower
+from xmera.simulation import reactionWheelStateEffector, simpleNav, spacecraft
+from xmera.simulation import simpleBattery
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
 

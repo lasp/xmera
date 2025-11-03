@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and mrpFeedback()
 #           and boreAngCalc() modules.  Illustrates the violation of several keep-in and
@@ -33,7 +33,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -52,7 +52,7 @@ import scenarioAttitudeConstraintViolation
 # of the multiple test runs for this test.
 
 
-@pytest.mark.parametrize("use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase", [(False, 20, 70, 0), 
+@pytest.mark.parametrize("use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase", [(False, 20, 70, 0),
                                                                                            (True,  20, 70, 0),
                                                                                            (True,  20, 70, 1),
 																						   (True,  20, 70, 2),
@@ -87,4 +87,3 @@ def test_bskAttitudeConstraintViolation(show_plots, use2SunSensors, starTrackerF
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-

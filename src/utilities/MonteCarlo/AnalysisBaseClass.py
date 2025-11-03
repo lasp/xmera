@@ -3,12 +3,12 @@ import os
 import time
 
 import pandas as pd
-from Basilisk.utilities import macros
+from xmera.utilities import macros
 import numpy as np
 
 import holoviews as hv
-from Basilisk.utilities.dataframe_utilities import curve_per_df_component
-from Basilisk.utilities.DS_Plot import DS_Plot
+from xmera.utilities.dataframe_utilities import curve_per_df_component
+from xmera.utilities.DS_Plot import DS_Plot
 
 class mcAnalysisBaseClass:
     def __init__(self):

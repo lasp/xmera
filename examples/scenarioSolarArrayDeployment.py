@@ -20,14 +20,14 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import prescribedMotionStateEffector
-from Basilisk.simulation import prescribedRotation1DOF
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros, RigidBodyKinematics as rbk
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import vizSupport
+from xmera.architecture import messaging
+from xmera.simulation import spacecraft
+from xmera.simulation import prescribedMotionStateEffector
+from xmera.simulation import prescribedRotation1DOF
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros, RigidBodyKinematics as rbk
+from xmera.utilities import unitTestSupport
+from xmera.utilities import vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

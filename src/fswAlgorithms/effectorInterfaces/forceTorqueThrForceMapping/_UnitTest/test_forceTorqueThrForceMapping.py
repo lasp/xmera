@@ -20,12 +20,12 @@ import sys
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import forceTorqueThrForceMapping
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import fswSetupThrusters
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import forceTorqueThrForceMapping
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import fswSetupThrusters
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 @pytest.mark.skipif(sys.platform == "win32", reason="known to not pass on windows platform")
 def test_forceTorqueThrForceMapping1():

@@ -23,17 +23,17 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 
 # Import all the modules that are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import thrusterPlatformState
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
-from Basilisk.architecture import sim_model
+from xmera.utilities import SimulationBaseClass
+from xmera.fswAlgorithms import thrusterPlatformState
+from xmera.utilities import macros
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
+from xmera.architecture import sim_model
 
 
 @pytest.mark.parametrize("theta1", [0, np.pi/36, np.pi/18])

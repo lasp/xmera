@@ -23,11 +23,11 @@ import numpy as np
 
 
 # Import all the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.fswAlgorithms import triad
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.fswAlgorithms import triad
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 
 def SPE_angle(v1, v2):

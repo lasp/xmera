@@ -25,11 +25,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 import numpy as np
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import mrpRotation
-from Basilisk.utilities import macros as mc
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.fswAlgorithms import mrpRotation
+from xmera.utilities import macros as mc
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
 
 
 def compute_truth(sigma_RR0, omega_RR0_R, ref_state_in_data, dt, cmd_state_flag, test_reset):

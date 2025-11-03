@@ -66,7 +66,7 @@ The spacecraft trajectories as seen from the inertial and asteroid fixed frame m
 .. image:: /_images/Scenarios/scenarioSmallBodyNavUKF2.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSmallBodyNavUKF.py
 
@@ -74,7 +74,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Example simulation to demonstrate the use of the smallBodyNavUKF
 # Author:   Julio C. Sanchez
@@ -86,18 +86,18 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.fswAlgorithms import smallBodyNavUKF
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import planetEphemeris
-from Basilisk.simulation import planetNav
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody)
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
+from xmera.fswAlgorithms import smallBodyNavUKF
+from xmera.simulation import ephemerisConverter
+from xmera.simulation import planetEphemeris
+from xmera.simulation import planetNav
+from xmera.simulation import simpleNav
+from xmera.simulation import spacecraft
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import (SimulationBaseClass, macros, simIncludeGravBody)
+from xmera.utilities import orbitalMotion
+from xmera.utilities import unitTestSupport
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -288,7 +288,7 @@ def plot_acc_error(time, a_err, P):
 
 
 def run(show_plots):
-    from Basilisk import __path__
+    from xmera import __path__
     bskPath = __path__[0]
     fileName = os.path.basename(os.path.splitext(__file__)[0])
 

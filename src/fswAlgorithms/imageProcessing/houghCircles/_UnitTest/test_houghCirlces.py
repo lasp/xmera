@@ -31,7 +31,7 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
@@ -44,12 +44,12 @@ except ImportError:
     reasonErr = "python Pillow package not installed---can't test HoughCircle module"
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 try:
-    from Basilisk.fswAlgorithms import houghCircles
+    from xmera.fswAlgorithms import houghCircles
 except ImportError:
     importErr = True
     reasonErr = "Hough Circles not built---check OpenCV option"

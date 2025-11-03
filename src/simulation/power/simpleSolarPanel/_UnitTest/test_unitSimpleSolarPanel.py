@@ -32,17 +32,17 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.architecture import messaging
-from Basilisk.simulation import simpleSolarPanel
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import astroFunctions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport                  # general support file with common unit test functions
+from xmera.architecture import messaging
+from xmera.simulation import simpleSolarPanel
+from xmera.utilities import macros
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import astroFunctions
 
 
 @pytest.mark.parametrize("orbitDistance", [1000.*astroFunctions.AU, 1000.*1.52*astroFunctions.AU])
@@ -79,9 +79,9 @@ def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
 def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     #   Test initialization
-    testFailCount = 0                      
-    testMessages = []                      
-    unitTaskName = "unitTask"             
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
     #   Specify test-against parameter
@@ -120,14 +120,14 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     panel.sunInMsg.subscribeTo(sunMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, panel)
-    
+
     dataLog = panel.nodePowerOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     #   Execute the sim for 1 second.
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
-    
+
     unitTestSim.ExecuteSimulation()
 
     powerData = dataLog.netPower
@@ -137,7 +137,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     if not unitTestSupport.isDoubleEqual(powerData[1], referencePower*referenceMultiplier, tol):
         testFailCount += 1
         testMessages.append('Error: simpleSolarPanel did not compute power correctly.')
-    
+
     return [testFailCount, ''.join(testMessages)]
 
 

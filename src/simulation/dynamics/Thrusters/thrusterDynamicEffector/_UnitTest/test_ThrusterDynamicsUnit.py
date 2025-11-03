@@ -42,14 +42,14 @@ splitPath = path.split('simulation')
 # @endcond
 
 #Import all of the modules that we are going to call in this simulation
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 import matplotlib.pyplot as plt
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.simulation import stateArchitecture
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.simulation import thrusterDynamicEffector
+from xmera.simulation import stateArchitecture
+from xmera.simulation import spacecraft
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 
 class ResultsStore:

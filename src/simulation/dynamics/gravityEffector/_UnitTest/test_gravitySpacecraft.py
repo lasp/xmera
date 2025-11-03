@@ -24,18 +24,18 @@ import numpy as np
 import spiceypy
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion, RigidBodyKinematics
-from Basilisk.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion, RigidBodyKinematics
+from xmera.utilities import SimulationBaseClass
 import matplotlib.pyplot as plt
 
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import planetEphemeris
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import simIncludeGravBody
+from xmera.simulation import ephemerisConverter
+from xmera.simulation import planetEphemeris
+from xmera.simulation import spacecraft
+from xmera.utilities import simIncludeGravBody
 import pytest
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

@@ -23,7 +23,7 @@ Overview
 This script sets up a formation flying scenario with two spacecraft.
 The deputy spacecraft reconfigures its relative orbit in one orbit from one initial orbital element difference to
 target orbital element difference.
-This script is found in the folder ``basilisk/examples`` and executed by using::
+This script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioFormationReconfig.py
 
@@ -74,24 +74,24 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import spacecraftReconfig
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import fswSetupThrusters
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import vizSupport
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import inertial3D
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import spacecraftReconfig
+from xmera.simulation import extForceTorque
+from xmera.simulation import simpleNav
+from xmera.simulation import spacecraft
+from xmera.simulation import thrusterDynamicEffector
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import fswSetupThrusters
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import simIncludeThruster
+from xmera.utilities import unitTestSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

@@ -60,9 +60,9 @@ import inspect
 import os
 import sys
 
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

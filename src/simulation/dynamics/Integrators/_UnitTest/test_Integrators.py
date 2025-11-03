@@ -30,14 +30,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import svIntegrators
+from xmera.simulation import spacecraft
+from xmera.simulation import svIntegrators
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename

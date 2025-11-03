@@ -23,7 +23,7 @@ import sys
 
 import numpy as np
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename

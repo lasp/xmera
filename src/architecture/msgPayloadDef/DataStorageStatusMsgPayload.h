@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 
-#ifndef BASILISK_DATASTORAGESTATUSSIMMSG_H
-#define BASILISK_DATASTORAGESTATUSSIMMSG_H
+#ifndef XMERA_DATASTORAGESTATUSSIMMSG_H
+#define XMERA_DATASTORAGESTATUSSIMMSG_H
 
 /*! @brief Message to store current storage unit stored data, storage capacity, and received data.*/
 typedef struct
@@ -36,4 +36,4 @@ typedef struct
     std::vector<double> storedData;           //!< [] vector of stored data amount for each data name group
 } DataStorageStatusMsgPayload;
 
-#endif  // BASILISK_DATASTORAGESTATUSSIMMSG_H
+#endif  // XMERA_DATASTORAGESTATUSSIMMSG_H

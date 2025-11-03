@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Test Hohmann transfer and attitude change scenario.
 # Author:   João Vaz Carneiro
@@ -31,7 +31,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -79,6 +79,3 @@ def test_bskAttitudeGuidance(show_plots, rFirst, rSecond):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-
-
-

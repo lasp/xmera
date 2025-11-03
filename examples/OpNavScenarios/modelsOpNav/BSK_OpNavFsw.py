@@ -32,24 +32,24 @@ the ``modeRequest`` definitions which enable all the tasks necessary to perform 
 import math
 
 import numpy as np
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (hillPoint, attTrackingError, mrpFeedback,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (hillPoint, attTrackingError, mrpFeedback,
                                     rwMotorTorque, opNavPoint, headingSuKF, relativeODuKF, horizonOpNav,
                                     pixelLineConverter, faultDetection, pixelLineBiasUKF)
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import fswSetupRW, orbitalMotion, macros
-from Basilisk.utilities import deprecated
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import fswSetupRW, orbitalMotion, macros
+from xmera.utilities import deprecated
 
 bskPath = __path__[0]
 
 try:
-    from Basilisk.fswAlgorithms import limbFinding, houghCircles  # FSW for OpNav
+    from xmera.fswAlgorithms import limbFinding, houghCircles  # FSW for OpNav
 except ImportError:
     print("OpNav Modules Missing, check build options")
 
 try:
-    from Basilisk.fswAlgorithms import centerRadiusCNN  # FSW for OpNav
+    from xmera.fswAlgorithms import centerRadiusCNN  # FSW for OpNav
     centerRadiusCNNIncluded = True
 except ImportError:
     centerRadiusCNNIncluded = False

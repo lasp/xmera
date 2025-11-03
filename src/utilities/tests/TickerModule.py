@@ -1,4 +1,4 @@
-from Basilisk.architecture import sim_model
+from xmera.architecture import sim_model
 
 class TickerModule(sim_model.SysModel):
 

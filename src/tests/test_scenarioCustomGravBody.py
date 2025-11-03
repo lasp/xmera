@@ -21,8 +21,8 @@ import os
 import sys
 
 import pytest
-from Basilisk.architecture import sim_model
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import sim_model
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename

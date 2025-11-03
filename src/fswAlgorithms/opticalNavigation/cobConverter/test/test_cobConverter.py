@@ -20,10 +20,10 @@ import inspect
 import numpy as np
 import os
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import cobConverter
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import cobConverter
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

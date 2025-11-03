@@ -17,12 +17,12 @@
 
 import numpy
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import thrFiringSchmitt
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import fswSetupThrusters
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import thrFiringSchmitt
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import fswSetupThrusters
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("resetCheck, dvOn", [

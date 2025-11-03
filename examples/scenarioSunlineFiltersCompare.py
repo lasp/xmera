@@ -2,17 +2,17 @@
 import numpy as np
 import time
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import orbitalMotion as om
+from xmera.utilities import RigidBodyKinematics as rbk
 
-from Basilisk.simulation import spacecraft, coarseSunSensor
-from Basilisk.fswAlgorithms import sunlineUKF, sunlineSRuKF
-from Basilisk.architecture import messaging
+from xmera.simulation import spacecraft, coarseSunSensor
+from xmera.fswAlgorithms import sunlineUKF, sunlineSRuKF
+from xmera.architecture import messaging
 
 import SunLineKF_test_utilities as Fplot
 

@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_SIMPLETRANSMITTER_H
-#define BASILISK_SIMPLETRANSMITTER_H
+#ifndef XMERA_SIMPLETRANSMITTER_H
+#define XMERA_SIMPLETRANSMITTER_H
 
 #include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 #include <architecture/utilities/bskLogging.h>
@@ -50,4 +50,4 @@ class SimpleTransmitter : public DataNodeBase {
     double previousTime;       //!< Previous timestep tracked for data packet integration
 };
 
-#endif  // BASILISK_SIMPLETRANSMITTER_H
+#endif  // XMERA_SIMPLETRANSMITTER_H

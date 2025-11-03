@@ -51,7 +51,7 @@ it is 0.1 seconds. This is necessary because the :ref:`thrMomentumDumping` autom
 control period for the firing. However, if the dynamics is integrated at the same frequency, this does not give
 enough time resolution to appreciate the variation in the momentum.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioMomentumDumpingZeroNetForce.py
 
@@ -95,12 +95,12 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque,
                                     thrMomentumManagement, forceTorqueThrForceMapping, thrMomentumDumping)
-from Basilisk.simulation import (reactionWheelStateEffector, thrusterDynamicEffector, simpleNav, spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.simulation import (reactionWheelStateEffector, thrusterDynamicEffector, simpleNav, spacecraft)
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, simIncludeThruster, unitTestSupport, vizSupport)
 

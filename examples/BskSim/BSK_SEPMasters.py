@@ -17,10 +17,10 @@
 #
 
 # Import architectural modules
-from Basilisk.utilities import SimulationBaseClass, macros as mc
+from xmera.utilities import SimulationBaseClass, macros as mc
 
-from Basilisk import __path__
-from Basilisk.fswAlgorithms import formationBarycenter
+from xmera import __path__
+from xmera.fswAlgorithms import formationBarycenter
 
 # Get current file path
 import sys, os, inspect

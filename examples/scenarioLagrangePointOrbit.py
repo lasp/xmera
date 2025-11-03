@@ -23,7 +23,7 @@ Overview
 This script sets up a 3-DOF spacecraft which is operating at one of five Earth-Moon Lagrange points. The purpose
 is to illustrate how to use multiple gravity bodies to create interesting 3-body orbit behavior.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioLagrangePointOrbit.py
 
@@ -120,7 +120,7 @@ When starting at L4 or L5, the spacecraft remains near the stable equilibrium po
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  This scenario illustrates the orbit of a spacecraft near the Earth-Moon Lagrange points.
 # Author:   Scott McKinley
@@ -133,10 +133,10 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import numpy as np
 import spiceypy
-from Basilisk import __path__
-from Basilisk.simulation import orbElemConvert
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera import __path__
+from xmera.simulation import orbElemConvert
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
 bskPath = __path__[0]

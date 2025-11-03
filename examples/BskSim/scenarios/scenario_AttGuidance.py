@@ -25,7 +25,7 @@ make use of the hill pointing module with
 the :ref:`mrpFeedback` module and a reaction wheel pyramid
 to control the attitude all within the new BSK_Sim architecture.
 
-The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``xmera/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_AttGuidance.py
 
@@ -93,7 +93,7 @@ import sys
 
 import numpy as np
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

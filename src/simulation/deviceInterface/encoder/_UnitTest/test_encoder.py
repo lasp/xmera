@@ -32,16 +32,16 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import encoder                    # import the module that is to be tested
-from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.simulation import encoder                    # import the module that is to be tested
+from xmera.architecture import messaging                      # import the message definitions
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 

@@ -9,9 +9,9 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import rwNullSpace_C
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import rwNullSpace_C
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros
 from numpy.linalg import inv
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

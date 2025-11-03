@@ -85,14 +85,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             elif isinstance(attr, list):
                 # The attribute is a list of yet to be determined types
                 if len(attr) > 0:
-                    if "Basilisk" in str(type(attr[0])):
+                    if "xmera" in str(type(attr[0])):
                         # The attribute is a list of swigged BSK objects
                         for el, k in zip(attr, range(len(attr))):
                             self.explore_and_find_subattr(el, attr_name + "[" + str(k) + "]", content)
                     else:
                         # The attribute is a list of common types
                         content[attr_name] = attr
-            elif "Basilisk" in str(type(attr)):
+            elif "xmera" in str(type(attr)):
                 # The attribute is a swigged BSK object
                 # Check to see if the object is a vector and pull out the data
                 if "Vector" in str(type(attr)) or "vector" in str(type(attr)):

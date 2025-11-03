@@ -16,7 +16,7 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 import numpy as np
-from Basilisk.fswAlgorithms import rwMotorTorque
+from xmera.fswAlgorithms import rwMotorTorque
 from numpy import linalg as la
 
 

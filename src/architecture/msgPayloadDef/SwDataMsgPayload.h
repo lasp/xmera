@@ -17,12 +17,12 @@
 
  */
 
-#ifndef BASILISK_SWDATASIMMSG_H
-#define BASILISK_SWDATASIMMSG_H
+#ifndef XMERA_SWDATASIMMSG_H
+#define XMERA_SWDATASIMMSG_H
 
 /*! SW data message definition */
 typedef struct {
     double dataValue;  //!< kg/m^3 Local neutral particle density
 } SwDataMsgPayload;
 
-#endif  // BASILISK_SWDATASIMMSG_H
+#endif  // XMERA_SWDATASIMMSG_H

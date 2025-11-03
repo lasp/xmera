@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_SIMPLEINSTRUMENT_H
-#define BASILISK_SIMPLEINSTRUMENT_H
+#ifndef XMERA_SIMPLEINSTRUMENT_H
+#define XMERA_SIMPLEINSTRUMENT_H
 
 #include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 
@@ -33,4 +33,4 @@ class SimpleInstrument : public DataNodeBase {
                            double currentTime);  //!< Sets the name and baud rate for the data in the output message.
 };
 
-#endif  // BASILISK_SIMPLEINSTRUMENT_H
+#endif  // XMERA_SIMPLEINSTRUMENT_H

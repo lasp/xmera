@@ -8,10 +8,10 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import dvAccumulation
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import dvAccumulation
+from xmera.utilities import SimulationBaseClass, unitTestSupport
+from xmera.utilities import macros
 from numpy import random
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

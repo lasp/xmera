@@ -20,11 +20,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import hingedRigidBodyMotorSensor
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.simulation import hingedRigidBodyMotorSensor
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("thetaNoiseStd, thetaDotNoiseStd, accuracy", [(0.0, 0.0, 1.0e-12)])

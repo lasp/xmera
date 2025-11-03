@@ -2,8 +2,8 @@ import inspect
 import numpy as np
 import os
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from xmera.architecture import messaging
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib
 import matplotlib.pyplot as plt
 

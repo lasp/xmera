@@ -29,8 +29,8 @@
 
 #include <architecture/utilities/bskLogging.h>
 
-#ifndef BASILISK_DATASTORAGEUNITBASE_H
-#define BASILISK_DATASTORAGEUNITBASE_H
+#ifndef XMERA_DATASTORAGEUNITBASE_H
+#define XMERA_DATASTORAGEUNITBASE_H
 
 struct dataInstance {
     char dataInstanceName[128];  //!< data instance name
@@ -76,4 +76,4 @@ class DataStorageUnitBase : public SysModel {
     double netBaud;                                     //!< Net baud rate at a given time step
 };
 
-#endif  // BASILISK_DATASTORAGEUNITBASE_H
+#endif  // XMERA_DATASTORAGEUNITBASE_H

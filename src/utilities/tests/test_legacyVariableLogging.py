@@ -16,11 +16,11 @@
 
 from numpy.testing import assert_array_equal
 
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.simulation import spacecraft
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 import warnings
-from Basilisk.utilities import deprecated
+from xmera.utilities import deprecated
 
 def test_legacy_variable_logging(show_plots):
     __tracebackhide__ = True

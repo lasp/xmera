@@ -24,7 +24,7 @@ This script sets up a 3-DOF spacecraft that is operating near-Halo orbit at L2 E
 is to illustrate how to set up the spacecraft's initial conditions to create a near-Halo orbit and convert the barycenter focused
 non-dimensional ICs to earth-centered inertial frame components.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioHaloOrbit.py
 
@@ -58,7 +58,7 @@ The following images illustrate the simulation run results with the following se
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  This scenario illustrates the near-Halo orbit of a spacecraft.
 # Author:   Yumeka Nagano
@@ -71,9 +71,9 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import spiceypy
-from Basilisk import __path__
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera import __path__
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
 bskPath = __path__[0]

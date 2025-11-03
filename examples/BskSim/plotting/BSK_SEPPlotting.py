@@ -19,8 +19,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
@@ -160,13 +160,13 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, OmegaMax, figID=None):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx + 1) + '}$')
-    plt.plot(timeData, 0.75*dataOmegaMax / macros.RPM, color='black', 
+    plt.plot(timeData, 0.75*dataOmegaMax / macros.RPM, color='black',
              linestyle='dashed', label=r'$75\% \Omega_{max}$')
-    plt.plot(timeData, -0.75*dataOmegaMax / macros.RPM, color='black', 
+    plt.plot(timeData, -0.75*dataOmegaMax / macros.RPM, color='black',
              linestyle='dashed')
-    plt.plot(timeData, dataOmegaMax / macros.RPM, color='black', 
+    plt.plot(timeData, dataOmegaMax / macros.RPM, color='black',
              linestyle='solid', label=r'$\Omega_{max}$')
-    plt.plot(timeData, -dataOmegaMax / macros.RPM, color='black', 
+    plt.plot(timeData, -dataOmegaMax / macros.RPM, color='black',
              linestyle='solid')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')

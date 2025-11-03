@@ -15,11 +15,11 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.moduleTemplates import cppModuleTemplate
-from Basilisk.architecture import sim_model
-from Basilisk.architecture.messaging import ModuleTemplateMsg, ModuleTemplateMsgPayload
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.moduleTemplates import cppModuleTemplate
+from xmera.architecture import sim_model
+from xmera.architecture.messaging import ModuleTemplateMsg, ModuleTemplateMsgPayload
 
 import numpy as np
 

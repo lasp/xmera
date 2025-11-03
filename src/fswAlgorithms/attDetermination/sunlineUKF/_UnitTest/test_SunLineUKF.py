@@ -20,9 +20,9 @@ import math
 import matplotlib.pyplot as plt
 import numpy
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import sunlineUKF
-from Basilisk.utilities import SimulationBaseClass, macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import sunlineUKF
+from xmera.utilities import SimulationBaseClass, macros
 
 import SunLineuKF_test_utilities as FilterPlots
 

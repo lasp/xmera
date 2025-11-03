@@ -19,9 +19,9 @@
 import numpy as np
 import spiceypy
 
-from Basilisk import __path__
-from Basilisk.simulation import ephemerisConverter, groundLocation, eclipse
-from Basilisk.utilities import macros as mc, simIncludeGravBody
+from xmera import __path__
+from xmera.simulation import ephemerisConverter, groundLocation, eclipse
+from xmera.utilities import macros as mc, simIncludeGravBody
 
 bskPath = __path__[0]
 

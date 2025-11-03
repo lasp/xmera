@@ -82,7 +82,7 @@ has not converged it. At all subsequent time steps, the flag is equal to 0.
 .. image:: /_images/Scenarios/scenarioLambertSolver9.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioLambertSolver.py
 
@@ -90,7 +90,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing how to use the Lambert Planner, Lambert Solver and Lambert Validator modules for
 #           autonomous Delta-V guidance
@@ -102,21 +102,21 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
-from Basilisk.fswAlgorithms import (lambertPlanner, lambertSolver, lambertValidator)
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
+from xmera import __path__
+from xmera.fswAlgorithms import (lambertPlanner, lambertSolver, lambertValidator)
+from xmera.simulation import simpleNav
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from xmera.utilities import orbitalMotion
+from xmera.utilities import unitTestSupport
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
     vizFound = True
 except ImportError:
     vizFound = False
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

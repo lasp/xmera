@@ -29,7 +29,7 @@ This scenario is intended to provide both an overview and a concrete demonstrati
 and :ref:`spaceToGroundTransmitter`, which represents a spacecraft-based radio system that requires
 visibility to a ground station.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioGroundDownlink.py
 
@@ -62,23 +62,23 @@ from matplotlib import pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import simpleInstrument, simpleStorageUnit, partitionedStorageUnit, spaceToGroundTransmitter
-from Basilisk.simulation import groundLocation
-from Basilisk.utilities import vizSupport
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.simulation import simpleInstrument, simpleStorageUnit, partitionedStorageUnit, spaceToGroundTransmitter
+from xmera.simulation import groundLocation
+from xmera.utilities import vizSupport
+from xmera.utilities import unitTestSupport
 
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import astroFunctions
+from xmera.simulation import spacecraft
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import astroFunctions
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
 path = os.path.dirname(os.path.abspath(__file__))

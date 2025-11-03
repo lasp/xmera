@@ -17,12 +17,12 @@
 
 
 import pytest
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.simulation import extForceTorque
+from xmera.simulation import gravityEffector
+from xmera.simulation import spacecraft
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

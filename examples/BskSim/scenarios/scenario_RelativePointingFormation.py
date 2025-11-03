@@ -25,7 +25,7 @@ This script sets up a deputy that points to a chief spacecraft. The goal of the 
 #. How to make sure that a deputy spacecraft is able to read data from a chief spacecraft.
 #. How to implement a module that combines data from two spacecraft into a scenario.
 
-The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``xmera/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_RelativePointingFormation.py
 
@@ -127,7 +127,7 @@ the Earth's shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with 
 
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport
 
 # Get current file path
 import sys, os, inspect

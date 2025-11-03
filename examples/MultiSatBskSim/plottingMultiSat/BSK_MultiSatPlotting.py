@@ -17,8 +17,8 @@
 #
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
 
@@ -296,4 +296,3 @@ def plot_orbital_element_differences(timeData, oed, id=None):
     plt.legend()
     plt.xlabel("time [orbit]")
     plt.ylabel("Orbital Element Difference")
-

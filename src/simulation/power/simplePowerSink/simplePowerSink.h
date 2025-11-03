@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_SIMPLEPOWERSINK_H
-#define BASILISK_SIMPLEPOWERSINK_H
+#ifndef XMERA_SIMPLEPOWERSINK_H
+#define XMERA_SIMPLEPOWERSINK_H
 
 #include <simulation/power/_GeneralModuleFiles/powerNodeBase.h>
 
@@ -32,4 +32,4 @@ class SimplePowerSink : public PowerNodeBase {
     void evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageMsg);
 };
 
-#endif  // BASILISK_SIMPLEPOWERSINK_H
+#endif  // XMERA_SIMPLEPOWERSINK_H

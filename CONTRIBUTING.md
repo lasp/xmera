@@ -1,6 +1,6 @@
 ## Branches
 
--   Branches should be named `feature/bsk-XXX--short-desc` or `hotfix/short-desc`, where "bsk-XXX" is the associated
+-   Branches should be named `feature/xmera-XXX--short-desc` or `hotfix/short-desc`, where "bsk-XXX" is the associated
     Github project ticket.
     -   If a branch is not associated with a ticket, either it's a hotfix or it needs a ticket.
     -   Hotfixes should be used sparingly. For instance, a bug introduced in the same release cycle
@@ -32,7 +32,7 @@
 -   Before merging a PR, the following requirements must be met. These requirements ensure that history is effectively
 linear, which aids readability and makes `git bisect` more useful and easier to reason about.
 
-    -   At least one (perferably two) reviewers have approved the PR.
+    -   At least one (preferably two) reviewers have approved the PR.
     -   No outstanding review comments have been left unresolved.
     -   The branch passes continuous integration.
     -   The branch has been rebased onto the current `develop` branch.
@@ -44,7 +44,7 @@ disabled). Always use the "Merge" strategy.
 
 ## Coding Conventions
 
-A [coding conventions](https://hanspeterschaub.info/basilisk/Support/Developer/CodingGuidlines.html) document exists to
+A [coding conventions](https://lasp.github.io/xmera/developer/code-guidelines.html) document exists to
 explain peculiarities and assist in onboarding.
 
 **tl;dr** All development should correspond to a Github ticket, and branch names and PRs should include the ticket name.

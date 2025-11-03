@@ -16,11 +16,11 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import (attTrackingError, mrpFeedback, rwMotorTorque, oneAxisSolarArrayPoint,
+from xmera.utilities import macros as mc
+from xmera.fswAlgorithms import (attTrackingError, mrpFeedback, rwMotorTorque, oneAxisSolarArrayPoint,
                                     thrusterPlatformReference, thrusterPlatformState, solarArrayReference,
                                     hingedRigidBodyPIDMotor, torqueScheduler, thrustCMEstimation)
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 import numpy as np
 

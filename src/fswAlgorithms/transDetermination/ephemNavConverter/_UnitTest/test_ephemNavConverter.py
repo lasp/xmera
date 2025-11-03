@@ -17,10 +17,10 @@
 import inspect
 import os
 
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import ephemNavConverter
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.utilities import astroFunctions
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import ephemNavConverter
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros
+from xmera.utilities import astroFunctions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

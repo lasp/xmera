@@ -27,8 +27,8 @@
 #
 
 
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging
+from xmera.architecture import sim_model
+from xmera.architecture import messaging
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

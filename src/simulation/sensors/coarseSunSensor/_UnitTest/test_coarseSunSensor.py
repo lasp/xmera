@@ -32,12 +32,12 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import coarseSunSensor
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.simulation import coarseSunSensor
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion as om
+from xmera.utilities import unitTestSupport
 from matplotlib import pyplot as plt
 
 path = os.path.dirname(os.path.abspath(__file__))

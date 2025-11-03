@@ -17,7 +17,7 @@
 #
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrates how to setup CSS sensors on a rigid spacecraft
 # Author:   Hanspeter Schaub
@@ -29,7 +29,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -79,4 +79,3 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

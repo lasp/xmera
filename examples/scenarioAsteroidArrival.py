@@ -29,7 +29,7 @@ burn at periapsis of the elliptical orbit, transferring to a circular orbit abou
 meters. The spacecraft then completes a series of Hohmann transfers while also conducting several attitude changes
 until reaching a final elliptical orbit about the asteroid.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioAsteroidArrival.py
 
@@ -185,7 +185,7 @@ The following image illustrates the expected visualization of this simulation sc
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing how to setup a flyby capture orbit about a custom gravity body.
 # Author:  Leah Kiner
@@ -196,23 +196,23 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport, unitTestSupport, orbitalMotion)
-from Basilisk.simulation import spacecraft, extForceTorque, simpleNav, ephemerisConverter, planetEphemeris
-from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
-from Basilisk.architecture import messaging
+from xmera.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport, unitTestSupport, orbitalMotion)
+from xmera.simulation import spacecraft, extForceTorque, simpleNav, ephemerisConverter, planetEphemeris
+from xmera.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
+from xmera.architecture import messaging
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

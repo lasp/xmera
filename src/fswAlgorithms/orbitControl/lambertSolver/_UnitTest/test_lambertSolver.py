@@ -20,11 +20,11 @@ import copy
 import itertools
 
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import lambertSolver
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import lambertSolver
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
 
 from fswAlgorithms.orbitControl.lambertSolver._UnitTest.Support.IzzoLambert import *
 

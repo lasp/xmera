@@ -78,5 +78,5 @@ endforeach()
 
 xmera_generate_messaging_init()
 
-install(DIRECTORY utilities DESTINATION Basilisk)
-install(DIRECTORY ../supportData DESTINATION Basilisk)
+install(DIRECTORY utilities DESTINATION xmera)
+install(DIRECTORY ../supportData DESTINATION xmera)

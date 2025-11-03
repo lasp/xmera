@@ -14,9 +14,9 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-from Basilisk.utilities import orbitalMotion as oe_py
-from Basilisk.architecture.orbitalMotion import OrbitalMotion as oe_cpp
-from Basilisk.architecture.orbitalMotion import ClassicalElements as elements_cpp
+from xmera.utilities import orbitalMotion as oe_py
+from xmera.architecture.orbitalMotion import OrbitalMotion as oe_cpp
+from xmera.architecture.orbitalMotion import ClassicalElements as elements_cpp
 import numpy as np
 
 

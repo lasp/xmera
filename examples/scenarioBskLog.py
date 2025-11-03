@@ -32,15 +32,15 @@ import os
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.moduleTemplates import cppModuleTemplate
-from Basilisk.utilities import macros
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.moduleTemplates import cppModuleTemplate
+from xmera.utilities import macros
+from xmera.architecture import sim_model
+from xmera.architecture import messaging
 
 def run(case):
     """

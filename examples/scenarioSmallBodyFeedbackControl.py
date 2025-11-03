@@ -47,14 +47,14 @@ Finally, the attitude and attitude rate is given in the plots below.
 .. image:: /_images/Scenarios/scenarioSmallBodyFeedbackControl5.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioSmallBodyFeedbackControl.py
 
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Example simulation to demonstrate the use of the smallBodyWaypointFeedback module
 # Author:   Adam Herrmann
@@ -66,32 +66,32 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import rwMotorTorque
-from Basilisk.fswAlgorithms import smallBodyWaypointFeedback
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import planetEphemeris
-from Basilisk.simulation import planetNav
-from Basilisk.simulation import radiationPressure
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeRW
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import inertial3D
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import rwMotorTorque
+from xmera.fswAlgorithms import smallBodyWaypointFeedback
+from xmera.simulation import ephemerisConverter
+from xmera.simulation import extForceTorque
+from xmera.simulation import planetEphemeris
+from xmera.simulation import planetNav
+from xmera.simulation import radiationPressure
+from xmera.simulation import reactionWheelStateEffector
+from xmera.simulation import simpleNav
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeRW
+from xmera.utilities import unitTestSupport
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
     vizFound = True
 except ImportError:
     vizFound = False
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

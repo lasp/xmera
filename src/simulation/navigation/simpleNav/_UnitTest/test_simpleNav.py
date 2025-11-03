@@ -18,10 +18,10 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from Basilisk.architecture import messaging
-from Basilisk.simulation import simpleNav
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
+from xmera.simulation import simpleNav
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import RigidBodyKinematics as rbk
 
 
 def test_long_sim(show_plots):

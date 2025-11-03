@@ -24,7 +24,7 @@ Overview
 This script sets up a formation flying scenario with two spacecraft. The deputy spacecraft keeps a given
 mean orbital element difference based on Lyapunov control theory.
 
-This script is found in the folder ``basilisk/examples`` and executed by using::
+This script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioFormationMeanOEFeedback.py
 
@@ -71,17 +71,17 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
-from Basilisk.fswAlgorithms import meanOEFeedback
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import vizSupport
+from xmera import __path__
+from xmera.fswAlgorithms import meanOEFeedback
+from xmera.simulation import extForceTorque
+from xmera.simulation import simpleNav
+from xmera.simulation import spacecraft
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

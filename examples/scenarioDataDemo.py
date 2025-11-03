@@ -29,7 +29,7 @@ This scenario is intended to provide both an overview and a concrete demonstrati
 #. Computation of data transmitted by onboard transmitters;
 #. Computation of the sum of data stored onboard the spacecraft.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioDataDemo.py
 
@@ -70,18 +70,18 @@ demonstrate the data stored, generated, and downlinked.
 import os
 
 import numpy as np
-from Basilisk import __path__
-from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.simulation import simpleInstrument
-from Basilisk.simulation import simpleStorageUnit
-from Basilisk.simulation import simpleTransmitter
-from Basilisk.simulation import spacecraft
+from xmera import __path__
+from xmera.simulation import partitionedStorageUnit
+from xmera.simulation import simpleInstrument
+from xmera.simulation import simpleStorageUnit
+from xmera.simulation import simpleTransmitter
+from xmera.simulation import spacecraft
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import astroFunctions
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import astroFunctions
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
 from matplotlib import pyplot as plt
 
 bskPath = __path__[0]

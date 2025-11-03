@@ -24,7 +24,7 @@ This scenario demonstrates imaging a target on the surface of the Earth based on
 Simulated data generated from this image is stored in an on-board storage device and then downlinked to a ground
 station.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioGroundLocationImaging.py
 
@@ -64,7 +64,7 @@ The following plots illustrate the 2D pointing error, access data, image command
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque(), simpleNav(), locationPoint(), groundLocation(),
 #           simpleInstrumentController(), simpleInstrument(), partitionedStorageUnit(), and spaceToGroundTransmitter()
@@ -79,44 +79,44 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # import message declarations
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import locationPointing
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import locationPointing
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import simpleInstrumentController
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import groundLocation
-from Basilisk.simulation import partitionedStorageUnit
-from Basilisk.simulation import simpleInstrument
-from Basilisk.simulation import simpleNav
-from Basilisk.simulation import spaceToGroundTransmitter
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import simpleInstrumentController
+from xmera.simulation import extForceTorque
+from xmera.simulation import groundLocation
+from xmera.simulation import partitionedStorageUnit
+from xmera.simulation import simpleInstrument
+from xmera.simulation import simpleNav
+from xmera.simulation import spaceToGroundTransmitter
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
+from xmera.simulation import spacecraft
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import astroFunctions
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import (
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import astroFunctions
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import (
     unitTestSupport,
 )  # general support file with common unit test functions
 
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

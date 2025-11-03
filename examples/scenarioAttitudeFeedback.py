@@ -29,7 +29,7 @@ Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 Earth that is initially tumbling.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioAttitudeFeedback.py
 
@@ -143,7 +143,7 @@ to settle on a value that matches the un-modeled external torque.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
 #           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
@@ -157,33 +157,33 @@ import numpy as np
 np.set_printoptions(precision=16)
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import extForceTorque
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simpleNav
+from xmera.simulation import spacecraft
+from xmera.simulation import extForceTorque
+from xmera.utilities import simIncludeGravBody
+from xmera.simulation import simpleNav
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.fswAlgorithms import inertial3D
+from xmera.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

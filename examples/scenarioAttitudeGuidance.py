@@ -28,7 +28,7 @@ Overview
 Discusses how to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioAttitudeGuidance.py
 
@@ -120,7 +120,7 @@ is achieved.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
 #           mrpFeedback() with attitude navigation modules.  Illustrates how
@@ -133,28 +133,28 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 # import message declarations
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import hillPoint
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import attTrackingError
+from xmera.fswAlgorithms import hillPoint
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import mrpFeedback
-from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import simpleNav
+from xmera.fswAlgorithms import mrpFeedback
+from xmera.simulation import extForceTorque
+from xmera.simulation import simpleNav
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import RigidBodyKinematics
+from xmera.simulation import spacecraft
+from xmera.utilities import RigidBodyKinematics
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

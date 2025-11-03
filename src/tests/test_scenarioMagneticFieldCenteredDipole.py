@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the for the magnetic field tutorial script.
 # Author:   Hanspeter Schaub
@@ -30,7 +30,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -85,4 +85,3 @@ def test_scenarioMagneticField(show_plots, orbitCase, planetCase):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

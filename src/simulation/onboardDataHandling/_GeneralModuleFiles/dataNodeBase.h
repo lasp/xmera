@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_DATANODEBASE_H
-#define BASILISK_DATANODEBASE_H
+#ifndef XMERA_DATANODEBASE_H
+#define XMERA_DATANODEBASE_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <Eigen/Dense>
@@ -61,4 +61,4 @@ class DataNodeBase : public SysModel {
     DeviceCmdMsgPayload nodeStatusMsg;    //!< class variable
 };
 
-#endif  // BASILISK_DATANODEBASE_H
+#endif  // XMERA_DATANODEBASE_H

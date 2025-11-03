@@ -2,7 +2,7 @@ from typing import Callable, Any, Sequence, Union, Dict
 
 import numpy as np
 
-from Basilisk.architecture import sim_model
+from xmera.architecture import sim_model
 
 LoggingFunction = Callable[[int], Any]
 

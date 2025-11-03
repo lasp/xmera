@@ -18,10 +18,10 @@
 #
 
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.simulation import mappingInstrument
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.simulation import mappingInstrument
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 
 def test_mappingInstrument():

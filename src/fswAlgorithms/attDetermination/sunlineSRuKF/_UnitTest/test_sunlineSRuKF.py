@@ -19,10 +19,10 @@
 import sunlineSRuKF_test_utilities as filter_plots
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import sunlineSRuKF
-from Basilisk.utilities import SimulationBaseClass, macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import sunlineSRuKF
+from xmera.utilities import SimulationBaseClass, macros
+from xmera.utilities import RigidBodyKinematics as rbk
 
 
 def add_time_column(time, data):

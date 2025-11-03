@@ -26,7 +26,7 @@ are set up with individual profilers and motors as shown in the following diagra
 .. image:: /_images/static/test_scenario_DeployingPanel.svg
    :align: center
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioDeployingPanel.py
 
@@ -72,7 +72,7 @@ The second panel also generates power, but stops short of full deployment and th
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Scenario script and test of the hingedRigidBodyStateEffector with changes
 #           made to permit deployment.
@@ -84,16 +84,16 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
-from Basilisk.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
-from Basilisk.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
+from xmera.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
+from xmera.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
 import math
 
 

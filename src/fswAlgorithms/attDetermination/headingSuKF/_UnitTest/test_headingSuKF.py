@@ -21,9 +21,9 @@ import math
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import headingSuKF
-from Basilisk.utilities import SimulationBaseClass, macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import headingSuKF
+from xmera.utilities import SimulationBaseClass, macros
 
 import headingSuKF_test_utilities as FilterPlots
 

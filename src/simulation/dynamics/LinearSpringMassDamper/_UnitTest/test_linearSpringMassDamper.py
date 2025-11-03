@@ -26,17 +26,17 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import linearSpringMassDamper
-from Basilisk.simulation import gravityEffector
-from Basilisk.utilities import macros
-from Basilisk.utilities import pythonVariableLogger
-from Basilisk.simulation import fuelTank
-from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.utilities import simIncludeThruster
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.simulation import spacecraft
+from xmera.simulation import linearSpringMassDamper
+from xmera.simulation import gravityEffector
+from xmera.utilities import macros
+from xmera.utilities import pythonVariableLogger
+from xmera.simulation import fuelTank
+from xmera.simulation import thrusterDynamicEffector
+from xmera.utilities import simIncludeThruster
+from xmera.architecture import messaging
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'NoGravity'),

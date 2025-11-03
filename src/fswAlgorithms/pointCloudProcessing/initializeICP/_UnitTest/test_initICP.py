@@ -20,14 +20,14 @@ import os
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import SimulationBaseClass, macros
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import SimulationBaseClass, macros
 
-from Basilisk.fswAlgorithms import initializeICP
-from Basilisk.architecture import messaging
+from xmera.fswAlgorithms import initializeICP
+from xmera.architecture import messaging
 
 
 def test_all_valid():

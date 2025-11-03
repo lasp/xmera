@@ -29,17 +29,17 @@ import inspect
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import prescribedRot1DOF  # import the module that is to be tested
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import sim_model
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import prescribedRot1DOF  # import the module that is to be tested
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 

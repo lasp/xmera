@@ -16,13 +16,13 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 
 def run():
     """
-    Illustration of Basilisk process and task creation
+    Illustration of xmera process and task creation
     """
 
     #  Create a sim module as an empty container

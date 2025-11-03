@@ -22,10 +22,10 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy
-from Basilisk.architecture import messaging
-from Basilisk.simulation import simpleVoltEstimator
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.simulation import simpleVoltEstimator
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

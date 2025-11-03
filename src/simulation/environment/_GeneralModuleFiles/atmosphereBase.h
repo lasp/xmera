@@ -16,8 +16,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#ifndef BASILISK_ATMOSPHEREBASE_H
-#define BASILISK_ATMOSPHEREBASE_H
+#ifndef XMERA_ATMOSPHEREBASE_H
+#define XMERA_ATMOSPHEREBASE_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <time.h>
@@ -78,4 +78,4 @@ class AtmosphereBase : public SysModel {
     struct tm epochDateTime;  //!< time/date structure containing the epoch information using a Gregorian calendar
 };
 
-#endif /* Atmosphere_H */
+#endif /* XMERA_ATMOSPHEREBASE_H */

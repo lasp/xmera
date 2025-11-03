@@ -18,10 +18,10 @@
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import rateServoFullNonlinear  # import the module that is to be tested
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import rateServoFullNonlinear  # import the module that is to be tested
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 @pytest.mark.parametrize("rw_num", [4, 0])
 @pytest.mark.parametrize("int_gain", [0.01, -1])

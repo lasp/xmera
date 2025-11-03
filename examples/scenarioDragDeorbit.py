@@ -26,7 +26,7 @@ deorbit. This is achieved using the :ref:`exponentialAtmosphere` or :ref:`msisAt
 :ref:`dragDynamicEffector` dynamics module. The simulation is executed until the altitude falls below some threshold,
 using a terminal event handler.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioDragDeorbit.py
 
@@ -117,7 +117,7 @@ The same plots are generated using the MSIS model:
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstration of deorbit using exponentialAtmosphere and dragDynamicEffector modules.
 # Author:   Mark Stephenson
@@ -127,15 +127,15 @@ The same plots are generated using the MSIS model:
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk, used to get the location of supporting data
-from Basilisk import __path__
+# The path to the location of xmera, used to get the location of supporting data
+from xmera import __path__
 # always import the Basilisk messaging support
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 # import atmosphere and drag modules
-from Basilisk.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector
+from xmera.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.simulation import spacecraft
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport, simSetPlanetEnvironment)
 
 bskPath = __path__[0]

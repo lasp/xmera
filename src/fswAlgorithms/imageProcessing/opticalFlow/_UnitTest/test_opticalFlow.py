@@ -23,19 +23,19 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 importErr = False
 reasonErr = ""
 try:
-    from Basilisk.fswAlgorithms import opticalFlow
+    from xmera.fswAlgorithms import opticalFlow
 except ImportError:
     importErr = True
     reasonErr = "Optical Flow not built---check OpenCV option"

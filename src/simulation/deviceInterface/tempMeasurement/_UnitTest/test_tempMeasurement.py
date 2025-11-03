@@ -30,11 +30,11 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import sensorThermal, tempMeasurement
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros, astroFunctions
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.simulation import sensorThermal, tempMeasurement
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros, astroFunctions
+from xmera.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 

@@ -26,7 +26,7 @@ This script sets up three 6-DOF spacecraft orbiting the Earth. The goal of this 
 #. show how one can change the active flight mode on the run, and
 #. discuss how this script takes advantage of the new BSK Sim structure.
 
-The script is found in the folder ``basilisk/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::
+The script is found in the folder ``xmera/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::
 
       python3 scenario_AttGuidMultiSat.py
 
@@ -104,7 +104,7 @@ import os
 import sys
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

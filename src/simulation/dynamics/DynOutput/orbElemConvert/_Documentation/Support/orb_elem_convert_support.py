@@ -38,7 +38,7 @@ import math
 import matplotlib.pyplot as plt
 # @cond DOXYGEN_IGNORE
 import numpy
-from Basilisk.utilities import macros as mc
+from xmera.utilities import macros as mc
 
 a = 10000000.0
 e = 0.99

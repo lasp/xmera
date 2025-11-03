@@ -31,7 +31,7 @@ Note, this scenario also illustrates how to ensure that the differential equatio
 the servicer and debris object are integrated at the same time.  This is not required in this scenario
 as there are no direct satellite-to-satellite dynamic interactions.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioFormationBasic.py
 
@@ -94,7 +94,7 @@ saturated, and the attitude still eventually stabilizes.
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Basic simulation showing a servicer (3-axis attitude controlled) and a tumbling debris object.
 # Author:   Hanspeter Schaub
@@ -106,22 +106,22 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft, svIntegrators
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.simulation import reactionWheelStateEffector, simpleNav, spacecraft, svIntegrators
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 except ImportError:
     pass
 
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 

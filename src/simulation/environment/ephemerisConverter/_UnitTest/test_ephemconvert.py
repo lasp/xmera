@@ -24,14 +24,14 @@
 #
 
 import numpy as np
-import Basilisk.architecture.messaging
-from Basilisk import __path__
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import spiceInterface
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+import xmera.architecture.messaging
+from xmera import __path__
+from xmera.simulation import ephemerisConverter
+from xmera.simulation import spiceInterface
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 bskPath = __path__[0]
 

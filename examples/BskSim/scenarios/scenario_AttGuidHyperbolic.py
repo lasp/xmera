@@ -23,7 +23,7 @@ Overview
 This script sets up a 6-DOF spacecraft on a hyperbolic trajectory. The goal of this tutorial is to demonstrate how to
 configure a velocity pointing FSW in the new BSK_Sim architecture.
 
-The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
+The script is found in the folder ``xmera/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_AttGuidHyperbolic.py
 
@@ -82,7 +82,7 @@ import sys
 
 import numpy as np
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from xmera.utilities import orbitalMotion, macros, vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -23,10 +23,10 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import SimulationBaseClass, macros
-from Basilisk.fswAlgorithms import ephemDifference
-from Basilisk.utilities import astroFunctions
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass, macros
+from xmera.fswAlgorithms import ephemDifference
+from xmera.utilities import astroFunctions
+from xmera.architecture import messaging
 
 @pytest.mark.parametrize("ephBdyCount", [3, 0])
 def test_ephemDifference(ephBdyCount):

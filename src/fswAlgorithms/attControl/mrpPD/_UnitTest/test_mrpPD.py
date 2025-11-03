@@ -18,10 +18,10 @@
 import numpy as np
 import pytest
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import mrpPD
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.fswAlgorithms import mrpPD
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 @pytest.mark.parametrize("setExtTorque", [False, True])
 def test_mrpPD(show_plots, setExtTorque):

@@ -18,11 +18,11 @@
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import starTracker
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.simulation import starTracker
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 def list_stack(vec, sim_stop_time, unit_proc_rate):
     # returns a list duplicated the number of times needed to be consistent with module output

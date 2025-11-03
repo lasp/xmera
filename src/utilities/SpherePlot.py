@@ -3,7 +3,7 @@ import copy
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.utilities import RigidBodyKinematics
+from xmera.utilities import RigidBodyKinematics
 
 
 def plotSpheres(posDataL_N, posDataF_N, attDataL_N, attDataF_N, spPosListLeader_H, rListLeader,
@@ -112,4 +112,3 @@ def plotSpheres(posDataL_N, posDataF_N, attDataL_N, attDataF_N, spPosListLeader_
 
 def NormalizeData(data):
     return (data - np.min(data)) / (np.max(data) - np.min(data))
-

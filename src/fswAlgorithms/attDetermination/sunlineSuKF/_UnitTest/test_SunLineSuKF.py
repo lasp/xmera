@@ -19,9 +19,9 @@
 '''
 import numpy
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
-from Basilisk.utilities import SimulationBaseClass, macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import sunlineSuKF  # import the module that is to be tested
+from xmera.utilities import SimulationBaseClass, macros
 
 import SunLineSuKF_test_utilities as FilterPlots
 

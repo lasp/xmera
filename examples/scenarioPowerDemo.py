@@ -31,7 +31,7 @@ simplePower modules are intended to provide three major features:
 #. Computation of power consumed by on-board spacecraft power sinks;
 #. Computation of the spacecraft power balance and total stored energy by the simpleBattery class.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioPowerDemo.py
 
@@ -80,22 +80,22 @@ from matplotlib import pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import simplePowerSink
-from Basilisk.simulation import simpleBattery
-from Basilisk.simulation import simpleSolarPanel
-from Basilisk.simulation import eclipse
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import astroFunctions
+from xmera.utilities import SimulationBaseClass
+from xmera.simulation import simplePowerSink
+from xmera.simulation import simpleBattery
+from xmera.simulation import simpleSolarPanel
+from xmera.simulation import eclipse
+from xmera.simulation import spacecraft
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import astroFunctions
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
 path = os.path.dirname(os.path.abspath(__file__))

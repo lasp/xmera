@@ -24,16 +24,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 import spiceypy
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import oeStateEphem
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import oeStateEphem
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('fswAlgorithms')
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
 orbit_position_epsilon = 10000.0

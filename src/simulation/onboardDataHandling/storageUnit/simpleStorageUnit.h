@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_SIMPLESTORAGEUNIT_H
-#define BASILISK_SIMPLESTORAGEUNIT_H
+#ifndef XMERA_SIMPLESTORAGEUNIT_H
+#define XMERA_SIMPLESTORAGEUNIT_H
 
 #include <simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -36,4 +36,4 @@ class SimpleStorageUnit : public DataStorageUnitBase {
                                                    //!< partition in the storage unit ("STORED DATA")
 };
 
-#endif  // BASILISK_SIMPLESTORAGEUNIT_H
+#endif  // XMERA_SIMPLESTORAGEUNIT_H

@@ -4,10 +4,10 @@
 #   Creation Date:      October 5, 2018
 #
 
-from Basilisk.fswAlgorithms import vehicleConfigData
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from xmera.fswAlgorithms import vehicleConfigData
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 
 def test_vehicleConfigData():

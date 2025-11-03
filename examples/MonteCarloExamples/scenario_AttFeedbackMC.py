@@ -40,14 +40,14 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
 # import general simulation support files
 import sys
-from Basilisk.utilities.MonteCarlo.Controller import Controller
-from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
+from xmera.utilities.MonteCarlo.Controller import Controller
+from xmera.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
+from xmera.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
                                                        NormalVectorCartDispersion)
 
 sys.path.append(path+"/../BskSim/scenarios/")

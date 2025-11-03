@@ -17,8 +17,8 @@
 
  */
 
-#ifndef BASILISK_POWERSTORAGESTATUSSIMMSG_H
-#define BASILISK_POWERSTORAGESTATUSSIMMSG_H
+#ifndef XMERA_POWERSTORAGESTATUSSIMMSG_H
+#define XMERA_POWERSTORAGESTATUSSIMMSG_H
 
 /*! @brief Message to store current battery stored charge, maximum charge, and received power.*/
 typedef struct {
@@ -27,4 +27,4 @@ typedef struct {
     double currentNetPower;  //!< [W] Current net power received/drained from the battery.
 } PowerStorageStatusMsgPayload;
 
-#endif  // BASILISK_POWERSTORAGESTATUSSIMMSG_H
+#endif  // XMERA_POWERSTORAGESTATUSSIMMSG_H

@@ -33,7 +33,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -101,4 +101,3 @@ def test_scenarioBskScenarios(show_plots, scenarioCase):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

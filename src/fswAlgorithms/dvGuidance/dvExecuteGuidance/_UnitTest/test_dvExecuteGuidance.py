@@ -26,10 +26,10 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import dvExecuteGuidance
-from Basilisk.utilities import macros
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.fswAlgorithms import dvExecuteGuidance
+from xmera.utilities import macros
+from xmera.architecture import messaging
 
 
 # parameters

@@ -29,20 +29,20 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging
-from Basilisk.simulation import dataFileToViz
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import sim_model
+from xmera.architecture import messaging
+from xmera.simulation import dataFileToViz
+from xmera.simulation import spacecraft
+from xmera.utilities import RigidBodyKinematics as rbk
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import vizSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport
+from xmera.utilities import vizSupport
 
 try:
-    from Basilisk.simulation import vizInterface
+    from xmera.simulation import vizInterface
 except ImportError:
     pass
 

@@ -30,7 +30,7 @@ as well as determine the
 magnetic field at a spacecraft location.  The orbit setup is similar to that used in
 :ref:`scenarioBasicOrbit`.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioMagneticFieldWMM.py
 
@@ -116,7 +116,7 @@ The following images illustrate the expected simulation run returns for a range 
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test illustrating how to use a world magnetic model (WMM) for spacecraft about Earth.
 # Author:   Hanspeter Schaub
@@ -127,24 +127,24 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
+from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import magneticFieldWMM
+from xmera.simulation import spacecraft
+from xmera.simulation import magneticFieldWMM
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
+from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, spice_utilities)
 
 #attempt to import vizard
-from Basilisk.utilities import vizSupport
+from xmera.utilities import vizSupport
 
 
 def run(show_plots, orbitCase):

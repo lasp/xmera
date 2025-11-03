@@ -29,7 +29,7 @@ is used to drive the RW spin rates
 to desired values.  The spacecraft is setup to stabilize and point in a fixed inertial direction while
 this RW momentum control is engaged.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioMtbMomentumManagement.py
 
@@ -68,7 +68,7 @@ The following plots illustrate the sensed magnetic field as well as the TAM comm
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft with RWs, TAMs and MTBs to perform RW momentum dumping.
 # Author:   Henry Macanas and Hanspeter Schaub
@@ -79,18 +79,18 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# The path to the location of Basilisk
+# The path to the location of xmera
 # Used to get the location of supporting data.
-from Basilisk import __path__
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
+from xmera import __path__
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque,
                                     tamComm, mtbMomentumManagement)
-from Basilisk.simulation import (reactionWheelStateEffector,
+from xmera.simulation import (reactionWheelStateEffector,
                                  simpleNav,
                                  magneticFieldWMM, magnetometer, MtbEffector,
                                  spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, macros,
+from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, spice_utilities, vizSupport)
 

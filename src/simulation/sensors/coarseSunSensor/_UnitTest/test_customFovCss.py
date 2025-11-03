@@ -25,12 +25,12 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-from Basilisk.architecture import messaging
-from Basilisk.architecture import sim_model
-from Basilisk.simulation import coarseSunSensor
-from Basilisk.utilities import astroFunctions
-from Basilisk.utilities import macros
-from Basilisk.utilities import SimulationBaseClass
+from xmera.architecture import messaging
+from xmera.architecture import sim_model
+from xmera.simulation import coarseSunSensor
+from xmera.utilities import astroFunctions
+from xmera.utilities import macros
+from xmera.utilities import SimulationBaseClass
 
 
 @pytest.mark.parametrize("xi", [np.pi/6, np.pi/3, np.pi/2])

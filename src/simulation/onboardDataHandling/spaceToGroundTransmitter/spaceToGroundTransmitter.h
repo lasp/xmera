@@ -18,8 +18,8 @@
 
  */
 
-#ifndef BASILISK_SPACETOGROUNDTRANSMITTER_H
-#define BASILISK_SPACETOGROUNDTRANSMITTER_H
+#ifndef XMERA_SPACETOGROUNDTRANSMITTER_H
+#define XMERA_SPACETOGROUNDTRANSMITTER_H
 
 #include <architecture/msgPayloadDef/AccessMsgPayload.h>
 #include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
@@ -55,4 +55,4 @@ class SpaceToGroundTransmitter : public DataNodeBase {
     double previousTime;                                     //!< Previous timestep tracked for data packet integration
     std::vector<AccessMsgPayload> groundLocationAccessMsgs;  //!< local copy of ground access messages
 };
-#endif  // BASILISK_SPACETOGROUNDTRANSMITTER_H
+#endif  // XMERA_SPACETOGROUNDTRANSMITTER_H

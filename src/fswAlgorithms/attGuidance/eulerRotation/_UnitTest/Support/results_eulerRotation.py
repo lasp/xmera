@@ -20,8 +20,8 @@ from numpy import sin, cos
 
 np.set_printoptions(precision=12)
 
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import macros as mc
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import macros as mc
 
 
 
@@ -172,7 +172,3 @@ angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega
 # M3 = rbk.Mi(np.pi, 3)
 # print 'M3 = ', M3
 # print 'sigma = ', rbk.C2MRP(M3)
-
-
-
-

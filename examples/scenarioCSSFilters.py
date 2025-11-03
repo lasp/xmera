@@ -24,7 +24,7 @@ This script sets up a 6-DOF spacecraft in deep space without any gravitational
 bodies. Only rotational motion is simulated.  The script illustrates how to
 setup attitude filters that use measurements from the Coarse Sun Sensors (CSS).
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
     python3 scenarioCSSFilters.py
 
@@ -251,7 +251,7 @@ The post fit residuals, show a fully functional filter, with no issues of observ
 """
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstrates how to setup and use sun heading filters
 # Author:   Thibaud Teil
@@ -262,17 +262,17 @@ The post fit residuals, show a fully functional filter, with no issues of observ
 
 import numpy as np
 
-from Basilisk import __path__
+from xmera import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
-from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import orbitalMotion as om
+from xmera.utilities import RigidBodyKinematics as rbk
 
-from Basilisk.simulation import spacecraft, coarseSunSensor
-from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF
-from Basilisk.architecture import messaging
+from xmera.simulation import spacecraft, coarseSunSensor
+from xmera.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF
+from xmera.architecture import messaging
 
 import SunLineKF_test_utilities as Fplot
 

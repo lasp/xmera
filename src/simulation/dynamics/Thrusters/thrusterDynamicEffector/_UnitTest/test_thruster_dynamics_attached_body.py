@@ -25,10 +25,10 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
-from Basilisk.simulation import spacecraft, thrusterDynamicEffector
-from Basilisk.architecture import messaging
-from Basilisk.architecture import sim_model
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
+from xmera.simulation import spacecraft, thrusterDynamicEffector
+from xmera.architecture import messaging
+from xmera.architecture import sim_model
 import matplotlib.pyplot as plt
 
 

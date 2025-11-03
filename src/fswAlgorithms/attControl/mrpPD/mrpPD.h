@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _BASILISK_MRP_PD_
-#define _BASILISK_MRP_PD_
+#ifndef _XMERA_MRP_PD_
+#define _XMERA_MRP_PD_
 
 #include <stdint.h>
 #include <stdexcept>

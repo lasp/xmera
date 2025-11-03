@@ -53,4 +53,4 @@ class MappingInstrument : public SysModel {
     std::vector<DataNodeUsageMsgPayload> dataNodeOutMsgBuffer;  //!< buffer of data node output data
 };
 
-#endif  // BASILISK_MAPPINGINSTRUMENT_H
+#endif  // MAPPINGINSTRUMENT_H

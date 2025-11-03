@@ -37,9 +37,9 @@ import os
 import sys
 import time
 
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import RigidBodyKinematics as rbk
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from xmera.utilities import orbitalMotion, macros, unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -167,7 +167,7 @@ class scenario_OpNav(BSKScenario):
         circleRadii = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
         validCircle = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.valid)
 
-        frame = unitTestSupport.addTimeColumn(self.headingBVecLog.times(), self.headingBVecLog.bVec_B) 
+        frame = unitTestSupport.addTimeColumn(self.headingBVecLog.times(), self.headingBVecLog.bVec_B)
 
         numRW = 4
         dataRW = []

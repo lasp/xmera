@@ -18,10 +18,10 @@
 import numpy as np
 import pytest
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.fswAlgorithms import sunSafePoint
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros as mc
+from xmera.utilities import SimulationBaseClass
+from xmera.fswAlgorithms import sunSafePoint
+from xmera.architecture import messaging
+from xmera.utilities import macros as mc
 
 @pytest.mark.parametrize("case", [
      (1)        # sun is visible, vectors are not aligned

@@ -21,14 +21,14 @@ import os
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import stepperMotorController
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import stepperMotorController
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 @pytest.mark.parametrize("motor_step_angle", [0.008 * macros.D2R, 0.01 * macros.D2R, 0.5 * macros.D2R])

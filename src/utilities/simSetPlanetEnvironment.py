@@ -17,7 +17,7 @@
 #
 
 import numpy as np
-from Basilisk.utilities import macros
+from xmera.utilities import macros
 
 
 def exponentialAtmosphere(atmosModule, name):
@@ -130,5 +130,3 @@ def convertToIgrfDipoleCoefficients(nominalField, tilt, longitudeOfTilt, magFiel
     magFieldModule.g10 = nominalField*np.cos(theta_m)
 
     return
-
-

@@ -18,8 +18,8 @@
 
 
 import numpy as np
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import macros as mc
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import macros as mc
 
 np.set_printoptions(precision=12)
 

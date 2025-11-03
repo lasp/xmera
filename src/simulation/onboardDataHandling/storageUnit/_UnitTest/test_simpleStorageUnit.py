@@ -22,14 +22,14 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import simpleStorageUnit
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
+from xmera.utilities import SimulationBaseClass
+from xmera.simulation import simpleStorageUnit
+from xmera.architecture import messaging
+from xmera.utilities import macros
 
 params_storage_limits = [(1200, 1200, 2400, 2400),
                      (600, 1200, 3600, 3600),
@@ -42,9 +42,9 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
     """
     Tests:
 
-    1. Whether the simpleStorageUnit can add multiple nodes (core base class 
+    1. Whether the simpleStorageUnit can add multiple nodes (core base class
         functionality);
-    2. That the simpleStorageUnit correctly evaluates how much stored data it should 
+    2. That the simpleStorageUnit correctly evaluates how much stored data it should
         have given a pair of input messages.
 
     """
@@ -104,7 +104,7 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
 
     #   Check 3 - is the amount of data more than zero and less than the capacity?
     for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind], 
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
             capacityLog[ind]), (
             "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
 
@@ -114,7 +114,7 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
     #   Check 4 - is there only one partition?
     assert len(partitionName[0]) == 1, (
         "FAILED: PartitionedStorageUnit did use the correct partition.")
-    
+
     #   Check 6 - is the name of the partition correct?
     assert partitionName[0][0] == "STORED DATA", (
         "FAILED: PartitionedStorageUnit did not correctly log the partition name.")
@@ -134,13 +134,13 @@ params_set_data = [(1200, 1200, 1200, 2400, 2400),
 @pytest.mark.parametrize(
         "baudRate_1, baudRate_2, add_data, storageCapacity, expectedStorage",
         params_set_data)
-def test_set_data_buffer(baudRate_1, baudRate_2, add_data, storageCapacity, 
+def test_set_data_buffer(baudRate_1, baudRate_2, add_data, storageCapacity,
                          expectedStorage):
     """
     Tests:
 
     1. Whether the partitionedStorageUnit can add data using the setDataBuffer method;
-    2. That the partitionedStorageUnit correctly evaluates how much stored data it 
+    2. That the partitionedStorageUnit correctly evaluates how much stored data it
         should have given a pair of input messages and using setDataBuffer.
 
     :return:
@@ -207,7 +207,7 @@ def test_set_data_buffer(baudRate_1, baudRate_2, add_data, storageCapacity,
 
     #   Check 3 - is the amount of data more than zero and less than the capacity?
     for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind], 
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
             capacityLog[ind]), (
             "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
 
@@ -217,11 +217,11 @@ def test_set_data_buffer(baudRate_1, baudRate_2, add_data, storageCapacity,
     #   Check 4 - is the data in the partitioned storage unit correct?
     assert partitionData[-1][0] == storedDataLog[-1], (
         "FAILED: PartitionedStorageUnit did not correctly log the stored data.")
-    
+
     #   Check 5 - is there only one partition?
     assert len(partitionName[0]) == 1, (
         "FAILED: PartitionedStorageUnit should have just one partition.")
-   
+
     #   Check 6 - is the name of the partition correct?
     assert partitionName[0][0] == "STORED DATA", (
         "FAILED: PartitionedStorageUnit did not correctly log the partition name.")
@@ -232,8 +232,8 @@ if __name__ == "__main__":
     baudRate_2 = 1200
     storageCapacity = 2400
     expectedStorage = 2400
-    test_storage_limits(baudRate_1, baudRate_2, 
+    test_storage_limits(baudRate_1, baudRate_2,
                         storageCapacity, expectedStorage)
     add_data = 1200
-    test_set_data_buffer(baudRate_1, baudRate_2, add_data, 
+    test_set_data_buffer(baudRate_1, baudRate_2, add_data,
                          storageCapacity, expectedStorage)

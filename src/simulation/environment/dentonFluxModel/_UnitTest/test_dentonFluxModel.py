@@ -28,17 +28,17 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from Basilisk import __path__
+from xmera import __path__
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
-from Basilisk.simulation import dentonFluxModel
+from xmera.utilities import SimulationBaseClass
+from xmera.architecture import messaging
+from xmera.utilities import macros
+from xmera.simulation import dentonFluxModel
 
 Kps = ['0o', '4-', '5+']
 LTs = [0.00, 14.73]

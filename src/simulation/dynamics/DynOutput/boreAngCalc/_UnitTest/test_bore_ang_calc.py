@@ -31,12 +31,12 @@ import os
 
 import numpy
 import pytest
-from Basilisk.architecture import messaging
-from Basilisk.simulation import boreAngCalc
-from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from xmera.architecture import messaging
+from xmera.simulation import boreAngCalc
+from xmera.utilities import RigidBodyKinematics
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 

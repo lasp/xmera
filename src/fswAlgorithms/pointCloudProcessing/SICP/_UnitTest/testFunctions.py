@@ -26,12 +26,12 @@ open3d = pytest.importorskip("open3d")
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import scalingIterativeClosestPoint
+from xmera.utilities import SimulationBaseClass, unitTestSupport, macros
+from xmera.architecture import messaging
+from xmera.fswAlgorithms import scalingIterativeClosestPoint
 
 def pythonSICP(pointCloud, referenceCloud, Np, scale_minMax = None):
     maxIterations = 10

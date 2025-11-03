@@ -34,12 +34,12 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import macros
-from Basilisk.simulation import imuSensor
-from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.architecture import messaging
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport
+from xmera.utilities import macros
+from xmera.simulation import imuSensor
+from xmera.utilities import RigidBodyKinematics as rbk
+from xmera.architecture import messaging
 
 def addTimeColumn(time, data):
     return np.transpose(np.vstack([[time], np.transpose(data)]))

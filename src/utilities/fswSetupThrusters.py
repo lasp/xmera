@@ -21,7 +21,7 @@
 #   FSW Setup Utilities for Thrusters
 #
 
-from Basilisk.architecture import messaging
+from xmera.architecture import messaging
 
 
 thrList = []

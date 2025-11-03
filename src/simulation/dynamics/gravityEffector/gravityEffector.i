@@ -17,17 +17,17 @@
 
  */
 
-%module(package="Basilisk.simulation") gravityEffector
+%module(package="xmera.simulation") gravityEffector
 %{
    #include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 %}
 
 %pythoncode %{
-from Basilisk.simulation.pointMassGravityModel import PointMassGravityModel
-from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
-from Basilisk.simulation.sphericalHarmonicsGravityModel import SphericalHarmonicsGravityModel
+from xmera.simulation.pointMassGravityModel import PointMassGravityModel
+from xmera.simulation.polyhedralGravityModel import PolyhedralGravityModel
+from xmera.simulation.sphericalHarmonicsGravityModel import SphericalHarmonicsGravityModel
 
-from Basilisk.utilities import deprecated
+from xmera.utilities import deprecated
 
 Polyhedral = PolyhedralGravityModel
 SphericalHarmonics = SphericalHarmonicsGravityModel

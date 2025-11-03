@@ -28,8 +28,8 @@
 
 #include <architecture/utilities/bskLogging.h>
 
-#ifndef BASILISK_SIMPOWERSTORAGEBASE_H
-#define BASILISK_SIMPOWERSTORAGEBASE_H
+#ifndef XMERA_SIMPOWERSTORAGEBASE_H
+#define XMERA_SIMPOWERSTORAGEBASE_H
 
 /*! @brief power storage base class */
 class PowerStorageBase : public SysModel {
@@ -68,4 +68,4 @@ class PowerStorageBase : public SysModel {
     double currentPowerSum;                              //!< [W] Current net power.
 };
 
-#endif  // BASILISK_SIMPOWERSTORAGEBASE_H
+#endif  // XMERA_SIMPOWERSTORAGEBASE_H

@@ -29,15 +29,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-from Basilisk.architecture import sim_model
-from Basilisk.architecture import messaging
-from Basilisk.simulation import prescribedRotation1DOF
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from xmera.architecture import sim_model
+from xmera.architecture import messaging
+from xmera.simulation import prescribedRotation1DOF
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = 'xmera'
 splitPath = path.split(bskName)
 
 @pytest.mark.parametrize("coastOptionBangDuration", [0.0, 2.0])  # [s]

@@ -18,7 +18,7 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Integrated tutorial of the spacecraft(), gravity, and hinged rigid body modules illustrating
 #           how Delta_v maneuver from test_scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
@@ -35,7 +35,7 @@ import sys
 
 import numpy as np
 import pytest
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -87,4 +87,3 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

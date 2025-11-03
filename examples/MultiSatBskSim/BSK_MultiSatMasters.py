@@ -21,10 +21,10 @@ import inspect
 import os
 import sys
 
-from Basilisk import __path__
-from Basilisk.fswAlgorithms import formationBarycenter
+from xmera import __path__
+from xmera.fswAlgorithms import formationBarycenter
 # Import architectural modules
-from Basilisk.utilities import SimulationBaseClass, macros as mc
+from xmera.utilities import SimulationBaseClass, macros as mc
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

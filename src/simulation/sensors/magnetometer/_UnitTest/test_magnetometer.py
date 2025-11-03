@@ -36,12 +36,12 @@ path = os.path.dirname(os.path.abspath(filename))
 bskPath = path.split('src')[0]
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import magnetometer
-from Basilisk.architecture import messaging
-from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import unitTestSupport                  # general support file with common unit test functions
+from xmera.simulation import magnetometer
+from xmera.architecture import messaging
+from xmera.utilities import macros
+from xmera.utilities import RigidBodyKinematics as rbk
 
 
 @pytest.mark.parametrize("useNoiseStd, errTol", [(False, 1e-10), (True, 1e-2)])

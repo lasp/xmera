@@ -18,8 +18,8 @@
 
 import pytest
 
-from Basilisk.architecture import swigDeprecatedCheck
-from Basilisk.utilities import deprecated
+from xmera.architecture import swigDeprecatedCheck
+from xmera.utilities import deprecated
 
 
 def get_class_without_warning():

@@ -22,7 +22,7 @@ Overview
 This scenario illustrates how different integrators compare in terms of
 accuracy and computational cost.
 
-The script is found in the folder ``basilisk/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioIntegratorsComparison.py
 
@@ -125,15 +125,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.simulation import svIntegrators
+from xmera.simulation import spacecraft
+from xmera.simulation import svIntegrators
 
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
+from xmera.utilities import SimulationBaseClass
+from xmera.utilities import macros
+from xmera.utilities import orbitalMotion
+from xmera.utilities import simIncludeGravBody
+from xmera.utilities import unitTestSupport
 
 # The following code may not be very interesting to learn how to
 # set up different integrators. To learn this, refer to the other

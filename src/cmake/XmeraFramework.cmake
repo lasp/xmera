@@ -115,7 +115,7 @@ function(xmera_add_swig_module module)
   #   we need to use the following logic to ensure that the relative rpath
   #   is correct no matter how deeply nested the module is.
   #
-  # # "a.b.c" -> "Basilisk/a/b/_c.so" -> "../../../lib"
+  # # "a.b.c" -> "xmera/a/b/_c.so" -> "../../../lib"
   # string(REGEX MATCHALL [[\.]] _rpath "${module}")
   # # _rpath = ".;."
   # list(APPEND _rpath ".")
@@ -136,11 +136,11 @@ function(xmera_add_swig_module module)
 
   install(
     TARGETS "${module}"
-    DESTINATION "Basilisk/${_package_path}"
+    DESTINATION "xmera/${_package_path}"
   )
   install(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/${_module_basename}.py"
-    DESTINATION "Basilisk/${_package_path}"
+    DESTINATION "xmera/${_package_path}"
   )
 endfunction()
 
@@ -221,17 +221,17 @@ function(xmera_add_swig_message message)
 
   install(
     TARGETS "${message}"
-    DESTINATION "Basilisk/architecture/messaging"
+    DESTINATION "xmera/architecture/messaging"
   )
   install(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/${message}.py"
-    DESTINATION "Basilisk/architecture/messaging"
+    DESTINATION "xmera/architecture/messaging"
   )
 endfunction()
 
 function(xmera_generate_messaging_init)
   get_property(_file_contents GLOBAL PROPERTY XMERA_REGISTERED_MESSAGES)
-  list(TRANSFORM _file_contents PREPEND "from Basilisk.architecture.messaging.")
+  list(TRANSFORM _file_contents PREPEND "from xmera.architecture.messaging.")
   list(TRANSFORM _file_contents APPEND " import *")
   list(JOIN _file_contents "\n" _file_contents)
 
@@ -242,7 +242,7 @@ function(xmera_generate_messaging_init)
 
   install(
     FILES "${CMAKE_BINARY_DIR}/messaging__init__.py"
-    DESTINATION Basilisk/architecture/messaging/
+    DESTINATION xmera/architecture/messaging/
     RENAME __init__.py
   )
 endfunction()
