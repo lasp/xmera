@@ -101,14 +101,6 @@ protected:
     FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
     Eigen::MatrixXd processNoise;  //!< [-] process noise matrix
     Eigen::MatrixXd covarInitial;  //!< [-] covariance at previous time
-
-private:
-    // Temporary storage for the measurements being processed.
-    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
-
-    // Helper method, used by stateUpdate() to ensure that measurements are
-    // processed in time-order.
-    void orderMeasurementsChronologically();
 };
 
 #endif /* KALMAN_FILTER_INTERFACE_HPP */

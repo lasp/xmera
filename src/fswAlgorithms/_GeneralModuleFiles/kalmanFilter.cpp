@@ -3,6 +3,21 @@
 
 #include "kalmanFilter.h"
 
+using MeasurementVector = std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER>;
+
+/*!- Order the measurements chronologically (standard sort)
+ @return void
+ */
+static void orderMeasurementsChronologically(MeasurementVector* const measurements) {
+    std::sort(measurements->begin(),
+              measurements->end(),
+              [](std::optional<MeasurementModel> meas1, std::optional<MeasurementModel> meas2) {
+                  if (!meas1.has_value()) return false;
+                  if (!meas2.has_value()) return true;
+                  return meas1.value().getTimeTag() < meas2.value().getTimeTag();
+              });
+}
+
 void KalmanFilter::reset(uint64_t currentSimNanos) {
     assert(this->stateInitial.size() == this->covarInitial.rows() &&
            this->stateInitial.size() == this->covarInitial.cols());
@@ -22,20 +37,15 @@ void KalmanFilter::reset(uint64_t currentSimNanos) {
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void KalmanFilter::updateState(
-    uint64_t currentSimNanos,
-    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements
-) {
-    this->measurements = measurements;
-
+void KalmanFilter::updateState(uint64_t currentSimNanos, MeasurementVector measurements) {
     /*! sort the measurment vector in chronological order */
-    this->orderMeasurementsChronologically();
+    orderMeasurementsChronologically(&measurements);
 
     /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
      * has been populated in the measurements array*/
     for (int index = 0; index < MAX_MEASUREMENT_NUMBER; ++index) {
-        if (!this->measurements[index].has_value()) continue;
-        auto& measurement = this->measurements[index].value();
+        if (!measurements[index].has_value()) continue;
+        auto& measurement = measurements[index].value();
 
         /*! - If the time tag from a valid measurement is new compared to previous step,
         propagate and update the filter*/
@@ -52,7 +62,7 @@ void KalmanFilter::updateState(
         measurement.setPostFitResiduals(
             measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state)));
 
-        this->measurements[index] = measurement;
+        measurements[index] = measurement;
     }
 
     /*! - If current clock time is further ahead than the last measurement time, then
@@ -60,23 +70,6 @@ void KalmanFilter::updateState(
     if ((double)currentSimNanos * NANO2SEC > this->previousFilterTimeTag) {
         this->timeUpdate((double)currentSimNanos * NANO2SEC);
     }
-}
-
-/*!- Order the measurements chronologically (standard sort)
- @return void
- */
-void KalmanFilter::orderMeasurementsChronologically() {
-    std::sort(this->measurements.begin(),
-              this->measurements.end(),
-              [](std::optional<MeasurementModel> meas1, std::optional<MeasurementModel> meas2) {
-                  if (!meas1.has_value()) {
-                      return false;
-                  } else if (!meas2.has_value()) {
-                      return true;
-                  } else {
-                      return meas1.value().getTimeTag() < meas2.value().getTimeTag();
-                  }
-              });
 }
 
 /*! Set the filter initial state position vector
