@@ -35,6 +35,9 @@ class EkfInterface : public KalmanFilter {
     void setMinimumCovarianceNormForEkf(double infiniteNorm);
     double getMinimumCovarianceNormForEkf() const;
 
+    FilterStateVector stateLogged;   //!< [-] State variable for logging
+    Eigen::VectorXd stateError;      //!< [-] Current mean state error
+
    private:
     void timeUpdate(double updateTime) override;
     void measurementUpdate(const MeasurementModel& measurement) override;
