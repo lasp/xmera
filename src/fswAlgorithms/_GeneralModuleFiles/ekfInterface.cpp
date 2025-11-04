@@ -3,13 +3,13 @@
 
 #include "ekfInterface.h"
 
-EkfInterface::EkfInterface(FilterType type) { this->filterType = type; }
+EkfInterface::EkfInterface(const FilterType type) { this->filterType = type; }
 
 /*! Reset all of the filter states, including the custom reset
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void EkfInterface::reset(uint64_t currentSimNanos) {
+void EkfInterface::reset(const uint64_t currentSimNanos) {
     KalmanFilter::reset(currentSimNanos);
     this->stateError = Eigen::VectorXd ::Zero(this->state.size());
     this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());
