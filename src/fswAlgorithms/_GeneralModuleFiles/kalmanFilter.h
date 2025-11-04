@@ -95,7 +95,6 @@ public:
     // They are accessed by both the implementors of this class
     // and by the module that drives the filter.
     Eigen::MatrixXd covar;         //!< [-] covariance
-    FilterStateVector xBar{};        //!< [-] Current mean state estimate
     FilterStateVector stateLogged;   //!< [-] State variable for logging
     Eigen::VectorXd stateError;      //!< [-] Current mean state error
 };
