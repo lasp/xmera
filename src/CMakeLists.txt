@@ -78,6 +78,7 @@ endforeach()
 
 install(DIRECTORY utilities DESTINATION Basilisk)
 install(DIRECTORY ../supportData DESTINATION Basilisk)
+install(FILES cmake/UseXmera.cmake DESTINATION cmake)
 
 install(EXPORT xmera
   DESTINATION cmake

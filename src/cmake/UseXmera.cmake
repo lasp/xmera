@@ -1,20 +1,5 @@
-# Root directories to add via `add_subdirectory()`
-set(XMERA_MODULE_ROOTS
-  "${CMAKE_SOURCE_DIR}/fswAlgorithms/"
-  "${CMAKE_SOURCE_DIR}/simulation/"
-  CACHE STRING
-  "Semicolon-separated roots containing modules to add to the build. Each directory must contain a CMakeLists.txt."
-)
-
-set(XMERA_ENABLE_GROUPS ""
-  CACHE STRING
-  "Semicolon-separated group names or globs to enable."
-)
-
-set(XMERA_ENABLE_INTERNAL "NO"
-  CACHE STRING
-  "Whether to enable modules that are marked as INTERNAL (default NO)"
-)
+cmake_policy(PUSH)
+cmake_minimum_required(VERSION 3.27)
 
 if(APPLE)
   set(XMERA_RPATH_ORIGIN "@loader_path")
@@ -25,35 +10,6 @@ endif()
 define_property(SOURCE PROPERTY XMERA_SWIG_MESSAGE_TEMPLATE BRIEF_DOCS
   "The path to the templated .i file to use when generating a SWIG interface for this file"
 )
-
-function(_xmera_is_prefix prefix value out_var)
-  set("${out_var}" OFF PARENT_SCOPE)
-
-  string(LENGTH "${prefix}" _prefix_len)
-  string(LENGTH "${value}" _value_len)
-  if(_prefix_len LESS_EQUAL _value_len)
-    string(SUBSTRING "${value}" 0 ${_prefix_len} _candidate)
-    if(_candidate STREQUAL "${prefix}")
-      set("${out_var}" ON PARENT_SCOPE)
-    endif()
-  endif()
-endfunction()
-
-function(xmera_is_module_enabled module_path out_var)
-  cmake_parse_arguments(PARSE_ARGV 2 arg "INTERNAL" "" "")
-
-  set("${out_var}" OFF PARENT_SCOPE)
-
-  if((NOT arg_INTERNAL) OR XMERA_ENABLE_INTERNAL)
-    foreach(_prefix IN LISTS XMERA_ENABLE_GROUPS)
-      _xmera_is_prefix("${_prefix}." "${module_path}." _result)
-      if(_result)
-        set("${out_var}" "${_result}" PARENT_SCOPE)
-        return()
-      endif()
-    endforeach()
-  endif()
-endfunction()
 
 function(xmera_add_swig_module module)
   # separate "a.b.c" into "a" and "c"
@@ -107,7 +63,7 @@ function(xmera_add_swig_module module)
   )
 
   target_link_libraries("${module}" PRIVATE
-    Xmera::Core
+    xmera::core
     Python3::Module
   )
 
@@ -147,7 +103,7 @@ endfunction()
 function(xmera_add_swig_message message header)
   get_property(_template SOURCE "${header}" PROPERTY XMERA_SWIG_MESSAGE_TEMPLATE)
   if(NOT (DEFINED _template))
-    set(_template "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/msgInterfacePy.i.in")
+    set(_template "${XMERA_DIR}/usr/share/xmera/msgInterfacePy.i.in")
   endif()
 
   add_custom_command(
@@ -155,7 +111,7 @@ function(xmera_add_swig_message message header)
     OUTPUT
       "${CMAKE_CURRENT_BINARY_DIR}/${message}.i"
     COMMAND
-      "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/generateSWIGModules.py"
+      "${XMERA_DIR}/bin/generateSWIGModules.py"
       "${CMAKE_CURRENT_BINARY_DIR}/${message}.i"
       "${_template}"
       "${message}"
@@ -165,7 +121,7 @@ function(xmera_add_swig_message message header)
     MAIN_DEPENDENCY
       "${header}"
     DEPENDS
-      "${CMAKE_SOURCE_DIR}/architecture/messaging/msgAutoSource/generateSWIGModules.py"
+      "${XMERA_DIR}/bin/generateSWIGModules.py"
       "${_template}"
     VERBATIM
     DEPENDS_EXPLICIT_ONLY
@@ -212,7 +168,7 @@ function(xmera_add_swig_message message header)
   target_link_libraries("${message}" PRIVATE
     Python3::Module
     Eigen3::Eigen
-    Xmera::Core
+    xmera::core
   )
 
   set_target_properties("${message}" PROPERTIES
@@ -230,3 +186,5 @@ function(xmera_add_swig_message message header)
     DESTINATION "Basilisk/architecture/messaging"
   )
 endfunction()
+
+cmake_policy(POP)
