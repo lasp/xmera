@@ -24,10 +24,9 @@ void EkfInterface::reset(const uint64_t currentSimNanos) {
 
 /*! Perform the time update for kalman filter.
  @return void
- @param updateTime The time that we need to fix the filter to (seconds)
+ @param updateTime The time since last update that we need to fix the filter to (seconds)
  */
-void EkfInterface::timeUpdate(const double updateTime) {
-    double dt = updateTime - this->previousFilterTimeTag;
+void EkfInterface::timeUpdate(const double dt) {
     this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());
     std::array<double, 2> time = {0, dt};
 
@@ -66,8 +65,6 @@ void EkfInterface::timeUpdate(const double updateTime) {
     }
     this->covar = this->stateTransitionMatrix * this->covar * this->stateTransitionMatrix.transpose() +
                   processNoiseMapping * this->processNoise * processNoiseMapping.transpose();
-
-    this->previousFilterTimeTag = updateTime;
 }
 
 /*! Perform the measurement update for the kalman filter.

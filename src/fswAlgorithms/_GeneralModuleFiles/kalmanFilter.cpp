@@ -38,6 +38,8 @@ void KalmanFilter::updateState(uint64_t currentSimNanos, MeasurementVector measu
     /*! sort the measurment vector in chronological order */
     orderMeasurementsChronologically(&measurements);
 
+    double currentFilterTimeTag = this->previousFilterTimeTag;
+
     /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
      * has been populated in the measurements array*/
     for (int index = 0; index < MAX_MEASUREMENT_NUMBER; ++index) {
@@ -46,10 +48,11 @@ void KalmanFilter::updateState(uint64_t currentSimNanos, MeasurementVector measu
 
         /*! - If the time tag from a valid measurement is new compared to previous step,
         propagate and update the filter*/
-        if (measurement.getTimeTag() < this->previousFilterTimeTag || !measurement.getValidity()) continue;
+        if (measurement.getTimeTag() < currentFilterTimeTag || !measurement.getValidity()) continue;
 
         /*! - time update to the measurement time and compute pre-fit residuals*/
-        this->timeUpdate(measurement.getTimeTag());
+        this->timeUpdate(measurement.getTimeTag() - currentFilterTimeTag);
+        currentFilterTimeTag = measurement.getTimeTag();
 
         measurement.setPreFitResiduals(this->computeResiduals(measurement));
 
@@ -64,9 +67,12 @@ void KalmanFilter::updateState(uint64_t currentSimNanos, MeasurementVector measu
 
     /*! - If current clock time is further ahead than the last measurement time, then
     propagate to this current time-step*/
-    if ((double)currentSimNanos * NANO2SEC > this->previousFilterTimeTag) {
-        this->timeUpdate((double)currentSimNanos * NANO2SEC);
+    if ((double)currentSimNanos * NANO2SEC > currentFilterTimeTag) {
+        this->timeUpdate(((double)currentSimNanos * NANO2SEC) - this->previousFilterTimeTag);
+        currentFilterTimeTag = (double)currentSimNanos * NANO2SEC;
     }
+
+    this->previousFilterTimeTag = currentFilterTimeTag;
 }
 
 /*! Set the filter initial state position vector
