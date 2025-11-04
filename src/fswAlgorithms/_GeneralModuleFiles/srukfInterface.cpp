@@ -39,8 +39,6 @@ void SRukfInterface::reset(uint64_t currentSimNanos) {
     this->processNoise.resize(this->state.size(), this->state.size());
     this->cholProcessNoise =
         SRukfInterface::choleskyDecomposition(this->unitConversion * this->unitConversion * this->processNoise);
-
-    this->customreset();
 }
 
 /*! Perform the time update for kalman filter.

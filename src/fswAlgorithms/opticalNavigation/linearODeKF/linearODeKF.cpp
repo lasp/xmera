@@ -3,15 +3,26 @@
 
 #include "linearODeKF.h"
 
+void LinearODeKF::reset(uint64_t currentSimNanos) {
+    this->customReset();
+    this->ekf.reset(currentSimNanos);
+}
+
+void LinearODeKF::updateState(uint64_t currentSimNanos) {
+    this->readFilterMeasurements();
+    this->ekf.updateState(currentSimNanos, this->measurements);
+    this->writeOutputMessages(currentSimNanos);
+}
+
 /*! Reset the flyby OD filter to an initial state and initializes the internal estimation matrices.
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LinearODeKF::customreset() {
+void LinearODeKF::customReset() {
     /*! - Check if the required message has not been connected */
     assert(this->opNavHeadingMsg.isLinked());
     if (this->constantVelocityInitial) {
-        this->constantVelocity = this->constantVelocityInitial.value() * this->unitConversion;
+        this->constantVelocity = this->constantVelocityInitial.value() * this->ekf.unitConversion;
     }
     /*! - Set the dynamics matrix calculator*/
     std::function<Eigen::MatrixXd(double, const FilterStateVector)> dynamicsMatrixCalculator =
@@ -25,7 +36,7 @@ void LinearODeKF::customreset() {
             return dynamicsMatrix;
         };
 
-    this->dynamics.setDynamicsMatrix(dynamicsMatrixCalculator);
+    this->ekf.dynamics.setDynamicsMatrix(dynamicsMatrixCalculator);
 
     /*! - Set the filter dynamics (linear) */
     std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics =
@@ -45,12 +56,12 @@ void LinearODeKF::customreset() {
             XDot.setPosition(stateDerivative);
             Eigen::MatrixXd stm = state.detachStm();
 
-            Eigen::MatrixXd dynMatrix = this->dynamics.computeDynamicsMatrix(t, state);
+            Eigen::MatrixXd dynMatrix = this->ekf.dynamics.computeDynamicsMatrix(t, state);
             XDot.attachStm(dynMatrix * stm);
 
             return XDot;
         };
-    this->dynamics.setDynamics(twoBodyDynamics);
+    this->ekf.dynamics.setDynamics(twoBodyDynamics);
 }
 
 /*! Write the output data to appropriate messages given the state components
@@ -63,21 +74,21 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
     FilterResidualsMsgPayload residualsBuffer{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    eigenMatrixXToCArray(this->stateLogged.scale(1 / this->unitConversion).getPositionStates(),
+    eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).getPositionStates(),
                          navTransOutMsgBuffer.r_BN_N);
     if (this->constantVelocityInitial) {
         eigenMatrixToCArray(constantVelocityInitial.value(), navTransOutMsgBuffer.v_BN_N);
     } else {
-        eigenMatrixXToCArray(this->stateLogged.scale(1 / this->unitConversion).getVelocityStates(),
+        eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).getVelocityStates(),
                              navTransOutMsgBuffer.v_BN_N);
     }
 
     /*! - Populate the filter states output buffer and write the output message*/
-    opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXToCArray(this->stateLogged.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.state);
-    eigenMatrixXToCArray(1 / this->unitConversion * this->stateError, opNavFilterMsgBuffer.stateError);
-    eigenMatrixXToCArray(1 / this->unitConversion / this->unitConversion * this->covar, opNavFilterMsgBuffer.covar);
-    opNavFilterMsgBuffer.numberOfStates = this->state.size();
+    opNavFilterMsgBuffer.timeTag = this->ekf.previousFilterTimeTag;
+    eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).returnValues(), opNavFilterMsgBuffer.state);
+    eigenMatrixXToCArray(1 / this->ekf.unitConversion * this->ekf.stateError, opNavFilterMsgBuffer.stateError);
+    eigenMatrixXToCArray(1 / this->ekf.unitConversion / this->ekf.unitConversion * this->ekf.covar, opNavFilterMsgBuffer.covar);
+    opNavFilterMsgBuffer.numberOfStates = this->ekf.state.size();
 
     auto optionalMeasurement = this->measurements[0];
     if (optionalMeasurement.has_value()) {
@@ -107,10 +118,10 @@ void LinearODeKF::readFilterMeasurements() {
     headingMeasurement.setTimeTag(this->opNavHeadingBuffer.timeTag);
     headingMeasurement.setValidity(this->opNavHeadingBuffer.valid);
 
-    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->previousFilterTimeTag) {
+    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->ekf.previousFilterTimeTag) {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N).normalized());
-        headingMeasurement.setMeasurementNoise(this->measNoiseScaling *
+        headingMeasurement.setMeasurementNoise(this->ekf.measNoiseScaling *
                                                cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N,
                                                                     (int)headingMeasurement.size(),
                                                                     (int)headingMeasurement.size()));
@@ -139,7 +150,7 @@ Eigen::MatrixXd LinearODeKF::measurementMatrix(const FilterStateVector& state) {
     @param Eigen::Vector3d velocity
     */
 void LinearODeKF::setConstantVelocity(const Eigen::Vector3d& velocity) {
-    assert(this->state.hasVelocity() == false);
+    assert(this->ekf.state.hasVelocity() == false);
     this->constantVelocityInitial = velocity;
 }
 

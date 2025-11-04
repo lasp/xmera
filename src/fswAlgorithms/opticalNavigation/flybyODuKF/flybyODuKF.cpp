@@ -3,16 +3,27 @@
 
 #include "flybyODuKF.h"
 
+void FlybyODuKF::reset(uint64_t currentSimNanos) {
+    this->customReset();
+    this->srukf.reset(currentSimNanos);
+}
+
+void FlybyODuKF::updateState(uint64_t currentSimNanos) {
+    this->readFilterMeasurements();
+    this->srukf.updateState(currentSimNanos, this->measurements);
+    this->writeOutputMessages(currentSimNanos);
+}
+
 /*! Reset the flyby OD filter to an initial state and
  initializes the internal estimation matrices.
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void FlybyODuKF::customreset() {
+void FlybyODuKF::customReset() {
     /*! - Check if the required message has not been connected */
     assert(this->opNavHeadingMsg.isLinked());
     /*! - Initialize filter parameters and change units to km and s */
-    this->muCentral *= pow(this->unitConversion, 3);  // mu is input in meters
+    this->muCentral *= pow(this->srukf.unitConversion, 3);  // mu is input in meters
     double centralBody = this->muCentral;
     std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics =
         [centralBody](double t, const FilterStateVector& state) {
@@ -32,7 +43,7 @@ void FlybyODuKF::customreset() {
         };
 
     /*! - Set the filter dynamics */
-    this->dynamics.setDynamics(twoBodyDynamics);
+    this->srukf.dynamics.setDynamics(twoBodyDynamics);
 }
 
 /*! Read the message containing the measurement data.
@@ -45,15 +56,15 @@ void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
     FilterResidualsMsgPayload residualsBuffer{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    eigenMatrixXToCArray(this->state.scale(1 / this->unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
-    eigenMatrixXToCArray(this->state.scale(1 / this->unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
+    eigenMatrixXToCArray(this->srukf.state.scale(1 / this->srukf.unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
+    eigenMatrixXToCArray(this->srukf.state.scale(1 / this->srukf.unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
 
     /*! - Populate the filter states output buffer and write the output message*/
-    opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXToCArray(this->state.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.state);
-    eigenMatrixXToCArray(this->xBar.scale(1 / this->unitConversion).returnValues(), opNavFilterMsgBuffer.stateError);
-    eigenMatrixXToCArray(1 / this->unitConversion / this->unitConversion * this->covar, opNavFilterMsgBuffer.covar);
-    opNavFilterMsgBuffer.numberOfStates = this->state.size();
+    opNavFilterMsgBuffer.timeTag = this->srukf.previousFilterTimeTag;
+    eigenMatrixXToCArray(this->srukf.state.scale(1 / this->srukf.unitConversion).returnValues(), opNavFilterMsgBuffer.state);
+    eigenMatrixXToCArray(this->srukf.xBar.scale(1 / this->srukf.unitConversion).returnValues(), opNavFilterMsgBuffer.stateError);
+    eigenMatrixXToCArray(1 / this->srukf.unitConversion / this->srukf.unitConversion * this->srukf.covar, opNavFilterMsgBuffer.covar);
+    opNavFilterMsgBuffer.numberOfStates = this->srukf.state.size();
 
     auto optionalMeasurement = this->measurements[0];
     if (optionalMeasurement.has_value()) {
@@ -83,11 +94,11 @@ void FlybyODuKF::readFilterMeasurements() {
     headingMeasurement.setTimeTag(this->opNavHeadingBuffer.timeTag);
     headingMeasurement.setValidity(this->opNavHeadingBuffer.valid);
 
-    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->previousFilterTimeTag) {
+    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->srukf.previousFilterTimeTag) {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N));
         headingMeasurement.getObservation().normalize();
-        headingMeasurement.setMeasurementNoise(this->measNoiseScaling *
+        headingMeasurement.setMeasurementNoise(this->srukf.measNoiseScaling *
                                                cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N,
                                                                     (int)headingMeasurement.size(),
                                                                     (int)headingMeasurement.size()));

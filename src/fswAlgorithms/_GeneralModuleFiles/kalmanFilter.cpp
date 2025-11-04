@@ -14,7 +14,6 @@ void KalmanFilter::reset(uint64_t currentSimNanos) {
     this->covar = this->unitConversion * this->unitConversion * this->covarInitial;
     this->covar.resize(this->state.size(), this->state.size());
     this->previousFilterTimeTag = (double)currentSimNanos * NANO2SEC;
-    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! Take the relative position measurements and output an estimate of the
@@ -22,11 +21,9 @@ void KalmanFilter::reset(uint64_t currentSimNanos) {
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void KalmanFilter::updateState(uint64_t currentSimNanos) {
-    this->customInitializeUpdate();
-    /*! Read all available measurements, add their information to the Measurement container class, then sort the
-     * vector in chronological order */
-    this->readFilterMeasurements();
+void KalmanFilter::updateState(uint64_t currentSimNanos,
+                               std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements) {
+    /*! sort the measurment vector in chronological order */
     this->orderMeasurementsChronologically();
     /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
      * has been populated in the measurements array*/
@@ -55,8 +52,6 @@ void KalmanFilter::updateState(uint64_t currentSimNanos) {
     if ((double)currentSimNanos * NANO2SEC > this->previousFilterTimeTag) {
         this->timeUpdate((double)currentSimNanos * NANO2SEC);
     }
-    this->customFinalizeUpdate();
-    this->writeOutputMessages(currentSimNanos);
 }
 
 /*!- Order the measurements chronologically (standard sort)

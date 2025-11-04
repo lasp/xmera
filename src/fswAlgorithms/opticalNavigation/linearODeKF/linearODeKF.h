@@ -21,15 +21,18 @@
 #include <fswAlgorithms/_GeneralModuleFiles/ekfInterface.h>
 #include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 
-class LinearODeKF : public EkfInterface {
+class LinearODeKF : public SysModel {
    public:
-    LinearODeKF(FilterType type) : EkfInterface(type) {};
+    explicit LinearODeKF(FilterType type){};
     ~LinearODeKF() = default;
 
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
+
    private:
-    void customreset() final;
-    void readFilterMeasurements() final;
-    void writeOutputMessages(uint64_t currentSimNanos) final;
+    void customReset();
+    void readFilterMeasurements();
+    void writeOutputMessages(uint64_t currentSimNanos);
     static Eigen::MatrixXd measurementMatrix(const FilterStateVector& state);
 
    public:
@@ -43,6 +46,9 @@ class LinearODeKF : public EkfInterface {
     std::optional<Eigen::Vector3d> getConstantVelocity() const;
 
    private:
+    EkfInterface ekf{FilterType::Classical};
+    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
+
     std::optional<Eigen::Vector3d> constantVelocity;         //!< Unestimated constant velocity
     std::optional<Eigen::Vector3d> constantVelocityInitial;  //!< Initial value of constant velocity
 };
