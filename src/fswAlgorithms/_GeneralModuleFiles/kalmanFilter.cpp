@@ -8,12 +8,13 @@ void KalmanFilter::reset(uint64_t currentSimNanos) {
            this->stateInitial.size() == this->covarInitial.cols());
 
     this->state = this->stateInitial.scale(this->unitConversion);
+    this->previousFilterTimeTag = (double)currentSimNanos * NANO2SEC;
+
     this->xBar = FilterStateVector::filterStateVectorFromStateStructure(this->stateInitial);
     this->stateError = Eigen::VectorXd::Zero(this->state.size());
     this->stateLogged = this->state;
     this->covar = this->unitConversion * this->unitConversion * this->covarInitial;
     this->covar.resize(this->state.size(), this->state.size());
-    this->previousFilterTimeTag = (double)currentSimNanos * NANO2SEC;
 }
 
 /*! Take the relative position measurements and output an estimate of the
@@ -21,32 +22,39 @@ void KalmanFilter::reset(uint64_t currentSimNanos) {
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void KalmanFilter::updateState(uint64_t currentSimNanos,
-                               std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements) {
+void KalmanFilter::updateState(
+    uint64_t currentSimNanos,
+    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements
+) {
+    this->measurements = measurements;
+
     /*! sort the measurment vector in chronological order */
     this->orderMeasurementsChronologically();
+
     /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
      * has been populated in the measurements array*/
     for (int index = 0; index < MAX_MEASUREMENT_NUMBER; ++index) {
-        auto measurement = MeasurementModel();
-        if (!this->measurements[index].has_value()) {
-            continue;
-        } else {
-            measurement = this->measurements[index].value();
-        }
+        if (!this->measurements[index].has_value()) continue;
+        auto& measurement = this->measurements[index].value();
+
         /*! - If the time tag from a valid measurement is new compared to previous step,
         propagate and update the filter*/
-        if (measurement.getTimeTag() >= this->previousFilterTimeTag && measurement.getValidity()) {
-            /*! - time update to the measurement time and compute pre-fit residuals*/
-            this->timeUpdate(measurement.getTimeTag());
-            measurement.setPreFitResiduals(this->computeResiduals(measurement));
-            /*! - measurement update and compute post-fit residuals  */
-            this->measurementUpdate(measurement);
-            measurement.setPostFitResiduals(
-                measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state)));
-            this->measurements[index] = measurement;
-        }
+        if (measurement.getTimeTag() < this->previousFilterTimeTag || !measurement.getValidity()) continue;
+
+        /*! - time update to the measurement time and compute pre-fit residuals*/
+        this->timeUpdate(measurement.getTimeTag());
+
+        measurement.setPreFitResiduals(this->computeResiduals(measurement));
+
+        /*! - measurement update and compute post-fit residuals  */
+        this->measurementUpdate(measurement);
+
+        measurement.setPostFitResiduals(
+            measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state)));
+
+        this->measurements[index] = measurement;
     }
+
     /*! - If current clock time is further ahead than the last measurement time, then
     propagate to this current time-step*/
     if ((double)currentSimNanos * NANO2SEC > this->previousFilterTimeTag) {
