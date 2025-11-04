@@ -39,7 +39,7 @@ class EkfInterface : public KalmanFilter {
     Eigen::VectorXd stateError;      //!< [-] Current mean state error
 
    private:
-    void timeUpdate(double updateTime) override;
+    void timeUpdate(double dt) override;
     void measurementUpdate(const MeasurementModel& measurement) override;
 
     Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;

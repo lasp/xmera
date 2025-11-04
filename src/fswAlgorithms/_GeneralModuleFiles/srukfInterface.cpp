@@ -45,13 +45,12 @@ void SRukfInterface::reset(uint64_t currentSimNanos) {
  It propagates the sigma points forward in time and then gets the current
  covariance and state estimates.
  @return void
- @param updateTime The time that we need to fix the filter to (seconds)
+ @param dt The time since last update that we need to fix the filter to (seconds)
  */
-void SRukfInterface::timeUpdate(double updateTime) {
+void SRukfInterface::timeUpdate(double dt) {
     Eigen::VectorXd propagatedSigmaPoint;
     Eigen::MatrixXd A(this->state.size(), 3 * this->state.size());
 
-    double dt = updateTime - this->previousFilterTimeTag;
     std::array<double, 2> time = {0, dt};
 
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
@@ -93,7 +92,6 @@ void SRukfInterface::timeUpdate(double updateTime) {
 
     this->covar = this->sBar * this->sBar.transpose();
     this->state = this->sigmaPoints[0];
-    this->previousFilterTimeTag = updateTime;
 }
 
 /*! Perform the measurement update for the kalman filter.
