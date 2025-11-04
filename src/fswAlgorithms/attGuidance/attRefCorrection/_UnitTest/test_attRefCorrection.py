@@ -36,7 +36,8 @@ def test_att_ref_correction():
     module = attRefCorrection.AttRefCorrection()
     module.modelTag = "attRefCorrectionTag"
     unit_test_sim.AddModelToTask(unit_task_name, module)
-    module.sigma_BcB = [math.tan(math.pi/4), 0.0, 0.0]
+    sigma_RR0 = [[-math.tan(math.pi/4)], [0.0], [0.0]]
+    module.setSigmaRR0(sigma_RR0)
 
     # Configure blank module input messages
     att_ref_in_msg_data = messaging.AttRefMsgPayload()

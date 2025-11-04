@@ -17,9 +17,11 @@
 
 */
 
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 #include "attRefCorrection.h"
-#include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
+
+#include <stdexcept>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -39,16 +41,25 @@ void AttRefCorrection::reset(uint64_t callTime) {
  @param callTime The clock time at which the function was called (nanoseconds)
 */
 void AttRefCorrection::updateState(uint64_t callTime) {
-    AttRefMsgPayload attRefMsgBuffer;  //!< local copy of message buffer
-    double sigma_BBc[3];               //!< MRP from corrected body frame to body frame
-
     // read in the input messages
-    attRefMsgBuffer = this->attRefInMsg();
+    AttRefMsgPayload attRefMsgBuffer = this->attRefInMsg();
+    Eigen::Vector3d sigma_RN_local = cArrayAsEigenVector3(attRefMsgBuffer.sigma_RN);
 
     // compute corrected reference orientation
-    v3Scale(-1.0, this->sigma_BcB, sigma_BBc);
-    addMRP(attRefMsgBuffer.sigma_RN, sigma_BBc, attRefMsgBuffer.sigma_RN);
+    sigma_RN_local = addMrp(sigma_RN_local, this->sigma_RR0);
 
     // write to the output messages
+    eigenVectorToCArray(sigma_RN_local, attRefMsgBuffer.sigma_RN);
     this->attRefOutMsg.write(&attRefMsgBuffer, this->moduleID, callTime);
 }
+
+/*! Setter method for the current MRP attitude coordinate set with respect to the input reference
+ @return void
+ @param sigmaRR0 [-] current MRP attitude coordinate set with respect to the input reference
+*/
+void AttRefCorrection::setSigmaRR0(const Eigen::Vector3d& sigma) { this->sigma_RR0 = sigma; }
+
+/*! Getter method for the current MRP attitude coordinate set with respect to the input reference
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d AttRefCorrection::getSigmaRR0() const { return this->sigma_RR0; }
