@@ -29,6 +29,9 @@ class LinearODeKF : public SysModel {
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
+    void setMeasurementNoiseScale(double measurementNoiseScale);
+    double getMeasurementNoiseScale() const;
+
    private:
     void customReset();
     void readFilterMeasurements();
@@ -47,6 +50,7 @@ class LinearODeKF : public SysModel {
 
    private:
     EkfInterface ekf{FilterType::Classical};
+    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
 
     std::optional<Eigen::Vector3d> constantVelocity;         //!< Unestimated constant velocity

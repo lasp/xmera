@@ -30,6 +30,9 @@ class SRukfInterface : public KalmanFilter {
     void setBeta(double beta);
     double getBeta() const;
 
+    void setMeasurementNoiseScale(double measurementNoiseScale);
+    double getMeasurementNoiseScale() const;
+
    private:
     void timeUpdate(double updateTime) override;
     void measurementUpdate(const MeasurementModel& measurement) override;
@@ -48,6 +51,7 @@ class SRukfInterface : public KalmanFilter {
     size_t numberSigmaPoints = 0;                                          //!< [-] number of sigma points
     Eigen::MatrixXd cholProcessNoise;                                      //!< [-] cholesky of Qnoise
     Eigen::MatrixXd cholMeasNoise;                                         //!< [-] cholesky of Measurement noise
+    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
 
     double beta = 0;
     double alpha = 0;

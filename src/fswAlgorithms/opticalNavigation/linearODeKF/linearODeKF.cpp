@@ -121,7 +121,7 @@ void LinearODeKF::readFilterMeasurements() {
     if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->ekf.previousFilterTimeTag) {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N).normalized());
-        headingMeasurement.setMeasurementNoise(this->ekf.measNoiseScaling *
+        headingMeasurement.setMeasurementNoise(this->measNoiseScaling *
                                                cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N,
                                                                     (int)headingMeasurement.size(),
                                                                     (int)headingMeasurement.size()));
@@ -158,3 +158,16 @@ void LinearODeKF::setConstantVelocity(const Eigen::Vector3d& velocity) {
     @return std::optional<Eigen::Vector3d> velocity
     */
 std::optional<Eigen::Vector3d> LinearODeKF::getConstantVelocity() const { return this->constantVelocityInitial; }
+
+/*! Set the filter measurement noise scale factor if desirable
+    @param double measurementNoiseScale
+    @return void
+    */
+void LinearODeKF::setMeasurementNoiseScale(const double measurementNoiseScale) {
+    this->measNoiseScaling = measurementNoiseScale;
+}
+
+/*! Get the filter measurement noise scale factor
+    @return double measurementNoiseScale
+    */
+double LinearODeKF::getMeasurementNoiseScale() const { return this->measNoiseScaling; }

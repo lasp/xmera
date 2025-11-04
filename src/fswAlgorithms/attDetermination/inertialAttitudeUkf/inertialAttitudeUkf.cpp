@@ -170,7 +170,7 @@ void InertialAttitudeUkf::readAttitudeData() {
             /*! - Get the mapping from camera frame to inertial for the noise matrix */
             Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(attitude.dcm_CB);
 
-            attitudeMeasurement.setMeasurementNoise(this->srukf.measNoiseScaling * dcm_CB.transpose() *
+            attitudeMeasurement.setMeasurementNoise(this->srukf.getMeasurementNoiseScale() * dcm_CB.transpose() *
                                                     this->attitudeMessages[index].measurementNoise_C * dcm_CB);
             attitudeMeasurement.setObservation(
                 mrpSwitch(Eigen::Map<Eigen::Vector3d>(attitude.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold));
@@ -214,7 +214,7 @@ void InertialAttitudeUkf::readRateData() {
         rateMeasurement.setTimeTag(rateBuffer.timeTag);
         rateMeasurement.setValidity(true);
 
-        rateMeasurement.setMeasurementNoise(this->srukf.measNoiseScaling * this->rateNoise);
+        rateMeasurement.setMeasurementNoise(this->srukf.getMeasurementNoiseScale() * this->rateNoise);
         rateMeasurement.setObservation(cArrayToEigenVector(rateBuffer.omega_BN_B));
         rateMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
         this->measurements[this->measurementIndex] = rateMeasurement;
