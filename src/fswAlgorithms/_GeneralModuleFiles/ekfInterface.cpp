@@ -11,7 +11,8 @@ EkfInterface::EkfInterface(const FilterType type) { this->filterType = type; }
  */
 void EkfInterface::reset(const uint64_t currentSimNanos) {
     KalmanFilter::reset(currentSimNanos);
-    this->stateError = Eigen::VectorXd ::Zero(this->state.size());
+    this->stateError = Eigen::VectorXd::Zero(this->state.size());
+    this->stateLogged = this->state;
     this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());
     if (this->stateInitial.hasVelocity()) {
         this->processNoise.resize(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());

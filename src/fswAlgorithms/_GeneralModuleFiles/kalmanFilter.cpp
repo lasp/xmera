@@ -25,8 +25,6 @@ void KalmanFilter::reset(uint64_t currentSimNanos) {
     this->state = this->stateInitial.scale(this->unitConversion);
     this->previousFilterTimeTag = (double)currentSimNanos * NANO2SEC;
 
-    this->stateError = Eigen::VectorXd::Zero(this->state.size());
-    this->stateLogged = this->state;
     this->covar = this->unitConversion * this->unitConversion * this->covarInitial;
     this->covar.resize(this->state.size(), this->state.size());
 }

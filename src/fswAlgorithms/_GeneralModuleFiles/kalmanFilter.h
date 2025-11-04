@@ -95,8 +95,6 @@ public:
     // They are accessed by both the implementors of this class
     // and by the module that drives the filter.
     Eigen::MatrixXd covar;         //!< [-] covariance
-    FilterStateVector stateLogged;   //!< [-] State variable for logging
-    Eigen::VectorXd stateError;      //!< [-] Current mean state error
 };
 
 #endif /* KALMAN_FILTER_INTERFACE_HPP */
