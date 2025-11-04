@@ -342,3 +342,16 @@ void SRukfInterface::setBeta(const double betaInput) { this->beta = betaInput; }
     @return double beta
     */
 double SRukfInterface::getBeta() const { return this->beta; }
+
+/*! Set the filter measurement noise scale factor if desirable
+    @param double measurementNoiseScale
+    @return void
+    */
+void SRukfInterface::setMeasurementNoiseScale(const double measurementNoiseScale) {
+    this->measNoiseScaling = measurementNoiseScale;
+}
+
+/*! Get the filter measurement noise scale factor
+    @return double measurementNoiseScale
+    */
+double SRukfInterface::getMeasurementNoiseScale() const { return this->measNoiseScaling; }

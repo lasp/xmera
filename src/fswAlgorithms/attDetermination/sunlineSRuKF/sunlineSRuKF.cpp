@@ -122,7 +122,7 @@ void SunlineSRuKF::readGyroMeasurements() {
         gyroMeasurements.setObservation(cArrayToEigenVector(navAttInputBuffer.omega_BN_B));
         gyroMeasurements.setMeasurementModel(MeasurementModel::velocityStates);
         Eigen::MatrixXd I = Eigen::Matrix3d::Identity();
-        gyroMeasurements.setMeasurementNoise(this->srukf.measNoiseScaling * pow(this->gyroMeasNoiseStd, 2) * I);
+        gyroMeasurements.setMeasurementNoise(this->srukf.getMeasurementNoiseScale() * pow(this->gyroMeasNoiseStd, 2) * I);
 
         /*! - Read measurement and cholesky decomposition its noise*/
         this->measurements[this->filterMeasurement] = gyroMeasurements;
@@ -181,7 +181,7 @@ void SunlineSRuKF::readCssMeasurements() {
         /*! - Read measurement and cholesky decomposition its noise*/
         Eigen::MatrixXd I(this->numActiveCss, this->numActiveCss);
         I.setIdentity();
-        cssMeasurements.setMeasurementNoise(this->srukf.measNoiseScaling * pow(this->cssMeasNoiseStd, 2) * I);
+        cssMeasurements.setMeasurementNoise(this->srukf.getMeasurementNoiseScale() * pow(this->cssMeasNoiseStd, 2) * I);
         cssMeasurements.setObservation(cssObservation);
         cssMeasurements.setMeasurementModel(linearModel);
         cssMeasurements.setMeasurementName("css");

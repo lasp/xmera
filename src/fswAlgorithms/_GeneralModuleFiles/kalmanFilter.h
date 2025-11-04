@@ -65,9 +65,6 @@ public:
     void setUnitConversionFromSItoState(double conversion);
     double getUnitConversionFromSItoState() const;
 
-    void setMeasurementNoiseScale(double measurementNoiseScale);
-    double getMeasurementNoiseScale() const;
-
     void setFilterDynamics(
         const std::function<const FilterStateVector(double, const FilterStateVector&)>& dynamicsPropagator);
 
@@ -99,7 +96,6 @@ public:
     // and by the module that drives the filter.
     Eigen::MatrixXd covar;         //!< [-] covariance
     FilterStateVector xBar;          //!< [-] Current mean state estimate
-    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     FilterStateVector stateLogged;   //!< [-] State variable for logging
     Eigen::VectorXd stateError;      //!< [-] Current mean state error
 };

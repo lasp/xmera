@@ -214,19 +214,6 @@ void KalmanFilter::setProcessNoise(const Eigen::MatrixXd& processNoiseInput) {
     */
 Eigen::MatrixXd KalmanFilter::getProcessNoise() const { return this->processNoise; }
 
-/*! Set the filter measurement noise scale factor if desirable
-    @param double measurementNoiseScale
-    @return void
-    */
-void KalmanFilter::setMeasurementNoiseScale(const double measurementNoiseScale) {
-    this->measNoiseScaling = measurementNoiseScale;
-}
-
-/*! Get the filter measurement noise scale factor
-    @return double measurementNoiseScale
-    */
-double KalmanFilter::getMeasurementNoiseScale() const { return this->measNoiseScaling; }
-
 /*! Set a unit conversion factor, for instance if desirable to solve for a state in km in the filter, but Basilisk's
  * outside facing interface is in SI
     @param double conversion

@@ -98,7 +98,7 @@ void FlybyODuKF::readFilterMeasurements() {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N));
         headingMeasurement.getObservation().normalize();
-        headingMeasurement.setMeasurementNoise(this->srukf.measNoiseScaling *
+        headingMeasurement.setMeasurementNoise(this->srukf.getMeasurementNoiseScale() *
                                                cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N,
                                                                     (int)headingMeasurement.size(),
                                                                     (int)headingMeasurement.size()));
