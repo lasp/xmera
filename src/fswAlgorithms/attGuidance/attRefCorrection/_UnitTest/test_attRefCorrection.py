@@ -36,12 +36,12 @@ def test_att_ref_correction():
     module = attRefCorrection.AttRefCorrection()
     module.modelTag = "attRefCorrectionTag"
     unit_test_sim.AddModelToTask(unit_task_name, module)
-    sigma_RR0 = [[-math.tan(math.pi/4)], [0.0], [0.0]]
-    module.setSigmaRR0(sigma_RR0)
+    sigma_RR0 = [[math.tan(math.pi/16)], [0.0], [0.0]]
+    module.sigma_RR0 = sigma_RR0
 
     # Configure blank module input messages
     att_ref_in_msg_data = messaging.AttRefMsgPayload()
-    att_ref_in_msg_data.sigma_RN = [math.tan(math.pi/8), 0.0, 0.0]
+    att_ref_in_msg_data.sigma_RN = [math.tan(math.pi/16), 0.0, 0.0]
     att_ref_in_msg = messaging.AttRefMsg().write(att_ref_in_msg_data)
 
     # subscribe input messages to module
@@ -57,13 +57,14 @@ def test_att_ref_correction():
 
     # pull module data and make sure it is correct
     true_vector = [
-        [-math.tan(math.pi / 8), 0.0, 0.0],
-        [-math.tan(math.pi / 8), 0.0, 0.0],
-        [-math.tan(math.pi / 8), 0.0, 0.0]
+        [math.tan(math.pi / 8), 0.0, 0.0],
+        [math.tan(math.pi / 8), 0.0, 0.0],
+        [math.tan(math.pi / 8), 0.0, 0.0]
     ]
 
     # compare the module results to the truth values
     accuracy = 1e-12
+    np.testing.assert_allclose(sigma_RR0, module.sigma_RR0, atol=accuracy, verbose=True)
     np.testing.assert_allclose(att_ref_out_msg_rec.sigma_RN, true_vector, atol=accuracy, rtol=0, verbose=True)
 
 
