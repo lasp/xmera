@@ -71,8 +71,6 @@ def test_coarseSunSensor(show_plots, useConstellation, visibilityFactor, fov, ke
                                      noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide)
     assert testResults < 1, testMessage
 
-    __tracebackhide__ = True
-
 
 def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue,
         sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide):

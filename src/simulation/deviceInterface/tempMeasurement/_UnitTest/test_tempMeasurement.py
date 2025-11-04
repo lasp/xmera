@@ -56,7 +56,6 @@ def test_sensorThermalFault(tempFault):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(tempFault)
     assert testResults < 1, testMessage
-    __tracebackhide__ = True
 
 
 def run(tempFault):

@@ -102,7 +102,6 @@ def test_measurements_kf(show_plots):
     state_update_test(show_plots)
 
 def state_update_test(show_plots):
-    __tracebackhide__ = True
 
     unit_task_name = "unit_task"
     unit_process_name = "TestProcess"
@@ -224,7 +223,6 @@ def state_update_test(show_plots):
 
 
 def state_propagation_test(show_plots, dt):
-    __tracebackhide__ = True
 
     unit_task_name = "unit_task"  # arbitrary name (don't change)
     unit_process_name = "TestProcess"  # arbitrary name (don't change)

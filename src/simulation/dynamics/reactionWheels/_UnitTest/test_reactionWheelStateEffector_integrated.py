@@ -59,11 +59,6 @@ def test_reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     assert testResults < 1, testMessage
 
 def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 

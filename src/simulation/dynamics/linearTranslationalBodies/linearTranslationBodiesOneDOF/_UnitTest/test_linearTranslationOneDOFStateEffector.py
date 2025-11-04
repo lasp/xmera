@@ -81,7 +81,6 @@ def test_translatingBody(show_plots, function):
 
 # rho ref and cmd force are zero, no lock flag
 def translatingBodyNoInput(show_plots):
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -260,7 +259,6 @@ def translatingBodyNoInput(show_plots):
 
 # rho ref and cmd force are zero, lock flag is enabled
 def translatingBodyLockFlag(show_plots):
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -445,7 +443,6 @@ def translatingBodyLockFlag(show_plots):
 
 # cmd force is nonzero, rho ref is zero, no lock flag
 def translatingBodyCommandedForce(show_plots, cmdForce):
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -619,7 +616,6 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
 
 # rho ref is nonzero, cmd force is zero and lock flag is false
 def translatingBodyRhoReference(show_plots, rhoRef):
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages

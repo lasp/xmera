@@ -89,11 +89,6 @@ def test_all_sunline_sekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, 
 
 
 def sunline_individual_test():
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -569,10 +564,6 @@ def sunline_individual_test():
 # Test for the time and update with static states (zero d_dot)
 ####################################################################################
 def StatePropStatic():
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
     numStates = 5
     numObs = 3
 
@@ -631,11 +622,6 @@ def StatePropStatic():
 # Test for the time and update with changing states (non-zero d_dot)
 ####################################################################################
 def StatePropVariable(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -780,11 +766,6 @@ def StatePropVariable(show_plots):
 # Test for the full filter with time and measurement update
 ####################################################################################
 def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 

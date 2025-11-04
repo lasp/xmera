@@ -27,11 +27,6 @@ path = os.path.dirname(os.path.abspath(filename))
 
 def test_tankModelConstantVolume(show_plots=False):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     model = fuelTank.FuelTankModelConstantVolume()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1], [1], [1]]
@@ -105,7 +100,6 @@ def test_tankModelConstantVolume(show_plots=False):
 
 
 def test_tankModelConstantDensity(show_plots=False):
-    __tracebackhide__ = True
 
     model = fuelTank.FuelTankModelConstantDensity()
     model.propMassInit = 10
@@ -180,7 +174,6 @@ def test_tankModelConstantDensity(show_plots=False):
 
 
 def test_tankModelEmptying(show_plots=False):
-    __tracebackhide__ = True
 
     model = fuelTank.FuelTankModelEmptying()
     model.propMassInit = 10
@@ -255,7 +248,6 @@ def test_tankModelEmptying(show_plots=False):
 
 
 def test_tankModelUniformBurn(show_plots=False):
-    __tracebackhide__ = True
 
     model = fuelTank.FuelTankModelUniformBurn()
     model.propMassInit = 10
@@ -331,7 +323,6 @@ def test_tankModelUniformBurn(show_plots=False):
 
 
 def test_tankModelCentrifugalBurn(show_plots=False):
-    __tracebackhide__ = True
 
     model = fuelTank.FuelTankModelCentrifugalBurn()
     model.propMassInit = 10

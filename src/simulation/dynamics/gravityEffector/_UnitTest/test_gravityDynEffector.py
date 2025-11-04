@@ -155,11 +155,6 @@ def test_gravityEffectorAllTest(show_plots):
 
 def independentSphericalHarmonics(show_plots):
     testCase = "independentCheck"
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -211,11 +206,6 @@ def independentSphericalHarmonics(show_plots):
 
 def sphericalHarmonics(show_plots):
     testCase = 'sphericalHarmonics'
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -283,11 +273,6 @@ def sphericalHarmonics(show_plots):
 
 def singleGravityBody(show_plots):
     testCase = 'singleBody'
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -437,12 +422,7 @@ def register(manager):
     return
 
 def multiBodyGravity(show_plots):
-    testCase = 'multiBody' #for AutoTeX stuff
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
+    testCase = 'multiBody' #for AutoTeX stuf
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     #

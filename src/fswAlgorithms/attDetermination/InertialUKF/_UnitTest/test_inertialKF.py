@@ -211,11 +211,6 @@ def test_stateUpdateInertialAttitude(show_plots):
     assert testResults < 1, testMessage
 def stateUpdateInertialAttitude(show_plots):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -359,12 +354,6 @@ def BROKENtest_statePropInertialAttitude(show_plots):
     assert testResults < 1, testMessage
 def statePropInertialAttitude(show_plots):
     """Module Unit Test"""
-
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -451,11 +440,6 @@ def test_stateUpdateRWInertialAttitude(show_plots):
     assert testResults < 1, testMessage
 def stateUpdateRWInertialAttitude(show_plots):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -608,12 +592,6 @@ def BROKENtest_StatePropRateInertialAttitude(show_plots):
     assert testResults < 1, testMessage
 def statePropRateInertialAttitude(show_plots):
     """Module Unit Test"""
-
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -739,11 +717,6 @@ def BROKENtest_FaultScenarios(show_plots):
     assert testResults < 1, testMessage
 def faultScenarios(show_plots):
     """Module Unit Test"""
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 

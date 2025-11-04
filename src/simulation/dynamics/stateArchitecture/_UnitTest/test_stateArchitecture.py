@@ -21,7 +21,6 @@ from xmera.simulation import stateArchitecture
 
 
 def test_stateData(show_plots):
-    __tracebackhide__ = True
 
     stateUse = [[10.0], [20.0]]
     stateName = "position"
@@ -68,7 +67,6 @@ def test_stateData(show_plots):
 
 
 def test_stateProperties(show_plots):
-    __tracebackhide__ = True
 
     newManager = stateArchitecture.DynParamManager()
 
@@ -102,7 +100,6 @@ def test_stateProperties(show_plots):
 
 
 def test_stateArchitecture(show_plots):
-    __tracebackhide__ = True
 
     newManager = stateArchitecture.DynParamManager()
 

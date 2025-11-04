@@ -40,11 +40,6 @@ def test_all_utilities_ukf(show_plots, filterModule):
     assert testResults < 1, testMessage
 
 def utilities_nominal(filterModule):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -297,11 +292,6 @@ def utilities_nominal(filterModule):
 
 
 def utilities_fault(filterModule):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 

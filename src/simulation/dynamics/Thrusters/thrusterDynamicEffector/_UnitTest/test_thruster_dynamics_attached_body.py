@@ -64,7 +64,6 @@ def test_unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
 # Run the test
 def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
-    __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages

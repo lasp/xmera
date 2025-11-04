@@ -23,7 +23,6 @@ import warnings
 from xmera.utilities import deprecated
 
 def test_legacy_variable_logging(show_plots):
-    __tracebackhide__ = True
 
     warnings.filterwarnings("ignore", category=deprecated.BSKDeprecationWarning)
 
