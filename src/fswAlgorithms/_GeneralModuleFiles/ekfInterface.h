@@ -26,8 +26,8 @@ enum class FilterType { Classical, Extended };
 /*! @brief Extended or Classical/Linear Kalman Filter base class. */
 class EkfInterface : public KalmanFilter {
    public:
-    EkfInterface(FilterType type);
-    ~EkfInterface() = default;
+    explicit EkfInterface(FilterType type);
+    ~EkfInterface() override = default;
     void reset(uint64_t currentSimNanos) override;
 
     void setFilterDynamicsMatrix(
@@ -36,10 +36,11 @@ class EkfInterface : public KalmanFilter {
     double getMinimumCovarianceNormForEkf() const;
 
    private:
-    void timeUpdate(double updateTime) final;
-    void measurementUpdate(const MeasurementModel& measurement) final;
+    void timeUpdate(double updateTime) override;
+    void measurementUpdate(const MeasurementModel& measurement) override;
 
-    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) final;
+    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
+
     Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd& covar,
                                       const Eigen::MatrixXd& measurementMatrix,
                                       const Eigen::MatrixXd& measurementNoise) const;
