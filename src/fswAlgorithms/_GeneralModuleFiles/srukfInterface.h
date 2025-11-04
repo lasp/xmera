@@ -33,6 +33,8 @@ class SRukfInterface : public KalmanFilter {
     void setMeasurementNoiseScale(double measurementNoiseScale);
     double getMeasurementNoiseScale() const;
 
+    FilterStateVector xBar{};  //!< [-] Current mean state estimate
+
    private:
     void timeUpdate(double updateTime) override;
     void measurementUpdate(const MeasurementModel& measurement) override;
