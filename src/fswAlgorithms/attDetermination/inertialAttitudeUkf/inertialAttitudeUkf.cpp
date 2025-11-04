@@ -3,7 +3,7 @@
 
 #include "inertialAttitudeUkf.h"
 
-InertialAttitudeUkf::InertialAttitudeUkf(AttitudeFilterMethod method) { this->measurementAcceptanceMethod = method; }
+InertialAttitudeUkf::InertialAttitudeUkf(const AttitudeFilterMethod method) { this->measurementAcceptanceMethod = method; }
 
 void InertialAttitudeUkf::reset(uint64_t currentSimNanos) {
     this->customReset();
