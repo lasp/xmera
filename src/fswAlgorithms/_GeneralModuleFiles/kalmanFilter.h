@@ -18,12 +18,13 @@
 #include <optional>
 
 /*! @brief Kalman Filter interface */
-class KalmanFilter : public SysModel {
+class KalmanFilter{
    public:
     KalmanFilter() = default;
-    ~KalmanFilter() = default;
-    void reset(uint64_t currentSimNanos) override;
-    void updateState(uint64_t currentSimNanos) final;
+    virtual ~KalmanFilter() = default;
+    virtual void reset(uint64_t currentSimNanos);
+    virtual void updateState(uint64_t currentSimNanos,
+                                   std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements);
 
     void setInitialPosition(const Eigen::VectorXd& initialPositionInput);
     std::optional<Eigen::VectorXd> getInitialPosition() const;
@@ -47,16 +48,17 @@ class KalmanFilter : public SysModel {
     void setFilterDynamics(
         const std::function<const FilterStateVector(double, const FilterStateVector&)>& dynamicsPropagator);
 
-   protected:
-    virtual void customreset() { /* virtual */ };
-    virtual void customInitializeUpdate() { /* virtual */ };
-    virtual void customFinalizeUpdate() { /* virtual */ };
-    /*! Read method neads to read incoming messages containing the measurements for the filter.
-     * Their information must be added to the Measurement container class, and added to the measurements vector.
-     * Each measurement must be paired with a measurement model provided in the measurementModels.h */
-    virtual void readFilterMeasurements() { /* virtual */ };
-    virtual void writeOutputMessages(uint64_t currentSimNanos) { /* virtual */ };
+    FilterStateVector state;         //!< [-] State estimate for time TimeTag
+    Eigen::MatrixXd covar;         //!< [-] covariance
+    FilterStateVector xBar;          //!< [-] Current mean state estimate
+    double previousFilterTimeTag = 0;  //!< [s]  Time tag for state covar/etc
+    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
+    DynamicsModel dynamics;
+    FilterStateVector stateLogged;   //!< [-] State variable for logging
+    double unitConversion = 1;    //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
+    Eigen::VectorXd stateError;      //!< [-] Current mean state error
 
+   protected:
     virtual void timeUpdate(double updateTime) = 0;
     virtual void measurementUpdate(const MeasurementModel& measurement) = 0;
     virtual Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) = 0;
@@ -64,20 +66,9 @@ class KalmanFilter : public SysModel {
 
     std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
     //!< measurement containers in chronological order
-    DynamicsModel dynamics;
-    double previousFilterTimeTag = 0;  //!< [s]  Time tag for state covar/etc
-    double unitConversion = 1;    //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
-    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
-
-    FilterStateVector state;         //!< [-] State estimate for time TimeTag
     FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
-    FilterStateVector stateLogged;   //!< [-] State variable for logging
-    FilterStateVector xBar;          //!< [-] Current mean state estimate
-    Eigen::VectorXd stateError;      //!< [-] Current mean state error
-
     Eigen::MatrixXd processNoise;  //!< [-] process noise matrix
     Eigen::MatrixXd covarInitial;  //!< [-] covariance at previous time
-    Eigen::MatrixXd covar;         //!< [-] covariance
 };
 
 #endif /* KALMAN_FILTER_INTERFACE_HPP */

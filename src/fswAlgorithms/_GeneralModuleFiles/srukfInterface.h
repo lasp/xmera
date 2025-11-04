@@ -30,10 +30,10 @@ class SRukfInterface : public KalmanFilter {
     double getBeta() const;
 
    private:
-    void timeUpdate(double updateTime) final;
-    void measurementUpdate(const MeasurementModel& measurement) final;
+    void timeUpdate(double updateTime) override;
+    void measurementUpdate(const MeasurementModel& measurement) override;
+    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
 
-    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) final;
     Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd& input) const;
     Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd& input,
                                        const Eigen::VectorXd& inputVector,

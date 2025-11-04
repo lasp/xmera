@@ -18,28 +18,13 @@
 #include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 
-class SunlineSRuKF : public SRukfInterface {
+class SunlineSRuKF : public SysModel{
    public:
-   private:
-    void customreset() final;
-    void readCssMeasurements();
-    void readGyroMeasurements();
-    void readFilterMeasurements() final;
-    void customFinalizeUpdate() final;
-    void writeOutputMessages(uint64_t currentSimNanos) final;
-    static FilterStateVector stateDerivative(double t, const FilterStateVector& state);
+    SunlineSRuKF() = default;
+    ~SunlineSRuKF() override = default;
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
-    int filterMeasurement = 0;    //!< [-] Number of measurements of different types being read
-    int numActiveCss = 0;         //!< [-] Number of currently active CSS sensors
-    double sensorUseThresh = 0;   //!< Threshold below which we discount sensors
-    double cssMeasNoiseStd = 0;   //!< [-] CSS measurement noise std
-    double gyroMeasNoiseStd = 0;  //!< [rad/s] rate gyro measurement noise std
-    CSSConfigMsgPayload cssConfigInputBuffer;
-
-    double biasLowerBound = 0.5;
-    double biasUpperBound = 1.5;
-
-   public:
     ReadFunctor<NavAttMsgPayload> navAttInMsg;
     ReadFunctor<CSSArraySensorMsgPayload> cssDataInMsg;
     ReadFunctor<CSSConfigMsgPayload> cssConfigInMsg;
@@ -59,6 +44,27 @@ class SunlineSRuKF : public SRukfInterface {
     double getBiasUpperBound() const;
     void setBiasLowerBound(double biasLowerBound);
     double getBiasLowerBound() const;
+
+   private:
+    void customReset();
+    void readCssMeasurements();
+    void readGyroMeasurements();
+    void readFilterMeasurements();
+    void customFinalizeUpdate();
+    void writeOutputMessages(uint64_t currentSimNanos);
+    static FilterStateVector stateDerivative(double t, const FilterStateVector& state);
+
+    SRukfInterface srukf{};
+    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
+    int filterMeasurement = 0;    //!< [-] Number of measurements of different types being read
+    int numActiveCss = 0;         //!< [-] Number of currently active CSS sensors
+    double sensorUseThresh = 0;   //!< Threshold below which we discount sensors
+    double cssMeasNoiseStd = 0;   //!< [-] CSS measurement noise std
+    double gyroMeasNoiseStd = 0;  //!< [rad/s] rate gyro measurement noise std
+    CSSConfigMsgPayload cssConfigInputBuffer;
+
+    double biasLowerBound = 0.5;
+    double biasUpperBound = 1.5;
 };
 
 #endif

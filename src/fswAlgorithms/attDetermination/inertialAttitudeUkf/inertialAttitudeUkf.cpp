@@ -5,7 +5,19 @@
 
 InertialAttitudeUkf::InertialAttitudeUkf(AttitudeFilterMethod method) { this->measurementAcceptanceMethod = method; }
 
-void InertialAttitudeUkf::customreset() {
+void InertialAttitudeUkf::reset(uint64_t currentSimNanos) {
+    this->customReset();
+}
+
+void InertialAttitudeUkf::updateState(uint64_t currentSimNanos) {
+    this->customInitializeUpdate();
+    this->readFilterMeasurements();
+    this->srukf.updateState(currentSimNanos, this->measurements);
+    this->customFinalizeUpdate();
+    this->writeOutputMessages(currentSimNanos);
+}
+
+void InertialAttitudeUkf::customReset() {
     /*! No custom reset for this module */
     std::function<FilterStateVector(double, const FilterStateVector)> attitudeDynamics =
         [this](double t, const FilterStateVector& state) {
@@ -37,7 +49,7 @@ void InertialAttitudeUkf::customreset() {
 
             return stateDerivative;
         };
-    this->dynamics.setDynamics(attitudeDynamics);
+    this->srukf.dynamics.setDynamics(attitudeDynamics);
 
     this->firstFilterPass = true;
 }
@@ -57,16 +69,16 @@ void InertialAttitudeUkf::customFinalizeUpdate() { this->switchStateCovariance()
  @return void
  */
 void InertialAttitudeUkf::switchStateCovariance() {
-    Eigen::Vector3d sigma = this->state.getPositionStates();
+    Eigen::Vector3d sigma = this->srukf.state.getPositionStates();
     if (sigma.norm() > this->mrpSwitchThreshold) {
         PositionState mrp;
         mrp.setValues(mrpSwitch(sigma, this->mrpSwitchThreshold));
-        this->state.setPosition(mrp);
+        this->srukf.state.setPosition(mrp);
         Eigen::Matrix3d switchMatrix = 2 * std::pow(sigma.norm(), 4) * sigma * sigma.transpose() -
                                        std::pow(sigma.norm(), 2) * Eigen::Matrix3d::Identity();
-        this->covar.block(0, 0, 3, 3) = switchMatrix * this->covar.block(0, 0, 3, 3) * switchMatrix.transpose();
-        this->covar.block(0, 3, 3, 3) = switchMatrix * this->covar.block(0, 3, 3, 3);
-        this->covar.block(3, 0, 3, 3) = this->covar.block(3, 0, 3, 3) * switchMatrix.transpose();
+        this->srukf.covar.block(0, 0, 3, 3) = switchMatrix * this->srukf.covar.block(0, 0, 3, 3) * switchMatrix.transpose();
+        this->srukf.covar.block(0, 3, 3, 3) = switchMatrix * this->srukf.covar.block(0, 3, 3, 3);
+        this->srukf.covar.block(3, 0, 3, 3) = this->srukf.covar.block(3, 0, 3, 3) * switchMatrix.transpose();
     }
 }
 
@@ -81,15 +93,15 @@ void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
     FilterResidualsMsgPayload ratePayload{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    navAttPayload.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXToCArray(this->state.getPositionStates(), navAttPayload.sigma_BN);
-    eigenMatrixXToCArray(this->state.getVelocityStates(), navAttPayload.omega_BN_B);
+    navAttPayload.timeTag = this->srukf.previousFilterTimeTag;
+    eigenMatrixXToCArray(this->srukf.state.getPositionStates(), navAttPayload.sigma_BN);
+    eigenMatrixXToCArray(this->srukf.state.getVelocityStates(), navAttPayload.omega_BN_B);
 
     /*! - Populate the filter states output buffer and write the output message*/
-    filterPayload.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXToCArray(this->state.returnValues(), filterPayload.state);
-    eigenMatrixXToCArray(this->xBar.returnValues(), filterPayload.stateError);
-    eigenMatrixXToCArray(this->covar, filterPayload.covar);
+    filterPayload.timeTag = this->srukf.previousFilterTimeTag;
+    eigenMatrixXToCArray(this->srukf.state.returnValues(), filterPayload.state);
+    eigenMatrixXToCArray(this->srukf.xBar.returnValues(), filterPayload.stateError);
+    eigenMatrixXToCArray(this->srukf.covar, filterPayload.covar);
 
     for (size_t index = 0; index < MAX_MEASUREMENT_NUMBER; index++) {
         if (this->measurements[index].has_value()) {
@@ -149,7 +161,7 @@ void InertialAttitudeUkf::readRWSpeedData() {
 void InertialAttitudeUkf::readAttitudeData() {
     for (int index = 0; index < this->numberOfStarTackers; index++) {
         auto attitude = this->attitudeMessages[index].attitudeMsg();
-        if (attitude.timeTag > this->previousFilterTimeTag) {
+        if (attitude.timeTag > this->srukf.previousFilterTimeTag) {
             auto attitudeMeasurement = MeasurementModel();
             attitudeMeasurement.setMeasurementName("attitude");
             attitudeMeasurement.setTimeTag(attitude.timeTag);
@@ -158,7 +170,7 @@ void InertialAttitudeUkf::readAttitudeData() {
             /*! - Get the mapping from camera frame to inertial for the noise matrix */
             Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(attitude.dcm_CB);
 
-            attitudeMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
+            attitudeMeasurement.setMeasurementNoise(this->srukf.measNoiseScaling * dcm_CB.transpose() *
                                                     this->attitudeMessages[index].measurementNoise_C * dcm_CB);
             attitudeMeasurement.setObservation(
                 mrpSwitch(Eigen::Map<Eigen::Vector3d>(attitude.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold));
@@ -196,13 +208,13 @@ void InertialAttitudeUkf::readAttitudeData() {
  * */
 void InertialAttitudeUkf::readRateData() {
     STAttMsgPayload rateBuffer = this->rateDataInMsg();
-    if (rateBuffer.timeTag > this->previousFilterTimeTag) {
+    if (rateBuffer.timeTag > this->srukf.previousFilterTimeTag) {
         auto rateMeasurement = MeasurementModel();
         rateMeasurement.setMeasurementName("rate");
         rateMeasurement.setTimeTag(rateBuffer.timeTag);
         rateMeasurement.setValidity(true);
 
-        rateMeasurement.setMeasurementNoise(this->measNoiseScaling * this->rateNoise);
+        rateMeasurement.setMeasurementNoise(this->srukf.measNoiseScaling * this->rateNoise);
         rateMeasurement.setObservation(cArrayToEigenVector(rateBuffer.omega_BN_B));
         rateMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
         this->measurements[this->measurementIndex] = rateMeasurement;

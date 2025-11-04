@@ -31,27 +31,20 @@ class AttitudeMessage {
 enum class AttitudeFilterMethod { AttitudeOnly, RateMeasurementsWhenNoStars, AllMeasurements };
 
 /*! @brief Inertial Attitude filter which reads Star Tracker measurements and gyro measurements */
-class InertialAttitudeUkf : public SRukfInterface {
+class InertialAttitudeUkf : public SysModel {
    public:
-    InertialAttitudeUkf(AttitudeFilterMethod method);
-    ~InertialAttitudeUkf() = default;
+    explicit InertialAttitudeUkf(AttitudeFilterMethod method);
+    ~InertialAttitudeUkf() override = default;
 
-   private:
-    void customreset() final;
-    void readFilterMeasurements() final;
-    void writeOutputMessages(uint64_t currentSimNanos) final;
-    void customInitializeUpdate() final;
-    void customFinalizeUpdate() final;
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
 
-    /*! Specific read messages */
-    void readRWSpeedData();
-    void readAttitudeData();
-    void readRateData();
-    void switchStateCovariance();
+    void setRateNoise(const Eigen::Matrix3d& rateNoise);
+    Eigen::Matrix3d getRateNoise() const;
+    void addAttitudeInput(const AttitudeMessage& attitudeMeasurement);
+    Eigen::Matrix3d getAttitudeNoise(int attitudeMeasurementNumber) const;
 
-   public:
     ReadFunctor<RWArrayConfigMsgPayload> rwArrayConfigMsg;
-    RWArrayConfigMsgPayload rwArrayConfigPayload;
     ReadFunctor<VehicleConfigMsgPayload> vehicleConfigMsg;
     ReadFunctor<RWSpeedMsgPayload> rwSpeedMsg;
     ReadFunctor<STAttMsgPayload> rateDataInMsg;
@@ -61,12 +54,23 @@ class InertialAttitudeUkf : public SRukfInterface {
     Message<FilterResidualsMsgPayload> attitudeResidualMsg;
     Message<FilterResidualsMsgPayload> rateResidualMsg;
 
-    void setRateNoise(const Eigen::Matrix3d& rateNoise);
-    Eigen::Matrix3d getRateNoise() const;
-    void addAttitudeInput(const AttitudeMessage& attitudeMeasurement);
-    Eigen::Matrix3d getAttitudeNoise(int attitudeMeasurementNumber) const;
-
    private:
+    void customReset();
+    void readFilterMeasurements();
+    void writeOutputMessages(uint64_t currentSimNanos);
+    void customInitializeUpdate();
+    void customFinalizeUpdate();
+
+    /*! Specific read messages */
+    void readRWSpeedData();
+    void readAttitudeData();
+    void readRateData();
+    void switchStateCovariance();
+
+    RWArrayConfigMsgPayload rwArrayConfigPayload;
+
+    SRukfInterface srukf{};
+    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;
     AttitudeFilterMethod measurementAcceptanceMethod;
     bool firstFilterPass = true;
     bool validAttitude = false;

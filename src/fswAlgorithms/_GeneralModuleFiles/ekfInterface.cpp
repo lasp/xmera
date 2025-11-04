@@ -19,7 +19,6 @@ void EkfInterface::reset(uint64_t currentSimNanos) {
         this->processNoise.resize(this->state.getPositionStates().size(), this->state.getPositionStates().size());
     }
     this->minCovarNorm = this->minCovarNorm * this->unitConversion * this->unitConversion;
-    this->customreset();
 }
 
 /*! Perform the time update for kalman filter.

@@ -21,15 +21,18 @@
 #include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 
-class FlybyODuKF : public SRukfInterface {
+class FlybyODuKF : public SysModel {
    public:
     FlybyODuKF() = default;
     ~FlybyODuKF() = default;
 
+    void reset(uint64_t currentSimNanos) override;
+    void updateState(uint64_t currentSimNanos) override;
+
    private:
-    void customreset() final;
-    void readFilterMeasurements() final;
-    void writeOutputMessages(uint64_t currentSimNanos) final;
+    void customReset();
+    void readFilterMeasurements();
+    void writeOutputMessages(uint64_t currentSimNanos);
 
    public:
     ReadFunctor<OpNavUnitVecMsgPayload> opNavHeadingMsg;
@@ -42,6 +45,8 @@ class FlybyODuKF : public SRukfInterface {
     double getCentralBodyGravitationParameter() const;
 
    private:
+    SRukfInterface srukf{};
+    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;
     double muCentral = 1;  //!< [GM] gravitation parameter of central body
 };
 
