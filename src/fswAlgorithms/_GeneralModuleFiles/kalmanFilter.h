@@ -18,57 +18,97 @@
 #include <optional>
 
 /*! @brief Kalman Filter interface */
-class KalmanFilter{
-   public:
+class KalmanFilter {
+public:
     KalmanFilter() = default;
     virtual ~KalmanFilter() = default;
     virtual void reset(uint64_t currentSimNanos);
-    virtual void updateState(uint64_t currentSimNanos,
-                                   std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements);
 
+    // Used by a particular module to provide more time-ordered measurements.
+    void updateState(
+      uint64_t currentSimNanos,
+      std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements
+    );
+
+protected:
+    // Inheritors implement these to configure the appropriate behaviors of this
+    // generic Kalman filter to a specific setting.
+    virtual void timeUpdate(double updateTime) = 0;
+    virtual void measurementUpdate(const MeasurementModel& measurement) = 0;
+    virtual Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) = 0;
+
+public:
+    // Initialization-time methods
+    // Invoked to configure a generic kalman filter for use in a particular setting
+    // (e.g., by a particular xmera module)
     void setInitialPosition(const Eigen::VectorXd& initialPositionInput);
     std::optional<Eigen::VectorXd> getInitialPosition() const;
+
     void setInitialVelocity(const Eigen::VectorXd& initialVelocityInput);
     std::optional<Eigen::VectorXd> getInitialVelocity() const;
+
     void setInitialAcceleration(const Eigen::VectorXd& initialAccelerationInput);
     std::optional<Eigen::VectorXd> getInitialAcceleration() const;
+
     void setInitialBias(const Eigen::VectorXd& initialBiasInput);
     std::optional<Eigen::VectorXd> getInitialBias() const;
+
     void setInitialConsiderParameters(const Eigen::VectorXd& initialConsiderInput);
     std::optional<Eigen::VectorXd> getInitialConsiderParameters() const;
 
     void setInitialCovariance(const Eigen::MatrixXd& initialCovariance);
     Eigen::MatrixXd getInitialCovariance() const;
+
     void setProcessNoise(const Eigen::MatrixXd& processNoise);
     Eigen::MatrixXd getProcessNoise() const;
+
     void setUnitConversionFromSItoState(double conversion);
     double getUnitConversionFromSItoState() const;
+
     void setMeasurementNoiseScale(double measurementNoiseScale);
     double getMeasurementNoiseScale() const;
+
     void setFilterDynamics(
         const std::function<const FilterStateVector(double, const FilterStateVector&)>& dynamicsPropagator);
 
+public:
+    // State operated upon directly by KalmanFilter::updateState
+    // (and therefore meaningfully "owned" by KalmanFilter)
     FilterStateVector state;         //!< [-] State estimate for time TimeTag
+    double previousFilterTimeTag = 0;  //!< [s]  Time tag for state covar/etc
+
+public:
+    // These fields are operated upon *only* by the abstract methods given
+    // by any particular implementor of KalmanFilter.
+    //
+    // These fields represent the internal state of a generic Kalman filter.
+    // They are accessed by both the implementors of this class
+    // and by the module that drives the filter.
     Eigen::MatrixXd covar;         //!< [-] covariance
     FilterStateVector xBar;          //!< [-] Current mean state estimate
-    double previousFilterTimeTag = 0;  //!< [s]  Time tag for state covar/etc
     double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     DynamicsModel dynamics;
     FilterStateVector stateLogged;   //!< [-] State variable for logging
     double unitConversion = 1;    //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
     Eigen::VectorXd stateError;      //!< [-] Current mean state error
 
-   protected:
-    virtual void timeUpdate(double updateTime) = 0;
-    virtual void measurementUpdate(const MeasurementModel& measurement) = 0;
-    virtual Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) = 0;
-    void orderMeasurementsChronologically();
-
-    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
-    //!< measurement containers in chronological order
+protected:
+    // These fields are operated upon *only* by the abstract methods given
+    // by any particular implementor of KalmanFilter.
+    //
+    // These fields represent the internal state of a generic Kalman filter.
+    // They are accessed only by implementors of this class.
     FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
     Eigen::MatrixXd processNoise;  //!< [-] process noise matrix
     Eigen::MatrixXd covarInitial;  //!< [-] covariance at previous time
+
+private:
+    // Temporary storage for the measurements being processed.
+    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
+
+    // Helper method, used by stateUpdate() to ensure that measurements are
+    // processed in time-order.
+    void orderMeasurementsChronologically();
 };
 
 #endif /* KALMAN_FILTER_INTERFACE_HPP */
