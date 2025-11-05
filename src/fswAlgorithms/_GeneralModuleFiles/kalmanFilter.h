@@ -22,17 +22,11 @@ class KalmanFilter {
 public:
     KalmanFilter() = default;
     virtual ~KalmanFilter() = default;
-    virtual void reset(uint64_t currentSimNanos);
 
-    // Used by a particular module to provide more time-ordered measurements.
-    void updateState(
-      uint64_t currentSimNanos,
-      std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements
-    );
-
-protected:
+public:
     // Inheritors implement these to configure the appropriate behaviors of this
     // generic Kalman filter to a specific setting.
+    virtual void reset(uint64_t currentSimNanos);
     virtual void timeUpdate(double dt) = 0;
     virtual Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) = 0;
     virtual Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) = 0;
@@ -69,12 +63,6 @@ public:
         const std::function<const FilterStateVector(double, const FilterStateVector&)>& dynamicsPropagator);
 
 public:
-    // State operated upon directly by KalmanFilter::updateState
-    // (and therefore meaningfully "owned" by KalmanFilter)
-    FilterStateVector state;         //!< [-] State estimate for time TimeTag
-    double previousFilterTimeTag = 0;  //!< [s]  Time tag for state covar/etc
-
-public:
     // These fields represent configuration-time properties of a Kalman filter.
     // They are only used in ::reset (both in this class and derived classes).
     FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
@@ -94,7 +82,19 @@ public:
     // These fields represent the internal state of a generic Kalman filter.
     // They are accessed by both the implementors of this class
     // and by the module that drives the filter.
+    FilterStateVector state;       //!< [-] State estimate for time TimeTag
     Eigen::MatrixXd covar;         //!< [-] covariance
 };
+
+namespace xmera {
+    using MeasurementVector = std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER>;
+
+    void updateKalmanFilter(
+        KalmanFilter& filterState,
+        MeasurementVector measurements,
+        uint64_t previousSimNanos,
+        uint64_t currentSimNanos
+    );
+}
 
 #endif /* KALMAN_FILTER_INTERFACE_HPP */

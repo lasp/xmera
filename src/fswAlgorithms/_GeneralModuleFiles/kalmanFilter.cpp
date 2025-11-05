@@ -3,76 +3,13 @@
 
 #include "kalmanFilter.h"
 
-using MeasurementVector = std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER>;
-
-/*!- Order the measurements chronologically (standard sort)
- @return void
- */
-static void orderMeasurementsChronologically(MeasurementVector* const measurements) {
-    std::sort(measurements->begin(),
-              measurements->end(),
-              [](std::optional<MeasurementModel> meas1, std::optional<MeasurementModel> meas2) {
-                  if (!meas1.has_value()) return false;
-                  if (!meas2.has_value()) return true;
-                  return meas1.value().getTimeTag() < meas2.value().getTimeTag();
-              });
-}
-
 void KalmanFilter::reset(uint64_t currentSimNanos) {
     assert(this->stateInitial.size() == this->covarInitial.rows() &&
            this->stateInitial.size() == this->covarInitial.cols());
 
     this->state = this->stateInitial.scale(this->unitConversion);
-    this->previousFilterTimeTag = (double)currentSimNanos * NANO2SEC;
-
     this->covar = this->unitConversion * this->unitConversion * this->covarInitial;
     this->covar.resize(this->state.size(), this->state.size());
-}
-
-/*! Take the relative position measurements and output an estimate of the
- spacecraft states in the inertial frame.
- @return void
- @param currentSimNanos The clock time at which the function was called (nanoseconds)
- */
-void KalmanFilter::updateState(uint64_t currentSimNanos, MeasurementVector measurements) {
-    /*! sort the measurment vector in chronological order */
-    orderMeasurementsChronologically(&measurements);
-
-    double currentFilterTimeTag = this->previousFilterTimeTag;
-
-    /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
-     * has been populated in the measurements array*/
-    for (int index = 0; index < MAX_MEASUREMENT_NUMBER; ++index) {
-        if (!measurements[index].has_value()) continue;
-        auto& measurement = measurements[index].value();
-
-        /*! - If the time tag from a valid measurement is new compared to previous step,
-        propagate and update the filter*/
-        if (measurement.getTimeTag() < currentFilterTimeTag || !measurement.getValidity()) continue;
-
-        /*! - time update to the measurement time and compute pre-fit residuals*/
-        this->timeUpdate(measurement.getTimeTag() - currentFilterTimeTag);
-        currentFilterTimeTag = measurement.getTimeTag();
-
-        measurement.setPreFitResiduals(this->computeResiduals(measurement));
-
-        /*! - measurement update and compute post-fit residuals  */
-        auto computedMeasurement = filterState.measurementUpdate(measurement);
-
-        measurement.setPostFitResiduals(
-            measurement.subMeasurements(measurement.getObservation(), computedMeasurement));
-
-        measurements[index] = measurement;
-    }
-
-    /*! - If current clock time is further ahead than the last measurement time, then
-    propagate to this current time-step*/
-    if ((double)currentSimNanos * NANO2SEC > currentFilterTimeTag) {
-        this->timeUpdate(((double)currentSimNanos * NANO2SEC) - this->previousFilterTimeTag);
-        currentFilterTimeTag = (double)currentSimNanos * NANO2SEC;
-    }
-
-    this->previousFilterTimeTag = currentFilterTimeTag;
 }
 
 /*! Set the filter initial state position vector
@@ -228,3 +165,65 @@ void KalmanFilter::setUnitConversionFromSItoState(const double conversion) { thi
     @return double unitConversion
     */
 double KalmanFilter::getUnitConversionFromSItoState() const { return this->unitConversion; }
+
+
+/*!- Order the measurements chronologically (standard sort)
+ @return void
+ */
+static void orderMeasurementsChronologically(xmera::MeasurementVector* const measurements) {
+    std::sort(measurements->begin(),
+              measurements->end(),
+              [](std::optional<MeasurementModel> meas1, std::optional<MeasurementModel> meas2) {
+                  if (!meas1.has_value()) return false;
+                  if (!meas2.has_value()) return true;
+                  return meas1.value().getTimeTag() < meas2.value().getTimeTag();
+              });
+}
+
+/*! Take the relative position measurements and output an estimate of the
+ spacecraft states in the inertial frame.
+ @return void
+ @param currentSimNanos The clock time at which the function was called (nanoseconds)
+ */
+extern void xmera::updateKalmanFilter(
+    KalmanFilter& filterState,
+    MeasurementVector measurements,
+    uint64_t previousFilterTimeTag,
+    uint64_t nextFilterTimeTag
+) {
+    /*! sort the measurment vector in chronological order */
+    orderMeasurementsChronologically(&measurements);
+
+    double currentFilterTimeTag = previousFilterTimeTag;
+
+    /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
+     * has been populated in the measurements array*/
+    for (int index = 0; index < MAX_MEASUREMENT_NUMBER; ++index) {
+        if (!measurements[index].has_value()) continue;
+        auto& measurement = measurements[index].value();
+
+        /*! - If the time tag from a valid measurement is new compared to previous step,
+        propagate and update the filter*/
+        if (measurement.getTimeTag() < currentFilterTimeTag || !measurement.getValidity()) continue;
+
+        /*! - time update to the measurement time and compute pre-fit residuals*/
+        filterState.timeUpdate(measurement.getTimeTag() - currentFilterTimeTag);
+        currentFilterTimeTag = measurement.getTimeTag();
+
+        measurement.setPreFitResiduals(filterState.computeResiduals(measurement));
+
+        /*! - measurement update and compute post-fit residuals  */
+        auto computedMeasurement = filterState.measurementUpdate(measurement);
+
+        measurement.setPostFitResiduals(
+            measurement.subMeasurements(measurement.getObservation(), computedMeasurement));
+
+        measurements[index] = measurement;
+    }
+
+    /*! - If current clock time is further ahead than the last measurement time, then
+    propagate to this current time-step*/
+    if (nextFilterTimeTag > currentFilterTimeTag) {
+        filterState.timeUpdate(nextFilterTimeTag - currentFilterTimeTag);
+    }
+}

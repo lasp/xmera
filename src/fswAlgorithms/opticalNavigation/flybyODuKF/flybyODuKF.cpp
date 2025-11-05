@@ -6,12 +6,20 @@
 void FlybyODuKF::reset(uint64_t currentSimNanos) {
     this->customReset();
     this->srukf.reset(currentSimNanos);
+    this->previousSimNanos = currentSimNanos;
 }
 
 void FlybyODuKF::updateState(uint64_t currentSimNanos) {
     this->readFilterMeasurements();
-    this->srukf.updateState(currentSimNanos, this->measurements);
+    xmera::updateKalmanFilter(
+        this->srukf,
+        this->measurements,
+        (double)this->previousSimNanos * NANO2SEC,
+        (double)currentSimNanos * NANO2SEC
+    );
     this->writeOutputMessages(currentSimNanos);
+
+    this->previousSimNanos = currentSimNanos;
 }
 
 /*! Reset the flyby OD filter to an initial state and
@@ -60,7 +68,7 @@ void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray(this->srukf.state.scale(1 / this->srukf.unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
 
     /*! - Populate the filter states output buffer and write the output message*/
-    opNavFilterMsgBuffer.timeTag = this->srukf.previousFilterTimeTag;
+    opNavFilterMsgBuffer.timeTag = (double)this->previousSimNanos * NANO2SEC;
     eigenMatrixXToCArray(this->srukf.state.scale(1 / this->srukf.unitConversion).returnValues(), opNavFilterMsgBuffer.state);
     eigenMatrixXToCArray(this->srukf.xBar.scale(1 / this->srukf.unitConversion).returnValues(), opNavFilterMsgBuffer.stateError);
     eigenMatrixXToCArray(1 / this->srukf.unitConversion / this->srukf.unitConversion * this->srukf.covar, opNavFilterMsgBuffer.covar);
@@ -94,7 +102,7 @@ void FlybyODuKF::readFilterMeasurements() {
     headingMeasurement.setTimeTag(this->opNavHeadingBuffer.timeTag);
     headingMeasurement.setValidity(this->opNavHeadingBuffer.valid);
 
-    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->srukf.previousFilterTimeTag) {
+    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= (double)this->previousSimNanos * NANO2SEC) {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N));
         headingMeasurement.getObservation().normalize();

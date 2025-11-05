@@ -87,6 +87,8 @@ class InertialAttitudeUkf : public SysModel {
     int numberOfStarTackers = 0;
     int measurementIndex = 0;
     double mrpSwitchThreshold = 1;  //!< [-] Threshold for switching MRP to/from the shadow set
+
+    uint64_t previousSimNanos = 0;
 };
 
 #endif
