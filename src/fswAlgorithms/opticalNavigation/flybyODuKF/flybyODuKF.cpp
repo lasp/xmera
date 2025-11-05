@@ -5,7 +5,7 @@
 
 void FlybyODuKF::reset(uint64_t currentSimNanos) {
     this->customReset();
-    this->srukf.reset(currentSimNanos);
+    this->srukf.reset();
     this->previousSimNanos = currentSimNanos;
 }
 

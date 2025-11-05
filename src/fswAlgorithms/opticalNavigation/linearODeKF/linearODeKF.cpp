@@ -5,7 +5,7 @@
 
 void LinearODeKF::reset(uint64_t currentSimNanos) {
     this->customReset();
-    this->ekf.reset(currentSimNanos);
+    this->ekf.reset();
     this->previousSimNanos = currentSimNanos;
 }
 
