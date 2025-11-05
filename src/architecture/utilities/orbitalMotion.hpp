@@ -41,6 +41,31 @@ class EquinoctialElements {
     double a = 0, P1 = 0, P2 = 0, Q1 = 0, Q2 = 0, l = 0, L = 0;
 };
 
+class ClassicalElementsF32 {
+   public:
+    double semiMajorAxis = 0;
+    float eccentricity = 0;
+    float inclination = 0;
+    float rightAscensionAscendingNode = 0;
+    float argPeriapsis = 0;
+    float trueAnomaly = 0;
+    double radiusMagnitude = 0;
+    float alpha = 0;
+    double radiusPeriapsis = 0;
+    double radiusApoapsis = 0;
+};
+
+class EquinoctialElementsF32 {
+   public:
+    double a = 0;
+    float P1 = 0;
+    float P2 = 0;
+    float Q1 = 0;
+    float Q2 = 0;
+    float l = 0;
+    float L = 0;
+};
+
 class OrbitalMotion {
    public:
     static Eigen::Matrix3d hillFrameDCM(const Eigen::Vector3d& rc_N, const Eigen::Vector3d& vc_N);
@@ -84,6 +109,21 @@ class OrbitalMotion {
     static Eigen::Vector3d zonalHarmonicPerturbation(const Eigen::Vector3d& positionKm, int maxJ, CelestialObject body);
 
     static EquinoctialElements mapClassicalToEquinoctialElements(const ClassicalElements& classicals);
+
+    static float eccentricToTrueAnomalyF32(float E, float e);
+    static float eccentricToMeanAnomalyF32(float E, float e);
+    static float trueToEccentricAnomalyF32(float f, float e);
+    static float trueToHyperbolicAnomalyF32(float f, float e);
+    static float trueToMeanAnomalyF32(float f, float e);
+    static float hyperbolicToTrueAnomalyF32(float H, float e);
+    static float hyperbolicToMeanAnomalyF32(float H, float e);
+    static float meanToEccentricAnomalyF32(float M, float e);
+    static float meanToTrueAnomalyF32(float M, float e);
+    static float meanToHyperbolicAnomalyF32(float N, float e);
+    static CartesianState elementsToCartesianStateF32(double mu, const ClassicalElementsF32& elements);
+    static ClassicalElementsF32 cartesianStateToElementsF32(double mu,
+                                                            const Eigen::Vector3d& rVec,
+                                                            const Eigen::Vector3d& vVec);
 };
 
 #endif
