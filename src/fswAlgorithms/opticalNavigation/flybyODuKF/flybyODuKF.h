@@ -48,6 +48,7 @@ class FlybyODuKF : public SysModel {
     SRukfInterface srukf{};
     std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;
     double muCentral = 1;  //!< [GM] gravitation parameter of central body
+    uint64_t previousSimNanos = 0;
 };
 
 #endif

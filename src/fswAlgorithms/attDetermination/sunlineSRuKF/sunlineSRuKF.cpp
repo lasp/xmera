@@ -6,13 +6,21 @@
 void SunlineSRuKF::reset(uint64_t currentSimNanos) {
     this->customReset();
     this->writeOutputMessages(currentSimNanos);
+    this->previousSimNanos = currentSimNanos;
 }
 
 void SunlineSRuKF::updateState(const uint64_t currentSimNanos) {
     this->readFilterMeasurements();
-    this->srukf.updateState(currentSimNanos, this->measurements);
+    xmera::updateKalmanFilter(
+        this->srukf,
+        this->measurements,
+        (double)this->previousSimNanos * NANO2SEC,
+        (double)currentSimNanos * NANO2SEC
+    );
     this->writeOutputMessages(currentSimNanos);
     this->customFinalizeUpdate();
+
+    this->previousSimNanos = currentSimNanos;
 }
 
 /*! Reset the sunline filter to an initial state and
@@ -70,7 +78,7 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray(this->srukf.state.getPositionStates(), navAttOutMsgBuffer.vehSunPntBdy);
 
     /*! - Populate the filter states output buffer and write the output message*/
-    filterMsgBuffer.timeTag = this->srukf.previousFilterTimeTag;
+    filterMsgBuffer.timeTag = (double)this->previousSimNanos * NANO2SEC;
     eigenMatrixXToCArray(this->srukf.state.returnValues(), filterMsgBuffer.state);
     eigenMatrixXToCArray(this->srukf.xBar.returnValues(), filterMsgBuffer.stateError);
     eigenMatrixXToCArray(this->srukf.covar, filterMsgBuffer.covar);
@@ -114,7 +122,7 @@ void SunlineSRuKF::readGyroMeasurements() {
     /*! Read rate gyro measurements */
     NavAttMsgPayload navAttInputBuffer = this->navAttInMsg();
 
-    if (navAttInputBuffer.timeTag >= this->srukf.previousFilterTimeTag) {
+    if (navAttInputBuffer.timeTag >= (double)this->previousSimNanos * NANO2SEC) {
         auto gyroMeasurements = MeasurementModel();
         gyroMeasurements.setValidity(true);
         gyroMeasurements.setMeasurementName("gyro");
@@ -177,7 +185,7 @@ void SunlineSRuKF::readCssMeasurements() {
             return observed;
         };
 
-    if (cssMeasurements.getValidity() && cssMeasurements.getTimeTag() >= this->srukf.previousFilterTimeTag) {
+    if (cssMeasurements.getValidity() && cssMeasurements.getTimeTag() >= (double)this->previousSimNanos * NANO2SEC) {
         /*! - Read measurement and cholesky decomposition its noise*/
         Eigen::MatrixXd I(this->numActiveCss, this->numActiveCss);
         I.setIdentity();

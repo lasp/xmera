@@ -6,12 +6,20 @@
 void LinearODeKF::reset(uint64_t currentSimNanos) {
     this->customReset();
     this->ekf.reset(currentSimNanos);
+    this->previousSimNanos = currentSimNanos;
 }
 
 void LinearODeKF::updateState(uint64_t currentSimNanos) {
     this->readFilterMeasurements();
-    this->ekf.updateState(currentSimNanos, this->measurements);
+    xmera::updateKalmanFilter(
+        this->ekf,
+        this->measurements,
+        (double)this->previousSimNanos * NANO2SEC,
+        (double)currentSimNanos * NANO2SEC
+    );
     this->writeOutputMessages(currentSimNanos);
+
+    this->previousSimNanos = currentSimNanos;
 }
 
 /*! Reset the flyby OD filter to an initial state and initializes the internal estimation matrices.
@@ -84,7 +92,7 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
     }
 
     /*! - Populate the filter states output buffer and write the output message*/
-    opNavFilterMsgBuffer.timeTag = this->ekf.previousFilterTimeTag;
+    opNavFilterMsgBuffer.timeTag = (double)this->previousSimNanos * NANO2SEC;
     eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).returnValues(), opNavFilterMsgBuffer.state);
     eigenMatrixXToCArray(1 / this->ekf.unitConversion * this->ekf.stateError, opNavFilterMsgBuffer.stateError);
     eigenMatrixXToCArray(1 / this->ekf.unitConversion / this->ekf.unitConversion * this->ekf.covar, opNavFilterMsgBuffer.covar);
@@ -118,7 +126,7 @@ void LinearODeKF::readFilterMeasurements() {
     headingMeasurement.setTimeTag(this->opNavHeadingBuffer.timeTag);
     headingMeasurement.setValidity(this->opNavHeadingBuffer.valid);
 
-    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->ekf.previousFilterTimeTag) {
+    if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= (double)this->previousSimNanos * NANO2SEC) {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N).normalized());
         headingMeasurement.setMeasurementNoise(this->measNoiseScaling *

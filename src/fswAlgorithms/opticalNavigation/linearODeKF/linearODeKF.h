@@ -52,6 +52,7 @@ class LinearODeKF : public SysModel {
     EkfInterface ekf{FilterType::Classical};
     double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
+    uint64_t previousSimNanos = 0;
 
     std::optional<Eigen::Vector3d> constantVelocity;         //!< Unestimated constant velocity
     std::optional<Eigen::Vector3d> constantVelocityInitial;  //!< Initial value of constant velocity

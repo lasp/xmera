@@ -65,6 +65,8 @@ class SunlineSRuKF : public SysModel{
 
     double biasLowerBound = 0.5;
     double biasUpperBound = 1.5;
+
+    uint64_t previousSimNanos = 0;
 };
 
 #endif

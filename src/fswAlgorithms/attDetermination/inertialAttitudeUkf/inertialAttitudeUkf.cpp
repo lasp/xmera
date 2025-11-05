@@ -7,14 +7,22 @@ InertialAttitudeUkf::InertialAttitudeUkf(const AttitudeFilterMethod method) { th
 
 void InertialAttitudeUkf::reset(uint64_t currentSimNanos) {
     this->customReset();
+    this->previousSimNanos = currentSimNanos;
 }
 
 void InertialAttitudeUkf::updateState(uint64_t currentSimNanos) {
     this->customInitializeUpdate();
     this->readFilterMeasurements();
-    this->srukf.updateState(currentSimNanos, this->measurements);
+    xmera::updateKalmanFilter(
+        this->srukf,
+        this->measurements,
+        (double)this->previousSimNanos * NANO2SEC,
+        (double)currentSimNanos * NANO2SEC
+    );
     this->customFinalizeUpdate();
     this->writeOutputMessages(currentSimNanos);
+
+    this->previousSimNanos = currentSimNanos;
 }
 
 void InertialAttitudeUkf::customReset() {
@@ -93,12 +101,12 @@ void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
     FilterResidualsMsgPayload ratePayload{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    navAttPayload.timeTag = this->srukf.previousFilterTimeTag;
+    navAttPayload.timeTag = (double)this->previousSimNanos * NANO2SEC;
     eigenMatrixXToCArray(this->srukf.state.getPositionStates(), navAttPayload.sigma_BN);
     eigenMatrixXToCArray(this->srukf.state.getVelocityStates(), navAttPayload.omega_BN_B);
 
     /*! - Populate the filter states output buffer and write the output message*/
-    filterPayload.timeTag = this->srukf.previousFilterTimeTag;
+    filterPayload.timeTag = (double)this->previousSimNanos * NANO2SEC;
     eigenMatrixXToCArray(this->srukf.state.returnValues(), filterPayload.state);
     eigenMatrixXToCArray(this->srukf.xBar.returnValues(), filterPayload.stateError);
     eigenMatrixXToCArray(this->srukf.covar, filterPayload.covar);
@@ -161,7 +169,7 @@ void InertialAttitudeUkf::readRWSpeedData() {
 void InertialAttitudeUkf::readAttitudeData() {
     for (int index = 0; index < this->numberOfStarTackers; index++) {
         auto attitude = this->attitudeMessages[index].attitudeMsg();
-        if (attitude.timeTag > this->srukf.previousFilterTimeTag) {
+        if (attitude.timeTag > (double)this->previousSimNanos * NANO2SEC) {
             auto attitudeMeasurement = MeasurementModel();
             attitudeMeasurement.setMeasurementName("attitude");
             attitudeMeasurement.setTimeTag(attitude.timeTag);
@@ -208,7 +216,7 @@ void InertialAttitudeUkf::readAttitudeData() {
  * */
 void InertialAttitudeUkf::readRateData() {
     STAttMsgPayload rateBuffer = this->rateDataInMsg();
-    if (rateBuffer.timeTag > this->srukf.previousFilterTimeTag) {
+    if (rateBuffer.timeTag > (double)this->previousSimNanos * NANO2SEC) {
         auto rateMeasurement = MeasurementModel();
         rateMeasurement.setMeasurementName("rate");
         rateMeasurement.setTimeTag(rateBuffer.timeTag);
