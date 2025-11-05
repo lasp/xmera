@@ -4,17 +4,12 @@
 #ifndef KALMAN_FILTER_INTERFACE_HPP
 #define KALMAN_FILTER_INTERFACE_HPP
 
-#include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/messaging/messaging.h>
-#include <architecture/utilities/eigenSupport.h>
-#include <architecture/utilities/macroDefinitions.h>
-#include <fswAlgorithms/_GeneralModuleFiles/dynamicModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h>
 #include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
-#include <fswAlgorithms/_GeneralModuleFiles/stateModels.h>
+
 #include <Eigen/Dense>
+
 #include <array>
-#include <functional>
 #include <optional>
 
 /*! @brief Kalman Filter interface */
