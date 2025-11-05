@@ -10,7 +10,7 @@ void SunlineSRuKF::reset(uint64_t currentSimNanos) {
 
 void SunlineSRuKF::updateState(const uint64_t currentSimNanos) {
     this->readFilterMeasurements();
-
+    this->srukf.updateState(currentSimNanos, this->measurements);
     this->writeOutputMessages(currentSimNanos);
     this->customFinalizeUpdate();
 }
