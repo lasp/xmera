@@ -31,8 +31,7 @@ class EkfInterface : public KalmanFilter {
 
     void reset() override;
     void timeUpdate(double dt) override;
-    Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) override;
-    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
+    void measurementUpdate(MeasurementModel& measurement) override;
 
     void setFilterDynamicsMatrix(
         const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>& dynamicsMatrixCalculator);
@@ -53,6 +52,7 @@ class EkfInterface : public KalmanFilter {
     double unitConversion = 1;       //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
 
    private:
+    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement);
     Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd& covar,
                                       const Eigen::MatrixXd& measurementMatrix,
                                       const Eigen::MatrixXd& measurementNoise) const;

@@ -76,7 +76,10 @@ void EkfInterface::timeUpdate(const double dt) {
  @param Measurement
  @return void
  */
-Eigen::MatrixXd EkfInterface::measurementUpdate(const MeasurementModel& measurement) {
+void EkfInterface::measurementUpdate(MeasurementModel& measurement) {
+    measurement.setPreFitResiduals(this->computeResiduals(measurement));
+
+
     /*! - Compute the valid observations delta */
     Eigen::VectorXd measurementDelta =
         measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state));
@@ -98,7 +101,10 @@ Eigen::MatrixXd EkfInterface::measurementUpdate(const MeasurementModel& measurem
         EkfInterface::ekfUpdate(kalmanGain, measurementDelta);
     }
 
-    return measurement.model(this->state);
+    measurement.setPostFitResiduals(measurement.subMeasurements(
+        measurement.getObservation(),
+        measurement.model(this->state)
+    ));
 }
 
 /*! Compute the Kalman Gain
