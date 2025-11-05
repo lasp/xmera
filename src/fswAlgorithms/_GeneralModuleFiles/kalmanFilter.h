@@ -34,7 +34,7 @@ protected:
     // Inheritors implement these to configure the appropriate behaviors of this
     // generic Kalman filter to a specific setting.
     virtual void timeUpdate(double dt) = 0;
-    virtual void measurementUpdate(const MeasurementModel& measurement) = 0;
+    virtual Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) = 0;
     virtual Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) = 0;
 
 public:

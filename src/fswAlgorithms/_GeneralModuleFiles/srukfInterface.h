@@ -37,7 +37,7 @@ class SRukfInterface : public KalmanFilter {
 
    private:
     void timeUpdate(double dt) override;
-    void measurementUpdate(const MeasurementModel& measurement) override;
+    Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) override;
     Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
 
     Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd& input) const;
