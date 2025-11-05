@@ -34,7 +34,7 @@ namespace xmera {
 
     void updateKalmanFilter(
         KalmanFilter& filterState,
-        MeasurementVector measurements,
+        MeasurementVector& measurements,
         uint64_t previousSimNanos,
         uint64_t currentSimNanos
     );
