@@ -5,10 +5,9 @@
 
 /*! Reset all of the filter states, including the custom reset
  @return void
- @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void SRukfInterface::reset(uint64_t currentSimNanos) {
-    KalmanFilter::reset(currentSimNanos);
+void SRukfInterface::reset() {
+    KalmanFilter::reset();
 
     this->sBar = this->unitConversion * this->unitConversion * this->covarInitial;
     this->sBar.resize(this->state.size(), this->state.size());

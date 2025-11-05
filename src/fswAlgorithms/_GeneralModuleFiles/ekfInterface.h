@@ -28,7 +28,11 @@ class EkfInterface : public KalmanFilter {
    public:
     explicit EkfInterface(FilterType type);
     ~EkfInterface() override = default;
-    void reset(uint64_t currentSimNanos) override;
+
+    void reset() override;
+    void timeUpdate(double dt) override;
+    Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) override;
+    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
 
     void setFilterDynamicsMatrix(
         const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>& dynamicsMatrixCalculator);
@@ -39,11 +43,6 @@ class EkfInterface : public KalmanFilter {
     Eigen::VectorXd stateError;      //!< [-] Current mean state error
 
    private:
-    void timeUpdate(double dt) override;
-    Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) override;
-
-    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
-
     Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd& covar,
                                       const Eigen::MatrixXd& measurementMatrix,
                                       const Eigen::MatrixXd& measurementNoise) const;

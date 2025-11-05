@@ -3,7 +3,7 @@
 
 #include "kalmanFilter.h"
 
-void KalmanFilter::reset(uint64_t currentSimNanos) {
+void KalmanFilter::reset() {
     assert(this->stateInitial.size() == this->covarInitial.rows() &&
            this->stateInitial.size() == this->covarInitial.cols());
 

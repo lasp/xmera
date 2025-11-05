@@ -23,7 +23,10 @@ class SRukfInterface : public KalmanFilter {
     SRukfInterface() = default;
     ~SRukfInterface() override = default;
 
-    void reset(uint64_t callTime) override;
+    void reset() override;
+    void timeUpdate(double dt) override;
+    Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) override;
+    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
 
     void setAlpha(double alpha);
     double getAlpha() const;
@@ -36,10 +39,6 @@ class SRukfInterface : public KalmanFilter {
     FilterStateVector xBar{};  //!< [-] Current mean state estimate
 
    private:
-    void timeUpdate(double dt) override;
-    Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) override;
-    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
-
     Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd& input) const;
     Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd& input,
                                        const Eigen::VectorXd& inputVector,
