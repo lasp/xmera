@@ -43,3 +43,29 @@ double calculateChebyValue(const double *coefficients,
 
     return estValue;
 }
+
+/*
+ * Function to evaluate a set of chebyshev polynomials (first argument) to a certain degree (second argument) at
+ * a specific point (evaluationPoint)
+ */
+float calculateChebyValueF32(const float *coefficients,
+                             const signed int numberOfCoefficients,
+                             const double evaluationPoint) {
+    float chebyPrev = 1.0;
+    float chebyNow = evaluationPoint;
+    const float valueMult = 2.0 * evaluationPoint;
+
+    float estValue = coefficients[0] * chebyPrev;
+    if (numberOfCoefficients <= 1) {
+        return estValue;
+    }
+    estValue += coefficients[1] * chebyNow;
+    for (int i = 2; i < numberOfCoefficients; ++i) {
+        const float chebyLocalPrev = chebyNow;
+        chebyNow = valueMult * chebyNow - chebyPrev;
+        chebyPrev = chebyLocalPrev;
+        estValue += coefficients[i] * chebyNow;
+    }
+
+    return estValue;
+}
