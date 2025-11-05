@@ -4,12 +4,11 @@
 #ifndef KALMAN_FILTER_INTERFACE_HPP
 #define KALMAN_FILTER_INTERFACE_HPP
 
-#include <fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h>
 #include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 
 #include <Eigen/Dense>
 
-#include <array>
+#include <span>
 #include <optional>
 
 /*! @brief Kalman Filter interface */
@@ -25,11 +24,11 @@ public:
 };
 
 namespace xmera {
-    using MeasurementVector = std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER>;
+    using MeasurementVector = std::span<std::optional<MeasurementModel>>;
 
     void updateKalmanFilter(
         KalmanFilter& filterState,
-        MeasurementVector& measurements,
+        MeasurementVector measurements,
         uint64_t previousSimNanos,
         uint64_t currentSimNanos
     );

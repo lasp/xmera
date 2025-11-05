@@ -6,9 +6,9 @@
 /*!- Order the measurements chronologically (standard sort)
  @return void
  */
-static void orderMeasurementsChronologically(xmera::MeasurementVector* const measurements) {
-    std::sort(measurements->begin(),
-              measurements->end(),
+static void orderMeasurementsChronologically(xmera::MeasurementVector measurements) {
+    std::sort(measurements.begin(),
+              measurements.end(),
               [](std::optional<MeasurementModel> meas1, std::optional<MeasurementModel> meas2) {
                   if (!meas1.has_value()) return false;
                   if (!meas2.has_value()) return true;
@@ -23,20 +23,20 @@ static void orderMeasurementsChronologically(xmera::MeasurementVector* const mea
  */
 extern void xmera::updateKalmanFilter(
     KalmanFilter& filterState,
-    MeasurementVector& measurements,
+    MeasurementVector measurements,
     uint64_t previousFilterTimeTag,
     uint64_t nextFilterTimeTag
 ) {
     /*! sort the measurment vector in chronological order */
-    orderMeasurementsChronologically(&measurements);
+    orderMeasurementsChronologically(measurements);
 
     double currentFilterTimeTag = previousFilterTimeTag;
 
     /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
      * has been populated in the measurements array*/
-    for (int index = 0; index < MAX_MEASUREMENT_NUMBER; ++index) {
-        if (!measurements[index].has_value()) continue;
-        auto& measurement = measurements[index].value();
+    for (auto& measurementElt : measurements) {
+        if (!measurementElt.has_value()) continue;
+        auto& measurement = measurementElt.value();
 
         /*! - If the time tag from a valid measurement is new compared to previous step,
         propagate and update the filter*/
