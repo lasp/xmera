@@ -100,7 +100,7 @@ void SRukfInterface::timeUpdate(double dt) {
  @param Measurement
  @return void
  */
-void SRukfInterface::measurementUpdate(const MeasurementModel& measurement) {
+Eigen::MatrixXd SRukfInterface::measurementUpdate(const MeasurementModel& measurement) {
     this->cholMeasNoise.setZero(measurement.size(), measurement.size());
     this->cholMeasNoise = this->choleskyDecomposition(measurement.getMeasurementNoise());
     /*! - Compute the valid observations and the measurement model for all observations*/
@@ -179,6 +179,8 @@ void SRukfInterface::measurementUpdate(const MeasurementModel& measurement) {
 
     /*! - Compute equivalent covariance based on updated sBar matrix*/
     this->covar = this->sBar * this->sBar.transpose();
+
+    return measurement.model(this->state);
 }
 
 /*! Compute the measurement residuals if the measurement data was fresh.
