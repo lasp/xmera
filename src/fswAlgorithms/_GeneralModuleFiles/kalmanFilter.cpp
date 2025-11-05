@@ -9,7 +9,7 @@
 static void orderMeasurementsChronologically(xmera::MeasurementVector measurements) {
     std::sort(measurements.begin(),
               measurements.end(),
-              [](std::optional<MeasurementModel> meas1, std::optional<MeasurementModel> meas2) {
+              [](std::optional<MeasurementModel> const& meas1, std::optional<MeasurementModel> const& meas2) {
                   if (!meas1.has_value()) return false;
                   if (!meas2.has_value()) return true;
                   return meas1.value().getTimeTag() < meas2.value().getTimeTag();
