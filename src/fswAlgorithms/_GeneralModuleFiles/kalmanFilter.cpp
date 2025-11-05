@@ -42,17 +42,13 @@ extern void xmera::updateKalmanFilter(
         propagate and update the filter*/
         if (measurement.getTimeTag() < currentFilterTimeTag || !measurement.getValidity()) continue;
 
-        /*! - time update to the measurement time and compute pre-fit residuals*/
+        /*! - time update to the measurement time */
         filterState.timeUpdate(measurement.getTimeTag() - currentFilterTimeTag);
+
+        /*! - compute pre-fit residuals, measurement update, and compute post-fit residuals  */
+        filterState.measurementUpdate(measurement);
+
         currentFilterTimeTag = measurement.getTimeTag();
-
-        measurement.setPreFitResiduals(filterState.computeResiduals(measurement));
-
-        /*! - measurement update and compute post-fit residuals  */
-        auto computedMeasurement = filterState.measurementUpdate(measurement);
-
-        measurement.setPostFitResiduals(
-            measurement.subMeasurements(measurement.getObservation(), computedMeasurement));
     }
 
     /*! - If current clock time is further ahead than the last measurement time, then

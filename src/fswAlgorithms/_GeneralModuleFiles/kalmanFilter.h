@@ -19,8 +19,7 @@ public:
 
     virtual void reset() = 0;
     virtual void timeUpdate(double dt) = 0;
-    virtual Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) = 0;
-    virtual Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) = 0;
+    virtual void measurementUpdate(MeasurementModel& measurement) = 0;
 };
 
 namespace xmera {

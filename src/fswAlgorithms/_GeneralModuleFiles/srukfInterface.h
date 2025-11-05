@@ -26,8 +26,7 @@ class SRukfInterface : public KalmanFilter {
 
     void reset() override;
     void timeUpdate(double dt) override;
-    Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) override;
-    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) override;
+    void measurementUpdate(MeasurementModel& measurement) override;
 
     void setAlpha(double alpha);
     double getAlpha() const;
@@ -49,6 +48,7 @@ class SRukfInterface : public KalmanFilter {
     double unitConversion = 1;       //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
 
    private:
+    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement);
     Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd& input) const;
     Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd& input,
                                        const Eigen::VectorXd& inputVector,
