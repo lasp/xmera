@@ -40,10 +40,12 @@ void ZmqConnector::send(const cielimMessage::CielimMessage& message) {
 
 void ZmqConnector::message_buffer_deallocate(void* data, void* hint) { free(data); }
 
-ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
+ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage, bool shouldReturnDiagnostics) {
     this->requesterSocket->send(zmq::message_t("REQUEST_IMAGE", 13), zmq::send_flags::sndmore);
     this->requesterSocket->send(zmq::message_t(std::to_string(cameraId)), zmq::send_flags::sndmore);
     this->requesterSocket->send(zmq::message_t(std::to_string(shouldReturnImage).c_str(), sizeof(char)),
+                                zmq::send_flags::sndmore);
+    this->requesterSocket->send(zmq::message_t(std::to_string(shouldReturnDiagnostics).c_str(), sizeof(char)),
                                 zmq::send_flags::none);
 
     // SAFETY: it's okay to discard these [[nodiscard]] values because
@@ -52,12 +54,10 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
     //   2) the returned length in the (present) optional is recoverable from the given message's `.size()` method.
     auto imageLengthMessage = zmq::message_t();
     auto imageMessage = zmq::message_t();
-    auto centerOfBrightnessX = zmq::message_t();
-    auto centerOfBrightnessY = zmq::message_t();
+    auto diagnosticsMessage = zmq::message_t();
     static_cast<void>(this->requesterSocket->recv(imageMessage, zmq::recv_flags::none));
     static_cast<void>(this->requesterSocket->recv(imageLengthMessage, zmq::recv_flags::none));
-    auto cobXMsgSize = this->requesterSocket->recv(centerOfBrightnessX, zmq::recv_flags::none);
-    auto cobYMsgSize = this->requesterSocket->recv(centerOfBrightnessY, zmq::recv_flags::none);
+    static_cast<void>(this->requesterSocket->recv(diagnosticsMessage, zmq::recv_flags::none));
 
     const int32_t* lengthPoint = imageLengthMessage.data<int32_t>();
     const void* imagePoint = imageMessage.data();
@@ -70,10 +70,11 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
 
     returnData.imageBufferLength = imageBufferLength;
     returnData.centerOfBrightness = std::nullopt;
-
-    if (cobXMsgSize.has_value() && cobYMsgSize.has_value()) {
-        returnData.centerOfBrightness =
-            Eigen::Vector2d(*centerOfBrightnessX.data<double>(), *centerOfBrightnessY.data<double>());
+    auto* diagnostics = new imageDiagnostics::DiagnosticData();
+    if (diagnostics->ParseFromArray(diagnosticsMessage.data(), diagnosticsMessage.size())) {
+        returnData.centerOfBrightness = Eigen::Vector2d(diagnostics->cob_x(), diagnostics->cob_y());
+        returnData.coverage = diagnostics->coverage();
+        returnData.brightPixels = diagnostics->totalbrightpixels();
     }
 
     return returnData;
