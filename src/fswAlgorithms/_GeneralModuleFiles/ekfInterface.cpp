@@ -9,7 +9,13 @@ EkfInterface::EkfInterface(const FilterType type) { this->filterType = type; }
  @return void
  */
 void EkfInterface::reset() {
-    KalmanFilter::reset();
+    assert(this->stateInitial.size() == this->covarInitial.rows() &&
+           this->stateInitial.size() == this->covarInitial.cols());
+
+    this->state = this->stateInitial.scale(this->unitConversion);
+    this->covar = this->unitConversion * this->unitConversion * this->covarInitial;
+    this->covar.resize(this->state.size(), this->state.size());
+
     this->stateError = Eigen::VectorXd::Zero(this->state.size());
     this->stateLogged = this->state;
     this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());

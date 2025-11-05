@@ -42,6 +42,16 @@ class EkfInterface : public KalmanFilter {
     FilterStateVector stateLogged;   //!< [-] State variable for logging
     Eigen::VectorXd stateError;      //!< [-] Current mean state error
 
+    DynamicsModel dynamics;
+    Eigen::MatrixXd processNoise;   //!< [-] process noise matrix
+
+    FilterStateVector state;         //!< [-] State estimate for time TimeTag
+    Eigen::MatrixXd covar;           //!< [-] covariance
+
+    FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
+    Eigen::MatrixXd covarInitial;    //!< [-] covariance at previous time
+    double unitConversion = 1;       //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
+
    private:
     Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd& covar,
                                       const Eigen::MatrixXd& measurementMatrix,

@@ -23,36 +23,10 @@ public:
     KalmanFilter() = default;
     virtual ~KalmanFilter() = default;
 
-public:
-    // Inheritors implement these to configure the appropriate behaviors of this
-    // generic Kalman filter to a specific setting.
-    virtual void reset();
+    virtual void reset() = 0;
     virtual void timeUpdate(double dt) = 0;
     virtual Eigen::MatrixXd measurementUpdate(const MeasurementModel& measurement) = 0;
     virtual Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) = 0;
-
-public:
-    // These fields represent configuration-time properties of a Kalman filter.
-    // They are only used in ::reset (both in this class and derived classes).
-    FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
-    Eigen::MatrixXd covarInitial;  //!< [-] covariance at previous time
-    double unitConversion = 1;    //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
-
-public:
-    // These fields represent configuration-time properties of a Kalman filter.
-    // They are only used by implementors of this class (and potentially clients thereof).
-    DynamicsModel dynamics;
-    Eigen::MatrixXd processNoise;  //!< [-] process noise matrix
-
-public:
-    // These fields are operated upon *only* by the abstract methods given
-    // by any particular implementor of KalmanFilter.
-    //
-    // These fields represent the internal state of a generic Kalman filter.
-    // They are accessed by both the implementors of this class
-    // and by the module that drives the filter.
-    FilterStateVector state;       //!< [-] State estimate for time TimeTag
-    Eigen::MatrixXd covar;         //!< [-] covariance
 };
 
 namespace xmera {
