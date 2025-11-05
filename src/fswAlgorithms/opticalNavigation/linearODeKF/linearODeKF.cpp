@@ -13,7 +13,7 @@ void LinearODeKF::updateState(uint64_t currentSimNanos) {
     this->readFilterMeasurements();
     xmera::updateKalmanFilter(
         this->ekf,
-        this->measurements,
+        std::span{&this->measurement, 1},
         (double)this->previousSimNanos * NANO2SEC,
         (double)currentSimNanos * NANO2SEC
     );
@@ -98,17 +98,15 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray(1 / this->ekf.unitConversion / this->ekf.unitConversion * this->ekf.covar, opNavFilterMsgBuffer.covar);
     opNavFilterMsgBuffer.numberOfStates = this->ekf.state.size();
 
-    auto optionalMeasurement = this->measurements[0];
-    if (optionalMeasurement.has_value()) {
-        auto measurement = MeasurementModel();
-        measurement = optionalMeasurement.value();
+    if (this->measurement.has_value()) {
+        auto measurement = std::exchange(this->measurement, std::nullopt).value();
+
         residualsBuffer.valid = true;
         residualsBuffer.numberOfObservations = 1;
         residualsBuffer.sizeOfObservations = measurement.size();
         eigenMatrixXToCArray(measurement.getObservation(), residualsBuffer.observation);
         eigenMatrixXToCArray(measurement.getPostFitResiduals(), residualsBuffer.postFits);
         eigenMatrixXToCArray(measurement.getPreFitResiduals(), residualsBuffer.preFits);
-        this->measurements[0].reset();
     }
     this->opNavResidualMsg.write(&residualsBuffer, this->moduleID, currentSimNanos);
     this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
@@ -135,7 +133,7 @@ void LinearODeKF::readFilterMeasurements() {
                                                                     (int)headingMeasurement.size()));
         headingMeasurement.setMeasurementModel(MeasurementModel::normalizedPositionStates);
         headingMeasurement.setMeasurementMatrix(LinearODeKF::measurementMatrix);
-        this->measurements[0] = headingMeasurement;
+        this->measurement = headingMeasurement;
     }
 }
 

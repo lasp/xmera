@@ -55,7 +55,8 @@ class SunlineSRuKF : public SysModel{
     static FilterStateVector stateDerivative(double t, const FilterStateVector& state);
 
     SRukfInterface srukf{};
-    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All
+    //! measure up to one star tracker and one gyro
+    std::array<std::optional<MeasurementModel>, 1 + 1> measurements = {};
     int filterMeasurement = 0;    //!< [-] Number of measurements of different types being read
     int numActiveCss = 0;         //!< [-] Number of currently active CSS sensors
     double sensorUseThresh = 0;   //!< Threshold below which we discount sensors

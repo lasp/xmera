@@ -84,8 +84,7 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray(this->srukf.covar, filterMsgBuffer.covar);
     filterMsgBuffer.numberOfStates = this->srukf.state.size();
 
-    int i = 0;
-    for (auto optionalMeasurement : this->measurements) {
+    for (auto& optionalMeasurement : this->measurements) {
         if (optionalMeasurement.has_value() && optionalMeasurement->getMeasurementName() == "gyro") {
             auto measurement = MeasurementModel();
             measurement = optionalMeasurement.value();
@@ -105,8 +104,7 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
             eigenMatrixXToCArray(measurement.getPostFitResiduals(), filterCssResMsgBuffer.postFits);
             eigenMatrixXToCArray(measurement.getPreFitResiduals(), filterCssResMsgBuffer.preFits);
         }
-        this->measurements[i].reset();
-        i += 1;
+        optionalMeasurement.reset();
     }
 
     this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, currentSimNanos);

@@ -70,7 +70,8 @@ class InertialAttitudeUkf : public SysModel {
     RWArrayConfigMsgPayload rwArrayConfigPayload;
 
     SRukfInterface srukf{};
-    std::array<std::optional<MeasurementModel>, MAX_MEASUREMENT_NUMBER> measurements;
+    //! measure up to MAX_ST_VEH_COUNT star trackers and one gyro
+    std::array<std::optional<MeasurementModel>, MAX_ST_VEH_COUNT + 1> measurements = {};
     AttitudeFilterMethod measurementAcceptanceMethod;
     bool firstFilterPass = true;
     bool validAttitude = false;
@@ -85,7 +86,7 @@ class InertialAttitudeUkf : public SysModel {
     Eigen::Matrix3d rateNoise;
     std::array<AttitudeMessage, MAX_ST_VEH_COUNT> attitudeMessages;
     int numberOfStarTackers = 0;
-    int measurementIndex = 0;
+    size_t measurementIndex = 0;
     double mrpSwitchThreshold = 1;  //!< [-] Threshold for switching MRP to/from the shadow set
 
     uint64_t previousSimNanos = 0;
