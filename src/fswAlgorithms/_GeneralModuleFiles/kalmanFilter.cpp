@@ -23,7 +23,7 @@ static void orderMeasurementsChronologically(xmera::MeasurementVector* const mea
  */
 extern void xmera::updateKalmanFilter(
     KalmanFilter& filterState,
-    MeasurementVector measurements,
+    MeasurementVector& measurements,
     uint64_t previousFilterTimeTag,
     uint64_t nextFilterTimeTag
 ) {
@@ -53,8 +53,6 @@ extern void xmera::updateKalmanFilter(
 
         measurement.setPostFitResiduals(
             measurement.subMeasurements(measurement.getObservation(), computedMeasurement));
-
-        measurements[index] = measurement;
     }
 
     /*! - If current clock time is further ahead than the last measurement time, then
