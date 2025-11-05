@@ -8,6 +8,7 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
+#include <fswAlgorithms/_GeneralModuleFiles/dynamicModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h>
 #include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>
 #include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
