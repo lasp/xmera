@@ -29,7 +29,7 @@ void SunlineSRuKF::updateState(const uint64_t currentSimNanos) {
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void SunlineSRuKF::customReset() {
-    this->srukf.setFilterDynamics(SunlineSRuKF::stateDerivative);
+    this->srukf.dynamics.setDynamics(SunlineSRuKF::stateDerivative);
     /*! - Check if the required messages have been connected */
     assert(this->cssDataInMsg.isLinked());
     assert(this->cssConfigInMsg.isLinked());

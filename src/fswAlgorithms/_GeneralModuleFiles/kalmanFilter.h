@@ -32,40 +32,10 @@ public:
     virtual Eigen::VectorXd computeResiduals(const MeasurementModel& measurement) = 0;
 
 public:
-    // Initialization-time methods
-    // Invoked to configure a generic kalman filter for use in a particular setting
-    // (e.g., by a particular xmera module)
-    void setInitialPosition(const Eigen::VectorXd& initialPositionInput);
-    std::optional<Eigen::VectorXd> getInitialPosition() const;
-
-    void setInitialVelocity(const Eigen::VectorXd& initialVelocityInput);
-    std::optional<Eigen::VectorXd> getInitialVelocity() const;
-
-    void setInitialAcceleration(const Eigen::VectorXd& initialAccelerationInput);
-    std::optional<Eigen::VectorXd> getInitialAcceleration() const;
-
-    void setInitialBias(const Eigen::VectorXd& initialBiasInput);
-    std::optional<Eigen::VectorXd> getInitialBias() const;
-
-    void setInitialConsiderParameters(const Eigen::VectorXd& initialConsiderInput);
-    std::optional<Eigen::VectorXd> getInitialConsiderParameters() const;
-
-    void setInitialCovariance(const Eigen::MatrixXd& initialCovariance);
-    Eigen::MatrixXd getInitialCovariance() const;
-
-    void setProcessNoise(const Eigen::MatrixXd& processNoise);
-    Eigen::MatrixXd getProcessNoise() const;
-
-    void setUnitConversionFromSItoState(double conversion);
-    double getUnitConversionFromSItoState() const;
-
-    void setFilterDynamics(
-        const std::function<const FilterStateVector(double, const FilterStateVector&)>& dynamicsPropagator);
-
-public:
     // These fields represent configuration-time properties of a Kalman filter.
     // They are only used in ::reset (both in this class and derived classes).
     FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
+    Eigen::MatrixXd covarInitial;  //!< [-] covariance at previous time
     double unitConversion = 1;    //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
 
 public:
@@ -73,7 +43,6 @@ public:
     // They are only used by implementors of this class (and potentially clients thereof).
     DynamicsModel dynamics;
     Eigen::MatrixXd processNoise;  //!< [-] process noise matrix
-    Eigen::MatrixXd covarInitial;  //!< [-] covariance at previous time
 
 public:
     // These fields are operated upon *only* by the abstract methods given
