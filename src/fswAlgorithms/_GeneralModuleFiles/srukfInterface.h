@@ -36,7 +36,16 @@ class SRukfInterface : public KalmanFilter {
     void setMeasurementNoiseScale(double measurementNoiseScale);
     double getMeasurementNoiseScale() const;
 
-    FilterStateVector xBar{};  //!< [-] Current mean state estimate
+    DynamicsModel dynamics;
+    Eigen::MatrixXd processNoise;  //!< [-] process noise matrix
+    FilterStateVector xBar{};      //!< [-] Current mean state estimate
+
+    FilterStateVector state;       //!< [-] State estimate for time TimeTag
+    Eigen::MatrixXd covar;         //!< [-] covariance
+
+    FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
+    Eigen::MatrixXd covarInitial;    //!< [-] covariance at previous time
+    double unitConversion = 1;       //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
 
    private:
     Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd& input) const;
