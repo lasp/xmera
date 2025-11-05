@@ -15,7 +15,7 @@ void InertialAttitudeUkf::updateState(uint64_t currentSimNanos) {
     this->readFilterMeasurements();
     xmera::updateKalmanFilter(
         this->srukf,
-        this->measurements,
+        std::span{this->measurements.data(), this->measurementIndex},
         (double)this->previousSimNanos * NANO2SEC,
         (double)currentSimNanos * NANO2SEC
     );
@@ -111,26 +111,25 @@ void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray(this->srukf.xBar.returnValues(), filterPayload.stateError);
     eigenMatrixXToCArray(this->srukf.covar, filterPayload.covar);
 
-    for (size_t index = 0; index < MAX_MEASUREMENT_NUMBER; index++) {
-        if (this->measurements[index].has_value()) {
-            auto measurement = this->measurements[index].value();
-            if (measurement.getMeasurementName() == "attitude") {
-                attitudePayload.valid = true;
-                attitudePayload.numberOfObservations = 1;
-                attitudePayload.sizeOfObservations = measurement.size();
-                eigenMatrixXToCArray(measurement.getObservation(), attitudePayload.observation);
-                eigenMatrixXToCArray(measurement.getPostFitResiduals(), attitudePayload.postFits);
-                eigenMatrixXToCArray(measurement.getPreFitResiduals(), attitudePayload.preFits);
-            }
-            if (measurement.getMeasurementName() == "rate") {
-                ratePayload.valid = true;
-                ratePayload.numberOfObservations = 1;
-                ratePayload.sizeOfObservations = measurement.size();
-                eigenMatrixXToCArray(measurement.getObservation(), ratePayload.observation);
-                eigenMatrixXToCArray(measurement.getPostFitResiduals(), ratePayload.postFits);
-                eigenMatrixXToCArray(measurement.getPreFitResiduals(), ratePayload.preFits);
-            }
-            this->measurements[index].reset();
+    for (auto& measurementElt : this->measurements) {
+        if (!measurementElt.has_value()) continue;
+        auto measurement = std::exchange(measurementElt, std::nullopt).value();
+
+        if (measurement.getMeasurementName() == "attitude") {
+            attitudePayload.valid = true;
+            attitudePayload.numberOfObservations = 1;
+            attitudePayload.sizeOfObservations = measurement.size();
+            eigenMatrixXToCArray(measurement.getObservation(), attitudePayload.observation);
+            eigenMatrixXToCArray(measurement.getPostFitResiduals(), attitudePayload.postFits);
+            eigenMatrixXToCArray(measurement.getPreFitResiduals(), attitudePayload.preFits);
+        }
+        if (measurement.getMeasurementName() == "rate") {
+            ratePayload.valid = true;
+            ratePayload.numberOfObservations = 1;
+            ratePayload.sizeOfObservations = measurement.size();
+            eigenMatrixXToCArray(measurement.getObservation(), ratePayload.observation);
+            eigenMatrixXToCArray(measurement.getPostFitResiduals(), ratePayload.postFits);
+            eigenMatrixXToCArray(measurement.getPreFitResiduals(), ratePayload.preFits);
         }
     }
     this->attitudeResidualMsg.write(&attitudePayload, this->moduleID, currentSimNanos);

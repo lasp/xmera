@@ -13,7 +13,7 @@ void FlybyODuKF::updateState(uint64_t currentSimNanos) {
     this->readFilterMeasurements();
     xmera::updateKalmanFilter(
         this->srukf,
-        this->measurements,
+        std::span{&this->measurement, 1},
         (double)this->previousSimNanos * NANO2SEC,
         (double)currentSimNanos * NANO2SEC
     );
@@ -74,17 +74,15 @@ void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray(1 / this->srukf.unitConversion / this->srukf.unitConversion * this->srukf.covar, opNavFilterMsgBuffer.covar);
     opNavFilterMsgBuffer.numberOfStates = this->srukf.state.size();
 
-    auto optionalMeasurement = this->measurements[0];
-    if (optionalMeasurement.has_value()) {
-        auto measurement = MeasurementModel();
-        measurement = optionalMeasurement.value();
+    if (this->measurement.has_value()) {
+        auto measurement = std::exchange(this->measurement, std::nullopt).value();
+
         residualsBuffer.valid = true;
         residualsBuffer.numberOfObservations = 1;
         residualsBuffer.sizeOfObservations = measurement.getObservation().size();
         eigenMatrixXToCArray(measurement.getObservation(), residualsBuffer.observation);
         eigenMatrixXToCArray(measurement.getPostFitResiduals(), residualsBuffer.postFits);
         eigenMatrixXToCArray(measurement.getPreFitResiduals(), residualsBuffer.preFits);
-        this->measurements[0].reset();
     }
     this->opNavResidualMsg.write(&residualsBuffer, this->moduleID, currentSimNanos);
     this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
@@ -111,7 +109,7 @@ void FlybyODuKF::readFilterMeasurements() {
                                                                     (int)headingMeasurement.size(),
                                                                     (int)headingMeasurement.size()));
         headingMeasurement.setMeasurementModel(MeasurementModel::normalizedPositionStates);
-        this->measurements[0] = headingMeasurement;
+        this->measurement = headingMeasurement;
     }
 }
 
