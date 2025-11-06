@@ -105,6 +105,49 @@ void ThrFiringRemainder::updateState(uint64_t callTime) {
 
     /*! - write the moduel output message */
     this->onTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
+}
 
-    return;
+/*! Setter method for thrMinFireTime.
+ @return void
+ @param thrMinFireTime
+*/
+void ThrFiringRemainder::setThrMinFireTime(const double thrMinFireTime) {
+    this->thrMinFireTime = thrMinFireTime;
+}
+
+/*! Getter method for thrMinFireTime.
+ @return const double
+*/
+double ThrFiringRemainder::getThrMinFireTime() const {
+	return this->thrMinFireTime;
+}
+
+/*! Setter method for baseThrustState.
+ @return void
+ @param baseThrustState
+*/
+void ThrFiringRemainder::setBaseThrustState(const int baseThrustState) {
+    this->baseThrustState = baseThrustState;
+}
+
+/*! Getter method for baseThrustState.
+ @return const int
+*/
+int ThrFiringRemainder::getBaseThrustState() const {
+	return this->baseThrustState;
+}
+
+/*! Setter method for defaultControlPeriod.
+ @return void
+ @param defaultControlPeriod
+*/
+void ThrFiringRemainder::setDefaultControlPeriod(const double defaultControlPeriod) {
+    this->defaultControlPeriod = defaultControlPeriod;
+}
+
+/*! Getter method for defaultControlPeriod.
+ @return const double
+*/
+double ThrFiringRemainder::getDefaultControlPeriod() const {
+	return this->defaultControlPeriod;
 }
