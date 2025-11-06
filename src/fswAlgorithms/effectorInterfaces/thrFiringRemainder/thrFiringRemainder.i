@@ -8,11 +8,11 @@
 
 %include <attribute.i>
 %attribute(ThrFiringRemainder, double, thrMinFireTime, getThrMinFireTime, setThrMinFireTime)
-%attribute(ThrFiringRemainder, double, baseThrustState, getBaseThrustState, setBaseThrustState)
+%attribute(ThrFiringRemainder, ThrustPulsingRegime, thrustPulsingRegime, getThrustPulsingRegime, setThrustPulsingRegime)
 %attribute(ThrFiringRemainder, double, defaultControlPeriod, getDefaultControlPeriod, setDefaultControlPeriod)
 
 %include "thrFiringRemainder.h"
-%include "thrFiringRemainderAlgorithm.h"
+%include "thrFiringRemainderTypes.h"
 
 %include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>

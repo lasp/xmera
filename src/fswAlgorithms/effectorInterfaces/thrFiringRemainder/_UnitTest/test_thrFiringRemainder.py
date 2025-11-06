@@ -5,8 +5,7 @@ import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from xmera.utilities import SimulationBaseClass
-from xmera.utilities import unitTestSupport                  # general support file with common unit test functions
-from xmera.fswAlgorithms import thrFiringRemainder            # import the module that is to be tested
+from xmera.fswAlgorithms import thrFiringRemainder
 from xmera.utilities import macros
 from xmera.utilities import fswSetupThrusters
 from xmera.architecture import messaging
@@ -43,9 +42,9 @@ def test_thrFiringRemainder(show_plots, reset_check, dv_on):
     module.thrMinFireTime = 0.2
     module.defaultControlPeriod = default_control_period
     if dv_on == 1:
-        module.baseThrustState = 1
+        module.thrustPulsingRegime = thrFiringRemainder.ThrustPulsingRegime_OFF_PULSING
     else:
-        module.baseThrustState = 0
+        module.thrustPulsingRegime = thrFiringRemainder.ThrustPulsingRegime_ON_PULSING
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()

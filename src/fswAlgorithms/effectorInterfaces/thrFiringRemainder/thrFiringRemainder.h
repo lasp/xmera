@@ -23,8 +23,8 @@ class ThrFiringRemainder : public SysModel {
     void setThrMinFireTime(double thrMinFireTime);  //!< Setter for thrMinFireTime variable
     double getThrMinFireTime() const;               //!< Getter for thrMinFireTime variable
 
-    void setBaseThrustState(int baseThrustState);  //!< Setter for baseThrustState variable
-    int getBaseThrustState() const;                //!< Getter for baseThrustState variable
+    void setThrustPulsingRegime(ThrustPulsingRegime thrustPulsingRegime);  //!< Setter for thrustPulsingRegime variable
+    ThrustPulsingRegime getThrustPulsingRegime() const;                    //!< Getter for thrustPulsingRegime variable
 
     void setDefaultControlPeriod(double defaultControlPeriod);  //!< Setter for defaultControlPeriod variable
     double getDefaultControlPeriod() const;                     //!< Getter for defaultControlPeriod variable

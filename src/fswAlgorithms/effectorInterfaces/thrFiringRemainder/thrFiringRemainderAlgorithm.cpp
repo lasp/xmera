@@ -18,6 +18,8 @@
  */
 
 #include "thrFiringRemainderAlgorithm.h"
+#include "thrFiringRemainderTypes.h"
+
 #include "architecture/utilities/macroDefinitions.h"
 
 #include <array>
@@ -26,7 +28,6 @@
 /*! This method performs a complete reset of the algorithm.  Local algorithm variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param callTime The clock time at which the function was called (nanoseconds)
  @param thrConfigInMsgPayload The thruster configuration data
  */
 void ThrFiringRemainderAlgorithm::reset(const THRArrayConfigMsgPayload& thrConfigInMsgPayload) {
@@ -52,7 +53,8 @@ void ThrFiringRemainderAlgorithm::reset(const THRArrayConfigMsgPayload& thrConfi
  @param thrForceInMsgPayload The commanded thruster forces
  */
 THRArrayOnTimeCmdMsgPayload ThrFiringRemainderAlgorithm::update(const uint64_t callTime,
-                                                                THRArrayCmdForceMsgPayload& thrForceInMsgPayload) {
+                                                                THRArrayCmdForceMsgPayload thrForceInMsgPayload)
+{
     double controlPeriod{};                        /* [s] control period */
     std::array<double, MAX_EFF_CNT> onTime{};      /* [s] array of commanded on time for thrusters */
     THRArrayOnTimeCmdMsgPayload thrOnTimeOut = {}; /* [-] copy of the thruster on-time output message */
@@ -72,7 +74,7 @@ THRArrayOnTimeCmdMsgPayload ThrFiringRemainderAlgorithm::update(const uint64_t c
         /*! - Correct for off-pulsing if necessary.  Here the requested force is negative, and the maximum thrust
          needs to be added.  If not control force is requested in off-pulsing mode, then the thruster force should
          be set to the maximum thrust value */
-        if (this->baseThrustState == 1) {
+        if (this->thrustPulsingRegime == ThrustPulsingRegime::OFF_PULSING) {
             thrForceInMsgPayload.thrForce[i] += this->maxThrust[i];
         }
 
@@ -121,18 +123,18 @@ void ThrFiringRemainderAlgorithm::setThrMinFireTime(const double thrMinFireTime)
 */
 double ThrFiringRemainderAlgorithm::getThrMinFireTime() const { return this->thrMinFireTime; }
 
-/*! Setter method for baseThrustState.
+/*! Setter method for thrustPulsingRegime.
  @return void
- @param baseThrustState
+ @param thrustPulsingRegime
 */
-void ThrFiringRemainderAlgorithm::setBaseThrustState(const int baseThrustState) {
-    this->baseThrustState = baseThrustState;
+void ThrFiringRemainderAlgorithm::setThrustPulsingRegime(const ThrustPulsingRegime thrustPulsingRegime) {
+    this->thrustPulsingRegime = thrustPulsingRegime;
 }
 
-/*! Getter method for baseThrustState.
- @return const int
+/*! Getter method for thrustPulsingRegime.
+ @return ThrustPulsingRegime
 */
-int ThrFiringRemainderAlgorithm::getBaseThrustState() const { return this->baseThrustState; }
+ThrustPulsingRegime ThrFiringRemainderAlgorithm::getThrustPulsingRegime() const { return this->thrustPulsingRegime; }
 
 /*! Setter method for defaultControlPeriod.
  @return void

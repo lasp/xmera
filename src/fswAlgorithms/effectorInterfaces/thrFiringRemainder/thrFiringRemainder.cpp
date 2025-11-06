@@ -16,7 +16,7 @@ void ThrFiringRemainder::reset(uint64_t callTime)
     }
 
     /*! - read in the support messages */
-    THRArrayConfigMsgPayload localThrusterData = this->thrConfInMsg();
+    const THRArrayConfigMsgPayload localThrusterData = this->thrConfInMsg();
     this->algorithm.reset(localThrusterData);
 }
 
@@ -46,19 +46,19 @@ double ThrFiringRemainder::getThrMinFireTime() const {
 	return this->algorithm.getThrMinFireTime();
 }
 
-/*! Setter method for baseThrustState.
+/*! Setter method for thrustPulsingRegime.
  @return void
- @param baseThrustState
+ @param thrustPulsingRegime
 */
-void ThrFiringRemainder::setBaseThrustState(const int baseThrustState) {
-    this->algorithm.setBaseThrustState(baseThrustState);
+void ThrFiringRemainder::setThrustPulsingRegime(const ThrustPulsingRegime thrustPulsingRegime) {
+    this->algorithm.setThrustPulsingRegime(thrustPulsingRegime);
 }
 
-/*! Getter method for baseThrustState.
- @return const int
+/*! Getter method for thrustPulsingRegime.
+ @return ThrustPulsingRegime
 */
-int ThrFiringRemainder::getBaseThrustState() const {
-	return this->algorithm.getBaseThrustState();
+ThrustPulsingRegime ThrFiringRemainder::getThrustPulsingRegime() const {
+    return this->algorithm.getThrustPulsingRegime();
 }
 
 /*! Setter method for defaultControlPeriod.
