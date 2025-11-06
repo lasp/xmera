@@ -1,109 +1,72 @@
+# ISC License
 #
-#  ISC License
+#  Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
-#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
 #
-#  Permission to use, copy, modify, and/or distribute this software for any
-#  purpose with or without fee is hereby granted, provided that the above
-#  copyright notice and this permission notice appear in all copies.
-#
-#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
 import math
+import numpy as np
 
-import pytest
 from xmera.architecture import messaging
 from xmera.fswAlgorithms import attRefCorrection
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
-from xmera.utilities import unitTestSupport
 
+def test_att_ref_correction():
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
 
-@pytest.mark.parametrize("accuracy", [1e-12])
-
-def test_attRefCorrection(show_plots, accuracy):
-    r"""
-    **Validation Test Description**
-
-    Checks the output of the module that the correct orientation adjustment is applied
-
-    **Test Parameters**
-
-    Args:
-        accuracy (float): absolute accuracy value used in the validation tests
-
-    **Description of Variables Being Tested**
-
-    The ``sigma_RN`` variable of the output message is tested
-    """
-    [testResults, testMessage] = attRefCorrectionTestFunction(show_plots, accuracy)
-    assert testResults < 1, testMessage
-
-
-def attRefCorrectionTestFunction(show_plots, accuracy):
-    """Test method"""
-    testFailCount = 0
-    testMessages = []
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
-
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    testProcessRate = macros.sec2nano(0.5)
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process_rate = macros.sec2nano(0.5)
+    test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # setup module to be tested
     module = attRefCorrection.AttRefCorrection()
     module.modelTag = "attRefCorrectionTag"
-    unitTestSim.AddModelToTask(unitTaskName, module)
-    module.sigma_BcB = [math.tan(math.pi/4), 0.0, 0.0]
+    unit_test_sim.AddModelToTask(unit_task_name, module)
+    sigma_RR0 = [[math.tan(math.pi/16)], [0.0], [0.0]]
+    module.sigma_RR0 = sigma_RR0
 
     # Configure blank module input messages
-    attRefInMsgData = messaging.AttRefMsgPayload()
-    attRefInMsgData.sigma_RN = [math.tan(math.pi/8), 0.0, 0.0]
-    attRefInMsg = messaging.AttRefMsg().write(attRefInMsgData)
+    att_ref_in_msg_data = messaging.AttRefMsgPayload()
+    att_ref_in_msg_data.sigma_RN = [math.tan(math.pi/16), 0.0, 0.0]
+    att_ref_in_msg = messaging.AttRefMsg().write(att_ref_in_msg_data)
 
     # subscribe input messages to module
-    module.attRefInMsg.subscribeTo(attRefInMsg)
+    module.attRefInMsg.subscribeTo(att_ref_in_msg)
 
     # setup output message recorder objects
-    attRefOutMsgRec = module.attRefOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, attRefOutMsgRec)
+    att_ref_out_msg_rec = module.attRefOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, att_ref_out_msg_rec)
 
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.sec2nano(1.0))
+    unit_test_sim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
-    trueVector = [
-        [-math.tan(math.pi / 8), 0.0, 0.0],
-        [-math.tan(math.pi / 8), 0.0, 0.0],
-        [-math.tan(math.pi / 8), 0.0, 0.0]
+    true_vector = [
+        [math.tan(math.pi / 8), 0.0, 0.0],
+        [math.tan(math.pi / 8), 0.0, 0.0],
+        [math.tan(math.pi / 8), 0.0, 0.0]
     ]
+
     # compare the module results to the truth values
-    for i in range(0, len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], trueVector[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.modelTag + " Module failed sigma_RN unit test at t=" +
-                                str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
-
-    if testFailCount == 0:
-        print("PASSED: " + module.modelTag)
-    else:
-        print(testMessages)
-
-    return [testFailCount, "".join(testMessages)]
+    accuracy = 1e-12
+    np.testing.assert_allclose(sigma_RR0, module.sigma_RR0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(att_ref_out_msg_rec.sigma_RN, true_vector, atol=accuracy, rtol=0, verbose=True)
 
 
 if __name__ == "__main__":
-    test_attRefCorrection(False, 1e-12)
+    test_att_ref_correction()

@@ -314,7 +314,7 @@ class BSKFswModels:
 
     def SetAttRefCorrection(self):
         """Define the attitude reference correction module"""
-        self.attRefCorrection.sigma_BcB = [0., 0., 0.]
+        self.attRefCorrection.sigma_RR0 = [0., 0., 0.]
         self.attRefCorrection.attRefInMsg.subscribeTo(self.attRefMsg)
         self.attRefCorrection.attRefOutMsg = self.attRefMsg
 
