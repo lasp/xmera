@@ -12,6 +12,7 @@
 %attribute(ThrFiringRemainder, double, defaultControlPeriod, getDefaultControlPeriod, setDefaultControlPeriod)
 
 %include "thrFiringRemainder.h"
+%include "thrFiringRemainderAlgorithm.h"
 
 %include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>

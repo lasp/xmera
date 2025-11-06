@@ -7,4 +7,5 @@ endif()
 xmera_add_swig_module("${module}")
 target_sources("${module}" PRIVATE
   thrFiringRemainder.cpp
+  thrFiringRemainderAlgorithm.cpp
 )
