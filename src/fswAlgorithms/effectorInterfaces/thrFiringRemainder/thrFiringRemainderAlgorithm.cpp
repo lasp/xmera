@@ -21,6 +21,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 #include <array>
+#include <stdexcept>
 
 /*! This method performs a complete reset of the algorithm.  Local algorithm variables that retain
  time varying states between function calls are reset to their default values.
@@ -109,6 +110,9 @@ THRArrayOnTimeCmdMsgPayload ThrFiringRemainderAlgorithm::update(const uint64_t c
  @param thrMinFireTime
 */
 void ThrFiringRemainderAlgorithm::setThrMinFireTime(const double thrMinFireTime) {
+    if (thrMinFireTime < 0.0) {
+        throw std::invalid_argument("ThrFiringRemainderAlgorithm::thrMinFireTime cannot be < 0.0");
+    }
     this->thrMinFireTime = thrMinFireTime;
 }
 
