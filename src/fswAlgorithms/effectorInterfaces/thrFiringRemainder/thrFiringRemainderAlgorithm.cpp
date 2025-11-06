@@ -139,6 +139,9 @@ int ThrFiringRemainderAlgorithm::getBaseThrustState() const { return this->baseT
  @param defaultControlPeriod
 */
 void ThrFiringRemainderAlgorithm::setDefaultControlPeriod(const double defaultControlPeriod) {
+    if (defaultControlPeriod <= 0.0) {
+        throw std::invalid_argument("ThrFiringRemainderAlgorithm::defaultControlPeriod cannot be <= 0.0");
+    }
     this->defaultControlPeriod = defaultControlPeriod;
 }
 
