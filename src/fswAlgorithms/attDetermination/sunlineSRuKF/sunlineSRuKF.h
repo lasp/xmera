@@ -18,7 +18,60 @@
 #include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 
-class SunlineSRuKF : public SysModel{
+enum class SunlineSRuKFMeasurementType { Gyro, Css };
+
+struct SunlineSRuKFMeasurementModel final : public SRukfMeasurementModel {
+public:
+    Eigen::MatrixXd model(const FilterStateVector& state) const override {
+        switch (this->type) {
+        case SunlineSRuKFMeasurementType::Gyro:
+            return state.getVelocityStates();
+
+        case SunlineSRuKFMeasurementType::Css: {
+            Eigen::VectorXd observed = this->hMatrix * state.getPositionStates();
+            if (state.hasBias()) {
+                observed = observed * state.getBiasStates().value();
+            }
+            return observed;
+        }
+        }
+    }
+
+    Eigen::VectorXd subtract(
+        const Eigen::VectorXd& observed,
+        const Eigen::VectorXd& predicted
+    ) const override {
+        return observed - predicted;
+    }
+
+    Eigen::VectorXd getObservation() const override {
+        return this->observation;
+    }
+
+    Eigen::MatrixXd getNoise() const override {
+        return this->measNoise;
+    }
+
+    void setPreFitResiduals(Eigen::VectorXd const& preFitResiduals) override {
+        this->preFitResiduals = preFitResiduals;
+    }
+
+    void setPostFitResiduals(Eigen::VectorXd const& postFitResiduals) override {
+        this->postFitResiduals = postFitResiduals;
+    }
+
+public:
+    SunlineSRuKFMeasurementType type = SunlineSRuKFMeasurementType::Gyro;
+    Eigen::VectorXd observation = {};       //!< [-] Observation data vector
+    Eigen::MatrixXd measNoise = {};         //!< [-] Measurement noise
+    Eigen::MatrixXd hMatrix = {};
+
+public:
+    Eigen::VectorXd preFitResiduals = {};   //!< [-] Observation pre fit residuals
+    Eigen::VectorXd postFitResiduals = {};  //!< [-] Observation post fit residuals
+};
+
+class SunlineSRuKF : public SysModel {
    public:
     SunlineSRuKF() = default;
     ~SunlineSRuKF() override = default;
@@ -35,8 +88,10 @@ class SunlineSRuKF : public SysModel{
 
     void setCssMeasurementNoiseStd(double cssMeasurementNoiseStd);
     void setGyroMeasurementNoiseStd(double gyroMeasurementNoiseStd);
+    void setMeasurementNoiseScale(double measurementNoiseScale);
     double getCssMeasurementNoiseStd() const;
     double getGyroMeasurementNoiseStd() const;
+    double getMeasurementNoiseScale() const;
     void setSensorThreshold(double threshold);
     double getSensorThreshold() const;
 
@@ -56,12 +111,13 @@ class SunlineSRuKF : public SysModel{
 
     SRukfInterface srukf{};
     //! measure up to one star tracker and one gyro
-    std::array<std::optional<MeasurementModel>, 1 + 1> measurements = {};
+    xmera::measurement_queue<SunlineSRuKFMeasurementModel, 1 + 1> measurements = {};
     int filterMeasurement = 0;    //!< [-] Number of measurements of different types being read
     int numActiveCss = 0;         //!< [-] Number of currently active CSS sensors
     double sensorUseThresh = 0;   //!< Threshold below which we discount sensors
     double cssMeasNoiseStd = 0;   //!< [-] CSS measurement noise std
     double gyroMeasNoiseStd = 0;  //!< [rad/s] rate gyro measurement noise std
+    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     CSSConfigMsgPayload cssConfigInputBuffer;
 
     double biasLowerBound = 0.5;

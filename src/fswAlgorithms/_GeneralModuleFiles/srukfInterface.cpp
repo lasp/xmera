@@ -104,13 +104,15 @@ void SRukfInterface::timeUpdate(double dt) {
  @param Measurement
  @return void
  */
-void SRukfInterface::measurementUpdate(MeasurementModel& measurement) {
+void SRukfInterface::measurementUpdate(SRukfMeasurementModel& measurement) {
     measurement.setPreFitResiduals(this->computeResiduals(measurement));
 
-    this->cholMeasNoise.setZero(measurement.size(), measurement.size());
-    this->cholMeasNoise = this->choleskyDecomposition(measurement.getMeasurementNoise());
+    auto const& observation = measurement.getObservation();
+
+    this->cholMeasNoise.setZero(observation.size(), observation.size());
+    this->cholMeasNoise = this->choleskyDecomposition(measurement.getNoise());
     /*! - Compute the valid observations and the measurement model for all observations*/
-    Eigen::MatrixXd yMeas(measurement.size(), this->numberSigmaPoints);
+    Eigen::MatrixXd yMeas(observation.size(), this->numberSigmaPoints);
     for (size_t j = 0; j < this->numberSigmaPoints; ++j) {
         /*! Sigma points positions need to be normalized for the measurement model.*/
         yMeas.col(j) = measurement.model(this->sigmaPoints[j]);
@@ -119,7 +121,7 @@ void SRukfInterface::measurementUpdate(MeasurementModel& measurement) {
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
      time update section of the reference document*/
     Eigen::VectorXd yBar;
-    yBar.setZero(measurement.size());
+    yBar.setZero(observation.size());
     for (size_t i = 0; i < this->numberSigmaPoints; ++i) {
         yBar += this->wM(i) * yMeas.col(i);
     }
@@ -127,16 +129,16 @@ void SRukfInterface::measurementUpdate(MeasurementModel& measurement) {
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement
      update section of the code.  This is based on the difference between the yBar
      parameter and the calculated measurement models.  Equation 24. */
-    Eigen::MatrixXd A(measurement.size(), 2 * this->state.size() + measurement.size());
+    Eigen::MatrixXd A(observation.size(), 2 * this->state.size() + observation.size());
     for (size_t i = 1; i < this->numberSigmaPoints; ++i) {
         A.col(i - 1) = sqrt(this->wC(1)) * (yMeas.col(i) - yBar);
     }
-    A.block(0, this->numberSigmaPoints - 1, measurement.size(), measurement.size()) = this->cholMeasNoise;
+    A.block(0, this->numberSigmaPoints - 1, observation.size(), observation.size()) = this->cholMeasNoise;
 
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
      current Sy matrix*/
     Eigen::MatrixXd sy;
-    sy.setZero(measurement.size(), measurement.size());
+    sy.setZero(observation.size(), observation.size());
     sy = SRukfInterface::qrDecompositionJustR(A);
 
     /*! - Cholesky update block for vectors.*/
@@ -148,11 +150,11 @@ void SRukfInterface::measurementUpdate(MeasurementModel& measurement) {
     Eigen::VectorXd xError;
     xError.setZero(this->state.size());
     Eigen::MatrixXd kMat;
-    kMat.setZero(this->state.size(), measurement.size());
+    kMat.setZero(this->state.size(), observation.size());
     Eigen::MatrixXd STkMatT;
-    STkMatT.setZero(measurement.size(), this->state.size());
+    STkMatT.setZero(observation.size(), this->state.size());
     Eigen::MatrixXd pXY;
-    pXY.setZero(this->state.size(), measurement.size());
+    pXY.setZero(this->state.size(), observation.size());
 
     for (size_t i = 0; i < this->numberSigmaPoints; ++i) {
         xError = this->sigmaPoints[i].add(this->xBar.scale(-1)).returnValues();
@@ -170,11 +172,11 @@ void SRukfInterface::measurementUpdate(MeasurementModel& measurement) {
     /*! - Difference the yBar and the observations to get the observed error and
      multiply by the Kalman Gain to get the state update.  Add the state update
      to the state to get the updated state value (equation 27).*/
-    this->state = this->xBar.addVector(kMat * measurement.subMeasurements(measurement.getObservation(), yBar));
+    this->state = this->xBar.addVector(kMat * measurement.subtract(observation, yBar));
 
     /*! - Compute the updated matrix U from equation 28 */
     Eigen::MatrixXd Umat;
-    Umat.setZero(this->state.size(), measurement.size());
+    Umat.setZero(this->state.size(), observation.size());
     Umat = kMat * sy;
 
     /*! - For each column in the update matrix, perform a cholesky down-date on it to
@@ -186,8 +188,8 @@ void SRukfInterface::measurementUpdate(MeasurementModel& measurement) {
     /*! - Compute equivalent covariance based on updated sBar matrix*/
     this->covar = this->sBar * this->sBar.transpose();
 
-    measurement.setPostFitResiduals(measurement.subMeasurements(
-        measurement.getObservation(),
+    measurement.setPostFitResiduals(measurement.subtract(
+        observation,
         measurement.model(this->state)
     ));
 }
@@ -198,20 +200,22 @@ void SRukfInterface::measurementUpdate(MeasurementModel& measurement) {
 @param Measurement
 @return Eigen::VectorXd
  */
-Eigen::VectorXd SRukfInterface::computeResiduals(const MeasurementModel& measurement) {
+Eigen::VectorXd SRukfInterface::computeResiduals(const SRukfMeasurementModel& measurement) {
+    auto const& observation = measurement.getObservation();
+
     /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
-    Eigen::MatrixXd yMeas(measurement.size(), this->numberSigmaPoints);
+    Eigen::MatrixXd yMeas(observation.size(), this->numberSigmaPoints);
     for (size_t j = 0; j < this->numberSigmaPoints; ++j) {
         /*! Sigma points positions need to be normalized for the measurement model.*/
         yMeas.col(j) = measurement.model(this->sigmaPoints[j]);
     }
     /*! - Compute the value for the yBar parameter (equation 23)*/
     Eigen::VectorXd yBar;
-    yBar.setZero(measurement.size());
+    yBar.setZero(observation.size());
     for (size_t i = 0; i < this->numberSigmaPoints; ++i) {
         yBar += this->wM(i) * yMeas.col(i);
     }
-    return measurement.subMeasurements(measurement.getObservation(), yBar);
+    return measurement.subtract(observation, yBar);
 }
 
 /*! Perform a QR decomposition using HouseholderQR from Eigen, but only returns the transpose of the
@@ -351,16 +355,3 @@ void SRukfInterface::setBeta(const double betaInput) { this->beta = betaInput; }
     @return double beta
     */
 double SRukfInterface::getBeta() const { return this->beta; }
-
-/*! Set the filter measurement noise scale factor if desirable
-    @param double measurementNoiseScale
-    @return void
-    */
-void SRukfInterface::setMeasurementNoiseScale(const double measurementNoiseScale) {
-    this->measNoiseScaling = measurementNoiseScale;
-}
-
-/*! Get the filter measurement noise scale factor
-    @return double measurementNoiseScale
-    */
-double SRukfInterface::getMeasurementNoiseScale() const { return this->measNoiseScaling; }

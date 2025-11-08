@@ -8,4 +8,6 @@
 
 %include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.i>
 
+%template(KalmanFilter) KalmanFilter<SRukfMeasurementModel>;
+
 %include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>

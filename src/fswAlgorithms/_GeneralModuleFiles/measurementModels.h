@@ -50,16 +50,21 @@ class MeasurementModel {
     std::string name{};                //!< [-] Name of measurement  type
     double timeTag{};                  //!< [-] Observation time tag
     bool validity = false;             //!< [-] Observation validity
+   public:
     Eigen::VectorXd observation;       //!< [-] Observation data vector
     Eigen::MatrixXd noise;             //!< [-] Measurement Noise
+   private:
     Eigen::MatrixXd choleskyNoise;     //!< [-] Cholesky decomposition of measurement noise
     Eigen::VectorXd postFitResiduals;  //!< [-] Observation post fit residuals
     Eigen::VectorXd preFitResiduals;   //!< [-] Observation pre fit residuals
 
+   public:
     std::function<const Eigen::MatrixXd(const FilterStateVector&)>
         measurementModel;  //!< [-] observation measurement model
+   private:
     std::function<const Eigen::MatrixXd(const FilterStateVector&)>
         measurementPartials;  //!< [-] partial of measurement model wrt state
+   public:
     std::function<const Eigen::VectorXd(const Eigen::VectorXd&, const Eigen::VectorXd&)> measurementSubtraction =
         [](const Eigen::VectorXd& measurementObserved, const Eigen::VectorXd& measurementPredicted) {
             return measurementObserved - measurementPredicted;

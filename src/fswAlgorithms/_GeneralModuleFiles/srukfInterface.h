@@ -18,23 +18,42 @@
 #include <functional>
 #include <optional>
 
+struct SRukfMeasurementModel {
+public:
+    SRukfMeasurementModel() = default;
+    virtual ~SRukfMeasurementModel() = default;
+
+    //! [-] observation measurement model
+    virtual Eigen::MatrixXd model(const FilterStateVector& state) const = 0;
+
+    virtual Eigen::VectorXd subtract(
+        const Eigen::VectorXd& observed,
+        const Eigen::VectorXd& predicted
+    ) const = 0;
+
+    virtual Eigen::VectorXd getObservation() const = 0;
+
+    virtual Eigen::MatrixXd getNoise() const = 0;
+
+    virtual void setPreFitResiduals(Eigen::VectorXd const& preFitResiduals) = 0;
+
+    virtual void setPostFitResiduals(Eigen::VectorXd const& postFitResiduals) = 0;
+};
+
 /*! @brief Square Root unscented Kalman Filter base class */
-class SRukfInterface : public KalmanFilter {
+class SRukfInterface : public KalmanFilter<SRukfMeasurementModel> {
    public:
     SRukfInterface() = default;
     ~SRukfInterface() override = default;
 
     void reset() override;
     void timeUpdate(double dt) override;
-    void measurementUpdate(MeasurementModel& measurement) override;
+    void measurementUpdate(SRukfMeasurementModel& measurement) override;
 
     void setAlpha(double alpha);
     double getAlpha() const;
     void setBeta(double beta);
     double getBeta() const;
-
-    void setMeasurementNoiseScale(double measurementNoiseScale);
-    double getMeasurementNoiseScale() const;
 
     DynamicsModel dynamics;
     Eigen::MatrixXd processNoise;  //!< [-] process noise matrix
@@ -48,7 +67,7 @@ class SRukfInterface : public KalmanFilter {
     double unitConversion = 1;       //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
 
    private:
-    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement);
+    Eigen::VectorXd computeResiduals(const SRukfMeasurementModel& measurement);
     Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd& input) const;
     Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd& input,
                                        const Eigen::VectorXd& inputVector,
@@ -62,7 +81,6 @@ class SRukfInterface : public KalmanFilter {
     size_t numberSigmaPoints = 0;                                          //!< [-] number of sigma points
     Eigen::MatrixXd cholProcessNoise;                                      //!< [-] cholesky of Qnoise
     Eigen::MatrixXd cholMeasNoise;                                         //!< [-] cholesky of Measurement noise
-    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
 
     double beta = 0;
     double alpha = 0;

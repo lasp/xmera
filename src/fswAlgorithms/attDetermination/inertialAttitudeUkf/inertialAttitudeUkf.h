@@ -30,6 +30,75 @@ class AttitudeMessage {
 
 enum class AttitudeFilterMethod { AttitudeOnly, RateMeasurementsWhenNoStars, AllMeasurements };
 
+enum class InertialAttitudeUkfMeasurementType { Attitude, Rate };
+
+struct InertialAttitudeUkfMeasurementModel final : public SRukfMeasurementModel {
+public:
+    Eigen::MatrixXd model(const FilterStateVector& state) const override {
+        switch (this->type) {
+        case InertialAttitudeUkfMeasurementType::Attitude:
+            return state.getPositionStates();
+
+        case InertialAttitudeUkfMeasurementType::Rate: {
+            Eigen::VectorXd observation = state.getVelocityStates();
+            if (state.hasBias()) {
+                assert(observation.size() == state.getBiasStates().size());
+                observation += state.getBiasStates();
+            }
+            return observation;
+        }
+        }
+    }
+
+    Eigen::VectorXd subtract(
+        const Eigen::VectorXd& observed,
+        const Eigen::VectorXd& predicted
+    ) const override {
+        switch (this->type) {
+        case InertialAttitudeUkfMeasurementType::Attitude: {
+            Eigen::Vector3d yMeas = observed - predicted;
+            if (observed.norm() > 0.95 && predicted.norm() > 0.95) {
+                const Eigen::Vector3d predictedShadow = mrpShadow(Eigen::Vector3d{predicted});
+                Eigen::Vector3d yMeasShadow = observed - predictedShadow;
+                if (yMeasShadow.norm() < yMeas.norm()) {
+                    return yMeasShadow;
+                }
+            }
+            return yMeas;
+        } break;
+
+        case InertialAttitudeUkfMeasurementType::Rate:
+            return observed - predicted;
+        }
+    }
+
+    Eigen::VectorXd getObservation() const override {
+        return this->observation;
+    }
+
+    Eigen::MatrixXd getNoise() const override {
+        return this->measNoise;
+    }
+
+    void setPreFitResiduals(Eigen::VectorXd const& preFitResiduals) override {
+        this->preFitResiduals = preFitResiduals;
+    }
+
+    void setPostFitResiduals(Eigen::VectorXd const& postFitResiduals) override {
+        this->postFitResiduals = postFitResiduals;
+    }
+
+public:
+    InertialAttitudeUkfMeasurementType type = InertialAttitudeUkfMeasurementType::Attitude;
+
+    Eigen::VectorXd observation = {};       //!< [-] Observation data vector
+    Eigen::MatrixXd measNoise = {};         //!< [-] Measurement noise
+
+public:
+    Eigen::VectorXd preFitResiduals = {};   //!< [-] Observation pre fit residuals
+    Eigen::VectorXd postFitResiduals = {};  //!< [-] Observation post fit residuals
+};
+
 /*! @brief Inertial Attitude filter which reads Star Tracker measurements and gyro measurements */
 class InertialAttitudeUkf : public SysModel {
    public:
@@ -41,6 +110,8 @@ class InertialAttitudeUkf : public SysModel {
 
     void setRateNoise(const Eigen::Matrix3d& rateNoise);
     Eigen::Matrix3d getRateNoise() const;
+    void setMeasurementNoiseScale(double measurementNoiseScale);
+    double getMeasurementNoiseScale() const;
     void addAttitudeInput(const AttitudeMessage& attitudeMeasurement);
     Eigen::Matrix3d getAttitudeNoise(int attitudeMeasurementNumber) const;
 
@@ -70,8 +141,9 @@ class InertialAttitudeUkf : public SysModel {
     RWArrayConfigMsgPayload rwArrayConfigPayload;
 
     SRukfInterface srukf{};
+    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     //! measure up to MAX_ST_VEH_COUNT star trackers and one gyro
-    std::array<std::optional<MeasurementModel>, MAX_ST_VEH_COUNT + 1> measurements = {};
+    xmera::measurement_queue<InertialAttitudeUkfMeasurementModel, MAX_ST_VEH_COUNT + 1> measurements = {};
     AttitudeFilterMethod measurementAcceptanceMethod;
     bool firstFilterPass = true;
     bool validAttitude = false;
@@ -85,7 +157,7 @@ class InertialAttitudeUkf : public SysModel {
     Eigen::Vector3d filteredOmega_BN_B;
     Eigen::Matrix3d rateNoise;
     std::array<AttitudeMessage, MAX_ST_VEH_COUNT> attitudeMessages;
-    int numberOfStarTackers = 0;
+    size_t numberOfStarTackers = 0;
     size_t measurementIndex = 0;
     double mrpSwitchThreshold = 1;  //!< [-] Threshold for switching MRP to/from the shadow set
 
