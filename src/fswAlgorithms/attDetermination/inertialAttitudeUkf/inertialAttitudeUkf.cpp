@@ -13,9 +13,8 @@ void InertialAttitudeUkf::reset(uint64_t currentSimNanos) {
 void InertialAttitudeUkf::updateState(uint64_t currentSimNanos) {
     this->customInitializeUpdate();
     this->readFilterMeasurements();
-    xmera::updateKalmanFilter(
+    this->measurements.applyToFilter(
         this->srukf,
-        std::span{this->measurements.data(), this->measurementIndex},
         (double)this->previousSimNanos * NANO2SEC,
         (double)currentSimNanos * NANO2SEC
     );
@@ -111,27 +110,33 @@ void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray(this->srukf.xBar.returnValues(), filterPayload.stateError);
     eigenMatrixXToCArray(this->srukf.covar, filterPayload.covar);
 
-    for (auto& measurementElt : this->measurements) {
-        if (!measurementElt.has_value()) continue;
-        auto measurement = std::exchange(measurementElt, std::nullopt).value();
+    for (
+        auto it = this->measurements.popEarliest();
+        it.has_value();
+        it = this->measurements.popEarliest()
+    ) {
+        auto& measurement = it.value().second;
 
-        if (measurement.getMeasurementName() == "attitude") {
+        switch (measurement.type) {
+        case InertialAttitudeUkfMeasurementType::Attitude:
             attitudePayload.valid = true;
             attitudePayload.numberOfObservations = 1;
-            attitudePayload.sizeOfObservations = measurement.size();
-            eigenMatrixXToCArray(measurement.getObservation(), attitudePayload.observation);
-            eigenMatrixXToCArray(measurement.getPostFitResiduals(), attitudePayload.postFits);
-            eigenMatrixXToCArray(measurement.getPreFitResiduals(), attitudePayload.preFits);
-        }
-        if (measurement.getMeasurementName() == "rate") {
+            attitudePayload.sizeOfObservations = measurement.observation.size();
+            eigenMatrixXToCArray(measurement.observation, attitudePayload.observation);
+            eigenMatrixXToCArray(measurement.postFitResiduals, attitudePayload.postFits);
+            eigenMatrixXToCArray(measurement.preFitResiduals, attitudePayload.preFits);
+            break;
+
+        case InertialAttitudeUkfMeasurementType::Rate:
             ratePayload.valid = true;
             ratePayload.numberOfObservations = 1;
-            ratePayload.sizeOfObservations = measurement.size();
-            eigenMatrixXToCArray(measurement.getObservation(), ratePayload.observation);
-            eigenMatrixXToCArray(measurement.getPostFitResiduals(), ratePayload.postFits);
-            eigenMatrixXToCArray(measurement.getPreFitResiduals(), ratePayload.preFits);
+            ratePayload.sizeOfObservations = measurement.observation.size();
+            eigenMatrixXToCArray(measurement.observation, ratePayload.observation);
+            eigenMatrixXToCArray(measurement.postFitResiduals, ratePayload.postFits);
+            eigenMatrixXToCArray(measurement.preFitResiduals, ratePayload.preFits);
         }
     }
+
     this->attitudeResidualMsg.write(&attitudePayload, this->moduleID, currentSimNanos);
     this->rateResidualMsg.write(&ratePayload, this->moduleID, currentSimNanos);
 
@@ -166,47 +171,34 @@ void InertialAttitudeUkf::readRWSpeedData() {
  * @return void
  * */
 void InertialAttitudeUkf::readAttitudeData() {
-    for (int index = 0; index < this->numberOfStarTackers; index++) {
-        auto attitude = this->attitudeMessages[index].attitudeMsg();
-        if (attitude.timeTag > (double)this->previousSimNanos * NANO2SEC) {
-            auto attitudeMeasurement = MeasurementModel();
-            attitudeMeasurement.setMeasurementName("attitude");
-            attitudeMeasurement.setTimeTag(attitude.timeTag);
-            attitudeMeasurement.setValidity(true);
+    auto actualAttitudeMessages = std::span{this->attitudeMessages.data(), this->numberOfStarTackers};
 
-            /*! - Get the mapping from camera frame to inertial for the noise matrix */
-            Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(attitude.dcm_CB);
+    for (auto& attitudeMessage : actualAttitudeMessages) {
+        auto attitude = attitudeMessage.attitudeMsg();
 
-            attitudeMeasurement.setMeasurementNoise(this->srukf.getMeasurementNoiseScale() * dcm_CB.transpose() *
-                                                    this->attitudeMessages[index].measurementNoise_C * dcm_CB);
-            attitudeMeasurement.setObservation(
-                mrpSwitch(Eigen::Map<Eigen::Vector3d>(attitude.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold));
-            attitudeMeasurement.setMeasurementModel(MeasurementModel::positionStates);
+        this->validAttitude = (attitude.timeTag > (double)this->previousSimNanos * NANO2SEC);
+        if (!this->validAttitude) continue;
 
-            std::function<const Eigen::VectorXd(const Eigen::Vector3d&, const Eigen::Vector3d&)> mrpSub =
-                [](Eigen::Vector3d const& observed, const Eigen::Vector3d& predicted) {
-                    Eigen::Vector3d yMeas = observed - predicted;
-                    if (observed.norm() > 0.95 && predicted.norm() > 0.95) {
-                        const Eigen::Vector3d predictedShadow = mrpShadow(predicted);
-                        Eigen::Vector3d yMeasShadow = observed - predictedShadow;
-                        if (yMeasShadow.norm() < yMeas.norm()) {
-                            return yMeasShadow;
-                        }
-                    }
-                    return yMeas;
-                };
-            attitudeMeasurement.setMeasurementSubtraction(mrpSub);
+        /*! - Only consider the filter started once a Star Tracker image is processed */
+        this->firstFilterPass = false;
 
-            this->measurements[this->measurementIndex] = attitudeMeasurement;
-            this->measurementIndex += 1;
-            this->validAttitude = true;
-            /*! - Only consider the filter started once a Star Tracker image is processed */
-            if (this->firstFilterPass) {
-                this->firstFilterPass = false;
-            }
-        } else {
-            this->validAttitude = false;
-        }
+        /*! - Get the mapping from camera frame to inertial for the noise matrix */
+        Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(attitude.dcm_CB);
+
+        InertialAttitudeUkfMeasurementModel attitudeMeasurement = {};
+        attitudeMeasurement.type = InertialAttitudeUkfMeasurementType::Attitude;
+        attitudeMeasurement.observation = mrpSwitch(
+            Eigen::Map<Eigen::Vector3d>(attitude.MRP_BdyInrtl).eval(),
+            this->mrpSwitchThreshold
+        );
+        attitudeMeasurement.measNoise =
+            ( this->measNoiseScaling
+            * dcm_CB.transpose()
+            * attitudeMessage.measurementNoise_C
+            * dcm_CB
+            );
+
+        this->measurements.enqueue(attitude.timeTag, std::move(attitudeMeasurement));
     }
 }
 
@@ -215,18 +207,18 @@ void InertialAttitudeUkf::readAttitudeData() {
  * */
 void InertialAttitudeUkf::readRateData() {
     STAttMsgPayload rateBuffer = this->rateDataInMsg();
-    if (rateBuffer.timeTag > (double)this->previousSimNanos * NANO2SEC) {
-        auto rateMeasurement = MeasurementModel();
-        rateMeasurement.setMeasurementName("rate");
-        rateMeasurement.setTimeTag(rateBuffer.timeTag);
-        rateMeasurement.setValidity(true);
 
-        rateMeasurement.setMeasurementNoise(this->srukf.getMeasurementNoiseScale() * this->rateNoise);
-        rateMeasurement.setObservation(cArrayToEigenVector(rateBuffer.omega_BN_B));
-        rateMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
-        this->measurements[this->measurementIndex] = rateMeasurement;
-        this->measurementIndex += 1;
-    }
+    if (rateBuffer.timeTag <= (double)this->previousSimNanos * NANO2SEC) return;
+
+    InertialAttitudeUkfMeasurementModel rateMeasurement = {};
+    rateMeasurement.type = InertialAttitudeUkfMeasurementType::Rate;
+    rateMeasurement.observation = cArrayToEigenVector(rateBuffer.omega_BN_B);
+    rateMeasurement.measNoise =
+        ( this->measNoiseScaling
+        * this->rateNoise
+        );
+
+    this->measurements.enqueue(rateBuffer.timeTag, std::move(rateMeasurement));
 }
 
 /*! Read the message containing the measurement data.
@@ -284,3 +276,16 @@ Eigen::Matrix3d InertialAttitudeUkf::getAttitudeNoise(int attitudeMeasNumber) co
     assert(attitudeMeasNumber < this->numberOfStarTackers);
     return this->attitudeMessages[attitudeMeasNumber].measurementNoise_C;
 }
+
+/*! Set the filter measurement noise scale factor if desirable
+    @param double measurementNoiseScale
+    @return void
+    */
+void InertialAttitudeUkf::setMeasurementNoiseScale(const double measurementNoiseScale) {
+    this->measNoiseScaling = measurementNoiseScale;
+}
+
+/*! Get the filter measurement noise scale factor
+    @return double measurementNoiseScale
+    */
+double InertialAttitudeUkf::getMeasurementNoiseScale() const { return this->measNoiseScaling; }

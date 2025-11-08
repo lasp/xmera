@@ -1,7 +1,6 @@
 add_library(fswAlgorithmsCommon OBJECT
   dynamicModels.cpp
   ekfInterface.cpp
-  kalmanFilter.cpp
   measurementModels.cpp
   srukfInterface.cpp
   stateModels.cpp

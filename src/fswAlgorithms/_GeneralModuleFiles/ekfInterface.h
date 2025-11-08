@@ -23,15 +23,40 @@
  * with the computed state error at each measurement update */
 enum class FilterType { Classical, Extended };
 
+struct EkfMeasurementModel {
+public:
+    EkfMeasurementModel() = default;
+    virtual ~EkfMeasurementModel() = default;
+
+    //! [-] observation measurement model
+    virtual Eigen::MatrixXd model(const FilterStateVector& state) const = 0;
+
+    virtual Eigen::MatrixXd measurementMatrix(const FilterStateVector& state) const = 0;
+
+    virtual Eigen::VectorXd subtract(
+        const Eigen::VectorXd& observed,
+        const Eigen::VectorXd& predicted
+    ) const = 0;
+
+
+    virtual Eigen::VectorXd getObservation() const = 0;
+
+    virtual Eigen::MatrixXd getNoise() const = 0;
+
+    virtual void setPreFitResiduals(Eigen::VectorXd const& preFitResiduals) = 0;
+
+    virtual void setPostFitResiduals(Eigen::VectorXd const& postFitResiduals) = 0;
+};
+
 /*! @brief Extended or Classical/Linear Kalman Filter base class. */
-class EkfInterface : public KalmanFilter {
+class EkfInterface : public KalmanFilter<EkfMeasurementModel> {
    public:
     explicit EkfInterface(FilterType type);
     ~EkfInterface() override = default;
 
     void reset() override;
     void timeUpdate(double dt) override;
-    void measurementUpdate(MeasurementModel& measurement) override;
+    void measurementUpdate(EkfMeasurementModel& measurement) override;
 
     void setFilterDynamicsMatrix(
         const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>& dynamicsMatrixCalculator);
@@ -52,7 +77,7 @@ class EkfInterface : public KalmanFilter {
     double unitConversion = 1;       //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
 
    private:
-    Eigen::VectorXd computeResiduals(const MeasurementModel& measurement);
+    Eigen::VectorXd computeResiduals(const EkfMeasurementModel& measurement);
     Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd& covar,
                                       const Eigen::MatrixXd& measurementMatrix,
                                       const Eigen::MatrixXd& measurementNoise) const;

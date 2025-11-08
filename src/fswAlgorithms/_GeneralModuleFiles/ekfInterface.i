@@ -8,4 +8,6 @@
 
 %include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.i>
 
+%template(KalmanFilter) KalmanFilter<EkfMeasurementModel>;
+
 %include <fswAlgorithms/_GeneralModuleFiles/ekfInterface.h>
