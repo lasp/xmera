@@ -11,14 +11,15 @@ void LinearODeKF::reset(uint64_t currentSimNanos) {
 
 void LinearODeKF::updateState(uint64_t currentSimNanos) {
     this->readFilterMeasurements();
+
     this->measurements.applyToFilter(
         this->ekf,
         (double)this->previousSimNanos * NANO2SEC,
         (double)currentSimNanos * NANO2SEC
     );
-    this->writeOutputMessages(currentSimNanos);
-
     this->previousSimNanos = currentSimNanos;
+
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! Reset the flyby OD filter to an initial state and initializes the internal estimation matrices.

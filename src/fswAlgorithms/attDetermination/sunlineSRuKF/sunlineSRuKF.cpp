@@ -11,15 +11,16 @@ void SunlineSRuKF::reset(uint64_t currentSimNanos) {
 
 void SunlineSRuKF::updateState(const uint64_t currentSimNanos) {
     this->readFilterMeasurements();
+
     this->measurements.applyToFilter(
         this->srukf,
         (double)this->previousSimNanos * NANO2SEC,
         (double)currentSimNanos * NANO2SEC
     );
+    this->previousSimNanos = currentSimNanos;
+
     this->writeOutputMessages(currentSimNanos);
     this->customFinalizeUpdate();
-
-    this->previousSimNanos = currentSimNanos;
 }
 
 /*! Reset the sunline filter to an initial state and

@@ -11,14 +11,15 @@ void FlybyODuKF::reset(uint64_t currentSimNanos) {
 
 void FlybyODuKF::updateState(uint64_t currentSimNanos) {
     this->readFilterMeasurements();
+
     this->measurements.applyToFilter(
         this->srukf,
         (double)this->previousSimNanos * NANO2SEC,
         (double)currentSimNanos * NANO2SEC
     );
-    this->writeOutputMessages(currentSimNanos);
-
     this->previousSimNanos = currentSimNanos;
+
+    this->writeOutputMessages(currentSimNanos);
 }
 
 /*! Reset the flyby OD filter to an initial state and
