@@ -13,15 +13,16 @@ void InertialAttitudeUkf::reset(uint64_t currentSimNanos) {
 void InertialAttitudeUkf::updateState(uint64_t currentSimNanos) {
     this->customInitializeUpdate();
     this->readFilterMeasurements();
+
     this->measurements.applyToFilter(
         this->srukf,
         (double)this->previousSimNanos * NANO2SEC,
         (double)currentSimNanos * NANO2SEC
     );
+    this->previousSimNanos = currentSimNanos;
+
     this->customFinalizeUpdate();
     this->writeOutputMessages(currentSimNanos);
-
-    this->previousSimNanos = currentSimNanos;
 }
 
 void InertialAttitudeUkf::customReset() {
