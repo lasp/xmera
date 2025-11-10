@@ -3,6 +3,8 @@
 
 #include "inertialAttitudeUkf.h"
 
+#include <span>
+
 InertialAttitudeUkf::InertialAttitudeUkf(const AttitudeFilterMethod method) { this->measurementAcceptanceMethod = method; }
 
 void InertialAttitudeUkf::reset(uint64_t currentSimNanos) {
