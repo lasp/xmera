@@ -60,9 +60,11 @@ def test_rw_motor_torque(show_plots, num_control_axes, num_wheels, num_input_cmd
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, module)
 
+    torque = np.array([1.0, -0.5, 0.7])
+
     # attControl message
     input_message_data = messaging.CmdTorqueBodyMsgPayload()
-    requested_torque1 = [1.0, -0.5, 0.7]
+    requested_torque1 = torque
     input_message_data.torqueRequestBody = requested_torque1
     cmd_torque_in_msg = messaging.CmdTorqueBodyMsg().write(input_message_data)
 
@@ -70,7 +72,7 @@ def test_rw_motor_torque(show_plots, num_control_axes, num_wheels, num_input_cmd
 
     if num_input_cmd_torques == 2:
         input_message_data2 = messaging.CmdTorqueBodyMsgPayload()
-        requested_torque2 = [0.5, 1.0, 3.0]
+        requested_torque2 = np.array([[1.1, -1.3, 2.0], [0.3, 0.9, -1.4], [2.2, 1.7, 0.6]]) @ torque
         input_message_data2.torqueRequestBody = requested_torque2
         cmd_torque_in2_msg = messaging.CmdTorqueBodyMsg().write(input_message_data2)
         requested_torque += np.array(requested_torque2)
@@ -79,51 +81,22 @@ def test_rw_motor_torque(show_plots, num_control_axes, num_wheels, num_input_cmd
     rw_config_params = messaging.RWArrayConfigMsgPayload()
     RW_EFF_CNT = messaging.RW_EFF_CNT
 
-    if num_wheels == RW_EFF_CNT:
-        rw_config_params.GsMatrix_B = [
-            0.4835867893995201, 0.7025829597277155, 0.5220354411517549,
-            0.6274167231454653, 0.4634123147571517, 0.6257773422303058,
-            0.4927675437195689, 0.3909468277672152, 0.7773935462269635,
-            0.2791305379092009, 0.20278639222840245, 0.9385967301954065,
-            0.1742148051521812, 0.9353106472878886, 0.3079662233682429,
-            0.7408864742367625, 0.30733781515416325, 0.5971856492492805,
-            0.49166240509756476, 0.11024265612126483, 0.863779275153674,
-            0.08522980139648922, 0.5635691254043687, 0.8216603445736381,
-            0.5169183283391889, 0.6482094982986043, 0.5591242153068406,
-            0.5539478507672101, 0.4352935184619988, 0.7096910112262675,
-            0.08177103922211226, 0.7185493168899821, 0.6906521384470449,
-            0.5424303480563135, 0.8034905566669417, 0.24530031156636306,
-            0.6791649825098244, 0.25103926707369056, 0.6897203874901293,
-            0.6662787689368599, 0.6695372377111813, 0.32831766535181106,
-            0.28428078464167594, 0.5440295499812461, 0.7894404880867942,
-            0.8881073966834958, 0.007176386091829566, 0.4595799728433832,
-            0.7043700914244455, 0.20398698108861654, 0.6798912308987893,
-            0.5913513581668906, 0.7154722881784563, 0.3720255045596441,
-            0.5353927164036736, 0.8292977052562882, 0.1600623480977027,
-            0.5626385603464779, 0.5530980227747188, 0.6144269099038059,
-            0.8047402627946283, 0.5179828986694456, 0.2899772855298006,
-            0.6435726414836709, 0.49863310510036174, 0.5806714059015666,
-            0.2533767502100278, 0.8066673674024603, 0.533936307831739,
-            0.051675625147813466, 0.741898369799065, 0.6685180914942186,
-            0.6705007071467579, 0.243658731626882, 0.700756180292173,
-            0.6124322825812726, 0.6044312394389204, 0.5094993386086216,
-            0.5025822950964116, 0.49662160344788164, 0.7076567103083798,
-            0.4875326918964735, 0.8575174427431412, 0.16424283766253403,
-            0.3659744927810267, 0.8415919620749859, 0.39722240622155974,
-            0.6205921515961875, 0.5508152351685801, 0.5580931446303532,
-            0.20125257120061574, 0.7022636474963218, 0.6828785924235018,
-            0.4318909377763495, 0.6786025351852008, 0.5941117883924572,
-            0.6839787443692367, 0.6598940110591041, 0.31098709204629277,
-            0.35743175000357147, 0.8343049491885353, 0.4197353878920623,
-            0.8124751056450826, 0.35669421673672336, 0.46114362020262967,
-            0.04721328350343224, 0.8901899787392832, 0.45313652204714083]
-    else:
+    if num_wheels == 4:
         rw_config_params.GsMatrix_B = [
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
             0.0, 0.0, 1.0,
             0.5773502691896258, 0.5773502691896258, 0.5773502691896258
         ]
+    else:
+        # create some arbitrary spin axes
+        spin_axis = np.array([0.56, -1.73, 0.22])
+        G_s_B = []
+        for rw in range(num_wheels):
+            spin_axis = np.array([[1.5, -3.7, 0.4], [-0.1, 0.3, -1.9], [3.2, 0.3, 0.8]]) @ spin_axis
+            G_s_B.append(spin_axis / np.linalg.norm(spin_axis))
+
+        rw_config_params.GsMatrix_B = np.array(G_s_B).flatten()
 
     rw_config_params.JsList = [0.1] * num_wheels
     rw_config_params.numRW = num_wheels
@@ -131,16 +104,13 @@ def test_rw_motor_torque(show_plots, num_control_axes, num_wheels, num_input_cmd
 
     if rw_avail_msg != "NO":
         rw_availability_message = messaging.RWAvailabilityMsgPayload()
-
-        avail = [messaging.UNAVAILABLE] * num_wheels
-        for i in range(num_wheels):
-            if rw_avail_msg == "ON":
-                avail[i] = messaging.AVAILABLE
-            elif rw_avail_msg == "OFF":
-                avail[i] = messaging.UNAVAILABLE
-            else:
-                if i < int(num_wheels / 2):
-                    avail[i] = messaging.AVAILABLE
+        if rw_avail_msg == "ON":
+            avail = [messaging.AVAILABLE] * num_wheels
+        elif rw_avail_msg == "OFF":
+            avail = [messaging.UNAVAILABLE] * num_wheels
+        else:
+            avail_alternating = [messaging.AVAILABLE, messaging.AVAILABLE, messaging.UNAVAILABLE] * RW_EFF_CNT
+            avail = avail_alternating[:num_wheels]
 
         rw_availability_message.wheelAvailability = avail
 
