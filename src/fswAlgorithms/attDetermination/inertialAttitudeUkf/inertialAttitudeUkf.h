@@ -10,6 +10,7 @@
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 #include <architecture/msgPayloadDef/FilterMsgPayload.h>
 #include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>

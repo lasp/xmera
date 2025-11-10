@@ -7,45 +7,40 @@
 #include <Eigen/Core>
 #include <optional>
 
+enum class StateType { Position, Velocity, Acceleration, Bias, Consider };
+
 /*! @brief State class */
+template<StateType TYPE>
 class State {
-   public:
+public:
     State() = default;
-    explicit State(Eigen::VectorXd initialState) : values(std::move(initialState)) {}
 
-    void setValues(const Eigen::VectorXd& componentValues);
-    Eigen::VectorXd getValues() const;
-    long size() const { return values.size(); }
+    explicit State(const Eigen::VectorXd& initialState)
+        : values(initialState)
+    {}
 
-   private:
+    void setValues(const Eigen::VectorXd& componentValues) {
+        this->values = componentValues;
+    }
+
+    Eigen::VectorXd getValues() const {
+        return this->values;
+    }
+
+    size_t size() const {
+        return values.size();
+    }
+
+private:
     Eigen::VectorXd values;
 };
 
-class PositionState : public State {
-   public:
-    PositionState() = default;
-    explicit PositionState(const Eigen::VectorXd& initialPosition);
-};
-class VelocityState : public State {
-   public:
-    VelocityState() = default;
-    explicit VelocityState(const Eigen::VectorXd& initialVelocity);
-};
-class AccelerationState : public State {
-   public:
-    AccelerationState() = default;
-    explicit AccelerationState(const Eigen::VectorXd& initialAcceleration);
-};
-class BiasState : public State {
-   public:
-    BiasState() = default;
-    explicit BiasState(const Eigen::VectorXd& initialBias);
-};
-class ConsiderState : public State {
-   public:
-    ConsiderState() = default;
-    explicit ConsiderState(const Eigen::VectorXd& initialConsider);
-};
+using PositionState = State<StateType::Position>;
+using VelocityState = State<StateType::Velocity>;
+using AccelerationState = State<StateType::Acceleration>;
+using BiasState = State<StateType::Bias>;
+using ConsiderState = State<StateType::Consider>;
+
 
 /*! @brief State models used to map a state vector to a measurement */
 class FilterStateVector {
@@ -58,34 +53,34 @@ class FilterStateVector {
     Eigen::MatrixXd stm;
 
    public:
-    static FilterStateVector filterStateVectorFromStateStructure(const FilterStateVector& stateVector);
-
     long size() const;
+
     FilterStateVector add(const FilterStateVector& vector) const;
     FilterStateVector addVector(const Eigen::VectorXd& vector) const;
     FilterStateVector scale(const double scalar) const;
+
     Eigen::VectorXd returnValues() const;
 
     void setPosition(const PositionState& position);
-    PositionState getPosition() const;
     Eigen::VectorXd getPositionStates() const;
     bool hasPosition() const;
+
     void setVelocity(const VelocityState& velocity);
-    VelocityState getVelocity() const;
     Eigen::VectorXd getVelocityStates() const;
     bool hasVelocity() const;
+
     void setAcceleration(const AccelerationState& acceleration);
-    AccelerationState getAcceleration() const;
     Eigen::VectorXd getAccelerationStates() const;
     bool hasAcceleration() const;
+
     void setBias(const BiasState& bias);
-    BiasState getBias() const;
     Eigen::VectorXd getBiasStates() const;
     bool hasBias() const;
+
     void setConsider(const ConsiderState& consider);
-    ConsiderState getConsider() const;
     Eigen::VectorXd getConsiderStates() const;
     bool hasConsider() const;
+
     void attachStm(const Eigen::MatrixXd& stm);
     Eigen::MatrixXd detachStm() const;
 };
