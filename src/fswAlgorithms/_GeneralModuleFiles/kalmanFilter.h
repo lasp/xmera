@@ -4,8 +4,6 @@
 #ifndef KALMAN_FILTER_INTERFACE_HPP
 #define KALMAN_FILTER_INTERFACE_HPP
 
-#include <algorithm>
-#include <span>
 #include <optional>
 
 /*! @brief Kalman Filter interface */
