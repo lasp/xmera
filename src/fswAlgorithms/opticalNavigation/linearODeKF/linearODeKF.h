@@ -19,7 +19,6 @@
 #include <architecture/utilities/orbitalMotion.h>
 
 #include <fswAlgorithms/_GeneralModuleFiles/ekfInterface.h>
-#include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 
 struct LinearODeKFMeasurementModel : public EkfMeasurementModel {
 public:

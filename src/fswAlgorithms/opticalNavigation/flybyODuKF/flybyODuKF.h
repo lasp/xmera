@@ -18,7 +18,6 @@
 #include <architecture/utilities/orbitalMotion.h>
 
 #include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>
-#include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 
 struct FlybyODuKFMeasurementModel final : public SRukfMeasurementModel {
