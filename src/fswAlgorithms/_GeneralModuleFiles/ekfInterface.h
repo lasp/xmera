@@ -11,7 +11,6 @@
 #include <fswAlgorithms/_GeneralModuleFiles/dynamicModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h>
 #include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>
-#include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/stateModels.h>
 #include <Eigen/Dense>
 #include <array>

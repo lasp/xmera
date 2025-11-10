@@ -15,7 +15,6 @@
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
-#include <fswAlgorithms/_GeneralModuleFiles/measurementModels.h>
 #include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
 
 enum class SunlineSRuKFMeasurementType { Gyro, Css };
