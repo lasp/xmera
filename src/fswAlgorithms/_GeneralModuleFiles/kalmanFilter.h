@@ -70,31 +70,31 @@ namespace xmera {
         template<detail::base_of<Measurement> MeasurementBase>
         void applyToFilter(
             KalmanFilter<MeasurementBase>& filterState,
-            double previousSimNanos,
-            double nextSimNanos
+            double previousSimSeconds,
+            double nextSimSeconds
         ) {
-            double currentSimNanos = previousSimNanos;
+            double currentSimSeconds = previousSimSeconds;
 
             for (size_t i = this->size; 0 < i; i -= 1) {
                 auto& measurement = this->measurements[i - 1].value();
 
                 /*! - If the time tag from a valid measurement is new compared to previous step,
                 propagate and update the filter*/
-                if (measurement.first < currentSimNanos) continue;
+                if (measurement.first < currentSimSeconds) continue;
 
                 /*! - time update to the measurement time */
-                filterState.timeUpdate(measurement.first - currentSimNanos);
+                filterState.timeUpdate(measurement.first - currentSimSeconds);
 
                 /*! - compute pre-fit residuals, measurement update, and compute post-fit residuals  */
                 filterState.measurementUpdate(measurement.second);
 
-                currentSimNanos = measurement.first;
+                currentSimSeconds = measurement.first;
             }
 
             /*! - If current clock time is further ahead than the last measurement time, then
             propagate to this current time-step*/
-            if (currentSimNanos < nextSimNanos) {
-                filterState.timeUpdate(nextSimNanos - currentSimNanos);
+            if (currentSimSeconds < nextSimSeconds) {
+                filterState.timeUpdate(nextSimSeconds - currentSimSeconds);
             }
         }
 
