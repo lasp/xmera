@@ -29,7 +29,7 @@ void SunlineSRuKF::updateState(const uint64_t currentSimNanos) {
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void SunlineSRuKF::customReset() {
-    this->srukf.dynamics.setDynamics(SunlineSRuKF::stateDerivative);
+    this->srukf.dynamics = &SunlineSRuKF::stateDerivative;
     /*! - Check if the required messages have been connected */
     assert(this->cssDataInMsg.isLinked());
     assert(this->cssConfigInMsg.isLinked());
@@ -179,15 +179,6 @@ void SunlineSRuKF::readCssMeasurements() {
 
     if (!validObservation) return;
     if (observationTimeTag < (double)this->previousSimNanos * NANO2SEC) return;
-
-    std::function<const Eigen::VectorXd(const FilterStateVector)> linearModel =
-        [hMatrix](const FilterStateVector& state) {
-            Eigen::VectorXd observed = hMatrix * state.getPositionStates();
-            if (state.hasBias()) {
-                observed = observed * state.getBiasStates().value();
-            }
-            return observed;
-        };
 
     /*! - Read measurement and cholesky decomposition its noise*/
     Eigen::MatrixXd I(this->numActiveCss, this->numActiveCss);

@@ -58,7 +58,7 @@ void SRukfInterface::timeUpdate(double dt) {
     std::array<double, 2> time = {0, dt};
 
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
-    this->sigmaPoints[0] = this->dynamics.propagate(time, this->state, dt);
+    this->sigmaPoints[0] = xmera::propagate(this->dynamics, this->state, time, dt);
     /*! - Scale that Sigma point by the appropriate scaling factor (Wm[0])*/
     this->xBar = this->sigmaPoints[0].scale(this->wM(0));
 
@@ -66,10 +66,10 @@ void SRukfInterface::timeUpdate(double dt) {
      Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
     for (size_t i = 1; i < this->state.size() + 1; ++i) {
         /*! - Adding covariance columns from sigma points*/
-        this->sigmaPoints[i] = dynamics.propagate(time, this->state.addVector(this->eta * this->sBar.col(i - 1)), dt);
+        this->sigmaPoints[i] = xmera::propagate(this->dynamics, this->state.addVector(this->eta * this->sBar.col(i - 1)), time, dt);
         /*! - Subtracting covariance columns from sigma points*/
         this->sigmaPoints[i + this->state.size()] =
-            this->dynamics.propagate(time, this->state.addVector(-this->eta * this->sBar.col(i - 1)), dt);
+            xmera::propagate(this->dynamics, this->state.addVector(-this->eta * this->sBar.col(i - 1)), time, dt);
     }
 
     /*! - Compute xbar according to Eq (19)*/

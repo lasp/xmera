@@ -38,7 +38,7 @@ void EkfInterface::timeUpdate(const double dt) {
     /*! - Propagate full state and STM vector using dynamics specified in child class */
     FilterStateVector stateStm = this->state;
     stateStm.attachStm(this->stateTransitionMatrix);
-    FilterStateVector propagatedStateStm = this->dynamics.propagate(time, stateStm, dt);
+    FilterStateVector propagatedStateStm = xmera::propagate(this->dynamics, stateStm, time, dt);
 
     this->stateTransitionMatrix = propagatedStateStm.detachStm();
 
@@ -177,14 +177,6 @@ Eigen::VectorXd EkfInterface::computeResiduals(const EkfMeasurementModel& measur
     Eigen::MatrixXd measurementMatrix = measurement.measurementMatrix(this->state);
 
     return measurement.subtract(measurementDelta, measurementMatrix * this->stateError);
-}
-
-/*! Get the filter dynamics matrix (A = df/dX evaluated at the reference)
-    @return Eigen::VectorXd stateInitial
-    */
-void EkfInterface::setFilterDynamicsMatrix(
-    const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>& dynamicsMatrixCalculator) {
-    this->dynamics.setDynamicsMatrix(dynamicsMatrixCalculator);
 }
 
 /*! Set a minimum value (infinite norm, meaning maximal term) of the covariance before switching to Extended KF updates.

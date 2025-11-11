@@ -57,8 +57,6 @@ class EkfInterface : public KalmanFilter<EkfMeasurementModel> {
     void timeUpdate(double dt) override;
     void measurementUpdate(EkfMeasurementModel& measurement) override;
 
-    void setFilterDynamicsMatrix(
-        const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>& dynamicsMatrixCalculator);
     void setMinimumCovarianceNormForEkf(double infiniteNorm);
     double getMinimumCovarianceNormForEkf() const;
 

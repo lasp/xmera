@@ -32,44 +32,28 @@ void LinearODeKF::customReset() {
     if (this->constantVelocityInitial) {
         this->constantVelocity = this->constantVelocityInitial.value() * this->ekf.unitConversion;
     }
-    /*! - Set the dynamics matrix calculator*/
-    std::function<Eigen::MatrixXd(double, const FilterStateVector)> dynamicsMatrixCalculator =
-        [this](double time, const FilterStateVector& state) {
-            Eigen::VectorXd position = state.getPositionStates();
-            Eigen::MatrixXd dynamicsMatrix = Eigen::MatrixXd::Zero(state.size(), state.size());
-            if (!this->constantVelocity) {
-                dynamicsMatrix.block(0, position.size(), position.size(), position.size()) =
-                    Eigen::MatrixXd::Identity(position.size(), position.size());
-            }
-            return dynamicsMatrix;
-        };
-
-    this->ekf.dynamics.setDynamicsMatrix(dynamicsMatrixCalculator);
 
     /*! - Set the filter dynamics (linear) */
-    std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics =
-        [this](double t, const FilterStateVector& state) {
-            FilterStateVector XDot;
-            PositionState stateDerivative;
+    this->ekf.dynamics = [this](double t, const FilterStateVector& state) {
+        FilterStateVector XDot;
 
-            if (this->constantVelocity) {
-                stateDerivative.setValues(this->constantVelocity.value());
-            } else {
-                stateDerivative.setValues(state.getVelocityStates());
-                VelocityState flybyVelocity;
-                flybyVelocity.setValues(Eigen::Vector3d::Zero());
-                XDot.setVelocity(flybyVelocity);
-            }
+        if (this->constantVelocity) {
+            XDot.setPosition(PositionState{this->constantVelocity.value()});
+            XDot.attachStm(Eigen::MatrixXd::Zero(state.size(), state.size()));
+        } else {
+            Eigen::VectorXd position = state.getPositionStates();
 
-            XDot.setPosition(stateDerivative);
-            Eigen::MatrixXd stm = state.detachStm();
+            Eigen::MatrixXd dynMatrix = Eigen::MatrixXd::Zero(state.size(), state.size());
+            dynMatrix.block(0, position.size(), position.size(), position.size()) =
+                Eigen::MatrixXd::Identity(position.size(), position.size());
 
-            Eigen::MatrixXd dynMatrix = this->ekf.dynamics.computeDynamicsMatrix(t, state);
-            XDot.attachStm(dynMatrix * stm);
+            XDot.setPosition(PositionState{state.getVelocityStates()});
+            XDot.setVelocity(VelocityState{Eigen::Vector3d::Zero()});
+            XDot.attachStm(dynMatrix * state.detachStm());
+        }
 
-            return XDot;
-        };
-    this->ekf.dynamics.setDynamics(twoBodyDynamics);
+        return XDot;
+    };
 }
 
 /*! Write the output data to appropriate messages given the state components
