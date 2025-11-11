@@ -39,8 +39,8 @@ void FlybyODuKF::customReset() {
         FilterStateVector XDot;
         /*! Implement propagation with rate derivatives set to zero */
         /*! Implement point mass gravity for the propagation */
-        PositionState flybyPosition;
-        VelocityState flybyVelocity;
+        PositionState<Eigen::Dynamic> flybyPosition;
+        VelocityState<Eigen::Dynamic> flybyVelocity;
         flybyPosition.setValues(state.getVelocityStates());
         flybyVelocity.setValues(-centralBody / pow(state.getPositionStates().norm(), 3) *
                                 state.getPositionStates());

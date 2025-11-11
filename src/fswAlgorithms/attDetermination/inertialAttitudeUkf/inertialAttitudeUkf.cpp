@@ -35,7 +35,7 @@ void InertialAttitudeUkf::customReset() {
         Eigen::MatrixXd bMat = bmatMrp(mrp);
 
         FilterStateVector stateDerivative;
-        PositionState mrpDot;
+        PositionState<Eigen::Dynamic> mrpDot;
         mrpDot.setValues(0.25 * bMat * omega);
         stateDerivative.setPosition(mrpDot);
 
@@ -45,13 +45,13 @@ void InertialAttitudeUkf::customReset() {
             wheelTorque += this->wheelAccelerations[i] * this->rwArrayConfigPayload.JsList[i] * gsMatrix;
         }
 
-        VelocityState omegaDot;
+        VelocityState<Eigen::Dynamic> omegaDot;
         omegaDot.setValues(-this->spacecraftInertiaInverse *
                            (tildeMatrix(omega) * this->spacecraftInertia * omega + wheelTorque));
         stateDerivative.setVelocity(omegaDot);
 
         if (state.hasBias()) {
-            BiasState xDotBias;
+            BiasState<Eigen::Dynamic> xDotBias;
             xDotBias.setValues(Eigen::VectorXd::Zero(3));
             stateDerivative.setBias(xDotBias);
         }
@@ -79,7 +79,7 @@ void InertialAttitudeUkf::customFinalizeUpdate() { this->switchStateCovariance()
 void InertialAttitudeUkf::switchStateCovariance() {
     Eigen::Vector3d sigma = this->srukf.state.getPositionStates();
     if (sigma.norm() > this->mrpSwitchThreshold) {
-        PositionState mrp;
+        PositionState<Eigen::Dynamic> mrp;
         mrp.setValues(mrpSwitch(sigma, this->mrpSwitchThreshold));
         this->srukf.state.setPosition(mrp);
         Eigen::Matrix3d switchMatrix = 2 * std::pow(sigma.norm(), 4) * sigma * sigma.transpose() -

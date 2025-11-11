@@ -44,12 +44,12 @@ void SunlineSRuKF::customReset() {
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void SunlineSRuKF::customFinalizeUpdate() {
-    PositionState heading;
+    PositionState<Eigen::Dynamic> heading;
     heading.setValues(this->srukf.state.getPositionStates().normalized());
     this->srukf.state.setPosition(heading);
 
     if (this->srukf.state.hasBias()) {
-        BiasState bias;
+        BiasState<Eigen::Dynamic> bias;
         if (this->srukf.state.getBiasStates().value() < this->biasLowerBound) {
             Eigen::VectorXd lowerSaturateBias(1);
             lowerSaturateBias(0) = this->biasLowerBound;
@@ -219,8 +219,8 @@ FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStat
     Eigen::Vector3d sHat = state.getPositionStates();
     Eigen::Vector3d omega = state.getVelocityStates();
 
-    PositionState xDotPosition;
-    VelocityState xDotVelocity;
+    PositionState<Eigen::Dynamic> xDotPosition;
+    VelocityState<Eigen::Dynamic> xDotVelocity;
 
     xDotPosition.setValues(sHat.cross(omega));
     xDotVelocity.setValues(Eigen::VectorXd::Zero(3));
@@ -229,7 +229,7 @@ FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStat
     XDot.setVelocity(xDotVelocity);
 
     if (state.hasBias()) {
-        BiasState xDotBias;
+        BiasState<Eigen::Dynamic> xDotBias;
         xDotBias.setValues(Eigen::VectorXd::Zero(1));
         XDot.setBias(xDotBias);
     }
