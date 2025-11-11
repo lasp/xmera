@@ -27,7 +27,7 @@ public:
         return this->values;
     }
 
-    size_t size() const {
+    Eigen::Index size() const {
         return values.size();
     }
 
@@ -53,7 +53,7 @@ class FilterStateVector {
     Eigen::MatrixXd stm;
 
    public:
-    long size() const;
+    Eigen::Index size() const;
 
     FilterStateVector add(const FilterStateVector& vector) const;
     FilterStateVector addVector(const Eigen::VectorXd& vector) const;

@@ -6,8 +6,8 @@
 /*! Set the positional components of your state (cartesian position, attitude, etc)
    @param Eigen::VectorXd positionComponents
 */
-long FilterStateVector::size() const {
-    long totalSize = 0;
+Eigen::Index FilterStateVector::size() const {
+    Eigen::Index totalSize = 0;
     if (this->hasPosition()) {
         totalSize += this->getPositionStates().size();
     }
@@ -32,38 +32,38 @@ long FilterStateVector::size() const {
 */
 FilterStateVector FilterStateVector::addVector(const Eigen::VectorXd& vector) const {
     assert(vector.size() == this->size());
-    long lastIndex = 0;
+    Eigen::Index lastIndex = 0;
     FilterStateVector sum;
     if (this->hasPosition()) {
-        sum.position = PositionState {
+        sum.position = PositionState<Eigen::Dynamic> {
               this->getPositionStates()
             + vector.segment(lastIndex, this->getPositionStates().size())
         };
         lastIndex += this->getPositionStates().size();
     }
     if (this->hasVelocity()) {
-        sum.velocity = VelocityState {
+        sum.velocity = VelocityState<Eigen::Dynamic> {
               this->getVelocityStates()
             + vector.segment(lastIndex, this->getVelocityStates().size())
         };
         lastIndex += this->getVelocityStates().size();
     }
     if (this->hasAcceleration()) {
-        sum.acceleration = AccelerationState {
+        sum.acceleration = AccelerationState<Eigen::Dynamic> {
               this->getAccelerationStates()
             + vector.segment(lastIndex, this->getAccelerationStates().size())
         };
         lastIndex += this->getAccelerationStates().size();
     }
     if (this->hasBias()) {
-        sum.bias = BiasState {
+        sum.bias = BiasState<Eigen::Dynamic> {
               this->getBiasStates()
             + vector.segment(lastIndex, this->getBiasStates().size())
         };
         lastIndex += this->getBiasStates().size();
     }
     if (this->hasConsider()) {
-        sum.considerParameters = ConsiderState {
+        sum.considerParameters = ConsiderState<Eigen::Dynamic> {
               this->getConsiderStates()
             + vector.segment(lastIndex, this->getConsiderStates().size())
         };
@@ -152,7 +152,7 @@ FilterStateVector FilterStateVector::scale(const double scalar) const {
 */
 Eigen::VectorXd FilterStateVector::returnValues() const {
     Eigen::VectorXd stateVectorValues(this->size());
-    long lastIndex = 0;
+    Eigen::Index lastIndex = 0;
     if (this->hasPosition()) {
         stateVectorValues.segment(lastIndex, this->getPositionStates().size())
             = this->getPositionStates();
