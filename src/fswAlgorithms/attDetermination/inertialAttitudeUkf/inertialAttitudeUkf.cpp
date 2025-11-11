@@ -174,11 +174,12 @@ void InertialAttitudeUkf::readRWSpeedData() {
 void InertialAttitudeUkf::readAttitudeData() {
     auto actualAttitudeMessages = std::span{this->attitudeMessages.data(), this->numberOfStarTackers};
 
+    this->validAttitude = false;
     for (auto& attitudeMessage : actualAttitudeMessages) {
         auto attitude = attitudeMessage.attitudeMsg();
 
-        this->validAttitude = (attitude.timeTag > (double)this->previousSimNanos * NANO2SEC);
-        if (!this->validAttitude) continue;
+        if (attitude.timeTag <= (double)this->previousSimNanos * NANO2SEC) continue;
+        this->validAttitude = true;
 
         /*! - Only consider the filter started once a Star Tracker image is processed */
         this->firstFilterPass = false;
