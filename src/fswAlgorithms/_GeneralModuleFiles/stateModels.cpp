@@ -79,31 +79,31 @@ FilterStateVector FilterStateVector::addVector(const Eigen::VectorXd& vector) co
 FilterStateVector FilterStateVector::add(const FilterStateVector& vector) const {
     FilterStateVector sum;
     if (this->hasPosition() && vector.hasPosition()) {
-        sum.position = PositionState {
+        sum.position = PositionState<Eigen::Dynamic> {
               this->getPositionStates()
             + vector.getPositionStates()
         };
     }
     if (this->hasVelocity() && vector.hasVelocity()) {
-        sum.velocity = VelocityState {
+        sum.velocity = VelocityState<Eigen::Dynamic> {
               this->getVelocityStates()
             + vector.getVelocityStates()
         };
     }
     if (this->hasAcceleration() && vector.hasAcceleration()) {
-        sum.acceleration = AccelerationState {
+        sum.acceleration = AccelerationState<Eigen::Dynamic> {
               this->getAccelerationStates()
             + vector.getAccelerationStates()
         };
     }
     if (this->hasBias() && vector.hasBias()) {
-        sum.bias = BiasState {
+        sum.bias = BiasState<Eigen::Dynamic> {
               this->getBiasStates()
             + vector.getBiasStates()
         };
     }
     if (this->hasConsider() && vector.hasConsider()) {
-        sum.considerParameters = ConsiderState {
+        sum.considerParameters = ConsiderState<Eigen::Dynamic> {
               this->getConsiderStates()
             + vector.getConsiderStates()
         };
@@ -119,27 +119,27 @@ FilterStateVector FilterStateVector::add(const FilterStateVector& vector) const 
 FilterStateVector FilterStateVector::scale(const double scalar) const {
     FilterStateVector scaledVector;
     if (this->hasPosition()) {
-        scaledVector.position = PositionState {
+        scaledVector.position = PositionState<Eigen::Dynamic> {
             this->getPositionStates() * scalar
         };
     }
     if (this->hasVelocity()) {
-        scaledVector.velocity = VelocityState {
+        scaledVector.velocity = VelocityState<Eigen::Dynamic> {
             this->getVelocityStates() * scalar
         };
     }
     if (this->hasAcceleration()) {
-        scaledVector.acceleration = AccelerationState {
+        scaledVector.acceleration = AccelerationState<Eigen::Dynamic> {
             this->getAccelerationStates() * scalar
         };
     }
     if (this->hasBias()) {
-        scaledVector.bias = BiasState {
+        scaledVector.bias = BiasState<Eigen::Dynamic> {
             this->getBiasStates() * scalar
         };
     }
     if (this->hasConsider()) {
-        scaledVector.considerParameters = ConsiderState {
+        scaledVector.considerParameters = ConsiderState<Eigen::Dynamic> {
             this->getConsiderStates() * scalar
         };
     }
@@ -191,7 +191,7 @@ bool FilterStateVector::hasPosition() const {
 /*! Set the positional components of your state (cartesian position, attitude, etc)
    @param Eigen::VectorXd positionComponents
 */
-void FilterStateVector::setPosition(const PositionState& positionState) {
+void FilterStateVector::setPosition(const PositionState<Eigen::Dynamic>& positionState) {
     this->position = positionState;
 }
 
@@ -212,7 +212,7 @@ bool FilterStateVector::hasVelocity() const {
 /*! Set the velocity components of your state (cartesian velocity, angular rate, etc)
    @param Eigen::VectorXd velocityComponents
 */
-void FilterStateVector::setVelocity(const VelocityState& velocityState) {
+void FilterStateVector::setVelocity(const VelocityState<Eigen::Dynamic>& velocityState) {
     this->velocity = velocityState;
 }
 
@@ -233,7 +233,7 @@ bool FilterStateVector::hasAcceleration() const {
 /*! Set the acceleration class of your state (cartesian acceleration, angular acceleration, etc)
    @param Eigen::VectorXd velocityComponents
 */
-void FilterStateVector::setAcceleration(const AccelerationState& accelerationState) {
+void FilterStateVector::setAcceleration(const AccelerationState<Eigen::Dynamic>& accelerationState) {
     this->acceleration = accelerationState;
 }
 
@@ -254,7 +254,7 @@ bool FilterStateVector::hasBias() const {
 /*! Set the bias class of your state (cartesian bias, angular bias, etc)
    @param Eigen::VectorXd velocityComponents
 */
-void FilterStateVector::setBias(const BiasState& biasState) {
+void FilterStateVector::setBias(const BiasState<Eigen::Dynamic>& biasState) {
     this->bias = biasState;
 }
 
@@ -275,7 +275,7 @@ bool FilterStateVector::hasConsider() const {
 /*! Set the considerParameters class of your state (cartesian considerParameters, angular considerParameters, etc)
    @param Eigen::VectorXd velocityComponents
 */
-void FilterStateVector::setConsider(const ConsiderState& considerParametersState) {
+void FilterStateVector::setConsider(const ConsiderState<Eigen::Dynamic>& considerParametersState) {
     this->considerParameters = considerParametersState;
 }
 
