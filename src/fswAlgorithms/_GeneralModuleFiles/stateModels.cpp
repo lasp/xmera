@@ -3,6 +3,14 @@
 
 #include "stateModels.h"
 
+static_assert(xmera::is_state_vector<FilterStateVector>);
+static_assert(xmera::has_position<FilterStateVector>);
+static_assert(xmera::has_velocity<FilterStateVector>);
+static_assert(xmera::has_acceleration<FilterStateVector>);
+static_assert(xmera::has_bias<FilterStateVector>);
+static_assert(xmera::has_consider<FilterStateVector>);
+static_assert(xmera::has_stm<FilterStateVector>);
+
 /*! Set the positional components of your state (cartesian position, attitude, etc)
    @param Eigen::VectorXd positionComponents
 */
