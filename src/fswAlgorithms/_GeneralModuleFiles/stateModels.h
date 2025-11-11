@@ -97,4 +97,85 @@ class FilterStateVector {
     bool hasConsider() const;
 };
 
+
+namespace xmera{
+    template<typename StateVector>
+    concept is_state_vector = requires(StateVector state, StateVector const constState) {
+        { StateVector::SIZE }
+            -> std::convertible_to<Eigen::Index const&>;
+
+        { constState.size() }
+            -> std::convertible_to<Eigen::Index>;
+        { constState.returnValues() }
+            -> std::same_as<Eigen::Vector<double, StateVector::SIZE>>;
+
+        { constState.scale(std::declval<double>()) }
+            -> std::same_as<StateVector>;
+        { constState.add(constState) }
+            -> std::same_as<StateVector>;
+        { constState.addVector(constState.returnValues()) }
+            -> std::same_as<StateVector>;
+    };
+
+    template<typename StateVector>
+    concept has_stm = requires(StateVector state, StateVector const constState) {
+        { StateVector::SIZE }
+            -> std::convertible_to<Eigen::Index const&>;
+        { constState.detachStm() }
+            -> std::same_as<Eigen::Matrix<double, StateVector::SIZE, StateVector::SIZE>>;
+        { state.attachStm(constState.detachStm()) }
+            ;
+    };
+
+    template<typename StateVector>
+    concept has_position = requires(StateVector const constState) {
+        { StateVector::ROWS }
+            -> std::convertible_to<Eigen::Index const&>;
+        { constState.hasPosition() }
+            -> std::convertible_to<bool>;
+        { constState.getPositionStates() }
+            -> std::same_as<Eigen::Vector<double, StateVector::ROWS>>;
+    };
+
+    template<typename StateVector>
+    concept has_velocity = requires(StateVector const constState) {
+        { StateVector::ROWS }
+            -> std::convertible_to<Eigen::Index const&>;
+        { constState.hasVelocity() }
+            -> std::convertible_to<bool>;
+        { constState.getVelocityStates() }
+            -> std::same_as<Eigen::Vector<double, StateVector::ROWS>>;
+    };
+
+    template<typename StateVector>
+    concept has_acceleration = requires(StateVector const constState) {
+        { StateVector::ROWS }
+            -> std::convertible_to<Eigen::Index const&>;
+        { constState.hasAcceleration() }
+            -> std::convertible_to<bool>;
+        { constState.getAccelerationStates() }
+            -> std::same_as<Eigen::Vector<double, StateVector::ROWS>>;
+    };
+
+    template<typename StateVector>
+    concept has_bias = requires(StateVector const constState) {
+        { StateVector::ROWS }
+            -> std::convertible_to<Eigen::Index const&>;
+        { constState.hasBias() }
+            -> std::convertible_to<bool>;
+        { constState.getBiasStates() }
+            -> std::same_as<Eigen::Vector<double, StateVector::ROWS>>;
+    };
+
+    template<typename StateVector>
+    concept has_consider = requires(StateVector const constState) {
+        { StateVector::ROWS }
+            -> std::convertible_to<Eigen::Index const&>;
+        { constState.hasConsider() }
+            -> std::convertible_to<bool>;
+        { constState.getConsiderStates() }
+            -> std::same_as<Eigen::Vector<double, StateVector::ROWS>>;
+    };
+}
+
 #endif
