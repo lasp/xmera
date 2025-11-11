@@ -29,37 +29,35 @@ void InertialAttitudeUkf::updateState(uint64_t currentSimNanos) {
 
 void InertialAttitudeUkf::customReset() {
     /*! No custom reset for this module */
-    std::function<FilterStateVector(double, const FilterStateVector)> attitudeDynamics =
-        [this](double t, const FilterStateVector& state) {
-            Eigen::Vector3d mrp(state.getPositionStates());
-            Eigen::Vector3d omega(state.getVelocityStates());
-            Eigen::MatrixXd bMat = bmatMrp(mrp);
+    this->srukf.dynamics = [this](double t, const FilterStateVector& state) {
+        Eigen::Vector3d mrp(state.getPositionStates());
+        Eigen::Vector3d omega(state.getVelocityStates());
+        Eigen::MatrixXd bMat = bmatMrp(mrp);
 
-            FilterStateVector stateDerivative;
-            PositionState mrpDot;
-            mrpDot.setValues(0.25 * bMat * omega);
-            stateDerivative.setPosition(mrpDot);
+        FilterStateVector stateDerivative;
+        PositionState mrpDot;
+        mrpDot.setValues(0.25 * bMat * omega);
+        stateDerivative.setPosition(mrpDot);
 
-            Eigen::Vector3d wheelTorque = Eigen::Vector3d::Zero();
-            for (int i = 0; i < this->rwArrayConfigPayload.numRW; i++) {
-                Eigen::Vector3d gsMatrix = Eigen::Map<Eigen::Vector3d>(&this->rwArrayConfigPayload.GsMatrix_B[i * 3]);
-                wheelTorque += this->wheelAccelerations[i] * this->rwArrayConfigPayload.JsList[i] * gsMatrix;
-            }
+        Eigen::Vector3d wheelTorque = Eigen::Vector3d::Zero();
+        for (int i = 0; i < this->rwArrayConfigPayload.numRW; i++) {
+            Eigen::Vector3d gsMatrix = Eigen::Map<Eigen::Vector3d>(&this->rwArrayConfigPayload.GsMatrix_B[i * 3]);
+            wheelTorque += this->wheelAccelerations[i] * this->rwArrayConfigPayload.JsList[i] * gsMatrix;
+        }
 
-            VelocityState omegaDot;
-            omegaDot.setValues(-this->spacecraftInertiaInverse *
-                               (tildeMatrix(omega) * this->spacecraftInertia * omega + wheelTorque));
-            stateDerivative.setVelocity(omegaDot);
+        VelocityState omegaDot;
+        omegaDot.setValues(-this->spacecraftInertiaInverse *
+                           (tildeMatrix(omega) * this->spacecraftInertia * omega + wheelTorque));
+        stateDerivative.setVelocity(omegaDot);
 
-            if (state.hasBias()) {
-                BiasState xDotBias;
-                xDotBias.setValues(Eigen::VectorXd::Zero(3));
-                stateDerivative.setBias(xDotBias);
-            }
+        if (state.hasBias()) {
+            BiasState xDotBias;
+            xDotBias.setValues(Eigen::VectorXd::Zero(3));
+            stateDerivative.setBias(xDotBias);
+        }
 
-            return stateDerivative;
-        };
-    this->srukf.dynamics.setDynamics(attitudeDynamics);
+        return stateDerivative;
+    };
 
     this->firstFilterPass = true;
 }

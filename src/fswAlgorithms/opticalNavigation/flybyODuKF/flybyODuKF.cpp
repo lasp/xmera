@@ -33,25 +33,23 @@ void FlybyODuKF::customReset() {
     /*! - Initialize filter parameters and change units to km and s */
     this->muCentral *= pow(this->srukf.unitConversion, 3);  // mu is input in meters
     double centralBody = this->muCentral;
-    std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics =
-        [centralBody](double t, const FilterStateVector& state) {
-            FilterStateVector XDot;
-            /*! Implement propagation with rate derivatives set to zero */
-            /*! Implement point mass gravity for the propagation */
-            PositionState flybyPosition;
-            VelocityState flybyVelocity;
-            flybyPosition.setValues(state.getVelocityStates());
-            flybyVelocity.setValues(-centralBody / pow(state.getPositionStates().norm(), 3) *
-                                    state.getPositionStates());
-
-            XDot.setPosition(flybyPosition);
-            XDot.setVelocity(flybyVelocity);
-
-            return XDot;
-        };
 
     /*! - Set the filter dynamics */
-    this->srukf.dynamics.setDynamics(twoBodyDynamics);
+    this->srukf.dynamics = [centralBody](double t, const FilterStateVector& state) {
+        FilterStateVector XDot;
+        /*! Implement propagation with rate derivatives set to zero */
+        /*! Implement point mass gravity for the propagation */
+        PositionState flybyPosition;
+        VelocityState flybyVelocity;
+        flybyPosition.setValues(state.getVelocityStates());
+        flybyVelocity.setValues(-centralBody / pow(state.getPositionStates().norm(), 3) *
+                                state.getPositionStates());
+
+        XDot.setPosition(flybyPosition);
+        XDot.setVelocity(flybyVelocity);
+
+        return XDot;
+    };
 }
 
 /*! Read the message containing the measurement data.
