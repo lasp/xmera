@@ -29,27 +29,18 @@ void LinearODeKF::updateState(uint64_t currentSimNanos) {
 void LinearODeKF::customReset() {
     /*! - Check if the required message has not been connected */
     assert(this->opNavHeadingMsg.isLinked());
-    if (this->constantVelocityInitial) {
-        this->constantVelocity = this->constantVelocityInitial.value() * this->ekf.unitConversion;
-    }
 
     /*! - Set the filter dynamics (linear) */
-    this->ekf.dynamics = [this](double t, const FilterStateVector& state) {
+    this->ekf.dynamics = [](double t, const FilterStateVector& state) {
         FilterStateVector XDot;
 
-        if (this->constantVelocity) {
-            XDot.setPosition(PositionState<Eigen::Dynamic> {this->constantVelocity.value()});
-        } else {
-            XDot.setPosition(PositionState<Eigen::Dynamic> {state.getVelocityStates()});
-            XDot.setVelocity(VelocityState<Eigen::Dynamic> {Eigen::Vector3d::Zero()});
-        }
+        XDot.setPosition(PositionState<Eigen::Dynamic> {state.getVelocityStates()});
+        XDot.setVelocity(VelocityState<Eigen::Dynamic> {Eigen::Vector3d::Zero()});
 
         return XDot;
     };
 
-    this->ekf.dynamicsTransitionMatrix = [this](double t, const FilterStateVector& state) -> Eigen::MatrixXd {
-        if (this->constantVelocity) return Eigen::MatrixXd::Zero(state.size(), state.size());
-
+    this->ekf.dynamicsTransitionMatrix = [](double t, const FilterStateVector& state) -> Eigen::MatrixXd {
         Eigen::VectorXd const& position = state.getPositionStates();
 
         Eigen::MatrixXd dynMatrix = Eigen::MatrixXd::Zero(state.size(), state.size());
@@ -72,12 +63,8 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
     eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).getPositionStates(),
                          navTransOutMsgBuffer.r_BN_N);
-    if (this->constantVelocityInitial) {
-        eigenMatrixToCArray(constantVelocityInitial.value(), navTransOutMsgBuffer.v_BN_N);
-    } else {
-        eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).getVelocityStates(),
-                             navTransOutMsgBuffer.v_BN_N);
-    }
+    eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).getVelocityStates(),
+                         navTransOutMsgBuffer.v_BN_N);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavFilterMsgBuffer.timeTag = (double)this->previousSimNanos * NANO2SEC;
@@ -129,19 +116,6 @@ void LinearODeKF::readFilterMeasurements() {
 
     this->measurements.enqueue(this->opNavHeadingBuffer.timeTag, std::move(headingMeasurement));
 }
-
-/*! Set a constant velocity vector that will not be estimated. Assert that velocity is not part of the state
-    @param Eigen::Vector3d velocity
-    */
-void LinearODeKF::setConstantVelocity(const Eigen::Vector3d& velocity) {
-    assert(this->ekf.state.hasVelocity() == false);
-    this->constantVelocityInitial = velocity;
-}
-
-/*! Get the constant velocity vector
-    @return std::optional<Eigen::Vector3d> velocity
-    */
-std::optional<Eigen::Vector3d> LinearODeKF::getConstantVelocity() const { return this->constantVelocityInitial; }
 
 /*! Set the filter measurement noise scale factor if desirable
     @param double measurementNoiseScale

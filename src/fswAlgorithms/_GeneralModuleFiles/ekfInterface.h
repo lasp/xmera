@@ -150,11 +150,7 @@ public:
 
         this->stateError = Eigen::VectorXd::Zero(this->state.size());
         this->stateLogged = this->state;
-        if (this->stateInitial.hasVelocity()) {
-            this->processNoise.resize(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());
-        } else {
-            this->processNoise.resize(this->state.getPositionStates().size(), this->state.getPositionStates().size());
-        }
+        this->processNoise.resize(this->state.getPositionStates().size(), this->state.getPositionStates().size());
         this->minCovarNorm = this->minCovarNorm * this->unitConversion * this->unitConversion;
     }
 
@@ -191,24 +187,20 @@ public:
         /*! - Update the covariance Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T
          * The process noise mapping will depend on the number of "rate" states */
         Eigen::MatrixXd processNoiseMapping;
-        if (!this->state.hasVelocity()) {
-            processNoiseMapping =
-                Eigen::MatrixXd::Identity(this->state.getPositionStates().size(), this->state.getPositionStates().size());
-            processNoiseMapping *= pow(dt, 2) / 2;
-        } else {
-            processNoiseMapping.setZero(this->state.getPositionStates().size() + this->state.getVelocityStates().size(),
-                                        this->state.getVelocityStates().size());
-            processNoiseMapping.block(
-                0, 0, this->state.getPositionStates().size(), this->state.getPositionStates().size()) =
-                pow(dt, 2) / 2 *
-                Eigen::MatrixXd::Identity(this->state.getPositionStates().size(), this->state.getPositionStates().size());
-            processNoiseMapping.block(this->state.getPositionStates().size(),
-                                      0,
-                                      this->state.getVelocityStates().size(),
-                                      this->state.getVelocityStates().size()) =
-                dt *
-                Eigen::MatrixXd::Identity(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());
-        }
+        processNoiseMapping.setZero(this->state.size(), this->state.getPositionStates().size());
+        processNoiseMapping.block(0,
+                                  0,
+                                  this->state.getPositionStates().size(),
+                                  this->state.getPositionStates().size()) =
+            pow(dt, 2) / 2 *
+            Eigen::MatrixXd::Identity(this->state.getPositionStates().size(), this->state.getPositionStates().size());
+        processNoiseMapping.block(this->state.getPositionStates().size(),
+                                  0,
+                                  this->state.getVelocityStates().size(),
+                                  this->state.getPositionStates().size()) =
+            dt *
+            Eigen::MatrixXd::Identity(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());
+
         this->covar = stateTransitionMatrix * this->covar * stateTransitionMatrix.transpose() +
                       processNoiseMapping * this->processNoise * processNoiseMapping.transpose();
     }
