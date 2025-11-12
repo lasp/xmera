@@ -27,6 +27,7 @@ void CenterOfBrightness::reset(uint64_t currentSimNanos) {
 void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
     CameraImageMsgPayload imageBuffer{};
     OpNavCOBMsgPayload cobBuffer{};
+    CenterOfBrightnessDiagnosticMsgPayload diagnosticBuffer{true, true};
 
     cv::Mat imageCV = this->readImage(imageBuffer, cobBuffer, currentSimNanos);
     if (imageCV.empty()) {
@@ -37,8 +38,9 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
     if (this->validWindow) {
         this->applyWindow(imageCV);
     }
-    cobBuffer = this->findCob(imageCV, imageBuffer);
+    cobBuffer = this->findCob(imageCV, imageBuffer, diagnosticBuffer);
     this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
+    this->centerOfBrightnessDiagnosticOutMsg.write(&diagnosticBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method retrieves the image data.
@@ -182,12 +184,11 @@ void CenterOfBrightness::applyWindow(cv::Mat const& image) const {
     }
 }
 
-/*! This method computes the points of the window used for windowing
+/*! This method computes the points of the window used for windowing, it also sets the diagnostic.invalidWindowTrigger
  @return void
  @param image openCV matrix of the input image
  */
 void CenterOfBrightness::computeWindow(cv::Mat const& image) {
-    // if any of the window parameters is 0 (not specified), window is the same as image dimensions and won't be applied
     if (this->windowCenter.isZero() || this->windowWidth == 0 || this->windowHeight == 0) {
         this->windowPointTopLeft[0] = 0;
         this->windowPointTopLeft[1] = 0;
@@ -212,7 +213,9 @@ void CenterOfBrightness::computeWindow(cv::Mat const& image) {
  @param imageBuffer Reference to the image payload buffer
 
  */
-OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat& imageCV, const CameraImageMsgPayload& imageBuffer) {
+OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat& imageCV,
+                                               const CameraImageMsgPayload& imageBuffer,
+                                               CenterOfBrightnessDiagnosticMsgPayload& diagnosticMsgBuffer) {
     OpNavCOBMsgPayload cobBuffer{};
     std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
 
@@ -231,6 +234,7 @@ OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat& imageCV, const Cam
         if (averageBrightnessOld > 0.0) {
             brightnessIncrease = (averageBrightnessNew - averageBrightnessOld) / averageBrightnessOld;
         }
+        diagnosticMsgBuffer.noPixelTrigger = false;
 
         /*! If brightness increase is less than brightness increase threshold, do not validate image */
         if (brightnessIncrease >= this->relativeBrightnessIncreaseThreshold) {
@@ -240,10 +244,10 @@ OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat& imageCV, const Cam
             cobBuffer.centerOfBrightness[0] = cobData.first[0] + 0.5;
             cobBuffer.centerOfBrightness[1] = cobData.first[1] + 0.5;
             cobBuffer.pixelsFound = static_cast<int32_t>(locations.size());
+            diagnosticMsgBuffer.notExceedingBrightnessIncreaseTrigger = false;
         }
         cobBuffer.rollingAverageBrightness = averageBrightnessNew;
     }
-
     return cobBuffer;
 }
 

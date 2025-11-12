@@ -9,6 +9,7 @@
 
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
+#include <architecture/msgPayloadDef/CenterOfBrightnessDiagnosticMsgPayload.h>
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/bskLogging.h>
@@ -41,7 +42,8 @@ class CenterOfBrightness : public SysModel {
     void setNumberOfPointsBrightnessAverage(int32_t rollingAverage);
     int32_t getNumberOfPointsBrightnessAverage() const;
 
-    Message<OpNavCOBMsgPayload> opnavCOBOutMsg;     //!< The name of the OpNav center of brightness output message
+    Message<OpNavCOBMsgPayload> opnavCOBOutMsg;  //!< The name of the OpNav center of brightness output message
+    Message<CenterOfBrightnessDiagnosticMsgPayload> centerOfBrightnessDiagnosticOutMsg;
     ReadFunctor<CameraImageMsgPayload> imageInMsg;  //!< The name of the camera output message
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
@@ -51,7 +53,9 @@ class CenterOfBrightness : public SysModel {
     std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
     void computeWindow(cv::Mat const& image);
     void applyWindow(cv::Mat const& image) const;
-    OpNavCOBMsgPayload findCob(const cv::Mat& imageCV, const CameraImageMsgPayload& imageBuffer);
+    OpNavCOBMsgPayload findCob(const cv::Mat& imageCV,
+                               const CameraImageMsgPayload& imageBuffer,
+                               CenterOfBrightnessDiagnosticMsgPayload& diagnosticMsgBuffer);
     void updateBrightnessHistory(double brightness);
 
     uint64_t sensorTimeTag;                    //!< [ns] Current time tag for sensor out

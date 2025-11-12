@@ -15,3 +15,4 @@
 %include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 
 %include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
+%include <architecture/msgPayloadDef/CenterOfBrightnessDiagnosticMsgPayload.h>
