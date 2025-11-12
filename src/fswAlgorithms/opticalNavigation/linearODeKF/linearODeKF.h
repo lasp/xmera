@@ -102,17 +102,11 @@ class LinearODeKF : public SysModel {
     Message<FilterMsgPayload> opNavFilterMsg;
     Message<FilterResidualsMsgPayload> opNavResidualMsg;
 
-    void setConstantVelocity(const Eigen::Vector3d& velocity);
-    std::optional<Eigen::Vector3d> getConstantVelocity() const;
-
    private:
     EkfInterface<FilterStateVector> ekf{FilterType::Classical};
     double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     xmera::measurement_queue<LinearODeKFMeasurementModel, 1> measurements = {};  //!< [Measurements] All
     uint64_t previousSimNanos = 0;
-
-    std::optional<Eigen::Vector3d> constantVelocity;         //!< Unestimated constant velocity
-    std::optional<Eigen::Vector3d> constantVelocityInitial;  //!< Initial value of constant velocity
 };
 
 #endif
