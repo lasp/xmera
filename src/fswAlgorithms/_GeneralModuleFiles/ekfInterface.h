@@ -22,15 +22,16 @@
  * with the computed state error at each measurement update */
 enum class FilterType { Classical, Extended };
 
+template<typename StateVector>
 struct EkfMeasurementModel {
 public:
     EkfMeasurementModel() = default;
     virtual ~EkfMeasurementModel() = default;
 
     //! [-] observation measurement model
-    virtual Eigen::MatrixXd model(const FilterStateVector& state) const = 0;
+    virtual Eigen::MatrixXd model(const StateVector& state) const = 0;
 
-    virtual Eigen::MatrixXd measurementMatrix(const FilterStateVector& state) const = 0;
+    virtual Eigen::MatrixXd measurementMatrix(const StateVector& state) const = 0;
 
     virtual Eigen::VectorXd subtract(
         const Eigen::VectorXd& observed,
@@ -48,51 +49,36 @@ public:
 };
 
 namespace xmera {
-    namespace detail {
-        struct StateWithStm final {
-            FilterStateVector state;
-            Eigen::MatrixXd stm;
-
-            StateWithStm add(StateWithStm const& other) const {
-                return {
-                    .state = this->state.add(other.state),
-                    .stm = this->stm + other.stm,
-                };
-            }
-
-            StateWithStm scale(double scale) const {
-                return {
-                    .state = this->state.scale(scale),
-                    .stm = this->stm * scale,
-                };
-            }
-        };
-
-        static_assert(xmera::linearly_combinable<StateWithStm>);
-    }
+    template<typename StateVector>
+    concept ekf_state_vector = requires(StateVector const constState) {
+        requires xmera::linearly_combinable<StateVector>;
+        requires xmera::has_position<StateVector>;
+        requires xmera::has_velocity<StateVector>;
+    };
 }
 
 /*! @brief Extended or Classical/Linear Kalman Filter base class. */
-class EkfInterface final : public KalmanFilter<EkfMeasurementModel> {
+template<xmera::ekf_state_vector StateVector>
+class EkfInterface final : public KalmanFilter<EkfMeasurementModel<StateVector>> {
 public:
     //! [-] State variable for logging
-    FilterStateVector stateLogged;
+    StateVector stateLogged;
     //! [-] Current mean state error
     Eigen::VectorXd stateError;
 
     //! [-] Dynamics to compute the state derivative at a time
-    DynamicsModel<FilterStateVector> dynamics;
-    std::function<Eigen::MatrixXd(double time, FilterStateVector state)> dynamicsTransitionMatrix;
+    DynamicsModel<StateVector> dynamics;
+    std::function<Eigen::MatrixXd(double time, StateVector state)> dynamicsTransitionMatrix;
     //! [-] process noise matrix
     Eigen::MatrixXd processNoise;
 
     //! [-] State estimate for time TimeTag
-    FilterStateVector state;
+    StateVector state;
     //! [-] covariance
     Eigen::MatrixXd covar;
 
     //! [-] State estimate for time TimeTag at previous time
-    FilterStateVector stateInitial;
+    StateVector stateInitial;
     //! [-] covariance at previous time
     Eigen::MatrixXd covarInitial;
     //! [-] Scale that converts input units (SI) to a desired unit for the inner maths
@@ -104,6 +90,28 @@ private:
 
     //! [-] flag to know whether the filter is being run as a linear KF or extended KF
     FilterType filterType = FilterType::Extended;
+
+private:
+    struct StateWithStm final {
+        StateVector state;
+        Eigen::MatrixXd stm;
+
+        StateWithStm add(StateWithStm const& other) const {
+            return {
+                .state = this->state.add(other.state),
+                .stm = this->stm + other.stm,
+            };
+        }
+
+        StateWithStm scale(double scale) const {
+            return {
+                .state = this->state.scale(scale),
+                .stm = this->stm * scale,
+            };
+        }
+    };
+
+    static_assert(xmera::linearly_combinable<StateWithStm>);
 
 public:
     explicit EkfInterface(const FilterType type)
@@ -127,7 +135,6 @@ public:
     double getMinimumCovarianceNormForEkf() const {
         return this->minCovarNorm / this->unitConversion / this->unitConversion;
     }
-
 
 public:
     /*! Reset all of the filter states, including the custom reset
@@ -159,14 +166,14 @@ public:
         /*! - Propagate full state and STM vector using dynamics specified in child class */
         Eigen::MatrixXd stateTransitionMatrix;
         {
-            DynamicsModel<xmera::detail::StateWithStm> stateStmDynamics =
-                [this](double time, xmera::detail::StateWithStm const& state) -> xmera::detail::StateWithStm {
+            DynamicsModel<StateWithStm> stateStmDynamics =
+                [this](double time, StateWithStm const& state) -> StateWithStm {
                     return {
                         .state = this->dynamics(time, state.state),
                         .stm = this->dynamicsTransitionMatrix(time, state.state) * state.stm,
                     };
                 };
-            xmera::detail::StateWithStm stateStm = {
+            StateWithStm stateStm = {
                 .state = this->state,
                 .stm = Eigen::MatrixXd::Identity(this->state.size(), this->state.size()),
             };
@@ -210,7 +217,7 @@ public:
      @param Measurement
      @return void
      */
-    void measurementUpdate(EkfMeasurementModel &measurement) override {
+    void measurementUpdate(EkfMeasurementModel<StateVector> &measurement) override {
         auto const& observation = measurement.getObservation();
 
         auto const& preFitResiduals = this->computeResiduals(measurement);
@@ -250,7 +257,7 @@ private:
      @param Measurement
      @return Eigen::VectorXd
      */
-    Eigen::VectorXd computeResiduals(const EkfMeasurementModel &measurement) {
+    Eigen::VectorXd computeResiduals(const EkfMeasurementModel<StateVector> &measurement) {
         Eigen::VectorXd measurementDelta = measurement.subtract(
             measurement.getObservation(),
             measurement.model(this->state)
