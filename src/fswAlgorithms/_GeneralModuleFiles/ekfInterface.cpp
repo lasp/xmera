@@ -40,7 +40,6 @@ void EkfInterface::reset() {
 
     this->stateError = Eigen::VectorXd::Zero(this->state.size());
     this->stateLogged = this->state;
-    this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());
     if (this->stateInitial.hasVelocity()) {
         this->processNoise.resize(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());
     } else {
@@ -54,26 +53,27 @@ void EkfInterface::reset() {
  @param updateTime The time since last update that we need to fix the filter to (seconds)
  */
 void EkfInterface::timeUpdate(const double dt) {
-    this->stateTransitionMatrix = Eigen::MatrixXd::Identity(this->state.size(), this->state.size());
-    std::array<double, 2> time = {0, dt};
-
     /*! - Propagate full state and STM vector using dynamics specified in child class */
-    DynamicsModel<StateWithStm> stateStmDynamics = [this](double time, StateWithStm const& state) -> StateWithStm {
-        return {
-            .state = this->dynamics(time, state.state),
-            .stm = this->dynamicsTransitionMatrix(time, state.state) * state.stm,
+    Eigen::MatrixXd stateTransitionMatrix;
+    {
+        DynamicsModel<StateWithStm> stateStmDynamics = [this](double time, StateWithStm const& state) -> StateWithStm {
+            return {
+                .state = this->dynamics(time, state.state),
+                .stm = this->dynamicsTransitionMatrix(time, state.state) * state.stm,
+            };
         };
-    };
-    StateWithStm stateStm = {
-        .state = this->state,
-        .stm = this->stateTransitionMatrix,
-    };
-    StateWithStm propagatedStateStm = xmera::propagate(stateStmDynamics, stateStm, time, dt);
+        StateWithStm stateStm = {
+            .state = this->state,
+            .stm = Eigen::MatrixXd::Identity(this->state.size(), this->state.size()),
+        };
+        StateWithStm propagatedStateStm = xmera::propagate(stateStmDynamics, stateStm, {0, dt}, dt);
+
+        stateTransitionMatrix = propagatedStateStm.stm;
+        this->state = propagatedStateStm.state;
+    }
 
     /*! - Unpack propagated states and update state, and state error */
-    this->stateTransitionMatrix = propagatedStateStm.stm;
-    this->state = propagatedStateStm.state;
-    this->stateError = this->stateTransitionMatrix * this->stateError;
+    this->stateError = stateTransitionMatrix * this->stateError;
     this->stateLogged = this->state.addVector(this->stateError);
 
     /*! - Update the covariance Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T
@@ -97,7 +97,7 @@ void EkfInterface::timeUpdate(const double dt) {
             dt *
             Eigen::MatrixXd::Identity(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());
     }
-    this->covar = this->stateTransitionMatrix * this->covar * this->stateTransitionMatrix.transpose() +
+    this->covar = stateTransitionMatrix * this->covar * stateTransitionMatrix.transpose() +
                   processNoiseMapping * this->processNoise * processNoiseMapping.transpose();
 }
 

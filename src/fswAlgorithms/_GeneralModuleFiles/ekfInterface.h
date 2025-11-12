@@ -101,9 +101,6 @@ public:
     double unitConversion = 1;
 
 private:
-    //! [-] State Transition Matrix
-    Eigen::MatrixXd stateTransitionMatrix;
-
     //! [-] Infinite norm after which the filter will begin processing measurements as an extended kalman filter
     double minCovarNorm = 1E-5;
 
