@@ -122,6 +122,8 @@ def run_sequence(image, blur, save_test, valid_image,
 
     data_log = module_config.opnavCOBOutMsg.recorder()
     unit_test_sim.AddModelToTask("unit_task", data_log)
+    diagnosis_log = module_config.centerOfBrightnessDiagnosticOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unit_task", diagnosis_log)
 
     # run simulation for 5 time steps (excluding initial time step at 0 ns), scale brightness each time step
     # necessary to test rolling brightness average
@@ -161,6 +163,90 @@ def run_sequence(image, blur, save_test, valid_image,
     return cob, pixelNum, brightnessAverage, brightnessAverage_ref
 
 
+
+def run_sequence_diagnosis(diag_all_true, image, blur, valid_image,
+                         window_point_top_left, window_point_bottom_right,
+                         image_path, image_path_module):
+    if(diag_all_true):
+        pixel_threshold = 255
+        relbrightness_threshold = np.inf
+    else:
+        pixel_threshold = 0
+        relbrightness_threshold = -np.inf
+
+    # setup simulation environment
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    process_rate = macros.sec2nano(0.5)
+    test_process = unit_test_sim.CreateNewProcess("unit_process")
+    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+
+#     # setup center of brightness module
+    window_center = compute_window_center(window_point_top_left, window_point_bottom_right)
+    window_width, window_height = compute_window_size(window_point_top_left, window_point_bottom_right)
+    if(window_width == 0 or window_height == 0):
+        return
+
+    module_config = centerOfBrightness.CenterOfBrightness()
+    module_config.modelTag = "centerOfBrightness_seq"
+    if window_center.all() != 0:
+        module_config.setWindowCenter(window_center)
+        module_config.setWindowSize(window_width, window_height)
+
+    module_config.setRelativeBrightnessIncreaseThreshold(relbrightness_threshold)
+    module_config.setNumberOfPointsBrightnessAverage(3)
+    module_config.setFileName(image_path_module)
+    module_config.setBlurSize(blur)
+    module_config.setPixelThreshold(pixel_threshold)
+    module_config.setSaveDir(path + '/result_save.png')
+    unit_test_sim.AddModelToTask("unit_task", module_config)
+
+    input_message_data = messaging.CameraImageMsgPayload()
+    input_message_data.timeTag = int(1E9)
+    input_message_data.cameraID = 1
+    input_message_data.valid = valid_image
+    img_in_msg = messaging.CameraImageMsg().write(input_message_data)
+    module_config.imageInMsg.subscribeTo(img_in_msg)
+
+    data_log = module_config.opnavCOBOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unit_task", data_log)
+    diagnosis_log = module_config.centerOfBrightnessDiagnosticOutMsg.recorder()
+    unit_test_sim.AddModelToTask("unit_task", diagnosis_log)
+
+    # run simulation for 5 time steps (excluding initial time step at 0 ns), scale brightness each time step
+    # necessary to test rolling brightness average
+
+    unit_test_sim.InitializeSimulation()
+    scaler = np.array([0.5, 0.6, 0.8, 0.3, 0.9])
+    brightness_ref = np.zeros([len(scaler)])
+    brightnessAverage_ref = np.zeros([len(scaler)])
+
+
+    white_width = grey_width = height = None
+    if image == "half_half.png":
+        white_width = 138
+        grey_width = 1
+        height = 183
+        if np.array_equal(window_point_top_left, [50, 0]) and np.array_equal(window_point_bottom_right, [275, 91]):
+            height = 91
+
+    for i in range(0, len(scaler)):
+        im = cv2.imread(image_path)
+        th, im_th = cv2.threshold(im, int(scaler[i] * 255), 255, cv2.THRESH_TRUNC)
+        cv2.imwrite(image_path_module, im_th)
+
+        unit_test_sim.ConfigureStopTime(i * process_rate)
+        unit_test_sim.ExecuteSimulation()
+
+        if image == "half_half.png":
+            brightness_raw = int(scaler[i] * 255)*white_width*height + 116*grey_width*height
+            brightness_ref[i] = brightness_raw / 255
+            lower_idx = max(0, i-(int(module_config.getNumberOfPointsBrightnessAverage())-1))
+            brightnessAverage_ref[i] = np.mean(brightness_ref[lower_idx:i+1])
+
+    np.testing.assert_equal(diagnosis_log.noPixelTrigger, diag_all_true)
+    np.testing.assert_equal(diagnosis_log.notExceedingBrightnessIncreaseTrigger, diag_all_true)
+
+
 def centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save_image, window_point_top_left,
                            window_point_bottom_right):
     image_path = path + '/' + image
@@ -174,6 +260,17 @@ def centerOfBrightnessTest(show_plots, image, blur, save_test, valid_image, save
 
     cob, pixelNum, brightnessAverage, brightnessAverage_ref = run_sequence(
         image, blur, save_test, valid_image,
+        window_point_top_left, window_point_bottom_right,
+        image_path, image_path_module
+    )
+
+    run_sequence_diagnosis(
+        True, image, blur, valid_image,
+        window_point_top_left, window_point_bottom_right,
+        image_path, image_path_module
+    )
+    run_sequence_diagnosis(
+        False, image, blur, valid_image,
         window_point_top_left, window_point_bottom_right,
         image_path, image_path_module
     )
