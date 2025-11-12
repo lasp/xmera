@@ -48,47 +48,66 @@ public:
 };
 
 /*! @brief Extended or Classical/Linear Kalman Filter base class. */
-class EkfInterface : public KalmanFilter<EkfMeasurementModel> {
-   public:
+class EkfInterface final : public KalmanFilter<EkfMeasurementModel> {
+public:
     explicit EkfInterface(FilterType type);
     ~EkfInterface() override = default;
-
-    void reset() override;
-    void timeUpdate(double dt) override;
-    void measurementUpdate(EkfMeasurementModel& measurement) override;
 
     void setMinimumCovarianceNormForEkf(double infiniteNorm);
     double getMinimumCovarianceNormForEkf() const;
 
-    FilterStateVector stateLogged;   //!< [-] State variable for logging
-    Eigen::VectorXd stateError;      //!< [-] Current mean state error
+public:
+    void reset() override;
+    void timeUpdate(double dt) override;
+    void measurementUpdate(EkfMeasurementModel& measurement) override;
 
-    DynamicsModel dynamics;
-    Eigen::MatrixXd processNoise;   //!< [-] process noise matrix
-
-    FilterStateVector state;         //!< [-] State estimate for time TimeTag
-    Eigen::MatrixXd covar;           //!< [-] covariance
-
-    FilterStateVector stateInitial;  //!< [-] State estimate for time TimeTag at previous time
-    Eigen::MatrixXd covarInitial;    //!< [-] covariance at previous time
-    double unitConversion = 1;       //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
-
-   private:
+private:
     Eigen::VectorXd computeResiduals(const EkfMeasurementModel& measurement);
+
     Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd& covar,
                                       const Eigen::MatrixXd& measurementMatrix,
                                       const Eigen::MatrixXd& measurementNoise) const;
+
     void updateCovariance(const Eigen::MatrixXd& measMat,
                           const Eigen::MatrixXd& noise,
                           const Eigen::MatrixXd& kalmanGain);
+
     void ckfUpdate(const Eigen::MatrixXd& kalmanGain, const Eigen::VectorXd& residual);
+
     void ekfUpdate(const Eigen::MatrixXd& kalmanGain, const Eigen::VectorXd& yMeas);
 
-    Eigen::MatrixXd stateTransitionMatrix;  //!< [-] State Transition Matrix
-    double minCovarNorm = 1E-5; /*!< [-] Infinite norm after which the filter will begin processing measurements as
-    an extended kalman filter */
-    FilterType filterType =
-        FilterType::Extended;  //!< [-] flag to know whether the filter is being run as a linear KF or extended KF
+public:
+    //! [-] State variable for logging
+    FilterStateVector stateLogged;
+    //! [-] Current mean state error
+    Eigen::VectorXd stateError;
+
+    //! [-] Dynamics to compute the state derivative at a time
+    DynamicsModel dynamics;
+    //! [-] process noise matrix
+    Eigen::MatrixXd processNoise;
+
+    //! [-] State estimate for time TimeTag
+    FilterStateVector state;
+    //! [-] covariance
+    Eigen::MatrixXd covar;
+
+    //! [-] State estimate for time TimeTag at previous time
+    FilterStateVector stateInitial;
+    //! [-] covariance at previous time
+    Eigen::MatrixXd covarInitial;
+    //! [-] Scale that converts input units (SI) to a desired unit for the inner maths
+    double unitConversion = 1;
+
+private:
+    //! [-] State Transition Matrix
+    Eigen::MatrixXd stateTransitionMatrix;
+
+    //! [-] Infinite norm after which the filter will begin processing measurements as an extended kalman filter
+    double minCovarNorm = 1E-5;
+
+    //! [-] flag to know whether the filter is being run as a linear KF or extended KF
+    FilterType filterType = FilterType::Extended;
 };
 
 #endif /* EKF_INTERFACE_HPP */
