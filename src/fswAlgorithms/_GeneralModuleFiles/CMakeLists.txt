@@ -1,5 +1,4 @@
 add_library(fswAlgorithmsCommon OBJECT
-  ekfInterface.cpp
   srukfInterface.cpp
   stateModels.cpp
 )
