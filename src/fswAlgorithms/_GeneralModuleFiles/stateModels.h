@@ -97,11 +97,13 @@ class FilterStateVector {
 namespace xmera{
     template<typename StateVector>
     concept is_state_vector = requires(StateVector state, StateVector const constState) {
+        // The statically-known extent of the state vector (which may be Eigen::Dynamic)
         { StateVector::SIZE }
             -> std::convertible_to<Eigen::Index const&>;
-
+        // The dynamically-known extent of the state vector (which is never Eigen::Dynamic)
         { constState.size() }
             -> std::convertible_to<Eigen::Index>;
+
         { constState.returnValues() }
             -> std::same_as<Eigen::Vector<double, StateVector::SIZE>>;
 

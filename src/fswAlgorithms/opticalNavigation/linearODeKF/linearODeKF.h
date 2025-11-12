@@ -20,7 +20,8 @@
 
 #include <fswAlgorithms/_GeneralModuleFiles/ekfInterface.h>
 
-struct LinearODeKFMeasurementModel : public EkfMeasurementModel {
+#ifndef SWIG
+struct LinearODeKFMeasurementModel : public EkfMeasurementModel<FilterStateVector> {
 public:
     //! [-] observation measurement model
     Eigen::MatrixXd model(const FilterStateVector& state) const override {
@@ -76,6 +77,7 @@ public:
     Eigen::VectorXd preFitResiduals = {};   //!< [-] Observation pre fit residuals
     Eigen::VectorXd postFitResiduals = {};  //!< [-] Observation post fit residuals
 };
+#endif
 
 class LinearODeKF : public SysModel {
    public:
@@ -104,7 +106,7 @@ class LinearODeKF : public SysModel {
     std::optional<Eigen::Vector3d> getConstantVelocity() const;
 
    private:
-    EkfInterface ekf{FilterType::Classical};
+    EkfInterface<FilterStateVector> ekf{FilterType::Classical};
     double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     xmera::measurement_queue<LinearODeKFMeasurementModel, 1> measurements = {};  //!< [Measurements] All
     uint64_t previousSimNanos = 0;
