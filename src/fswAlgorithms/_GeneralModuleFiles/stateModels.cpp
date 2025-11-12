@@ -9,7 +9,6 @@ static_assert(xmera::has_velocity<FilterStateVector>);
 static_assert(xmera::has_acceleration<FilterStateVector>);
 static_assert(xmera::has_bias<FilterStateVector>);
 static_assert(xmera::has_consider<FilterStateVector>);
-static_assert(xmera::has_stm<FilterStateVector>);
 
 /*! Set the positional components of your state (cartesian position, attitude, etc)
    @param Eigen::VectorXd positionComponents
@@ -116,7 +115,6 @@ FilterStateVector FilterStateVector::add(const FilterStateVector& vector) const 
             + vector.getConsiderStates()
         };
     }
-    sum.attachStm(this->detachStm() + vector.detachStm());
     return sum;
 }
 
@@ -151,7 +149,6 @@ FilterStateVector FilterStateVector::scale(const double scalar) const {
             this->getConsiderStates() * scalar
         };
     }
-    scaledVector.attachStm(this->detachStm() * scalar);
     return scaledVector;
 }
 
@@ -292,18 +289,4 @@ void FilterStateVector::setConsider(const ConsiderState<Eigen::Dynamic>& conside
 */
 Eigen::VectorXd FilterStateVector::getConsiderStates() const {
     return this->considerParameters.value().getValues();
-}
-
-/*! Attach the state transition matrix of your state for simultaneous propagation
-   @param Eigen::MatrixXd stm
-*/
-void FilterStateVector::attachStm(const Eigen::MatrixXd& stm) {
-    this->stm = stm;
-}
-
-/*! Detach the state transition matrix of your state for simultaneous propagation
-   @return Eigen::MatrixXd stm
-*/
-Eigen::MatrixXd FilterStateVector::detachStm() const {
-    return this->stm;
 }

@@ -62,7 +62,6 @@ class FilterStateVector {
     std::optional<AccelerationState<ROWS>> acceleration;
     std::optional<BiasState<ROWS>> bias;
     std::optional<ConsiderState<ROWS>> considerParameters;
-    Eigen::Matrix<double, SIZE, SIZE> stm;
 
    public:
     Eigen::Index size() const;
@@ -72,9 +71,6 @@ class FilterStateVector {
     FilterStateVector scale(const double scalar) const;
 
     Eigen::Vector<double, SIZE> returnValues() const;
-
-    void attachStm(const Eigen::Matrix<double, SIZE, SIZE>& stm);
-    Eigen::Matrix<double, SIZE, SIZE> detachStm() const;
 
     void setPosition(const PositionState<ROWS>& position);
     Eigen::Vector<double, ROWS> getPositionStates() const;
@@ -115,16 +111,6 @@ namespace xmera{
             -> std::same_as<StateVector>;
         { constState.addVector(constState.returnValues()) }
             -> std::same_as<StateVector>;
-    };
-
-    template<typename StateVector>
-    concept has_stm = requires(StateVector state, StateVector const constState) {
-        { StateVector::SIZE }
-            -> std::convertible_to<Eigen::Index const&>;
-        { constState.detachStm() }
-            -> std::same_as<Eigen::Matrix<double, StateVector::SIZE, StateVector::SIZE>>;
-        { state.attachStm(constState.detachStm()) }
-            ;
     };
 
     template<typename StateVector>
