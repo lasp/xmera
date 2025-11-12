@@ -39,20 +39,24 @@ void LinearODeKF::customReset() {
 
         if (this->constantVelocity) {
             XDot.setPosition(PositionState<Eigen::Dynamic> {this->constantVelocity.value()});
-            XDot.attachStm(Eigen::MatrixXd::Zero(state.size(), state.size()));
         } else {
-            Eigen::VectorXd position = state.getPositionStates();
-
-            Eigen::MatrixXd dynMatrix = Eigen::MatrixXd::Zero(state.size(), state.size());
-            dynMatrix.block(0, position.size(), position.size(), position.size()) =
-                Eigen::MatrixXd::Identity(position.size(), position.size());
-
             XDot.setPosition(PositionState<Eigen::Dynamic> {state.getVelocityStates()});
             XDot.setVelocity(VelocityState<Eigen::Dynamic> {Eigen::Vector3d::Zero()});
-            XDot.attachStm(dynMatrix * state.detachStm());
         }
 
         return XDot;
+    };
+
+    this->ekf.dynamicsTransitionMatrix = [this](double t, const FilterStateVector& state) -> Eigen::MatrixXd {
+        if (this->constantVelocity) return Eigen::MatrixXd::Zero(state.size(), state.size());
+
+        Eigen::VectorXd const& position = state.getPositionStates();
+
+        Eigen::MatrixXd dynMatrix = Eigen::MatrixXd::Zero(state.size(), state.size());
+        dynMatrix.block(0, position.size(), position.size(), position.size()) =
+            Eigen::MatrixXd::Identity(position.size(), position.size());
+
+        return dynMatrix;
     };
 }
 

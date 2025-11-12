@@ -84,6 +84,7 @@ public:
 
     //! [-] Dynamics to compute the state derivative at a time
     DynamicsModel<FilterStateVector> dynamics;
+    std::function<Eigen::MatrixXd(double time, FilterStateVector state)> dynamicsTransitionMatrix;
     //! [-] process noise matrix
     Eigen::MatrixXd processNoise;
 

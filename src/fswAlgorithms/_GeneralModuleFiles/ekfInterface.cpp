@@ -3,6 +3,28 @@
 
 #include "ekfInterface.h"
 
+struct StateWithStm final {
+    FilterStateVector state;
+    Eigen::MatrixXd stm;
+
+    StateWithStm add(StateWithStm const& other) const {
+        return {
+            .state = this->state.add(other.state),
+            .stm = this->stm + other.stm,
+        };
+    }
+
+    StateWithStm scale(double scale) const {
+        return {
+            .state = this->state.scale(scale),
+            .stm = this->stm * scale,
+        };
+    }
+};
+
+static_assert(xmera::linearly_combinable<StateWithStm>);
+
+
 EkfInterface::EkfInterface(const FilterType type) { this->filterType = type; }
 
 /*! Reset all of the filter states, including the custom reset
@@ -36,14 +58,21 @@ void EkfInterface::timeUpdate(const double dt) {
     std::array<double, 2> time = {0, dt};
 
     /*! - Propagate full state and STM vector using dynamics specified in child class */
-    FilterStateVector stateStm = this->state;
-    stateStm.attachStm(this->stateTransitionMatrix);
-    FilterStateVector propagatedStateStm = xmera::propagate(this->dynamics, stateStm, time, dt);
-
-    this->stateTransitionMatrix = propagatedStateStm.detachStm();
+    DynamicsModel<StateWithStm> stateStmDynamics = [this](double time, StateWithStm const& state) -> StateWithStm {
+        return {
+            .state = this->dynamics(time, state.state),
+            .stm = this->dynamicsTransitionMatrix(time, state.state) * state.stm,
+        };
+    };
+    StateWithStm stateStm = {
+        .state = this->state,
+        .stm = this->stateTransitionMatrix,
+    };
+    StateWithStm propagatedStateStm = xmera::propagate(stateStmDynamics, stateStm, time, dt);
 
     /*! - Unpack propagated states and update state, and state error */
-    this->state = propagatedStateStm;
+    this->stateTransitionMatrix = propagatedStateStm.stm;
+    this->state = propagatedStateStm.state;
     this->stateError = this->stateTransitionMatrix * this->stateError;
     this->stateLogged = this->state.addVector(this->stateError);
 
