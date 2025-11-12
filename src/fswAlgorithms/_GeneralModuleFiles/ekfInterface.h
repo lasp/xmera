@@ -83,7 +83,7 @@ public:
     Eigen::VectorXd stateError;
 
     //! [-] Dynamics to compute the state derivative at a time
-    DynamicsModel dynamics;
+    DynamicsModel<FilterStateVector> dynamics;
     //! [-] process noise matrix
     Eigen::MatrixXd processNoise;
 

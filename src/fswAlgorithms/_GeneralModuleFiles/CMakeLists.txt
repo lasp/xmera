@@ -1,5 +1,4 @@
 add_library(fswAlgorithmsCommon OBJECT
-  dynamicModels.cpp
   ekfInterface.cpp
   srukfInterface.cpp
   stateModels.cpp

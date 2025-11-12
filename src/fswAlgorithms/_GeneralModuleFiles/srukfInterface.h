@@ -54,7 +54,7 @@ class SRukfInterface : public KalmanFilter<SRukfMeasurementModel> {
     void setBeta(double beta);
     double getBeta() const;
 
-    DynamicsModel dynamics;
+    DynamicsModel<FilterStateVector> dynamics;
     Eigen::MatrixXd processNoise;  //!< [-] process noise matrix
     FilterStateVector xBar{};      //!< [-] Current mean state estimate
 
