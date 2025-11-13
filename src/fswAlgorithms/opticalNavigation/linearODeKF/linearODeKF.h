@@ -21,19 +21,19 @@
 #include <fswAlgorithms/_GeneralModuleFiles/ekfInterface.h>
 
 #ifndef SWIG
-struct LinearODeKFMeasurementModel : public EkfMeasurementModel<FilterStateVector> {
+struct LinearODeKFMeasurementModel : public EkfMeasurementModel<3> {
 public:
     //! [-] observation measurement model
-    Eigen::MatrixXd model(const FilterStateVector& state) const override {
-        return state.getPositionStates() / state.getPositionStates().norm();
+    Eigen::MatrixXd model(const EkfStateVector<3>& state) const override {
+        return state.position / state.position.norm();
     }
 
     /*! Compute the measurement matrix to linearize the measurement model
         @param FilterStateVector state
         @return Eigen::MatrixXd
     */
-    Eigen::MatrixXd measurementMatrix(const FilterStateVector& state) const override {
-        Eigen::Vector3d position = state.getPositionStates();
+    Eigen::MatrixXd measurementMatrix(const EkfStateVector<3>& state) const override {
+        Eigen::Vector3d const& position = state.position;
 
         Eigen::MatrixXd measurementMatrix = Eigen::MatrixXd::Zero(position.size(), state.size());
         measurementMatrix.block(0, 0, position.size(), position.size()) =
@@ -103,7 +103,7 @@ class LinearODeKF : public SysModel {
     Message<FilterResidualsMsgPayload> opNavResidualMsg;
 
    private:
-    EkfInterface<FilterStateVector> ekf{FilterType::Classical};
+    EkfInterface<3> ekf{FilterType::Classical};
     double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     xmera::measurement_queue<LinearODeKFMeasurementModel, 1> measurements = {};  //!< [Measurements] All
     uint64_t previousSimNanos = 0;

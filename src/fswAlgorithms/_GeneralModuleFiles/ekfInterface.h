@@ -17,21 +17,54 @@
 #include <functional>
 #include <optional>
 
+template<Eigen::Index SIZE>
+struct EkfStateVector final {
+    static_assert(SIZE != Eigen::Dynamic);
+
+    Eigen::Vector<double, SIZE> position;
+    Eigen::Vector<double, SIZE> velocity;
+
+    size_t size() const {
+        return this->position.size();
+    }
+
+    EkfStateVector add(EkfStateVector const& other) const {
+        return {
+            .position = this->position + other.position,
+            .velocity = this->velocity + other.velocity,
+        };
+    }
+
+    EkfStateVector scale(double scale) const {
+        return {
+            .position = this->position * scale,
+            .velocity = this->velocity * scale,
+        };
+    }
+
+    EkfStateVector addVector(Eigen::Vector<double, 2 * SIZE> values) const {
+        return {
+            .position = this->position + values.segment(0, this->position.size()),
+            .velocity = this->velocity + values.segment(this->position.size(), this->velocity.size()),
+        };
+    }
+};
+
 /*! Enumerator class to set if the filter is meant to be used purely as a linear/classical KF,
  * no reference state updates will be performed in the classical filter, while the EKF updates the reference
  * with the computed state error at each measurement update */
 enum class FilterType { Classical, Extended };
 
-template<typename StateVector>
+template<Eigen::Index SIZE>
 struct EkfMeasurementModel {
 public:
     EkfMeasurementModel() = default;
     virtual ~EkfMeasurementModel() = default;
 
     //! [-] observation measurement model
-    virtual Eigen::MatrixXd model(const StateVector& state) const = 0;
+    virtual Eigen::MatrixXd model(const EkfStateVector<SIZE>& state) const = 0;
 
-    virtual Eigen::MatrixXd measurementMatrix(const StateVector& state) const = 0;
+    virtual Eigen::MatrixXd measurementMatrix(const EkfStateVector<SIZE>& state) const = 0;
 
     virtual Eigen::VectorXd subtract(
         const Eigen::VectorXd& observed,
@@ -48,39 +81,31 @@ public:
     virtual void setPostFitResiduals(Eigen::VectorXd const& postFitResiduals) = 0;
 };
 
-namespace xmera {
-    template<typename StateVector>
-    concept ekf_state_vector = requires(StateVector const constState) {
-        requires xmera::linearly_combinable<StateVector>;
-        requires xmera::has_position<StateVector>;
-        requires xmera::has_velocity<StateVector>;
-    };
-}
-
 /*! @brief Extended or Classical/Linear Kalman Filter base class. */
-template<xmera::ekf_state_vector StateVector>
-class EkfInterface final : public KalmanFilter<EkfMeasurementModel<StateVector>> {
+template<Eigen::Index SIZE>
+class EkfInterface final : public KalmanFilter<EkfMeasurementModel<SIZE>> {
+    static_assert(SIZE != Eigen::Dynamic);
 public:
     //! [-] State variable for logging
-    StateVector stateLogged;
+    EkfStateVector<SIZE> stateLogged;
     //! [-] Current mean state error
-    Eigen::VectorXd stateError;
+    Eigen::Vector<double, 2 * SIZE> stateError;
 
     //! [-] Dynamics to compute the state derivative at a time
-    DynamicsModel<StateVector> dynamics;
-    std::function<Eigen::MatrixXd(double time, StateVector state)> dynamicsTransitionMatrix;
+    DynamicsModel<EkfStateVector<SIZE>> dynamics;
+    std::function<Eigen::MatrixXd(double time, EkfStateVector<SIZE> state)> dynamicsTransitionMatrix;
     //! [-] process noise matrix
-    Eigen::MatrixXd processNoise;
+    Eigen::Matrix<double, SIZE, SIZE> processNoise;
 
     //! [-] State estimate for time TimeTag
-    StateVector state;
+    EkfStateVector<SIZE> state;
     //! [-] covariance
-    Eigen::MatrixXd covar;
+    Eigen::Matrix<double, 2 * SIZE, 2 * SIZE> covar;
 
     //! [-] State estimate for time TimeTag at previous time
-    StateVector stateInitial;
+    EkfStateVector<SIZE> stateInitial;
     //! [-] covariance at previous time
-    Eigen::MatrixXd covarInitial;
+    Eigen::Matrix<double, 2 * SIZE, 2 * SIZE> covarInitial;
     //! [-] Scale that converts input units (SI) to a desired unit for the inner maths
     double unitConversion = 1;
 
@@ -93,8 +118,8 @@ private:
 
 private:
     struct StateWithStm final {
-        StateVector state;
-        Eigen::MatrixXd stm;
+        EkfStateVector<SIZE> state;
+        Eigen::Matrix<double, 2 * SIZE, 2 * SIZE> stm;
 
         StateWithStm add(StateWithStm const& other) const {
             return {
@@ -141,16 +166,11 @@ public:
      @return void
      */
     void reset() override {
-        assert(this->stateInitial.size() == this->covarInitial.rows() &&
-               this->stateInitial.size() == this->covarInitial.cols());
-
         this->state = this->stateInitial.scale(this->unitConversion);
         this->covar = this->unitConversion * this->unitConversion * this->covarInitial;
-        this->covar.resize(this->state.size(), this->state.size());
 
-        this->stateError = Eigen::VectorXd::Zero(this->state.size());
+        this->stateError.setZero();
         this->stateLogged = this->state;
-        this->processNoise.resize(this->state.getPositionStates().size(), this->state.getPositionStates().size());
         this->minCovarNorm = this->minCovarNorm * this->unitConversion * this->unitConversion;
     }
 
@@ -160,7 +180,7 @@ public:
      */
     void timeUpdate(const double dt) override {
         /*! - Propagate full state and STM vector using dynamics specified in child class */
-        Eigen::MatrixXd stateTransitionMatrix;
+        Eigen::Matrix<double, 2 * SIZE, 2 * SIZE> stateTransitionMatrix;
         {
             DynamicsModel<StateWithStm> stateStmDynamics =
                 [this](double time, StateWithStm const& state) -> StateWithStm {
@@ -171,7 +191,7 @@ public:
                 };
             StateWithStm stateStm = {
                 .state = this->state,
-                .stm = Eigen::MatrixXd::Identity(this->state.size(), this->state.size()),
+                .stm = Eigen::Matrix<double, 2 * SIZE, 2 * SIZE>::Identity(),
             };
 
             auto propagatedStateStm = xmera::propagate(stateStmDynamics, stateStm, {0, dt}, dt);
@@ -186,20 +206,11 @@ public:
 
         /*! - Update the covariance Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T
          * The process noise mapping will depend on the number of "rate" states */
-        Eigen::MatrixXd processNoiseMapping;
-        processNoiseMapping.setZero(this->state.size(), this->state.getPositionStates().size());
-        processNoiseMapping.block(0,
-                                  0,
-                                  this->state.getPositionStates().size(),
-                                  this->state.getPositionStates().size()) =
-            pow(dt, 2) / 2 *
-            Eigen::MatrixXd::Identity(this->state.getPositionStates().size(), this->state.getPositionStates().size());
-        processNoiseMapping.block(this->state.getPositionStates().size(),
-                                  0,
-                                  this->state.getVelocityStates().size(),
-                                  this->state.getPositionStates().size()) =
-            dt *
-            Eigen::MatrixXd::Identity(this->state.getVelocityStates().size(), this->state.getVelocityStates().size());
+        Eigen::Matrix<double, 2 * SIZE, SIZE> processNoiseMapping;
+        processNoiseMapping.block(0, 0, SIZE, SIZE) =
+            Eigen::Matrix<double, SIZE, SIZE>::Identity() * (pow(dt, 2) / 2);
+        processNoiseMapping.block(SIZE, 0, SIZE, SIZE) =
+            Eigen::Matrix<double, SIZE, SIZE>::Identity() * dt;
 
         this->covar = stateTransitionMatrix * this->covar * stateTransitionMatrix.transpose() +
                       processNoiseMapping * this->processNoise * processNoiseMapping.transpose();
@@ -209,18 +220,17 @@ public:
      @param Measurement
      @return void
      */
-    void measurementUpdate(EkfMeasurementModel<StateVector> &measurement) override {
+    void measurementUpdate(EkfMeasurementModel<SIZE> &measurement) override {
         auto const& observation = measurement.getObservation();
 
         auto const& preFitResiduals = this->computeResiduals(measurement);
         measurement.setPreFitResiduals(preFitResiduals);
 
         /*! - Compute the measurement matrix at this state */
-        Eigen::MatrixXd measurementMatrix = measurement.measurementMatrix(this->state);
+        auto measurementMatrix = measurement.measurementMatrix(this->state);
 
         /*! - Compute the Kalman Gain */
-        Eigen::MatrixXd kalmanGain =
-            this->computeKalmanGain(this->covar, measurementMatrix, measurement.getNoise());
+        auto kalmanGain = this->computeKalmanGain(this->covar, measurementMatrix, measurement.getNoise());
 
         /*! - Update the covariance */
         this->updateCovariance(measurementMatrix, measurement.getNoise(), kalmanGain);
@@ -231,7 +241,7 @@ public:
             this->ckfUpdate(kalmanGain, preFitResiduals);
         } else {
             /*! - Compute the valid observations delta */
-            Eigen::VectorXd measurementDelta =
+            auto measurementDelta =
                 measurement.subtract(observation, measurement.model(this->state));
 
             /*! - Compute the update with a EKF, the reference state is changed by the filter update */
@@ -249,13 +259,13 @@ private:
      @param Measurement
      @return Eigen::VectorXd
      */
-    Eigen::VectorXd computeResiduals(const EkfMeasurementModel<StateVector> &measurement) {
-        Eigen::VectorXd measurementDelta = measurement.subtract(
+    Eigen::VectorXd computeResiduals(const EkfMeasurementModel<SIZE> &measurement) {
+        auto measurementDelta = measurement.subtract(
             measurement.getObservation(),
             measurement.model(this->state)
         );
 
-        Eigen::MatrixXd measurementMatrix = measurement.measurementMatrix(this->state);
+        auto measurementMatrix = measurement.measurementMatrix(this->state);
 
         return measurement.subtract(measurementDelta, measurementMatrix * this->stateError);
     }
@@ -267,14 +277,13 @@ private:
      @return Eigen::MatrixXd
      */
     Eigen::MatrixXd computeKalmanGain(
-        const Eigen::MatrixXd &covariance,
+        const Eigen::Matrix<double, 2 * SIZE, 2 * SIZE> &covariance,
         const Eigen::MatrixXd &measurementMatrix,
         const Eigen::MatrixXd &measurementNoise
     ) const {
-        Eigen::MatrixXd kalmanGain(covariance.cols(), measurementNoise.cols());
-        kalmanGain = covariance * measurementMatrix.transpose();
-        kalmanGain *= (measurementMatrix * covariance * measurementMatrix.transpose() + measurementNoise).inverse();
-        return kalmanGain;
+        return
+              (covariance * measurementMatrix.transpose())
+            * (measurementMatrix * covariance * measurementMatrix.transpose() + measurementNoise).inverse();
     }
 
     /*! Update the covariance using the Joseph form of the update
@@ -288,8 +297,7 @@ private:
         const Eigen::MatrixXd &noise,
         const Eigen::MatrixXd &kalmanGain
     ) {
-        Eigen::MatrixXd josephTransform(this->state.size(), this->state.size());
-        josephTransform = Eigen::MatrixXd::Identity(this->state.size(), this->state.size()) - kalmanGain * measMat;
+        auto josephTransform = Eigen::MatrixXd::Identity(this->state.size(), this->state.size()) - kalmanGain * measMat;
         this->covar = josephTransform * this->covar * josephTransform.transpose();
         this->covar += kalmanGain * noise * kalmanGain.transpose();
     }
