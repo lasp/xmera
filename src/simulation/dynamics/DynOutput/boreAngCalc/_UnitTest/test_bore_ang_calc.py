@@ -1,31 +1,9 @@
+"""
+Bore Angle Calculation Test
 
-# ISC License
-#
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-#
-# Permission to use, copy, modify, and/or distribute this software for any
-# purpose with or without fee is hereby granted, provided that the above
-# copyright notice and this permission notice appear in all copies.
-#
-# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
-
-#
-# Bore Angle Calculation Test
-#
-# Purpose:  Test the proper function of the ore Angle Calculation module.
-#           Proper function is tested by
-#
-# Author:   Rachel Mamich
-# Creation Date:  Jun. 30, 2017
-#
+Purpose:  Test the proper function of the ore Angle Calculation module.
+Proper function is tested by
+"""
 
 import os
 

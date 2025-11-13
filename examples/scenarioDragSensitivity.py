@@ -1,28 +1,10 @@
-#
-#  ISC License
-#
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-#
-#  Permission to use, copy, modify, and/or distribute this software for any
-#  purpose with or without fee is hereby granted, provided that the above
-#  copyright notice and this permission notice appear in all copies.
-#
-#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-#
-
 r"""
 Overview
 --------
 
 This script executes a parametric analysis of the control law examined in :ref:`scenarioDragRendezvous`,
 considering the performance of that control
-law across both increasing initial displacements and variations in atmospheric density. 
+law across both increasing initial displacements and variations in atmospheric density.
 
 This script is found in the folder ``src/examples`` and executed by using::
 
@@ -100,13 +82,13 @@ def drag_sensitivity_analysis(ctrlType, nuOffsetNum, densityNum, rerunSims=False
     else:
         with open(ctrlType+"_sweep_results.pickle", "rb") as fp:
             sim_results = pickle.load(fp)
-    
+
     pool.close()
 
 
 def results_to_ranges_and_plot(results_list):
     """
-    Converts a results dict from scenarioDragRendezvous to a set of initial and final distance and speed errors, 
+    Converts a results dict from scenarioDragRendezvous to a set of initial and final distance and speed errors,
     and returns a plot of all of the Hill-frame trajectories.
     """
     fig = plt.figure()

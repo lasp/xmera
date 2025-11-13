@@ -1,22 +1,3 @@
-/*
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-
 #include "fuelTank.h"
 
 #include <iostream>
@@ -46,30 +27,30 @@ void FuelTank::setNameOfMassState(const std::string nameOfMassState) { this->nam
  @return void
  @param model fuel tank model type
  */
-void FuelTank::setTankModel(FuelTankModel *model) { this->fuelTankModel = model; }
+void FuelTank::setTankModel(FuelTankModel* model) { this->fuelTankModel = model; }
 
 /*! Attach a fuel slosh particle to the tank */
-void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
+void FuelTank::pushFuelSloshParticle(FuelSlosh* particle) {
     // - Add a fuel slosh particle to the vector of fuel slosh particles
     this->fuelSloshParticles.push_back(particle);
 }
 
-void FuelTank::addThrusterSet(ThrusterDynamicEffector *dynEff) {
+void FuelTank::addThrusterSet(ThrusterDynamicEffector* dynEff) {
     thrDynEffectors.push_back(dynEff);
     dynEff->fuelMass = this->fuelTankModel->propMassInit;
 }
 
-void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) { thrStateEffectors.push_back(stateEff); }
+void FuelTank::addThrusterSet(ThrusterStateEffector* stateEff) { thrStateEffectors.push_back(stateEff); }
 
 /*! Link states that the module accesses */
-void FuelTank::linkInStates(DynParamManager &statesIn) {
+void FuelTank::linkInStates(DynParamManager& statesIn) {
     // - Grab access to the hubs omega_BN_N
     this->omegaState = statesIn.getStateObject("hubOmega");
 }
 
 /*! Register states. The fuel tank has one state associated with it: mass, and it also has the
  responsibility to call register states for the fuel slosh particles */
-void FuelTank::registerStates(DynParamManager &statesIn) {
+void FuelTank::registerStates(DynParamManager& statesIn) {
     // - Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1, 1);
     this->massState = statesIn.registerState(1, 1, this->nameOfMassState);
@@ -94,12 +75,12 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 
     //! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
-    for (auto &dynEffector : this->thrDynEffectors) {
+    for (auto& dynEffector : this->thrDynEffectors) {
         dynEffector->computeStateContribution(integTime);
         this->fuelConsumption += dynEffector->stateDerivContribution(0);
     }
 
-    for (auto &stateEffector : this->thrStateEffectors) {
+    for (auto& stateEffector : this->thrStateEffectors) {
         stateEffector->updateEffectorMassProps(integTime);
         this->fuelConsumption += stateEffector->stateDerivContribution(0);
     }
@@ -123,7 +104,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
     }
 
     // - Set total fuel mass parameter for thruster dynamic effectors experiencing blow down effects
-    for (auto &dynEffector : this->thrDynEffectors) {
+    for (auto& dynEffector : this->thrDynEffectors) {
         dynEffector->fuelMass = totalMass;
     }
 
@@ -134,7 +115,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 
 /*! Fuel tank adds its contributions to the matrices for the back-sub method. */
 void FuelTank::updateContributions(double integTime,
-                                   BackSubMatrices &backSubContr,
+                                   BackSubMatrices& backSubContr,
                                    Eigen::Vector3d sigma_BN,
                                    Eigen::Vector3d omega_BN_B,
                                    Eigen::Vector3d g_N) {
@@ -175,8 +156,8 @@ void FuelTank::computeDerivatives(double integTime,
 
 /*! Fuel tank contributes to the energy and momentum calculations */
 void FuelTank::updateEnergyMomContributions(double integTime,
-                                            Eigen::Vector3d &rotAngMomPntCContr_B,
-                                            double &rotEnergyContr,
+                                            Eigen::Vector3d& rotAngMomPntCContr_B,
+                                            double& rotEnergyContr,
                                             Eigen::Vector3d omega_BN_B) {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;

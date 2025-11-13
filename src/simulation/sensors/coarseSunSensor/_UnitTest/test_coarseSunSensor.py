@@ -1,32 +1,13 @@
+"""
+Coarse Sun Sensor Unit Test
 
-# ISC License
-#
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-#
-# Permission to use, copy, modify, and/or distribute this software for any
-# purpose with or without fee is hereby granted, provided that the above
-# copyright notice and this permission notice appear in all copies.
-#
-# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
-#
-# Coarse Sun Sensor Unit Test
-#
-# Purpose:  Test the proper function of the coarse sun sensor (css) module.
-#           For basic functionality, results are compared to simple truth values calculated using np.cos().
-#           For noise testing, noiseless truth values are subtracted from the output and the standard deviation is compared
-#           to the input standard deviation.
-#           For css constellation set up, two identical constellations are set up with different methods and compared to
-#           each other
-# Creation Date:  May. 31, 2017
-#
+Purpose:  Test the proper function of the coarse sun sensor (css) module.
+For basic functionality, results are compared to simple truth values calculated using np.cos().
+For noise testing, noiseless truth values are subtracted from the output and the standard deviation is compared
+to the input standard deviation.
+For css constellation set up, two identical constellations are set up with different methods and compared to
+each other
+"""
 
 import os
 

@@ -1,22 +1,3 @@
-/*
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-
 #ifndef _LINEARALGEBRA_H_
 #define _LINEARALGEBRA_H_
 
@@ -38,26 +19,26 @@ extern "C" {
 #endif
 
 /* N element vectors */
-void vElementwiseMult(double *v1, size_t dim, double *v2, double *result);
-void vCopy(double *v, size_t dim, double *result);
-void vSetZero(double *v, size_t dim);
-void vSetOnes(double *v, size_t dim);
-void vAdd(double *v1, size_t dim, double *v2, double *result);
-void vSubtract(double *v1, size_t dim, double *v2, double *result);
-void vScale(double scaleFactor, double *v, size_t dim, double *result);
-double vDot(double *v1, size_t dim, double *v2);
-void vOuterProduct(double *v1, size_t dim1, double *v2, size_t dim2, void *result);
-void vtMultM(double *v, void *mx, size_t dim1, size_t dim2, void *result);
-void vtMultMt(double *v, void *mx, size_t dim1, size_t dim2, void *result);
-double vNorm(double *v, size_t dim);
-double vMax(double *v, size_t dim);    /* Non-sorted, non-optimized algorithm for finding the max of a small 1-D array*/
-double vMaxAbs(double *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of the absolute values
+void vElementwiseMult(double* v1, size_t dim, double* v2, double* result);
+void vCopy(double* v, size_t dim, double* result);
+void vSetZero(double* v, size_t dim);
+void vSetOnes(double* v, size_t dim);
+void vAdd(double* v1, size_t dim, double* v2, double* result);
+void vSubtract(double* v1, size_t dim, double* v2, double* result);
+void vScale(double scaleFactor, double* v, size_t dim, double* result);
+double vDot(double* v1, size_t dim, double* v2);
+void vOuterProduct(double* v1, size_t dim1, double* v2, size_t dim2, void* result);
+void vtMultM(double* v, void* mx, size_t dim1, size_t dim2, void* result);
+void vtMultMt(double* v, void* mx, size_t dim1, size_t dim2, void* result);
+double vNorm(double* v, size_t dim);
+double vMax(double* v, size_t dim);    /* Non-sorted, non-optimized algorithm for finding the max of a small 1-D array*/
+double vMaxAbs(double* v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of the absolute values
                                           of the elements of a small 1-D array*/
-void vNormalize(double *v, size_t dim, double *result);
-int vIsEqual(double *v1, size_t dim, double *v2, double accuracy);
-int vIsZero(double *v, size_t dim, double accuracy);
-void vPrint(FILE *pFile, const char *name, double *v, size_t dim);
-void vSort(double *Input, double *Output, size_t dim);
+void vNormalize(double* v, size_t dim, double* result);
+int vIsEqual(double* v1, size_t dim, double* v2, double accuracy);
+int vIsZero(double* v, size_t dim, double accuracy);
+void vPrint(FILE* pFile, const char* name, double* v, size_t dim);
+void vSort(double* Input, double* Output, size_t dim);
 
 /* 2 element vectors */
 void v2Set(double v0, double v1, double result[2]);
@@ -88,12 +69,12 @@ void v3Normalize(double v[3], double result[3]);
 int v3IsEqual(double v1[3], double v2[3], double accuracy);
 int v3IsEqualRel(double v1[3], double v2[3], double accuracy);
 int v3IsZero(double v[3], double accuracy);
-void v3Print(FILE *pFile, const char *name, double v[3]);
+void v3Print(FILE* pFile, const char* name, double v[3]);
 void v3Cross(double v1[3], double v2[3], double result[3]);
 void v3Perpendicular(double v[3], double result[3]);
 void v3Tilde(double v[3], double result[3][3]);
 void v3Sort(double v[3], double result[3]);
-void v3PrintScreen(const char *name, double v[3]);
+void v3PrintScreen(const char* name, double v[3]);
 
 /* 4 element vectors */
 void v4Set(double v0, double v1, double v2, double v3, double result[4]);
@@ -113,42 +94,42 @@ void v6OuterProduct(double v1[6], double v2[6], double result[6][6]);
 int v6IsEqual(double v1[6], double v2[6], double accuracy);
 
 /* NxM matrices */
-void mLeastSquaresInverse(void *mx, size_t dim1, size_t dim2, void *result);
-void mMinimumNormInverse(void *mx, size_t dim1, size_t dim2, void *result);
-void mCopy(void *mx, size_t dim1, size_t dim2, void *result);
-void mSetZero(void *result, size_t dim1, size_t dim2);
-void mSetIdentity(void *result, size_t dim1, size_t dim2);
-void mDiag(void *v, size_t dim, void *result);
-void mTranspose(void *mx, size_t dim1, size_t dim2, void *result);
-void mAdd(void *mx1, size_t dim1, size_t dim2, void *mx2, void *result);
-void mSubtract(void *mx1, size_t dim1, size_t dim2, void *mx2, void *result);
-void mScale(double scaleFactor, void *mx, size_t dim1, size_t dim2, void *result);
-void mMultM(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size_t dim22, void *result);
-void mtMultM(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size_t dim22, void *result);
-void mMultMt(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size_t dim22, void *result);
-void mtMultMt(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size_t dim22, void *result);
-void mMultV(void *mx, size_t dim1, size_t dim2, void *v, void *result);
-void mtMultV(void *mx, size_t dim1, size_t dim2, void *v, void *result);
-double mTrace(void *mx, size_t dim);
-double mDeterminant(void *mx, size_t dim);
-void mCofactor(void *mx, size_t dim, void *result);
-int mInverse(void *mx, size_t dim, void *result);
-int mIsEqual(void *mx1, size_t dim1, size_t dim2, void *mx2, double accuracy);
-int mIsZero(void *mx, size_t dim1, size_t dim2, double accuracy);
-void mPrintScreen(const char *name, void *mx, size_t dim1, size_t dim2);
-void mPrint(FILE *pFile, const char *name, void *mx, size_t dim1, size_t dim2);
-void mGetSubMatrix(void *mx,
+void mLeastSquaresInverse(void* mx, size_t dim1, size_t dim2, void* result);
+void mMinimumNormInverse(void* mx, size_t dim1, size_t dim2, void* result);
+void mCopy(void* mx, size_t dim1, size_t dim2, void* result);
+void mSetZero(void* result, size_t dim1, size_t dim2);
+void mSetIdentity(void* result, size_t dim1, size_t dim2);
+void mDiag(void* v, size_t dim, void* result);
+void mTranspose(void* mx, size_t dim1, size_t dim2, void* result);
+void mAdd(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result);
+void mSubtract(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result);
+void mScale(double scaleFactor, void* mx, size_t dim1, size_t dim2, void* result);
+void mMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result);
+void mtMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result);
+void mMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result);
+void mtMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result);
+void mMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result);
+void mtMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result);
+double mTrace(void* mx, size_t dim);
+double mDeterminant(void* mx, size_t dim);
+void mCofactor(void* mx, size_t dim, void* result);
+int mInverse(void* mx, size_t dim, void* result);
+int mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy);
+int mIsZero(void* mx, size_t dim1, size_t dim2, double accuracy);
+void mPrintScreen(const char* name, void* mx, size_t dim1, size_t dim2);
+void mPrint(FILE* pFile, const char* name, void* mx, size_t dim1, size_t dim2);
+void mGetSubMatrix(void* mx,
                    size_t dim1,
                    size_t dim2,
                    size_t dim1Start,
                    size_t dim2Start,
                    size_t dim1Result,
                    size_t dim2Result,
-                   void *result);
-void mSetSubMatrix(void *mx,
+                   void* result);
+void mSetSubMatrix(void* mx,
                    size_t dim1,
                    size_t dim2,
-                   void *result,
+                   void* result,
                    size_t dim1Result,
                    size_t dim2Result,
                    size_t dim1Start,
@@ -172,9 +153,9 @@ double m22Trace(double mx[2][2]);
 double m22Determinant(double mx[2][2]);
 int m22IsEqual(double mx1[2][2], double mx2[2][2], double accuracy);
 int m22IsZero(double mx[2][2], double accuracy);
-void m22Print(FILE *pFile, const char *name, double mx[2][2]);
+void m22Print(FILE* pFile, const char* name, double mx[2][2]);
 int m22Inverse(double mx[2][2], double result[2][2]);
-void m22PrintScreen(const char *name, double mx[2][2]);
+void m22PrintScreen(const char* name, double mx[2][2]);
 
 /* 3x3 matrices */
 void m33Set(double m00,
@@ -203,12 +184,12 @@ double m33Trace(double mx[3][3]);
 double m33Determinant(double mx[3][3]);
 int m33IsEqual(double mx1[3][3], double mx2[3][3], double accuracy);
 int m33IsZero(double mx[3][3], double accuracy);
-void m33Print(FILE *pfile, const char *name, double mx[3][3]);
+void m33Print(FILE* pfile, const char* name, double mx[3][3]);
 int m33Inverse(double mx[3][3], double result[3][3]);
 void m33SingularValues(double mx[3][3], double result[3]);
 void m33EigenValues(double mx[3][3], double result[3]);
 double m33ConditionNumber(double mx[3][3]);
-void m33PrintScreen(const char *name, double mx[3][3]);
+void m33PrintScreen(const char* name, double mx[3][3]);
 
 /* 4x4 matrices */
 void m44Set(double m00,

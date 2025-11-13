@@ -1,33 +1,12 @@
+"""
+Module Name:        spacecraftPointing
 
-# ISC License
-#
-# Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-#
-# Permission to use, copy, modify, and/or distribute this software for any
-# purpose with or without fee is hereby granted, provided that the above
-# copyright notice and this permission notice appear in all copies.
-#
-# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
-#
-#   Unit Test Script
-#   Module Name:        spacecraftPointing
-#   Author:             Simon van Overeem
-#   Creation Date:      January 7, 2018
-#
-
-# The test that is performed in this file checks whether the spacecraftPointing module computes the correct output.
-# The inputs of the test are five data points of the chief spacecraft and the deputy spacecraft. From these datapoints
-# the orientation of the reference frame with respect to the inertial frame (sigma_R1N) is determined. Furthermore,
-# the angular velocity (omega_RN_N) and the angular acceleration (domega_RN_N) are calculated. The outcomes are compared
-# to the expected outcome of the module.
+The test that is performed in this file checks whether the spacecraftPointing module computes the correct output.
+The inputs of the test are five data points of the chief spacecraft and the deputy spacecraft. From these datapoints
+the orientation of the reference frame with respect to the inertial frame (sigma_R1N) is determined. Furthermore,
+the angular velocity (omega_RN_N) and the angular acceleration (domega_RN_N) are calculated. The outcomes are compared
+to the expected outcome of the module.
+"""
 
 import inspect
 import os

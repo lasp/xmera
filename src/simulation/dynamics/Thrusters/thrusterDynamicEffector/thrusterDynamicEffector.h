@@ -1,22 +1,3 @@
-/*
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-
 #ifndef THRUSTER_DYNAMIC_EFFECTOR_H
 #define THRUSTER_DYNAMIC_EFFECTOR_H
 
@@ -42,27 +23,27 @@ class ThrusterDynamicEffector : public SysModel, public DynamicEffector {
    public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
-    void linkInStates(DynParamManager &states);
+    void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);
     void computeStateContribution(double integTime);
     void reset(uint64_t currentSimNanos);
-    void addThruster(THRSimConfig *newThruster);  //! Add a new thruster to the thruster set
+    void addThruster(THRSimConfig* newThruster);  //! Add a new thruster to the thruster set
     void addThruster(
-        THRSimConfig *newThruster,
-        Message<SCStatesMsgPayload> *bodyStateMsg);  //!< -- (overloaded) Add a new thruster to the thruster set connect
+        THRSimConfig* newThruster,
+        Message<SCStatesMsgPayload>* bodyStateMsg);  //!< -- (overloaded) Add a new thruster to the thruster set connect
                                                      //!< to a body different than the hub
     void updateState(uint64_t currentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-    void ComputeThrusterFire(THRSimConfig *CurrentThruster, double currentTime);
-    void ComputeThrusterShut(THRSimConfig *CurrentThruster, double currentTime);
+    void ComputeThrusterFire(THRSimConfig* CurrentThruster, double currentTime);
+    void ComputeThrusterShut(THRSimConfig* CurrentThruster, double currentTime);
     void UpdateThrusterProperties();
-    void computeBlowDownDecay(THRSimConfig *CurrentThruster);
+    void computeBlowDownDecay(THRSimConfig* CurrentThruster);
 
    public:
-    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;           //!< -- input message with thruster commands
-    std::vector<Message<THROutputMsgPayload> *> thrusterOutMsgs;  //!< -- output message vector for thruster data
+    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;          //!< -- input message with thruster commands
+    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
 
     int stepsInRamp;                         //!< class variable
     std::vector<THRSimConfig> thrusterData;  //!< -- Thruster information
@@ -70,10 +51,10 @@ class ThrusterDynamicEffector : public SysModel, public DynamicEffector {
     double mDotTotal;                        //!< kg/s Current mass flow rate of thrusters
     double fuelMass;                         //!< kg Current total fuel mass of connected fuel tank
     double prevFireTime;                     //!< s  Previous thruster firing time
-    double thrFactorToTime(THRSimConfig *thrData, std::vector<THRTimePair> *thrRamp);
-    StateData *hubSigma;                        //!< pointer to the hub attitude states
-    StateData *hubOmega;                        //!< pointer to the hub angular velocity states
-    Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    double thrFactorToTime(THRSimConfig* thrData, std::vector<THRTimePair>* thrRamp);
+    StateData* hubSigma;                        //!< pointer to the hub attitude states
+    StateData* hubOmega;                        //!< pointer to the hub angular velocity states
+    Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 

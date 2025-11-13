@@ -1,8 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        rwConfigData
-#   Creation Date:      October 5, 2018
-#
+"""
+Module Name:        rwConfigData
+"""
 
 import numpy as np
 from xmera.architecture import messaging

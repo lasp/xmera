@@ -1,22 +1,3 @@
-/*
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-
 #include "linearAlgebra.h"
 #include "safeMath.h"
 #include <assert.h>
@@ -24,61 +5,61 @@
 #include <stddef.h>
 #include <string.h>
 
-#define MOVE_DOUBLE(source, dim, destination) (memmove((void *)(destination), (void *)(source), sizeof(double) * (dim)))
+#define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double) * (dim)))
 
 #define CHECK_ARRAY_DIMENSIONS(DIM) \
     assert((DIM) <= LINEAR_ALGEBRA_MAX_ARRAY_SIZE && "Linear Algebra library array dimension input is too large.")
 
-void vElementwiseMult(double *v1, size_t dim, double *v2, double *result) {
+void vElementwiseMult(double* v1, size_t dim, double* v2, double* result) {
     size_t i;
     for (i = 0; i < dim; i++) {
         result[i] = v1[i] * v2[i];
     }
 }
 
-void vCopy(double *v, size_t dim, double *result) {
+void vCopy(double* v, size_t dim, double* result) {
     size_t i;
     for (i = 0; i < dim; i++) {
         result[i] = v[i];
     }
 }
 
-void vSetZero(double *v, size_t dim) {
+void vSetZero(double* v, size_t dim) {
     size_t i;
     for (i = 0; i < dim; i++) {
         v[i] = 0.0;
     }
 }
 
-void vSetOnes(double *v, size_t dim) {
+void vSetOnes(double* v, size_t dim) {
     size_t i;
     for (i = 0; i < dim; i++) {
         v[i] = 1.0;
     }
 }
 
-void vAdd(double *v1, size_t dim, double *v2, double *result) {
+void vAdd(double* v1, size_t dim, double* v2, double* result) {
     size_t i;
     for (i = 0; i < dim; i++) {
         result[i] = v1[i] + v2[i];
     }
 }
 
-void vSubtract(double *v1, size_t dim, double *v2, double *result) {
+void vSubtract(double* v1, size_t dim, double* v2, double* result) {
     size_t i;
     for (i = 0; i < dim; i++) {
         result[i] = v1[i] - v2[i];
     }
 }
 
-void vScale(double scaleFactor, double *v, size_t dim, double *result) {
+void vScale(double scaleFactor, double* v, size_t dim, double* result) {
     size_t i;
     for (i = 0; i < dim; i++) {
         result[i] = v[i] * scaleFactor;
     }
 }
 
-double vDot(double *v1, size_t dim, double *v2) {
+double vDot(double* v1, size_t dim, double* v2) {
     size_t i;
     double result = 0.0;
     for (i = 0; i < dim; i++) {
@@ -88,8 +69,8 @@ double vDot(double *v1, size_t dim, double *v2) {
     return result;
 }
 
-void vOuterProduct(double *v1, size_t dim1, double *v2, size_t dim2, void *result) {
-    double *m_result = (double *)result;
+void vOuterProduct(double* v1, size_t dim1, double* v2, size_t dim2, void* result) {
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -100,13 +81,13 @@ void vOuterProduct(double *v1, size_t dim1, double *v2, size_t dim2, void *resul
     }
 }
 
-void vtMultM(double *v, void *mx, size_t dim1, size_t dim2, void *result) {
+void vtMultM(double* v, void* mx, size_t dim1, size_t dim2, void* result) {
     CHECK_ARRAY_DIMENSIONS(dim1 * dim2);
     size_t dim11 = 1;
     size_t dim12 = dim1;
     size_t dim22 = dim2;
-    double *m_mx1 = (double *)v;
-    double *m_mx2 = (double *)mx;
+    double* m_mx1 = (double*)v;
+    double* m_mx2 = (double*)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
 
     size_t i;
@@ -124,13 +105,13 @@ void vtMultM(double *v, void *mx, size_t dim1, size_t dim2, void *result) {
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
 }
 
-void vtMultMt(double *v, void *mx, size_t dim1, size_t dim2, void *result) {
+void vtMultMt(double* v, void* mx, size_t dim1, size_t dim2, void* result) {
     size_t dim11 = 1;
     size_t dim12 = dim2;
     size_t dim22 = dim1;
     CHECK_ARRAY_DIMENSIONS(dim11 * dim22);
-    double *m_mx1 = (double *)v;
-    double *m_mx2 = (double *)mx;
+    double* m_mx1 = (double*)v;
+    double* m_mx2 = (double*)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
 
     size_t i;
@@ -148,9 +129,9 @@ void vtMultMt(double *v, void *mx, size_t dim1, size_t dim2, void *result) {
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
 }
 
-double vNorm(double *v, size_t dim) { return sqrt(vDot(v, dim, v)); }
+double vNorm(double* v, size_t dim) { return sqrt(vDot(v, dim, v)); }
 
-double vMax(double *array, size_t dim) {
+double vMax(double* array, size_t dim) {
     size_t i;
     double result;
 
@@ -163,7 +144,7 @@ double vMax(double *array, size_t dim) {
     return result;
 }
 
-double vMaxAbs(double *array, size_t dim) {
+double vMaxAbs(double* array, size_t dim) {
     size_t i;
     double result;
 
@@ -176,7 +157,7 @@ double vMaxAbs(double *array, size_t dim) {
     return result;
 }
 
-void vNormalize(double *v, size_t dim, double *result) {
+void vNormalize(double* v, size_t dim, double* result) {
     double norm = vNorm(v, dim);
 
     if (norm > DB0_EPS) {
@@ -186,7 +167,7 @@ void vNormalize(double *v, size_t dim, double *result) {
     }
 }
 
-int vIsEqual(double *v1, size_t dim, double *v2, double accuracy) {
+int vIsEqual(double* v1, size_t dim, double* v2, double accuracy) {
     size_t i;
     for (i = 0; i < dim; i++) {
         if (fabs(v1[i] - v2[i]) > accuracy) {
@@ -196,7 +177,7 @@ int vIsEqual(double *v1, size_t dim, double *v2, double accuracy) {
     return 1;
 }
 
-int vIsZero(double *v, size_t dim, double accuracy) {
+int vIsZero(double* v, size_t dim, double accuracy) {
     size_t i;
     int result = 1;
     for (i = 0; i < dim; i++) {
@@ -209,7 +190,7 @@ int vIsZero(double *v, size_t dim, double accuracy) {
     return result;
 }
 
-void vPrint(FILE *pFile, const char *name, double *v, size_t dim) {
+void vPrint(FILE* pFile, const char* name, double* v, size_t dim) {
     size_t i;
     fprintf(pFile, "%s = [", name);
     for (i = 0; i < dim; i++) {
@@ -222,7 +203,7 @@ void vPrint(FILE *pFile, const char *name, double *v, size_t dim) {
 }
 
 /*I hope you allocated the output prior to calling this!*/
-void vSort(double *Input, double *Output, size_t dim) {
+void vSort(double* Input, double* Output, size_t dim) {
     size_t i, j;
     memcpy(Output, Input, dim * sizeof(double));
     for (i = 0; i < dim; i++) {
@@ -467,7 +448,7 @@ int v3IsZero(double v[3], double accuracy) {
     return 1;
 }
 
-void v3Print(FILE *pFile, const char *name, double v[3]) {
+void v3Print(FILE* pFile, const char* name, double v[3]) {
     size_t dim = 3;
     size_t i;
     fprintf(pFile, "%s = [", name);
@@ -541,7 +522,7 @@ void v3Sort(double v[3], double result[3]) {
     }
 }
 
-void v3PrintScreen(const char *name, double vec[3]) {
+void v3PrintScreen(const char* name, double vec[3]) {
     printf("%s (%20.15g, %20.15g, %20.15g)\n", name, vec[0], vec[1], vec[2]);
 }
 
@@ -659,11 +640,11 @@ int v6IsEqual(double v1[6], double v2[6], double accuracy) {
     return 1;
 }
 
-void mLeastSquaresInverse(void *mx, size_t dim1, size_t dim2, void *result) {
+void mLeastSquaresInverse(void* mx, size_t dim1, size_t dim2, void* result) {
     /*
      * Computes the least squares inverse.
      */
-    double *m_result = (double *)result;
+    double* m_result = (double*)result;
     double mxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double mxGrammian[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double mxGrammianInverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
@@ -674,12 +655,12 @@ void mLeastSquaresInverse(void *mx, size_t dim1, size_t dim2, void *result) {
     mMultM(mxGrammianInverse, dim2, dim2, mxTranspose, dim2, dim1, m_result);
 }
 
-void mMinimumNormInverse(void *mx, size_t dim1, size_t dim2, void *result) {
+void mMinimumNormInverse(void* mx, size_t dim1, size_t dim2, void* result) {
     /*
      * Computes the minumum norm inverse.
      */
-    double *m_mx = (double *)mx;
-    double *m_result = (double *)result;
+    double* m_mx = (double*)mx;
+    double* m_result = (double*)result;
     double mxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double mxMxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double mxMxTransposeInverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
@@ -690,9 +671,9 @@ void mMinimumNormInverse(void *mx, size_t dim1, size_t dim2, void *result) {
     mMultM(mxTranspose, dim2, dim1, mxMxTransposeInverse, dim1, dim1, m_result);
 }
 
-void mCopy(void *mx, size_t dim1, size_t dim2, void *result) {
-    double *m_mx = (double *)mx;
-    double *m_result = (double *)result;
+void mCopy(void* mx, size_t dim1, size_t dim2, void* result) {
+    double* m_mx = (double*)mx;
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -703,8 +684,8 @@ void mCopy(void *mx, size_t dim1, size_t dim2, void *result) {
     }
 }
 
-void mSetZero(void *result, size_t dim1, size_t dim2) {
-    double *m_result = (double *)result;
+void mSetZero(void* result, size_t dim1, size_t dim2) {
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -715,8 +696,8 @@ void mSetZero(void *result, size_t dim1, size_t dim2) {
     }
 }
 
-void mSetIdentity(void *result, size_t dim1, size_t dim2) {
-    double *m_result = (double *)result;
+void mSetIdentity(void* result, size_t dim1, size_t dim2) {
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -727,9 +708,9 @@ void mSetIdentity(void *result, size_t dim1, size_t dim2) {
     }
 }
 
-void mDiag(void *v, size_t dim, void *result) {
-    double *m_v = (double *)v;
-    double *m_result = (double *)result;
+void mDiag(void* v, size_t dim, void* result) {
+    double* m_v = (double*)v;
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -740,8 +721,8 @@ void mDiag(void *v, size_t dim, void *result) {
     }
 }
 
-void mTranspose(void *mx, size_t dim1, size_t dim2, void *result) {
-    double *m_mx = (double *)mx;
+void mTranspose(void* mx, size_t dim1, size_t dim2, void* result) {
+    double* m_mx = (double*)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     CHECK_ARRAY_DIMENSIONS(dim1 * dim2);
 
@@ -756,10 +737,10 @@ void mTranspose(void *mx, size_t dim1, size_t dim2, void *result) {
     MOVE_DOUBLE(m_result, dim2 * dim1, result);
 }
 
-void mAdd(void *mx1, size_t dim1, size_t dim2, void *mx2, void *result) {
-    double *m_mx1 = (double *)mx1;
-    double *m_mx2 = (double *)mx2;
-    double *m_result = (double *)result;
+void mAdd(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result) {
+    double* m_mx1 = (double*)mx1;
+    double* m_mx2 = (double*)mx2;
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -770,10 +751,10 @@ void mAdd(void *mx1, size_t dim1, size_t dim2, void *mx2, void *result) {
     }
 }
 
-void mSubtract(void *mx1, size_t dim1, size_t dim2, void *mx2, void *result) {
-    double *m_mx1 = (double *)mx1;
-    double *m_mx2 = (double *)mx2;
-    double *m_result = (double *)result;
+void mSubtract(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result) {
+    double* m_mx1 = (double*)mx1;
+    double* m_mx2 = (double*)mx2;
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -784,9 +765,9 @@ void mSubtract(void *mx1, size_t dim1, size_t dim2, void *mx2, void *result) {
     }
 }
 
-void mScale(double scaleFactor, void *mx, size_t dim1, size_t dim2, void *result) {
-    double *m_mx = (double *)mx;
-    double *m_result = (double *)result;
+void mScale(double scaleFactor, void* mx, size_t dim1, size_t dim2, void* result) {
+    double* m_mx = (double*)mx;
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -797,9 +778,9 @@ void mScale(double scaleFactor, void *mx, size_t dim1, size_t dim2, void *result
     }
 }
 
-void mMultM(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size_t dim22, void *result) {
-    double *m_mx1 = (double *)mx1;
-    double *m_mx2 = (double *)mx2;
+void mMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result) {
+    double* m_mx1 = (double*)mx1;
+    double* m_mx2 = (double*)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     CHECK_ARRAY_DIMENSIONS(dim11 * dim22);
 
@@ -821,9 +802,9 @@ void mMultM(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
 }
 
-void mtMultM(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size_t dim22, void *result) {
-    double *m_mx1 = (double *)mx1;
-    double *m_mx2 = (double *)mx2;
+void mtMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result) {
+    double* m_mx1 = (double*)mx1;
+    double* m_mx2 = (double*)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     CHECK_ARRAY_DIMENSIONS(dim12 * dim22);
 
@@ -845,9 +826,9 @@ void mtMultM(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, siz
     MOVE_DOUBLE(m_result, dim12 * dim22, result);
 }
 
-void mMultMt(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size_t dim22, void *result) {
-    double *m_mx1 = (double *)mx1;
-    double *m_mx2 = (double *)mx2;
+void mMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result) {
+    double* m_mx1 = (double*)mx1;
+    double* m_mx2 = (double*)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     CHECK_ARRAY_DIMENSIONS(dim11 * dim21);
 
@@ -869,9 +850,9 @@ void mMultMt(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, siz
     MOVE_DOUBLE(m_result, dim11 * dim21, result);
 }
 
-void mtMultMt(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, size_t dim22, void *result) {
-    double *m_mx1 = (double *)mx1;
-    double *m_mx2 = (double *)mx2;
+void mtMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result) {
+    double* m_mx1 = (double*)mx1;
+    double* m_mx2 = (double*)mx2;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     CHECK_ARRAY_DIMENSIONS(dim12 * dim21);
 
@@ -893,12 +874,12 @@ void mtMultMt(void *mx1, size_t dim11, size_t dim12, void *mx2, size_t dim21, si
     MOVE_DOUBLE(m_result, dim12 * dim21, result);
 }
 
-void mMultV(void *mx, size_t dim1, size_t dim2, void *v, void *result) {
+void mMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result) {
     size_t dim11 = dim1;
     size_t dim12 = dim2;
     size_t dim22 = 1;
-    double *m_mx1 = (double *)mx;
-    double *m_mx2 = (double *)v;
+    double* m_mx1 = (double*)mx;
+    double* m_mx2 = (double*)v;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     CHECK_ARRAY_DIMENSIONS(dim11 * dim22);
 
@@ -917,12 +898,12 @@ void mMultV(void *mx, size_t dim1, size_t dim2, void *v, void *result) {
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
 }
 
-void mtMultV(void *mx, size_t dim1, size_t dim2, void *v, void *result) {
+void mtMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result) {
     size_t dim11 = dim1;
     size_t dim12 = dim2;
     size_t dim22 = 1;
-    double *m_mx1 = (double *)mx;
-    double *m_mx2 = (double *)v;
+    double* m_mx1 = (double*)mx;
+    double* m_mx2 = (double*)v;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     CHECK_ARRAY_DIMENSIONS(dim12 * dim22);
 
@@ -941,8 +922,8 @@ void mtMultV(void *mx, size_t dim1, size_t dim2, void *v, void *result) {
     MOVE_DOUBLE(m_result, dim12 * dim22, result);
 }
 
-double mTrace(void *mx, size_t dim) {
-    double *m_mx = (double *)mx;
+double mTrace(void* mx, size_t dim) {
+    double* m_mx = (double*)mx;
 
     size_t i;
     double result = 0.0;
@@ -953,8 +934,8 @@ double mTrace(void *mx, size_t dim) {
     return result;
 }
 
-double mDeterminant(void *mx, size_t dim) {
-    double *m_mx = (double *)mx;
+double mDeterminant(void* mx, size_t dim) {
+    double* m_mx = (double*)mx;
 
     size_t i;
     size_t j;
@@ -989,7 +970,7 @@ double mDeterminant(void *mx, size_t dim) {
     return (result);
 }
 
-void mCofactor(void *mx, size_t dim, void *result) {
+void mCofactor(void* mx, size_t dim, void* result) {
     /* The (j,i)th cofactor of A is defined as (-1)^(i + j)*det(A_(i,j))
        where A_(i,j) is the submatrix of A obtained from A by removing the ith row and jth column */
     size_t i;
@@ -998,7 +979,7 @@ void mCofactor(void *mx, size_t dim, void *result) {
     size_t j;
     size_t j0;
     size_t j1;
-    double *m_mx = (double *)mx;
+    double* m_mx = (double*)mx;
     double m_mxij[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double det;
@@ -1034,7 +1015,7 @@ void mCofactor(void *mx, size_t dim, void *result) {
     MOVE_DOUBLE(m_result, dim * dim, result);
 }
 
-int mInverse(void *mx, size_t dim, void *result) {
+int mInverse(void* mx, size_t dim, void* result) {
     /* Inverse of a square matrix A with non zero determinant is adjoint matrix divided by determinant */
     /* The adjoint matrix is the square matrix X such that the (i,j)th entry of X is the (j,i)th cofactor of A */
 
@@ -1064,9 +1045,9 @@ int mInverse(void *mx, size_t dim, void *result) {
     return status;
 }
 
-int mIsEqual(void *mx1, size_t dim1, size_t dim2, void *mx2, double accuracy) {
-    double *m_mx1 = (double *)mx1;
-    double *m_mx2 = (double *)mx2;
+int mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy) {
+    double* m_mx1 = (double*)mx1;
+    double* m_mx2 = (double*)mx2;
 
     size_t i;
     size_t j;
@@ -1080,8 +1061,8 @@ int mIsEqual(void *mx1, size_t dim1, size_t dim2, void *mx2, double accuracy) {
     return 1;
 }
 
-int mIsZero(void *mx, size_t dim1, size_t dim2, double accuracy) {
-    double *m_mx = (double *)mx;
+int mIsZero(void* mx, size_t dim1, size_t dim2, double accuracy) {
+    double* m_mx = (double*)mx;
 
     size_t i;
     size_t j;
@@ -1095,8 +1076,8 @@ int mIsZero(void *mx, size_t dim1, size_t dim2, double accuracy) {
     return 1;
 }
 
-void mPrintScreen(const char *name, void *mx, size_t dim1, size_t dim2) {
-    double *m_mx = (double *)mx;
+void mPrintScreen(const char* name, void* mx, size_t dim1, size_t dim2) {
+    double* m_mx = (double*)mx;
 
     size_t i;
     size_t j;
@@ -1115,8 +1096,8 @@ void mPrintScreen(const char *name, void *mx, size_t dim1, size_t dim2) {
     printf("];\n");
 }
 
-void mPrint(FILE *pFile, const char *name, void *mx, size_t dim1, size_t dim2) {
-    double *m_mx = (double *)mx;
+void mPrint(FILE* pFile, const char* name, void* mx, size_t dim1, size_t dim2) {
+    double* m_mx = (double*)mx;
 
     size_t i;
     size_t j;
@@ -1135,16 +1116,16 @@ void mPrint(FILE *pFile, const char *name, void *mx, size_t dim1, size_t dim2) {
     fprintf(pFile, "];\n");
 }
 
-void mGetSubMatrix(void *mx,
+void mGetSubMatrix(void* mx,
                    size_t dim1,
                    size_t dim2,
                    size_t dim1Start,
                    size_t dim2Start,
                    size_t dim1Result,
                    size_t dim2Result,
-                   void *result) {
-    double *m_mx = (double *)mx;
-    double *m_result = (double *)result;
+                   void* result) {
+    double* m_mx = (double*)mx;
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -1155,16 +1136,16 @@ void mGetSubMatrix(void *mx,
     }
 }
 
-void mSetSubMatrix(void *mx,
+void mSetSubMatrix(void* mx,
                    size_t dim1,
                    size_t dim2,
-                   void *result,
+                   void* result,
                    size_t dim1Result,
                    size_t dim2Result,
                    size_t dim1Start,
                    size_t dim2Start) {
-    double *m_mx = (double *)mx;
-    double *m_result = (double *)result;
+    double* m_mx = (double*)mx;
+    double* m_result = (double*)result;
 
     size_t i;
     size_t j;
@@ -1409,7 +1390,7 @@ int m22IsZero(double mx[2][2], double accuracy) {
     return 1;
 }
 
-void m22Print(FILE *pFile, const char *name, double mx[2][2]) {
+void m22Print(FILE* pFile, const char* name, double mx[2][2]) {
     size_t dim1 = 2;
     size_t dim2 = 2;
     size_t i;
@@ -1449,7 +1430,7 @@ int m22Inverse(double mx[2][2], double result[2][2]) {
     return status;
 }
 
-void m22PrintScreen(const char *name, double mx[2][2]) {
+void m22PrintScreen(const char* name, double mx[2][2]) {
     int i;
     printf("%s:\n", name);
     for (i = 0; i < 2; i++) {
@@ -1706,7 +1687,7 @@ int m33IsZero(double mx[3][3], double accuracy) {
     return 1;
 }
 
-void m33Print(FILE *pFile, const char *name, double mx[3][3]) {
+void m33Print(FILE* pFile, const char* name, double mx[3][3]) {
     size_t dim1 = 3;
     size_t dim2 = 3;
     size_t i;
@@ -1800,7 +1781,7 @@ double m33ConditionNumber(double mx[3][3]) {
     return (sv[0] / sv[2]);
 }
 
-void m33PrintScreen(const char *name, double mx[3][3]) {
+void m33PrintScreen(const char* name, double mx[3][3]) {
     int i;
     printf("%s:\n", name);
     for (i = 0; i < 3; i++) {

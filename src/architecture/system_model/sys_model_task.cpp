@@ -1,22 +1,3 @@
-/*
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-
 #include "sys_model_task.h"
 
 /*! A construction option that allows the user to set some task parameters.
@@ -25,35 +6,31 @@
  @param FirstStartTime The amount of time in nanoseconds to hold a task dormant before starting.
         After this time the task is executed at integer amounts of InputPeriod again
  */
-SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime) :
-    NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime)
-{
+SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
+    : NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime) {
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
 }
 
 /*! This method self-initializes all of the models that have been added to the Task.
  @return void
  */
-void SysModelTask::selfInitTaskList() const
-{
-    for(auto const& modelPair : this->TaskModels) {
+void SysModelTask::selfInitTaskList() const {
+    for (auto const& modelPair : this->TaskModels) {
         SysModel* NonIt = modelPair.ModelPtr;
         NonIt->selfInit();
     }
 }
-
 
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
  * See sys_model_task.h for related method reset()
  @return void
  @param CurrentSimTime The time to start at after reset
 */
-void SysModelTask::resetModels(uint64_t CurrentSimTime)
-{
-	for (auto const& modelPair : this->TaskModels) {
-		modelPair.ModelPtr->reset(CurrentSimTime);
-	}
-	this->NextStartTime = CurrentSimTime;
+void SysModelTask::resetModels(uint64_t CurrentSimTime) {
+    for (auto const& modelPair : this->TaskModels) {
+        modelPair.ModelPtr->reset(CurrentSimTime);
+    }
+    this->NextStartTime = CurrentSimTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
 }
 
@@ -62,11 +39,9 @@ void SysModelTask::resetModels(uint64_t CurrentSimTime)
  @return void
  @param currentSimNanos The current simulation time in [ns]
  */
-void SysModelTask::executeModels(uint64_t currentSimNanos)
-{
-    for(auto ModelPair = this->TaskModels.begin();
-    (ModelPair != this->TaskModels.end() && this->taskActive);
-    ModelPair++) {
+void SysModelTask::executeModels(uint64_t currentSimNanos) {
+    for (auto ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
+         ModelPair++) {
         SysModel* NonIt = (ModelPair->ModelPtr);
         NonIt->updateState(currentSimNanos);
         NonIt->CallCounts += 1;
@@ -81,19 +56,17 @@ void SysModelTask::executeModels(uint64_t currentSimNanos)
  @param NewModel The new model that we are adding to the Task
  @param Priority The selected priority of the model being added (highest goes first)
  */
-void SysModelTask::addModel(SysModel *NewModel, int32_t Priority)
-{
+void SysModelTask::addModel(SysModel* NewModel, int32_t Priority) {
     ModelPriorityPair LocalPair;
 
     //! - Set the local pair with the requested priority and mode
     LocalPair.CurrentModelPriority = Priority;
     LocalPair.ModelPtr = NewModel;
-//    SystemMessaging::GetInstance()->addModuleToProcess(NewModel->moduleID,
-//            parentProc);
+    //    SystemMessaging::GetInstance()->addModuleToProcess(NewModel->moduleID,
+    //            parentProc);
     //! - Loop through the ModelPair vector and if Priority is higher than next, insert
-    for(auto ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
-        ModelPair++) {
-        if(Priority > ModelPair->CurrentModelPriority) {
+    for (auto ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end(); ModelPair++) {
+        if (Priority > ModelPair->CurrentModelPriority) {
             this->TaskModels.insert(ModelPair, LocalPair);
             return;
         }
@@ -108,12 +81,11 @@ void SysModelTask::addModel(SysModel *NewModel, int32_t Priority)
  @return void
  @param newPeriod The period that the task should run at going forward
  */
-void SysModelTask::setPeriod(uint64_t newPeriod)
-{
+void SysModelTask::setPeriod(uint64_t newPeriod) {
     //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
-    if(this->NextStartTime > this->TaskPeriod) {
-        uint64_t newStartTime = (this->NextStartTime/newPeriod)*newPeriod;
-        if(newStartTime <= (this->NextStartTime - this->TaskPeriod)) {
+    if (this->NextStartTime > this->TaskPeriod) {
+        uint64_t newStartTime = (this->NextStartTime / newPeriod) * newPeriod;
+        if (newStartTime <= (this->NextStartTime - this->TaskPeriod)) {
             newStartTime += newPeriod;
         }
         this->NextStartTime = newStartTime;
@@ -126,18 +98,10 @@ void SysModelTask::setPeriod(uint64_t newPeriod)
     this->TaskPeriod = newPeriod;
 }
 
-uint64_t SysModelTask::getNextStartTime() const {
-    return this->NextStartTime;
-}
+uint64_t SysModelTask::getNextStartTime() const { return this->NextStartTime; }
 
-uint64_t SysModelTask::getNextPickupTime() const {
-    return this->NextPickupTime;
-}
+uint64_t SysModelTask::getNextPickupTime() const { return this->NextPickupTime; }
 
-uint64_t SysModelTask::getTaskPeriod() const {
-    return this->TaskPeriod;
-}
+uint64_t SysModelTask::getTaskPeriod() const { return this->TaskPeriod; }
 
-uint64_t SysModelTask::getFirstTaskTime() const {
-    return this->FirstTaskTime;
-}
+uint64_t SysModelTask::getFirstTaskTime() const { return this->FirstTaskTime; }

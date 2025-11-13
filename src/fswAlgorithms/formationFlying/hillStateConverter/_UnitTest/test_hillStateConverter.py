@@ -1,5 +1,3 @@
-
-#   3rd party / std lib imports
 import pytest
 from xmera.architecture import messaging
 #   Modules to test

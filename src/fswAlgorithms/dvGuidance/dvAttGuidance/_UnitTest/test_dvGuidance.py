@@ -1,8 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        dvGuidance
-#   Creation Date:      October 5, 2018
-#
+"""
+Module Name:        dvGuidance
+"""
 
 import inspect
 import os

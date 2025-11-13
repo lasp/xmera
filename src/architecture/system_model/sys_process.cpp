@@ -1,22 +1,3 @@
-/*
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-
 #include "sys_process.h"
 #include <iostream>
 #include <utility>
@@ -26,20 +7,16 @@
     @return void
     @param messageContainer The amount of nanoseconds between calls to this Task.
  */
-SysProcess::SysProcess(std::string name) : SysProcess()
-{
-    this->processName = std::move(name);
-}
+SysProcess::SysProcess(std::string name) : SysProcess() { this->processName = std::move(name); }
 
 /*! This method sets the nextTaskTime = 0 and calls selfInitTaskList() for
  * all process tasks.
  @return void
  */
-void SysProcess::selfInitialize()
-{
+void SysProcess::selfInitialize() {
     this->nextTaskTime = 0;
-    for(auto const& process : this->processTasks) {
-        SysModelTask *localTask = process.TaskPtr;
+    for (auto const& process : this->processTasks) {
+        SysModelTask* localTask = process.TaskPtr;
         localTask->selfInitTaskList();
     }
 }
@@ -49,10 +26,9 @@ void SysProcess::selfInitialize()
     @return void
     @param currentTime Current simulation time in ns that reset is occurring at
 */
-void SysProcess::reset(uint64_t currentTime)
-{
-    for(auto const& process : this->processTasks) {
-        SysModelTask *localTask = process.TaskPtr;
+void SysProcess::reset(uint64_t currentTime) {
+    for (auto const& process : this->processTasks) {
+        SysModelTask* localTask = process.TaskPtr;
         localTask->resetModels(currentTime);
     }
     this->nextTaskTime = currentTime;
@@ -63,15 +39,14 @@ void SysProcess::reset(uint64_t currentTime)
  *  and then adds everything back into the process with the correct priority.
     @return void
 */
-void SysProcess::reInitialize()
-{
-    for(auto const& task : this->processTasks) {
-        SysModelTask *localTask = task.TaskPtr;
+void SysProcess::reInitialize() {
+    for (auto const& task : this->processTasks) {
+        SysModelTask* localTask = task.TaskPtr;
         localTask->reset();
     }
     std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
     this->processTasks.clear();
-    for(auto const& task : taskPtrs) {
+    for (auto const& task : taskPtrs) {
         this->addTask(task.TaskPtr, task.taskPriority);
     }
 }
@@ -80,36 +55,35 @@ void SysProcess::reInitialize()
  * unless it isn't supposed to run yet.
  @return void
  */
-void SysProcess::singleStepNextTask(uint64_t currentNanos)
-{
+void SysProcess::singleStepNextTask(uint64_t currentNanos) {
     //! - Check to make sure that there are models to be called.
-    if(this->processTasks.begin() == this->processTasks.end()) {
+    if (this->processTasks.begin() == this->processTasks.end()) {
         bskLogger.bskLog(BSK_WARNING, "Received a step command on sim that has no active Tasks.");
         return;
     }
     auto fireIt = this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++) {
-        if(it->NextTaskStart < fireIt->NextTaskStart ||
-                (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority)) {
+    for (auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
+        if (it->NextTaskStart < fireIt->NextTaskStart ||
+            (it->NextTaskStart == fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority)) {
             fireIt = it;
         }
     }
-    if(fireIt->NextTaskStart > currentNanos) {
+    if (fireIt->NextTaskStart > currentNanos) {
         this->nextTaskTime = fireIt->NextTaskStart;
         return;
     }
     //! - Call the next scheduled model, and set the time to its start
-    SysModelTask *localTask = fireIt->TaskPtr;
+    SysModelTask* localTask = fireIt->TaskPtr;
     localTask->executeModels(currentNanos);
     fireIt->NextTaskStart = localTask->getNextStartTime();
 
     //! - Figure out when we are going to be called next for scheduling purposes
-    fireIt=this->processTasks.begin();
+    fireIt = this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++) {
-        if(it->NextTaskStart < fireIt->NextTaskStart ||
-           (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority)) {
+    for (auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
+        if (it->NextTaskStart < fireIt->NextTaskStart ||
+            (it->NextTaskStart == fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority)) {
             fireIt = it;
         }
     }
@@ -122,8 +96,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
  @param newTask The new task that we are adding to the list
  @param taskPriority The selected priority of the task being added
  */
-void SysProcess::addTask(SysModelTask *newTask, int32_t taskPriority)
-{
+void SysProcess::addTask(SysModelTask* newTask, int32_t taskPriority) {
     ModelScheduleEntry localEntry;
     localEntry.TaskPtr = newTask;
     localEntry.TaskUpdatePeriod = newTask->getTaskPeriod();
@@ -141,14 +114,12 @@ void SysProcess::addTask(SysModelTask *newTask, int32_t taskPriority)
  @return void
  @param taskCall Pointer to a struct that contains start time and task handle.
  */
-void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
-{
+void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall) {
     //! - Iteratre through all of the task models to find correct place
-    for(auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
+    for (auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
         //! - If the next Task starts after new Task, pop it on just prior
-        if(it->NextTaskStart > taskCall.NextTaskStart ||
-           (it->NextTaskStart == taskCall.NextTaskStart &&
-            taskCall.taskPriority > it->taskPriority)) {
+        if (it->NextTaskStart > taskCall.NextTaskStart ||
+            (it->NextTaskStart == taskCall.NextTaskStart && taskCall.taskPriority > it->taskPriority)) {
             this->processTasks.insert(it, taskCall);
             return;
         }
@@ -162,9 +133,8 @@ void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
     and you are really only turning one on at a time.
     @return void
 */
-void SysProcess::disableTasks() const
-{
-    for(auto const& scheduleEntry : this->processTasks) {
+void SysProcess::disableTasks() const {
+    for (auto const& scheduleEntry : this->processTasks) {
         scheduleEntry.TaskPtr->disable();
     }
 }
@@ -173,9 +143,8 @@ void SysProcess::disableTasks() const
  inhibited but you want to turn it all on at once.
  @return void
  */
-void SysProcess::enableTasks() const
-{
-    for(auto const& scheduleEntry : this->processTasks) {
+void SysProcess::enableTasks() const {
+    for (auto const& scheduleEntry : this->processTasks) {
         scheduleEntry.TaskPtr->enable();
     }
 }
@@ -183,23 +152,23 @@ void SysProcess::enableTasks() const
 /*! This method updates a specified task's period once it locates that task
     in the list.  It will warn the user if a task is not found.
     @return void
-	@param taskName The name of the task you want to change period of
-	@param newPeriod the new number of nanoseconds you want between calls
+    @param taskName The name of the task you want to change period of
+    @param newPeriod the new number of nanoseconds you want between calls
 */
-void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPeriod)
-{
-	//! - Iteratre through all of the task models to disable them
-	for (ModelScheduleEntry &scheduleEntry : this->processTasks) {
-		if (scheduleEntry.TaskPtr->TaskName == taskName) {
-			scheduleEntry.TaskPtr->setPeriod(newPeriod);
-			scheduleEntry.NextTaskStart = scheduleEntry.TaskPtr->getNextStartTime();
-			scheduleEntry.TaskUpdatePeriod = scheduleEntry.TaskPtr->getTaskPeriod();
-			return;
-		}
-	}
-    bskLogger.bskLog(BSK_WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
+void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPeriod) {
+    //! - Iteratre through all of the task models to disable them
+    for (ModelScheduleEntry& scheduleEntry : this->processTasks) {
+        if (scheduleEntry.TaskPtr->TaskName == taskName) {
+            scheduleEntry.TaskPtr->setPeriod(newPeriod);
+            scheduleEntry.NextTaskStart = scheduleEntry.TaskPtr->getNextStartTime();
+            scheduleEntry.TaskUpdatePeriod = scheduleEntry.TaskPtr->getTaskPeriod();
+            return;
+        }
+    }
+    bskLogger.bskLog(BSK_WARNING,
+                     "You attempted to change the period of task: %s I couldn't find that in process: %s",
+                     taskName.c_str(),
+                     this->processName.c_str());
 }
 
-uint64_t SysProcess::getPrevRouteTime() const {
-    return this->prevRouteTime;
-}
+uint64_t SysProcess::getPrevRouteTime() const { return this->prevRouteTime; }

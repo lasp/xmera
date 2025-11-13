@@ -1,22 +1,3 @@
-/*
- ISC License
-
-Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-
 #include "centerOfBrightness.h"
 
 /*! Module constructor */
@@ -66,8 +47,8 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
 @param cobBuffer Reference to the COB output buffer.
 @param currentSimNanos Current simulation time in nanoseconds.
  */
-cv::Mat CenterOfBrightness::readImage(CameraImageMsgPayload &imageBuffer,
-                                      OpNavCOBMsgPayload &cobBuffer,
+cv::Mat CenterOfBrightness::readImage(CameraImageMsgPayload& imageBuffer,
+                                      OpNavCOBMsgPayload& cobBuffer,
                                       uint64_t currentSimNanos) {
     cv::Mat imageCV;
 
@@ -81,8 +62,8 @@ cv::Mat CenterOfBrightness::readImage(CameraImageMsgPayload &imageBuffer,
         imageCV = cv::imread(this->fileName, cv::IMREAD_COLOR);
     } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char *)imageBuffer.imagePointer,
-                                                (char *)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
+                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
     }
     /*! - If no image is present, write zeros in message */
@@ -130,7 +111,7 @@ std::pair<Eigen::Vector2d, double> CenterOfBrightness::computeWeightedCenterOfBr
     uint32_t weightSum = 0;
     Eigen::Vector2d coordinates;
     coordinates.setZero();
-    for (auto &pixel : nonZeroPixels) {
+    for (auto& pixel : nonZeroPixels) {
         /*! Individual pixel intensity used as the weight for the contribution to the solution*/
         auto weight = this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
         coordinates[0] += weight * pixel[0];
@@ -166,7 +147,7 @@ void CenterOfBrightness::updateBrightnessHistory(double brightness) {
  @return void
  @param image cv::Mat of the input image
  */
-void CenterOfBrightness::applyWindow(cv::Mat const &image) const {
+void CenterOfBrightness::applyWindow(cv::Mat const& image) const {
     /*! Create a window and ignore anything outside of it (make it black).
      * Point in opencv is column, row. x goes left-to-right, y goes top-to-bottom ([0,0] is top left corner).
      * Window mask is inclusive (edge of mask should be considered in COB), so must add/subtract one pixel. */
@@ -205,7 +186,7 @@ void CenterOfBrightness::applyWindow(cv::Mat const &image) const {
  @return void
  @param image openCV matrix of the input image
  */
-void CenterOfBrightness::computeWindow(cv::Mat const &image) {
+void CenterOfBrightness::computeWindow(cv::Mat const& image) {
     // if any of the window parameters is 0 (not specified), window is the same as image dimensions and won't be applied
     if (this->windowCenter.isZero() || this->windowWidth == 0 || this->windowHeight == 0) {
         this->windowPointTopLeft[0] = 0;
@@ -231,7 +212,7 @@ void CenterOfBrightness::computeWindow(cv::Mat const &image) {
  @param imageBuffer Reference to the image payload buffer
 
  */
-OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat &imageCV, const CameraImageMsgPayload &imageBuffer) {
+OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat& imageCV, const CameraImageMsgPayload& imageBuffer) {
     OpNavCOBMsgPayload cobBuffer{};
     std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
 
@@ -270,7 +251,7 @@ OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat &imageCV, const Cam
     @param Eigen::Vector2i center [px]
     @return void
     */
-void CenterOfBrightness::setWindowCenter(const Eigen::VectorXi &center) { this->windowCenter = center; }
+void CenterOfBrightness::setWindowCenter(const Eigen::VectorXi& center) { this->windowCenter = center; }
 
 /*! Get the mask center for windowing
     @return Eigen::Vector2i center [px]
@@ -325,7 +306,7 @@ double CenterOfBrightness::getPixelThreshold() const { return this->pixelThresho
     @param std::string fileName
     @return void
 */
-void CenterOfBrightness::setFileName(const std::string &fileName) { this->fileName = fileName; }
+void CenterOfBrightness::setFileName(const std::string& fileName) { this->fileName = fileName; }
 
 /*! Get the filename for the module to read an image directly
     @return std::string fileName
@@ -358,7 +339,7 @@ bool CenterOfBrightness::getSaveImages() const { return this->saveImages; }
     @param std::string directory
     @return void
 */
-void CenterOfBrightness::setSaveDir(const std::string &directory) { this->saveDir = directory; }
+void CenterOfBrightness::setSaveDir(const std::string& directory) { this->saveDir = directory; }
 
 /*! Get the directory where images are saved
     @return std::string directory
