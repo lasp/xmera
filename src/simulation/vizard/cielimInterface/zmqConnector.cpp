@@ -20,10 +20,10 @@ bool ZmqConnector::isConnected() const {
     return false;
 }
 
-void ZmqConnector::send(const cielimMessage::CielimMessage &message) {
+void ZmqConnector::send(const cielimMessage::CielimMessage& message) {
     /*! - send protobuffer raw over zmq_socket */
     size_t byteCount = message.ByteSizeLong();
-    void *serialized_message = malloc(byteCount);
+    void* serialized_message = malloc(byteCount);
     message.SerializeToArray(serialized_message, (int)byteCount);
     auto payload = zmq::message_t(serialized_message, byteCount, ZmqConnector::message_buffer_deallocate, nullptr);
 
@@ -38,7 +38,7 @@ void ZmqConnector::send(const cielimMessage::CielimMessage &message) {
     static_cast<void>(this->requesterSocket->recv(pong, zmq::recv_flags::none));
 }
 
-void ZmqConnector::message_buffer_deallocate(void *data, void *hint) { free(data); }
+void ZmqConnector::message_buffer_deallocate(void* data, void* hint) { free(data); }
 
 ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
     this->requesterSocket->send(zmq::message_t("REQUEST_IMAGE", 13), zmq::send_flags::sndmore);
@@ -59,10 +59,10 @@ ImageData ZmqConnector::requestImage(size_t cameraId, bool shouldReturnImage) {
     auto cobXMsgSize = this->requesterSocket->recv(centerOfBrightnessX, zmq::recv_flags::none);
     auto cobYMsgSize = this->requesterSocket->recv(centerOfBrightnessY, zmq::recv_flags::none);
 
-    const int32_t *lengthPoint = imageLengthMessage.data<int32_t>();
-    const void *imagePoint = imageMessage.data();
+    const int32_t* lengthPoint = imageLengthMessage.data<int32_t>();
+    const void* imagePoint = imageMessage.data();
     int32_t imageBufferLength = *lengthPoint;
-    void *image = malloc(imageBufferLength * sizeof(char));
+    void* image = malloc(imageBufferLength * sizeof(char));
     memcpy(image, imagePoint, imageBufferLength * sizeof(char));
 
     auto returnData = ImageData();
@@ -99,4 +99,4 @@ void ZmqConnector::init() {
     static_cast<void>(this->requesterSocket->recv(message, zmq::recv_flags::none));
 }
 
-void ZmqConnector::setComPortNumber(std::string &portNumber) { this->comPortNumber = portNumber; }
+void ZmqConnector::setComPortNumber(std::string& portNumber) { this->comPortNumber = portNumber; }

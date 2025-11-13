@@ -15,9 +15,9 @@
  * The base class provides small utilities (runtime detection of the Jacobian) and
  * forwards the public-facing calls to the derived implementation.
  */
-template<typename TraitsT, typename DerivedT>
+template <typename TraitsT, typename DerivedT>
 class ProcessModelBase {
-public:
+   public:
     using Traits = TraitsT;
     using Derived = DerivedT;
 
@@ -25,36 +25,30 @@ public:
     using StateVector = typename Traits::StateVector;
     using StateMatrix = typename Traits::StateMatrix;
 
-    StateVector propagate(double dt, const StateVector& x) const {
-        return asDerived().propagateImpl(dt, x);
-    }
+    StateVector propagate(double dt, const StateVector& x) const { return asDerived().propagateImpl(dt, x); }
 
-    template<typename D = Derived, typename = std::enable_if_t<HasJacobian<D>::value>>
+    template <typename D = Derived, typename = std::enable_if_t<HasJacobian<D>::value>>
     StateMatrix stateJacobian(double dt, const StateVector& x) const {
         return asDerived().jacobianImpl(dt, x);
     }
 
-    static constexpr bool supportsAnalyticJacobian() {
-        return HasJacobian<Derived>::value;
-    }
+    static constexpr bool supportsAnalyticJacobian() { return HasJacobian<Derived>::value; }
 
-protected:
+   protected:
     ProcessModelBase() = default;
     ~ProcessModelBase() = default;
 
-private:
-    template<typename Candidate, typename = void>
+   private:
+    template <typename Candidate, typename = void>
     struct HasJacobian : std::false_type {};
 
-    template<typename Candidate>
-    struct HasJacobian<Candidate, std::void_t<
-        decltype(std::declval<const Candidate&>().jacobianImpl(
-            std::declval<double>(), std::declval<StateVector>()))
-    >> : std::true_type {};
+    template <typename Candidate>
+    struct HasJacobian<Candidate,
+                       std::void_t<decltype(std::declval<const Candidate&>()
+                                                .jacobianImpl(std::declval<double>(), std::declval<StateVector>()))>>
+        : std::true_type {};
 
-    const Derived& asDerived() const {
-        return static_cast<const Derived&>(*this);
-    }
+    const Derived& asDerived() const { return static_cast<const Derived&>(*this); }
 };
 
 #endif  // BASILISK_STATICPROCESSMODEL_HPP

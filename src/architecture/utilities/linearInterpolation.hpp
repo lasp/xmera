@@ -13,10 +13,9 @@
 @param x Function x coordinate for interpolation
 */
 double linearInterpolation(double x1, double x2, double y1, double y2, double x) {
-
-    assert(x1 <  x && x < x2);
+    assert(x1 < x && x < x2);
 
     return y1 * (x2 - x) / (x2 - x1) + y2 * (x - x1) / (x2 - x1);
 }
 
-#endif // LINEARINTERPOLATION_H
+#endif  // LINEARINTERPOLATION_H

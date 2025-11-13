@@ -3,7 +3,7 @@
  * Function to evaluate a set of chebyshev polynomials (first argument) to a certain degree (second argument) at
  * a specific point (evaluationPoint)
  */
-double calculateChebyValue(const double *coefficients,
+double calculateChebyValue(const double* coefficients,
                            const signed int numberOfCoefficients,
                            const double evaluationPoint) {
     double chebyPrev = 1.0;

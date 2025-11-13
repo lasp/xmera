@@ -7,24 +7,18 @@
 #include <memory>
 
 class AggregateException final : public std::exception {
-public:
+   public:
     AggregateException(const std::string& message) : msg(message) {}
 
-    const char* what() const noexcept override {
-        return this->msg.c_str();
-    }
+    const char* what() const noexcept override { return this->msg.c_str(); }
 
-    void add_exception(const std::exception_ptr &ex_ptr) {
-        this->exceptions.push_back(ex_ptr);
-    }
+    void add_exception(const std::exception_ptr& ex_ptr) { this->exceptions.push_back(ex_ptr); }
 
-    const std::vector<std::exception_ptr>& get_exceptions() const {
-        return this->exceptions;
-    }
+    const std::vector<std::exception_ptr>& get_exceptions() const { return this->exceptions; }
 
-private:
+   private:
     std::string msg;
     std::vector<std::exception_ptr> exceptions;
 };
 
-#endif //XMERA_AGGREGATEEXCEPTION_H
+#endif  // XMERA_AGGREGATEEXCEPTION_H

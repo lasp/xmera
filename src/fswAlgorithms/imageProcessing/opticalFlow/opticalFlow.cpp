@@ -48,8 +48,8 @@ void OpticalFlow::updateState(uint64_t currentSimNanos) {
         }
     } else if (imageBuffer.valid == 1 && imageBuffer.timeTag > this->firstTimeTag) {
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char *)imageBuffer.imagePointer,
-                                                (char *)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
+                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         this->secondImage = cv::imdecode(vectorBuffer, cv::IMREAD_GRAYSCALE);
 
         this->sensorTimeTag = imageBuffer.timeTag;
@@ -172,7 +172,7 @@ void OpticalFlow::updateState(uint64_t currentSimNanos) {
  @param inputBWImage cv::Mat of the input image
  @param mask cv::Mat of the output mask (binary black and white image)
  */
-void OpticalFlow::makeMask(cv::Mat const &inputBWImage, cv::Mat &mask) const {
+void OpticalFlow::makeMask(cv::Mat const& inputBWImage, cv::Mat& mask) const {
     cv::Mat distanceImage(inputBWImage.size(), CV_8UC1);
     cv::distanceTransform(inputBWImage, distanceImage, cv::DIST_L2, cv::DIST_MASK_PRECISE);
 

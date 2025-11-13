@@ -7,15 +7,13 @@
 
 #include "State.hpp"
 
-template<int StateDim>
+template <int StateDim>
 class IMeasurement {
-public:
+   public:
     virtual void apply(State<StateDim>& state) const = 0;
     virtual ~IMeasurement() = default;
     virtual double getTimeTag() const = 0;
     virtual bool getValidity() const = 0;
 };
 
-
-
-#endif //BASILISK_IMEASUREMENT_H
+#endif  // BASILISK_IMEASUREMENT_H

@@ -1,12 +1,9 @@
 #include "svIntegratorRK4.h"
 
 svIntegratorRK4::svIntegratorRK4(DynamicObject* dyn)
-    : svIntegratorRungeKutta(dyn, svIntegratorRK4::getCoefficients())
-{
-}
+    : svIntegratorRungeKutta(dyn, svIntegratorRK4::getCoefficients()) {}
 
-RKCoefficients<4> svIntegratorRK4::getCoefficients()
-{
+RKCoefficients<4> svIntegratorRK4::getCoefficients() {
     RKCoefficients<4> coefficients;
     coefficients.aMatrix.at(1).at(0) = 0.5;
     coefficients.aMatrix.at(2).at(1) = 0.5;

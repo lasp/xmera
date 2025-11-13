@@ -71,7 +71,7 @@ void EkfInterface::timeUpdate(const double updateTime) {
  @param Measurement
  @return void
  */
-void EkfInterface::measurementUpdate(const MeasurementModel &measurement) {
+void EkfInterface::measurementUpdate(const MeasurementModel& measurement) {
     /*! - Compute the valid observations delta */
     Eigen::VectorXd measurementDelta =
         measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state));
@@ -100,9 +100,9 @@ void EkfInterface::measurementUpdate(const MeasurementModel &measurement) {
 @param Eigen::MatrixXd measurementNoise
 @return Eigen::MatrixXd
  */
-Eigen::MatrixXd EkfInterface::computeKalmanGain(const Eigen::MatrixXd &covariance,
-                                                const Eigen::MatrixXd &measurementMatrix,
-                                                const Eigen::MatrixXd &measurementNoise) const {
+Eigen::MatrixXd EkfInterface::computeKalmanGain(const Eigen::MatrixXd& covariance,
+                                                const Eigen::MatrixXd& measurementMatrix,
+                                                const Eigen::MatrixXd& measurementNoise) const {
     Eigen::MatrixXd kalmanGain(covariance.cols(), measurementNoise.cols());
     kalmanGain = covariance * measurementMatrix.transpose();
     kalmanGain *= (measurementMatrix * covariance * measurementMatrix.transpose() + measurementNoise).inverse();
@@ -115,9 +115,9 @@ Eigen::MatrixXd EkfInterface::computeKalmanGain(const Eigen::MatrixXd &covarianc
 @param Eigen::MatrixXd kalmanGain
 @return void
  */
-void EkfInterface::updateCovariance(const Eigen::MatrixXd &measMat,
-                                    const Eigen::MatrixXd &noise,
-                                    const Eigen::MatrixXd &kalmanGain) {
+void EkfInterface::updateCovariance(const Eigen::MatrixXd& measMat,
+                                    const Eigen::MatrixXd& noise,
+                                    const Eigen::MatrixXd& kalmanGain) {
     Eigen::MatrixXd josephTransform(this->state.size(), this->state.size());
     josephTransform = Eigen::MatrixXd::Identity(this->state.size(), this->state.size()) - kalmanGain * measMat;
     this->covar = josephTransform * this->covar * josephTransform.transpose();
@@ -129,7 +129,7 @@ void EkfInterface::updateCovariance(const Eigen::MatrixXd &measMat,
 @param Eigen::VectorXd residual
 @return void
  */
-void EkfInterface::ckfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &residual) {
+void EkfInterface::ckfUpdate(const Eigen::MatrixXd& kalmanGain, const Eigen::VectorXd& residual) {
     this->stateError = this->stateError + kalmanGain * residual;
     this->stateLogged = this->state.addVector(this->stateError);
 }
@@ -139,7 +139,7 @@ void EkfInterface::ckfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::Vec
 @param Eigen::VectorXd measurementDelta
 @return void
  */
-void EkfInterface::ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &measurementDelta) {
+void EkfInterface::ekfUpdate(const Eigen::MatrixXd& kalmanGain, const Eigen::VectorXd& measurementDelta) {
     this->stateError = kalmanGain * measurementDelta;
 
     this->state = this->state.addVector(this->stateError);
@@ -150,7 +150,7 @@ void EkfInterface::ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::Vec
 @param Measurement
 @return Eigen::VectorXd
  */
-Eigen::VectorXd EkfInterface::computeResiduals(const MeasurementModel &measurement) {
+Eigen::VectorXd EkfInterface::computeResiduals(const MeasurementModel& measurement) {
     Eigen::VectorXd measurementDelta(
         measurement.subMeasurements(measurement.getObservation(), measurement.model(this->state)));
     Eigen::MatrixXd measurementMatrix = measurement.computeMeasurementMatrix(this->state);
@@ -162,7 +162,7 @@ Eigen::VectorXd EkfInterface::computeResiduals(const MeasurementModel &measureme
     @return Eigen::VectorXd stateInitial
     */
 void EkfInterface::setFilterDynamicsMatrix(
-    const std::function<const Eigen::MatrixXd(const double, const FilterStateVector &)> &dynamicsMatrixCalculator) {
+    const std::function<const Eigen::MatrixXd(const double, const FilterStateVector&)>& dynamicsMatrixCalculator) {
     this->dynamics.setDynamicsMatrix(dynamicsMatrixCalculator);
 }
 

@@ -4,16 +4,16 @@
 #define N_DEBYE_PARAMETERS 37
 
 typedef struct {
-    double a;         //!< object semi-major axis
-    double e;         //!< Eccentricity of the orbit
-    double i;         //!< inclination of the orbital plane
-    double Omega;     //!< Right ascension of the ascending node
-    double omega;     //!< Argument of periapsis of the orbit
-    double f;         //!< True anomaly of the orbit
-    double rmag;      //!< Magnitude of the position vector (extra)
-    double alpha;     //!< Inverted semi-major axis (extra)
-    double rPeriap;   //!< Radius of periapsis (extra)
-    double rApoap;    //!< Radius if apoapsis (extra)
+    double a;        //!< object semi-major axis
+    double e;        //!< Eccentricity of the orbit
+    double i;        //!< inclination of the orbital plane
+    double Omega;    //!< Right ascension of the ascending node
+    double omega;    //!< Argument of periapsis of the orbit
+    double f;        //!< True anomaly of the orbit
+    double rmag;     //!< Magnitude of the position vector (extra)
+    double alpha;    //!< Inverted semi-major axis (extra)
+    double rPeriap;  //!< Radius of periapsis (extra)
+    double rApoap;   //!< Radius if apoapsis (extra)
 } ClassicElements;
 
 /* Celestial object being orbited */
@@ -53,35 +53,35 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /*
-     E = eccentric anomaly
-     f = true anomaly
-     M = mean anomaly
-     H = hyperbolic anomaly
-     N = mean hyperbolic anomaly
-     */
-    double  E2f(double E, double e);
-    double  E2M(double E, double e);
-    double  f2E(double f, double e);
-    double  f2H(double f, double e);
-    double  H2f(double H, double e);
-    double  H2N(double H, double e);
-    double  M2E(double M, double e);
-    double  N2H(double N, double e);
-    void    elem2rv(double mu, ClassicElements *elements, double *rVec, double *vVec);
-    void    rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements);
-    void    clMeanOscMap(double req, double J2, ClassicElements *elements, ClassicElements *elements_p, double sgn);
-    void    clElem2eqElem(ClassicElements *elements_cl, equinoctialElements *elements_eq);
+/*
+ E = eccentric anomaly
+ f = true anomaly
+ M = mean anomaly
+ H = hyperbolic anomaly
+ N = mean hyperbolic anomaly
+ */
+double E2f(double E, double e);
+double E2M(double E, double e);
+double f2E(double f, double e);
+double f2H(double f, double e);
+double H2f(double H, double e);
+double H2N(double H, double e);
+double M2E(double M, double e);
+double N2H(double N, double e);
+void elem2rv(double mu, ClassicElements* elements, double* rVec, double* vVec);
+void rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements);
+void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn);
+void clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_eq);
 
-    void    hillFrame(double *rc_N, double *vc_N, double HN[3][3]);
-    void    hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, double *rd_N, double *vd_N);
-    void    rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H);
+void hillFrame(double* rc_N, double* vc_N, double HN[3][3]);
+void hill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N);
+void rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H);
 
-    double  atmosphericDensity(double alt);
-    double  debyeLength(double alt);
-    void    atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec, double *advec);
-    void    jPerturb(double *rvec, int num, double *ajtot, ...);
-    void    solarRad(double A, double m, double *sunvec, double *arvec);
+double atmosphericDensity(double alt);
+double debyeLength(double alt);
+void atmosphericDrag(double Cd, double A, double m, double* rvec, double* vvec, double* advec);
+void jPerturb(double* rvec, int num, double* ajtot, ...);
+void solarRad(double A, double m, double* sunvec, double* arvec);
 
 #ifdef __cplusplus
 }

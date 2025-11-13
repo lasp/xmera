@@ -9,5 +9,3 @@
 #define MAX_STATES_VECTOR 9
 
 #endif
-
-

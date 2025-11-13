@@ -1164,5 +1164,3 @@ def hill2rv(rc_N, vc_N, rho_H, rhoPrime_H):
     rd_N = rc_N + np.matmul(NH, rho_H)
     vd_N = vc_N + np.matmul(NH, rhoPrime_H + np.cross(omega_HN_H, rho_H))
     return rd_N, vd_N
-
-

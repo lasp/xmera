@@ -1,12 +1,9 @@
 #include "svIntegratorRKF78.h"
 
 svIntegratorRKF78::svIntegratorRKF78(DynamicObject* dyn)
-    : svIntegratorAdaptiveRungeKutta(dyn, svIntegratorRKF78::getCoefficients(), 8.)
-{
-}
+    : svIntegratorAdaptiveRungeKutta(dyn, svIntegratorRKF78::getCoefficients(), 8.) {}
 
-RKAdaptiveCoefficients<13> svIntegratorRKF78::getCoefficients()
-{
+RKAdaptiveCoefficients<13> svIntegratorRKF78::getCoefficients() {
     RKAdaptiveCoefficients<13> coefficients;
 
     // From Erwin Fehlberg (1968) Classical fifth-, sixth-, seventh-, and eighth-order

@@ -14,9 +14,9 @@
  * covariance propagation helper that leverages an analytic Jacobian when the process
  * model exposes one, and falls back to a simple additive noise model otherwise.
  */
-template<typename TraitsT, typename ProcessModelT>
+template <typename TraitsT, typename ProcessModelT>
 class StaticKalmanBase {
-public:
+   public:
     using Traits = TraitsT;
     using ProcessModel = ProcessModelT;
 
@@ -25,8 +25,7 @@ public:
     using StateMatrix = typename Traits::StateMatrix;
 
     StaticKalmanBase() = default;
-    explicit StaticKalmanBase(ProcessModel model)
-        : processModel_(std::move(model)) {}
+    explicit StaticKalmanBase(ProcessModel model) : processModel_(std::move(model)) {}
 
     const StateVector& state() const { return state_; }
     const StateMatrix& covariance() const { return covariance_; }
@@ -37,7 +36,7 @@ public:
     ProcessModel& processModel() { return processModel_; }
     const ProcessModel& processModel() const { return processModel_; }
 
-protected:
+   protected:
     /**
      * @brief Propagate the state and covariance forward in time.
      *
@@ -61,12 +60,9 @@ protected:
     StateMatrix covariance_ = Traits::identityCovariance();
     ProcessModel processModel_{};
 
-private:
-    void propagateCovariance(double dt,
-                             const StateVector& linearizationPoint,
-                             const StateMatrix& processNoise) {
-        using HasJacobianTag = std::integral_constant<bool,
-            ProcessModel::supportsAnalyticJacobian()>;
+   private:
+    void propagateCovariance(double dt, const StateVector& linearizationPoint, const StateMatrix& processNoise) {
+        using HasJacobianTag = std::integral_constant<bool, ProcessModel::supportsAnalyticJacobian()>;
         propagateCovarianceImpl(dt, linearizationPoint, processNoise, HasJacobianTag{});
     }
 
@@ -78,10 +74,7 @@ private:
         covariance_ = F * covariance_ * F.transpose() + processNoise;
     }
 
-    void propagateCovarianceImpl(double,
-                                 const StateVector&,
-                                 const StateMatrix& processNoise,
-                                 std::false_type) {
+    void propagateCovarianceImpl(double, const StateVector&, const StateMatrix& processNoise, std::false_type) {
         covariance_ += processNoise;
     }
 };

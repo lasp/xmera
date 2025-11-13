@@ -17,23 +17,23 @@
 #include <Eigen/Core>
 
 class SunlineSRuKFTemplated : public SysModel {
-public:
+   public:
     SunlineSRuKFTemplated();
 
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
 
-private:
+   private:
     SRUnscentedKalmanFilter<6> ukf{};
     void readCssMeasurements();
     void readGyroMeasurements();
     void readFilterMeasurements();
-//    void customFinalizeUpdate();
+    //    void customFinalizeUpdate();
     void writeOutputMessages(uint64_t currentSimNanos);
-//    static FilterStateVector<StateConfig> stateDerivative(double t, const FilterStateVector<StateConfig> &state);
-//
-//    int filterMeasurement = 0;    //!< [-] Number of measurements of different types being read
-//    int numActiveCss = 0;         //!< [-] Number of currently active CSS sensors
+    //    static FilterStateVector<StateConfig> stateDerivative(double t, const FilterStateVector<StateConfig> &state);
+    //
+    //    int filterMeasurement = 0;    //!< [-] Number of measurements of different types being read
+    //    int numActiveCss = 0;         //!< [-] Number of currently active CSS sensors
     double sensorUseThresh = 0;   //!< Threshold below which we discount sensors
     double cssMeasNoiseStd = 0;   //!< [-] CSS measurement noise std
     double gyroMeasNoiseStd = 0;  //!< [rad/s] rate gyro measurement noise std
@@ -63,7 +63,7 @@ private:
     void setBiasLowerBound(double biasLowerBound);
     double getBiasLowerBound() const;
 
-//    State<6> stateDerivative(double t, const State<6> &state);
+    //    State<6> stateDerivative(double t, const State<6> &state);
 };
 
 #endif

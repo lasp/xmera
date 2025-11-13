@@ -1558,8 +1558,8 @@ def BdotmatMRP(q, dq):
     """
     BdotmatMRP(Q, dQ)
 
-    	B = BdotmatMRP(Q, dQ) returns the derivative of the 3x3 BmatMRP 
-        matrix, which is used to calculate the second order derivative 
+    	B = BdotmatMRP(Q, dQ) returns the derivative of the 3x3 BmatMRP
+        matrix, which is used to calculate the second order derivative
         of the MRP vector Q.
 
     	(d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
@@ -4281,4 +4281,3 @@ def v3Tilde(vector):
               ]
 
     return xTilde
-

@@ -101,7 +101,7 @@ double CobConverter::getRadiusUncertainty() const { return this->algorithm.getRa
  * @brief Set the attitude error covariance matrix in body frame (for unit vector measurements).
  * @param covAtt_BN_B 3x3 attitude covariance in body frame.
  */
-void CobConverter::setAttitudeCovariance(const Eigen::Matrix3d &covAtt_BN_B) {
+void CobConverter::setAttitudeCovariance(const Eigen::Matrix3d& covAtt_BN_B) {
     this->algorithm.setAttitudeCovariance(covAtt_BN_B);
 }
 

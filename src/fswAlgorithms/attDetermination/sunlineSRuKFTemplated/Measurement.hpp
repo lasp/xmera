@@ -7,13 +7,12 @@
 
 #include <iostream>
 
-template<int ObsDim, int StateDim, typename Model>
+template <int ObsDim, int StateDim, typename Model>
 class Measurement final : public IMeasurement<StateDim> {
-public:
+   public:
     using ObsVector = Eigen::Matrix<double, ObsDim, 1>;
 
-    Measurement(const Model& model, const ObsVector& z)
-        : model(model), z(z) {}
+    Measurement(const Model& model, const ObsVector& z) : model(model), z(z) {}
 
     void apply(State<StateDim>& state) const override {
         using ObsToState = Eigen::Matrix<double, ObsDim, StateDim>;
@@ -23,20 +22,19 @@ public:
         Eigen::Matrix<double, ObsDim, 1> y = z - model.measure(state.x);
         Eigen::Matrix<double, ObsDim, ObsDim> S = H * state.P * H.transpose() + R;
         Eigen::Matrix<double, StateDim, ObsDim> K = state.P * H.transpose();
-//        Eigen::Matrix<double, ObsDim, ObsDim> thing = S.inverse();
-//        state.x += K * y;
-//        state.P -= K * H * state.P;
+        //        Eigen::Matrix<double, ObsDim, ObsDim> thing = S.inverse();
+        //        state.x += K * y;
+        //        state.P -= K * H * state.P;
     }
 
     double getTimeTag() const override { return time; }
     bool getValidity() const override { return isValid; }
 
-private:
+   private:
     Model model;
     ObsVector z;
     double time;
     bool isValid;
 };
 
-
-#endif //BASILISK_MEASUREMENT_H
+#endif  // BASILISK_MEASUREMENT_H

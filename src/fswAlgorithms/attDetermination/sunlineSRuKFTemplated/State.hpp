@@ -7,7 +7,7 @@
 
 #include <Eigen/Core>
 
-template<int StateDim>
+template <int StateDim>
 struct State {
     using Vector = Eigen::Matrix<double, StateDim, 1>;
     using Covariance = Eigen::Matrix<double, StateDim, StateDim>;
@@ -16,6 +16,4 @@ struct State {
     Covariance P = Covariance::Identity();
 };
 
-
-
-#endif //BASILISK_STATE_H
+#endif  // BASILISK_STATE_H

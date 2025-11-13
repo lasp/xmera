@@ -12,34 +12,33 @@
 #include <Eigen/Dense>
 #include <functional>
 
-template<int StateDim>
+template <int StateDim>
 class SRUnscentedKalmanFilter : public KalmanFilterBase<StateDim, SRUnscentedKalmanFilter<StateDim>> {
-public:
+   public:
     using StateType = State<StateDim>;
     static constexpr int NumSigma = 2 * StateDim + 1;
     using Vector = Eigen::Matrix<double, StateDim, 1>;
     using Matrix = Eigen::Matrix<double, StateDim, StateDim>;
     using SigmaMatrix = Eigen::Matrix<double, StateDim, NumSigma>;
 
-   SRUnscentedKalmanFilter();
+    SRUnscentedKalmanFilter();
 
     void predictImpl(double currentSimNanos) {
         SigmaMatrix sigmaPoints;
 
         // 1. Square root of P
         Eigen::LLT<Matrix> llt(state_.P);
-        Matrix S = llt.matrixL(); // lower-triangular S such that P = S S^T
+        Matrix S = llt.matrixL();  // lower-triangular S such that P = S S^T
 
         // 2. Generate sigma points
         sigmaPoints.col(0) = state_.x;
         for (int i = 0; i < StateDim; ++i) {
-            sigmaPoints.col(i + 1)           = state_.x + eta * S.col(i);
+            sigmaPoints.col(i + 1) = state_.x + eta * S.col(i);
             sigmaPoints.col(i + 1 + StateDim) = state_.x - eta * S.col(i);
         }
 
         // 3. Propagate sigma points through nonlinear model
-        for (int i = 0; i < NumSigma; ++i)
-            sigmaPoints.col(i) = fx(sigmaPoints.col(i));
+        for (int i = 0; i < NumSigma; ++i) sigmaPoints.col(i) = fx(sigmaPoints.col(i));
 
         // 4. Predicted mean
         Vector x_pred = Vector::Zero();
@@ -48,16 +47,13 @@ public:
 
         w_m(0) = lambda / (StateDim + lambda);
         w_c(0) = w_m(0) + (1 - alpha * alpha + beta);
-        for (int i = 1; i < NumSigma; ++i)
-            w_m(i) = w_c(i) = 1.0 / (2 * (StateDim + lambda));
+        for (int i = 1; i < NumSigma; ++i) w_m(i) = w_c(i) = 1.0 / (2 * (StateDim + lambda));
 
-        for (int i = 0; i < NumSigma; ++i)
-            x_pred += w_m(i) * sigmaPoints.col(i);
+        for (int i = 0; i < NumSigma; ++i) x_pred += w_m(i) * sigmaPoints.col(i);
 
         // 5. Centered and weighted sigma deviations (excluding 0)
         Eigen::Matrix<double, StateDim, NumSigma - 1> Y;
-        for (int i = 1; i < NumSigma; ++i)
-            Y.col(i - 1) = std::sqrt(w_c(i)) * (sigmaPoints.col(i) - x_pred);
+        for (int i = 1; i < NumSigma; ++i) Y.col(i - 1) = std::sqrt(w_c(i)) * (sigmaPoints.col(i) - x_pred);
 
         // 6. QR decomposition of Y
         Eigen::HouseholderQR<Eigen::Matrix<double, StateDim, NumSigma - 1>> qr(Y);
@@ -69,7 +65,7 @@ public:
 
         // Store result
         state_.x = x_pred;
-        state_.P = S_pred * S_pred.transpose(); // or keep just S_pred for future sqrt usage
+        state_.P = S_pred * S_pred.transpose();  // or keep just S_pred for future sqrt usage
     }
 
     // template <typename Meas>
@@ -90,32 +86,28 @@ public:
         // Generate sigma points
         sigmaPoints.col(0) = state_.x;
         for (int i = 0; i < StateDim; ++i) {
-            sigmaPoints.col(i + 1)       = state_.x + eta * S_x.col(i);
+            sigmaPoints.col(i + 1) = state_.x + eta * S_x.col(i);
             sigmaPoints.col(i + 1 + StateDim) = state_.x - eta * S_x.col(i);
         }
 
         // Propagate sigma points into measurement space
         ZSigmaMat Zsigmas;
-        for (int i = 0; i < NumSigma; ++i)
-            Zsigmas.col(i) = Meas::h(sigmaPoints.col(i));
+        for (int i = 0; i < NumSigma; ++i) Zsigmas.col(i) = Meas::h(sigmaPoints.col(i));
 
         // Compute weights
         Eigen::Matrix<double, NumSigma, 1> w_m;
         Eigen::Matrix<double, NumSigma, 1> w_c;
         w_m(0) = lambda / (StateDim + lambda);
         w_c(0) = w_m(0) + (1 - alpha * alpha + beta);
-        for (int i = 1; i < NumSigma; ++i)
-            w_m(i) = w_c(i) = 1.0 / (2 * (StateDim + lambda));
+        for (int i = 1; i < NumSigma; ++i) w_m(i) = w_c(i) = 1.0 / (2 * (StateDim + lambda));
 
         // Predicted measurement mean
         ZVec z_pred = ZVec::Zero();
-        for (int i = 0; i < NumSigma; ++i)
-            z_pred += w_m(i) * Zsigmas.col(i);
+        for (int i = 0; i < NumSigma; ++i) z_pred += w_m(i) * Zsigmas.col(i);
 
         // Measurement covariance S_z via QR
         Eigen::Matrix<double, ZDim, NumSigma - 1> Zdev;
-        for (int i = 1; i < NumSigma; ++i)
-            Zdev.col(i - 1) = std::sqrt(w_c(i)) * (Zsigmas.col(i) - z_pred);
+        for (int i = 1; i < NumSigma; ++i) Zdev.col(i - 1) = std::sqrt(w_c(i)) * (Zsigmas.col(i) - z_pred);
 
         Eigen::HouseholderQR<Eigen::Matrix<double, ZDim, NumSigma - 1>> qr(Zdev);
         Eigen::Matrix<double, ZDim, ZDim> S_z = qr.householderQ() * ZMat::Identity();
@@ -126,8 +118,7 @@ public:
 
         // Add measurement noise
         ZMat S_r = Meas::getSqrtR();  // or passed in from caller
-        for (int i = 0; i < ZDim; ++i)
-            S_z = cholupdate<ZDim>(S_z, S_r.col(i), true);
+        for (int i = 0; i < ZDim; ++i) S_z = cholupdate<ZDim>(S_z, S_r.col(i), true);
 
         // Compute cross covariance P_xz
         Eigen::Matrix<double, StateDim, ZDim> P_xz = Eigen::Matrix<double, StateDim, ZDim>::Zero();
@@ -143,8 +134,7 @@ public:
 
         // Update square-root covariance
         Eigen::Matrix<double, StateDim, ZDim> KSz = K * S_z;
-        for (int i = 0; i < ZDim; ++i)
-            S_x = cholupdate<StateDim>(S_x, KSz.col(i), false);
+        for (int i = 0; i < ZDim; ++i) S_x = cholupdate<StateDim>(S_x, KSz.col(i), false);
 
         state_.P = S_x * S_x.transpose();  // or keep S_x if working in sqrt form
     }
@@ -155,20 +145,18 @@ public:
     @param Measurement
     @return Eigen::VectorXd
      */
-    Eigen::VectorXd computeResiduals(const std::unique_ptr<IMeasurement<StateDim>> measurement)
-    {
+    Eigen::VectorXd computeResiduals(const std::unique_ptr<IMeasurement<StateDim>> measurement) {
         /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
         Eigen::MatrixXd yMeas(measurement.size(), this->numberSigmaPoints);
-        for(size_t j=0; j < this->numberSigmaPoints; ++j)
-        {
+        for (size_t j = 0; j < this->numberSigmaPoints; ++j) {
             /*! Sigma points positions need to be normalized for the measurement model.*/
             yMeas.col(j) = measurement.model(this->sigmaPoints[j]);
         }
         /*! - Compute the value for the yBar parameter (equation 23)*/
         Eigen::VectorXd yBar;
         yBar.setZero(measurement.size());
-        for(size_t i=0; i<this->numberSigmaPoints; ++i){
-            yBar += this->wM(i)*yMeas.col(i);
+        for (size_t i = 0; i < this->numberSigmaPoints; ++i) {
+            yBar += this->wM(i) * yMeas.col(i);
         }
         return measurement.getObservation() - yBar;
     }
@@ -180,7 +168,7 @@ public:
     @param double alphaInput
     @return void
     */
-    void setAlpha(const double alphaInput){
+    void setAlpha(const double alphaInput) {
         this->alpha = alphaInput;
         this->computeLambdaAndEta();
     }
@@ -188,27 +176,20 @@ public:
     /*! Get the filter alpha parameter
         @return double alpha
         */
-    double getAlpha() const {
-        return this->alpha;
-    }
+    double getAlpha() const { return this->alpha; }
 
     /*! Set the filter beta parameter
         @param double betaInput
         @return void
         */
-    void setBeta(const double betaInput){
-        this->beta = betaInput;
-
-    }
+    void setBeta(const double betaInput) { this->beta = betaInput; }
 
     /*! Get the filter beta parameter
         @return double beta
         */
-    double getBeta() const {
-        return this->beta;
-    }
+    double getBeta() const { return this->beta; }
 
-private:
+   private:
     StateType state_;
 
     double beta = 2.0;
@@ -239,9 +220,9 @@ private:
     }
 
     void computeLambdaAndEta() {
-        this->lambda = StateDim * (alpha * alpha -1);
+        this->lambda = StateDim * (alpha * alpha - 1);
         this->eta = std::sqrt(StateDim + lambda);
     }
 };
 
-#endif //BASILISK_SRUNSCENTEDKALMANFILTER_H
+#endif  // BASILISK_SRUNSCENTEDKALMANFILTER_H

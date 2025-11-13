@@ -11,7 +11,7 @@
  * struct, allowing each sensor model to declare its own compile-time dimension while still
  * sharing the state-centric definitions.
  */
-template<typename ScalarT, int StateDimT>
+template <typename ScalarT, int StateDimT>
 struct FilterTraits {
     static_assert(StateDimT > 0, "State dimension must be strictly positive.");
 
@@ -27,7 +27,7 @@ struct FilterTraits {
      *
      * @tparam MeasDimT Compile-time dimension of the measurement vector.
      */
-    template<int MeasDimT>
+    template <int MeasDimT>
     struct MeasurementTraits {
         static_assert(MeasDimT > 0, "Measurement dimension must be strictly positive.");
 
@@ -40,13 +40,9 @@ struct FilterTraits {
         using CrossCovariance = Eigen::Matrix<Scalar, state_dim, meas_dim>;
     };
 
-    static StateVector zeroState() {
-        return StateVector::Zero();
-    }
+    static StateVector zeroState() { return StateVector::Zero(); }
 
-    static StateMatrix identityCovariance() {
-        return StateMatrix::Identity();
-    }
+    static StateMatrix identityCovariance() { return StateMatrix::Identity(); }
 };
 
 #endif  // BASILISK_STATICFILTERTRAITS_HPP

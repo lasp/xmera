@@ -2,13 +2,7 @@
 #include "dynamicObject.h"
 
 /*! @brief Constructor */
-StateVecIntegrator::StateVecIntegrator(DynamicObject* dyn)
-{
-    this->dynPtrs.push_back(dyn);
-}
+StateVecIntegrator::StateVecIntegrator(DynamicObject* dyn) { this->dynPtrs.push_back(dyn); }
 
 /*! @brief Destructor */
-StateVecIntegrator::~StateVecIntegrator(void)
-{
-    this->dynPtrs.clear();
-}
+StateVecIntegrator::~StateVecIntegrator(void) { this->dynPtrs.clear(); }
