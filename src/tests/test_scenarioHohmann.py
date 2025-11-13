@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Test Hohmann transfer and attitude change scenario.
-# Author:   João Vaz Carneiro
-# Creation Date: Sep 29, 2023
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Test Hohmann transfer and attitude change scenario.
+"""
 
 import inspect
 import os

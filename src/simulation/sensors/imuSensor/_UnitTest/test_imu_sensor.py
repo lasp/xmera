@@ -1,11 +1,10 @@
-#
-#   IMU Unit Test
-#   Purpose:  Test IMU functions
-#   Author:  Scott Carnahan
-#   Creation Date:  September 14, 2017
-#
+"""
+IMU Unit Test
+Purpose:  Test IMU functions
 
-# import pytest
+import pytest
+"""
+
 import inspect
 import os
 

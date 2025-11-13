@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        prescribedTrans
-#   Author:             Leah Kiner
-#   Creation Date:      Jan 2, 2023
-#
+"""
+Module Name:        prescribedTrans
+"""
 
 import inspect
 import matplotlib.pyplot as plt

@@ -1,12 +1,10 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft() and gravity modules illustrating
-#           how impulsive Delta_v maneuver can be simulated with stoping and starting the
-#           simulation.
-# Author:   Hanspeter Schaub
-# Creation Date:  Nov. 26, 2016
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test of the spacecraft() and gravity modules illustrating
+how impulsive Delta_v maneuver can be simulated with stoping and starting the
+simulation.
+"""
 
 import inspect
 import os

@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  test script for scenarioAttitudeFeedbackRWPower.py
-# Author:   Hanspeter Schaub
-# Creation Date:  Jan. 26, 2020
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  test script for scenarioAttitudeFeedbackRWPower.py
+"""
 
 import inspect
 import os

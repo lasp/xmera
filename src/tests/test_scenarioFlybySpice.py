@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test for importing a custom Spice file to specifiy translational motion with attitude pointing modes.
-# Author:   Leah Kiner
-# Creation Date:  Feb. 4 2022
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test for importing a custom Spice file to specifiy translational motion with attitude pointing modes.
+"""
 
 import inspect
 import os

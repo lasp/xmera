@@ -1,12 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Demonstrates how to setup and use sun heading filters
-# Author:   Thibaud Teil
-# Creation Date:  November 20, 2017
-#
+"""
+Xmera Scenario Script and Integrated Test
 
-
+Purpose:  Demonstrates how to setup and use sun heading filters
+"""
 
 import inspect
 import os

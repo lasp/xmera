@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        spinningBodies
-#   Author:             João Vaz Carneiro
-#   Creation Date:      September 15, 2022
-#
+"""
+Module Name:        spinningBodies
+"""
 
 import inspect
 import os

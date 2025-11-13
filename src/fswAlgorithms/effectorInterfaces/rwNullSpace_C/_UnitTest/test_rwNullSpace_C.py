@@ -1,8 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        rwNullSpace
-#   Creation Date:      October 5, 2018
-#
+"""
+Module Name:        rwNullSpace
+"""
 
 import inspect
 import os

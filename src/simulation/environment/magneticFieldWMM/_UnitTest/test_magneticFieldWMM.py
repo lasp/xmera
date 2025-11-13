@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        MagneticFieldWMM
-#   Author:             Hanspeter Schaub
-#   Creation Date:      June 18, 2019
-#
+"""
+Module Name:        MagneticFieldWMM
+"""
 
 import inspect
 import os

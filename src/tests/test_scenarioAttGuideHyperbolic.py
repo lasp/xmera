@@ -1,13 +1,11 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
-#           mrpFeedback() with attitude navigation modules.  This script is a
-#           spinoff from the attitude guidance tutorial, it implements a hyperbolic
-#           trajectory and uses the velocityPoint module.
-# Author:   Anne Bennett
-# Creation Date:  Aug. 28th, 2017
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(),
+mrpFeedback() with attitude navigation modules.  This script is a
+spinoff from the attitude guidance tutorial, it implements a hyperbolic
+trajectory and uses the velocityPoint module.
+"""
 
 import inspect
 import os

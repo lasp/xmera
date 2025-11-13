@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        thrMomentumDumping
-#   Author:             Hanspeter Schaub
-#   Creation Date:      August 21, 2016
-#
+"""
+Module Name:        thrMomentumDumping
+"""
 
 import inspect
 import os

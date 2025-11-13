@@ -1,8 +1,6 @@
-# Unit Test Script
-# Module Name:        Camera
-# Author:             Lucas Webb and Hanspeter Schaub
-# Creation Date:      April 30, 2020
-
+"""
+Module Name:        Camera
+"""
 
 import colorsys
 import inspect

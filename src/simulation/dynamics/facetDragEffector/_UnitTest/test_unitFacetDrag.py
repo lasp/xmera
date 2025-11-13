@@ -1,12 +1,3 @@
-#
-#
-#
-# Purpose:  Test the facetDrag module.
-# Author:   Andrew Harris
-# Creation Date:  May 16 2019
-#
-
-
 import inspect
 import os
 

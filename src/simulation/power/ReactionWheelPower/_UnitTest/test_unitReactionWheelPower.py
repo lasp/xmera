@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        PowerRW
-#   Author:             Hanspeter Schaub
-#   Creation Date:      January 22, 2020
-#
+"""
+Module Name:        PowerRW
+"""
 
 import inspect
 import os

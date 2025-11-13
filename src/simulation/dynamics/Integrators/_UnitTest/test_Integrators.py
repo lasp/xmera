@@ -1,10 +1,8 @@
-#
-# Basilisk Unit Test
-#
-# Purpose:  Unit test of the dynamics integrator function
-# Author:   Hanspeter Schaub
-# Creation Date:  Dec. 14, 2016
-#
+"""
+Basilisk Unit Test
+
+Purpose:  Unit test of the dynamics integrator function
+"""
 
 import inspect
 import os

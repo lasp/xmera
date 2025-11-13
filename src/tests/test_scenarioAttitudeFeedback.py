@@ -1,11 +1,9 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
-#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
-# Author:   Hanspeter Schaub
-# Creation Date:  Nov. 19, 2016
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
+mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
+"""
 
 import inspect
 import os

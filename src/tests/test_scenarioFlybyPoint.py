@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the attitude Hill point guidance of a spacecraft during a flyby.
-# Author:   Riccardo Calaon
-# Creation Date:  May 22, 2023
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the attitude Hill point guidance of a spacecraft during a flyby.
+"""
 
 import inspect
 import os

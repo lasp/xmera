@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        translatingBodies
-#   Author:             Peter Johnson
-#   Creation Date:      March 6, 2024
-#
+"""
+Module Name:        translatingBodies
+"""
 
 import inspect
 import os

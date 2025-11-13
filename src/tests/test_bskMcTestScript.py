@@ -1,11 +1,9 @@
-#
-# Monte Carlo tests
-#
-# Purpose:  This script calls a series of bskSim Monte Carlo related simulations to ensure
-# that they complete properly.
-# Creation Date:  Nov 18, 2019
-#
+"""
+Monte Carlo tests
 
+Purpose:  This script calls a series of bskSim Monte Carlo related simulations to ensure
+that they complete properly.
+"""
 
 import importlib
 import inspect

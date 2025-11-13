@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test for the TAM sensor on a rigid spacecraft
-# Author:   Demet Cilden-Guler
-# Creation Date:  September 23, 2019
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test for the TAM sensor on a rigid spacecraft
+"""
 
 import inspect
 import os

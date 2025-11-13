@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the pinholeCamera() module.
-# Author:   Julio C. Sanchez
-# Creation Date:  Jun. 30, 2023
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test of the pinholeCamera() module.
+"""
 
 import inspect
 import os

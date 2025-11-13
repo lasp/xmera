@@ -1,9 +1,6 @@
-#
-#   Integrated Unit Test Script
-#   Purpose:  Run a test of the VSCMG sim module
-#   Author:  John Alcorn
-#   Creation Date:  November 14, 2016
-#
+"""
+Purpose:  Run a test of the VSCMG sim module
+"""
 
 import numpy as np
 import pytest

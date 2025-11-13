@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        tamComm
-#   Author:             Demet Cilden-Guler
-#   Creation Date:      October 22, 2019
-#
+"""
+Module Name:        tamComm
+"""
 
 import inspect
 import os

@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Demonstrate the performance of different integrators.
-# Author:   Juan Garcia Bonilla
-# Creation Date:  May 1, 2023
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Demonstrate the performance of different integrators.
+"""
 
 import inspect
 import os

@@ -1,5 +1,3 @@
-
-#   3rd party / std lib imports
 import numpy as np
 import pytest
 from xmera.architecture import messaging

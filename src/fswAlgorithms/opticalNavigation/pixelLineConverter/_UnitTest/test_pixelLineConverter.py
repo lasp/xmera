@@ -1,8 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        pixelLineConverter.py
-#   Creation Date:      May 16, 2019
-#
+"""
+Module Name:        pixelLineConverter.py
+"""
 
 import inspect
 import os

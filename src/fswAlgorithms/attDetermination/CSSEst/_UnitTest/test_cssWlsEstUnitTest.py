@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        cssWlsEst()
-#   Author:             Hanspeter Schaub
-#   Creation Date:      April 29, 2018
-#
+"""
+Module Name:        cssWlsEst()
+"""
 
 import inspect
 import logging

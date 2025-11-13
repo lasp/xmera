@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        tabularAtmosphere
-#   Author:             Mikaela Felix
-#   Creation Date:      Feb 11, 2022
-#
+"""
+Module Name:        tabularAtmosphere
+"""
 
 import os
 

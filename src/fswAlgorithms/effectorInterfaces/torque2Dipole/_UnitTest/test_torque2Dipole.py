@@ -1,10 +1,8 @@
-#
-#   Unit Test Script
-#   Module Name:        torque2Dipole
-#   Author:             Henry Macanas
-#   Creation Date:      06 18, 2021
-#
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
+"""
+Module Name:        torque2Dipole
+
+"""
+
 import numpy as np
 from xmera.architecture import sim_model
 from xmera.architecture import messaging  # import the message definitions

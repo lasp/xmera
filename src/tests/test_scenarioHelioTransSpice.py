@@ -1,11 +1,8 @@
-#
-# Integrated tests
-#
-# Purpose:  Integrated test of loading custom Spice files to specificy a spacecraft's translational motion. No simulation values are returned and tested.
-# Author:   Leah Kiner
-# Creation Date:  Feb 5, 2022
-#
+"""
+Integrated tests
 
+Purpose:  Integrated test of loading custom Spice files to specificy a spacecraft's translational motion. No simulation values are returned and tested.
+"""
 
 import inspect
 import os

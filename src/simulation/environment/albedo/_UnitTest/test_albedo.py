@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:   Planet's Albedo
-#   Author:        Demet Cilden-Guler
-#   Creation Date: May 28, 2020
-#
+"""
+Module Name:   Planet's Albedo
+"""
 
 import os
 

@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        rateMsgConverter
-#   Author:             Hanspeter Schaub
-#   Creation Date:      June 30, 2018
-#
+"""
+Module Name:        rateMsgConverter
+"""
 
 import inspect
 import os

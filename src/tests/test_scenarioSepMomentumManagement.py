@@ -1,12 +1,9 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the scenarioSepMomentumManagement script. Illustrates how to perform continuum momentum
-#           management on a spacecraft equipped with a dual-gimbaled solar electric thruster.
-# Author:   Riccardo Calaon
-# Creation Date:  November 29, 2023
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the scenarioSepMomentumManagement script. Illustrates how to perform continuum momentum
+management on a spacecraft equipped with a dual-gimbaled solar electric thruster.
+"""
 
 import inspect
 import os

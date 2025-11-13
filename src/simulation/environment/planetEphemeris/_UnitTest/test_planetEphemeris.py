@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        planetEphemeris
-#   Author:             Hanspeter Schaub
-#   Creation Date:      April 24, 2019
-#
+"""
+Module Name:        planetEphemeris
+"""
 
 import inspect
 import os

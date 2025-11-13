@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Test the gravity gradient effector module.
-# Author:   Hanspeter Schaub
-# Creation Date:  Jan 12, 2019
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Test the gravity gradient effector module.
+"""
 
 import inspect
 import os

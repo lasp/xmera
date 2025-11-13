@@ -1,10 +1,7 @@
-#
-#   Integrated Unit Test Script
-#   Module Name:        prescribedMotion
-#   Author:             Leah Kiner
-#   Creation Date:      Jan 10, 2022
-#   Last Updated:       April 15, 2024
-#
+"""
+Module Name:        prescribedMotion
+Last Updated:       April 15, 2024
+"""
 
 import inspect
 import matplotlib

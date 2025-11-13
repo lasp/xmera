@@ -1,12 +1,9 @@
-#
-# Integrated tests
-#
-# Purpose:  This script calls a series of opNav related simulation tutorials to ensure
-# that they complete properly.
-# Author:   Thibaud Teil
-# Creation Date:  Feb 7, 2020
-#
+"""
+Integrated tests
 
+Purpose:  This script calls a series of opNav related simulation tutorials to ensure
+that they complete properly.
+"""
 
 import importlib
 import inspect

@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Demonstration of deorbit using exponentialAtmosphere and dragDynamicEffector modules.
-# Author:   Mark Stephenson
-# Creation Date:  Aug. 31, 2022
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Demonstration of deorbit using exponentialAtmosphere and dragDynamicEffector modules.
+"""
 
 import inspect
 import os

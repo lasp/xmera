@@ -1,9 +1,9 @@
-#
-# Xmera Integrated Test
-#
-# Purpose:  Integrated test of the MonteCarlo module.  Runs multiple
-#           scenarioAttitudeFeedbackRW with dispersed initial parameters
-#
+"""
+Xmera Integrated Test
+
+Purpose:  Integrated test of the MonteCarlo module.  Runs multiple
+scenarioAttitudeFeedbackRW with dispersed initial parameters
+"""
 
 import inspect
 import os

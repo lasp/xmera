@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        sensorThermal
-#   Author:             Adam Herrmann
-#   Creation Date:      January 12th, 2023
-#
+"""
+Module Name:        sensorThermal
+"""
 
 import pytest
 import os, inspect

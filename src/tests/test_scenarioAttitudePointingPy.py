@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  integrated test of a script that uses a Python BSK module
-# Author:   Hanspeter Schaub
-# Creation Date:  Jan. 16, 2021
-#
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  integrated test of a script that uses a Python BSK module
+"""
 
 import inspect
 import os

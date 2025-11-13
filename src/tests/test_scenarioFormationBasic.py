@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the scenarioFormationBasic
-# Author:   Hanspeter Schaub
-# Creation Date:  Dec. 29, 2019
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the scenarioFormationBasic
+"""
 
 import inspect
 import os

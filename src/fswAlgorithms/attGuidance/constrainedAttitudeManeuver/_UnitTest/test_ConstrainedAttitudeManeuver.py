@@ -1,10 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        constrainedAttitudeManeuver
-#   Author:             Riccardo Calaon
-#   Creation Date:      April 16, 2022
-#
-
+"""
+Module Name:        constrainedAttitudeManeuver
+"""
 
 import os
 

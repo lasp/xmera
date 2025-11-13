@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Demonstrates how to setup CSS sensors on a rigid spacecraft
-# Author:   Hanspeter Schaub
-# Creation Date:  July 21, 2017
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Demonstrates how to setup CSS sensors on a rigid spacecraft
+"""
 
 import inspect
 import os

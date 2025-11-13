@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        solarArrayReference
-#   Author:             Riccardo Calaon
-#   Creation Date:      January 21, 2023
-#
+"""
+Module Name:        solarArrayReference
+"""
 
 import pytest
 import os, inspect, random

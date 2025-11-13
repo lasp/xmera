@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        motorThermal
-#   Author:             João Vaz Carneiro
-#   Creation Date:      March 4, 2021
-#
+"""
+Module Name:        motorThermal
+"""
 
 import inspect
 import os

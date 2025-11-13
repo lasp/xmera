@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        simplePowerSink
-#   Author:             Andrew Harris
-#   Creation Date:      July 17th 2019
-#
+"""
+Module Name:        simplePowerSink
+"""
 
 import inspect
 import os

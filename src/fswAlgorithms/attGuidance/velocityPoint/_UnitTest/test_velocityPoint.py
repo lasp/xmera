@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        velocityPoint
-#   Author:             Mar Cols
-#   Creation Date:      January 22, 2016
-#
+"""
+Module Name:        velocityPoint
+"""
 
 import numpy as np
 from xmera.architecture import messaging

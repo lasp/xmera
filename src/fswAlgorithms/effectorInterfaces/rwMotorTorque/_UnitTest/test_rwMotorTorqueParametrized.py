@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        rwMotorTorque
-#   Author:             Hanspeter Schaub
-#   Creation Date:      July 4, 2016
-#
+"""
+Module Name:        rwMotorTorque
+"""
 
 import inspect
 import os

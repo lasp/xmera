@@ -1,15 +1,12 @@
-#
-#   Unit Test Script
-#   Module Name:        spacecraftPointing
-#   Author:             Simon van Overeem
-#   Creation Date:      January 7, 2018
-#
+"""
+Module Name:        spacecraftPointing
 
-# The test that is performed in this file checks whether the spacecraftPointing module computes the correct output.
-# The inputs of the test are five data points of the chief spacecraft and the deputy spacecraft. From these datapoints
-# the orientation of the reference frame with respect to the inertial frame (sigma_R1N) is determined. Furthermore,
-# the angular velocity (omega_RN_N) and the angular acceleration (domega_RN_N) are calculated. The outcomes are compared
-# to the expected outcome of the module.
+The test that is performed in this file checks whether the spacecraftPointing module computes the correct output.
+The inputs of the test are five data points of the chief spacecraft and the deputy spacecraft. From these datapoints
+the orientation of the reference frame with respect to the inertial frame (sigma_R1N) is determined. Furthermore,
+the angular velocity (omega_RN_N) and the angular acceleration (domega_RN_N) are calculated. The outcomes are compared
+to the expected outcome of the module.
+"""
 
 import inspect
 import os

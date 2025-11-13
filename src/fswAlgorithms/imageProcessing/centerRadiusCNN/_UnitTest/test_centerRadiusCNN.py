@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        centerRadiusCNN
-#   Author:             Thibaud Teil
-#   Creation Date:      January 10, 2020
-#
+"""
+Module Name:        centerRadiusCNN
+"""
 
 import inspect
 import os

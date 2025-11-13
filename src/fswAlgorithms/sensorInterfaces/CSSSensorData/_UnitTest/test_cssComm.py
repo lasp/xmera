@@ -1,9 +1,8 @@
-#
-#   Unit Test Script
-#   Module Name:        cssComm
-#   Creation Date:      October 4, 2018
-#   Updated On:         February 10, 2019
-#
+"""
+Module Name:        cssComm
+Updated On:         February 10, 2019
+"""
+
 import inspect
 import os
 

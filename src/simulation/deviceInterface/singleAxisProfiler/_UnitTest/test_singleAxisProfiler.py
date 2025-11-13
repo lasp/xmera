@@ -1,9 +1,7 @@
-#
-#   Unit Test Script
-#   Module Name:        singleAxisProfiler
-#   Author:             Leah Kiner
-#   Created:            March 20, 2024
-#
+"""
+Module Name:        singleAxisProfiler
+Created:            March 20, 2024
+"""
 
 import inspect
 import matplotlib.pyplot as plt

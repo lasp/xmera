@@ -1,8 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        thrustRWDesat
-#   Creation Date:      October 5, 2018
-#
+"""
+Module Name:        thrustRWDesat
+"""
 
 from xmera.architecture import messaging
 from xmera.fswAlgorithms import thrustRWDesat

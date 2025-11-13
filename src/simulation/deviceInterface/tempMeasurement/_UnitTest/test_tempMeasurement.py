@@ -1,11 +1,10 @@
-#
-# Thermal Sensor Faults Test
-#
-# Purpose:  Test the proper function of the faulty behaviors of the tempMeasurement module.
-#           Results are compared to simple truth values.
-#           To test spiking, percent of spike values compared with expected.
-# Creation Date:  Feb. 9, 2023
-#
+"""
+Thermal Sensor Faults Test
+
+Purpose:  Test the proper function of the faulty behaviors of the tempMeasurement module.
+Results are compared to simple truth values.
+To test spiking, percent of spike values compared with expected.
+"""
 
 import os
 

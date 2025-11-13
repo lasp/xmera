@@ -1,10 +1,7 @@
-#
-#   Integrated Unit Test Script
-#   Purpose:  Run the external ForceTorque dynEffector by specifying the forces and torques
-#             in either messages and/or direct array input
-#   Author:  Hanspeter Schaub
-#   Creation Date:  Oct. 30, 2016
-#
+"""
+Purpose:  Run the external ForceTorque dynEffector by specifying the forces and torques
+in either messages and/or direct array input
+"""
 
 import numpy as np
 import pytest

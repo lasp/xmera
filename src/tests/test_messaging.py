@@ -1,12 +1,9 @@
-#
-# Integrated tests
-#
-# Purpose:  This script runs a series of test to ensure that the messaging
-# interface is properly set up for C and Cpp messages
-# Author:   Benjamin Bercovici
-# Creation Date:  June 4th, 2021
-#
+"""
+Integrated tests
 
+Purpose:  This script runs a series of test to ensure that the messaging
+interface is properly set up for C and Cpp messages
+"""
 
 from xmera.architecture import sim_model
 from xmera.architecture import messaging

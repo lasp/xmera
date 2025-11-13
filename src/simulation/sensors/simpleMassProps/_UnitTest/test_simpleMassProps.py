@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        cppModuleTemplateParametrized
-#   Author:             (First Name) (Last Name)
-#   Creation Date:      Month Day, Year
-#
+"""
+Module Name:        cppModuleTemplateParametrized
+"""
 
 import inspect
 import os

@@ -1,12 +1,9 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
-# how to setup an orbital simulation that uses multiple gravitational bodies.
-# Author:   Hanspeter Schaub
-# Creation Date:  Dec. 8, 2016
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
+how to setup an orbital simulation that uses multiple gravitational bodies.
+"""
 
 import inspect
 import os

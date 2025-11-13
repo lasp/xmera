@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Test file for scenarioTAMcomparison
-# Author:   Hanspeter Schaub
-# Creation Date:  Oct. 20, 2021
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Test file for scenarioTAMcomparison
+"""
 
 import inspect
 import os

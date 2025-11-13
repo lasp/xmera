@@ -1,13 +1,10 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
-#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
-#           while using the Thrusters to do the attitude control actuation.
-# Author:   Giulio Napolitano
-# Creation Date:  Jan. 7, 2017
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and
+mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
+while using the Thrusters to do the attitude control actuation.
+"""
 
 import inspect
 import os

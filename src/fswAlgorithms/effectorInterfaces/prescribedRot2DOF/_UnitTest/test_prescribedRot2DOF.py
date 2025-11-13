@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        prescribedRot2DOF
-#   Author:             Leah Kiner
-#   Creation Date:      Nov 27, 2022
-#
+"""
+Module Name:        prescribedRot2DOF
+"""
 
 import pytest
 import inspect

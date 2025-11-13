@@ -1,11 +1,9 @@
-#
-# Bore Angle Calculation Test
-#
-# Purpose:  Test the proper function of the Bore Angle Calculation module using the inertial heading option.
-#
-# Author:   João Vaz Carneiro
-# Creation Date:  Jan. 12, 2023
-#
+"""
+Bore Angle Calculation Test
+
+Purpose:  Test the proper function of the Bore Angle Calculation module using the inertial heading option.
+"""
+
 import math
 import os
 

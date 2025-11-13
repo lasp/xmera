@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        SEPPointing
-#   Author:             Riccardo Calaon
-#   Creation Date:      February 15, 2023
-#
+"""
+Module Name:        SEPPointing
+"""
 
 import pytest
 import os

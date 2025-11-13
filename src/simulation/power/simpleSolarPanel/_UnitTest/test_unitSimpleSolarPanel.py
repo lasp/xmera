@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        simpleSolarPanel
-#   Author:             Andrew Harris
-#   Creation Date:      July 17th 2019
-#
+"""
+Module Name:        simpleSolarPanel
+"""
 
 import inspect
 import os

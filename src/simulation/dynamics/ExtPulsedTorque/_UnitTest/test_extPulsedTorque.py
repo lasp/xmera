@@ -1,9 +1,6 @@
-#
-#   Integrated Unit Test Script
-#   Purpose:  Run the external pulsed torque disturance dynEffector
-#   Author:  Hanspeter Schaub
-#   Creation Date:  March 26, 2017
-#
+"""
+Purpose:  Run the external pulsed torque disturance dynEffector
+"""
 
 import numpy as np
 import pytest

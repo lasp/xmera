@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        torqueScheduler
-#   Author:             Riccardo Calaon
-#   Creation Date:      January 25, 2023
-#
+"""
+Module Name:        torqueScheduler
+"""
 
 import pytest
 from xmera.architecture import sim_model

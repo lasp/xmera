@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        spacecraftReconfig
-#   Author:             Hirotaka Kondo
-#   Creation Date:      March 27, 2020
-#
+"""
+Module Name:        spacecraftReconfig
+"""
 
 import pytest
 from xmera.architecture import messaging

@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        Magnetometer - TAM
-#   Author:             Demet Cilden-Guler
-#   Creation Date:      September 25, 2019
-#
+"""
+Module Name:        Magnetometer - TAM
+"""
 
 import inspect
 import os

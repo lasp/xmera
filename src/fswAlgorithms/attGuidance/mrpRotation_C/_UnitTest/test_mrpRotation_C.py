@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        mrpRotation
-#   Author:             Hanspeter Schaub
-#   Creation Date:      May 20, 2018
-#
+"""
+Module Name:        mrpRotation
+"""
 
 import inspect
 import os

@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        LimbFinding
-#   Author:             Thibaud Teil
-#   Creation Date:      September 16, 2019
-#
+"""
+Module Name:        LimbFinding
+"""
 
 import inspect
 import os

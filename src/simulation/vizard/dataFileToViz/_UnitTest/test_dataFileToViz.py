@@ -1,10 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        vizInterfaceDataFile
-#   Author:             Hanspeter Schaub
-#   Creation Date:      May 12, 2020
-#
-
+"""
+Module Name:        vizInterfaceDataFile
+"""
 
 import os
 

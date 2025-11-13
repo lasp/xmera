@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        meanOEFeedback
-#   Author:             Hirotaka Kondo
-#   Creation Date:      March 27, 2020
-#
+"""
+Module Name:        meanOEFeedback
+"""
 
 import pytest
 from xmera.architecture import messaging

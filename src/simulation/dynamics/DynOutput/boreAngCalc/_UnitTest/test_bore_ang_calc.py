@@ -1,12 +1,9 @@
-#
-# Bore Angle Calculation Test
-#
-# Purpose:  Test the proper function of the ore Angle Calculation module.
-#           Proper function is tested by
-#
-# Author:   Rachel Mamich
-# Creation Date:  Jun. 30, 2017
-#
+"""
+Bore Angle Calculation Test
+
+Purpose:  Test the proper function of the ore Angle Calculation module.
+Proper function is tested by
+"""
 
 import os
 

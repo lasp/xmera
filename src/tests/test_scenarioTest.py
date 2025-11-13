@@ -1,12 +1,9 @@
-#
-# Integrated tests
-#
-# Purpose:  This script calls a series of basic scenario tutorials to ensure
-# that they complete properly.  No simulation values are returned and tested.
-# Author:   Hanspeter Schaub
-# Creation Date:  May 20, 2021
-#
+"""
+Integrated tests
 
+Purpose:  This script calls a series of basic scenario tutorials to ensure
+that they complete properly.  No simulation values are returned and tested.
+"""
 
 import importlib
 import inspect

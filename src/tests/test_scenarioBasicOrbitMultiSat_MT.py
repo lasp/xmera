@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the scenario_BasicOrbitMultiSat_MT
-# Author:   Hanspeter Schaub
-# Creation Date:  Oct. 24, 2021
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the scenario_BasicOrbitMultiSat_MT
+"""
 
 import inspect
 import os

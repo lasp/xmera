@@ -1,8 +1,7 @@
-#
-#   Unit Test Script
-#   Module Name:        PrescribedRotation1DOF
-#   Author:             Leah Kiner
-#   Last Updated:       March 28, 2024
+"""
+Module Name:        PrescribedRotation1DOF
+Last Updated:       March 28, 2024
+"""
 
 import inspect
 import os

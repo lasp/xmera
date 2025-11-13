@@ -1,13 +1,10 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft() and gravity modules illustrating
-#           a four body system, for a Patched Conics analysis of an interplanetary transfer
-#           between Earth and Jupiter
-#
-# Author:   Divinaa Burder
-# Creation Date:  Feb 4, 2019
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test of the spacecraft() and gravity modules illustrating
+a four body system, for a Patched Conics analysis of an interplanetary transfer
+between Earth and Jupiter
+"""
 
 import inspect
 import os

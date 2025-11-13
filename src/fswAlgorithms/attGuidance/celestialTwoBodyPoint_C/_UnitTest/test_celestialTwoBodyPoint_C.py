@@ -1,8 +1,6 @@
-#   Unit Test Script
-#   Module Name:        celestialTwoBodyPoint
-#   Author:             Mar Cols
-#   Creation Date:      May 11, 2016
-#
+"""
+Module Name:        celestialTwoBodyPoint
+"""
 
 import inspect
 import os

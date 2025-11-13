@@ -1,9 +1,8 @@
-#
-# Ephemeris Converter Unit Test
-#
-# Purpose:  Test the proper function of the ephemeris_converter module.
-# Author:   Thibaud Teil
-#
+"""
+Ephemeris Converter Unit Test
+
+Purpose:  Test the proper function of the ephemeris_converter module.
+"""
 
 import numpy as np
 import xmera.architecture.messaging

@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the scenarioRotatingPanel
-# Author:   Hanspeter Schaub
-# Creation Date:  Oct. 7, 2020
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the scenarioRotatingPanel
+"""
 
 import inspect
 import os

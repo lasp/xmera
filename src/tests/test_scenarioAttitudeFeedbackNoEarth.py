@@ -1,12 +1,10 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
-#           mrpFeedback() modules.  Illustrates the spacecraft attitude dynamics while
-#           in deep space.
-# Author:   Hanspeter Schaub
-# Creation Date:  Sept. 13, 2018
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav() and
+mrpFeedback() modules.  Illustrates the spacecraft attitude dynamics while
+in deep space.
+"""
 
 import inspect
 import os

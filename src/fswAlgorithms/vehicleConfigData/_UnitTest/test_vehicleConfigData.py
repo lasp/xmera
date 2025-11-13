@@ -1,8 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        vehicleConfigData
-#   Creation Date:      October 5, 2018
-#
+"""
+Module Name:        vehicleConfigData
+"""
 
 from xmera.fswAlgorithms import vehicleConfigData
 from xmera.utilities import SimulationBaseClass

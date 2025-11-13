@@ -1,9 +1,7 @@
-#
-#   Copy of the unit test for sunSafe Point adapted to any heading
-#   Module Name:        opNavPoint
-#   Author:             Thibaud Teil
-#   Creation Date:      August 20, 2019
-#
+"""
+Copy of the unit test for sunSafe Point adapted to any heading
+Module Name:        opNavPoint
+"""
 
 import inspect
 import os

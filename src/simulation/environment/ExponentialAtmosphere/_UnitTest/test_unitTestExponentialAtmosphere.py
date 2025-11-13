@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        atmosphere
-#   Author:             Hanspeter Schaub
-#   Creation Date:      March 9, 2019
-#
+"""
+Module Name:        atmosphere
+"""
 
 import inspect
 import math

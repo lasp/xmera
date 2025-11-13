@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        HoughCircles
-#   Author:             Thibaud Teil
-#   Creation Date:      March 13, 2019
-#
+"""
+Module Name:        HoughCircles
+"""
 
 import inspect
 import os

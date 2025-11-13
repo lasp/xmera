@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of groundLocation and locationPointing.
-# Author:   Hanspeter Schaub
-# Creation Date:  Dec. 2, 2016
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of groundLocation and locationPointing.
+"""
 
 import inspect
 import os

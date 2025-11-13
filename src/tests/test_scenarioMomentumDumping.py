@@ -1,13 +1,10 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft(), RWs, thrusters, thrMomentumManagement(),
-#           thrForceMapping() and thrMomentumDumping() modules. Illustrates how to dump momentum
-#           once a certain threshold is passed.
-# Author:   Riccardo Calaon
-# Creation Date:  Apr. 18, 2022
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the spacecraft(), RWs, thrusters, thrMomentumManagement(),
+thrForceMapping() and thrMomentumDumping() modules. Illustrates how to dump momentum
+once a certain threshold is passed.
+"""
 
 import inspect
 import os

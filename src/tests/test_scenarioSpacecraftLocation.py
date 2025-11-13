@@ -1,11 +1,9 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
-#           a 3-DOV spacecraft on a range of orbit types.
-# Author:   Hanspeter Schaub
-# Creation Date:  Nov. 26, 2016
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
+a 3-DOV spacecraft on a range of orbit types.
+"""
 
 import inspect
 import os

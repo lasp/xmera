@@ -1,9 +1,4 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Author:   Hanspeter Schaub
-# Creation Date:  Dec. 13, 2023
-#
+"""Xmera Scenario Script and Integrated Test"""
 
 import inspect
 import os

@@ -1,8 +1,8 @@
-#
-# Xmera Integrated Test
-#
-# Purpose:  Integrated test of the MonteCarlo module with Spice usage.
-#
+"""
+Xmera Integrated Test
+
+Purpose:  Integrated test of the MonteCarlo module with Spice usage.
+"""
 
 import inspect
 import os

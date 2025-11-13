@@ -1,9 +1,7 @@
-#
-#   Unit Test Script
-#   Module Name:        prescribedLinearTranslation
-#   Author:             Leah Kiner
-#   Last Updated:       March 18, 2024
-#
+"""
+Module Name:        prescribedLinearTranslation
+Last Updated:       March 18, 2024
+"""
 
 import inspect
 import os

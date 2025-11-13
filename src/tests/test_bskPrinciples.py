@@ -1,12 +1,9 @@
-#
-# Integrated tests
-#
-# Purpose:  This script calls a series of quick start guide demonstration scripts to ensure
-# that they complete properly.
-# Author:   Hanspeter Schaub
-# Creation Date:  Feb. 3, 2021
-#
+"""
+Integrated tests
 
+Purpose:  This script calls a series of quick start guide demonstration scripts to ensure
+that they complete properly.
+"""
 
 import fnmatch
 import importlib

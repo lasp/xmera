@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        motorVoltageInterface
-#   Author:             João Vaz Carneiro
-#   Creation Date:      February 13, 2021
-#
+"""
+Module Name:        motorVoltageInterface
+"""
 
 import inspect
 import os

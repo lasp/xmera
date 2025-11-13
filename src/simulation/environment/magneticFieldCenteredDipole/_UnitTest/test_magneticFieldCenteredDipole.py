@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        magneticField - Centered Dipole Model
-#   Author:             Hanspeter Schaub
-#   Creation Date:      March 10, 2019
-#
+"""
+Module Name:        magneticField - Centered Dipole Model
+"""
 
 import inspect
 import os

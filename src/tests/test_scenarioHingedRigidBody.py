@@ -1,14 +1,11 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated tutorial of the spacecraft(), gravity, and hinged rigid body modules illustrating
-#           how Delta_v maneuver from test_scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
-#           Rotational motion is allowed on the spacecraft to simulate the full interaction of the hinged rigid
-#           bodies and the spacecraft.
-# Author:   Scott Carnahan
-# Creation Date:  Jul. 17, 2017
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated tutorial of the spacecraft(), gravity, and hinged rigid body modules illustrating
+how Delta_v maneuver from test_scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
+Rotational motion is allowed on the spacecraft to simulate the full interaction of the hinged rigid
+bodies and the spacecraft.
+"""
 
 import inspect
 import os

@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the for the magnetic field tutorial script.
-# Author:   Hanspeter Schaub
-# Creation Date:  March 17, 2019
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test of the for the magnetic field tutorial script.
+"""
 
 import inspect
 import os

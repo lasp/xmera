@@ -1,10 +1,8 @@
-#
-# xmera Scenario Script and Integrated Test
-#
-# Purpose:  Test the validity of a simple exponential atmosphere model.
-# Author:   Andrew Harris
-# Creation Date:  Jan 18, 2017
-#
+"""
+xmera Scenario Script and Integrated Test
+
+Purpose:  Test the validity of a simple exponential atmosphere model.
+"""
 
 import inspect
 import math

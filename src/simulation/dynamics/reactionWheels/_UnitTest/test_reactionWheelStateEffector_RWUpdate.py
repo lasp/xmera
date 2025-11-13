@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        reactionWheelStateEffector_RWUpdate
-#   Author:             João Vaz Carneiro
-#   Creation Date:      January 23, 2020
-#
+"""
+Module Name:        reactionWheelStateEffector_RWUpdate
+"""
 
 import inspect
 import os

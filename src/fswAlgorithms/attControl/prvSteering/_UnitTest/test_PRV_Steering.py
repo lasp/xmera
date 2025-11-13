@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
 import pytest
 from xmera.architecture import messaging

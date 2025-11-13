@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        solarArrayRotation
-#   Author:             Riccardo Calaon
-#   Creation Date:      January 12, 2023
-#
+"""
+Module Name:        solarArrayRotation
+"""
 
 import inspect
 import os

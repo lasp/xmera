@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        ETcontrol
-#   Author:             Julian Hammerl
-#   Creation Date:      May 20, 2021
-#
+"""
+Module Name:        ETcontrol
+"""
 
 import numpy as np
 import pytest
@@ -16,7 +13,6 @@ from xmera.utilities import macros, RigidBodyKinematics, orbitalMotion
 from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

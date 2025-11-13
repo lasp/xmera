@@ -1,12 +1,10 @@
-#
-# Eclipse Condition Unit Test
-#
-# Purpose:  Test the proper function of the Eclipse environment module.
-#           This is done by comparing computed expected shadow factors in
-#           particular eclipse conditions to what is simulated
-# Author:   Patrick Kenneally
-# Creation Date:  May. 31, 2017
-#
+"""
+Eclipse Condition Unit Test
+
+Purpose:  Test the proper function of the Eclipse environment module.
+This is done by comparing computed expected shadow factors in
+particular eclipse conditions to what is simulated
+"""
 
 import os
 import numpy as np

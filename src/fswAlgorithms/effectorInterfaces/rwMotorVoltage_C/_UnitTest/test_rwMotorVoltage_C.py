@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        rwMotorVoltage
-#   Author:             Hanspeter Schaub
-#   Creation Date:      January 16, 2017
-#
+"""
+Module Name:        rwMotorVoltage
+"""
 
 import inspect
 import os

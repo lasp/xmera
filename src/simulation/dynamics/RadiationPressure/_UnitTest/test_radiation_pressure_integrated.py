@@ -1,11 +1,9 @@
-#
-# Xmera Integrated Test of the Solar Radiation Pressure Evaluation
-#
-# Purpose:  Integrated test of the spacecraft(), gravity modules and the solar
-#           radiation pressure modeling.  Currently the cannonball model is only tested.
-# Author:   Patrick Kenneally
-# Creation Date:  June 11, 2018
-#
+"""
+Xmera Integrated Test of the Solar Radiation Pressure Evaluation
+
+Purpose:  Integrated test of the spacecraft(), gravity modules and the solar
+radiation pressure modeling.  Currently the cannonball model is only tested.
+"""
 
 import os
 

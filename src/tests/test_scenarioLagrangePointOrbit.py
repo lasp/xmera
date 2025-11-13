@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  This scenario illustrates the orbit of a spacecraft near the Earth-Sun Lagrange points.
-# Author:   Scott McKinley
-# Creation Date:  Sep. 2, 2022
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  This scenario illustrates the orbit of a spacecraft near the Earth-Sun Lagrange points.
+"""
 
 import inspect
 import os

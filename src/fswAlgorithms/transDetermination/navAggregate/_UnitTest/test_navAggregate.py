@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        navAggregate()
-#   Author:             Hanspeter Schaub
-#   Creation Date:      Feb. 21, 2019
-#
+"""
+Module Name:        navAggregate()
+"""
 
 import inspect
 import os

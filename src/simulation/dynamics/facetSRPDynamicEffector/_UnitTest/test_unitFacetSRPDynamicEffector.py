@@ -1,10 +1,7 @@
-#
-#   Unit Test Script
-#   Module Name:        facetSRPDynamicEffector
-#   Author:             Leah Kiner
-#   Creation Date:      Dec 18 2022
-#   Last Updated:       Dec 13 2023
-#
+"""
+Module Name:        facetSRPDynamicEffector
+Last Updated:       Dec 13 2023
+"""
 
 import os
 

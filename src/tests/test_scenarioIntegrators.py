@@ -1,11 +1,9 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Demonstration of how to setup and use different integrators in
-#           Basilisk.  The simulation performs a 3-DOF orbit scenario.
-# Author:   Hanspeter Schaub
-# Creation Date:  Dec. 14, 2016
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Demonstration of how to setup and use different integrators in
+Basilisk.  The simulation performs a 3-DOF orbit scenario.
+"""
 
 import inspect
 import os

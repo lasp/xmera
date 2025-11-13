@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test for the albedo module
-# Author:   Demet Cilden-Guler
-# Creation Date:  May 27, 2020
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Integrated test for the albedo module
+"""
 
 import inspect
 import os

@@ -1,11 +1,9 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Demonstration of using planetStates.planetPositionVelocity and isCentralBody to set
-#           spacecraft initial states in an absolute or relative frame
-# Author:   Scott Carnahan
-# Creation Date:  14 July 2018
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Demonstration of using planetStates.planetPositionVelocity and isCentralBody to set
+spacecraft initial states in an absolute or relative frame
+"""
 
 import inspect
 import os

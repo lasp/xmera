@@ -1,10 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Basic simulation showing a servicer that reorbits a debris using electrostatic forces.
-# Author:   Julian Hammerl
-# Creation Date:  May 20, 2021
-#
+"""
+Xmera Scenario Script and Integrated Test
+
+Purpose:  Basic simulation showing a servicer that reorbits a debris using electrostatic forces.
+"""
 
 import inspect
 import os

@@ -1,11 +1,8 @@
-#
-# Xmera Scenario Script and Integrated Test
-#
-# Purpose:  Integrated test of the scenarioAttitudeGG
-# Author:   Hanspeter Schaub
-# Creation Date:  Jan. 19, 2020
-#
+"""
+Xmera Scenario Script and Integrated Test
 
+Purpose:  Integrated test of the scenarioAttitudeGG
+"""
 
 import inspect
 import os

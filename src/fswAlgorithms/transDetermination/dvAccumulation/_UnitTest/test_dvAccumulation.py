@@ -1,8 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        dvAccumulation
-#   Creation Date:      October 5, 2018
-#
+"""
+Module Name:        dvAccumulation
+"""
 
 import inspect
 import os

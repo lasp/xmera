@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        simpleInstrumentController
-#   Author:             Adam Herrmann
-#   Creation Date:      May 19th, 2020
-#
+"""
+Module Name:        simpleInstrumentController
+"""
 
 import inspect
 import os

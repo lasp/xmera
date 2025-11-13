@@ -1,6 +1,7 @@
-#   This test validates the EKF module by running several
-#   scenarios on both individual functions and the full module.
-#   Author: Thibaud Teil
+"""
+This test validates the EKF module by running several
+scenarios on both individual functions and the full module.
+"""
 
 import numpy as np
 import pytest

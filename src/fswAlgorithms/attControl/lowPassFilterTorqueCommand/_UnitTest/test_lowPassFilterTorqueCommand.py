@@ -9,7 +9,6 @@ from xmera.utilities import macros
 from xmera.utilities import unitTestSupport  # general support file with common unit test functions
 
 
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

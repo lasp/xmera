@@ -1,12 +1,10 @@
-#
-# Thruster Unit Test
-#
-# Purpose:  Test the proper function of the Thruster Dynamics module.
-#           This is done by comparing expected torques and forces to
-#           what is simulated
-# Author:   Thibaud Teil
-# Creation Date:  Dec. 20, 2016
-#
+"""
+Thruster Unit Test
+
+Purpose:  Test the proper function of the Thruster Dynamics module.
+This is done by comparing expected torques and forces to
+what is simulated
+"""
 
 import inspect
 import math

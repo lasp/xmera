@@ -1,10 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        waypointReference
-#   Author:             Riccardo Calaon
-#   Creation Date:      March 14, 2021
-#
-
+"""
+Module Name:        waypointReference
+"""
 
 import os
 

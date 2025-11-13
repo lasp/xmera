@@ -1,9 +1,6 @@
-#
-#   Unit Test Script
-#   Module Name:        sunSafePoint
-#   Author:             Hanspeter Schaub
-#   Creation Date:      April 25, 2018
-#
+"""
+Module Name:        sunSafePoint
+"""
 
 import inspect
 import os

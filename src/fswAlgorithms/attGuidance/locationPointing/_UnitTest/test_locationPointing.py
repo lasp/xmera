@@ -1,8 +1,7 @@
-#   Unit Test Script
-#   Module Name:        locationPointing
-#   Author:             Hanspeter Schaub
-#   Creation Date:      May 9, 2021
-#
+"""
+Module Name:        locationPointing
+"""
+
 import math
 
 import numpy as np

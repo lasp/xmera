@@ -1,12 +1,9 @@
-#
-# Integrated tests
-#
-# Purpose:  This script calls a series of bskSim related simulation tutorials to ensure
-# that they complete properly.
-# Author:   Hanspeter Schaub
-# Creation Date:  May 10, 2018
-#
+"""
+Integrated tests
 
+Purpose:  This script calls a series of bskSim related simulation tutorials to ensure
+that they complete properly.
+"""
 
 import importlib
 import inspect
