@@ -31,17 +31,15 @@ void LinearODeKF::customReset() {
     assert(this->opNavHeadingMsg.isLinked());
 
     /*! - Set the filter dynamics (linear) */
-    this->ekf.dynamics = [](double t, const FilterStateVector& state) {
-        FilterStateVector XDot;
-
-        XDot.setPosition(PositionState<Eigen::Dynamic> {state.getVelocityStates()});
-        XDot.setVelocity(VelocityState<Eigen::Dynamic> {Eigen::Vector3d::Zero()});
-
-        return XDot;
+    this->ekf.dynamics = [](double t, const EkfStateVector<3>& state) -> EkfStateVector<3> {
+        return {
+            .position = state.velocity,
+            .velocity = Eigen::Vector3d::Zero(),
+        };
     };
 
-    this->ekf.dynamicsTransitionMatrix = [](double t, const FilterStateVector& state) -> Eigen::MatrixXd {
-        Eigen::VectorXd const& position = state.getPositionStates();
+    this->ekf.dynamicsTransitionMatrix = [](double t, const EkfStateVector<3>& state) -> Eigen::MatrixXd {
+        Eigen::VectorXd const& position = state.position;
 
         Eigen::MatrixXd dynMatrix = Eigen::MatrixXd::Zero(state.size(), state.size());
         dynMatrix.block(0, position.size(), position.size(), position.size()) =
@@ -61,14 +59,15 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
     FilterResidualsMsgPayload residualsBuffer{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).getPositionStates(),
+    eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).position,
                          navTransOutMsgBuffer.r_BN_N);
-    eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).getVelocityStates(),
+    eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).velocity,
                          navTransOutMsgBuffer.v_BN_N);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavFilterMsgBuffer.timeTag = (double)this->previousSimNanos * NANO2SEC;
-    eigenMatrixXToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).returnValues(), opNavFilterMsgBuffer.state);
+    eigenVectorToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).position, opNavFilterMsgBuffer.state + 0);
+    eigenVectorToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).velocity, opNavFilterMsgBuffer.state + 3);
     eigenMatrixXToCArray(1 / this->ekf.unitConversion * this->ekf.stateError, opNavFilterMsgBuffer.stateError);
     eigenMatrixXToCArray(1 / this->ekf.unitConversion / this->ekf.unitConversion * this->ekf.covar, opNavFilterMsgBuffer.covar);
     opNavFilterMsgBuffer.numberOfStates = this->ekf.state.size();
