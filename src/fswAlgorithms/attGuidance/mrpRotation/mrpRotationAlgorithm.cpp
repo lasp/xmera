@@ -124,7 +124,7 @@ void MrpRotationAlgorithm::setSigmaRR0(const Eigen::Vector3d& sigma) { this->sig
 /*! Getter method for the current MRP attitude coordinate set with respect to the input reference
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d& MrpRotationAlgorithm::getSigmaRR0() const { return this->sigma_RR0; }
+const Eigen::Vector3d MrpRotationAlgorithm::getSigmaRR0() const { return this->sigma_RR0; }
 
 /*! Setter method for the angular velocity vector relative to input reference
  @return void
@@ -135,7 +135,7 @@ void MrpRotationAlgorithm::setOmegaRR0(const Eigen::Vector3d& omega) { this->ome
 /*! Getter method for the angular velocity vector relative to input reference
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d& MrpRotationAlgorithm::getOmegaRR0() const { return this->omega_RR0_R; }
+const Eigen::Vector3d MrpRotationAlgorithm::getOmegaRR0() const { return this->omega_RR0_R; }
 
 /*! Enable dynamic reference input
  @return void

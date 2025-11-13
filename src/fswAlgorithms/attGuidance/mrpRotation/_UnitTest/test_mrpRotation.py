@@ -140,9 +140,9 @@ def test_mrp_rotation(show_plots, cmd_state_flag, test_reset):
 
     # Initialize the test module configuration data
     sigma_RR0 = np.array([0.3, .5, 0.0])
-    module.setSigmaRR0(sigma_RR0)
+    module.sigma_RR0 = sigma_RR0
     omega_RR0_R = np.array([0.1, 0.0, 0.0]) * mc.D2R
-    module.setOmegaRR0(omega_RR0_R)
+    module.omega_RR0_R = omega_RR0_R
 
     if cmd_state_flag:
         desired_att = messaging.AttStateMsgPayload()
