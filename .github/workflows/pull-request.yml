@@ -175,7 +175,7 @@ jobs:
         working-directory: src
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
-        run: cmake --preset ci-test
+        run: cmake --preset fuzz-smoke-test
 
       - name: Build
         working-directory: src
@@ -201,9 +201,11 @@ jobs:
           path: junit/test-results-${{ matrix.python-version }}.xml
           retention-days: 7
 
-      - name: Run C/C++ tests
+      - name: Run C/C++ unit tests (include fuzz-smoke)
         working-directory: ./build
-        run: ctest --output-on-failure
+        env:
+          CTEST_PARALLEL_LEVEL: 1
+        run: ctest --output-on-failure -LE fuzz
 
       - name: Upload CMake & test logs on failure
         if: ${{ failure() }}
