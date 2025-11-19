@@ -126,3 +126,17 @@ void RwMotorTorque::updateState(uint64_t callTime) {
 
     return;
 }
+
+/*! Setter method for the control axes mapping matrix CB, where each row includes the transpose of a control axis.
+ The matrix needs to be 3x3, so if only 2 axes are controlled, the third row should be all zeros.
+ @return void
+ @param controlMappingMatrix Known external torque expressed in body frame components
+*/
+void RwMotorTorque::setControlAxes(const Eigen::Matrix3d& controlMappingMatrix) {
+    this->controlAxes_B = controlMappingMatrix;
+}
+
+/*! Getter method for the control axes mapping matrix CB.
+ @return const Eigen::Matrix3d
+*/
+Eigen::Matrix3d RwMotorTorque::getControlAxes() const { return this->controlAxes_B; }

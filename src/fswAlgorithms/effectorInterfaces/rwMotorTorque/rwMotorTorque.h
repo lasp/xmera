@@ -18,7 +18,8 @@ class RwMotorTorque : public SysModel {
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    Eigen::Matrix3d controlAxes_B{};  //!< [-] array of the control unit axes
+    void setControlAxes(const Eigen::Matrix3d& controlMappingMatrix);
+    Eigen::Matrix3d getControlAxes() const;
 
     /* declare module IO interfaces */
     Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;   //!< RW motor torque output message
@@ -28,6 +29,7 @@ class RwMotorTorque : public SysModel {
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;     //!< optional RWs availability input message
 
    private:
+    Eigen::Matrix3d controlAxes_B{Eigen::Matrix3d::Zero()};  //!< [-] array of the control unit axes
     uint32_t numControlAxes{};      //!< [-] counter indicating how many orthogonal axes are controlled
     int numAvailRW{};               //!< [-] number of reaction wheels available
     RWArrayConfigMsgPayload
