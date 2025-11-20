@@ -50,6 +50,14 @@ def read_write_test():
     epoch_message = messaging.EpochMsg().write(epoch_payload)
     module.epochMessage.subscribeTo(epoch_message)
 
+    # Create diagnostic message
+    diagnostics_payload = messaging.ImageDiagnosticsPayload()
+    diagnostics_payload.areaOfInterestCenter = [0,0]
+    diagnostics_payload.areaOfInterestWidthHeight = [100,200]
+    diagnostics_payload.threshold = 15/255
+    diagnostic_message = messaging.ImageDiagnostics().write(diagnostics_payload)
+    module.imageDiagnosticsMessage.subscribeTo(diagnostic_message)
+
     # Create camera rendering message
     rendering_payload = messaging.CameraRenderingMsgPayload()
     rendering_payload.cameraId = 1
@@ -74,6 +82,7 @@ def read_write_test():
     asteroid_parameter_payload.brdf = "Lambertian"
     asteroid_parameter_payload.reflectanceParameters = [0.5]
     asteroid_parameter_payload.meanRadius = 10000
+    asteroid_parameter_payload.geometricAlbedo = 0.1
     asteroid_parameter_payload.principalAxisDistortion = [1, 0.9, 1.1]
     asteroid_parameter_payload.sigma_BN = [0, 0, 0.5]
 
@@ -188,6 +197,12 @@ def read_write_test():
     np.testing.assert_equal(cielim_message.camera.cameraPositionInBody, camera_payload.cameraBodyFramePosition)
     np.testing.assert_equal(cielim_message.camera.bodyFrameToCameraMrp, camera_payload.bodyToCameraMrp)
 
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.threshold, diagnostics_payload.threshold)
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.centerX, diagnostics_payload.areaOfInterestCenter[0])
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.centerY, diagnostics_payload.areaOfInterestCenter[1])
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.width, diagnostics_payload.areaOfInterestWidthHeight[0])
+    np.testing.assert_equal(cielim_message.camera.areaOfInterest.height, diagnostics_payload.areaOfInterestWidthHeight[1])
+
     np.testing.assert_equal(cielim_message.camera.lensModel.fieldOfView,camera_payload.fieldOfView)
     np.testing.assert_equal(cielim_message.camera.lensModel.focalLength, camera_payload.focalLength)
     np.testing.assert_equal(cielim_message.camera.lensModel.pointSpreadFunction, camera_payload.gaussianPointSpreadFunction)
@@ -239,7 +254,7 @@ def read_write_test():
         np.testing.assert_equal(cielim_message.celestialBodies[i].attitude, np.array(message.J20002Pfix).flatten())
         np.testing.assert_equal(cielim_message.celestialBodies[i].centralBody, central)
         if (name == asteroid_parameter_payload.bodyName):
-            np.testing.assert_equal(cielim_message.celestialBodies[i].geometricAlbedo, asteroid_parameter_payload.geometricAlbedo)
+            np.testing.assert_equal(cielim_message.celestialBodies[i].model.geometricAlbedo, asteroid_parameter_payload.geometricAlbedo)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.meanRadius, asteroid_parameter_payload.meanRadius)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.shapeModel, asteroid_parameter_payload.shapeModel)
             np.testing.assert_equal(cielim_message.celestialBodies[i].model.perlinNoise.octaveCount, asteroid_parameter_payload.perlinNoiseOctaveCount)

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package imageDiagnostics;
+option optimize_for = LITE_RUNTIME;
+
+// Diagnostic data
+message DiagnosticData{
+    double cob_x = 1;
+    double cob_y = 2;
+    double coverage = 3;
+    int32 totalBrightPixels = 4;
+}

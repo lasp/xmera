@@ -25,9 +25,28 @@ add_custom_command(
   DEPENDS_EXPLICIT_ONLY
 )
 
+add_custom_command(
+  COMMENT "Generating protobuf (C++/Python): imageDiagnostics"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/imageDiagnostics.proto"
+  OUTPUT
+    "${CMAKE_CURRENT_BINARY_DIR}/imageDiagnostics.pb.cc"
+    "${CMAKE_CURRENT_BINARY_DIR}/imageDiagnostics.pb.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/imageDiagnostics_pb2.py"
+  COMMAND
+    "${Protobuf_PROTOC_EXECUTABLE}"
+    "--proto_path=${CMAKE_CURRENT_SOURCE_DIR}"
+    "--cpp_out=${CMAKE_CURRENT_BINARY_DIR}"
+    "--python_out=${CMAKE_CURRENT_BINARY_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/imageDiagnostics.proto"
+  VERBATIM
+  DEPENDS_EXPLICIT_ONLY
+)
+
 xmera_add_swig_module("${module}")
 target_sources("${module}" PRIVATE
   "${CMAKE_CURRENT_BINARY_DIR}/cielimMessage.pb.cc"
+  "${CMAKE_CURRENT_BINARY_DIR}/imageDiagnostics.pb.cc"
   cielimInterface.cpp
   zmqConnector.cpp
 )
@@ -43,5 +62,6 @@ target_link_libraries("${module}" PRIVATE
 
 install(
   FILES cielimMessage.proto
+  FILES imageDiagnostics.proto
   DESTINATION protobuf/
 )
