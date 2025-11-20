@@ -21,10 +21,10 @@
 #include <fswAlgorithms/_GeneralModuleFiles/ekfInterface.h>
 
 #ifndef SWIG
-struct LinearODeKFMeasurementModel : public EkfMeasurementModel<3> {
+struct LinearODeKFMeasurementModel : public EkfMeasurementModel<3, 3> {
 public:
     //! [-] observation measurement model
-    Eigen::MatrixXd model(const EkfStateVector<3>& state) const override {
+    VectorMd model(const EkfStateVector<3>& state) const override {
         return state.position / state.position.norm();
     }
 
@@ -32,13 +32,13 @@ public:
         @param FilterStateVector state
         @return Eigen::MatrixXd
     */
-    Eigen::MatrixXd measurementMatrix(const EkfStateVector<3>& state) const override {
-        Eigen::Vector3d const& position = state.position;
+    MatrixMMd measurementMatrix(const EkfStateVector<3>& state) const override {
+        auto const& position = state.position;
 
-        Eigen::MatrixXd measurementMatrix = Eigen::MatrixXd::Zero(position.size(), state.size());
+        MatrixMMd measurementMatrix = MatrixMMd::Zero(position.size(), state.size());
         measurementMatrix.block(0, 0, position.size(), position.size()) =
             ( 1 / position.norm()
-            * ( Eigen::MatrixXd::Identity(position.size(), position.size())
+            * ( MatrixMMd::Identity(position.size(), position.size())
               - 1 / pow(position.norm(), 2) * position * position.transpose()
               )
             );
@@ -46,36 +46,33 @@ public:
         return measurementMatrix;
     }
 
-    Eigen::VectorXd subtract(
-        const Eigen::VectorXd& observed,
-        const Eigen::VectorXd& predicted
-    ) const override {
+    VectorMd subtract(const VectorMd& observed, const VectorMd& predicted) const override {
         return observed - predicted;
     }
 
-    Eigen::VectorXd getObservation() const override {
+    VectorMd getObservation() const override {
         return this->observation;
     }
 
-    Eigen::MatrixXd getNoise() const override {
+    MatrixMMd getNoise() const override {
         return this->measNoise;
     }
 
-    void setPreFitResiduals(Eigen::VectorXd const& preFitResiduals) override {
+    void setPreFitResiduals(VectorMd const& preFitResiduals) override {
         this->preFitResiduals = preFitResiduals;
     }
 
-    void setPostFitResiduals(Eigen::VectorXd const& postFitResiduals) override {
+    void setPostFitResiduals(VectorMd const& postFitResiduals) override {
         this->postFitResiduals = postFitResiduals;
     }
 
 public:
-    Eigen::VectorXd observation = {};       //!< [-] Observation data vector
-    Eigen::MatrixXd measNoise = {};         //!< [-] Measurement noise
+    VectorMd observation = {};       //!< [-] Observation data vector
+    MatrixMMd measNoise   = {};       //!< [-] Measurement noise
 
 public:
-    Eigen::VectorXd preFitResiduals = {};   //!< [-] Observation pre fit residuals
-    Eigen::VectorXd postFitResiduals = {};  //!< [-] Observation post fit residuals
+    VectorMd preFitResiduals  = {};  //!< [-] Observation pre fit residuals
+    VectorMd postFitResiduals = {};  //!< [-] Observation post fit residuals
 };
 #endif
 
@@ -103,7 +100,7 @@ class LinearODeKF : public SysModel {
     Message<FilterResidualsMsgPayload> opNavResidualMsg;
 
    private:
-    EkfInterface<3> ekf{FilterType::Classical};
+    EkfInterface<3, 3> ekf{FilterType::Classical};
     double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     xmera::measurement_queue<LinearODeKFMeasurementModel, 1> measurements = {};  //!< [Measurements] All
     uint64_t previousSimNanos = 0;
