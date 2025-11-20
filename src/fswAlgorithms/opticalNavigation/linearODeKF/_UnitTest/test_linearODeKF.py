@@ -44,15 +44,6 @@ def two_body_gravity(t, x, velocity):
 
 
 def setup_filter_data(type = "classical", velocity = False):
-    # Construct algorithm and associated C++ container
-    ckf = linearODeKF.FilterType_Classical
-    ekf = linearODeKF.FilterType_Extended
-    if type == "classical":
-        filter_object = linearODeKF.LinearODeKF(ckf)
-    if type == "extended":
-        filter_object = linearODeKF.LinearODeKF(ekf)
-        filter_object.setMinimumCovarianceNormForEkf(1E5)  # filter in km and km/s
-
     closest = 500*1e3
     dT = 25 * 60
     v_inf = 10*1e3
@@ -65,33 +56,30 @@ def setup_filter_data(type = "classical", velocity = False):
 
     r_N = np.dot(dcm_NF, np.array(r_F)).tolist()
     v_N = np.dot(dcm_NF, np.array(v_F)).tolist()
-    if not velocity:
-        filter_object.setUnitConversionFromSItoState(1E-3)  # filter in km and km/s
-        filter_object.setInitialPosition(r_N)
-        filter_object.setInitialVelocity(v_N)
-        filter_object.setInitialCovariance([[1000. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                            [0.0, 100. * 1E6, 0.0, 0.0, 0.0, 0.0],
-                                            [0.0, 0.0, 100. * 1E6, 0.0, 0.0, 0.0],
-                                            [0.0, 0.0, 0.0, 0.1 * 1E6, 0.0, 0.0],
-                                            [0.0, 0.0, 0.0, 0.0, 0.01 * 1E6, 0.0],
-                                            [0.0, 0.0, 0.0, 0.0, 0.0, 0.01 * 1E6]])
 
-        sigmaVel = (1E-4) ** 2
-        filter_object.setProcessNoise([[sigmaVel, 0.0, 0.0],
-                                       [0.0, sigmaVel*10, 0.0],
-                                       [0.0, 0.0, sigmaVel*10]])
-    else:
-        filter_object.setUnitConversionFromSItoState(1E-3)  # filter in km and km/s
-        filter_object.setInitialPosition(r_N)
-        filter_object.setConstantVelocity(v_N)
-        filter_object.setInitialCovariance([[1000. * 1E6, 0.0, 0.0],
-                                            [0.0, 100. * 1E6, 0.0],
-                                            [0.0, 0.0, 100. * 1E6]])
+    sigmaVel = (1E-4) ** 2
 
-        sigmaPosition = (1E-2) ** 2
-        filter_object.setProcessNoise([[sigmaPosition, 0.0, 0.0],
-                                       [0.0, sigmaPosition*10, 0.0],
-                                       [0.0, 0.0, sigmaPosition*10]])
+    # Construct algorithm and associated C++ container
+    if type == "classical":
+        filter_object = linearODeKF.LinearODeKF(linearODeKF.FilterType_Classical)
+        filter_object.setUnitConversionFromSItoState(1E-3)  # filter in km and km/s
+    elif type == "extended":
+        filter_object = linearODeKF.LinearODeKF(linearODeKF.FilterType_Extended)
+        filter_object.setUnitConversionFromSItoState(1E-3)  # filter in km and km/s
+        filter_object.setMinimumCovarianceNormForEkf(1E-1)  # filter in km and km/s
+
+    filter_object.setInitialPosition(r_N)
+    filter_object.setInitialVelocity(v_N)
+    filter_object.setInitialCovariance([[1000. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 100. * 1E6, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 100. * 1E6, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.1 * 1E6, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.01 * 1E6, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.01 * 1E6]])
+    filter_object.setProcessNoise([[sigmaVel, 0.0, 0.0],
+                                   [0.0, sigmaVel*10, 0.0],
+                                   [0.0, 0.0, sigmaVel*10]])
+
     return filter_object
 
 @pytest.mark.parametrize("dt", [1, 10])

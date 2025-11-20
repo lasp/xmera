@@ -151,7 +151,7 @@ public:
      @return void
      */
     void setMinimumCovarianceNormForEkf(const double infiniteNorm) {
-        this->minCovarNorm = infiniteNorm;
+        this->minCovarNorm = infiniteNorm * this->unitConversion * this->unitConversion;
     }
 
     /*! Get the minimum value of the covariance before switching to Extended KF updates.
