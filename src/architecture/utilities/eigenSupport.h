@@ -238,7 +238,7 @@ Eigen::MatrixX<ScalarT> cArrayAsEigenMatrixX(ScalarT* inArray, int nRows, int nC
  * @param inArray Reference to the C array holding the coefficients.
  * @return Eigen vector whose contents match the input array.
  */
-template <typename ScalarT, std::size_t size>
+template <typename ScalarT, int size>
 Eigen::Vector<ScalarT, size> cArrayAsEigenVector(ScalarT (&inArray)[size]) {
     return Eigen::Map<Eigen::Vector<ScalarT, size>>(inArray);
 }
