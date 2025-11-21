@@ -312,15 +312,11 @@ Eigen::Vector3<ScalarT> eigenMrpToVector3(const Eigen::MRP<ScalarT>& mrp) {
  * @return Eigen::Matrix3 representing the rotation.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> eigenM1(const ScalarT angle) {
-    Eigen::Matrix3<ScalarT> mOut = Eigen::Matrix3<ScalarT>::Identity();
+Eigen::Matrix3<ScalarT> eigenM1(ScalarT angle) {
+    const ScalarT c = std::cos(angle);
+    const ScalarT s = std::sin(angle);
 
-    mOut(1, 1) = std::cos(angle);
-    mOut(1, 2) = std::sin(angle);
-    mOut(2, 1) = -std::sin(angle);
-    mOut(2, 2) = std::cos(angle);
-
-    return mOut;
+    return Eigen::Matrix3<ScalarT>{{ScalarT{1}, ScalarT{0}, ScalarT{0}}, {ScalarT{0}, c, s}, {ScalarT{0}, -s, c}};
 }
 
 /**
@@ -331,15 +327,11 @@ Eigen::Matrix3<ScalarT> eigenM1(const ScalarT angle) {
  * @return Eigen::Matrix3 representing the rotation.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> eigenM2(const ScalarT angle) {
-    Eigen::Matrix3<ScalarT> mOut = Eigen::Matrix3<ScalarT>::Identity();
+Eigen::Matrix3<ScalarT> eigenM2(ScalarT angle) {
+    const ScalarT c = std::cos(angle);
+    const ScalarT s = std::sin(angle);
 
-    mOut(0, 0) = std::cos(angle);
-    mOut(0, 2) = -std::sin(angle);
-    mOut(2, 0) = std::sin(angle);
-    mOut(2, 2) = std::cos(angle);
-
-    return mOut;
+    return Eigen::Matrix3<ScalarT>{{c, ScalarT{0}, -s}, {ScalarT{0}, ScalarT{1}, ScalarT{0}}, {s, ScalarT{0}, c}};
 }
 
 /**
@@ -350,15 +342,11 @@ Eigen::Matrix3<ScalarT> eigenM2(const ScalarT angle) {
  * @return Eigen::Matrix3 representing the rotation.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> eigenM3(const ScalarT angle) {
-    Eigen::Matrix3<ScalarT> mOut = Eigen::Matrix3<ScalarT>::Identity();
+Eigen::Matrix3<ScalarT> eigenM3(ScalarT angle) {
+    const ScalarT c = std::cos(angle);
+    const ScalarT s = std::sin(angle);
 
-    mOut(0, 0) = std::cos(angle);
-    mOut(0, 1) = std::sin(angle);
-    mOut(1, 0) = -std::sin(angle);
-    mOut(1, 1) = std::cos(angle);
-
-    return mOut;
+    return Eigen::Matrix3<ScalarT>{{c, s, ScalarT{0}}, {-s, c, ScalarT{0}}, {ScalarT{0}, ScalarT{0}, ScalarT{1}}};
 }
 
 /**
@@ -370,18 +358,13 @@ Eigen::Matrix3<ScalarT> eigenM3(const ScalarT angle) {
  */
 template <typename Derived>
 Eigen::Matrix3<typename Eigen::MatrixBase<Derived>::Scalar> eigenTilde(const Eigen::MatrixBase<Derived>& vec) {
-    using Scalar = typename Eigen::MatrixBase<Derived>::Scalar;
+    using Scalar = Eigen::MatrixBase<Derived>::Scalar;
 
-    Eigen::Matrix3<Scalar> mOut = Eigen::Matrix3<Scalar>::Zero();
+    const Scalar vx = vec(0);
+    const Scalar vy = vec(1);
+    const Scalar vz = vec(2);
 
-    mOut(0, 1) = -vec(2);
-    mOut(1, 0) = vec(2);
-    mOut(0, 2) = vec(1);
-    mOut(2, 0) = -vec(1);
-    mOut(1, 2) = -vec(0);
-    mOut(2, 1) = vec(0);
-
-    return mOut;
+    return Eigen::Matrix3<Scalar>{{Scalar{0}, -vz, vy}, {vz, Scalar{0}, -vx}, {-vy, vx, Scalar{0}}};
 }
 
 #endif  // EIGEN_SUPPORT
