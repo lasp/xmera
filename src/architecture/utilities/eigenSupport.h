@@ -40,10 +40,10 @@ void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Deriv
 
     if constexpr ((Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0) {
         Eigen::Matrix<Scalar, Rows, Cols, Eigen::RowMajor> tmp = inMat;
-        std::memcpy(out, tmp.data(), Size * sizeof(Scalar));
+        std::copy(tmp.data(), tmp.data() + tmp.size(), out);
     } else {
         Eigen::Matrix<Scalar, Cols, Rows> tmpT = inMat.transpose();
-        std::memcpy(out, tmpT.data(), Size * sizeof(Scalar));
+        std::copy(tmpT.data(), tmpT.data() + tmpT.size(), out);
     }
 }
 
@@ -70,8 +70,7 @@ void eigenMatrixXToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Deri
 
     // Make a contiguous row-major buffer regardless of input layout
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rm = inMat.derived();
-    const auto count = static_cast<std::size_t>(inMat.size());
-    std::memcpy(out, rm.data(), count * sizeof(Scalar));
+    std::copy(rm.data(), rm.data() + rm.size(), out);
 }
 
 /**
@@ -101,10 +100,10 @@ void eigenMatrixToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Der
 
     if constexpr ((Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0) {
         Eigen::Matrix<Scalar, R, C, Eigen::RowMajor> tmp = inMat;
-        std::memcpy(out, tmp.data(), N * M * sizeof(Scalar));
+        std::copy(tmp.data(), tmp.data() + tmp.size(), &out[0][0]);
     } else {
         Eigen::Matrix<Scalar, C, R> tmpT = inMat.transpose();
-        std::memcpy(out, tmpT.data(), N * M * sizeof(Scalar));
+        std::copy(tmpT.data(), tmpT.data() + tmpT.size(), &out[0][0]);
     }
 }
 
@@ -131,7 +130,7 @@ void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename De
     }
 
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rm = inMat.derived();
-    std::memcpy(&out[0][0], rm.data(), Rows * Cols * sizeof(Scalar));
+    std::copy(rm.data(), rm.data() + rm.size(), &out[0][0]);
 }
 
 /**
@@ -173,7 +172,7 @@ void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rm = inMat.derived();
 
     if (stride == 1) {
-        std::memcpy(out + offset, rm.data(), count * sizeof(Scalar));
+        std::copy(rm.data(), rm.data() + rm.size(), out + offset);
     } else {
         const Scalar* src = rm.data();
         std::size_t idx = offset;
@@ -194,7 +193,7 @@ void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
  */
 template <typename ScalarT, int size>
 void eigenVectorToCArray(const Eigen::Vector<ScalarT, size>& inVec, ScalarT* outArray) {
-    memcpy(outArray, inVec.data(), size * sizeof(ScalarT));
+    std::copy(inVec.data(), inVec.data() + size, outArray);
 }
 
 /**
