@@ -152,31 +152,32 @@ template <class Derived, std::size_t Size>
 void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
                               typename Derived::Scalar (&out)[Size],
                               std::size_t offset,
-                              const std::size_t stride = 1) {
+                              const std::size_t stride = 1U) {
     using Scalar = Derived::Scalar;
 
     const auto count = static_cast<std::size_t>(inMat.size());
-    if (count == 0) return;
+    if (count == 0U) {
+        return;
+    }
 
-    if (stride == 0 && count > 1) {
+    if (stride == 0U && count > 1U) {
         std::terminate();
     }
 
     // Capacity check: last index must be < N
-    const std::size_t last_index = offset + (count - 1) * stride;
-    if (last_index >= Size) {
+    if (const std::size_t last_index = offset + (count - 1U) * stride; last_index >= Size) {
         std::terminate();
     }
 
     // Make a contiguous row-major buffer regardless of input layout
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rm = inMat.derived();
 
-    if (stride == 1) {
+    if (stride == 1U) {
         std::copy(rm.data(), rm.data() + rm.size(), out + offset);
     } else {
         const Scalar* src = rm.data();
         std::size_t idx = offset;
-        for (std::size_t i = 0; i < count; ++i) {
+        for (std::size_t i = 0U; i < count; ++i) {
             out[idx] = src[i];
             idx += stride;
         }
