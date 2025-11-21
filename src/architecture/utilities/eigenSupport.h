@@ -1,5 +1,5 @@
-#ifndef EIGENSUPPORT
-#define EIGENSUPPORT
+#ifndef EIGEN_SUPPORT
+#define EIGEN_SUPPORT
 
 #include <architecture/utilities/eigenMRP.h>
 
@@ -399,4 +399,4 @@ Eigen::Matrix3<typename Eigen::MatrixBase<Derived>::Scalar> eigenTilde(const Eig
     return mOut;
 }
 
-#endif  // EIGENSUPPORT
+#endif  // EIGEN_SUPPORT
