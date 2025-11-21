@@ -208,9 +208,7 @@ void eigenVectorToCArray(const Eigen::Vector<ScalarT, size>& inVec, ScalarT* out
  */
 template <typename ScalarT, int rows, int cols>
 Eigen::Matrix<ScalarT, rows, cols> cArrayAsEigenMatrix(ScalarT* inArray) {
-    Eigen::Matrix<ScalarT, rows, cols> outMat;
-    outMat = Eigen::Map<Eigen::Matrix<ScalarT, rows, cols>>(inArray, outMat.rows(), outMat.cols());
-    return outMat;
+    return Eigen::Map<Eigen::Matrix<ScalarT, rows, cols>>(inArray);
 }
 
 /**
@@ -224,8 +222,7 @@ Eigen::Matrix<ScalarT, rows, cols> cArrayAsEigenMatrix(ScalarT* inArray) {
  */
 template <typename ScalarT>
 Eigen::MatrixX<ScalarT> cArrayAsEigenMatrixX(ScalarT* inArray, int nRows, int nCols) {
-    Eigen::MatrixX<ScalarT> outMat;
-    outMat.resize(nRows, nCols);
+    Eigen::MatrixX<ScalarT> outMat(nRows, nCols);
     outMat = Eigen::Map<Eigen::MatrixX<ScalarT>>(inArray, outMat.rows(), outMat.cols());
     return outMat;
 }
@@ -291,13 +288,7 @@ Eigen::Matrix3<ScalarT> cArrayAsEigenMatrix3(ScalarT* inArray) {
  */
 template <typename ScalarT>
 Eigen::Matrix3<ScalarT> c2DArrayAsEigenMatrix3(ScalarT in2DArray[3][3]) {
-    Eigen::Matrix3<ScalarT> outMat;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            outMat(i, j) = in2DArray[i][j];
-        }
-    }
-
+    Eigen::Matrix3<ScalarT> outMat = Eigen::Map<const Eigen::Matrix<ScalarT, 3, 3, Eigen::RowMajor>>(&in2DArray[0][0]);
     return outMat;
 }
 
@@ -309,14 +300,8 @@ Eigen::Matrix3<ScalarT> c2DArrayAsEigenMatrix3(ScalarT in2DArray[3][3]) {
  * @return Eigen::Vector3 containing the MRP coefficients.
  */
 template <typename ScalarT>
-Eigen::Vector3<ScalarT> eigenMrpToVector3(const Eigen::MRP<ScalarT> mrp) {
-    Eigen::Vector3<ScalarT> vec3;
-
-    vec3[0] = mrp.x();
-    vec3[1] = mrp.y();
-    vec3[2] = mrp.z();
-
-    return vec3;
+Eigen::Vector3<ScalarT> eigenMrpToVector3(const Eigen::MRP<ScalarT>& mrp) {
+    return Eigen::Vector3<ScalarT>(mrp.x(), mrp.y(), mrp.z());
 }
 
 /**
