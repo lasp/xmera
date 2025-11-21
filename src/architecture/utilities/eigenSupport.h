@@ -8,7 +8,7 @@
 #include <exception>
 
 template <class Derived>
-constexpr bool is_row_major_v = (Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0;
+inline constexpr bool is_row_major_v = (Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0;
 
 template <class Derived>
 inline constexpr bool is_fixed_v =
