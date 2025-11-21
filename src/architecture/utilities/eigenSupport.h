@@ -31,7 +31,7 @@ void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Deriv
     static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
                   "Input must be a fixed-size Eigen type.");
 
-    using Scalar = typename Derived::Scalar;
+    using Scalar = Derived::Scalar;
     constexpr int Rows = Derived::RowsAtCompileTime;
     constexpr int Cols = Derived::ColsAtCompileTime;
 
@@ -61,7 +61,7 @@ void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Deriv
  */
 template <class Derived, std::size_t Size>
 void eigenMatrixXToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[Size]) {
-    using Scalar = typename Derived::Scalar;
+    using Scalar = Derived::Scalar;
 
     // Runtime capacity check against compile-time size
     if (static_cast<std::size_t>(inMat.size()) > Size) {
@@ -92,7 +92,7 @@ void eigenMatrixToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Der
     static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
                   "Input must be a fixed-size Eigen type.");
 
-    using Scalar = typename Derived::Scalar;
+    using Scalar = Derived::Scalar;
     constexpr int R = Derived::RowsAtCompileTime;
     constexpr int C = Derived::ColsAtCompileTime;
 
@@ -123,7 +123,7 @@ void eigenMatrixToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Der
  */
 template <class Derived, std::size_t Rows, std::size_t Cols>
 void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[Rows][Cols]) {
-    using Scalar = typename Derived::Scalar;
+    using Scalar = Derived::Scalar;
 
     // Enforce shape at runtime (safer for 2-D indexing)
     if (inMat.rows() != static_cast<int>(Rows) || inMat.cols() != static_cast<int>(Cols)) {
@@ -154,7 +154,7 @@ void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
                               typename Derived::Scalar (&out)[Size],
                               std::size_t offset,
                               const std::size_t stride = 1) {
-    using Scalar = typename Derived::Scalar;
+    using Scalar = Derived::Scalar;
 
     const auto count = static_cast<std::size_t>(inMat.size());
     if (count == 0) return;
