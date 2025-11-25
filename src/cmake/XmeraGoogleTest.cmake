@@ -1,5 +1,4 @@
 option(XMERA_ENABLE_FUZZTESTS "Fetch and build fuzz targets with Google FuzzTest" OFF)
-#option(XMERA_ENABLE_SANITIZERS "Build Xmera with ASan/UBSan instrumentation" OFF)
 
 if(XMERA_ENABLE_FUZZTESTS)
   include(FetchContent)
@@ -25,6 +24,8 @@ if(XMERA_ENABLE_FUZZTESTS)
   set(ANTLR_BUILD_SHARED OFF CACHE BOOL "Disable building ANTLR4 shared library" FORCE)
 
   FetchContent_MakeAvailable(fuzztest)
+
+  fuzztest_setup_fuzzing_flags()
 endif()
 
 find_package(GTest REQUIRED)
