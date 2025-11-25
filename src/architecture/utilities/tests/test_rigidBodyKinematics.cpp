@@ -5,8 +5,47 @@
 #include "architecture/utilities/rigidBodyKinematics.hpp"
 #include "architecture/utilities/tests/rbk_float_wrappers.h"
 #include <Eigen/Dense>
+#include <algorithm>
+#include <cmath>
 #include <functional>
+#include <limits>
+#include <numbers>
 #include <random>
+#include <type_traits>
+
+/**
+ * @file test_rigidBodyKinematics.cpp
+ * @brief Comprehensive regression tests for rigid-body kinematics utilities.
+ *
+ * @section scope Scope
+ * Covers additive attitude operations (MRP/PRV/Euler), holonomic Euler-parameter constraints,
+ * every B-matrix variant (B, Binv, Bdot), conversions between DCMs and all supported
+ * parameterizations, cross-representation transforms (EP↔MRP, PRV↔Euler321, etc.),
+ * time-derivative helpers, rotation-matrix builders, and tilde matrices. Randomized sampling over
+ * wide angular ranges exposes singularity behavior and conditioning extremes.
+ *
+ * @section reference_parity Reference parity
+ * Each templated C++ routine is validated against its legacy C wrapper (via SWIG) by converting
+ * the C arrays back into Eigen objects, comparing outputs, and checking secondary invariants such as
+ * DCM orthogonality, B·Bᵀ scaling, and Euler-parameter holonomic constraints.
+ *
+ * @section relative_tolerance Relative tolerance strategy
+ * Rather than loosening global tolerances, tests rely on `rotationParameterTolerance(param)` to
+ * scale machine epsilon by max(‖param‖, 1) and a conditioning term (including a safety factor). The
+ * helper `relativeErrorNorm(actual, expected)` computes `(actual-expected).norm() /
+ * (max(expected.norm(), 1) + eps)`. Most expectations bound this relative error to keep precision
+ * requirements realistic near singular regions while keeping tight checks elsewhere.
+ *
+ * @section sections Section guide
+ * - AdditiveTest/EulerParameterTest: Ensures addition/subtraction routines preserve valid states and
+ *   match the C references, including holonomic constraints for Euler parameters.
+ * - BMatrixTypedTest: Validates all B/Binv/Bdot implementations against structural identities
+ *   (e.g., `binv * bmat ≈ I`) and reference arrays.
+ * - DcmToRepresentationTest & RepresentationTransformTest: Exercise all DCM↔representation paths and
+ *   cross-representation conversions while enforcing orthogonality and reference parity.
+ * - RepresentationDerivativesTest: Checks differential helpers, MRP switching/shadowing, rotation
+ *   matrix generation, and tilde matrices using the relative-error framework.
+ */
 
 // Test-wide Helpers
 using FloatingPointTypes = ::testing::Types<float, double>;
@@ -14,9 +53,29 @@ using FloatingPointTypes = ::testing::Types<float, double>;
 template <typename T>
 T kinematicsAccuracy() {
     if constexpr (std::is_same_v<T, float>)
-        return static_cast<T>(1e-4);
+        return static_cast<T>(1e-7);
     else
-        return static_cast<T>(1e-8);
+        return static_cast<T>(1e-15);
+}
+
+template <typename Derived>
+typename Derived::Scalar rotationParameterTolerance(const Eigen::MatrixBase<Derived>& param) {
+    using Scalar = typename Derived::Scalar;
+    const Scalar eps = std::numeric_limits<Scalar>::epsilon();
+    const Scalar magnitude = std::max<Scalar>(static_cast<Scalar>(1), param.norm());
+    const Scalar conditioning = static_cast<Scalar>(1) + magnitude + magnitude * magnitude;
+    const Scalar safetyFactor = static_cast<Scalar>(32);
+    return safetyFactor * eps * conditioning;
+}
+
+template <typename DerivedA, typename DerivedB>
+typename DerivedA::Scalar relativeErrorNorm(const Eigen::MatrixBase<DerivedA>& actual,
+                                            const Eigen::MatrixBase<DerivedB>& expected) {
+    using Scalar = typename DerivedA::Scalar;
+    static_assert(std::is_same_v<Scalar, typename DerivedB::Scalar>, "Scalar mismatch in relativeErrorNorm");
+    const Scalar eps = std::numeric_limits<Scalar>::epsilon();
+    const Scalar scale = std::max(expected.norm(), static_cast<Scalar>(1));
+    return (actual - expected).norm() / (scale + eps);
 }
 
 template <typename T>
@@ -69,7 +128,7 @@ class AdditiveTest : public ::testing::TestWithParam<AdditiveTestCase<T>> {
     using Mat3 = Eigen::Matrix<T, 3, 3>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 
     Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
@@ -122,8 +181,12 @@ void runAdditiveTest(const AdditiveTestCase<T>& param,
     Eigen::Matrix<T, 3, 1> result = param.cppFunc(a, b);
     Eigen::Matrix<T, 3, 3> dcm = param.dcmFunc(result);
 
-    EXPECT_LT((dcm * dcm.transpose() - Eigen::Matrix<T, 3, 3>::Identity()).norm(), accuracy);
-    EXPECT_LT((result - expected).norm(), accuracy);
+    const auto identity = Eigen::Matrix<T, 3, 3>::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(result), accuracy);
+    EXPECT_LT(relativeErrorNorm(dcm * dcm.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), accuracy);
+    EXPECT_LT(relativeErrorNorm(result, expected), valueTolerance);
 }
 
 class AdditiveFloatTest : public AdditiveTest<float> {};
@@ -237,7 +300,7 @@ class EulerParameterTest : public ::testing::TestWithParam<EulerTestCase<T>> {
     const T accuracy = kinematicsAccuracy<T>();
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> angleDistribution{-3.14, 3.14};
+    std::uniform_real_distribution<T> angleDistribution{-std::numbers::pi, std::numbers::pi};
 
     Vec4 randomEulerParameter() {
         T phi = angleDistribution(generator);
@@ -253,8 +316,8 @@ class EulerParameterTest : public ::testing::TestWithParam<EulerTestCase<T>> {
         Vec4 ep1 = randomEulerParameter();
         Vec4 ep2 = randomEulerParameter();
 
-        EXPECT_LT(normConstraintViolation(ep1), accuracy);
-        EXPECT_LT(normConstraintViolation(ep2), accuracy);
+        EXPECT_LT(normConstraintViolation(ep1), std::max(rotationParameterTolerance(ep1), this->accuracy));
+        EXPECT_LT(normConstraintViolation(ep2), std::max(rotationParameterTolerance(ep2), this->accuracy));
 
         T expectedArray[4] = {};
         param.cFunc(ep1.data(), ep2.data(), expectedArray);
@@ -262,10 +325,11 @@ class EulerParameterTest : public ::testing::TestWithParam<EulerTestCase<T>> {
 
         Vec4 result = param.cppFunc(ep1, ep2);
 
-        EXPECT_LT(normConstraintViolation(result), accuracy)
+        EXPECT_LT(normConstraintViolation(result), std::max(rotationParameterTolerance(result), this->accuracy))
             << "Holonomic constraint violated for test: " << param.name;
 
-        EXPECT_NEAR((result - expected).norm(), 0, accuracy) << "C/C++ mismatch for test: " << param.name;
+        const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+        EXPECT_LT(relativeErrorNorm(result, expected), valueTolerance) << "C/C++ mismatch for test: " << param.name;
     }
 };
 
@@ -318,7 +382,7 @@ class BMatrixTypedTest : public ::testing::Test {
     using Mat43 = Eigen::Matrix<T, 4, 3>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 
     Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
@@ -341,7 +405,11 @@ TYPED_TEST(BMatrixTypedTest, BinvEp) {
     else
         BinvEP(ep.data(), expectedArray);
     auto expected = cArray34ToEigenMatrix34(expectedArray);
-    EXPECT_LT((binvEp(ep) - expected).norm(), this->accuracy);
+    const auto binv = binvEp(ep);
+    const TypeParam tolerance = rotationParameterTolerance(ep);
+    const TypeParam relativeError =
+        (binv - expected).norm() / (expected.norm() + std::numeric_limits<TypeParam>::epsilon());
+    EXPECT_LT(relativeError, tolerance);
 }
 
 TYPED_TEST(BMatrixTypedTest, BinvMrp) {
@@ -352,21 +420,43 @@ TYPED_TEST(BMatrixTypedTest, BinvMrp) {
     else
         BinvMRP(mrp.data(), expectedArray);
     auto expected = cArray33ToEigenMatrix33(expectedArray);
-    EXPECT_LT(((1 + mrp.dot(mrp)) * (1 + mrp.dot(mrp)) * binvMrp(mrp) - bmatMrp(mrp).transpose()).norm(),
-              this->accuracy);
-    EXPECT_LT((binvMrp(mrp) - expected).norm(), this->accuracy);
+
+    const TypeParam tolerance = rotationParameterTolerance(mrp);
+    const TypeParam eps = std::numeric_limits<TypeParam>::epsilon();
+    const Eigen::Matrix<TypeParam, 3, 3> scaledBinv = (1 + mrp.dot(mrp)) * (1 + mrp.dot(mrp)) * binvMrp(mrp);
+    const Eigen::Matrix<TypeParam, 3, 3> transposeBmat = bmatMrp(mrp).transpose();
+    const TypeParam scaledRelativeError = (scaledBinv - transposeBmat).norm() / (transposeBmat.norm() + eps);
+    EXPECT_LT(scaledRelativeError, tolerance);
+
+    auto m = binvMrp(mrp);
+    const TypeParam relativeBinvError = (m - expected).norm() / (expected.norm() + eps);
+    EXPECT_LT(relativeBinvError, tolerance);
 }
 
 TYPED_TEST(BMatrixTypedTest, BinvPrv) {
     auto prv = this->randVec3();
+    const TypeParam relativeTolerance = rotationParameterTolerance(prv);
     TypeParam expectedArray[3][3] = {};
     if constexpr (std::is_same_v<TypeParam, float>)
         BinvPRV_float(prv.data(), expectedArray);
     else
         BinvPRV(prv.data(), expectedArray);
     auto expected = cArray33ToEigenMatrix33(expectedArray);
-    EXPECT_LT((binvPrv(prv) * bmatPrv(prv) - Eigen::Matrix<TypeParam, 3, 3>::Identity()).norm(), this->accuracy);
-    EXPECT_LT((binvPrv(prv) - expected).norm(), this->accuracy);
+
+    const Eigen::Matrix<TypeParam, 3, 3> binv = binvPrv(prv);
+    const Eigen::Matrix<TypeParam, 3, 3> bmat = bmatPrv(prv);
+    const Eigen::Matrix<TypeParam, 3, 3> product = binv * bmat;
+
+    const TypeParam traceError = std::abs(product.trace() - static_cast<TypeParam>(3.0));
+    EXPECT_LT(traceError / static_cast<TypeParam>(3.0), relativeTolerance);
+
+    const auto identity = Eigen::Matrix<TypeParam, 3, 3>::Identity();
+    const TypeParam relativeIdentityError = (product - identity).norm() / identity.norm();
+    EXPECT_LT(relativeIdentityError, relativeTolerance);
+
+    const TypeParam relativeBinvError =
+        (binv - expected).norm() / (expected.norm() + std::numeric_limits<TypeParam>::epsilon());
+    EXPECT_LT(relativeBinvError, relativeTolerance);
 }
 
 TYPED_TEST(BMatrixTypedTest, BinvEuler321) {
@@ -377,7 +467,11 @@ TYPED_TEST(BMatrixTypedTest, BinvEuler321) {
     else
         BinvEuler321(euler.data(), expectedArray);
     auto expected = cArray33ToEigenMatrix33(expectedArray);
-    EXPECT_LT((binvEulerAngles321(euler) - expected).norm(), this->accuracy);
+    const auto binv = binvEulerAngles321(euler);
+    const TypeParam tolerance = rotationParameterTolerance(euler);
+    const TypeParam relativeError =
+        (binv - expected).norm() / (expected.norm() + std::numeric_limits<TypeParam>::epsilon());
+    EXPECT_LT(relativeError, tolerance);
 }
 
 TYPED_TEST(BMatrixTypedTest, BmatEp) {
@@ -388,8 +482,13 @@ TYPED_TEST(BMatrixTypedTest, BmatEp) {
     else
         BmatEP(ep.data(), expectedArray);
     auto expected = cArray43ToEigenMatrix43(expectedArray);
-    EXPECT_LT((bmatEp(ep).transpose() * ep).norm(), this->accuracy);
-    EXPECT_LT((bmatEp(ep) - expected).norm(), this->accuracy);
+    const auto bmat = bmatEp(ep);
+    const TypeParam tolerance = rotationParameterTolerance(ep);
+    const TypeParam eps = std::numeric_limits<TypeParam>::epsilon();
+    const TypeParam orthogonalityError = (bmat.transpose() * ep).norm() / (bmat.norm() + eps);
+    EXPECT_LT(orthogonalityError, tolerance);
+    const TypeParam relativeError = (bmat - expected).norm() / (expected.norm() + eps);
+    EXPECT_LT(relativeError, tolerance);
 }
 
 TYPED_TEST(BMatrixTypedTest, BmatMrp) {
@@ -400,11 +499,18 @@ TYPED_TEST(BMatrixTypedTest, BmatMrp) {
     else
         BmatMRP(mrp.data(), expectedArray);
     auto expected = cArray33ToEigenMatrix33(expectedArray);
-    EXPECT_LT((bmatMrp(mrp).transpose() * bmatMrp(mrp) -
-               (1 + mrp.dot(mrp)) * (1 + mrp.dot(mrp)) * Eigen::Matrix<TypeParam, 3, 3>::Identity())
-                  .norm(),
-              this->accuracy);
-    EXPECT_LT((bmatMrp(mrp) - expected).norm(), this->accuracy);
+
+    const auto bmat = bmatMrp(mrp);
+    const TypeParam tolerance = rotationParameterTolerance(mrp);
+    const TypeParam eps = std::numeric_limits<TypeParam>::epsilon();
+    const Eigen::Matrix<TypeParam, 3, 3> product = bmat.transpose() * bmat;
+    const Eigen::Matrix<TypeParam, 3, 3> theoretical =
+        (1 + mrp.dot(mrp)) * (1 + mrp.dot(mrp)) * Eigen::Matrix<TypeParam, 3, 3>::Identity();
+    const TypeParam productError = (product - theoretical).norm() / (theoretical.norm() + eps);
+    EXPECT_LT(productError, tolerance);
+
+    const TypeParam relativeError = (bmat - expected).norm() / (expected.norm() + eps);
+    EXPECT_LT(relativeError, tolerance);
 }
 
 TYPED_TEST(BMatrixTypedTest, BdotMrp) {
@@ -416,7 +522,11 @@ TYPED_TEST(BMatrixTypedTest, BdotMrp) {
     else
         BdotmatMRP(mrp.data(), dmrp.data(), expectedArray);
     auto expected = cArray33ToEigenMatrix33(expectedArray);
-    EXPECT_LT((bmatDotMrp(mrp, dmrp) - expected).norm(), this->accuracy);
+
+    const TypeParam tolerance = std::max(rotationParameterTolerance(mrp), rotationParameterTolerance(dmrp));
+    const TypeParam eps = std::numeric_limits<TypeParam>::epsilon();
+    const TypeParam relativeError = (bmatDotMrp(mrp, dmrp) - expected).norm() / (expected.norm() + eps);
+    EXPECT_LT(relativeError, tolerance);
 }
 
 TYPED_TEST(BMatrixTypedTest, BmatPrv) {
@@ -427,7 +537,11 @@ TYPED_TEST(BMatrixTypedTest, BmatPrv) {
     else
         BmatPRV(prv.data(), expectedArray);
     auto expected = cArray33ToEigenMatrix33(expectedArray);
-    EXPECT_LT((bmatPrv(prv) - expected).norm(), this->accuracy);
+    const auto bmat = bmatPrv(prv);
+    const TypeParam tolerance = rotationParameterTolerance(prv);
+    const TypeParam eps = std::numeric_limits<TypeParam>::epsilon();
+    const TypeParam relativeError = (bmat - expected).norm() / (expected.norm() + eps);
+    EXPECT_LT(relativeError, tolerance);
 }
 
 TYPED_TEST(BMatrixTypedTest, BmatEuler321) {
@@ -438,7 +552,11 @@ TYPED_TEST(BMatrixTypedTest, BmatEuler321) {
     else
         BmatEuler321(euler.data(), expectedArray);
     auto expected = cArray33ToEigenMatrix33(expectedArray);
-    EXPECT_LT((bmatEulerAngles321(euler) - expected).norm(), this->accuracy);
+    const auto bmat = bmatEulerAngles321(euler);
+    const TypeParam tolerance = rotationParameterTolerance(euler);
+    const TypeParam eps = std::numeric_limits<TypeParam>::epsilon();
+    const TypeParam relativeError = (bmat - expected).norm() / (expected.norm() + eps);
+    EXPECT_LT(relativeError, tolerance);
 }
 
 // DCM to representations test
@@ -449,7 +567,7 @@ class DcmToRepresentationTest : public ::testing::Test {
     using Vec3 = Eigen::Matrix<T, 3, 1>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 };
 
@@ -471,8 +589,12 @@ TYPED_TEST(DcmToRepresentationTest, dcmToMrp) {
         C2MRP(dcmArray, expectedArray);
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
 
-    EXPECT_LT((dcm * dcm.transpose() - TestFixture::Mat3::Identity()).norm(), this->accuracy);
-    EXPECT_LT((dcmToMrp(dcm) - expected).norm(), this->accuracy);
+    const auto identity = TestFixture::Mat3::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(dcm), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dcm * dcm.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dcmToMrp(dcm), expected), valueTolerance);
 }
 
 TYPED_TEST(DcmToRepresentationTest, mrpToDcm) {
@@ -490,8 +612,12 @@ TYPED_TEST(DcmToRepresentationTest, mrpToDcm) {
     Mat3 expected = cArray33ToEigenMatrix33(expectedArray);
     Mat3 result = mrpToDcm<T>(mrp);
 
-    EXPECT_LT((result * result.transpose() - Mat3::Identity()).norm(), this->accuracy);
-    EXPECT_LT((result - expected).norm(), this->accuracy);
+    const auto identity = Mat3::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(result), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(result * result.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(result, expected), valueTolerance);
 }
 
 TYPED_TEST(DcmToRepresentationTest, dcmToPrv) {
@@ -509,8 +635,12 @@ TYPED_TEST(DcmToRepresentationTest, dcmToPrv) {
         C2PRV(dcmArray, expectedArray);
     auto expected = Eigen::Map<Eigen::Matrix<T, 3, 1>>(expectedArray);
 
-    EXPECT_LT((dcm * dcm.transpose() - TestFixture::Mat3::Identity()).norm(), this->accuracy);
-    EXPECT_LT((dcmToPrv(dcm) - expected).norm(), this->accuracy);
+    const auto identity = TestFixture::Mat3::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(dcm), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dcm * dcm.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dcmToPrv(dcm), expected), valueTolerance);
 }
 
 TYPED_TEST(DcmToRepresentationTest, prvToDcm) {
@@ -528,8 +658,12 @@ TYPED_TEST(DcmToRepresentationTest, prvToDcm) {
     Mat3 expected = cArray33ToEigenMatrix33(expectedArray);
     Mat3 result = prvToDcm<T>(prv);
 
-    EXPECT_LT((result * result.transpose() - Mat3::Identity()).norm(), this->accuracy);
-    EXPECT_LT((result - expected).norm(), this->accuracy);
+    const auto identity = Mat3::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(result), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(result * result.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(result, expected), valueTolerance);
 }
 
 TYPED_TEST(DcmToRepresentationTest, dcmToEuler321) {
@@ -547,8 +681,12 @@ TYPED_TEST(DcmToRepresentationTest, dcmToEuler321) {
         C2Euler321(dcmArray, expectedArray);
     auto expected = Eigen::Map<Eigen::Matrix<T, 3, 1>>(expectedArray);
 
-    EXPECT_LT((dcm * dcm.transpose() - TestFixture::Mat3::Identity()).norm(), this->accuracy);
-    EXPECT_LT((dcmToEulerAngles321(dcm) - expected).norm(), this->accuracy);
+    const auto identity = TestFixture::Mat3::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(dcm), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dcm * dcm.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dcmToEulerAngles321(dcm), expected), valueTolerance);
 }
 
 TYPED_TEST(DcmToRepresentationTest, eulerAngles321ToDcm) {
@@ -566,8 +704,12 @@ TYPED_TEST(DcmToRepresentationTest, eulerAngles321ToDcm) {
     Mat3 expected = cArray33ToEigenMatrix33(expectedArray);
     Mat3 result = eulerAngles321ToDcm<T>(euler);
 
-    EXPECT_LT((result * result.transpose() - Mat3::Identity()).norm(), this->accuracy);
-    EXPECT_LT((result - expected).norm(), this->accuracy);
+    const auto identity = Mat3::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(result), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(result * result.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(result, expected), valueTolerance);
 }
 
 TYPED_TEST(DcmToRepresentationTest, dcmToEulerParameter) {
@@ -585,8 +727,12 @@ TYPED_TEST(DcmToRepresentationTest, dcmToEulerParameter) {
         C2EP(dcmArray, expectedArray);
     auto expected = Eigen::Map<Eigen::Matrix<T, 4, 1>>(expectedArray);
 
-    EXPECT_LT((dcm * dcm.transpose() - TestFixture::Mat3::Identity()).norm(), this->accuracy);
-    EXPECT_LT((dcmToEp(dcm) - expected).norm(), this->accuracy);
+    const auto identity = TestFixture::Mat3::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(dcm), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dcm * dcm.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dcmToEp(dcm), expected), valueTolerance);
 }
 
 TYPED_TEST(DcmToRepresentationTest, eulerParameterToDcm) {
@@ -612,8 +758,12 @@ TYPED_TEST(DcmToRepresentationTest, eulerParameterToDcm) {
     Mat3 expected = cArray33ToEigenMatrix33(expectedArray);
     Mat3 result = epToDcm(ep);
 
-    EXPECT_LT((result * result.transpose() - Mat3::Identity()).norm(), this->accuracy);
-    EXPECT_LT((result - expected).norm(), this->accuracy);
+    const auto identity = Mat3::Identity();
+    const T orthoTolerance = std::max(rotationParameterTolerance(result), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(result * result.transpose(), identity), orthoTolerance);
+
+    const T valueTolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(result, expected), valueTolerance);
 }
 
 // Representation-to-representation tests
@@ -623,7 +773,7 @@ class RepresentationTransformTest : public ::testing::Test {
     using Vec3 = Eigen::Matrix<T, 3, 1>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 };
 
@@ -650,7 +800,8 @@ TYPED_TEST(RepresentationTransformTest, epToMrp) {
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
     Vec3 result = epToMrp<T>(ep);
 
-    EXPECT_LT((result - expected).norm(), TestFixture::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(result, expected), tolerance);
 }
 
 TYPED_TEST(RepresentationTransformTest, epToPrv) {
@@ -674,7 +825,8 @@ TYPED_TEST(RepresentationTransformTest, epToPrv) {
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
     Vec3 result = epToPrv<T>(ep);
 
-    EXPECT_LT((result - expected).norm(), TestFixture::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(result, expected), tolerance);
 }
 
 TYPED_TEST(RepresentationTransformTest, epToEulerAngles321) {
@@ -698,7 +850,8 @@ TYPED_TEST(RepresentationTransformTest, epToEulerAngles321) {
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
     Vec3 result = epToEulerAngles321<T>(ep);
 
-    EXPECT_LT((result - expected).norm(), TestFixture::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(result, expected), tolerance);
 }
 
 TYPED_TEST(RepresentationTransformTest, mrpToPrv) {
@@ -713,7 +866,8 @@ TYPED_TEST(RepresentationTransformTest, mrpToPrv) {
     else
         MRP2PRV(rep.data(), expectedArray);
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
-    EXPECT_LT((mrpToPrv<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), RepresentationTransformTest<T>::accuracy);
+    EXPECT_LT(relativeErrorNorm(mrpToPrv<T>(rep), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationTransformTest, prvToMrp) {
@@ -728,7 +882,8 @@ TYPED_TEST(RepresentationTransformTest, prvToMrp) {
     else
         PRV2MRP(rep.data(), expectedArray);
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
-    EXPECT_LT((prvToMrp<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), RepresentationTransformTest<T>::accuracy);
+    EXPECT_LT(relativeErrorNorm(prvToMrp<T>(rep), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationTransformTest, eulerAngles321ToMrp) {
@@ -743,7 +898,8 @@ TYPED_TEST(RepresentationTransformTest, eulerAngles321ToMrp) {
     else
         Euler3212MRP(rep.data(), expectedArray);
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
-    EXPECT_LT((eulerAngles321ToMrp<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), RepresentationTransformTest<T>::accuracy);
+    EXPECT_LT(relativeErrorNorm(eulerAngles321ToMrp<T>(rep), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationTransformTest, mrpToEulerAngles321) {
@@ -758,7 +914,8 @@ TYPED_TEST(RepresentationTransformTest, mrpToEulerAngles321) {
     else
         MRP2Euler321(rep.data(), expectedArray);
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
-    EXPECT_LT((mrpToEulerAngles321<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), RepresentationTransformTest<T>::accuracy);
+    EXPECT_LT(relativeErrorNorm(mrpToEulerAngles321<T>(rep), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationTransformTest, prvToEulerAngles321) {
@@ -773,7 +930,8 @@ TYPED_TEST(RepresentationTransformTest, prvToEulerAngles321) {
     else
         PRV2Euler321(rep.data(), expectedArray);
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
-    EXPECT_LT((prvToEulerAngles321<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), RepresentationTransformTest<T>::accuracy);
+    EXPECT_LT(relativeErrorNorm(prvToEulerAngles321<T>(rep), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationTransformTest, eulerAngles321ToPrv) {
@@ -788,7 +946,8 @@ TYPED_TEST(RepresentationTransformTest, eulerAngles321ToPrv) {
     else
         Euler3212PRV(rep.data(), expectedArray);
     Vec3 expected = Eigen::Map<Vec3>(expectedArray);
-    EXPECT_LT((eulerAngles321ToPrv<T>(rep) - expected).norm(), RepresentationTransformTest<T>::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), RepresentationTransformTest<T>::accuracy);
+    EXPECT_LT(relativeErrorNorm(eulerAngles321ToPrv<T>(rep), expected), tolerance);
 }
 
 // Representation Derivatives Tests
@@ -798,7 +957,7 @@ class RepresentationDerivativesTest : public ::testing::Test {
     using Vec3 = Eigen::Matrix<T, 3, 1>;
 
     std::default_random_engine generator{std::random_device{}()};
-    std::uniform_real_distribution<T> dist{-3.14, 3.14};
+    std::uniform_real_distribution<T> dist{-std::numbers::pi, std::numbers::pi};
     const T accuracy = kinematicsAccuracy<T>();
 
     Vec3 randVec3() { return Vec3(dist(generator), dist(generator), dist(generator)); }
@@ -818,7 +977,8 @@ TYPED_TEST(RepresentationDerivativesTest, dmrp) {
         dMRP(rep.data(), rate.data(), expectedArray);
 
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
-    EXPECT_LT((dmrp<T>(rep, rate) - expected).norm(), this->accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dmrp<T>(rep, rate), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationDerivativesTest, dmrpToOmega) {
@@ -833,7 +993,8 @@ TYPED_TEST(RepresentationDerivativesTest, dmrpToOmega) {
         dMRP2Omega(rep.data(), rate.data(), expectedArray);
 
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
-    EXPECT_LT((dmrpToOmega<T>(rep, rate) - expected).norm(), this->accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dmrpToOmega<T>(rep, rate), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationDerivativesTest, dprv) {
@@ -848,7 +1009,8 @@ TYPED_TEST(RepresentationDerivativesTest, dprv) {
         dPRV(rep.data(), rate.data(), expectedArray);
 
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
-    EXPECT_LT((dprv<T>(rep, rate) - expected).norm(), this->accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(dprv<T>(rep, rate), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationDerivativesTest, deuler321) {
@@ -863,7 +1025,8 @@ TYPED_TEST(RepresentationDerivativesTest, deuler321) {
         dEuler321(rep.data(), rate.data(), expectedArray);
 
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
-    EXPECT_LT((deuler321<T>(rep, rate) - expected).norm(), this->accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), this->accuracy);
+    EXPECT_LT(relativeErrorNorm(deuler321<T>(rep, rate), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationDerivativesTest, ddmrp) {
@@ -880,7 +1043,8 @@ TYPED_TEST(RepresentationDerivativesTest, ddmrp) {
         ddMRP(mrp.data(), dmrp.data(), omega.data(), domega.data(), expectedArray);
 
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
-    EXPECT_LT((ddmrp<T>(mrp, dmrp, omega, domega) - expected).norm(), TestFixture::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(ddmrp<T>(mrp, dmrp, omega, domega), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationDerivativesTest, ddmrpToOmega) {
@@ -896,7 +1060,8 @@ TYPED_TEST(RepresentationDerivativesTest, ddmrpToOmega) {
         ddMRP2dOmega(mrp.data(), dmrp.data(), ddmrp.data(), expectedArray);
 
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
-    EXPECT_LT((ddmrpTodOmega<T>(mrp, dmrp, ddmrp) - expected).norm(), TestFixture::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(ddmrpTodOmega<T>(mrp, dmrp, ddmrp), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationDerivativesTest, mrpSwitch) {
@@ -911,7 +1076,8 @@ TYPED_TEST(RepresentationDerivativesTest, mrpSwitch) {
         MRPswitch(mrp.data(), value, expectedArray);
 
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
-    EXPECT_LT((mrpSwitch<T>(mrp, value) - expected).norm(), TestFixture::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(mrpSwitch<T>(mrp, value), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationDerivativesTest, mrpShadow) {
@@ -925,7 +1091,8 @@ TYPED_TEST(RepresentationDerivativesTest, mrpShadow) {
         MRPshadow(mrp.data(), expectedArray);
 
     typename TestFixture::Vec3 expected = Eigen::Map<typename TestFixture::Vec3>(expectedArray);
-    EXPECT_LT((mrpShadow<T>(mrp) - expected).norm(), TestFixture::accuracy);
+    const T tolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(mrpShadow<T>(mrp), expected), tolerance);
 }
 
 TYPED_TEST(RepresentationDerivativesTest, rotationMatrix) {
@@ -940,7 +1107,8 @@ TYPED_TEST(RepresentationDerivativesTest, rotationMatrix) {
             Mi(angle, axis, expectedArray);
 
         Eigen::Matrix<T, 3, 3> expected = cArray33ToEigenMatrix33(expectedArray);
-        EXPECT_LT((rotationMatrix<T>(angle, axis) - expected).norm(), TestFixture::accuracy);
+        const T tolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+        EXPECT_LT(relativeErrorNorm(rotationMatrix<T>(angle, axis), expected), tolerance);
     }
 }
 
@@ -956,7 +1124,14 @@ TYPED_TEST(RepresentationDerivativesTest, tildeMatrix) {
         tilde(vec.data(), expectedArray);
 
     Eigen::Matrix<T, 3, 3> expected = cArray33ToEigenMatrix33(expectedArray);
-    EXPECT_LT((tildeMatrix<T>(vec) * vec).norm(), TestFixture::accuracy);
-    EXPECT_LT((tildeMatrix<T>(vec) * testVec - vec.cross(testVec)).norm(), TestFixture::accuracy);
-    EXPECT_LT((tildeMatrix<T>(vec) - expected).norm(), TestFixture::accuracy);
+    const auto zeroVec = TestFixture::Vec3::Zero();
+    const T zeroTolerance = std::max(rotationParameterTolerance(vec), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(tildeMatrix<T>(vec) * vec, zeroVec), zeroTolerance);
+
+    const T crossTolerance =
+        std::max({rotationParameterTolerance(vec), rotationParameterTolerance(testVec), TestFixture::accuracy});
+    EXPECT_LT(relativeErrorNorm(tildeMatrix<T>(vec) * testVec, vec.cross(testVec)), crossTolerance);
+
+    const T matrixTolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
+    EXPECT_LT(relativeErrorNorm(tildeMatrix<T>(vec), expected), matrixTolerance);
 }
