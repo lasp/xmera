@@ -16,8 +16,6 @@
           "${sourceDir}/cmake/",
         "CMAKE_BUILD_TYPE":
           "Debug",
-        "CMAKE_INSTALL_MODE":
-          "SYMLINK_OR_COPY",
         "CMAKE_INSTALL_PREFIX":
           "${sourceDir}/../dist",
         "XMERA_MODULE_ROOTS":
@@ -25,7 +23,9 @@
         "XMERA_ENABLE_GROUPS":
           "simulation;fswAlgorithms;moduleTemplates",
         "XMERA_ENABLE_INTERNAL":
-          "YES"
+          "YES",
+        "XMERA_ENABLE_FUZZTESTS":
+          "OFF"
       }
     },
     {
@@ -34,6 +34,22 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":
           "Release"
+      }
+    },
+    {
+      "name": "fuzz-smoke-test",
+      "inherits": "ci-test",
+      "cacheVariables": {
+        "XMERA_ENABLE_FUZZTESTS":
+          "ON"
+      }
+    },
+    {
+      "name": "fuzz-test",
+      "inherits": "fuzz-smoke-test",
+      "cacheVariables": {
+        "FUZZTEST_FUZZING_MODE":
+          "ON"
       }
     }
   ],

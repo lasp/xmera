@@ -1,0 +1,154 @@
+name: Nightly Long Tests
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  USERNAME: ${{ github.repository_owner }}
+  FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite"
+  VCPKG_FEATURE_FLAGS: "manifests,registries,binarycaching"
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
+  CTEST_OUTPUT_ON_FAILURE: 1
+  XMERA_FUZZTEST_CORPUS_DIR: ${{ github.workspace }}/.fuzztest_corpus
+
+jobs:
+  nightly-long:
+    name: Long tests & fuzzing (ubuntu-24.04 / Clang)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore fuzz corpus cache
+        id: fuzz-corpus-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .fuzztest_corpus
+          key: fuzz-corpus-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            fuzz-corpus-${{ runner.os }}-
+
+      - name: Ensure fuzz corpus directory exists
+        run: mkdir -p .fuzztest_corpus
+
+      - name: Install Clang 18
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-18 lld-18
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 180
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 180
+          sudo update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld-18 180
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ninja-build build-essential \
+            pkg-config autoconf automake libtool \
+            zip unzip \
+            bison swig \
+            mono-complete
+
+      - name: Setup CMake 3.28.3
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.28.3'
+
+      - name: Install vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
+          vcpkgJsonGlob: "src/vcpkg.json"
+          vcpkgConfigurationJsonGlob: "src/vcpkg-configuration.json"
+
+      - name: Add NuGet sources for vcpkg binary cache (portable)
+        env:
+          VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
+        run: |
+          set -euo pipefail
+          NUGET="$(${VCPKG_EXE} fetch nuget | tail -n 1)"
+
+          # Build the command invocation safely (handles paths with spaces)
+          if [[ "$NUGET" == *.exe ]]; then
+            NUGET_CMD=(mono "$NUGET")
+          else
+            # e.g., "nuget" shim from Mono on macOS, or a native path
+            NUGET_CMD=("$NUGET")
+          fi
+
+          echo "Using NuGet CLI: ${NUGET_CMD[*]}"
+
+          "${NUGET_CMD[@]}" sources add \
+            -Source "${FEED_URL}" \
+            -StorePasswordInClearText \
+            -Name GitHubPackages \
+            -UserName "${USERNAME}" \
+            -Password "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}"
+
+          "${NUGET_CMD[@]}" setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
+            -Source "${FEED_URL}"
+
+      - name: Configure long-test preset (ASan/UBSan fuzzing)
+        working-directory: src
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
+          CC: clang
+          CXX: clang++
+        run: cmake --preset fuzz-test
+
+      - name: Build targets
+        working-directory: src
+        env:
+          CC: clang
+          CXX: clang++
+        run: cmake --build ../build --parallel
+
+      - name: Run C/C++ tests (includes fuzz smoke)
+        working-directory: build
+        env:
+          XMERA_FUZZTEST_REPLAY_CORPUS: __ALL__
+          XMERA_FUZZTEST_REPLAY_FOR: inf
+        run: ctest --output-on-failure
+
+      - name: Run long fuzzers
+        working-directory: build
+        env:
+          ASAN_OPTIONS: detect_leaks=1:strict_string_checks=1:check_initialization_order=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1:suppressions=/dev/null
+        run: |
+          "${GITHUB_WORKSPACE}/.github/scripts/run_long_fuzzers.sh" "$(pwd)" "${GITHUB_WORKSPACE}/fuzz-logs" \
+            --fuzz-for 600s \
+            --corpus "${XMERA_FUZZTEST_CORPUS_DIR}"
+
+      - name: Archive fuzz logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-logs
+          path: fuzz-logs
+          retention-days: 7
+
+      - name: Upload fuzz corpus artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-corpus-${{ github.run_id }}
+          path: .fuzztest_corpus
+          retention-days: 7
+
+      - name: Save fuzz corpus cache
+        if: ${{ always() }}
+        uses: actions/cache/save@v4
+        with:
+          path: .fuzztest_corpus
+          key: fuzz-corpus-${{ runner.os }}-${{ github.run_id }}
