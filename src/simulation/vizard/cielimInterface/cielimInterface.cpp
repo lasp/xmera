@@ -425,6 +425,27 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
         centerOfBrightnessPayload.centerOfBrightness[1] = imageData.centerOfBrightness.value()[1] + 0.5;
     }
     this->centerOfBrightnessOutMessage.write(&centerOfBrightnessPayload, this->moduleID, currentSimNanos);
+
+    ImageDiagnosticsPayload imageDiagnosticsOutputPayload = {};
+    imageDiagnosticsOutputPayload.threshold = this->imageDiagnosticsPayload.threshold;
+    imageDiagnosticsOutputPayload.areaOfInterestCenter[0] = this->imageDiagnosticsPayload.areaOfInterestCenter[0];
+    imageDiagnosticsOutputPayload.areaOfInterestCenter[1] = this->imageDiagnosticsPayload.areaOfInterestCenter[1];
+    imageDiagnosticsOutputPayload.areaOfInterestWidthHeight[0] =
+        this->imageDiagnosticsPayload.areaOfInterestWidthHeight[0];
+    imageDiagnosticsOutputPayload.areaOfInterestWidthHeight[1] =
+        this->imageDiagnosticsPayload.areaOfInterestWidthHeight[1];
+
+    if (imageData.centerOfBrightness) {
+        imageDiagnosticsOutputPayload.centerOfBrightness[0] = imageData.centerOfBrightness.value()[0] + 0.5;
+        imageDiagnosticsOutputPayload.centerOfBrightness[1] = imageData.centerOfBrightness.value()[1] + 0.5;
+    }
+    if (imageData.brightPixels) {
+        imageDiagnosticsOutputPayload.totalBrightPixels = imageData.brightPixels.value();
+    }
+    if (imageData.coverage) {
+        imageDiagnosticsOutputPayload.coverage = imageData.coverage.value();
+    }
+    this->imageDiagnosticsOutMessage.write(&imageDiagnosticsOutputPayload, this->moduleID, currentSimNanos);
 }
 
 /*! Get the communication mode

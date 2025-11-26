@@ -72,6 +72,7 @@ class CielimInterface : public SysModel {
 
     Message<CameraImageMsgPayload> imageOutMessage;            //!< vector of vizard instrument camera output messages
     Message<OpNavCOBMsgPayload> centerOfBrightnessOutMessage;  //!< The true image center of brightness output message
+    Message<ImageDiagnosticsPayload> imageDiagnosticsOutMessage;  //!< Image diagnostics received
 
    private:
     void requestImage(uint64_t currentSimNanos);  //!<   request image and store it in output image message

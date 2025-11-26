@@ -2,6 +2,7 @@
 #define ZMQCONNECTOR_H
 
 #include "cielimMessage.pb.h"
+#include "imageDiagnostics.pb.h"
 #include <Eigen/Core>
 #include <string>
 #include <zmq.hpp>
@@ -10,6 +11,8 @@ struct ImageData {
     int32_t imageBufferLength;
     void* imageBuffer;
     std::optional<Eigen::Vector2d> centerOfBrightness;
+    std::optional<double> coverage;
+    std::optional<int32_t> brightPixels;
 };
 
 class ZmqConnector {
@@ -20,7 +23,7 @@ class ZmqConnector {
     void connect();
     [[nodiscard]] bool isConnected() const;
     void send(const cielimMessage::CielimMessage& messagePayload);
-    ImageData requestImage(size_t cameraId, bool shoudReturnImage = true);
+    ImageData requestImage(size_t cameraId, bool shoudReturnImage = true, bool shouldReturnDiagnostics = true);
     void setComPortNumber(std::string& portNumber);
     void ping();
     void init();
