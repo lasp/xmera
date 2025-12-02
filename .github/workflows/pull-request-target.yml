@@ -18,7 +18,7 @@ defaults:
 
 env:
   FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-  VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},read"
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,read"
   VCPKG_FEATURE_FLAGS: "manifests,registries,binarycaching"
   CMAKE_BUILD_PARALLEL_LEVEL: 4
   CTEST_PARALLEL_LEVEL: 4
