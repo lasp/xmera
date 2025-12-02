@@ -26,8 +26,8 @@ inline constexpr bool is_fixed_v =
  * @param inMat Matrix to copy from.
  * @param out Destination array that receives the flattened entries.
  */
-template <class Derived, std::size_t Size>
-void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[Size]) {
+template <class Derived, std::size_t size>
+void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[size]) {
     static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
                   "Input must be a fixed-size Eigen type.");
 
@@ -35,7 +35,7 @@ void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Deriv
     constexpr int Rows = Derived::RowsAtCompileTime;
     constexpr int Cols = Derived::ColsAtCompileTime;
 
-    static_assert(static_cast<std::size_t>(Rows) * static_cast<std::size_t>(Cols) == Size,
+    static_assert(static_cast<std::size_t>(Rows) * static_cast<std::size_t>(Cols) == size,
                   "Output array size must equal rows*cols of input.");
 
     if constexpr ((Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0) {
@@ -59,12 +59,12 @@ void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Deriv
  * @param inMat Matrix to copy from.
  * @param out Destination array that must hold at least `inMat.size()` values.
  */
-template <class Derived, std::size_t Size>
-void eigenMatrixXToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[Size]) {
+template <class Derived, std::size_t size>
+void eigenMatrixXToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[size]) {
     using Scalar = Derived::Scalar;
 
     // Runtime capacity check against compile-time size
-    if (static_cast<std::size_t>(inMat.size()) > Size) {
+    if (static_cast<std::size_t>(inMat.size()) > size) {
         std::terminate();
     }
 
@@ -120,12 +120,12 @@ void eigenMatrixToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Der
  * @param inMat Matrix to copy from.
  * @param out Destination 2-D array `out[Rows][Cols]`.
  */
-template <class Derived, std::size_t Rows, std::size_t Cols>
-void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[Rows][Cols]) {
+template <class Derived, std::size_t rows, std::size_t cols>
+void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[rows][cols]) {
     using Scalar = Derived::Scalar;
 
     // Enforce shape at runtime (safer for 2-D indexing)
-    if (inMat.rows() != static_cast<int>(Rows) || inMat.cols() != static_cast<int>(Cols)) {
+    if (inMat.rows() != static_cast<int>(rows) || inMat.cols() != static_cast<int>(cols)) {
         std::terminate();
     }
 
@@ -148,9 +148,9 @@ void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename De
  * @param offset Starting index in `out` for the first element.
  * @param stride Number of indices to skip between elements (default 1).
  */
-template <class Derived, std::size_t Size>
+template <class Derived, std::size_t size>
 void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
-                              typename Derived::Scalar (&out)[Size],
+                              typename Derived::Scalar (&out)[size],
                               std::size_t offset,
                               const std::size_t stride = 1U) {
     using Scalar = Derived::Scalar;
@@ -165,7 +165,7 @@ void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
     }
 
     // Capacity check: last index must be < N
-    if (const std::size_t last_index = offset + (count - 1U) * stride; last_index >= Size) {
+    if (const std::size_t last_index = offset + ((count - 1U) * stride); last_index >= size) {
         std::terminate();
     }
 
