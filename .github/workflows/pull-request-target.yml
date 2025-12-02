@@ -1,51 +1,80 @@
-name: "Pull Request NuGet Packaging"
+name: "Pull Request (Forks, NuGet cache read-only)"
 
 on:
-  workflow_run:
-    workflows:
-      - Pull Request Test
-    types:
-      - completed
+  pull_request_target:
+
+permissions:
+  contents: read
+  packages: read
+  actions: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.workflow_run.id }}
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 defaults:
   run:
     shell: bash --noprofile --norc -euo pipefail {0}
 
 env:
-  USERNAME: ${{ github.repository_owner }}
   FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite"
+  VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},read"
   VCPKG_FEATURE_FLAGS: "manifests,registries,binarycaching"
   CMAKE_BUILD_PARALLEL_LEVEL: 4
   CTEST_PARALLEL_LEVEL: 4
   CTEST_OUTPUT_ON_FAILURE: 1
 
 jobs:
-  publish-nuget:
-    name: Publish NuGet packages (ubuntu-24.04)
-    if: >
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.pull_requests[0].number != null &&
-      github.event.workflow_run.head_repository.full_name == github.repository
+  pre-commit:
     runs-on: ubuntu-24.04
-    environment:
-      name: nuget-publish
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
     permissions:
       contents: read
-      packages: write
-      actions: read
     steps:
-      - name: Checkout pull request merge commit
+      - name: Checkout PR head (no credentials)
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.workflow_run.repository.full_name }}
-          ref: ${{ format('refs/pull/{0}/merge', github.event.workflow_run.pull_requests[0].number) }}
-          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            **/pyproject.toml
+            **/requirements*.txt
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Install clang-format (Linux static binary)
+        run: |
+          sudo wget -qO /usr/local/bin/clang-format https://github.com/cpp-linter/clang-tools-static-binaries/releases/latest/download/clang-format-20_linux-amd64
+          sudo chmod a+x /usr/local/bin/clang-format
+          clang-format --version
+
+      - id: file_changes
+        uses: tj-actions/changed-files@v46
+
+      - name: Run pre-commit (changed files)
+        uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --color always --files ${{ steps.file_changes.outputs.all_changed_files }}
+
+  build-test:
+    name: Build & Test (forks, ubuntu-24.04 / py3.11)
+    runs-on: ubuntu-24.04
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    steps:
+      - name: Checkout PR head (no credentials)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -85,18 +114,11 @@ jobs:
           vcpkgJsonGlob: "src/vcpkg.json"
           vcpkgConfigurationJsonGlob: "src/vcpkg-configuration.json"
 
-      - name: Cache vcpkg build artifacts
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ runner.workspace }}/b/vcpkg/installed
-            ${{ runner.workspace }}/b/vcpkg/packages
-            ${{ runner.workspace }}/b/vcpkg/buildtrees
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('src/vcpkg.json', 'src/vcpkg-configuration.json') }}
-
-      - name: Add NuGet sources for vcpkg binary cache (portable)
+      - name: Add NuGet sources for vcpkg binary cache (read-only)
         env:
           VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
+          NUGET_USER: ${{ github.repository_owner }}
+          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           NUGET="$(${VCPKG_EXE} fetch nuget | tail -n 1)"
@@ -111,12 +133,12 @@ jobs:
 
           "${NUGET_CMD[@]}" sources add \
             -Source "${FEED_URL}" \
-            -StorePasswordInClearText \
             -Name GitHubPackages \
-            -UserName "${USERNAME}" \
-            -Password "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}"
+            -UserName "${NUGET_USER}" \
+            -Password "${NUGET_TOKEN}" \
+            -StorePasswordInClearText
 
-          "${NUGET_CMD[@]}" setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
+          "${NUGET_CMD[@]}" setapikey "${NUGET_TOKEN}" \
             -Source "${FEED_URL}"
 
       - name: Create virtual environment
@@ -133,18 +155,26 @@ jobs:
 
       - name: Configure (CMake preset)
         working-directory: src
-        run: cmake --preset ci-test
+        run: cmake --preset fuzz-smoke-test
 
       - name: Build
         working-directory: src
         run: cmake --build ../build --parallel
 
-      - name: Install Basilisk (editable)
+      - name: Install Xmera (editable)
         run: |
           source .venv/bin/activate
           cmake --install build --prefix $(pwd)/dist
           python -m pip install -e .
 
-      - name: Run C/C++ tests
+      - name: Run Python tests
+        run: |
+          source .venv/bin/activate
+          cd src
+          pytest -n auto -m "not scenarioTest"
+
+      - name: Run C/C++ unit tests (include fuzz-smoke)
         working-directory: ./build
-        run: ctest --output-on-failure
+        env:
+          CTEST_PARALLEL_LEVEL: 1
+        run: ctest --output-on-failure -LE fuzz

@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     steps:
       - uses: actions/checkout@v4
 
@@ -59,6 +60,7 @@ jobs:
     name: Build & Test (${{ matrix.os }} / py${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     if: ${{ github.event.pull_request.draft == false }}
+      && github.event.pull_request.head.repo.full_name == github.repository
     strategy:
       fail-fast: false
       matrix:
@@ -172,8 +174,6 @@ jobs:
 
       - name: Configure (CMake preset)
         working-directory: src
-        env:
-          VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
         run: cmake --preset fuzz-smoke-test
 
       - name: Build
