@@ -1,5 +1,5 @@
 # README
-test
+tes
 ### Xmera (ky-MAIR-uh)
 
 * [Summary of Xmera](docs/source/index.rst)
