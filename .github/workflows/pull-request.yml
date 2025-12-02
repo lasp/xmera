@@ -59,8 +59,7 @@ jobs:
   build-test:
     name: Build & Test (${{ matrix.os }} / py${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
-    if: ${{ github.event.pull_request.draft == false }}
-      && github.event.pull_request.head.repo.full_name == github.repository
+    if: ${{ github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository }}
     strategy:
       fail-fast: false
       matrix:
