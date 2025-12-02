@@ -89,12 +89,12 @@ void Triad::updateState(uint64_t callTime) {
         hReqHat_N = this->hHat_N.normalized();
     } else if (this->inertialAxisInput == InertialAxisInput::inputInertialHeadingMsg) {
         InertialHeadingMsgPayload inertialHeadingIn = this->inertialHeadingInMsg();
-        hReqHat_N = cArrayAsEigenVector(inertialHeadingIn.rHat_XN_N).normalized();
+        hReqHat_N = cArrayToEigenVector(inertialHeadingIn.rHat_XN_N).normalized();
     } else if (this->inertialAxisInput == InertialAxisInput::inputEphemerisMsg) {
         EphemerisMsgPayload ephemerisIn = this->ephemerisInMsg();
         NavTransMsgPayload transNavIn = this->transNavInMsg();
         hReqHat_N =
-            (cArrayAsEigenVector(ephemerisIn.r_BdyZero_N) - cArrayAsEigenVector(transNavIn.r_BN_N)).normalized();
+            (cArrayToEigenVector(ephemerisIn.r_BdyZero_N) - cArrayToEigenVector(transNavIn.r_BN_N)).normalized();
     }
 
     /*! get body frame heading */
@@ -103,10 +103,10 @@ void Triad::updateState(uint64_t callTime) {
         hRefHat_B = this->h1Hat_B.normalized();
     } else if (this->bodyAxisInput == BodyAxisInput::inputBodyHeadingMsg) {
         BodyHeadingMsgPayload bodyHeadingIn = this->bodyHeadingInMsg();
-        hRefHat_B = cArrayAsEigenVector(bodyHeadingIn.rHat_XB_B).normalized();
+        hRefHat_B = cArrayToEigenVector(bodyHeadingIn.rHat_XB_B).normalized();
     }
 
-    Eigen::MRPd sigma_BN(cArrayAsEigenVector(attNavIn.sigma_BN));
+    Eigen::MRPd sigma_BN(cArrayToEigenVector(attNavIn.sigma_BN));
     /*! define the body frame orientation DCM BN */
     Eigen::Matrix3d BN = sigma_BN.toRotationMatrix().transpose();
 
@@ -114,7 +114,7 @@ void Triad::updateState(uint64_t callTime) {
     Eigen::Vector3d a1Hat_B = this->a1Hat_B.normalized();
 
     /*! read Sun direction in B frame from the attNav message */
-    Eigen::Vector3d rHat_SB_B = cArrayAsEigenVector(attNavIn.vehSunPntBdy).normalized();
+    Eigen::Vector3d rHat_SB_B = cArrayToEigenVector(attNavIn.vehSunPntBdy).normalized();
 
     Eigen::Vector3d rHat_SB_N;
     rHat_SB_N = BN.transpose() * rHat_SB_B;

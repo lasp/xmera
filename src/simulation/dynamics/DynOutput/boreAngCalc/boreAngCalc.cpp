@@ -69,10 +69,10 @@ void BoreAngCalc::ReadInputs() {
 */
 void BoreAngCalc::computeCelestialAxisPoint() {
     // Convert planet and body data to Eigen variables
-    Eigen::Vector3d r_BN_N = cArrayAsEigenVector(this->localState.r_BN_N);           // spacecraft's inertial position
-    Eigen::Vector3d v_BN_N = cArrayAsEigenVector(this->localState.v_BN_N);           // spacecraft''s inertial velocity
-    Eigen::Vector3d r_PN_N = cArrayAsEigenVector(this->localPlanet.PositionVector);  // planet's inertial position
-    Eigen::Vector3d v_PN_N = cArrayAsEigenVector(this->localPlanet.VelocityVector);  // planet's inertial velocity
+    Eigen::Vector3d r_BN_N = cArrayToEigenVector(this->localState.r_BN_N);           // spacecraft's inertial position
+    Eigen::Vector3d v_BN_N = cArrayToEigenVector(this->localState.v_BN_N);           // spacecraft''s inertial velocity
+    Eigen::Vector3d r_PN_N = cArrayToEigenVector(this->localPlanet.PositionVector);  // planet's inertial position
+    Eigen::Vector3d v_PN_N = cArrayToEigenVector(this->localPlanet.VelocityVector);  // planet's inertial velocity
 
     // Compute the relative vectors
     Eigen::Vector3d r_PB_N = r_PN_N - r_BN_N;                      // relative position vector
@@ -87,7 +87,7 @@ void BoreAngCalc::computeCelestialAxisPoint() {
     dcm_PoN.row(1) = dcm_PoN.row(2).cross(dcm_PoN.row(0));
 
     // Compute the point to body frame DCM and convert the boresight vector to the Po frame
-    Eigen::MRPd sigma_BN = cArrayAsEigenMrp(this->localState.sigma_BN);  // mrp, inertial to body frame
+    Eigen::MRPd sigma_BN = cArrayToEigenMrp(this->localState.sigma_BN);  // mrp, inertial to body frame
     Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();    // dcm, inertial to body frame
     Eigen::Matrix3d dcm_BPo = dcm_BN * dcm_PoN.transpose();              // dcm, point to body frame
     this->boreVec_Po = dcm_BPo.transpose() * this->boreVec_B;
@@ -119,7 +119,7 @@ void BoreAngCalc::computeCelestialOutputData() {
 */
 void BoreAngCalc::computeInertialOutputData() {
     // Compute the DCM from inertial do body frame
-    Eigen::MRPd sigma_BN = cArrayAsEigenMrp(this->localState.sigma_BN);  // mrp, inertial to body frame
+    Eigen::MRPd sigma_BN = cArrayToEigenMrp(this->localState.sigma_BN);  // mrp, inertial to body frame
     Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();    // dcm, inertial to body frame
 
     // Calculate the inertial heading vector

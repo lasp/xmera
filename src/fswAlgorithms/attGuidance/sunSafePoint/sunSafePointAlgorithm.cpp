@@ -35,7 +35,7 @@ AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
     this->sunDirectionInBuffer = sunDirectionInMsg;
 
     // Determine norm of measured Sun-direction vector
-    const double sHatNorm = cArrayAsEigenVector(this->sunDirectionInBuffer.vehSunPntBdy).norm();
+    const double sHatNorm = cArrayToEigenVector(this->sunDirectionInBuffer.vehSunPntBdy).norm();
 
     // Zero the attitude guidance output buffer message
     this->attGuidanceOutBuffer = AttGuidMsgPayload();
@@ -65,7 +65,7 @@ AttGuidMsgPayload SunSafePointAlgorithm::update(uint64_t callTime,
 void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
     // Compute the current sun angle error
     double dotProductNormalized =
-        this->sHatBdyCmd.dot(cArrayAsEigenVector(this->sunDirectionInBuffer.vehSunPntBdy)) / sHatNorm;
+        this->sHatBdyCmd.dot(cArrayToEigenVector(this->sunDirectionInBuffer.vehSunPntBdy)) / sHatNorm;
     dotProductNormalized = std::abs(dotProductNormalized) > 1.0 ? dotProductNormalized / std::abs(dotProductNormalized)
                                                                 : dotProductNormalized;
     double sunAngleErr = safeAcos(dotProductNormalized);
@@ -82,7 +82,7 @@ void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
             e_hat = this->eHat180_B;
             // Normal case where sun and commanded body vectors are not aligned
         } else {
-            e_hat = cArrayAsEigenVector(this->sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
+            e_hat = cArrayToEigenVector(this->sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
         }
         Eigen::Vector3d sunMnvrVec = e_hat / e_hat.norm();
         Eigen::Vector3d sigma_BR = std::tan(sunAngleErr * 0.25) * sunMnvrVec;
@@ -92,14 +92,14 @@ void SunSafePointAlgorithm::computeAttGuidanceStates(double sHatNorm) {
 
     // Rate tracking error is the body rate to bring spacecraft to rest
     this->omega_RN_B =
-        (this->sunAxisSpinRate / sHatNorm) * cArrayAsEigenVector(this->sunDirectionInBuffer.vehSunPntBdy);
+        (this->sunAxisSpinRate / sHatNorm) * cArrayToEigenVector(this->sunDirectionInBuffer.vehSunPntBdy);
 }
 
 /*! Method for computing the hub angular rate error omega_BR_B.
  @return void
 */
 void SunSafePointAlgorithm::computeHubAngularRateError(NavAttMsgPayload imuInMsg) {
-    const Eigen::Vector3d omega_BN_B = cArrayAsEigenVector(imuInMsg.omega_BN_B);  // [rad/s]
+    const Eigen::Vector3d omega_BN_B = cArrayToEigenVector(imuInMsg.omega_BN_B);  // [rad/s]
     Eigen::Vector3d omega_BR_B = omega_BN_B - this->omega_RN_B;                   // [rad/s]
 
     eigenVectorToCArray(omega_BR_B, this->attGuidanceOutBuffer.omega_BR_B);

@@ -184,9 +184,9 @@ void ThrusterStateEffector::UpdateThrusterProperties() {
             this->attachedBodyBuffer = this->attachedBodyInMsgs.at(index)();
 
             // Grab attached body variables
-            sigma_FN = cArrayAsEigenMrp(attachedBodyBuffer.sigma_BN);
-            omega_FN_F = cArrayAsEigenVector(attachedBodyBuffer.omega_BN_B);
-            r_FN_N = cArrayAsEigenVector(attachedBodyBuffer.r_BN_N);
+            sigma_FN = cArrayToEigenMrp(attachedBodyBuffer.sigma_BN);
+            omega_FN_F = cArrayToEigenVector(attachedBodyBuffer.omega_BN_B);
+            r_FN_N = cArrayToEigenVector(attachedBodyBuffer.r_BN_N);
 
             // Compute the DCM between the attached body and the hub
             dcm_FN = (sigma_FN.toRotationMatrix()).transpose();

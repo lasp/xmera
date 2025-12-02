@@ -118,7 +118,7 @@ void GroundMapping::computeAccess(uint64_t c) {
 
     Eigen::Vector3d v_BL_L =
         this->dcm_LP * this->dcm_PN *
-        (cArrayAsEigenVector(scStateInMsgBuffer.v_BN_N) -
+        (cArrayToEigenVector(scStateInMsgBuffer.v_BN_N) -
          this->w_PN.cross(r_BP_N));  // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
     eigenVectorToCArray(v_BL_L, this->accessMsgBuffer.at(c).v_BL_L);
     this->accessMsgBuffer.at(c).range_dot = v_BL_L.dot(r_BL_L) / r_BL_mag;
@@ -142,15 +142,15 @@ void GroundMapping::computeAccess(uint64_t c) {
  */
 void GroundMapping::updateInertialPositions() {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
-    this->dcm_PN = cArrayAsEigenMatrix3(*this->planetInMsgBuffer.J20002Pfix);
-    this->dcm_PN_dot = cArrayAsEigenMatrix3(*this->planetInMsgBuffer.J20002Pfix_dot);
-    this->r_PN_N = cArrayAsEigenVector(this->planetInMsgBuffer.PositionVector);
+    this->dcm_PN = cArrayToEigenMatrix3(*this->planetInMsgBuffer.J20002Pfix);
+    this->dcm_PN_dot = cArrayToEigenMatrix3(*this->planetInMsgBuffer.J20002Pfix_dot);
+    this->r_PN_N = cArrayToEigenVector(this->planetInMsgBuffer.PositionVector);
 
     // Compute the position of the body frame to the planet in the inertial frame
-    this->r_BP_N = cArrayAsEigenVector(scStateInMsgBuffer.r_BN_N) - this->r_PN_N;
+    this->r_BP_N = cArrayToEigenVector(scStateInMsgBuffer.r_BN_N) - this->r_PN_N;
     double dcm_BN[3][3];
     MRP2C(scStateInMsgBuffer.sigma_BN, dcm_BN);
-    this->dcm_NB = cArrayAsEigenMatrix3(*dcm_BN).transpose();
+    this->dcm_NB = cArrayToEigenMatrix3(*dcm_BN).transpose();
 
     // Get planet frame angular velocity vector
     Eigen::Matrix3d w_tilde_PN = -this->dcm_PN_dot * this->dcm_PN.transpose();

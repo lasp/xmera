@@ -111,8 +111,8 @@ void MsmForceTorque::readMessages() {
         this->volt.at(c) = voltInMsgBuffer.voltage;
 
         scStateInMsgsBuffer = this->scStateInMsgs.at(c)();
-        this->r_BN_NList.at(c) = cArrayAsEigenVector(scStateInMsgsBuffer.r_BN_N);
-        this->sigma_BNList.at(c) = cArrayAsEigenVector(scStateInMsgsBuffer.sigma_BN);
+        this->r_BN_NList.at(c) = cArrayToEigenVector(scStateInMsgsBuffer.r_BN_N);
+        this->sigma_BNList.at(c) = cArrayToEigenVector(scStateInMsgsBuffer.sigma_BN);
     }
 }
 

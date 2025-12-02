@@ -94,19 +94,19 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep) {
      */
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     dcm_BN = sigmaBN.toRotationMatrix().transpose();
-    magField_N = cArrayAsEigenVector(this->magInMsgBuffer.magField_N);
+    magField_N = cArrayToEigenVector(this->magInMsgBuffer.magField_N);
     magField_B = dcm_BN * magField_N;
     bTilde = eigenTilde(magField_B);
 
     /*
      * Compute torque produced by magnetic torque bars in body frame components.
-     * Since cArrayAsEigenMatrix expects a column major input, we need to
+     * Since cArrayToEigenMatrix expects a column major input, we need to
      * transpose GtMatrix_B.
      */
     double GtColMajor[3 * MAX_EFF_CNT];
     mSetZero(GtColMajor, 3, this->mtbConfigParams.numMTB);
     mTranspose(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB, GtColMajor);
-    GtMatrix_B = cArrayAsEigenMatrixX(GtColMajor, 3, this->mtbConfigParams.numMTB);
+    GtMatrix_B = cArrayToEigenMatrixX(GtColMajor, 3, this->mtbConfigParams.numMTB);
 
     /* check if dipole commands are saturating the effector */
     for (int i = 0; i < this->mtbConfigParams.numMTB; i++) {

@@ -85,8 +85,8 @@ void LambertPlanner::readMessages() {
     } else {
         this->time = navTransInMsgBuffer.timeTag;
     }
-    this->r_N = cArrayAsEigenVector(navTransInMsgBuffer.r_BN_N);
-    this->v_N = cArrayAsEigenVector(navTransInMsgBuffer.v_BN_N);
+    this->r_N = cArrayToEigenVector(navTransInMsgBuffer.r_BN_N);
+    this->v_N = cArrayToEigenVector(navTransInMsgBuffer.v_BN_N);
 }
 
 /*! This method writes the output messages each call of updateState

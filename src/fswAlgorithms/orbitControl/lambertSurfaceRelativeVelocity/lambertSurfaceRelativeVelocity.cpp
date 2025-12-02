@@ -53,11 +53,11 @@ void LambertSurfaceRelativeVelocity::readMessages() {
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
     EphemerisMsgPayload ephemerisInMsgBuffer = this->ephemerisInMsg();
 
-    this->r_BN_N = cArrayAsEigenVector(lambertProblemInMsgBuffer.r2vec);
+    this->r_BN_N = cArrayToEigenVector(lambertProblemInMsgBuffer.r2vec);
 
-    Eigen::MRPd sigma_PN = cArrayAsEigenMrp(ephemerisInMsgBuffer.sigma_BN);
+    Eigen::MRPd sigma_PN = cArrayToEigenMrp(ephemerisInMsgBuffer.sigma_BN);
     this->dcm_PN = sigma_PN.toRotationMatrix().transpose();
-    Eigen::Vector3d omega_PN_P = cArrayAsEigenVector(ephemerisInMsgBuffer.omega_BN_B);
+    Eigen::Vector3d omega_PN_P = cArrayToEigenVector(ephemerisInMsgBuffer.omega_BN_B);
     this->omega_PN_N = this->dcm_PN.transpose() * omega_PN_P;
 }
 

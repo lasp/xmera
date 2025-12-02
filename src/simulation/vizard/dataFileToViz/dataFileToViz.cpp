@@ -132,14 +132,14 @@ void DataFileToViz::setNumOfSatellites(int numSat) {
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void DataFileToViz::appendThrPos(double pos_B[3]) { this->thrPosList.push_back(cArrayAsEigenVector3(pos_B)); }
+void DataFileToViz::appendThrPos(double pos_B[3]) { this->thrPosList.push_back(cArrayToEigenVector3(pos_B)); }
 
 /*!
  Add a thruster 3d unit direction vector to the list.  The input vectors gets normalized before being added to the list.
  */
 void DataFileToViz::appendThrDir(double dir_B[3]) {
     v3Normalize(dir_B, dir_B);
-    this->thrDirList.push_back(cArrayAsEigenVector3(dir_B));
+    this->thrDirList.push_back(cArrayToEigenVector3(dir_B));
 }
 
 /*!
@@ -204,7 +204,7 @@ void DataFileToViz::appendOmegaMax(double OmegaMax) { this->rwOmegaMaxList.push_
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cArrayAsEigenVector3(pos_B)); }
+void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cArrayToEigenVector3(pos_B)); }
 
 /*!
  Add a RW spin axis unit direction vector to the list.  The input vectors gets normalized before being added to the
@@ -212,7 +212,7 @@ void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cAr
  */
 void DataFileToViz::appendRwDir(double dir_B[3]) {
     v3Normalize(dir_B, dir_B);
-    this->rwDirList.push_back(cArrayAsEigenVector3(dir_B));
+    this->rwDirList.push_back(cArrayToEigenVector3(dir_B));
 }
 
 /*! Update this module at the task rate

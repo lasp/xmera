@@ -93,8 +93,8 @@ void Spacecraft::readOptionalRefMsg() {
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
         attRefMsgBuffer = this->attRefInMsg();
-        Eigen::MRPd sigma_BN = cArrayAsEigenMrp(attRefMsgBuffer.sigma_RN);
-        Eigen::Vector3d omega_BN_N = cArrayAsEigenVector(attRefMsgBuffer.omega_RN_N);
+        Eigen::MRPd sigma_BN = cArrayToEigenMrp(attRefMsgBuffer.sigma_RN);
+        Eigen::Vector3d omega_BN_N = cArrayToEigenVector(attRefMsgBuffer.omega_RN_N);
         Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
         omega_BN_B = dcm_BN * omega_BN_N;
 
@@ -108,8 +108,8 @@ void Spacecraft::readOptionalRefMsg() {
         TransRefMsgPayload transRefMsgBuffer;
         transRefMsgBuffer = this->transRefInMsg();
 
-        r_RN_N = cArrayAsEigenVector(transRefMsgBuffer.r_RN_N);
-        v_RN_N = cArrayAsEigenVector(transRefMsgBuffer.v_RN_N);
+        r_RN_N = cArrayToEigenVector(transRefMsgBuffer.r_RN_N);
+        v_RN_N = cArrayToEigenVector(transRefMsgBuffer.v_RN_N);
 
         this->hubR_N->setState(r_RN_N);
         this->hubV_N->setState(v_RN_N);

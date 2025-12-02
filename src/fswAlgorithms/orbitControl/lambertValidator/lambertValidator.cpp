@@ -114,21 +114,21 @@ void LambertValidator::readMessages() {
     }
 
     // current spacecraft state
-    this->r_N = cArrayAsEigenVector(navTransInMsgBuffer.r_BN_N);
-    this->v_N = cArrayAsEigenVector(navTransInMsgBuffer.v_BN_N);
+    this->r_N = cArrayToEigenVector(navTransInMsgBuffer.r_BN_N);
+    this->v_N = cArrayToEigenVector(navTransInMsgBuffer.v_BN_N);
 
     // targeted position
-    this->r_TN_N = cArrayAsEigenVector(lambertProblemInMsgBuffer.r2vec);
+    this->r_TN_N = cArrayToEigenVector(lambertProblemInMsgBuffer.r2vec);
 
     // lambert solution and performance message content
     if (this->lambertSolutionSpecifier == 1) {
-        this->vLambert_N = cArrayAsEigenVector(lambertSolutionInMsgBuffer.v1);
+        this->vLambert_N = cArrayToEigenVector(lambertSolutionInMsgBuffer.v1);
         this->validLambert = lambertSolutionInMsgBuffer.valid;
         this->xLambert = lambertPerformanceInMsgBuffer.x;
         this->numIterLambert = lambertPerformanceInMsgBuffer.numIter;
         this->errXLambert = lambertPerformanceInMsgBuffer.errX;
     } else if (this->lambertSolutionSpecifier == 2) {
-        this->vLambert_N = cArrayAsEigenVector(lambertSolutionInMsgBuffer.v1Sol2);
+        this->vLambert_N = cArrayToEigenVector(lambertSolutionInMsgBuffer.v1Sol2);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
         this->xLambert = lambertPerformanceInMsgBuffer.xSol2;
         this->numIterLambert = lambertPerformanceInMsgBuffer.numIterSol2;
@@ -219,7 +219,7 @@ std::array<Eigen::VectorXd, NUM_INITIALSTATES> LambertValidator::getInitialState
     eigenVectorToCArray(this->rm_N, rc_N);
     eigenVectorToCArray(this->vm_N, vc_N);
     hillFrame(rc_N, vc_N, HN);
-    this->dcm_HN = c2DArrayAsEigenMatrix3(HN);
+    this->dcm_HN = c2DArrayToEigenMatrix3(HN);
 
     // vectors expressed in Hill frame
     Eigen::Vector3d rm_H = this->dcm_HN * this->rm_N;

@@ -69,7 +69,7 @@ void SmallBodyNavUKF::readMessages() {
 */
 void SmallBodyNavUKF::processUT(uint64_t currentSimNanos) {
     /* Read angular velocity of the small body fixed frame */
-    this->omega_AN_A = cArrayAsEigenVector(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
+    this->omega_AN_A = cArrayToEigenVector(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
 
     /* Declare matrix to store sigma points spread */
     Eigen::MatrixXd X_sigma_k;
@@ -192,7 +192,7 @@ void SmallBodyNavUKF::measurementUT() {
     /* Extract dcm of the small body, it transforms from inertial to small body fixed frame */
     double dcm_AN_array[3][3];
     MRP2C(asteroidEphemerisInMsgBuffer.sigma_BN, dcm_AN_array);
-    this->dcm_AN = cArrayAsEigenMatrix3(*dcm_AN_array);
+    this->dcm_AN = cArrayToEigenMatrix3(*dcm_AN_array);
 
     /* Add process noise covariance */
     this->R_k1_ = this->R_k1_ + this->dcm_AN * this->R_meas * this->dcm_AN.transpose();
@@ -204,13 +204,13 @@ void SmallBodyNavUKF::measurementUT() {
 void SmallBodyNavUKF::kalmanUpdate() {
     /* Read attitude MRP of the small body fixed frame w.r.t. inertial */
     Eigen::Vector3d sigma_AN;
-    sigma_AN = cArrayAsEigenVector(asteroidEphemerisInMsgBuffer.sigma_BN);
+    sigma_AN = cArrayToEigenVector(asteroidEphemerisInMsgBuffer.sigma_BN);
 
     /* Subtract the asteroid position from the spacecraft position */
     Eigen::VectorXd y_k1;
     y_k1.setZero(this->numMeas);
-    y_k1.segment(0, 3) = this->dcm_AN * (cArrayAsEigenVector(navTransInMsgBuffer.r_BN_N) -
-                                         cArrayAsEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
+    y_k1.segment(0, 3) = this->dcm_AN * (cArrayToEigenVector(navTransInMsgBuffer.r_BN_N) -
+                                         cArrayToEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
 
     /* Compute Kalman gain */
     this->K = this->H * this->R_k1_.inverse();

@@ -10,12 +10,12 @@
 */
 CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayload guidInMsg) {
     // Compute hub inertial angular velocity in B-frame components
-    Eigen::Vector3d omega_BR_B = cArrayAsEigenVector(guidInMsg.omega_BR_B);
-    Eigen::Vector3d omega_RN_B = cArrayAsEigenVector(guidInMsg.omega_RN_B);
+    Eigen::Vector3d omega_BR_B = cArrayToEigenVector(guidInMsg.omega_BR_B);
+    Eigen::Vector3d omega_RN_B = cArrayToEigenVector(guidInMsg.omega_RN_B);
     Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
 
-    Eigen::Vector3d sigma_BR = cArrayAsEigenVector(guidInMsg.sigma_BR);
-    Eigen::Vector3d domega_RN_B = cArrayAsEigenVector(guidInMsg.domega_RN_B);
+    Eigen::Vector3d sigma_BR = cArrayToEigenVector(guidInMsg.sigma_BR);
+    Eigen::Vector3d domega_RN_B = cArrayToEigenVector(guidInMsg.domega_RN_B);
 
     // Compute required attitude control torque vector
     Eigen::Vector3d Lr = -this->K * sigma_BR - this->P * omega_BR_B + omega_RN_B.cross(this->ISCPntB_B * omega_BN_B) +
@@ -34,7 +34,7 @@ CmdTorqueBodyMsgPayload MrpPDAlgorithm::update(uint64_t callTime, AttGuidMsgPayl
  @param vehicleConfigIn Vehicle config input
 */
 void MrpPDAlgorithm::setSpacecraftInertia(VehicleConfigMsgPayload vehicleConfigIn) {
-    this->ISCPntB_B = cArrayAsEigenMatrix3(vehicleConfigIn.ISCPntB_B);
+    this->ISCPntB_B = cArrayToEigenMatrix3(vehicleConfigIn.ISCPntB_B);
 }
 
 /*! Setter method for the derivative gain P.

@@ -68,8 +68,8 @@ void LambertSolver::readMessages() {
         this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
     }
     this->solverMethod = lambertProblemInMsgBuffer.solverMethod;
-    this->r1vec = cArrayAsEigenVector(lambertProblemInMsgBuffer.r1vec);
-    this->r2vec = cArrayAsEigenVector(lambertProblemInMsgBuffer.r2vec);
+    this->r1vec = cArrayToEigenVector(lambertProblemInMsgBuffer.r1vec);
+    this->r2vec = cArrayToEigenVector(lambertProblemInMsgBuffer.r2vec);
 }
 
 /*! This method writes the output messages each call of updateState

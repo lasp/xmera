@@ -87,7 +87,7 @@ bool SpacecraftLocation::ReadMessages() {
 
     // read in primary spacecraft states
     this->primaryScStatesBuffer = this->primaryScStateInMsg();
-    this->r_BN_N = cArrayAsEigenVector(this->primaryScStatesBuffer.r_BN_N);
+    this->r_BN_N = cArrayToEigenVector(this->primaryScStatesBuffer.r_BN_N);
 
     // read in the spacecraft state messages
     bool scRead;
@@ -128,11 +128,11 @@ void SpacecraftLocation::computeAccess() {
     Eigen::Vector3d r_LP_P;  //!< [m] spacecraft Location relative to planet origin vector
 
     // get planet position and orientation relative to inertial frame
-    this->dcm_PN = cArrayAsEigenMatrix3(*this->planetState.J20002Pfix);
-    this->r_PN_N = cArrayAsEigenVector(this->planetState.PositionVector);
+    this->dcm_PN = cArrayToEigenMatrix3(*this->planetState.J20002Pfix);
+    this->r_PN_N = cArrayToEigenVector(this->planetState.PositionVector);
 
     // compute primary spacecraft relative to planet
-    Eigen::MRPd sigma_BN = cArrayAsEigenMrp(this->primaryScStatesBuffer.sigma_BN);
+    Eigen::MRPd sigma_BN = cArrayToEigenMrp(this->primaryScStatesBuffer.sigma_BN);
     Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
     r_LP_P = this->dcm_PN * (this->r_BN_N + dcm_NB * this->r_LB_B - this->r_PN_N);
 
@@ -145,7 +145,7 @@ void SpacecraftLocation::computeAccess() {
         Eigen::Vector3d r_SP_P;  // other satellite position relative to planet
         Eigen::Vector3d r_SL_P;  // other satellite position relative to primary spacecraft location L
 
-        r_SN_N = cArrayAsEigenVector(this->scStatesBuffer.at(c).r_BN_N);
+        r_SN_N = cArrayToEigenVector(this->scStatesBuffer.at(c).r_BN_N);
         r_SP_P = this->dcm_PN * (r_SN_N - this->r_PN_N);
 
         // do affine scaling to map ellipsoid to sphere

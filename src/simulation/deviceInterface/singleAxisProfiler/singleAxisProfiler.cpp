@@ -63,7 +63,7 @@ Eigen::Vector3d SingleAxisProfiler::computeSigma_FM(double theta) {
     // Compute the MRP sigma_FM representing the current spinning body attitude relative to the mount frame
     double sigma_FM_array[3];
     C2MRP(dcm_FM, sigma_FM_array);
-    return cArrayAsEigenVector(sigma_FM_array);
+    return cArrayToEigenVector(sigma_FM_array);
 }
 
 /*! Setter method for the spinning body rotation axis.

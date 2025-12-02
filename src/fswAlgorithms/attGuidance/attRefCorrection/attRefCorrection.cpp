@@ -24,7 +24,7 @@ void AttRefCorrection::reset(uint64_t callTime) {
 void AttRefCorrection::updateState(uint64_t const callTime) {
     // read in the input messages
     AttRefMsgPayload attRefMsgBuffer = this->attRefInMsg();
-    Eigen::Vector3d sigma_RN_local = cArrayAsEigenVector3(attRefMsgBuffer.sigma_RN);
+    Eigen::Vector3d sigma_RN_local = cArrayToEigenVector3(attRefMsgBuffer.sigma_RN);
 
     // compute corrected reference orientation
     sigma_RN_local = addMrp(sigma_RN_local, this->sigma_RR0);

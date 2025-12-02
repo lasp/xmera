@@ -12,10 +12,10 @@ std::tuple<NavTransMsgPayload, FilterMsgPayload> EphemDifferenceWithUncertaintyA
     double timeTag = ephemSecondaryInBuffer.timeTag;
 
     /*! - compute relative states */
-    Eigen::Vector3d r_1_N = cArrayAsEigenVector(ephemBaseInBuffer.r_BdyZero_N);
-    Eigen::Vector3d v_1_N = cArrayAsEigenVector(ephemBaseInBuffer.v_BdyZero_N);
-    Eigen::Vector3d r_2_N = cArrayAsEigenVector(ephemSecondaryInBuffer.r_BdyZero_N);
-    Eigen::Vector3d v_2_N = cArrayAsEigenVector(ephemSecondaryInBuffer.v_BdyZero_N);
+    Eigen::Vector3d r_1_N = cArrayToEigenVector(ephemBaseInBuffer.r_BdyZero_N);
+    Eigen::Vector3d v_1_N = cArrayToEigenVector(ephemBaseInBuffer.v_BdyZero_N);
+    Eigen::Vector3d r_2_N = cArrayToEigenVector(ephemSecondaryInBuffer.r_BdyZero_N);
+    Eigen::Vector3d v_2_N = cArrayToEigenVector(ephemSecondaryInBuffer.v_BdyZero_N);
 
     Eigen::Vector3d r_21_N = r_2_N - r_1_N;
     Eigen::Vector3d v_21_N = v_2_N - v_1_N;

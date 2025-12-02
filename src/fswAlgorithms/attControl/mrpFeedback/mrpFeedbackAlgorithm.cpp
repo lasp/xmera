@@ -16,7 +16,7 @@ void MrpFeedbackAlgorithm::reset(VehicleConfigMsgPayload vehConfigMsg,
                                  RWArrayConfigMsgPayload rwConfigMsg,
                                  bool rwIsLinked) {
     /*! - copy over spacecraft inertia tensor */
-    this->ISCPntB_B = cArrayAsEigenMatrix3(vehConfigMsg.ISCPntB_B);
+    this->ISCPntB_B = cArrayToEigenMatrix3(vehConfigMsg.ISCPntB_B);
 
     /*! - zero the number of RW by default */
     this->rwConfigParams.numRW = 0;
@@ -86,7 +86,7 @@ MrpFeedbackOutput MrpFeedbackAlgorithm::update(uint64_t callTime,
     Eigen::Vector3d Lr = this->K * sigma_BR + this->P * omega_BR_B + this->P * this->Ki * z;
 
     Eigen::Matrix<double, 3, RW_EFF_CNT> G_s_B =
-        cArrayAsEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
+        cArrayToEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
 
     Eigen::Vector3d H_B = this->ISCPntB_B * omega_BN_B;
     for (uint32_t i = 0; i < this->rwConfigParams.numRW; i++) {

@@ -54,7 +54,7 @@ void RwMotorTorqueAlgorithm::reset(RWArrayConfigMsgPayload& rwParamsInMsg, bool 
      and create the [Gs] projection matrix once */
     if (!rwAvailIsLinked) {
         this->numAvailRW = this->rwConfigParams.numRW;
-        this->G_s_B = cArrayAsEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
+        this->G_s_B = cArrayToEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
     }
 }
 
@@ -76,11 +76,11 @@ RwMotorTorqueMsgPayload RwMotorTorqueAlgorithm::update(CmdTorqueBodyMsgPayload& 
     /*! - zero control torque and RW motor torque variables */
     Eigen::Vector<double, RW_EFF_CNT> us = Eigen::Vector<double, RW_EFF_CNT>::Zero();
 
-    Eigen::Vector3d Lr_B = cArrayAsEigenVector(LrInputMsg.torqueRequestBody);
+    Eigen::Vector3d Lr_B = cArrayToEigenVector(LrInputMsg.torqueRequestBody);
 
     /*! - Check if the optional second message is provided */
     if (cmdTorque2IsLinked) {
-        Lr_B += cArrayAsEigenVector(LrInput2Msg.torqueRequestBody);
+        Lr_B += cArrayToEigenVector(LrInput2Msg.torqueRequestBody);
     }
 
     /*! - Check if RW availability message is available */
@@ -91,7 +91,7 @@ RwMotorTorqueMsgPayload RwMotorTorqueAlgorithm::update(CmdTorqueBodyMsgPayload& 
         /*! - create the current [Gs] projection matrix with the available RWs */
         for (uint32_t i = 0; i < this->rwConfigParams.numRW; ++i) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) {
-                this->G_s_B.col(numAvailWheels) = cArrayAsEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
+                this->G_s_B.col(numAvailWheels) = cArrayToEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
                 numAvailWheels += 1;
             }
         }

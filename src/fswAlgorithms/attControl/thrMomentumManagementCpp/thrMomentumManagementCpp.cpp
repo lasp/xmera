@@ -26,7 +26,7 @@ void ThrMomentumManagementCpp::updateState(uint64_t currentSimNanos) {
         Eigen::Vector3d hs_B = Eigen::Vector3d::Zero();
         for (int i = 0; i < this->rwConfigParams.numRW; i++) {
             hs_B += this->rwConfigParams.JsList[i] * rwSpeedMsg.wheelSpeeds[i] *
-                    cArrayAsEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
+                    cArrayToEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
         }
 
         if (this->hd_B.norm() > 0) {

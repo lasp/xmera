@@ -173,7 +173,7 @@ void PositionODuKF::readFilterMeasurements() {
     this->measurementRead = false;
     if (this->cameraPosBuffer.valid) {
         /*! - Read measurement and cholesky decomposition its noise*/
-        this->obs = cArrayAsEigenVector(this->cameraPosBuffer.cameraPos_N) * 1E-3;  // Change units to km
+        this->obs = cArrayToEigenVector(this->cameraPosBuffer.cameraPos_N) * 1E-3;  // Change units to km
         this->measurementNoise.resize(this->obs.size(), this->obs.size());
         this->measurementNoise << this->measNoiseSD * this->measNoiseSD, 0, 0, 0, this->measNoiseSD * this->measNoiseSD,
             0, 0, 0, this->measNoiseSD * this->measNoiseSD;

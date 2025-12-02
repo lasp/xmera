@@ -137,9 +137,9 @@ void GroundLocation::WriteMessages(uint64_t CurrentClock) {
 
 void GroundLocation::updateInertialPositions() {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
-    this->dcm_PN = cArrayAsEigenMatrix3(*this->planetState.J20002Pfix);
-    this->dcm_PN_dot = cArrayAsEigenMatrix3(*this->planetState.J20002Pfix_dot);
-    this->r_PN_N = cArrayAsEigenVector(this->planetState.PositionVector);
+    this->dcm_PN = cArrayToEigenMatrix3(*this->planetState.J20002Pfix);
+    this->dcm_PN_dot = cArrayToEigenMatrix3(*this->planetState.J20002Pfix_dot);
+    this->r_PN_N = cArrayToEigenVector(this->planetState.PositionVector);
     // Then, transpose it to get the planet to inertial frame
     this->r_LP_N = this->dcm_PN.transpose() * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N / this->r_LP_N.norm();
@@ -163,7 +163,7 @@ void GroundLocation::computeAccess() {
          scStatesMsgIt != scStatesBuffer.end();
          scStatesMsgIt++, accessMsgIt++) {
         //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
-        Eigen::Vector3d r_BP_N = cArrayAsEigenVector(scStatesMsgIt->r_BN_N) - this->r_PN_N;
+        Eigen::Vector3d r_BP_N = cArrayToEigenVector(scStatesMsgIt->r_BN_N) - this->r_PN_N;
         Eigen::Vector3d r_BL_N = r_BP_N - this->r_LP_N;
         auto r_BL_mag = r_BL_N.norm();
         Eigen::Vector3d relativeHeading_N = r_BL_N / r_BL_mag;
@@ -180,7 +180,7 @@ void GroundLocation::computeAccess() {
 
         Eigen::Vector3d v_BL_L =
             this->dcm_LP * this->dcm_PN *
-            (cArrayAsEigenVector(scStatesMsgIt->v_BN_N) -
+            (cArrayToEigenVector(scStatesMsgIt->v_BN_N) -
              this->w_PN.cross(r_BP_N));  // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
         eigenVectorToCArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L) / r_BL_mag;

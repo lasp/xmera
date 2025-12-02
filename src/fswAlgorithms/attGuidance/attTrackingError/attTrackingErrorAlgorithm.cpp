@@ -26,24 +26,24 @@ AttGuidMsgPayload AttTrackingErrorAlgorithm::update(uint64_t callTime,
     Eigen::Vector3d sigma_RR0 = -1 * this->sigma_R0R;
 
     // Compute MRP from inertial to updated reference frame sigma_RN
-    Eigen::Vector3d sigma_RN = cArrayAsEigenVector(attRefInMsg.sigma_RN);
+    Eigen::Vector3d sigma_RN = cArrayToEigenVector(attRefInMsg.sigma_RN);
     sigma_RN = addMrp(sigma_RN, sigma_RR0);
 
     // Compute attitude error sigma_BR
-    Eigen::Vector3d sigma_BN = cArrayAsEigenVector(attNavInMsg.sigma_BN);
+    Eigen::Vector3d sigma_BN = cArrayToEigenVector(attNavInMsg.sigma_BN);
     Eigen::Vector3d sigma_BR = subMrp(sigma_BN, sigma_RN);
 
     // Compute angular velocity reference body frame components omega_RN_B
     Eigen::Matrix3d dcm_BN = mrpToDcm(sigma_BN);
-    Eigen::Vector3d omega_RN_N = cArrayAsEigenVector(attRefInMsg.omega_RN_N);
+    Eigen::Vector3d omega_RN_N = cArrayToEigenVector(attRefInMsg.omega_RN_N);
     Eigen::Vector3d omega_RN_B = dcm_BN * omega_RN_N;
 
     // Compute angular velocity error omega_BR
-    Eigen::Vector3d omega_BN_B = cArrayAsEigenVector(attNavInMsg.omega_BN_B);
+    Eigen::Vector3d omega_BN_B = cArrayToEigenVector(attNavInMsg.omega_BN_B);
     Eigen::Vector3d omega_BR_B = omega_BN_B - omega_RN_B;
 
     // Compute reference angular velocity rate in body frame components domega_RN_B
-    Eigen::Vector3d domega_RN_N = cArrayAsEigenVector(attRefInMsg.domega_RN_N);
+    Eigen::Vector3d domega_RN_N = cArrayToEigenVector(attRefInMsg.domega_RN_N);
     Eigen::Vector3d domega_RN_B = dcm_BN * domega_RN_N;
 
     // Write attitude guidance output message

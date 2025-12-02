@@ -16,7 +16,7 @@
 void RateServoFullNonlinearAlgorithm::reset(VehicleConfigMsgPayload vehConfigMsg,
                                             RWArrayConfigMsgPayload rwConfigMsg,
                                             bool rwIsLinked) {
-    this->ISCPntB_B = cArrayAsEigenMatrix3(vehConfigMsg.ISCPntB_B);
+    this->ISCPntB_B = cArrayToEigenMatrix3(vehConfigMsg.ISCPntB_B);
 
     this->rwConfigParams.numRW = 0;
     if (rwIsLinked) {
@@ -88,7 +88,7 @@ CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(uint64_t callTim
     Eigen::Vector3d Lr = this->P * omega_BBast_B + this->Ki * this->z;
 
     Eigen::Matrix<double, 3, RW_EFF_CNT> G_s_B =
-        cArrayAsEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
+        cArrayToEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
 
     Eigen::Vector3d H_B = this->ISCPntB_B * omega_BN_B;
     for (uint32_t i = 0; i < this->rwConfigParams.numRW; i++) {
