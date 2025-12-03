@@ -109,7 +109,7 @@ public:
     DynamicsModel<EkfStateVector<STATE_SIZE>> dynamics;
     std::function<MatrixSSd(double time, EkfStateVector<STATE_SIZE> state)> dynamicsTransitionMatrix;
     //! [-] process noise matrix
-    Eigen::Matrix<double, STATE_SIZE, STATE_SIZE> processNoise;
+    std::function<MatrixSSd(double time)> processNoise;
 
     //! [-] State estimate for time TimeTag
     EkfStateVector<STATE_SIZE> state;
@@ -220,14 +220,8 @@ public:
 
         /*! - Update the covariance Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T
          * The process noise mapping will depend on the number of "rate" states */
-        Eigen::Matrix<double, 2 * STATE_SIZE, STATE_SIZE> processNoiseMapping;
-        processNoiseMapping.block(0, 0, STATE_SIZE, STATE_SIZE) =
-            Eigen::Matrix<double, STATE_SIZE, STATE_SIZE>::Identity() * (pow(dt, 2) / 2);
-        processNoiseMapping.block(STATE_SIZE, 0, STATE_SIZE, STATE_SIZE) =
-            Eigen::Matrix<double, STATE_SIZE, STATE_SIZE>::Identity() * dt;
-
         this->covar = stateTransitionMatrix * this->covar * stateTransitionMatrix.transpose() +
-                      processNoiseMapping * this->processNoise * processNoiseMapping.transpose();
+                      this->processNoise(dt);
     }
 
     /*! Perform the measurement update for the kalman filter.
