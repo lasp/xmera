@@ -47,6 +47,13 @@ void LinearODeKF::customReset() {
 
         return dynMatrix;
     };
+
+    this->ekf.processNoise = [this](double dt) {
+        Eigen::Matrix<double, 3 + 3, 3> processNoiseMapping;
+        processNoiseMapping.block(0, 0, 3, 3) = Eigen::Matrix<double, 3, 3>::Identity() * (pow(dt, 2) / 2);
+        processNoiseMapping.block(3, 0, 3, 3) = Eigen::Matrix<double, 3, 3>::Identity() * dt;
+        return processNoiseMapping * this->processNoise * processNoiseMapping.transpose();
+    };
 }
 
 /*! Write the output data to appropriate messages given the state components

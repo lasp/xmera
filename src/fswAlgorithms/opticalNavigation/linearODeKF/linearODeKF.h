@@ -101,6 +101,7 @@ class LinearODeKF : public SysModel {
 
    private:
     EkfInterface<3, 3> ekf{FilterType::Classical};
+    Eigen::Matrix<double, 3, 3> processNoise = Eigen::Matrix<double, 3, 3>::Identity();
     double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
     xmera::measurement_queue<LinearODeKFMeasurementModel, 1> measurements = {};  //!< [Measurements] All
     uint64_t previousSimNanos = 0;
