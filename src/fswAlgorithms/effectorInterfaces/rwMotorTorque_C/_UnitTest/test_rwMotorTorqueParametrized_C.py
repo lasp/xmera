@@ -1,6 +1,27 @@
-"""
-Module Name:        rwMotorTorque
-"""
+#
+# ISC License
+#
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+
+#
+#   Unit Test Script
+#   Module Name:        rwMotorTorque
+#   Author:             Hanspeter Schaub
+#   Creation Date:      July 4, 2016
+#
 
 import inspect
 import os
@@ -17,10 +38,10 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import all of the modules that we are going to be called in this simulation
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import unitTestSupport
-from xmera.fswAlgorithms import rwMotorTorque
+from xmera.fswAlgorithms import rwMotorTorque_C
 from xmera.utilities import macros
 from xmera.architecture import messaging
-from Support import results_rwMotorTorque
+from Support import results_rwMotorTorque_C
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -36,7 +57,7 @@ from Support import results_rwMotorTorque
 
 
 # update "module" in this function name to reflect the module name
-def test_rwMotorTorque(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg):
+def test_rwMotorTorque_C(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques, RWAvailMsg)
@@ -59,7 +80,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
 
 
     # Construct algorithm and associated C++ container
-    module = rwMotorTorque.RwMotorTorque()
+    module = rwMotorTorque_C.RwMotorTorque_C()
     module.modelTag = "rwMotorTorque"
 
 
@@ -174,7 +195,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
         module.rwAvailInMsg.subscribeTo(rwAvailInMsg)
 
     else:
-        avail = [rwMotorTorque.AVAILABLE] * numWheels  # this is used purely for the python level solution
+        avail = [rwMotorTorque_C.AVAILABLE] * numWheels  # this is used purely for the python level solution
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.rwMotorTorqueOutMsg.recorder()
@@ -210,7 +231,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
     ])
 
     # set the output truth states
-    trueVector[0] = results_rwMotorTorque.computeTorqueU(np.array(controlAxes_B),
+    trueVector[0] = results_rwMotorTorque_C.computeTorqueU(np.array(controlAxes_B),
                                                                    np.array(rwConfigParams.GsMatrix_B).reshape((
                                                                        3, RW_EFF_CNT), order='F'),
                                                                    requestedTorque,
@@ -268,7 +289,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, numInputCmdTorques,
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_rwMotorTorque(False,
+    test_rwMotorTorque_C(False,
                 3,      # numControlAxes
                 36,      # numWheels
                 2,      # numInputCmdTorques

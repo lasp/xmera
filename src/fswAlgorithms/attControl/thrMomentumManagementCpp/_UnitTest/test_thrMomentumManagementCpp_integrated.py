@@ -100,7 +100,7 @@ def test_momentumBiasIntegrated(show_plots):
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
     rwMotorTorqueObj.modelTag = "rwMotorTorque"
     scSim.AddModelToTask(fswTask, rwMotorTorqueObj)
-    rwMotorTorqueObj.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    rwMotorTorqueObj.controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
     # Construct the desaturation momentum algorithm
     thrDesatControl = thrMomentumManagementCpp.ThrMomentumManagementCpp()

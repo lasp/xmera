@@ -1,5 +1,5 @@
-#ifndef _RW_MOTOR_TORQUE_H_
-#define _RW_MOTOR_TORQUE_H_
+#ifndef RW_MOTOR_TORQUE_H
+#define RW_MOTOR_TORQUE_H
 
 #include <stdint.h>
 
@@ -9,22 +9,21 @@
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
+#include "rwMotorTorqueAlgorithm.h"
 
-#include <architecture/utilities/bskLogging.h>
+#include <Eigen/Core>
 
 /*! @brief Top level structure for the sub-module routines. */
 class RwMotorTorque : public SysModel {
    public:
+    RwMotorTorque() = default;
+    ~RwMotorTorque() final = default;
+
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
-    /* declare module private variables */
-    double controlAxes_B[3 * 3];  //!< [-] array of the control unit axes
-    uint32_t numControlAxes;      //!< [-] counter indicating how many orthogonal axes are controlled
-    int numAvailRW;               //!< [-] number of reaction wheels available
-    RWArrayConfigMsgPayload
-        rwConfigParams;                 //!< [-] struct to store message containing RW config parameters in body B frame
-    double GsMatrix_B[3 * RW_EFF_CNT];  //!< [-] The RW spin axis matrix in body frame components
-    double CGs[3][RW_EFF_CNT];          //!< [-] Projection matrix that defines the controlled body axes
+
+    void setControlAxes(const Eigen::Matrix3d& controlMappingMatrix);
+    Eigen::Matrix3d getControlAxes() const;
 
     /* declare module IO interfaces */
     Message<RwMotorTorqueMsgPayload> rwMotorTorqueOutMsg;   //!< RW motor torque output message
@@ -33,7 +32,8 @@ class RwMotorTorque : public SysModel {
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;     //!<  RW Array input message
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;     //!< optional RWs availability input message
 
-    BSKLogger bskLogger = {};  //!< BSK Logging
+   private:
+    RwMotorTorqueAlgorithm algorithm{};
 };
 
 #endif

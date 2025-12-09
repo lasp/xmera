@@ -500,7 +500,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
     rwMotorTorqueObj.modelTag = "rwMotorTorque"
-    rwMotorTorqueObj.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    rwMotorTorqueObj.controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     scSim.AddModelToTask(fswTask, rwMotorTorqueObj, 20)
 
     # Configure thruster on-time message
