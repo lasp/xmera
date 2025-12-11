@@ -324,5 +324,107 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
                                verbose=True)
 
 
+def test_coberror_outlier(
+        cameraResolution=[512, 512],
+        centerOfBrightness=[152, 251],
+        numberOfPixels=75,
+        sunDirection=[-1.0, -1.0, 0.0],
+        distance=36e6,
+        method=binary):
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    testProcessRate = macros.sec2nano(0.5)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    R_object = 25. * 1e3
+    R_object_uncer = 8 * 1e3
+    att_sigma = 0.001
+    covar_att_B = np.diag([att_sigma**2, (0.9*att_sigma)**2, (0.95*att_sigma)**2])
+    module = cobConverter.CobConverter(method, R_object)
+    module.setRadiusUncertainty(R_object_uncer)
+    module.setAttitudeCovariance(covar_att_B)
+    module.setNumStandardDeviations(3)
+    module.setStandardDeviation(100)
+    module.enableOutlierDetection()
+    unitTestSim.AddModelToTask(unitTaskName, module, module)
+
+    r_BdyZero_N = np.array([-distance, -300. * 1e3, 0.])
+    v_BdyZero_N = np.array([8. * 1e3, 0., 0.])
+
+    # compute spacecraft pointing
+    h_1 = np.array(r_BdyZero_N) / np.linalg.norm(r_BdyZero_N)
+    h_3 = np.cross(h_1, np.array(v_BdyZero_N) / np.linalg.norm(v_BdyZero_N))
+    h_3 *= 1 / np.linalg.norm(h_3)
+    h_2 = np.cross(h_3, h_1) / np.linalg.norm(np.cross(h_3, h_1))
+    dcm_BN = np.array([h_1, h_2, h_3])
+    sigma_BN = rbk.C2MRP(dcm_BN)
+
+    # set up camera orientation such that it is pointing at the target
+    dcm_CB = np.array([[0.0, 1.0, 0.0], [0.0, 0.0, -1.0], [-1.0, 0.0, 0.0]])
+    sigma_CB = rbk.C2MRP(dcm_CB)
+
+    # Create the input messages.
+    inputCamera = messaging.CameraModelMsgPayload()
+    inputCob = messaging.OpNavCOBMsgPayload()
+    inputFilter = messaging.FilterMsgPayload()
+    inputAtt = messaging.NavAttMsgPayload()
+    inputSun = messaging.NavAttMsgPayload()
+
+    # Set camera parameters
+    inputCamera.fieldOfView = [np.deg2rad(20.0), np.deg2rad(20.0)]
+    inputCamera.resolution = cameraResolution
+    inputCamera.bodyToCameraMrp = sigma_CB
+    inputCamera.focalLength = 0.10
+    camInMsg = messaging.CameraModelMsg().write(inputCamera)
+    module.cameraConfigInMsg.subscribeTo(camInMsg)
+
+    # Set center of brightness
+    inputCob.centerOfBrightness = centerOfBrightness
+    inputCob.pixelsFound = numberOfPixels
+    inputCob.timeTag = 12345
+    inputCob.valid = (numberOfPixels > 0)
+    cobInMsg = messaging.OpNavCOBMsg().write(inputCob)
+    module.opnavCOBInMsg.subscribeTo(cobInMsg)
+
+    # Set filter message
+    full_covariance = np.diag([50e3, 50e3, 50e3, 0.01, 0.01, 0.01])
+    inputFilter.numberOfStates = 6
+    inputFilter.state = np.array([r_BdyZero_N, v_BdyZero_N]).flatten()
+    inputFilter.covar = full_covariance.flatten()
+    filterInMsg = messaging.FilterMsg().write(inputFilter)
+    module.opnavFilterInMsg.subscribeTo(filterInMsg)
+    vehSunPntN = np.array(sunDirection) / np.linalg.norm(np.array(sunDirection))  # unit vector from SC to Sun
+
+    # Set body attitude relative to inertial
+    inputAtt.sigma_BN = sigma_BN
+    attInMsg = messaging.NavAttMsg().write(inputAtt)
+    module.navAttInMsg.subscribeTo(attInMsg)
+
+    inputSun.vehSunPntBdy = dcm_BN @ vehSunPntN
+    sunInMsg = messaging.NavAttMsg().write(inputSun)
+    module.sunInMsg.subscribeTo(sunInMsg)
+
+    dataLogUnitVec = module.opnavUnitVecOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLogUnitVec)
+    dataLogCOM = module.comCorrectionOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLogCOM)
+    dataDiagnostic = module.cobConverterDiagnosticOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataDiagnostic)
+
+    module.setNumStandardDeviations(100)
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(testProcessRate)
+    unitTestSim.ExecuteSimulation()
+    np.testing.assert_equal(dataDiagnostic.coberrorOutlierTrigger, False, err_msg='coberrorOutlierTrigger should be False')
+
+    module.setNumStandardDeviations(0.01)
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(testProcessRate)
+    unitTestSim.ExecuteSimulation()
+    np.testing.assert_equal(dataDiagnostic.coberrorOutlierTrigger, True, err_msg='coberrorOutlierTrigger should be True')
+
+
 if __name__ == '__main__':
     test_cob_converter(False, [512, 512], [152, 251], 75, [-1.0, -1.0, 0.0], 36e6, binary)

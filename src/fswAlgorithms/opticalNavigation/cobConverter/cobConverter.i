@@ -17,3 +17,4 @@
 %include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 %include <architecture/msgPayloadDef/OpNavCOMMsgPayload.h>
 %include <architecture/msgPayloadDef/FilterMsgPayload.h>
+%include <architecture/msgPayloadDef/CobConverterDiagnosticMsgPayload.h>

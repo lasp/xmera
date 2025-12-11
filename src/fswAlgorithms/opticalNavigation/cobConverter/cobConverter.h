@@ -9,6 +9,7 @@
 #include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCOMMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
+#include <architecture/msgPayloadDef/CobConverterDiagnosticMsgPayload.h>
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include "cobConverterAlgorithm.h"
@@ -57,6 +58,7 @@ class CobConverter : public SysModel {
     // Output messages
     Message<OpNavUnitVecMsgPayload> opnavUnitVecOutMsg;
     Message<OpNavCOMMsgPayload> comCorrectionOutMsg;
+    Message<CobConverterDiagnosticMsgPayload> cobConverterDiagnosticOutMsg;
 
     // Input messages
     ReadFunctor<OpNavCOBMsgPayload> opnavCOBInMsg;
