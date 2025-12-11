@@ -17,9 +17,11 @@ void FlybyPointAlgorithm::reset() {
  @param r_BN_N The relative position state
  @param v_BN_N The relative velocity state
  */
-AttRefMsgPayload FlybyPointAlgorithm::updateState(uint64_t currentSimNanos,
-                                                  const Eigen::Vector3d& r_BN_N,
-                                                  const Eigen::Vector3d& v_BN_N) {
+std::pair<AttRefMsgPayload, FlybyDiagnosticMsgPayload> FlybyPointAlgorithm::updateState(uint64_t currentSimNanos,
+                                                                                        const Eigen::Vector3d& r_BN_N,
+                                                                                        const Eigen::Vector3d& v_BN_N) {
+    /*! init diagnostic message */
+    FlybyDiagnosticMsgPayload flybyDiagnosticMsgBuffer = {false, false, false, false};
     /*! compute dt from current time and last filter read time and get new states*/
     this->dt = (currentSimNanos - this->lastFilterReadTime) * NANO2SEC;
     if ((this->dt >= this->timeBetweenFilterData) || this->firstRead) {
@@ -33,7 +35,7 @@ AttRefMsgPayload FlybyPointAlgorithm::updateState(uint64_t currentSimNanos,
             this->firstRead = false;
         }
         /*! Protect against bad new solutions by checking validity */
-        else if (this->checkValidity(currentSimNanos, r_BN_N, v_BN_N)) {
+        else if (this->checkValidity(currentSimNanos, r_BN_N, v_BN_N, flybyDiagnosticMsgBuffer)) {
             /*! update flyby parameters and guidance frame */
             this->computeFlybyParameters(r_BN_N, v_BN_N);
             this->computeRN(r_BN_N, v_BN_N);
@@ -45,11 +47,10 @@ AttRefMsgPayload FlybyPointAlgorithm::updateState(uint64_t currentSimNanos,
     }
     auto [sigma_RN, omega_RN_N, omegaDot_RN_N] = this->computeGuidanceSolution();
     AttRefMsgPayload attMsgBuffer{};
-
     eigenVectorToCArray(sigma_RN, attMsgBuffer.sigma_RN);
     eigenVectorToCArray(omega_RN_N, attMsgBuffer.omega_RN_N);
     eigenVectorToCArray(omegaDot_RN_N, attMsgBuffer.domega_RN_N);
-    return attMsgBuffer;
+    return {attMsgBuffer, flybyDiagnosticMsgBuffer};
 }
 
 void FlybyPointAlgorithm::computeFlybyParameters(const Eigen::Vector3d& r_BN_N, const Eigen::Vector3d& v_BN_N) {
@@ -68,13 +69,18 @@ void FlybyPointAlgorithm::computeFlybyParameters(const Eigen::Vector3d& r_BN_N, 
 
 bool FlybyPointAlgorithm::checkValidity(uint64_t currentSimNanos,
                                         const Eigen::Vector3d& r_BN_N,
-                                        const Eigen::Vector3d& v_BN_N) const {
+                                        const Eigen::Vector3d& v_BN_N,
+                                        FlybyDiagnosticMsgPayload& flybyDiagnosticMsgBuffer) const {
     bool valid = true;
     Eigen::Vector3d ur_N = r_BN_N.normalized();
     Eigen::Vector3d uv_N = v_BN_N.normalized();
+
     /*! assert r and v are not collinear (collision trajectory) */
     if (std::abs(1 - ur_N.dot(uv_N)) < this->toleranceForCollinearity) {
         valid = false;
+        flybyDiagnosticMsgBuffer.collinearityTrigger = true;
+    } else {
+        flybyDiagnosticMsgBuffer.collinearityTrigger = false;
     }
 
     /*! check if the predicted rate exceeds the maximum rate of the spacecraft */
@@ -82,18 +88,29 @@ bool FlybyPointAlgorithm::checkValidity(uint64_t currentSimNanos,
     double maxPredictedRate = v_BN_N.norm() / distanceClosestApproach * 180 / M_PI;
     if (maxPredictedRate > this->maxRate && this->maxRate > 0) {
         valid = false;
+        flybyDiagnosticMsgBuffer.maxRateTrigger = true;
+    } else {
+        flybyDiagnosticMsgBuffer.maxRateTrigger = false;
     }
+
     /*! check if the predicted acceleration exceeds the maximum acceleration of the spacecraft */
     double maxPredictedAcceleration =
         3 * std::sqrt(3) / 8 * pow(v_BN_N.norm() / distanceClosestApproach, 2) * 180 / M_PI;
     if (maxPredictedAcceleration > this->maxAcceleration && this->maxAcceleration > 0) {
         valid = false;
+        flybyDiagnosticMsgBuffer.maxAccelerationTrigger = true;
+    } else {
+        flybyDiagnosticMsgBuffer.maxAccelerationTrigger = false;
     }
+
     /*! check if the position error exceeds a-priori sigma bound */
     double deltaT = currentSimNanos * NANO2SEC - this->timeOfFirstRead;
     double deltaPositionNorm = (r_BN_N - (this->firstNavPosition + deltaT * this->firstNavVelocity)).norm();
     if (deltaPositionNorm > this->positionKnowledgeSigma && this->positionKnowledgeSigma > 0) {
         valid = false;
+        flybyDiagnosticMsgBuffer.positionKnowledgeExceedTrigger = true;
+    } else {
+        flybyDiagnosticMsgBuffer.positionKnowledgeExceedTrigger = false;
     }
 
     return valid;

@@ -13,3 +13,4 @@
 %include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 %include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 %include <architecture/msgPayloadDef/AttRefMsgPayload.h>
+%include <architecture/msgPayloadDef/FlybyDiagnosticMsgPayload.h>
