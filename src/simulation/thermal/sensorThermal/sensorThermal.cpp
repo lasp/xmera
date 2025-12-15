@@ -131,9 +131,9 @@ void SensorThermal::computeSunData() {
     Eigen::Vector3d sHat_B;  //!< [] unit Sun heading vector relative to the spacecraft in B frame.
 
     //! - Read Message data to eigen
-    r_BN_N = cArrayAsEigenVector(this->stateCurrent.r_BN_N);
-    r_SN_N = cArrayAsEigenVector(this->sunData.PositionVector);
-    sigma_BN = cArrayAsEigenVector(this->stateCurrent.sigma_BN);
+    r_BN_N = cArrayToEigenVector(this->stateCurrent.r_BN_N);
+    r_SN_N = cArrayToEigenVector(this->sunData.PositionVector);
+    sigma_BN = cArrayToEigenVector(this->stateCurrent.sigma_BN);
 
     //! - Find sun heading unit vector
     r_SB_N = r_SN_N - r_BN_N;

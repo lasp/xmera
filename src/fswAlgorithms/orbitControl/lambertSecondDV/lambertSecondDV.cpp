@@ -50,10 +50,10 @@ void LambertSecondDV::readMessages() {
 
     // lambert solution content
     if (this->lambertSolutionSpecifier == 1) {
-        this->vExpected_N = cArrayAsEigenVector(lambertSolutionInMsgBuffer.v2);
+        this->vExpected_N = cArrayToEigenVector(lambertSolutionInMsgBuffer.v2);
         this->validLambert = lambertSolutionInMsgBuffer.valid;
     } else if (this->lambertSolutionSpecifier == 2) {
-        this->vExpected_N = cArrayAsEigenVector(lambertSolutionInMsgBuffer.v2Sol2);
+        this->vExpected_N = cArrayToEigenVector(lambertSolutionInMsgBuffer.v2Sol2);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
     } else {
         bskLogger.bskLog(BSK_ERROR,
@@ -62,7 +62,7 @@ void LambertSecondDV::readMessages() {
     }
 
     // desired velocity
-    this->vDesired_N = cArrayAsEigenVector(desiredVelocityInMsgBuffer.vDesired_N);
+    this->vDesired_N = cArrayToEigenVector(desiredVelocityInMsgBuffer.vDesired_N);
     this->maneuverTime = desiredVelocityInMsgBuffer.maneuverTime;
 }
 

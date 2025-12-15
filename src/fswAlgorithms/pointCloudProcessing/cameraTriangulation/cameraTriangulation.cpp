@@ -61,7 +61,7 @@ void CameraTriangulation::readMessages() {
     /* point cloud message */
     bool validPointCloud = pointCloudInMsgBuffer.valid;
     int pointCloudSize = pointCloudInMsgBuffer.numberOfPoints;
-    this->pointCloud = cArrayAsEigenMatrixX(pointCloudInMsgBuffer.points, SICP_POINT_DIM, pointCloudSize);
+    this->pointCloud = cArrayToEigenMatrixX(pointCloudInMsgBuffer.points, SICP_POINT_DIM, pointCloudSize);
     uint64_t timeTagPointCloud = pointCloudInMsgBuffer.timeTag;
 
     /* key points message */
@@ -70,7 +70,7 @@ void CameraTriangulation::readMessages() {
     int cameraIDkeyPoints = keyPointsInMsgBuffer.cameraID;
     // stacked vector with all pixel locations of key points
     Eigen::VectorXd keyPointsStacked(2 * numberKeyPoints);
-    keyPointsStacked = cArrayAsEigenMatrixX(keyPointsInMsgBuffer.keyPoints_secondImage, 2 * numberKeyPoints, 1);
+    keyPointsStacked = cArrayToEigenMatrixX(keyPointsInMsgBuffer.keyPoints_secondImage, 2 * numberKeyPoints, 1);
     // convert to std vector that includes all key point pixel locations
     this->keyPoints.clear();
     for (int c = 0; c < numberKeyPoints; c++) {
@@ -79,13 +79,13 @@ void CameraTriangulation::readMessages() {
     }
     uint64_t timeTagKeyPoints = keyPointsInMsgBuffer.timeTag_secondImage;
     // dcm from inertial frame N to body frame B
-    this->sigma_BN = cArrayAsEigenMrp(keyPointsInMsgBuffer.sigma_BN_secondImage);
+    this->sigma_BN = cArrayToEigenMrp(keyPointsInMsgBuffer.sigma_BN_secondImage);
     Eigen::Matrix3d dcm_BN = this->sigma_BN.toRotationMatrix().transpose();
 
     /* camera config message */
     int cameraIDconfig = cameraConfigInMsgBuffer.cameraID;
     // dcm from body frame B to camera frame C
-    Eigen::MRPd sigma_CB = cArrayAsEigenMrp(cameraConfigInMsgBuffer.sigma_CB);
+    Eigen::MRPd sigma_CB = cArrayToEigenMrp(cameraConfigInMsgBuffer.sigma_CB);
     Eigen::Matrix3d dcm_CB = sigma_CB.toRotationMatrix().transpose();
     // camera parameters
     double alpha = 0;

@@ -125,11 +125,11 @@ void ImuSensor::readInputMessages() {
     if (this->scStateInMsg.isLinked()) {
         this->StateCurrent = this->scStateInMsg();
     }
-    this->current_sigma_BN = cArrayAsEigenVector(this->StateCurrent.sigma_BN);
-    this->current_omega_BN_B = cArrayAsEigenVector(this->StateCurrent.omega_BN_B);
-    this->current_nonConservativeAccelpntB_B = cArrayAsEigenVector(this->StateCurrent.nonConservativeAccelpntB_B);
-    this->current_omegaDot_BN_B = cArrayAsEigenVector(this->StateCurrent.omegaDot_BN_B);
-    this->current_TotalAccumDV_BN_B = cArrayAsEigenVector(this->StateCurrent.TotalAccumDV_BN_B);
+    this->current_sigma_BN = cArrayToEigenVector(this->StateCurrent.sigma_BN);
+    this->current_omega_BN_B = cArrayToEigenVector(this->StateCurrent.omega_BN_B);
+    this->current_nonConservativeAccelpntB_B = cArrayToEigenVector(this->StateCurrent.nonConservativeAccelpntB_B);
+    this->current_omegaDot_BN_B = cArrayToEigenVector(this->StateCurrent.omegaDot_BN_B);
+    this->current_TotalAccumDV_BN_B = cArrayToEigenVector(this->StateCurrent.TotalAccumDV_BN_B);
 }
 
 /*!
@@ -282,7 +282,7 @@ void ImuSensor::computePlatformDR() {
                (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
     eigenMatrixToCArray(dcm_P2P1, dcm_P2P1_cArray);         // makes a 9x1
     C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray);        // makes it back into a 3x3
-    this->prv_PN_out = cArrayAsEigenVector(prv_PN_cArray);  // writes it back to the variable to be passed along.
+    this->prv_PN_out = cArrayToEigenVector(prv_PN_cArray);  // writes it back to the variable to be passed along.
 
     // calculate "instantaneous" angular rate
     this->omega_PN_P_out = this->dcm_PB * this->current_omega_BN_B;

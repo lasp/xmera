@@ -49,18 +49,18 @@ void ThrustCMEstimation::updateState(uint64_t currentSimNanos) {
     THRConfigMsgPayload thrConfigBuffer = this->thrusterConfigBInMsg();
 
     /*! compute thruster information in B-frame coordinates */
-    Eigen::Vector3d r_TB_B = cArrayAsEigenVector(thrConfigBuffer.rThrust_B);
-    Eigen::Vector3d T_B = thrConfigBuffer.maxThrust * cArrayAsEigenVector(thrConfigBuffer.tHatThrust_B);
+    Eigen::Vector3d r_TB_B = cArrayToEigenVector(thrConfigBuffer.rThrust_B);
+    Eigen::Vector3d T_B = thrConfigBuffer.maxThrust * cArrayToEigenVector(thrConfigBuffer.tHatThrust_B);
 
     /*! compute error w.r.t. target attitude */
     AttGuidMsgPayload attGuidBuffer = this->attGuidInMsg();
-    Eigen::Vector3d sigma_BR = cArrayAsEigenVector(attGuidBuffer.sigma_BR);
-    Eigen::Vector3d omega_BR_B = cArrayAsEigenVector(attGuidBuffer.omega_BR_B);
+    Eigen::Vector3d sigma_BR = cArrayToEigenVector(attGuidBuffer.sigma_BR);
+    Eigen::Vector3d omega_BR_B = cArrayToEigenVector(attGuidBuffer.omega_BR_B);
     double attError = pow(sigma_BR.squaredNorm() + omega_BR_B.squaredNorm(), 0.5);
 
     /*! read commanded torque msg */
     CmdTorqueBodyMsgPayload cmdTorqueBuffer = this->intFeedbackTorqueInMsg();
-    Eigen::Vector3d L_B = -cArrayAsEigenVector(cmdTorqueBuffer.torqueRequestBody);
+    Eigen::Vector3d L_B = -cArrayToEigenVector(cmdTorqueBuffer.torqueRequestBody);
 
     Eigen::Vector3d y;        // measurement
     Eigen::Vector3d preFit;   // pre-fit residual
@@ -110,7 +110,7 @@ void ThrustCMEstimation::updateState(uint64_t currentSimNanos) {
     Eigen::Vector3d r_CB_error;
     if (this->cmKnowledge) {
         VehicleConfigMsgPayload vehConfigBuffer = this->vehConfigInMsg();
-        Eigen::Vector3d r_CB_B_true = cArrayAsEigenVector(vehConfigBuffer.CoM_B);
+        Eigen::Vector3d r_CB_B_true = cArrayToEigenVector(vehConfigBuffer.CoM_B);
         r_CB_error = this->r_CB_est - r_CB_B_true;
         eigenVectorToCArray(r_CB_error, cmEstDataBuffer.stateError);
     } else {

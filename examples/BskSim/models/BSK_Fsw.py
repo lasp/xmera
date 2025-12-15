@@ -415,9 +415,9 @@ class BSKFswModels:
     def SetRWMotorTorque(self):
         """Set the RW motor torque information"""
         controlAxes_B = [
-            1.0, 0.0, 0.0
-            , 0.0, 1.0, 0.0
-            , 0.0, 0.0, 1.0
+            [1.0, 0.0, 0.0]
+            , [0.0, 1.0, 0.0]
+            , [0.0, 0.0, 1.0]
         ]
         self.rwMotorTorque.controlAxes_B = controlAxes_B
         self.rwMotorTorque.vehControlInMsg.subscribeTo(self.cmdTorqueMsg)

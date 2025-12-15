@@ -159,8 +159,8 @@ void KeplerianOrbit::change_f() {
     double v[3];
     ClassicElements oe = this->oe();                                                                               //
     elem2rv(this->mu, &oe, r, v);                                                                                  //
-    this->position_BP_P = cArrayAsEigenVector(r);                                                                  //
-    this->velocity_BP_P = cArrayAsEigenVector(v);                                                                  //
+    this->position_BP_P = cArrayToEigenVector(r);                                                                  //
+    this->velocity_BP_P = cArrayToEigenVector(v);                                                                  //
     this->true_anomaly_rate = this->n() * pow(this->a(), 2) * sqrt(1 - pow(this->e(), 2)) / pow(this->r(), 2);     //
     this->radial_rate = this->r() * this->fDot() * this->e() * sin(this->f()) / (1 + this->e() * cos(this->f()));  //
     this->eccentric_anomaly = safeAcos(this->e() + cos(this->f()) / (1 + this->e() * cos(this->f())));             //

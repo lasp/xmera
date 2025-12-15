@@ -104,7 +104,7 @@ void SunlineSRuKF::readGyroMeasurements() {
         gyroMeasurements.setValidity(true);
         gyroMeasurements.setMeasurementName("gyro");
         gyroMeasurements.setTimeTag(navAttInputBuffer.timeTag);
-        gyroMeasurements.setObservation(cArrayAsEigenVector(navAttInputBuffer.omega_BN_B));
+        gyroMeasurements.setObservation(cArrayToEigenVector(navAttInputBuffer.omega_BN_B));
         gyroMeasurements.setMeasurementModel(MeasurementModel::velocityStates);
         Eigen::MatrixXd I = Eigen::Matrix3d::Identity();
         gyroMeasurements.setMeasurementNoise(this->measNoiseScaling * pow(this->gyroMeasNoiseStd, 2) * I);

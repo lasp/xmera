@@ -63,7 +63,7 @@ void ExtForceTorque::computeForceTorque(double integTime, double timeStep) {
     this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
     if (this->cmdForceInertialInMsg.isLinked()) {
-        cmdVec = cArrayAsEigenVector(this->incomingCmdForceInertialBuffer.forceRequestInertial);
+        cmdVec = cArrayToEigenVector(this->incomingCmdForceInertialBuffer.forceRequestInertial);
         this->forceExternal_N += cmdVec;
     }
 
@@ -71,7 +71,7 @@ void ExtForceTorque::computeForceTorque(double integTime, double timeStep) {
     this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
     if (this->cmdForceBodyInMsg.isLinked()) {
-        cmdVec = cArrayAsEigenVector(this->incomingCmdForceBodyBuffer.forceRequestBody);
+        cmdVec = cArrayToEigenVector(this->incomingCmdForceBodyBuffer.forceRequestBody);
         this->forceExternal_B += cmdVec;
     }
 
@@ -79,7 +79,7 @@ void ExtForceTorque::computeForceTorque(double integTime, double timeStep) {
     this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
     if (this->cmdTorqueInMsg.isLinked()) {
-        cmdVec = cArrayAsEigenVector(this->incomingCmdTorqueBuffer.torqueRequestBody);
+        cmdVec = cArrayToEigenVector(this->incomingCmdTorqueBuffer.torqueRequestBody);
         this->torqueExternalPntB_B += cmdVec;
     }
 

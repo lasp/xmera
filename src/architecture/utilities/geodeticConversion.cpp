@@ -9,7 +9,7 @@ given a rotation matrix.
 @return pcpfPosition: [m] Position vector in PCPF coordinates
 */
 Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3]) {
-    Eigen::Matrix3d dcm_PN = cArrayAsEigenMatrix3(*J20002Pfix);
+    Eigen::Matrix3d dcm_PN = cArrayToEigenMatrix3(*J20002Pfix);
     Eigen::Vector3d pcpfPosition = dcm_PN * pciPosition;
 
     return pcpfPosition;
@@ -107,7 +107,7 @@ rotation matrix.
 @return pciPosition: [m] Final position in the planet-centered inertial frame.
 */
 Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3]) {
-    Eigen::Matrix3d dcm_NP = cArrayAsEigenMatrix3(*J20002Pfix).transpose();
+    Eigen::Matrix3d dcm_NP = cArrayToEigenMatrix3(*J20002Pfix).transpose();
     Eigen::Vector3d pciPosition = dcm_NP * pcpfPosition;
 
     return pciPosition;
@@ -136,7 +136,7 @@ Eigen::Matrix3d C_PCPF2SEZ(double lat, double longitude) {
     Euler2(M_PI_2 - lat, m1);
     Euler3(longitude, m2);
 
-    Eigen::MatrixXd rot2 = cArrayAsEigenMatrix3(*m1);
-    Eigen::MatrixXd rot3 = cArrayAsEigenMatrix3(*m2);
+    Eigen::MatrixXd rot2 = cArrayToEigenMatrix3(*m1);
+    Eigen::MatrixXd rot3 = cArrayToEigenMatrix3(*m2);
     return rot2 * rot3;
 }

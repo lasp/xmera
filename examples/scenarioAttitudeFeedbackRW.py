@@ -492,7 +492,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 
     # Make the RW control all three body axes
     controlAxes_B = [
-        1, 0, 0, 0, 1, 0, 0, 0, 1
+        [1, 0, 0], [0, 1, 0], [0, 0, 1]
     ]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 

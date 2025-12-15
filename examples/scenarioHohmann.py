@@ -232,8 +232,7 @@ def run(show_plots, rFirst, rSecond):
 
     firstBurnMRPRotation = mrpRotation.MrpRotation()
     firstBurnMRPRotation.modelTag = "mrpRotation"
-    sigma_RR0 = np.array([np.tan(- np.pi / 8), 0, 0])
-    firstBurnMRPRotation.setSigmaRR0(sigma_RR0)
+    firstBurnMRPRotation.sigma_RR0 = np.array([np.tan(- np.pi / 8), 0, 0])
     scSim.AddModelToTask("firstBurnTask", firstBurnMRPRotation)
     firstBurnMRPRotation.attRefOutMsg = attRefMsg
 
@@ -247,8 +246,7 @@ def run(show_plots, rFirst, rSecond):
     # Need to get this reference attitude to rotate 180
     secondBurnMRPRotation = mrpRotation.MrpRotation()
     secondBurnMRPRotation.modelTag = "mrpRotation"
-    sigma_RR0 = np.array([np.tan(np.pi / 8), 0, 0])
-    secondBurnMRPRotation.setSigmaRR0(sigma_RR0)
+    secondBurnMRPRotation.sigma_RR0 = np.array([np.tan(np.pi / 8), 0, 0])
     scSim.AddModelToTask("secondBurnTask", secondBurnMRPRotation)
     secondBurnMRPRotation.attRefOutMsg = attRefMsg
 
@@ -280,7 +278,7 @@ def run(show_plots, rFirst, rSecond):
     # Add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
     rwMotorTorqueObj.modelTag = "rwMotorTorque"
-    controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
     scSim.AddModelToTask(fswTaskName, rwMotorTorqueObj)
 

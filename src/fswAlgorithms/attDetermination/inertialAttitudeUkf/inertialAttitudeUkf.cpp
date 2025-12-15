@@ -126,13 +126,13 @@ void InertialAttitudeUkf::readRWSpeedData() {
     if (this->firstFilterPass) {
         this->wheelAccelerations = Eigen::VectorXd::Zero(this->rwArrayConfigPayload.numRW);
         Eigen::MatrixXd wheelSpeed =
-            cArrayAsEigenMatrixX(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
+            cArrayToEigenMatrixX(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
         this->previousWheelSpeeds = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
         this->previousWheelSpeedTime = wheelSpeedTime * NANO2SEC;
     } else {
         double dt = wheelSpeedTime * NANO2SEC - this->previousWheelSpeedTime;
         Eigen::MatrixXd wheelSpeed =
-            cArrayAsEigenMatrixX(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
+            cArrayToEigenMatrixX(rwSpeedPayload.wheelSpeeds, this->rwArrayConfigPayload.numRW, 1);
         Eigen::VectorXd currentWheelSpeed = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
         this->wheelAccelerations = (currentWheelSpeed - this->previousWheelSpeeds) / dt;
         this->previousWheelSpeeds = Eigen::Map<Eigen::VectorXd>(wheelSpeed.data(), wheelSpeed.size());
@@ -154,7 +154,7 @@ void InertialAttitudeUkf::readStarTrackerData() {
             starTrackerMeasurement.setValidity(true);
 
             /*! - Get the mapping from camera frame to inertial for the noise matrix */
-            Eigen::Matrix3d dcm_CB = cArrayAsEigenMatrix3(starTracker.dcm_CB);
+            Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(starTracker.dcm_CB);
 
             starTrackerMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
                                                        this->starTrackerMessages[index].measurementNoise_C * dcm_CB);
@@ -204,7 +204,7 @@ void InertialAttitudeUkf::readGyroData() {
 
         gyroMeasurement.setMeasurementNoise(this->measNoiseScaling * this->gyroNoise /
                                             gyroBuffer.numberOfValidGyroMeasurements);
-        gyroMeasurement.setObservation(cArrayAsEigenVector(gyroBuffer.AngVelPlatform));
+        gyroMeasurement.setObservation(cArrayToEigenVector(gyroBuffer.AngVelPlatform));
         gyroMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
         this->measurements[this->measurementIndex] = gyroMeasurement;
         this->measurementIndex += 1;
@@ -221,7 +221,7 @@ void InertialAttitudeUkf::readFilterMeasurements() {
         this->rwArrayConfigPayload = this->rwArrayConfigMsg();
         auto vehicleConfigPayload = this->vehicleConfigMsg();
 
-        this->spacecraftInertia = cArrayAsEigenMatrix3(vehicleConfigPayload.ISCPntB_B);
+        this->spacecraftInertia = cArrayToEigenMatrix3(vehicleConfigPayload.ISCPntB_B);
         this->spacecraftInertiaInverse = this->spacecraftInertia.inverse();
     }
 

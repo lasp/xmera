@@ -67,10 +67,10 @@ void StarTracker::applySensorErrors() {
     this->mrpErrors = prvToMrp(this->navErrors);
 
     Eigen::Vector3d sigmaSensed;
-    sigmaSensed = addMrp(cArrayAsEigenVector(this->scState.sigma_BN), this->mrpErrors);
+    sigmaSensed = addMrp(cArrayToEigenVector(this->scState.sigma_BN), this->mrpErrors);
 
     // Save the previous sensed quaternion before computing the current sensed quaternion
-    this->betaPrevious_CN = cArrayAsEigenVector(this->sensedValues.qInrtl2Case);
+    this->betaPrevious_CN = cArrayToEigenVector(this->sensedValues.qInrtl2Case);
 
     this->computeQuaternion(&sigmaSensed, &this->sensedValues);
     this->sensedValues.timeTag = this->sensorTimeTag;
@@ -96,7 +96,7 @@ void StarTracker::computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* 
     compute platform angular velocity from sensed quaternions
  */
 void StarTracker::computeAngularVelocity(uint64_t currentSimNanos) {
-    Eigen::Vector4d beta_CN = cArrayAsEigenVector(this->sensedValues.qInrtl2Case);
+    Eigen::Vector4d beta_CN = cArrayToEigenVector(this->sensedValues.qInrtl2Case);
 
     // Determine betaDot_CN
     Eigen::Vector4d betaDot_CN = Eigen::Vector4d::Zero();
@@ -116,7 +116,7 @@ void StarTracker::computeAngularVelocity(uint64_t currentSimNanos) {
  */
 void StarTracker::computeTrueOutput() {
     this->trueValues.timeTag = this->sensorTimeTag;
-    Eigen::Vector3d sigma_BN = cArrayAsEigenVector(this->scState.sigma_BN);
+    Eigen::Vector3d sigma_BN = cArrayToEigenVector(this->scState.sigma_BN);
     this->computeQuaternion(&sigma_BN, &this->trueValues);
 }
 

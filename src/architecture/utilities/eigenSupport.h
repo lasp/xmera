@@ -1,5 +1,5 @@
-#ifndef EIGENSUPPORT
-#define EIGENSUPPORT
+#ifndef EIGEN_SUPPORT
+#define EIGEN_SUPPORT
 
 #include <architecture/utilities/eigenMRP.h>
 
@@ -8,7 +8,7 @@
 #include <exception>
 
 template <class Derived>
-constexpr bool is_row_major_v = (Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0;
+inline constexpr bool is_row_major_v = (Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0;
 
 template <class Derived>
 inline constexpr bool is_fixed_v =
@@ -26,24 +26,24 @@ inline constexpr bool is_fixed_v =
  * @param inMat Matrix to copy from.
  * @param out Destination array that receives the flattened entries.
  */
-template <class Derived, std::size_t Size>
-void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[Size]) {
+template <class Derived, std::size_t size>
+void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[size]) {
     static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
                   "Input must be a fixed-size Eigen type.");
 
-    using Scalar = typename Derived::Scalar;
+    using Scalar = Derived::Scalar;
     constexpr int Rows = Derived::RowsAtCompileTime;
     constexpr int Cols = Derived::ColsAtCompileTime;
 
-    static_assert(static_cast<std::size_t>(Rows) * static_cast<std::size_t>(Cols) == Size,
+    static_assert(static_cast<std::size_t>(Rows) * static_cast<std::size_t>(Cols) == size,
                   "Output array size must equal rows*cols of input.");
 
     if constexpr ((Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0) {
         Eigen::Matrix<Scalar, Rows, Cols, Eigen::RowMajor> tmp = inMat;
-        std::memcpy(out, tmp.data(), Size * sizeof(Scalar));
+        std::copy(tmp.data(), tmp.data() + tmp.size(), out);
     } else {
         Eigen::Matrix<Scalar, Cols, Rows> tmpT = inMat.transpose();
-        std::memcpy(out, tmpT.data(), Size * sizeof(Scalar));
+        std::copy(tmpT.data(), tmpT.data() + tmpT.size(), out);
     }
 }
 
@@ -59,19 +59,18 @@ void eigenMatrixToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Deriv
  * @param inMat Matrix to copy from.
  * @param out Destination array that must hold at least `inMat.size()` values.
  */
-template <class Derived, std::size_t Size>
-void eigenMatrixXToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[Size]) {
-    using Scalar = typename Derived::Scalar;
+template <class Derived, std::size_t size>
+void eigenMatrixXToCArray(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[size]) {
+    using Scalar = Derived::Scalar;
 
     // Runtime capacity check against compile-time size
-    if (static_cast<std::size_t>(inMat.size()) > Size) {
+    if (static_cast<std::size_t>(inMat.size()) > size) {
         std::terminate();
     }
 
     // Make a contiguous row-major buffer regardless of input layout
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rm = inMat.derived();
-    const auto count = static_cast<std::size_t>(inMat.size());
-    std::memcpy(out, rm.data(), count * sizeof(Scalar));
+    std::copy(rm.data(), rm.data() + rm.size(), out);
 }
 
 /**
@@ -92,7 +91,7 @@ void eigenMatrixToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Der
     static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
                   "Input must be a fixed-size Eigen type.");
 
-    using Scalar = typename Derived::Scalar;
+    using Scalar = Derived::Scalar;
     constexpr int R = Derived::RowsAtCompileTime;
     constexpr int C = Derived::ColsAtCompileTime;
 
@@ -101,10 +100,10 @@ void eigenMatrixToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Der
 
     if constexpr ((Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0) {
         Eigen::Matrix<Scalar, R, C, Eigen::RowMajor> tmp = inMat;
-        std::memcpy(out, tmp.data(), N * M * sizeof(Scalar));
+        std::copy(tmp.data(), tmp.data() + tmp.size(), &out[0][0]);
     } else {
         Eigen::Matrix<Scalar, C, R> tmpT = inMat.transpose();
-        std::memcpy(out, tmpT.data(), N * M * sizeof(Scalar));
+        std::copy(tmpT.data(), tmpT.data() + tmpT.size(), &out[0][0]);
     }
 }
 
@@ -121,17 +120,17 @@ void eigenMatrixToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Der
  * @param inMat Matrix to copy from.
  * @param out Destination 2-D array `out[Rows][Cols]`.
  */
-template <class Derived, std::size_t Rows, std::size_t Cols>
-void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[Rows][Cols]) {
-    using Scalar = typename Derived::Scalar;
+template <class Derived, std::size_t rows, std::size_t cols>
+void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename Derived::Scalar (&out)[rows][cols]) {
+    using Scalar = Derived::Scalar;
 
     // Enforce shape at runtime (safer for 2-D indexing)
-    if (inMat.rows() != static_cast<int>(Rows) || inMat.cols() != static_cast<int>(Cols)) {
+    if (inMat.rows() != static_cast<int>(rows) || inMat.cols() != static_cast<int>(cols)) {
         std::terminate();
     }
 
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rm = inMat.derived();
-    std::memcpy(&out[0][0], rm.data(), Rows * Cols * sizeof(Scalar));
+    std::copy(rm.data(), rm.data() + rm.size(), &out[0][0]);
 }
 
 /**
@@ -149,35 +148,36 @@ void eigenMatrixXToCArray2D(const Eigen::MatrixBase<Derived>& inMat, typename De
  * @param offset Starting index in `out` for the first element.
  * @param stride Number of indices to skip between elements (default 1).
  */
-template <class Derived, std::size_t Size>
+template <class Derived, std::size_t size>
 void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
-                              typename Derived::Scalar (&out)[Size],
+                              typename Derived::Scalar (&out)[size],
                               std::size_t offset,
-                              const std::size_t stride = 1) {
-    using Scalar = typename Derived::Scalar;
+                              const std::size_t stride = 1U) {
+    using Scalar = Derived::Scalar;
 
     const auto count = static_cast<std::size_t>(inMat.size());
-    if (count == 0) return;
+    if (count == 0U) {
+        return;
+    }
 
-    if (stride == 0 && count > 1) {
+    if (stride == 0U && count > 1U) {
         std::terminate();
     }
 
     // Capacity check: last index must be < N
-    const std::size_t last_index = offset + (count - 1) * stride;
-    if (last_index >= Size) {
+    if (const std::size_t last_index = offset + ((count - 1U) * stride); last_index >= size) {
         std::terminate();
     }
 
     // Make a contiguous row-major buffer regardless of input layout
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rm = inMat.derived();
 
-    if (stride == 1) {
-        std::memcpy(out + offset, rm.data(), count * sizeof(Scalar));
+    if (stride == 1U) {
+        std::copy(rm.data(), rm.data() + rm.size(), out + offset);
     } else {
         const Scalar* src = rm.data();
         std::size_t idx = offset;
-        for (std::size_t i = 0; i < count; ++i) {
+        for (std::size_t i = 0U; i < count; ++i) {
             out[idx] = src[i];
             idx += stride;
         }
@@ -194,7 +194,7 @@ void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
  */
 template <typename ScalarT, int size>
 void eigenVectorToCArray(const Eigen::Vector<ScalarT, size>& inVec, ScalarT* outArray) {
-    memcpy(outArray, inVec.data(), size * sizeof(ScalarT));
+    std::copy(inVec.data(), inVec.data() + size, outArray);
 }
 
 /**
@@ -207,10 +207,8 @@ void eigenVectorToCArray(const Eigen::Vector<ScalarT, size>& inVec, ScalarT* out
  * @return Eigen matrix populated with the values from `inArray`.
  */
 template <typename ScalarT, int rows, int cols>
-Eigen::Matrix<ScalarT, rows, cols> cArrayAsEigenMatrix(ScalarT* inArray) {
-    Eigen::Matrix<ScalarT, rows, cols> outMat;
-    outMat = Eigen::Map<Eigen::Matrix<ScalarT, rows, cols>>(inArray, outMat.rows(), outMat.cols());
-    return outMat;
+Eigen::Matrix<ScalarT, rows, cols> cArrayToEigenMatrix(ScalarT* inArray) {
+    return Eigen::Map<Eigen::Matrix<ScalarT, rows, cols>>(inArray);
 }
 
 /**
@@ -223,9 +221,8 @@ Eigen::Matrix<ScalarT, rows, cols> cArrayAsEigenMatrix(ScalarT* inArray) {
  * @return Eigen dynamic matrix containing the mapped values.
  */
 template <typename ScalarT>
-Eigen::MatrixX<ScalarT> cArrayAsEigenMatrixX(ScalarT* inArray, int nRows, int nCols) {
-    Eigen::MatrixX<ScalarT> outMat;
-    outMat.resize(nRows, nCols);
+Eigen::MatrixX<ScalarT> cArrayToEigenMatrixX(ScalarT* inArray, int nRows, int nCols) {
+    Eigen::MatrixX<ScalarT> outMat(nRows, nCols);
     outMat = Eigen::Map<Eigen::MatrixX<ScalarT>>(inArray, outMat.rows(), outMat.cols());
     return outMat;
 }
@@ -238,8 +235,8 @@ Eigen::MatrixX<ScalarT> cArrayAsEigenMatrixX(ScalarT* inArray, int nRows, int nC
  * @param inArray Reference to the C array holding the coefficients.
  * @return Eigen vector whose contents match the input array.
  */
-template <typename ScalarT, std::size_t size>
-Eigen::Vector<ScalarT, size> cArrayAsEigenVector(ScalarT (&inArray)[size]) {
+template <typename ScalarT, int size>
+Eigen::Vector<ScalarT, size> cArrayToEigenVector(ScalarT (&inArray)[size]) {
     return Eigen::Map<Eigen::Vector<ScalarT, size>>(inArray);
 }
 
@@ -251,7 +248,7 @@ Eigen::Vector<ScalarT, size> cArrayAsEigenVector(ScalarT (&inArray)[size]) {
  * @return Eigen::Vector3 populated from the input data.
  */
 template <typename ScalarT>
-Eigen::Vector3<ScalarT> cArrayAsEigenVector3(ScalarT* inArray) {
+Eigen::Vector3<ScalarT> cArrayToEigenVector3(ScalarT* inArray) {
     return Eigen::Map<Eigen::Vector3<ScalarT>>(inArray);
 }
 
@@ -263,7 +260,7 @@ Eigen::Vector3<ScalarT> cArrayAsEigenVector3(ScalarT* inArray) {
  * @return Eigen::MRP constructed from the input.
  */
 template <typename ScalarT>
-Eigen::MRP<ScalarT> cArrayAsEigenMrp(ScalarT* inArray) {
+Eigen::MRP<ScalarT> cArrayToEigenMrp(ScalarT* inArray) {
     Eigen::MRP<ScalarT> sigma_Eigen;
     sigma_Eigen = Eigen::Map<Eigen::Vector<ScalarT, 3>>(inArray);
 
@@ -278,7 +275,7 @@ Eigen::MRP<ScalarT> cArrayAsEigenMrp(ScalarT* inArray) {
  * @return Eigen::Matrix3 with the copied values.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> cArrayAsEigenMatrix3(ScalarT* inArray) {
+Eigen::Matrix3<ScalarT> cArrayToEigenMatrix3(ScalarT* inArray) {
     return Eigen::Map<Eigen::Matrix3<ScalarT>>(inArray, 3, 3).transpose();
 }
 
@@ -290,14 +287,8 @@ Eigen::Matrix3<ScalarT> cArrayAsEigenMatrix3(ScalarT* inArray) {
  * @return Eigen::Matrix3 containing the same entries.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> c2DArrayAsEigenMatrix3(ScalarT in2DArray[3][3]) {
-    Eigen::Matrix3<ScalarT> outMat;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            outMat(i, j) = in2DArray[i][j];
-        }
-    }
-
+Eigen::Matrix3<ScalarT> c2DArrayToEigenMatrix3(ScalarT in2DArray[3][3]) {
+    Eigen::Matrix3<ScalarT> outMat = Eigen::Map<const Eigen::Matrix<ScalarT, 3, 3, Eigen::RowMajor>>(&in2DArray[0][0]);
     return outMat;
 }
 
@@ -309,14 +300,8 @@ Eigen::Matrix3<ScalarT> c2DArrayAsEigenMatrix3(ScalarT in2DArray[3][3]) {
  * @return Eigen::Vector3 containing the MRP coefficients.
  */
 template <typename ScalarT>
-Eigen::Vector3<ScalarT> eigenMrpToVector3(const Eigen::MRP<ScalarT> mrp) {
-    Eigen::Vector3<ScalarT> vec3;
-
-    vec3[0] = mrp.x();
-    vec3[1] = mrp.y();
-    vec3[2] = mrp.z();
-
-    return vec3;
+Eigen::Vector3<ScalarT> eigenMrpToVector3(const Eigen::MRP<ScalarT>& mrp) {
+    return Eigen::Vector3<ScalarT>(mrp.x(), mrp.y(), mrp.z());
 }
 
 /**
@@ -327,15 +312,11 @@ Eigen::Vector3<ScalarT> eigenMrpToVector3(const Eigen::MRP<ScalarT> mrp) {
  * @return Eigen::Matrix3 representing the rotation.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> eigenM1(const ScalarT angle) {
-    Eigen::Matrix3<ScalarT> mOut = Eigen::Matrix3<ScalarT>::Identity();
+Eigen::Matrix3<ScalarT> eigenM1(ScalarT angle) {
+    const ScalarT c = std::cos(angle);
+    const ScalarT s = std::sin(angle);
 
-    mOut(1, 1) = std::cos(angle);
-    mOut(1, 2) = std::sin(angle);
-    mOut(2, 1) = -std::sin(angle);
-    mOut(2, 2) = std::cos(angle);
-
-    return mOut;
+    return Eigen::Matrix3<ScalarT>{{ScalarT{1}, ScalarT{0}, ScalarT{0}}, {ScalarT{0}, c, s}, {ScalarT{0}, -s, c}};
 }
 
 /**
@@ -346,15 +327,11 @@ Eigen::Matrix3<ScalarT> eigenM1(const ScalarT angle) {
  * @return Eigen::Matrix3 representing the rotation.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> eigenM2(const ScalarT angle) {
-    Eigen::Matrix3<ScalarT> mOut = Eigen::Matrix3<ScalarT>::Identity();
+Eigen::Matrix3<ScalarT> eigenM2(ScalarT angle) {
+    const ScalarT c = std::cos(angle);
+    const ScalarT s = std::sin(angle);
 
-    mOut(0, 0) = std::cos(angle);
-    mOut(0, 2) = -std::sin(angle);
-    mOut(2, 0) = std::sin(angle);
-    mOut(2, 2) = std::cos(angle);
-
-    return mOut;
+    return Eigen::Matrix3<ScalarT>{{c, ScalarT{0}, -s}, {ScalarT{0}, ScalarT{1}, ScalarT{0}}, {s, ScalarT{0}, c}};
 }
 
 /**
@@ -365,15 +342,11 @@ Eigen::Matrix3<ScalarT> eigenM2(const ScalarT angle) {
  * @return Eigen::Matrix3 representing the rotation.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> eigenM3(const ScalarT angle) {
-    Eigen::Matrix3<ScalarT> mOut = Eigen::Matrix3<ScalarT>::Identity();
+Eigen::Matrix3<ScalarT> eigenM3(ScalarT angle) {
+    const ScalarT c = std::cos(angle);
+    const ScalarT s = std::sin(angle);
 
-    mOut(0, 0) = std::cos(angle);
-    mOut(0, 1) = std::sin(angle);
-    mOut(1, 0) = -std::sin(angle);
-    mOut(1, 1) = std::cos(angle);
-
-    return mOut;
+    return Eigen::Matrix3<ScalarT>{{c, s, ScalarT{0}}, {-s, c, ScalarT{0}}, {ScalarT{0}, ScalarT{0}, ScalarT{1}}};
 }
 
 /**
@@ -385,18 +358,13 @@ Eigen::Matrix3<ScalarT> eigenM3(const ScalarT angle) {
  */
 template <typename Derived>
 Eigen::Matrix3<typename Eigen::MatrixBase<Derived>::Scalar> eigenTilde(const Eigen::MatrixBase<Derived>& vec) {
-    using Scalar = typename Eigen::MatrixBase<Derived>::Scalar;
+    using Scalar = Eigen::MatrixBase<Derived>::Scalar;
 
-    Eigen::Matrix3<Scalar> mOut = Eigen::Matrix3<Scalar>::Zero();
+    const Scalar vx = vec(0);
+    const Scalar vy = vec(1);
+    const Scalar vz = vec(2);
 
-    mOut(0, 1) = -vec(2);
-    mOut(1, 0) = vec(2);
-    mOut(0, 2) = vec(1);
-    mOut(2, 0) = -vec(1);
-    mOut(1, 2) = -vec(0);
-    mOut(2, 1) = vec(0);
-
-    return mOut;
+    return Eigen::Matrix3<Scalar>{{Scalar{0}, -vz, vy}, {vz, Scalar{0}, -vx}, {-vy, vx, Scalar{0}}};
 }
 
-#endif  // EIGENSUPPORT
+#endif  // EIGEN_SUPPORT

@@ -295,25 +295,25 @@ void PrescribedMotionStateEffector::updateState(uint64_t callTime) {
     // Read the translational input message if it is linked and written
     if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten()) {
         PrescribedTranslationMsgPayload incomingPrescribedTransStates = this->prescribedTranslationInMsg();
-        this->r_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.r_FM_M);
-        this->rPrime_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.rPrime_FM_M);
-        this->rPrimePrime_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.rPrimePrime_FM_M);
+        this->r_FM_M = cArrayToEigenVector(incomingPrescribedTransStates.r_FM_M);
+        this->rPrime_FM_M = cArrayToEigenVector(incomingPrescribedTransStates.rPrime_FM_M);
+        this->rPrimePrime_FM_M = cArrayToEigenVector(incomingPrescribedTransStates.rPrimePrime_FM_M);
 
         // Save off the prescribed translational states at each dynamics time step
-        this->rEpoch_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.r_FM_M);
-        this->rPrimeEpoch_FM_M = cArrayAsEigenVector(incomingPrescribedTransStates.rPrime_FM_M);
+        this->rEpoch_FM_M = cArrayToEigenVector(incomingPrescribedTransStates.r_FM_M);
+        this->rPrimeEpoch_FM_M = cArrayToEigenVector(incomingPrescribedTransStates.rPrime_FM_M);
     }
 
     // Read the rotational input message if it is linked and written
     if (this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten()) {
         PrescribedRotationMsgPayload incomingPrescribedRotStates = this->prescribedRotationInMsg();
-        this->omega_FM_F = cArrayAsEigenVector(incomingPrescribedRotStates.omega_FM_F);
-        this->omegaPrime_FM_F = cArrayAsEigenVector(incomingPrescribedRotStates.omegaPrime_FM_F);
-        this->sigma_FM = cArrayAsEigenVector(incomingPrescribedRotStates.sigma_FM);
+        this->omega_FM_F = cArrayToEigenVector(incomingPrescribedRotStates.omega_FM_F);
+        this->omegaPrime_FM_F = cArrayToEigenVector(incomingPrescribedRotStates.omegaPrime_FM_F);
+        this->sigma_FM = cArrayToEigenVector(incomingPrescribedRotStates.sigma_FM);
 
         // Save off the prescribed rotational states at each dynamics time step
-        this->omegaEpoch_FM_F = cArrayAsEigenVector(incomingPrescribedRotStates.omega_FM_F);
-        Eigen::Vector3d sigma_FM_loc = cArrayAsEigenVector(incomingPrescribedRotStates.sigma_FM);
+        this->omegaEpoch_FM_F = cArrayToEigenVector(incomingPrescribedRotStates.omega_FM_F);
+        Eigen::Vector3d sigma_FM_loc = cArrayToEigenVector(incomingPrescribedRotStates.sigma_FM);
         this->sigma_FMState->setState(sigma_FM_loc);
     }
 

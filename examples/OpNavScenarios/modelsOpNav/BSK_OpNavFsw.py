@@ -392,10 +392,9 @@ class BSKFswModels():
         self.fswRwConfigMsg = fswSetupRW.writeConfigMessage()
 
     def SetRWMotorTorque(self, SimBase):
-        controlAxes_B = [
-                        1.0, 0.0, 0.0
-                        , 0.0, 1.0, 0.0
-                        , 0.0, 0.0, 1.0
+        controlAxes_B = [[1.0, 0.0, 0.0]
+                        , [0.0, 1.0, 0.0]
+                        , [0.0, 0.0, 1.0]
                         ]
         self.rwMotorTorque.controlAxes_B = controlAxes_B
         self.rwMotorTorque.vehControlInMsg.subscribeTo(self.mrpFeedbackRWs.cmdTorqueOutMsg)

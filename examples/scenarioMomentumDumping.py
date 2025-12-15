@@ -275,7 +275,7 @@ def run(show_plots):
     mrpControl.setK((mrpControl.getP()/xi)*(mrpControl.getP()/xi)/np.max(I))
     mrpControl.setIntegralLimit(2. / mrpControl.getKi() * 0.1)
 
-    controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()

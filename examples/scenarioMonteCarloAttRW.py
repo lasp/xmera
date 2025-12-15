@@ -534,11 +534,7 @@ def createScenarioAttitudeFeedbackRW():
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwConfMsg)
     # Make the RW control all three body axes
-    controlAxes_B = [
-             1,0,0
-            ,0,1,0
-            ,0,0,1
-        ]
+    controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     fswRWVoltage = rwMotorVoltage.RwMotorVoltage(0.0, 10.0)

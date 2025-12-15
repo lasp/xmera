@@ -61,12 +61,12 @@ void EphemerisConverter::convertEphemData(uint64_t clockNow) {
         this->ephemOutBuffers.at(c).timeTag = this->spiceInMsgs.at(c).timeWritten() * 1.0E-9;
 
         /* Compute sigma_BN */
-        dcm_BN = cArrayAsEigenMatrix3(*this->spiceInBuffers.at(c).J20002Pfix);
+        dcm_BN = cArrayToEigenMatrix3(*this->spiceInBuffers.at(c).J20002Pfix);
         sigma_BN = dcmToMrp(dcm_BN);
         eigenVectorToCArray(sigma_BN, this->ephemOutBuffers.at(c).sigma_BN);  // sigma_BN
 
         /* Compute omega_BN_B */
-        dcm_BN_dot = cArrayAsEigenMatrix3(*this->spiceInBuffers.at(c).J20002Pfix_dot);
+        dcm_BN_dot = cArrayToEigenMatrix3(*this->spiceInBuffers.at(c).J20002Pfix_dot);
         omega_tilde_BN_B_eigen = -dcm_BN_dot * dcm_BN.transpose();
         eigenMatrixToCArray(omega_tilde_BN_B_eigen, omega_tilde_BN_B_array);
         m33Copy(RECAST3X3 omega_tilde_BN_B_array, omega_tilde_BN_B);

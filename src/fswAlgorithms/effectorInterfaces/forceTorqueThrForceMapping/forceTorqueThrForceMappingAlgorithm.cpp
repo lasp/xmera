@@ -34,7 +34,7 @@ void ForceTorqueThrForceMappingAlgorithm::reset(VehicleConfigMsgPayload& vehConf
                                                 THRArrayConfigMsgPayload& thrConfigMsg) {
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
     this->numThrusters = thrConfigMsg.numThrusters;
-    this->CoM_B = cArrayAsEigenVector(vehConfigMsg.CoM_B);
+    this->CoM_B = cArrayToEigenVector(vehConfigMsg.CoM_B);
     if (this->numThrusters > MAX_EFF_CNT) {
         throw std::invalid_argument(
             "forceTorqueThrForceMapping thruster configuration input message has a number of "
@@ -43,8 +43,8 @@ void ForceTorqueThrForceMappingAlgorithm::reset(VehicleConfigMsgPayload& vehConf
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
     for (uint32_t i = 0; i < this->numThrusters; ++i) {
-        this->rThruster_B.col(i) = cArrayAsEigenVector(thrConfigMsg.thrusters[i].rThrust_B);
-        this->gtThruster_B.col(i) = cArrayAsEigenVector(thrConfigMsg.thrusters[i].tHatThrust_B);
+        this->rThruster_B.col(i) = cArrayToEigenVector(thrConfigMsg.thrusters[i].rThrust_B);
+        this->gtThruster_B.col(i) = cArrayToEigenVector(thrConfigMsg.thrusters[i].tHatThrust_B);
         if (thrConfigMsg.thrusters[i].maxThrust <= 0.0) {
             throw std::invalid_argument(
                 "forceTorqueThrForceMapping: A configured thruster has a non-sensible "
@@ -64,8 +64,8 @@ THRArrayCmdForceMsgPayload ForceTorqueThrForceMappingAlgorithm::update(CmdTorque
 
     /* Create the torque and force vector */
     Eigen::Vector<double, 6> forceTorque_B{};
-    forceTorque_B.head(3) = cArrayAsEigenVector(cmdTorqueMsg.torqueRequestBody);
-    forceTorque_B.tail(3) = cArrayAsEigenVector(cmdForceMsg.forceRequestBody);
+    forceTorque_B.head(3) = cArrayToEigenVector(cmdTorqueMsg.torqueRequestBody);
+    forceTorque_B.tail(3) = cArrayToEigenVector(cmdForceMsg.forceRequestBody);
 
     /* - compute thruster locations relative to COM */
     Eigen::Matrix<double, 3, MAX_EFF_CNT> rThrusterRelCOM_B{Eigen::Matrix<double, 3, MAX_EFF_CNT>::Zero()};

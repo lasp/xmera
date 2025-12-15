@@ -82,7 +82,7 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
     double q[3] = {yaw, pitch, roll};
     double dcm_PBcArray[9];
     Euler3212C(q, RECAST3X3 dcm_PBcArray);
-    this->dcm_PB = cArrayAsEigenMatrix3(dcm_PBcArray);
+    this->dcm_PB = cArrayToEigenMatrix3(dcm_PBcArray);
 }
 
 /*! This method is used to reset the module.
@@ -180,9 +180,9 @@ void CoarseSunSensor::computeSunData() {
     //! - Get the position from spacecraft to Sun
 
     //! - Read Message data to eigen
-    r_BN_N_eigen = cArrayAsEigenVector(this->stateCurrent.r_BN_N);
-    sunPos = cArrayAsEigenVector(this->sunData.PositionVector);
-    sigma_BN_eigen = cArrayAsEigenMrp(this->stateCurrent.sigma_BN);
+    r_BN_N_eigen = cArrayToEigenVector(this->stateCurrent.r_BN_N);
+    sunPos = cArrayToEigenVector(this->sunData.PositionVector);
+    sigma_BN_eigen = cArrayToEigenMrp(this->stateCurrent.sigma_BN);
 
     //! - Find sun heading unit vector
     Sc2Sun_Inrtl = sunPos - r_BN_N_eigen;

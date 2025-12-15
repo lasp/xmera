@@ -82,10 +82,10 @@ void FlybyODuKF::readFilterMeasurements() {
 
     if (headingMeasurement.getValidity() && headingMeasurement.getTimeTag() >= this->previousFilterTimeTag) {
         /*! - Read measurement and cholesky decomposition its noise*/
-        headingMeasurement.setObservation(cArrayAsEigenVector(this->opNavHeadingBuffer.rhat_BN_N));
+        headingMeasurement.setObservation(cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N));
         headingMeasurement.getObservation().normalize();
         headingMeasurement.setMeasurementNoise(this->measNoiseScaling *
-                                               cArrayAsEigenMatrixX(this->opNavHeadingBuffer.covar_N,
+                                               cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N,
                                                                     (int)headingMeasurement.size(),
                                                                     (int)headingMeasurement.size()));
         headingMeasurement.setMeasurementModel(MeasurementModel::normalizedPositionStates);
