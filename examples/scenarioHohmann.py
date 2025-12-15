@@ -280,7 +280,7 @@ def run(show_plots, rFirst, rSecond):
     # Add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.RwMotorTorque()
     rwMotorTorqueObj.modelTag = "rwMotorTorque"
-    controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
     scSim.AddModelToTask(fswTaskName, rwMotorTorqueObj)
 

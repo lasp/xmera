@@ -308,7 +308,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
-    controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     # Boresight vector modules.

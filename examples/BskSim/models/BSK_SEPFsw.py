@@ -491,9 +491,9 @@ class BSKFswModels:
         """
         Defines the motor torque from the control law
         """
-        controlAxes_B = [1.0, 0.0, 0.0,
-                         0.0, 1.0, 0.0,
-                         0.0, 0.0, 1.0]
+        controlAxes_B = [[1.0, 0.0, 0.0],
+                         [0.0, 1.0, 0.0],
+                         [0.0, 0.0, 1.0]]
 
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
         self.rwMotorTorqueData.vehControlInMsg.subscribeTo(self.mrpFeedbackRWsData.cmdTorqueOutMsg)

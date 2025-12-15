@@ -412,7 +412,7 @@ def run(show_plots):
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(rwConfigMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpFeedbackControl.cmdTorqueOutMsg)
-    rwMotorTorqueObj.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    rwMotorTorqueObj.controlAxes_B = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
 
     # Connect the smallBodyEKF output messages to the relevant modules
