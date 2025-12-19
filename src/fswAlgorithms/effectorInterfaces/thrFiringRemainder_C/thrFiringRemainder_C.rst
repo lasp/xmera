@@ -1,53 +1,13 @@
-Executive Summary
------------------
-
-A thruster force message is read in and converted to a thruster on-time output message. The module ensures the requested on-time is at least as large as the thruster's minimum on time.  If not then the on-time is zeroed, but the unimplemented thrust time is kept as a remainder calculation.  If these add up to reach the minimum on time, then a thruster pulse is requested.  If the thruster on time is larger than the control period, then an on-time that is 1.1 times the control period is requested. More information can be found in the
-:download:`PDF Description </../../src/fswAlgorithms/effectorInterfaces/thrFiringRemainder/_Documentation/Basilisk-thrFiringRemainder-2023-08-07.pdf>`.
-The paper `Steady-State Attitude and Control Effort Sensitivity Analysis of Discretized Thruster Implementations <https://doi.org/10.2514/1.A33709>`__ includes a detailed discussion on the Remainder Trigger algorithm and compares it to other thruster firing methods.
-
-
-Message Connection Descriptions
--------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
-
-.. _ModuleIO_ThrFiringRemainder:
-.. figure:: /../../src/fswAlgorithms/effectorInterfaces/thrFiringRemainder/_Documentation/Images/moduleImgThrFiringRemainder.svg
-    :align: center
-
-    Figure 1: ``rwNullSpace()`` Module I/O Illustration
-
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - thrForceInMsg
-      - :ref:`THRArrayCmdForceMsgPayload`
-      - thruster force input message
-    * - onTimeOutMsg
-      - :ref:`THRArrayOnTimeCmdMsgPayload`
-      - thruster on-time output message
-    * - thrConfInMsg
-      - :ref:`THRArrayConfigMsgPayload`
-      - Thruster array configuration input message
-
-
 Module Description
 ==================
 
 This module implements a remainder tracking thruster firing logic. More
-details can be found in Reference.
+details can be found in `Reference 1 <ref-1_>`_.
 
 Module Input and Output Messages
 --------------------------------
 
-As illustrated in Figure `[fig:moduleImg] <#fig:moduleImg>`__, the
-module reads in two messages. One message contains the thruster
+The module reads in two messages. One message contains the thruster
 configuration message from which the maximum thrust force value for each
 thruster is extracted and stored in the module. This message is only
 read in on ``reset()``.
@@ -166,3 +126,34 @@ Module Assumptions and Limitations
 The module assumes that the incoming forces :math:`F_{i}` can be both
 positive or negative, depending if an on- or off-pulsing mode is being
 implemented. The particular mode is set through ``baseThrustState``.
+
+Test Description and Success Criteria
+=====================================
+
+The unit test creates a desired thruster force input vector and then
+runs the simulation for 3 seconds. If the ``resetCheck`` flag is true
+then a ``reset()`` method is called and the simulation is repeated for
+another 2.5 seconds. If the ``dvOn`` flag is set than the off-pulsing
+mode is checked.
+
+User Guide
+==========
+
+The following variables are all required parameter to operate this
+module:
+
+- ``thrForceInMsg``: thruster force input message
+
+- ``thrConfInMsg``: thruster configuration input message
+
+- ``onTimeOutMsg``: thruster on-time output message
+
+- ``thrMinFireTime``: Minimum thruster on-time in seconds
+
+- ``baseThrustState``: Flag indicating either an on-pulsing (0) or
+  off-pulsing (1) configuration
+
+References
+==========
+.. _ref-1:
+1. `Steady-State Attitude and Control Effort Sensitivity Analysis of Discretized Thruster Implementations <https://doi.org/10.2514/1.A33709>`__.

@@ -1,7 +1,13 @@
-#ifndef THR_FIRING_REMAINDER
-#define THR_FIRING_REMAINDER
+/*
+ ISC License
 
-#include "thrFiringRemainderAlgorithm.h"
+ Copyright (c) 2025, University of Colorado at Boulder
+ */
+
+#ifndef THR_FIRING_REMAINDER_C_
+#define THR_FIRING_REMAINDER_C_
+
+#include "thrFiringRemainderAlgorithm_C.h"
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
@@ -13,21 +19,19 @@
 #include <stdint.h>
 
 /*! @brief Top level structure for the sub-module routines. */
-class ThrFiringRemainder : public SysModel {
+class ThrFiringRemainder_C : public SysModel {
    public:
-    ThrFiringRemainder() = default;   //!< Constructor
-    ~ThrFiringRemainder() = default;  //!< Destructor
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    void setThrMinFireTime(double thrMinFireTime);  //!< Setter for thrMinFireTime variable
-    double getThrMinFireTime() const;               //!< Getter for thrMinFireTime variable
+    void setThrMinFireTime(double thrMinFireTime);
+    double getThrMinFireTime() const;
 
-    void setThrustPulsingRegime(ThrustPulsingRegime thrustPulsingRegime);  //!< Setter for thrustPulsingRegime variable
-    ThrustPulsingRegime getThrustPulsingRegime() const;                    //!< Getter for thrustPulsingRegime variable
+    void setBaseThrustState(int baseThrustState);
+    int getBaseThrustState() const;
 
-    void setDefaultControlPeriod(double defaultControlPeriod);  //!< Setter for defaultControlPeriod variable
-    double getDefaultControlPeriod() const;                     //!< Getter for defaultControlPeriod variable
+    void setDefaultControlPeriod(double defaultControlPeriod);
+    double getDefaultControlPeriod() const;
 
     /* declare module IO interfaces */
     ReadFunctor<THRArrayCmdForceMsgPayload> thrForceInMsg;  //!< The name of the Input message
@@ -36,7 +40,7 @@ class ThrFiringRemainder : public SysModel {
     BSKLogger bskLogger = {};                               //!< BSK Logging
 
    private:
-    ThrFiringRemainderAlgorithm algorithm{};
+    ThrFiringRemainderInternalState algorithmState{};
 };
 
 #endif

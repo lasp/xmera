@@ -3,6 +3,7 @@
 
 #include "THRConfigMsgPayload.h"
 #include "definitions.h"
+#include <stdint.h>
 
 /*! @brief FSW message definition containing the thruster cluster information */
 typedef struct {

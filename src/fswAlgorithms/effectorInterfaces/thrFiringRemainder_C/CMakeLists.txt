@@ -1,11 +1,12 @@
-set(module "fswAlgorithms.effectorInterfaces.thrFiringRemainder")
+set(module "fswAlgorithms.effectorInterfaces.thrFiringRemainder_C")
 xmera_is_module_enabled("${module}" _is_enabled)
 if(NOT _is_enabled)
   return()
 endif()
 
 xmera_add_swig_module("${module}")
+
 target_sources("${module}" PRIVATE
-  thrFiringRemainder.cpp
-  thrFiringRemainderAlgorithm.cpp
+  thrFiringRemainder_C.cpp
+  thrFiringRemainderAlgorithm_C.c
 )
