@@ -3,10 +3,10 @@ NavAttMsgPayload SunlineEphemAlgorithm::updateState(const EphemerisMsgPayload& s
                                                     const NavTransMsgPayload& scPos,
                                                     const NavAttMsgPayload& scAtt) const {
     // Get sun position
-    const Eigen::Vector3d rSun(sunPos.r_BdyZero_N[0], sunPos.r_BdyZero_N[1], sunPos.r_BdyZero_N[2]);
-    const Eigen::Vector3d rSc(scPos.r_BN_N[0], scPos.r_BN_N[1], scPos.r_BN_N[2]);
+    const Eigen::Vector3d r_SN_N(sunPos.r_BdyZero_N[0], sunPos.r_BdyZero_N[1], sunPos.r_BdyZero_N[2]);
+    const Eigen::Vector3d r_BN_N(scPos.r_BN_N[0], scPos.r_BN_N[1], scPos.r_BN_N[2]);
     // Difference in inertial frame
-    const Eigen::Vector3d r_SB_N = rSun - rSc;
+    const Eigen::Vector3d r_SB_N = r_SN_N - r_BN_N;
     Eigen::Vector3d r_SB_N_hat = Eigen::Vector3d::Zero();
     if (r_SB_N.norm() > std::numeric_limits<double>::epsilon()) {
         r_SB_N_hat = r_SB_N;
