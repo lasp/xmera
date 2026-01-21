@@ -111,3 +111,45 @@ class DS_Plot():
             image = image*legend
 
         return image, self.title
+
+class DS_HistPlot:
+    """
+    Minimal histogram plot for ALL values in dataframe(s), as a density.
+    """
+    def __init__(self, data, title="",
+                 xAxisLabel="Coverage",
+                 yAxisLabel="Density",
+                 bins=25,
+                 x_range=(0.0, 1.0),
+                 macro_y=1.0):
+        self.data = data if isinstance(data, list) else [data]
+        self.title = title
+        self.xAxisLabel = xAxisLabel
+        self.yAxisLabel = yAxisLabel
+        self.bins = bins
+        self.x_range = x_range
+        self.macro_y = macro_y
+
+    def generateImage(self):
+        hv.extension("bokeh")
+
+        # Flatten all values across all frames/columns
+        vals = np.concatenate([df.to_numpy().ravel() for df in self.data]).astype(float)
+        vals = vals[np.isfinite(vals)] * self.macro_y
+
+        if vals.size == 0:
+            img = hv.Text(0.5, 0.5, "All Data Missing").opts(
+                width=960, height=540, padding=0.05,
+                title=self.title, xlabel=self.xAxisLabel, ylabel=self.yAxisLabel
+            )
+            return img, self.title
+
+        edges = np.linspace(self.x_range[0], self.x_range[1], self.bins + 1)
+        hist, edges = np.histogram(vals, bins=edges, density=True)  # <-- density
+
+        img = hv.Histogram((edges, hist)).opts(
+            width=960, height=540, padding=0.05,
+            title=self.title, xlabel=self.xAxisLabel, ylabel=self.yAxisLabel,
+            xlim=self.x_range
+        )
+        return img, self.title
