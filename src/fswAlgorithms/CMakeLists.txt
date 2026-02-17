@@ -103,6 +103,7 @@ add_subdirectory(imageProcessing/centerRadiusCNN)
 add_subdirectory(imageProcessing/houghCircles)
 add_subdirectory(imageProcessing/limbFinding)
 add_subdirectory(imageProcessing/opticalFlow)
+add_subdirectory(imageProcessing/regionsOfInterest)
 
 add_subdirectory(opticalNavigation/cobConverter)
 add_subdirectory(opticalNavigation/faultDetection)
