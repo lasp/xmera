@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _TRIAD_METHOD_
 #define _TRIAD_METHOD_
 #include <stdint.h>

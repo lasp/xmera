@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "lambertSecondDV.h"
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>

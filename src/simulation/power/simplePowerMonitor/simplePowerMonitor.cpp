@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+
 #include "simplePowerMonitor.h"
 
 /*! The constructor creates a SimplePowerMonitor instance with zero stored charge and a capacity of -1.*/

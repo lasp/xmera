@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: ISC
+
 #ifndef BASILISK_GYROMODEL_H
 #define BASILISK_GYROMODEL_H
 

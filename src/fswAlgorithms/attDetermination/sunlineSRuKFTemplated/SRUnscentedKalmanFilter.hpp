@@ -1,4 +1,5 @@
-//
+// SPDX-License-Identifier: ISC
+
 // Created by Patrick Kenneally on 5/24/25.
 //
 

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef CIRCLE_OPNAV_MSG_H
 #define CIRCLE_OPNAV_MSG_H
 

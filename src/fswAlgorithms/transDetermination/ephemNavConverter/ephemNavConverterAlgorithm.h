@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef EPHEM_NAV_CONVERTER_ALGORITHM_H
 #define EPHEM_NAV_CONVERTER_ALGORITHM_H
 

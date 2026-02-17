@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "flybyODuKF.h"
 
 /*! Reset the flyby OD filter to an initial state and

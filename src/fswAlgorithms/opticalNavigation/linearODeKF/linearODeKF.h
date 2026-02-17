@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 /*! @brief Top level structure for the flyby OD linear kalman filter.
  Used to estimate the spacecraft's inertial position relative to a body.
  */

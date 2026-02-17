@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Autonomous Vehicle System Lab, University of Colorado at Boulder
+
 #include "svIntegratorRK2.h"
 
 svIntegratorRK2::svIntegratorRK2(DynamicObject* dyn)

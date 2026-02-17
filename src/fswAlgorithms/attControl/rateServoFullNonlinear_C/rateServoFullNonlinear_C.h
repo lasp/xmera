@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2015, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef RATE_SERVO_FULL_NONLINEAR_C_H
 #define RATE_SERVO_FULL_NONLINEAR_C_H
 

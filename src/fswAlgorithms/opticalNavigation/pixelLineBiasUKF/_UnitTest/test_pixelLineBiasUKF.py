@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 import numpy as np
 from xmera.architecture import messaging
 from xmera.fswAlgorithms import pixelLineBiasUKF  # import the module that is to be tested

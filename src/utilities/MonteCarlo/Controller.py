@@ -1,4 +1,8 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
+
 # MonteCarlo module. Please read the accompanying README.md for usage information.
 #
 # Purpose:  This module is used to run a simulation with varying initial parameters.

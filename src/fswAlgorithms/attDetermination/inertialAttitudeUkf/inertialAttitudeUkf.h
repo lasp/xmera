@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 /*! @brief Top level structure for the inertial attitude unscented kalman filter.
  Used to estimate the spacecraft's inertial attitude as MRPs and attitude rate.
  */

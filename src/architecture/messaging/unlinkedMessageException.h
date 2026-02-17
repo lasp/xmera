@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: ISC
+
 #ifndef UNLINKED_MESSAGE_EXCEPTION_H
 #define UNLINKED_MESSAGE_EXCEPTION_H
 

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _EPHEM_DIFFERENCE_WITH_UNCERTAINTY_H_
 #define _EPHEM_DIFFERENCE_WITH_UNCERTAINTY_H_
 

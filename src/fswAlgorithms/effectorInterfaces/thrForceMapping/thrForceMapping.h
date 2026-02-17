@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef XMERA_THRUSTER_FORCE_MAPPING_H
 #define XMERA_THRUSTER_FORCE_MAPPING_H
 

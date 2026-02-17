@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Autonomous Vehicle System Lab, University of Colorado at Boulder
+
 %module swigDeprecatedCheck
 
 // The following lines show how to deprecate a stand-alone C++ function,

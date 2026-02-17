@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2017, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef RW_MOTOR_VOLTAGE_ALGORITHM_H
 #define RW_MOTOR_VOLTAGE_ALGORITHM_H
 

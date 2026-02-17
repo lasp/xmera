@@ -1,8 +1,5 @@
-/*
- ISC License
-
- Copyright (c) 2025, University of Colorado at Boulder
- */
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 
 #ifndef THRFIRINGREMAINDERALGORITHM_C_H
 #define THRFIRINGREMAINDERALGORITHM_C_H

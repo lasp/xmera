@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "ephemNavConverterAlgorithm.h"
 
 inline void v3Copy(double const v[3], double result[3]) {

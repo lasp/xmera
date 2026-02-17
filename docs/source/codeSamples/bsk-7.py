@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2021, Autonomous Vehicle System Lab, University of Colorado at Boulder
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 from xmera.architecture import messaging
 from xmera.moduleTemplates import cppModuleTemplate
 from xmera.utilities import SimulationBaseClass

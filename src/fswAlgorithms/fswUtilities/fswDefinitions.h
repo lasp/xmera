@@ -1,11 +1,6 @@
-/*
- * ADCSDefinitions.h
- *
- * Provide generation defintions related to the ADCS Algorithms
- *
- * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
- * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
- */
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #ifndef _FSW_DEFINITIONS_H
 #define _FSW_DEFINITIONS_H

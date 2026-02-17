@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: ISC
+
 #ifndef BASILISK_MEASUREMENT_H
 #define BASILISK_MEASUREMENT_H
 

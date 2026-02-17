@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2022, Autonomous Vehicle System Lab, University of Colorado at Boulder
+#
+
 """
 Integrated tests
 

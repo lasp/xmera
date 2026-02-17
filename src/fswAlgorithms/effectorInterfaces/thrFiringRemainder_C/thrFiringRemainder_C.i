@@ -1,8 +1,6 @@
-/*
- ISC License
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 
- Copyright (c) 2025, University of Colorado at Boulder
- */
 %module thrFiringRemainder_C
 %{
    #include "thrFiringRemainder_C.h"

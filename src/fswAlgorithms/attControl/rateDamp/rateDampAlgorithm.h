@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _RATE_DAMP_ALGORITHM_H
 #define _RATE_DAMP_ALGORITHM_H
 

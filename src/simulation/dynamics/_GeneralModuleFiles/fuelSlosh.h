@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+
 #ifndef FUEL_SLOSH_H
 #define FUEL_SLOSH_H
 

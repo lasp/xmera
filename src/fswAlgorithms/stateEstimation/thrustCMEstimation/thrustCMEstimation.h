@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 /*! @brief Top level structure for the thrust CM estimation kalman filter.
  Used to estimate the spacecraft's center of mass position with respect to the B frame.
  */

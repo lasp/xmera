@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "sunlineEphemAlgorithm.h"
 NavAttMsgPayload SunlineEphemAlgorithm::updateState(const EphemerisMsgPayload& sunPos,
                                                     const NavTransMsgPayload& scPos,

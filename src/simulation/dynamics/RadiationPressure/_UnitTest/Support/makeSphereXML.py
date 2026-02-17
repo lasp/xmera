@@ -1,4 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 #
+
 # Make XML Radiation Pressure Lookup for spherical object to test against cannonball
 #
 # Purpose:  to Make lookup tables for "cannonball" method comparison

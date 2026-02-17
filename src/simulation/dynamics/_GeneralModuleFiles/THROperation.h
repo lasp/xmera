@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+
 #ifndef SIM_THRUSTER_OPERATION_H
 #define SIM_THRUSTER_OPERATION_H
 #include <stdint.h>

@@ -1,4 +1,8 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
+
 # Orb_Elem_Convert Support Script
 #
 # Purpose:  Illustrate the variation in discrepancy between

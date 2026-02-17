@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 import pytest
 import os, inspect, random
 import numpy as np
