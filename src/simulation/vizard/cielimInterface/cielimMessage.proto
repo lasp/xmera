@@ -82,6 +82,17 @@ message QuantumEfficiency{
     double blueValue3 = 10; // [-] Value of the blue channel Qe curve at the third wavelength sample point
 }
 
+message ImageData{
+    enum Format {
+      RAW = 0;
+      PNG = 1;
+      JPG = 2;
+    };
+    Format imageFormat = 1; // [-] Image format of the received image
+    double bitDepth = 2; // [-] Value of the red channel Qe curve at the first wavelength sample point
+}
+
+
 message LensModel{
     repeated double fieldOfView = 1;  //[deg, deg] Camera Field of View edge-to-edge
     double focalLength = 2; // [m] Camera focal length
@@ -106,6 +117,7 @@ message SensorModel{
     double fullWellCapacity = 10; // [e-] Amount of charge that can be stored within an individual pixel
     double gamma = 11; // [-] Gamma correction factor
     QuantumEfficiency qeCurve = 12; // [-] Quantum Efficiency curve information
+    ImageData imageData = 13; // [-] Output image data
 }
 
 message AreaOfInterest{
