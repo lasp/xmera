@@ -139,8 +139,8 @@ class Camera : public SysModel {
                                //!< as a function of vertical distance from camera center (degrees)
     Eigen::VectorXd distortion{};  //!< [-] Polynomial coefficients to form the curve of distortion (values between 0
                                    //!< and 1) as a function of vertical distance from camera center (degrees)
-    double transmission{};  //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
-                            //!< wavelengths
+    double transmission{};      //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
+                                //!< wavelengths
     std::string imageFormat{};  //!< [-] Image format (raw, png, jpeg)
     int bitDepth{};             //!< [-] Bit depth if raw format is selected
 
