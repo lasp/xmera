@@ -22,10 +22,11 @@ except ImportError:
     reasonErr = "\nCielim Interface not built ---check build option"
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
-def test_interface():
-    read_write_test()
+@pytest.mark.parametrize("format", ["RAW", "JPG", "PNG"])
+def test_interface(format):
+    read_write_test(format)
 
-def read_write_test():
+def read_write_test(format):
     tmpdir = tempfile.TemporaryDirectory()
     unit_task_name = "unitTask"
     unit_process_name = "TestProcess"
@@ -120,6 +121,8 @@ def read_write_test():
     camera_payload.verticalVignetting = [0.5, 0.6, 0.7, 0.8]
     camera_payload.distortion = [0.2, 0.4, 0.6, 0.8]
     camera_payload.transmission = 0.9
+    camera_payload.imageFormat = format
+    camera_payload.bitDepth = 12
     camera_message = messaging.CameraModelMsg().write(camera_payload)
     module.cameraModelMessage.subscribeTo(camera_message)
 
@@ -227,6 +230,13 @@ def read_write_test():
     np.testing.assert_equal(cielim_message.camera.sensorModel.sensorHeight, camera_payload.sensorHeight)
     np.testing.assert_equal(cielim_message.camera.sensorModel.fullWellCapacity, camera_payload.fullWellCapacity)
     np.testing.assert_equal(cielim_message.camera.sensorModel.gamma, camera_payload.gammaCorrection)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.imageData.bitDepth, camera_payload.bitDepth)
+    if format == "PNG":
+        np.testing.assert_equal(cielim_message.camera.sensorModel.imageData.imageFormat, cielimMessage_pb2.ImageData.PNG)
+    elif format == "RAW":
+        np.testing.assert_equal(cielim_message.camera.sensorModel.imageData.imageFormat, cielimMessage_pb2.ImageData.RAW)
+    elif format == "JPG":
+        np.testing.assert_equal(cielim_message.camera.sensorModel.imageData.imageFormat, cielimMessage_pb2.ImageData.JPG)
 
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.integrationWeightFactor, camera_payload.integrationWeightFactor)
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue1, camera_payload.redQuantumEfficiency[0])
