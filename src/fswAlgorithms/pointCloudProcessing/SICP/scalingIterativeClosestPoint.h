@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _SICP_H_
 #define _SICP_H_
 

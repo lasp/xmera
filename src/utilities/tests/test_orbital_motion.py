@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 from xmera.utilities import orbitalMotion as oe_py
 from xmera.architecture.orbitalMotion import OrbitalMotion as oe_cpp
 from xmera.architecture.orbitalMotion import ClassicalElements as elements_cpp

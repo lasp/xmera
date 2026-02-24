@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 

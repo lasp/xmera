@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef FACET_DRAG_DYNAMIC_EFFECTOR_H
 #define FACET_DRAG_DYNAMIC_EFFECTOR_H
 

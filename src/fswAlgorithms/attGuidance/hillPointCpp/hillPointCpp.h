@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _HILL_POINT_CPP_H_
 #define _HILL_POINT_CPP_H_
 

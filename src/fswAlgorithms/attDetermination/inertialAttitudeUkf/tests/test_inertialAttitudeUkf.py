@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 from numba.core.cgutils import printf
 
 import uKF_test_utilities as filter_plots

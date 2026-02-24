@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "ephemDifferenceWithUncertainty.h"
 
 /*! This method resets the module state to its initialized default.

@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2023, Autonomous Vehicle System Lab, University of Colorado at Boulder
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 """Xmera Scenario Script and Integrated Test"""
 
 import inspect

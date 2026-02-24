@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 /*! @brief Top level structure for the flyby OD unscented kalman filter.
  Used to estimate the spacecraft's inertial position relative to a body.
  */

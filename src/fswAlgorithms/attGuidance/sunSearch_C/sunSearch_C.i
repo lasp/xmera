@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 %module sunSearch_C
 %{
    #include "sunSearch_C.h"

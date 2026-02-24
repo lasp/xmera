@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _OE_STATE_EPHEM_ALGORITHM_H_
 #define _OE_STATE_EPHEM_ALGORITHM_H_
 

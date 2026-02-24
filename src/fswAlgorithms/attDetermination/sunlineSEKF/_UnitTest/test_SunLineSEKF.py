@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 """
 This test validates the EKF module by running several
 scenarios on both individual functions and the full module.

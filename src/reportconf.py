@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+#
+
 """
 This reportconf.py file is executed by src/conftest.py if and only if
 the user has pytest-html installed. It is used to customize the contents of

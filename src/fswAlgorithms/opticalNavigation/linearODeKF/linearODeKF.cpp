@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "linearODeKF.h"
 
 /*! Reset the flyby OD filter to an initial state and initializes the internal estimation matrices.

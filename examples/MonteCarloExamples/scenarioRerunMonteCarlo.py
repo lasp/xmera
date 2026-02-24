@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 r"""
 
 This script is a basic demonstration of a script that can be used to rerun a set or subset of Monte Carlo simulations.

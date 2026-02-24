@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+
 #ifndef msgHeader_h
 #define msgHeader_h
 

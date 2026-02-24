@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: ISC
+
 #ifndef XMERA_AGGREGATEEXCEPTION_H
 #define XMERA_AGGREGATEEXCEPTION_H
 

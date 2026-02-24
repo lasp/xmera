@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+# Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 r"""
 
 This script illustrates how to run a Monte Carlo simulation where the Spice is used within the Python

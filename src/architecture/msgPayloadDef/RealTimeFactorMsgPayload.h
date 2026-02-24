@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef REAL_TIME_FACTOR_H
 #define REAL_TIME_FACTOR_H
 

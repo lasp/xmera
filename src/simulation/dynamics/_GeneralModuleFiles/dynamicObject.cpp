@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2023, Autonomous Vehicle System Lab, University of Colorado at Boulder
+
 #include "dynamicObject.h"
 
 void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator) {

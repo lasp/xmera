@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _FLYBY_POINT_ALGORITHM_H
 #define _FLYBY_POINT_ALGORITHM_H
 
@@ -10,14 +13,14 @@ class FlybyPointAlgorithm {
    public:
     void reset();
     std::pair<AttRefMsgPayload, FlybyDiagnosticMsgPayload> updateState(uint64_t currentSimNanos,
-                                                                       const Eigen::Vector3d &r_BN_N,
-                                                                       const Eigen::Vector3d &v_BN_N);
+                                                                       const Eigen::Vector3d& r_BN_N,
+                                                                       const Eigen::Vector3d& v_BN_N);
     bool checkValidity(uint64_t currentSimNanos,
-                       const Eigen::Vector3d &r_BN_N,
-                       const Eigen::Vector3d &v_BN_N,
-                       FlybyDiagnosticMsgPayload &flybyDiagnosticMsgBuffer) const;
-    void computeFlybyParameters(const Eigen::Vector3d &r_BN_N, const Eigen::Vector3d &v_BN_N);
-    void computeRN(const Eigen::Vector3d &r_BN_N, const Eigen::Vector3d &v_BN_N);
+                       const Eigen::Vector3d& r_BN_N,
+                       const Eigen::Vector3d& v_BN_N,
+                       FlybyDiagnosticMsgPayload& flybyDiagnosticMsgBuffer) const;
+    void computeFlybyParameters(const Eigen::Vector3d& r_BN_N, const Eigen::Vector3d& v_BN_N);
+    void computeRN(const Eigen::Vector3d& r_BN_N, const Eigen::Vector3d& v_BN_N);
     std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d> computeGuidanceSolution() const;
     double getTimeBetweenFilterData() const;
     void setTimeBetweenFilterData(double timeBetweenFilterData);

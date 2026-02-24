@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+
 #include "ephemerisUtilities.h"
 /*
  * Function to evaluate a set of chebyshev polynomials (first argument) to a certain degree (second argument) at

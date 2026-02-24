@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _SIGNAL_PROCESSING_H_
 #define _SIGNAL_PROCESSING_H_
 

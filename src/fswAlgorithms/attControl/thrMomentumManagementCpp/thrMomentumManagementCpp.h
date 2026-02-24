@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _THR_MOMENTUM_MANAGEMENT_CPP_H_
 #define _THR_MOMENTUM_MANAGEMENT_CPP_H_
 

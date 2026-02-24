@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "measurementModels.h"
 
 /*! Function to represent measurement model which inputs a stateModel and outputs a matrix

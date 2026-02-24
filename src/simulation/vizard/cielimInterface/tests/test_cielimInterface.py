@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+#
+
 import tempfile, sys
 from xmera import __path__
 bskPath = __path__[0]

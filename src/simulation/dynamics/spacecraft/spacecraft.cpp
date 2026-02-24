@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "spacecraft.h"
 #include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
 #include <architecture/utilities/eigenMRP.h>

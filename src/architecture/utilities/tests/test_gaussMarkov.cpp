@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2018, Autonomous Vehicle System Lab, University of Colorado at Boulder
+// Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "architecture/utilities/gauss_markov.h"
 #include <Eigen/Dense>
 #include <gtest/gtest.h>

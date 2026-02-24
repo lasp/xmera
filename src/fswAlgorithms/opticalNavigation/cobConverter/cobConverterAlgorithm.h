@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #ifndef _COB_CONVERT_ALGORITHM_H_
 #define _COB_CONVERT_ALGORITHM_H_
 

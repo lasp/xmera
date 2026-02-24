@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: ISC
+// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
 #include "stateModels.h"
 
 PositionState::PositionState(const Eigen::VectorXd& initialPosition) : State(initialPosition) {}

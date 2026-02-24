@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: ISC
+# Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
+#
+
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy import linalg as la

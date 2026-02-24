@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: ISC
+#
+
 from Basilisk.fswAlgorithms import sunlineSRuKFTemplated
 
 def main():
