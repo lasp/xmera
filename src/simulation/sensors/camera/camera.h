@@ -97,6 +97,10 @@ class Camera : public SysModel {
     Eigen::VectorXd getDistortion() const;
     void setTransmission(double transmissionValue);
     double getTransmission() const;
+    void setImageFormat(const std::string& imageFormatValue);
+    std::string getImageFormat() const;
+    void setBitDepth(int bitDepthValue);
+    int getBitDepth() const;
 
    private:
     std::string parentSpacecraftName{};  //!< [-] Name of the parent body to which the camera should be attached
@@ -137,6 +141,8 @@ class Camera : public SysModel {
                                    //!< and 1) as a function of vertical distance from camera center (degrees)
     double transmission{};  //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
                             //!< wavelengths
+    std::string imageFormat{};  //!< [-] Image format (raw, png, jpeg)
+    int bitDepth{};             //!< [-] Bit depth if raw format is selected
 
    public:
     std::string filename{};                              //!< Filename for module to read an image directly
