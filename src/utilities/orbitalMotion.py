@@ -610,14 +610,14 @@ def rv2elem(mu, rVec, vVec):
 
     if (np.isnan(np.sum(rVec)) or np.isnan(np.sum(vVec))):
         print("ERROR: received NAN rVec or vVec values.")
-        elements.a = np.NaN
-        elements.alpha = np.NaN
-        elements.e = np.NaN
-        elements.i = np.NaN
-        elements.AN = np.NaN
-        elements.AP = np.NaN
-        elements.f = np.NaN
-        elements.rmag = np.NaN
+        elements.a = np.nan
+        elements.alpha = np.nan
+        elements.e = np.nan
+        elements.i = np.nan
+        elements.AN = np.nan
+        elements.AP = np.nan
+        elements.f = np.nan
+        elements.rmag = np.nan
         return
 
 
@@ -800,7 +800,7 @@ def atmosphericDrag(Cd, A, m, rvec, vvec):
         print("ERROR: atmosphericDrag() received rvec = [{} {} {}].". \
             format(str(rvec[1]), str(rvec[2]), str(rvec[3])))
         print('The value of rvec should produce a positive altitude for the Earth.')
-        advec.fill(np.NaN)
+        advec.fill(np.nan)
         return
 
     # get the Atmospheric density at the given altitude in kg/m^3 #
