@@ -1,0 +1,150 @@
+name: "Pull Request NuGet Packaging"
+
+on:
+  workflow_run:
+    workflows:
+      - Pull Request Test
+    types:
+      - completed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.id }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+env:
+  USERNAME: ${{ github.repository_owner }}
+  FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite"
+  VCPKG_FEATURE_FLAGS: "manifests,registries,binarycaching"
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
+  CTEST_PARALLEL_LEVEL: 4
+  CTEST_OUTPUT_ON_FAILURE: 1
+
+jobs:
+  publish-nuget:
+    name: Publish NuGet packages (ubuntu-24.04)
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.pull_requests[0].number != null &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    environment:
+      name: nuget-publish
+    permissions:
+      contents: read
+      packages: write
+      actions: read
+    steps:
+      - name: Checkout pull request merge commit
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.workflow_run.repository.full_name }}
+          ref: ${{ format('refs/pull/{0}/merge', github.event.workflow_run.pull_requests[0].number) }}
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            **/pyproject.toml
+            **/requirements*.txt
+
+      - name: Install system dependencies (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ninja-build build-essential \
+            pkg-config autoconf automake libtool \
+            zip unzip \
+            bison swig \
+            libdrm-dev \
+            libx11-dev libxkbcommon-x11-dev libx11-xcb-dev \
+            libxft-dev libxext-dev libgles2-mesa-dev \
+            libxi-dev libxtst-dev libxrandr-dev libltdl-dev \
+            libgtk2.0-dev \
+            python3-setuptools python3-jinja2 python3-tk \
+            mono-complete
+
+      - name: Setup CMake 3.28.3
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.28.3'
+
+      - name: Install vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
+          vcpkgJsonGlob: "src/vcpkg.json"
+          vcpkgConfigurationJsonGlob: "src/vcpkg-configuration.json"
+
+      - name: Cache vcpkg build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.workspace }}/b/vcpkg/installed
+            ${{ runner.workspace }}/b/vcpkg/packages
+            ${{ runner.workspace }}/b/vcpkg/buildtrees
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('src/vcpkg.json', 'src/vcpkg-configuration.json') }}
+
+      - name: Add NuGet sources for vcpkg binary cache (portable)
+        env:
+          VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
+        run: |
+          set -euo pipefail
+          NUGET="$(${VCPKG_EXE} fetch nuget | tail -n 1)"
+
+          if [[ "$NUGET" == *.exe ]]; then
+            NUGET_CMD=(mono "$NUGET")
+          else
+            NUGET_CMD=("$NUGET")
+          fi
+
+          echo "Using NuGet CLI: ${NUGET_CMD[*]}"
+
+          "${NUGET_CMD[@]}" sources add \
+            -Source "${FEED_URL}" \
+            -StorePasswordInClearText \
+            -Name GitHubPackages \
+            -UserName "${USERNAME}" \
+            -Password "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}"
+
+          "${NUGET_CMD[@]}" setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
+            -Source "${FEED_URL}"
+
+      - name: Create virtual environment
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          python -V
+          pip -V
+
+      - name: Install required Python dependencies
+        run: |
+          source .venv/bin/activate
+          python -m pip install -r requirements.txt
+
+      - name: Configure (CMake preset)
+        working-directory: src
+        run: cmake --preset ci-test
+
+      - name: Build
+        working-directory: src
+        run: cmake --build ../build --parallel
+
+      - name: Install Basilisk (editable)
+        run: |
+          source .venv/bin/activate
+          cmake --install build --prefix $(pwd)/dist
+          python -m pip install -e .
+
+      - name: Run C/C++ tests
+        working-directory: ./build
+        run: ctest --output-on-failure

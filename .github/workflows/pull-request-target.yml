@@ -1,7 +1,12 @@
-name: "Pull Request Test"
+name: "Pull Request (Forks, NuGet cache read-only)"
 
 on:
-  pull_request:
+  pull_request_target:
+
+permissions:
+  contents: read
+  packages: read
+  actions: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,11 +27,15 @@ env:
 jobs:
   pre-commit:
     runs-on: ubuntu-24.04
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
     permissions:
       contents: read
-    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout PR head (no credentials)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - uses: actions/setup-python@v5
         with:
@@ -57,9 +66,9 @@ jobs:
           extra_args: --color always --files ${{ steps.file_changes.outputs.all_changed_files }}
 
   build-test:
-    name: Build & Test (${{ matrix.os }} / py${{ matrix.python-version }})
+    name: Build & Test (forks, ${{ matrix.os }} / py${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
-    if: ${{ github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
     strategy:
       fail-fast: false
       matrix:
@@ -71,8 +80,11 @@ jobs:
       actions: read
       security-events: write
     steps:
-      - name: Checkout code
+      - name: Checkout PR head (no credentials)
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -123,20 +135,11 @@ jobs:
           vcpkgJsonGlob: "src/vcpkg.json"
           vcpkgConfigurationJsonGlob: "src/vcpkg-configuration.json"
 
-      - name: Cache vcpkg build artifacts
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ runner.workspace }}/b/vcpkg/installed
-            ${{ runner.workspace }}/b/vcpkg/packages
-            ${{ runner.workspace }}/b/vcpkg/buildtrees
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('src/vcpkg.json', 'src/vcpkg-configuration.json') }}
-
       - name: Add NuGet sources for vcpkg binary cache (read-only)
         env:
           VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
           NUGET_USER: ${{ github.repository_owner }}
-          NUGET_TOKEN: ${{ github.token }}
+          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           NUGET="$(${VCPKG_EXE} fetch nuget | tail -n 1)"
@@ -189,30 +192,10 @@ jobs:
         run: |
           source .venv/bin/activate
           cd src
-          pytest -n auto -m "not scenarioTest" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
-
-      - name: Upload pytest test results
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-${{ matrix.os }}-py${{ matrix.python-version }}
-          path: junit/test-results-${{ matrix.python-version }}.xml
-          retention-days: 7
+          pytest -n auto -m "not scenarioTest"
 
       - name: Run C/C++ unit tests (include fuzz-smoke)
         working-directory: ./build
         env:
           CTEST_PARALLEL_LEVEL: 1
         run: ctest --output-on-failure -LE fuzz
-
-      - name: Upload CMake & test logs on failure
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: cmake-logs-${{ matrix.os }}-py${{ matrix.python-version }}
-          path: |
-            dist3/CMakeCache.txt
-            dist3/CMakeFiles/CMakeOutput.log
-            dist3/CMakeFiles/CMakeError.log
-            **/Testing/Temporary/LastTest.log
-          retention-days: 7
