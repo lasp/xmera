@@ -13,6 +13,7 @@ This script is a basic demonstration of a script that can be used to rerun a set
 
 """
 
+import importlib
 import inspect
 import os
 import sys
@@ -56,11 +57,11 @@ def run(time=None):
     newDataDir = path + "/" + scenarioName + "MC/rerun"
 
 
-    exec('import '+ scenarioName)
-    simulationModule = eval(scenarioName + "." + scenarioName) # ex. scenarioMonteCarlo.scenarioMonteCarlo
+    module = importlib.import_module(scenarioName)
+    simulationModule = getattr(module, scenarioName)
     if time is not None:
-        exec (scenarioName + '.' + scenarioName + '.simBaseTime = time')  # ex. scenarioMonteCarlo.scenarioMonteCarlo.simBaseTime = time
-    executionModule = eval(scenarioName + ".runScenario") # ex. scenarioMonteCarlo.run
+        getattr(module, scenarioName).simBaseTime = time
+    executionModule = getattr(module, "runScenario")
 
     monteCarlo.setSimulationFunction(simulationModule)
     monteCarlo.setExecutionFunction(executionModule)
