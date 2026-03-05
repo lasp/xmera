@@ -89,7 +89,7 @@ def fixMDotData(mDotData):
     but one.
     """
     firstNonZeroRow = np.nonzero(mDotData[:,1])[0][0]
-    return np.row_stack([[0,0], mDotData[firstNonZeroRow:, :]])
+    return np.vstack([[0,0], mDotData[firstNonZeroRow:, :]])
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)

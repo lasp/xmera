@@ -32,7 +32,7 @@ endColor = '\u001b[0m'
 class EventHandlerClass:
     """Event Handler Class"""
     def __init__(self, eventName, eventRate=int(1E9), eventActive=False,
-                 conditionList=[], actionList=[], terminal=False):
+                 conditionList=[], actionList=[], terminal=False, callerGlobals=None):
         self.eventName = eventName
         self.eventActive = eventActive
         self.eventRate = eventRate
@@ -43,27 +43,35 @@ class EventHandlerClass:
         self.checkCall = None
         self.operateCall = None
         self.terminal = terminal
+        self.callerGlobals = callerGlobals or {}
 
     def methodizeEvent(self):
-        if self.checkCall != None:
+        if self.checkCall is not None:
             return
-        funcString = 'def EVENT_check_' + self.eventName + '(self):\n'
-        funcString += '    if('
-        for condValue in self.conditionList:
-            funcString += ' ' + condValue + ' and'
-        funcString = funcString[:-3] + '):\n'
-        funcString += '        return 1\n'
-        funcString += '    return 0'
 
-        exec (funcString)
-        self.checkCall = eval('EVENT_check_' + self.eventName)
-        funcString = 'def EVENT_operate_' + self.eventName + '(self):\n'
-        for actionValue in self.actionList:
-            funcString += '    '
-            funcString += actionValue + '\n'
-        funcString += '    return 0'
-        exec (funcString)
-        self.operateCall = eval('EVENT_operate_' + self.eventName)
+        cond_expr = ' and '.join(f'({c})' for c in self.conditionList)
+        check_code = compile(cond_expr, f'<event:{self.eventName}:check>', 'eval')
+
+        operate_src = '\n'.join(self.actionList)
+        operate_code = compile(operate_src, f'<event:{self.eventName}:operate>', 'exec')
+
+        # Build a shared namespace from the caller's globals so condition/action
+        # strings can reference any name that was in scope at registration time
+        # (e.g. 'np', 'math').  'self' is updated in-place before each call to
+        # avoid allocating a new dict on every simulation tick.
+        ns = dict(self.callerGlobals)
+        ns['self'] = None
+
+        def check_call(sim):
+            ns['self'] = sim
+            return 1 if eval(check_code, ns) else 0
+
+        def operate_call(sim):
+            ns['self'] = sim
+            exec(operate_code, ns)
+
+        self.checkCall = check_call
+        self.operateCall = operate_call
 
     def checkEvent(self, parentSim):
         nextTime = int(-1)
@@ -552,8 +560,9 @@ class SimBaseClass:
         """
         if (eventName in list(self.eventMap.keys())):
             return
+        callerGlobals = inspect.currentframe().f_back.f_globals
         newEvent = EventHandlerClass(eventName, eventRate, eventActive,
-                                     conditionList, actionList, terminal)
+                                     conditionList, actionList, terminal, callerGlobals)
         self.eventMap.update({eventName: newEvent})
 
     def initializeEventChecks(self):

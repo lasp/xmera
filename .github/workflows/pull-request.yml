@@ -64,7 +64,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, macos-14]
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
     permissions:
       contents: read
       packages: write
@@ -175,7 +175,20 @@ jobs:
         working-directory: src
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
-        run: cmake --preset fuzz-smoke-test
+        run: |
+          source ${{ github.workspace }}/.venv/bin/activate
+          PY_PREFIX=${{ env.pythonLocation }}
+          PY_VER=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            PY_LIB_EXT="so"
+          else
+            PY_LIB_EXT="dylib"
+          fi
+          cmake --preset fuzz-smoke-test \
+            -DPython3_EXECUTABLE=$PY_PREFIX/bin/python3 \
+            -DPython3_LIBRARY=$PY_PREFIX/lib/libpython${PY_VER}.${PY_LIB_EXT} \
+            -DPython3_INCLUDE_DIR=$PY_PREFIX/include/python${PY_VER} \
+            -DPython3_FIND_FRAMEWORK=NEVER
 
       - name: Build
         working-directory: src

@@ -2,7 +2,7 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-%module(directors="1") sim_model
+%module(directors="1", threads="1") sim_model
 %{
    #include "sim_model.h"
 %}
@@ -59,6 +59,39 @@ namespace std {
 %feature("pythonappend") SysModel::SysModel %{
     self.__super_init_called__ = True%}
 %rename("_SysModel") SysModel;
+
+// These three methods block waiting for child simulation threads (via BSKSemaphore::acquire).
+// They must release the GIL before blocking so that SWIG director callbacks in the child
+// threads can acquire it. The catch blocks re-acquire the GIL (via Py_BLOCK_THREADS, which
+// is valid inside a Py_BEGIN_ALLOW_THREADS scope) before SWIG_exception calls PyErr_SetString.
+//
+// %nothreadallow cancels the automatic Py_BEGIN/END_ALLOW_THREADS that threads="1" would
+// otherwise add around $action. Without it, $action carries its own inner thread-allow
+// block, and our outer Py_BEGIN_ALLOW_THREADS causes a double PyEval_SaveThread — calling
+// it a second time when the GIL is already released, which is a fatal error in Python 3.12.
+%nothreadallow SimModel::selfInitSimulation;
+%nothreadallow SimModel::resetInitSimulation;
+%nothreadallow SimModel::stepUntilStop;
+
+%define %sim_blocking_exception(method)
+%exception method {
+    Py_BEGIN_ALLOW_THREADS
+    try {
+        $action
+    } catch (const std::exception& e) {
+        Py_BLOCK_THREADS;
+        SWIG_exception(SWIG_RuntimeError, e.what());
+    } catch (const std::string& e) {
+        Py_BLOCK_THREADS;
+        SWIG_exception(SWIG_RuntimeError, e.c_str());
+    }
+    Py_END_ALLOW_THREADS
+}
+%enddef
+
+%sim_blocking_exception(SimModel::selfInitSimulation)
+%sim_blocking_exception(SimModel::resetInitSimulation)
+%sim_blocking_exception(SimModel::stepUntilStop)
 
 %include "cSysModel.i"
 %include "sys_model_task.h"

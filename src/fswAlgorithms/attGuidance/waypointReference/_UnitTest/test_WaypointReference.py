@@ -143,7 +143,7 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
             lineString += str(q.tolist())[1:-1] + delimiter
         elif attType == 2:
             q = rbk.MRP2EP(attReal_RN[-1])
-            qs = [q[1], q[2], q[3], q[0]]
+            qs = q[[1, 2, 3, 0]].tolist()
             lineString += str(qs)[1:-1] + delimiter
         else:
             print("Invalid attitude type")

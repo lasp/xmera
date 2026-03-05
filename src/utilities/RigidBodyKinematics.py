@@ -2,15 +2,8 @@
 # Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 #
 
-import math
-
-# Import required modules:
 import numpy as np
 from numpy import linalg as la
-
-M_PI = np.pi
-D2R = M_PI / 180.
-R2D = 180. / M_PI
 
 
 def Picheck(x):
@@ -18,10 +11,10 @@ def Picheck(x):
         Picheck(x)
         Makes sure that the angle x lies within +/- Pi.
     """
-    if x > M_PI:
-        return x - 2 * M_PI
-    if x < -M_PI:
-        return x + 2 * M_PI
+    if x > np.pi:
+        return x - 2 * np.pi
+    if x < -np.pi:
+        return x + 2 * np.pi
     return x
 
 
@@ -81,9 +74,9 @@ def C2Euler121(C):
     	Q = C2Euler121(C) translates the 3x3 direction cosine matrix
     	C into the corresponding (1-2-1) euler angle set.
     """
-    q0 = math.atan2(C[0, 1], -C[0, 2])
-    q1 = math.acos(C[0, 0])
-    q2 = math.atan2(C[1, 0], C[2, 0])
+    q0 = np.arctan2(C[0, 1], -C[0, 2])
+    q1 = np.arccos(C[0, 0])
+    q2 = np.arctan2(C[1, 0], C[2, 0])
     q = np.array([q0, q1, q2])
 
     return q
@@ -110,9 +103,9 @@ def C2Euler131(C):
     	Q = C2Euler131(C) translates the 3x3 direction cosine matrix
     	C into the corresponding (1-3-1) euler angle set.
     """
-    q0 = math.atan2(C[0, 2], C[0, 1])
-    q1 = math.acos(C[0, 0])
-    q2 = math.atan2(C[2, 0], -C[1, 0])
+    q0 = np.arctan2(C[0, 2], C[0, 1])
+    q1 = np.arccos(C[0, 0])
+    q2 = np.arctan2(C[2, 0], -C[1, 0])
     q = np.array([q0, q1, q2])
 
     return q
@@ -125,9 +118,9 @@ def C2Euler132(C):
     	Q = C2Euler132(C) translates the 3x3 direction cosine matrix
     	C into the corresponding (1-3-2) euler angle set.
     """
-    q0 = math.atan2(C[1, 2], C[1, 1])
-    q1 = math.asin(-C[1, 0])
-    q2 = math.atan2(C[2, 0], C[0, 0])
+    q0 = np.arctan2(C[1, 2], C[1, 1])
+    q1 = np.arcsin(-C[1, 0])
+    q2 = np.arctan2(C[2, 0], C[0, 0])
     q = np.array([q0, q1, q2])
 
     return q
@@ -140,9 +133,9 @@ def C2Euler212(C):
     	Q = C2Euler212(C) translates the 3x3 direction cosine matrix
     	C into the corresponding (2-1-2) euler angle set.
     """
-    q0 = math.atan2(C[1, 0], C[1, 2])
-    q1 = math.acos(C[1, 1])
-    q2 = math.atan2(C[0, 1], -C[2, 1])
+    q0 = np.arctan2(C[1, 0], C[1, 2])
+    q1 = np.arccos(C[1, 1])
+    q2 = np.arctan2(C[0, 1], -C[2, 1])
     q = np.array([q0, q1, q2])
 
     return q
@@ -156,9 +149,9 @@ def C2Euler213(C):
     	C into the corresponding (2-1-3) euler angle set.
     """
 
-    q0 = math.atan2(C[2, 0], C[2, 2])
-    q1 = math.asin(-C[2, 1])
-    q2 = math.atan2(C[0, 1], C[1, 1])
+    q0 = np.arctan2(C[2, 0], C[2, 2])
+    q1 = np.arcsin(-C[2, 1])
+    q2 = np.arctan2(C[0, 1], C[1, 1])
     q = np.array([q0, q1, q2])
 
     return q
@@ -172,9 +165,9 @@ def C2Euler231(C):
     	C into the corresponding (2-3-1) euler angle set.
     """
 
-    q0 = math.atan2(-C[0, 2], C[0, 0])
-    q1 = math.asin(C[0, 1])
-    q2 = math.atan2(-C[2, 1], C[1, 1])
+    q0 = np.arctan2(-C[0, 2], C[0, 0])
+    q1 = np.arcsin(C[0, 1])
+    q2 = np.arctan2(-C[2, 1], C[1, 1])
     q = np.array([q0, q1, q2])
     return q
 
@@ -187,9 +180,9 @@ def C2Euler232(C):
     	C into the corresponding (2-3-2) euler angle set.
     """
 
-    q0 = math.atan2(C[1, 2], -C[1, 0])
-    q1 = math.acos(C[1, 1])
-    q2 = math.atan2(C[2, 1], C[0, 1])
+    q0 = np.arctan2(C[1, 2], -C[1, 0])
+    q1 = np.arccos(C[1, 1])
+    q2 = np.arctan2(C[2, 1], C[0, 1])
     q = np.array([q0, q1, q2])
     return q
 
@@ -202,9 +195,9 @@ def C2Euler312(C):
     	C into the corresponding (3-1-2) euler angle set.
     """
 
-    q0 = math.atan2(-C[1, 0], C[1, 1])
-    q1 = math.asin(C[1, 2])
-    q2 = math.atan2(-C[0, 2], C[2, 2])
+    q0 = np.arctan2(-C[1, 0], C[1, 1])
+    q1 = np.arcsin(C[1, 2])
+    q2 = np.arctan2(-C[0, 2], C[2, 2])
     q = np.array([q0, q1, q2])
     return q
 
@@ -217,9 +210,9 @@ def C2Euler313(C):
     	C into the corresponding (3-1-3) euler angle set.
     """
 
-    q0 = math.atan2(C[2, 0], -C[2, 1])
-    q1 = math.acos(C[2, 2])
-    q2 = math.atan2(C[0, 2], C[1, 2])
+    q0 = np.arctan2(C[2, 0], -C[2, 1])
+    q1 = np.arccos(C[2, 2])
+    q2 = np.arctan2(C[0, 2], C[1, 2])
     q = np.array([q0, q1, q2])
     return q
 
@@ -232,9 +225,9 @@ def C2Euler321(C):
     	C into the corresponding (3-2-1) euler angle set.
     """
 
-    q0 = math.atan2(C[0, 1], C[0, 0])
-    q1 = math.asin(-C[0, 2])
-    q2 = math.atan2(C[1, 2], C[2, 2])
+    q0 = np.arctan2(C[0, 1], C[0, 0])
+    q1 = np.arcsin(-C[0, 2])
+    q2 = np.arctan2(C[1, 2], C[2, 2])
     q = np.array([q0, q1, q2])
     return q
 
@@ -247,9 +240,9 @@ def C2Euler323(C):
     	C into the corresponding (3-2-3) euler angle set.
     """
 
-    q0 = math.atan2(C[2, 1], C[2, 0])
-    q1 = math.acos(C[2, 2])
-    q2 = math.atan2(C[1, 2], -C[0, 2])
+    q0 = np.arctan2(C[2, 1], C[2, 0])
+    q1 = np.arccos(C[2, 2])
+    q2 = np.arctan2(C[1, 2], -C[0, 2])
     q = np.array([q0, q1, q2])
     return q
 
@@ -337,16 +330,16 @@ def addEuler121(e1, e2):
     	(1-2-1) rotations E1 and E2.
     """
 
-    cp1 = math.cos(e1[1])
-    cp2 = math.cos(e2[1])
-    sp1 = math.sin(e1[1])
-    sp2 = math.sin(e2[1])
+    cp1 = np.cos(e1[1])
+    cp2 = np.cos(e2[1])
+    sp1 = np.sin(e1[1])
+    sp2 = np.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
-    cp3 = math.cos(q1)
-    q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
-    q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
+    q1 = np.arccos(cp1 * cp2 - sp1 * sp2 * np.cos(dum))
+    cp3 = np.cos(q1)
+    q0 = Picheck(e1[0] + np.arctan2(sp1 * sp2 * np.sin(dum), cp2 - cp3 * cp1))
+    q2 = Picheck(e2[2] + np.arctan2(sp1 * sp2 * np.sin(dum), cp1 - cp3 * cp2))
 
     q = np.array([q0, q1, q2])
 
@@ -377,16 +370,16 @@ def addEuler131(e1, e2):
     	(1-3-1) rotations E1 and E2.
     """
 
-    cp1 = math.cos(e1[1])
-    cp2 = math.cos(e2[1])
-    sp1 = math.sin(e1[1])
-    sp2 = math.sin(e2[1])
+    cp1 = np.cos(e1[1])
+    cp2 = np.cos(e2[1])
+    sp1 = np.sin(e1[1])
+    sp2 = np.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
-    cp3 = math.cos(q1)
-    q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
-    q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
+    q1 = np.arccos(cp1 * cp2 - sp1 * sp2 * np.cos(dum))
+    cp3 = np.cos(q1)
+    q0 = Picheck(e1[0] + np.arctan2(sp1 * sp2 * np.sin(dum), cp2 - cp3 * cp1))
+    q2 = Picheck(e2[2] + np.arctan2(sp1 * sp2 * np.sin(dum), cp1 - cp3 * cp2))
 
     q = np.array([q0, q1, q2])
     return q
@@ -416,16 +409,16 @@ def addEuler212(e1, e2):
     	(2-1-2) rotations E1 and E2.
     """
 
-    cp1 = math.cos(e1[1])
-    cp2 = math.cos(e2[1])
-    sp1 = math.sin(e1[1])
-    sp2 = math.sin(e2[1])
+    cp1 = np.cos(e1[1])
+    cp2 = np.cos(e2[1])
+    sp1 = np.sin(e1[1])
+    sp2 = np.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
-    cp3 = math.cos(q1)
-    q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
-    q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
+    q1 = np.arccos(cp1 * cp2 - sp1 * sp2 * np.cos(dum))
+    cp3 = np.cos(q1)
+    q0 = Picheck(e1[0] + np.arctan2(sp1 * sp2 * np.sin(dum), cp2 - cp3 * cp1))
+    q2 = Picheck(e2[2] + np.arctan2(sp1 * sp2 * np.sin(dum), cp1 - cp3 * cp2))
     q = np.array([q0, q1, q2])
     return q
 
@@ -469,16 +462,16 @@ def addEuler232(e1, e2):
     	(2-3-2) rotations E1 and E2.
     """
 
-    cp1 = math.cos(e1[1])
-    cp2 = math.cos(e2[1])
-    sp1 = math.sin(e1[1])
-    sp2 = math.sin(e2[1])
+    cp1 = np.cos(e1[1])
+    cp2 = np.cos(e2[1])
+    sp1 = np.sin(e1[1])
+    sp2 = np.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
-    cp3 = math.cos(q1)
-    q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
-    q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
+    q1 = np.arccos(cp1 * cp2 - sp1 * sp2 * np.cos(dum))
+    cp3 = np.cos(q1)
+    q0 = Picheck(e1[0] + np.arctan2(sp1 * sp2 * np.sin(dum), cp2 - cp3 * cp1))
+    q2 = Picheck(e2[2] + np.arctan2(sp1 * sp2 * np.sin(dum), cp1 - cp3 * cp2))
     q = np.array([q0, q1, q2])
     return q
 
@@ -507,16 +500,16 @@ def addEuler313(e1, e2):
     	(3-1-3) rotations E1 and E2.
     """
 
-    cp1 = math.cos(e1[1])
-    cp2 = math.cos(e2[1])
-    sp1 = math.sin(e1[1])
-    sp2 = math.sin(e2[1])
+    cp1 = np.cos(e1[1])
+    cp2 = np.cos(e2[1])
+    sp1 = np.sin(e1[1])
+    sp2 = np.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
-    cp3 = math.cos(q1)
-    q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
-    q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
+    q1 = np.arccos(cp1 * cp2 - sp1 * sp2 * np.cos(dum))
+    cp3 = np.cos(q1)
+    q0 = Picheck(e1[0] + np.arctan2(sp1 * sp2 * np.sin(dum), cp2 - cp3 * cp1))
+    q2 = Picheck(e2[2] + np.arctan2(sp1 * sp2 * np.sin(dum), cp1 - cp3 * cp2))
     q = np.array([q0, q1, q2])
     return q
 
@@ -545,16 +538,16 @@ def addEuler323(e1, e2):
     	(3-2-3) rotations E1 and E2.
     """
 
-    cp1 = math.cos(e1[1])
-    cp2 = math.cos(e2[1])
-    sp1 = math.sin(e1[1])
-    sp2 = math.sin(e2[1])
+    cp1 = np.cos(e1[1])
+    cp2 = np.cos(e2[1])
+    sp1 = np.sin(e1[1])
+    sp2 = np.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
-    cp3 = math.cos(q1)
-    q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
-    q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
+    q1 = np.arccos(cp1 * cp2 - sp1 * sp2 * np.cos(dum))
+    cp3 = np.cos(q1)
+    q0 = Picheck(e1[0] + np.arctan2(sp1 * sp2 * np.sin(dum), cp2 - cp3 * cp1))
+    q2 = Picheck(e2[2] + np.arctan2(sp1 * sp2 * np.sin(dum), cp1 - cp3 * cp2))
     q = np.array([q0, q1, q2])
     return q
 
@@ -623,15 +616,15 @@ def addPRV(qq1, qq2):
 
     q1 = PRV2elem(qq1)
     q2 = PRV2elem(qq2)
-    cp1 = math.cos(q1[0] / 2.)
-    cp2 = math.cos(q2[0] / 2.)
-    sp1 = math.sin(q1[0] / 2.)
-    sp2 = math.sin(q2[0] / 2.)
+    cp1 = np.cos(q1[0] / 2.)
+    cp2 = np.cos(q2[0] / 2.)
+    sp1 = np.sin(q1[0] / 2.)
+    sp2 = np.sin(q2[0] / 2.)
     e1 = q1[1:4]
     e2 = q2[1:4]
 
-    p = 2. * math.acos(cp1 * cp2 - sp1 * sp2 * np.dot(e1, e2))
-    sp = math.sin(p / 2.)
+    p = 2. * np.arccos(cp1 * cp2 - sp1 * sp2 * np.dot(e1, e2))
+    sp = np.sin(p / 2.)
     e = (cp1 * sp2 * e2 + cp2 * sp1 * e1 + sp1 * sp2 * np.cross(e1, e2))
     q = (p / sp) * e
 
@@ -676,10 +669,10 @@ def BinvEuler121(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = c2
@@ -706,10 +699,10 @@ def BinvEuler123(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = c2 * c3
@@ -736,10 +729,10 @@ def BinvEuler131(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = c2
@@ -766,10 +759,10 @@ def BinvEuler132(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = c2 * c3
@@ -796,10 +789,10 @@ def BinvEuler212(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = s2 * s3
@@ -826,10 +819,10 @@ def BinvEuler213(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = c2 * s3
@@ -856,10 +849,10 @@ def BinvEuler231(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = s2
@@ -886,10 +879,10 @@ def BinvEuler232(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = s2 * c3
@@ -916,10 +909,10 @@ def BinvEuler312(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = -c2 * s3
@@ -946,10 +939,10 @@ def BinvEuler313(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = s2 * s3
@@ -976,10 +969,10 @@ def BinvEuler321(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = -s2
@@ -1006,10 +999,10 @@ def BinvEuler323(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
 
     B = np.zeros([3, 3])
     B[0, 0] = -s2 * c3
@@ -1090,8 +1083,8 @@ def BinvPRV(q):
     """
 
     p = la.norm(q)
-    c1 = (1 - math.cos(p)) / p / p
-    c2 = (p - math.sin(p)) / p / p / p
+    c1 = (1 - np.cos(p)) / p / p
+    c2 = (p - np.sin(p)) / p / p / p
 
     B = np.zeros([3, 3])
     B[0, 0] = 1 - c2 * (q[1] * q[1] + q[2] * q[2])
@@ -1146,10 +1139,10 @@ def BmatEuler121(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = 0
@@ -1177,10 +1170,10 @@ def BmatEuler123(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = c3
@@ -1208,10 +1201,10 @@ def BmatEuler131(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = 0
@@ -1239,10 +1232,10 @@ def BmatEuler132(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = c3
@@ -1270,10 +1263,10 @@ def BmatEuler212(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = s3
@@ -1301,10 +1294,10 @@ def BmatEuler213(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = s3
@@ -1332,10 +1325,10 @@ def BmatEuler231(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = 0
@@ -1363,10 +1356,10 @@ def BmatEuler232(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = c3
@@ -1394,10 +1387,10 @@ def BmatEuler312(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = -s3
@@ -1425,10 +1418,10 @@ def BmatEuler313(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = s3
@@ -1456,10 +1449,10 @@ def BmatEuler321(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = 0
@@ -1487,10 +1480,10 @@ def BmatEuler323(q):
     		dQ/dt = [B(Q)] w
     """
 
-    s2 = math.sin(q[1])
-    c2 = math.cos(q[1])
-    s3 = math.sin(q[2])
-    c3 = math.cos(q[2])
+    s2 = np.sin(q[1])
+    c2 = np.cos(q[1])
+    s3 = np.sin(q[2])
+    c3 = np.cos(q[2])
     B = np.zeros([3, 3])
 
     B[0, 0] = -c3
@@ -1596,7 +1589,7 @@ def BmatPRV(q):
     """
 
     p = np.linalg.norm(q)
-    c = 1 / p / p * (1 - p / 2 / math.tan(p / 2))
+    c = 1 / p / p * (1 - p / 2 / np.tan(p / 2))
     B = np.zeros([3, 3])
     B[0, 0] = 1 - c * (q[1] * q[1] + q[2] * q[2])
     B[0, 1] = -q[2] / 2 + c * (q[0] * q[1])
@@ -2082,7 +2075,7 @@ def gibbs2MRP(q1):
     	into the MRP vector Q.
     """
 
-    return q1 / (1 + math.sqrt(1 + np.dot(q1, q1)))
+    return q1 / (1 + np.sqrt(1 + np.dot(q1, q1)))
 
 
 def gibbs2PRV(q):
@@ -2094,7 +2087,7 @@ def gibbs2PRV(q):
     """
 
     tp = np.linalg.norm(q)
-    p = 2 * math.atan(tp)
+    p = 2 * np.arctan(tp)
     q0 = q[0] / tp * p
     q1 = q[1] / tp * p
     q2 = q[2] / tp * p
@@ -2301,7 +2294,7 @@ def MRP2PRV(q):
     """
 
     tp = np.linalg.norm(q)
-    p = 4 * math.atan(tp)
+    p = 4 * np.arctan(tp)
     q0 = q[0] / tp * p
     q1 = q[1] / tp * p
     q2 = q[2] / tp * p
@@ -2371,8 +2364,8 @@ def PRV2EP(qq1):
 
     q = np.zeros(4)
     q1 = PRV2elem(qq1)
-    sp = math.sin(q1[0] / 2)
-    q[0] = math.cos(q1[0] / 2)
+    sp = np.sin(q1[0] / 2)
+    q[0] = np.cos(q1[0] / 2)
     q[1] = q1[1] * sp
     q[2] = q1[2] * sp
     q[3] = q1[3] * sp
@@ -2521,7 +2514,7 @@ def PRV2Gibbs(q):
     """
 
     q = PRV2elem(q)
-    tp = math.tan(q[0] / 2)
+    tp = np.tan(q[0] / 2)
     q0 = q[1] * tp
     q1 = q[2] * tp
     q2 = q[3] * tp
@@ -2539,7 +2532,7 @@ def PRV2MRP(q):
     """
 
     q = PRV2elem(q)
-    tp = math.tan(q[0] / 4)
+    tp = np.tan(q[0] / 4)
     q0 = q[1] * tp
     q1 = q[2] * tp
     q2 = q[3] * tp
@@ -2574,17 +2567,17 @@ def subEuler121(e, e1):
     	(1-2-1) euler angle vector from E1 to E.
     """
 
-    cp = math.cos(e[1])
-    cp1 = math.cos(e1[1])
-    sp = math.sin(e[1])
-    sp1 = math.sin(e1[1])
+    cp = np.cos(e[1])
+    cp1 = np.cos(e1[1])
+    sp = np.sin(e[1])
+    sp1 = np.sin(e1[1])
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
-    cp2 = math.cos(e2[1])
-    e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
-    e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
+    e2[1] = np.arccos(cp1 * cp + sp1 * sp * np.cos(dum))
+    cp2 = np.cos(e2[1])
+    e2[0] = Picheck(-e1[2] + np.arctan2(sp1 * sp * np.sin(dum), cp2 * cp1 - cp))
+    e2[2] = Picheck(e[2] - np.arctan2(sp1 * sp * np.sin(dum), cp1 - cp * cp2))
 
     return e2
 
@@ -2613,17 +2606,17 @@ def subEuler131(e, e1):
     	(1-3-1) euler angle vector from E1 to E.
     """
 
-    cp = math.cos(e[1])
-    cp1 = math.cos(e1[1])
-    sp = math.sin(e[1])
-    sp1 = math.sin(e1[1])
+    cp = np.cos(e[1])
+    cp1 = np.cos(e1[1])
+    sp = np.sin(e[1])
+    sp1 = np.sin(e1[1])
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
-    cp2 = math.cos(e2[1])
-    e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
-    e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
+    e2[1] = np.arccos(cp1 * cp + sp1 * sp * np.cos(dum))
+    cp2 = np.cos(e2[1])
+    e2[0] = Picheck(-e1[2] + np.arctan2(sp1 * sp * np.sin(dum), cp2 * cp1 - cp))
+    e2[2] = Picheck(e[2] - np.arctan2(sp1 * sp * np.sin(dum), cp1 - cp * cp2))
 
     return e2
 
@@ -2652,17 +2645,17 @@ def subEuler212(e, e1):
     	(2-1-2) euler angle vector from E1 to E.
     """
 
-    cp = math.cos(e[1])
-    cp1 = math.cos(e1[1])
-    sp = math.sin(e[1])
-    sp1 = math.sin(e1[1])
+    cp = np.cos(e[1])
+    cp1 = np.cos(e1[1])
+    sp = np.sin(e[1])
+    sp1 = np.sin(e1[1])
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
-    cp2 = math.cos(e2[1])
-    e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
-    e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
+    e2[1] = np.arccos(cp1 * cp + sp1 * sp * np.cos(dum))
+    cp2 = np.cos(e2[1])
+    e2[0] = Picheck(-e1[2] + np.arctan2(sp1 * sp * np.sin(dum), cp2 * cp1 - cp))
+    e2[2] = Picheck(e[2] - np.arctan2(sp1 * sp * np.sin(dum), cp1 - cp * cp2))
 
     return e2
 
@@ -2707,17 +2700,17 @@ def subEuler232(e, e1):
     	(2-3-2) euler angle vector from E1 to E.
     """
 
-    cp = math.cos(e[1])
-    cp1 = math.cos(e1[1])
-    sp = math.sin(e[1])
-    sp1 = math.sin(e1[1])
+    cp = np.cos(e[1])
+    cp1 = np.cos(e1[1])
+    sp = np.sin(e[1])
+    sp1 = np.sin(e1[1])
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
-    cp2 = math.cos(e2[1])
-    e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
-    e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
+    e2[1] = np.arccos(cp1 * cp + sp1 * sp * np.cos(dum))
+    cp2 = np.cos(e2[1])
+    e2[0] = Picheck(-e1[2] + np.arctan2(sp1 * sp * np.sin(dum), cp2 * cp1 - cp))
+    e2[2] = Picheck(e[2] - np.arctan2(sp1 * sp * np.sin(dum), cp1 - cp * cp2))
 
     return e2
 
@@ -2746,17 +2739,17 @@ def subEuler313(e, e1):
     	(3-1-3) euler angle vector from E1 to E.
     """
 
-    cp = math.cos(e[1])
-    cp1 = math.cos(e1[1])
-    sp = math.sin(e[1])
-    sp1 = math.sin(e1[1])
+    cp = np.cos(e[1])
+    cp1 = np.cos(e1[1])
+    sp = np.sin(e[1])
+    sp1 = np.sin(e1[1])
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
-    cp2 = math.cos(e2[1])
-    e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
-    e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
+    e2[1] = np.arccos(cp1 * cp + sp1 * sp * np.cos(dum))
+    cp2 = np.cos(e2[1])
+    e2[0] = Picheck(-e1[2] + np.arctan2(sp1 * sp * np.sin(dum), cp2 * cp1 - cp))
+    e2[2] = Picheck(e[2] - np.arctan2(sp1 * sp * np.sin(dum), cp1 - cp * cp2))
 
     return e2
 
@@ -2785,17 +2778,17 @@ def subEuler323(e, e1):
     	(3-2-3) euler angle vector from E1 to E.
     """
 
-    cp = math.cos(e[1])
-    cp1 = math.cos(e1[1])
-    sp = math.sin(e[1])
-    sp1 = math.sin(e1[1])
+    cp = np.cos(e[1])
+    cp1 = np.cos(e1[1])
+    sp = np.sin(e[1])
+    sp1 = np.sin(e1[1])
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
-    cp2 = math.cos(e2[1])
-    e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
-    e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
+    e2[1] = np.arccos(cp1 * cp + sp1 * sp * np.cos(dum))
+    cp2 = np.cos(e2[1])
+    e2[0] = Picheck(-e1[2] + np.arctan2(sp1 * sp * np.sin(dum), cp2 * cp1 - cp))
+    e2[2] = Picheck(e[2] - np.arctan2(sp1 * sp * np.sin(dum), cp1 - cp * cp2))
 
     return e2
 
@@ -2846,15 +2839,15 @@ def subPRV(q1, q2):
 
     q1 = PRV2elem(q1)
     q2 = PRV2elem(q2)
-    cp1 = math.cos(q1[0] / 2)
-    cp2 = math.cos(q2[0] / 2)
-    sp1 = math.sin(q1[0] / 2)
-    sp2 = math.sin(q2[0] / 2)
+    cp1 = np.cos(q1[0] / 2)
+    cp2 = np.cos(q2[0] / 2)
+    sp1 = np.sin(q1[0] / 2)
+    sp2 = np.sin(q2[0] / 2)
     e1 = q1[1:4]
     e2 = q2[1:4]
 
-    p = 2 * math.acos(cp1 * cp2 + sp1 * sp2 * np.dot(e1, e2))
-    sp = math.sin(p / 2)
+    p = 2 * np.arccos(cp1 * cp2 + sp1 * sp2 * np.dot(e1, e2))
+    sp = np.sin(p / 2)
     e = (-cp1 * sp2 * e2 + cp2 * sp1 * e1 + sp1 * sp2 * np.cross(e1, e2)) / sp
     q = p * e
 
@@ -2865,7 +2858,7 @@ def EP2C(q):
     """
 	EP2C
 
-        C = EP2C(Q) returns the direction math.cosine
+        C = EP2C(Q) returns the direction np.cosine
         matrix in terms of the 4x1 euler parameter vector
         Q.  The first element is the non-dimensional euler
         parameter, while the remain three elements form
@@ -2897,11 +2890,11 @@ def EP2Euler121(q):
         vector E.
 	"""
 
-    t1 = math.atan2(q[3], q[2])
-    t2 = math.atan2(q[1], q[0])
+    t1 = np.arctan2(q[3], q[2])
+    t2 = np.arctan2(q[1], q[0])
 
     e1 = t1 + t2
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[1] * q[1]))
+    e2 = 2 * np.arccos(np.sqrt(q[0] * q[0] + q[1] * q[1]))
     e3 = t2 - t1
 
     e = np.array([e1, e2, e3])
@@ -2921,9 +2914,9 @@ def EP2Euler123(q):
     q2 = q[2]
     q3 = q[3]
 
-    e1 = math.atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
-    e2 = math.asin(2 * (q1 * q3 + q0 * q2))
-    e3 = math.atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
+    e1 = np.arctan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
+    e2 = np.arcsin(2 * (q1 * q3 + q0 * q2))
+    e3 = np.arctan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
 
     e = np.array([e1, e2, e3])
     return e
@@ -2938,11 +2931,11 @@ def EP2Euler131(q):
         vector E.
 	"""
 
-    t1 = math.atan2(q[2], q[3])
-    t2 = math.atan2(q[1], q[0])
+    t1 = np.arctan2(q[2], q[3])
+    t2 = np.arctan2(q[1], q[0])
 
     e1 = t2 - t1
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[1] * q[1]))
+    e2 = 2 * np.arccos(np.sqrt(q[0] * q[0] + q[1] * q[1]))
     e3 = t2 + t1
 
     e = np.array([e1, e2, e3])
@@ -2962,9 +2955,9 @@ def EP2Euler132(q):
     q2 = q[2]
     q3 = q[3]
 
-    e1 = math.atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
-    e2 = math.asin(-2 * (q1 * q2 - q0 * q3))
-    e3 = math.atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
+    e1 = np.arctan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
+    e2 = np.arcsin(-2 * (q1 * q2 - q0 * q3))
+    e3 = np.arctan2(2 * (q1 * q3 + q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
 
     e = np.array([e1, e2, e3])
     return e
@@ -2979,11 +2972,11 @@ def EP2Euler212(q):
         vector E.
     """
 
-    t1 = math.atan2(q[3], q[1])
-    t2 = math.atan2(q[2], q[0])
+    t1 = np.arctan2(q[3], q[1])
+    t2 = np.arctan2(q[2], q[0])
 
     e1 = t2 - t1
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[2] * q[2]))
+    e2 = 2 * np.arccos(np.sqrt(q[0] * q[0] + q[2] * q[2]))
     e3 = t2 + t1
 
     e = np.array([e1, e2, e3])
@@ -3003,9 +2996,9 @@ def EP2Euler213(q):
     q2 = q[2]
     q3 = q[3]
 
-    e1 = math.atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
-    e2 = math.asin(-2 * (q2 * q3 - q0 * q1))
-    e3 = math.atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
+    e1 = np.arctan2(2 * (q1 * q3 + q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
+    e2 = np.arcsin(-2 * (q2 * q3 - q0 * q1))
+    e3 = np.arctan2(2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
 
     e = np.array([e1, e2, e3])
     return e
@@ -3024,9 +3017,9 @@ def EP2Euler231(q):
     q2 = q[2]
     q3 = q[3]
 
-    e1 = math.atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
-    e2 = math.asin(2 * (q1 * q2 + q0 * q3))
-    e3 = math.atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
+    e1 = np.arctan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
+    e2 = np.arcsin(2 * (q1 * q2 + q0 * q3))
+    e3 = np.arctan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
 
     e = np.array([e1, e2, e3])
     return e
@@ -3041,11 +3034,11 @@ def EP2Euler232(q):
     	vector E.
     """
 
-    t1 = math.atan2(q[1], q[3])
-    t2 = math.atan2(q[2], q[0])
+    t1 = np.arctan2(q[1], q[3])
+    t2 = np.arctan2(q[2], q[0])
 
     e1 = t1 + t2
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[2] * q[2]))
+    e2 = 2 * np.arccos(np.sqrt(q[0] * q[0] + q[2] * q[2]))
     e3 = t2 - t1
 
     e = np.array([e1, e2, e3])
@@ -3065,9 +3058,9 @@ def EP2Euler312(q):
     q2 = q[2]
     q3 = q[3]
 
-    e1 = math.atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
-    e2 = math.asin(2 * (q2 * q3 + q0 * q1))
-    e3 = math.atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
+    e1 = np.arctan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
+    e2 = np.arcsin(2 * (q2 * q3 + q0 * q1))
+    e3 = np.arctan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
 
     e = np.array([e1, e2, e3])
     return e
@@ -3082,11 +3075,11 @@ def EP2Euler313(q):
     	vector E.
     """
 
-    t1 = math.atan2(q[2], q[1])
-    t2 = math.atan2(q[3], q[0])
+    t1 = np.arctan2(q[2], q[1])
+    t2 = np.arctan2(q[3], q[0])
 
     e1 = t1 + t2
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[3] * q[3]))
+    e2 = 2 * np.arccos(np.sqrt(q[0] * q[0] + q[3] * q[3]))
     e3 = t2 - t1
 
     e = np.array([e1, e2, e3])
@@ -3106,9 +3099,9 @@ def EP2Euler321(q):
     q2 = q[2]
     q3 = q[3]
 
-    e1 = math.atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
-    e2 = math.asin(-2 * (q1 * q3 - q0 * q2))
-    e3 = math.atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
+    e1 = np.arctan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
+    e2 = np.arcsin(-2 * (q1 * q3 - q0 * q2))
+    e3 = np.arctan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
 
     e = np.array([e1, e2, e3])
     return e
@@ -3123,11 +3116,11 @@ def EP2Euler323(q):
     	vector E.
     """
 
-    t1 = math.atan2(q[1], q[2])
-    t2 = math.atan2(q[3], q[0])
+    t1 = np.arctan2(q[1], q[2])
+    t2 = np.arctan2(q[3], q[0])
 
     e1 = t2 - t1
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[3] * q[3]))
+    e2 = 2 * np.arccos(np.sqrt(q[0] * q[0] + q[3] * q[3]))
     e3 = t2 + t1
 
     e = np.array([e1, e2, e3])
@@ -3174,8 +3167,8 @@ def EP2PRV(q):
     	into the principal rotation vector Q.
     """
 
-    p = 2 * math.acos(q[0])
-    sp = math.sin(p / 2)
+    p = 2 * np.arccos(q[0])
+    sp = np.sin(p / 2)
     q1 = q[1] / sp * p
     q2 = q[2] / sp * p
     q3 = q[3] / sp * p
@@ -3189,8 +3182,8 @@ def euler1(x):
 	Returns the elementary rotation matrix about the first body axis.
 	"""
     m = np.identity(3)
-    m[1, 1] = math.cos(x)
-    m[1, 2] = math.sin(x)
+    m[1, 1] = np.cos(x)
+    m[1, 2] = np.sin(x)
     m[2, 1] = -m[1, 2]
     m[2, 2] = m[1, 1]
 
@@ -3204,8 +3197,8 @@ def euler2(x):
 	second body axis.
 	"""
     m = np.identity(3)
-    m[0, 0] = math.cos(x)
-    m[0, 2] = -math.sin(x)
+    m[0, 0] = np.cos(x)
+    m[0, 2] = -np.sin(x)
     m[2, 0] = -m[0, 2]
     m[2, 2] = m[0, 0]
 
@@ -3219,8 +3212,8 @@ def euler3(x):
 	third body axis.
 	"""
     m = np.identity(3)
-    m[0, 0] = math.cos(x)
-    m[0, 1] = math.sin(x)
+    m[0, 0] = np.cos(x)
+    m[0, 1] = np.sin(x)
     m[1, 0] = -m[0, 1]
     m[1, 1] = m[0, 0]
 
@@ -3235,12 +3228,12 @@ def euler1212C(q):
         matrix in terms of the 1-2-1 euler angles.
         Input Q must be a 3x1 vector of euler angles.
 	"""
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct2
@@ -3268,10 +3261,10 @@ def euler1212EP(e):
     e2 = e[1] / 2
     e3 = e[2] / 2
 
-    q0 = math.cos(e2) * math.cos(e1 + e3)
-    q1 = math.cos(e2) * math.sin(e1 + e3)
-    q2 = math.sin(e2) * math.cos(e1 - e3)
-    q3 = math.sin(e2) * math.sin(e1 - e3)
+    q0 = np.cos(e2) * np.cos(e1 + e3)
+    q1 = np.cos(e2) * np.sin(e1 + e3)
+    q2 = np.sin(e2) * np.cos(e1 - e3)
+    q3 = np.sin(e2) * np.sin(e1 - e3)
 
     return np.array([q0, q1, q2, q3])
 
@@ -3318,12 +3311,12 @@ def euler1232C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct2 * ct3
@@ -3347,12 +3340,12 @@ def euler1232EP(e):
     	vector E into the euler parameter vector Q.
     """
 
-    c1 = math.cos(e[0] / 2)
-    s1 = math.sin(e[0] / 2)
-    c2 = math.cos(e[1] / 2)
-    s2 = math.sin(e[1] / 2)
-    c3 = math.cos(e[2] / 2)
-    s3 = math.sin(e[2] / 2)
+    c1 = np.cos(e[0] / 2)
+    s1 = np.sin(e[0] / 2)
+    c2 = np.cos(e[1] / 2)
+    s2 = np.sin(e[1] / 2)
+    c3 = np.cos(e[2] / 2)
+    s3 = np.sin(e[2] / 2)
 
     q0 = c1 * c2 * c3 - s1 * s2 * s3
     q1 = s1 * c2 * c3 + c1 * s2 * s3
@@ -3404,12 +3397,12 @@ def euler1312C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct2
@@ -3437,10 +3430,10 @@ def euler1312EP(e):
     e2 = e[1] / 2
     e3 = e[2] / 2
 
-    q0 = math.cos(e2) * math.cos(e1 + e3)
-    q1 = math.cos(e2) * math.sin(e1 + e3)
-    q2 = math.sin(e2) * math.sin(-e1 + e3)
-    q3 = math.sin(e2) * math.cos(-e1 + e3)
+    q0 = np.cos(e2) * np.cos(e1 + e3)
+    q1 = np.cos(e2) * np.sin(e1 + e3)
+    q2 = np.sin(e2) * np.sin(-e1 + e3)
+    q3 = np.sin(e2) * np.cos(-e1 + e3)
 
     return np.array([q0, q1, q2, q3])
 
@@ -3487,12 +3480,12 @@ def euler1322C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct2 * ct3
@@ -3516,12 +3509,12 @@ def euler1322EP(e):
     	vector E into the euler parameter vector Q.
     """
 
-    c1 = math.cos(e[0] / 2)
-    s1 = math.sin(e[0] / 2)
-    c2 = math.cos(e[1] / 2)
-    s2 = math.sin(e[1] / 2)
-    c3 = math.cos(e[2] / 2)
-    s3 = math.sin(e[2] / 2)
+    c1 = np.cos(e[0] / 2)
+    s1 = np.sin(e[0] / 2)
+    c2 = np.cos(e[1] / 2)
+    s2 = np.sin(e[1] / 2)
+    c3 = np.cos(e[2] / 2)
+    s3 = np.sin(e[2] / 2)
 
     q0 = c1 * c2 * c3 + s1 * s2 * s3
     q1 = s1 * c2 * c3 - c1 * s2 * s3
@@ -3573,12 +3566,12 @@ def euler2122C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct1 * ct3 - ct2 * st1 * st3
@@ -3603,12 +3596,12 @@ def euler2132C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct1 * ct3 + st1 * st2 * st3
@@ -3633,12 +3626,12 @@ def euler2312C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct1 * ct2
@@ -3663,12 +3656,12 @@ def euler2322C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct1 * ct2 * ct3 - st1 * st3
@@ -3693,12 +3686,12 @@ def euler3122C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct1 * ct3 - st1 * st2 * st3
@@ -3723,12 +3716,12 @@ def euler3132C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct3 * ct1 - st3 * ct2 * st1
@@ -3752,12 +3745,12 @@ def euler3212C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct2 * ct1
@@ -3782,12 +3775,12 @@ def euler3232C(q):
     	Input Q must be a 3x1 vector of euler angles.
     """
 
-    st1 = math.sin(q[0])
-    ct1 = math.cos(q[0])
-    st2 = math.sin(q[1])
-    ct2 = math.cos(q[1])
-    st3 = math.sin(q[2])
-    ct3 = math.cos(q[2])
+    st1 = np.sin(q[0])
+    ct1 = np.cos(q[0])
+    st2 = np.sin(q[1])
+    ct2 = np.cos(q[1])
+    st3 = np.sin(q[2])
+    ct3 = np.cos(q[2])
 
     C = np.identity(3)
     C[0, 0] = ct1 * ct2 * ct3 - st1 * st3
@@ -3815,10 +3808,10 @@ def euler2122EP(e):
     e2 = e[1] / 2
     e3 = e[2] / 2
 
-    q0 = math.cos(e2) * math.cos(e1 + e3)
-    q1 = math.sin(e2) * math.cos(-e1 + e3)
-    q2 = math.cos(e2) * math.sin(e1 + e3)
-    q3 = math.sin(e2) * math.sin(-e1 + e3)
+    q0 = np.cos(e2) * np.cos(e1 + e3)
+    q1 = np.sin(e2) * np.cos(-e1 + e3)
+    q2 = np.cos(e2) * np.sin(e1 + e3)
+    q3 = np.sin(e2) * np.sin(-e1 + e3)
 
     return np.array([q0, q1, q2, q3])
 
@@ -3831,12 +3824,12 @@ def euler2132EP(e):
     	vector E into the euler parameter vector Q.
     """
 
-    c1 = math.cos(e[0] / 2)
-    s1 = math.sin(e[0] / 2)
-    c2 = math.cos(e[1] / 2)
-    s2 = math.sin(e[1] / 2)
-    c3 = math.cos(e[2] / 2)
-    s3 = math.sin(e[2] / 2)
+    c1 = np.cos(e[0] / 2)
+    s1 = np.sin(e[0] / 2)
+    c2 = np.cos(e[1] / 2)
+    s2 = np.sin(e[1] / 2)
+    c3 = np.cos(e[2] / 2)
+    s3 = np.sin(e[2] / 2)
 
     q0 = c1 * c2 * c3 + s1 * s2 * s3
     q1 = c1 * s2 * c3 + s1 * c2 * s3
@@ -3854,12 +3847,12 @@ def euler2312EP(e):
     	vector E into the euler parameter vector Q.
     """
 
-    c1 = math.cos(e[0] / 2)
-    s1 = math.sin(e[0] / 2)
-    c2 = math.cos(e[1] / 2)
-    s2 = math.sin(e[1] / 2)
-    c3 = math.cos(e[2] / 2)
-    s3 = math.sin(e[2] / 2)
+    c1 = np.cos(e[0] / 2)
+    s1 = np.sin(e[0] / 2)
+    c2 = np.cos(e[1] / 2)
+    s2 = np.sin(e[1] / 2)
+    c3 = np.cos(e[2] / 2)
+    s3 = np.sin(e[2] / 2)
 
     q0 = c1 * c2 * c3 - s1 * s2 * s3
     q1 = c1 * c2 * s3 + s1 * s2 * c3
@@ -3881,10 +3874,10 @@ def euler2322EP(e):
     e2 = e[1] / 2
     e3 = e[2] / 2
 
-    q0 = math.cos(e2) * math.cos(e1 + e3)
-    q1 = math.sin(e2) * math.sin(e1 - e3)
-    q2 = math.cos(e2) * math.sin(e1 + e3)
-    q3 = math.sin(e2) * math.cos(e1 - e3)
+    q0 = np.cos(e2) * np.cos(e1 + e3)
+    q1 = np.sin(e2) * np.sin(e1 - e3)
+    q2 = np.cos(e2) * np.sin(e1 + e3)
+    q3 = np.sin(e2) * np.cos(e1 - e3)
 
     return np.array([q0, q1, q2, q3])
 
@@ -3897,12 +3890,12 @@ def euler3122EP(e):
     	vector E into the euler parameter vector Q.
     """
 
-    c1 = math.cos(e[0] / 2)
-    s1 = math.sin(e[0] / 2)
-    c2 = math.cos(e[1] / 2)
-    s2 = math.sin(e[1] / 2)
-    c3 = math.cos(e[2] / 2)
-    s3 = math.sin(e[2] / 2)
+    c1 = np.cos(e[0] / 2)
+    s1 = np.sin(e[0] / 2)
+    c2 = np.cos(e[1] / 2)
+    s2 = np.sin(e[1] / 2)
+    c3 = np.cos(e[2] / 2)
+    s3 = np.sin(e[2] / 2)
 
     q0 = c1 * c2 * c3 - s1 * s2 * s3
     q1 = c1 * s2 * c3 - s1 * c2 * s3
@@ -3924,10 +3917,10 @@ def euler3132EP(e):
     e2 = e[1] / 2
     e3 = e[2] / 2
 
-    q0 = math.cos(e2) * math.cos(e1 + e3)
-    q1 = math.sin(e2) * math.cos(e1 - e3)
-    q2 = math.sin(e2) * math.sin(e1 - e3)
-    q3 = math.cos(e2) * math.sin(e1 + e3)
+    q0 = np.cos(e2) * np.cos(e1 + e3)
+    q1 = np.sin(e2) * np.cos(e1 - e3)
+    q2 = np.sin(e2) * np.sin(e1 - e3)
+    q3 = np.cos(e2) * np.sin(e1 + e3)
 
     return np.array([q0, q1, q2, q3])
 
@@ -3939,12 +3932,12 @@ def euler3212EP(e):
         vector E into the euler parameter vector Q.
     """
 
-    c1 = math.cos(e[0] / 2)
-    s1 = math.sin(e[0] / 2)
-    c2 = math.cos(e[1] / 2)
-    s2 = math.sin(e[1] / 2)
-    c3 = math.cos(e[2] / 2)
-    s3 = math.sin(e[2] / 2)
+    c1 = np.cos(e[0] / 2)
+    s1 = np.sin(e[0] / 2)
+    c2 = np.cos(e[1] / 2)
+    s2 = np.sin(e[1] / 2)
+    c3 = np.cos(e[2] / 2)
+    s3 = np.sin(e[2] / 2)
 
     q0 = c1 * c2 * c3 + s1 * s2 * s3
     q1 = c1 * c2 * s3 - s1 * s2 * c3
@@ -3965,10 +3958,10 @@ def euler3232EP(e):
     e2 = e[1] / 2
     e3 = e[2] / 2
 
-    q0 = math.cos(e2) * math.cos(e1 + e3)
-    q1 = math.sin(e2) * math.sin(-e1 + e3)
-    q2 = math.sin(e2) * math.cos(-e1 + e3)
-    q3 = math.cos(e2) * math.sin(e1 + e3)
+    q0 = np.cos(e2) * np.cos(e1 + e3)
+    q1 = np.sin(e2) * np.sin(-e1 + e3)
+    q2 = np.sin(e2) * np.cos(-e1 + e3)
+    q3 = np.cos(e2) * np.sin(e1 + e3)
 
     return np.array([q0, q1, q2, q3])
 
