@@ -123,12 +123,19 @@ TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowNoWindowDefined) {
 
 TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowValidWindow) {
     // Set up a valid window centered in the image
-    Eigen::Vector2i center(512, 384);
-    algorithm.setWindowCenter(center);
+    Eigen::Vector2i inputCenter(500, 500);
+    algorithm.setWindowCenter(inputCenter);
     algorithm.setWindowSize(400, 300);
     algorithm.setImageSize(1000, 1000);
 
     EXPECT_NO_THROW(algorithm.reset());
+
+    auto center = algorithm.getWindowCenter();
+    auto size = algorithm.getWindowSize();
+    EXPECT_EQ(center.x(), 500);
+    EXPECT_EQ(center.y(), 500);
+    EXPECT_EQ(size.x(), 400);
+    EXPECT_EQ(size.y(), 300);
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowExtendsLeftThrows) {

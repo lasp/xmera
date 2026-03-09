@@ -85,26 +85,31 @@ void fuzzWindowingBehavior(int32_t window_center_x,
                            int32_t region_y,
                            int32_t region_pixels) {
     RegionsOfInterestAlgorithm algorithm;
-
+    algorithm.setImageSize(FUZZ_MAX_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE);
     // Set window parameters
     if (window_width > 0 && window_height > 0) {
         Eigen::Vector2i windowCenter(window_center_x, window_center_y);
         algorithm.setWindowCenter(windowCenter);
         algorithm.setWindowSize(window_width, window_height);
-        algorithm.setImageSize(FUZZ_MAX_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE);
 
-        // Reset may throw if window is invalid, which is acceptable
-        algorithm.reset();
-
-        // If reset succeeded, test with a region
-        std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
-        regions[0].numberOfPixels = region_pixels;
-        regions[0].centerOfBrightness << region_x, region_y;
-        regions[0].regionCenter << region_x, region_y;
-
-        RegionOfInterest result = algorithm.update(regions);
-        EXPECT_GE(result.numberOfPixels, 0);
+        EXPECT_NO_THROW(algorithm.reset());
+    } else {
+        EXPECT_NO_THROW(algorithm.reset());
+        Eigen::Vector2i windowCenter = algorithm.getWindowCenter();
+        Eigen::Vector2i windowSize = algorithm.getWindowSize();
+        EXPECT_EQ(windowCenter.x(), FUZZ_MAX_IMAGE_SIZE / 2);
+        EXPECT_EQ(windowCenter.y(), FUZZ_MAX_IMAGE_SIZE / 2);
+        EXPECT_EQ(windowSize.x(), FUZZ_MAX_IMAGE_SIZE);
+        EXPECT_EQ(windowSize.y(), FUZZ_MAX_IMAGE_SIZE);
     }
+
+    std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
+    regions[0].numberOfPixels = region_pixels;
+    regions[0].centerOfBrightness << region_x, region_y;
+    regions[0].regionCenter << region_x, region_y;
+
+    RegionOfInterest result = algorithm.update(regions);
+    EXPECT_GE(result.numberOfPixels, 0);
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzWindowingBehavior)

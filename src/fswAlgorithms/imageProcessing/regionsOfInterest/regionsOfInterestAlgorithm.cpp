@@ -119,17 +119,16 @@ bool RegionsOfInterestAlgorithm::regionInWindow(const RegionOfInterest& region) 
 void RegionsOfInterestAlgorithm::computeWindow() {
     // If no window is defined, use entire image
     if (this->windowCenter.isZero() || this->windowWidth == 0 || this->windowHeight == 0) {
-        this->windowPointTopLeft.x() = 0;
-        this->windowPointTopLeft.y() = 0;
-        this->windowPointBottomRight.x() = this->imageSize.x();
-        this->windowPointBottomRight.y() = this->imageSize.y();
-    } else {
-        // Compute window corners from center and size
-        this->windowPointTopLeft.x() = this->windowCenter.x() - this->windowWidth / 2;
-        this->windowPointTopLeft.y() = this->windowCenter.y() - this->windowHeight / 2;
-        this->windowPointBottomRight.x() = this->windowCenter.x() + this->windowWidth / 2;
-        this->windowPointBottomRight.y() = this->windowCenter.y() + this->windowHeight / 2;
+        this->windowCenter.x() = this->imageSize.x() / 2;
+        this->windowCenter.y() = this->imageSize.y() / 2;
+        this->windowWidth = this->imageSize.x();
+        this->windowHeight = this->imageSize.y();
     }
+    // Compute window corners from center and size
+    this->windowPointTopLeft.x() = this->windowCenter.x() - this->windowWidth / 2;
+    this->windowPointTopLeft.y() = this->windowCenter.y() - this->windowHeight / 2;
+    this->windowPointBottomRight.x() = this->windowCenter.x() + this->windowWidth / 2;
+    this->windowPointBottomRight.y() = this->windowCenter.y() + this->windowHeight / 2;
 
     // Validate window boundaries
     if (windowPointTopLeft.x() < 0) {

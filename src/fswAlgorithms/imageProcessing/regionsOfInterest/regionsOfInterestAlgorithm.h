@@ -74,7 +74,7 @@ class RegionsOfInterestAlgorithm {
     int32_t minDetectionPixel = 2;                               //!< [int] Minimum pixel detection size
     int32_t maxSeparation{500};                                  //!< [px] width of mask to be used for windowing
     int32_t cameraId{};                                          //!< [-] Id of the camera imaging
-    Eigen::Vector2i windowCenter = Eigen::Vector2i(512, 512);    //!< [px] center of mask to be used for windowing
+    Eigen::Vector2i windowCenter = Eigen::Vector2i::Zero();      //!< [px] center of mask to be used for windowing
     int32_t windowWidth{};                                       //!< [px] width of mask to be used for windowing
     int32_t windowHeight{};                                      //!< [px] height of mask to be used for windowing
     Eigen::Vector2i windowPointTopLeft = Eigen::Vector2i(0, 0);  //!< [px] top left point of window
