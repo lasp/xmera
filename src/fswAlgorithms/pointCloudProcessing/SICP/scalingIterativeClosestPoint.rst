@@ -53,7 +53,7 @@ This section is to outline the steps needed to setup a SICPin Python.
 
 #. Import the SICP class::
 
-    from Basilisk.fswAlgorithms import scalingIterativeClosestPoint
+    from Xmera.fswAlgorithms import scalingIterativeClosestPoint
 
 #. Create an instantiation of the module::
 
@@ -72,4 +72,3 @@ error, scalingMin and Max are the max allowable scaling range for the scalar ter
 
     inputPointCloud = messaging.PointCloudMsgPayload()
     referencePointCloud = messaging.PointCloudMsgPayload()
-

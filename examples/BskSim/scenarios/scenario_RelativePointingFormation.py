@@ -40,7 +40,7 @@ The simulation layout is almost the same as the one used for the :ref:`scenario_
 Two simulation processes are created: one which contains dynamics modules, and one that contains
 the Flight Software (FSW) modules. First of all, it can be observed that the Dynamics- and FSW files used are
 the :ref:`BSK_FormationDynamics` and :ref:`BSK_FormationFSW` files.
-These two files have been created for this specific formation flying implementation into Basilisk.
+These two files have been created for this specific formation flying implementation into Xmera.
 
 After initializing the interfaces and making sure that the :ref:`scenario_BasicOrbitFormation`
 class inherits from the BSKSim class,
@@ -70,7 +70,7 @@ The gravity body (Earth in this case) is created using the ``gravBodyFactory`` a
 separate object to each spacecraft as can be seen below.
 
 After that each object is added to the corresponding task. Something that is very important is the message names.
-In case multiple spacecraft are implemented in Basilisk it is necessary to manually connect an output message of
+In case multiple spacecraft are implemented in Xmera it is necessary to manually connect an output message of
 one module to the input of a different module. This can be seen in the module-initialization methods
 in the :ref:`BSK_FormationDynamics.py <BSK_FormationDynamics>` file.
 

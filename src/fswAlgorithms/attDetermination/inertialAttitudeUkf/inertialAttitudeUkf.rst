@@ -7,7 +7,7 @@ inertial attitude estimate. The filter used is an unscented Kalman filter using 
 gyroscopes.
 
 More information on can be found in the
-:download:`PDF Description </../../src/fswAlgorithms/attDetermination/InertialUKF/_Documentation/Basilisk-inertialUKF-20190402.pdf>`
+:download:`PDF Description </../../src/fswAlgorithms/attDetermination/InertialUKF/_Documentation/Xmera-inertialUKF-20190402.pdf>`
 
 Message Connection Descriptions
 -------------------------------

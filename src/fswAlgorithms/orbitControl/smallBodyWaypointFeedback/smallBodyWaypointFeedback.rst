@@ -4,9 +4,9 @@ This module is provides a feedback control law for waypoint-to-waypoint control 
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -45,7 +45,7 @@ A cannonball SRP model, third body perturbations from the sun, and point-mass gr
 messages written out by :ref:`simpleNav` and :ref:`planetNav` modules or an estimator that provides the same input messages.
 
 Algorithm
-^^^^^^^^^^
+^^^^^^^^^
 The state vector is defined as follows:
 
 .. math::

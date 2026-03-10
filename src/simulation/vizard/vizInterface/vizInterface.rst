@@ -1,14 +1,14 @@
 
 Executive Summary
 -----------------
-This module provides an interface to package up Basilisk messages and pass them onto the :ref:`Vizard <vizard>`
-application.  This allows for the Basilisk simulation data to be recorded to a file for play-back, or for
+This module provides an interface to package up Xmera messages and pass them onto the :ref:`Vizard <vizard>`
+application.  This allows for the Xmera simulation data to be recorded to a file for play-back, or for
 live streaming of the simulation data.  It is possible to record the simulation data of a single spacecraft or a
 multitude of spacecraft.
 
 Module Assumptions and Limitations
 ----------------------------------
-The module is only able to read Basilisk simulation state messages that are accessable from the task group that
+The module is only able to read Xmera simulation state messages that are accessable from the task group that
 is calling ``vizInterface``.
 
 
@@ -27,7 +27,7 @@ The following messages are set directly within ``vizInterface``.  Additional mes
       - Description
     * - opnavImageOutMsgs
       - :ref:`CameraImageMsgPayload`
-      - (optional) vector of Image output messages, the corresponding camera configuration input message is setup 
+      - (optional) vector of Image output messages, the corresponding camera configuration input message is setup
         through ``vizInterface.addCamMsgToModule(msg)``
     * - epochInMsg
       - :ref:`EpochMsgPayload`
@@ -64,6 +64,3 @@ User Guide
 The ``vizInterface`` module can be directly configured, or setup using the helper methods in :ref:`vizSupport`.
 More information can be found in :ref:`vizardSettings` page.  The :ref:`scenarioFormationBasic` illustrates and
 discusses how to configure ``vizInterface`` for use with multiple satellites.
-
-
-

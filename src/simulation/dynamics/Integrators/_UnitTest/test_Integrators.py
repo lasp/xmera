@@ -4,7 +4,7 @@
 #
 
 """
-Basilisk Unit Test
+Xmera Unit Test
 
 Purpose:  Unit test of the dynamics integrator function
 """

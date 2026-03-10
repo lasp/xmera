@@ -9,7 +9,7 @@ Chapter 4. This contains further information on this module's mathematical frame
 the algorithm implementations.
 
 Virtual and Private method descriptors
--------------------------------
+--------------------------------------
 The following table lists all the module input and output messages.  The module msg connection is set by the
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
@@ -53,7 +53,7 @@ provides information on what this message is used for.
 
 
 Module assumptions and limitations
--------------------------------
+----------------------------------
 
 The module inherits all assumptions made while implementing a Kalman filter:
     • Observability considerations

@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-DataStorageUnitBase is a base class that is used generate a standard interface and list of features for modules that store simulated onboard data.  This class is used by other modules as a parent class and cannot be instantiated by itself.  All Basilisk data storage modules based on this DataStorageUnitBase inherit the following common properties:
+DataStorageUnitBase is a base class that is used generate a standard interface and list of features for modules that store simulated onboard data.  This class is used by other modules as a parent class and cannot be instantiated by itself.  All Xmera data storage modules based on this DataStorageUnitBase inherit the following common properties:
 
 1. Writes out a :ref:`DataStorageStatusMsgPayload` containing the sum of the current stored data (in bits), the storage capacity (bits), the current net data rate (in baud), an array of char array containing the names of the stored data (ex. Instrument 1, Instrument 2), and an array of integers containing the stored data associated with each type (bits).
 2. Allows for multiple :ref:`DataNodeUsageMsgPayload` corresponding to individual :ref:`dataNodeBase` instances to be subscribed to using the ``addDataNodeToModel(msg)`` method.

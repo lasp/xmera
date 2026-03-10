@@ -5,7 +5,7 @@ The SPICE interface class gets time and planetary or spacecraft body information
 
 
 The module
-:download:`PDF Description </../../src/simulation/environment/spiceInterface/_Documentation/Basilisk-SPICE_INTERFACE20170712.pdf>`
+:download:`PDF Description </../../src/simulation/environment/spiceInterface/_Documentation/Xmera-SPICE_INTERFACE20170712.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 

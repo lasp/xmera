@@ -99,7 +99,7 @@ The module is configurable with the following parameters:
      - 0 for rectilinear flyby model, 1 for Clohessy-Wiltshire model
 
 Unit Test
-----------
+---------
 This unit test script tests the correctness of the reference attitude computed by :ref:`flybyPoint` in a scenario where the rectilinear flyby assumption is valid.
 
 In this test, there is no gravity body, and the spacecraft is put onto a rectilinear trajectory about the origin.

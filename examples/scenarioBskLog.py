@@ -7,7 +7,7 @@ r"""
 Overview
 --------
 
-This scenario demonstrates how to set up run a Basilisk simulation and change the default verbosity
+This scenario demonstrates how to set up run a Xmera simulation and change the default verbosity
 of ``bskLog`` methods.  The default verbosity is set to DEBUG, which means all ``bskLog`` call print
 the associated information.  More information about using ``bskLog`` and changing its verbosity
 can be found in :ref:`bskLogging`.

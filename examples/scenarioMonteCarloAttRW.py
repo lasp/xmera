@@ -122,7 +122,7 @@ Illustration of Simulation Results
 """
 
 #
-# Basilisk Integrated Test
+# Xmera Integrated Test
 #
 # Purpose:  Integrated test of the MonteCarlo module.  Runs multiple
 #           scenarioAttitudeFeedbackRW with dispersed initial parameters
@@ -595,7 +595,7 @@ def createScenarioAttitudeFeedbackRW():
         scSim.AddModelToTask(simTaskName, scSim.msgRecList[msgName])
         c += 1
 
-    # This is a hack because of a bug in Basilisk... leave this line it keeps
+    # This is a hack because of a bug in Xmera... leave this line it keeps
     # variables from going out of scope after this function returns
     scSim.additionalReferences = [rwVoltageIO, fswRWVoltage, scObject, earth, rwMotorTorqueObj, mrpControl, attError, inertial3DObj]
 

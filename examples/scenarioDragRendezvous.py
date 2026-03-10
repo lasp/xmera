@@ -149,7 +149,7 @@ def setup_spacecraft_plant(rN, vN, modelName):
 
 def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', useJ2=False):
     """
-    Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
+    Xmera simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
     both static gain and desensitized time-varying gain options and the option to use simulated attitude control or
     direct reference inputs.
 

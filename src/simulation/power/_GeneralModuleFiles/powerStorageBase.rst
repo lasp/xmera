@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-The PowerStorageBase is a base class that is used generate a standard interface and list of features for modules that store electrical power.  This class is used by other modules as a parent class and cannot be instantiated by itself.  All Basilisk power storage modules based on this PowerStorageBase inherit the following common properties:
+The PowerStorageBase is a base class that is used generate a standard interface and list of features for modules that store electrical power.  This class is used by other modules as a parent class and cannot be instantiated by itself.  All Xmera power storage modules based on this PowerStorageBase inherit the following common properties:
 
 1. Writes out a :ref:`PowerStorageStatusMsgPayload` containing the current stored power (in Watt-Seconds or Joules), the current net power (in Watts), and the battery storage capacity (in Watt-Seconds or Joules).
 2. Allows for multiple :ref:`PowerNodeUsageMsgPayload` corresponding to individual :ref:`powerNodeBase` instances to be subscribed to using the addPowerNodeToModel method.

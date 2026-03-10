@@ -13,7 +13,7 @@ Overview
 --------
 
 This script sets up a 3-DOF spacecraft which is orbiting Earth.  The purpose
-is to illustrate how to start and stop the Basilisk simulation to apply
+is to illustrate how to start and stop the Xmera simulation to apply
 some :math:`\Delta v`'s for simple orbit maneuvers.  Read :ref:`scenarioBasicOrbit`
 to learn how to setup an orbit simulation.
 

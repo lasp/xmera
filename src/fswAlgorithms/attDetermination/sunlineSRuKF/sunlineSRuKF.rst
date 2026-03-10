@@ -50,7 +50,7 @@ The optional bias state models the varying solar intensity which scales the meas
     \boldsymbol{s} = \left\{ \begin{matrix} {}^\mathcal{B}\boldsymbol{\hat{s}} \\ {}^\mathcal{B}\boldsymbol{\omega} \end{matrix} \right\}.
 
 Dynamics model
-+++++++++++++++++++++++++++
+++++++++++++++
 The sun heading is fixed in inertial coordinates, it only changes in body-frame coordinates due to the motion of the spacecraft. Therefore, the dynamics of the sun heading is only given by the body-frame derivative of the sun heading unit-direction vector. For simplicity, the derivative of the angular rate vector is set to zero in this module. This gives:
 If the bias state is present, it has no dynamics.
 
@@ -58,7 +58,7 @@ If the bias state is present, it has no dynamics.
     \boldsymbol{\dot{s}} = \left\{ \begin{matrix} {}^\mathcal{B}\boldsymbol{\hat{s}} \times {}^\mathcal{B}\boldsymbol{\omega} \\ \boldsymbol{0} \end{matrix} \right\}.
 
 Measurement model
-+++++++++++++++++++++++++++
++++++++++++++++++
 Two types of measurements are processed by this filter: gyro measurements and CSS measurements. For gyro measurements, the gyro rates are mapped directly to the rate component of the state via a :math:`3 \times 3` identity matrix, which constitutes the measurement model.
 
 For the CSS measurement, the measurement model is constituted by the :math:`n \times 3` matrix :math:`[\boldsymbol{H}]`, where :math:`n` is the number of active sun sensors active at that moment. With :math:`{}^\mathcal{B}\boldsymbol{\hat{n}}_i` being the boresight of the :math:`i`-th CSS, the measurement model is given by:

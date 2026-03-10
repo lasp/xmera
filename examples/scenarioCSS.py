@@ -292,7 +292,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     cssList = [CSS1, CSS2, CSS3]
     if useCSSConstellation:
         # If instead of individual CSS a cluster of CSS units is to be evaluated as one,
-        # then they can be grouped into a list, and added to the Basilisk execution
+        # then they can be grouped into a list, and added to the Xmera execution
         # stack as a single entity.  This is done with
         cssArray = coarseSunSensor.CSSConstellation()
         cssArray.modelTag = "css_array"

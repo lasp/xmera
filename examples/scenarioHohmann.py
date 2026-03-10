@@ -12,7 +12,7 @@ and an inertial frame aligned with the burn direction, although alignment with t
 will be applied in te correct direction regardless of the attitude.
 
 Compared to :ref:`scenarioOrbitManeuver` which also implements impulsive orbit maneuvers, here a set
-of pointing modes are defined.  The Basilisk event system is used to then switch between the flight modes
+of pointing modes are defined.  The Xmera event system is used to then switch between the flight modes
 by selectively turning on/off flight mode tasks.
 
 The detail of the simulation script is as follows. This script sets up a basic spacecraft which starts on a circular

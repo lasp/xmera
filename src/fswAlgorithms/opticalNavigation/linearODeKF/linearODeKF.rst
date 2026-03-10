@@ -35,7 +35,7 @@ provides information on what this message is used for.
       - opnav input message containing the unit vector towards the target
 
 Module models
--------------------------------
+-------------
 The measurement model for the filter is functionally contained in the center of brightness
 converter module. The message read in therefore contains the predicted measurement:
 
@@ -55,7 +55,7 @@ set and held constant or estimated by the filter given no acceleration.
 
 
 Module assumptions and limitations
--------------------------------
+----------------------------------
 
 .. list-table:: Interface methods implemented
     :widths: 25 75 50
@@ -87,7 +87,7 @@ This section is to outline the steps needed to setup a flybyODSRuKF converter in
 
 #. Import the module::
 
-    from Basilisk.fswAlgorithms import linearODeKF
+    from Xmera.fswAlgorithms import linearODeKF
 
 #. Create an instantiation of converter class::
 

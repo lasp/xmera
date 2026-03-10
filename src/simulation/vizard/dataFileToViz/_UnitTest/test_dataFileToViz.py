@@ -42,7 +42,7 @@ def test_module(show_plots, convertPosUnits, attType, checkThruster, checkRW):
     **Validation Test Description**
 
     This section describes the specific unit tests conducted on this module.
-    The test reads in simulation from ``data.txt``, run the module, and compares the Basilisk
+    The test reads in simulation from ``data.txt``, run the module, and compares the Xmera
     spacecraft state messages with known values.
 
     Args:

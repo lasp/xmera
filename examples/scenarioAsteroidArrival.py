@@ -23,7 +23,7 @@ The script is found in the folder ``xmera/examples`` and executed by using::
 .. attention::
 
     To see the asteroid Bennu in Vizard the asteroid asset bundle must be installed.  See
-    the Vizard `Download <http://hanspeterschaub.info/basilisk/Vizard/VizardDownload.html>`__ web page.
+    the Vizard `Download <https://github.com/lasp/xmera/Vizard/VizardDownload.html>`__ web page.
 
 Setting Up The Custom Gravitational Body
 ----------------------------------------

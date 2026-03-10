@@ -22,7 +22,7 @@ The script is found in the folder ``xmera/examples`` and executed by using::
 
 When the simulation completes 2-3 plots are shown for each case.  One plot always shows
 the inertial position vector components, while the third plot shows the inertial differences
-between the Basilisk simulation trajectory and the SPICE spacecraft trajectory.  Read :ref:`scenarioBasicOrbit`
+between the Xmera simulation trajectory and the SPICE spacecraft trajectory.  Read :ref:`scenarioBasicOrbit`
 to learn how to setup an orbit simulation.
 
 The simulation layout is shown in the following illustration.  The SPICE interface object keeps track of
@@ -44,7 +44,7 @@ The following images illustrate the expected simulation run returns for a range 
 
 This scenario simulates the Hubble Space Telescope (HST) spacecraft about the Earth in a LEO orbit.
 The resulting position coordinates and orbit illustration are shown below.  A 2000 second simulation is
-performed, and the Basilisk and SPICE generated orbits match up very well.
+performed, and the Xmera and SPICE generated orbits match up very well.
 
 .. image:: /_images/Scenarios/scenarioOrbitMultiBody1Hubble.svg
    :align: center
@@ -235,7 +235,7 @@ def run(show_plots, scCase):
     # initial position and velocity vectors through before initialization
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
-    # the natural question arises, how does Basilisk know relative to what frame these states are defined?  This is
+    # the natural question arises, how does Xmera know relative to what frame these states are defined?  This is
     # actually setup above where we set `.isCentralBody = True` and mark the Earth as are central body.
     # Without this statement, the code would assume the spacecraft() states are
     # relative to the default zeroBase frame.
@@ -341,7 +341,7 @@ def run(show_plots, scCase):
         plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
                  , color='#aa0000'
                  , linewidth=0.5
-                 , label='Basilisk'
+                 , label='Xmera'
                  )
         plt.legend(loc='lower right')
 

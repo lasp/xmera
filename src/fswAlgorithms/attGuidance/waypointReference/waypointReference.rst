@@ -1,8 +1,8 @@
 Executive Summary
 -----------------
 
-Module that reads the reorientation maneuver of a spacecraft from a text file, likely created outside of Basilisk, and outputs an
-Attitude Reference Message. This module makes it possible to reproduce on Basilisk attitude orientation maneuvers computed externally. The module outputs an Attitude
+Module that reads the reorientation maneuver of a spacecraft from a text file, likely created outside of Xmera, and outputs an
+Attitude Reference Message. This module makes it possible to reproduce on Xmera attitude orientation maneuvers computed externally. The module outputs an Attitude
 Reference Message that follows the sequence of waypoints contained in the text file. The text file must be formatted appropriately for the module to be able to read
 the information correctly: see Module Assumptions and Limitaions for a detailed explanation on how to do this.
 
@@ -39,7 +39,7 @@ one waypoint is correctly read if presented as a line like the following
     t, \sigma_1, \sigma_2, \sigma_3, \omega_1, \omega_2, \omega_3, \dot{\omega}_1, \dot{\omega}_2, \dot{\omega}_3
 
 The module is conceptually very simple and makes no further assumptions. However, the user might want to use a sampling frequency in the
-Basilisk simulation that is equal or higher than the frequency of the waypoints. For lower sampling frequencies, the module output does not give a
+Xmera simulation that is equal or higher than the frequency of the waypoints. For lower sampling frequencies, the module output does not give a
 trustworthy representation of the maneuver.
 
 

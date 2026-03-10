@@ -5,7 +5,7 @@ This module reads in a desired attitude control torque vector and maps it onto a
 
 The module works for both on-pulsing (nominal thruster state is off such as with RCS thrusters)
 and off-pulsing (nominal thruster state is on such as with DV thrusters).
-More information can be found in the :download:`PDF Description </../../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Basilisk-ThrusterForces-20160627.pdf>`.
+More information can be found in the :download:`PDF Description </../../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Xmera-ThrusterForces-20160627.pdf>`.
 
 Message Connection Descriptions
 -------------------------------
@@ -33,5 +33,3 @@ provides information on what this message is used for.
     * - vehConfigInMsg
       - :ref:`VehicleConfigMsgPayload`
       - spacecraft configuration input message
-
-

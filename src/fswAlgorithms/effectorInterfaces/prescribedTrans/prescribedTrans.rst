@@ -135,11 +135,11 @@ This module provides a :ref:`PrescribedTranslationMsgPayload` output message tha
 Note that a separate rotational profiler module can be connected to the prescribed motion dynamics module
 to fully define the kinematic motion of the prescribed body.
 
-This section is to outline the steps needed to setup a prescribed translational module in python using Basilisk.
+This section is to outline the steps needed to setup a prescribed translational module in python using Xmera.
 
 #. Import the prescribedTrans class::
 
-    from Basilisk.fswAlgorithms import prescribedTrans
+    from Xmera.fswAlgorithms import prescribedTrans
 
 #. Create an instantiation of a prescribed translational C module and the associated C++ container::
 

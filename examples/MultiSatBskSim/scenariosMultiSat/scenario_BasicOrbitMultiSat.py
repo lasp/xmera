@@ -24,7 +24,7 @@ structure. However, this last scenario hard codes both spacecraft into the dynam
 While this works for a small number of spacecraft, it is not easily scalable. This example aims to show a more pipelined
 way of adding spacecraft that can be either homogeneous or heterogeneous (different dynamics and flight software modules
 from one another). Another advantage of these changes is that the simulation now has a separate process for the
-environment, dynamics and FSW. When Basilisk supports multi-threading the process evaluation, this will
+environment, dynamics and FSW. When Xmera supports multi-threading the process evaluation, this will
 greatly reduce the time it takes to run the simulation with a large number of spacecraft.
 
 In line with these changes, the environment is not embedded into the dynamics class, as each spacecraft has its own
@@ -45,7 +45,7 @@ Environment files used are :ref:`BSK_EnvironmentEarth` and :ref:`BSK_Environment
 file used is the :ref:`BSK_MultiSatDynamics`. The environment used in the simulation can be changed with either the
 ``Earth`` or ``Mercury`` flag on the ``run`` method. As stated before, the FSW file is not added in this scenario
 to focus first on setting up the dynamics of a number of spacecraft. All these files have been
-created for this specific formation flying implementation into Basilisk but can be changed to accommodate any changes to
+created for this specific formation flying implementation into Xmera but can be changed to accommodate any changes to
 the intended simulation.
 
 After initializing the interfaces and making sure that the :ref:`scenario_BasicOrbitMultiSat`

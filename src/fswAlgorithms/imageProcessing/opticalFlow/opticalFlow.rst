@@ -9,10 +9,10 @@ while one the second image is processed it is used with Optical Flow in order to
 A message is then written containing the new and old features, the number of features, and the attitudes and times at
 which they were taken.
 
-Descriptions of the core algorithms can be found on the OpenCV documentation here: `GoodFeatures`_, `OpticalFlow`_
+Descriptions of the core algorithms can be found on the OpenCV documentation here: `GoodFeatures`_, `OpticalFlow <OpticalFlow_OpenCV_>`_
 
 .. _GoodFeatures: https://docs.opencv.org/3.4/d4/d8c/tutorial_py_shi_tomasi.html
-.. _OpticalFlow: https://docs.opencv.org/3.4/d4/dee/tutorial_optical_flow.html
+.. _OpticalFlow_OpenCV: https://docs.opencv.org/3.4/d4/dee/tutorial_optical_flow.html
 
 
 Message Connection Descriptions
@@ -43,7 +43,7 @@ provides information on what this message is used for.
       - Input Target body to inertial attitude
 
 Module Description
--------------------------------
+------------------
 
 The logic of the module flows as such: as updateState is called and messages are processed, it checks
 for when a newImage is processed. If no image was processed prior, it finds features in the image,
@@ -70,7 +70,7 @@ This section is to outline the steps needed to setup a OpticalFlow in Python.
 
 #. Import the opticalFlow class::
 
-    from Basilisk.fswAlgorithms import opticalFlow
+    from Xmera.fswAlgorithms import opticalFlow
 
 #. Create an instantiation of the module::
 

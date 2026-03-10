@@ -5,7 +5,7 @@ This class provides an container for all the dynamics models and components to a
 This class is a necessary component to any Kalman Filter implementation
 
 Virtual and Private method descriptors
--------------------------------
+--------------------------------------
 The following table lists all the class methods and their function
 
 .. list-table:: Interface methods which remain private
@@ -31,7 +31,7 @@ The following table lists all the class methods and their function
 
 
 Module assumptions and limitations
--------------------------------
+----------------------------------
 
 Only an RK4 is provided currently as an integrator
 

@@ -116,7 +116,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of xmera, used to get the location of supporting data
 from xmera import __path__
-# always import the Basilisk messaging support
+# always import the Xmera messaging support
 from xmera.architecture import messaging
 # import atmosphere and drag modules
 from xmera.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector

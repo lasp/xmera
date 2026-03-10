@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This document describes how Three-Axis Magnetometer (TAM) devices are modeled in the Basilisk software. The purpose of this module is to implement magnetic field measurements on the sensor frame :math:`S`.
+This document describes how Three-Axis Magnetometer (TAM) devices are modeled in the Xmera software. The purpose of this module is to implement magnetic field measurements on the sensor frame :math:`S`.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -96,7 +96,7 @@ This section outlines the steps needed to add a Magnetometer module to a sim. Fi
 
 .. code-block:: python
 
-      from Basilisk.simulation import magneticFieldCenteredDipole
+      from Xmera.simulation import magneticFieldCenteredDipole
       magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
       magModule.modelTag = "CenteredDipole"
 
@@ -104,7 +104,7 @@ and/or
 
 .. code-block:: python
 
-      from Basilisk.simulation import magneticFieldWMM
+      from Xmera.simulation import magneticFieldWMM
       magModule = magneticFieldWMM.MagneticFieldWMM()
       magModule.modelTag = "WMM"
 
@@ -112,7 +112,7 @@ Then, the magnetic field measurements must be imported and initialized:
 
 .. code-block:: python
 
-      from Basilisk.simulation import magnetometer
+      from Xmera.simulation import magnetometer
       testModule = magnetometer.Magnetometer()
       testModule.modelTag = "TAM_sensor"
 

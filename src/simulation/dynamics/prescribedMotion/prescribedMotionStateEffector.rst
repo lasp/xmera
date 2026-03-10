@@ -86,11 +86,11 @@ conserved.
 
 User Guide
 ----------
-This section outlines the steps needed to set up the prescribed motion state effector module in python using Basilisk.
+This section outlines the steps needed to set up the prescribed motion state effector module in python using Xmera.
 
 #. Import the prescribedMotionStateEffector class::
 
-    from Basilisk.simulation import prescribedMotionStateEffector
+    from Xmera.simulation import prescribedMotionStateEffector
 
 #. Create the prescribed motion state effector::
 

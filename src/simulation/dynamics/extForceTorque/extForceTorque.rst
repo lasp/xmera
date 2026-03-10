@@ -7,7 +7,7 @@ outgasing or a thruster, or be used to directly apply requested control forces o
 torques.
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/extForceTorque/_Documentation/Basilisk-extForceTorque-20161103.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/extForceTorque/_Documentation/Xmera-extForceTorque-20161103.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 
@@ -34,4 +34,3 @@ provides information on what this message is used for.
     * - cmdForceInertialInMsg
       - :ref:`CmdForceInertialMsgPayload`
       - commanded force input msg in N frame
-

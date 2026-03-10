@@ -55,7 +55,7 @@ Detailed Module Description
 ---------------------------
 
 Measurement mapping
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 This module models the measurement that will be ingested by the following filter. This is essentially a stand-alone
 measurement model for the filter composed via messaging.
@@ -224,7 +224,7 @@ This section is to outline the steps needed to setup a center of brightness conv
 
 #. Import the module::
 
-    from Basilisk.fswAlgorithms import cobConverter
+    from Xmera.fswAlgorithms import cobConverter
 
 #. Create an instantiation of converter class. The COM/COB correction method and object radius need to be specified::
 

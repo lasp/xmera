@@ -10,7 +10,7 @@ Overview
 Demonstration of basic 6-DOF orbit and fuel slosh simulation setup.
 This script sets up a 6-DOF spacecraft orbiting a planet.  The purpose
 is to illustrate how to create a spacecraft, attach a gravity model and a fuel tank, and run
-a basic Basilisk simulation.
+a basic Xmera simulation.
 
 The script is found in the folder ``xmera/examples`` and executed by using::
 

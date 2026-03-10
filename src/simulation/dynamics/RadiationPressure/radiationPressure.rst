@@ -5,7 +5,7 @@ Executive Summary
 Radiation pressure dynamics class used to compute
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/RadiationPressure/_Documentation/Basilisk-RadiationPressure-20170712.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/RadiationPressure/_Documentation/Xmera-RadiationPressure-20170712.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 
@@ -28,18 +28,3 @@ provides information on what this message is used for.
     * - sunEclipseInMsg
       - :ref:`EclipseMsgPayload`
       - (optional) sun eclipse input message
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

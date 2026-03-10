@@ -1,6 +1,6 @@
-==============================
+========================
 Stepper Motor Controller
-==============================
+========================
 
 .. list-table::
    :widths: 5 40 10 10
@@ -16,12 +16,12 @@ Stepper Motor Controller
      - 20250723
 
 
-====================
+==================
 Module Description
-====================
+==================
 
 Introduction
-============
+------------
 This stepper motor flight software module computes the number of motor steps required to actuate a stepper motor from
 its current angle to a specified reference motor angle. Each time a new motor reference message is written
 to this module, the required motor steps commanded to achieve the incoming reference angle are computed, updated, and

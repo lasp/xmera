@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: ISC
 #
 
-from Basilisk.fswAlgorithms import sunlineSRuKFTemplated
+from Xmera.fswAlgorithms import sunlineSRuKFTemplated
 
 def main():
     module = sunlineSRuKFTemplated.SunlineSRuKFTemplated()

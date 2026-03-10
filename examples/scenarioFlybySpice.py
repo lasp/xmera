@@ -10,7 +10,7 @@ Overview
 The purpose of this simulation is to illustrate how to set a spacecraft's translational motion using a custom
 Spice file for planetary flybys. This allows the user to easily visualize a mission trajectory using Vizard.
 Attitude pointing modes are also implemented in this script to enhance the mission simulation and illustrate
-other capabilities in Basilisk.
+other capabilities in Xmera.
 
 The script is found in the folder ``xmera/examples`` and executed by using::
 

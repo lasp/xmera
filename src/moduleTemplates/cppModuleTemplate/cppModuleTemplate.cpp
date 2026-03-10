@@ -4,8 +4,6 @@
 
 #include "moduleTemplates/cppModuleTemplate/cppModuleTemplate.h"
 
-#include <iostream>
-
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! This is the constructor for the module class.  It sets default variable

@@ -8,7 +8,7 @@ Overview
 --------
 
 This script duplicates the basic orbit simulation in the scenario :ref:`scenarioBasicOrbit`.
-The difference is that this version allows for the Basilisk simulation data to be live streamed to the
+The difference is that this version allows for the Xmera simulation data to be live streamed to the
 :ref:`vizard` visualization program.
 
 The script is found in the folder ``xmera/examples`` and executed by using::
@@ -21,12 +21,12 @@ argument using::
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                         , liveStream=True)
 
-When starting Basilisk simulation it prints now to the terminal that it is trying to connect to Vizard::
+When starting Xmera simulation it prints now to the terminal that it is trying to connect to Vizard::
 
     Waiting for Vizard at tcp://localhost:5556
 
 Copy ``tcp://localhost:5556`` and open the Vizard application.  Enter this address in the connection field and select
-"Direct Communication" mode as well as "Live Streaming".  After this the Basilisk simulation resumes and
+"Direct Communication" mode as well as "Live Streaming".  After this the Xmera simulation resumes and
 will live stream the data to Vizard.
 
 .. figure:: /_images/static/vizard-ImgStream.jpg

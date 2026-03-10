@@ -50,7 +50,7 @@ Configuring a Python Environment For this Script
 The setup steps are as follows:
 
 #. The datashaders etc. require that this script be run with Python 3.7, not higher
-#. Create dedicated virtual environment and compile Basilisk for this environment
+#. Create dedicated virtual environment and compile Xmera for this environment
 #. Install this particular version of ``panel`` package first.  It must be done alone as it upgrades
    ``bokeh`` to a version that is too new::
 

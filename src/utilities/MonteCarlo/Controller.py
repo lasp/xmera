@@ -880,7 +880,7 @@ class SimulationExecutor:
                 '.TaskList[2].TaskModels[0]': 1123244
              }
 
-        :param simInstance: A basilisk simulation to set random seeds on
+        :param simInstance: A xmera simulation to set random seeds on
         :type simInstance: SimulationBaseClass
         :return: A dictionary with the random seeds that should be applied to the sim
                         """
@@ -905,7 +905,7 @@ class SimulationExecutor:
 
         Args:
             simInstance: SimulationBaseClass
-                A basilisk simulation to set random seeds on
+                A xmera simulation to set random seeds on
             modifications:
                 A dictionary containing RNGSeeds to be populate for the sim, among other sim modifications.
         """

@@ -68,7 +68,7 @@ from this tutorial, though, the panels will
 this motion to be solved for correctly. In
 fact, with the 10 second time step, the simulation will not even run.
 This is a good reminder to check the time step size when trouble-shooting
-Basilisk simulations.
+Xmera simulations.
 
 Moving on, the orbit maneuver code must be changed to  implement the finite
 thrusting maneuver rather than the impulse Delta-v used before.
@@ -130,7 +130,7 @@ similar to a weight hanging from a spring on Earth.
 
 import os
 
-# import non-basilisk libraries
+# import non-xmera libraries
 import matplotlib.pyplot as plt
 import numpy as np
 # The path to the location of xmera
@@ -143,7 +143,7 @@ from xmera.simulation import hingedRigidBodyStateEffector
 from xmera.simulation import \
     spacecraft  # The base of any spacecraft simulation which deals with spacecraft dynamics
 # import general simulation support files
-from xmera.utilities import SimulationBaseClass  # The class which contains the basilisk simuation environment
+from xmera.utilities import SimulationBaseClass  # The class which contains the xmera simuation environment
 from xmera.utilities import macros  # Some unit conversions
 from xmera.utilities import orbitalMotion
 from xmera.utilities import simIncludeGravBody

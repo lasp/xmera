@@ -39,7 +39,7 @@ def test_unitEclipse(show_plots, eclipseCondition, planet):
     """
 **Test Description and Success Criteria**
 
-The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with \
+The unit test validates the internal aspects of the Xmera eclipse module by comparing simulated output with \
 expected output. It validates the computation of a shadow factor for total eclipse, partial eclipse,annular eclipse, \
 and no eclipse scenarios. The test is designed to analyze one type at a time for both Earth and Mars and is then \
 repeated for all three.
@@ -50,7 +50,7 @@ These orbital elements vary for each eclipse type since the Sun and planet state
 made using the orbitalMotion elem2rv function, where the inputs are six orbital elements (a, e, i, Omega, omega, f) \
 and the outputs are Cartesian position and velocity vectors. For the annular eclipse case, the conversion is \
 avoided and a Cartesian position vector is initially provided instead. The vectors are then passed into \
-spacecraft and, subsequently, the eclipse module through the Basilisk messaging system.
+spacecraft and, subsequently, the eclipse module through the Xmera messaging system.
 
 Testing the no eclipse case with Mars as the occulting body is the same as the Earth no eclipse test, except \
 Mars is set as the zero base. The Mars full, partial, and annular eclipse cases, however, are like the Earth \
@@ -90,7 +90,7 @@ def test_unitEclipseCustom(show_plots):
     """
 **Test Description and Success Criteria**
 
-The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with \
+The unit test validates the internal aspects of the Xmera eclipse module by comparing simulated output with \
 expected output. It validates the computation of a shadow factor for total eclipse using a custom gravity body.
 
 This unit test sets up a custom gravity body, the asteroid Bennu, using the planetEphemeris module (i.e. Spice \

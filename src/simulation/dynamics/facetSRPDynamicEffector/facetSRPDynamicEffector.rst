@@ -92,12 +92,12 @@ true value computed in python.
 
 User Guide
 ----------
-The following steps are required to set up the faceted SRP dynamic effector in python using Basilisk. Be sure to include
+The following steps are required to set up the faceted SRP dynamic effector in python using Xmera. Be sure to include
 the Sun as a gravitational body in the simulation to use this module.
 
 #. First import the facetSRPDynamicEffector class::
 
-    from Basilisk.simulation import facetSRPDynamicEffector
+    from Xmera.simulation import facetSRPDynamicEffector
 
 #. Next, create an instantiation of the SRP dynamic effector::
 

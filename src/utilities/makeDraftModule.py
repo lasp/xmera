@@ -4,7 +4,7 @@
 #
 
 """
-This script is used to create a Basilisk module folder given the basic I/O and naming information.
+This script is used to create a Xmera module folder given the basic I/O and naming information.
 
 - Modify either ``fillCppInfo()`` or ``fillCInfo()`` to contain the desired information for the new BSK module.
 - edit the ``__main__`` routine at the end of the file to call the desired module type with
@@ -18,7 +18,7 @@ import re
 import shutil
 from datetime import datetime
 
-# assumes this script is in .../basilisk/src/utilities
+# assumes this script is in .../xmera/src/utilities
 pathToSrc = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 initialCwd = os.getcwd()
 
@@ -29,11 +29,11 @@ endColor = '\033[0m'
 
 class moduleGenerator:
     """
-    class to generate draft Basilisk modules
+    class to generate draft Xmera modules
     """
     def __init__(self):
         # the following variables must be set for this module generator to function
-        self.modulePathRelSrc = None  # path to the new module folder relative to basilisk/src
+        self.modulePathRelSrc = None  # path to the new module folder relative to xmera/src
         self.moduleName = None  # lower camel case name of the module
         self.briefDescription = None  # brief module description
         self.copyrightHolder = None  # holder of open source copyright
@@ -46,7 +46,7 @@ class moduleGenerator:
 
         # private class variables
         self._absPath = None  # absolute path to the folder which will contain the module folder
-        self._newModuleLocation = None  # absolute path to the auto-generated Basilisk module folder
+        self._newModuleLocation = None  # absolute path to the auto-generated Xmera module folder
         self._licenseText = None  # BSK open-source license statement
 
     def log(self, statement, **kwargs):
@@ -91,7 +91,7 @@ class moduleGenerator:
         os.chdir(self._newModuleLocation)
 
     def readLicense(self):
-        """Read the Basilisk license file"""
+        """Read the Xmera license file"""
         self.log(statusColor + "Importing License:" + endColor, end=" ")
         with open(pathToSrc + "/../LICENSE", 'r') as f:
             self._licenseText = f.read()
@@ -245,7 +245,7 @@ class moduleGenerator:
 
     def createCppModule(self):
         """
-        Create a C++ Basilisk module
+        Create a C++ Xmera module
         """
         modulePath = self.modulePathRelSrc
         name = self.moduleName
@@ -260,7 +260,7 @@ class moduleGenerator:
         self.readLicense()
         licenseC = "/*" + self._licenseText + "*/\n\n"
 
-        # make sure the path, specified relative to basilisk/src, to the new module location is correct
+        # make sure the path, specified relative to xmera/src, to the new module location is correct
         self._absPath = os.path.join(pathToSrc, modulePath)
         self.checkPathToNewFolderLocation()
 
@@ -428,7 +428,7 @@ class moduleGenerator:
 
 def fillCppInfo(module):
     """Fill in the C++ module information.  This should be edited before running to meet the new module needs."""
-    # define the path where the Basilisk module folder will be
+    # define the path where the Xmera module folder will be
     module.modulePathRelSrc = os.path.join("moduleTemplates", "")
 
     # define module name and brief description

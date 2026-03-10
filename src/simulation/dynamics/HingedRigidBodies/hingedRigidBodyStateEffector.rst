@@ -52,7 +52,7 @@ for a detailed description of this model. A hinged rigid body has 2 states: thet
 For additional information about connecting a reference, see Bascom and Schaub paper: `Modular Dynamic Modeling of Hinged Solar Panel Deployments <https://hanspeterschaub.info/Papers/Bascom2022.pdf>`__
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Basilisk-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Xmera-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 
@@ -65,18 +65,18 @@ how to run it, as well as testing.
 
 Module Testing
 ^^^^^^^^^^^^^^
-The integrated tests has six scenarios it is testing. The first three are: one with gravity and no damping, one without gravity and without damping, and one without gravity with damping. These first three tests are verifying energy and momentum conservation. In the first two cases orbital energy, orbital momentum, rotational energy, and rotational angular momentum should all be conserved. In the third case orbital momentum, orbital energy, and rotational momentum should be conserved. This integrated test validates for all three scenarios that all of these parameters are conserved. The fourth scenario is verifying that the steady state deflection while a constant force is being applied matches the back of the envelope (BOE) calculation. The fifth scenario applies a constant force and removes the force and the test verifies that the frequency and amplitude match the BOE calculations. And the sixth scenario verifies that Basilisk gives identical results to a planar Lagrangian dynamical system created independently.
+The integrated tests has six scenarios it is testing. The first three are: one with gravity and no damping, one without gravity and without damping, and one without gravity with damping. These first three tests are verifying energy and momentum conservation. In the first two cases orbital energy, orbital momentum, rotational energy, and rotational angular momentum should all be conserved. In the third case orbital momentum, orbital energy, and rotational momentum should be conserved. This integrated test validates for all three scenarios that all of these parameters are conserved. The fourth scenario is verifying that the steady state deflection while a constant force is being applied matches the back of the envelope (BOE) calculation. The fifth scenario applies a constant force and removes the force and the test verifies that the frequency and amplitude match the BOE calculations. And the sixth scenario verifies that Xmera gives identical results to a planar Lagrangian dynamical system created independently.
 
-The document :download:`PDF Description </../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Basilisk-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf>`
+The document :download:`PDF Description </../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Xmera-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf>`
 contains a more detailed discussion of the testing, as well as the expected results.
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a Hinged Rigid Body State Effector in python using Basilisk.
+This section is to outline the steps needed to setup a Hinged Rigid Body State Effector in python using Xmera.
 
 #. Import the hingedRigidBodyStateEffector class::
 
-    from Basilisk.simulation import hingedRigidBodyStateEffector
+    from Xmera.simulation import hingedRigidBodyStateEffector
 
 #. Create an instantiation of a Hinged Rigid body::
 
@@ -117,7 +117,3 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, panel1)
-
-
-
-

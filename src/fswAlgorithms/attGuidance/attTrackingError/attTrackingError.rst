@@ -1,6 +1,6 @@
-=============
+=======================
 Attitude Tracking Error
-=============
+=======================
 
 -----------------
 Executive Summary
@@ -10,9 +10,9 @@ The Attitude Tracking Error module reads in current spacecraft attitude, where i
 and rate errors and express it all reference motion in the spacecraft body frame. This module is intended to be the last module in the guidance module chain.
 It's output is at the guidance attitude tracking errors relative to a moving reference frame.
 
--------------------------------
+----------------------------
 Module Input/Output Messages
--------------------------------
+----------------------------
 
 The following table lists all the module input and output messages:
 
@@ -33,9 +33,9 @@ The following table lists all the module input and output messages:
       - :ref:`AttRefMsgPayload`
       - attitude reference input message
 
--------------------------------
+----------------
 Module Functions
--------------------------------
+----------------
 Below is a list of functions that this simulation module performs
 
 - Reads the incoming attitude navigation and reference attitude message
@@ -46,9 +46,9 @@ Below is a list of functions that this simulation module performs
 - Computes the angular acceleration in body frame
 - Writes the guidance module output message
 
--------------------------------
+------------------
 Module Description
--------------------------------
+------------------
 
 The following text describes existing function in details and the mathematics behind the `attTrackingError` module.
 
@@ -60,7 +60,7 @@ These outputs are commonly consumed by downstream attitude controllers.
 **Parameter**
 
 * :math:`\mathbf\sigma_{R_0R}` : a configurable MRP correction mapping between an original reference frame (R0) and a corrected reference frame (R).
-This allows the module to apply a fixed reference offset to the incoming reference attitude.
+  This allows the module to apply a fixed reference offset to the incoming reference attitude.
 
 **Outputs**
 
@@ -106,9 +106,9 @@ quantities for downstream attitude control laws.
 
 
 
--------------------------------
+----------------
 Test Description
--------------------------------
+----------------
 
 This unit test confirms correct implementation of the attitude tracking transformations by comparing its outputs to independently computed truth values. Known navigation
 and reference attitude states, angular rates, angular accelerations,and a reference correction are provided to the module. The test passes if the computed attitude error,

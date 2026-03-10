@@ -20,7 +20,7 @@ as well as navigation output messages - :ref:`navTransMsgPayload` and :ref:`ephe
 .. attention::
 
     To see the asteroid Bennu in Vizard the asteroid asset bundle must be installed.  See
-    the Vizard `Download <http://hanspeterschaub.info/basilisk/Vizard/VizardDownload.html>`__ web page.
+    the Vizard `Download <https://github.com/lasp/xmera/Vizard/VizardDownload.html>`__ web page.
 
 The relative position estimate and the estimation error and covariance may be found in the plots below.
 

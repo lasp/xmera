@@ -448,11 +448,11 @@ are not set by the user, the module defaults to the non-smoothed bang-bang profi
 ``smoothingDuration`` is set to a nonzero value, the smoothed bang-bang profiler is selected. If both variables are
 set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
-This section is to outline the steps needed to set up the prescribed rotational 1 DOF module in python using Basilisk.
+This section is to outline the steps needed to set up the prescribed rotational 1 DOF module in python using Xmera.
 
 #. Import the prescribedRotation1DOF class::
 
-    from Basilisk.simulation import prescribedRotation1DOF
+    from Xmera.simulation import prescribedRotation1DOF
 
 #. Create an instantiation of the module::
 

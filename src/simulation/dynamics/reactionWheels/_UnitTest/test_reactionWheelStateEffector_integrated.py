@@ -362,7 +362,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'BOE':
         plt.figure()
         plt.clf()
-        plt.plot(scDataLog.times()*1e-9, thetaOut, label = 'Basilisk')
+        plt.plot(scDataLog.times()*1e-9, thetaOut, label = 'Xmera')
         plt.plot(timeBOE, thetaBOE, 'ro', label='BOE')
         plt.legend(loc='upper left', numpoints=1)
         plt.xlabel("Time (s)")
@@ -371,7 +371,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
         plt.figure()
         plt.clf()
-        plt.plot(scDataLog.times()*1e-9, omegaData[:,2], label = 'Basilisk')
+        plt.plot(scDataLog.times()*1e-9, omegaData[:,2], label = 'Xmera')
         plt.plot(timeBOE, omegaBOE, 'ro', label='BOE')
         plt.legend(loc='upper right', numpoints=1)
         plt.xlabel("Time (s)")
@@ -380,7 +380,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
         plt.figure()
         plt.clf()
-        plt.plot(scDataLog.times()*1e-9, wheelSpeeds, label = 'Basilisk')
+        plt.plot(scDataLog.times()*1e-9, wheelSpeeds, label = 'Xmera')
         plt.plot(timeBOE, wheelSpeedBOE, 'ro', label='BOE')
         plt.legend(loc ='upper left', numpoints=1)
         plt.xlabel("Time (s)")
@@ -393,7 +393,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
         plt.figure()
         plt.clf()
-        plt.plot(scDataLog.times()*1e-9, omegaData[:,2], label='Basilisk')
+        plt.plot(scDataLog.times()*1e-9, omegaData[:,2], label='Xmera')
         plt.xlabel("Time (s)")
         plt.ylabel("Body Rate (rad/s)")
         unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestBodyRates", "Reaction Wheel " + testCase + " Test Body Rates", plt, r"width=0.8\textwidth", path)

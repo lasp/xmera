@@ -6,11 +6,11 @@ attached to a spacecraft.  It emulates the "counts" that will typically be
 output by the ADC on board of a spacecraft.
 
 The module
-:download:`PDF Description </../../src/simulation/sensors/coarseSunSensor/_Documentation/Basilisk-CoarseSunSensor-20170803.pdf>`
+:download:`PDF Description </../../src/simulation/sensors/coarseSunSensor/_Documentation/Xmera-CoarseSunSensor-20170803.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 The corruption types are outlined in this
-:download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/BasiliskCorruptions.pdf>`.
+:download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/XmeraCorruptions.pdf>`.
 
 .. warning::
   Be careful when generating CSS objects in a loop or using a function! It is often convenient to initialize many CSS' with the same attributes using a loop with a function like ``setupCSS(CSS)`` where ``setupCSS`` initializes the field of view, sensor noise, min / max outputs, etc. If you do this, be sure to disown the memory in Python so the object doesn't get accidentally garbage collected or freed for use. You can disown the memory though ``cssObject.this.disown()``.

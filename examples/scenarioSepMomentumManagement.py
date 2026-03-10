@@ -106,12 +106,13 @@ def run(momentumManagement, cmEstimation, showPlots):
     The scenario can be run with the followings setups parameters:
 
     Args:
-        momentumManagement (bool): When false, the platform aligns the thruster with the CM location it receives as
-                                   input. When true, the thruster is used to perform momentum management.
-        cmEstimation (bool): When false, the platform is connected to the true CM location message. When true, the
-                             platform is connected to the estimated CM location.
-        showPlots (bool): Determines if the script should display plots.
+        momentumManagement (bool): When false, the platform aligns the thruster with the CM location
+            it receives as input. When true, the thruster is used to perform momentum management.
 
+        cmEstimation (bool): When false, the platform is connected to the true CM location message.
+            When true, the platform is connected to the estimated CM location.
+
+        showPlots (bool): Determines if the script should display plots.
     """
 
     # Create simulation variable names

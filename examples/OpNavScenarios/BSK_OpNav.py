@@ -7,16 +7,16 @@ r"""
 Overview
 --------
 
-The goal of the OpNav Scenarios is to simulate Optical Navigation methods and performance in Basilisk.
-All of the scenarios provided in ``basilisk/examples/OpNavScenarios`` put a spacecraft on orbit about Mars. By extracting
+The goal of the OpNav Scenarios is to simulate Optical Navigation methods and performance in Xmera.
+All of the scenarios provided in ``xmera/examples/OpNavScenarios`` put a spacecraft on orbit about Mars. By extracting
 limbs are circles from the images, the spacecraft can point to the planet, and estimate it's position.
 
 .. image:: /_images/static/OpNavScenario.png
    :align: center
 
-This Basilisk Simulation, which inherits ``SimulationBaseClass``, provides the backbone for all the OpNav simulations
-provided in ``basilisk/examples/OpNavScenarios``.
-These simulations spawn the Basilisk :ref:`Vizard <Vizard>` visualization in order to provide images for processing.
+This Xmera Simulation, which inherits ``SimulationBaseClass``, provides the backbone for all the OpNav simulations
+provided in ``xmera/examples/OpNavScenarios``.
+These simulations spawn the Xmera :ref:`Vizard <Vizard>` visualization in order to provide images for processing.
 These images are
 handled by the vizInterface module found in ``src/simulation/vizInterface``. A figure illustrating the architecture
 is found here:
@@ -26,7 +26,7 @@ is found here:
    :align: center
 
 More details on the software interaction can be found in Chapter 2 of `Thibaud Teil's PhD thesis <http://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`_.
-Sequentially, Basilisk modules then receive the images in order to process and navigate using them. This is illustrated
+Sequentially, Xmera modules then receive the images in order to process and navigate using them. This is illustrated
 in more detail:
 
 .. image:: /_images/static/OpNav_Details.png
@@ -37,7 +37,7 @@ in more detail:
 Running OpNav Simulations
 -------------------------
 .. important::
-    Make sure Basilisk is built to include the OpNav modules by using ``--opNav True`` when running ``conanfile.py``.
+    Make sure Xmera is built to include the OpNav modules by using ``--opNav True`` when running ``conanfile.py``.
     This is not turned on by default as it will install the large OpenCL library.
 
 In order to call Vizard from python simulations, the path to the downloaded Vizard app must be properly set.

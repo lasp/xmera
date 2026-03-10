@@ -37,7 +37,7 @@ provides information on what this message is used for.
       - opnav input message containing the position vector towards the target
 
 Module models
--------------------------------
+-------------
 The measurement model for the filter is functionally contained in the cameraTriangulation
 module. The message read in therefore contains the predicted measurement:
 
@@ -57,7 +57,7 @@ of gravitational parameter :math:`\mu`.
 
 
 Module assumptions and limitations
--------------------------------
+----------------------------------
 
 The module inherits all assumptions made while implementing a Kalman filter:
     • Observability considerations
@@ -74,7 +74,7 @@ This section is to outline the steps needed to setup a positionODSRuKF converter
 
 #. Import the module::
 
-    from Basilisk.fswAlgorithms import positionODSRuKF
+    from Xmera.fswAlgorithms import positionODSRuKF
 
 #. Create an instantiation of converter class::
 
@@ -115,4 +115,3 @@ This section is to outline the steps needed to setup a positionODSRuKF converter
 #. Subscribe to the messages, primarily the measurement message::
 
     positionOD.opNavHeadingMsg.subscribeTo(cameraTriangulation.cameraLocalizationOutMsg)
-    

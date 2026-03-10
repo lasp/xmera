@@ -5,7 +5,7 @@ This virtual class provides an interface for all Kalman Filters. Modules which i
 benefit from having the core logic of a sequential filter
 
 Virtual and Private method descriptors
--------------------------------
+--------------------------------------
 The following table lists all the class methods and their function
 
 .. list-table:: Interface methods which remain private
@@ -51,7 +51,7 @@ The following table lists all the class methods and their function
 
 
 Module assumptions and limitations
--------------------------------
+----------------------------------
 
 The module inherits all assumptions made while implementing a Kalman filter:
     • Observability considerations

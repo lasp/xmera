@@ -1,29 +1,29 @@
 Executive Summary
 -----------------
-This support class ``bskLogger`` enables C++ ``bskLog()`` and ANSI-C ``_bskLog()`` method to be used to log various debug, information, warning and error messages. The verbosity, i.e. what level of messages are printed to the terminal, can be set from the Basilisk python script.
+This support class ``bskLogger`` enables C++ ``bskLog()`` and ANSI-C ``_bskLog()`` method to be used to log various debug, information, warning and error messages. The verbosity, i.e. what level of messages are printed to the terminal, can be set from the Xmera python script.
 
-.. table:: Verbosity Level Options
-        :widths: 25 25 100
+.. list-table:: Verbosity Level Options
+   :widths: 25 75
+   :header-rows: 1
 
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | Level                 | Description                                                                         |
-        +=======================+=================================+===================================================+
-        | BSK_DEBUG             | Can be used for debug information logging.  Such ``bskLog`` statement should not be |
-        |                       | left in the final Basilisk code.                                                    |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | BSK_INFORMATION       | General information messages                                                        |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | BSK_WARNING           | Warnings about unexpected behavior, but not outright errors.                        |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | BSK_ERROR             | Erroneous behavior that needs to be fixed.                                          |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | BSK_SILENT            | This level is used to silence all `bskLog` statements.  This should never be used   |
-        |                       | with the `bskLog` method within the C++ or C code.                                  |
-        +-----------------------+---------------------------------+---------------------------------------------------+
+   * - Level
+     - Description
+   * - BSK_DEBUG
+     - Can be used for debug information logging.  Such ``bskLog`` statement should not be
+       left in the final Xmera code.
+   * - BSK_INFORMATION
+     - General information messages
+   * - BSK_WARNING
+     - Warnings about unexpected behavior, but not outright errors.
+   * - BSK_ERROR
+     - Erroneous behavior that needs to be fixed.
+   * - BSK_SILENT
+     - This level is used to silence all ``bskLog`` statements.  This should never be used
+       with the ``bskLog`` method within the C++ or C code.
 
 
 Class Assumptions and Limitations
-----------------------------------
+---------------------------------
 The ``bskLogger`` class is intended to be used primarily within the BSK modules.  All the modules must have been initialized before the ``bskLog`` becomes effective.  Thus, if ``bskLog`` is used during initialization to print a warning, this will not function as expected.
 
 For utility libraries such as ``linearAlgebra.c/h`` etc., this logging capabilities is not applicable as these libraries don't have access to the ``bskLogger`` instance.  Rather, in such cases use the ``BSK_PRINT()`` macro instead.
@@ -35,18 +35,18 @@ Using ``bskLogger`` From Python
 For an example of how to set the verbosity from Python, see :ref:`scenarioBskLog`.
 The default verbosity is set to the lowest level ``BSK_DEBUG`` such that any ``bskLog`` method print out the associated message string.  If this is the desired behavior, then no further actions are required.
 
-If the verbosity level is to be changed for a particular Basilisk script, then the following instructions explain how this can be done.  At the top of the Basilisk python scrip be sure to include the ``bskLogging`` support package::
+If the verbosity level is to be changed for a particular Xmera script, then the following instructions explain how this can be done.  At the top of the Xmera python scrip be sure to include the ``bskLogging`` support package::
 
-    from Basilisk.architecture import bskLogging
+    from Xmera.architecture import bskLogging
 
 Setting Verbosity Globally for all BSK Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The ``bskLog`` verbosity can be modified for all Basilisk modules by using::
+The ``bskLog`` verbosity can be modified for all Xmera modules by using::
 
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
 The verbosity options are listed in the table above.  Note that this command must be included at the very beginning of
-the Basilisk simulation script, certainly before the call for ``SimulationBaseClass.SimBaseClass()``.
+the Xmera simulation script, certainly before the call for ``SimulationBaseClass.SimBaseClass()``.
 
 Changing Verbosity for a Particular BSK Module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -63,10 +63,10 @@ Another option is to use the ``BSKLogger()`` constructor to provide the verbosit
     sNavObject = simpleNav.SimpleNav()
     sNavObject.bskLogger = bskLogging.BSKLogger(bskLogging.BSK_INFORMATION)
 
-Unlike change the global verbosity level, the module specific verbosity can be changed later on in the Basilisk
+Unlike change the global verbosity level, the module specific verbosity can be changed later on in the Xmera
 python script as the corresponding module is created and configured.
 
-Using ``bskLog`` in C++ Basilisk Modules
+Using ``bskLog`` in C++ Xmera Modules
 ----------------------------------------
 The first step is to include the ``bskLogging`` support file with the module `*.h` file using:
 
@@ -87,7 +87,7 @@ Within the ``*.cpp`` file, the ``bskLog()`` method can be called with:
     bskLogger.bskLog(BSK_INFORMATION, "%d %d", arg1, arg2);
 
 
-Using ``_bskLog`` in C Basilisk Modules
+Using ``_bskLog`` in C Xmera Modules
 ---------------------------------------
 The first step is to include the ``bskLogging`` support file with the module ``*.h`` file using:
 

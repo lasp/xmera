@@ -185,7 +185,7 @@ class SimBaseClass:
 
     def ShowExecutionOrder(self):
         """
-        Shows in what order the Basilisk processes, task lists and modules are executed
+        Shows in what order the Xmera processes, task lists and modules are executed
         """
 
         for processData in self. TotalSim.processList:
@@ -203,7 +203,7 @@ class SimBaseClass:
 
     def ShowExecutionFigure(self, show_plots=False):
         """
-        Shows in what order the Basilisk processes, task lists and modules are executed
+        Shows in what order the Xmera processes, task lists and modules are executed
         """
         processList = OrderedDict()
         for processData in self. TotalSim.processList:
@@ -348,7 +348,7 @@ class SimBaseClass:
     # 'allModels' attributes (as well as any mention of them) as they are no longer needed
     @deprecated.deprecated("2024/09/06",
         "Use the 'logger' function or 'PythonVariableLogger' instead of 'AddVariableForLogging'."
-        " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
+        " See 'https://github.com/lasp/xmera/Learn/xmeraPrinciples/xmeraPrinciples-6.html'"
     )
     def AddVariableForLogging(self, VarName: str, LogPeriod: int = 0, *_, **__):
         """Generates a logger and adds it to the same task as the module
@@ -497,7 +497,7 @@ class SimBaseClass:
 
     # @deprecated.deprecated("2024/09/06",
     #     "Deprecated way to access logged variables."
-    #     " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
+    #     " See 'https://github.com/lasp/xmera/Learn/xmeraPrinciples/xmeraPrinciples-6.html'"
     # )
     def GetLogVariableData(self, LogName):
         """

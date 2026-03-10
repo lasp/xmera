@@ -4,7 +4,7 @@ Executive Summary
 This module reads in the position and velocity of multiple orbital bodies and outputs position and velocity of each body relative to a single other orbital body position and velocity.  Up to 10 input ephemeris messages can be connected.
 
 More information can be found in the
-:download:`PDF Description </../../src/fswAlgorithms/transDetermination/ephemDifference/_Documentation/Basilisk-ephemDifference-2019-03-27.pdf>`.
+:download:`PDF Description </../../src/fswAlgorithms/transDetermination/ephemDifference/_Documentation/Xmera-ephemDifference-2019-03-27.pdf>`.
 
 
 Message Connection Descriptions
@@ -35,4 +35,3 @@ provides information on what this message is used for.
     * - ephOutMsg
       - :ref:`EphemerisMsgPayload`
       - converted ephemeris output message, stored in ``changeBodies[i]``
-

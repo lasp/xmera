@@ -11,7 +11,7 @@ Demonstrates how to set up conical keep-in and keep-out constraints for a spacec
 This script sets up a 6-DOF spacecraft which is orbiting the Earth, in the presence of the Sun.
 The spacecraft is modelled according to the specifics of the Bevo-2 satellite, that has a sensitive
 star tracker aligned with the x body axis and two sun sensors aligned with the y and z body axes.
-The goal is to illustrate how to set up a Basilisk simulation to check whether certain slew
+The goal is to illustrate how to set up a Xmera simulation to check whether certain slew
 maneuvers cause violations in the positional constraints of the spacecraft.
 
 The script is found in the folder ``xmera/examples`` and executed by using::

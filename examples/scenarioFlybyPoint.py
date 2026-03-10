@@ -11,9 +11,9 @@ This script shows how to set up the :ref:`flybyPoint` to compute a guidance refe
 direction of the celestial object being flown by. In this scenario, an Earth flyby is simulated. Effectively,
 :ref:`flybyPoint` computes a Hill reference frame, which is however referred to a body that is not the spacecraft's
 primary gravity body. To align a specific body-frame direction with the direction of the body, for example the direction
- of a camera that needs to take pictures of an asteroid, the user needst to specify the ``sigma_R0R'' parameter in the
- :ref:`attTrackingError`: this allows to introduce an offset rotation that aligns the desired axis with the celestial
- body, rather than the  body's :math:`x` axis. The script is run with the following input arguments:
+of a camera that needs to take pictures of an asteroid, the user needs to specify the ``sigma_R0R`` parameter in the
+:ref:`attTrackingError`: this allows to introduce an offset rotation that aligns the desired axis with the celestial
+body, rather than the body's :math:`x` axis. The script is run with the following input arguments:
 
 The script is found in the folder ``xmera/examples`` and executed by using::
 
