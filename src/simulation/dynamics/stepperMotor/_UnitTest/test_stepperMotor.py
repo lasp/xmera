@@ -488,6 +488,132 @@ def test_stepper_motor_single_step(show_plots, steps_commanded, step_angle, step
                                atol=accuracy,
                                verbose=True)
 
+
+@pytest.mark.parametrize("steps_commanded_1", [10, -10])
+@pytest.mark.parametrize("steps_commanded_2", [5, -5])
+@pytest.mark.parametrize("steps_commanded_3", [3, -3])
+def test_stepper_motor_rapid_commands(show_plots, steps_commanded_1, steps_commanded_2, steps_commanded_3):
+    r"""
+    **Verification Test Description**
+
+    This test verifies the stepper motor correctly handles multiple rapid command
+    interruptions. Three commands are sent in quick succession, each interrupting
+    the previous one after only 2 steps are completed.
+
+    **Test Parameters**
+
+    Args:
+        steps_commanded_1 (int): [steps] First command
+        steps_commanded_2 (int): [steps] Second command (interrupts first)
+        steps_commanded_3 (int): [steps] Third command (interrupts second)
+
+    **Description of Variables Being Tested**
+
+    The motor angle, rate, and step count are checked to converge to the reference
+    values after the final command completes.
+
+    """
+
+    task_name = "unitTask"
+    process_name = "TestProcess"
+    test_sim = SimulationBaseClass.SimBaseClass()
+    test_time_step_sec = 0.01
+    test_process_rate = macros.sec2nano(test_time_step_sec)
+    test_process = test_sim.CreateNewProcess(process_name)
+    test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
+
+    # Create the stepperMotor module
+    step_time = 1.0  # [s]
+    step_angle = 1.0 * macros.D2R  # [rad]
+    stepper_motor = stepperMotor.StepperMotor()
+    stepper_motor.modelTag = "StepperMotor"
+    stepper_motor.setThetaInit(0.0)
+    stepper_motor.setStepAngle(step_angle)
+    stepper_motor.setStepTime(step_time)
+    test_sim.AddModelToTask(task_name, stepper_motor)
+
+    # Create the first stepperMotor input message
+    motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
+    motor_step_command_msg_data.stepsCommanded = steps_commanded_1
+    motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data)
+    stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
+
+    # Set up data logging
+    stepper_motor_data_log = stepper_motor.stepperMotorOutMsg.recorder()
+    test_sim.AddModelToTask(task_name, stepper_motor_data_log)
+
+    # Run 2 steps of the first command then interrupt
+    test_sim.InitializeSimulation()
+    interrupt_time_1 = 2.0 * step_time  # [s] After 2 steps
+    test_sim.ConfigureStopTime(macros.sec2nano(interrupt_time_1))
+    test_sim.ExecuteSimulation()
+
+    # Send second command (interrupts first)
+    motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
+    motor_step_command_msg_data.stepsCommanded = steps_commanded_2
+    motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data,
+                                                                   test_sim.TotalSim.getCurrentNanos())
+    stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
+
+    # Run 2 steps of the second command then interrupt
+    interrupt_time_2 = interrupt_time_1 + 2.0 * step_time  # [s]
+    test_sim.ConfigureStopTime(macros.sec2nano(interrupt_time_2))
+    test_sim.ExecuteSimulation()
+
+    # Send third command (interrupts second)
+    motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
+    motor_step_command_msg_data.stepsCommanded = steps_commanded_3
+    motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data,
+                                                                   test_sim.TotalSim.getCurrentNanos())
+    stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
+
+    # Run until third command completes
+    sim_time_3 = step_time * abs(steps_commanded_3)  # [s]
+    sim_time_extra = 5.0  # [s]
+    test_sim.ConfigureStopTime(macros.sec2nano(interrupt_time_2 + sim_time_3 + sim_time_extra))
+    test_sim.ExecuteSimulation()
+
+    # Extract the logged data
+    timespan = macros.NANO2SEC * stepper_motor_data_log.times()  # [s]
+    theta = macros.R2D * stepper_motor_data_log.theta  # [deg]
+    theta_dot = macros.R2D * stepper_motor_data_log.thetaDot  # [deg/s]
+    theta_ddot = macros.R2D * stepper_motor_data_log.thetaDDot  # [deg/s^2]
+    motor_step_count = stepper_motor_data_log.stepCount
+
+    if show_plots:
+        motor_steps_commanded = stepper_motor_data_log.stepsCommanded
+        plot_results(timespan, theta, theta_dot, theta_ddot, motor_step_count, motor_steps_commanded)
+        plt.show()
+    plt.close("all")
+
+    # Determine expected final angle: 2 steps of cmd1 + 2 steps of cmd2 + all of cmd3
+    sign_1 = 1 if steps_commanded_1 > 0 else -1
+    sign_2 = 1 if steps_commanded_2 > 0 else -1
+    theta_after_cmd1_interrupt = 2 * sign_1 * step_angle
+    theta_after_cmd2_interrupt = theta_after_cmd1_interrupt + 2 * sign_2 * step_angle
+    theta_final_expected = theta_after_cmd2_interrupt + steps_commanded_3 * step_angle
+
+    accuracy = 1e-12
+
+    # Check the motor converged to the correct final state
+    np.testing.assert_allclose(theta[-1],
+                               macros.R2D * theta_final_expected,
+                               atol=accuracy,
+                               verbose=True)
+    np.testing.assert_allclose(theta_dot[-1],
+                               0.0,
+                               atol=accuracy,
+                               verbose=True)
+    np.testing.assert_allclose(theta_ddot[-1],
+                               0.0,
+                               atol=accuracy,
+                               verbose=True)
+    np.testing.assert_allclose(motor_step_count[-1],
+                               steps_commanded_3,
+                               atol=accuracy,
+                               verbose=True)
+
+
 def plot_results(timespan,
                  theta,
                  theta_dot,
