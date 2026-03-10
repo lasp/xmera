@@ -126,6 +126,7 @@ ARRAYASLIST(float)
 }
 
 %enddef
+ARRAYINTASLIST(bool)
 ARRAYINTASLIST(int)
 ARRAYINTASLIST(unsigned int)
 
