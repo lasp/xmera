@@ -13,7 +13,7 @@ effector attached to a rigid body hub and has the following functions:
 - Provides its contributions to energy and momentum of the spacecraft
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/FuelTank/_Documentation/Basilisk-FUELTANK-20171203.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/FuelTank/_Documentation/Xmera-FUELTANK-20171203.pdf>`
 contains further information on this module's computations.
 
 

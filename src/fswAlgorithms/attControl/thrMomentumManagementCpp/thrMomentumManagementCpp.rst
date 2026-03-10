@@ -4,7 +4,7 @@ Executive Summary
 This module reads in the Reaction Wheel (RW) speeds, determines the net RW momentum, and then determines the amount of angular momentum that must be dumped.
 
 A separate thruster firing logic module called thrMomentumDumping will later on compute the thruster on cycling. The module
-:download:`PDF Description </../../src/fswAlgorithms/attControl/thrMomentumManagement/_Documentation/Basilisk-thrMomentumManagement-20160817.pdf>`
+:download:`PDF Description </../../src/fswAlgorithms/attControl/thrMomentumManagement/_Documentation/Xmera-thrMomentumManagement-20160817.pdf>`
 contains further information on this module's function, how to run it, as well as testing.
 
 Module Input and Output
@@ -76,6 +76,7 @@ Assume the spacecraft contains :math:`N_{\text{RW}}` RWs. The net RW angular mom
   \begin{equation}
     \boldsymbol h_{s} = \sum_{i=1}^{N_{\text{RW}}} \hat{\boldsymbol g}_{s_{i}} J_{s_{i}} \Omega_{i}
   \end{equation}
+
 where :math:`\hat{\boldsymbol g}_{s_{i}}` is the RW spin axis, :math:`J_{s_{i}}` is the spin axis RW inertia and :math:`\Omega_{i}` is the RW speed rate about this axis.
 Because the inertial attitude of the spacecraft is assumed to be held nominally steady the body-relative RW cluster angular momentum rate can be approximated as
 

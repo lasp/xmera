@@ -37,8 +37,8 @@ this method in this scenario.
 Creating New Integrator Modules
 -------------------------------
 
-New integration modules can be readily created for Basilisk.  They are all stored in the folder
-``Basilisk/src/simulation/dynamics/Integrators/``.
+New integration modules can be readily created for Xmera.  They are all stored in the folder
+``Xmera/src/simulation/dynamics/Integrators/``.
 
 The integrators must be created to function on a general state vector and be independent of the particular
 dynamics being integrated.  Note that the default integrator is placed inside the ``_GeneralModulesFiles``
@@ -50,7 +50,7 @@ folder within the ``dynamics`` folder.
 # Xmera Scenario Script and Integrated Test
 #
 # Purpose:  Demonstration of how to setup and use different variable time step integrators in
-#           Basilisk.  The simulation performs a 3-DOF elliptic orbit scenario.
+#           Xmera.  The simulation performs a 3-DOF elliptic orbit scenario.
 # Author:   João Vaz Carneiro
 # Creation Date:  Sep. 26, 2021
 #

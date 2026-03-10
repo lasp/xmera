@@ -3,7 +3,7 @@ Executive Summary
 This module provides the GEO electron and ion flux based on 82 satellite-years as discussed in `this paper <https://doi
 .org/10.1002/2015SW001168>`__ by M. H. Denton and on `this website <https://gemelli.spacescience.org/mdenton/>`__.
 A Fortran module can be downloaded from this website which computes the electron and ion flux for a given :math:`K_p` index,
-local time and particle energy, and also includes the relevant flux data. The Basilisk module only uses the mean
+local time and particle energy, and also includes the relevant flux data. The Xmera module only uses the mean
 flux data.
 
 

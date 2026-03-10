@@ -47,7 +47,7 @@ direction of the Sun. It is important to note that two pointing
 conditions in a three-dimensional space compose an overdetermined
 problem. Thus, the main constraint is always priorized over the
 secondary one so the former can always be met.
-Figure :ref:`1 <#fig:fig1>`__ shows the case where Mars is the primary
+Figure :ref:`fig1_celestialTwoBodyPoint` shows the case where Mars is the primary
 celestial body and the Sun is the secondary one. Note that the origin
 of the desired reference frame :math:`\mathcal{R}` is the position of
 the spacecraft.

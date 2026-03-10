@@ -1,11 +1,11 @@
 Ephemerides Recenter
-=============================
+====================
 
 This module provides functionality to transform the ephemerides of a collection of bodies
 so that they are expressed relative to a new central body, rather than their original reference (e.g., Sun or Earth).
 
 Assumptions and Limitations
----------------
+---------------------------
 
 The module should be used in the following circumstances: when creating a simulation with ephemeris tables mostly all
 generated with respect to a central body like the Sun or Earth, but with the spacecraft table in the simulation
@@ -49,7 +49,7 @@ Below is an example of using the Python interface (mocked for testing) to intera
     body.bodySpiceName = "Mars"
     body.originalCentralBodyName = "Sun"
 
-    # Attach message functors (e.g., input/output links in Basilisk)
+    # Attach message functors (e.g., input/output links in Xmera)
     body.inputEphemerisMsg = YourInputMsgFunctor()
     body.outputEphemerisMsg = YourOutputMsg()
 
@@ -58,7 +58,7 @@ Below is an example of using the Python interface (mocked for testing) to intera
     module.setNewZeroBase("Mars")
     module.setPreviousCommonZeroBase("Sun")
 
-    # Run module (e.g., in Basilisk dynamics loop)
+    # Run module (e.g., in Xmera dynamics loop)
     module.updateState(callTime)
 
 Notes

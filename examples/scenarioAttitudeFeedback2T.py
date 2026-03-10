@@ -32,8 +32,8 @@ modules.  Interface messages are now shared across SIM and FSW message passing i
 .. image:: /_images/static/test_scenarioAttitudeFeedback2T.svg
    :align: center
 
-Note that starting with Basilisk 2.0 onwards it is trivial to connect to module messages within
-another Basilisk process (task group).  There are no additional steps required to establish these connections.
+Note that starting with Xmera 2.0 onwards it is trivial to connect to module messages within
+another Xmera process (task group).  There are no additional steps required to establish these connections.
 Recall that this simulation is single-threaded and that the processes are evaluated sequentially.  The new BSK2
 messaging system got rid of message names.  With multi-process simulations there are thus no longer any
 message naming conflicts to consider as messages are directly connected.

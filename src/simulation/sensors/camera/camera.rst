@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-The goal of the camera module is to simulate a camera in the Basilisk
+The goal of the camera module is to simulate a camera in the Xmera
 codebase. Although images are provided by the visualization, they are
 renders of the Unity engine and are not necessarily representative of
 a camera. The module reads in an image from a file, or in the
@@ -71,7 +71,7 @@ Overview of Corruptions
 
 #. Dark current is due to thermal properties of the CCD or CMOS sensor in use: as electrons are created independently of
    incoming light, they are captured in the pixel potential wells and appear to be a signal. Dark current noise is the
-   statistical variation of this phenomenon. In Basilisk, dark current noise is added with a Gaussian noise model with
+   statistical variation of this phenomenon. In Xmera, dark current noise is added with a Gaussian noise model with
    zero standard deviation and mean of 15 × D, where D is another input to the module.
 
 #. The image color can be changed in the HSV color space.  The hue value is rotated by  a specified amount of radians,
@@ -88,7 +88,7 @@ Overview of Corruptions
    The corrupted pixels stay the same throughout the simulation and provide an example of a static artifact.
 
 #. Camera sensor with relatively high energies, they can saturate a line of pixels and corrupt the image. Cosmic rays are
-   modeled in Basilisk by randomly choosing a point on the sensor as well as second point within a maximal distance of the
+   modeled in Xmera by randomly choosing a point on the sensor as well as second point within a maximal distance of the
    first one. The abundance of cosmic rays on an image depend on the shutter speed amongst other parameters, and the
    module allows to toggle the frequency and quantity of such events.
 
@@ -97,7 +97,7 @@ To read more about the corruptions and for example pictures see section 5.2 of D
 `thesis <https://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf>`__.
 
 Because each successive filter is applied on top of the previous, the order in which they are applied is very important.
-Currently Basilisk does not support a custom order with out directly modifying the source code. The order is as shown
+Currently Xmera does not support a custom order with out directly modifying the source code. The order is as shown
 in the following table describing the filter and the parameters to control the filter. This order was determined
 in part by trying to match a simulated image to a real image of mars and also based on what makes sense.
 In the following parameters a value of 0 turns this corruption off and is the default value.  Any filter

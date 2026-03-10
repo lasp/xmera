@@ -4,7 +4,7 @@ Executive Summary
 This module reads in the Reaction Wheel (RW) speeds, determines the net RW momentum, and then determines the amount of angular momentum that must be dumped.
 
 A separate thruster firing logic module called thrMomentumDumping will later on compute the thruster on cycling. The module
-:download:`PDF Description </../../src/fswAlgorithms/attControl/thrMomentumManagement/_Documentation/Basilisk-thrMomentumManagement-20160817.pdf>`
+:download:`PDF Description </../../src/fswAlgorithms/attControl/thrMomentumManagement/_Documentation/Xmera-thrMomentumManagement-20160817.pdf>`
 contains further information on this module's function, how to run it, as well as testing.
 
 Message Connection Descriptions
@@ -29,4 +29,3 @@ provides information on what this message is used for.
     * - rwConfigDataInMsg
       - :ref:`RWArrayConfigMsgPayload`
       - name of the RWA configuration message
-

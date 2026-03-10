@@ -10,7 +10,7 @@ Overview
 Demonstrates a basic debris reorbit scenario from geostationary orbit using the Electrostatic Tractor (ET) concept and how to visualize the simulation
 data in :ref:`Vizard <vizard>`. This scenario shows how to use the :ref:`etSphericalControl` module for ET relative
 motion control and also illustrates the usage of the :ref:`msmForceTorque` to calculate the electrostatic forces with the Multi-Sphere Method (MSM). This simulation simply uses a single sphere to represent each spacecraft. The servicing satellite is charged to a positive electric potential, while the other satellite (the debris) is uncontrolled and charged to a negative potential. The purpose of this script is to show an explicit method to
-setup the ET reorbit simulation, and also show how to store the Basilisk simulation data to be able to visualize
+setup the ET reorbit simulation, and also show how to store the Xmera simulation data to be able to visualize
 both satellite's motions within the :ref:`Vizard <vizard>` application.
 
 The script is found in the folder ``src/examples`` and executed by using::

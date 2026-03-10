@@ -7,7 +7,7 @@ r"""
 Overview
 --------
 
-This script demonstrates how to use the Basilisk v2.1 multi-threading to simulate a constellation
+This script demonstrates how to use the Xmera v2.1 multi-threading to simulate a constellation
 of 16 spacecraft using 4 threads.  The simulation scenario setup is very similar to
 :ref:`scenario_BasicOrbitMultiSat`.  To setup the unique satellite orbits, the script here loops
 over all satellites an incrementally changes the orbit elements.  The following Vizard screen capture
@@ -21,12 +21,12 @@ Inside the ``run()`` command the number of threads is specified using::
     TheScenario.TotalSim.resetThreads(numThreads)
 
 With this basic setup it is assumed that each BSK process can run independently in a thread.  Note that this script
-does not use any spacecraft flight software which is running in a separate process.  The Basilisk v2.1
-multi-threading only functions for simulations where each Basilisk process can be evaluated independently.
+does not use any spacecraft flight software which is running in a separate process.  The Xmera v2.1
+multi-threading only functions for simulations where each Xmera process can be evaluated independently.
 
 .. warning::
 
-    The Basilisk v2.1 multi-threading does not have a thread-safe messaging system.  This will be
+    The Xmera v2.1 multi-threading does not have a thread-safe messaging system.  This will be
     added in a later release.
 
 Illustration of Simulation Results

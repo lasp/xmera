@@ -46,7 +46,7 @@ A sample setup is done using:
 .. code-block:: python
     :linenos:
 
-    from Basilisk.utilities import macros
+    from Xmera.utilities import macros
     from math import pi
 
     testModule.startTime = macros.sec2nano(30) # [ns] start the deployment 30 seconds into the simulation

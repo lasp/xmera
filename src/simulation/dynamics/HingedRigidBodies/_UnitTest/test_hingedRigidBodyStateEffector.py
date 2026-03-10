@@ -766,7 +766,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
-    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilisk")
+    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Xmera")
     plt.plot(theta1Out[-1,0]*1e-9, thetaSS,'ok',label = "BOE Calculation")
     plt.xlabel('time (s)')
     plt.ylabel('theta 1 (rad)')
@@ -779,7 +779,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
-    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilisk")
+    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Xmera")
     plt.plot(theta2Out[-1,0]*1e-9, thetaSS,'ok',label = "BOE Calculation")
     plt.xlabel('time (s)')
     plt.ylabel('theta 2 (rad)')
@@ -1031,7 +1031,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
-    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilisk")
+    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Xmera")
     plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [2*thetaSS, 2*thetaSS],'-g',label = "Theta Max")
     plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [thetaMax2, thetaMax2],'-k',label = "Theta Max 2")
     plt.xlabel('time (s)')
@@ -1289,7 +1289,7 @@ def test_hingedRigidBodyMotorTorque(show_plots):
                                   err_msg="Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test")
 
 
-def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
+def test_hingedRigidBodyLagrangVsXmera(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"
 
@@ -1463,65 +1463,65 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(time, X[0,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,0]-rOut_BN_N[:,0]),'-r',label = "Basilisk")
+    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,0]-rOut_BN_N[:,0]),'-r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [X[0,25], X[0,75], X[0,125], X[0,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('x position (m)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "XPositionLagrangianVsBasilisk"
-    PlotTitle = "X Position Lagrangian Vs Basilisk"
+    PlotName = "XPositionLagrangianVsXmera"
+    PlotTitle = "X Position Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[1,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[:,1]),'r',label = "Basilisk")
+    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[:,1]),'r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [X[1,25], X[1,75], X[1,125], X[1,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('y position (m)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "YPositionLagrangianVsBasilisk"
-    PlotTitle = "Y Position Lagrangian Vs Basilisk"
+    PlotName = "YPositionLagrangianVsXmera"
+    PlotTitle = "Y Position Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[2,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, thetaOut,'-r',label = "Basilisk")
+    plt.plot(dataLog.times()*1e-9, thetaOut,'-r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [X[2,25], X[2,75], X[2,125], X[2,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('theta (rad)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "ThetaLagrangianVsBasilisk"
-    PlotTitle = "Theta Lagrangian Vs Basilisk"
+    PlotName = "ThetaLagrangianVsXmera"
+    PlotTitle = "Theta Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
-    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilisk")
+    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [X[3,25], X[3,75], X[3,125], X[3,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('theta 1 (rad)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "Theta1LagrangianVsBasilisk"
-    PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
+    PlotName = "Theta1LagrangianVsXmera"
+    PlotTitle = "Theta 1 Position Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
-    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilisk")
+    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Xmera")
     plt.plot([time[25], time[75], time[125], time[175]], [-X[4,25], -X[4,75], -X[4,125], -X[4,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('theta 2 (rad)')
     plt.legend(loc ='lower left',numpoints = 1)
-    PlotName = "Theta2LagrangianVsBasilisk"
-    PlotTitle = "Theta 2 Lagrangian Vs Basilisk"
+    PlotName = "Theta2LagrangianVsXmera"
+    PlotTitle = "Theta 2 Lagrangian Vs Xmera"
     format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
@@ -1534,16 +1534,16 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     for i in timeList:
         assert abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])) <= accuracy, ("Hinged Rigid Body integrated test "
-                                                                          "Lagrangian vs. Basilisk failed x position "
+                                                                          "Lagrangian vs. Xmera failed x position "
                                                                           "comparison ")
         assert abs(X[1,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) <= accuracy, ("Hinged Rigid Body integrated test "
-                                                                          "Lagrangian vs. Basilisk failed y position "
+                                                                          "Lagrangian vs. Xmera failed y position "
                                                                           "comparison ")
-        assert abs(X[2,i] - thetaOut[i]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed "
+        assert abs(X[2,i] - thetaOut[i]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera failed "
                                                       "theta comparison ")
-        assert abs(X[3,i] - theta1Out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Basilisk "
+        assert abs(X[3,i] - theta1Out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera "
                                                          "failed theta 1 comparison ")
-        assert abs(-X[4,i] - theta2Out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Basilisk "
+        assert abs(-X[4,i] - theta2Out[i,1]) <= accuracy, ("Hinged Rigid Body integrated test Lagrangian vs. Xmera "
                                                           "failed theta 2 comparison ")
 
 
@@ -1722,4 +1722,4 @@ if __name__ == "__main__":
     # test_hingedRigidBodyThetaSS(True)
     # test_hingedRigidBodyFrequencyAmp(True)
     # test_hingedRigidBodyMotorTorque(True, True)
-    test_hingedRigidBodyLagrangVsBasilisk(True)
+    test_hingedRigidBodyLagrangVsXmera(True)

@@ -53,7 +53,7 @@ through an attitude state input message containing
 :math:`\mathbf\sigma_{R_{0}/N}`,
 :math:`{}^{\mathcal{N}}{\mathbf\omega}_{R_{0}/N}` and
 :math:`{}^{\mathcal{N}}{\dot{\mathbf\omega}}_{R_{0}/N}`
-as illustrated in :ref:`[fig:moduleIO] <#fig:moduleIO>`__.
+as illustrated in :ref:`fig:moduleIO`.
 The MRP set is mapped into the corresponding Direction Cosine Matrix (DCM) using
 
 .. math:: [R_{0}N] = [R_{0}N ( \mathbf\sigma_{R_{0}/N})]
@@ -129,7 +129,7 @@ equation is numerically evaluated using:
    _{R_{0}/N} \times
    	{}^{\mathcal{N}}{\mathbf\omega}
    _{R/R_{0}}
-   	+
+   +
    	{}^{\mathcal{N}}{\dot{\mathbf\omega}}
    _{R_{0}/N}
 
@@ -146,7 +146,7 @@ The ``mrpRotation`` module has the following design goals
 
 - **Flexible Setup**: The desired rotation state can be described
   through an initial MRP and angular velocity vector specified in module
-  internal variables, or read in through a Basilisk :ref:`AttStateMsg`
+  internal variables, or read in through a Xmera :ref:`AttStateMsg`
   message.
 
 Module Assumptions and Limitations

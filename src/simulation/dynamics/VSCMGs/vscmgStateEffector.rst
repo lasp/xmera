@@ -5,7 +5,7 @@ Executive Summary
 This dynamic effector class implements a variable speed control moment gyroscope or VSCMG device.
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/VSCMGs/_Documentation/Basilisk-VSCMGSTATEEFFECTOR-20180718.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/VSCMGs/_Documentation/Xmera-VSCMGSTATEEFFECTOR-20180718.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 
@@ -32,4 +32,3 @@ provides information on what this message is used for.
     * - vscmgOutMsgs
       - :ref:`VSCMGConfigMsgPayload`
       - vector of VSCMG output messages
-

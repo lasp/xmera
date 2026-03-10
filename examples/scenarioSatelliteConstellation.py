@@ -9,7 +9,7 @@ Overview
 --------
 
 This scenario demonstrates how to set up a Walker-Delta constellation of satellites. Note that this scenario
-uses the stand-alone Basilisk architecture rather than using the ''examples/FormationBskSim`` or ``examples/MultiSatBskSim``
+uses the stand-alone Xmera architecture rather than using the ''examples/FormationBskSim`` or ``examples/MultiSatBskSim``
 architectures for simultaneously simulating multiple spacecraft.
 
 The script is found in the folder ``xmera/examples`` and executed by using::
@@ -62,7 +62,7 @@ is created through the ``vizInterface``::
 #
 # Xmera Scenario Script and Integrated Test
 #
-# Purpose:  Demonstrates how to use the stand alone Basilisk architecture to automate
+# Purpose:  Demonstrates how to use the stand alone Xmera architecture to automate
 #           the setup of a Walker constellation.
 # Author:   Andrew Morell
 # Creation Date:  Dec. 13, 2023
@@ -83,7 +83,7 @@ from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
 from xmera.fswAlgorithms import locationPointing
 from xmera.simulation import (simpleNav, planetEphemeris)
 
-# always import the Basilisk messaging support
+# always import the Xmera messaging support
 
 def run(show_plots, a, i, T, P, F):
     """

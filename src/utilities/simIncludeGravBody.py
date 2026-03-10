@@ -388,7 +388,7 @@ class gravBodyFactory:
 
         Unless the 'path' input is provided, the kernels are loaded from the folder:
         `%BSK_PATH%/supportData/EphemerisData/`, where `%BSK_PATH%` is replaced by
-        the Basilisk directory.
+        the Xmera directory.
 
         Args:
             path (str): The absolute path to the folder that contains the

@@ -31,7 +31,7 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
         try:
             radEquator = float(firstRow[0])
             mu = float(firstRow[1])
-            # firstRow[2] is uncertainty in mu, not needed for Basilisk
+            # firstRow[2] is uncertainty in mu, not needed for Xmera
             maxDegreeFile = int(firstRow[3])
             maxOrderFile = int(firstRow[4])
             coefficientsNormalized = int(firstRow[5]) == 1

@@ -49,11 +49,11 @@ See the following tech report for a detailed description of this model.
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a Translating Body State Effector in Python using Basilisk.
+This section is to outline the steps needed to setup a Translating Body State Effector in Python using Xmera.
 
 #. Import the linearTranslatingBodyOneDOFStateEffector class::
 
-    from Basilisk.simulation import linearTranslatingBodyOneDOFStateEffector
+    from Xmera.simulation import linearTranslatingBodyOneDOFStateEffector
 
 #. Create an instantiation of a Translating body::
 
@@ -122,4 +122,3 @@ This section is to outline the steps needed to setup a Translating Body State Ef
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, translatingBody)
-

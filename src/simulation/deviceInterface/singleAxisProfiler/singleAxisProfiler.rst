@@ -73,11 +73,11 @@ User Guide
 ----------
 The only required input to this module that must be set by the user is the spinning body rotation axis expressed
 as a unit vector in Mount frame components ``rotHat_M``. This section outlines the steps needed to set up this
-single axis profiler module in python using Basilisk.
+single axis profiler module in python using Xmera.
 
 #. Import the singleAxisProfiler class::
 
-    from Basilisk.simulation import singleAxisProfiler
+    from Xmera.simulation import singleAxisProfiler
 
 #. Create an instantiation of the module::
 

@@ -8,7 +8,7 @@ This class is used to implement drag dynamic effects on spacecraft using a varie
 cannonball (attitude-independent) drag, single flat-plate drag, faceted drag models, and an interface to full-CAD GPU-accellerated
 drag models.
 For more information see the
-:download:`PDF Description </../../src/simulation/dynamics/facetDragEffector/_Documentation/Basilisk-facet_drag-20190515.pdf>`.
+:download:`PDF Description </../../src/simulation/dynamics/facetDragEffector/_Documentation/Xmera-facet_drag-20190515.pdf>`.
 
 
 
@@ -28,4 +28,3 @@ provides information on what this message is used for.
     * - atmoDensInMsg
       - :ref:`AtmoPropsMsgPayload`
       - input message for atmospheric density information
-

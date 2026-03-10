@@ -16,12 +16,12 @@ Stepper Motor
      - 20250820
 
 
-====================
+==================
 Module Description
-====================
+==================
 
 Introduction
-============
+------------
 The stepper motor module simulates the actuation of a stepper motor. Given the initial motor angle :math:`\theta_0`, a
 fixed motor step angle :math:`\Delta\theta`, a fixed motor step time :math:`\Delta t`, and an input message containing
 an integer number of steps commanded, the motor states are computed at each time step and output from the module.
@@ -141,7 +141,7 @@ Below is a list of functions that this simulation module performs
     - Handles interruptions to motor actuation by resetting the motor actuation after the current step is complete
 
 Module Assumptions and Limitations
-======================================
+==================================
     - The motor step angle and step time are fixed parameters (Cannot be negative)
     - The motor cannot stop actuating in the middle of a step
     - When the motor actuation is interrupted by a new reference command, the motor must complete its actuation through the current step before following the new command

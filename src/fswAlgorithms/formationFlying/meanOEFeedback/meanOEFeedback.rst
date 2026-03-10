@@ -43,7 +43,7 @@ Module Assumptions and Limitations
 - This module assumes that target orbital element differnce is constant during simulation.
 
 User Guide
-----------------------------------
+----------
 This module requires the following variables to be set as parameters:
 
 - ``oeType`` 0 for classic oe (default), 1 for equinoctial oe

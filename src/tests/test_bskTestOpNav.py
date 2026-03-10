@@ -28,8 +28,8 @@ sys.path.append(path + '/../../examples/OpNavScenarios/')
 r"""
 Skip the following tests if all necessary modules do not exist
 Requirements:
-    - Vizard downloaded and app path set properly (in basilisk/examples/OpNavScenarios/BSK_OpNav.py)
-    - Basilisk built with ZMQ, protobuffers, and OpenCV
+    - Vizard downloaded and app path set properly (in xmera/examples/OpNavScenarios/BSK_OpNav.py)
+    - Xmera built with ZMQ, protobuffers, and OpenCV
 """
 
 import BSK_OpNav

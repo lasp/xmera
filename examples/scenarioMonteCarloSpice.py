@@ -8,13 +8,13 @@ r"""
 This script illustrates how to run a Monte Carlo simulation where the Spice is used within the Python
 setup.  Note that the Python Spice setup is separate from the BSK c++ Spice module setup.  In this tutorial
 a very simple simulation is shown to showcase how to correctly perform Python-based Spice function calls with a
-Basilisk Monte Carlo run.
+Xmera Monte Carlo run.
 
 The script is found in the folder ``xmera/examples`` and executed by using::
 
       python3 scenarioMonteCarloSpice.py
 
-The simulation sets up a simple spacecraft and associated initial conditions.  Note that the Basilisk spacecraft
+The simulation sets up a simple spacecraft and associated initial conditions.  Note that the Xmera spacecraft
 simulation is setup within the class ``MySimulation``.  Here the the code is added to load Spice kernels within
 Python to pull the Hubble states from Spice.  Thus, this python Spice call is performed within each Monte Carlo
 thread.  In this simple example the Hubble states are then printed to the terminal.
@@ -32,7 +32,7 @@ The user should be careful to load the Spice or use within the Python code withi
 """
 
 #
-# Basilisk Integrated Test
+# Xmera Integrated Test
 #
 # Purpose:  This Monte Carlo example shows how to properly use Spice in such simulations.
 #
@@ -103,7 +103,7 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
 
         self.accessSpiceKernel()
 
-        # This is a hack because of a bug in Basilisk... leave this line it keeps
+        # This is a hack because of a bug in Xmera... leave this line it keeps
         # variables from going out of scope after this function returns
         self.additionalReferences = [scObject]
 

@@ -11,7 +11,7 @@ Demonstrates a basic method to simulate 3 satellites with 6-DOF motion and how t
 data in :ref:`Vizard <vizard>`.  One satellite is a 3-axis attitude controlled
 satellite, while the second satellite is a tumbling space debris object.  The controlled satellite simulation components
 are taken from :ref:`scenarioAttitudeFeedbackRW`. The purpose of this script is to show an explicit method to
-setup multiple satellites, and also show how to store the Basilisk simulation data to be able to visualize
+setup multiple satellites, and also show how to store the Xmera simulation data to be able to visualize
 both satellite's motions within the :ref:`Vizard <vizard>` application.
 
 Note, this scenario also illustrates how to ensure that the differential equations of motion of

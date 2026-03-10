@@ -140,11 +140,11 @@ to the body-fixed mount frame. The second prescribed rotational motion output me
 that a separate translational profiler module must also be connected to the prescribed motion dynamics module to fully
 define the kinematic motion of the prescribed body.
 
-This section is to outline the steps needed to setup a prescribed 1 DOF rotational module in python using Basilisk.
+This section is to outline the steps needed to setup a prescribed 1 DOF rotational module in python using Xmera.
 
 #. Import the prescribedRot1DOF class::
 
-    from Basilisk.fswAlgorithms import prescribedRot1DOF
+    from Xmera.fswAlgorithms import prescribedRot1DOF
 
 #. Create an instantiation of a prescribed rotational 1 DOF C module and the associated C++ container::
 

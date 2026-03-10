@@ -31,7 +31,7 @@ Detailed Module Description
 
 Thruster Modeling
 ~~~~~~~~~~~~~~~~~
-The functionalities of this thruster implementation are identical to the ones seen in :ref:`thrusterDynamicEffector`. For a general description of the thruster implementation in Basilisk, namely how the forces and torques are computed, see that module's documentation.
+The functionalities of this thruster implementation are identical to the ones seen in :ref:`thrusterDynamicEffector`. For a general description of the thruster implementation in Xmera, namely how the forces and torques are computed, see that module's documentation.
 
 The main difference between the two thruster implementations comes from how the ``thrustFactor`` is computed and updated at each timestep. The ``thrustFactor`` is a parameter specific to each thruster and ranges from 0 to 1. It defines what the current magnitude of the thrust is: at 0 the thruster is off, and at 1 the thruster is at ``maxThrust``. While the previous thruster module computed the ``thrustFactor`` using on and off-ramps at the beginning and end of the thrusting maneuver, respectively, with a constant steady-state value of 1 in-between, this module updates that value through a first-order ordinary differential equation.
 
@@ -95,7 +95,7 @@ Model Assumptions and Limitations
 Assumptions
 ~~~~~~~~~~~
 
-The model assumes that the behavior of a thruster is represented by a first-order filter. Therefore, due to the simplicity of the model, some real-world behaviors cannot be simulated, such as overshoot or 
+The model assumes that the behavior of a thruster is represented by a first-order filter. Therefore, due to the simplicity of the model, some real-world behaviors cannot be simulated, such as overshoot or
 damping.
 
 The thruster module also assumes that the thruster always thrusts along its thrust directions axis. No dispersion is added to the thrust axis with respect to the nominal thruster axis.
@@ -103,7 +103,7 @@ The thruster module also assumes that the thruster always thrusts along its thru
 Limitations
 ~~~~~~~~~~~
 
-One of the limitations of this model relates to the dynamic nature of this thruster implementation. The thrust is simulated through the thrust factor, which is updated by integrating a differencial equation. This means that it is not possible to reproduce on-off behavior, where the thruster goes from not thrusting to being at maximum thrust or vice-versa. Using this dynamic model, we would have to use infinite derivatives to 
+One of the limitations of this model relates to the dynamic nature of this thruster implementation. The thrust is simulated through the thrust factor, which is updated by integrating a differencial equation. This means that it is not possible to reproduce on-off behavior, where the thruster goes from not thrusting to being at maximum thrust or vice-versa. Using this dynamic model, we would have to use infinite derivatives to
 reproduce this behavior, which is not numerically feasible. To replicate this behavior, the user should use the older version of the thruster effector (:ref:`thrusterDynamicEffector`) with both on or off-ramps disabled.
 
 Another limitation is that the :math:`I_{sp}` used is constant throughout the simulation. This means that the mass flow rate of the thruster is constant - the thruster will lose mass as soon as the valve is open, independent of how much thrust force is being produced. If the user needs to change the :math:`I_{sp}` value of any of the thrusters, the simulation needs to be stop and restarted.
@@ -122,8 +122,8 @@ This section contains conceptual overviews of the code and clear examples for th
 Module Setup
 ~~~~~~~~~~~~
 
-To use the thruster state effector module, the user first needs to create the thruster and populate it with the necessary information, such as thruster magnitude, minimum on time, etc. This can be done with the help 
-of the :ref:`simIncludeThruster` Basilisk Python library. The code to create a generic thruster is shown below:
+To use the thruster state effector module, the user first needs to create the thruster and populate it with the necessary information, such as thruster magnitude, minimum on time, etc. This can be done with the help
+of the :ref:`simIncludeThruster` Xmera Python library. The code to create a generic thruster is shown below:
 
 .. code-block:: python
 

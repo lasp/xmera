@@ -38,16 +38,16 @@ provides information on what this message is used for.
 Detailed Module Description
 ---------------------------
 
-The module :download:`PDF Module Description </../../src/simulation/dynamics/dualHingedRigidBodies/_Documentation/Basilisk-DUALHINGEDRIGIDBODYSTATEEFFECTOR-20180102.pdf>` contains further information on this module's function, as well as testing.
+The module :download:`PDF Module Description </../../src/simulation/dynamics/dualHingedRigidBodies/_Documentation/Xmera-DUALHINGEDRIGIDBODYSTATEEFFECTOR-20180102.pdf>` contains further information on this module's function, as well as testing.
 
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a Hinged Rigid Body State Effector in python using Basilisk.
+This section is to outline the steps needed to setup a Hinged Rigid Body State Effector in python using Xmera.
 
 #. Import the dualHingedRigidBodyStateEffector class::
 
-    from Basilisk.simulation import dualHingedRigidBodyStateEffector
+    from Xmera.simulation import dualHingedRigidBodyStateEffector
 
 #. Create an instantiation of a Dual Hinged Rigid body::
 
@@ -88,5 +88,3 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, panel1)
-
-

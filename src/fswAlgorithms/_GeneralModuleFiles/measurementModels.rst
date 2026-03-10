@@ -5,7 +5,7 @@ This class provides an container for all the measurement models and components t
 This class is a necessary component to any Kalman Filter implementation
 
 Virtual and Private method descriptors
--------------------------------
+--------------------------------------
 The following table lists all the class methods and their function
 
 .. list-table:: Interface methods which remain private
@@ -26,7 +26,7 @@ The following table lists all the class methods and their function
       - necessary
 
 Module assumptions and limitations
--------------------------------
+----------------------------------
 
 None
 

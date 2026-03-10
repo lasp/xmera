@@ -75,10 +75,10 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 # To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
-# outside of the Basilisk directory.
+# outside of the Xmera directory.
 #
-# To copy them, first find the location of the Basilisk installation.
-# After installing, you can find the installed location of Basilisk by opening a python interpreter and
+# To copy them, first find the location of the Xmera installation.
+# After installing, you can find the installed location of Xmera by opening a python interpreter and
 # running the commands:
 from xmera import __path__
 

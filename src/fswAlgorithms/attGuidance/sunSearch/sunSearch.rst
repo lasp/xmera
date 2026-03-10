@@ -39,7 +39,7 @@ For each consecutive rotation, this module attempts to meet all the user-defined
 The subscripts :math:`i` are to indicate each principal body axis, and are dropped from now on for ease of notation. The maximum angular rates about each axis :math:`\omega_M` are user-defined. The total required slew angle about each axis :math:`\theta_R` and the requested slew time :math:`T_R` are also user-defined.
 
 Bang-bang maneuver, no coasting, matching the requested time
-+++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 First, this module computes a bang-bang maneuver with constant, opposite acceleration in the first and second half of the maneuer. The total maneuver time coincides with :math:`T_R`. The constant acceleration throughout the maneuver is:
 
 .. math::
@@ -48,7 +48,7 @@ First, this module computes a bang-bang maneuver with constant, opposite acceler
 Defining :math:`t_c` as the control time, i.e., the time during which actuator control needs to be delivered in order to accelerate and decelerate the spacecraft, it is in this case :math:`t_c = T_R / 2`. Note that there need to be two identical control time windows in order to ramp the spacecraft's rate up and then down back to zero. The maximum angular rate is reached at :math:`t = T_R/2` and it is :math:`\omega^* = \frac{2\theta_R}{T_R}`.
 
 Bang-bang maneuver, no coasting, exceeding the requested time
-+++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 If the computed angular acceleration exceeds the maximum acceleration :math:`(\alpha^* > \alpha_M)`, the aforementioned maneuver is infeasible. In this case the acceleration is set to the maximum value :math:`\alpha_M`. The priority is to ensure that the rotation sweeps the required angle :math:`\theta_R` exactly, but in order for this to happend with a lower angular acceleration that what is optima, the maneuver happens in a total slew time :math:`T > T_R`. For a slew maneuver consisting of two accelerated arcs and one coasting arc in the middle, happening at :math:`\omega^*`, the following equation holds true:
 
 .. math::
@@ -57,7 +57,7 @@ If the computed angular acceleration exceeds the maximum acceleration :math:`(\a
 where, for the controlled time :math:`t_c` to be real, it needs to be :math:`T \geq \sqrt{ \frac{4\theta_R}{\alpha_M} }`. To maintain the slew time as short as possible, the choice is :math:`T = \sqrt{ \frac{4\theta_R}{\alpha_M} }`, where from :math:`\alpha_M < \alpha^*` it follows that :math:`T > T_R`. Solving the second-order equation for the control time gives :math:`t_c = T/2`, ultimately resulting in a bang-bang maneuver with no coasting, whose total duration exceeds the requested maneuver time. The maximum angular rate is reached at :math:`t = T/2` and it is :math:`\omega^* = \frac{2\theta_R}{T}`.
 
 Bang-bang maneuver with coasting
-+++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++
 If the maximum angular rate reached during the slew exceeds the maximum admissible rate :math:`(\omega^* > \omega_M)`, the maneuver must be adjusted further. Imposing that the maximum rate is :math:`\omega_M`, the and that the spacecraft stops accelerating and coasts and that rate before decelerating back to zero, gives the following relation:
 
 .. math::

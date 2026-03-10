@@ -495,9 +495,9 @@ def SCRotation(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,1],"b")
-    plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo', label = "Basilisk " + r"$\sigma_{1,t-1}$")
-    plt.plot(moduleOutput[index,0]*1e-9, moduleOutput[index,1],'ro', label = "Basilisk " + r"$\sigma_{1,t}$")
-    plt.plot(moduleOutput[index,0]*1e-9, sigmaGhost[0],'ko', label = "Basilisk " + r"$\sigma_{1,0}$")
+    plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo', label = "Xmera " + r"$\sigma_{1,t-1}$")
+    plt.plot(moduleOutput[index,0]*1e-9, moduleOutput[index,1],'ro', label = "Xmera " + r"$\sigma_{1,t}$")
+    plt.plot(moduleOutput[index,0]*1e-9, sigmaGhost[0],'ko', label = "Xmera " + r"$\sigma_{1,0}$")
     plt.plot([moduleOutput[index-1,0]*1e-9, moduleOutput[index,0]*1e-9], [moduleOutput[index-1,1], sigmaGhost[0]],'--k')
     axes = plt.gca()
     axes.set_ylim([-0.5,0.5])
@@ -519,16 +519,16 @@ def SCRotation(show_plots):
     unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,1],label = r"$\omega_1$" + " Basilisk")
-    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,2],label = r"$\omega_2$" + " Basilisk")
-    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,3], label = r"$\omega_3$" + " Basilisk")
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,1],label = r"$\omega_1$" + " Xmera")
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,2],label = r"$\omega_2$" + " Xmera")
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,3], label = r"$\omega_3$" + " Xmera")
     plt.plot(timeArray*1e-9,omegaAnalyticalArray[0,:],'bo', label = r"$\omega_1$" + " BOE")
     plt.plot(timeArray*1e-9,omegaAnalyticalArray[1,:],'go', label = r"$\omega_2$" + " BOE")
     plt.plot(timeArray*1e-9,omegaAnalyticalArray[2,:],'ro', label = r"$\omega_3$" + " BOE")
     plt.xlabel("Time (s)")
     plt.ylabel("Angular Velocity (rad/s)")
     plt.legend(loc ='lower right',numpoints = 1, prop = {'size': 6.5})
-    unitTestSupport.writeFigureLaTeX("scPlusBasiliskVsBOECalcForRotation", "Basilisk Vs BOE Calc For Rotation", plt, r"width=0.8\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusXmeraVsBOECalcForRotation", "Xmera Vs BOE Calc For Rotation", plt, r"width=0.8\textwidth", path)
     if show_plots:
         plt.show()
         plt.close("all")
@@ -661,17 +661,17 @@ def SCTransBOE(show_plots):
     t0 = t2 - v2/a2
     x3 = x2 + 0.5*v2*(t0-t2) + 0.5*v3*(t3-t0)
 
-    # truth and Basilisk
+    # truth and Xmera
     truthV = [v1, v2, v3]
     truthX = [x1, x2, x3]
 
-    basiliskV = [v_BN_NOutput[int(t1/timeStep), 1], v_BN_NOutput[int(t2/timeStep), 1], v_BN_NOutput[int(t3/timeStep), 1]]
-    basiliskX = [r_BN_NOutput[int(t1/timeStep), 1], r_BN_NOutput[int(t2/timeStep), 1], r_BN_NOutput[int(t3/timeStep), 1]]
+    xmeraV = [v_BN_NOutput[int(t1/timeStep), 1], v_BN_NOutput[int(t2/timeStep), 1], v_BN_NOutput[int(t3/timeStep), 1]]
+    xmeraX = [r_BN_NOutput[int(t1/timeStep), 1], r_BN_NOutput[int(t2/timeStep), 1], r_BN_NOutput[int(t3/timeStep), 1]]
 
     plt.close('all')
     plt.figure()
     plt.clf()
-    plt.plot(r_BN_NOutput[:,0]*1e-9, r_BN_NOutput[:,1],'-b',label = "Basilisk")
+    plt.plot(r_BN_NOutput[:,0]*1e-9, r_BN_NOutput[:,1],'-b',label = "Xmera")
     plt.plot([t1, t2, t3], [x1, x2, x3],'ro',markersize = 6.5,label = "BOE")
     plt.xlabel('time (s)')
     plt.ylabel('X (m)')
@@ -683,7 +683,7 @@ def SCTransBOE(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(v_BN_NOutput[:,0]*1e-9, v_BN_NOutput[:,1],'-b',label = "Basilisk")
+    plt.plot(v_BN_NOutput[:,0]*1e-9, v_BN_NOutput[:,1],'-b',label = "Xmera")
     plt.plot([t1, t2, t3], [v1, v2, v3],'ro',markersize = 6.5,label = "BOE")
     plt.xlabel('time (s)')
     plt.ylabel('X velocity (m/s)')
@@ -699,13 +699,13 @@ def SCTransBOE(show_plots):
     accuracy = 1e-10
     for i in range(0,3):
         # check a vector values
-        if abs((truthX[i] - basiliskX[i])/truthX[i]) > accuracy:
+        if abs((truthX[i] - xmeraX[i])/truthX[i]) > accuracy:
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Translation BOE Integrated test failed pos unit test")
 
     for i in range(0,3):
         # check a vector values
-        if abs((truthV[i] - basiliskV[i])/truthV[i]) > accuracy:
+        if abs((truthV[i] - xmeraV[i])/truthV[i]) > accuracy:
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Translation BOE Integrated test failed velocity unit test")
 

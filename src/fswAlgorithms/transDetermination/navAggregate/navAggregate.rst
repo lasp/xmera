@@ -49,7 +49,7 @@ The outline to set up the navAggregate module in Python is as follows:
 
 #. Import the module::
 
-    from Basilisk.fswAlgorithms import navAggregate
+    from Xmera.fswAlgorithms import navAggregate
 
 #. Create an instantiation::
 

@@ -7,7 +7,7 @@ r"""
 Overview
 --------
 
-This script showcases how to create a Python Basilisk module.
+This script showcases how to create a Python Xmera module.
 
 Demonstrates how to stabilize the attitude tumble without translational motion.
 This script sets up a 6-DOF spacecraft, but without specifying any orbital motion.  Thus,
@@ -24,7 +24,7 @@ the simulation completes 3 plots are shown for the MRP attitude history, the rat
 tracking errors, as well as the control torque vector.
 
 The MRP PD control module in this script is a class called ``PythonMRPPD``.  Note that it has the
-same setup and update routines as are found with a C/C++ Basilisk module.
+same setup and update routines as are found with a C/C++ Xmera module.
 These Python modules behave exactly as other C++/C modules: they respect their
 given priority and can run before C++/C modules.
 
@@ -271,7 +271,7 @@ def run(show_plots):
 
 class PythonMRPPD(sim_model.SysModel):
     """
-    This class inherits from the `SysModel` available in the ``Basilisk.architecture.sim_model`` module.
+    This class inherits from the `SysModel` available in the ``Xmera.architecture.sim_model`` module.
     The `SysModel` is the parent class which your Python BSK modules must inherit.
     The class uses the following
     virtual functions:
@@ -316,7 +316,7 @@ class PythonMRPPD(sim_model.SysModel):
 
     def updateState(self, currentSimNanos):
         """
-        The updateState method is the cyclical worker method for a given Basilisk class.  It
+        The updateState method is the cyclical worker method for a given Xmera class.  It
         will get called periodically at the rate specified in the task that the model is
         attached to.  It persists and anything can be done inside of it.  If you have realtime
         requirements though, be careful about how much processing you put into a Python updateState

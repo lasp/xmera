@@ -51,11 +51,11 @@ for a detailed description of this model.
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a Spinning Body State Effector in Python using Basilisk.
+This section is to outline the steps needed to setup a Spinning Body State Effector in Python using Xmera.
 
 #. Import the spinningBodyOneDOFStateEffector class::
 
-    from Basilisk.simulation import spinningBodyOneDOFStateEffector
+    from Xmera.simulation import spinningBodyOneDOFStateEffector
 
 #. Create an instantiation of a Spinning body::
 
@@ -120,4 +120,3 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
-

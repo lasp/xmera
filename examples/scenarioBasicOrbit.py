@@ -14,7 +14,7 @@ Overview
 
 This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order
 approximation or run with high-order spherical harmonic terms.  The following diagram illustrates how the
-Basilisk components are interconnected.
+Xmera components are interconnected.
 
 .. image:: /_images/static/test_scenarioBasicOrbit.svg
    :align: center
@@ -27,22 +27,22 @@ The script is found in the folder ``xmera/examples`` and executed by using::
                    returning to the :ref:`examples` before moving on.
 
 
-Making a Copy of the Example Basilisk Scenario Script
+Making a Copy of the Example Xmera Scenario Script
 -----------------------------------------------------
 
 To play with any scenario scripts as tutorials, you should make a copy of
-them into a custom folder outside of the Basilisk directory.
+them into a custom folder outside of the Xmera directory.
 
-To copy them, first find the location of the Basilisk installation. After installing, you can find the
-installed location of Basilisk by opening a python interpreter and running the commands:
+To copy them, first find the location of the Xmera installation. After installing, you can find the
+installed location of Xmera by opening a python interpreter and running the commands:
 
 .. code-block:: python
 
    import xmera
-   basiliskPath = xmera.__path__[0]
-   print basiliskPath
+   xmeraPath = xmera.__path__[0]
+   print xmeraPath
 
-Copy the folder ``{basiliskPath}/examples`` into a new folder in a different directory.
+Copy the folder ``{xmeraPath}/examples`` into a new folder in a different directory.
 Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the copied integrated tests.
 
 
@@ -85,7 +85,7 @@ Further, some display elements such as thruster or reaction wheel panels are onl
 being simulated in BSK.
 
 While Vizard has many visualization features that can be customized from within the application, many
-Vizard settings can also be scripted from the Basilisk python script.
+Vizard settings can also be scripted from the Xmera python script.
 A complete discussion on these options and features can be found the the `Vizard Settings <vizardSettings>`_ page.
 
 
@@ -188,17 +188,17 @@ from copy import copy
 import matplotlib.pyplot as plt
 import numpy as np
 # To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
-# outside of the Basilisk directory.
+# outside of the Xmera directory.
 #
-# To copy them, first find the location of the Basilisk installation.
-# After installing, you can find the installed location of Basilisk by opening a python interpreter and
+# To copy them, first find the location of the Xmera installation.
+# After installing, you can find the installed location of Xmera by opening a python interpreter and
 # running the commands:
 from xmera import __path__
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-# Copy the folder `{basiliskPath}/examples` into a new folder in a different directory.
+# Copy the folder `{xmeraPath}/examples` into a new folder in a different directory.
 # Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
 
 
@@ -209,7 +209,7 @@ from xmera.simulation import spacecraft
 from xmera.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
-# always import the Basilisk messaging support
+# always import the Xmera messaging support
 
 def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     """
@@ -399,7 +399,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # such devices are being simulated in BSK.
 
     # While Vizard has many visualization features that can be customized from within the application, many Vizard
-    # settings can also be scripted from the Basilisk python script.  A complete discussion on these options and
+    # settings can also be scripted from the Xmera python script.  A complete discussion on these options and
     # features can be found the the Vizard documentation pages.
 
     # Before the simulation is ready to run, it must be initialized.  The following code uses a

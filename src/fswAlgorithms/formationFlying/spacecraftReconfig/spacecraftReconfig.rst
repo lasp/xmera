@@ -8,7 +8,7 @@ is scheduled so that reconfiguration is completed in one orbit period.
 
 In addition to formation control algorithm described in the textbook, some extensions and improvements are included in
 this module.
-First, this module assumes that deputy spacecraft has one-axis thrusters. Therefore, attitude control is also necessary 
+First, this module assumes that deputy spacecraft has one-axis thrusters. Therefore, attitude control is also necessary
 along with burn at certain period. When burn timing is approaching, target attitude is output as ``attRefOutMsg``.
 Otherwise, and if ``attRefInMsg`` (which is optional) is set, the reference message is output as ``attRefOutMsg``.
 Second, if :math:`\delta a` is not zero, drift of :math:`\delta M` occurs. This module can take this drift into consideration
@@ -59,7 +59,7 @@ Module Assumptions and Limitations
 - Impulsive maneuvers are approximated by steady thrust of a certain period.
 
 User Guide
-----------------------------------
+----------
 This module requires the following variables to be set as parameters:
 
 - ``attControlTime`` time [s] necessary to control one attitude to another attitude

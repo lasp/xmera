@@ -52,11 +52,11 @@ See the following conference paper for a detailed description of this model.
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a Spinning Body 2 DoF State Effector in Python using Basilisk.
+This section is to outline the steps needed to setup a Spinning Body 2 DoF State Effector in Python using Xmera.
 
 #. Import the spinningBody2DOFStateEffector class::
 
-    from Basilisk.simulation import spinningBody2DOFStateEffector
+    from Xmera.simulation import spinningBody2DOFStateEffector
 
 #. Create an instantiation of a Spinning body::
 

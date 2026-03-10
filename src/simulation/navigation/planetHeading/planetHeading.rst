@@ -32,7 +32,7 @@ The following table lists all the module input and output messages.  The module 
 
 Detailed Module Description
 ---------------------------
-Many physical effects and spacecraft controls depend on the heading vector to a planet. Generally, it is useful for this vector to be given in spacecraft body frame components. Examples of such models in Basilisk that can use this data are course sun sensors (sun heading), and various control setups to point to a planet (planet heading). Because this information is so widely useful, it ought to be implemented in a single location to reduce computation and ensure consistency.
+Many physical effects and spacecraft controls depend on the heading vector to a planet. Generally, it is useful for this vector to be given in spacecraft body frame components. Examples of such models in Xmera that can use this data are course sun sensors (sun heading), and various control setups to point to a planet (planet heading). Because this information is so widely useful, it ought to be implemented in a single location to reduce computation and ensure consistency.
 
 Design Philosophy
 ^^^^^^^^^^^^^^^^^
@@ -64,8 +64,8 @@ The user can only instantiate this module and add it to a task.
 
 .. code-block:: python
 
-    from Basilisk.simulation import planetHeading
-    from Basilisk.utilities import SimulationBaseClass()
+    from Xmera.simulation import planetHeading
+    from Xmera.utilities import SimulationBaseClass()
 
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
@@ -78,4 +78,3 @@ The user can only instantiate this module and add it to a task.
     sim.AddModelToTask(task.Name, ph)
 
     dataLog = ph.planetHeadingOutMsg.recorder()
-

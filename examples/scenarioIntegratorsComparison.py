@@ -15,7 +15,7 @@ The script is found in the folder ``xmera/examples`` and executed by using::
 
 For information on how to setup different integrators, see :ref:`scenarioIntegrators` and :ref:`scenarioVariableTimeStepIntegrators`.
 
-Currently, Basilisk only supports explicit Runge-Kutta integrators,
+Currently, Xmera only supports explicit Runge-Kutta integrators,
 both of the regular and adaptive variations. Non-adaptive Runge-Kutta
 integrators can be controlled solely by the step size: larger step
 sizes means that faster computation, but less accurate results.
@@ -25,7 +25,7 @@ size and absolute and relative tolerance. These integrators will try
 to use the user-given step size, but if the error grows too large, a
 smaller time step is used internally for greater accuracy.
 
-When using an adaptive integrator, the Basilisk dynamics task time step
+When using an adaptive integrator, the Xmera dynamics task time step
 can be increased without risk of increasing the integration error. However,
 this also means that other modules in the task are updated less often,
 which might be undesirable. Additionally, spacecraft state messages will

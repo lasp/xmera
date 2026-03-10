@@ -438,11 +438,11 @@ are not set by the user, the module defaults to the non-smoothed bang-bang profi
 ``smoothingDuration`` is set to a nonzero value, the smoothed bang-bang profiler is selected. If both variables are
 set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
-This section is to outline the steps needed to setup the prescribed linear translational module in python using Basilisk.
+This section is to outline the steps needed to setup the prescribed linear translational module in python using Xmera.
 
 #. Import the prescribedLinearTranslation class::
 
-    from Basilisk.simulation import prescribedLinearTranslation
+    from Xmera.simulation import prescribedLinearTranslation
 
 #. Create an instantiation of the module::
 

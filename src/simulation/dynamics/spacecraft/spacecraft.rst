@@ -12,7 +12,7 @@ by attaching dynamicEffectors. This class performs all of this interaction betwe
 the hub.
 
 The module
-:download:`PDF Description </../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Basilisk-SPACECRAFT-20170808.pdf>`
+:download:`PDF Description </../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Xmera-SPACECRAFT-20170808.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
 
@@ -52,11 +52,11 @@ provides information on what this message is used for.
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a Spacecraft module in python using Basilisk.
+This section is to outline the steps needed to setup a Spacecraft module in python using Xmera.
 
 #.  Import the spacecraft class::
 
-        from Basilisk.simulation import spacecraft
+        from Xmera.simulation import spacecraft
 
 #.  Create an instantiation of a spacecraft::
 
@@ -118,23 +118,3 @@ This section is to outline the steps needed to setup a Spacecraft module in pyth
     * - r_BcB_B
       - double[3]
       - Center of mass location in B frame
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

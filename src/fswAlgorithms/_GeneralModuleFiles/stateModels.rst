@@ -5,7 +5,7 @@ This class provides an container for all the state models to a kalman filter.
 This class is a necessary component to any Kalman Filter implementation
 
 Virtual and Private method descriptors
--------------------------------
+--------------------------------------
 The following table lists all the state class
 
 .. list-table:: Interface methods which remain private
@@ -39,7 +39,7 @@ The following table lists all the FilterStateVector class, which contains all th
 
 
 Module assumptions and limitations
--------------------------------
+----------------------------------
 
 The states are strongly typed, but the covariance is not (yet).
 When returning values, the order of the states is Position, Velocity, Accel, Bias, Consider
@@ -50,7 +50,7 @@ User Guide
 This section lists all the setters and getters that are defined by the interface
 
 .. list-table:: Interface methods which remain private
-    :widths: 25 75 25
+    :widths: 25 75
     :header-rows: 1
 
     * - Method Name

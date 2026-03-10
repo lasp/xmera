@@ -36,10 +36,12 @@ In this case the flyby is modeled as rectilinear motion of the spacecraft, i.e.,
 
 .. math::
     \theta = \arccos\left( -  \mathbf{\hat{r}}  \cdot  \mathbf{\hat{v}} \right )
+
 By replacing the values of :math:`\gamma_0` and  :math:`f_0` we can obtain the time of closest approach through this equation:
 
 .. math::
     t_{CA} = - \frac{\sin(\gamma_0)}{f_0}
+
 The following equation solves for time of closest approach uncertainty where :math:`P` is the spacecraft state covariance.
 
 .. math::

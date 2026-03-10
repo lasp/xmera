@@ -4,7 +4,7 @@ Executive Summary
 This module computes an ephemeris-based sunline heading.
 
 More information can be found in the
-:download:`PDF Description </../../src/fswAlgorithms/attDetermination/sunlineEphem/_Documentation/Basilisk-SunlineEphem-20181204.pdf>`
+:download:`PDF Description </../../src/fswAlgorithms/attDetermination/sunlineEphem/_Documentation/Xmera-SunlineEphem-20181204.pdf>`
 
 Message Connection Descriptions
 -------------------------------
@@ -31,4 +31,3 @@ provides information on what this message is used for.
     * - scAttitudeInMsg
       - :ref:`NavAttMsgPayload`
       - name of the spacecraft attitude input message
-

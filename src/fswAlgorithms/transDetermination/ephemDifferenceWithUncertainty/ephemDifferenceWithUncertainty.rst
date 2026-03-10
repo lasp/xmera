@@ -72,7 +72,7 @@ This section is to outline the steps needed to setup the module in Python.
 
 #. Import the module::
 
-    from Basilisk.fswAlgorithms import ephemDifferenceWithUncertainty
+    from Xmera.fswAlgorithms import ephemDifferenceWithUncertainty
 
 #. Create an instantiation of the class::
 

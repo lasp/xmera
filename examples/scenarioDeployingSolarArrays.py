@@ -16,8 +16,8 @@ are required to simulate the array deployments.
 Note that in order to simulate hub-relative prescribed motion, kinematic profiler modules must be connected to the
 prescribed motion state effector modules. The kinematic profiler modules specify the translational and rotational
 states of each prescribed sub-component relative to the spacecraft hub and write the sub-component states at each time
-step to the prescribed motions state effector modules using the Basilisk messaging system. Currently two kinematic
-profiler modules exist in Basilisk that can be used to simulate prescribed motion. The first
+step to the prescribed motions state effector modules using the Xmera messaging system. Currently two kinematic
+profiler modules exist in Xmera that can be used to simulate prescribed motion. The first
 :ref:`prescribedLinearTranslation` module prescribes linear translational motion of a prescribed sub-component
 relative to the hub; while the second :ref:`prescribedRotation1DOF` module prescribes 1 DOF rotational motion relative
 to the hub.

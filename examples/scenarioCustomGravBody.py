@@ -12,7 +12,7 @@ r"""
 Overview
 --------
 
-Demonstrates how to setup a custom gravity object in Basilisk that is not directly supported by
+Demonstrates how to setup a custom gravity object in Xmera that is not directly supported by
 the ``simIncludeGravBody.py`` file.  In this simulation the sun is created using standard values, the Earth
 is created using custom values, and the asteroid Itokawa is created with custom values.
 

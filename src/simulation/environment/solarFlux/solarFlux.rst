@@ -64,8 +64,8 @@ The names below are only special in that they are useful defaults and are actual
 
 .. code-block:: python
 
-    from Basilisk.simulation import solarFlux
-    from Basilisk.utilities import SimulationBaseClass()
+    from Xmera.simulation import solarFlux
+    from Xmera.utilities import SimulationBaseClass()
 
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
@@ -79,4 +79,3 @@ The names below are only special in that they are useful defaults and are actual
     sim.AddModelToTask(task.Name, sf)
 
     dataLog = sf.solarFluxOutMsg.recorder()
-

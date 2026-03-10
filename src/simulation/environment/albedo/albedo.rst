@@ -1,7 +1,7 @@
 
 Executive Summary
 -----------------
-This document describes how albedo is modeled in the Basilisk software. The purpose of this module is to calculate
+This document describes how albedo is modeled in the Xmera software. The purpose of this module is to calculate
 albedo value at the given instrument locations.
 
 Message Connection Descriptions
@@ -78,7 +78,7 @@ Eq. :eq:`eq:albedo:1` - :eq:`eq:albedo:4` and :math:`\mathbf{r}_{dAP}`, which is
 grid points.
 
 Sunlit Field of View Area
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 In determining the illuminated area within the instrument's fov, :math:`f_1`, :math:`f_2` and :math:`f_3`
 are computed as shown below,
 
@@ -115,7 +115,7 @@ Albedo flux ratio can be calculated as,
 
 where :math:`d_{Area}` is the area of the incremental area, :math:`ALB` is the albedo coefficient. There are albedo models
 based on an average albedo value and albedo data. The existing data files are placed under
-``Basilisk/supportData/AlbedoData`` as ``.csv`` file format consisting :math:`ALB` matrix. The number of rows represent the
+``Xmera/supportData/AlbedoData`` as ``.csv`` file format consisting :math:`ALB` matrix. The number of rows represent the
 :math:`numLat`, number of latitude (between -90 to 90 deg) and columns represent the :math:`numLon`, number of longitude
 (between -180 to 180 deg).
 
@@ -147,7 +147,7 @@ This section outlines the steps needed to add Albedo module to a sim. First, the
 
 .. code-block:: python
 
-      from Basilisk.simulation import albedo
+      from Xmera.simulation import albedo
       albModule = albedo.Albedo()
       albModule.modelTag = "Albedo_module"
 

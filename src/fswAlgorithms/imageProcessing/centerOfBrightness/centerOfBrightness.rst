@@ -35,7 +35,7 @@ Detailed Module Description
 ---------------------------
 
 Image Processing
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 The module performs a small set of operations to prepare the image for the center of brightness detection.
 Firstly, it applies a Gaussian blur on the image, which helps soften the edges of bright objects and improves
@@ -75,7 +75,7 @@ This section is to outline the steps needed to setup a Center of Brightness in P
 
 #. Import the centerOfBrightness class::
 
-    from Basilisk.fswAlgorithms import centerOfBrightness
+    from Xmera.fswAlgorithms import centerOfBrightness
 
 #. Create an instantiation of centerOfBrightness::
 

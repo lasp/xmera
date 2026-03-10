@@ -11,7 +11,7 @@ This script sets up a 6-DOF spacecraft which is orbiting the Earth, in the prese
 The spacecraft is modelled according to the specifics of the Bevo-2 satellite, that has a sensitive
 star tracker aligned with the x body axis and two sun sensors aligned with the y and z body axes.
 In contrast with :ref:`scenarioAttitudeConstraintViolation` the goal of this scenario is to illustrate
-how to set up a Basilisk simulation using the :ref:`constrainedAttitudeManeuver` module to perform a
+how to set up a Xmera simulation using the :ref:`constrainedAttitudeManeuver` module to perform a
 slew maneuver while ensuring constraint compliance.
 
 The script is found in the folder ``xmera/examples`` and executed by using::

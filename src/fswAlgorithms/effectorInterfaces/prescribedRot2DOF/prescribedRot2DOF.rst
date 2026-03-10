@@ -160,11 +160,11 @@ motion output message can be connected to the :ref:`prescribedMotionStateEffecto
 a state effector's rotational motion. Note that a separate translational profiler module must also be connected to
 the prescribed motion dynamics module to fully define the kinematic motion of the prescribed body.
 
-This section is to outline the steps needed to setup a prescribed 2 DOF rotational module in python using Basilisk.
+This section is to outline the steps needed to setup a prescribed 2 DOF rotational module in python using Xmera.
 
 #. Import the prescribedRot1DOF class::
 
-    from Basilisk.fswAlgorithms import prescribedRot2DOF
+    from Xmera.fswAlgorithms import prescribedRot2DOF
 
 #. Create an instantiation of a prescribed rotational 2 DOF C module and the associated C++ container::
 

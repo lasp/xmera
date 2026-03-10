@@ -23,7 +23,7 @@ def test_PySysModel():
     # create the dynamics task and specify the integration update time
     dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.)))
 
-    # create copies of the Basilisk modules
+    # create copies of the Xmera modules
     mod1 = cppModuleTemplate.CppModuleTemplate()
     mod1.modelTag = "module1"
 

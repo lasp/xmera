@@ -6,7 +6,7 @@ This class is used to hold relevant atmospheric properties and to compute the de
 relative to a specified planet. Planetary parameters, including position and input message, are settable by the user.
 Internal support is provided for Venus, Earth, and Mars. In a given simulation, each planet of interest should have only
 one MsisAtmosphere model associated with it linked to the spacecraft in orbit about that body.  For more information see the
-:download:`PDF Description </../../src/simulation/environment/MsisAtmosphere/_Documentation/Basilisk-msisAtmosphere-20190221.pdf>`.
+:download:`PDF Description </../../src/simulation/environment/MsisAtmosphere/_Documentation/Xmera-msisAtmosphere-20190221.pdf>`.
 
 
 
@@ -55,5 +55,3 @@ Regarding the vector ``swDataInMsgs``, the order of these 23 messages must follo
          20 - ap_3_-57
          21 - f107_1944_0
          22 - f107_24_-24
-
-

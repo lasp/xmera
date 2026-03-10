@@ -2,8 +2,8 @@
 
 General Purpose
 ---------------
-The purpose of this folder is to provide examples of Basilisk module templates.  It contains two fully functioning
-sample C and C++ modules, as well as two modules which are auto-generated using the :ref:`makeDraftModule`
+The purpose of this folder is to provide examples of Xmera module templates.  It contains a fully functioning
+sample C++ module, as well as two modules which are auto-generated using the :ref:`makeDraftModule`
 script found in ``src/utilities/makeDraftModule.py``.
 
 A module folder can contain a series of related module folders.  By adding a ``*.rst`` file to this folder the purpose of a folder can be documented.  The ``*.rst`` file name should be the same as the parent folder.
@@ -15,7 +15,7 @@ The sub-folder called ``_GeneralModuleFiles`` contains support ``*.c/h`` files t
 
 Usage of Template Folders
 -------------------------
-To use the C or C++ template module:
+To use the template module:
 
 - make a copy of this sub-folder
 - rename the sub-folder name
@@ -53,15 +53,15 @@ To use the C or C++ template module:
 
 Usage of ``makeDraftModules.py``
 --------------------------------
-The script :ref:`makeDraftModule` in ``basilisk/src/utilities/makeDraftModule.py``
-provides a class that creates a default Basilisk
+The script :ref:`makeDraftModule` in ``xmera/src/utilities/makeDraftModule.py``
+provides a class that creates a default Xmera
 module folder and associated ``.c/cpp``, ``.h``, ``.i``, ``.rst`` and ``_UnitTest/test_xxx.py`` files.
 When running ``python3 conanfile.py`` this script is used to create the ``autoCModule`` and ``autoCppModule`` folders.
 This provides convenient examples and ensures this auto-module creation capability is tested and up to date
-with the latest Basilisk code base.
+with the latest Xmera code base.
 
 See the bottom of the support script ``makeDraftModule.py`` for examples how to create a folder with draft
-Basilisk module code.  You can
+Xmera module code.  You can
 
 - specify where the folder should be located,
 - what the module name will be,
