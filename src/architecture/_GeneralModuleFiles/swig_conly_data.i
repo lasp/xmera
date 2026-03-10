@@ -65,9 +65,7 @@
 
 %enddef
 ARRAYASLIST(double)
-ARRAYASLIST(int)
 ARRAYASLIST(float)
-ARRAYASLIST(unsigned int)
 
 %define ARRAYINTASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
