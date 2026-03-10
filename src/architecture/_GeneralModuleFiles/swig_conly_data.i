@@ -69,6 +69,38 @@ ARRAYASLIST(int)
 ARRAYASLIST(float)
 ARRAYASLIST(unsigned int)
 
+%typemap(in) bool [ANY] (bool temp[$1_dim0]) {
+    if (!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError, "Expected a sequence");
+        return NULL;
+    }
+    if (PySequence_Length($input) > $1_dim0) {
+        PyErr_SetString(PyExc_ValueError, "Size mismatch. Expected $1_dim0 elements");
+        return NULL;
+    }
+    memset(temp, 0, $1_dim0 * sizeof(bool));
+    for (int i = 0; i < PySequence_Length($input); i++) {
+        PyObject *o = PySequence_GetItem($input, i);
+        temp[i] = PyObject_IsTrue(o) ? true : false;
+        Py_DECREF(o);
+    }
+    $1 = temp;
+}
+
+%typemap(memberin) bool [ANY] {
+    for (int i = 0; i < $1_dim0; i++) {
+        $1[i] = $input[i];
+    }
+}
+
+%typemap(out) bool [ANY] {
+    $result = PyList_New($1_dim0);
+    for (int i = 0; i < $1_dim0; i++) {
+        PyObject *o = PyBool_FromLong((long)$1[i]);
+        PyList_SetItem($result, i, o);
+    }
+}
+
 %define ARRAYINTASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
     int i;
