@@ -277,6 +277,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         auto* lensModel = new cielimMessage::LensModel();
         auto* sensorModel = new cielimMessage::SensorModel();
         auto* quantumEfficiency = new cielimMessage::QuantumEfficiency();
+        auto* imageData = new cielimMessage::ImageData();
 
         camera->set_cameraid(this->cameraModelPayload.cameraId);
         camera->set_parentname(this->cameraModelPayload.parentName);
@@ -322,6 +323,16 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         quantumEfficiency->set_bluevalue2(this->cameraModelPayload.blueQuantumEfficiency[1]);
         quantumEfficiency->set_bluevalue3(this->cameraModelPayload.blueQuantumEfficiency[2]);
         sensorModel->set_allocated_qecurve(quantumEfficiency);
+
+        if (std::string rawString{this->cameraModelPayload.imageFormat}; rawString == "RAW") {
+            imageData->set_imageformat(cielimMessage::ImageData_Format_RAW);
+        } else if (std::string jpgString{this->cameraModelPayload.imageFormat}; jpgString == "JPG") {
+            imageData->set_imageformat(cielimMessage::ImageData_Format_JPG);
+        } else {
+            imageData->set_imageformat(cielimMessage::ImageData_Format_PNG);
+        }
+        imageData->set_bitdepth(this->cameraModelPayload.bitDepth);
+        sensorModel->set_allocated_imagedata(imageData);
 
         camera->set_allocated_lensmodel(lensModel);
         camera->set_allocated_sensormodel(sensorModel);

@@ -6,6 +6,7 @@
 
 #define MAX_STRING_LENGTH 256
 #define MAX_POLY_COEFF 10
+#define MAX_FORMAT_LENGTH 12
 
 /*! @brief Structure used to define the camera model*/
 
@@ -44,6 +45,8 @@ typedef struct {
                                         //!< 0 and 1) as a function of vertical distance from camera center (degrees)
     double transmission;  //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
                           //!< wavelengths
+    char imageFormat[MAX_FORMAT_LENGTH];  //!< image format (raw, png, jpeg)
+    int bitDepth;                         //!< bit depth if raw is selected
 } CameraModelMsgPayload;
 
 #endif

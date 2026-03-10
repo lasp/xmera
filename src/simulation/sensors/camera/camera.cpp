@@ -353,6 +353,8 @@ void Camera::updateState(uint64_t currentSimNanos) {
         eigenMatrixXToCArray(this->distortion, cameraModelMsg.distortion);
     }
     cameraModelMsg.transmission = this->transmission;
+    strcpy(cameraModelMsg.imageFormat, this->imageFormat.c_str());
+    cameraModelMsg.bitDepth = this->bitDepth;
 
     /*! - Update the camera config data no matter if an image is present*/
     this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
@@ -749,3 +751,25 @@ void Camera::setTransmission(double transmissionValue) { this->transmission = tr
     @return double transmission
     */
 double Camera::getTransmission() const { return this->transmission; }
+
+/*! Set the image format (raw, png, jpeg)
+    @param imageFormatValue std::string
+    @return void
+    */
+void Camera::setImageFormat(const std::string& imageFormatValue) { this->imageFormat = imageFormatValue; }
+
+/*! Get the image format
+    @return std::string imageFormat
+    */
+std::string Camera::getImageFormat() const { return this->imageFormat; }
+
+/*! Set the bit depth (used when raw format is selected)
+    @param bitDepthValue int
+    @return void
+    */
+void Camera::setBitDepth(const int bitDepthValue) { this->bitDepth = bitDepthValue; }
+
+/*! Get the bit depth
+    @return int bitDepth
+    */
+int Camera::getBitDepth() const { return this->bitDepth; }

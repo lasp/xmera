@@ -146,6 +146,8 @@ def test_camera(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurS
     module.setVerticalVignetting([0.5, 0.6, 0.7, 0.8])
     module.setDistortion([0.2, 0.4, 0.6, 0.8])
     module.setTransmission(0.9)
+    module.setImageFormat("png")
+    module.setBitDepth(8)
 
     # Noise parameters
     module.gaussian = gauss
@@ -245,6 +247,10 @@ def test_camera(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurS
                                   "Test failed distortion coefficients")
     np.testing.assert_equal(dataLogCameraModel.transmission, module.getTransmission(),
                             "Test failed transmission rate of lens")
+    np.testing.assert_equal(dataLogCameraModel.imageFormat, module.getImageFormat(),
+                            "Test failed image format")
+    np.testing.assert_equal(dataLogCameraModel.bitDepth, module.getBitDepth(),
+                            "Test failed bit depth")
 
     #  Error check for corruption
     err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)) / np.linalg.norm(
