@@ -1,0 +1,9 @@
+/*
+ * Hide the expanded children of Message Payloads and Base Classes in the
+ * sidebar navigation.  The pages are still in the toctree (so they get a
+ * sidebar), but we don't want 137+ entries flooding the nav.
+ */
+.bd-docs-nav a[href*="msgPayloads/index"] ~ ul,
+.bd-docs-nav a[href*="baseClasses/index"] ~ ul {
+    display: none !important;
+}

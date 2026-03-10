@@ -44,7 +44,10 @@ docs/source/_images/Scenarios/*
 docs/source/breathe.data
 docs/source/externalTools/*
 docs/source/examples/*
-
+docs/source/api/msgPayloads/*
+docs/source/api/baseClasses/*
+docs/source/api/modules/*
+docs/generated_cxx_docs/
 examples/MonteCarloExamples/scenario_AttFeedbackMC/
 
 src/moduleTemplates/autoCppModule/*

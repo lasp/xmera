@@ -19,7 +19,7 @@ import pytest
 make_report = ('--report' in sys.argv)
 report_dir = 'tests/report/'  # relative to current folder
 rel_fig_dir = 'assets/testFigs/'  # relative to report/
-testFigsDir = report_dir + rel_fig_dir  # can assume this is run from basilisk/src/
+testFigsDir = report_dir + rel_fig_dir  # can assume this is run from xmera/src/
 if make_report:
     os.makedirs(testFigsDir)
 
@@ -40,7 +40,7 @@ def get_docstring(item):
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """
-        We (Basilisk) use this function to do two things:
+        We (Xmera) use this function to do two things:
         1) append the docstrings to the test log extras
         2) print test plots to the test log extras
 
