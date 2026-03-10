@@ -24,8 +24,8 @@ from xmera.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../docs/source/codeSamples')
-files = fnmatch.filter(os.listdir(path + '/../../docs/source/codeSamples'), "*.py")
+sys.path.append(path + '/../../docs/source/code-samples')
+files = fnmatch.filter(os.listdir(path + '/../../docs/source/code-samples'), "*.py")
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

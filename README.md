@@ -7,17 +7,17 @@
 ### How do I get set up?
 The following links contain installation instructions for the supported platforms:
 
-- [Setup a macOS Development Environment](docs/source/Install/installOnMacOS.rst)
+- [Setup a macOS Development Environment](docs/source/install/installOnMacOS.rst)
 
-- [Setup a Linux Development Environment](docs/source/Install/installOnLinux.rst)
+- [Setup a Linux Development Environment](docs/source/install/installOnLinux.rst)
 
-- [Setup a Windows Development Environment](docs/source/Install/installOnWindows.rst)
+- [Setup a Windows Development Environment](docs/source/install/installOnWindows.rst)
 
 
 
 ### Xmera Development guidelines
 * [Contributing](CONTRIBUTING.md)
-* [Coding Guidelines](docs/source/Support/Developer/CodingGuidlines.rst)
+* [Coding Guidelines](docs/source/releases/developer/CodingGuidlines.rst)
 
 
 ### Getting Started
