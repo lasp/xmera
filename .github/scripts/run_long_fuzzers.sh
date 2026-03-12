@@ -68,8 +68,14 @@ while IFS= read -r fuzz_bin; do
   if [[ -n "$FUZZ_DURATION" ]]; then
     cmd+=("--fuzz_for=${FUZZ_DURATION}")
   fi
+  env_vars=()
   if [[ -n "$CORPUS_DIR" ]]; then
-    cmd+=("--corpus_database=${CORPUS_DIR}")
+    fuzz_corpus_dir="${CORPUS_DIR}/${fuzz_name}"
+    mkdir -p "$fuzz_corpus_dir"
+    env_vars+=(
+      "FUZZTEST_TESTSUITE_OUT_DIR=${fuzz_corpus_dir}"
+      "FUZZTEST_TESTSUITE_IN_DIR=${fuzz_corpus_dir}"
+    )
   fi
-  "${cmd[@]}" | tee "$LOG_DIR/${fuzz_name}.log"
+  env "${env_vars[@]}" "${cmd[@]}" 2>&1 | tee "$LOG_DIR/${fuzz_name}.log" || true
 done <<< "$FUZZ_BINS"
