@@ -81,7 +81,7 @@ std::array<RegionOfInterest, MAX_NUMBER_REGIONS> RegionsOfInterestAlgorithm::ord
     const std::array<RegionOfInterest, MAX_NUMBER_REGIONS>& regions) {
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> sorted = regions;
     std::ranges::sort(sorted.begin(), sorted.end(), [](const RegionOfInterest& a, const RegionOfInterest& b) {
-        return a.numberOfPixels >= b.numberOfPixels;
+        return a.numberOfPixels > b.numberOfPixels;
     });
     return sorted;
 }
