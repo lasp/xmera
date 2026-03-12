@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
+    inputs:
+      fuzz_duration:
+        description: 'Duration per fuzz target (e.g. 120s, 10m)'
+        default: '120s'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
