@@ -135,16 +135,17 @@ When all the prerequisite installations are complete, the project can be built a
 
     cd src
     cmake --preset base
-    cmake --build ../dist3
-    cmake --install ../dist3
-    pip install -e ..
+    cmake --build ../build --parallel
+    CMAKE_INSTALL_MODE=REL_SYMLINK_OR_COPY cmake --install ../build --prefix ../dist
+    pip install -e .
 
-The project defines three CMake presets;
+The project defines four CMake presets;
 
-- base - Debug build profile with visualization dependencies
-- full - Everything in "base" with OpNav dependencies
-- ci-test - Everything in "full" with Release build profile. Simulation execution is faster with a Release build
+- base - Debug build profile
+- ci-test - Inherits from "base" with a Release build profile. Simulation execution is faster with a Release build
   profile.
+- fuzz-smoke-test - Inherits from "ci-test" with fuzz tests enabled
+- fuzz-test - Inherits from "fuzz-smoke-test" with fuzzing mode enabled
 
 To view the complete definition of these presets see the presets file in `src/CMakePresets.json`.
 
@@ -158,13 +159,13 @@ To clean a build
 
 .. code-block:: console
 
-    cmake --build ../dist3 --target clean
+    cmake --build ../build --target clean
 
 To clean and then build
 
 .. code-block:: console
 
-    cmake --build ../dist3 --clean-first
+    cmake --build ../build --clean-first
 
 To test your setup you can run one of the :ref:`examples`
 
