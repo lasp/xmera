@@ -7,6 +7,8 @@ r"""
 Overview
 --------
 
+.. highlight:: python
+
 This script sets up a 3-DOF spacecraft which is orbiting a planet that
 has a magnetic field.  The purpose
 is to illustrate how to create and setup the centered dipole
@@ -14,7 +16,9 @@ magnetic field, as well as determine the
 magnetic field at a spacecraft location.  The orbit setup is similar to that used in
 :ref:`scenarioBasicOrbit`.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
     python3 scenarioMagneticFieldCenteredDipole.py
 

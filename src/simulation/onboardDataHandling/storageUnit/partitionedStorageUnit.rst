@@ -28,7 +28,9 @@ To set up this module users must create a PartitionedStorageUnit instance::
    storageUnit = partitionedStorageUnit.PartitionedStorageUnit()
    storageUnit.modelTag = "storageUnit"
 
-In addition to the variables that must be set for the :ref:`DataStorageUnitBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total data stored in the storageUnit will be limited to not exceed this capacity value::
+In addition to the variables that must be set for the :ref:`DataStorageUnitBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total data stored in the storageUnit will be limited to not exceed this capacity value:
+
+.. code-block:: python
 
    storageUnit.storageCapacity = 1E5 # Given in bits
 
@@ -40,7 +42,9 @@ Then, the names of the partitions need to be added to the storageUnit using::
 
    storageUnit.addPartition("partitionName")
 
-The ``setDataBuffer()`` method can be used to add or remove a given amount of data from specified partitions::
+The ``setDataBuffer()`` method can be used to add or remove a given amount of data from specified partitions:
+
+.. code-block:: python
 
    storageUnit.setDataBuffer(["partitionName","anotherPartitionName"], [1E4, -1E4]) # Given in bits
 

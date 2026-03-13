@@ -29,7 +29,7 @@ both tasks are enabled, as both sets of modules are executed.
 To disable **all** tasks within a process, use the ``disableTasks()`` method on the process variable. The script executes
 another simulation step and prints output before and after to confirm that no tasks are running when they are disabled.
 
-To re-enable a specific task, use the :ref:`SimulationBaseClass` method ``enableTask(name)``. The argument is the name of
+To re-enable a specific task, use the ``SimulationBaseClass`` method ``enableTask(name)``. The argument is the name of
 the task you wish to enable. After another simulation step, the output confirms that the enabled task's modules are once
 again executed.
 

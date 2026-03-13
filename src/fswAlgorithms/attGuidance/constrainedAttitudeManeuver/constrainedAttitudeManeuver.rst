@@ -67,7 +67,7 @@ Two different cost functions are used by the :math:`A^*` algorithm to search a v
 The second is the effort-based cost function computed integrating the control torque norm over the interpolated trajectory obtained from a path., as explained in
 `R. Calaon and H. Schaub <https://arc.aiaa.org/doi/abs/10.2514/1.A35294>`__. In both cases, the final reference passed to the Attitude Reference Message
 consists in the interpolated curve obtained from the optimal path computed by :math:`A^*`, based on the chosen cost function. Interpolation is performed using the
-routine in :ref:`BSpline`.
+routine in ``BSpline``.
 
 Note that this module does not implement the constant angular rate norm routine described in `R. Calaon and H. Schaub <https://arc.aiaa.org/doi/abs/10.2514/1.A35294>`__.
 The attitude, rates and accelerations provided to the Attitude Reference Message are those obtained directly from the BSpline interpolation.

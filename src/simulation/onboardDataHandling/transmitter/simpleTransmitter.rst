@@ -41,7 +41,9 @@ To set up this module users must create a SimpleTransmitter instance::
    transmitter = simpleTransmitter.SimpleTransmitter()
    transmitter.modelTag = "transmitter"
 
-Set the `nodeBaudRate`, `packetSize`, and numBuffers variables::
+Set the `nodeBaudRate`, `packetSize`, and numBuffers variables:
+
+.. code-block:: python
 
    transmitter.nodeBaudRate = -16000. # baud
    transmitter.packetSize = -1E6 # bits

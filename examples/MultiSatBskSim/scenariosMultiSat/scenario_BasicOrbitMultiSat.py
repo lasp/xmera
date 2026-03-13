@@ -13,13 +13,17 @@ This script sets up three spacecraft orbiting a planet (Earth or Mercury). The g
 #. demonstrate how to create a formation flying scenario with any number of spacecraft, and
 #. show how to customize the environment, dynamics and flight software files.
 
-The script is found in the folder ``xmera/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::
+The script is found in the folder ``xmera/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using:
+
+.. code-block:: console
 
       python3 scenario_BasicOrbitMultiSat.py
 
-The simulation mimics the basic simulation in the earlier tutorials in :ref:`scenario_BasicOrbit` and
-:ref:`scenario_BasicOrbitFormation`. :ref:`scenario_BasicOrbit` introduces the use of the BSK_Sim structure and
-its advantages, and :ref:`scenario_BasicOrbitFormation` simulates a basic scenario with two spacecraft using the BSK_Sim
+.. highlight:: python
+
+The simulation mimics the basic simulation in the earlier tutorials in :ref:`BskSim_scenarios_scenario_BasicOrbit` and
+:ref:`BskSim_scenarios_scenario_BasicOrbitFormation`. :ref:`BskSim_scenarios_scenario_BasicOrbit` introduces the use of the BSK_Sim structure and
+its advantages, and :ref:`BskSim_scenarios_scenario_BasicOrbitFormation` simulates a basic scenario with two spacecraft using the BSK_Sim
 structure. However, this last scenario hard codes both spacecraft into the dynamics and flight software (FSW) classes.
 While this works for a small number of spacecraft, it is not easily scalable. This example aims to show a more pipelined
 way of adding spacecraft that can be either homogeneous or heterogeneous (different dynamics and flight software modules
@@ -33,22 +37,22 @@ different planets, ground locations, etc.
 
 No flight software module is added in this scenario, only the environment and dynamics modules. However, for
 organization purposes the flight software module customization will also addressed. A more thorough review of the FSW
-class can be read in :ref:`scenario_AttGuidMultiSat`.
+class can be read in :ref:`MultiSatBskSim_scenariosMultiSat_scenario_AttGuidMultiSat`.
 
 Configuring the scenario file
 -----------------------------
-The simulation layout is very similar to the one used for the :ref:`scenario_BasicOrbitFormation` file. As stated
+The simulation layout is very similar to the one used for the :ref:`BskSim_scenarios_scenario_BasicOrbitFormation` file. As stated
 before, several simulation processes are created: one for the environment and two for each of the spacecraft, each
 representing the dynamics and flight software modules. It is absolutely crucial that the environment model be created
 first, then the dynamics model for each spacecraft and then the FSW model for each spacecraft. In this case, the
-Environment files used are :ref:`BSK_EnvironmentEarth` and :ref:`BSK_EnvironmentMercury`, whereas the Dynamics
-file used is the :ref:`BSK_MultiSatDynamics`. The environment used in the simulation can be changed with either the
+Environment files used are :ref:`MultiSatBskSim_modelsMultiSat_BSK_EnvironmentEarth` and :ref:`MultiSatBskSim_modelsMultiSat_BSK_EnvironmentMercury`, whereas the Dynamics
+file used is the :ref:`MultiSatBskSim_modelsMultiSat_BSK_MultiSatDynamics`. The environment used in the simulation can be changed with either the
 ``Earth`` or ``Mercury`` flag on the ``run`` method. As stated before, the FSW file is not added in this scenario
 to focus first on setting up the dynamics of a number of spacecraft. All these files have been
 created for this specific formation flying implementation into Xmera but can be changed to accommodate any changes to
 the intended simulation.
 
-After initializing the interfaces and making sure that the :ref:`scenario_BasicOrbitMultiSat`
+After initializing the interfaces and making sure that the :ref:`MultiSatBskSim_scenariosMultiSat_scenario_BasicOrbitMultiSat`
 class inherits from the modified BSKSim class, the initial conditions are configured using the
 ``configure_initial_conditions`` method. This method cannot take advantage of the new BSK structure, and therefore the
 initial conditions for each spacecraft must be hard coded. Three sets of orbital elements are created, each
@@ -56,7 +60,7 @@ corresponding to one spacecraft and can adapt to the planet that the spacecraft 
 elements are converted to position and velocity and the initial conditions are set for each spacecraft.
 
 After that the function that logs the outputs can be observed. Again, this looks very similar to
-the ``log_outputs`` method in the :ref:`scenario_BasicOrbitFormation` file. However, there is one difference: since multiple
+the ``log_outputs`` method in the :ref:`BskSim_scenarios_scenario_BasicOrbitFormation` file. However, there is one difference: since multiple
 spacecraft are simulated, we must loop through each dynamics process and record each module. This makes the logging
 variables be lists of arrays instead of simply arrays. The same is true for the FSW objects.
 
@@ -65,25 +69,25 @@ plot with all the spacecraft's orbits.
 
 BSK_EnvironmentEarth and BSK_EnvironmentMercury files description
 -----------------------------------------------------------------
-Both the :ref:`BSK_EnvironmentEarth` and :ref:`BSK_EnvironmentMercury` share the same structure, with a difference in the
+Both the :ref:`MultiSatBskSim_modelsMultiSat_BSK_EnvironmentEarth` and :ref:`MultiSatBskSim_modelsMultiSat_BSK_EnvironmentMercury` share the same structure, with a difference in the
 gravity bodies used: the first uses the Sun, Earth and the Moon, while the second one only uses the Sun and Mercury.
 
-The gravity bodies are created using :ref:`simIncludeGravBody` and their information is overridden by
+The gravity bodies are created using ``simIncludeGravBody`` and their information is overridden by
 the SPICE library. An eclipse module is set up using the gravitational bodies used in the simulation. A ground location
 (representing Boulder's location on Earth) is also set to be used in flight software. All modules are added to the
 environment process.
 
 BSK_MultiSatDynamics file description
 -------------------------------------
-Looking at the :ref:`BSK_MultiSatDynamics` file, it can be observed that the dynamics process for each spacecraft
+Looking at the :ref:`MultiSatBskSim_modelsMultiSat_BSK_MultiSatDynamics` file, it can be observed that the dynamics process for each spacecraft
 consists of one tasks named ``DynamicsTaskX`` where ``X`` represents that spacecraft's index. This task are added to the
 corresponding dynamics process and an instance of a specific object is added.
 
 The dynamics class creates a :ref:`spacecraft`, :ref:`simpleNav`, :ref:`reactionWheelStateEffector` and
 :ref:`thrusterDynamicEffector` objects. It also creates a :ref:`fuelTank` module that uses truster information to show
 the status of the onboard fuel tank. Although no attitude guidance and control is implemented in this example, this
-class will be used in other scenarios that make use of those control surfaces (see :ref:`scenario_AttGuidMultiSat` and
-:ref:`scenario_StationKeepingMultiSat`).
+class will be used in other scenarios that make use of those control surfaces (see :ref:`MultiSatBskSim_scenariosMultiSat_scenario_AttGuidMultiSat` and
+:ref:`MultiSatBskSim_scenariosMultiSat_scenario_StationKeepingMultiSat`).
 
 The dynamics script also sets up a number of power-related modules such as :ref:`simpleSolarPanel`,
 :ref:`simplePowerSink`, :ref:`simpleBattery` and :ref:`ReactionWheelPower`.

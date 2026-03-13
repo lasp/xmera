@@ -14,7 +14,7 @@ Version |release|
 
 Version 2.3.0
 -------------
-- A bug was introduced at 2.2.1 (2dc0a35) to the :ref:`SimulationBaseClass` `AddModelToTask` function when it was
+- A bug was introduced at 2.2.1 (2dc0a35) to the ``SimulationBaseClass`` `AddModelToTask` function when it was
   refactored to use the updated module variable logging. The bug manifests as no data being logged for a variable when
   there are more than one task, a module in each task, and the variable being logged is from a module assigned to a
   task added to a process after the first task has been added to a process.
@@ -65,7 +65,7 @@ Version 2.1.5
   The code compiles, but auto-completion etc. doesn't work in that module.
 - :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector` module inertial state outputs are relative to the central gravity body,
   not the inertial frame.  This is now corrected.
-- Adding an instrument camera to :ref:`vizInterface` has changed.  See :ref:`vizardSettings` on how
+- Adding an instrument camera to :ref:`vizInterface` has changed.  See ``vizardSettings`` on how
   to use the new method ``addCamMsgToModule()``.
 
 Version 2.1.4
@@ -73,7 +73,7 @@ Version 2.1.4
 - In Xcode, when editing ``vizInterface.c/h`` files, the protobuffer library is not properly found
   when opNav is included.
   The code compiles, but auto-completion etc. doesn't work in that module.
-- prior version had a bug in computer the latitude in ``PCPF2LLA()`` inside :ref:`geodeticConversion`.  This is used
+- prior version had a bug in computer the latitude in ``PCPF2LLA()`` inside ``geodeticConversion``.  This is used
   in the ``specifyLocationPCPF()`` method inside :ref:`groundLocation`, and in
   :ref:`msisAtmosphere` and :ref:`albedo`.
 - :ref:`coarsesunsensor` now receives in ``sensorList`` a list of CSS configuration state pointers, not
@@ -245,11 +245,11 @@ Version 1.8.4
     $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
     $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 
-- If running Windows the path to the Xmera library destination folder must be set, see :ref:`installWindows`.
+- If running Windows the path to the Xmera library destination folder must be set.
 - On Linux and Windows the ``vizInterface`` and all ``opNav`` related modules is not properly linking.
   Thus, all associated modules, including saving to Vizard binaries, is not working in this version.
 - If running Windows, be sure to use ``pip install conan`` to get conan, and don't download the binary installer,
-  see :ref:`installWindows`.   The binary installer causes several issues with this new build system in that
+  see the Windows install instructions.   The binary installer causes several issues with this new build system in that
   it contains its own copy of Python, and thus checking for required python packages does work.
 - The new build system provides many speed improvements in doing a clean or partial build, but some small changes are
   required to update BSK python simulation scripts to be compatible with the new build system.
@@ -371,7 +371,7 @@ Version 1.7.3
 - WINDOWS ONLY: Windows users cannot currently run pytest directly on Xmera ``src/`` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Xmera, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
 - Here the reaction wheel dynamics have been modified such that the RW state output message is no longer hard-coded to ``rw_config_0_data``, etc.  Rather, now the ``modelTag`` string is pre-pended to make this output msg name unique with.  Any scripts that is logging this RW state message will have to be updated.  The reason for this change is to allow multiple spacecraft to have RW devices and unique RW state messages.
 - There was an issue doing a clean compile using Python 2 which is addressed in the next version
-- :ref:`test_reactionWheelStateEffector_integrated` didn't run on Python 2, this is fixed in the next version.
+- ``test_reactionWheelStateEffector_integrated`` didn't run on Python 2, this is fixed in the next version.
 
 **Version 1.4.2**
 

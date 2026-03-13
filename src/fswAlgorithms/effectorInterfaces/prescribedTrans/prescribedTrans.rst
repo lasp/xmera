@@ -137,7 +137,9 @@ to fully define the kinematic motion of the prescribed body.
 
 This section is to outline the steps needed to setup a prescribed translational module in python using Xmera.
 
-#. Import the prescribedTrans class::
+#. Import the prescribedTrans class:
+
+.. code-block:: python
 
     from Xmera.fswAlgorithms import prescribedTrans
 
@@ -146,7 +148,9 @@ This section is to outline the steps needed to setup a prescribed translational 
     PrescribedTrans = prescribedTrans.prescribedTrans()
     PrescribedTrans.modelTag = "prescribedTrans"
 
-#. Define all of the configuration data associated with the module. For example::
+#. Define all of the configuration data associated with the module. For example:
+
+.. code-block:: python
 
     PrescribedTrans.transAxis_M = np.array([1.0, 0.0, 0.0])
     PrescribedTrans.scalarAccelMax = 0.01  # [m/s^2]

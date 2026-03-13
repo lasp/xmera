@@ -17,7 +17,7 @@ The script is found in the folder ``xmera/examples/BskSim/scenarios`` and execut
       python3 scenario_RelativePointingFormation.py
 
 The simulation mimics the basic simulation in the earlier tutorial in
-:ref:`scenario_BasicOrbitFormation`.
+:ref:`BskSim_scenarios_scenario_BasicOrbitFormation`.
 
 The flight software mode is set to spacecraftPointing. The goal of this mode is to align a vector given in the
 deputy's body-frame with a vector that points from the deputy to the chief spacecraft.
@@ -36,13 +36,13 @@ torque module to make sure that the deputy's attitude will match with the attitu
 
 Configuring the scenario file
 -----------------------------
-The simulation layout is almost the same as the one used for the :ref:`scenario_BasicOrbitFormation` file.
+The simulation layout is almost the same as the one used for the :ref:`BskSim_scenarios_scenario_BasicOrbitFormation` file.
 Two simulation processes are created: one which contains dynamics modules, and one that contains
 the Flight Software (FSW) modules. First of all, it can be observed that the Dynamics- and FSW files used are
-the :ref:`BSK_FormationDynamics` and :ref:`BSK_FormationFSW` files.
+the :ref:`BskSim_models_BSK_FormationDynamics` and :ref:`BskSim_models_BSK_FormationFsw` files.
 These two files have been created for this specific formation flying implementation into Xmera.
 
-After initializing the interfaces and making sure that the :ref:`scenario_BasicOrbitFormation`
+After initializing the interfaces and making sure that the :ref:`BskSim_scenarios_scenario_BasicOrbitFormation`
 class inherits from the BSKSim class,
 it is time to configure the initial conditions using the ``configure_initial_conditions`` method.
 It can be observed that two sets of
@@ -53,7 +53,7 @@ whatever the user prefers. After the orbital elements are initialized the initia
 conditions are set for each spacecraft.
 
 After that the function that logs the outputs can be observed. Again this looks very similar to the log_outputs function
-in the :ref:`scenario_BasicOrbit` file, however one discrepancy can be noticed. Looking
+in the :ref:`BskSim_scenarios_scenario_BasicOrbit` file, however one discrepancy can be noticed. Looking
 at the code below it can be observed that
 two instances of the simpleNavObject are logged (``simpleNavObject`` and ``simpleNavObject2``
 respectively). Each object corresponds
@@ -62,7 +62,7 @@ before last logging statement below.
 
 BSK_FormationDynamics file description
 --------------------------------------
-Looking at the :ref:`BSK_FormationDynamics` file, it can be observed that the dynamics process consists of two tasks named ``DynamicsTask``
+Looking at the :ref:`BskSim_models_BSK_FormationDynamics` file, it can be observed that the dynamics process consists of two tasks named ``DynamicsTask``
 and ``DynamicsTask2`` respectively. These tasks are added to the dynamics process and to each task, an instance of a specific object
 is added.
 
@@ -72,12 +72,12 @@ separate object to each spacecraft as can be seen below.
 After that each object is added to the corresponding task. Something that is very important is the message names.
 In case multiple spacecraft are implemented in Xmera it is necessary to manually connect an output message of
 one module to the input of a different module. This can be seen in the module-initialization methods
-in the :ref:`BSK_FormationDynamics.py <BSK_FormationDynamics>` file.
+in the :ref:`BSK_FormationDynamics.py <BskSim_models_BSK_FormationDynamics>` file.
 
 BSK_FormationFsw file description
 ---------------------------------
 
-The setup of the FSW file (:ref:`BSK_FormationFSW`) in case of formation flying is
+The setup of the FSW file (:ref:`BskSim_models_BSK_FormationFsw`) in case of formation flying is
 very similar to the setup of the dynamics file.
 Also in this case, an instance of each task is initialized that corresponds to one
 of the two spacecraft. Furthermore, it is

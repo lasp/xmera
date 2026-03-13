@@ -12,6 +12,8 @@ r"""
 Overview
 --------
 
+.. highlight:: python
+
 Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the Earth.
 This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to
 illustrate how the Reaction Wheel (RW) state effector can be added to the rigid :ref:`spacecraft` hub,
@@ -21,7 +23,9 @@ The first setup runs the RW control to produce a desired set of RW motor torques
 which are then connected directly to the RW device input states.  The second setup illustrates
 how to setup voltage based I/O modules to the RW devices, both on the FSW and SIM side.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
       python3 scenarioAttitudeFeedbackRW.py
 
@@ -58,7 +62,7 @@ a wheel with a simple jitter model, or a wheel with a fully coupled model.
 
 
 The next step in this simulation setup is to use create() to include a particular RW devices.
-The `rwFactory` class in :ref:`simIncludeRW` contains several
+The `rwFactory` class in ``simIncludeRW`` contains several
 public specifications of RW devices which can be accessed by specifying the wheel name, ``Honeywell_HR16``
 in this case.  The  2nd required argument is the spin axis :math:`\hat{\mathbf g}_B`.  It is a unit
 vector expressed in the :math:`\cal B`-frame.  The remaining arguments are all optional.  In this simulation

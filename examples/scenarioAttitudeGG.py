@@ -10,7 +10,7 @@ Overview
 Illustrates how to add a :ref:`GravityGradientEffector` to a 6U cube-sat spacecraft while a Hill-frame pointing
 control solution is active.  This script expands on :ref:`scenarioAttitudeGuidance` sets
 up a 6-DOF spacecraft which is orbiting the Earth.  More illustrations on using the gravity gradient
-torque effector can be found in the modules :ref:`UnitTestGravityGradientEffector` folder.
+torque effector can be found in the modules ``unitTestGravityGradientEffector`` folder.
 
 The script is found in the folder ``xmera/examples`` and executed by using::
 

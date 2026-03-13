@@ -19,7 +19,9 @@ To set up this module users must create a SimpleInstrument instance::
    simpleInstrument = simpleInstrument.SimpleInstrument()
    simpleInstrument.modelTag = "instrument1"
 
-Set the `nodeBaudRate` and `nodeDataName` variables::
+Set the `nodeBaudRate` and `nodeDataName` variables:
+
+.. code-block:: python
 
    instrument.nodeBaudRate = 1200. # baud
    instrument.nodeDataName = "Instrument 1" # baud

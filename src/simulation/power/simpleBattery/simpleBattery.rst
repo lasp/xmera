@@ -26,7 +26,9 @@ To set up this module users must create a SimpleBattery instance::
    battery = simpleBattery.SimpleBattery()
    battery.modelTag = "batteryModel"
 
-In addition to the variables that must be set for the :ref:`PowerStorageBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total power stored in the battery will be limited to not exceed this capacity value::
+In addition to the variables that must be set for the :ref:`PowerStorageBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total power stored in the battery will be limited to not exceed this capacity value:
+
+.. code-block:: python
 
    battery.storageCapacity = 10.0 # Given in Joules or Watt-seconds
 

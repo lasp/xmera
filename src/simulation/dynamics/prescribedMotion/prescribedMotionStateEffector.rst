@@ -88,7 +88,9 @@ User Guide
 ----------
 This section outlines the steps needed to set up the prescribed motion state effector module in python using Xmera.
 
-#. Import the prescribedMotionStateEffector class::
+#. Import the prescribedMotionStateEffector class:
+
+.. code-block:: python
 
     from Xmera.simulation import prescribedMotionStateEffector
 
@@ -96,7 +98,9 @@ This section outlines the steps needed to set up the prescribed motion state eff
 
     prescribed_motion_body = prescribedMotionStateEffector.PrescribedMotionStateEffector()
 
-#. Define the prescribed motion state effector module parameters::
+#. Define the prescribed motion state effector module parameters:
+
+.. code-block:: python
 
     prescribed_motion_body.setMass(10.0)  # [kg]
     prescribed_motion_body.setIPntFc_F([[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]])  # [kg-m^2]

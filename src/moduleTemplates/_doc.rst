@@ -3,11 +3,11 @@
 General Purpose
 ---------------
 The purpose of this folder is to provide examples of Xmera module templates.  It contains a fully functioning
-sample C++ module, as well as two modules which are auto-generated using the :ref:`makeDraftModule`
+sample C++ module, as well as two modules which are auto-generated using the ``makeDraftModule``
 script found in ``src/utilities/makeDraftModule.py``.
 
 A module folder can contain a series of related module folders.  By adding a ``*.rst`` file to this folder the purpose of a folder can be documented.  The ``*.rst`` file name should be the same as the parent folder.
-Note that the :ref:`cModuleTemplate` has an expanded module documentation file that discusses in detail
+Note that the ``cModuleTemplate`` has an expanded module documentation file that discusses in detail
 what can be included, and how RST can be used to include math, figures, citations, links, tables, etc.
 
 The sub-folder called ``_GeneralModuleFiles`` contains support ``*.c/h`` files that are used by all modules.  As a minimum, a file is required that defines the Module specific output message type
@@ -53,7 +53,7 @@ To use the template module:
 
 Usage of ``makeDraftModules.py``
 --------------------------------
-The script :ref:`makeDraftModule` in ``xmera/src/utilities/makeDraftModule.py``
+The script ``makeDraftModule`` in ``xmera/src/utilities/makeDraftModule.py``
 provides a class that creates a default Xmera
 module folder and associated ``.c/cpp``, ``.h``, ``.i``, ``.rst`` and ``_UnitTest/test_xxx.py`` files.
 When running ``python3 conanfile.py`` this script is used to create the ``autoCModule`` and ``autoCppModule`` folders.

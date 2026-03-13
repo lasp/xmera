@@ -14,8 +14,8 @@ Overview
 
 This script sets up a 6-DOF spacecraft orbiting Earth. The goal of the scenario is to
 
-#. add reaction wheels to :ref:`BSK_Dynamics`, and
-#. establish a inertial pointing FSW mode in :ref:`BSK_FSW`.
+#. add reaction wheels to :ref:`BskSim_models_BSK_Dynamics`, and
+#. establish a inertial pointing FSW mode in :ref:`BskSim_models_BSK_Fsw`.
 
 The script is found in the folder ``xmera/examples/BskSim/scenarios`` and executed by using::
 
@@ -31,15 +31,15 @@ The simulation layout is shown in the following illustration.
 
 Two simulation processes are created: one
 which contains dynamics modules, and one that contains the FSW
-modules. The initial setup for the simulation closely models that of :ref:`scenario_BasicOrbit`.
+modules. The initial setup for the simulation closely models that of :ref:`BskSim_scenarios_scenario_BasicOrbit`.
 
 
 
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-In addition to the modules used in :ref:`scenario_BasicOrbit`, the user must configure the RW module
-in :ref:`BSK_Dynamics`
+In addition to the modules used in :ref:`BskSim_scenarios_scenario_BasicOrbit`, the user must configure the RW module
+in :ref:`BskSim_models_BSK_Dynamics`
 to stabilize the tumbling. This is accomplished by first creating the RW state effector.
 The RW object is then configured through ``InitAllDynObjects(SimBase)`` which
 includes the ``SetReactionWheelDynEffector()``
@@ -50,14 +50,14 @@ Custom FSW Configurations Instructions
 --------------------------------------
 
 To configure the desired :ref:`inertial3D` FSW mode the user must declare the following modules
-within the ``__init__()`` function in :ref:`BSK_FSW`.
+within the ``__init__()`` function in :ref:`BskSim_models_BSK_Fsw`.
 These provide the initial setup for an attitude guidance system that makes use of an inertial pointing model, a module
 that tracks the error of the spacecraft's MRP parameters against the pointing model, and a module that takes that
 information to provide a torque to correct for the error.
 
-Following the initial declaration of these configuration modules, :ref:`BSK_FSW`
+Following the initial declaration of these configuration modules, :ref:`BskSim_models_BSK_Fsw`
 calls a ``InitAllFSWObjects()`` command,
-which, like :ref:`BSK_Dynamics`'s ``InitAllDynObjects()``, calls additional setter functions that configure each
+which, like :ref:`BskSim_models_BSK_Dynamics`'s ``InitAllDynObjects()``, calls additional setter functions that configure each
 of the FSW modules with the appropriate information and message names.
 
 In addition to the modules used for attitude guidance, there are also two setter functions that send vehicle and RW
@@ -76,7 +76,7 @@ Note that if a C FSW module re-directs its message writing to such a stand-alone
 the message this stand-alone message should be recorded.  The output message payload within the module itself
 remain zero in such a case.
 
-Finally, the :ref:`inertial3D` mode call in :ref:`scenario_FeedbackRW` needs to be triggered by::
+Finally, the :ref:`inertial3D` mode call in :ref:`BskSim_scenarios_scenario_FeedbackRW` needs to be triggered by::
 
      SimBase.createNewEvent("initiateInertial3D", self.processTasksTimeStep, True,
                    ["self.modeRequest == 'inertial3D'"],

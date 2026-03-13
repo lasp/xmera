@@ -450,7 +450,9 @@ set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
 This section is to outline the steps needed to set up the prescribed rotational 1 DOF module in python using Xmera.
 
-#. Import the prescribedRotation1DOF class::
+#. Import the prescribedRotation1DOF class:
+
+.. code-block:: python
 
     from Xmera.simulation import prescribedRotation1DOF
 
@@ -458,7 +460,9 @@ This section is to outline the steps needed to set up the prescribed rotational 
 
     prescribedRot1DOF = prescribedRotation1DOF.PrescribedRotation1DOF()
 
-#. Define all of the configuration data associated with the module. For example, to configure the smoothed bang-coast-bang option::
+#. Define all of the configuration data associated with the module. For example, to configure the smoothed bang-coast-bang option:
+
+.. code-block:: python
 
     prescribedRot1DOF.modelTag = "prescribedRotation1DOF"
     prescribedRot1DOF.setRotHat_M(np.array([0.0, 1.0, 0.0]))
@@ -467,7 +471,9 @@ This section is to outline the steps needed to set up the prescribed rotational 
     prescribedRot1DOF.setCoastOptionBangDuration(3.0)  # [s]
     prescribedRot1DOF.setSmoothingDuration(1.0)  # [s]
 
-#. Connect a :ref:`HingedRigidBodyMsgPayload` message for the spinning body reference angle to the module. For example, the user can create a stand-alone message to specify the reference angle::
+#. Connect a :ref:`HingedRigidBodyMsgPayload` message for the spinning body reference angle to the module. For example, the user can create a stand-alone message to specify the reference angle:
+
+.. code-block:: python
 
     hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
     hingedRigidBodyMessageData.theta = macros.D2R * 90.0  # [rad]

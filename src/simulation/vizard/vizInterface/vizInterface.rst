@@ -1,7 +1,7 @@
 
 Executive Summary
 -----------------
-This module provides an interface to package up Xmera messages and pass them onto the :ref:`Vizard <vizard>`
+This module provides an interface to package up Xmera messages and pass them onto the Vizard
 application.  This allows for the Xmera simulation data to be recorded to a file for play-back, or for
 live streaming of the simulation data.  It is possible to record the simulation data of a single spacecraft or a
 multitude of spacecraft.
@@ -36,7 +36,7 @@ The following messages are set directly within ``vizInterface``.  Additional mes
       - :ref:`SpicePlanetStateMsgPayload`
       - (optional) vector of input messages of planet Spice data
 
-The ``VizSpacecraftData`` structure, defined in :ref:`vizStructures`, contains a range of input messages for each spacecraft added.
+The ``VizSpacecraftData`` structure, defined in ``vizStructures``, contains a range of input messages for each spacecraft added.
 
 .. list-table:: ``VizSpacecraftData`` input messages per spacecraft
     :widths: 25 25 50
@@ -61,6 +61,6 @@ The ``VizSpacecraftData`` structure, defined in :ref:`vizStructures`, contains a
 
 User Guide
 ----------
-The ``vizInterface`` module can be directly configured, or setup using the helper methods in :ref:`vizSupport`.
-More information can be found in :ref:`vizardSettings` page.  The :ref:`scenarioFormationBasic` illustrates and
+The ``vizInterface`` module can be directly configured, or setup using the helper methods in ``vizSupport``.
+More information can be found in ``vizardSettings`` page.  The :ref:`scenarioFormationBasic` illustrates and
 discusses how to configure ``vizInterface`` for use with multiple satellites.

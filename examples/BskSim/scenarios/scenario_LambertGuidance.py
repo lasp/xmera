@@ -36,13 +36,13 @@ The simulation is a more complex simulation than the earlier tutorial for the La
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-The modules required for this scenario are identical to those used in :ref:`scenario_BasicOrbit`.
+The modules required for this scenario are identical to those used in :ref:`BskSim_scenarios_scenario_BasicOrbit`.
 
 
 Custom FSW Configurations Instructions
 --------------------------------------
 
-The five Lambert modules were added to the :ref:`BSK_FSW` framework.
+The five Lambert modules were added to the :ref:`BskSim_models_BSK_Fsw` framework.
 
 The first maneuver event is triggered when a user calls `self.masterSim.modeRequest = 'lambertFirstDV'` in any
 current or future :ref:`Folder_BskSim` file, and the second maneuver using

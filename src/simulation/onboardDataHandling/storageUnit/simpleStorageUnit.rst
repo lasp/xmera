@@ -27,7 +27,9 @@ To set up this module users must create a SimpleStorageUnit instance::
    storageUnit = simpleStorageUnit.SimpleStorageUnit()
    storageUnit.modelTag = "storageUnit"
 
-In addition to the variables that must be set for the :ref:`DataStorageUnitBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total data stored in the storageUnit will be limited to not exceed this capacity value::
+In addition to the variables that must be set for the :ref:`DataStorageUnitBase` base class, this module requires the ``storageCapacity`` attribute to be specified.  The total data stored in the storageUnit will be limited to not exceed this capacity value:
+
+.. code-block:: python
 
    storageUnit.storageCapacity = 1E5 # Given in bits
 
@@ -35,7 +37,9 @@ The next step is to attach one or more :ref:`DataNodeUsageMsgPayload` instances 
 
    storageUnit.addDataNodeToModel(dataMsg)
 
-The method ``setDataBuffer()`` can be used to add or remove a specific amount of data from the storage unit::
+The method ``setDataBuffer()`` can be used to add or remove a specific amount of data from the storage unit:
+
+.. code-block:: python
 
    storageUnit.setDataBuffer(1E4) # Given in bits
 

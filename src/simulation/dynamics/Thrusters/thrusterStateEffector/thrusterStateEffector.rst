@@ -110,7 +110,7 @@ Another limitation is that the :math:`I_{sp}` used is constant throughout the si
 
 
 .. note::
-  The dynamic behaviour of this module is governed by the ``cutoffFrequency`` variable inside :ref:`THRSimConfig`. Its default value is equal to 10 rad/s. All variables related to on and off-ramps have no impact on this module and are instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterDynamicEffector`.
+  The dynamic behaviour of this module is governed by the ``cutoffFrequency`` variable inside ``THRSimConfig``. Its default value is equal to 10 rad/s. All variables related to on and off-ramps have no impact on this module and are instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterDynamicEffector`.
 
 
 
@@ -123,7 +123,7 @@ Module Setup
 ~~~~~~~~~~~~
 
 To use the thruster state effector module, the user first needs to create the thruster and populate it with the necessary information, such as thruster magnitude, minimum on time, etc. This can be done with the help
-of the :ref:`simIncludeThruster` Xmera Python library. The code to create a generic thruster is shown below:
+of the ``simIncludeThruster`` Xmera Python library. The code to create a generic thruster is shown below:
 
 .. code-block:: python
 

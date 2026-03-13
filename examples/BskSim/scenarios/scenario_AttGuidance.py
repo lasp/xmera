@@ -25,20 +25,20 @@ The simulation layout is shown in the following illustration.
 .. image:: /_images/static/test_scenario_AttGuidance.svg
    :align: center
 
-The initial setup for the simulation closely models that of :ref:`scenario_FeedbackRW`.
+The initial setup for the simulation closely models that of :ref:`BskSim_scenarios_scenario_FeedbackRW`.
 
 
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-The modules required for this scenario are identical to those used in :ref:`scenario_FeedbackRW`.
+The modules required for this scenario are identical to those used in :ref:`BskSim_scenarios_scenario_FeedbackRW`.
 
 
 Custom FSW Configurations Instructions
 --------------------------------------
 
 Three of the four modules required to configure the :ref:`hillPoint` FSW mode have already been included
-within the :ref:`BSK_FSW` framework
+within the :ref:`BskSim_models_BSK_Fsw` framework
 (``mrpFeedbackRWConfig()``, ``attTrackingErrorConfig()``, ``rwMotorTorqueConfig()``). The only remaining
 module is the hill pointing module itself which is set within ``__init__()``.
 

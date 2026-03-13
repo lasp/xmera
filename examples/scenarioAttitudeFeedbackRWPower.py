@@ -18,7 +18,7 @@ The script is found in the folder ``xmera/examples`` and executed by using::
 The simulation layout is shown in the following illustration.  A single simulation process is created
 which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
 modules.  The 3 separate :ref:`ReactionWheelPower` instances are created to model the RW power requirements.
-For more examples on using the RW power module see :ref:`test_unitReactionWheelPower`.
+For more examples on using the RW power module see ``test_unitReactionWheelPower``.
 Next, a battery module is created
 using :ref:`simpleBattery`.  All the RW power draw messages are connected to the battery to model the total
 energy usage.

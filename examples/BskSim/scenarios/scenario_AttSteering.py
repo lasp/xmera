@@ -23,17 +23,17 @@ The simulation layout is shown in the following illustration.
 .. image:: /_images/static/test_scenario_AttSteering.svg
    :align: center
 
-The initial conditions for the scenario are the same as found within :ref:`scenario_FeedbackRW`.
+The initial conditions for the scenario are the same as found within :ref:`BskSim_scenarios_scenario_FeedbackRW`.
 
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-The dynamics setup is the same as in :ref:`scenario_FeedbackRW`.
+The dynamics setup is the same as in :ref:`BskSim_scenarios_scenario_FeedbackRW`.
 
 Custom FSW Configurations Instructions
 --------------------------------------
 
-To configure the desired "steeringRW" FSW mode the user must add the following modules to :ref:`BSK_FSW.py <BSK_FSW>`.
+To configure the desired "steeringRW" FSW mode the user must add the following modules to :ref:`BSK_FSW.py <BskSim_models_BSK_Fsw>`.
 
 
 

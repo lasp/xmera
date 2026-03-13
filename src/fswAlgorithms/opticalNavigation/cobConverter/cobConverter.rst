@@ -222,11 +222,15 @@ User Guide
 ----------
 This section is to outline the steps needed to setup a center of brightness converter in Python.
 
-#. Import the module::
+#. Import the module:
+
+.. code-block:: python
 
     from Xmera.fswAlgorithms import cobConverter
 
-#. Create an instantiation of converter class. The COM/COB correction method and object radius need to be specified::
+#. Create an instantiation of converter class. The COM/COB correction method and object radius need to be specified:
+
+.. code-block:: python
 
     module = cobConverter.CobConverter(cobConverter.PhaseAngleCorrectionMethod_NoCorrection, R_obj)  # no correction
     # module = cobConverter.CobConverter(cobConverter.PhaseAngleCorrectionMethod_Lambertian, R_obj)  # Lambertian method
@@ -244,7 +248,9 @@ This section is to outline the steps needed to setup a center of brightness conv
 
     module.enableOutlierDetection()
 
-#. The number of acceptable standard deviations and the standard deviation itself for COB outlier detection are set by::
+#. The number of acceptable standard deviations and the standard deviation itself for COB outlier detection are set by:
+
+.. code-block:: python
 
     module.setNumStandardDeviations(3)  # default 3
     module.setStandardDeviation(100)  # if not set, then the standard deviation is dynamically updated by the module

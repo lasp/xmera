@@ -2,7 +2,7 @@ Executive Summary
 -----------------
 
 This is a very basic dummy C++ Xmera module that can be used as a template to create other C++ modules.
-It mimics the functionality of :ref:`cModuleTemplate`.  See that module for a more complete discussion
+It mimics the functionality of ``cModuleTemplate``.  See that module for a more complete discussion
 of how to write the RST module documentation file.
 
 
@@ -20,9 +20,9 @@ provides information on what this message is used for.
       - Msg Type
       - Description
     * - dataInMsg
-      - :ref:`CModuleTemplateMsgPayload`
+      - ``CModuleTemplateMsgPayload``
       - (optional) Input message description.  Note here if this message is optional, and what the default behavior
         is if this message is not provided.
     * - dataOutMsg
-      - :ref:`CModuleTemplateMsgPayload`
+      - ``CModuleTemplateMsgPayload``
       - Output message description.

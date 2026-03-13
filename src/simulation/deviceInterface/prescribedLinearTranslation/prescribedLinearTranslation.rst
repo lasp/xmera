@@ -440,7 +440,9 @@ set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
 This section is to outline the steps needed to setup the prescribed linear translational module in python using Xmera.
 
-#. Import the prescribedLinearTranslation class::
+#. Import the prescribedLinearTranslation class:
+
+.. code-block:: python
 
     from Xmera.simulation import prescribedLinearTranslation
 
@@ -448,7 +450,9 @@ This section is to outline the steps needed to setup the prescribed linear trans
 
     prescribedLinearTrans = prescribedLinearTranslation.PrescribedLinearTranslation()
 
-#. Define all of the configuration data associated with the module. For example, to configure the smoothed bang-coast-bang option::
+#. Define all of the configuration data associated with the module. For example, to configure the smoothed bang-coast-bang option:
+
+.. code-block:: python
 
     prescribedLinearTrans.modelTag = "prescribedLinearTranslation"
     prescribedLinearTrans.setTransHat_M(np.array([0.5, 0.0, 0.5 * np.sqrt(3)]))
@@ -457,7 +461,9 @@ This section is to outline the steps needed to setup the prescribed linear trans
     prescribedLinearTrans.setCoastRampDuration(1.0)  # [s]
     prescribedLinearTrans.setSmoothingDuration(1.0)  # [s]
 
-#. Connect a :ref:`LinearTranslationRigidBodyMsgPayload` message for the translating body reference position to the module. For example, the user can create a stand-alone message to specify the reference position::
+#. Connect a :ref:`LinearTranslationRigidBodyMsgPayload` message for the translating body reference position to the module. For example, the user can create a stand-alone message to specify the reference position:
+
+.. code-block:: python
 
     linearTranslationRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
     linearTranslationRigidBodyMessageData.rho = 1.0  # [m]

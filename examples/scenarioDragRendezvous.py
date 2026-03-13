@@ -7,10 +7,14 @@ r"""
 Overview
 --------
 
+.. highlight:: python
+
 This script sets up a formation flying scenario with two spacecraft. The deputy spacecraft attempts to rendezvous with the
 chief using attitude-driven differential drag using the strategy outlined in `this paper <https://arc.aiaa.org/doi/10.2514/1.G004521>`_.
 
-This script is found in the folder ``src/examples`` and executed by using::
+This script is found in the folder ``src/examples`` and executed by using:
+
+.. code-block:: console
 
       python3 scenarioDragRendezvous
 

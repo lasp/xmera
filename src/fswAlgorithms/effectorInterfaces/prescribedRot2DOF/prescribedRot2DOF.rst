@@ -162,7 +162,9 @@ the prescribed motion dynamics module to fully define the kinematic motion of th
 
 This section is to outline the steps needed to setup a prescribed 2 DOF rotational module in python using Xmera.
 
-#. Import the prescribedRot1DOF class::
+#. Import the prescribedRot1DOF class:
+
+.. code-block:: python
 
     from Xmera.fswAlgorithms import prescribedRot2DOF
 
@@ -171,7 +173,9 @@ This section is to outline the steps needed to setup a prescribed 2 DOF rotation
     PrescribedRot2DOF = prescribedRot2DOF.prescribedRot2DOF()
     PrescribedRot2DOF.modelTag = "PrescribedRot2DOF"
 
-#. Define all of the configuration data associated with the module. For example::
+#. Define all of the configuration data associated with the module. For example:
+
+.. code-block:: python
 
     rotAxis1_M = np.array([0.0, 1.0, 0.0])                                      # Rotation axis for the first reference rotation angle, thetaRef1a
     rotAxis2_F1 = np.array([0.0, 0.0, 1.0])                                     # Rotation axis for the second reference rotation angle, thetaRef2a

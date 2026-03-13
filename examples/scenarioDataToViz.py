@@ -8,7 +8,7 @@ Overview
 --------
 
 Demonstrates how to convert spacecraft states, stored in a text file from another program, into Xmera
-messages using :ref:`dataFileToViz`.  These messages are red by :ref:`vizInterface` to save a :ref:`Vizard <vizard>`
+messages using :ref:`dataFileToViz`.  These messages are red by :ref:`vizInterface` to save a ``Vizard``
 compatible data play for offline playback and analysis.  In this simulation a servicer is holding a relative
 position with respect to an uncontrolled satellite.  Custom spacecraft models are specified for Vizard
 in the folder ``dataForExamples``.

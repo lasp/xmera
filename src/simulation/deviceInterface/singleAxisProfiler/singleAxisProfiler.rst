@@ -75,7 +75,9 @@ The only required input to this module that must be set by the user is the spinn
 as a unit vector in Mount frame components ``rotHat_M``. This section outlines the steps needed to set up this
 single axis profiler module in python using Xmera.
 
-#. Import the singleAxisProfiler class::
+#. Import the singleAxisProfiler class:
+
+.. code-block:: python
 
     from Xmera.simulation import singleAxisProfiler
 
@@ -88,7 +90,9 @@ single axis profiler module in python using Xmera.
     singleAxisRotProfiler.modelTag = "singleAxisProfiler"
     singleAxisRotProfiler.setRotHat_M([1.0, 0.0, 0.0])
 
-#. Connect the :ref:`StepperMotorMsgPayload` input message to the module that tracks the stepper motor states in time. For example, the user can create a stand-alone message to specify a non-rotating spinning body::
+#. Connect the :ref:`StepperMotorMsgPayload` input message to the module that tracks the stepper motor states in time. For example, the user can create a stand-alone message to specify a non-rotating spinning body:
+
+.. code-block:: python
 
     stepperMotorMessageData = messaging.StepperMotorMsgPayload()
     stepperMotorMessageData.theta = 10.0 * np.pi / 180.0  # [rad]

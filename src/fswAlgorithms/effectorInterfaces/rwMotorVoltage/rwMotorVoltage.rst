@@ -132,7 +132,9 @@ This code makes the following assumptions:
 User Guide
 ==========
 
-The module is configured by::
+The module is configured by:
+
+.. code-block:: python
 
     module = rwMotorVoltage.RwMotorVoltage(minVoltageMagnitude, maxVoltageMagnitude)
     module.modelTag = "rwMotorVoltage"

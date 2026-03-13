@@ -15,5 +15,3 @@ The following support files help with writing Xmera modules.
    add-sphinx-docs
    module-checklist
    understanding-xmera
-   migrating-module-to-bsk2
-   migrating-to-python3

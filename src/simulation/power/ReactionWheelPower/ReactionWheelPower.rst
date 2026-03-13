@@ -124,7 +124,9 @@ common to that base class.
 Minimum Module Setup
 ^^^^^^^^^^^^^^^^^^^^
 The following code illustrates the minimum module setup within Python assuming the module is
-connected to the first RW (thus the ``0`` label)::
+connected to the first RW (thus the ``0`` label):
+
+.. code-block:: python
 
     testModule = PowerRW.PowerRW()
     testModule.modelTag = "bskSat"

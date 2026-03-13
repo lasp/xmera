@@ -55,12 +55,12 @@ the spacecraft.
 .. _fig1_celestialTwoBodyPoint:
 .. figure:: _Documentation/Figures/fig1.pdf
     :align: center
-   name: fig:fig1
+    :name: fig:fig1
 
-Illustration of the restricted two-body pointing reference frame
-:math:`\mathcal{R}:\{ \hat{\mathbf r}_{1},\hat{\mathbf r}_{1}, \hat{\mathbf r}_{2} \}`
-and the inertial frame
-:math:`\mathcal{N}:\{ \hat{\mathbf n}_{1},\hat{\mathbf n}_{1}, \hat{\mathbf n}_{2} \}`.
+    Illustration of the restricted two-body pointing reference frame
+    :math:`\mathcal{R}:\{ \hat{\mathbf r}_{1},\hat{\mathbf r}_{1}, \hat{\mathbf r}_{2} \}`
+    and the inertial frame
+    :math:`\mathcal{N}:\{ \hat{\mathbf n}_{1},\hat{\mathbf n}_{1}, \hat{\mathbf n}_{2} \}`.
 
 Assuming knowledge of the position of the spacecraft
 :math:`\mathbf{r}_{B/N}` and the involved celestial bodies,

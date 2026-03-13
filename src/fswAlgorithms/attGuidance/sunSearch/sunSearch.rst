@@ -73,7 +73,9 @@ which indicates that adding a coasting arc to meet the requirement on the angula
 
 User Guide
 ----------
-The required module configuration is::
+The required module configuration is:
+
+.. code-block:: python
 
     attGuid = sunSearch.SunSearch()
 

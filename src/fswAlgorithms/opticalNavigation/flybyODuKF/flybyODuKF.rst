@@ -28,7 +28,7 @@ provides information on what this message is used for.
       - :ref:`FilterMsgPayload`
       - output filter data message containing states and covariances
     * - opNavResidualMsg
-      - :ref:`FilterResidualMsgPayload`
+      - :ref:`FilterResidualsMsgPayload`
       - output measurement data message containing residuals
     * - opNavHeadingMsg
       - :ref:`OpNavUnitVecMsgPayload`

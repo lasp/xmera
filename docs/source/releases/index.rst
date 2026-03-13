@@ -9,5 +9,4 @@ as how to code up C or C++ Xmera modules.
 .. toctree::
    :maxdepth: 2
 
-   xmera-release-notes
    xmera-known-issues

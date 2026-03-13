@@ -38,8 +38,8 @@ not come from a noisy sensor but from a ground-based estimation process.
     * - scEphemOutMsg
       - :ref:`EphemerisMsgPayload`
       - spacecraft ephemeris output msg
-    * - scEphemOutMsg
-      - :ref:`accelDataOutMsg`
+    * - accelDataOutMsg
+      - :ref:`AccDataMsgPayload`
       - spacecraft accelerometer and gyro output msg
     * - scStateInMsg
       - :ref:`SCStatesMsgPayload`
