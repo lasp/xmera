@@ -10,6 +10,7 @@ The following support files help with writing Xmera modules.
 
    code-guidelines
    debugging
+   fuzz-testing
    deprecating-code
    making-new-module
    add-sphinx-docs
