@@ -55,7 +55,7 @@ except ImportError as e:
     )
 
 from xmera.utilities import SimulationBaseClass, macros
-
+from xmera.architecture import messaging
 
 # ---------------------------------------------------------------------------
 # Simulation helpers
@@ -85,16 +85,6 @@ def _build_module(args):
         mod.setSaveDir(_DATA_DIR)
 
     return mod
-
-
-def _run(mod):
-    """Wrap the module in a minimal simulation and execute one time step."""
-    sim = SimulationBaseClass.SimBaseClass()
-    testProc = sim.CreateNewProcess("refProcess")
-    testProc.addTask(sim.CreateNewTask("refTask", macros.sec2nano(1.0)))
-    sim.AddModelToTask("refTask", mod)
-    sim.InitializeSimulation()
-    sim.TotalSim.singleStepProcesses()
 
 
 # ---------------------------------------------------------------------------
@@ -134,19 +124,18 @@ def _extract_col_sums(mod, W):
     return [mod.getColSum(c) for c in range(W)]
 
 
-def _extract_roi(mod):
-    roi_msg = mod.roiOutMsg.read()
-    numRegions = int(roi_msg.numValidRegions)
+def _extract_roi(mod, log_roi_out_msg):
+    numRegions = int(log_roi_out_msg.numValidRegions)
     regions = []
     for rank in range(numRegions):
-        entry = roi_msg.topRegions[rank]
+        entry = log_roi_out_msg.topRegions[rank]
         regions.append({
             "rank": rank,
             "row": int(entry.row),
             "col": int(entry.col),
             "count": int(entry.count),
         })
-    return int(roi_msg.regionSize), regions
+    return int(log_roi_out_msg.regionSize), regions
 
 
 # ---------------------------------------------------------------------------
@@ -228,7 +217,14 @@ def main():
     print(f"Output : {_DATA_DIR}")
 
     mod = _build_module(args)
-    _run(mod)
+    log_roi_out_msg = mod.roiOutMsg.recorder()
+    sim = SimulationBaseClass.SimBaseClass()
+    testProc = sim.CreateNewProcess("refProcess")
+    testProc.addTask(sim.CreateNewTask("refTask", macros.sec2nano(1.0)))
+    sim.AddModelToTask("refTask", mod)
+    sim.AddModelToTask("refTask", log_roi_out_msg)
+    sim.InitializeSimulation()
+    sim.TotalSim.singleStepProcesses()
 
     # --- Extract ---
     raw    = _extract_raw(mod, W, H)
@@ -236,7 +232,7 @@ def main():
     thresh = _extract_thresh(mod, W, H)
     row_sums = _extract_row_sums(mod, H)
     col_sums = _extract_col_sums(mod, W)
-    region_size, roi_regions = _extract_roi(mod)
+    region_size, roi_regions = _extract_roi(mod, log_roi_out_msg)
 
     # --- Save ---
     _save_tiff(raw,    os.path.join(_DATA_DIR, "raw_calibrated.tiff"))
