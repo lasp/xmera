@@ -5,7 +5,6 @@
   "description": "NASA C SPICE toolkit",
   "homepage": "https://naif.jpl.nasa.gov/naif/toolkit_C.html",
   "license": null,
-  "supports": "!((arm | arm64) & windows)",
   "dependencies": [
     {
       "name": "vcpkg-cmake",
