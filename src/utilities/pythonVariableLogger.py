@@ -91,7 +91,11 @@ class PythonVariableLogger(sim_model.SysModel):
         return np.column_stack([self.times(), self.__getattr__(name)])
 
     def __getattr__(self, __name: str) -> Any:
-        if __name in self._variables:
-            return np.array(self._variables[__name])
+        try:
+            variables = self.__dict__["_variables"]
+        except KeyError:
+            raise AttributeError(__name)
+        if __name in variables:
+            return np.array(variables[__name])
         raise AttributeError(f"Logger is not logging '{__name}'. "
-                             f"Must be one of: {', '.join(self._variables)}")
+                             f"Must be one of: {', '.join(variables)}")
