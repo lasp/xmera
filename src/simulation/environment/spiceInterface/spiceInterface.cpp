@@ -7,8 +7,47 @@
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/simDefinitions.h>
 #include <SpiceUsr.h>
+#include <cmath>
+#include <limits>
 #include <string.h>
 #include <sstream>
+
+void SecondaryBody::setPositionOffset(const Eigen::Vector3d& offset) { this->offset = offset; }
+
+Eigen::Vector3d SecondaryBody::getPositionOffset() const { return this->offset; }
+
+Eigen::Vector3d SecondaryBody::getPositionOffsetAt(double elapsedSeconds) const {
+    if (this->orbitalPeriod <= 0.0) {
+        return this->offset;
+    }
+    // The orbit is a circle of radius |offset| centered on the primary. The plane
+    // normal is offset x (offset x up): this lies in the offset-up plane, so the
+    // orbit plane itself tilts toward the equator (perpendicular to up) rather
+    // than running through the poles. When offset is parallel to up the cross
+    // product degenerates; fall back to the J2000 X axis.
+    // |offset x up| / |offset| = sin(angle); when offset is parallel to up this
+    // collapses to float roundoff, so detect it with a small multiple of machine eps.
+    constexpr double parallelTol = 8.0 * std::numeric_limits<double>::epsilon();
+    const Eigen::Vector3d up(0.0, 0.0, 1.0);
+    Eigen::Vector3d intermediate = this->offset.cross(up);
+    if (intermediate.norm() < parallelTol * this->offset.norm()) {
+        intermediate = this->offset.cross(Eigen::Vector3d(1.0, 0.0, 0.0));
+    }
+    Eigen::Vector3d planeNormal = this->offset.cross(intermediate);
+    planeNormal.normalize();
+
+    const Eigen::Vector3d perp = planeNormal.cross(this->offset);
+    const double angle = 2.0 * M_PI * elapsedSeconds / this->orbitalPeriod;
+    return std::cos(angle) * this->offset + std::sin(angle) * perp;
+}
+
+void SecondaryBody::setSecondaryName(const std::string& name) { this->secondaryName = name; }
+
+std::string SecondaryBody::getSecondaryName() const { return this->secondaryName; }
+
+void SecondaryBody::setOrbitalPeriod(double period) { this->orbitalPeriod = period; }
+
+double SecondaryBody::getOrbitalPeriod() const { return this->orbitalPeriod; }
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
@@ -46,6 +85,8 @@ SpiceInterface::SpiceInterface() {
              EPOCH_MIN,
              EPOCH_SEC);
     this->UTCCalInit = string;
+    planetWithSecondary = "";
+    secondaryBody = SecondaryBody();
 
     return;
 }
@@ -197,6 +238,19 @@ void SpiceInterface::computeGPSData() {
     this->GPSWeek = (uint16_t)(this->GPSWeek - this->GPSRollovers * 1024);
 }
 
+SpicePlanetStateMsgPayload SpiceInterface::populateSecondaryBodyMsg(
+    const SpicePlanetStateMsgPayload& primaryBody) const {
+    SpicePlanetStateMsgPayload message = primaryBody;
+    const double elapsedSeconds = this->J2000Current - this->J2000ETInit;
+    const auto pos = this->secondaryBody.getPositionOffsetAt(elapsedSeconds);
+    message.PositionVector[0] += pos[0];
+    message.PositionVector[1] += pos[1];
+    message.PositionVector[2] += pos[2];
+
+    strcpy(message.PlanetName, this->secondaryBody.getSecondaryName().c_str());
+    return message;
+}
+
 /*! This method takes the values computed in the model and outputs them.
  It packages up the internal variables into the output structure definitions
  and puts them out on the messaging system
@@ -217,6 +271,10 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock) {
     //! - Iterate through all of the planets that are on and write their outputs
     for (long unsigned int c = 0; c < this->planetStateOutMsgs.size(); c++) {
         this->planetStateOutMsgs[c]->write(&this->planetData[c], this->moduleID, CurrentClock);
+        if (this->planetWithSecondary == this->planetNames[c]) {
+            auto message = this->populateSecondaryBodyMsg(this->planetData[c]);
+            this->secondaryStateOutMsg.write(&message, this->moduleID, CurrentClock);
+        }
     }
 
     //! - Iterate through all of the spacecraft that are on and write their outputs
@@ -265,7 +323,7 @@ void SpiceInterface::updateState(uint64_t currentSimNanos) {
     planet state output messages and the vector of planet state message payloads */
 void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     std::vector<std::string>::iterator it;
-
+    this->planetNames = planetNames;
     /* clear the planet state message and payload vectors */
     for (long unsigned int c = 0; c < this->planetStateOutMsgs.size(); c++) {
         delete this->planetStateOutMsgs.at(c);
@@ -350,6 +408,22 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
 
     return;
 }
+
+/*! Attach a secondary body to a primary celestial body in the planet list.
+ The secondary's state is published to secondaryStateOutMsg as the primary's
+ SPICE-derived state plus the secondary's (optionally time-varying) offset.
+@param name Name of the primary celestial body in the planet list
+@param offsetBody The SecondaryBody to attach
+ */
+void SpiceInterface::setOffsetBody(const std::string& name, const SecondaryBody& offsetBody) {
+    this->planetWithSecondary = name;
+    this->secondaryBody = offsetBody;
+}
+
+/*! Stop publishing the secondary state output message. The stored SecondaryBody
+ configuration is preserved, so a subsequent setOffsetBody() call re-activates it.
+ */
+void SpiceInterface::passivateSecondary() { this->planetWithSecondary = ""; }
 
 /*! This method gets the state of each spice item that has been added to the module
  and saves the information off into the array.
