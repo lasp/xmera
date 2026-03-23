@@ -44,13 +44,12 @@ class PythonVariableLogger(sim_model.SysModel):
             min_log_period (int, optional): The minimum interval between data recordings
                 Defaults to 0.
         """
-        super().__init__()
-
         self.logging_functions = logging_functions
-
         self.min_log_period = min_log_period
         self._next_update_time = 0
         self.clear()
+
+        super().__init__()
 
     def clear(self):
         """Called to clear the internal data storages"""
