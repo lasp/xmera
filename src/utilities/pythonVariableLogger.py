@@ -44,13 +44,12 @@ class PythonVariableLogger(sim_model.SysModel):
             min_log_period (int, optional): The minimum interval between data recordings
                 Defaults to 0.
         """
-        super().__init__()
-
         self.logging_functions = logging_functions
-
         self.min_log_period = min_log_period
         self._next_update_time = 0
         self.clear()
+
+        super().__init__()
 
     def clear(self):
         """Called to clear the internal data storages"""
@@ -91,7 +90,11 @@ class PythonVariableLogger(sim_model.SysModel):
         return np.column_stack([self.times(), self.__getattr__(name)])
 
     def __getattr__(self, __name: str) -> Any:
-        if __name in self._variables:
-            return np.array(self._variables[__name])
+        try:
+            variables = self.__dict__["_variables"]
+        except KeyError:
+            raise AttributeError(__name)
+        if __name in variables:
+            return np.array(variables[__name])
         raise AttributeError(f"Logger is not logging '{__name}'. "
-                             f"Must be one of: {', '.join(self._variables)}")
+                             f"Must be one of: {', '.join(variables)}")
