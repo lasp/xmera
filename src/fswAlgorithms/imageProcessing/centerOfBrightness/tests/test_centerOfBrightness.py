@@ -274,4 +274,3 @@ def test_img_msg_check_for_new_image():
 
 if __name__ == '__main__':
     test_threshold_impact()
-
