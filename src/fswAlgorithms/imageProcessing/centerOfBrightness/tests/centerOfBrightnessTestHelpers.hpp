@@ -25,9 +25,9 @@ class FuzzImageReader : public ImageReaderInterface {
 
     void getImageAsArray(const Eigen::Vector2i& /*center*/,
                          const Eigen::Vector2i& /*windowSize*/,
-                         std::array<Eigen::Vector2i, maxWindowSize>& output) override {
+                         std::array<Eigen::Vector2i, kMaxWindowSize>& output) override {
         output.fill(Eigen::Vector2i::Zero());
-        for (size_t i = 0; i < pixels.size() && i < maxWindowSize; ++i) {
+        for (size_t i = 0; i < pixels.size() && i < kMaxWindowSize; ++i) {
             output[i] = pixels[i];
         }
     }

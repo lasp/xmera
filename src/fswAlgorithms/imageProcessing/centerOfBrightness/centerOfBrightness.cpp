@@ -4,6 +4,8 @@
 
 #include "centerOfBrightness.h"
 
+inline constexpr double kNanoToSec = 1.0e-9;
+
 /*! Module constructor */
 CenterOfBrightness::CenterOfBrightness(std::shared_ptr<ImageReaderInterface> imageReaderInstance)
     : imageReader(std::move(imageReaderInstance)) {}
@@ -21,6 +23,7 @@ void CenterOfBrightness::reset(uint64_t currentSimNanos) {
         throw std::invalid_argument("CenterOfBrightness.roiInMsg wasn't connected.");
     }
     this->algorithm.reset();
+    this->previousImageTimeTag = 0;
 }
 
 /*! This module reads a region of interest message and delegates image reading and center of brightness
@@ -31,13 +34,19 @@ void CenterOfBrightness::reset(uint64_t currentSimNanos) {
 void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
     auto roiPayload = this->roiInMsg();
     OpNavCOBMsgPayload cobBuffer{};
+    CenterOfBrightnessResult result{};
 
-    // Unpack msg payload into algorithm's bespoke struct
-    CobRegionOfInterest roi{};
-    roi.center = Eigen::Vector2i(roiPayload.centerX, roiPayload.centerY);
-    roi.size = Eigen::Vector2i(roiPayload.width, roiPayload.height);
+    int64_t imageTimeTag =
+        this->imageReader->getCurrentImageTimeTag(this->cameraID, static_cast<int64_t>(currentSimNanos * kNanoToSec));
+    if (imageTimeTag > this->previousImageTimeTag) {
+        this->previousImageTimeTag = imageTimeTag;
 
-    CenterOfBrightnessResult result = this->algorithm.update(roi, *this->imageReader);
+        CobRegionOfInterest roi{};
+        roi.center = Eigen::Vector2i(roiPayload.centerX, roiPayload.centerY);
+        roi.size = Eigen::Vector2i(roiPayload.width, roiPayload.height);
+
+        result = this->algorithm.update(roi, *this->imageReader);
+    }
 
     cobBuffer.valid = result.valid;
     cobBuffer.centerOfBrightness[0] = result.centerOfBrightness[0];
@@ -45,7 +54,7 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
     cobBuffer.pixelsFound = result.pixelsFound;
     cobBuffer.rollingAverageBrightness = result.rollingAverageBrightness;
     if (result.valid) {
-        cobBuffer.timeTag = static_cast<uint64_t>(roiPayload.timeTag);
+        cobBuffer.timeTag = static_cast<uint64_t>(imageTimeTag);
         cobBuffer.cameraID = this->cameraID;
     }
 

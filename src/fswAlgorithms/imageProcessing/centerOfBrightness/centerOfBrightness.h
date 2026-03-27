@@ -44,6 +44,7 @@ class CenterOfBrightness : public SysModel {
     CenterOfBrightnessAlgorithm algorithm{};
     std::shared_ptr<ImageReaderInterface> imageReader;  //!< shared ownership with Python/SWIG
     int32_t cameraID{};
+    int64_t previousImageTimeTag{};
 };
 
 #endif
