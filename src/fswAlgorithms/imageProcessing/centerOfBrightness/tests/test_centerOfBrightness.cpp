@@ -22,7 +22,7 @@ class MockImageReader : public ImageReaderInterface {
 
     Eigen::Vector2i getFullImageSize(int32_t cameraId) override { return {100, 100}; }
 
-    int64_t checkForNewImage(int32_t cameraId, int64_t previousImageTimeTag) override { return 1; }
+    int64_t getCurrentImageTimeTag(int32_t cameraId, int64_t previousImageTimeTag) override { return 1; }
 
     void getImageAsArray(const Eigen::Vector2i& center,
                          const Eigen::Vector2i& windowSize,

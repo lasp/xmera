@@ -4,70 +4,76 @@
 
 #include "centerOfBrightnessAlgorithm.h"
 
+#include <iostream>
+
 CenterOfBrightnessAlgorithm::CenterOfBrightnessAlgorithm() = default;
 
 CenterOfBrightnessAlgorithm::~CenterOfBrightnessAlgorithm() = default;
 
-/*! Reset algorithm state: clears brightness history and window validity */
-void CenterOfBrightnessAlgorithm::reset() {
-    this->brightnessHistory.resize(0);
-    this->validWindow = false;
-}
+/*! Reset algorithm state: clears brightness history */
+void CenterOfBrightnessAlgorithm::reset() { this->brightnessHistory.resize(0); }
 
-/*! Main entry point: processes an image and returns the center of brightness result.
+/*! Main entry point: delegates to findCob.
  @return CenterOfBrightnessResult
- @param image OpenCV BGR image
+ @param roi Region of interest for windowing
+ @param imageReader Image reader providing pixel data
  */
-CenterOfBrightnessResult CenterOfBrightnessAlgorithm::update(const cv::Mat& image) {
-    if (image.empty()) {
-        return {};
+CenterOfBrightnessResult CenterOfBrightnessAlgorithm::update(const CobRegionOfInterest& roi,
+                                                             ImageReaderInterface& imageReader) {
+    CenterOfBrightnessResult result{};
+    imageReader.getImageAsArray(roi.center, roi.size, *this->pixelBuffer);
+    auto [coordinates, pixelsFound] = this->computeCenterOfBrightness(*this->pixelBuffer);
+
+    if (pixelsFound > 0) {
+        double brightnessIncrease = this->computeBrightnessIncrease(pixelsFound);
+        result.noPixelTrigger = false;
+        if (brightnessIncrease >= this->relativeBrightnessIncreaseThreshold) {
+            result.valid = true;
+            result.centerOfBrightness = coordinates;
+            result.pixelsFound = pixelsFound;
+            result.notExceedingBrightnessIncreaseTrigger = false;
+        }
+        result.rollingAverageBrightness = this->brightnessHistory.mean();
     }
-    this->computeWindow(image);
-    if (this->validWindow) {
-        this->applyWindow(image);
-    }
-    return this->findCob(image);
+    return result;
 }
 
-/*! Method extracts the bright pixels (above a given threshold) by first grayscaling then bluring image.
- @return std 2 vector of integers
- @param image openCV matrix of the input image
+/*! Compute the unweighted centroid of non-zero pixels. (0,0) is treated as sentinel / invalid.
+ @return pair of centroid coordinates and count of valid pixels
+ @param pixels Array of pixel coordinates from image reader
  */
-std::vector<cv::Vec2i> CenterOfBrightnessAlgorithm::extractBrightPixels(cv::Mat image) {
-    cv::Mat blured;
-    std::vector<cv::Vec2i> locations;
-
-    /*! - Grayscale, blur, and threshold iamge*/
-    cv::cvtColor(image, this->imageGray, cv::COLOR_BGR2GRAY);
-    cv::blur(this->imageGray, blured, cv::Size(this->blurSize, this->blurSize));
-    cv::threshold(blured, image, this->pixelThreshold, 255, cv::THRESH_BINARY);
-
-    /*! - Find all the non-zero pixels in the image*/
-    cv::findNonZero(image, locations);
-
-    return locations;
+std::pair<Eigen::Vector2d, int32_t> CenterOfBrightnessAlgorithm::computeCenterOfBrightness(
+    const std::array<Eigen::Vector2i, kMaxWindowSize>& pixels) {
+    Eigen::Vector2d coordinates = Eigen::Vector2d::Zero();
+    int32_t count = 0;
+    for (const auto& pixel : pixels) {
+        if (pixel.isZero()) continue;
+        coordinates[0] += pixel[0];
+        coordinates[1] += pixel[1];
+        ++count;
+    }
+    if (count > 0) {
+        coordinates /= count;
+    }
+    return {coordinates, count};
 }
 
-/*! Method computes the weighted center of brightness and total brightness out of the non-zero pixel coordinates.
- @return std::pair<Eigen::Vector2d, double> First: center of brightness, Second: brightness
- @param vector integer pixel coordinates of bright pixels
+/*! Compute relative brightness increase from the rolling average.
+ @return relative brightness increase
+ @param pixelsFound Number of bright pixels found this timestep
  */
-std::pair<Eigen::Vector2d, double> CenterOfBrightnessAlgorithm::computeWeightedCenterOfBrightness(
-    std::vector<cv::Vec2i> nonZeroPixels) {
-    uint32_t weightSum = 0;
-    Eigen::Vector2d coordinates;
-    coordinates.setZero();
-    for (auto& pixel : nonZeroPixels) {
-        /*! Individual pixel intensity used as the weight for the contribution to the solution*/
-        auto weight = this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
-        coordinates[0] += weight * pixel[0];
-        coordinates[1] += weight * pixel[1];
-        weightSum += weight;  // weighted sum of all the pixels
+double CenterOfBrightnessAlgorithm::computeBrightnessIncrease(int32_t pixelsFound) {
+    double averageBrightnessOld = 0.0;
+    if (this->brightnessHistory.rows() > 0) {
+        averageBrightnessOld = this->brightnessHistory.mean();
     }
-    double brightness = weightSum / 255.0;  // normalized
-    coordinates /= weightSum;
-
-    return {coordinates, brightness};
+    this->updateBrightnessHistory(static_cast<double>(pixelsFound));
+    double averageBrightnessNew = this->brightnessHistory.mean();
+    double brightnessIncrease = 0.0;
+    if (averageBrightnessOld > 0.0) {
+        brightnessIncrease = (averageBrightnessNew - averageBrightnessOld) / averageBrightnessOld;
+    }
+    return brightnessIncrease;
 }
 
 /*! Update brightness history by shifting back previous brightness values and updating most recent one
@@ -89,120 +95,6 @@ void CenterOfBrightnessAlgorithm::updateBrightnessHistory(double brightness) {
     this->brightnessHistory[0] = brightness;
 }
 
-/*! This method applies the window for windowing by setting anything outside the window to black.
- @return void
- @param image cv::Mat of the input image
- */
-void CenterOfBrightnessAlgorithm::applyWindow(cv::Mat const& image) const {
-    /*! Create a window and ignore anything outside of it (make it black).
-     * Point in opencv is column, row. x goes left-to-right, y goes top-to-bottom ([0,0] is top left corner).
-     * Window mask is inclusive (edge of mask should be considered in COB), so must add/subtract one pixel. */
-    /*! - Left edge removal */
-    if (this->windowPointTopLeft[0] > 0) {
-        cv::rectangle(
-            image, cv::Point(0, 0), cv::Point(this->windowPointTopLeft[0] - 1, image.size().height), cv::Scalar(0), -1);
-    }
-    /*! - Right edge removal */
-    if (this->windowPointBottomRight[0] < image.size().width) {
-        cv::rectangle(image,
-                      cv::Point(this->windowPointBottomRight[0] + 1, 0),
-                      cv::Point(image.size().width, image.size().height),
-                      cv::Scalar(0),
-                      -1);
-    }
-    /*! - Top edge removal */
-    if (this->windowPointTopLeft[1] > 0) {
-        cv::rectangle(image,
-                      cv::Point(this->windowPointTopLeft[0] - 1, 0),
-                      cv::Point(this->windowPointBottomRight[0] + 1, this->windowPointTopLeft[1] - 1),
-                      cv::Scalar(0),
-                      -1);
-    }
-    /*! - Bottom edge removal */
-    if (this->windowPointBottomRight[1] < image.size().height) {
-        cv::rectangle(image,
-                      cv::Point(this->windowPointTopLeft[0] - 1, this->windowPointBottomRight[1] + 1),
-                      cv::Point(this->windowPointBottomRight[0] + 1, image.size().height),
-                      cv::Scalar(0),
-                      -1);
-    }
-}
-
-/*! This method computes the points of the window used for windowing
- @return void
- @param image openCV matrix of the input image
- */
-void CenterOfBrightnessAlgorithm::computeWindow(cv::Mat const& image) {
-    if (this->windowCenter.isZero() || this->windowWidth == 0 || this->windowHeight == 0) {
-        this->windowPointTopLeft[0] = 0;
-        this->windowPointTopLeft[1] = 0;
-        this->windowPointBottomRight[0] = image.size().width;
-        this->windowPointBottomRight[1] = image.size().height;
-    } else {
-        this->windowPointTopLeft[0] = this->windowCenter[0] - this->windowWidth / 2;
-        this->windowPointTopLeft[1] = this->windowCenter[1] - this->windowHeight / 2;
-        this->windowPointBottomRight[0] = this->windowCenter[0] + this->windowWidth / 2;
-        this->windowPointBottomRight[1] = this->windowCenter[1] + this->windowHeight / 2;
-        this->validWindow = true;
-    }
-    assert(windowPointTopLeft[0] >= 0);
-    assert(windowPointTopLeft[1] >= 0);
-    assert(windowPointBottomRight[0] <= image.size().width);
-    assert(windowPointBottomRight[1] <= image.size().height);
-}
-
-/*! This method finds the center of brightness (COB) from the image.
- @return CenterOfBrightnessResult
- @param imageCV OpenCV matrix of the input image
- */
-CenterOfBrightnessResult CenterOfBrightnessAlgorithm::findCob(const cv::Mat& imageCV) {
-    CenterOfBrightnessResult result{};
-    std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
-
-    /*!- If no lit pixels are found do not validate the image as a measurement */
-    if (!locations.empty()) {
-        std::pair<Eigen::Vector2d, double> cobData;
-        cobData = this->computeWeightedCenterOfBrightness(locations);
-
-        double averageBrightnessOld = 0.0;
-        if (this->brightnessHistory.rows() > 0) {
-            averageBrightnessOld = this->brightnessHistory.mean();
-        }
-        this->updateBrightnessHistory(cobData.second);
-        double averageBrightnessNew = this->brightnessHistory.mean();
-        double brightnessIncrease = 0.0;
-        if (averageBrightnessOld > 0.0) {
-            brightnessIncrease = (averageBrightnessNew - averageBrightnessOld) / averageBrightnessOld;
-        }
-        result.noPixelTrigger = false;
-
-        /*! If brightness increase is less than brightness increase threshold, do not validate image */
-        if (brightnessIncrease >= this->relativeBrightnessIncreaseThreshold) {
-            result.valid = true;
-            result.centerOfBrightness[0] = cobData.first[0] + 0.5;
-            result.centerOfBrightness[1] = cobData.first[1] + 0.5;
-            result.pixelsFound = static_cast<int32_t>(locations.size());
-            result.notExceedingBrightnessIncreaseTrigger = false;
-        }
-        result.rollingAverageBrightness = averageBrightnessNew;
-    }
-    return result;
-}
-
-void CenterOfBrightnessAlgorithm::setWindowCenter(const Eigen::VectorXi& center) { this->windowCenter = center; }
-
-Eigen::VectorXi CenterOfBrightnessAlgorithm::getWindowCenter() const { return this->windowCenter; }
-
-void CenterOfBrightnessAlgorithm::setWindowSize(const int32_t width, const int32_t height) {
-    this->windowWidth = width;
-    this->windowHeight = height;
-}
-
-Eigen::VectorXi CenterOfBrightnessAlgorithm::getWindowSize() const {
-    Eigen::VectorXi size = {this->windowWidth, this->windowHeight};
-    return size;
-}
-
 void CenterOfBrightnessAlgorithm::setRelativeBrightnessIncreaseThreshold(double increaseThreshold) {
     this->relativeBrightnessIncreaseThreshold = increaseThreshold;
 }
@@ -210,14 +102,6 @@ void CenterOfBrightnessAlgorithm::setRelativeBrightnessIncreaseThreshold(double 
 double CenterOfBrightnessAlgorithm::getRelativeBrightnessIncreaseThreshold() const {
     return this->relativeBrightnessIncreaseThreshold;
 }
-
-void CenterOfBrightnessAlgorithm::setPixelThreshold(double pixelThreshold) { this->pixelThreshold = pixelThreshold; }
-
-double CenterOfBrightnessAlgorithm::getPixelThreshold() const { return this->pixelThreshold; }
-
-void CenterOfBrightnessAlgorithm::setBlurSize(int32_t blur) { this->blurSize = blur; }
-
-int32_t CenterOfBrightnessAlgorithm::getBlurSize() const { return this->blurSize; }
 
 void CenterOfBrightnessAlgorithm::setNumberOfPointsBrightnessAverage(int32_t rollingAverage) {
     this->numberOfPointsBrightnessAverage = rollingAverage;

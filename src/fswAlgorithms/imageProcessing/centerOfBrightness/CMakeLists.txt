@@ -10,6 +10,8 @@ xmera_add_swig_module("${module}")
 target_sources("${module}" PRIVATE
   centerOfBrightnessAlgorithm.cpp
   centerOfBrightness.cpp
+  imageReader/imageReaderFromFile.cpp
+  imageReader/imageReaderFromMessage.cpp
 )
 
 target_link_libraries("${module}" PRIVATE
