@@ -14,6 +14,31 @@ target_link_libraries(test_centerOfBrightness PRIVATE
 
 gtest_discover_tests(test_centerOfBrightness)
 
+if(XMERA_ENABLE_FUZZTESTS)
+  fuzztest_setup_fuzzing_flags()
+
+  add_executable(test_centerOfBrightness_fuzz
+    ../centerOfBrightnessAlgorithm.cpp
+    centerOfBrightnessTestHelpers.hpp
+    test_centerOfBrightness_fuzz.cpp
+  )
+
+  target_include_directories(test_centerOfBrightness_fuzz PRIVATE "../..")
+  target_include_directories(test_centerOfBrightness_fuzz PRIVATE "..")
+  target_include_directories(test_centerOfBrightness_fuzz PRIVATE "${CMAKE_SOURCE_DIR}")
+
+  target_link_libraries(test_centerOfBrightness_fuzz PRIVATE
+    Eigen3::Eigen
+    fuzztest::fuzztest
+    fuzztest::fuzztest_gtest_main
+  )
+
+  gtest_discover_tests(test_centerOfBrightness_fuzz
+    PROPERTIES
+      LABELS "fuzz\;fuzz-smoke"
+  )
+endif()
+
 find_package(OpenCV REQUIRED)
 
 add_executable(test_imageReaderFromFile
