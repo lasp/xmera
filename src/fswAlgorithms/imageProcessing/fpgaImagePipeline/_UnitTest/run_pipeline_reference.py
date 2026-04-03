@@ -18,9 +18,7 @@ Usage examples::
     python run_pipeline_reference.py image.tiff
 
     # Full control
-    python run_pipeline_reference.py star_scene.tiff \\
-        --width 4096 --height 3000 \\
-        --kernel 7 --threshold 200 --roi-size 128
+    python run_pipeline_reference.py test_resized.tif --width 4096 --height 3000 --kernel 7 --threshold 10000 --roi-size 128
 
     # Enable built-in module disk saves as well
     python run_pipeline_reference.py image.tiff --module-save
@@ -124,16 +122,16 @@ def _extract_col_sums(mod, W):
     return [mod.getColSum(c) for c in range(W)]
 
 
-def _extract_roi(mod, log_roi_out_msg):
+def _extract_roi(log_roi_out_msg):
     numRegions = int(log_roi_out_msg.numValidRegions)
+    topBins_data = log_roi_out_msg.topBins[0]  # keys: "topBins[k].row" etc.
     regions = []
     for rank in range(numRegions):
-        entry = log_roi_out_msg.topRegions[rank]
         regions.append({
             "rank": rank,
-            "row": int(entry.row),
-            "col": int(entry.col),
-            "count": int(entry.count),
+            "row": int(topBins_data[f"topBins[{rank}].row"]),
+            "col": int(topBins_data[f"topBins[{rank}].col"]),
+            "count": int(topBins_data[f"topBins[{rank}].count"]),
         })
     return int(log_roi_out_msg.regionSize), regions
 
@@ -232,7 +230,7 @@ def main():
     thresh = _extract_thresh(mod, W, H)
     row_sums = _extract_row_sums(mod, H)
     col_sums = _extract_col_sums(mod, W)
-    region_size, roi_regions = _extract_roi(mod, log_roi_out_msg)
+    region_size, roi_regions = _extract_roi(log_roi_out_msg)
 
     # --- Save ---
     _save_tiff(raw,    os.path.join(_DATA_DIR, "raw_calibrated.tiff"))

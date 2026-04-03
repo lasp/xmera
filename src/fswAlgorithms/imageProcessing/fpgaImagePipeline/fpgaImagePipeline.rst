@@ -299,7 +299,7 @@ Message Connection Descriptions
       - :ref:`FpgaRowColSumMsgPayload`
       - Per-row and per-column above-threshold pixel counts.
     * - roiOutMsg
-      - :ref:`FpgaRoiMsgPayload`
+      - :ref:`FpgaBinsMsgPayload`
       - Top-8 ROI regions sorted descending by above-threshold pixel count.
     * - configOutMsg
       - :ref:`FpgaPipelineConfigMsgPayload`

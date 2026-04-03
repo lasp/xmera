@@ -15,5 +15,5 @@
 %include <architecture/msgPayloadDef/FpgaThreshImageMsgPayload.h>
 %include <architecture/msgPayloadDef/FpgaRowColSumMsgPayload.h>
 STRUCTASLIST(FpgaRoiEntry)
-%include <architecture/msgPayloadDef/FpgaRoiMsgPayload.h>
+%include <architecture/msgPayloadDef/FpgaBinsMsgPayload.h>
 %include <architecture/msgPayloadDef/FpgaPipelineConfigMsgPayload.h>

@@ -1,5 +1,5 @@
-#ifndef FPGA_ROI_MSG_PAYLOAD_H
-#define FPGA_ROI_MSG_PAYLOAD_H
+#ifndef FPGA_BINS_MSG_PAYLOAD_H
+#define FPGA_BINS_MSG_PAYLOAD_H
 
 #include <stdint.h>
 
@@ -14,10 +14,10 @@ typedef struct {
 
 /*! @brief Top-ranked ROI regions sorted descending by above-threshold pixel count. */
 typedef struct {
-    uint64_t timeTag;                             //!< [ns]   Time tag from upstream camera emulator
-    uint32_t regionSize;                          //!< [px]   Region size: 64, 128, or 256 pixels
-    uint32_t numValidRegions;                     //!< [-]    Number of valid entries (<= FPGA_ROI_TOP_COUNT)
-    FpgaRoiEntry topRegions[FPGA_ROI_TOP_COUNT];  //!< [-]    Top regions sorted descending by count
-} FpgaRoiMsgPayload;
+    uint64_t timeTag;                          //!< [ns]   Time tag from upstream camera emulator
+    uint32_t regionSize;                       //!< [px]   Region size: 64, 128, or 256 pixels
+    uint32_t numValidRegions;                  //!< [-]    Number of valid entries (<= FPGA_ROI_TOP_COUNT)
+    FpgaRoiEntry topBins[FPGA_ROI_TOP_COUNT];  //!< [-]    Top regions sorted descending by count
+} FpgaBinsMsgPayload;
 
 #endif

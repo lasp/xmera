@@ -180,7 +180,7 @@ void FpgaImagePipeline::updateState(uint64_t callTime) {
     this->applyBlurAndThreshold();
     this->computeRowColSums();
 
-    FpgaRoiMsgPayload roi{};
+    FpgaBinsMsgPayload roi{};
     this->computeRoi(roi);
 
     this->publishOutputs(callTime, imageTimeTag, roi);
@@ -436,7 +436,7 @@ void FpgaImagePipeline::computeRowColSums() {
 // computeRoi()
 // ---------------------------------------------------------------------------
 
-void FpgaImagePipeline::computeRoi(FpgaRoiMsgPayload& roi) const {
+void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload& roi) const {
     const uint32_t W = this->imageWidth;
     const uint32_t H = this->imageHeight;
     const uint32_t rSize = this->roiRegionSize;
@@ -473,11 +473,11 @@ void FpgaImagePipeline::computeRoi(FpgaRoiMsgPayload& roi) const {
     for (uint32_t k = 0; k < FPGA_ROI_TOP_COUNT; k++) {
         if (k < topCount) {
             const uint32_t idx = indices[k];
-            roi.topRegions[k].row = static_cast<uint16_t>(idx / numRegionCols);
-            roi.topRegions[k].col = static_cast<uint16_t>(idx % numRegionCols);
-            roi.topRegions[k].count = regionCounts[idx];
+            roi.topBins[k].row = static_cast<uint16_t>(idx / numRegionCols);
+            roi.topBins[k].col = static_cast<uint16_t>(idx % numRegionCols);
+            roi.topBins[k].count = regionCounts[idx];
         } else {
-            roi.topRegions[k] = FpgaRoiEntry{};
+            roi.topBins[k] = FpgaRoiEntry{};
         }
     }
 }
@@ -486,7 +486,7 @@ void FpgaImagePipeline::computeRoi(FpgaRoiMsgPayload& roi) const {
 // publishOutputs()
 // ---------------------------------------------------------------------------
 
-void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t imageTimeTag, FpgaRoiMsgPayload& roi) {
+void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t imageTimeTag, FpgaBinsMsgPayload& roi) {
     const uint32_t W = this->imageWidth;
     const uint32_t H = this->imageHeight;
     const size_t n = static_cast<size_t>(W) * H;
@@ -558,7 +558,7 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
 // saveDataToDisk()
 // ---------------------------------------------------------------------------
 
-void FpgaImagePipeline::saveDataToDisk(uint64_t timeTagNs, const FpgaRoiMsgPayload& roi) {
+void FpgaImagePipeline::saveDataToDisk(uint64_t timeTagNs, const FpgaBinsMsgPayload& roi) {
     std::string const prefix = this->saveDir + "/" + std::to_string(timeTagNs) + "_";
     uint32_t const W = this->imageWidth;
     uint32_t const H = this->imageHeight;
@@ -605,8 +605,7 @@ void FpgaImagePipeline::saveDataToDisk(uint64_t timeTagNs, const FpgaRoiMsgPaylo
         std::ofstream f(prefix + "roi.csv");
         f << "rank,region_col,region_row,count\n";
         for (uint32_t k = 0; k < roi.numValidRegions; k++) {
-            f << k << "," << roi.topRegions[k].col << "," << roi.topRegions[k].row << "," << roi.topRegions[k].count
-              << "\n";
+            f << k << "," << roi.topBins[k].col << "," << roi.topBins[k].row << "," << roi.topBins[k].count << "\n";
         }
     }
 }

@@ -374,7 +374,7 @@ def test_roi_ranking():
 
         roi_msg = mod.roiOutMsg.read()
         assert roi_msg.numValidRegions > 0, "No valid ROI regions reported"
-        top = roi_msg.topRegions[0]
+        top = roi_msg.topBins[0]
         assert top.count > 0, "Top ROI has zero pixel count"
         assert top.row == 2, f"Expected top ROI row=2, got {top.row}"
         assert top.col == 1, f"Expected top ROI col=1, got {top.col}"

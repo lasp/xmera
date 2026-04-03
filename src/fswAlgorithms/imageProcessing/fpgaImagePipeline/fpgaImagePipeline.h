@@ -6,7 +6,7 @@
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaPipelineConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaRawImageMsgPayload.h>
-#include <architecture/msgPayloadDef/FpgaRoiMsgPayload.h>
+#include <architecture/msgPayloadDef/FpgaBinsMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaRowColSumMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaThreshImageMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
@@ -86,7 +86,7 @@ class FpgaImagePipeline : public SysModel {
     Message<FpgaRawImageMsgPayload> blurredImageOutMsg;    //!< After box blur
     Message<FpgaThreshImageMsgPayload> threshImageOutMsg;  //!< Binary threshold result
     Message<FpgaRowColSumMsgPayload> rowColSumOutMsg;      //!< Row/col accumulators
-    Message<FpgaRoiMsgPayload> roiOutMsg;                  //!< Top-8 ROI regions
+    Message<FpgaBinsMsgPayload> roiOutMsg;                 //!< Top-8 ROI regions
     Message<FpgaPipelineConfigMsgPayload> configOutMsg;    //!< Ancillary config snapshot
 
     BSKLogger bskLogger = {};
@@ -121,9 +121,9 @@ class FpgaImagePipeline : public SysModel {
     void applyCalibration();
     void applyBlurAndThreshold();
     void computeRowColSums();
-    void computeRoi(FpgaRoiMsgPayload& roi) const;
-    void publishOutputs(uint64_t callTime, uint64_t imageTimeTag, FpgaRoiMsgPayload& roi);
-    void saveDataToDisk(uint64_t timeTagNs, const FpgaRoiMsgPayload& roi);
+    void computeRoi(FpgaBinsMsgPayload& roi) const;
+    void publishOutputs(uint64_t callTime, uint64_t imageTimeTag, FpgaBinsMsgPayload& roi);
+    void saveDataToDisk(uint64_t timeTagNs, const FpgaBinsMsgPayload& roi);
 
     // --- Helpers ---
     static uint16_t clamp12(int32_t v);
