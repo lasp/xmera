@@ -34,6 +34,7 @@ STRUCTASLIST(RWConfigElementMsgPayload)
 STRUCTASLIST(CSSArraySensorMsgPayload)
 STRUCTASLIST(THRConfigMsgPayload)
 STRUCTASLIST(ReconfigBurnInfoMsgPayload)
+STRUCTASLIST(FpgaRoiEntry)
 
 %include <architecture/messaging/messaging.h>
 %include <architecture/_GeneralModuleFiles/sys_model.h>
