@@ -14,11 +14,11 @@ Outputs written to ``data/``:
 
 Usage examples::
 
-    # Minimal — loads image.tiff with default pipeline parameters
-    python run_pipeline_reference.py image.tiff
-
     # Full control
-    python run_pipeline_reference.py test_resized.tif --width 4096 --height 3000 --kernel 7 --threshold 10000 --roi-size 128
+    python run_pipeline_reference.py test_cells.tif --width 4096 --height 3000 --kernel 7 --roi-size 128
+    python run_pipeline_reference.py pia_958_830.tiff --width 958 --height 830 --kernel 5 --roi-size 128
+    python run_pipeline_reference.py pia_616_592.tif --width 616 --height 592 --kernel 5 --roi-size 128
+    python run_pipeline_reference.py pia_1920_1080.tif --width 1920 --height 1080 --kernel 9 --roi-size 128
 
     # Enable built-in module disk saves as well
     python run_pipeline_reference.py image.tiff --module-save
@@ -172,6 +172,94 @@ def _save_roi_csv(regions, region_size, path):
             ])
 
 
+def _save_roi_overlay_tiff(blur, roi_regions, region_size, path):
+    """Save a colour-annotated TIFF with the top ROI regions drawn on the blur image.
+
+    Each of the up-to-8 valid regions is drawn as a coloured rectangle whose
+    top-left corner is at (pixel_col, pixel_row) = (region.col * region_size,
+    region.row * region_size).  The rank number (0 = best) is printed inside
+    the rectangle.  Rank 0 is red; subsequent ranks cycle through a fixed palette.
+
+    The blur image is normalised to 8-bit [0, 255] so that the annotation is
+    visible regardless of the blur output scale.
+    """
+    # Colour palette (BGR): rank 0 → red, 1 → orange, 2 → yellow, 3 → green,
+    #                        4 → cyan, 5 → blue, 6 → magenta, 7 → white
+    rank_colors = [
+        (0,   0,   255),
+        (0,   128, 255),
+        (0,   255, 255),
+        (0,   255,   0),
+        (255, 255,   0),
+        (255,   0,   0),
+        (255,   0, 255),
+        (255, 255, 255),
+    ]
+
+    # Normalise blur to 8-bit and convert to BGR for colour drawing
+    blur_8bit = cv2.normalize(blur, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    vis = cv2.cvtColor(blur_8bit, cv2.COLOR_GRAY2BGR)
+
+    for r in roi_regions:
+        rank   = r["rank"]
+        px_row = r["row"] * region_size
+        px_col = r["col"] * region_size
+        color  = rank_colors[rank % len(rank_colors)]
+        pt1 = (px_col, px_row)
+        pt2 = (px_col + region_size - 1, px_row + region_size - 1)
+        cv2.rectangle(vis, pt1, pt2, color, 2)
+        cv2.putText(vis, str(rank), (px_col + 4, px_row + 20),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2, cv2.LINE_AA)
+
+    cv2.imwrite(path, vis)
+
+
+# ---------------------------------------------------------------------------
+# Bit-depth detection and auto-threshold
+# ---------------------------------------------------------------------------
+
+def _detect_image_info(image_path, kernel):
+    """Read the image header to detect bit depth and suggest a pipeline threshold.
+
+    Bit-depth detection
+    -------------------
+    The module internally converts 8-bit images by scaling pixel values ×16
+    (bringing [0, 255] into the 12-bit equivalent range [0, 4080]).  This
+    function replicates that scaling so the suggested threshold is always
+    expressed in blur-output units, regardless of the source depth.
+
+    Threshold suggestion
+    --------------------
+    The pipeline threshold is compared against *blur* output values, not raw
+    pixel values.  For a uniform bright patch of intensity V with kernel k:
+
+        blur = (V * k * k) >> blurShift(k)    (blurShift: 5→1, 7→2, 9→3)
+
+    The suggested threshold is set to 70% of the blur value at the 99th
+    percentile raw pixel intensity.  This ensures that genuinely bright regions
+    (top 1% of pixels) will be above threshold after blurring, while typical
+    background pixels are not.
+
+    Returns
+    -------
+    (is_8bit : bool, width : int, height : int, suggested_threshold : int)
+    """
+    img = cv2.imread(image_path, cv2.IMREAD_ANYDEPTH | cv2.IMREAD_GRAYSCALE)
+    if img is None:
+        return False, None, None, 21000
+
+    is_8bit = (img.dtype == np.uint8)
+    img16 = img.astype(np.uint16) * 16 if is_8bit else img.astype(np.uint16)
+
+    h, w = img16.shape
+    shift = {5: 1, 7: 2, 9: 3}.get(int(kernel), 1)
+    p99 = int(np.percentile(img16.ravel(), 99))
+    blur_p99 = (p99 * int(kernel) * int(kernel)) >> shift
+    suggested = max(1, int(blur_p99 * 0.7))
+
+    return is_8bit, w, h, suggested
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -185,7 +273,8 @@ def main():
     parser.add_argument("--width",     type=int,   default=4096, help="Image width in pixels")
     parser.add_argument("--height",    type=int,   default=3000, help="Image height in pixels")
     parser.add_argument("--kernel",    type=int,   default=5,    help="Blur kernel size (5, 7, or 9)")
-    parser.add_argument("--threshold", type=int,   default=21000,    help="Threshold value (0–65535)")
+    parser.add_argument("--threshold", type=int,   default=None,
+                        help="Threshold value (0–65535). Omit to auto-detect from image.")
     parser.add_argument("--roi-size",  type=int,   default=64,   help="ROI region size (64, 128, or 256)")
 
     calib = parser.add_argument_group("calibration (optional)")
@@ -206,6 +295,18 @@ def main():
         sys.exit(f"ERROR: input image not found: {args.image}")
 
     os.makedirs(_DATA_DIR, exist_ok=True)
+
+    # --- Bit-depth detection and auto-threshold ---
+    is_8bit, detected_w, detected_h, auto_threshold = _detect_image_info(args.image, args.kernel)
+    depth_str = "8-bit  (module will scale ×16 → 12-bit equivalent)" if is_8bit else "16-bit"
+    print(f"Image depth       : {depth_str}")
+    if detected_w is not None:
+        print(f"Detected size     : {detected_w}×{detected_h}  (configured: {args.width}×{args.height})")
+    if args.threshold is None:
+        args.threshold = auto_threshold
+        print(f"Auto-threshold    : {args.threshold}  (70% of blur at 99th-percentile pixel)")
+    else:
+        print(f"Threshold         : {args.threshold}  (user-specified)")
 
     W, H = args.width, args.height
 
@@ -239,6 +340,7 @@ def main():
     _save_csv_vector(row_sums, "row",    os.path.join(_DATA_DIR, "row_sums.csv"))
     _save_csv_vector(col_sums, "col",    os.path.join(_DATA_DIR, "col_sums.csv"))
     _save_roi_csv(roi_regions, region_size, os.path.join(_DATA_DIR, "roi.csv"))
+    _save_roi_overlay_tiff(blur, roi_regions, region_size, os.path.join(_DATA_DIR, "roi_overlay.tiff"))
 
     # --- Summary ---
     above = int(thresh.astype(bool).sum())
@@ -254,6 +356,7 @@ def main():
     for name in ("raw_calibrated.tiff", "blurred.tiff", "threshold.png",
                  "row_sums.csv", "col_sums.csv", "roi.csv"):
         print(f"  {name}")
+    print(f"  roi_overlay.tiff")
 
 
 if __name__ == "__main__":
