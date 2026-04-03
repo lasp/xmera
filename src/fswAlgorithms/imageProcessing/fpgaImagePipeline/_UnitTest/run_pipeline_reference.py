@@ -123,7 +123,7 @@ def _extract_col_sums(mod, W):
 
 
 def _extract_roi(log_roi_out_msg):
-    numRegions = int(log_roi_out_msg.numValidRegions)
+    numRegions = log_roi_out_msg.numValidRegions[0]
     topBins_data = log_roi_out_msg.topBins[0]  # keys: "topBins[k].row" etc.
     regions = []
     for rank in range(numRegions):
@@ -133,7 +133,7 @@ def _extract_roi(log_roi_out_msg):
             "col": int(topBins_data[f"topBins[{rank}].col"]),
             "count": int(topBins_data[f"topBins[{rank}].count"]),
         })
-    return int(log_roi_out_msg.regionSize), regions
+    return log_roi_out_msg.regionSize[0], regions
 
 
 # ---------------------------------------------------------------------------
