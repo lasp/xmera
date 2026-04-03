@@ -3,6 +3,8 @@
 
 #include "inertialAttitudeUkf.h"
 
+#include "architecture/msgPayloadDef/IMUSensorMsgPayload.h"
+
 InertialAttitudeUkf::InertialAttitudeUkf(AttitudeFilterMethod method) { this->measurementAcceptanceMethod = method; }
 
 void InertialAttitudeUkf::customreset() {
@@ -199,20 +201,17 @@ void InertialAttitudeUkf::readStarTrackerData() {
  * @return void
  * */
 void InertialAttitudeUkf::readGyroData(const uint64_t currentSimNanos) {
-    IMUSensorMsgPayload gyroBuffer = this->imuSensorDataInMsg();
-    if (gyroBuffer.timeTag > this->previousFilterTimeTag) {
-        auto gyroMeasurement = MeasurementModel();
-        gyroMeasurement.setMeasurementName("gyro");
-        gyroMeasurement.setTimeTag(gyroBuffer.timeTag);
-        gyroMeasurement.setValidity(true);
+    IMUSensorBodyMsgPayload gyroBuffer = this->imuSensorDataInMsg();
+    auto gyroMeasurement = MeasurementModel();
+    gyroMeasurement.setMeasurementName("gyro");
+    gyroMeasurement.setTimeTag(currentSimNanos * NANO2SEC);
+    gyroMeasurement.setValidity(true);
 
-        gyroMeasurement.setMeasurementNoise(this->measNoiseScaling * this->gyroNoise /
-                                            gyroBuffer.numberOfValidGyroMeasurements);
-        gyroMeasurement.setObservation(cArrayToEigenVector(gyroBuffer.AngVelPlatform));
-        gyroMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
-        this->measurements[this->measurementIndex] = gyroMeasurement;
-        this->measurementIndex += 1;
-    }
+    gyroMeasurement.setMeasurementNoise(this->measNoiseScaling * this->gyroNoise);
+    gyroMeasurement.setObservation(cArrayToEigenVector(gyroBuffer.AngVelBody));
+    gyroMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
+    this->measurements[this->measurementIndex] = gyroMeasurement;
+    this->measurementIndex += 1;
 }
 
 /*! Read the message containing the measurement data.

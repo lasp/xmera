@@ -12,7 +12,7 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/FilterMsgPayload.h>
 #include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
-#include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
+#include <architecture/msgPayloadDef/IMUSensorBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
@@ -55,7 +55,7 @@ class InertialAttitudeUkf : public SRukfInterface {
     RWArrayConfigMsgPayload rwArrayConfigPayload;
     ReadFunctor<VehicleConfigMsgPayload> vehicleConfigMsg;
     ReadFunctor<RWSpeedMsgPayload> rwSpeedMsg;
-    ReadFunctor<IMUSensorMsgPayload> imuSensorDataInMsg;
+    ReadFunctor<IMUSensorBodyMsgPayload> imuSensorDataInMsg;
 
     Message<NavAttMsgPayload> navAttitudeOutputMsg;
     Message<FilterMsgPayload> inertialFilterOutputMsg;
