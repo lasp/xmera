@@ -195,9 +195,10 @@ void InertialAttitudeUkf::readStarTrackerData() {
 /*! Loop through the entire gyro buffer to find the first index that is in the future compared to the
  * previousFilterTimeTag. This does not assume the data comes in chronological order since the gyro data
  * is a ring buffer and can wrap around
+ * @param uint64_t currentSimNanos
  * @return void
  * */
-void InertialAttitudeUkf::readGyroData() {
+void InertialAttitudeUkf::readGyroData(const uint64_t currentSimNanos) {
     IMUSensorMsgPayload gyroBuffer = this->imuSensorDataInMsg();
     if (gyroBuffer.timeTag > this->previousFilterTimeTag) {
         auto gyroMeasurement = MeasurementModel();
@@ -236,10 +237,10 @@ void InertialAttitudeUkf::readFilterMeasurements(const uint64_t currentSimNanos)
     readStarTrackerData();
     /*! Only add the gyro measurements to processing if the filter is in a mode that desires that */
     if (this->measurementAcceptanceMethod == AttitudeFilterMethod::AllMeasurements) {
-        readGyroData();
+        readGyroData(currentSimNanos);
     }
     if (measurementAcceptanceMethod == AttitudeFilterMethod::GyroWhenDazzled && !this->validStarTracker) {
-        readGyroData();
+        readGyroData(currentSimNanos);
     }
 }
 
