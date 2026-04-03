@@ -74,9 +74,10 @@ void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
 
 /*! Read the message containing the measurement data.
  * It updates class variables relating to measurement data including validity and time tags.
+ @param uint64_t currentSimNanos
  @return void
  */
-void FlybyODuKF::readFilterMeasurements() {
+void FlybyODuKF::readFilterMeasurements(const uint64_t currentSimNanos) {
     this->opNavHeadingBuffer = this->opNavHeadingMsg();
     auto headingMeasurement = MeasurementModel();
 

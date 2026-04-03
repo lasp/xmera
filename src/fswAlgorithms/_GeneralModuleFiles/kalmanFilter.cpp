@@ -26,7 +26,7 @@ void KalmanFilter::updateState(uint64_t currentSimNanos) {
     this->customInitializeUpdate();
     /*! Read all available measurements, add their information to the Measurement container class, then sort the
      * vector in chronological order */
-    this->readFilterMeasurements();
+    this->readFilterMeasurements(currentSimNanos);
     this->orderMeasurementsChronologically();
     /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
      * has been populated in the measurements array*/

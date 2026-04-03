@@ -54,7 +54,7 @@ class KalmanFilter : public SysModel {
     /*! Read method neads to read incoming messages containing the measurements for the filter.
      * Their information must be added to the Measurement container class, and added to the measurements vector.
      * Each measurement must be paired with a measurement model provided in the measurementModels.h */
-    virtual void readFilterMeasurements() { /* virtual */ };
+    virtual void readFilterMeasurements(uint64_t currentSimNanos) { /* virtual */ };
     virtual void writeOutputMessages(uint64_t currentSimNanos) { /* virtual */ };
 
     virtual void timeUpdate(double updateTime) = 0;

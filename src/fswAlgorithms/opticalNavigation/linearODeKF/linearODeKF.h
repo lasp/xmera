@@ -28,7 +28,7 @@ class LinearODeKF : public EkfInterface {
 
    private:
     void customreset() final;
-    void readFilterMeasurements() final;
+    void readFilterMeasurements(uint64_t currentSimNanos) final;
     void writeOutputMessages(uint64_t currentSimNanos) final;
     static Eigen::MatrixXd measurementMatrix(const FilterStateVector& state);
 

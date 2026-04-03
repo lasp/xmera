@@ -28,7 +28,7 @@ class FlybyODuKF : public SRukfInterface {
 
    private:
     void customreset() final;
-    void readFilterMeasurements() final;
+    void readFilterMeasurements(uint64_t currentSimNanos) final;
     void writeOutputMessages(uint64_t currentSimNanos) final;
 
    public:

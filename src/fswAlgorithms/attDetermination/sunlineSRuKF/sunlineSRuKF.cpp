@@ -182,7 +182,7 @@ void SunlineSRuKF::readCssMeasurements() {
  * It updates class variables relating to measurement data including validity and time tags.
  @return void
  */
-void SunlineSRuKF::readFilterMeasurements() {
+void SunlineSRuKF::readFilterMeasurements(const uint64_t currentSimNanos) {
     /*! zero filter measurement index */
     this->filterMeasurement = 0;
 

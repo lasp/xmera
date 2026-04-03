@@ -216,9 +216,10 @@ void InertialAttitudeUkf::readGyroData() {
 
 /*! Read the message containing the measurement data.
  * It updates class variables relating to measurement data including validity and time tags.
+ @param uint64_t currentSimNanos
  @return void
  */
-void InertialAttitudeUkf::readFilterMeasurements() {
+void InertialAttitudeUkf::readFilterMeasurements(const uint64_t currentSimNanos) {
     /*! - Read static RW and spacecraft config data message and store it in module fields */
     if (this->firstFilterPass) {
         this->rwArrayConfigPayload = this->rwArrayConfigMsg();
