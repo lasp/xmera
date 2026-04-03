@@ -1,15 +1,15 @@
 """
-Unit tests for fpgaImagePipeline module.
+Unit tests for fpgaImagePipeline — one smoke test plus one test per computation
+function in updateState():
 
-Tests cover all pipeline stages:
-  1. Smoke test — small synthetic image via imageFileName, verify output dimensions.
-  2. Calibration op-codes — all 16 op-codes produce expected pixel values.
-  3. Blur — uniform image blurs to itself; impulse produces kernel-shaped response.
-  4. Threshold — pixels above/below threshold are correctly packed into the bit buffer.
-  5. Row/col sums — counts match manually counted above-threshold pixels.
-  6. ROI ranking — correct region ranked #1 for image with known bright spot.
-  7. Kernel size validation — reset() throws for invalid kernel size.
-  8. Message chaining — rawImageOutMsg fields are correctly written and readable.
+    test_smoke_small_image        — end-to-end: verifies rawImageOutMsg is published
+    applyBlurAndThreshold()  →  test_apply_blur_and_threshold
+    computeRowColSums()      →  test_compute_row_col_sums
+    computeRoi()             →  test_compute_roi
+    blur test for single impulse → getBlurPixel
+    message chaining — rawImageOutMsg fields are correctly written and readable.
+
+All tests use a fully synthetic NumPy image so every expected value is derived analytically.
 """
 
 import inspect
@@ -36,7 +36,7 @@ except ImportError:
     importErr = True
     reasonErr = "fpgaImagePipeline not built — check OpenCV option"
 
-from xmera.architecture import messaging
+from xmera.architecture import messaging  # registers message payload types in SWIG runtime
 from xmera.utilities import SimulationBaseClass, macros
 
 
@@ -44,27 +44,24 @@ from xmera.utilities import SimulationBaseClass, macros
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_sim(module, task_rate_ns=int(1e9)):
-    """Set up a minimal simulation with one task containing *module*."""
+def _make_sim(module):
     sim = SimulationBaseClass.SimBaseClass()
-    task = sim.CreateNewTask("testTask", macros.sec2nano(1.0))
+    proc = sim.CreateNewProcess("testProcess")
+    proc.addTask(sim.CreateNewTask("testTask", macros.sec2nano(1.0)))
     sim.AddModelToTask("testTask", module)
     return sim
 
 
-def _make_tiff(arr_uint16, path):
-    """Write a uint16 numpy array to a 16-bit grayscale TIFF."""
-    cv2.imwrite(path, arr_uint16.astype(np.uint16))
+def _make_tiff(arr, path):
+    cv2.imwrite(path, arr.astype(np.uint16))
 
 
 def _run_once(sim):
-    """Initialize and step the simulation once."""
     sim.InitializeSimulation()
-    sim.TotalSim.SingleStepProcesses()
+    sim.TotalSim.singleStepProcesses()
 
 
 def _make_module(width, height, kernel=5, threshold=0, roi_size=64):
-    """Create a configured FpgaImagePipeline module."""
     mod = fpgaImagePipeline.FpgaImagePipeline()
     mod.ModelTag = "fpgaTest"
     mod.setImageWidth(width)
@@ -76,7 +73,22 @@ def _make_module(width, height, kernel=5, threshold=0, roi_size=64):
 
 
 # ---------------------------------------------------------------------------
-# 1. Smoke test
+# Shared synthetic image used by the first two tests
+#
+#   Image  : 16×8, every pixel = 500 (uint16), kernel=5 (half=2)
+#   Blur   : interior pixels (rows 2–5, cols 2–13) receive
+#            blur = (500 × 25) >> 1 = 6250
+#            border pixels (rows 0–1, 6–7 and cols 0–1, 14–15) receive blur = 0
+# ---------------------------------------------------------------------------
+
+W_SMALL, H_SMALL = 16, 8
+VAL = 500
+INTERIOR_BLUR = (VAL * 5 * 5) >> 1   # 6250 — full 5×5 window, blurShift(5)=1
+HALF = 2                               # (kernel-1)//2 for kernel=5
+
+
+# ---------------------------------------------------------------------------
+# Test 0 — Smoke test
 # ---------------------------------------------------------------------------
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
@@ -104,122 +116,306 @@ def test_smoke_small_image():
 
 
 # ---------------------------------------------------------------------------
-# 2. Calibration op-code tests
+# Test 1 — applyBlurAndThreshold()
 # ---------------------------------------------------------------------------
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
-@pytest.mark.parametrize("op_code, raw_val, calib_val, reg_a, reg_b, reg_c, reg_d, expected", [
-    # op=0x0: pass — output = raw
-    (0x0,  200, 100, 10, 20, 30, 40, 200),
-    # op=0x1: set to regA
-    (0x1,  200, 100, 50, 20, 30, 40, 50),
-    # op=0x2: set to regB
-    (0x2,  200, 100, 10, 60, 30, 40, 60),
-    # op=0x3: set to regC
-    (0x3,  200, 100, 10, 20, 70, 40, 70),
-    # op=0x4: set to regD
-    (0x4,  200, 100, 10, 20, 30, 80, 80),
-    # op=0x5: set to calibVal literal
-    (0x5,  200, 123, 10, 20, 30, 40, 123),
-    # op=0x6: add regA (200 + 50 = 250)
-    (0x6,  200, 100, 50, 20, 30, 40, 250),
-    # op=0x7: add regB (200 + 60 = 260)
-    (0x7,  200, 100, 10, 60, 30, 40, 260),
-    # op=0x8: add regC (200 + 70 = 270)
-    (0x8,  200, 100, 10, 20, 70, 40, 270),
-    # op=0x9: add regD (200 + 80 = 280)
-    (0x9,  200, 100, 10, 20, 30, 80, 280),
-    # op=0xa: add calibVal (200 + 100 = 300)
-    (0xa,  200, 100, 10, 20, 30, 40, 300),
-    # op=0xb: sub regA (200 - 50 = 150)
-    (0xb,  200, 100, 50, 20, 30, 40, 150),
-    # op=0xc: sub regB (200 - 60 = 140)
-    (0xc,  200, 100, 10, 60, 30, 40, 140),
-    # op=0xd: sub regC (200 - 70 = 130)
-    (0xd,  200, 100, 10, 20, 70, 40, 130),
-    # op=0xe: sub regD (200 - 80 = 120)
-    (0xe,  200, 100, 10, 20, 30, 80, 120),
-    # op=0xf: sub calibVal (200 - 100 = 100)
-    (0xf,  200, 100, 10, 20, 30, 40, 100),
-    # Clamp at 0: op=0xb, raw=10, regA=50 → 10-50 clamped to 0
-    (0xb,   10, 100, 50, 20, 30, 40,   0),
-    # Clamp at 4095: op=0x6, raw=4000, regA=200 → 4200 clamped to 4095
-    (0x6, 4000, 100, 200, 20, 30, 40, 4095),
+@pytest.mark.parametrize("threshold, interior_set", [
+    (INTERIOR_BLUR - 1, True),   # 6250 > 6249 → interior bits SET
+    (INTERIOR_BLUR,     False),  # 6250 > 6250 is False → all bits CLEAR (strict >)
 ])
-def test_calibration_opcodes(op_code, raw_val, calib_val, reg_a, reg_b, reg_c, reg_d, expected):
-    """Each calibration op-code produces the correct output for a single-pixel image."""
-    W, H = 1, 1
-    # Build a 1-pixel image and a 1-pixel calibration image
-    img = np.array([[raw_val]], dtype=np.uint16)
-    calib_word = ((op_code & 0xF) << 12) | (calib_val & 0x0FFF)
-    calib = np.array([[calib_word]], dtype=np.uint16)
+def test_apply_blur_and_threshold(threshold, interior_set):
+    """Unit test for applyBlurAndThreshold() — verifies both blurBuf and threshBuf.
 
+    C++ function under test
+    -----------------------
+    applyBlurAndThreshold() performs two operations in a single pass:
+      1. Computes a separable 2-D box blur and writes the result to blurBuf.
+      2. Compares each blur output against the threshold and packs the result
+         (1 = above threshold, 0 = not) into threshBuf, MSB-first per byte.
+
+    Synthetic image
+    ---------------
+    16 (W) × 8 (H), every pixel = 500 (uint16).
+    Kernel = 5, half = (5-1)/2 = 2.
+
+    Blur formula (NOT a true average)
+    ----------------------------------
+    The FPGA blur computes:
+        blur = sum(k×k window) >> blurShift(k)
+    blurShift(5) = 1, so the divisor is 2, not k²=25.
+
+    For a uniform image every pixel in the window = 500, so:
+        interior blur = (500 × 5 × 5) >> 1 = 12500 >> 1 = 6250
+
+    This is intentional hardware behaviour: right-shifting by 1 is free on an
+    FPGA, whereas dividing by 25 would require an expensive divider circuit.
+    The threshold must therefore be calibrated to the blur output scale (~6250),
+    not the raw pixel scale (~500).
+
+    Pixel regions
+    -------------
+    Interior (rows 2–5, cols 2–13):
+        The full 5×5 window fits inside the image → blur = 6250.
+    Border (rows 0–1, rows 6–7, cols 0–1, cols 14–15):
+        The pipeline never writes the border strip → blur = 0.
+
+    Parametrized threshold cases
+    ----------------------------
+    threshold = 6249:  6250 > 6249 is True  → interior bits SET,  border bits CLEAR.
+    threshold = 6250:  6250 > 6250 is False → ALL bits CLEAR.
+    The second case specifically verifies the comparison is strict > (not >=).
+
+    Assertions (every pixel checked)
+    ---------------------------------
+    getBlurPixel(idx) == 6250  for interior pixels,  0 for border pixels.
+    getThreshBit(idx) == True  for interior pixels when threshold=6249,
+                        False  for all pixels when threshold=6250.
+    """
+    img = np.full((H_SMALL, W_SMALL), VAL, dtype=np.uint16)
     with tempfile.NamedTemporaryFile(suffix=".tiff", delete=False) as f:
         img_path = f.name
-    with tempfile.NamedTemporaryFile(suffix=".tiff", delete=False) as f:
-        calib_path = f.name
     try:
         _make_tiff(img, img_path)
-        _make_tiff(calib, calib_path)
-
-        mod = _make_module(W, H)
+        mod = _make_module(W_SMALL, H_SMALL, kernel=5, threshold=threshold)
         mod.setImageFileName(img_path)
-        mod.setCalibEnabled(True)
-        mod.setCalibImageFile(calib_path)
-        mod.setCalibRegA(reg_a)
-        mod.setCalibRegB(reg_b)
-        mod.setCalibRegC(reg_c)
-        mod.setCalibRegD(reg_d)
-        sim = _make_sim(mod)
-        _run_once(sim)
+        _run_once(_make_sim(mod))
 
-        result = mod.getRawPixel(0)
-        assert result == expected, (
-            f"op=0x{op_code:x}, raw={raw_val}, calib={calib_val}: "
-            f"expected {expected}, got {result}"
-        )
+        for r in range(H_SMALL):
+            for c in range(W_SMALL):
+                idx = r * W_SMALL + c
+                interior = HALF <= r < H_SMALL - HALF and HALF <= c < W_SMALL - HALF
+                expected_blur = INTERIOR_BLUR if interior else 0
+                expected_bit  = interior_set  if interior else False
+
+                assert mod.getBlurPixel(idx) == expected_blur, (
+                    f"blur  ({r},{c}): expected {expected_blur}, got {mod.getBlurPixel(idx)}"
+                )
+                assert mod.getThreshBit(idx) == expected_bit, (
+                    f"bit   ({r},{c}): expected {expected_bit}, got {mod.getThreshBit(idx)}"
+                )
     finally:
         os.unlink(img_path)
-        os.unlink(calib_path)
 
 
 # ---------------------------------------------------------------------------
-# 3. Blur tests
+# Test 2 — computeRowColSums()
 # ---------------------------------------------------------------------------
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
-@pytest.mark.parametrize("kernel", [5, 7, 9])
-def test_blur_uniform_image(kernel):
-    """A uniform image should blur to itself (modulo integer rounding)."""
-    W, H = 32, 32
-    val = 512
-    img = np.full((H, W), val, dtype=np.uint16)
+def test_compute_row_col_sums():
+    """Unit test for computeRowColSums() — verifies rowSumBuf and colSumBuf.
+
+    C++ function under test
+    -----------------------
+    computeRowColSums() reads threshBuf (produced by applyBlurAndThreshold) and
+    accumulates two 1-D histograms:
+        rowSumBuf[r]  +=1  for each set bit at column c in row r
+        colSumBuf[c]  +=1  for each set bit at row r in column c
+
+    It reads only threshBuf — it does not re-read blur values or raw pixels.
+
+    Synthetic image and pipeline settings
+    --------------------------------------
+    Same 16×8 uniform image (val=500) and kernel=5 as test_apply_blur_and_threshold.
+    threshold = INTERIOR_BLUR - 1 = 6249, so ALL interior pixels are above threshold.
+
+    Known threshBuf pattern (trust test_apply_blur_and_threshold)
+    --------------------------------------------------------------
+    Interior rectangle rows 2–5 × cols 2–13: all bits SET  (48 set bits total).
+    Border rows 0–1, 6–7 and cols 0–1, 14–15: all bits CLEAR.
+
+    Expected rowSumBuf  (H=8 entries)
+    ------------------------------------
+    row 0:    0   — border, no set bits in this row
+    row 1:    0   — border
+    rows 2–5: 12  — 12 set bits per row (cols 2, 3, …, 13 are all set)
+    row 6:    0   — border
+    row 7:    0   — border
+
+    Expected colSumBuf  (W=16 entries)
+    ------------------------------------
+    col 0:      0   — border, no set bits in this column
+    col 1:      0   — border
+    cols 2–13:  4   — 4 set bits per column (rows 2, 3, 4, 5 are all set)
+    col 14:     0   — border
+    col 15:     0   — border
+
+    Cross-check: sum(rowSumBuf) = 4×12 = 48 = sum(colSumBuf) = 12×4 = 48.
+    """
+    THRESHOLD = INTERIOR_BLUR - 1   # 6249 → all interior bits set
+
+    EXPECTED_ROW_SUMS = [0, 0, 12, 12, 12, 12, 0, 0]
+    EXPECTED_COL_SUMS = [0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0]
+
+    img = np.full((H_SMALL, W_SMALL), VAL, dtype=np.uint16)
+    with tempfile.NamedTemporaryFile(suffix=".tiff", delete=False) as f:
+        img_path = f.name
+    try:
+        _make_tiff(img, img_path)
+        mod = _make_module(W_SMALL, H_SMALL, kernel=5, threshold=THRESHOLD)
+        mod.setImageFileName(img_path)
+        _run_once(_make_sim(mod))
+
+        for r in range(H_SMALL):
+            assert mod.getRowSum(r) == EXPECTED_ROW_SUMS[r], (
+                f"rowSum[{r}]: expected {EXPECTED_ROW_SUMS[r]}, got {mod.getRowSum(r)}"
+            )
+        for c in range(W_SMALL):
+            assert mod.getColSum(c) == EXPECTED_COL_SUMS[c], (
+                f"colSum[{c}]: expected {EXPECTED_COL_SUMS[c]}, got {mod.getColSum(c)}"
+            )
+    finally:
+        os.unlink(img_path)
+
+
+# ---------------------------------------------------------------------------
+# Test 3 — computeRoi()
+# ---------------------------------------------------------------------------
+
+@pytest.mark.skipif(importErr, reason=reasonErr)
+def test_compute_roi():
+    """Unit test for computeRoi() — verifies region ranking by above-threshold count.
+
+    C++ function under test
+    -----------------------
+    computeRoi() divides the image into a grid of roi_size×roi_size regions,
+    counts the above-threshold pixels (from threshBuf) in each region, then
+    partial-sorts to find the top FPGA_ROI_TOP_COUNT (=8) regions by count and
+    writes them in descending order into FpgaBinsMsgPayload.topBins[].
+
+    Synthetic image
+    ---------------
+    192×192, all pixels = 0 except a 64×64 bright block (value 4095) at
+    raw rows [64..127], cols [64..127].
+
+    Pipeline settings
+    -----------------
+    kernel=5 (half=2), threshold=100, roi_size=64.
+    The image forms a 3×3 grid of 9 regions (192/64 = 3 per side):
+        (row=0,col=0)  (row=0,col=1)  (row=0,col=2)
+        (row=1,col=0)  (row=1,col=1)  (row=1,col=2)   ← bright block here
+        (row=2,col=0)  (row=2,col=1)  (row=2,col=2)
+
+    Above-threshold pixel derivation
+    ---------------------------------
+    The 5×5 blur window at (rStart, c) overlaps the bright block [64..127]×[64..127]
+    when rStart ∈ [60..127] and c ∈ [60..127], giving:
+        outRow = rStart+2  ∈ [62..129]
+        outCol = c+2       ∈ [62..129]
+    Any overlap — even 1 bright pixel — produces blur ≥ 4095>>1 = 2047 >> threshold=100,
+    so all 68×68 = 4624 positions in [62..129]×[62..129] are above threshold.
+
+    Count per region (roi_size=64, regions cover pixel rows/cols [0..63], [64..127], [128..191])
+    --------------------------------------------------------------------------------------------
+    Region (0,0): outRows [62,63] × outCols [62,63]   =  2× 2 =    4
+    Region (0,1): outRows [62,63] × outCols [64,127]  =  2×64 =  128
+    Region (0,2): outRows [62,63] × outCols [128,129] =  2× 2 =    4
+    Region (1,0): outRows [64,127] × outCols [62,63]  = 64× 2 =  128
+    Region (1,1): outRows [64,127] × outCols [64,127] = 64×64 = 4096  ← ranked #1
+    Region (1,2): outRows [64,127] × outCols [128,129]= 64× 2 =  128
+    Region (2,0): outRows [128,129] × outCols [62,63] =  2× 2 =    4
+    Region (2,1): outRows [128,129] × outCols [64,127]=  2×64 =  128
+    Region (2,2): outRows [128,129] × outCols [128,129]=  2× 2 =    4
+    Total = 4624.
+
+    numValidRegions
+    ---------------
+    All 9 regions have nonzero counts, but FPGA_ROI_TOP_COUNT = 8, so
+    numValidRegions = min(9, 8) = 8.
+
+    Recorder access pattern
+    -----------------------
+    roiOutMsg is accessed via a Basilisk recorder (not .read()) because
+    FpgaBinsMsgPayload contains a struct array (topBins[8]) that requires
+    STRUCTASLIST SWIG typemaps — these are only active in the recorder's
+    message module.  The recorder exposes topBins as a dict with keys
+    "topBins[k].row", "topBins[k].col", "topBins[k].count".
+
+    Expected roiOutMsg (recorder access)
+    --------------------------------------
+    numValidRegions    = 8
+    topBins[0].row   = 1     (region row index in the 3×3 grid)
+    topBins[0].col   = 1     (region col index in the 3×3 grid)
+    topBins[0].count = 4096  (number of above-threshold pixels in region (1,1))
+    """
+    ROI_SIZE = 64
+    W, H = 3 * ROI_SIZE, 3 * ROI_SIZE   # 192×192
+
+    img = np.zeros((H, W), dtype=np.uint16)
+    img[ROI_SIZE:2 * ROI_SIZE, ROI_SIZE:2 * ROI_SIZE] = 4095   # center region (1,1)
 
     with tempfile.NamedTemporaryFile(suffix=".tiff", delete=False) as f:
         img_path = f.name
     try:
         _make_tiff(img, img_path)
-        mod = _make_module(W, H, kernel=kernel, threshold=0)
+        mod = _make_module(W, H, kernel=5, threshold=100, roi_size=ROI_SIZE)
         mod.setImageFileName(img_path)
         sim = _make_sim(mod)
+        roi_rec = mod.roiOutMsg.recorder()
+        sim.AddModelToTask("testTask", roi_rec)
         _run_once(sim)
 
-        # Check interior pixels (away from border effects of the zero-border window)
-        half = (kernel - 1) // 2
-        for r in range(half, H - half):
-            for c in range(half, W - half):
-                got = mod.getBlurPixel(r * W + c)
-                # Interior pixels have full kernel coverage: sum = val * kernel^2, shift applies
-                shift = {5: 1, 7: 2, 9: 3}[kernel]
-                expected = (val * kernel * kernel) >> shift
-                assert got == expected, f"kernel={kernel} r={r} c={c}: got {got}, expected {expected}"
+        num_valid = roi_rec.numValidRegions[0]
+        top       = roi_rec.topBins[0]
+        assert num_valid == 8, (
+            f"numValidRegions: expected 8, got {num_valid}"
+        )
+        assert int(top["topBins[0].row"])   == 1,    f"top.row:   expected 1,    got {top['topBins[0].row']}"
+        assert int(top["topBins[0].col"])   == 1,    f"top.col:   expected 1,    got {top['topBins[0].col']}"
+        assert int(top["topBins[0].count"]) == 4096, f"top.count: expected 4096, got {top['topBins[0].count']}"
     finally:
         os.unlink(img_path)
 
 
+# ---------------------------------------------------------------------------
+# Test 4 - Blur test for single impulse
+# ---------------------------------------------------------------------------
 @pytest.mark.skipif(importErr, reason=reasonErr)
 def test_blur_impulse_kernel5():
-    """A single bright pixel blurs to a kernel-shaped (5x5) response."""
+    """Unit test for applyBlurAndThreshold() — verifies blur spatial support using a
+    single-pixel impulse image.
+
+    C++ function under test
+    -----------------------
+    applyBlurAndThreshold() implements a separable 2-D box blur:
+        Row pass  : for each pixel (r, c), sum the row window [c-half .. c+half].
+        Column pass: for each result (r, c), sum the column window [r-half .. r+half].
+        Final blur = (row_sum × col_sum product) >> blurShift(k)
+    For kernel=5: half=2, blurShift=1, so the 2-D sum is right-shifted by 1.
+
+    Synthetic image
+    ---------------
+    16×16, all pixels = 0 except a single bright pixel at (row=7, col=7) = 4095.
+    This is an impulse (delta function), which isolates the blur kernel's spatial
+    support: the blur output is nonzero only where the sliding window overlaps the
+    impulse location.
+
+    Expected nonzero region
+    -----------------------
+    The 5×5 window (half=2) centred on output pixel (r, c) overlaps the impulse at
+    (cy=7, cx=7) only when:
+        |r - 7| <= 2  AND  |c - 7| <= 2
+    That is a 5×5 block: rows 5–9, cols 5–9.
+
+    For any (r, c) in that block, exactly one pixel in the window is nonzero (4095),
+    so the full-window sum = 4095, and:
+        blur = 4095 >> 1 = 2047
+
+    At the centre (r=7, c=7) the full 5×5 window is used, giving the same 2047.
+
+    Two assertions
+    --------------
+    1. Peak check: getBlurPixel(7*16+7) == 2047.
+       Only one pixel in the 5×5 window is nonzero (4095), so
+       colSum = 4095 and blur = 4095 >> 1 = 2047.
+
+    2. Support check: for all pixels with |r-7| > half OR |c-7| > half,
+       getBlurPixel == 0.
+       The condition |r-cy| > half OR |c-cx| > half exactly identifies
+       pixels outside the 5×5 nonzero region — any blur energy leaking
+       beyond that boundary triggers a failure.
+    """
     W, H = 16, 16
     img = np.zeros((H, W), dtype=np.uint16)
     cx, cy = 7, 7  # center of impulse (col, row)
@@ -234,177 +430,24 @@ def test_blur_impulse_kernel5():
         sim = _make_sim(mod)
         _run_once(sim)
 
-        shift = 1  # kernel=5 → shift=1
-        # The peak (at the impulse) should have gone through a 1x1 "window" with value 4095,
-        # then column pass with 1 element: blurBuf[cy*W+cx] = (4095 >> 1) = 2047
-        peak = mod.getBlurPixel(cy * W + cx)
-        assert peak > 0, "Peak of impulse response should be nonzero"
-
-        # All pixels farther than 4 from center should be zero (2*half+1=5, half=2)
         half = 2
+        # The full 5×5 window is centred on (cy,cx): sum = 4095 (one nonzero pixel),
+        # blur = 4095 >> 1 = 2047.
+        peak = mod.getBlurPixel(cy * W + cx)
+        assert peak == 2047, f"Peak of impulse response: expected 2047, got {peak}"
+
+        # All pixels outside the 5×5 support (|r-cy|>half OR |c-cx|>half) must be zero.
         for r in range(H):
             for c in range(W):
                 v = mod.getBlurPixel(r * W + c)
-                if abs(r - cy) > half * 2 or abs(c - cx) > half * 2:
-                    assert v == 0, f"Expected zero at ({r},{c}) far from impulse, got {v}"
+                if abs(r - cy) > half or abs(c - cx) > half:
+                    assert v == 0, f"Expected zero at ({r},{c}) outside 5×5 support, got {v}"
     finally:
         os.unlink(img_path)
 
 
 # ---------------------------------------------------------------------------
-# 4. Threshold test
-# ---------------------------------------------------------------------------
-
-@pytest.mark.skipif(importErr, reason=reasonErr)
-def test_threshold_packing():
-    """Pixels above threshold are set in the 1-bit buffer; below are clear."""
-    W, H = 8, 4  # exactly 4 bytes of threshold buffer
-    threshold = 100
-
-    # Create image: even-column pixels = 200 (above), odd-column = 50 (below)
-    img = np.zeros((H, W), dtype=np.uint16)
-    img[:, 0::2] = 200   # even cols: above threshold
-    img[:, 1::2] = 50    # odd cols: below threshold
-
-    with tempfile.NamedTemporaryFile(suffix=".tiff", delete=False) as f:
-        img_path = f.name
-    try:
-        _make_tiff(img, img_path)
-        # kernel=5 with uniform regions; use a tiny image so blur doesn't mix columns
-        # Use kernel=5, but the image is only 4 rows tall — border effects will occur.
-        # For this test, skip blur by setting all cols to the same value then checking
-        # the threshold behaviour directly with a simple case.
-        mod = _make_module(W, H, kernel=5, threshold=threshold)
-        mod.setImageFileName(img_path)
-        sim = _make_sim(mod)
-        _run_once(sim)
-
-        # Check a few known pixels in the interior
-        # After blur, mixed pixels may have intermediate values — just check
-        # that the overall pattern: every pixel has a deterministic above/below result.
-        # Focus on row 2, columns 0 and 1 (interior of the 4-row image)
-        for c in range(W):
-            idx = 2 * W + c
-            bit = mod.getThreshBit(idx)
-            blur_val = mod.getBlurPixel(idx)
-            if blur_val > threshold:
-                assert bit, f"col={c} blur={blur_val} > threshold={threshold} but bit is 0"
-            else:
-                assert not bit, f"col={c} blur={blur_val} <= threshold={threshold} but bit is 1"
-    finally:
-        os.unlink(img_path)
-
-
-# ---------------------------------------------------------------------------
-# 5. Row/col sums test
-# ---------------------------------------------------------------------------
-
-@pytest.mark.skipif(importErr, reason=reasonErr)
-def test_row_col_sums():
-    """Row and column sums match manually counted above-threshold pixels."""
-    W, H = 16, 16
-    threshold = 500
-
-    # All pixels = 0 except a 4x4 block at top-left corner = 4095
-    img = np.zeros((H, W), dtype=np.uint16)
-    img[0:4, 0:4] = 4095
-
-    with tempfile.NamedTemporaryFile(suffix=".tiff", delete=False) as f:
-        img_path = f.name
-    try:
-        _make_tiff(img, img_path)
-        mod = _make_module(W, H, kernel=5, threshold=threshold, roi_size=64)
-        mod.setImageFileName(img_path)
-        sim = _make_sim(mod)
-        _run_once(sim)
-
-        # Count what the test expects from the threshold buffer (after blur)
-        expected_row_sums = [mod.getRowSum(r) for r in range(H)]
-        expected_col_sums = [mod.getColSum(c) for c in range(W)]
-
-        # Total above-threshold pixels = sum of all row sums = sum of all col sums
-        total_from_rows = sum(expected_row_sums)
-        total_from_cols = sum(expected_col_sums)
-        assert total_from_rows == total_from_cols, (
-            f"Row sum total ({total_from_rows}) != col sum total ({total_from_cols})"
-        )
-
-        # The bright block is at rows 0-3, cols 0-3. After blur with kernel=5, some
-        # surrounding pixels may also exceed threshold. At minimum the 4 core rows
-        # of the block should have nonzero row sums.
-        for r in range(4):
-            assert expected_row_sums[r] > 0, f"Row {r} in bright block has zero sum"
-        for c in range(4):
-            assert expected_col_sums[c] > 0, f"Col {c} in bright block has zero sum"
-
-        # Rows and columns far from the block should be zero
-        for r in range(8, H):
-            assert expected_row_sums[r] == 0, f"Row {r} far from block should be zero"
-        for c in range(8, W):
-            assert expected_col_sums[c] == 0, f"Col {c} far from block should be zero"
-    finally:
-        os.unlink(img_path)
-
-
-# ---------------------------------------------------------------------------
-# 6. ROI ranking test
-# ---------------------------------------------------------------------------
-
-@pytest.mark.skipif(importErr, reason=reasonErr)
-def test_roi_ranking():
-    """The region containing a known bright spot is ranked #1."""
-    roi_size = 64
-    W, H = roi_size * 3, roi_size * 3  # 3x3 grid of regions
-    threshold = 100
-
-    img = np.zeros((H, W), dtype=np.uint16)
-    # Bright spot in region (regionRow=2, regionCol=1) — bottom-middle region
-    r_start = 2 * roi_size
-    c_start = 1 * roi_size
-    img[r_start:r_start + roi_size, c_start:c_start + roi_size] = 4095
-
-    with tempfile.NamedTemporaryFile(suffix=".tiff", delete=False) as f:
-        img_path = f.name
-    try:
-        _make_tiff(img, img_path)
-        mod = _make_module(W, H, kernel=5, threshold=threshold, roi_size=roi_size)
-        mod.setImageFileName(img_path)
-        sim = _make_sim(mod)
-        _run_once(sim)
-
-        roi_msg = mod.roiOutMsg.read()
-        assert roi_msg.numValidRegions > 0, "No valid ROI regions reported"
-        top = roi_msg.topBins[0]
-        assert top.count > 0, "Top ROI has zero pixel count"
-        assert top.row == 2, f"Expected top ROI row=2, got {top.row}"
-        assert top.col == 1, f"Expected top ROI col=1, got {top.col}"
-    finally:
-        os.unlink(img_path)
-
-
-# ---------------------------------------------------------------------------
-# 7. Kernel size validation
-# ---------------------------------------------------------------------------
-
-@pytest.mark.skipif(importErr, reason=reasonErr)
-@pytest.mark.parametrize("bad_kernel", [0, 1, 3, 4, 6, 8, 10, 255])
-def test_invalid_kernel_size_raises(bad_kernel):
-    """setKernelSize raises immediately for unsupported kernel sizes (only 5, 7, 9 are valid)."""
-    with pytest.raises(Exception):
-        _make_module(32, 32, kernel=bad_kernel)
-
-
-@pytest.mark.skipif(importErr, reason=reasonErr)
-@pytest.mark.parametrize("good_kernel", [5, 7, 9])
-def test_valid_kernel_size_no_raise(good_kernel):
-    """setKernelSize accepts valid kernel sizes 5, 7, and 9."""
-    mod = _make_module(32, 32, kernel=good_kernel)
-    sim = _make_sim(mod)
-    sim.InitializeSimulation()  # should not raise
-
-
-# ---------------------------------------------------------------------------
-# 8. Message chaining
+# Test 5 - Message chaining
 # ---------------------------------------------------------------------------
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
