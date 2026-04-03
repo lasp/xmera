@@ -256,8 +256,9 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
             this->rawBuf[i] = src[i] & 0x0FFF;
         }
         timeTagOut = imgMsg.timeTag;
+    } else {
+        bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: no image source (set imageFileName or link imageInMsg)");
     }
-    bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: no image source (set imageFileName or link imageInMsg)");
     return imageSourceIsConfigured;
 }
 
