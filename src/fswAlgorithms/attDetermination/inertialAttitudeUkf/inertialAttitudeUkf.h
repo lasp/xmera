@@ -23,13 +23,13 @@
 #define MAX_ST_VEH_COUNT 4
 
 /*! @brief Star Tracker (ST) sensor container class. Contains the msg input name and Id and sensor noise value. */
-class StarTrackerMessage {
+class AttitudeMessage {
    public:
-    ReadFunctor<STAttMsgPayload> starTrackerMsg;  //!< star tracker input message
-    Eigen::Matrix3d measurementNoise_C;           //!< [-] Per axis noise on the ST
+    ReadFunctor<STAttMsgPayload> attitudeMsg;  //!< attitude input message
+    Eigen::Matrix3d measurementNoise_C;        //!< [-] Per axis noise on the attitude
 };
 
-enum class AttitudeFilterMethod { StarOnly, GyroWhenDazzled, AllMeasurements };
+enum class AttitudeFilterMethod { AttitudeOnly, RateMeasurementsWhenNoStars, AllMeasurements };
 
 /*! @brief Inertial Attitude filter which reads Star Tracker measurements and gyro measurements */
 class InertialAttitudeUkf : public SRukfInterface {
@@ -46,8 +46,8 @@ class InertialAttitudeUkf : public SRukfInterface {
 
     /*! Specific read messages */
     void readRWSpeedData();
-    void readStarTrackerData();
-    void readGyroData();
+    void readAttitudeData();
+    void readRateData();
     void switchStateCovariance();
 
    public:
@@ -59,18 +59,18 @@ class InertialAttitudeUkf : public SRukfInterface {
 
     Message<NavAttMsgPayload> navAttitudeOutputMsg;
     Message<FilterMsgPayload> inertialFilterOutputMsg;
-    Message<FilterResidualsMsgPayload> starTrackerResidualMsg;
-    Message<FilterResidualsMsgPayload> gyroResidualMsg;
+    Message<FilterResidualsMsgPayload> attitudeResidualMsg;
+    Message<FilterResidualsMsgPayload> rateResidualMsg;
 
-    void setGyroNoise(const Eigen::Matrix3d& gyroNoise);
-    Eigen::Matrix3d getGyroNoise() const;
-    void addStarTrackerInput(const StarTrackerMessage& starTracker);
-    Eigen::Matrix3d getStarTrackerNoise(int starTrackerNumber) const;
+    void setRateNoise(const Eigen::Matrix3d& rateNoise);
+    Eigen::Matrix3d getRateNoise() const;
+    void addAttitudeInput(const AttitudeMessage& attitudeMeasurement);
+    Eigen::Matrix3d getAttitudeNoise(int attitudeMeasurementNumber) const;
 
    private:
     AttitudeFilterMethod measurementAcceptanceMethod;
     bool firstFilterPass = true;
-    bool validStarTracker = false;
+    bool validAttitude = false;
 
     Eigen::VectorXd wheelAccelerations{};
     Eigen::VectorXd previousWheelSpeeds{};
@@ -79,8 +79,8 @@ class InertialAttitudeUkf : public SRukfInterface {
     double previousWheelSpeedTime = 0;
 
     Eigen::Vector3d filteredOmega_BN_B;
-    Eigen::Matrix3d gyroNoise;
-    std::array<StarTrackerMessage, MAX_ST_VEH_COUNT> starTrackerMessages;
+    Eigen::Matrix3d rateNoise;
+    std::array<AttitudeMessage, MAX_ST_VEH_COUNT> attitudeMessages;
     int numberOfStarTackers = 0;
     int measurementIndex = 0;
     double mrpSwitchThreshold = 1;  //!< [-] Threshold for switching MRP to/from the shadow set
