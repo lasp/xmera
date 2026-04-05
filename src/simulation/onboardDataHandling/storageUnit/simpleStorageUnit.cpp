@@ -68,5 +68,5 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime) {
  */
 void SimpleStorageUnit::setDataBuffer(int64_t data) {
     std::string partitionName = "STORED DATA";
-    SimpleStorageUnit::DataStorageUnitBase::setDataBuffer(partitionName, data);
+    DataStorageUnitBase::setDataBuffer(partitionName, data);
 }

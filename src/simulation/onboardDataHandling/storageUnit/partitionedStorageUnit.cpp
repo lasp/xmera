@@ -54,6 +54,6 @@ void PartitionedStorageUnit::addPartition(std::string dataName) {
  */
 void PartitionedStorageUnit::setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data) {
     for (size_t i = 0; i < partitionNames.size(); i++) {
-        PartitionedStorageUnit::DataStorageUnitBase::setDataBuffer(partitionNames[i], data[i]);
+        DataStorageUnitBase::setDataBuffer(partitionNames[i], data[i]);
     }
 }

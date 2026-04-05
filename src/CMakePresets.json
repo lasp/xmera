@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "configurePresets": [
     {
       "name": "base",
@@ -51,12 +51,31 @@
         "FUZZTEST_FUZZING_MODE":
           "ON"
       }
+    },
+    {
+      "name": "windows-ninja",
+      "inherits": "base",
+      "generator": "Ninja Multi-Config",
+      "environment": {
+        "VCPKG_VISUAL_STUDIO_PATH": "C:/Program Files/Microsoft Visual Studio/18/Community"
+      },
+      "cacheVariables": {
+        "VCPKG_HOST_TRIPLET": "x64-windows",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "Python3_EXECUTABLE": "$env{VIRTUAL_ENV}/Scripts/python.exe"
+      }
     }
   ],
   "buildPresets": [
     {
       "name": "base",
-      "configurePreset": "base"
+      "configurePreset": "base",
+      "jobs": 0
+    },
+    {
+      "name": "windows-ninja",
+      "configurePreset": "windows-ninja",
+      "jobs": 0
     }
   ]
 }

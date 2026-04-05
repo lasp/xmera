@@ -8,13 +8,8 @@
 #include <stdarg.h>
 #include "architecture/utilities/bskLogging.h"
 
-logLevel_t LogLevel = BSK_DEBUG;
-
-std::map<int, const char*> BSKLogger::logLevelMap = {{0, "BSK_DEBUG"},
-                                                     {1, "\033[92mBSK_INFORMATION\033[0m"},
-                                                     {2, "\033[93mBSK_WARNING\033[0m"},
-                                                     {3, "\033[91mBSK_ERROR\033[0m"},
-                                                     {4, "BSK_SILENT"}};
+// Internal storage for default log level (not exported)
+static logLevel_t LogLevel = BSK_DEBUG;
 
 /*! This method sets the default logging verbosity
     @param logLevel
@@ -26,9 +21,8 @@ logLevel_t getDefaultLogLevel() { return LogLevel; }
 
 /*! This method prints the default logging verbosity */
 void printDefaultLogLevel() {
-    std::map<int, const char*> logLevelMap{
-        {0, "BSK_DEBUG"}, {1, "BSK_INFORMATION"}, {2, "BSK_WARNING"}, {3, "BSK_ERROR"}, {4, "BSK_SILENT"}};
-    const char* defaultLevelStr = logLevelMap[LogLevel];
+    const auto& logLevelMap = getLogLevelMap();
+    const char* defaultLevelStr = logLevelMap.at(LogLevel);
     printf("Default Logging Level: %s\n", defaultLevelStr);
 }
 
@@ -49,7 +43,8 @@ void BSKLogger::setLogLevel(logLevel_t logLevel) { this->_logLevel = logLevel; }
 
 /*! This method reads the current logging verbosity */
 void BSKLogger::printLogLevel() {
-    const char* currLevelStr = this->logLevelMap[this->_logLevel];
+    const auto& logLevelMap = getLogLevelMap();
+    const char* currLevelStr = logLevelMap.at(this->_logLevel);
     printf("Current Logging Level: %s\n", currLevelStr);
 }
 
@@ -63,7 +58,8 @@ int BSKLogger::getLogLevel() { return this->_logLevel; }
 */
 void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...) {
     if (targetLevel >= this->_logLevel) {
-        const char* targetLevelStr = this->logLevelMap[targetLevel];
+        const auto& logLevelMap = getLogLevelMap();
+        const char* targetLevelStr = logLevelMap.at(targetLevel);
         char formatMessage[MAX_LOGGING_LENGTH];
         va_list args;
         va_start(args, info);

@@ -9,6 +9,8 @@ add_library(dynamicsCommon OBJECT
 target_include_directories(dynamicsCommon PRIVATE
   # Project-wide includes
   "${CMAKE_SOURCE_DIR}"
+  # Generated headers (for xmera_core_export.h)
+  "${CMAKE_BINARY_DIR}"
 )
 
 target_link_libraries(dynamicsCommon PUBLIC

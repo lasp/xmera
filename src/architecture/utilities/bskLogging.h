@@ -5,6 +5,8 @@
 #ifndef _BSK_LOG_
 #define _BSK_LOG_
 
+#include "xmera_core_export.h"
+
 // maximum length of info to log in a reference to BSKLogging in C, not relevant in C++
 #define MAX_LOGGING_LENGTH 255
 
@@ -16,8 +18,9 @@ typedef enum {
     BSK_SILENT  // the coder should never use this flag when using bskLog().  It is used to turn off all output
 } logLevel_t;
 
-extern logLevel_t LogLevel;
-void printDefaultLogLevel();
+XMERA_CORE_EXPORT void setDefaultLogLevel(logLevel_t logLevel);
+XMERA_CORE_EXPORT logLevel_t getDefaultLogLevel();
+XMERA_CORE_EXPORT void printDefaultLogLevel();
 
 /// \cond DO_NOT_DOCUMENT
 
@@ -25,11 +28,20 @@ void printDefaultLogLevel();
 #include <map>
 #include <string>
 
-void setDefaultLogLevel(logLevel_t logLevel);
-logLevel_t getDefaultLogLevel();
+// Helper function to get log level map (avoids static member export issues)
+inline const std::map<int, const char*>& getLogLevelMap() {
+    static const std::map<int, const char*> logLevelMap = {
+        {0, "BSK_DEBUG"},
+        {1, "\033[92mBSK_INFORMATION\033[0m"},
+        {2, "\033[93mBSK_WARNING\033[0m"},
+        {3, "\033[91mBSK_ERROR\033[0m"},
+        {4, "BSK_SILENT"}
+    };
+    return logLevelMap;
+}
 
 /*! BSK logging class */
-class BSKLogger final {
+class XMERA_CORE_EXPORT BSKLogger final {
    public:
     BSKLogger();
     BSKLogger(logLevel_t logLevel);
@@ -37,10 +49,6 @@ class BSKLogger final {
     void printLogLevel();
     int getLogLevel();
     void bskLog(logLevel_t targetLevel, const char* info, ...);
-
-    // Provides a mapping from log level enum to str
-   public:
-    static std::map<int, const char*> logLevelMap;
 
    private:
     logLevel_t _logLevel;
