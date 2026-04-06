@@ -10,7 +10,6 @@
 %include <architecture/_GeneralModuleFiles/swig_common_model.i>
 
 %include <std_string.i>
-%include <carrays.i>
 %include <std_vector.i>
 %import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <stdint.i>

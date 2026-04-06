@@ -8,7 +8,6 @@
 %}
 
 %include <architecture/_GeneralModuleFiles/swig_common_model.i>
-%include <carrays.i>
 %import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 %include "spaceToGroundTransmitter.h"
