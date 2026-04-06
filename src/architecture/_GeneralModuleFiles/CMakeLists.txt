@@ -1,0 +1,1 @@
+xmera_add_swig_module(architecture.cSysModel)

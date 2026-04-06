@@ -53,7 +53,7 @@ from typing import Optional, Union
 
 %include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 %include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 #pragma SWIG nowarn=362
 %include <simulation/dynamics/_GeneralModuleFiles/gravityEffector.h>
 

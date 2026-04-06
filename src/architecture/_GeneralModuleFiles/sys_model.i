@@ -1,1 +1,1 @@
-%include <architecture/_GeneralModuleFiles/cSysModel.i>
+%import <architecture/_GeneralModuleFiles/cSysModel.i>

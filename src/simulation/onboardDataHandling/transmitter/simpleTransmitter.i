@@ -12,7 +12,7 @@
 %include <std_string.i>
 %include <carrays.i>
 %include <std_vector.i>
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <stdint.i>
 
 %include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>

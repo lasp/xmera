@@ -18,7 +18,7 @@ namespace std {
     %template(ThrusterConfigVector) vector<THRSimConfig, std::allocator<THRSimConfig>>;
 }
 
-%include "sys_model.i"
+%import "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"

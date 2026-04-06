@@ -11,7 +11,7 @@
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 %include <swig_eigen.i>
 %include <std_vector.i>
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <stdint.i>
 
 //When using scientific notation in Python (1E9), it is interpreted as float

@@ -11,7 +11,7 @@
 %include <std_string.i>
 %include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include "magnetometer.h"
 
 %include <architecture/msgPayloadDef/SCStatesMsgPayload.h>

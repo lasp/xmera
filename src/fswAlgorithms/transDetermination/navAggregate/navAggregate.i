@@ -7,7 +7,7 @@
    #include "navAggregate.h"
 %}
 
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 STRUCTASLIST(AggregateAttInput)

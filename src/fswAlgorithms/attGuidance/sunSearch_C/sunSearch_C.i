@@ -10,7 +10,7 @@
 
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include "sunSearch_C.h"
 
 %include <architecture/msgPayloadDef/NavAttMsgPayload.h>

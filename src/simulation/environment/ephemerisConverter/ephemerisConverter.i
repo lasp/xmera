@@ -13,7 +13,7 @@
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 %include <std_vector.i>
 
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include "ephemerisConverter.h"
 
 %include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>

@@ -12,7 +12,7 @@
 %include <stdint.i>
 
 
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
 %include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 %include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>

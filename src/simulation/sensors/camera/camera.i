@@ -12,7 +12,7 @@
 %include <stdint.i>
 %include <std_string.i>
 %include <std_vector.i>
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include "camera.h"
 
 %include <architecture/msgPayloadDef/CameraModelMsgPayload.h>

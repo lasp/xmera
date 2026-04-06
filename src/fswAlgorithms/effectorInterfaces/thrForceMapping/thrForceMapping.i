@@ -7,7 +7,7 @@
     #include "thrForceMapping.h"
 %}
 
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <architecture/_GeneralModuleFiles/swig_common_model.i>
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 EIGEN_MAT_WRAP(Vector36d, 157)

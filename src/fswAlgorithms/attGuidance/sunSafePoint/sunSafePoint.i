@@ -11,7 +11,7 @@
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
-%include "sys_model.i"
+%import "sys_model.i"
 %include "sunSafePoint.h"
 
 %include "architecture/msgPayloadDef/NavAttMsgPayload.h"

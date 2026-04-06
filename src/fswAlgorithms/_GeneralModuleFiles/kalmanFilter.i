@@ -10,7 +10,7 @@
 %include <std_vector.i>
 %include <std_string.i>
 %include <architecture/_GeneralModuleFiles/swig_eigen.i>
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 
 %typemap(out) std::optional<Eigen::VectorXd> %{
     if ($1.has_value()) {

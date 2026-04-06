@@ -56,12 +56,7 @@ namespace std {
     }
 }
 
-%feature("director") SysModel;
-%feature("pythonappend") SysModel::SysModel %{
-    self.__super_init_called__ = True%}
-%rename("_SysModel") SysModel;
-
-%include "cSysModel.i"
+%import "cSysModel.i"
 %include "sys_model_task.h"
 %include "sys_process.h"
 %include "sim_model.h"
@@ -86,6 +81,8 @@ namespace std {
 );
 
 %pythoncode %{
+from xmera.architecture.cSysModel import _SysModel, BSKLogger
+
 class SuperInitChecker(type):
 
     def __call__(cls, *a, **kw):

@@ -9,7 +9,7 @@
 
 %include <std_string.i>
 %include <stdint.i>
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include "simSynch.h"
 
 %include <architecture/msgPayloadDef/SynchClockMsgPayload.h>

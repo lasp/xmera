@@ -18,7 +18,7 @@ namespace std {
     %template(DoubleVector) vector<double, allocator<double>>;
 }
 
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include "planetEphemeris.h"
 %include <architecture/utilities/orbitalMotion.h>
 %include <architecture/utilities/astroConstants.h>

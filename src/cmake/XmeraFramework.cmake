@@ -80,9 +80,6 @@ function(xmera_add_swig_module module)
       -DXMERA_CORE_EXPORT=
       "${_gen_swig_include_flags}"
       "${CMAKE_CURRENT_SOURCE_DIR}/${_module_basename}.i"
-    COMMAND
-      "${Python3_EXECUTABLE}" -c
-      "p='${CMAKE_CURRENT_BINARY_DIR}/${_module_basename}.py'; s=open(p).read(); l='import xmera.architecture.cSysModel\\n'; open(p,'w').write(l+s) if l not in s else None"
     WORKING_DIRECTORY
       "${CMAKE_CURRENT_BINARY_DIR}"
     MAIN_DEPENDENCY
@@ -198,9 +195,6 @@ function(xmera_add_swig_message message)
       -DXMERA_CORE_EXPORT=
       "${_gen_swig_include_flags}"
       "${CMAKE_CURRENT_BINARY_DIR}/${message}.i"
-    COMMAND
-      "${Python3_EXECUTABLE}" -c
-      "p='${CMAKE_CURRENT_BINARY_DIR}/${message}.py'; s=open(p).read(); l='import xmera.architecture.cSysModel\\n'; open(p,'w').write(l+s) if l not in s else None"
     WORKING_DIRECTORY
       "${CMAKE_CURRENT_BINARY_DIR}"
     MAIN_DEPENDENCY

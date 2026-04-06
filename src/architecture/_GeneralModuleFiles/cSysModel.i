@@ -1,4 +1,4 @@
-%module cSysModel
+%module(package="xmera.architecture", directors="1") cSysModel
 %{
    #include <architecture/_GeneralModuleFiles/sys_model.h>
 %}
@@ -6,6 +6,11 @@
 %include <std_string.i>
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 %include <architecture/utilities/bskLogging.h>
+
+%feature("director") SysModel;
+%feature("pythonappend") SysModel::SysModel %{
+    self.__super_init_called__ = True%}
+%rename("_SysModel") SysModel;
 
 %include <architecture/_GeneralModuleFiles/sys_model.h>
 

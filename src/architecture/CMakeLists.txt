@@ -41,6 +41,7 @@ install(TARGETS xmera_core
 add_library(Xmera::Core ALIAS xmera_core)
 
 
+add_subdirectory(_GeneralModuleFiles)
 add_subdirectory(utilities)
 add_subdirectory(system_model)
 add_subdirectory(msgPayloadDef)

@@ -8,7 +8,7 @@
 %}
 
 %include <std_string.i>
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h>
 %include "simpleInstrument.h"
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>

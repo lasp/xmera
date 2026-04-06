@@ -29,7 +29,7 @@
 // this raises an error because mySpiceInterface.planetFrames is returned by value
 %naturalvar SpiceInterface::planetFrames;
 
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 
 %include "spiceInterface.h"
 

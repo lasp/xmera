@@ -11,7 +11,7 @@
 %include <architecture/_GeneralModuleFiles/swig_eigen.i>
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 %include <carrays.i>
-%include <architecture/_GeneralModuleFiles/sys_model.i>
+%import <architecture/_GeneralModuleFiles/sys_model.i>
 %include <std_vector.i>
 %include <cstring.i>
 %include <architecture/_GeneralModuleFiles/swig_common_model.i>
