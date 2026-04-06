@@ -3,18 +3,20 @@
     Build script for xmera on Windows.
 
 .DESCRIPTION
-    Configures and builds xmera using CMake and Ninja.
+    Configures, builds, and installs xmera using CMake and Ninja.
+    Automatically discovers Visual Studio via vswhere.exe and initializes
+    the VS environment if needed.
 
     Prerequisites:
-    - Run from Developer PowerShell for VS 2022
+    - Visual Studio with C++ workload installed
     - VCPKG_ROOT environment variable set to your vcpkg installation
     - See docs/windows-setup.md for full setup instructions
 
 .PARAMETER Config
-    Build configuration: Debug or Release. Default: Debug
+    Build configuration: Debug or Release. Default: Release
 
 .PARAMETER Arch
-    Target architecture: x64 or arm64. Default: auto-detect from Python
+    Target architecture: x64 or arm64. Default: x64
 
 .PARAMETER Clean
     Remove the build directory before building.
@@ -25,32 +27,42 @@
 .PARAMETER ConfigureOnly
     Only run CMake configure, don't build.
 
+.PARAMETER Preset
+    CMake configure preset name. Default: windows-ninja
+
+.PARAMETER SkipInstall
+    Skip the cmake --install step after building.
+
 .EXAMPLE
     .\build.ps1
-    Build Debug with default settings
+    Build Release with default settings
 
 .EXAMPLE
     .\build.ps1 -Config Release -BuildDir C:\build\xmera
     Build Release to a shorter path
 
 .EXAMPLE
-    .\build.ps1 -Clean -Config Release
+    .\build.ps1 -Clean
     Clean build Release configuration
 #>
 
 [CmdletBinding()]
 param(
     [ValidateSet("Debug", "Release")]
-    [string]$Config = "Debug",
+    [string]$Config = "Release",
 
-    [ValidateSet("x64", "arm64", "")]
-    [string]$Arch = "",
+    [ValidateSet("x64", "arm64")]
+    [string]$Arch = "x64",
 
     [switch]$Clean,
 
     [string]$BuildDir = "",
 
-    [switch]$ConfigureOnly
+    [switch]$ConfigureOnly,
+
+    [string]$Preset = "windows-ninja",
+
+    [switch]$SkipInstall
 )
 
 $ErrorActionPreference = "Stop"
@@ -69,16 +81,6 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  xmera Windows Build" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-
-# Detect architecture from Python before VS init (Python works without VS environment)
-if (-not $Arch) {
-    try {
-        $pythonArch = python -c "import platform; print(platform.machine())"
-        $Arch = if ($pythonArch -eq "AMD64") { "x64" } else { "arm64" }
-    } catch {
-        $Arch = "x64"
-    }
-}
 
 # Check prerequisites
 $errors = @()
@@ -100,21 +102,39 @@ if (-not $env:VCPKG_ROOT) {
 }
 
 # Ensure VCPKG_VISUAL_STUDIO_PATH points to the full VS installation so vcpkg
-# can find all required toolchains (including ARM64 host tools on ARM64 Windows)
+# can find all required toolchains (including ARM64 host tools on ARM64 Windows).
+# This is set later by vswhere if VS init is needed; for now, fall back to VSINSTALLDIR.
 if (-not $env:VCPKG_VISUAL_STUDIO_PATH -and $env:VSINSTALLDIR) {
     $env:VCPKG_VISUAL_STUDIO_PATH = $env:VSINSTALLDIR.TrimEnd('\')
 }
 
-# Initialize VS environment if not already set
-if (-not $env:INCLUDE -or -not $env:VSINSTALLDIR) {
+# Initialize VS environment if not already set or if arch doesn't match
+# VSCMD_ARG_TGT_ARCH is set by VsDevShell, e.g. "x64", "x86", "arm64"
+$currentVsArch = $env:VSCMD_ARG_TGT_ARCH
+# Normalize: some VS versions report "amd64" instead of "x64"
+if ($currentVsArch -eq "amd64") { $currentVsArch = "x64" }
+$needsVsInit = (-not $env:INCLUDE -or -not $env:VSINSTALLDIR)
+if (-not $needsVsInit -and $currentVsArch -and $currentVsArch -ne $Arch) {
+    Write-Host "VS environment is for '$currentVsArch' but target is '$Arch', reinitializing..." -ForegroundColor Yellow
+    $needsVsInit = $true
+}
+if ($needsVsInit) {
     Write-Host "Initializing Visual Studio environment..." -ForegroundColor Yellow
 
-    $devShellDll = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-    $vsInstallPath = "C:\Program Files\Microsoft Visual Studio\18\Community"
-
-    if (-not (Test-Path $devShellDll)) {
-        $errors += "Could not find Visual Studio DevShell at: $devShellDll`n  Please install Visual Studio with C++ workload."
+    # Use vswhere.exe to find VS installation dynamically (works across editions and versions)
+    $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+    if (Test-Path $vswhere) {
+        $vsInstallPath = & $vswhere -latest -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+    }
+    if (-not $vsInstallPath -or -not (Test-Path $vsInstallPath)) {
+        $errors += "Could not find Visual Studio with C++ workload.`n  Install Visual Studio with 'Desktop development with C++' workload."
     } else {
+        $devShellDll = Join-Path $vsInstallPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+    }
+
+    if (-not $devShellDll -or -not (Test-Path $devShellDll)) {
+        $errors += "Could not find Visual Studio DevShell module.`n  Please install Visual Studio with C++ workload."
+    } elseif ($errors.Count -eq 0) {
         # Save variables that VS DevShell overwrites
         $savedVcpkgRoot = $env:VCPKG_ROOT
         $savedVcpkgVsPath = $env:VCPKG_VISUAL_STUDIO_PATH
@@ -126,7 +146,7 @@ if (-not $env:INCLUDE -or -not $env:VSINSTALLDIR) {
 
         # Restore variables overwritten by VS DevShell
         $env:VCPKG_ROOT = $savedVcpkgRoot
-        $env:VCPKG_VISUAL_STUDIO_PATH = $savedVcpkgVsPath
+        $env:VCPKG_VISUAL_STUDIO_PATH = if ($savedVcpkgVsPath) { $savedVcpkgVsPath } else { $vsInstallPath }
 
         Write-Host "VS environment initialized." -ForegroundColor Green
         Write-Host ""
@@ -149,6 +169,7 @@ $env:VCPKG_DEFAULT_TRIPLET = $VcpkgTriplet
 $env:VCPKG_TARGET_TRIPLET = $VcpkgTriplet
 
 Write-Host "Configuration: $Config" -ForegroundColor Green
+Write-Host "Preset:        $Preset" -ForegroundColor Green
 Write-Host "Architecture:  $Arch" -ForegroundColor Green
 Write-Host "Build Dir:     $BuildDir" -ForegroundColor Green
 Write-Host "VCPKG_ROOT:    $env:VCPKG_ROOT" -ForegroundColor Green
@@ -199,27 +220,25 @@ $needsConfigure = -not (Test-Path (Join-Path $BuildDir "build.ninja"))
 if ($needsConfigure) {
     Write-Host "Configuring..." -ForegroundColor Yellow
 
-    # Convert paths to forward slashes for CMake
+    # Use the windows-ninja preset; only override what the preset can't know
     $SrcDirCMake = $SrcDir -replace '\\', '/'
-    $BuildDirCMake = $BuildDir -replace '\\', '/'
-    $ScriptDirCMake = $ScriptDir -replace '\\', '/'
-    $VcpkgRootCMake = $env:VCPKG_ROOT -replace '\\', '/'
-    $PythonExeCMake = $PythonExe -replace '\\', '/'
+    $cmakeArgs = @("-S", $SrcDirCMake, "--preset", $Preset)
 
-    $cmakeArgs = @(
-        "-S", $SrcDirCMake,
-        "-B", $BuildDirCMake,
-        "-G", "Ninja Multi-Config",
-        "-DCMAKE_TOOLCHAIN_FILE=$VcpkgRootCMake/scripts/buildsystems/vcpkg.cmake",
-        "-DCMAKE_MODULE_PATH=$SrcDirCMake/cmake",
-        "-DVCPKG_TARGET_TRIPLET=$VcpkgTriplet",
-        "-DPython3_EXECUTABLE=$PythonExeCMake",
-        "-DCMAKE_INSTALL_PREFIX=$ScriptDirCMake/dist",
-        "-DXMERA_MODULE_ROOTS=fswAlgorithms;simulation;moduleTemplates",
-        "-DXMERA_ENABLE_GROUPS=simulation;fswAlgorithms;moduleTemplates",
-        "-DXMERA_ENABLE_INTERNAL=YES",
-        "-DXMERA_ENABLE_FUZZTESTS=OFF"
-    )
+    # Override build dir if non-default
+    $defaultBuildDir = Join-Path $ScriptDir "build"
+    if ($BuildDir -ne $defaultBuildDir) {
+        $cmakeArgs += "-B", ($BuildDir -replace '\\', '/')
+    }
+
+    # Always pass the Python path — custom presets may not configure it
+    $PythonExeCMake = $PythonExe -replace '\\', '/'
+    $cmakeArgs += "-DPython3_EXECUTABLE=$PythonExeCMake"
+
+    # Override triplet if non-default (preset defaults to x64-windows)
+    if ($Arch -ne "x64") {
+        $cmakeArgs += "-DVCPKG_TARGET_TRIPLET=$VcpkgTriplet"
+        $cmakeArgs += "-DVCPKG_HOST_TRIPLET=$VcpkgTriplet"
+    }
 
     Write-Host "cmake $($cmakeArgs -join ' ')" -ForegroundColor DarkGray
     & cmake @cmakeArgs
@@ -250,15 +269,36 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
+# Install
+$InstallPrefix = Join-Path $ScriptDir "dist"
+if (-not $SkipInstall) {
+    Write-Host ""
+    Write-Host "Installing to $InstallPrefix..." -ForegroundColor Yellow
+
+    & cmake --install $BuildDir --config $Config --prefix $InstallPrefix
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
+        Write-Host "========================================" -ForegroundColor Red
+        Write-Host "  INSTALL FAILED" -ForegroundColor Red
+        Write-Host "========================================" -ForegroundColor Red
+        exit 1
+    }
+}
+
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
 Write-Host "  BUILD SUCCESSFUL" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "Output: $BuildDir" -ForegroundColor Cyan
+Write-Host "Output:  $BuildDir" -ForegroundColor Cyan
+Write-Host "Install: $InstallPrefix" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Next steps:" -ForegroundColor Yellow
+Write-Host "Next steps (first time only):" -ForegroundColor Yellow
 Write-Host "  python -m venv .venv" -ForegroundColor DarkGray
 Write-Host "  .\.venv\Scripts\Activate.ps1" -ForegroundColor DarkGray
 Write-Host "  pip install -e ." -ForegroundColor DarkGray
+Write-Host ""
+Write-Host "Then run:" -ForegroundColor Yellow
+Write-Host "  python .\examples\scenarioBasicOrbit.py" -ForegroundColor DarkGray
 Write-Host ""

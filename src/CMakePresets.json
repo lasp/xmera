@@ -57,7 +57,7 @@
       "inherits": "base",
       "generator": "Ninja Multi-Config",
       "environment": {
-        "VCPKG_VISUAL_STUDIO_PATH": "C:/Program Files/Microsoft Visual Studio/18/Community"
+        "VCPKG_VISUAL_STUDIO_PATH": "$penv{VCPKG_VISUAL_STUDIO_PATH}"
       },
       "cacheVariables": {
         "VCPKG_HOST_TRIPLET": "x64-windows",
@@ -75,6 +75,12 @@
     {
       "name": "windows-ninja",
       "configurePreset": "windows-ninja",
+      "jobs": 0
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-ninja",
+      "configuration": "Release",
       "jobs": 0
     }
   ]

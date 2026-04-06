@@ -95,9 +95,11 @@ Verify PATH also includes:
 
 **Restart your terminal** after setting environment variables.
 
-## 3. Configure VS Code Terminal
+## 3. Configure VS Code Terminal (Optional)
 
-To get the VS Developer environment automatically in every VS Code terminal:
+> **Note**: `build.ps1` automatically discovers and initializes the VS environment
+> using `vswhere.exe`, so this step is optional. It is only needed if you want to use
+> CMake directly from the terminal without `build.ps1`.
 
 Open `Ctrl+Shift+P` → **"Open User Settings (JSON)"** and add:
 
@@ -114,11 +116,6 @@ Open `Ctrl+Shift+P` → **"Open User Settings (JSON)"** and add:
 ```
 
 Adjust the path if your VS is installed under a different version/edition.
-
-Verify it works by opening a new terminal and running:
-```powershell
-$env:INCLUDE   # Must print MSVC include paths, not be empty
-```
 
 ## 4. Directory Structure
 
@@ -142,60 +139,143 @@ cd C:\dev
 git clone <your-xmera-repo-url> xmera
 ```
 
+### Linking external module roots
+
+External module directories (e.g. `ema-gnc`) need to appear under `src/` so CMake
+can find them. On Linux/macOS you would use a symlink, but on Windows symlinks require
+administrator privileges. Use a **junction** instead — it works without elevation:
+
+```powershell
+# Create a junction so src\ema-gnc points to your external repo
+New-Item -ItemType Junction -Path "C:\dev\xmera\src\ema-gnc" -Target "C:\dev\ema-gnc"
+```
+
+The junction is transparent to CMake and git. To remove it:
+
+```powershell
+# Remove the junction (does NOT delete the target directory)
+(Get-Item "C:\dev\xmera\src\ema-gnc").Delete()
+```
+
+> **Note**: Do not use `Remove-Item -Recurse` on a junction — it will delete the
+> contents of the target directory. Always use `.Delete()` as shown above.
+
 ## 5. Build xmera
 
 ### Using the PowerShell build script (Recommended)
 
-The build script handles VS environment initialization, vcpkg, and CMake automatically.
+The build script handles VS environment initialization, vcpkg, CMake configuration,
+building, and installation automatically. It defaults to Release configuration.
 
-> **Important**: Always build with `-Config Release` for Python use. Python itself is
-> a Release binary, and Windows forbids mixing Debug and Release C runtimes in the same
-> process. A Debug build will crash with an access violation when Python tries to load
-> any `.pyd` extension module.
+> **Note**: Debug builds are available (`-Config Debug`) for C++ debugging, but Python
+> cannot load Debug `.pyd` modules due to a Debug/Release C runtime mismatch. Use Release
+> (the default) for Python work.
 
 ```powershell
 cd C:\dev\xmera
-.\build.ps1 -Config Release
+.\build.ps1
 ```
 
 With options:
 
 ```powershell
 # Build to a shorter path (avoids path length warnings)
-.\build.ps1 -Config Release -BuildDir C:\build\xmera
+.\build.ps1 -BuildDir C:\build\xmera
 
 # Clean build
-.\build.ps1 -Config Release -Clean
+.\build.ps1 -Clean
 
 # Combine options
-.\build.ps1 -Config Release -Clean -BuildDir C:\build\xmera
+.\build.ps1 -Clean -BuildDir C:\build\xmera
 ```
 
 ### Using CMake directly
 
-Must be run from a terminal where `$env:INCLUDE` is populated (Developer PowerShell):
+These are the individual steps that `build.ps1` runs. Use them when you want more
+control or need to debug a specific stage.
+
+#### Step 1: Initialize the VS Developer environment
+
+CMake needs the MSVC compiler on PATH. Open a **Developer PowerShell for VS**, or
+initialize the environment in an existing terminal:
 
 ```powershell
-cd C:\dev\xmera\src
-cmake --preset windows-ninja
-cmake --build ../build --config Release --parallel
+# Find your VS installation (vswhere ships with VS at a stable path)
+$vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+$vsInstallPath = & $vswhere -latest -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+
+# Load the VS Developer environment for x64
+Import-Module "$vsInstallPath\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+Enter-VsDevShell -VsInstallPath $vsInstallPath -SkipAutomaticLocation -Arch amd64
 ```
 
-## 6. Install and run
+Verify it worked:
+```powershell
+$env:INCLUDE   # Should print MSVC include paths
+cl.exe         # Should print the MSVC compiler version
+```
 
-After a successful build, `cmake --install` is **required** before Python can import
-xmera. The install step:
-- Copies `.pyd` extension modules and the `xmera_core.dll` to `dist/`
-- Copies all vcpkg runtime DLLs (cspice, opencv, zmq, ...) to `dist/lib/`
-- Installs a Windows-specific `xmera/__init__.py` that registers `dist/lib/` as a
-  DLL search directory so Python can find those DLLs when loading `.pyd` files
-- Installs a `cSysModel.py` compatibility shim required by SWIG-generated modules
+#### Step 2: Set environment variables
+
+```powershell
+# Point to your vcpkg installation (VS DevShell may overwrite this with its bundled vcpkg)
+$env:VCPKG_ROOT = [Environment]::GetEnvironmentVariable("VCPKG_ROOT", "Machine")
+
+# Tell vcpkg/CMake where VS is installed
+$env:VCPKG_VISUAL_STUDIO_PATH = $vsInstallPath
+
+# Set the vcpkg triplet
+$env:VCPKG_DEFAULT_TRIPLET = "x64-windows"
+$env:VCPKG_TARGET_TRIPLET = "x64-windows"
+```
+
+#### Step 3: Configure (CMake)
 
 ```powershell
 cd C:\dev\xmera
 
-# Required: install build outputs to dist/ (must match the -Config used to build)
+# Using the preset (recommended — all options are defined in src/CMakePresets.json)
+cmake -S src --preset windows-ninja
+
+# Or, if VIRTUAL_ENV is not set, override the Python path:
+cmake -S src --preset windows-ninja -DPython3_EXECUTABLE=C:/dev/xmera/.venv/Scripts/python.exe
+
+# Or, to use a custom build directory:
+cmake -S src --preset windows-ninja -B C:/build/xmera
+```
+
+#### Step 4: Build
+
+```powershell
+cmake --build build --config Release --parallel
+```
+
+#### Step 5: Install
+
+This copies `.pyd` modules, DLLs, and support data to `dist/`. **Required** before
+Python can import xmera.
+
+```powershell
 cmake --install build --config Release --prefix dist
+```
+
+#### Step 6: Set up Python and run
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e .
+python .\examples\scenarioBasicOrbit.py
+```
+
+## 6. Set up Python and run
+
+`build.ps1` automatically runs `cmake --install` after building, which copies `.pyd`
+modules, DLLs, and support data to `dist/`. All you need to do is set up a Python
+virtual environment:
+
+```powershell
+cd C:\dev\xmera
 
 # Create and activate virtual environment (first time only)
 python -m venv .venv
@@ -207,6 +287,11 @@ pip install -e .
 # Run an example
 python .\examples\scenarioBasicOrbit.py
 ```
+
+> If you used `build.ps1 -SkipInstall`, you must run the install step manually:
+> ```powershell
+> cmake --install build --config Release --prefix dist
+> ```
 
 ## 7. PowerShell Execution Policy
 
@@ -223,27 +308,25 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `-Config` | Debug or Release | Debug (use Release for Python) |
-| `-Arch` | x64 or arm64 | Auto-detect from Python |
+| `-Config` | Debug or Release | Release |
+| `-Arch` | x64 or arm64 | x64 |
 | `-Clean` | Remove build directory first | False |
 | `-BuildDir` | Custom build output path | `<repo>\build` |
 | `-ConfigureOnly` | Only configure, don't build | False |
+| `-SkipInstall` | Skip the cmake --install step | False |
 
 ### Full workflow from scratch
 
 ```powershell
-# 1. Build
-.\build.ps1 -Config Release -Clean -BuildDir C:\build\xmera
+# 1. Build and install
+.\build.ps1 -Clean
 
-# 2. Install
-cmake --install C:\build\xmera --config Release --prefix dist
-
-# 3. Set up Python environment (first time only)
+# 2. Set up Python environment (first time only)
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -e .
 
-# 4. Run
+# 3. Run
 python .\examples\scenarioBasicOrbit.py
 ```
 
@@ -264,16 +347,15 @@ Occurs on ARM64 Windows when vcpkg can't locate the full VS installation. Fix:
 
 ### `$env:INCLUDE` is empty in terminal
 
-The VS Developer environment is not initialized. Either:
-- Use the "PowerShell with VS" terminal profile (see section 3)
-- Or run `.\build.ps1` which initializes it automatically
+The VS Developer environment is not initialized. `build.ps1` handles this automatically
+using `vswhere.exe`. If you need the VS environment for manual CMake use, configure the
+VS Code terminal profile (see section 3) or launch a Developer PowerShell.
 
 ### Path length warnings during build
 
 Build to a shorter path:
 ```powershell
-.\build.ps1 -Config Release -BuildDir C:\build\xmera
-cmake --install C:\build\xmera --config Release --prefix dist
+.\build.ps1 -BuildDir C:\build\xmera
 ```
 
 Or move the repository to `C:\dev\xmera`.
@@ -288,9 +370,9 @@ python -c "import platform; print(platform.machine())"
 
 ### `ImportError: cannot import name '_module'`
 
-The `.pyd` extension module was not installed. Ensure you ran:
+The `.pyd` extension module was not installed. Rebuild (which also reinstalls):
 ```powershell
-cmake --install build --config Release --prefix dist
+.\build.ps1
 pip install -e .
 ```
 
@@ -299,31 +381,26 @@ pip install -e .
 This is a Debug/Release C runtime mismatch. Python is always a Release binary; loading
 a Debug-built `.pyd` triggers an access violation because the two CRT instances conflict.
 
-Fix: rebuild and reinstall with Release:
+Fix: rebuild with Release (the default):
 ```powershell
-.\build.ps1 -Config Release
-cmake --install build --config Release --prefix dist
+.\build.ps1 -Clean
 ```
 
 ### `ImportError: DLL load failed while importing _spiceInterface` (or other modules)
 
-Runtime DLLs (cspice, opencv, zmq, etc.) are not on PATH. These are installed by
-`cmake --install` to `dist/lib/` and loaded automatically via `xmera/__init__.py`.
-
-Ensure you ran:
+Runtime DLLs (cspice, opencv, zmq, etc.) are missing from `dist/lib/`. Rebuild
+(which includes the install step):
 ```powershell
-cmake --install build --config Release --prefix dist
+.\build.ps1
 ```
 
-If the error persists after reinstalling, the `dist/lib/` directory may be missing DLLs.
-Check that `dist/lib/cspice.dll` exists.
+If the error persists, check that `dist/lib/cspice.dll` exists.
 
 ### `NameError: name 'xmera' is not defined` or `AttributeError: module 'xmera' has no attribute 'architecture'`
 
-The `xmera/__init__.py` from `cmake --install` was not installed, or `dist/` contains a
-stale install from before these fixes. Rerun the install step:
+The `dist/` directory contains a stale install. Rebuild:
 ```powershell
-cmake --install build --config Release --prefix dist
+.\build.ps1 -Clean
 ```
 
 ## IDE Integration
