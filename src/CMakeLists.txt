@@ -127,7 +127,6 @@ install(DIRECTORY utilities DESTINATION xmera
 )
 install(DIRECTORY ../supportData DESTINATION xmera)
 install(FILES xmera_package_init.py DESTINATION xmera RENAME __init__.py)
-install(FILES xmera_architecture_cSysModel.py DESTINATION xmera/architecture RENAME cSysModel.py)
 
 # Install vcpkg runtime DLLs so Python can find them at import time.
 if(WIN32)
