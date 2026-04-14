@@ -23,22 +23,22 @@ The script is found in the folder ``xmera/examples/BskSim/scenarios`` and execut
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-Delta-V thrusters were added to the :ref:`BSK_Dynamics` framework. The properties of the DV thrusters can be changed
-there, but keep in mind to also change the thruster properties in :ref:`BSK_FSW`.
+Delta-V thrusters were added to the :ref:`BskSim_models_BSK_Dynamics` framework. The properties of the DV thrusters can be changed
+there, but keep in mind to also change the thruster properties in :ref:`BskSim_models_BSK_Fsw`.
 
 
 Custom FSW Configurations Instructions
 --------------------------------------
 
-Delta-V thrusters were added to the :ref:`BSK_FSW` framework. The properties of the DV thrusters can be changed
-there, but keep in mind to also change the thruster properties in :ref:`BSK_Dynamics`. Make sure to call
+Delta-V thrusters were added to the :ref:`BskSim_models_BSK_Fsw` framework. The properties of the DV thrusters can be changed
+there, but keep in mind to also change the thruster properties in :ref:`BskSim_models_BSK_Dynamics`. Make sure to call
 `FswModel.SetAttThrusters(useDvThrusters = True)` if it is desired to use the DV thrusters for attitude control,
 otherwise the ACS thrusters will be used by default.
 
 The necessary modules for attitude control with thrusters, i.e. :ref:`thrForceMapping` and :ref:`thrFiringRemainder`
 were added, and the module properties can be changed there. An additional MRP feedback module was added for thrusters.
 Modules for the DV execution, i.e. :ref:`dvGuidance` for DV attitude control and :ref:`dvExecuteGuidance` for maneuver
-execution were also added and can be adjusted in :ref:`BSK_FSW`.
+execution were also added and can be adjusted in :ref:`BskSim_models_BSK_Fsw`.
 
 Illustration of Simulation Results
 ----------------------------------

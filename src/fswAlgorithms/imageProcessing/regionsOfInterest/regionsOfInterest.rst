@@ -215,7 +215,9 @@ User Guide
 This section provides implementation guidance for integrating the Regions of Interest module into a flight
 software simulation. The following steps demonstrate the standard configuration workflow in Python.
 
-#. Import the regionsOfInterest class::
+#. Import the regionsOfInterest class:
+
+.. code-block:: python
 
     from Basilisk.fswAlgorithms import regionsOfInterest
 
@@ -225,14 +227,18 @@ software simulation. The following steps demonstrate the standard configuration 
     roiModule.ModelTag = "roiModule"
 
 #. Configure the maximum separation distance for region merging. This parameter defines the spatial threshold
-   for determining whether multiple detected regions should be merged into a single composite target::
+   for determining whether multiple detected regions should be merged into a single composite target:
+
+.. code-block:: python
 
     roiModule.setMaxRoiSeparation(100)  # pixels
 
    Regions with centers of brightness separated by less than this distance from the barycenter may be merged,
    depending on the proximity analysis outcome.
 
-#. (Optional) Configure spatial windowing to constrain the search region::
+#. (Optional) Configure spatial windowing to constrain the search region:
+
+.. code-block:: python
 
     import numpy as np
     windowCenter = np.array([512, 384], dtype=int)  # pixels
@@ -277,7 +283,9 @@ For multi-camera systems, assign a unique camera identifier to facilitate downst
 **Minimum Detection Threshold:**
 
 Configure the minimum pixel count threshold for valid region detection. Regions below this threshold are
-excluded as noise or spurious detections::
+excluded as noise or spurious detections:
+
+.. code-block:: python
 
     roiModule.setMinimumDetectionSize(10)  # pixels
 

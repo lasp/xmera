@@ -8,11 +8,11 @@ Overview
 --------
 
 Demonstrates a basic method to simulate 3 satellites with 6-DOF motion and how to visualize the simulation
-data in :ref:`Vizard <vizard>`.  One satellite is a 3-axis attitude controlled
+data in ``Vizard``.  One satellite is a 3-axis attitude controlled
 satellite, while the second satellite is a tumbling space debris object.  The controlled satellite simulation components
 are taken from :ref:`scenarioAttitudeFeedbackRW`. The purpose of this script is to show an explicit method to
 setup multiple satellites, and also show how to store the Xmera simulation data to be able to visualize
-both satellite's motions within the :ref:`Vizard <vizard>` application.
+both satellite's motions within the ``Vizard`` application.
 
 Note, this scenario also illustrates how to ensure that the differential equations of motion of
 the servicer and debris object are integrated at the same time.  This is not required in this scenario
@@ -53,7 +53,7 @@ of the servicer satellite.  However, in this scenario this is not required as th
 are independent of each other.  If an effector is used that is connected to both spacecraft, then this
 step will allow the effector force and torque evaluations to be properly applied to all sync'd objects.
 
-This simulation scripts illustrates how to use the :ref:`vizSupport` methods to record the simulation data such
+This simulation scripts illustrates how to use the ``vizSupport`` methods to record the simulation data such
 that it can be viewed in the Vizard visualization.
 
 

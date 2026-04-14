@@ -3,10 +3,6 @@
 Advanced: Redirecting Module Output to Stand-Alone Message
 ==========================================================
 
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/e_938BFwtiI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 .. sidebar:: Source Code
 
     The python code shown below can be downloaded :download:`here </../../docs/source/code-samples/xmera-7.py>`.

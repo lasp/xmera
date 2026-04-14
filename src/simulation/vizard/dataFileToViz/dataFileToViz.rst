@@ -2,7 +2,7 @@
 Executive Summary
 -----------------
 This module reads in simulation data of one or more spacecraft, likely created outside of Xmera,
-and creates associated Xmera messages such that :ref:`vizInterface` can stream of save a :ref:`Vizard <vizard>`
+and creates associated Xmera messages such that :ref:`vizInterface` can stream of save a Vizard
 compatible data file.  This makes it possible to use Vizard to illustrate a simulation.  The use of this module
 is demonstrates in :ref:`scenarioDataToViz`.
 
@@ -116,7 +116,7 @@ spacecraft contains 2 clusters (ADCS and DV) which contain one thruster each.
 
 These steps must be done for each spacecraft in the data file.  If a spacecraft does not have thrusters, then
 an empty thruster cluster vector must be added for that spacecraft.
-See :ref:`test_dataFileToViz` for an example on how to configure for thruster information.
+See ``test_dataFileToViz`` for an example on how to configure for thruster information.
 
 .. code-block:: python
 

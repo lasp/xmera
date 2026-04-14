@@ -11,9 +11,13 @@ This script illustrates how to setup different variable time step integration me
 Both a fourth-order (RKF45) and a seventh-order (RKF78) integrators are used. For comparison, an RK4 integrator is also
 used.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
       python3 scenarioVariableTimeStepIntegrators.py
+
+.. highlight:: python
 
 For more information on how to setup different integrators, see :ref:`scenarioIntegrators`. When the simulation
 completes, a plot is shown for illustrating both the true and the numerically evaluated orbit.

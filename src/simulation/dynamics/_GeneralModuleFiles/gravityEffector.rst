@@ -50,11 +50,15 @@ If no message is connected, then the planet has zero position and orientation in
 
 User Guide
 ----------
-The user must provide a list of ``GravBodyData`` objects to the spacecraft using::
+The user must provide a list of ``GravBodyData`` objects to the spacecraft using:
+
+.. code-block:: python
 
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(gravBodyList)
 
-Each gravity body data object can be created using::
+Each gravity body data object can be created using:
+
+.. code-block:: python
 
         earth = gravityEffector.GravBodyData()
         earth.planetName = 'earth_planet_data'

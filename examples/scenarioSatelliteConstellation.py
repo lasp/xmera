@@ -12,9 +12,13 @@ This scenario demonstrates how to set up a Walker-Delta constellation of satelli
 uses the stand-alone Xmera architecture rather than using the ''examples/FormationBskSim`` or ``examples/MultiSatBskSim``
 architectures for simultaneously simulating multiple spacecraft.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
     python3 scenarioSatelliteConstellation.py
+
+.. highlight:: python
 
 When designing a satellite constellation, symmetry provides repeatable performance and makes design and operations simpler. One
 such symmetric constellation design methodology is the Walker constellation which consists of circular orbits in evenly spaced

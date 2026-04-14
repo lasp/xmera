@@ -40,7 +40,7 @@ Then add the symlinked path to ``XMERA_MODULE_ROOTS`` at configure time:
         -DXMERA_MODULE_ROOTS="${XMERA_MODULE_ROOTS};${sourceDir}/externalModules/"
 
 Or, more conveniently, create a user preset in ``src/CMakeUserPresets.json``
-(see :ref:`cmake-parameters` for details):
+(see :ref:`CMake Build <cmake-parameters>` for details):
 
 .. code-block:: json
 
@@ -80,7 +80,7 @@ The external module inclusion follows a strict directory structure resembling th
 A single folder contains all the custom Xmera modules and message definitions in a specific
 sub-folder structure shown below.
 
-::
+.. code-block:: none
 
     custom-modules
     ├── externalModules
@@ -137,6 +137,8 @@ Frequently Asked Questions
 #. How do I import these custom modules when I write a Xmera python simulation script?
 
 - The custom Xmera modules are built into a ``xmera.externalModules`` package.  For example, to load a module
-  called ``customCppModule``, use::
+  called ``customCppModule``, use:
+
+.. code-block:: python
 
         from xmera.externalModules import customCppModule

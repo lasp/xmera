@@ -142,7 +142,9 @@ define the kinematic motion of the prescribed body.
 
 This section is to outline the steps needed to setup a prescribed 1 DOF rotational module in python using Xmera.
 
-#. Import the prescribedRot1DOF class::
+#. Import the prescribedRot1DOF class:
+
+.. code-block:: python
 
     from Xmera.fswAlgorithms import prescribedRot1DOF
 
@@ -151,7 +153,9 @@ This section is to outline the steps needed to setup a prescribed 1 DOF rotation
     PrescribedRot1DOF = prescribedRot1DOF.prescribedRot1DOF()
     PrescribedRot1DOF.modelTag = "prescribedRot1DOF"
 
-#. Define all of the configuration data associated with the module. For example::
+#. Define all of the configuration data associated with the module. For example:
+
+.. code-block:: python
 
     thetaInit = 0.0  # [rad]
     rotAxis_M = np.array([1.0, 0.0, 0.0])

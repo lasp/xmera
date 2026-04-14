@@ -30,7 +30,7 @@ of the Bevo 2 satellite. To better understand how to add RW to the Spacecraft Si
 from an initial to a final inertially fixed attitude, the reader is redirected to :ref:`scenarioAttitudeFeedbackRW`
 where this process is explained in the details.
 
-This script uses :ref:`simIncludeGravBody` to add Earth and Sun to the simulation. The method ``createSpiceInterface``
+This script uses ``simIncludeGravBody`` to add Earth and Sun to the simulation. The method ``createSpiceInterface``
 to create Spice modules for the celestial bodies and generate the respective Spice planet state messages.
 The :ref:`boreAngCalc` module is set up for each of the instruments that have geometric angular constraints. This module
 subscribes to the :ref:`SCStatesMsgPayload` and :ref:`SpicePlanetStateMsgPayload` of the bright object (the Sun) and

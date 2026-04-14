@@ -146,7 +146,7 @@ The ``mrpRotation`` module has the following design goals
 
 - **Flexible Setup**: The desired rotation state can be described
   through an initial MRP and angular velocity vector specified in module
-  internal variables, or read in through a Xmera :ref:`AttStateMsg`
+  internal variables, or read in through a Xmera :ref:`AttStateMsgPayload`
   message.
 
 Module Assumptions and Limitations

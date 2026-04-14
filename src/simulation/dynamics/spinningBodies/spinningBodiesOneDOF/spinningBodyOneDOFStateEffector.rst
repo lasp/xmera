@@ -53,7 +53,9 @@ User Guide
 ----------
 This section is to outline the steps needed to setup a Spinning Body State Effector in Python using Xmera.
 
-#. Import the spinningBodyOneDOFStateEffector class::
+#. Import the spinningBodyOneDOFStateEffector class:
+
+.. code-block:: python
 
     from Xmera.simulation import spinningBodyOneDOFStateEffector
 
@@ -85,7 +87,9 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
     spinningBody.nameOfThetaState = "spinningBodyTheta"
     spinningBody.nameOfThetaDotState = "spinningBodyThetaDot"
 
-#. (Optional) Connect a command torque message::
+#. (Optional) Connect a command torque message:
+
+.. code-block:: python
 
     cmdArray = messaging.ArrayMotorTorqueMsgPayload()
     cmdArray.motorTorque = [cmdTorque]  # [Nm]

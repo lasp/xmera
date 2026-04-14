@@ -11,9 +11,13 @@ Demonstrates how to add a Three-Axis Magnetometer (TAM) sensor to a spacecraft.
 This script sets up a 3-DOF spacecraft which is orbiting a planet with a magnetic field.
 The orbit setup is similar to that used in :ref:`scenarioBasicOrbit`.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
       python3 scenarioTAM.py
+
+.. highlight:: python
 
 Simulation Scenario Setup Details
 ---------------------------------

@@ -17,13 +17,13 @@ Building Xmera and Testing
 -   Do a clean build of Xmera and make sure all code compiles as expected (see :ref:`FAQ <FAQ>` on how to do a
     clean build)
 -   From the project root directory, run ``python run_all_test.py`` and ensure all python and C/C++ tests are passing
-    as expected (see :ref:`install-optional-ackages` for info on installing and running ``pytest``)
+    as expected
 
 Style and Formatting
 --------------------
 
 -  Do the code variables satisfy the :ref:`Xmera code style
-   guidelines <codingGuidelines>`?
+   guidelines <code-guidelines>`?
 -  Are 4 spaces used instead of tabs?
 
 Module Programming
@@ -80,14 +80,10 @@ Is a ``_UnitTest`` folder included that:
 
 Module Integrated Test
 ----------------------
-If an integrated test is provided as a ``test_XXX.py`` file.  Does this test method have a complete description of what is being tested?  The :ref:`test_cModuleTemplateParametrized.py <test_cModuleTemplateParametrized>` file contains a template illustrating the expected information.  Required sections include
+If an integrated test is provided as a ``test_XXX.py`` file.  Does this test method have a complete description of what is being tested?  The ``test_cModuleTemplateParametrized.py`` file contains a template illustrating the expected information.  Required sections include
 
     -   Validation Test Description
     -   Test Parameter Discussion
     -   Description of variables being tested
 
 See the :ref:`FAQ <FAQ>` on how to run generate an html validation report using ``pytest --report``.  Note that it is ok to just run this report for the module being tested.
-
-Update Release Notes
---------------------
-Update the :ref:`xmera-release-notes` at ``/docs/source/Support/User/release-notes.rst`` to include information about the new features being added.

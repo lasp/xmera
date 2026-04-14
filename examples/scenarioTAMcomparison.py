@@ -12,9 +12,13 @@ The purpose is to demonstrate how to add multiple Three-Axis Magnetometers (TAM)
 magnetic field representations, biases, and bounds to each.
 The orbit setup is similar to that used in :ref:`scenarioBasicOrbit`.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
       python3 scenarioTAMcomparison.py
+
+.. highlight:: python
 
 Simulation Scenario Setup Details
 ---------------------------------

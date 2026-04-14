@@ -24,7 +24,7 @@ The script is found in the folder ``xmera/examples`` and executed by using::
 
 When the simulation completes 3 plots are shown for the MRP attitude history, the rate
 tracking errors, as well as the control torque vector.  The ``run()`` method is setup to write out the
-Vizard data file to sub-folder ``_VizFiles/scenarioVizPoint_UnityViz.bin``.  By running :ref:`Vizard <vizard>`
+Vizard data file to sub-folder ``_VizFiles/scenarioVizPoint_UnityViz.bin``.  By running ``Vizard``
 and playing back this data file you will see the custom camera view that is created as
 illustrated in the Vizard snapshot above.
 

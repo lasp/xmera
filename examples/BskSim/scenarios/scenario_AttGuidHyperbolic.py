@@ -27,7 +27,7 @@ The simulation layout is shown in the following illustration.
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-The modules required for this scenario are identical to those used in :ref:`scenario_AttGuidance`.
+The modules required for this scenario are identical to those used in :ref:`BskSim_scenarios_scenario_AttGuidance`.
 
 Custom FSW Configurations Instructions
 --------------------------------------

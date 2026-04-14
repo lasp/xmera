@@ -11,12 +11,14 @@ The goal of the OpNav Scenarios is to simulate Optical Navigation methods and pe
 All of the scenarios provided in ``xmera/examples/OpNavScenarios`` put a spacecraft on orbit about Mars. By extracting
 limbs are circles from the images, the spacecraft can point to the planet, and estimate it's position.
 
+.. highlight:: python
+
 .. image:: /_images/static/OpNavScenario.png
    :align: center
 
 This Xmera Simulation, which inherits ``SimulationBaseClass``, provides the backbone for all the OpNav simulations
 provided in ``xmera/examples/OpNavScenarios``.
-These simulations spawn the Xmera :ref:`Vizard <Vizard>` visualization in order to provide images for processing.
+These simulations spawn the Xmera ``Vizard`` visualization in order to provide images for processing.
 These images are
 handled by the vizInterface module found in ``src/simulation/vizInterface``. A figure illustrating the architecture
 is found here:
@@ -51,7 +53,9 @@ name. If the path is not properly set, the OpNav simulations will hang (printing
 Vizard connection). Another option is to manually open the Vizard application after having started the python scenario,
 check OpNav or Direct Comm, and provide the tcp/ip address printed by the scenario.
 
-The scripts are tested if all modules are installed, but can be run at full length by calling::
+The scripts are tested if all modules are installed, but can be run at full length by calling:
+
+.. code-block:: console
 
     python3 scenario_OpNavAttOD.py
 
@@ -72,14 +76,14 @@ OpNav Dynamics, Flight Software, and Plotting
 
 The simulations use three other main python scripts.
 
-:ref:`BSK_OpNavDynamics` is similar to the BSKSim versions seen previously. The main additions are
+:ref:`OpNavScenarios_modelsOpNav_BSK_OpNavDynamics` is similar to the BSKSim versions seen previously. The main additions are
 the instantiation of :ref:`vizInterface`, and the camera module.
 
-:ref:`BSK_OpNavFsw` contains the FSW algorithms used in the scenarios. Examples are the Orbit Determination
+:ref:`OpNavScenarios_modelsOpNav_BSK_OpNavFsw` contains the FSW algorithms used in the scenarios. Examples are the Orbit Determination
 filters, the pointing guidance module, the CNN module, and more. This file also contains the ``modeRequest``
 definitions which enable all the tasks necessary to perform a specific action.
 
-:ref:`OpNav_Plotting` contains the plotting routines. None of the files are saved, but are shown when
+:ref:`OpNavScenarios_plottingOpNav_OpNav_Plotting` contains the plotting routines. None of the files are saved, but are shown when
 the scenario is run with python. Saving is left to the user's discretion.
 
 """

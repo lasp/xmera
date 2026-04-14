@@ -11,16 +11,16 @@ This script sets up two 3-DOF spacecraft orbiting the Earth. The goal of the sce
 
 #. highlight how the BSK_Sim structure of a formation flying tutorial is different from the basic orbit scenario,
 #. demonstrate how to create a formation flying scenario, and
-#. how to customize the :ref:`BSK_FormationDynamics.py <BSK_FormationDynamics>` and :ref:`BSK_FormationFSW.py <BSK_FormationFSW>` files.
+#. how to customize the :ref:`BSK_FormationDynamics.py <BskSim_models_BSK_FormationDynamics>` and :ref:`BSK_FormationFSW.py <BskSim_models_BSK_FormationFsw>` files.
 
 The script is found in the folder ``xmera/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_BasicOrbitFormation.py
 
-The simulation mimics the basic simulation in the earlier tutorial in :ref:`scenario_BasicOrbit`.
+The simulation mimics the basic simulation in the earlier tutorial in :ref:`BskSim_scenarios_scenario_BasicOrbit`.
 
 The flight software mode is set to inertial3D. The goal of this mode is to align the body axes of the spacecraft
-with an inertial 3D point guidance coordinate system defined in :ref:`BSK_FormationFSW`.
+with an inertial 3D point guidance coordinate system defined in :ref:`BskSim_models_BSK_FormationFsw`.
 However the flight software mode can also be set to "standby".
 
 The simulation layout is shown in the following illustrations.
@@ -34,13 +34,13 @@ The simulation layout is shown in the following illustrations.
 
 Configuring the scenario file
 -----------------------------
-The simulation layout is very similar to the one used for the :ref:`scenario_BasicOrbit` file.
+The simulation layout is very similar to the one used for the :ref:`BskSim_scenarios_scenario_BasicOrbit` file.
 Two simulation processes are created: one which contains dynamics modules, and one that contains
 the Flight Software (FSW) modules. First of all, it can be observed that the Dynamics- and FSW files used are
-the :ref:`BSK_FormationDynamics` and :ref:`BSK_FormationFSW` files.
+the :ref:`BskSim_models_BSK_FormationDynamics` and :ref:`BskSim_models_BSK_FormationFsw` files.
 These two files have been created for this specific formation flying implementation into Xmera.
 
-After initializing the interfaces and making sure that the :ref:`scenario_BasicOrbitFormation`
+After initializing the interfaces and making sure that the :ref:`BskSim_scenarios_scenario_BasicOrbitFormation`
 class inherits from the BSKSim class,
 it is time to configure the initial conditions using the ``configure_initial_conditions`` method.
 It can be observed that two sets of
@@ -49,7 +49,7 @@ conditions are set for each spacecraft.
 
 After that the function that logs the outputs can be observed. Again this looks very similar to
 the log_outputs method
-in the :ref:`scenario_BasicOrbit` file, however one discrepancy can be noticed. Looking at
+in the :ref:`BskSim_scenarios_scenario_BasicOrbit` file, however one discrepancy can be noticed. Looking at
 the code below it can be observed that
 two instances of the ``simpleNavObject`` are logged (``simpleNavObject`` and ``simpleNavObject2`` respectively).
 Each object corresponds
@@ -63,7 +63,7 @@ of a specific object are pulled.
 
 BSK_FormationDynamics file description
 --------------------------------------
-Looking at the :ref:`BSK_FormationDynamics` file, it can be observed that the dynamics
+Looking at the :ref:`BskSim_models_BSK_FormationDynamics` file, it can be observed that the dynamics
 process consists of two tasks named DynamicsTask
 and ``DynamicsTask2`` respectively. These tasks are added to the dynamics process and to each task,
 an instance of a specific object is added.
@@ -75,18 +75,18 @@ as a separate object to each spacecraft.
 After that each object is added to the corresponding task. Something that is very important is the message names.
 In case multiple spacecraft are implemented in Xmera it is necessary to manually connect an output message of
 one module to the input of a different module. This can be seen in the module-initialization methods
-in the :ref:`BSK_FormationDynamics.py <BSK_FormationDynamics>` file.
+in the :ref:`BSK_FormationDynamics.py <BskSim_models_BSK_FormationDynamics>` file.
 
 BSK_FormationFsw file description
 ---------------------------------
-The setup of the FSW file (:ref:`BSK_FormationFSW.py <BSK_FormationFSW>`) in case of
+The setup of the FSW file (:ref:`BSK_FormationFSW.py <BskSim_models_BSK_FormationFsw>`) in case of
 formation flying is very similar to the setup of the dynamics file.
 Also in this case, an instance of each task is initialized that corresponds to
 one of the two spacecraft. Furthermore, it is
 necessary to manually set the input- and output message names for the FSW
 modules. In order to make this tutorial work properly its
 is very important to set the ``self.mrpFeedbackRWs.Ki`` and ``self.mrpFeedbackRWs2.Ki``
-variables in :ref:`BSK_FormationFsw` to -1. Otherwise
+variables in :ref:`BskSim_models_BSK_FormationFsw` to -1. Otherwise
 the orientation and rates of both spacecraft will not converge!
 
 

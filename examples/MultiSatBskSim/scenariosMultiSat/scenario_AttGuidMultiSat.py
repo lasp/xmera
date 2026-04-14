@@ -17,8 +17,8 @@ The script is found in the folder ``xmera/examples/MultiSatBskSim/scenariosMulti
 
       python3 scenario_AttGuidMultiSat.py
 
-This simulation is based on the :ref:`scenario_BasicOrbitMultiSat` with the addition of flight software modules. It also
-takes some cues from :ref:`scenario_AttGuidance`, but with several spacecraft and more possible flight modes.
+This simulation is based on the :ref:`MultiSatBskSim_scenariosMultiSat_scenario_BasicOrbitMultiSat` with the addition of flight software modules. It also
+takes some cues from :ref:`BskSim_scenarios_scenario_AttGuidance`, but with several spacecraft and more possible flight modes.
 
 For simplicity, the script plots only the information related to one of the spacecraft, despite logging the necessary
 information for all spacecraft in the simulation.
@@ -26,13 +26,13 @@ information for all spacecraft in the simulation.
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-The dynamics modules required for this scenario are identical to those used in :ref:`scenario_BasicOrbitMultiSat`.
+The dynamics modules required for this scenario are identical to those used in :ref:`MultiSatBskSim_scenariosMultiSat_scenario_BasicOrbitMultiSat`.
 
 
 Custom FSW Configurations Instructions
 --------------------------------------
 
-In this example, all spacecraft inherit the same flight software class defined in :ref:`BSK_MultiSatFsw`. Four flight
+In this example, all spacecraft inherit the same flight software class defined in :ref:`MultiSatBskSim_modelsMultiSat_BSK_MultiSatFsw`. Four flight
 modes are implemented through the use of events and are described below:
 
 #. ``standby``: the spacecraft has no attitude requirements.
@@ -40,17 +40,17 @@ modes are implemented through the use of events and are described below:
 #. ``sunPointing``: the spacecraft points at the Sun.
 #. ``locationPointing``: the spacecraft aims at a ground location on Earth.
 
-The attitude is controlled using a set of four reaction wheels that are set up in :ref:`BSK_MultiSatDynamics`. The
+The attitude is controlled using a set of four reaction wheels that are set up in :ref:`MultiSatBskSim_modelsMultiSat_BSK_MultiSatDynamics`. The
 ``mrpFeedback`` is used for the control law and ``rwMotorTorque`` interfaces with the reaction wheels. The
 ``attTrackingError`` module is used with all modes to convert from a reference message to a guidance one.
 
 The events can be set using the ``modeRequest`` flag inside the FSW class. It is crucial that all events call the
 ``setAllButCurrentEventActivity`` method. This function is called in a way such that all events' activity is made active
 except for the current one. Without this command, every event could only be made active once. The method also makes
-sure it only affects the events specific to each spacecraft. For more information, see :ref:`SimulationBaseClass`.
+sure it only affects the events specific to each spacecraft. For more information, see ``SimulationBaseClass``.
 
 No formation flying control is done in this scenario. To see a more complete example which includes formation geometry
-control, see :ref:`scenario_StationKeepingMultiSat`.
+control, see :ref:`MultiSatBskSim_scenariosMultiSat_scenario_StationKeepingMultiSat`.
 
 In this scenario, it is shown how the flight software events are set up, and how to change them on-the-fly.
 

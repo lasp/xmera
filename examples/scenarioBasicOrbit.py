@@ -12,6 +12,8 @@ r"""
 Overview
 --------
 
+.. highlight:: python
+
 This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order
 approximation or run with high-order spherical harmonic terms.  The following diagram illustrates how the
 Xmera components are interconnected.
@@ -19,7 +21,9 @@ Xmera components are interconnected.
 .. image:: /_images/static/test_scenarioBasicOrbit.svg
    :align: center
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
     python3 scenarioBasicOrbit.py
 

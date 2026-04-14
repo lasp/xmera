@@ -47,7 +47,7 @@ Linear Algebra and Kinematics Support
 
 If your module includes vector or tensor math:
 
-- Refer to the :ref:`codingGuidelines` for naming conventions related to matrix representations.
+- Refer to the :ref:`code-guidelines` for naming conventions related to matrix representations.
 - For C++ modules, Xmera supports the `Eigen library <http://eigen.tuxfamily.org>`_. Keep in mind that Eigen's
   ``.toRotationMatrix()`` method returns the direction cosine matrix (DCM) :math:`[NB]`, not :math:`[BN]`. Xmera's
   Eigen MRP implementation follows this same convention.

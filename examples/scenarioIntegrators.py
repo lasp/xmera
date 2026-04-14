@@ -7,9 +7,13 @@ r"""
 Overview
 --------
 
+.. highlight:: python
+
 This script illustrates how to setup different integration methods for a basic 3-DOF orbit scenario.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
       python3 scenarioIntegrators.py
 

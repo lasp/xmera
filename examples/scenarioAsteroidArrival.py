@@ -16,9 +16,13 @@ burn at periapsis of the elliptical orbit, transferring to a circular orbit abou
 meters. The spacecraft then completes a series of Hohmann transfers while also conducting several attitude changes
 until reaching a final elliptical orbit about the asteroid.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
       python3 scenarioAsteroidArrival.py
+
+.. highlight:: python
 
 .. attention::
 

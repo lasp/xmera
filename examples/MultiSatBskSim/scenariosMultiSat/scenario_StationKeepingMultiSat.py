@@ -17,7 +17,7 @@ The script is found in the folder ``xmera/examples/MultiSatBskSim/scenariosMulti
 
       python3 scenario_StationKeepingMultiSat.py
 
-This simulation is based on the :ref:`scenario_AttGuidMultiSat` with the addition of station keeping control. Attitude
+This simulation is based on the :ref:`MultiSatBskSim_scenariosMultiSat_scenario_AttGuidMultiSat` with the addition of station keeping control. Attitude
 mode requests are processed in the same way as before, but now there is the added complexity of introducing formation
 control, which can influence attitude requests.
 
@@ -33,18 +33,18 @@ information for all spacecraft in the simulation.
 Custom Dynamics Configurations Instructions
 -------------------------------------------
 
-The dynamics modules required for this scenario are the same used in :ref:`scenario_BasicOrbitMultiSat` and
-:ref:`scenario_AttGuidMultiSat`. However, this example takes full advantage of all the features of the dynamics class,
+The dynamics modules required for this scenario are the same used in :ref:`MultiSatBskSim_scenariosMultiSat_scenario_BasicOrbitMultiSat` and
+:ref:`MultiSatBskSim_scenariosMultiSat_scenario_AttGuidMultiSat`. However, this example takes full advantage of all the features of the dynamics class,
 which includes thrusters for orbit corrections.
 
 Custom FSW Configurations Instructions
 --------------------------------------
 
-As stated in the previous section, the :ref:`BSK_MultiSatFsw` class used in this example is the same as the one used in
-:ref:`scenario_AttGuidMultiSat`. The main difference is that the station keeping module is now used, which allows for
+As stated in the previous section, the :ref:`MultiSatBskSim_modelsMultiSat_BSK_MultiSatFsw` class used in this example is the same as the one used in
+:ref:`MultiSatBskSim_scenariosMultiSat_scenario_AttGuidMultiSat`. The main difference is that the station keeping module is now used, which allows for
 relative orbit geometry control.
 
-If no station keeping is desired, then the FSW stack works exactly as in :ref:`scenario_AttGuidMultiSat`. However, if
+If no station keeping is desired, then the FSW stack works exactly as in :ref:`MultiSatBskSim_scenariosMultiSat_scenario_AttGuidMultiSat`. However, if
 station keeping is set properly, the FSW events work as follows. First, the attitude reference is set given the pointing
 requirements. Then, the station keeping module computes the information regarding the necessary corrective burns, such
 as point in orbit, duration, thrust, attitude requirements, etc. With this information, the module then chooses whether
@@ -66,7 +66,7 @@ control will be activated.
 
 Due to the fact that the ``spacecraftReconfig`` module only accepts messages of the type :ref:`attRefMsgPayload`, the
 ``locationPointing`` module always outputs a reference message and the ``attTrackingError`` module is always called,
-unlike how it happens in :ref:`scenario_AttGuidMultiSat`.
+unlike how it happens in :ref:`MultiSatBskSim_scenariosMultiSat_scenario_AttGuidMultiSat`.
 
 Illustration of Simulation Results
 ----------------------------------

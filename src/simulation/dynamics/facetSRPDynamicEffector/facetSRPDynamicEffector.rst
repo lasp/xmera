@@ -95,7 +95,9 @@ User Guide
 The following steps are required to set up the faceted SRP dynamic effector in python using Xmera. Be sure to include
 the Sun as a gravitational body in the simulation to use this module.
 
-#. First import the facetSRPDynamicEffector class::
+#. First import the facetSRPDynamicEffector class:
+
+.. code-block:: python
 
     from Xmera.simulation import facetSRPDynamicEffector
 
@@ -109,7 +111,9 @@ the Sun as a gravitational body in the simulation to use this module.
     SRPEffector.numFacets = 10
     SRPEffector.numArticulatedFacets = 4
 
-#. If the spacecraft contains articulated facets, a ``HingedRigidBodyMsgPayload`` articulation angle message must be configured for each articulated facet. An example using two constant stand-alone messages is provided below::
+#. If the spacecraft contains articulated facets, a ``HingedRigidBodyMsgPayload`` articulation angle message must be configured for each articulated facet. An example using two constant stand-alone messages is provided below:
+
+.. code-block:: python
 
     facetRotAngle1 = macros.D2R * 10.0  # [rad]
     facetRotAngle2 = macros.D2R * -10.0  # [rad]
@@ -132,7 +136,9 @@ the Sun as a gravitational body in the simulation to use this module.
     srpEffector.addArticulatedFacet(facetRotAngle2Message)
     srpEffector.addArticulatedFacet(facetRotAngle2Message)
 
-#. Next, define the spacecraft facet geometry information that is contained in the module's ``FacetedSRPSpacecraftGeometryData`` structure::
+#. Next, define the spacecraft facet geometry information that is contained in the module's ``FacetedSRPSpacecraftGeometryData`` structure:
+
+.. code-block:: python
 
     # Define facet areas
     area1 = 1.5 * 1.5

@@ -20,7 +20,7 @@ is created using custom values, and the asteroid Itokawa is created with custom 
    :align: center
 
 Further, the Vizard binary file is setup to load up a custom CAD model for the asteroid. The spacecraft
-orbit is defined relative to the asteroid.  Note, this feature requires :ref:`Vizard <vizard>` version 1.8 or higher.
+orbit is defined relative to the asteroid.  Note, this feature requires ``Vizard`` version 1.8 or higher.
 
 The script is found in the folder ``xmera/examples`` and executed by using::
 
@@ -36,7 +36,7 @@ which contains both modules.
 while Earth is on a circular orbit and Itokawa is on its elliptical heliocentric orbit.
 
 The method ``createCustomGravObject()`` is used to create the BSK grav bodies for both earth and Itokawa.
-The earth body is already supported in :ref:`simIncludeGravBody`, but in this script we show how this could
+The earth body is already supported in ``simIncludeGravBody``, but in this script we show how this could
 be customized.  The gravity body ephemeris states are connected to the :ref:`planetEphemeris` planet
 state output messages.
 

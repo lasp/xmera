@@ -51,7 +51,9 @@ User Guide
 ----------
 This section is to outline the steps needed to setup a Translating Body State Effector in Python using Xmera.
 
-#. Import the linearTranslatingBodyOneDOFStateEffector class::
+#. Import the linearTranslatingBodyOneDOFStateEffector class:
+
+.. code-block:: python
 
     from Xmera.simulation import linearTranslatingBodyOneDOFStateEffector
 
@@ -87,7 +89,9 @@ This section is to outline the steps needed to setup a Translating Body State Ef
     translatingBody.nameOfThetaState = "translatingBodyRho"
     translatingBody.nameOfThetaDotState = "translatingBodyRhoDot"
 
-#. (Optional) Connect a command force message::
+#. (Optional) Connect a command force message:
+
+.. code-block:: python
 
     cmdArray = messaging.ArrayMotorForceMsgPayload()
     cmdArray.motorForce = [cmdForce]  # [Nm]

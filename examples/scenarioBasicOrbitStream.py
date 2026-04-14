@@ -9,7 +9,7 @@ Overview
 
 This script duplicates the basic orbit simulation in the scenario :ref:`scenarioBasicOrbit`.
 The difference is that this version allows for the Xmera simulation data to be live streamed to the
-:ref:`vizard` visualization program.
+``Vizard`` visualization program.
 
 The script is found in the folder ``xmera/examples`` and executed by using::
 

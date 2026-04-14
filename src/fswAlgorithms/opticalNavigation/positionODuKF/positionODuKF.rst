@@ -30,10 +30,10 @@ provides information on what this message is used for.
       - :ref:`FilterMsgPayload`
       - output filter data message containing states and covariances
     * - opNavResidualMsg
-      - :ref:`FilterResidualMsgPayload`
+      - :ref:`FilterResidualsMsgPayload`
       - output measurement data message containing residuals
     * - cameraPosMsg
-      - :ref:`CameraLocalizationMsgPayload.h`
+      - :ref:`CameraLocalizationMsgPayload`
       - opnav input message containing the position vector towards the target
 
 Module models
@@ -72,7 +72,9 @@ User Guide
 ----------
 This section is to outline the steps needed to setup a positionODSRuKF converter in Python.
 
-#. Import the module::
+#. Import the module:
+
+.. code-block:: python
 
     from Xmera.fswAlgorithms import positionODSRuKF
 
@@ -85,7 +87,9 @@ This section is to outline the steps needed to setup a positionODSRuKF converter
     positionOD.alpha = 0.02
     positionOD.beta = 2.0
 
-#. Setup SRuKF measurement parameters, measurement noise Standard Deviation is given in meters::
+#. Setup SRuKF measurement parameters, measurement noise Standard Deviation is given in meters:
+
+.. code-block:: python
 
     positionOD.muCentral = 3000*1E9
     positionOD.measNoiseScaling = 1

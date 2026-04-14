@@ -10,10 +10,9 @@ The following support files help with writing Xmera modules.
 
    code-guidelines
    debugging
+   fuzz-testing
    deprecating-code
    making-new-module
    add-sphinx-docs
    module-checklist
    understanding-xmera
-   migrating-module-to-bsk2
-   migrating-to-python3

@@ -7,11 +7,15 @@ r"""
 Overview
 --------
 
+.. highlight:: python
+
 Demonstrates a spacecraft performing aerocapture.  :ref:`tabularAtmosphere` is used
 to read in a table of atmospheric density value for the planet.  A cannonball
 drag effector (:ref:`dragDynamicEffector`) is used to simulate the atmospheric drag force.
 
-The script is found in the folder ``xmera/examples`` and executed by using::
+The script is found in the folder ``xmera/examples`` and executed by using:
+
+.. code-block:: console
 
       python3 scenarioAerocapture.py
 
@@ -27,7 +31,7 @@ tabular atmosphere model.
 
 ::
 
-    show_plots = True, planetCase = `Earth`
+    show_plots = True, planetCase = 'Earth'
 
 .. image:: /_images/Scenarios/scenarioAerocapture5Earth.svg
    :align: center
@@ -47,7 +51,7 @@ captured by the planet.
 
 ::
 
-    show_plots = True, planetCase = `Mars`
+    show_plots = True, planetCase = 'Mars'
 
 .. image:: /_images/Scenarios/scenarioAerocapture5Mars.svg
    :align: center

@@ -7,7 +7,7 @@ the ``DynamicObject`` class.  This means they still have the regular Xmera ``res
 ``updateState()`` methods, but they also have a state machine and integrator build in as these
 modules have to integrate internal ordinate differential equations (ODEs).
 
-Xmera modules such as :ref:`spacecraft` and :ref:`spacecraftSystem` inherit from the ``DynamicObject`` class. These
+Xmera modules such as :ref:`spacecraft` and ``spacecraftSystem`` inherit from the ``DynamicObject`` class. These
 modules include the standard ``reset()`` and ``updateState()`` methods, but also incorporate a built-in state machine
 and numerical integrator to solve internal ordinary differential equations (ODEs).
 

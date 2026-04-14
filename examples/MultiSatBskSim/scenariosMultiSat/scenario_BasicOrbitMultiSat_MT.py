@@ -9,9 +9,11 @@ Overview
 
 This script demonstrates how to use the Xmera v2.1 multi-threading to simulate a constellation
 of 16 spacecraft using 4 threads.  The simulation scenario setup is very similar to
-:ref:`scenario_BasicOrbitMultiSat`.  To setup the unique satellite orbits, the script here loops
+:ref:`MultiSatBskSim_scenariosMultiSat_scenario_BasicOrbitMultiSat`.  To setup the unique satellite orbits, the script here loops
 over all satellites an incrementally changes the orbit elements.  The following Vizard screen capture
 illustrate the family of orbits being simulated.
+
+.. highlight:: python
 
 .. image:: /_images/static/scenario_BasicOrbitMultiSat_MT.jpg
    :align: center
