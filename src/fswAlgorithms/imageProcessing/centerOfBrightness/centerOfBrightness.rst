@@ -1,18 +1,19 @@
 Executive Summary
 -----------------
 
-Module reads in a message containing a pointer to an image and writes out the weighted center of brightness of the
-image for any pixel above a parametrized threshold. A window mask can be specified such that only the pixels within the
-specified window are considered. The module also computes the normalized total brightness of all bright pixels
-(brightness between 0 and 1, summed up over all bright pixels) and determines the rolling average of the brightness
-over the last few time steps. If there are no bright pixels, the brightness history (and rolling average) will not be
-updated.
+Module computes the unweighted center of brightness of an image within a specified region of interest (ROI).
+An ``ImageReaderInterface`` implementation is injected at construction time, decoupling the module from any
+particular image source. Two concrete readers are provided: ``ImageReaderFromFile`` (reads from disk) and
+``ImageReaderFromMessage`` (reads from a :ref:`CameraImageMsgPayload` message). The reader handles blur,
+thresholding, and extraction of non-zero pixel locations within the ROI window. The module then computes the
+centroid of those bright pixels, tracks a rolling average of the pixel count, and validates the result against
+a configurable brightness-increase threshold.
 
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
+The following table lists all the module input and output messages. The module msg connection is set by the
+user from python. The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 
@@ -23,86 +24,121 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - opnavCirclesOutMsg
+    * - opnavCOBOutMsg
       - :ref:`OpNavCOBMsgPayload`
-      - output center of brightness message containing number of detected pixels, and center-of-brightness in pixel
-        space, as well as the rolling average of the total brightness.
-    * - imageInMsg
-      - :ref:`CameraImageMsgPayload`
-      - camera image input message containing the pointer to the image
+      - Output center of brightness message containing the number of detected pixels,
+        center-of-brightness in pixel space, and the rolling average brightness.
+    * - centerOfBrightnessDiagnosticOutMsg
+      - :ref:`CenterOfBrightnessDiagnosticMsgPayload`
+      - Diagnostic output message with validity flags (noPixelTrigger,
+        notExceedingBrightnessIncreaseTrigger).
+    * - roiInMsg
+      - :ref:`RegionOfInterestMsgPayload`
+      - Region of interest input message specifying the window center and size.
+
 
 Detailed Module Description
 ---------------------------
 
+Architecture
+^^^^^^^^^^^^
+
+The module follows the Strategy pattern. At construction time it receives a ``std::shared_ptr`` to an
+``ImageReaderInterface``, which provides a common API for reading and pre-processing images regardless of
+the source. See :doc:`imageReader/imageReader` for details on the interface and its implementations.
+
+On each ``updateState`` call the module reads the ROI from ``roiInMsg``, delegates image reading and
+pixel extraction to the injected reader, and passes the resulting pixel coordinates to the core
+algorithm (``CenterOfBrightnessAlgorithm``).
+
 Image Processing
 ^^^^^^^^^^^^^^^^
 
-The module performs a small set of operations to prepare the image for the center of brightness detection.
-Firstly, it applies a Gaussian blur on the image, which helps soften the edges of bright objects and improves
-the detection performance.
-Secondly it thresholds the image in order to remove any dim pixels that may not be of interest to the detection
-algorith.
-Both of these are implemented using OpenCV methods.
+Image pre-processing is handled entirely by the ``ImageReaderInterface`` implementation. Each reader
+performs the following pipeline:
 
-Afterwards the weighted center-of-brightness is implemented by finding all the non-zero pixels (all pixels that were
-not thresholded down), and finding their intensity (which will be their weight).
-Assuming the image is made up of pixels :math:`p` with and x and y component, that :math:`I` is the intensity, and
-:math:`I_{\mathrm{min}` is the threshold value, the center of brightness within the window of the image
-(:math:`\mathrm{window} \in \mathrm{image}`) is then defined as:
+#. Load the image (from file or message payload).
+#. Convert from BGR to grayscale.
+#. Apply a box blur with a configurable kernel size (``blurSize``).
+#. Apply a binary threshold at ``pixelThreshold``: pixels above the threshold become 255, all others become 0.
+#. Extract the coordinates of non-zero pixels via ``cv::findNonZero``.
+#. Filter those coordinates to only those falling within the requested window.
+
+The output is a fixed-size array of ``Eigen::Vector2i`` pixel coordinates. Unused slots are filled with
+the zero-vector sentinel ``(0, 0)``.
+
+Center of Brightness
+^^^^^^^^^^^^^^^^^^^^
+
+The algorithm computes the **unweighted centroid** of all non-zero pixel locations returned by the reader.
+Given the set of bright-pixel coordinates :math:`\mathcal{P}` within the window:
+
+.. math::
+
+    \mathcal{P} &= \{ p \in \mathrm{window} \mid I(p) > I_{\min} \} \\
+    p_{\mathrm{cob}} &= \frac{1}{|\mathcal{P}|} \sum_{p \in \mathcal{P}} p
+
+where :math:`p_{\mathrm{cob}}` has x and y components written to the output message.
+
+Brightness Validation
+^^^^^^^^^^^^^^^^^^^^^
+
+The module tracks the number of bright pixels (``pixelsFound``) as a brightness metric and maintains a
+rolling average over the last :math:`N` time steps (``numberOfPointsBrightnessAverage``). On each step it
+computes the relative increase of the rolling average:
 
 .. math::
 
-    \mathcal{P} &= \{p \in \mathrm{window} \hspace{5cm} |  \hspace{5cm} I(p) > I_{\mathrm{min}\} \\
-    I_\mathrm{tot} &= \sum_{p \in \mathcal{P}} I(p) \\
-    p_{\mathrm{cob}} &= \frac{1}{I_\mathrm{tot}}\sum_{p \in \mathcal{P}} I(p) * p }
+    \Delta_{\mathrm{rel}} = \frac{\bar{B}_{\mathrm{new}} - \bar{B}_{\mathrm{old}}}{\bar{B}_{\mathrm{old}}}
 
-where the center of brightess :math:`p_{\mathrm{cob}}` has an x and y component which are then written to the message.
-The normalized total brightness is equal to
+If :math:`\Delta_{\mathrm{rel}}` is below ``relativeBrightnessIncreaseThreshold``, the result is tagged
+invalid. If no pixels are found at all, the result is also tagged invalid and the brightness history is
+not updated. Diagnostic flags are written to ``centerOfBrightnessDiagnosticOutMsg``.
 
-.. math::
-    I_\mathrm{tot, normalized} = \frac{I_\mathrm{tot}}{255}
-
-and the rolling average is computed over the last :math:`N` time steps, as specified by numberOfPointsBrightnessAverage.
-If the relative increase of the rolling brightness average from one time step to the next is below the threshold
-brightnessIncreaseThreshold, the image is tagged as invalid.
-
-If the incoming image is not valid, or there were no pixels above the threshold, the image is tagged as invalid.
-Downstream algorithms can therefore know when to skip a measurement.
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a Center of Brightness in Python.
+This section outlines the steps needed to set up a Center of Brightness module in Python.
 
-#. Import the centerOfBrightness class::
+#. Import the module::
 
-    from Xmera.fswAlgorithms import centerOfBrightness
+    from xmera.fswAlgorithms import centerOfBrightness
 
-#. Create an instantiation of centerOfBrightness::
+#. Create an image reader and configure its processing parameters::
 
-    cobAlgorithm = centerOfBrightness.CenterOfBrightness()
+    reader = centerOfBrightness.ImageReaderFromFile()
+    reader.setBlurSize(7)
+    reader.setPixelThreshold(10)
+    reader.setFileName("/path/to/image.png")
 
-#. Define the image processing parameters. For example::
+   Or, for message-based images::
 
-    cobAlgorithm.blurSize = 7
-    cobAlgorithm.threshold = 10
+    reader = centerOfBrightness.ImageReaderFromMessage()
+    reader.setBlurSize(7)
+    reader.setPixelThreshold(10)
+    reader.imageInMsg.subscribeTo(cameraImageMsg)
 
-#. Define the window mask (optional)::
+#. Create the module, passing the reader::
 
-    cobAlgorithm.setWindowCenter(windowCenter)
-    cobAlgorithm.setWindowSize(windowWidth, windowHeight)
+    cobModule = centerOfBrightness.CenterOfBrightness(reader)
+    cobModule.modelTag = "centerOfBrightness"
 
-#. Specify the number of data points to be used for the rolling average of total brightness (optional)::
+#. Configure the camera ID for the output message::
 
-    cobAlgorithm.numberOfPointsBrightnessAverage = 5
+    cobModule.setCameraID(1)
 
-#. Specify the minimum relative brightness increase of the rolling average of total brightness (optional)::
+#. Configure brightness validation parameters (optional)::
 
-    moduleConfig.setRelativeBrightnessIncreaseThreshold(0.1)
+    cobModule.setRelativeBrightnessIncreaseThreshold(0.1)
+    cobModule.setNumberOfPointsBrightnessAverage(5)
 
-#. Subscribe to the image message output by the camera model or visualization interface::
+#. Subscribe the module to a region of interest message::
 
-    cobAlgorithm.imageInMsg.subscribeTo(imgInMsg)
+    cobModule.roiInMsg.subscribeTo(roiMsg)
 
-#. The angular states of the body are created using an output message ``opnavCOBOutMsg``.
+#. Add the module to the simulation task::
 
-    sim.AddModelToTask(taskName, cobAlgorithm)
+    sim.AddModelToTask(taskName, cobModule)
+
+#. The results are available on the output messages ``opnavCOBOutMsg`` and
+   ``centerOfBrightnessDiagnosticOutMsg``.

@@ -4,8 +4,11 @@
 
 #include "centerOfBrightness.h"
 
+inline constexpr double kNanoToSec = 1.0e-9;
+
 /*! Module constructor */
-CenterOfBrightness::CenterOfBrightness() = default;
+CenterOfBrightness::CenterOfBrightness(std::shared_ptr<ImageReaderInterface> imageReaderInstance)
+    : imageReader(std::move(imageReaderInstance)) {}
 
 /*! Module destructor */
 CenterOfBrightness::~CenterOfBrightness() = default;
@@ -16,353 +19,72 @@ CenterOfBrightness::~CenterOfBrightness() = default;
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void CenterOfBrightness::reset(uint64_t currentSimNanos) {
-    if (!this->imageInMsg.isLinked()) {
-        throw std::invalid_argument("CenterOfBrightness.imageInMsg wasn't connected.");
+    if (!this->roiInMsg.isLinked()) {
+        throw std::invalid_argument("CenterOfBrightness.roiInMsg wasn't connected.");
     }
+    this->algorithm.reset();
+    this->previousImageTimeTag = 0;
 }
 
-/*! This module reads an OpNav image and extracts the weighted center of brightness. It performs a grayscale, a blur,
- * and a threshold on the image before summing the weighted pixel intensities in order to average them with the
- * total detected intensity. This provides the center of brightness measurement (as well as the total number of
- * bright pixels)
+/*! This module reads a region of interest message and delegates image reading and center of brightness
+ * computation to the algorithm and image reader.
  @return void
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
-    CameraImageMsgPayload imageBuffer{};
+    auto roiPayload = this->roiInMsg();
     OpNavCOBMsgPayload cobBuffer{};
-    CenterOfBrightnessDiagnosticMsgPayload diagnosticBuffer{true, true};
+    CenterOfBrightnessResult result{};
 
-    cv::Mat imageCV = this->readImage(imageBuffer, cobBuffer, currentSimNanos);
-    if (imageCV.empty()) {
-        this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
-        return;
+    int64_t imageTimeTag =
+        this->imageReader->getCurrentImageTimeTag(this->cameraID, static_cast<int64_t>(currentSimNanos * kNanoToSec));
+    if (imageTimeTag > this->previousImageTimeTag) {
+        this->previousImageTimeTag = imageTimeTag;
+
+        CobRegionOfInterest roi{};
+        roi.center = Eigen::Vector2i(roiPayload.centerX, roiPayload.centerY);
+        roi.size = Eigen::Vector2i(roiPayload.width, roiPayload.height);
+
+        result = this->algorithm.update(roi, *this->imageReader);
     }
-    this->computeWindow(imageCV);
-    if (this->validWindow) {
-        this->applyWindow(imageCV);
+
+    cobBuffer.valid = result.valid;
+    cobBuffer.centerOfBrightness[0] = result.centerOfBrightness[0];
+    cobBuffer.centerOfBrightness[1] = result.centerOfBrightness[1];
+    cobBuffer.pixelsFound = result.pixelsFound;
+    cobBuffer.rollingAverageBrightness = result.rollingAverageBrightness;
+    if (result.valid) {
+        cobBuffer.timeTag = static_cast<uint64_t>(imageTimeTag);
+        cobBuffer.cameraID = this->cameraID;
     }
-    cobBuffer = this->findCob(imageCV, imageBuffer, diagnosticBuffer);
+
+    CenterOfBrightnessDiagnosticMsgPayload diagnosticBuffer{result.noPixelTrigger,
+                                                            result.notExceedingBrightnessIncreaseTrigger};
+
     this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
     this->centerOfBrightnessDiagnosticOutMsg.write(&diagnosticBuffer, this->moduleID, currentSimNanos);
 }
 
-/*! This method retrieves the image data.
-@return OpenCV image or empty if no valid image is found.
-@param imageBuffer Reference to the image payload buffer.
-@param cobBuffer Reference to the COB output buffer.
-@param currentSimNanos Current simulation time in nanoseconds.
- */
-cv::Mat CenterOfBrightness::readImage(CameraImageMsgPayload& imageBuffer,
-                                      OpNavCOBMsgPayload& cobBuffer,
-                                      uint64_t currentSimNanos) {
-    cv::Mat imageCV;
+/*! Delegating setters/getters for algorithm parameters */
 
-    /*! - Read in the image*/
-    if (this->imageInMsg.isLinked()) {
-        imageBuffer = this->imageInMsg();
-        this->sensorTimeTag = this->imageInMsg.timeWritten();
-    }
-    /* Added for debugging purposes*/
-    if (!this->fileName.empty()) {
-        imageCV = cv::imread(this->fileName, cv::IMREAD_COLOR);
-    } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
-        /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
-                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
-        imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-    }
-    /*! - If no image is present, write zeros in message */
-    else {
-        return cv::Mat();
-    }
-
-    /*! - Save image to prescribed path if requested */
-    std::string dirName;
-    if (this->saveImages) {
-        dirName = std::format("{}{}.png", this->saveDir, (double)currentSimNanos * NANO2SEC);
-        if (!cv::imwrite(dirName, imageCV)) {
-            std::cerr << "Warning: CenterOfBrightness wasn't able to save images." << std::endl;
-        }
-    }
-
-    return imageCV;
-}
-
-/*! Method extracts the bright pixels (above a given threshold) by first grayscaling then bluring image.
- @return std 2 vector of integers
- @param image openCV matrix of the input image
- */
-std::vector<cv::Vec2i> CenterOfBrightness::extractBrightPixels(cv::Mat image) {
-    cv::Mat blured;
-    std::vector<cv::Vec2i> locations;
-
-    /*! - Grayscale, blur, and threshold iamge*/
-    cv::cvtColor(image, this->imageGray, cv::COLOR_BGR2GRAY);
-    cv::blur(this->imageGray, blured, cv::Size(this->blurSize, this->blurSize));
-    cv::threshold(blured, image, this->pixelThreshold, 255, cv::THRESH_BINARY);
-
-    /*! - Find all the non-zero pixels in the image*/
-    cv::findNonZero(image, locations);
-
-    return locations;
-}
-
-/*! Method computes the weighted center of brightness and total brightness out of the non-zero pixel coordinates.
- @return std::pair<Eigen::Vector2d, double> First: center of brightness, Second: brightness
- @param vector integer pixel coordinates of bright pixels
- */
-std::pair<Eigen::Vector2d, double> CenterOfBrightness::computeWeightedCenterOfBrightness(
-    std::vector<cv::Vec2i> nonZeroPixels) {
-    uint32_t weightSum = 0;
-    Eigen::Vector2d coordinates;
-    coordinates.setZero();
-    for (auto& pixel : nonZeroPixels) {
-        /*! Individual pixel intensity used as the weight for the contribution to the solution*/
-        auto weight = this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
-        coordinates[0] += weight * pixel[0];
-        coordinates[1] += weight * pixel[1];
-        weightSum += weight;  // weighted sum of all the pixels
-    }
-    double brightness = weightSum / 255.0;  // normalized
-    coordinates /= weightSum;
-
-    return {coordinates, brightness};
-}
-
-/*! Update brightness history by shifting back previous brightness values and updating most recent one
-    @return void
-    @param brightness total brightness of current time step
-    */
-void CenterOfBrightness::updateBrightnessHistory(double brightness) {
-    // increase vector size if it is not at its full size yet
-    if (this->brightnessHistory.rows() < this->numberOfPointsBrightnessAverage) {
-        this->brightnessHistory.conservativeResize(this->brightnessHistory.rows() + 1, 1);
-    }
-    // shift previous brightness values back (only if number of data points for rolling average is greater than 1)
-    if (this->brightnessHistory.rows() > 1) {
-        for (auto i = static_cast<int>(this->brightnessHistory.rows()) - 1; i > 0; --i) {
-            this->brightnessHistory[i] = this->brightnessHistory[i - 1];
-        }
-    }
-    // update most recent brightness value
-    this->brightnessHistory[0] = brightness;
-}
-
-/*! This method applies the window for windowing by setting anything outside the window to black.
- @return void
- @param image cv::Mat of the input image
- */
-void CenterOfBrightness::applyWindow(cv::Mat const& image) const {
-    /*! Create a window and ignore anything outside of it (make it black).
-     * Point in opencv is column, row. x goes left-to-right, y goes top-to-bottom ([0,0] is top left corner).
-     * Window mask is inclusive (edge of mask should be considered in COB), so must add/subtract one pixel. */
-    /*! - Left edge removal */
-    if (this->windowPointTopLeft[0] > 0) {
-        cv::rectangle(
-            image, cv::Point(0, 0), cv::Point(this->windowPointTopLeft[0] - 1, image.size().height), cv::Scalar(0), -1);
-    }
-    /*! - Right edge removal */
-    if (this->windowPointBottomRight[0] < image.size().width) {
-        cv::rectangle(image,
-                      cv::Point(this->windowPointBottomRight[0] + 1, 0),
-                      cv::Point(image.size().width, image.size().height),
-                      cv::Scalar(0),
-                      -1);
-    }
-    /*! - Top edge removal */
-    if (this->windowPointTopLeft[1] > 0) {
-        cv::rectangle(image,
-                      cv::Point(this->windowPointTopLeft[0] - 1, 0),
-                      cv::Point(this->windowPointBottomRight[0] + 1, this->windowPointTopLeft[1] - 1),
-                      cv::Scalar(0),
-                      -1);
-    }
-    /*! - Bottom edge removal */
-    if (this->windowPointBottomRight[1] < image.size().height) {
-        cv::rectangle(image,
-                      cv::Point(this->windowPointTopLeft[0] - 1, this->windowPointBottomRight[1] + 1),
-                      cv::Point(this->windowPointBottomRight[0] + 1, image.size().height),
-                      cv::Scalar(0),
-                      -1);
-    }
-}
-
-/*! This method computes the points of the window used for windowing, it also sets the diagnostic.invalidWindowTrigger
- @return void
- @param image openCV matrix of the input image
- */
-void CenterOfBrightness::computeWindow(cv::Mat const& image) {
-    if (this->windowCenter.isZero() || this->windowWidth == 0 || this->windowHeight == 0) {
-        this->windowPointTopLeft[0] = 0;
-        this->windowPointTopLeft[1] = 0;
-        this->windowPointBottomRight[0] = image.size().width;
-        this->windowPointBottomRight[1] = image.size().height;
-    } else {
-        this->windowPointTopLeft[0] = this->windowCenter[0] - this->windowWidth / 2;
-        this->windowPointTopLeft[1] = this->windowCenter[1] - this->windowHeight / 2;
-        this->windowPointBottomRight[0] = this->windowCenter[0] + this->windowWidth / 2;
-        this->windowPointBottomRight[1] = this->windowCenter[1] + this->windowHeight / 2;
-        this->validWindow = true;
-    }
-    assert(windowPointTopLeft[0] >= 0);
-    assert(windowPointTopLeft[1] >= 0);
-    assert(windowPointBottomRight[0] <= image.size().width);
-    assert(windowPointBottomRight[1] <= image.size().height);
-}
-
-/*! This method finds the center of brightness (COB) from the image and updates the COB output buffer.
- @return void
- @param imageCV OpenCV matrix of the input image
- @param imageBuffer Reference to the image payload buffer
-
- */
-OpNavCOBMsgPayload CenterOfBrightness::findCob(const cv::Mat& imageCV,
-                                               const CameraImageMsgPayload& imageBuffer,
-                                               CenterOfBrightnessDiagnosticMsgPayload& diagnosticMsgBuffer) {
-    OpNavCOBMsgPayload cobBuffer{};
-    std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
-
-    /*!- If no lit pixels are found do not validate the image as a measurement */
-    if (!locations.empty()) {
-        std::pair<Eigen::Vector2d, double> cobData;
-        cobData = this->computeWeightedCenterOfBrightness(locations);
-
-        double averageBrightnessOld = 0.0;
-        if (this->brightnessHistory.rows() > 0) {
-            averageBrightnessOld = this->brightnessHistory.mean();
-        }
-        this->updateBrightnessHistory(cobData.second);
-        double averageBrightnessNew = this->brightnessHistory.mean();
-        double brightnessIncrease = 0.0;
-        if (averageBrightnessOld > 0.0) {
-            brightnessIncrease = (averageBrightnessNew - averageBrightnessOld) / averageBrightnessOld;
-        }
-        diagnosticMsgBuffer.noPixelTrigger = false;
-
-        /*! If brightness increase is less than brightness increase threshold, do not validate image */
-        if (brightnessIncrease >= this->relativeBrightnessIncreaseThreshold) {
-            cobBuffer.valid = true;
-            cobBuffer.timeTag = this->sensorTimeTag;
-            cobBuffer.cameraID = imageBuffer.cameraID;
-            cobBuffer.centerOfBrightness[0] = cobData.first[0] + 0.5;
-            cobBuffer.centerOfBrightness[1] = cobData.first[1] + 0.5;
-            cobBuffer.pixelsFound = static_cast<int32_t>(locations.size());
-            diagnosticMsgBuffer.notExceedingBrightnessIncreaseTrigger = false;
-        }
-        cobBuffer.rollingAverageBrightness = averageBrightnessNew;
-    }
-    return cobBuffer;
-}
-
-/*! Set the mask center for windowing
-    @param Eigen::Vector2i center [px]
-    @return void
-    */
-void CenterOfBrightness::setWindowCenter(const Eigen::VectorXi& center) { this->windowCenter = center; }
-
-/*! Get the mask center for windowing
-    @return Eigen::Vector2i center [px]
-    */
-Eigen::VectorXi CenterOfBrightness::getWindowCenter() const { return this->windowCenter; }
-
-/*! Set the mask size for windowing
-    @param int32_t width [px]
-    @param int32_t height [px]
-    @return void
-    */
-void CenterOfBrightness::setWindowSize(const int32_t width, const int32_t height) {
-    this->windowWidth = width;
-    this->windowHeight = height;
-}
-
-/*! Get the mask center for windowing
-    @return Eigen::Vector2i size [px]
-    */
-Eigen::VectorXi CenterOfBrightness::getWindowSize() const {
-    Eigen::VectorXi center = {this->windowWidth, this->windowHeight};
-    return center;
-}
-
-/*! Set threshold for the increase in brightness for images not to be invalidated
-    @param double increaseThreshold
-    @return void
-    */
 void CenterOfBrightness::setRelativeBrightnessIncreaseThreshold(double increaseThreshold) {
-    this->relativeBrightnessIncreaseThreshold = increaseThreshold;
+    this->algorithm.setRelativeBrightnessIncreaseThreshold(increaseThreshold);
 }
 
-/*! Get threshold for the increase in brightness for images not to be invalidated
-    @return double increaseThreshold
-    */
 double CenterOfBrightness::getRelativeBrightnessIncreaseThreshold() const {
-    return this->relativeBrightnessIncreaseThreshold;
+    return this->algorithm.getRelativeBrightnessIncreaseThreshold();
 }
 
-/*! Set the pixel brightness threshold used for detecting bright pixels
-    @param double pixelThreshold
-    @return void
-    */
-void CenterOfBrightness::setPixelThreshold(double PixelThreshold) { this->pixelThreshold = PixelThreshold; }
-
-/*! Get the pixel brightness threshold used for detecting bright pixels
-    @return double pixelThreshold
-    */
-double CenterOfBrightness::getPixelThreshold() const { return this->pixelThreshold; }
-
-/*! Set the filename for the module to read an image directly
-    @param std::string fileName
-    @return void
-*/
-void CenterOfBrightness::setFileName(const std::string& fileName) { this->fileName = fileName; }
-
-/*! Get the filename for the module to read an image directly
-    @return std::string fileName
-*/
-std::string CenterOfBrightness::getFileName() const { return this->fileName; }
-
-/*! Set the blur size for the image processing filter
-    @param int32_t blur
-    @return void
-*/
-void CenterOfBrightness::setBlurSize(int32_t blur) { this->blurSize = blur; }
-
-/*! Get the blur size for the image processing filter
-    @return int32_t blur
-*/
-int32_t CenterOfBrightness::getBlurSize() const { return this->blurSize; }
-
-/*! Enable or disable saving debug images to file
-    @param bool save
-    @return void
-*/
-void CenterOfBrightness::setSaveImages(bool save) { this->saveImages = save; }
-
-/*! Get whether saving debug images is enabled
-    @return bool save
-*/
-bool CenterOfBrightness::getSaveImages() const { return this->saveImages; }
-
-/*! Set the directory where images should be saved
-    @param std::string directory
-    @return void
-*/
-void CenterOfBrightness::setSaveDir(const std::string& directory) { this->saveDir = directory; }
-
-/*! Get the directory where images are saved
-    @return std::string directory
-*/
-std::string CenterOfBrightness::getSaveDir() const { return this->saveDir; }
-
-/*! Set the number of points used for rolling brightness averaging
-    @param int32_t rollingAverage
-    @return void
-*/
 void CenterOfBrightness::setNumberOfPointsBrightnessAverage(int32_t rollingAverage) {
-    this->numberOfPointsBrightnessAverage = rollingAverage;
+    this->algorithm.setNumberOfPointsBrightnessAverage(rollingAverage);
 }
 
-/*! Get the number of points used for rolling brightness averaging
-    @return int32_t rollingAverage
-*/
-int32_t CenterOfBrightness::getNumberOfPointsBrightnessAverage() const { return this->numberOfPointsBrightnessAverage; }
+int32_t CenterOfBrightness::getNumberOfPointsBrightnessAverage() const {
+    return this->algorithm.getNumberOfPointsBrightnessAverage();
+}
+
+/*! Adapter-only setters/getters */
+
+void CenterOfBrightness::setCameraID(int32_t id) { this->cameraID = id; }
+
+int32_t CenterOfBrightness::getCameraID() const { return this->cameraID; }
