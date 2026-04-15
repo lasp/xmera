@@ -159,7 +159,7 @@ void InertialAttitudeUkf::readAttitudeData() {
             Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(attitude.dcm_CB);
 
             attitudeMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
-                                                       this->attitudeMessages[index].measurementNoise_C * dcm_CB);
+                                                    this->attitudeMessages[index].measurementNoise_C * dcm_CB);
             attitudeMeasurement.setObservation(
                 mrpSwitch(Eigen::Map<Eigen::Vector3d>(attitude.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold));
             attitudeMeasurement.setMeasurementModel(MeasurementModel::positionStates);
