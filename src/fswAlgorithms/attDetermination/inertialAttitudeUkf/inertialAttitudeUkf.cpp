@@ -195,16 +195,15 @@ void InertialAttitudeUkf::readAttitudeData() {
  * @return void
  * */
 void InertialAttitudeUkf::readRateData() {
-    IMUSensorMsgPayload rateBuffer = this->imuSensorDataInMsg();
+    STAttMsgPayload rateBuffer = this->rateDataInMsg();
     if (rateBuffer.timeTag > this->previousFilterTimeTag) {
         auto rateMeasurement = MeasurementModel();
         rateMeasurement.setMeasurementName("rate");
         rateMeasurement.setTimeTag(rateBuffer.timeTag);
         rateMeasurement.setValidity(true);
 
-        rateMeasurement.setMeasurementNoise(this->measNoiseScaling * this->rateNoise /
-                                            rateBuffer.numberOfValidGyroMeasurements);
-        rateMeasurement.setObservation(cArrayToEigenVector(rateBuffer.AngVelPlatform));
+        rateMeasurement.setMeasurementNoise(this->measNoiseScaling * this->rateNoise);
+        rateMeasurement.setObservation(cArrayToEigenVector(rateBuffer.omega_BN_B));
         rateMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
         this->measurements[this->measurementIndex] = rateMeasurement;
         this->measurementIndex += 1;

@@ -243,9 +243,9 @@ def test_propagation_kf(show_plots):
     star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addAttitudeInput(star_tracker2)
 
-    imu_data = messaging.IMUSensorMsgPayload()
-    imu_measurement = messaging.IMUSensorMsg().write(imu_data)
-    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(imu_measurement)
+    rate_data = messaging.STAttMsgPayload()
+    rate_measurement = messaging.STAttMsg().write(rate_data)
+    intertialAttitudeFilter.rateDataInMsg.subscribeTo(rate_measurement)
 
     attitude_data_log = intertialAttitudeFilter.navAttitudeOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, attitude_data_log)
@@ -375,9 +375,9 @@ def test_measurements_ukf(show_plots, initial_error, method):
     star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     inertialAttitudeFilter.addAttitudeInput(star_tracker2)
 
-    imu_data = messaging.IMUSensorMsgPayload()
-    imu_measurement = messaging.IMUSensorMsg().write(imu_data)
-    inertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(imu_measurement)
+    rate_data = messaging.STAttMsgPayload()
+    rate_measurement = messaging.STAttMsg().write(rate_data)
+    inertialAttitudeFilter.rateDataInMsg.subscribeTo(rate_measurement)
 
     filter_data_log = inertialAttitudeFilter.inertialFilterOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
@@ -424,10 +424,9 @@ def test_measurements_ukf(show_plots, initial_error, method):
                 st_2_msg.write(st_2_data, int(time[i+1]*1e9))
 
         if sim_time/4 < i:
-            imu_data.numberOfValidGyroMeasurements = 1
-            imu_data.timeTag = time[i+1]
-            imu_data.AngVelPlatform = expected[i+1, 4:7] + np.random.normal(0, np.sqrt(rate_sigma_2), 3)
-            imu_measurement.write(imu_data, int(time[i+1]*1e9))
+            rate_data.timeTag = time[i+1]
+            rate_data.omega_BN_B = expected[i+1, 4:7] + np.random.normal(0, np.sqrt(rate_sigma_2), 3)
+            rate_measurement.write(rate_data, int(time[i+1]*1e9))
 
         unit_test_sim.ConfigureStopTime(macros.sec2nano((time[i+1])))
         unit_test_sim.ExecuteSimulation()
@@ -584,9 +583,9 @@ def test_measurements_ukf_with_bias(show_plots, initial_error, method):
     star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     inertialAttitudeFilter.addAttitudeInput(star_tracker2)
 
-    imu_data = messaging.IMUSensorMsgPayload()
-    imu_measurement = messaging.IMUSensorMsg().write(imu_data)
-    inertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(imu_measurement)
+    rate_data = messaging.STAttMsgPayload()
+    rate_measurement = messaging.STAttMsg().write(rate_data)
+    inertialAttitudeFilter.rateDataInMsg.subscribeTo(rate_measurement)
 
     filter_data_log = inertialAttitudeFilter.inertialFilterOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
@@ -635,10 +634,9 @@ def test_measurements_ukf_with_bias(show_plots, initial_error, method):
                 st_2_msg.write(st_2_data, int(time[i+1]*1e9))
 
         if sim_time/4 < i:
-            imu_data.numberOfValidGyroMeasurements = 1
-            imu_data.timeTag = time[i+1]
-            imu_data.AngVelPlatform = expected[i+1, 4:7] + np.random.normal(0, np.sqrt(rate_sigma_2), 3) + true_rate_bias
-            imu_measurement.write(imu_data, int(time[i+1]*1e9))
+            rate_data.timeTag = time[i+1]
+            rate_data.omega_BN_B = expected[i+1, 4:7] + np.random.normal(0, np.sqrt(rate_sigma_2), 3) + true_rate_bias
+            rate_measurement.write(rate_data, int(time[i+1]*1e9))
 
         unit_test_sim.ConfigureStopTime(macros.sec2nano((time[i+1])))
         unit_test_sim.ExecuteSimulation()
@@ -803,9 +801,9 @@ def test_tuning_consistent(show_plots, initial_error, method, process_noise_tuni
     star_tracker2.measurementNoise_C = [[1e-4, 0, 0], [0,1e-4,0], [0,0,1e-4]]
     intertialAttitudeFilter.addAttitudeInput(star_tracker2)
 
-    imu_data = messaging.IMUSensorMsgPayload()
-    imu_measurement = messaging.IMUSensorMsg().write(imu_data)
-    intertialAttitudeFilter.imuSensorDataInMsg.subscribeTo(imu_measurement)
+    rate_data = messaging.STAttMsgPayload()
+    rate_measurement = messaging.STAttMsg().write(rate_data)
+    intertialAttitudeFilter.rateDataInMsg.subscribeTo(rate_measurement)
 
     filter_data_log = intertialAttitudeFilter.inertialFilterOutputMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
@@ -853,10 +851,9 @@ def test_tuning_consistent(show_plots, initial_error, method, process_noise_tuni
                 st_2_msg.write(st_2_data, int(time[i+1]*1e9))
 
         if sim_time/4 < i:
-            imu_data.numberOfValidGyroMeasurements = 1
-            imu_data.timeTag = time[i+1]
-            imu_data.AngVelPlatform = expected[i+1, 4:7] + np.random.normal(0, np.sqrt(rate_sigma_2), 3)
-            imu_measurement.write(imu_data, int(time[i+1]*1e9))
+            rate_data.timeTag = time[i+1]
+            rate_data.omega_BN_B = expected[i+1, 4:7] + np.random.normal(0, np.sqrt(rate_sigma_2), 3)
+            rate_measurement.write(rate_data, int(time[i+1]*1e9))
 
         unit_test_sim.ConfigureStopTime(macros.sec2nano((time[i+1])))
         unit_test_sim.ExecuteSimulation()

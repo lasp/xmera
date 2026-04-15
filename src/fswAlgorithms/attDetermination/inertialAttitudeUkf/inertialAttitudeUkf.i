@@ -17,5 +17,4 @@
 %include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 %include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
-%include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
 %include <architecture/msgPayloadDef/NavAttMsgPayload.h>
