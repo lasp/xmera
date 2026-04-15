@@ -56,13 +56,13 @@ function(xmera_is_module_enabled module_path out_var)
 endfunction()
 
 function(xmera_add_swig_module module)
-  # separate "a.b.c" into "a" and "c"
-  #  ... yes, ignore intermediate packages. everything just collapses. :(
-  # TODO: separate "a.b.c" into "a/b" and "c"
+  # separate "a.b.c" into package path and basename
   string(REPLACE "." ";" _package_components "${module}")
   list(POP_BACK _package_components _module_basename)
+  # Full path (a/b) used for build output to avoid basename collisions
+  list(JOIN _package_components "/" _full_package_path)
+  # First component only (a) used for install — matches existing import layout
   list(POP_FRONT _package_components _package_path)
-  # list(JOIN _package_components "/" _package_path)
 
   set(_gen_target_includes "$<TARGET_PROPERTY:${module},INCLUDE_DIRECTORIES>")
   set(_gen_swig_include_flags "$<LIST:TRANSFORM,${_gen_target_includes},PREPEND,-I>")
@@ -112,26 +112,14 @@ function(xmera_add_swig_module module)
     Python3::Module
   )
 
-  # TODO: once we actually use the full package path to install modules,
-  #   we need to use the following logic to ensure that the relative rpath
-  #   is correct no matter how deeply nested the module is.
-  #
-  # # "a.b.c" -> "xmera/a/b/_c.so" -> "../../../lib"
-  # string(REGEX MATCHALL [[\.]] _rpath "${module}")
-  # # _rpath = ".;."
-  # list(APPEND _rpath ".")
-  # # _rpath = ".;.;."
-  # list(TRANSFORM _rpath PREPEND ".")
-  # # _rpath = "..;..;.."
-  # list(JOIN _rpath "/" _rpath)
-  # # _rpath = "../../.."
-  # set(_rpath "${_rpath}/lib")
-  # # _rpath = "../../../lib"
   set(_rpath "../../lib")
 
   set_target_properties("${module}" PROPERTIES
     PREFIX "_"
     OUTPUT_NAME "${_module_basename}"
+    # Place each module in its own subdirectory to avoid basename collisions
+    # when different module groups have identically-named modules.
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${_full_package_path}"
     INSTALL_RPATH "${XMERA_RPATH_ORIGIN}/${_rpath}"
   )
   if(WIN32)
