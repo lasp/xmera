@@ -144,3 +144,22 @@ Eigen::Vector2i RegionsOfInterest::getWindowSize() const {
     Eigen::Vector2i size = {windowSize.x(), windowSize.y()};
     return size;
 }
+
+/**
+ * @brief Sets the image size
+ *
+ * The image size defines the total number of x and y pixels.
+ *
+ * @param width X pixels
+ * @param height Y pixels
+ */
+void RegionsOfInterest::setImageSize(const int32_t width, const int32_t height) {
+    this->algorithm.setImageSize(width, height);
+}
+
+/**
+ * @brief Gets the image size
+ *
+ * @return Eigen::Vector2i Image size as (x, y) in pixels
+ */
+Eigen::Vector2i RegionsOfInterest::getImageSize() const { return this->algorithm.getImageSize(); }
