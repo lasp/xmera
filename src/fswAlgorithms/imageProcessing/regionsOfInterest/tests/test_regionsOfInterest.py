@@ -30,6 +30,34 @@ def test_region_identification(show_plots, num_regions, use_windowing):
     region_identification(show_plots, num_regions, use_windowing)
 
 
+def test_setters_and_getters():
+    """Back-and-forth test that each setter stores the value reported by its matching getter."""
+    roi_module = regionsOfInterest.RegionsOfInterest()
+
+    # Max ROI separation (scalar)
+    roi_module.setMaxRoiSeparation(123)
+    np.testing.assert_equal(roi_module.getMaxRoiSeparation(), 123,
+                            err_msg="Max ROI separation getter did not return the value set")
+
+    # Window center (Eigen::Vector2i)
+    roi_module.setWindowCenter([256, 128])
+    np.testing.assert_array_equal(np.array(roi_module.getWindowCenter()).reshape([2]),
+                                  [256, 128],
+                                  err_msg="Window center getter did not return the value set")
+
+    # Window size (width, height)
+    roi_module.setWindowSize(640, 480)
+    np.testing.assert_array_equal(np.array(roi_module.getWindowSize()).reshape([2]),
+                                  [640, 480],
+                                  err_msg="Window size getter did not return the value set")
+
+    # Image size (width, height)
+    roi_module.setImageSize(1920, 1080)
+    np.testing.assert_array_equal(np.array(roi_module.getImageSize()).reshape([2]),
+                                  [1920, 1080],
+                                  err_msg="Image size getter did not return the value set")
+
+
 def test_single_region_basic(show_plots):
     """Test with a single bright region"""
     task_name = "unitTask"
