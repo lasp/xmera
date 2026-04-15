@@ -1,10 +1,12 @@
 Executive Summary
 -----------------
 
-This module filters incoming star tracker measurements and reaction wheel data in order to get the best possible
-inertial attitude estimate. The filter used is an unscented Kalman filter using the Modified Rodrigues Parameters
-(MRPs) as a non-singular attitude measure. Measurements can be coming in from several camera heads and several
-gyroscopes.
+This module filters incoming attitude and rate measurements along with reaction wheel data in order to get the best
+possible inertial attitude estimate. The filter used is an unscented Kalman filter using the Modified Rodrigues
+Parameters (MRPs) as a non-singular attitude measure. Attitude measurements (e.g. from star trackers) can be
+added from multiple sources via ``addAttitudeInput``, and rate measurements are read through a dedicated input
+message. The rate measurements are packed in an :ref:`STAttMsgPayload` but may originate from either star tracker
+measurements or gyroscope measurements.
 
 More information on can be found in the
 :download:`PDF Description </../../src/fswAlgorithms/attDetermination/InertialUKF/_Documentation/Xmera-inertialUKF-20190402.pdf>`
@@ -26,14 +28,14 @@ provides information on what this message is used for.
       - :ref:`NavAttMsgPayload`
       - navigation output message
     * - inertialFilterOutputMsg
-      - :ref:`InertialFilterMsgPayload`
-      - name of the output filter data message
-    * - starTrackerResidualMsg
+      - :ref:`FilterMsgPayload`
+      - output filter data message
+    * - attitudeResidualMsg
       - :ref:`FilterResidualsMsgPayload`
-      - name of the output residual data message for star measurements
-    * - gyroResidualMsg
+      - output residual data message for attitude measurements
+    * - rateResidualMsg
       - :ref:`FilterResidualsMsgPayload`
-      - name of the output residual data message for gyro measurements
+      - output residual data message for rate measurements
     * - vehicleConfigMsg
       - :ref:`VehicleConfigMsgPayload`
       - spacecraft vehicle configuration input message
@@ -43,6 +45,6 @@ provides information on what this message is used for.
     * - rwSpeedMsg
       - :ref:`RWSpeedMsgPayload`
       - reaction wheel speed input message.  Can be an empty message if no RW are included.
-    * - accelDataMsg
-      - :ref:`AccDataMsgPayload`
-      - rate gyro input message
+    * - rateDataInMsg
+      - :ref:`STAttMsgPayload`
+      - rate measurement input message packed in an :ref:`STAttMsgPayload`; rates may come from either star tracker measurements or a gyroscope

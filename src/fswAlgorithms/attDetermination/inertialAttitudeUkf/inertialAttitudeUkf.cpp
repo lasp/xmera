@@ -77,8 +77,8 @@ void InertialAttitudeUkf::switchStateCovariance() {
 void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
     NavAttMsgPayload navAttPayload{};
     FilterMsgPayload filterPayload{};
-    FilterResidualsMsgPayload starTrackerPayload{};
-    FilterResidualsMsgPayload gyroPayload{};
+    FilterResidualsMsgPayload attitudePayload{};
+    FilterResidualsMsgPayload ratePayload{};
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
     navAttPayload.timeTag = this->previousFilterTimeTag;
@@ -94,27 +94,27 @@ void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
     for (size_t index = 0; index < MAX_MEASUREMENT_NUMBER; index++) {
         if (this->measurements[index].has_value()) {
             auto measurement = this->measurements[index].value();
-            if (measurement.getMeasurementName() == "starTracker") {
-                starTrackerPayload.valid = true;
-                starTrackerPayload.numberOfObservations = 1;
-                starTrackerPayload.sizeOfObservations = measurement.size();
-                eigenMatrixXToCArray(measurement.getObservation(), starTrackerPayload.observation);
-                eigenMatrixXToCArray(measurement.getPostFitResiduals(), starTrackerPayload.postFits);
-                eigenMatrixXToCArray(measurement.getPreFitResiduals(), starTrackerPayload.preFits);
+            if (measurement.getMeasurementName() == "attitude") {
+                attitudePayload.valid = true;
+                attitudePayload.numberOfObservations = 1;
+                attitudePayload.sizeOfObservations = measurement.size();
+                eigenMatrixXToCArray(measurement.getObservation(), attitudePayload.observation);
+                eigenMatrixXToCArray(measurement.getPostFitResiduals(), attitudePayload.postFits);
+                eigenMatrixXToCArray(measurement.getPreFitResiduals(), attitudePayload.preFits);
             }
-            if (measurement.getMeasurementName() == "gyro") {
-                gyroPayload.valid = true;
-                gyroPayload.numberOfObservations = 1;
-                gyroPayload.sizeOfObservations = measurement.size();
-                eigenMatrixXToCArray(measurement.getObservation(), gyroPayload.observation);
-                eigenMatrixXToCArray(measurement.getPostFitResiduals(), gyroPayload.postFits);
-                eigenMatrixXToCArray(measurement.getPreFitResiduals(), gyroPayload.preFits);
+            if (measurement.getMeasurementName() == "rate") {
+                ratePayload.valid = true;
+                ratePayload.numberOfObservations = 1;
+                ratePayload.sizeOfObservations = measurement.size();
+                eigenMatrixXToCArray(measurement.getObservation(), ratePayload.observation);
+                eigenMatrixXToCArray(measurement.getPostFitResiduals(), ratePayload.postFits);
+                eigenMatrixXToCArray(measurement.getPreFitResiduals(), ratePayload.preFits);
             }
             this->measurements[index].reset();
         }
     }
-    this->starTrackerResidualMsg.write(&starTrackerPayload, this->moduleID, currentSimNanos);
-    this->gyroResidualMsg.write(&gyroPayload, this->moduleID, currentSimNanos);
+    this->attitudeResidualMsg.write(&attitudePayload, this->moduleID, currentSimNanos);
+    this->rateResidualMsg.write(&ratePayload, this->moduleID, currentSimNanos);
 
     this->navAttitudeOutputMsg.write(&navAttPayload, this->moduleID, currentSimNanos);
     this->inertialFilterOutputMsg.write(&filterPayload, this->moduleID, currentSimNanos);
@@ -143,27 +143,26 @@ void InertialAttitudeUkf::readRWSpeedData() {
     }
 }
 
-/*! Loop through the all the input star trackers and populate their measurement container if they are foward
- * in time
+/*! Loop through the all the input attitude data
  * @return void
  * */
-void InertialAttitudeUkf::readStarTrackerData() {
+void InertialAttitudeUkf::readAttitudeData() {
     for (int index = 0; index < this->numberOfStarTackers; index++) {
-        auto starTracker = this->starTrackerMessages[index].starTrackerMsg();
-        if (starTracker.timeTag > this->previousFilterTimeTag) {
-            auto starTrackerMeasurement = MeasurementModel();
-            starTrackerMeasurement.setMeasurementName("starTracker");
-            starTrackerMeasurement.setTimeTag(starTracker.timeTag);
-            starTrackerMeasurement.setValidity(true);
+        auto attitude = this->attitudeMessages[index].attitudeMsg();
+        if (attitude.timeTag > this->previousFilterTimeTag) {
+            auto attitudeMeasurement = MeasurementModel();
+            attitudeMeasurement.setMeasurementName("attitude");
+            attitudeMeasurement.setTimeTag(attitude.timeTag);
+            attitudeMeasurement.setValidity(true);
 
             /*! - Get the mapping from camera frame to inertial for the noise matrix */
-            Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(starTracker.dcm_CB);
+            Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(attitude.dcm_CB);
 
-            starTrackerMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
-                                                       this->starTrackerMessages[index].measurementNoise_C * dcm_CB);
-            starTrackerMeasurement.setObservation(
-                mrpSwitch(Eigen::Map<Eigen::Vector3d>(starTracker.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold));
-            starTrackerMeasurement.setMeasurementModel(MeasurementModel::positionStates);
+            attitudeMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
+                                                    this->attitudeMessages[index].measurementNoise_C * dcm_CB);
+            attitudeMeasurement.setObservation(
+                mrpSwitch(Eigen::Map<Eigen::Vector3d>(attitude.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold));
+            attitudeMeasurement.setMeasurementModel(MeasurementModel::positionStates);
 
             std::function<const Eigen::VectorXd(const Eigen::Vector3d&, const Eigen::Vector3d&)> mrpSub =
                 [](Eigen::Vector3d const& observed, const Eigen::Vector3d& predicted) {
@@ -177,39 +176,36 @@ void InertialAttitudeUkf::readStarTrackerData() {
                     }
                     return yMeas;
                 };
-            starTrackerMeasurement.setMeasurementSubtraction(mrpSub);
+            attitudeMeasurement.setMeasurementSubtraction(mrpSub);
 
-            this->measurements[this->measurementIndex] = starTrackerMeasurement;
+            this->measurements[this->measurementIndex] = attitudeMeasurement;
             this->measurementIndex += 1;
-            this->validStarTracker = true;
+            this->validAttitude = true;
             /*! - Only consider the filter started once a Star Tracker image is processed */
             if (this->firstFilterPass) {
                 this->firstFilterPass = false;
             }
         } else {
-            this->validStarTracker = false;
+            this->validAttitude = false;
         }
     }
 }
 
-/*! Loop through the entire gyro buffer to find the first index that is in the future compared to the
- * previousFilterTimeTag. This does not assume the data comes in chronological order since the gyro data
- * is a ring buffer and can wrap around
+/*! Read the message containing the rate data to be processed my the filter as a measurement
  * @return void
  * */
-void InertialAttitudeUkf::readGyroData() {
-    IMUSensorMsgPayload gyroBuffer = this->imuSensorDataInMsg();
-    if (gyroBuffer.timeTag > this->previousFilterTimeTag) {
-        auto gyroMeasurement = MeasurementModel();
-        gyroMeasurement.setMeasurementName("gyro");
-        gyroMeasurement.setTimeTag(gyroBuffer.timeTag);
-        gyroMeasurement.setValidity(true);
+void InertialAttitudeUkf::readRateData() {
+    STAttMsgPayload rateBuffer = this->rateDataInMsg();
+    if (rateBuffer.timeTag > this->previousFilterTimeTag) {
+        auto rateMeasurement = MeasurementModel();
+        rateMeasurement.setMeasurementName("rate");
+        rateMeasurement.setTimeTag(rateBuffer.timeTag);
+        rateMeasurement.setValidity(true);
 
-        gyroMeasurement.setMeasurementNoise(this->measNoiseScaling * this->gyroNoise /
-                                            gyroBuffer.numberOfValidGyroMeasurements);
-        gyroMeasurement.setObservation(cArrayToEigenVector(gyroBuffer.AngVelPlatform));
-        gyroMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
-        this->measurements[this->measurementIndex] = gyroMeasurement;
+        rateMeasurement.setMeasurementNoise(this->measNoiseScaling * this->rateNoise);
+        rateMeasurement.setObservation(cArrayToEigenVector(rateBuffer.omega_BN_B));
+        rateMeasurement.setMeasurementModel(MeasurementModel::velocityStatesWithBias);
+        this->measurements[this->measurementIndex] = rateMeasurement;
         this->measurementIndex += 1;
     }
 }
@@ -232,40 +228,40 @@ void InertialAttitudeUkf::readFilterMeasurements() {
     /*! - Read in wheel speeds, their time, and compute the wheel accelerations for the propagation method*/
     readRWSpeedData();
     /*! - Read star tracker measurements*/
-    readStarTrackerData();
-    /*! Only add the gyro measurements to processing if the filter is in a mode that desires that */
+    readAttitudeData();
+    /*! Only add the rate measurements to processing if the filter is in a mode that desires that */
     if (this->measurementAcceptanceMethod == AttitudeFilterMethod::AllMeasurements) {
-        readGyroData();
+        readRateData();
     }
-    if (measurementAcceptanceMethod == AttitudeFilterMethod::GyroWhenDazzled && !this->validStarTracker) {
-        readGyroData();
+    if (measurementAcceptanceMethod == AttitudeFilterMethod::RateMeasurementsWhenNoStars && !this->validAttitude) {
+        readRateData();
     }
 }
 
-/*! Set the gyro measurement noise matrix
-    @param Eigen::Matrix3d gyroNoise
+/*! Set the rate measurement noise matrix
+    @param Eigen::Matrix3d rateNoise
     @return void
     */
-void InertialAttitudeUkf::setGyroNoise(const Eigen::Matrix3d& gyroNoiseInput) { this->gyroNoise = gyroNoiseInput; }
+void InertialAttitudeUkf::setRateNoise(const Eigen::Matrix3d& rateNoiseInput) { this->rateNoise = rateNoiseInput; }
 
-/*! Get the gyro measurement noise matrix
-    @return Eigen::Matrix3d gyroNoise
+/*! Get the rate measurement noise matrix
+    @return Eigen::Matrix3d rateNoise
     */
-Eigen::Matrix3d InertialAttitudeUkf::getGyroNoise() const { return this->gyroNoise; }
+Eigen::Matrix3d InertialAttitudeUkf::getRateNoise() const { return this->rateNoise; }
 
-/*! Add a star tracker to the filter solution using the StarTrackerMessage class
-    @return StarTrackerMessage starTracker
+/*! Add a star tracker to the filter solution using the attitudeMessage class
+    @return attitudeMessage attitude
     */
-void InertialAttitudeUkf::addStarTrackerInput(const StarTrackerMessage& starTracker) {
-    this->starTrackerMessages[this->numberOfStarTackers] = starTracker;
+void InertialAttitudeUkf::addAttitudeInput(const AttitudeMessage& attitudeMsg) {
+    this->attitudeMessages[this->numberOfStarTackers] = attitudeMsg;
     this->numberOfStarTackers += 1;
 }
 
 /*! Get the star tracker measurement noise matrix for a particular number (indexed at 0)
-    @param int starTrackerNumber
-    @return Eigen::Matrix3d starTrackerMeasurementNoise
+    @param int attitudeMeasNumber
+    @return Eigen::Matrix3d attitudeMeasNoise
     */
-Eigen::Matrix3d InertialAttitudeUkf::getStarTrackerNoise(int starTrackerNumber) const {
-    assert(starTrackerNumber < this->numberOfStarTackers);
-    return this->starTrackerMessages[starTrackerNumber].measurementNoise_C;
+Eigen::Matrix3d InertialAttitudeUkf::getAttitudeNoise(int attitudeMeasNumber) const {
+    assert(attitudeMeasNumber < this->numberOfStarTackers);
+    return this->attitudeMessages[attitudeMeasNumber].measurementNoise_C;
 }
