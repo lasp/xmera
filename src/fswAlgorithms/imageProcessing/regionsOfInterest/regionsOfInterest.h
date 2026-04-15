@@ -28,6 +28,8 @@ class RegionsOfInterest : public SysModel {
     Eigen::Vector2i getWindowCenter() const;
     void setWindowSize(int32_t width, int32_t height);
     Eigen::Vector2i getWindowSize() const;
+    void setImageSize(int32_t width, int32_t height);
+    Eigen::Vector2i getImageSize() const;
 
     ReadFunctor<RegionsIdentifiedMsgPayload> roisInMsg;  //!< Input message containing detected regions
     Message<RegionOfInterestMsgPayload> regionOutMsg;    //!< Output message with identified ROI
