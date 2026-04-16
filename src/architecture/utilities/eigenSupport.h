@@ -211,8 +211,8 @@ void eigenVectorToCArray(const Eigen::Vector<ScalarT, size>& inVec, ScalarT* out
  * @return Eigen matrix populated with the values from `inArray`.
  */
 template <typename ScalarT, int rows, int cols>
-Eigen::Matrix<ScalarT, rows, cols> cArrayToEigenMatrix(ScalarT* inArray) {
-    return Eigen::Map<Eigen::Matrix<ScalarT, rows, cols>>(inArray);
+Eigen::Matrix<ScalarT, rows, cols> cArrayToEigenMatrix(const ScalarT* inArray) {
+    return Eigen::Map<const Eigen::Matrix<ScalarT, rows, cols>>(inArray);
 }
 
 /**
@@ -225,9 +225,9 @@ Eigen::Matrix<ScalarT, rows, cols> cArrayToEigenMatrix(ScalarT* inArray) {
  * @return Eigen dynamic matrix containing the mapped values.
  */
 template <typename ScalarT>
-Eigen::MatrixX<ScalarT> cArrayToEigenMatrixX(ScalarT* inArray, int nRows, int nCols) {
+Eigen::MatrixX<ScalarT> cArrayToEigenMatrixX(const ScalarT* inArray, int nRows, int nCols) {
     Eigen::MatrixX<ScalarT> outMat(nRows, nCols);
-    outMat = Eigen::Map<Eigen::MatrixX<ScalarT>>(inArray, outMat.rows(), outMat.cols());
+    outMat = Eigen::Map<const Eigen::MatrixX<ScalarT>>(inArray, outMat.rows(), outMat.cols());
     return outMat;
 }
 
@@ -240,8 +240,8 @@ Eigen::MatrixX<ScalarT> cArrayToEigenMatrixX(ScalarT* inArray, int nRows, int nC
  * @return Eigen vector whose contents match the input array.
  */
 template <typename ScalarT, int size>
-Eigen::Vector<ScalarT, size> cArrayToEigenVector(ScalarT (&inArray)[size]) {
-    return Eigen::Map<Eigen::Vector<ScalarT, size>>(inArray);
+Eigen::Vector<ScalarT, size> cArrayToEigenVector(const ScalarT (&inArray)[size]) {
+    return Eigen::Map<const Eigen::Vector<ScalarT, size>>(inArray);
 }
 
 /**
@@ -252,8 +252,8 @@ Eigen::Vector<ScalarT, size> cArrayToEigenVector(ScalarT (&inArray)[size]) {
  * @return Eigen::Vector3 populated from the input data.
  */
 template <typename ScalarT>
-Eigen::Vector3<ScalarT> cArrayToEigenVector3(ScalarT* inArray) {
-    return Eigen::Map<Eigen::Vector3<ScalarT>>(inArray);
+Eigen::Vector3<ScalarT> cArrayToEigenVector3(const ScalarT* inArray) {
+    return Eigen::Map<const Eigen::Vector3<ScalarT>>(inArray);
 }
 
 /**
@@ -264,9 +264,9 @@ Eigen::Vector3<ScalarT> cArrayToEigenVector3(ScalarT* inArray) {
  * @return Eigen::MRP constructed from the input.
  */
 template <typename ScalarT>
-Eigen::MRP<ScalarT> cArrayToEigenMrp(ScalarT* inArray) {
+Eigen::MRP<ScalarT> cArrayToEigenMrp(const ScalarT* inArray) {
     Eigen::MRP<ScalarT> sigma_Eigen;
-    sigma_Eigen = Eigen::Map<Eigen::Vector<ScalarT, 3>>(inArray);
+    sigma_Eigen = Eigen::Map<const Eigen::Vector<ScalarT, 3>>(inArray);
 
     return sigma_Eigen;
 }
@@ -279,8 +279,8 @@ Eigen::MRP<ScalarT> cArrayToEigenMrp(ScalarT* inArray) {
  * @return Eigen::Matrix3 with the copied values.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> cArrayToEigenMatrix3(ScalarT* inArray) {
-    return Eigen::Map<Eigen::Matrix3<ScalarT>>(inArray, 3, 3).transpose();
+Eigen::Matrix3<ScalarT> cArrayToEigenMatrix3(const ScalarT* inArray) {
+    return Eigen::Map<const Eigen::Matrix3<ScalarT>>(inArray, 3, 3).transpose();
 }
 
 /**
