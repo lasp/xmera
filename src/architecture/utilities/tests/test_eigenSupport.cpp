@@ -173,10 +173,28 @@ TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenVectorCopiesElements) {
     }
 }
 
+TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenVectorAcceptsConstInput) {
+    using Scalar = TypeParam;
+    const Scalar raw[3] = {static_cast<Scalar>(1.0), static_cast<Scalar>(2.0), static_cast<Scalar>(3.0)};
+    auto vec = cArrayToEigenVector(raw);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(vec(i), raw[i]);
+    }
+}
+
 TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenVector3CreatesMatchingVector) {
     using Scalar = TypeParam;
     Scalar raw[3] = {static_cast<Scalar>(1.0), static_cast<Scalar>(-2.0), static_cast<Scalar>(0.5)};
 
+    Eigen::Vector3<Scalar> vec = cArrayToEigenVector3(raw);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(vec(i), raw[i]);
+    }
+}
+
+TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenVector3AcceptsConstInput) {
+    using Scalar = TypeParam;
+    const Scalar raw[3] = {static_cast<Scalar>(4.0), static_cast<Scalar>(-5.0), static_cast<Scalar>(6.0)};
     Eigen::Vector3<Scalar> vec = cArrayToEigenVector3(raw);
     for (int i = 0; i < 3; ++i) {
         EXPECT_EQ(vec(i), raw[i]);
@@ -191,6 +209,38 @@ TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenMrpCopiesCoefficients) {
     EXPECT_EQ(mrp.x(), raw[0]);
     EXPECT_EQ(mrp.y(), raw[1]);
     EXPECT_EQ(mrp.z(), raw[2]);
+}
+
+TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenMrpAcceptsConstInput) {
+    using Scalar = TypeParam;
+    const Scalar raw[3] = {static_cast<Scalar>(0.1), static_cast<Scalar>(-0.2), static_cast<Scalar>(0.3)};
+    Eigen::MRP<Scalar> mrp = cArrayToEigenMrp(raw);
+    EXPECT_EQ(mrp.x(), raw[0]);
+    EXPECT_EQ(mrp.y(), raw[1]);
+    EXPECT_EQ(mrp.z(), raw[2]);
+}
+
+TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenMatrix3AcceptsConstInput) {
+    using Scalar = TypeParam;
+    const std::array<Scalar, 9> raw = {static_cast<Scalar>(1),
+                                       static_cast<Scalar>(2),
+                                       static_cast<Scalar>(3),
+                                       static_cast<Scalar>(4),
+                                       static_cast<Scalar>(5),
+                                       static_cast<Scalar>(6),
+                                       static_cast<Scalar>(7),
+                                       static_cast<Scalar>(8),
+                                       static_cast<Scalar>(9)};
+
+    Eigen::Matrix3<Scalar> expected;
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            expected(i, j) = static_cast<Scalar>(i * 3 + j + 1);
+        }
+    }
+
+    Eigen::Matrix3<Scalar> reconstructed = cArrayToEigenMatrix3(raw.data());
+    ExpectMatricesApproxEqual(expected, reconstructed, GetTolerance<Scalar>());
 }
 
 TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenMatrix3ReadsRowMajorDataCorrectly) {
