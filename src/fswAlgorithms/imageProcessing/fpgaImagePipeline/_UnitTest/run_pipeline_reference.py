@@ -218,7 +218,7 @@ def _save_roi_overlay_tiff(blur, roi_regions, region_size, path):
 # Bit-depth detection and auto-threshold
 # ---------------------------------------------------------------------------
 
-def _detect_image_info(image_path, kernel):
+def _detect_image_info(image_path, kernel, percentile=90.0):
     """Read the image header to detect bit depth and suggest a pipeline threshold.
 
     Bit-depth detection
@@ -230,15 +230,10 @@ def _detect_image_info(image_path, kernel):
 
     Threshold suggestion
     --------------------
-    The pipeline threshold is compared against *blur* output values, not raw
-    pixel values.  For a uniform bright patch of intensity V with kernel k:
-
-        blur = (V * k * k) >> blurShift(k)    (blurShift: 5→1, 7→2, 9→3)
-
-    The suggested threshold is set to 70% of the blur value at the 99th
-    percentile raw pixel intensity.  This ensures that genuinely bright regions
-    (top 1% of pixels) will be above threshold after blurring, while typical
-    background pixels are not.
+    Computes the actual blur map (box filter sum >> blurShift) after applying
+    the same bit-depth scaling the pipeline uses, then takes the given percentile
+    of that blur map.  This marks the top (100 - percentile)% of blur values as
+    above-threshold, directly in the pipeline's internal blur space.
 
     Returns
     -------
@@ -249,13 +244,13 @@ def _detect_image_info(image_path, kernel):
         return False, None, None, 21000
 
     is_8bit = (img.dtype == np.uint8)
-    img16 = img.astype(np.uint16) * 16 if is_8bit else img.astype(np.uint16)
+    pixels = img.astype(np.float32) * (16.0 if is_8bit else 1.0)
 
-    h, w = img16.shape
+    h, w = img.shape
+    blur = cv2.boxFilter(pixels, -1, (int(kernel), int(kernel)), normalize=False)
     shift = {5: 1, 7: 2, 9: 3}.get(int(kernel), 1)
-    p99 = int(np.percentile(img16.ravel(), 99))
-    blur_p99 = (p99 * int(kernel) * int(kernel)) >> shift
-    suggested = max(1, int(blur_p99 * 0.7))
+    blur_shifted = blur / float(1 << shift)  # mirrors blurShift(kernelSize)
+    suggested = max(1, int(np.percentile(blur_shifted.ravel(), percentile)))
 
     return is_8bit, w, h, suggested
 
@@ -304,7 +299,7 @@ def main():
         print(f"Detected size     : {detected_w}×{detected_h}  (configured: {args.width}×{args.height})")
     if args.threshold is None:
         args.threshold = auto_threshold
-        print(f"Auto-threshold    : {args.threshold}  (70% of blur at 99th-percentile pixel)")
+        print(f"Auto-threshold    : {args.threshold}  (90.0th percentile of actual blur map)")
     else:
         print(f"Threshold         : {args.threshold}  (user-specified)")
 
