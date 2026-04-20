@@ -238,7 +238,7 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
 
         for (uint32_t r = 0; r < this->imageHeight; r++) {
             for (uint32_t c = 0; c < this->imageWidth; c++) {
-                this->rawBuf[r * this->imageWidth + c] = static_cast<uint16_t>(img.at<uint16_t>(r, c) & 0x0FFF);
+                this->rawBuf[r * this->imageWidth + c] = std::min(img.at<uint16_t>(r, c), uint16_t{4095});
             }
         }
         timeTagOut = callTime;
