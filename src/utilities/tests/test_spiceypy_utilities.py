@@ -62,19 +62,25 @@ def test_ck_read_write(show_plots):
 
         # Read the same CK file to check if the values are identical
         spice_utilities.ckInitialize(tempFileName)
-        sigmaRead = np.empty_like(sigmaWrite)
-        omegaRead = np.empty_like(omegaWrite)
-        for idx in range(len(timeWrite)):
-            # Change the time string to account for increasing time
-            timeString = timeInit[:19] + f"{int(timeWrite[idx] * macros.NANO2SEC):02}" + timeInit[21:]
-            _, kernQuat, kernOmega = spice_utilities.ckRead(timeString, spacecraft_id=-202)
+        try:
+            sigmaRead = np.empty_like(sigmaWrite)
+            omegaRead = np.empty_like(omegaWrite)
+            for idx in range(len(timeWrite)):
+                # Change the time string to account for increasing time
+                timeString = timeInit[:19] + f"{int(timeWrite[idx] * macros.NANO2SEC):02}" + timeInit[21:]
+                _, kernQuat, kernOmega = spice_utilities.ckRead(timeString, spacecraft_id=-202)
 
-            sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
-            omegaRead[idx, :] = kernOmega
+                sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
+                omegaRead[idx, :] = kernOmega
 
-        # Compare the read and write data
-        np.testing.assert_allclose(sigmaRead, sigmaWrite)
-        np.testing.assert_allclose(omegaRead, omegaWrite)
+            # Compare the read and write data
+            np.testing.assert_allclose(sigmaRead, sigmaWrite)
+            np.testing.assert_allclose(omegaRead, omegaWrite)
+        finally:
+            # Unload the kernel so Windows can delete the temp file on
+            # TemporaryDirectory cleanup. Without this, SPICE keeps the
+            # .bc file handle open and shutil.rmtree hits WinError 32.
+            spice_utilities.ckClose(tempFileName)
 
 
 if __name__ == "__main__":
