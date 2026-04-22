@@ -193,8 +193,11 @@ class mcAnalysisBaseClass:
                 continue
             df = pd.read_pickle(filePath)
             dfSubSet = df.loc[idx[:], idx[runIdx, :]]
-            varName = filePath.rsplit("/")
-            pd.to_pickle(dfSubSet, baseDir + "/subset/" + varName[-1])
+            # Use os.path.basename so this works on Windows too — glob
+            # returns backslash-separated paths there, and filePath.rsplit("/")
+            # would return the full absolute path as varName[-1].
+            varName = os.path.basename(filePath)
+            pd.to_pickle(dfSubSet, os.path.join(baseDir, "subset", varName))
         print("Finished Populating Subset Directory")
 
     def renderPlots(self, plotList):
