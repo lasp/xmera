@@ -9,7 +9,18 @@ import shutil
 import subprocess
 import sys
 
+import matplotlib
+
 import pytest
+
+# Default to the non-interactive Agg backend so pytest-xdist workers
+# don't race on Tk/Tcl init (Windows) and so Linux CI runs without
+# needing $DISPLAY or a pre-set MPLBACKEND. Swapped to a GUI backend
+# below when --show_plots is passed. An explicit MPLBACKEND always wins.
+# Must run before reportconf.py is exec'd — it imports pyplot which
+# would otherwise lock in the auto-detected backend.
+if "MPLBACKEND" not in os.environ:
+    matplotlib.use("Agg")
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -47,6 +58,12 @@ def _close_matplotlib_figures():
     plt = sys.modules.get("matplotlib.pyplot")
     if plt is not None:
         plt.close("all")
+
+
+def pytest_configure(config):
+    if config.getoption("--show_plots") and "MPLBACKEND" not in os.environ:
+        import matplotlib.pyplot as plt
+        plt.switch_backend("TkAgg")
 
 
 def pytest_make_parametrize_id(config, val, argname):
