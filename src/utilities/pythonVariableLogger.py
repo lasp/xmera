@@ -44,6 +44,12 @@ class PythonVariableLogger(sim_model.SysModel):
             min_log_period (int, optional): The minimum interval between data recordings
                 Defaults to 0.
         """
+        # Seed self.this so SWIG's director ctor (which runs inside
+        # super().__init__()) finds the attribute via normal lookup
+        # instead of falling through to our __getattr__. _swiginit
+        # overwrites it with the real SwigPyObject a moment later.
+        self.__dict__["this"] = None
+
         self.logging_functions = logging_functions
         self.min_log_period = min_log_period
         self._next_update_time = 0
@@ -90,6 +96,12 @@ class PythonVariableLogger(sim_model.SysModel):
         return np.column_stack([self.times(), self.__getattr__(name)])
 
     def __getattr__(self, __name: str) -> Any:
+        # SWIG director init looks up `self.this` before _swiginit has set
+        # it. Raise plain AttributeError for protocol attributes so normal
+        # attribute-lookup semantics continue, rather than surfacing a
+        # "Logger is not logging 'this'" error that aborts the director.
+        if __name.startswith("_") or __name in ("this", "thisown"):
+            raise AttributeError(__name)
         try:
             variables = self.__dict__["_variables"]
         except KeyError:
