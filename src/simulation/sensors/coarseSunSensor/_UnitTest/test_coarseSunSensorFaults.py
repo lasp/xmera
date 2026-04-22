@@ -92,10 +92,13 @@ def run(cssFault):
     cssRecoder = CSS.cssDataOutMsg.recorder()
     unitTestSim.AddModelToTask(testTaskName, cssRecoder)
 
-    # Truth Values
+    # Map fault name to module enum. Deterministic modes pin a specific
+    # output; RAND/STUCK_RAND modes draw from GaussMarkov (std::normal_-
+    # distribution under the hood), whose output is not portable across
+    # C++ standard libraries, so we test their *behavior* instead of an
+    # exact value.
     if cssFault == "CSSFAULT_OFF":
         cssFaultValue = coarseSunSensor.CSSFAULT_OFF
-        truthValue = 0.0
     elif cssFault == "CSSFAULT_STUCK_CURRENT":
         cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_CURRENT
         truthValue = 1.4280970791070948
@@ -104,30 +107,46 @@ def run(cssFault):
         truthValue = 2.0
     elif cssFault == "CSSFAULT_STUCK_RAND":
         cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_RAND
-        truthValue = 1.7278304838858731
     elif cssFault == "CSSFAULT_RAND":
         cssFaultValue = coarseSunSensor.CSSFAULT_RAND
-        truthValue = 0.7974448327854251
     else:
         NotImplementedError("Fault type specified does not exist.")
 
     unitTestSim.InitializeSimulation()
 
-    # Execute the simulation for one time step
+    # First step primes pastValue (for STUCK_CURRENT), then apply the
+    # fault and capture three post-fault readings.
     unitTestSim.TotalSim.singleStepProcesses()
     CSS.faultState = cssFaultValue
+    outputs = []
     for i in range(3):
         unitTestSim.TotalSim.singleStepProcesses()
-
-    cssOutput = cssRecoder.OutputData[-1]
-    print(cssOutput)
-    print(truthValue)
+        outputs.append(cssRecoder.OutputData[-1])
+    print(outputs)
 
     if cssFault == "CSSFAULT_OFF":
-        if not truthValue == cssOutput:
+        # Off: sensedValue forced to 0 every step.
+        if not all(v == 0.0 for v in outputs):
             testFailCount += 1
-    elif not unitTestSupport.isDoubleEqualRelative(cssOutput, truthValue, 1E-12):
-        testFailCount += 1
+    elif cssFault == "CSSFAULT_STUCK_CURRENT":
+        # Stuck at the value captured just before the fault was applied.
+        if not unitTestSupport.isDoubleEqualRelative(outputs[-1], truthValue, 1E-12):
+            testFailCount += 1
+    elif cssFault == "CSSFAULT_STUCK_MAX":
+        # Every step returns the max (1.0 scaled by scaleFactor=2.0).
+        if not all(unitTestSupport.isDoubleEqualRelative(v, truthValue, 1E-12) for v in outputs):
+            testFailCount += 1
+    elif cssFault == "CSSFAULT_STUCK_RAND":
+        # First post-fault step draws a random value; subsequent steps
+        # are stuck at that same value (the module transitions itself
+        # to CSSFAULT_STUCK_CURRENT after the first draw).
+        if outputs[0] == 0.0 or not (outputs[0] == outputs[1] == outputs[2]):
+            testFailCount += 1
+    elif cssFault == "CSSFAULT_RAND":
+        # Every step draws a fresh random value, so they should not all
+        # be zero and at least two consecutive draws should differ.
+        if any(v == 0.0 for v in outputs) or outputs[0] == outputs[1] == outputs[2]:
+            testFailCount += 1
 
     return [testFailCount, ''.join(testMessages)]
 
