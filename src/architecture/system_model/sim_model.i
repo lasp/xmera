@@ -81,7 +81,18 @@ namespace std {
 );
 
 %pythoncode %{
-from xmera.architecture.cSysModel import _SysModel, BSKLogger
+from xmera.architecture.cSysModel import (
+    _SysModel,
+    BSKLogger,
+    BSK_DEBUG,
+    BSK_INFORMATION,
+    BSK_WARNING,
+    BSK_ERROR,
+    BSK_SILENT,
+    setDefaultLogLevel,
+    getDefaultLogLevel,
+    printDefaultLogLevel,
+)
 
 class SuperInitChecker(type):
 
