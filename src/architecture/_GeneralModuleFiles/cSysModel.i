@@ -1,10 +1,9 @@
-%module(package="xmera.architecture", directors="1") cSysModel
+%module(package="xmera.architecture", directors="1", threads="1") cSysModel
 %{
    #include <architecture/_GeneralModuleFiles/sys_model.h>
 %}
 
 %include <std_string.i>
-%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 %include <architecture/utilities/bskLogging.h>
 
 %feature("director") SysModel;
