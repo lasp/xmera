@@ -165,11 +165,16 @@ The junction is transparent to CMake and git. To remove it:
 ### Using the PowerShell build script (Recommended)
 
 The build script handles VS environment initialization, vcpkg, CMake configuration,
-building, and installation automatically. It defaults to Release configuration.
+building, and installation automatically. The build type (Release, RelWithDebInfo,
+etc.) is determined by the CMake preset you choose — pass `-Preset <name>` to
+select one.
 
-> **Note**: Debug builds are available (`-Config Debug`) for C++ debugging, but Python
-> cannot load Debug `.pyd` modules due to a Debug/Release C runtime mismatch. Use Release
-> (the default) for Python work.
+> **Note**: Never build a `Debug`-config preset for Python use. Python on Windows
+> is a Release binary and cannot load Debug `.pyd` modules — you will get either a
+> fatal access violation or a `PyModuleDef_Type.tp_flags & Py_TPFLAGS_READY` assertion
+> dialog at import time. For native debugging, use a preset with `RelWithDebInfo`
+> (e.g., `ema-gnc-debug`) — it produces release-compatible binaries with `.pdb`
+> symbols.
 
 ```powershell
 cd C:\dev\xmera
@@ -247,8 +252,11 @@ cmake -S src --preset windows-ninja -B C:/build/xmera
 #### Step 4: Build
 
 ```powershell
-cmake --build build --config Release --parallel
+cmake --build build --parallel
 ```
+
+The build type (Release, RelWithDebInfo, etc.) is baked in by the preset — no
+`--config` flag is needed.
 
 #### Step 5: Install
 
@@ -256,7 +264,7 @@ This copies `.pyd` modules, DLLs, and support data to `dist/`. **Required** befo
 Python can import xmera.
 
 ```powershell
-cmake --install build --config Release --prefix dist
+cmake --install build --prefix dist
 ```
 
 #### Step 6: Set up Python and run

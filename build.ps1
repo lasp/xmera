@@ -12,9 +12,6 @@
     - VCPKG_ROOT environment variable set to your vcpkg installation
     - See docs/windows-setup.md for full setup instructions
 
-.PARAMETER Config
-    Build configuration: Debug or Release. Default: Release
-
 .PARAMETER Arch
     Target architecture: x64 or arm64. Default: x64
 
@@ -28,29 +25,28 @@
     Only run CMake configure, don't build.
 
 .PARAMETER Preset
-    CMake configure preset name. Default: windows-ninja
+    CMake configure preset name. Default: windows-ninja.
+    The preset determines the build type (Release, RelWithDebInfo, etc.) —
+    pick a preset that matches what you want to build.
 
 .PARAMETER SkipInstall
     Skip the cmake --install step after building.
 
 .EXAMPLE
     .\build.ps1
-    Build Release with default settings
+    Build with default preset (windows-ninja)
 
 .EXAMPLE
-    .\build.ps1 -Config Release -BuildDir C:\build\xmera
-    Build Release to a shorter path
+    .\build.ps1 -Preset ema-gnc-release -BuildDir C:\build\xmera
+    Build ema-gnc-release to a shorter path
 
 .EXAMPLE
-    .\build.ps1 -Clean
-    Clean build Release configuration
+    .\build.ps1 -Preset ema-gnc-debug -Clean
+    Clean build of ema-gnc-debug (RelWithDebInfo, for native debugging)
 #>
 
 [CmdletBinding()]
 param(
-    [ValidateSet("Debug", "Release")]
-    [string]$Config = "Release",
-
     [ValidateSet("x64", "arm64")]
     [string]$Arch = "x64",
 
@@ -168,7 +164,6 @@ $VcpkgTriplet = "$Arch-windows"
 $env:VCPKG_DEFAULT_TRIPLET = $VcpkgTriplet
 $env:VCPKG_TARGET_TRIPLET = $VcpkgTriplet
 
-Write-Host "Configuration: $Config" -ForegroundColor Green
 Write-Host "Preset:        $Preset" -ForegroundColor Green
 Write-Host "Architecture:  $Arch" -ForegroundColor Green
 Write-Host "Build Dir:     $BuildDir" -ForegroundColor Green
@@ -257,9 +252,9 @@ if ($ConfigureOnly) {
 }
 
 # Build
-Write-Host "Building ($Config)..." -ForegroundColor Yellow
+Write-Host "Building..." -ForegroundColor Yellow
 
-& cmake --build $BuildDir --config $Config --parallel
+& cmake --build $BuildDir --parallel
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host ""
@@ -275,7 +270,7 @@ if (-not $SkipInstall) {
     Write-Host ""
     Write-Host "Installing to $InstallPrefix..." -ForegroundColor Yellow
 
-    & cmake --install $BuildDir --config $Config --prefix $InstallPrefix
+    & cmake --install $BuildDir --prefix $InstallPrefix
 
     if ($LASTEXITCODE -ne 0) {
         Write-Host ""

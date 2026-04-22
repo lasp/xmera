@@ -16,6 +16,8 @@
           "${sourceDir}/cmake/",
         "CMAKE_BUILD_TYPE":
           "Debug",
+        "CMAKE_GTEST_DISCOVERY_MODE":
+          "PRE_TEST",
         "CMAKE_INSTALL_PREFIX":
           "${sourceDir}/../dist",
         "XMERA_MODULE_ROOTS":
@@ -55,11 +57,12 @@
     {
       "name": "windows-ninja",
       "inherits": "base",
-      "generator": "Ninja Multi-Config",
+      "generator": "Ninja",
       "environment": {
         "VCPKG_VISUAL_STUDIO_PATH": "$penv{VCPKG_VISUAL_STUDIO_PATH}"
       },
       "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
         "VCPKG_HOST_TRIPLET": "x64-windows",
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "Python3_EXECUTABLE": "$env{VIRTUAL_ENV}/Scripts/python.exe"
@@ -75,12 +78,6 @@
     {
       "name": "windows-ninja",
       "configurePreset": "windows-ninja",
-      "jobs": 0
-    },
-    {
-      "name": "windows-release",
-      "configurePreset": "windows-ninja",
-      "configuration": "Release",
       "jobs": 0
     }
   ]
