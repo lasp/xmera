@@ -27,7 +27,11 @@ def test_interface(format):
     read_write_test(format)
 
 def read_write_test(format):
-    tmpdir = tempfile.TemporaryDirectory()
+    with tempfile.TemporaryDirectory() as tmpdir_name:
+        _read_write_test_impl(format, tmpdir_name)
+
+
+def _read_write_test_impl(format, tmpdir_name):
     unit_task_name = "unitTask"
     unit_process_name = "TestProcess"
     unit_test_sim = SimulationBaseClass.SimBaseClass()
@@ -40,7 +44,7 @@ def read_write_test(format):
     module = cielimInterface.CielimInterface()
     module.modelTag = "cielim_interface"
     module.setOpNavMode(cielimInterface.ClosedLoopMode_OPEN_LOOP)
-    module.setSaveFile(tmpdir.name + "/test_proto")
+    module.setSaveFile(tmpdir_name + "/test_proto")
 
     unit_test_sim.AddModelToTask(unit_task_name, module)
 
@@ -201,9 +205,11 @@ def read_write_test(format):
     unit_test_sim.ExecuteSimulation()
     module.closeProtobufFile()
 
-    # Read the existing address book.
-    file_handle = open(module.getSaveFilename(), "rb")
-    cielim_message = delimited_protobuf.read(file_handle, cielimMessage_pb2.CielimMessage)
+    # Read the existing address book. Use a `with` block so the handle
+    # is closed before the TemporaryDirectory tries to delete the file
+    # on scope exit — Windows refuses to unlink an open file.
+    with open(module.getSaveFilename(), "rb") as file_handle:
+        cielim_message = delimited_protobuf.read(file_handle, cielimMessage_pb2.CielimMessage)
 
     np.testing.assert_equal(cielim_message.currentTime.frameNumber, 1)
     np.testing.assert_equal(cielim_message.currentTime.simTimeElapsed, test_process_rate)
