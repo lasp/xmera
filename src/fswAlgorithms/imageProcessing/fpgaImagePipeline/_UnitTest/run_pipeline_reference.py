@@ -15,10 +15,9 @@ Outputs written to ``data/``:
 Usage examples::
 
     # Full control
-    python run_pipeline_reference.py test_cells.tif --width 4096 --height 3000 --kernel 7 --roi-size 128
     python run_pipeline_reference.py pia_958_830.tiff --width 958 --height 830 --kernel 5 --roi-size 128
-    python run_pipeline_reference.py pia_616_592.tif --width 616 --height 592 --kernel 5 --roi-size 128
-    python run_pipeline_reference.py pia_1920_1080.tif --width 1920 --height 1080 --kernel 9 --roi-size 128
+    python run_pipeline_reference.py pia_616_592.tiff --width 616 --height 592 --kernel 5 --roi-size 128
+    python run_pipeline_reference.py pia_1920_1080.tiff --width 1920 --height 1080 --kernel 9 --roi-size 128
 
     # Enable built-in module disk saves as well
     python run_pipeline_reference.py image.tiff --module-save
@@ -217,8 +216,7 @@ def _save_roi_overlay_tiff(blur, roi_regions, region_size, path):
 # ---------------------------------------------------------------------------
 # Bit-depth detection and auto-threshold
 # ---------------------------------------------------------------------------
-
-def _detect_image_info(image_path, kernel, percentile=90.0):
+def _detect_image_info(image_path, kernel, percentile=95.0):
     """Read the image header to detect bit depth and suggest a pipeline threshold.
 
     Bit-depth detection
@@ -299,7 +297,7 @@ def main():
         print(f"Detected size     : {detected_w}×{detected_h}  (configured: {args.width}×{args.height})")
     if args.threshold is None:
         args.threshold = auto_threshold
-        print(f"Auto-threshold    : {args.threshold}  (90.0th percentile of actual blur map)")
+        print(f"Auto-threshold    : {args.threshold}  (95.0th percentile of actual blur map)")
     else:
         print(f"Threshold         : {args.threshold}  (user-specified)")
 
