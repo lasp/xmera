@@ -319,6 +319,65 @@ UpdateResult<typename Spec::State, M> update(
 
 }  // namespace srukf
 
+// ----------------------------------------------------------------------------
+// SrukfInterface<Spec> — stateful façade matching fp32-fsw-xmera convention.
+//
+// Holds an SrukfStorage by value plus a settable dynamics function. Methods
+// reset() / predict(dt) / update<M>(m) mutate the held storage by delegating
+// to the free functions in `srukf::`. Setters/getters expose tunables and
+// initial conditions; getters expose mean and sqrt-covariance for readout.
+//
+// The (future) C shim for an algorithm built on this façade will wrap a
+// SrukfInterface<Spec> instance behind an opaque handle.
+// ----------------------------------------------------------------------------
+template<SrukfSpec Spec>
+class SrukfInterface {
+public:
+    using State    = typename Spec::State;
+    using StateMat = Eigen::Matrix<double, State::size, State::size>;
+
+    // Public — set by the owning algorithm class. Called from predict().
+    DynamicsModel<State> dynamics;
+
+    void setAlpha(double a)              { this->storage.alpha          = a;     }
+    void setBeta(double b)               { this->storage.beta           = b;     }
+    void setMeasurementNoiseScale(double s) { this->storage.measNoiseScale = s;  }
+    void setUnitConversion(double u)     { this->storage.unitConversion = u;     }
+    void setProcessNoise(StateMat const& Q) { this->storage.processNoise = Q;    }
+    void setInitialMean(State const& m)  { this->storage.meanInitial    = m;     }
+    void setInitialCovariance(StateMat const& P) { this->storage.covarInitial = P; }
+
+    double getAlpha() const              { return this->storage.alpha;          }
+    double getBeta()  const              { return this->storage.beta;           }
+    double getMeasurementNoiseScale() const { return this->storage.measNoiseScale; }
+
+    void reset() {
+        this->storage = srukf::reset<Spec>(this->storage);
+    }
+
+    void predict(double dt) {
+        this->storage = srukf::predict<Spec>(this->storage, this->dynamics, dt);
+    }
+
+    template<Measurement<State> M>
+    srukf::UpdateResult<State, M> update(M const& measurement) {
+        auto result = srukf::update<Spec, M>(this->storage, measurement);
+        this->storage = result.posterior;
+        return result;
+    }
+
+    // Read-only views of the underlying storage.
+    State    getMean()      const { return this->storage.mean;      }
+    StateMat getSqrtCovar() const { return this->storage.sqrtCovar; }
+
+    // Direct access to the storage struct, for filters that want to drive
+    // the functional core themselves or inspect internal state.
+    SrukfStorage<State> const& getStorage() const { return this->storage; }
+
+private:
+    SrukfStorage<State> storage;
+};
+
 }  // namespace filtering
 
 #endif
