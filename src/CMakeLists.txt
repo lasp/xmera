@@ -70,6 +70,9 @@ include(XmeraFramework)
 # Xmera core libraries
 add_subdirectory(architecture)
 
+# Framework-agnostic algorithm core (header-only, depends only on Eigen)
+add_subdirectory(filtering_core)
+
 # Modules (and associated helper libraries)
 foreach(d IN LISTS XMERA_MODULE_ROOTS)
   add_subdirectory("${d}")
