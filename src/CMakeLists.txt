@@ -73,6 +73,9 @@ add_subdirectory(architecture)
 # Framework-agnostic algorithm core (header-only, depends only on Eigen)
 add_subdirectory(filtering_core)
 
+# Per-filter algorithm libraries (depend on filtering_core, no xmera coupling)
+add_subdirectory(filtering_algorithms)
+
 # Modules (and associated helper libraries)
 foreach(d IN LISTS XMERA_MODULE_ROOTS)
   add_subdirectory("${d}")
