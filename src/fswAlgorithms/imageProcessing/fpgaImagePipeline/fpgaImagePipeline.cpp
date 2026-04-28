@@ -248,6 +248,7 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
         const CameraImageMsgPayload imgMsg = imageInMsg();
         if (!imgMsg.valid || imgMsg.imagePointer == nullptr) {
             bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: imageInMsg has invalid or null image");
+            return imageSourceIsConfigured;
         }
 
         const size_t n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
@@ -256,6 +257,7 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
             this->rawBuf[i] = src[i] & 0x0FFF;
         }
         timeTagOut = imgMsg.timeTag;
+        imageSourceIsConfigured = true;
     } else {
         bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: no image source (set imageFileName or link imageInMsg)");
     }
