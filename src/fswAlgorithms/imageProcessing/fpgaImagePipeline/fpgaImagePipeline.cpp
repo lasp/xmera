@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -251,10 +252,57 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
             return imageSourceIsConfigured;
         }
 
-        const size_t n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
-        const auto src = reinterpret_cast<const uint16_t*>(imgMsg.imagePointer);
-        for (size_t i = 0; i < n; i++) {
-            this->rawBuf[i] = src[i] & 0x0FFF;
+        // Detect PNG magic bytes: if the buffer starts with \x89PNG, decode it;
+        // otherwise treat the buffer as packed uint16_t 12-bit grayscale pixels.
+        static constexpr uint8_t kPngMagic[4] = {0x89, 0x50, 0x4E, 0x47};
+        const auto* bytes = static_cast<const uint8_t*>(imgMsg.imagePointer);
+        const bool isPng = imgMsg.imageBufferLength >= 4 && bytes[0] == kPngMagic[0] && bytes[1] == kPngMagic[1] &&
+                           bytes[2] == kPngMagic[2] && bytes[3] == kPngMagic[3];
+
+        if (isPng) {
+            const std::vector<uint8_t> buf(bytes, bytes + imgMsg.imageBufferLength);
+            cv::Mat decoded = cv::imdecode(buf, cv::IMREAD_COLOR);
+            if (decoded.empty()) {
+                bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: PNG decode failed");
+                return imageSourceIsConfigured;
+            }
+            cv::Mat gray;
+            cv::cvtColor(decoded, gray, cv::COLOR_BGR2GRAY);
+            // Scale 8-bit [0,255] → 12-bit equivalent [0,4080] (factor 16)
+            cv::Mat gray16;
+            gray.convertTo(gray16, CV_16U, 16.0);
+
+            const auto msgWidth = static_cast<uint32_t>(gray16.cols);
+            const auto msgHeight = static_cast<uint32_t>(gray16.rows);
+            if (msgWidth != this->imageWidth || msgHeight != this->imageHeight) {
+                bskLogger.bskLog(BSK_WARNING,
+                                 "FpgaImagePipeline: PNG dimensions %ux%u differ from configured %ux%u; re-allocating",
+                                 msgWidth,
+                                 msgHeight,
+                                 this->imageWidth,
+                                 this->imageHeight);
+                this->imageWidth = msgWidth;
+                this->imageHeight = msgHeight;
+                const size_t newN = static_cast<size_t>(msgWidth) * msgHeight;
+                this->rawBuf.assign(newN, 0);
+                this->blurBuf.assign(newN, 0);
+                this->threshBuf.assign((newN + 7) / 8, 0);
+                this->rowSumBuf.assign(msgHeight, 0);
+                this->colSumBuf.assign(msgWidth, 0);
+            }
+            for (uint32_t r = 0; r < this->imageHeight; ++r) {
+                for (uint32_t c = 0; c < this->imageWidth; ++c) {
+                    this->rawBuf[r * this->imageWidth + c] =
+                        std::min(gray16.at<uint16_t>(static_cast<int>(r), static_cast<int>(c)), uint16_t{4095});
+                }
+            }
+        } else {
+            // Raw uint16_t 12-bit grayscale pixels
+            const size_t n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
+            const auto* src = reinterpret_cast<const uint16_t*>(imgMsg.imagePointer);
+            for (size_t i = 0; i < n; i++) {
+                this->rawBuf[i] = src[i] & 0x0FFF;
+            }
         }
         timeTagOut = imgMsg.timeTag;
         imageSourceIsConfigured = true;

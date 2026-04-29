@@ -13,6 +13,7 @@ target_sources("${module}" PRIVATE
 
 target_link_libraries("${module}" PRIVATE
   opencv_imgcodecs
+  opencv_imgproc
 )
 
 # Suppress duplicate library warnings from OpenCV's vcpkg distribution on macOS
