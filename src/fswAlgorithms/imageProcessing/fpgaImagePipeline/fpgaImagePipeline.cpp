@@ -248,7 +248,6 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
     } else if (imageInMsg.isLinked()) {
         const CameraImageMsgPayload imgMsg = imageInMsg();
         if (!imgMsg.valid || imgMsg.imagePointer == nullptr) {
-            bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: imageInMsg has invalid or null image");
             return imageSourceIsConfigured;
         }
 
