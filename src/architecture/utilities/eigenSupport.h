@@ -11,6 +11,70 @@
 #include <cstring>
 #include <exception>
 
+// =============================================================================
+// Design goals for this header
+// =============================================================================
+//
+// This header bridges Eigen types and plain C arrays at the boundary with
+// Ada/SWIG/message-buffer code. The functions below already follow a small
+// set of conventions; the rules are stated here so that future contributions
+// stay consistent and so deviations are easy to spot.
+//
+// 1. Two directions, two parameter conventions.
+//    Output-side functions (Eigen -> C array) take the destination as a sized
+//    array reference `T (&out)[N]` so the buffer length is deduced and bounds
+//    are checked at compile time. Input-side functions (C array -> Eigen)
+//    take a `const ScalarT*` because callers commonly hand them stride-indexed
+//    offsets into larger buffers (e.g. `&GsMatrix_B[i * 3]`) or struct member
+//    arrays - array-reference parameters would force those callers into
+//    awkward casts. The `cArrayToEigenVector` overload is the exception (its
+//    size is part of the contract) and accepts `const ScalarT (&)[size]`.
+//
+// 2. Compile-time shape enforcement when the type carries it.
+//    Fixed-size variants (`eigenMatrixToCArray`, `eigenMatrixToCArray2D`,
+//    `eigenVectorToCArray`, `cArrayToEigenMatrix`, `cArrayToEigenVector3`,
+//    `cArrayToEigenMatrix3`, `c2DArrayToEigenMatrix3`, `eigenTilde`) use
+//    `static_assert` on `RowsAtCompileTime` / `ColsAtCompileTime` and on
+//    destination size. Compile-time fixed sizes are regularly valuable in
+//    embedded / flight-software contexts - they enable static stack
+//    reasoning, eliminate heap allocation, and surface shape mismatches
+//    before the binary leaves the developer's machine - and the FSW side
+//    of this codebase prefers them by default. Dynamic-size variants (named
+//    with an `X` infix: `eigenMatrixXToCArray`, `eigenMatrixXToCArray2D`,
+//    `eigenMatrixXInsertCArray`, `cArrayToEigenMatrixX`) fall back to runtime
+//    checks and `std::terminate()` on shape or capacity violations. The
+//    dynamic variants exist for host-PC / Xmera simulation modules where
+//    shapes legitimately depend on runtime configuration (variable-length
+//    sensor arrays, scenario-driven reaction wheel counts, etc.) and the
+//    FSW compile-time guarantees aren't applicable.
+//
+// 3. Row-major C array convention, regardless of Eigen storage order.
+//    All matrix <-> C-array conversions read and write row-major. Column-
+//    major Eigen inputs are transposed internally; row-major inputs go
+//    through unchanged. Callers don't need to reason about Eigen's default
+//    storage order.
+//
+// 4. Accept any Eigen expression on the output side.
+//    Output-side functions take `const Eigen::MatrixBase<Derived>&`, not
+//    concrete `Eigen::Matrix`/`Vector`. This admits `Zero()`, `Ones()`,
+//    `Constant(...)`, `transpose()`, `block<...>()`, and segment views in
+//    addition to plain matrix/vector variables. Internal evaluation to a
+//    `PlainObject` handles non-contiguous expressions safely.
+//
+// 5. Const correctness on inputs.
+//    Input parameters are const-qualified (`const ScalarT*`,
+//    `const ScalarT (&)[N]`, `const Eigen::MatrixBase<Derived>&`).
+//    `const`-qualified C arrays must be acceptable - regression tests in
+//    `tests/test_eigenSupport.cpp` enforce this for each input-side
+//    function, so removing `const` somewhere will fail to compile.
+//
+// 6. Fail loudly.
+//    Compile-time violations use `static_assert` with a message identifying
+//    which constraint failed. Runtime violations on dynamic variants call
+//    `std::terminate()` rather than throwing or silently truncating.
+//
+// =============================================================================
+
 template <class Derived>
 inline constexpr bool is_row_major_v = (Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0;
 
