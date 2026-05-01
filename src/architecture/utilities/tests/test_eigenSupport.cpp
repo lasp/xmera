@@ -121,11 +121,33 @@ TYPED_TEST(EigenSupportConversionsTest, EigenVectorToCArrayCopiesElements) {
         input(i) = static_cast<Scalar>(i - 1);
     }
 
-    std::array<Scalar, size> output{};
-    eigenVectorToCArray(input, output.data());
+    Scalar output[size] = {};
+    eigenVectorToCArray(input, output);
 
     for (int i = 0; i < size; ++i) {
         EXPECT_EQ(output[i], input(i));
+    }
+}
+
+TYPED_TEST(EigenSupportConversionsTest, EigenVectorToCArrayAcceptsExpression) {
+    using Scalar = TypeParam;
+
+    // Constant expression (Zero) - the original failure mode that prompted
+    // widening the signature to MatrixBase<Derived>.
+    Scalar zeroOut[3] = {static_cast<Scalar>(7), static_cast<Scalar>(7), static_cast<Scalar>(7)};
+    eigenVectorToCArray(Eigen::Vector3<Scalar>::Zero(), zeroOut);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(zeroOut[i], static_cast<Scalar>(0));
+    }
+
+    // Block expression - exercises the PlainObject evaluation path.
+    Eigen::Matrix<Scalar, 4, 1> source;
+    source << static_cast<Scalar>(1), static_cast<Scalar>(2), static_cast<Scalar>(3), static_cast<Scalar>(4);
+
+    Scalar blockOut[3] = {};
+    eigenVectorToCArray(source.template head<3>(), blockOut);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(blockOut[i], source(i));
     }
 }
 
@@ -271,6 +293,21 @@ TYPED_TEST(EigenSupportConversionsTest, C2DArrayToEigenMatrix3CopiesEntries) {
     Scalar raw[3][3] = {{static_cast<Scalar>(1), static_cast<Scalar>(2), static_cast<Scalar>(3)},
                         {static_cast<Scalar>(4), static_cast<Scalar>(5), static_cast<Scalar>(6)},
                         {static_cast<Scalar>(7), static_cast<Scalar>(8), static_cast<Scalar>(9)}};
+
+    Eigen::Matrix3<Scalar> reconstructed = c2DArrayToEigenMatrix3(raw);
+
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            EXPECT_EQ(reconstructed(i, j), raw[i][j]);
+        }
+    }
+}
+
+TYPED_TEST(EigenSupportConversionsTest, C2DArrayToEigenMatrix3AcceptsConstInput) {
+    using Scalar = TypeParam;
+    const Scalar raw[3][3] = {{static_cast<Scalar>(1), static_cast<Scalar>(2), static_cast<Scalar>(3)},
+                              {static_cast<Scalar>(4), static_cast<Scalar>(5), static_cast<Scalar>(6)},
+                              {static_cast<Scalar>(7), static_cast<Scalar>(8), static_cast<Scalar>(9)}};
 
     Eigen::Matrix3<Scalar> reconstructed = c2DArrayToEigenMatrix3(raw);
 

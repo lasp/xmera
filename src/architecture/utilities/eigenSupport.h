@@ -11,6 +11,70 @@
 #include <cstring>
 #include <exception>
 
+// =============================================================================
+// Design goals for this header
+// =============================================================================
+//
+// This header bridges Eigen types and plain C arrays at the boundary with
+// Ada/SWIG/message-buffer code. The functions below already follow a small
+// set of conventions; the rules are stated here so that future contributions
+// stay consistent and so deviations are easy to spot.
+//
+// 1. Two directions, two parameter conventions.
+//    Output-side functions (Eigen -> C array) take the destination as a sized
+//    array reference `T (&out)[N]` so the buffer length is deduced and bounds
+//    are checked at compile time. Input-side functions (C array -> Eigen)
+//    take a `const ScalarT*` because callers commonly hand them stride-indexed
+//    offsets into larger buffers (e.g. `&GsMatrix_B[i * 3]`) or struct member
+//    arrays - array-reference parameters would force those callers into
+//    awkward casts. The `cArrayToEigenVector` overload is the exception (its
+//    size is part of the contract) and accepts `const ScalarT (&)[size]`.
+//
+// 2. Compile-time shape enforcement when the type carries it.
+//    Fixed-size variants (`eigenMatrixToCArray`, `eigenMatrixToCArray2D`,
+//    `eigenVectorToCArray`, `cArrayToEigenMatrix`, `cArrayToEigenVector3`,
+//    `cArrayToEigenMatrix3`, `c2DArrayToEigenMatrix3`, `eigenTilde`) use
+//    `static_assert` on `RowsAtCompileTime` / `ColsAtCompileTime` and on
+//    destination size. Compile-time fixed sizes are regularly valuable in
+//    embedded / flight-software contexts - they enable static stack
+//    reasoning, eliminate heap allocation, and surface shape mismatches
+//    before the binary leaves the developer's machine - and the FSW side
+//    of this codebase prefers them by default. Dynamic-size variants (named
+//    with an `X` infix: `eigenMatrixXToCArray`, `eigenMatrixXToCArray2D`,
+//    `eigenMatrixXInsertCArray`, `cArrayToEigenMatrixX`) fall back to runtime
+//    checks and `std::terminate()` on shape or capacity violations. The
+//    dynamic variants exist for host-PC / Xmera simulation modules where
+//    shapes legitimately depend on runtime configuration (variable-length
+//    sensor arrays, scenario-driven reaction wheel counts, etc.) and the
+//    FSW compile-time guarantees aren't applicable.
+//
+// 3. Row-major C array convention, regardless of Eigen storage order.
+//    All matrix <-> C-array conversions read and write row-major. Column-
+//    major Eigen inputs are transposed internally; row-major inputs go
+//    through unchanged. Callers don't need to reason about Eigen's default
+//    storage order.
+//
+// 4. Accept any Eigen expression on the output side.
+//    Output-side functions take `const Eigen::MatrixBase<Derived>&`, not
+//    concrete `Eigen::Matrix`/`Vector`. This admits `Zero()`, `Ones()`,
+//    `Constant(...)`, `transpose()`, `block<...>()`, and segment views in
+//    addition to plain matrix/vector variables. Internal evaluation to a
+//    `PlainObject` handles non-contiguous expressions safely.
+//
+// 5. Const correctness on inputs.
+//    Input parameters are const-qualified (`const ScalarT*`,
+//    `const ScalarT (&)[N]`, `const Eigen::MatrixBase<Derived>&`).
+//    `const`-qualified C arrays must be acceptable - regression tests in
+//    `tests/test_eigenSupport.cpp` enforce this for each input-side
+//    function, so removing `const` somewhere will fail to compile.
+//
+// 6. Fail loudly.
+//    Compile-time violations use `static_assert` with a message identifying
+//    which constraint failed. Runtime violations on dynamic variants call
+//    `std::terminate()` rather than throwing or silently truncating.
+//
+// =============================================================================
+
 template <class Derived>
 inline constexpr bool is_row_major_v = (Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0;
 
@@ -189,16 +253,28 @@ void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
 }
 
 /**
- * @brief Copy a fixed-size Eigen vector into a contiguous C array.
+ * @brief Copy a fixed-size Eigen column-vector expression into a C array.
  *
- * @tparam ScalarT Scalar type stored in the vector.
- * @tparam size Compile-time number of elements.
- * @param inVec Vector whose contents should be copied.
- * @param outArray Pointer to a C array with at least `size` elements.
+ * Accepts any fixed-size Eigen expression that resolves to a column vector
+ * (concrete `Eigen::Vector<T, N>`, `Vector::Zero()`, `block<N, 1>()`, etc.).
+ * The destination is a sized C array; its length is enforced at compile time
+ * to match the vector length.
+ *
+ * @tparam Derived Fixed-size Eigen column-vector expression type.
+ * @tparam size Extent of the destination array (must equal vector length).
+ * @param inVec Vector expression whose contents should be copied.
+ * @param out Destination array that receives the entries.
  */
-template <typename ScalarT, int size>
-void eigenVectorToCArray(const Eigen::Vector<ScalarT, size>& inVec, ScalarT* outArray) {
-    std::copy(inVec.data(), inVec.data() + size, outArray);
+template <class Derived, std::size_t size>
+void eigenVectorToCArray(const Eigen::MatrixBase<Derived>& inVec, typename Derived::Scalar (&out)[size]) {
+    static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
+                  "Input must be a fixed-size Eigen type.");
+    static_assert(Derived::ColsAtCompileTime == 1, "Input must be a column vector.");
+    static_assert(static_cast<std::size_t>(Derived::RowsAtCompileTime) == size,
+                  "Output array size must equal vector length.");
+
+    const typename Derived::PlainObject evaluated = inVec;
+    std::copy(evaluated.data(), evaluated.data() + size, out);
 }
 
 /**
@@ -286,14 +362,17 @@ Eigen::Matrix3<ScalarT> cArrayToEigenMatrix3(const ScalarT* inArray) {
 /**
  * @brief Copy a 3×3 C two-dimensional array into an Eigen 3×3 matrix.
  *
+ * Both dimensions are enforced at compile time via the array reference
+ * parameter, and the input is const-qualified for consistency with the rest
+ * of the input-side conversion functions.
+ *
  * @tparam ScalarT Scalar type of the matrix.
  * @param in2DArray Source array with bounds `[3][3]`.
  * @return Eigen::Matrix3 containing the same entries.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> c2DArrayToEigenMatrix3(ScalarT in2DArray[3][3]) {
-    Eigen::Matrix3<ScalarT> outMat = Eigen::Map<const Eigen::Matrix<ScalarT, 3, 3, Eigen::RowMajor>>(&in2DArray[0][0]);
-    return outMat;
+Eigen::Matrix3<ScalarT> c2DArrayToEigenMatrix3(const ScalarT (&in2DArray)[3][3]) {
+    return Eigen::Map<const Eigen::Matrix<ScalarT, 3, 3, Eigen::RowMajor>>(&in2DArray[0][0]);
 }
 
 /**
@@ -356,12 +435,28 @@ Eigen::Matrix3<ScalarT> eigenM3(ScalarT angle) {
 /**
  * @brief Construct the skew-symmetric matrix such that `[tilde(vec)] * b = vec × b`.
  *
- * @tparam Derived Eigen vector expression type.
+ * Accepts either a fixed-size 3-element column vector (shape checked at
+ * compile time via `static_assert`) or a dynamic-size expression that is
+ * 3×1 at runtime (shape checked via `std::terminate()`). This mirrors the
+ * suite-wide split between fixed and dynamic variants documented at the
+ * top of this header.
+ *
+ * @tparam Derived Eigen 3-vector expression type.
  * @param vec Vector whose associated tilde matrix is requested.
  * @return Eigen::Matrix3 representing the skew-symmetric cross-product matrix.
  */
 template <typename Derived>
 Eigen::Matrix3<typename Eigen::MatrixBase<Derived>::Scalar> eigenTilde(const Eigen::MatrixBase<Derived>& vec) {
+    static_assert((Derived::RowsAtCompileTime == 3 || Derived::RowsAtCompileTime == Eigen::Dynamic) &&
+                      (Derived::ColsAtCompileTime == 1 || Derived::ColsAtCompileTime == Eigen::Dynamic),
+                  "eigenTilde requires a 3-element column vector (fixed-size or dynamic).");
+
+    if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic || Derived::ColsAtCompileTime == Eigen::Dynamic) {
+        if (vec.rows() != 3 || vec.cols() != 1) {
+            std::terminate();
+        }
+    }
+
     using Scalar = Eigen::MatrixBase<Derived>::Scalar;
 
     const Scalar vx = vec(0);
