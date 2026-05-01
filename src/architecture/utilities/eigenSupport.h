@@ -362,14 +362,17 @@ Eigen::Matrix3<ScalarT> cArrayToEigenMatrix3(const ScalarT* inArray) {
 /**
  * @brief Copy a 3×3 C two-dimensional array into an Eigen 3×3 matrix.
  *
+ * Both dimensions are enforced at compile time via the array reference
+ * parameter, and the input is const-qualified for consistency with the rest
+ * of the input-side conversion functions.
+ *
  * @tparam ScalarT Scalar type of the matrix.
  * @param in2DArray Source array with bounds `[3][3]`.
  * @return Eigen::Matrix3 containing the same entries.
  */
 template <typename ScalarT>
-Eigen::Matrix3<ScalarT> c2DArrayToEigenMatrix3(ScalarT in2DArray[3][3]) {
-    Eigen::Matrix3<ScalarT> outMat = Eigen::Map<const Eigen::Matrix<ScalarT, 3, 3, Eigen::RowMajor>>(&in2DArray[0][0]);
-    return outMat;
+Eigen::Matrix3<ScalarT> c2DArrayToEigenMatrix3(const ScalarT (&in2DArray)[3][3]) {
+    return Eigen::Map<const Eigen::Matrix<ScalarT, 3, 3, Eigen::RowMajor>>(&in2DArray[0][0]);
 }
 
 /**

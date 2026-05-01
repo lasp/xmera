@@ -303,6 +303,21 @@ TYPED_TEST(EigenSupportConversionsTest, C2DArrayToEigenMatrix3CopiesEntries) {
     }
 }
 
+TYPED_TEST(EigenSupportConversionsTest, C2DArrayToEigenMatrix3AcceptsConstInput) {
+    using Scalar = TypeParam;
+    const Scalar raw[3][3] = {{static_cast<Scalar>(1), static_cast<Scalar>(2), static_cast<Scalar>(3)},
+                              {static_cast<Scalar>(4), static_cast<Scalar>(5), static_cast<Scalar>(6)},
+                              {static_cast<Scalar>(7), static_cast<Scalar>(8), static_cast<Scalar>(9)}};
+
+    Eigen::Matrix3<Scalar> reconstructed = c2DArrayToEigenMatrix3(raw);
+
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            EXPECT_EQ(reconstructed(i, j), raw[i][j]);
+        }
+    }
+}
+
 TYPED_TEST(EigenSupportConversionsTest, EigenMatrixToCArray2DColumnMajorInput) {
     using Scalar = TypeParam;
     using MatrixType = Eigen::Matrix<Scalar, 2, 3>;
