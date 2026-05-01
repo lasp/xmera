@@ -435,12 +435,28 @@ Eigen::Matrix3<ScalarT> eigenM3(ScalarT angle) {
 /**
  * @brief Construct the skew-symmetric matrix such that `[tilde(vec)] * b = vec × b`.
  *
- * @tparam Derived Eigen vector expression type.
+ * Accepts either a fixed-size 3-element column vector (shape checked at
+ * compile time via `static_assert`) or a dynamic-size expression that is
+ * 3×1 at runtime (shape checked via `std::terminate()`). This mirrors the
+ * suite-wide split between fixed and dynamic variants documented at the
+ * top of this header.
+ *
+ * @tparam Derived Eigen 3-vector expression type.
  * @param vec Vector whose associated tilde matrix is requested.
  * @return Eigen::Matrix3 representing the skew-symmetric cross-product matrix.
  */
 template <typename Derived>
 Eigen::Matrix3<typename Eigen::MatrixBase<Derived>::Scalar> eigenTilde(const Eigen::MatrixBase<Derived>& vec) {
+    static_assert((Derived::RowsAtCompileTime == 3 || Derived::RowsAtCompileTime == Eigen::Dynamic) &&
+                      (Derived::ColsAtCompileTime == 1 || Derived::ColsAtCompileTime == Eigen::Dynamic),
+                  "eigenTilde requires a 3-element column vector (fixed-size or dynamic).");
+
+    if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic || Derived::ColsAtCompileTime == Eigen::Dynamic) {
+        if (vec.rows() != 3 || vec.cols() != 1) {
+            std::terminate();
+        }
+    }
+
     using Scalar = Eigen::MatrixBase<Derived>::Scalar;
 
     const Scalar vx = vec(0);
