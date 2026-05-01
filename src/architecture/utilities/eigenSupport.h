@@ -253,16 +253,28 @@ void eigenMatrixXInsertCArray(const Eigen::MatrixBase<Derived>& inMat,
 }
 
 /**
- * @brief Copy a fixed-size Eigen vector into a contiguous C array.
+ * @brief Copy a fixed-size Eigen column-vector expression into a C array.
  *
- * @tparam ScalarT Scalar type stored in the vector.
- * @tparam size Compile-time number of elements.
- * @param inVec Vector whose contents should be copied.
- * @param outArray Pointer to a C array with at least `size` elements.
+ * Accepts any fixed-size Eigen expression that resolves to a column vector
+ * (concrete `Eigen::Vector<T, N>`, `Vector::Zero()`, `block<N, 1>()`, etc.).
+ * The destination is a sized C array; its length is enforced at compile time
+ * to match the vector length.
+ *
+ * @tparam Derived Fixed-size Eigen column-vector expression type.
+ * @tparam size Extent of the destination array (must equal vector length).
+ * @param inVec Vector expression whose contents should be copied.
+ * @param out Destination array that receives the entries.
  */
-template <typename ScalarT, int size>
-void eigenVectorToCArray(const Eigen::Vector<ScalarT, size>& inVec, ScalarT* outArray) {
-    std::copy(inVec.data(), inVec.data() + size, outArray);
+template <class Derived, std::size_t size>
+void eigenVectorToCArray(const Eigen::MatrixBase<Derived>& inVec, typename Derived::Scalar (&out)[size]) {
+    static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
+                  "Input must be a fixed-size Eigen type.");
+    static_assert(Derived::ColsAtCompileTime == 1, "Input must be a column vector.");
+    static_assert(static_cast<std::size_t>(Derived::RowsAtCompileTime) == size,
+                  "Output array size must equal vector length.");
+
+    const typename Derived::PlainObject evaluated = inVec;
+    std::copy(evaluated.data(), evaluated.data() + size, out);
 }
 
 /**

@@ -121,11 +121,33 @@ TYPED_TEST(EigenSupportConversionsTest, EigenVectorToCArrayCopiesElements) {
         input(i) = static_cast<Scalar>(i - 1);
     }
 
-    std::array<Scalar, size> output{};
-    eigenVectorToCArray(input, output.data());
+    Scalar output[size] = {};
+    eigenVectorToCArray(input, output);
 
     for (int i = 0; i < size; ++i) {
         EXPECT_EQ(output[i], input(i));
+    }
+}
+
+TYPED_TEST(EigenSupportConversionsTest, EigenVectorToCArrayAcceptsExpression) {
+    using Scalar = TypeParam;
+
+    // Constant expression (Zero) - the original failure mode that prompted
+    // widening the signature to MatrixBase<Derived>.
+    Scalar zeroOut[3] = {static_cast<Scalar>(7), static_cast<Scalar>(7), static_cast<Scalar>(7)};
+    eigenVectorToCArray(Eigen::Vector3<Scalar>::Zero(), zeroOut);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(zeroOut[i], static_cast<Scalar>(0));
+    }
+
+    // Block expression - exercises the PlainObject evaluation path.
+    Eigen::Matrix<Scalar, 4, 1> source;
+    source << static_cast<Scalar>(1), static_cast<Scalar>(2), static_cast<Scalar>(3), static_cast<Scalar>(4);
+
+    Scalar blockOut[3] = {};
+    eigenVectorToCArray(source.template head<3>(), blockOut);
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_EQ(blockOut[i], source(i));
     }
 }
 
