@@ -10,6 +10,7 @@
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/FpgaRowColSumMsgPayload.h>
 #include <architecture/msgPayloadDef/FpgaThreshImageMsgPayload.h>
+#include <architecture/msgPayloadDef/RegionOfInterestMsgPayload.h>
 #include <architecture/msgPayloadDef/RegionsIdentifiedMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/macroDefinitions.h>

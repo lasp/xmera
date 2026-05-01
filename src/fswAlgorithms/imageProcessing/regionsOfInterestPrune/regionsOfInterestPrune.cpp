@@ -3,20 +3,19 @@
 #include <string>
 
 // ---------------------------------------------------------------------------
-// Free helper — converts a single internal candidate (corner-based) to the
-// center-coordinate form expected by RegionsIdentifiedMsgPayload.
+// Free helpers
 // ---------------------------------------------------------------------------
-static RegionOfInterestMsgPayload toRegionOfInterest(const RoiCandidateEntry& cand, double timeTagSec) {
-    RegionOfInterestMsgPayload reg{};
-    reg.timeTag = timeTagSec;
-    reg.centerX = static_cast<int>(cand.col + cand.width / 2);
-    reg.centerY = static_cast<int>(cand.row + cand.height / 2);
-    reg.width = static_cast<int>(cand.width);
-    reg.height = static_cast<int>(cand.height);
-    reg.numberOfPixels = static_cast<int>(cand.count);
-    reg.centerOfBrightnessX = reg.centerX;  // best estimate without full pixel data
-    reg.centerOfBrightnessY = reg.centerY;
-    return reg;
+
+// Converts a flat-array slot back to RegionOfInterestMsgPayload for visualization.
+static RegionOfInterestMsgPayload regionAt(const RegionsIdentifiedMsgPayload& msg, uint32_t k) {
+    return {.timeTag = msg.timeTag[k],
+            .centerX = msg.centerX[k],
+            .centerY = msg.centerY[k],
+            .width = msg.width[k],
+            .height = msg.height[k],
+            .numberOfPixels = msg.numberOfPixels[k],
+            .centerOfBrightnessX = msg.centerX[k],
+            .centerOfBrightnessY = msg.centerY[k]};
 }
 
 // ---------------------------------------------------------------------------
@@ -24,29 +23,36 @@ static RegionOfInterestMsgPayload toRegionOfInterest(const RoiCandidateEntry& ca
 // ---------------------------------------------------------------------------
 
 void RegionsOfInterestPrune::reset(uint64_t /*callTime*/) {
-    if (!rowColSumInMsg.isLinked())
-        bskLogger.bskLog(BSK_WARNING, "RegionsOfInterestPrune: rowColSumInMsg is not linked");
-    numPublished = 0;
-    lastRegionsOutput = {};
+    if (!this->rowColSumInMsg.isLinked())
+        this->bskLogger.bskLog(BSK_WARNING, "RegionsOfInterestPrune: rowColSumInMsg is not linked");
+    this->numPublished = 0;
+    this->lastRegionsOutput = {};
 }
 
 void RegionsOfInterestPrune::updateState(uint64_t callTime) {
-    if (!rowColSumInMsg.isLinked()) return;
+    if (!this->rowColSumInMsg.isLinked()) return;
 
-    const FpgaRowColSumMsgPayload rcMsg = rowColSumInMsg();
-    const auto* rowSums = reinterpret_cast<const uint16_t*>(rcMsg.rowSumPointer);
-    const auto* colSums = reinterpret_cast<const uint16_t*>(rcMsg.colSumPointer);
+    const FpgaRowColSumMsgPayload rcMsg = this->rowColSumInMsg();
+    const auto* rowSums = static_cast<const uint16_t*>(rcMsg.rowSumPointer);
+    const auto* colSums = static_cast<const uint16_t*>(rcMsg.colSumPointer);
 
-    const RoiCandidates candidates = algorithm.update(rowSums, rcMsg.numRows, colSums, rcMsg.numCols);
+    const RoiCandidates candidates = this->algorithm.update(rowSums, rcMsg.numRows, colSums, rcMsg.numCols);
 
-    lastRegionsOutput = {};
-    numPublished = std::min(candidates.numCandidates, static_cast<uint32_t>(MAX_NUMBER_REGIONS));
+    this->lastRegionsOutput = {};
+    this->numPublished = std::min(candidates.numCandidates, static_cast<uint32_t>(MAX_NUMBER_REGIONS));
     const double timeTagSec = static_cast<double>(callTime) * NANO2SEC;
-    for (uint32_t k = 0; k < numPublished; ++k)
-        lastRegionsOutput.regions[k] = toRegionOfInterest(candidates.candidates[k], timeTagSec);
-    regionsIdentifiedOutMsg.write(&lastRegionsOutput, moduleID, callTime);
+    for (uint32_t k = 0; k < this->numPublished; ++k) {
+        const auto& cand = candidates.candidates[k];
+        this->lastRegionsOutput.timeTag[k] = timeTagSec;
+        this->lastRegionsOutput.centerX[k] = static_cast<int>(cand.col + cand.width / 2);
+        this->lastRegionsOutput.centerY[k] = static_cast<int>(cand.row + cand.height / 2);
+        this->lastRegionsOutput.width[k] = static_cast<int>(cand.width);
+        this->lastRegionsOutput.height[k] = static_cast<int>(cand.height);
+        this->lastRegionsOutput.numberOfPixels[k] = static_cast<int>(cand.count);
+    }
+    this->regionsIdentifiedOutMsg.write(&this->lastRegionsOutput, moduleID, callTime);
 
-    if (saveImages && !saveDir.empty()) saveVisualization(rcMsg);
+    if (this->saveImages && !this->saveDir.empty()) saveVisualization(rcMsg);
 }
 
 // ---------------------------------------------------------------------------
@@ -63,8 +69,8 @@ cv::Mat RegionsOfInterestPrune::buildBackground(const FpgaRowColSumMsgPayload& r
     const auto H = static_cast<int>(rcMsg.numRows);
     const auto W = static_cast<int>(rcMsg.numCols);
 
-    if (threshImageInMsg.isLinked()) {
-        const FpgaThreshImageMsgPayload thMsg = threshImageInMsg();
+    if (this->threshImageInMsg.isLinked()) {
+        const FpgaThreshImageMsgPayload thMsg = this->threshImageInMsg();
         const auto* bits = reinterpret_cast<const uint8_t*>(thMsg.imagePointer);
         if (bits && thMsg.width == static_cast<uint32_t>(W) && thMsg.height == static_cast<uint32_t>(H)) {
             // Unpack 1-bit-per-pixel (MSB-first) → 8-bit grayscale → BGR.
@@ -79,8 +85,8 @@ cv::Mat RegionsOfInterestPrune::buildBackground(const FpgaRowColSumMsgPayload& r
     }
 
     // Fallback: synthesize from 1-D sums.
-    const auto* rowSums = reinterpret_cast<const uint16_t*>(rcMsg.rowSumPointer);
-    const auto* colSums = reinterpret_cast<const uint16_t*>(rcMsg.colSumPointer);
+    const auto* rowSums = static_cast<const uint16_t*>(rcMsg.rowSumPointer);
+    const auto* colSums = static_cast<const uint16_t*>(rcMsg.colSumPointer);
     if (!rowSums || !colSums) return {};
 
     uint32_t maxVal = 0;
@@ -124,26 +130,29 @@ void RegionsOfInterestPrune::saveVisualization(const FpgaRowColSumMsgPayload& rc
     cv::Mat vis = buildBackground(rcMsg);
     if (vis.empty()) return;
 
-    const uint32_t nDraw = numPublished;
+    const uint32_t nDraw = this->numPublished;
 
     // All published regions: thin cyan outline for context.
     for (uint32_t k = 0; k < nDraw; ++k) {
-        const auto& reg = lastRegionsOutput.regions[k];
-        const int x = reg.centerX - reg.width / 2;
-        const int y = reg.centerY - reg.height / 2;
-        cv::rectangle(vis, cv::Point(x, y), cv::Point(x + reg.width, y + reg.height), cv::Scalar(0, 255, 255), 1);
+        const int x = this->lastRegionsOutput.centerX[k] - this->lastRegionsOutput.width[k] / 2;
+        const int y = this->lastRegionsOutput.centerY[k] - this->lastRegionsOutput.height[k] / 2;
+        cv::rectangle(vis,
+                      cv::Point(x, y),
+                      cv::Point(x + this->lastRegionsOutput.width[k], y + this->lastRegionsOutput.height[k]),
+                      cv::Scalar(0, 255, 255),
+                      1);
     }
     // Rank-1 (red) and rank-2 (blue): thicker box + center dot + pixel-count label.
     static const cv::Scalar kRed(0, 0, 255);
     static const cv::Scalar kBlue(255, 0, 0);
     if (nDraw >= 1) {
-        const auto& r1 = lastRegionsOutput.regions[0];
+        const auto r1 = regionAt(this->lastRegionsOutput, 0);
         drawRegion(vis, r1, kRed, 2, "R1 (" + std::to_string(r1.numberOfPixels) + ")");
     }
     if (nDraw >= 2) {
-        const auto& r2 = lastRegionsOutput.regions[1];
+        const auto r2 = regionAt(this->lastRegionsOutput, 1);
         drawRegion(vis, r2, kBlue, 2, "R2 (" + std::to_string(r2.numberOfPixels) + ")");
     }
 
-    cv::imwrite(saveDir + "/" + std::to_string(rcMsg.timeTag) + "_pruning_output.png", vis);
+    cv::imwrite(this->saveDir + "/" + std::to_string(rcMsg.timeTag) + "_pruning_output.png", vis);
 }

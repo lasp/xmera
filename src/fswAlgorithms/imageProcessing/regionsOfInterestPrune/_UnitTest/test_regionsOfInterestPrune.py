@@ -65,19 +65,18 @@ def _run_once(sim):
 
 def _regions_from_log(roi_log, timestep=-1):
     """Return valid regions at timestep as SimpleNamespace objects with field attribute access."""
-    regions = roi_log.regions[timestep]
-    regions_dict = []
-    for k in range(0, 3):
-        numberOfPixels = regions[f"regions[{k}].numberOfPixels"]
+    regions = []
+    for k in range(MAX_NUMBER_REGIONS):
+        numberOfPixels = roi_log.numberOfPixels[timestep][k]
         if numberOfPixels > 0:
-            regions_dict.append(types.SimpleNamespace(
+            regions.append(types.SimpleNamespace(
                 numberOfPixels=numberOfPixels,
-                centerX=regions[f"regions[{k}].centerX"],
-                centerY=regions[f"regions[{k}].centerY"],
-                width=regions[f"regions[{k}].width"],
-                height=regions[f"regions[{k}].height"],
+                centerX=roi_log.centerX[timestep][k],
+                centerY=roi_log.centerY[timestep][k],
+                width=roi_log.width[timestep][k],
+                height=roi_log.height[timestep][k],
             ))
-    return regions_dict
+    return regions
 
 
 # ---------------------------------------------------------------------------

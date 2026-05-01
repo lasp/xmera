@@ -76,23 +76,16 @@ def test_single_region_basic(show_plots):
     # Configure module
     roi_module.setMaxRoiSeparation(100)
 
-    # Create input message with single region
+    # Create input message with single region (slot 1; slots 0 and 2 are empty)
     regions_msg_payload = messaging.RegionsIdentifiedMsgPayload()
-    region1 = messaging.RegionOfInterestMsgPayload()
-    region1.numberOfPixels = 250
-    region1.centerOfBrightnessX = 512
-    region1.centerOfBrightnessY = 384
-    region1.centerX = 512
-    region1.centerY = 384
-    region1.width = 20
-    region1.height = 20
-    region1.timeTag = 0.0
-
-    region2 = messaging.RegionOfInterestMsgPayload()
-    region3 = messaging.RegionOfInterestMsgPayload()
-
-    # regions_msg_payload.regions[0].numberOfPixels = 250
-    regions_msg_payload.regions = [region2, region1, region3]
+    regions_msg_payload.numberOfPixels      = [0,   250, 0]
+    regions_msg_payload.centerOfBrightnessX = [0,   512, 0]
+    regions_msg_payload.centerOfBrightnessY = [0,   384, 0]
+    regions_msg_payload.centerX             = [0,   512, 0]
+    regions_msg_payload.centerY             = [0,   384, 0]
+    regions_msg_payload.width               = [0,    20, 0]
+    regions_msg_payload.height              = [0,    20, 0]
+    regions_msg_payload.timeTag             = [0.0, 0.0, 0.0]
 
     regions_input_msg = messaging.RegionsIdentifiedMsg().write(regions_msg_payload)
     roi_module.roisInMsg.subscribeTo(regions_input_msg)
@@ -170,23 +163,11 @@ def test_region_merging(show_plots):
 
     # Create two close regions
     regions_msg_payload = messaging.RegionsIdentifiedMsgPayload()
-
-    # Create input message with single region
-    region1 = messaging.RegionOfInterestMsgPayload()
-    region1.numberOfPixels = 100
-    region1.centerOfBrightnessX = 500
-    region1.centerOfBrightnessY = 400
-    region1.centerX = 500
-    region1.centerY = 400
-    region2 = messaging.RegionOfInterestMsgPayload()
-    region2.numberOfPixels = 80
-    region2.centerOfBrightnessX = 510
-    region2.centerOfBrightnessY = 405
-    region2.centerX = 510
-    region2.centerY = 405
-    region3 = messaging.RegionOfInterestMsgPayload()
-
-    regions_msg_payload.regions = [region1, region2, region3]
+    regions_msg_payload.numberOfPixels      = [100, 80, 0]
+    regions_msg_payload.centerOfBrightnessX = [500, 510, 0]
+    regions_msg_payload.centerOfBrightnessY = [400, 405, 0]
+    regions_msg_payload.centerX             = [500, 510, 0]
+    regions_msg_payload.centerY             = [400, 405, 0]
 
     regions_input_msg = messaging.RegionsIdentifiedMsg().write(regions_msg_payload)
     roi_module.roisInMsg.subscribeTo(regions_input_msg)
@@ -235,23 +216,11 @@ def test_windowing(show_plots):
 
     # Create regions: one inside window, one outside
     regions_msg_payload = messaging.RegionsIdentifiedMsgPayload()
-
-    # Create input message with single region
-    region1 = messaging.RegionOfInterestMsgPayload()
-    region1.numberOfPixels = 100
-    region1.centerOfBrightnessX = 500
-    region1.centerOfBrightnessY = 380
-    region1.centerX = 500
-    region1.centerY = 380
-    region2 = messaging.RegionOfInterestMsgPayload()
-    region2.numberOfPixels = 200
-    region2.centerOfBrightnessX = 100
-    region2.centerOfBrightnessY = 100
-    region2.centerX = 100
-    region2.centerY = 100
-    region3 = messaging.RegionOfInterestMsgPayload()
-
-    regions_msg_payload.regions = [region1, region2, region3]
+    regions_msg_payload.numberOfPixels      = [100, 200, 0]
+    regions_msg_payload.centerOfBrightnessX = [500, 100, 0]
+    regions_msg_payload.centerOfBrightnessY = [380, 100, 0]
+    regions_msg_payload.centerX             = [500, 100, 0]
+    regions_msg_payload.centerY             = [380, 100, 0]
 
     regions_input_msg = messaging.RegionsIdentifiedMsg().write(regions_msg_payload)
     roi_module.roisInMsg.subscribeTo(regions_input_msg)
@@ -310,24 +279,15 @@ def region_identification(show_plots, num_regions, use_windowing):
         {'pixels': 180, 'x': 600, 'y': 300},
     ]
 
-    region_list = []
-    for i in range(min(num_regions, len(test_regions))):
-        region = messaging.RegionOfInterestMsgPayload()
-        region.numberOfPixels = test_regions[i]['pixels']
-        region.centerOfBrightnessX =  test_regions[i]['x']
-        region.centerOfBrightnessY =  test_regions[i]['y']
-        region.centerX = test_regions[i]['x']
-        region.centerY = test_regions[i]['y']
-        region.width = 15
-        region.height = 15
-        region.timeTag = i * 0.1
-        region_list.append(region)
-
-    for i in range(num_regions, 3):
-        region = messaging.RegionOfInterestMsgPayload()
-        region_list.append(region)
-
-    regions_msg_payload.regions = region_list
+    n = min(num_regions, len(test_regions))
+    regions_msg_payload.numberOfPixels      = [test_regions[i]['pixels'] if i < n else 0   for i in range(3)]
+    regions_msg_payload.centerOfBrightnessX = [test_regions[i]['x']      if i < n else 0   for i in range(3)]
+    regions_msg_payload.centerOfBrightnessY = [test_regions[i]['y']      if i < n else 0   for i in range(3)]
+    regions_msg_payload.centerX             = [test_regions[i]['x']      if i < n else 0   for i in range(3)]
+    regions_msg_payload.centerY             = [test_regions[i]['y']      if i < n else 0   for i in range(3)]
+    regions_msg_payload.width               = [15                         if i < n else 0   for i in range(3)]
+    regions_msg_payload.height              = [15                         if i < n else 0   for i in range(3)]
+    regions_msg_payload.timeTag             = [i * 0.1                   if i < n else 0.0 for i in range(3)]
     regions_input_msg = messaging.RegionsIdentifiedMsg().write(regions_msg_payload)
     roi_module.roisInMsg.subscribeTo(regions_input_msg)
 

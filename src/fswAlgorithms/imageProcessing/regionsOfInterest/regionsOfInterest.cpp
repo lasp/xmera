@@ -33,27 +33,17 @@ void RegionsOfInterest::reset(uint64_t currentSimNanos) { this->algorithm.reset(
 void RegionsOfInterest::updateState(uint64_t currentSimNanos) {
     // Read input message containing detected regions
     auto regionsMsgPayload = this->roisInMsg();
-    auto regions = std::to_array(regionsMsgPayload.regions);
 
     // Convert message payload to algorithm structures
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regionsInput{};
-    size_t index = 0;
-    for (const auto& [timeTag,
-                      centerX,
-                      centerY,
-                      width,
-                      height,
-                      numberOfPixels,
-                      centerOfBrightnessX,
-                      centerOfBrightnessY] : regions) {
+    for (size_t index = 0; index < MAX_NUMBER_REGIONS; ++index) {
         RegionOfInterest regionInput{};
-        regionInput.timeTag = timeTag;
-        regionInput.regionCenter << centerX, centerY;
-        regionInput.regionSize << width, height;
-        regionInput.centerOfBrightness << centerOfBrightnessX, centerOfBrightnessY;
-        regionInput.numberOfPixels = numberOfPixels;
+        regionInput.timeTag = regionsMsgPayload.timeTag[index];
+        regionInput.regionCenter << regionsMsgPayload.centerX[index], regionsMsgPayload.centerY[index];
+        regionInput.regionSize << regionsMsgPayload.width[index], regionsMsgPayload.height[index];
+        regionInput.centerOfBrightness << regionsMsgPayload.centerX[index], regionsMsgPayload.centerY[index];
+        regionInput.numberOfPixels = regionsMsgPayload.numberOfPixels[index];
         regionsInput.at(index) = regionInput;
-        ++index;
     }
 
     // Process regions through algorithm
