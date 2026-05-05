@@ -87,8 +87,6 @@ SpiceInterface::SpiceInterface() {
     this->UTCCalInit = string;
     planetWithSecondary = "";
     secondaryBody = SecondaryBody();
-
-    return;
 }
 
 /*! The only needed activity in the destructor is to delete the spice I/O buffer
@@ -107,18 +105,11 @@ SpiceInterface::~SpiceInterface() {
         delete this->transRefStateOutMsgs.at(c);
     }
     delete[] this->spiceBuffer;
-    //    if(this->SPICELoaded)
-    //    {
-    //        this->clearKeeper();
-    //    }
-    return;
 }
 
 void SpiceInterface::clearKeeper() { kclear_c(); }
 
-/*! Reset the module to origina configuration values.
- @return void
- */
+/*! Reset the module to original configuration values. */
 void SpiceInterface::reset(uint64_t CurrenSimNanos) {
     //! - Bail if the SPICEDataPath is not present
     if (this->SPICEDataPath == "") {
@@ -472,16 +463,10 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spic
         }
 
         if (planit->computeOrient) {
-            // pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
-            //     planit->second.J20002Pfix);
-
             double aux[6][6];
 
-            sxform_c(
-                this->referenceBase.c_str(),
-                planetFrame.c_str(),
-                this->J2000Current,
-                aux);  // returns attitude of planet (i.e. IAU_EARTH) wrt "j2000". note j2000 is actually ICRF in Spice.
+            // returns attitude of planet (e.g. IAU_EARTH) wrt "j2000" (which is ICRF in Spice)
+            sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux);
 
             m66Get33Matrix(0, 0, aux, planit->J20002Pfix);
 
