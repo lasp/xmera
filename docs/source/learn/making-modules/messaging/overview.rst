@@ -54,7 +54,7 @@ Message Lifecycle
 
        SomeMsgPayload buf{};
        buf.value = 42.0;
-       this->someOutMsg.write(&buf, this->moduleID, currentSimNanos);
+       this->someOutMsg.write(buf, this->moduleID, currentSimNanos);
 
 4. **Read** -- The consuming module reads the input message by calling the read
    functor:
@@ -96,7 +96,7 @@ Quick Example
 
         ControlCmdPayload cmd{};
         cmd.torque = computeControl(state);
-        this->controlOutMsg.write(&cmd, this->moduleID, currentSimNanos);
+        this->controlOutMsg.write(cmd, this->moduleID, currentSimNanos);
     }
 
 Next Steps

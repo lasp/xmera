@@ -63,7 +63,7 @@ The ``updateState()`` is the method that is called each time the Xmera simulatio
         v3Copy(inMsgBuffer.dataVector, outMsgBuffer.dataVector);
 
         /*! - write the module output message */
-        this->dataOutMsg.write(&outMsgBuffer, this->moduleID, currentSimNanos);
+        this->dataOutMsg.write(outMsgBuffer, this->moduleID, currentSimNanos);
     }
 
 .. warning::

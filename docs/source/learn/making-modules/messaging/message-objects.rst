@@ -81,13 +81,19 @@ Fill a zero-initialised local buffer and call ``write()``:
 
     SomeMsgPayload buf{};
     buf.dataVector[0] = 1.0;
-    this->someOutMsg.write(&buf, this->moduleID, currentSimNanos);
+    this->someOutMsg.write(buf, this->moduleID, currentSimNanos);
 
 .. note::
 
     Always zero-initialise the output buffer with ``{}`` to avoid writing
     uninitialised values.  A compile-time error is raised if the buffer type
     does not match the message type.
+
+.. note::
+
+    The pointer form ``write(&buf, ...)`` is deprecated and emits a
+    compile-time warning.  Existing module code that uses it still works,
+    but new code should pass the payload by reference as shown above.
 
 Helper Methods
 ^^^^^^^^^^^^^^
