@@ -8,147 +8,108 @@ import os
 
 import numpy as np
 
-#
-# Spice Unit Test
-#
-# Purpose:  Test the proper function of the Spice Ephemeris module for spacecraft information.
-#           Proper function is tested by comparing Spice Ephemeris to
-#           JPL Horizons Database for different planets and times of year
-# Author:   Hanspeter Schaub
-# Creation Date:  Dec. 17, 2021
-#
+# Spice Spacecraft Unit Test
+# Purpose:  Verify that SpiceInterface produces correct spacecraft state, attitude
+#           reference, and translational reference messages for a SPICE-tracked
+#           spacecraft (HST), benchmarked against JPL Horizons.
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 from xmera import __path__
-bskPath = __path__[0]
+bsk_path = __path__[0]
 
-import xmera.architecture.messaging
+import xmera.architecture.messaging  # noqa: F401
 from xmera.utilities import unitTestSupport
 from xmera.utilities import SimulationBaseClass
 from xmera.simulation import spiceInterface
 from xmera.utilities import macros
 
-# provide a unique test method name, starting with test_
+
 def test_unitSpiceSc(show_plots):
     """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSpiceSc(show_plots)
-    assert testResults < 1, testMessage
+    [test_fail_count, test_message] = unit_spice_sc(show_plots)
+    assert test_fail_count < 1, test_message
 
 
-# Run unit test
-def unitSpiceSc(show_plots):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
+def unit_spice_sc(show_plots):
+    test_fail_count = 0
+    test_messages = []
 
-    # Create a sim module as an empty container
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
 
-    # Create a sim module as an empty container
-    TotalSim = SimulationBaseClass.SimBaseClass()
+    total_sim = SimulationBaseClass.SimBaseClass()
+    dyn_unit_test_proc = total_sim.CreateNewProcess(unit_process_name)
+    dyn_unit_test_proc.addTask(total_sim.CreateNewTask(unit_task_name, macros.sec2nano(0.1)))
+    date_spice = "2015 February 10, 00:00:00.0 TDB"
 
-    DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
-    # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
-    dateSpice = "2015 February 10, 00:00:00.0 TDB"
+    spice_object = spiceInterface.SpiceInterface()
+    spice_object.modelTag = "SpiceInterfaceData"
+    spice_object.SPICEDataPath = bsk_path + "/supportData/EphemerisData/"
+    sc_names = ["HUBBLE SPACE TELESCOPE"]
+    spice_object.addSpacecraftNames(sc_names)
+    spice_object.UTCCalInit = date_spice
+    spice_object.zeroBase = "earth"
+    spice_object.loadSpiceKernel("hst_edited.bsp", bsk_path + "/supportData/EphemerisData/")
 
-    # Initialize the spice modules that we are using.
-    spiceObject = spiceInterface.SpiceInterface()
-    spiceObject.modelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    scNames = ["HUBBLE SPACE TELESCOPE"]
-    spiceObject.addSpacecraftNames(scNames)
-    spiceObject.UTCCalInit = dateSpice
-    spiceObject.zeroBase = "earth"
-    spiceObject.loadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
+    total_sim.AddModelToTask(unit_task_name, spice_object)
 
-    TotalSim.AddModelToTask(unitTaskName, spiceObject)
+    total_sim.ConfigureStopTime(macros.sec2nano(0.1))
+    total_sim.InitializeSimulation()
+    total_sim.ExecuteSimulation()
 
-    # Configure simulation
-    TotalSim.ConfigureStopTime(macros.sec2nano(0.1))
+    spice_object.unloadSpiceKernel("hst_edited.bsp", bsk_path + "/supportData/EphemerisData/")
 
-    # Execute simulation
-    TotalSim.InitializeSimulation()
-    TotalSim.ExecuteSimulation()
-
-    # unload spice kernel
-    spiceObject.unloadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
-
-    # set truth
-    truthPosition = np.array([-5855529.540348052, 1986110.860522791, -3116764.7117067943])
-    truthVelocity = np.array([-1848.9038338503085, -7268.515626753905, -1155.3578832725618])
-    truthAtt = np.array([0., 0., 0.])
-    truthZero = np.array([0., 0., 0.])
-
-    scStateMsg = spiceObject.scStateOutMsgs[0].read()
-    # print(scStateMsg.r_BN_N)
-    # print(scStateMsg.v_BN_N)
-    # print(scStateMsg.sigma_BN)
+    truth_position = np.array([-5855529.540348052, 1986110.860522791, -3116764.7117067943])
+    truth_velocity = np.array([-1848.9038338503085, -7268.515626753905, -1155.3578832725618])
+    truth_att = np.array([0., 0., 0.])
+    truth_zero = np.array([0., 0., 0.])
     accuracy = 0.01
-    testFailCount, testMessages = unitTestSupport.compareVector(truthPosition,
-                                                                scStateMsg.r_BN_N,
-                                                                accuracy, "scState-r_BN_N",
-                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(truthPosition,
-                                                                scStateMsg.r_CN_N,
-                                                                accuracy, "scState-r_CN_N",
-                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(truthVelocity,
-                                                                scStateMsg.v_BN_N,
-                                                                accuracy, "scState-v_BN_N",
-                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(truthVelocity,
-                                                                scStateMsg.v_CN_N,
-                                                                accuracy, "scState-v_CN_N",
-                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(truthAtt,
-                                                                scStateMsg.sigma_BN,
-                                                                accuracy, "scState-sigma_BN",
-                                                                testFailCount, testMessages)
-    attStateMsg = spiceObject.attRefStateOutMsgs[0].read()
-    testFailCount, testMessages = unitTestSupport.compareVector(truthAtt,
-                                                                attStateMsg.sigma_RN,
-                                                                accuracy, "scState-sigma_RN",
-                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(truthZero,
-                                                                attStateMsg.omega_RN_N,
-                                                                accuracy, "scState-omega_RN_N",
-                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(truthZero,
-                                                                attStateMsg.domega_RN_N,
-                                                                accuracy, "scState-domega_RN_N",
-                                                                testFailCount, testMessages)
 
-    transStateMsg = spiceObject.transRefStateOutMsgs[0].read()
-    testFailCount, testMessages = unitTestSupport.compareVector(truthPosition,
-                                                                transStateMsg.r_RN_N,
-                                                                accuracy, "scState-r_RN_N",
-                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(truthVelocity,
-                                                                transStateMsg.v_RN_N,
-                                                                accuracy, "scState-v_RN_N",
-                                                                testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(truthZero,
-                                                                transStateMsg.a_RN_N,
-                                                                accuracy, "scState-a_RN_N",
-                                                                testFailCount, testMessages)
+    sc_state_msg = spice_object.scStateOutMsgs[0].read()
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_position, sc_state_msg.r_BN_N,
+                                                                   accuracy, "scState-r_BN_N",
+                                                                   test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_position, sc_state_msg.r_CN_N,
+                                                                   accuracy, "scState-r_CN_N",
+                                                                   test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_velocity, sc_state_msg.v_BN_N,
+                                                                   accuracy, "scState-v_BN_N",
+                                                                   test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_velocity, sc_state_msg.v_CN_N,
+                                                                   accuracy, "scState-v_CN_N",
+                                                                   test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_att, sc_state_msg.sigma_BN,
+                                                                   accuracy, "scState-sigma_BN",
+                                                                   test_fail_count, test_messages)
 
+    att_state_msg = spice_object.attRefStateOutMsgs[0].read()
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_att, att_state_msg.sigma_RN,
+                                                                   accuracy, "scState-sigma_RN",
+                                                                   test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_zero, att_state_msg.omega_RN_N,
+                                                                   accuracy, "scState-omega_RN_N",
+                                                                   test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_zero, att_state_msg.domega_RN_N,
+                                                                   accuracy, "scState-domega_RN_N",
+                                                                   test_fail_count, test_messages)
 
-    # print out success message if no error were found
-    if testFailCount == 0:
+    trans_state_msg = spice_object.transRefStateOutMsgs[0].read()
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_position, trans_state_msg.r_RN_N,
+                                                                   accuracy, "scState-r_RN_N",
+                                                                   test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_velocity, trans_state_msg.v_RN_N,
+                                                                   accuracy, "scState-v_RN_N",
+                                                                   test_fail_count, test_messages)
+    test_fail_count, test_messages = unitTestSupport.compareVector(truth_zero, trans_state_msg.a_RN_N,
+                                                                   accuracy, "scState-a_RN_N",
+                                                                   test_fail_count, test_messages)
+
+    if test_fail_count == 0:
         print(" \n PASSED ")
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [test_fail_count, "".join(test_messages)]
 
 
-# This statement below ensures that the unit test scrip can be run as a
-# stand-along python script
-#
 if __name__ == "__main__":
-    test_unitSpiceSc(
-                     False  # show_plots
-                     )
+    test_unitSpiceSc(False)

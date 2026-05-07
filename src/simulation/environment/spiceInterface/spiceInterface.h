@@ -20,6 +20,25 @@
 #include <architecture/msgPayloadDef/SpiceTimeMsgPayload.h>
 #include <architecture/msgPayloadDef/TransRefMsgPayload.h>
 
+class SecondaryBody {
+   public:
+    SecondaryBody() = default;
+    ~SecondaryBody() = default;
+
+    void setPositionOffset(const Eigen::Vector3d& offset);
+    Eigen::Vector3d getPositionOffset() const;
+    Eigen::Vector3d getPositionOffsetAt(double elapsedSeconds) const;
+    void setSecondaryName(const std::string& name);
+    std::string getSecondaryName() const;
+    void setOrbitalPeriod(double period);
+    double getOrbitalPeriod() const;
+
+   private:
+    std::string secondaryName{};
+    Eigen::Vector3d offset{Eigen::Vector3d::Zero()};
+    double orbitalPeriod{0.0};  //!< s circular-orbit period; 0 disables motion
+};
+
 /*! @brief spice interface class */
 class SpiceInterface : public SysModel {
    public:
@@ -38,11 +57,15 @@ class SpiceInterface : public SysModel {
     void clearKeeper();  //!< class method
     void addPlanetNames(std::vector<std::string> planetNames);
     void addSpacecraftNames(std::vector<std::string> spacecraftNames);
+    SpicePlanetStateMsgPayload populateSecondaryBodyMsg(const SpicePlanetStateMsgPayload& primaryBody) const;
+    void setOffsetBody(const std::string& planetName, const SecondaryBody& offsetBody);
+    void passivateSecondary();
 
    public:
     Message<SpiceTimeMsgPayload> spiceTimeOutMsg;                          //!< spice time sampling output message
     ReadFunctor<EpochMsgPayload> epochInMsg;                               //!< (optional) input epoch message
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetStateOutMsgs;  //!< vector of planet state output messages
+    Message<SpicePlanetStateMsgPayload> secondaryStateOutMsg;  //!< State output message for a secondary body
     std::vector<Message<SCStatesMsgPayload>*> scStateOutMsgs;  //!< vector of spacecraft state output messages
     std::vector<Message<AttRefMsgPayload>*>
         attRefStateOutMsgs;  //!< vector of spacecraft attitude reference state output messages
@@ -58,16 +81,18 @@ class SpiceInterface : public SysModel {
     uint8_t* spiceBuffer;        //!< -- General buffer to pass down to spice
     std::string UTCCalInit;      //!< -- UTC time string for init time
 
+    std::vector<std::string> planetNames{};  //!< -- Vector of the input planet names
     std::vector<std::string>
         planetFrames;  //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
-
-    bool timeDataInit;         //!< -- Flag indicating whether time has been init
-    double J2000ETInit;        //!< s Seconds elapsed since J2000 at init
-    double J2000Current;       //!< s Current J2000 elapsed time
-    double julianDateCurrent;  //!< s Current JulianDate
-    double GPSSeconds;         //!< s Current GPS seconds
-    uint16_t GPSWeek;          //!< -- Current GPS week value
-    uint64_t GPSRollovers;     //!< -- Count on the number of GPS rollovers
+    std::string planetWithSecondary{};  //!< -- Optional : planet in the list which will have a secondary body attached
+    SecondaryBody secondaryBody{};      //!< -- Optional : the secondary body
+    bool timeDataInit;                  //!< -- Flag indicating whether time has been init
+    double J2000ETInit;                 //!< s Seconds elapsed since J2000 at init
+    double J2000Current;                //!< s Current J2000 elapsed time
+    double julianDateCurrent;           //!< s Current JulianDate
+    double GPSSeconds;                  //!< s Current GPS seconds
+    uint16_t GPSWeek;                   //!< -- Current GPS week value
+    uint64_t GPSRollovers;              //!< -- Count on the number of GPS rollovers
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 

@@ -7,7 +7,13 @@
    #include "spiceInterface.h"
 %}
 
+%include <attribute.i>
+%attributestring(SecondaryBody, std::string, secondaryName, getSecondaryName, setSecondaryName)
+%attribute(SecondaryBody, Eigen::Vector3d, positionOffset, getPositionOffset, setPositionOffset)
+%attribute(SecondaryBody, double, orbitalPeriod, getOrbitalPeriod, setOrbitalPeriod)
+
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 %include <std_string.i>
 %include <std_vector.i>
 
