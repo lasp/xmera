@@ -12,7 +12,7 @@ from xmera.utilities import SimulationBaseClass
 from xmera.utilities import macros
 from xmera.utilities import orbitalMotion
 
-from fswAlgorithms.orbitControl.lambertSolver._UnitTest.Support.IzzoLambert import *
+from Support.IzzoLambert import *
 
 # parameters
 solver = ["Gooding", "Izzo"]
