@@ -29,7 +29,6 @@
 ARRAYINTASLIST(FSWdeviceAvailability)
 STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
-STRUCTASLIST(RegionOfInterestMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
 STRUCTASLIST(CSSArraySensorMsgPayload)
 STRUCTASLIST(THRConfigMsgPayload)

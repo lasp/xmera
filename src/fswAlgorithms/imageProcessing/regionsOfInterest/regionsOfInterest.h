@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <Eigen/Core>
 
+#include <architecture/msgPayloadDef/RegionOfInterestMsgPayload.h>
 #include <architecture/msgPayloadDef/RegionsIdentifiedMsgPayload.h>
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 
