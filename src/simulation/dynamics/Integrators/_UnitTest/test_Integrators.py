@@ -190,12 +190,11 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     np.set_printoptions(precision=16)
     fileNameString = filename[len(path) + 6:-3]
-    if integratorCase == "rk4":
-        plt.close("all")  # clears out plots from earlier test runs
 
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
     p = oe.a * (1 - oe.e * oe.e)
+    plt.close(1)
     plt.figure(1, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     # draw the planet
