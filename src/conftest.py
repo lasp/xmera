@@ -33,6 +33,23 @@ def pytest_addoption(parser):
                      help="test(s) shall display plots")
     parser.addoption("--report", action="store_true",  # --report is easier, more controlled than --html=<pathToReport>
                          help="whether or not to gen a pytest-html report. The report is saved in ./tests/report")
+    parser.addoption("--log-worker-tests", action="store",
+                     default=None,
+                     help="Directory to write per-xdist-worker test execution logs (one file per worker). "
+                          "Each line is the test nodeid as it begins. Use to identify which test ran "
+                          "just before a worker crash.")
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_setup(item):
+    log_dir = item.config.getoption("--log-worker-tests")
+    if not log_dir:
+        return
+    worker = os.environ.get("PYTEST_XDIST_WORKER", "main")
+    os.makedirs(log_dir, exist_ok=True)
+    with open(os.path.join(log_dir, f"worker-{worker}.log"), "a") as f:
+        f.write(item.nodeid + "\n")
+        f.flush()
 
 
 @pytest.fixture(scope="module")
