@@ -8,7 +8,7 @@ import pytest
 from xmera.architecture import messaging
 from xmera.fswAlgorithms import thrForceMapping
 from xmera.utilities import (macros, fswSetupThrusters, SimulationBaseClass)
-from .Support.thruster_force_mapping_test_oracle import ThrForceMappingTestOracle
+from Support.thruster_force_mapping_test_oracle import ThrForceMappingTestOracle
 
 
 @pytest.mark.parametrize("useDVThruster", [True, False])
