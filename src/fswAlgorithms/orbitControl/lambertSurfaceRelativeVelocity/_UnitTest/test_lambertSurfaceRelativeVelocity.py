@@ -18,7 +18,7 @@ relativeVelocities = np.array([[0., 0., 0.], [100., -300., 200.]])
 time_maneuver = [1.e3, 2.e3]
 trueAnomalies = [0., 70.]
 rotAngles = [0., 230.]
-angularVelocities = np.array([[0., 0., 0.], [1., -3., 2.]])
+angularVelocities = np.array([[1., -3., 2.]])
 
 paramArray = [relativeVelocities, time_maneuver, trueAnomalies, rotAngles, angularVelocities]
 # create list with all combinations of parameters
