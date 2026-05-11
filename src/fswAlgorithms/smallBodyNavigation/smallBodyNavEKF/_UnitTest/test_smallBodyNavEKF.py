@@ -115,8 +115,7 @@ def smallBodyNavEKFTestFunction(show_plots):
         true_x_hat, np.array([x_hat[-1,:]]), 0.1, "x_hat",
         testFailCount, testMessages)
 
-    plt.figure(1)
-    plt.clf()
+    plt.close(1)
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.ticklabel_format(useOffset=False)
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,0], label='x-pos')
@@ -127,8 +126,7 @@ def smallBodyNavEKFTestFunction(show_plots):
     plt.ylabel('r_BO_O (m)')
     plt.title('Estimated Relative Spacecraft Position')
 
-    plt.figure(2)
-    plt.clf()
+    plt.close(2)
     plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,3], label='x-vel')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,4], label='y-vel')
@@ -138,8 +136,7 @@ def smallBodyNavEKFTestFunction(show_plots):
     plt.ylabel('v_BO_O (m/s)')
     plt.title('Estimated Spacecraft Velocity')
 
-    plt.figure(5)
-    plt.clf()
+    plt.close(5)
     plt.figure(5, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,6], label='s1')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,7], label='s2')
@@ -149,8 +146,7 @@ def smallBodyNavEKFTestFunction(show_plots):
     plt.ylabel('sigma_AN (rad)')
     plt.title('Estimated Asteroid Attitude')
 
-    plt.figure(6)
-    plt.clf()
+    plt.close(6)
     plt.figure(6, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,9], label='omega1')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,10], label='omega2')
