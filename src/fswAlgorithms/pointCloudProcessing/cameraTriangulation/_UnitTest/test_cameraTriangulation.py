@@ -257,9 +257,11 @@ def computeTriangulationCovariance(pointCloud, imagePoints, cameraCalibrationMat
         dij = pj - pi
         ai = dcm_FC.dot(Kinv).dot(uiBar)
         aj = dcm_FCj.dot(Kinv).dot(ujBar)
-        gamma = np.linalg.norm(np.cross(dij, aj))/np.linalg.norm(np.cross(ai, aj))
-        if np.linalg.norm(np.cross(ai, aj)) < 1e-10:
+        normCrossAiAj = np.linalg.norm(np.cross(ai, aj))
+        if normCrossAiAj < 1e-10:
             gamma = 0
+        else:
+            gamma = np.linalg.norm(np.cross(dij, aj))/normCrossAiAj
         Re = -gamma**2 * xiBarTilde.dot(Rx).dot(xiBarTilde)
         covarianceSumTerm += dcm_FC.dot(xiBarTilde).dot(Re).dot(xiBarTilde).dot(dcm_CF)
 
