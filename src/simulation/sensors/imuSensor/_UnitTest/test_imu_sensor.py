@@ -328,8 +328,8 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
     # truth/output comparison plots and AutoTex output
     time = dataLog.times()/1e9
+    plt.close(1)
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.clf()
     plt.plot(time, DRout[0:,0], linewidth = 6, color = 'black', label = "output1")
     plt.plot(time, stepPRV_PN[:,0], linestyle = '--', color = 'cyan', label = "truth1")
     plt.plot(time, DRout[0:,1], linewidth = 4, color = 'black', label = "output2")
@@ -344,8 +344,8 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     unitTestSupport.writeFigureLaTeX(testCase + "PRVcomparison",
                                      'Plot Comparing Time Step PRV Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the principal rotation vector.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
+    plt.close(4)
     plt.figure(4,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.clf()
     plt.plot(time, omegaOut[:,0], linewidth = 6, color = 'black', label = "output1")
     plt.plot(time, omega_PN_P[:,0], linestyle = '--', color = 'cyan', label = "truth1")
     plt.plot(time, omegaOut[:,1], linewidth = 4, color = 'black', label = "output2")
@@ -360,8 +360,8 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     unitTestSupport.writeFigureLaTeX(testCase + "omegaComparison",
                                      'Plot Comparing Angular Rate Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the angular rate.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
+    plt.close(7)
     plt.figure(7,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.clf()
     plt.plot(time, rDotDotOut[:,0], linewidth = 6, color = 'black', label = "output1")
     plt.plot(time, rDotDot_SN_P[:,0], linestyle = '--', color = 'cyan', label = "truth1")
     plt.plot(time, rDotDotOut[:,1], linewidth = 4, color = 'black', label = "output2")
@@ -377,8 +377,8 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                                      'Plot Comparing Sensor Linear Accelertaion Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the acceleration.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
 
+    plt.close(10)
     plt.figure(10,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.clf()
     plt.plot(time, DVout[:,0], linewidth = 6, color = 'black', label = "output1")
     plt.plot(time, DVAccum_SN_P[:,0], linestyle = '--', color = 'cyan', label = "truth1")
     plt.plot(time, DVout[:,1], linewidth = 4, color = 'black', label = "output2")
