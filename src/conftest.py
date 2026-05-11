@@ -11,6 +11,13 @@ import sys
 
 import pytest
 
+
+def pytest_collectstart(collector):
+    if isinstance(collector, pytest.Module):
+        directory = str(collector.path.parent)
+        if directory not in sys.path:
+            sys.path.insert(0, directory)
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 print(path)
