@@ -100,6 +100,7 @@ add_subdirectory(formationFlying/spacecraftReconfig)
 
 add_subdirectory(imageProcessing/centerOfBrightness)
 add_subdirectory(imageProcessing/centerRadiusCNN)
+add_subdirectory(imageProcessing/fpgaImagePipeline)
 add_subdirectory(imageProcessing/houghCircles)
 add_subdirectory(imageProcessing/limbFinding)
 add_subdirectory(imageProcessing/opticalFlow)
