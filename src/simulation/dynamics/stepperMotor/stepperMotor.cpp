@@ -63,12 +63,14 @@ void StepperMotor::updateState(uint64_t callTime) {
 
     // Actuate the motor only if a current actuation segment is not complete
     double t = callTime * NANO2SEC;
+    bool isMotorMoving = false;
     if (!(this->actuationComplete)) {
         // Reset the motor immediately after a new non-interrupting request is received
         if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) {
             this->resetMotor();
         }
         this->actuateMotor(t);
+        isMotorMoving = true;
     } else {
         this->tInit = t;
         this->thetaDDot = 0.0;
@@ -81,6 +83,7 @@ void StepperMotor::updateState(uint64_t callTime) {
     stepperMotorOut.thetaDDot = this->thetaDDot;
     stepperMotorOut.stepsCommanded = this->stepsCommanded;
     stepperMotorOut.stepCount = this->stepCount;
+    stepperMotorOut.isMotorMoving = isMotorMoving;
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
 }
 

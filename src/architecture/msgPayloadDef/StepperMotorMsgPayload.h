@@ -12,6 +12,7 @@ typedef struct {
     double thetaDDot;    //!< [rad/s^2] Current motor angular acceleration
     int stepsCommanded;  //!< Current number of commanded motor steps
     int stepCount;       //!< Current motor step count (number of steps taken)
+    bool isMotorMoving;  //!< indicator whether the motor is moving
 } StepperMotorMsgPayload;
 
 #endif /* stepperMotorSimMsg_h */
