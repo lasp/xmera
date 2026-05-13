@@ -19,6 +19,8 @@ void StepperMotor::reset(uint64_t callTime) {
     this->thetaDDot = 0.0;
     this->tInit = 0.0;
     this->stepCount = 0;
+    // Absolute motor position from theta=0 (so motorPosition * stepAngle ≈ theta).
+    this->motorPosition = static_cast<int>(std::round(this->thetaInit / this->stepAngle));
     this->previousWrittenTime = -1;
     this->actuationComplete = true;
     this->stepComplete = true;
@@ -83,6 +85,7 @@ void StepperMotor::updateState(uint64_t callTime) {
     stepperMotorOut.thetaDDot = this->thetaDDot;
     stepperMotorOut.stepsCommanded = this->stepsCommanded;
     stepperMotorOut.stepCount = this->stepCount;
+    stepperMotorOut.motorPosition = this->motorPosition;
     stepperMotorOut.isMotorMoving = isMotorMoving;
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
 }
@@ -195,8 +198,10 @@ void StepperMotor::computeStepComplete(double t) {
     // Update the motor step count
     if (this->intermediateThetaRef > this->intermediateThetaInit) {
         this->stepCount++;
+        this->motorPosition++;
     } else {
         this->stepCount--;
+        this->motorPosition--;
     }
 
     // Update the actuationComplete boolean variable only when motor actuation is complete

@@ -47,7 +47,8 @@ class StepperMotor : public SysModel {
     double stepAngle;    //!< [rad] Angle the stepper motor moves through for a single step (constant)
     double stepTime;     //!< [s] Time required for a single motor step (constant)
     int stepsCommanded;  //!< [steps] Number of commanded steps
-    int stepCount;       //!< [steps] Current motor step count (number of steps taken)
+    int stepCount;  //!< [steps] Current motor step count within the active command (resets to 0 at each new command)
+    int motorPosition;  //!< [steps] Absolute motor position; cumulative net signed step count, never reset
 
     /* Motor angle parameters */
     double thetaInit;              //!< [rad] Initial motor angle
