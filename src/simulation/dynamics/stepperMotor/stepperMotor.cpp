@@ -184,7 +184,10 @@ void StepperMotor::computeStepComplete(double t) {
     this->stepComplete = true;
     this->thetaDot = 0.0;
     this->theta = this->intermediateThetaRef;
-    this->tInit = t;
+    // Anchor to tf rather than t so the (t - tf) residual carries into the next step;
+    // otherwise, when the dynamics tick doesn't divide stepTime, that residual is lost
+    // each step and the long-run motor rate falls below 1/stepTime.
+    this->tInit = this->tf;
 
     // Update the motor step count
     if (this->intermediateThetaRef > this->intermediateThetaInit) {
