@@ -16,12 +16,31 @@ message EpochDateTime{
     double seconds = 6;
 }
 
+message StrayLightModel{
+  bool enabled = 1; // [-] Master toggle for the stray-light / lens-flare pass
+  double coreSize = 2; // [-] Scale factor for the sun core blob size (SunFalloffK = 8/coreSize)
+  double ghostSize = 3; // [-] Global scale factor for the ghost sizes
+  double ghostTransmittance = 4; // [-] Global brightness scale for the ghosts
+  double ghost1RelativeSize = 5; // [-] Per-ghost size scale for the first (closest) ghosts
+  double ghost2RelativeSize = 6; // [-] Per-ghost size scale for the second ghosts
+  double ghost3RelativeSize = 7; // [-] Per-ghost size scale for the third ghosts
+  double ghost4RelativeSize = 8; // [-] Per-ghost size scale for the fourth (orb) ghosts
+  double ghostBrightnessSizeExponent = 9; // [-] Couples ghost brightness to inverse size (2 = area-conserving)
+  double coronaFalloffExponent = 10; // [-] Falloff exponent of the wide corona aureole (higher = tighter)
+  double coronaIntensity = 11; // [-] Brightness amplitude of the wide corona, relative to the core
+  double baffleShieldAngle = 12; // [deg] Angle beyond the FoV half-angle out to which the off-axis sun still casts stray light (cutoff = FoV/2 + this; 0 = only when the sun is in frame)
+  double intensity = 13; // [-] Overall stray-light brightness as a fraction of the direct solar radiance (throughput); scales the whole flare. 1.0 = as bright as the sun's disk (default); real optics are far smaller, ~1e-3..1e-6
+  double numRays = 14; // [-] Number of evenly-spaced symmetric rays radiating from the sun (even -> mirror-symmetric across boresight)
+  double raySharpness = 15; // [-] Angular sharpness of the rays (higher = narrower, crisper rays)
+  double rayWeight = 16; // [-] Strength of the symmetric rays relative to the random streaks
+}
+
 message RenderingModel{
   double wavelength1 = 1; // [nm] first wavelength sample point
   double wavelength2 = 2; // [nm] second wavelength sample point
   double wavelength3 = 3; // [nm] third wavelength sample point
   double cosmicRayStdDeviation = 4; // [-] Standard deviation of cosmic ray frequency (poisson distribution)
-  double strayLight = 5; // [-] Enable stray light model
+  StrayLightModel strayLightModel = 5; // [-] [-] Stray-light / lens-flare model parameters
   bool starField = 6; // [-] Enable star field
   string rendering = 7; // [-] Type of rendering engine to be used (Lumen, Ray tracing)
   bool enableSmear = 8; // [-] Enable effects of long exposure times
@@ -82,26 +101,21 @@ message QuantumEfficiency{
     double blueValue3 = 10; // [-] Value of the blue channel Qe curve at the third wavelength sample point
 }
 
-message ImageData{
-    enum Format {
-      RAW = 0;
-      PNG = 1;
-      JPG = 2;
-    };
-    Format imageFormat = 1; // [-] Image format of the received image
-    double bitDepth = 2; // [-] Value of the red channel Qe curve at the first wavelength sample point
-}
-
-
 message LensModel{
     repeated double fieldOfView = 1;  //[deg, deg] Camera Field of View edge-to-edge
     double focalLength = 2; // [m] Camera focal length
     double pointSpreadFunction = 3; // [pix] Kernel size of gaussian psf
     double apertureRadius = 4; // [m] Aperture radius of lens
-    repeated double horizontalVignetting = 5; // [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of horizontal distance from camera center (degrees)
-    repeated double verticalVignetting = 6; // [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of vertical distance from camera center (degrees)
-    repeated double distortion = 7; // [-] Polynomial coefficients to form the curve of distortion (values between 0 and 1) as a function of vertical distance from camera center (degrees)
-    double transmission = 8; // [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all wavelengths
+    float transmission1 = 5; // [-] Transmission rate of the lens (value between 0 and 1) for wavelength 1
+    float transmission2 = 6; // [-] Transmission rate of the lens (value between 0 and 1) for wavelength 2
+    float transmission3 = 7; // [-] Transmission rate of the lens (value between 0 and 1) for wavelength 3
+    repeated double horizontalVignetting = 8; // [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of horizontal distance from camera center (degrees)
+    repeated double verticalVignetting = 9; // [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1) as a function of vertical distance from camera center (degrees)
+    float distortionK1 = 10; // [-] Polynomial coefficients to form the curve of distortion (dimensionless)
+    float distortionK2 = 11; // [-] Polynomial coefficients to form the curve of distortion (dimensionless)
+    float distortionK3 = 12; // [-] Polynomial coefficients to form the curve of distortion (dimensionless)
+    float distortionP1 = 13; // [-] Polynomial coefficients to form the curve of distortion (dimensionless)
+    float distortionP2 = 14; // [-] Polynomial coefficients to form the curve of distortion (dimensionless)
 }
 
 message SensorModel{
@@ -110,14 +124,19 @@ message SensorModel{
     double exposureTime = 3; // [s] Time with open shutter
     double readNoise = 4; // [e-] Read noise standard deviation in electrons
     bool shotNoise = 5; // [-] Model shot noise true or false
-    double darkCurrent = 6; // [e-/s] Dark current variance value in electrons per second (will be multiplied by exposure time)
-    double systemGain = 7; // [-] System gain between sensor current and pixel intensity
-    double sensorWidth = 8; // [m] Width of sensor
-    double sensorHeight = 9; // [m] Height of sensor
-    double fullWellCapacity = 10; // [e-] Amount of charge that can be stored within an individual pixel
-    double gamma = 11; // [-] Gamma correction factor
-    QuantumEfficiency qeCurve = 12; // [-] Quantum Efficiency curve information
-    ImageData imageData = 13; // [-] Output image data
+    float darkCurrent = 6; // [e-/s] Dark current rate in electrons per second
+    uint32 darkCurrentPattern = 7; // [-] Seed used to generate dark current noise pattern
+    float darkCurrentStdDeviation = 8; // [e-/s] Dark current rate standard deviation in electrons per second
+    double systemGain = 9; // [-] System gain between sensor current and pixel intensity
+    double sensorWidth = 10; // [m] Width of sensor
+    double sensorHeight = 11; // [m] Height of sensor
+    double fullWellCapacity = 12; // [e-] Amount of charge that can be stored within an individual pixel
+    double gamma = 13; // [-] Gamma correction factor
+    QuantumEfficiency qeCurve = 14; // [-] Quantum Efficiency curve information
+    bool isGrayscale = 15; // [-] Determines if images are grayscale or not
+    uint32 pixelDefectPattern = 16; // [-] Seed used to generate pixel defect pattern
+    float stuckPixelRate = 17; // [-] Probability of a stuck pixel, e.g. 0.01 = 1%
+    float deadPixelRate = 18; // [-] Probability of a dead pixel, e.g. 0.01 = 1%
 }
 
 message AreaOfInterest{
@@ -126,6 +145,17 @@ message AreaOfInterest{
     double width =3;  //!< [pix] Width of the area of interest
     double height =4;  //!< [pix] Height of the area of interest
     double threshold = 5;  //!< [0-255] threshold for a bright pixel to count (values below threshold are zeroed)
+}
+
+message ImageFormat{
+    enum Format {
+        PNG = 0;
+        RAW_8 = 1;
+        RAW_12 = 2;
+        RAW_12_PACKED = 3;
+        RAW_16 = 4;
+    };
+    Format format = 1; // [-] Image format of the received image
 }
 
 //Camera parameters
@@ -137,9 +167,10 @@ message CameraModel{
     LensModel lensModel = 5; // [-] Parameters to model the optics of the camera
     SensorModel sensorModel = 6; // [-] Parameters to model the camera sensor
     AreaOfInterest areaOfInterest = 7; // [-] Sub-fov of interest for diagnostics
+    ImageFormat imageFormat = 8; // [-] Output data format (PNG or RAW with specified bit depth)
 }
 
-/*! Cielim Message containing relevant data for image generation*/
+// Cielim Message containing relevant data for image generation
 message CielimMessage{
     EpochDateTime epoch = 1;
     TimeStamp currentTime = 2;

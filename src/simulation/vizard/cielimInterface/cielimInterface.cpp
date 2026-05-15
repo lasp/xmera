@@ -277,7 +277,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         auto* lensModel = new cielimMessage::LensModel();
         auto* sensorModel = new cielimMessage::SensorModel();
         auto* quantumEfficiency = new cielimMessage::QuantumEfficiency();
-        auto* imageData = new cielimMessage::ImageData();
+        auto* dataFormat = new cielimMessage::ImageFormat();
 
         camera->set_cameraid(this->cameraModelPayload.cameraId);
         camera->set_parentname(this->cameraModelPayload.parentName);
@@ -297,9 +297,17 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         for (int j = 0; j < MAX_POLY_COEFF; j++) {
             lensModel->add_horizontalvignetting(this->cameraModelPayload.horizontalVignetting[j]);
             lensModel->add_verticalvignetting(this->cameraModelPayload.verticalVignetting[j]);
-            lensModel->add_distortion(this->cameraModelPayload.distortion[j]);
         }
-        lensModel->set_transmission(this->cameraModelPayload.transmission);
+        // The single lens transmission is replicated across the three wavelength sample points.
+        lensModel->set_transmission1(this->cameraModelPayload.transmission);
+        lensModel->set_transmission2(this->cameraModelPayload.transmission);
+        lensModel->set_transmission3(this->cameraModelPayload.transmission);
+        // distortion[] maps positionally onto the radial (k1, k2, k3) and tangential (p1, p2) terms.
+        lensModel->set_distortionk1(this->cameraModelPayload.distortion[0]);
+        lensModel->set_distortionk2(this->cameraModelPayload.distortion[1]);
+        lensModel->set_distortionk3(this->cameraModelPayload.distortion[2]);
+        lensModel->set_distortionp1(this->cameraModelPayload.distortion[3]);
+        lensModel->set_distortionp2(this->cameraModelPayload.distortion[4]);
 
         sensorModel->set_renderrate(this->cameraModelPayload.renderRate);
         sensorModel->set_exposuretime(this->cameraModelPayload.exposureTime);
@@ -311,6 +319,12 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         sensorModel->set_sensorheight(this->cameraModelPayload.sensorHeight);
         sensorModel->set_fullwellcapacity(this->cameraModelPayload.fullWellCapacity);
         sensorModel->set_gamma(this->cameraModelPayload.gammaCorrection);
+        sensorModel->set_darkcurrentpattern(this->cameraModelPayload.darkCurrentPattern);
+        sensorModel->set_darkcurrentstddeviation(this->cameraModelPayload.darkCurrentStdDeviation);
+        sensorModel->set_isgrayscale(this->cameraModelPayload.isGrayscale);
+        sensorModel->set_pixeldefectpattern(this->cameraModelPayload.pixelDefectPattern);
+        sensorModel->set_stuckpixelrate(this->cameraModelPayload.stuckPixelRate);
+        sensorModel->set_deadpixelrate(this->cameraModelPayload.deadPixelRate);
 
         quantumEfficiency->set_integrationweightfactor(this->cameraModelPayload.integrationWeightFactor);
         quantumEfficiency->set_redvalue1(this->cameraModelPayload.redQuantumEfficiency[0]);
@@ -324,18 +338,28 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         quantumEfficiency->set_bluevalue3(this->cameraModelPayload.blueQuantumEfficiency[2]);
         sensorModel->set_allocated_qecurve(quantumEfficiency);
 
-        if (std::string rawString{this->cameraModelPayload.imageFormat}; rawString == "RAW") {
-            imageData->set_imageformat(cielimMessage::ImageData_Format_RAW);
-        } else if (std::string jpgString{this->cameraModelPayload.imageFormat}; jpgString == "JPG") {
-            imageData->set_imageformat(cielimMessage::ImageData_Format_JPG);
+        if (std::string{this->cameraModelPayload.imageFormat} == "RAW") {
+            switch (this->cameraModelPayload.bitDepth) {
+                case 8:
+                    dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_8);
+                    break;
+                case 12:
+                    dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_12);
+                    break;
+                case 16:
+                    dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_16);
+                    break;
+                default:
+                    dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_8);
+                    break;
+            }
         } else {
-            imageData->set_imageformat(cielimMessage::ImageData_Format_PNG);
+            dataFormat->set_format(cielimMessage::ImageFormat_Format_PNG);
         }
-        imageData->set_bitdepth(this->cameraModelPayload.bitDepth);
-        sensorModel->set_allocated_imagedata(imageData);
 
         camera->set_allocated_lensmodel(lensModel);
         camera->set_allocated_sensormodel(sensorModel);
+        camera->set_allocated_imageformat(dataFormat);
 
         /*! Write diagnostics msg */
         if (this->imageDiagnosticsMessage.isLinked() && this->imageDiagnosticsMessageStatus.dataFresh) {
@@ -358,7 +382,27 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         rendering->set_wavelength2(this->cameraRenderingPayload.wavelengths[1]);
         rendering->set_wavelength3(this->cameraRenderingPayload.wavelengths[2]);
         rendering->set_cosmicraystddeviation(this->cameraRenderingPayload.cosmicRayStdDeviation);
-        rendering->set_straylight(this->cameraRenderingPayload.strayLight);
+
+        auto* strayLightModel = new cielimMessage::StrayLightModel();
+        strayLightModel->set_enabled(this->cameraRenderingPayload.strayLightEnabled);
+        strayLightModel->set_coresize(this->cameraRenderingPayload.strayLightCoreSize);
+        strayLightModel->set_ghostsize(this->cameraRenderingPayload.strayLightGhostSize);
+        strayLightModel->set_ghosttransmittance(this->cameraRenderingPayload.strayLightGhostTransmittance);
+        strayLightModel->set_ghost1relativesize(this->cameraRenderingPayload.strayLightGhost1RelativeSize);
+        strayLightModel->set_ghost2relativesize(this->cameraRenderingPayload.strayLightGhost2RelativeSize);
+        strayLightModel->set_ghost3relativesize(this->cameraRenderingPayload.strayLightGhost3RelativeSize);
+        strayLightModel->set_ghost4relativesize(this->cameraRenderingPayload.strayLightGhost4RelativeSize);
+        strayLightModel->set_ghostbrightnesssizeexponent(
+            this->cameraRenderingPayload.strayLightGhostBrightnessSizeExponent);
+        strayLightModel->set_coronafalloffexponent(this->cameraRenderingPayload.strayLightCoronaFalloffExponent);
+        strayLightModel->set_coronaintensity(this->cameraRenderingPayload.strayLightCoronaIntensity);
+        strayLightModel->set_baffleshieldangle(this->cameraRenderingPayload.strayLightBaffleShieldAngle);
+        strayLightModel->set_intensity(this->cameraRenderingPayload.strayLightIntensity);
+        strayLightModel->set_numrays(this->cameraRenderingPayload.strayLightNumRays);
+        strayLightModel->set_raysharpness(this->cameraRenderingPayload.strayLightRaySharpness);
+        strayLightModel->set_rayweight(this->cameraRenderingPayload.strayLightRayWeight);
+        rendering->set_allocated_straylightmodel(strayLightModel);
+
         rendering->set_starfield(this->cameraRenderingPayload.starField);
         rendering->set_rendering(this->cameraRenderingPayload.rendering);
         rendering->set_enablesmear(this->cameraRenderingPayload.smear);
