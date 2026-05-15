@@ -70,6 +70,7 @@ class StepperMotor : public SysModel {
     bool stepComplete;       //!< Boolean designating the completion of a step
     bool newMsg;             //!< Boolean designating a new command message is written
     bool interruptMsg;       //!< Boolean designating the new command message is interrupting motor actuation
+    bool pendingStop;        //!< Boolean designating a stop command was received; halt after the current step completes
 
     /* Constant parameters */
     double a;  //!< Parabolic constant for the first half of a step
