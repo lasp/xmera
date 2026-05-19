@@ -16,6 +16,17 @@
 #include <architecture/msgPayloadDef/CobConverterDiagnosticMsgPayload.h>
 
 /**
+ * @brief Camera calibration to pinhole Brown-Conrady coefficients
+ */
+struct CalibrationCoefficients {
+    double k1 = 0;
+    double k2 = 0;
+    double k3 = 0;
+    double p1 = 0;
+    double p2 = 0;
+};
+
+/**
  * @enum PhaseAngleCorrectionMethodAlgorithm
  * @brief Phase-angle correction models for converting COB to COM.
  */
@@ -54,6 +65,8 @@ class CobConverterAlgorithm {
     void enableOutlierDetection();
     void disableOutlierDetection();
     bool isOutlierDetectionEnabled() const;
+    void setBrownConradyCoefficients(const CalibrationCoefficients& coefficients);
+    CalibrationCoefficients getBrownConradyCoefficients() const;
 
    private:
     void cobOutlierDetection(const FilterMsgPayload& filterMsgBuffer,
@@ -64,6 +77,7 @@ class CobConverterAlgorithm {
     std::tuple<Eigen::Vector3d, Eigen::Vector3d> computeCentersOfInterest(const OpNavCOBMsgPayload& cobMsgBuffer) const;
     void computeRelevantVectors(const Eigen::Vector3d& centerOfBrightness, const Eigen::Vector3d& centerOfMass);
     void computeCameraFrameUncertainty(const FilterMsgPayload& filterMsgBuffer, double pixelsFound);
+    Eigen::Vector3d calibrateDistortions(const Eigen::Vector3d& unCalibratedVector) const;
     std::tuple<OpNavUnitVecMsgPayload, OpNavCOMMsgPayload> populateOutputMessages(
         uint64_t timeTag,
         const Eigen::Vector3d& centerOfMass,
@@ -72,6 +86,7 @@ class CobConverterAlgorithm {
         OpNavCOMMsgPayload& comMsgBuffer);
 
     PhaseAngleCorrectionMethodAlgorithm phaseAngleCorrectionMethod;
+    CalibrationCoefficients calibrationCoefficients{};
     double objectRadius{};
     double objectRadiusUncertainty{};
     Eigen::Matrix3d covarAtt_BN_B{};
@@ -100,7 +115,6 @@ class CobConverterAlgorithm {
     Eigen::Vector3d sc_position{};
     Eigen::Vector3d shat_N{};
     double rhatCOBNorm = 0;
-    ;
     double spacecraftRange = 0;
     int cameraId = 0;
     bool goodOutlierCheck = true;
