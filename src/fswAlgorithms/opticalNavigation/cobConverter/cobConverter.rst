@@ -30,29 +30,29 @@ provides information on what this message is used for:
       - Msg Type
       - Description
     * - cameraConfigInMsg
-      - :ref:`CameraConfigMsgPayload`
-      - Input the camera config message
+      - :ref:`CameraModelMsgPayload`
+      - Input camera model message
     * - opnavCOBInMsg
       - :ref:`OpNavCOBMsgPayload`
       - Input center of brightness message written out by the image processing module
     * - opnavFilterInMsg
       - :ref:`FilterMsgPayload`
-      - Input filter message
+      - Input filter message (used for outlier detection and COM phase-angle uncertainty)
     * - navAttInMsg
       - :ref:`NavAttMsgPayload`
       - Input navigation message containing the spacecraft attitude in the inertial frame
-    * - ephemInMsg
-      - :ref:`EphemerisMsgPayload`
-      - Input ephemeris message containing the spacecraft position in the inertial frame
-    * - opnavUnitVecCOBOutMsg
+    * - sunInMsg
+      - :ref:`NavAttMsgPayload`
+      - Input Sun-pointing message containing the Sun direction in the body frame
+    * - opnavUnitVecOutMsg
       - :ref:`OpNavUnitVecMsgPayload`
-      - Output unit vector containing the heading vector of the COB and covariance in multiple frames for filtering
-    * - opnavUnitVecCOMOutMsg
-      - :ref:`OpNavUnitVecMsgPayload`
-      - Output unit vector containing the heading vector of the COM and covariance in multiple frames for filtering
-    * - opnavCOMOutMsg
+      - Output heading vector and covariance in multiple frames; carries the COM heading when a phase-angle correction is active, otherwise the COB heading
+    * - comCorrectionOutMsg
       - :ref:`OpNavCOMMsgPayload`
       - Output message containing information about the COM offset due to the phase angle correction
+    * - cobConverterDiagnosticOutMsg
+      - :ref:`CobConverterDiagnosticMsgPayload`
+      - Output diagnostic message reporting whether the COB outlier check was triggered
 
 Detailed Module Description
 ---------------------------
@@ -78,8 +78,8 @@ With this, the unit vector in the camera frame from focal point to center of bri
     \mathbf{r}_{COB}^C &= [K]^{-1} \mathbf{\bar{u}}_{COB}
 
 where :math:`\mathbf{\bar{u}}_{COB} = [\mathrm{cob}_x, \mathrm{cob}_y, 1]^T` with the pixel coordinates of the center of
-brightmess :math:`\mathrm{cob}_x` and :math:`\mathrm{cob}_y`, :math:`[K]` is the camera calibration matrix and
-:math:`\mathbf{r}_{COB}^N` is the unit vector describing the physical heading to the target in the camera frame.
+brightness :math:`\mathrm{cob}_x` and :math:`\mathrm{cob}_y`, :math:`[K]` is the camera calibration matrix and
+:math:`\mathbf{r}_{COB}^C` is the unit vector describing the physical heading to the target in the camera frame.
 
 The covariance of the COB error is found using the number of detected pixels and the camera parameters, given by:
 
@@ -180,7 +180,7 @@ This leads to standard deviation equation which is done by gathering the partial
 
 
 where :math:`[P]` is the filter position covariance matrix and :math:`\sigma_{R}^2` is the object's radius uncertainty. The
-Following equation was used to find the com covariance matrix:
+following equation is used to find the COM covariance matrix:
 
 
 .. math::
@@ -197,7 +197,7 @@ Following equation was used to find the com covariance matrix:
 
 
 where :math:`\psi_{i,x}` and :math:`\psi_{i,y}` are the iFOV. This matrix is then transformed into the body frame and
-added to the covariance of the attitude error and COB error. All individual covariance matrices,and thus the total
+added to the covariance of the attitude error and COB error. All individual covariance matrices, and thus the total
 covariance matrix, describe the measurement noise of a unit vector.
 
 By reading the camera orientation and the current body attitude in the inertial frame, the final step is to rotate
@@ -296,7 +296,7 @@ This section is to outline the steps needed to setup a center of brightness conv
     module.opnavCOBInMsg.subscribeTo(cobInMsg)
     module.opnavFilterInMsg.subscribeTo(filterInMsg)
     module.navAttInMsg.subscribeTo(attInMsg)
-    module.ephemInMsg.subscribeTo(ephemInMsg)
+    module.sunInMsg.subscribeTo(sunInMsg)
 
 #. Add model to task::
 
