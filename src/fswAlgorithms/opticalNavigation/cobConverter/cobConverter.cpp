@@ -168,3 +168,19 @@ void CobConverter::disableOutlierDetection() { this->algorithm.disableOutlierDet
  * @return True if enabled, false otherwise.
  */
 bool CobConverter::isOutlierDetectionEnabled() const { return this->algorithm.isOutlierDetectionEnabled(); }
+
+/**
+ * @brief Set the Brown-Conrady coefficients.
+ * @param coefficients CalibrationCoefficients
+ */
+void CobConverter::setBrownConradyCoefficients(const CalibrationCoefficients& coefficients) {
+    this->algorithm.setBrownConradyCoefficients(coefficients);
+}
+
+/**
+ * @brief Get the Brown-Conrady coefficients.
+ * @return CalibrationCoefficients
+ */
+CalibrationCoefficients CobConverter::getBrownConradyCoefficients() const {
+    return this->algorithm.getBrownConradyCoefficients();
+}

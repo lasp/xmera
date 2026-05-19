@@ -13,6 +13,7 @@
 %include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
 %include "cobConverter.h"
+%include "cobConverterAlgorithm.h"
 
 %include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
 %include <architecture/msgPayloadDef/NavAttMsgPayload.h>
