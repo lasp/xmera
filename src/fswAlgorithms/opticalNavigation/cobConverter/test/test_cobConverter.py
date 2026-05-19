@@ -430,5 +430,178 @@ def test_coberror_outlier(
     np.testing.assert_equal(dataDiagnostic.coberrorOutlierTrigger, True, err_msg='coberrorOutlierTrigger should be True')
 
 
+def apply_brown_conrady(uncalibrated, k1, k2, k3, p1, p2):
+    """Reference Brown-Conrady distortion model applied to a normalized image-plane coordinate."""
+    x = uncalibrated[0]
+    y = uncalibrated[1]
+    r2 = x * x + y * y
+    r4 = r2 * r2
+    r6 = r4 * r2
+    k_polynomial = 1.0 + k1 * r2 + k2 * r4 + k3 * r6
+    out = np.zeros(3)
+    out[0] = x * k_polynomial + 2.0 * p1 * x * y + p2 * (r2 + 2.0 * x * x)
+    out[1] = y * k_polynomial + 2.0 * p2 * x * y + p1 * (r2 + 2.0 * y * y)
+    out[2] = 1.0
+    return out
+
+
+def map_state_with_calibration(state, input_camera, k1, k2, k3, p1, p2):
+    """Mirror of mapState that also applies Brown-Conrady distortion."""
+    K = compute_camera_calibration_matrix(input_camera)
+    Kinv = np.linalg.inv(K)
+    raw = Kinv @ np.array([state[0], state[1], 1])
+    cal = apply_brown_conrady(raw, k1, k2, k3, p1, p2)
+    rhat_BN_C = -cal / np.linalg.norm(cal)
+    return rhat_BN_C
+
+
+@pytest.mark.parametrize("k1, k2, k3, label", [
+    (-1.0, -2.0, -5.0, "barrel"),
+    (1.0, 2.0, 5.0, "pincushion"),
+])
+def test_brown_conrady_polynomial_monotonicity(k1, k2, k3, label):
+    """Confirm the chosen radial coefficients yield a monotonic k-polynomial across the FOV.
+    With FOV=20 deg and a square sensor, the maximum normalized image-plane radius at the
+    corner is sqrt(2) * tan(FOV/2), so we sweep r over [0, that bound]."""
+    r_max = np.sqrt(2.0) * np.tan(np.deg2rad(20.0) / 2.0)
+    r_grid = np.linspace(0.0, r_max, 200)
+    r2 = r_grid ** 2
+    polynomial = 1.0 + k1 * r2 + k2 * r2 ** 2 + k3 * r2 ** 3
+    diffs = np.diff(polynomial)
+    if label == "barrel":
+        np.testing.assert_array_less(diffs, 0.0,
+                                     err_msg="Barrel polynomial should be strictly decreasing")
+    else:
+        np.testing.assert_array_less(0.0, diffs,
+                                     err_msg="Pincushion polynomial should be strictly increasing")
+
+
+@pytest.mark.parametrize("k1, k2, k3, p1, p2, label", [
+    (0.0, 0.0, 0.0, 0.0, 0.0, "identity"),
+    (-1.0, -2.0, -5.0, 0.0, 0.0, "barrel"),
+    (1.0, 2.0, 5.0, 0.0, 0.0, "pincushion"),
+    (0.0, 0.0, 0.0, 0.5, 0.3, "tangential"),
+    (-0.5, -1.0, -2.0, 0.2, -0.1, "combined"),
+])
+@pytest.mark.parametrize("centerOfBrightness", [[152, 251], [400, 350], [256, 256]])
+def test_brown_conrady_calibration(k1, k2, k3, p1, p2, label, centerOfBrightness):
+    """Verify that the Brown-Conrady coefficients are wired into the COB unit-vector pipeline.
+    Uses the no-correction phase-angle method so COM == COB and the unit-vector output is
+    purely the distortion-corrected, normalized image-plane vector."""
+    cameraResolution = [512, 512]
+    numberOfPixels = 75
+    sunDirection = [-1.0, -1.0, 0.0]
+    distance = 36e6
+
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    testProcessRate = macros.sec2nano(0.5)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    R_object = 25.0 * 1e3
+    module = cobConverter.CobConverter(noCorr, R_object)
+    module.setAttitudeCovariance(np.zeros((3, 3)))
+
+    coefficients = cobConverter.CalibrationCoefficients()
+    coefficients.k1 = k1
+    coefficients.k2 = k2
+    coefficients.k3 = k3
+    coefficients.p1 = p1
+    coefficients.p2 = p2
+    module.setBrownConradyCoefficients(coefficients)
+
+    unitTestSim.AddModelToTask(unitTaskName, module, module)
+
+    r_BdyZero_N = np.array([-distance, -300.0 * 1e3, 0.0])
+    v_BdyZero_N = np.array([8.0 * 1e3, 0.0, 0.0])
+
+    h_1 = np.array(r_BdyZero_N) / np.linalg.norm(r_BdyZero_N)
+    h_3 = np.cross(h_1, np.array(v_BdyZero_N) / np.linalg.norm(v_BdyZero_N))
+    h_3 *= 1 / np.linalg.norm(h_3)
+    h_2 = np.cross(h_3, h_1) / np.linalg.norm(np.cross(h_3, h_1))
+    dcm_BN = np.array([h_1, h_2, h_3])
+    sigma_BN = rbk.C2MRP(dcm_BN)
+
+    dcm_CB = np.array([[0.0, 1.0, 0.0], [0.0, 0.0, -1.0], [-1.0, 0.0, 0.0]])
+    sigma_CB = rbk.C2MRP(dcm_CB)
+
+    inputCamera = messaging.CameraModelMsgPayload()
+    inputCob = messaging.OpNavCOBMsgPayload()
+    inputFilter = messaging.FilterMsgPayload()
+    inputAtt = messaging.NavAttMsgPayload()
+    inputSun = messaging.NavAttMsgPayload()
+
+    inputCamera.fieldOfView = [np.deg2rad(20.0), np.deg2rad(20.0)]
+    inputCamera.resolution = cameraResolution
+    inputCamera.bodyToCameraMrp = sigma_CB
+    inputCamera.focalLength = 0.10
+    camInMsg = messaging.CameraModelMsg().write(inputCamera)
+    module.cameraConfigInMsg.subscribeTo(camInMsg)
+
+    inputCob.centerOfBrightness = centerOfBrightness
+    inputCob.pixelsFound = numberOfPixels
+    inputCob.timeTag = 12345
+    inputCob.valid = True
+    cobInMsg = messaging.OpNavCOBMsg().write(inputCob)
+    module.opnavCOBInMsg.subscribeTo(cobInMsg)
+
+    full_covariance = np.diag([50e3, 50e3, 50e3, 0.01, 0.01, 0.01])
+    inputFilter.numberOfStates = 6
+    inputFilter.state = np.array([r_BdyZero_N, v_BdyZero_N]).flatten()
+    inputFilter.covar = full_covariance.flatten()
+    filterInMsg = messaging.FilterMsg().write(inputFilter)
+    module.opnavFilterInMsg.subscribeTo(filterInMsg)
+
+    vehSunPntN = np.array(sunDirection) / np.linalg.norm(np.array(sunDirection))
+    inputAtt.sigma_BN = sigma_BN
+    attInMsg = messaging.NavAttMsg().write(inputAtt)
+    module.navAttInMsg.subscribeTo(attInMsg)
+
+    inputSun.vehSunPntBdy = dcm_BN @ vehSunPntN
+    sunInMsg = messaging.NavAttMsg().write(inputSun)
+    module.sunInMsg.subscribeTo(sunInMsg)
+
+    dataLogUnitVec = module.opnavUnitVecOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLogUnitVec)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(testProcessRate)
+    unitTestSim.ExecuteSimulation()
+
+    rhat_COB_C_true = map_state_with_calibration(centerOfBrightness, inputCamera, k1, k2, k3, p1, p2)
+    dcm_NC = dcm_BN.T @ dcm_CB.T
+    rhat_COB_N_true = dcm_NC @ rhat_COB_C_true
+
+    rhat_COM_C_out = dataLogUnitVec.rhat_BN_C[0]
+    rhat_COM_N_out = dataLogUnitVec.rhat_BN_N[0]
+
+    tolerance = 1e-9
+    np.testing.assert_allclose(rhat_COM_C_out, rhat_COB_C_true, rtol=0, atol=tolerance,
+                               err_msg=f"rhat_BN_C ({label})")
+    np.testing.assert_allclose(rhat_COM_N_out, rhat_COB_N_true, rtol=0, atol=tolerance,
+                               err_msg=f"rhat_BN_N ({label})")
+
+    # For a non-centered COB, barrel and pincushion should push the calibrated radius in opposite
+    # directions relative to the identity case. Skip this check when the COB happens to land at
+    # the principal point (no radial term).
+    radius_pixels = np.linalg.norm(np.array(centerOfBrightness) - np.array(cameraResolution) / 2.0)
+    if label in ("barrel", "pincushion") and radius_pixels > 0.0:
+        rhat_identity = map_state_with_calibration(centerOfBrightness, inputCamera, 0, 0, 0, 0, 0)
+        # In the camera frame, +z is the boresight; bigger radial distortion -> larger |x|, |y|.
+        radial_identity = np.hypot(rhat_identity[0], rhat_identity[1])
+        radial_distorted = np.hypot(rhat_COM_C_out[0], rhat_COM_C_out[1])
+        if label == "barrel":
+            assert radial_distorted < radial_identity, (
+                f"Barrel distortion should reduce the off-axis component "
+                f"({radial_distorted} >= {radial_identity})")
+        else:
+            assert radial_distorted > radial_identity, (
+                f"Pincushion distortion should increase the off-axis component "
+                f"({radial_distorted} <= {radial_identity})")
+
+
 if __name__ == '__main__':
     test_cob_converter(False, [512, 512], [152, 251], 75, [-1.0, -1.0, 0.0], 36e6, binary)
