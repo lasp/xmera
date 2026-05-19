@@ -13,6 +13,9 @@ The center of mass correction can be applied using the "Lambertian" or "Binary" 
 performed, the method needs to be "NoCorrection". The Lambertian method assumes that the body is a sphere with
 lambertian reflectance, while the Binary method assumes a brightness of either 1 or 0 in the image of the body.
 
+Optionally, Brown-Conrady distortion coefficients can be provided to correct the normalized image-plane coordinate
+for lens distortion before the heading vector is computed.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg connection is set by the
@@ -202,6 +205,25 @@ the covariance and heading vector in all the relevant frames for modules downstr
 converting MRPs to DCMs and performing the matrix multiplication.
 If the incoming image is not valid, the module writes empty messages.
 
+Camera distortion calibration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+After mapping the pixel coordinates into the normalized image plane via :math:`[K]^{-1}`, the resulting coordinate
+:math:`(x, y)` can be corrected for lens distortion using the Brown-Conrady model. With
+:math:`r^2 = x^2 + y^2`, the corrected coordinate :math:`(x', y')` is given by
+
+.. math::
+
+    x' &= x \left( 1 + k_1 r^2 + k_2 r^4 + k_3 r^6 \right) + 2 p_1 x y + p_2 \left( r^2 + 2 x^2 \right) \\
+    y' &= y \left( 1 + k_1 r^2 + k_2 r^4 + k_3 r^6 \right) + 2 p_2 x y + p_1 \left( r^2 + 2 y^2 \right)
+
+where :math:`k_1, k_2, k_3` are the radial distortion coefficients and :math:`p_1, p_2` are the tangential
+distortion coefficients. The radial polynomial :math:`1 + k_1 r^2 + k_2 r^4 + k_3 r^6` characterizes the type of
+radial distortion: a polynomial that is monotonically decreasing in :math:`r` represents barrel distortion (image
+features pulled toward the optical center), while a monotonically increasing polynomial represents pincushion
+distortion (features pushed away from the optical center). All coefficients default to zero, in which case the
+correction reduces to the identity and the module behaves as an ideal pinhole camera.
+
 An outlier detection may be performed for the COB. In this case, the filter message :ref:`FilterMsgPayload` is used to
 predict the location of the COB. If the location of the COB coming from the image is significantly different from the
 predicted COB, it is considered an outlier and the output unit vector is invalidated. For the output message to be
@@ -254,6 +276,19 @@ This section is to outline the steps needed to setup a center of brightness conv
 
     module.setNumStandardDeviations(3)  # default 3
     module.setStandardDeviation(100)  # if not set, then the standard deviation is dynamically updated by the module
+
+#. The Brown-Conrady distortion coefficients are optional and default to zero. To apply a lens calibration,
+   populate a ``CalibrationCoefficients`` struct and pass it to the module:
+
+.. code-block:: python
+
+    coefficients = cobConverter.CalibrationCoefficients()
+    coefficients.k1 = k1  # radial
+    coefficients.k2 = k2
+    coefficients.k3 = k3
+    coefficients.p1 = p1  # tangential
+    coefficients.p2 = p2
+    module.setBrownConradyCoefficients(coefficients)
 
 #. Subscribe to the messages::
 
