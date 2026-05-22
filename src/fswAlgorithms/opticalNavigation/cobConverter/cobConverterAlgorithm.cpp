@@ -159,6 +159,36 @@ std::tuple<Eigen::Vector3d, Eigen::Vector3d> CobConverterAlgorithm::computeCente
 }
 
 /**
+ * @brief Apply the Brown-Conrady distortion model to a normalized image-plane coordinate.
+ *
+ * Uses the stored radial (k1, k2, k3) and tangential (p1, p2) coefficients. With all
+ * coefficients zero, the input is returned unchanged.
+ *
+ * @param unCalibratedVector Normalized image-plane coordinate in homogeneous form (z = 1).
+ * @return Corrected coordinate in the same homogeneous form.
+ */
+Eigen::Vector3d CobConverterAlgorithm::calibrateDistortions(const Eigen::Vector3d& unCalibratedVector) const {
+    Eigen::Vector3d calibratedVector{0, 0, 1};
+    double const x = unCalibratedVector[0];
+    double const y = unCalibratedVector[1];
+    double const r2 = x * x + y * y;
+    double const r4 = r2 * r2;
+    double const r6 = r2 * r4;
+    double const k1 = this->calibrationCoefficients.k1;
+    double const k2 = this->calibrationCoefficients.k2;
+    const double k3 = this->calibrationCoefficients.k3;
+    double const p1 = this->calibrationCoefficients.p1;
+    double const p2 = this->calibrationCoefficients.p2;
+
+    double const kPolynomial = (1 + k1 * r2 + k2 * r4 + k3 * r6);
+
+    calibratedVector[0] = x * kPolynomial + 2 * p1 * x * y + p2 * (r2 + 2 * x * x);
+    calibratedVector[1] = y * kPolynomial + 2 * p2 * x * y + p1 * (r2 + 2 * y * y);
+
+    return calibratedVector;
+}
+
+/**
  * @brief Compute unit vectors in the camera frame from pixel coordinates.
  * @param centerOfBrightness 3-vector (homogeneous) pixel coordinates of COB.
  * @param centerOfMass 3-vector (homogeneous) pixel coordinates of COM.
@@ -166,9 +196,10 @@ std::tuple<Eigen::Vector3d, Eigen::Vector3d> CobConverterAlgorithm::computeCente
  */
 void CobConverterAlgorithm::computeRelevantVectors(const Eigen::Vector3d& centerOfBrightness,
                                                    const Eigen::Vector3d& centerOfMass) {
-    // Retrieve the vector from target to camera and normalize
-    this->rhatCOB_C = -this->cameraCalibrationMatrixInverse * centerOfBrightness;
-    this->rhatCOM_C = -this->cameraCalibrationMatrixInverse * centerOfMass;
+    // Retrieve the vector from target to camera and normalize. When all coefficients
+    // are zero calibrateDistortions is a no-op, so we always call it.
+    this->rhatCOB_C = -this->calibrateDistortions(this->cameraCalibrationMatrixInverse * centerOfBrightness);
+    this->rhatCOM_C = -this->calibrateDistortions(this->cameraCalibrationMatrixInverse * centerOfMass);
     this->rhatCOBNorm = rhatCOB_C.norm();
     this->rhatCOB_C.normalize();
     this->rhatCOM_C.normalize();
@@ -521,3 +552,19 @@ void CobConverterAlgorithm::disableOutlierDetection() { this->performOutlierDete
  * @return True if enabled, false otherwise.
  */
 bool CobConverterAlgorithm::isOutlierDetectionEnabled() const { return this->performOutlierDetection; }
+
+/**
+ * @brief Set the Brown Conrady calibration coefficients
+ * @param coefficients CalibrationCoefficients
+ */
+void CobConverterAlgorithm::setBrownConradyCoefficients(const CalibrationCoefficients& coefficients) {
+    this->calibrationCoefficients = coefficients;
+}
+
+/**
+ * @brief Get the Brown Conrady calibration coefficients.
+ * @return CalibrationCoefficients
+ */
+CalibrationCoefficients CobConverterAlgorithm::getBrownConradyCoefficients() const {
+    return this->calibrationCoefficients;
+}

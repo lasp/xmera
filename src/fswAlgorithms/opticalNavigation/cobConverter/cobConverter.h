@@ -56,6 +56,8 @@ class CobConverter : public SysModel {
     void enableOutlierDetection();
     void disableOutlierDetection();
     bool isOutlierDetectionEnabled() const;
+    void setBrownConradyCoefficients(const CalibrationCoefficients& coefficients);
+    CalibrationCoefficients getBrownConradyCoefficients() const;
 
    public:
     // Output messages
