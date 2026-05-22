@@ -21,6 +21,10 @@
     {
       "name": "opencv4",
       "version": "4.12.0"
+    },
+    {
+      "name": "abseil",
+      "version": "20260107.1"
     }
   ]
 }
