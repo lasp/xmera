@@ -113,12 +113,9 @@ void FlybyODuKFAlgorithm::enqueueMeasurement(double timeTag, HeadingMeasurement 
 void FlybyODuKFAlgorithm::update(double previousSeconds, double currentSeconds) {
     // applyToFilter walks the queue in time order, calling timeUpdate() for the
     // intervening predict steps and measurementUpdate() at each measurement,
-    // then a final timeUpdate() to currentSeconds. It does not remove the
-    // measurements it applied, so clear the queue afterward — otherwise a
-    // measurement would be re-applied next window and the bounded queue would
-    // reject newly arriving measurements.
+    // then a final timeUpdate() to currentSeconds. It empties the queue as it
+    // consumes each measurement.
     this->measurements.applyToFilter(*this, previousSeconds, currentSeconds);
-    this->measurements.clear();
 }
 
 void FlybyODuKFAlgorithm::timeUpdate(double dt) {

@@ -74,16 +74,18 @@ public:
     void applyToFilter(Filter& filter, double previousSimSeconds, double nextSimSeconds) {
         double currentSimSeconds = previousSimSeconds;
 
-        // Iterate from the latest stored slot (largest index = earliest time)
-        // back toward the head; the queue is sorted descending by time.
-        for (std::size_t i = this->size; i > 0; i -= 1) {
-            auto& measurement = this->measurements[i - 1].value();
-            if (measurement.first < currentSimSeconds) continue;
+        // Drain the queue earliest-first (popEarliest yields ascending time).
+        // Each measurement is removed as it is consumed, so the queue is empty
+        // when applyToFilter returns. Measurements older than the window start
+        // are popped and discarded (they can no longer be applied).
+        for (auto entry = this->popEarliest(); entry.has_value(); entry = this->popEarliest()) {
+            auto& [timeTag, measurement] = entry.value();
+            if (timeTag < currentSimSeconds) continue;
 
-            filter.timeUpdate(measurement.first - currentSimSeconds);
-            filter.measurementUpdate(measurement.second);
+            filter.timeUpdate(timeTag - currentSimSeconds);
+            filter.measurementUpdate(measurement);
 
-            currentSimSeconds = measurement.first;
+            currentSimSeconds = timeTag;
         }
 
         if (currentSimSeconds < nextSimSeconds) {
