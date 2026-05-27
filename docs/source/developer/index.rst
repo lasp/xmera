@@ -16,3 +16,4 @@ The following support files help with writing Xmera modules.
    add-sphinx-docs
    module-checklist
    understanding-xmera
+   filtering-architecture
