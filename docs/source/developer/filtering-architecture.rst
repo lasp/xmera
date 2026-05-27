@@ -14,13 +14,6 @@ Filtering Architecture (filtering_core)
 Why this exists
 ---------------
 
-Historically a Kalman filter and its xmera plumbing lived in one class: the
-filter math, the message reads/writes, and the ``SysModel`` lifecycle were all
-tangled together. That made the *algorithm* impossible to reuse outside xmera —
-in particular it could not be ported into ``fp32-fsw-xmera`` (the deployment
-repository the Adamant flight software consumes through a C shim) without a
-rewrite.
-
 The filtering infrastructure splits that responsibility into three layers:
 
 #. a **framework-agnostic core** (``filtering_core``) — the reusable filter
@@ -34,7 +27,7 @@ The filtering infrastructure splits that responsibility into three layers:
 The boundary is enforced by the build: ``filtering_core`` and
 ``filtering_algorithms/*`` are separate library targets that do **not** link or
 include any of ``architecture/messaging``, the message-payload headers,
-``SysModel``, or ``ReadFunctor``/``Message``. Code that compiles against those
+or ``SysModel``. Code that compiles against those
 targets is therefore portable by construction.
 
 Layered structure
@@ -151,9 +144,13 @@ host adapter
 xmera-aware layer. It is a ``SysModel`` that owns the message ports and holds
 the algorithm behind a ``std::unique_ptr`` (forward-declared, so the
 SWIG-parsed header never sees the concept-heavy core). Each ``updateState`` it
-reads the input payload into a ``HeadingMeasurement``, drives the algorithm's
-``predict``/``update``, and writes the algorithm's ``getState()`` /
-``getLastResiduals()`` back into the output payloads.
+reads the input payload into a ``HeadingMeasurement``, enqueues it on the
+algorithm (``enqueueMeasurement``), and then drives the filter over the window
+with a single ``update(t0, t1)`` call. The algorithm owns the
+``measurement_queue`` and decides per step — via the queue's ``applyToFilter``
+— whether to ``timeUpdate`` (predict) or ``measurementUpdate``. The adapter
+then writes the algorithm's ``getState()`` / ``getLastResiduals()`` back into
+the output payloads.
 
 How to use a filter
 -------------------
@@ -180,13 +177,19 @@ directly (no xmera):
 
    filter.reset();                     // pushes config into the SRUKF, sets dynamics
 
-   filter.predict(dt);                 // time update
+   // Lowest level: drive the filter directly (this is what the queue calls).
+   filter.timeUpdate(dt);              // predict step
 
    HeadingMeasurement meas;            // measurement update
    meas.rhat_BN_N = heading;           // unit vector body -> target, frame N
    meas.covarN    = covariance;
    meas.valid     = true;
-   filter.update(meas);
+   filter.measurementUpdate(meas);
+
+   // Host-adapter level: enqueue measurements, then one drive call per window.
+   // update(t0, t1) interleaves time and measurement updates from the queue.
+   filter.enqueueMeasurement(meas.timeTag, meas);
+   filter.update(t0, t1);
 
    FilterStateOutput out = filter.getState();        // mean + sqrt-covariance (SI)
    ResidualsOutput   res = filter.getLastResiduals(); // pre/post-fit residuals
