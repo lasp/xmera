@@ -64,5 +64,5 @@ Modules typically use the Xmera messaging system to receive inputs and publish o
         ExampleOutputMsgPayload output = {};
 
         // Compute results using `input`
-        this->outputMsg.write(&output, currentSimNanos);
+        this->outputMsg.write(output, this->moduleID, currentSimNanos);
     }
