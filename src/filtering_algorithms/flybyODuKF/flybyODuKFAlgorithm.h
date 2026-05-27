@@ -6,6 +6,7 @@
 
 #include "flybyODuKFTypes.h"
 
+#include <filtering_core/kalman_filter.hpp>
 #include <filtering_core/srukf_interface.hpp>
 #include <filtering_core/state.hpp>
 
@@ -67,8 +68,23 @@ public:
     // ---- Step ---------------------------------------------------------------
 
     void reset();
-    void predict(double dt);
-    void update(HeadingMeasurement const& measurement);
+
+    // Queue a measurement to be folded in on the next update(). The host
+    // adapter calls this after marshalling its input message.
+    void enqueueMeasurement(double timeTag, HeadingMeasurement measurement);
+
+    // Single drive entry point over the window [previousSeconds, currentSeconds]:
+    // applies any queued measurements in time order (interleaving time updates),
+    // then a final time update to currentSeconds. Delegates to the internal
+    // measurement_queue's applyToFilter, which decides per step whether to call
+    // timeUpdate() or measurementUpdate().
+    void update(double previousSeconds, double currentSeconds);
+
+    // The Updateable<FlybyODuKFAlgorithm, HeadingMeasurement> interface that the
+    // measurement_queue drives. Public so applyToFilter can reach them (and so
+    // tests can exercise the filter directly).
+    void timeUpdate(double dt);
+    void measurementUpdate(HeadingMeasurement const& measurement);
 
     // ---- Readout -------------------------------------------------------------
 
@@ -78,6 +94,9 @@ public:
 private:
     // Underlying SRUKF (functional core wrapped in a stateful façade).
     SrukfInterface<FlybyODuKFSpec> filter;
+
+    // Bounded queue of pending measurements, drained in time order by update().
+    filtering::measurement_queue<HeadingMeasurement, 1> measurements;
 
     // Configuration retained on `this` and applied in reset().
     double                      mu                = 0;

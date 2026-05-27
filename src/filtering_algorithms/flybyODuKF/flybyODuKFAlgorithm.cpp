@@ -4,6 +4,7 @@
 #include "flybyODuKFAlgorithm.h"
 
 #include <cmath>
+#include <utility>
 
 namespace filtering::flybyODuKF {
 
@@ -101,15 +102,31 @@ void FlybyODuKFAlgorithm::reset() {
     };
 
     this->filter.reset();
+    this->measurements.clear();
     this->currentTime = 0;
 }
 
-void FlybyODuKFAlgorithm::predict(double dt) {
+void FlybyODuKFAlgorithm::enqueueMeasurement(double timeTag, HeadingMeasurement measurement) {
+    this->measurements.enqueue(timeTag, std::move(measurement));
+}
+
+void FlybyODuKFAlgorithm::update(double previousSeconds, double currentSeconds) {
+    // applyToFilter walks the queue in time order, calling timeUpdate() for the
+    // intervening predict steps and measurementUpdate() at each measurement,
+    // then a final timeUpdate() to currentSeconds. It does not remove the
+    // measurements it applied, so clear the queue afterward — otherwise a
+    // measurement would be re-applied next window and the bounded queue would
+    // reject newly arriving measurements.
+    this->measurements.applyToFilter(*this, previousSeconds, currentSeconds);
+    this->measurements.clear();
+}
+
+void FlybyODuKFAlgorithm::timeUpdate(double dt) {
     this->filter.predict(dt);
     this->currentTime += dt;
 }
 
-void FlybyODuKFAlgorithm::update(HeadingMeasurement const& measurement) {
+void FlybyODuKFAlgorithm::measurementUpdate(HeadingMeasurement const& measurement) {
     HeadingMeasurementModel model;
     model.observed  = measurement.rhat_BN_N.normalized();
     model.measNoise = this->measNoiseScale * measurement.covarN;

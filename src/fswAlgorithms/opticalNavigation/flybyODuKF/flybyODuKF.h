@@ -75,7 +75,7 @@ class FlybyODuKF : public SysModel {
     Eigen::MatrixXd getProcessNoise() const;
 
    private:
-    void readFilterMeasurements();
+    bool readFilterMeasurements(double previousSeconds);
     void writeOutputMessages(uint64_t currentSimNanos, bool measurementProcessed);
 
    private:

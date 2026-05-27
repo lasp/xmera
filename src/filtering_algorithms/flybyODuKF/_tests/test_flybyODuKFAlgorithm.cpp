@@ -15,6 +15,7 @@
 #include <Eigen/Dense>
 
 #include <cmath>
+#include <utility>
 
 namespace filtering::flybyODuKF {
 namespace {
@@ -134,7 +135,7 @@ TEST(FlybyODuKFAlgorithm, PropagationConservesEnergyAndGrowsCovariance) {
     Vector6 truth = x0;
     for (int i = 0; i < steps; ++i) {
         truth = rk4Step(truth, dt);
-        algo.predict(dt);
+        algo.timeUpdate(dt);
 
         Vector6 const estimate = stateVector(algo.getState());
         // The filter's mean is a deterministic RK4 propagation in the
@@ -171,7 +172,7 @@ TEST(FlybyODuKFAlgorithm, MeasurementUpdatesShrinkCovarianceAndAlignHeading) {
     Vector6 truth = x0;
     for (int i = 1; i <= steps; ++i) {
         truth = rk4Step(truth, dt);
-        algo.predict(dt);
+        algo.timeUpdate(dt);
 
         if (i % 10 == 0) {
             HeadingMeasurement meas;
@@ -179,7 +180,7 @@ TEST(FlybyODuKFAlgorithm, MeasurementUpdatesShrinkCovarianceAndAlignHeading) {
             meas.rhat_BN_N = truth.head<3>().normalized();
             meas.covarN    = 5E-5 * Eigen::Matrix3d::Identity();
             meas.valid     = true;
-            algo.update(meas);
+            algo.measurementUpdate(meas);
         }
     }
 
@@ -200,6 +201,60 @@ TEST(FlybyODuKFAlgorithm, MeasurementUpdatesShrinkCovarianceAndAlignHeading) {
 
     // Residuals were captured on the last update.
     EXPECT_TRUE(algo.getLastResiduals().valid);
+}
+
+// The host adapter drives the filter through the measurement_queue: enqueue a
+// measurement, then a single update(t0, t1) per window. This must produce the
+// same convergence/covariance behavior as driving timeUpdate/measurementUpdate
+// directly.
+TEST(FlybyODuKFAlgorithm, QueueDrivenUpdateConvergesLikeDirectPath) {
+    Vector6 const x0 = initialTruth();
+
+    Vector6 x0Estimate = x0;
+    x0Estimate(0) += 5.0 * 1E3;
+    x0Estimate(4) += 5.0;
+
+    FlybyODuKFAlgorithm algo;
+    configure(algo, x0Estimate);
+    algo.reset();
+
+    Matrix6 const covar0 = [&] {
+        Matrix6 const s = algo.getState().sqrtCovar;
+        return Matrix6(s * s.transpose());
+    }();
+
+    constexpr double dt    = 1.0;
+    constexpr int    steps = 250;
+    Vector6 truth = x0;
+    for (int i = 1; i <= steps; ++i) {
+        double const t0 = static_cast<double>(i - 1) * dt;
+        double const t1 = static_cast<double>(i) * dt;
+        truth = rk4Step(truth, dt);
+
+        if (i % 10 == 0) {
+            HeadingMeasurement meas;
+            meas.timeTag   = t1;
+            meas.rhat_BN_N = truth.head<3>().normalized();
+            meas.covarN    = 5E-5 * Eigen::Matrix3d::Identity();
+            meas.valid     = true;
+            algo.enqueueMeasurement(meas.timeTag, std::move(meas));
+        }
+
+        // Single drive entry point over the window; the queue decides whether
+        // each step is a time update or a measurement update.
+        algo.update(t0, t1);
+    }
+
+    Matrix6 const sqrtCovarN = algo.getState().sqrtCovar;
+    Matrix6 const covarN     = sqrtCovarN * sqrtCovarN.transpose();
+    for (int i = 3; i < 6; ++i) {
+        EXPECT_LT(covarN(i, i), covar0(i, i)) << "velocity covariance index " << i;
+    }
+
+    Vector6 const estimate = stateVector(algo.getState());
+    Eigen::Vector3d const estHeading   = estimate.head<3>().normalized();
+    Eigen::Vector3d const truthHeading = truth.head<3>().normalized();
+    EXPECT_GT(estHeading.dot(truthHeading), std::cos(1.0 * M_PI / 180.0));
 }
 
 }  // namespace filtering::flybyODuKF

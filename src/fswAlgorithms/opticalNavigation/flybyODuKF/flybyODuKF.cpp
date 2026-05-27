@@ -9,6 +9,7 @@
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <cassert>
+#include <utility>
 
 using filtering::Position;
 using filtering::Velocity;
@@ -31,39 +32,34 @@ void FlybyODuKF::updateState(uint64_t currentSimNanos) {
     double const previousSeconds = static_cast<double>(this->previousSimNanos) * NANO2SEC;
     double const currentSeconds = static_cast<double>(currentSimNanos) * NANO2SEC;
 
-    this->readFilterMeasurements();
-
-    bool const haveMeasurement =
-        this->opNavHeadingBuffer.valid && this->opNavHeadingBuffer.timeTag >= previousSeconds;
-
-    if (haveMeasurement) {
-        // Propagate to the measurement, fold it in, then continue to the
-        // current sim time — the timing the old measurement_queue applied.
-        double const measurementSeconds = this->opNavHeadingBuffer.timeTag;
-        if (measurementSeconds - previousSeconds > 0) {
-            this->algorithm->predict(measurementSeconds - previousSeconds);
-        }
-
-        HeadingMeasurement measurement;
-        measurement.timeTag = measurementSeconds;
-        measurement.rhat_BN_N = cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N);
-        measurement.covarN = cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N, 3, 3);
-        measurement.valid = true;
-        this->algorithm->update(measurement);
-
-        if (currentSeconds - measurementSeconds > 0) {
-            this->algorithm->predict(currentSeconds - measurementSeconds);
-        }
-    } else if (currentSeconds - previousSeconds > 0) {
-        this->algorithm->predict(currentSeconds - previousSeconds);
-    }
+    // Read and enqueue any measurement, then drive the filter over the window
+    // with a single call; the algorithm interleaves time and measurement
+    // updates from its own queue.
+    bool const measurementProcessed = this->readFilterMeasurements(previousSeconds);
+    this->algorithm->update(previousSeconds, currentSeconds);
 
     this->previousSimNanos = currentSimNanos;
-    this->writeOutputMessages(currentSimNanos, haveMeasurement);
+    this->writeOutputMessages(currentSimNanos, measurementProcessed);
 }
 
-/*! Read the input heading measurement into the local buffer. */
-void FlybyODuKF::readFilterMeasurements() { this->opNavHeadingBuffer = this->opNavHeadingMsg(); }
+/*! Read the input heading message and, if valid and within the update window,
+    marshal it into a HeadingMeasurement and queue it on the algorithm. Returns
+    whether a measurement was enqueued. */
+bool FlybyODuKF::readFilterMeasurements(double previousSeconds) {
+    this->opNavHeadingBuffer = this->opNavHeadingMsg();
+
+    if (!this->opNavHeadingBuffer.valid) return false;
+    if (this->opNavHeadingBuffer.timeTag < previousSeconds) return false;
+
+    HeadingMeasurement measurement;
+    measurement.timeTag = this->opNavHeadingBuffer.timeTag;
+    measurement.rhat_BN_N = cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N);
+    measurement.covarN = cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N, 3, 3);
+    measurement.valid = true;
+
+    this->algorithm->enqueueMeasurement(measurement.timeTag, std::move(measurement));
+    return true;
+}
 
 /*! Marshal the algorithm's state and residuals into the output messages. */
 void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos, bool measurementProcessed) {
