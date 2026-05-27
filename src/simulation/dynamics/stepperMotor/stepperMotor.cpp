@@ -19,11 +19,14 @@ void StepperMotor::reset(uint64_t callTime) {
     this->thetaDDot = 0.0;
     this->tInit = 0.0;
     this->stepCount = 0;
+    // Absolute motor position from theta=0 (so motorPosition * stepAngle ≈ theta).
+    this->motorPosition = static_cast<int>(std::round(this->thetaInit / this->stepAngle));
     this->previousWrittenTime = -1;
     this->actuationComplete = true;
     this->stepComplete = true;
     this->newMsg = false;
     this->interruptMsg = false;
+    this->pendingStop = false;
 
     // Set motor maximum angular acceleration
     this->thetaDDotMax = this->stepAngle / (0.25 * this->stepTime * this->stepTime);  // [rad/s^2]
@@ -40,35 +43,47 @@ void StepperMotor::updateState(uint64_t callTime) {
     // Read the input message
     if (this->motorStepCommandInMsg.isWritten()) {
         motorStepCommandIn = this->motorStepCommandInMsg();
-        // Store the number of commanded motor steps when a new message is written
+        // Process a new command message
         if (this->previousWrittenTime < this->motorStepCommandInMsg.timeWritten()) {
-            this->stepsCommanded = motorStepCommandIn.stepsCommanded;
             this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
 
-            // Update booleans
-            this->newMsg = true;
-            if (this->actuationComplete) {
-                this->interruptMsg = false;
+            if (motorStepCommandIn.stopMotorCommand) {
+                // Honor the stop only if the motor is currently actuating; the current step is
+                // allowed to finish before halting (motor cannot physically stop mid-step).
+                if (!this->actuationComplete) {
+                    this->pendingStop = true;
+                }
             } else {
-                this->interruptMsg = true;
-            }
-            if (this->stepsCommanded == 0) {
-                this->actuationComplete = true;
-                this->stepCount = 0;
-            } else {
-                this->actuationComplete = false;
+                this->stepsCommanded = motorStepCommandIn.stepsCommanded;
+                this->pendingStop = false;
+
+                // Update booleans
+                this->newMsg = true;
+                if (this->actuationComplete) {
+                    this->interruptMsg = false;
+                } else {
+                    this->interruptMsg = true;
+                }
+                if (this->stepsCommanded == 0) {
+                    this->actuationComplete = true;
+                    this->stepCount = 0;
+                } else {
+                    this->actuationComplete = false;
+                }
             }
         }
     }
 
     // Actuate the motor only if a current actuation segment is not complete
     double t = callTime * NANO2SEC;
+    bool isMotorMoving = false;
     if (!(this->actuationComplete)) {
         // Reset the motor immediately after a new non-interrupting request is received
         if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) {
             this->resetMotor();
         }
         this->actuateMotor(t);
+        isMotorMoving = true;
     } else {
         this->tInit = t;
         this->thetaDDot = 0.0;
@@ -81,6 +96,8 @@ void StepperMotor::updateState(uint64_t callTime) {
     stepperMotorOut.thetaDDot = this->thetaDDot;
     stepperMotorOut.stepsCommanded = this->stepsCommanded;
     stepperMotorOut.stepCount = this->stepCount;
+    stepperMotorOut.motorPosition = this->motorPosition;
+    stepperMotorOut.isMotorMoving = isMotorMoving;
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
 }
 
@@ -91,6 +108,15 @@ void StepperMotor::updateState(uint64_t callTime) {
 void StepperMotor::actuateMotor(double t) {
     // Update the motor step parameters when a step is completed
     if (this->stepComplete) {
+        // If a stop was requested, halt at the step boundary instead of starting a new step.
+        if (this->pendingStop) {
+            this->actuationComplete = true;
+            this->pendingStop = false;
+            this->stepsCommanded = this->stepCount;
+            this->thetaDot = 0.0;
+            this->thetaDDot = 0.0;
+            return;
+        }
         this->updateStepParameters();
     }
 
@@ -184,13 +210,18 @@ void StepperMotor::computeStepComplete(double t) {
     this->stepComplete = true;
     this->thetaDot = 0.0;
     this->theta = this->intermediateThetaRef;
-    this->tInit = t;
+    // Anchor to tf rather than t so the (t - tf) residual carries into the next step;
+    // otherwise, when the dynamics tick doesn't divide stepTime, that residual is lost
+    // each step and the long-run motor rate falls below 1/stepTime.
+    this->tInit = this->tf;
 
     // Update the motor step count
     if (this->intermediateThetaRef > this->intermediateThetaInit) {
         this->stepCount++;
+        this->motorPosition++;
     } else {
         this->stepCount--;
+        this->motorPosition--;
     }
 
     // Update the actuationComplete boolean variable only when motor actuation is complete

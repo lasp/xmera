@@ -5,9 +5,10 @@
 #ifndef motorStepCommandSimMsg_h
 #define motorStepCommandSimMsg_h
 
-/*! @brief Structure containing number of commanded stepper motor steps */
+/*! @brief Structure containing the stepper motor step command */
 typedef struct {
-    int stepsCommanded;  //!< Number of commanded stepper motor steps
+    int stepsCommanded;     //!< Number of commanded stepper motor steps (ignored when stopMotorCommand is true)
+    bool stopMotorCommand;  //!< If true, request the motor to halt after completing the current step
 } MotorStepCommandMsgPayload;
 
 #endif /* motorStepCommandSimMsg_h */
