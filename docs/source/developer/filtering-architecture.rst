@@ -152,6 +152,130 @@ with a single ``update(t0, t1)`` call. The algorithm owns the
 then writes the algorithm's ``getState()`` / ``getLastResiduals()`` back into
 the output payloads.
 
+Anatomy of a filter: how the pieces compose
+--------------------------------------------
+
+Every filter built on ``filtering_core`` is the *same machine with a few holes
+filled in*. The core supplies the estimator math, the numerical integrator, the
+measurement scheduler, and the C++20 concepts that define the holes; a concrete
+filter supplies only what is genuinely filter-specific — what is estimated, how
+it evolves, and how it is observed — plus a thin class that wires them together.
+
+Roles, contracts, and concrete fill-ins
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 24 28 24 24
+
+   * - Role
+     - Contract (concept)
+     - Core consumer
+     - FlybyODuKF supplies
+   * - What is estimated
+     - ``FilterState<S>``
+     - ``SrukfInterface<Spec>``, ``propagate``
+     - ``StateVector<Position<3>, Velocity<3>>``
+   * - How the state evolves
+     - ``Dynamics<D, State>``
+     - ``rk4`` / ``propagate`` (in ``srukf::predict``)
+     - two-body gravity closure
+   * - How the state is observed
+     - ``Measurement<M, State>``
+     - ``srukf::update``
+     - ``HeadingMeasurementModel``
+   * - Estimator binding
+     - ``SrukfSpec`` (``State`` + ``ProcessNoiseCov``)
+     - ``SrukfInterface<Spec>``
+     - ``FlybyODuKFSpec``
+   * - The drivable filter
+     - ``Updateable<F, M>`` (``timeUpdate`` + ``measurementUpdate``)
+     - ``measurement_queue::applyToFilter``
+     - ``FlybyODuKFAlgorithm``
+   * - When to predict vs. update
+     - — (concrete, not a concept)
+     - ``measurement_queue`` + ``applyToFilter``
+     - one ``measurement_queue<HeadingMeasurement, 1>``
+
+The first three rows are the *plugs* a new filter must provide; everything in
+the "Core consumer" column is reused unchanged.
+
+Static view: concepts as sockets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each concept is a socket in the core; a concrete type plugs in by *satisfying*
+it — no inheritance, checked at compile time:
+
+::
+
+   generic socket (concept in filtering_core)    concrete plug (flybyODuKF)
+   ------------------------------------------     --------------------------
+   FilterState<State>                        <==  StateVector<Position<3>,
+                                                              Velocity<3>>
+   Dynamics<D, State>                        <==  two-body gravity lambda
+   Measurement<M, State>                     <==  HeadingMeasurementModel
+   SrukfSpec (State + ProcessNoiseCov)       <==  FlybyODuKFSpec
+   Updateable<Filter, Measurement>           <==  FlybyODuKFAlgorithm
+
+``FlybyODuKFAlgorithm`` is the *composition root*: it holds the estimator
+(``SrukfInterface<FlybyODuKFSpec>``), assigns the dynamics closure onto the
+estimator's ``dynamics`` member in ``reset()``, owns the ``measurement_queue``,
+retains the tunables and initial conditions, and exposes the ``Updateable`` pair
+(``timeUpdate`` / ``measurementUpdate``) plus the single-call ``update(t0, t1)``
+entry point.
+
+Runtime view: one update window
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A single ``update(t0, t1)`` drains the queue in time order; each step fans out
+through the estimator facade into the functional core, the integrator, and the
+supplied dynamics / measurement model:
+
+::
+
+   host adapter             FlybyODuKFAlgorithm          filtering_core
+   ------------             -------------------          --------------
+   read msg
+   build HeadingMeasurement
+   enqueueMeasurement -----> measurements.enqueue -----> measurement_queue
+   update(t0, t1) ---------> measurements.applyToFilter(*this, t0, t1)
+                              | per queued step, in time order:
+                              |- timeUpdate(dt) -------> filter.predict(dt)
+                              |                           `-> srukf::predict<Spec>
+                              |                                `-> propagate -> rk4
+                              |                                     `-> dynamics(t, x)
+                              `- measurementUpdate(m) -> filter.update(model)
+                                                          `-> srukf::update<Spec, M>
+                                                               `-> m.model(x) / noise()
+                                                                   / subtract(a, b)
+   getState() / getLastResiduals() <-- mean + sqrtCovar + residuals
+   write output payloads
+
+``applyToFilter`` is what decides, per step, whether the next action is a time
+update or a measurement update; neither the algorithm nor the estimator
+sequences that itself. Swapping ``SrukfInterface`` for ``EkfInterface`` changes
+only what ``timeUpdate`` / ``measurementUpdate`` do internally — the queue, the
+scheduling, the integrator, and the concepts are identical.
+
+Why the pattern is generic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- **The core knows nothing filter-specific.** ``measurement_queue``,
+  ``propagate`` / ``rk4``, and the estimator engines are parametrized only by
+  the ``Spec`` / ``State`` and driven entirely through concepts; they compile
+  against any filter that satisfies the contracts.
+- **A new filter is four plugs plus wiring.** Provide a ``State``
+  (a ``StateVector<...>``), a ``Dynamics`` closure, one or more ``Measurement``
+  models, and a ``Spec``; then a thin algorithm class wires them and owns the
+  config and queue. Nothing in the core is copied or edited.
+- **Composition is by concept, not inheritance.** There are no virtual bases
+  and no runtime dispatch; a type that fails a contract fails to compile at the
+  call site with a concept diagnostic, and everything stays fixed-size and
+  inlinable.
+- **The estimator is itself a swappable plug.** ``SrukfInterface<Spec>`` and
+  ``EkfInterface<...>`` both present the ``Updateable`` pair, so the same queue
+  and scheduling drive either one.
+
 How to use a filter
 -------------------
 
