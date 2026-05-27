@@ -24,3 +24,5 @@ target_compile_features(flybyODuKF_algorithm
   PUBLIC
     cxx_std_23
 )
+
+add_subdirectory(_tests)
