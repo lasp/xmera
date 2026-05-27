@@ -14,62 +14,29 @@
 #include <architecture/msgPayloadDef/FilterResidualsMsgPayload.h>
 #include <architecture/msgPayloadDef/NavTransMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
-#include <architecture/utilities/macroDefinitions.h>
-#include <architecture/utilities/orbitalMotion.h>
 
-#include <fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h>
-#include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.h>
+#include <Eigen/Core>
 
-struct FlybyODuKFMeasurementModel final : public SRukfMeasurementModel {
-public:
-    Eigen::MatrixXd model(const FilterStateVector& state) const override {
-        return state.getPositionStates() / state.getPositionStates().norm();
-    }
+#include <cstdint>
+#include <memory>
 
-    Eigen::VectorXd subtract(
-        const Eigen::VectorXd& observed,
-        const Eigen::VectorXd& predicted
-    ) const override {
-        return observed - predicted;
-    }
+// Pimpl onto the framework-agnostic algorithm. Forward-declared (rather than
+// included) so this header — which SWIG parses — never pulls in the
+// concept-heavy filtering_core templates. The full type is included in the
+// .cpp only.
+namespace filtering::flybyODuKF {
+class FlybyODuKFAlgorithm;
+}
 
-    Eigen::VectorXd getObservation() const override {
-        return this->observation;
-    }
-
-    Eigen::MatrixXd getNoise() const override {
-        return this->measNoise;
-    }
-
-    void setPreFitResiduals(Eigen::VectorXd const& preFitResiduals) override {
-        this->preFitResiduals = preFitResiduals;
-    }
-
-    void setPostFitResiduals(Eigen::VectorXd const& postFitResiduals) override {
-        this->postFitResiduals = postFitResiduals;
-    }
-
-public:
-    Eigen::VectorXd observation = {};  //!< [-] Observation data vector
-    Eigen::MatrixXd measNoise = {};    //!< [-] Measurement noise
-
-public:
-    Eigen::VectorXd preFitResiduals = {};   //!< [-] Observation pre fit residuals
-    Eigen::VectorXd postFitResiduals = {};  //!< [-] Observation post fit residuals
-};
-
+/*! @brief xmera host adapter for the flyby OD SRUKF. Owns the message surface
+ and marshals payloads in/out of the pure-C++ FlybyODuKFAlgorithm. */
 class FlybyODuKF : public SysModel {
    public:
-    FlybyODuKF() = default;
-    ~FlybyODuKF() = default;
+    FlybyODuKF();
+    ~FlybyODuKF();
 
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
-
-   private:
-    void customReset();
-    void readFilterMeasurements();
-    void writeOutputMessages(uint64_t currentSimNanos);
 
    public:
     ReadFunctor<OpNavUnitVecMsgPayload> opNavHeadingMsg;
@@ -78,17 +45,41 @@ class FlybyODuKF : public SysModel {
     Message<FilterMsgPayload> opNavFilterMsg;
     Message<FilterResidualsMsgPayload> opNavResidualMsg;
 
+    // ---- Configuration (forwarders onto the algorithm) ----------------------
+
+    void setAlpha(double alpha);
+    double getAlpha() const;
+
+    void setBeta(double beta);
+    double getBeta() const;
+
+    void setUnitConversionFromSItoState(double conversion);
+    double getUnitConversionFromSItoState() const;
+
     void setCentralBodyGravitationParameter(double mu);
     double getCentralBodyGravitationParameter() const;
 
     void setMeasurementNoiseScale(double measurementNoiseScale);
     double getMeasurementNoiseScale() const;
 
+    void setInitialPosition(const Eigen::Vector3d& r_BN_N);
+    Eigen::Vector3d getInitialPosition() const;
+
+    void setInitialVelocity(const Eigen::Vector3d& v_BN_N);
+    Eigen::Vector3d getInitialVelocity() const;
+
+    void setInitialCovariance(const Eigen::MatrixXd& covariance);
+    Eigen::MatrixXd getInitialCovariance() const;
+
+    void setProcessNoise(const Eigen::MatrixXd& processNoise);
+    Eigen::MatrixXd getProcessNoise() const;
+
    private:
-    SRukfInterface srukf{};
-    xmera::measurement_queue<FlybyODuKFMeasurementModel, 1> measurements = {};
-    double muCentral = 1;  //!< [GM] gravitation parameter of central body
-    double measNoiseScaling = 1;  //!< [-] Scale factor for the measurement noise
+    void readFilterMeasurements();
+    void writeOutputMessages(uint64_t currentSimNanos, bool measurementProcessed);
+
+   private:
+    std::unique_ptr<filtering::flybyODuKF::FlybyODuKFAlgorithm> algorithm;
     uint64_t previousSimNanos = 0;
 };
 

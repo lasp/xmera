@@ -3,88 +3,100 @@
 
 #include "flybyODuKF.h"
 
+#include "flybyODuKFAlgorithm.h"
+
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+
+#include <cassert>
+
+using filtering::Position;
+using filtering::Velocity;
+using filtering::flybyODuKF::FilterStateOutput;
+using filtering::flybyODuKF::FlybyODuKFAlgorithm;
+using filtering::flybyODuKF::HeadingMeasurement;
+using filtering::flybyODuKF::ResidualsOutput;
+
+FlybyODuKF::FlybyODuKF() : algorithm(std::make_unique<FlybyODuKFAlgorithm>()) {}
+FlybyODuKF::~FlybyODuKF() = default;
+
 void FlybyODuKF::reset(uint64_t currentSimNanos) {
-    this->customReset();
-    this->srukf.reset();
+    /*! - Require the input measurement message to be connected. */
+    assert(this->opNavHeadingMsg.isLinked());
+    this->algorithm->reset();
     this->previousSimNanos = currentSimNanos;
 }
 
 void FlybyODuKF::updateState(uint64_t currentSimNanos) {
+    double const previousSeconds = static_cast<double>(this->previousSimNanos) * NANO2SEC;
+    double const currentSeconds = static_cast<double>(currentSimNanos) * NANO2SEC;
+
     this->readFilterMeasurements();
 
-    this->measurements.applyToFilter(
-        this->srukf,
-        (double)this->previousSimNanos * NANO2SEC,
-        (double)currentSimNanos * NANO2SEC
-    );
+    bool const haveMeasurement =
+        this->opNavHeadingBuffer.valid && this->opNavHeadingBuffer.timeTag >= previousSeconds;
+
+    if (haveMeasurement) {
+        // Propagate to the measurement, fold it in, then continue to the
+        // current sim time — the timing the old measurement_queue applied.
+        double const measurementSeconds = this->opNavHeadingBuffer.timeTag;
+        if (measurementSeconds - previousSeconds > 0) {
+            this->algorithm->predict(measurementSeconds - previousSeconds);
+        }
+
+        HeadingMeasurement measurement;
+        measurement.timeTag = measurementSeconds;
+        measurement.rhat_BN_N = cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N);
+        measurement.covarN = cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N, 3, 3);
+        measurement.valid = true;
+        this->algorithm->update(measurement);
+
+        if (currentSeconds - measurementSeconds > 0) {
+            this->algorithm->predict(currentSeconds - measurementSeconds);
+        }
+    } else if (currentSeconds - previousSeconds > 0) {
+        this->algorithm->predict(currentSeconds - previousSeconds);
+    }
+
     this->previousSimNanos = currentSimNanos;
-
-    this->writeOutputMessages(currentSimNanos);
+    this->writeOutputMessages(currentSimNanos, haveMeasurement);
 }
 
-/*! Reset the flyby OD filter to an initial state and
- initializes the internal estimation matrices.
- @return void
- @param currentSimNanos The clock time at which the function was called (nanoseconds)
- */
-void FlybyODuKF::customReset() {
-    /*! - Check if the required message has not been connected */
-    assert(this->opNavHeadingMsg.isLinked());
-    /*! - Initialize filter parameters and change units to km and s */
-    this->muCentral *= pow(this->srukf.unitConversion, 3);  // mu is input in meters
-    double centralBody = this->muCentral;
+/*! Read the input heading measurement into the local buffer. */
+void FlybyODuKF::readFilterMeasurements() { this->opNavHeadingBuffer = this->opNavHeadingMsg(); }
 
-    /*! - Set the filter dynamics */
-    this->srukf.dynamics = [centralBody](double t, const FilterStateVector& state) {
-        FilterStateVector XDot;
-        /*! Implement propagation with rate derivatives set to zero */
-        /*! Implement point mass gravity for the propagation */
-        PositionState<Eigen::Dynamic> flybyPosition;
-        VelocityState<Eigen::Dynamic> flybyVelocity;
-        flybyPosition.setValues(state.getVelocityStates());
-        flybyVelocity.setValues(-centralBody / pow(state.getPositionStates().norm(), 3) *
-                                state.getPositionStates());
-
-        XDot.setPosition(flybyPosition);
-        XDot.setVelocity(flybyVelocity);
-
-        return XDot;
-    };
-}
-
-/*! Read the message containing the measurement data.
- * It updates class variables relating to measurement data including validity and time tags.
- @return void
- */
-void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
+/*! Marshal the algorithm's state and residuals into the output messages. */
+void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos, bool measurementProcessed) {
     NavTransMsgPayload navTransOutMsgBuffer{};
     FilterMsgPayload opNavFilterMsgBuffer{};
     FilterResidualsMsgPayload residualsBuffer{};
 
-    /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
-    eigenMatrixXToCArray(this->srukf.state.scale(1 / this->srukf.unitConversion).getPositionStates(), navTransOutMsgBuffer.r_BN_N);
-    eigenMatrixXToCArray(this->srukf.state.scale(1 / this->srukf.unitConversion).getVelocityStates(), navTransOutMsgBuffer.v_BN_N);
+    FilterStateOutput const filterState = this->algorithm->getState();
+    double const timeTag = static_cast<double>(currentSimNanos) * NANO2SEC;
 
-    /*! - Populate the filter states output buffer and write the output message*/
-    opNavFilterMsgBuffer.timeTag = (double)this->previousSimNanos * NANO2SEC;
-    eigenMatrixXToCArray(this->srukf.state.scale(1 / this->srukf.unitConversion).returnValues(), opNavFilterMsgBuffer.state);
-    eigenMatrixXToCArray(this->srukf.xBar.scale(1 / this->srukf.unitConversion).returnValues(), opNavFilterMsgBuffer.stateError);
-    eigenMatrixXToCArray(1 / this->srukf.unitConversion / this->srukf.unitConversion * this->srukf.covar, opNavFilterMsgBuffer.covar);
-    opNavFilterMsgBuffer.numberOfStates = this->srukf.state.size();
+    /*! - Navigation translation output (position/velocity in inertial frame). */
+    navTransOutMsgBuffer.timeTag = timeTag;
+    eigenMatrixXToCArray(filterState.state.head<3>().eval(), navTransOutMsgBuffer.r_BN_N);
+    eigenMatrixXToCArray(filterState.state.tail<3>().eval(), navTransOutMsgBuffer.v_BN_N);
 
-    for (
-        auto it = this->measurements.popEarliest();
-        it.has_value();
-        it = this->measurements.popEarliest()
-    ) {
-        auto& measurement = it.value().second;
+    /*! - Full filter state output. Reconstitute the covariance P = S * S^T. */
+    Eigen::Matrix<double, 6, 6> const covariance =
+        filterState.sqrtCovar * filterState.sqrtCovar.transpose();
+    opNavFilterMsgBuffer.timeTag = timeTag;
+    opNavFilterMsgBuffer.numberOfStates = FlybyODuKFAlgorithm::N;
+    eigenMatrixXToCArray(filterState.state, opNavFilterMsgBuffer.state);
+    eigenMatrixXToCArray(covariance, opNavFilterMsgBuffer.covar);
 
-        residualsBuffer.valid = true;
+    /*! - Residuals output, populated only when a measurement was processed. */
+    if (measurementProcessed) {
+        ResidualsOutput const residuals = this->algorithm->getLastResiduals();
+        residualsBuffer.timeTag = timeTag;
+        residualsBuffer.valid = residuals.valid;
         residualsBuffer.numberOfObservations = 1;
-        residualsBuffer.sizeOfObservations = measurement.observation.size();
-        eigenMatrixXToCArray(measurement.observation, residualsBuffer.observation);
-        eigenMatrixXToCArray(measurement.postFitResiduals, residualsBuffer.postFits);
-        eigenMatrixXToCArray(measurement.preFitResiduals, residualsBuffer.preFits);
+        residualsBuffer.sizeOfObservations = 3;
+        eigenMatrixXToCArray(residuals.observation, residualsBuffer.observation);
+        eigenMatrixXToCArray(residuals.preFit, residualsBuffer.preFits);
+        eigenMatrixXToCArray(residuals.postFit, residualsBuffer.postFits);
     }
 
     this->opNavResidualMsg.write(&residualsBuffer, this->moduleID, currentSimNanos);
@@ -92,53 +104,57 @@ void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos) {
     this->opNavFilterMsg.write(&opNavFilterMsgBuffer, this->moduleID, currentSimNanos);
 }
 
-/*! Read the message containing the measurement data.
- * It updates class variables relating to measurement data including validity and time tags.
- @return void
- */
-void FlybyODuKF::readFilterMeasurements() {
-    this->opNavHeadingBuffer = this->opNavHeadingMsg();
+// ---- Configuration forwarders ---------------------------------------------
 
-    if (!this->opNavHeadingBuffer.valid) return;
-    if (this->opNavHeadingBuffer.timeTag < (double)this->previousSimNanos * NANO2SEC) return;
+void FlybyODuKF::setAlpha(double alpha) { this->algorithm->setAlpha(alpha); }
+double FlybyODuKF::getAlpha() const { return this->algorithm->getAlpha(); }
 
-    /*! - Read measurement and cholesky decomposition its noise*/
-    auto observation = cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N).normalized();
+void FlybyODuKF::setBeta(double beta) { this->algorithm->setBeta(beta); }
+double FlybyODuKF::getBeta() const { return this->algorithm->getBeta(); }
 
-    auto headingMeasurement = FlybyODuKFMeasurementModel();
-    headingMeasurement.observation = observation;
-    headingMeasurement.measNoise =
-        ( this->measNoiseScaling
-        * cArrayToEigenMatrixX(
-            this->opNavHeadingBuffer.covar_N,
-            (int)observation.size(),
-            (int)observation.size()
-          )
-        );
-
-    this->measurements.enqueue(this->opNavHeadingBuffer.timeTag, std::move(headingMeasurement));
+void FlybyODuKF::setUnitConversionFromSItoState(double conversion) {
+    this->algorithm->setUnitConversion(conversion);
+}
+double FlybyODuKF::getUnitConversionFromSItoState() const {
+    return this->algorithm->getUnitConversion();
 }
 
-/*! Set the gravitational parameter used for orbit propagation
-    @param double muInput
-    @return void
-    */
-void FlybyODuKF::setCentralBodyGravitationParameter(const double muInput) { this->muCentral = muInput; }
+void FlybyODuKF::setCentralBodyGravitationParameter(double mu) { this->algorithm->setMu(mu); }
+double FlybyODuKF::getCentralBodyGravitationParameter() const { return this->algorithm->getMu(); }
 
-/*! Get gravitational parameter used for orbit propagation
-    @return double muCentral
-    */
-double FlybyODuKF::getCentralBodyGravitationParameter() const { return this->muCentral; }
-
-/*! Set the filter measurement noise scale factor if desirable
-    @param double measurementNoiseScale
-    @return void
-    */
-void FlybyODuKF::setMeasurementNoiseScale(const double measurementNoiseScale) {
-    this->measNoiseScaling = measurementNoiseScale;
+void FlybyODuKF::setMeasurementNoiseScale(double measurementNoiseScale) {
+    this->algorithm->setMeasurementNoiseScale(measurementNoiseScale);
+}
+double FlybyODuKF::getMeasurementNoiseScale() const {
+    return this->algorithm->getMeasurementNoiseScale();
 }
 
-/*! Get the filter measurement noise scale factor
-    @return double measurementNoiseScale
-    */
-double FlybyODuKF::getMeasurementNoiseScale() const { return this->measNoiseScaling; }
+void FlybyODuKF::setInitialPosition(const Eigen::Vector3d& r_BN_N) {
+    auto state = this->algorithm->getInitialState();
+    state.set<Position<3>>(r_BN_N);
+    this->algorithm->setInitialState(state);
+}
+Eigen::Vector3d FlybyODuKF::getInitialPosition() const {
+    return this->algorithm->getInitialState().get<Position<3>>();
+}
+
+void FlybyODuKF::setInitialVelocity(const Eigen::Vector3d& v_BN_N) {
+    auto state = this->algorithm->getInitialState();
+    state.set<Velocity<3>>(v_BN_N);
+    this->algorithm->setInitialState(state);
+}
+Eigen::Vector3d FlybyODuKF::getInitialVelocity() const {
+    return this->algorithm->getInitialState().get<Velocity<3>>();
+}
+
+void FlybyODuKF::setInitialCovariance(const Eigen::MatrixXd& covariance) {
+    this->algorithm->setInitialCovariance(Eigen::Matrix<double, 6, 6>(covariance));
+}
+Eigen::MatrixXd FlybyODuKF::getInitialCovariance() const {
+    return this->algorithm->getInitialCovariance();
+}
+
+void FlybyODuKF::setProcessNoise(const Eigen::MatrixXd& processNoise) {
+    this->algorithm->setProcessNoise(Eigen::Matrix<double, 6, 6>(processNoise));
+}
+Eigen::MatrixXd FlybyODuKF::getProcessNoise() const { return this->algorithm->getProcessNoise(); }

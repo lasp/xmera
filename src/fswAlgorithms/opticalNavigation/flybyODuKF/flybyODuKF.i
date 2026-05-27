@@ -6,8 +6,12 @@
    #include "flybyODuKF.h"
 %}
 
-%include <fswAlgorithms/_GeneralModuleFiles/srukfInterface.i>
+%include <std_string.i>
+%include <architecture/_GeneralModuleFiles/swig_conly_data.i>
+%include <std_vector.i>
+%include <architecture/_GeneralModuleFiles/swig_eigen.i>
 
+%include <architecture/_GeneralModuleFiles/sys_model.i>
 %include "flybyODuKF.h"
 
 %include <architecture/msgPayloadDef/NavTransMsgPayload.h>
