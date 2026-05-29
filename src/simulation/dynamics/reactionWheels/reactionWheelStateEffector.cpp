@@ -412,7 +412,6 @@ void ReactionWheelStateEffector::ReadInputs() {
     //! read the incoming command array, or zero if not connected
     if (this->rwMotorCmdInMsg.isLinked()) {
         this->incomingCmdBuffer = this->rwMotorCmdInMsg();
-        this->prevCommandTime = this->rwMotorCmdInMsg.timeWritten();
     } else {
         this->incomingCmdBuffer = RwMotorTorqueMsgPayload{};
     }

@@ -73,7 +73,6 @@ public:
 
 private:
     RwMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings
-    uint64_t prevCommandTime = UINT64_MAX;           //!< -- Time for previous valid thruster firing
 
     StateData* hubSigma = nullptr;
     StateData* hubOmega = nullptr;
