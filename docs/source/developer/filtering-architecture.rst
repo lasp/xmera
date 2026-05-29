@@ -301,6 +301,54 @@ Why the pattern is generic
   picks the one that fits, and adding a new policy is a pure addition that
   doesn't touch the queue.
 
+Heterogeneous measurements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A multi-sensor filter (e.g. sunline = gyro + coarse sun sensors, inertial
+attitude = star tracker + gyro) consumes more than one *kind* of measurement
+on one timeline. No core change is needed for this — the core is
+kind-agnostic:
+
+- ``measurement_queue``, ``apply_sequential``, and ``SequentialFilter`` all
+  operate over an arbitrary ``Measurement`` type.
+- ``srukf::update<M>`` is templated per measurement model, and each model
+  carries its own ``M::size``, so different observation dimensions already work
+  (the flyby heading model is size 3; the toy test below also drives a size-1
+  model through the same path).
+
+The filter that knows its kinds names a **closed set** as a ``std::variant``
+and dispatches with ``std::visit`` — fixed-size, no heap, no virtual:
+
+.. code-block:: cpp
+
+   using Measurement = std::variant<HeadingMeasurement, GyroMeasurement>;
+   filtering::measurement_queue<Measurement, CAP> measurements;   // one timeline
+
+   void measurementUpdate(Measurement const& m) {                 // SequentialFilter
+       std::visit([this](auto const& meas){ this->applyMeasurement(meas); }, m);
+   }
+   // one private overload per kind: POD -> model -> srukf.update(model)
+   void applyMeasurement(HeadingMeasurement const&);
+   void applyMeasurement(GyroMeasurement const&);
+
+Because every kind shares the one queue timeline, ``apply_sequential``
+interleaves them in time order for free — no per-kind sub-queues, no
+hand-rolled merge. The variant is over the **input PODs**; each
+``applyMeasurement`` overload builds that kind's **model** (the
+``Measurement<M, State>`` object) and calls ``srukf.update`` — the same
+POD-vs-model split the single-kind filter uses.
+
+A worked, compiling reference (real SRUKF, two kinds of observation sizes 3
+and 1) lives in
+``filtering_core/_tests/test_heterogeneous_measurements.cpp``.
+
+C-shim note: a ``std::variant`` doesn't cross a C ABI. The shim exposes one
+``enqueue_<kind>()`` per kind — it already mirrors each POD as a ``_c`` struct
+— and constructs the variant on the C++ side.
+
+(FlybyODuKF stays single-kind: it observes only a heading. The variant pattern
+lands for real when the multi-sensor filters are ported.)
+
 How to use a filter
 -------------------
 

@@ -22,3 +22,5 @@ target_compile_features(filtering_core
   INTERFACE
     cxx_std_23
 )
+
+add_subdirectory(_tests)
