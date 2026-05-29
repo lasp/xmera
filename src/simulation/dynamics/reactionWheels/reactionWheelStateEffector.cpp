@@ -163,11 +163,13 @@ void ReactionWheelStateEffector::updateContributions(
         OmegaSquared = RWIt->Omega * RWIt->Omega;
 
         // Determine which friction model to use (if starting from zero include stribeck)
-        if (fabs(RWIt->Omega) < 0.10 * RWIt->omegaLimitCycle && RWIt->betaStatic > 0) { RWIt->frictionStribeck = 1; }
+        if (std::fabs(RWIt->Omega) < 0.10 * RWIt->omegaLimitCycle && RWIt->betaStatic > 0) {
+            RWIt->frictionStribeck = 1;
+        }
         double signOfOmega = ((RWIt->Omega > 0) - (RWIt->Omega < 0));
         double omegaDot = RWIt->Omega - RWIt->omegaBefore;
         double signOfOmegaDot = ((omegaDot > 0) - (omegaDot < 0));
-        if (RWIt->frictionStribeck == 1 && abs(signOfOmega - signOfOmegaDot) < 2 && RWIt->betaStatic > 0) {
+        if (RWIt->frictionStribeck == 1 && std::abs(signOfOmega - signOfOmegaDot) < 2 && RWIt->betaStatic > 0) {
             RWIt->frictionStribeck = 1;
         } else {
             RWIt->frictionStribeck = 0;
@@ -195,7 +197,7 @@ void ReactionWheelStateEffector::updateContributions(
         }
 
         // This line avoids the limit cycle that can occur with friction
-        if (fabs(RWIt->Omega) < RWIt->omegaLimitCycle) {
+        if (std::fabs(RWIt->Omega) < RWIt->omegaLimitCycle) {
             frictionForce = frictionForceAtLimitCycle / RWIt->omegaLimitCycle * RWIt->Omega;
         }
 
