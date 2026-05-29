@@ -77,12 +77,12 @@ void ReactionWheelStateEffector::updateEffectorMassProps([[maybe_unused]] double
         RWIt->Omega = this->OmegasState->getState()(static_cast<Eigen::Index>(i), 0);
         if (RWIt->RWModel == JitterFullyCoupled) {
             RWIt->theta = this->thetasState->getState()(thetaCount, 0);
-            Eigen::Matrix3d dcm_WW0 = eigenM1(RWIt->theta);
+            Eigen::Matrix3d const dcm_WW0 = eigenM1(RWIt->theta);
             Eigen::Matrix3d dcm_BW0;
             dcm_BW0.col(0) = RWIt->gsHat_B;
             dcm_BW0.col(1) = RWIt->w2Hat0_B;
             dcm_BW0.col(2) = RWIt->w3Hat0_B;
-            Eigen::Matrix3d dcm_BW = dcm_BW0 * dcm_WW0.transpose();
+            Eigen::Matrix3d const dcm_BW = dcm_BW0 * dcm_WW0.transpose();
             RWIt->w2Hat_B = dcm_BW.col(1);
             RWIt->w3Hat_B = dcm_BW.col(2);
 
@@ -101,7 +101,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps([[maybe_unused]] double
             RWIt->rWcB_B = RWIt->rWB_B + RWIt->d * RWIt->w2Hat_B;
             RWIt->rTildeWcB_B = eigenTilde(RWIt->rWcB_B);
             RWIt->rPrimeWcB_B = RWIt->d * RWIt->Omega * RWIt->w3Hat_B;
-            Eigen::Matrix3d rPrimeTildeWcB_B = eigenTilde(RWIt->rPrimeWcB_B);
+            Eigen::Matrix3d const rPrimeTildeWcB_B = eigenTilde(RWIt->rPrimeWcB_B);
 
             //! - Give the mass of the reaction wheel to the effProps mass
             this->effProps.mEff += RWIt->mass;
@@ -115,12 +115,12 @@ void ReactionWheelStateEffector::updateEffectorMassProps([[maybe_unused]] double
             thetaCount++;
         } else if (RWIt->RWModel == JitterSimple) {
             RWIt->theta = this->thetasState->getState()(thetaCount, 0);
-            Eigen::Matrix3d dcm_WW0 = eigenM1(RWIt->theta);
+            Eigen::Matrix3d const dcm_WW0 = eigenM1(RWIt->theta);
             Eigen::Matrix3d dcm_BW0;
             dcm_BW0.col(0) = RWIt->gsHat_B;
             dcm_BW0.col(1) = RWIt->w2Hat0_B;
             dcm_BW0.col(2) = RWIt->w3Hat0_B;
-            Eigen::Matrix3d dcm_BW = dcm_BW0 * dcm_WW0.transpose();
+            Eigen::Matrix3d const dcm_BW = dcm_BW0 * dcm_WW0.transpose();
             RWIt->w2Hat_B = dcm_BW.col(1);
             RWIt->w3Hat_B = dcm_BW.col(2);
             thetaCount++;
@@ -142,26 +142,18 @@ void ReactionWheelStateEffector::updateContributions(
     [[maybe_unused]] Eigen::Vector3d sigma_BN,
     [[maybe_unused]] Eigen::Vector3d omega_BN_B
 ) {
-    Eigen::Vector3d omegaLoc_BN_B;
-    Eigen::Vector3d tempF;
-    double omegas;
-    double omegaw2;
-    double omegaw3;
-    double dSquared;
-    double OmegaSquared;
-
-    omegaLoc_BN_B = this->hubOmega->getState();
+    Eigen::Vector3d const omegaLoc_BN_B = this->hubOmega->getState();
 
     for (RWConfigMsgPayload* RWIt : this->ReactionWheelData) {
-        OmegaSquared = RWIt->Omega * RWIt->Omega;
+        double const OmegaSquared = RWIt->Omega * RWIt->Omega;
 
         // Determine which friction model to use (if starting from zero include stribeck)
         if (std::fabs(RWIt->Omega) < 0.10 * RWIt->omegaLimitCycle && RWIt->betaStatic > 0) {
             RWIt->frictionStribeck = true;
         }
-        double signOfOmega = ((RWIt->Omega > 0) - (RWIt->Omega < 0));
-        double omegaDot = RWIt->Omega - RWIt->omegaBefore;
-        double signOfOmegaDot = ((omegaDot > 0) - (omegaDot < 0));
+        double const signOfOmega = ((RWIt->Omega > 0) - (RWIt->Omega < 0));
+        double const omegaDot = RWIt->Omega - RWIt->omegaBefore;
+        double const signOfOmegaDot = ((omegaDot > 0) - (omegaDot < 0));
         if (RWIt->frictionStribeck && std::abs(signOfOmega - signOfOmegaDot) < 2 && RWIt->betaStatic > 0) {
             RWIt->frictionStribeck = true;
         } else {
@@ -205,7 +197,7 @@ void ReactionWheelStateEffector::updateContributions(
             //! imbalance torque (simplified external)
             if (RWIt->RWModel == JitterSimple) {
                 /* Fs = Us * Omega^2 */  // static imbalance force
-                tempF = RWIt->U_s * OmegaSquared * RWIt->w2Hat_B;
+                Eigen::Vector3d const tempF = RWIt->U_s * OmegaSquared * RWIt->w2Hat_B;
                 backSubContr.vecTrans += tempF;
 
                 //! add in dynamic imbalance torque
@@ -214,11 +206,11 @@ void ReactionWheelStateEffector::updateContributions(
                 backSubContr.vecRot += (RWIt->rWB_B.cross(tempF)) + (RWIt->U_d * OmegaSquared * RWIt->w2Hat_B);
             }
         } else if (RWIt->RWModel == JitterFullyCoupled) {
-            omegas = RWIt->gsHat_B.transpose() * omegaLoc_BN_B;
-            omegaw2 = RWIt->w2Hat_B.transpose() * omegaLoc_BN_B;
-            omegaw3 = RWIt->w3Hat_B.transpose() * omegaLoc_BN_B;
+            double const omegas = RWIt->gsHat_B.transpose() * omegaLoc_BN_B;
+            double const omegaw2 = RWIt->w2Hat_B.transpose() * omegaLoc_BN_B;
+            double const omegaw3 = RWIt->w3Hat_B.transpose() * omegaLoc_BN_B;
 
-            dSquared = RWIt->d * RWIt->d;
+            double const dSquared = RWIt->d * RWIt->d;
 
             RWIt->aOmega = -RWIt->mass * RWIt->d / (RWIt->Js + RWIt->mass * dSquared) * RWIt->w3Hat_B;
             RWIt->bOmega = -1.0 / (RWIt->Js + RWIt->mass * dSquared)
@@ -261,22 +253,16 @@ void ReactionWheelStateEffector::computeDerivatives(
 ) {
     Eigen::MatrixXd OmegasDot(this->numRW, 1);
     Eigen::MatrixXd thetasDot(this->numRWJitter, 1);
-    Eigen::Vector3d omegaDotBNLoc_B;
-    Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcm_BN;       /*! direction cosine matrix from N to B */
-    Eigen::Matrix3d dcm_NB;       /*! direction cosine matrix from B to N */
-    Eigen::Vector3d rDDotBNLoc_N; /*! second time derivative of rBN in N frame */
-    Eigen::Vector3d rDDotBNLoc_B; /*! second time derivative of rBN in B frame */
     int RWi = 0;
     int thetaCount = 0;
 
-    //! Grab necessarry values from manager
-    omegaDotBNLoc_B = omegaDot_BN_B;
-    rDDotBNLoc_N = rDDotNonGrav_BN_N;
-    sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
-    dcm_NB = sigmaBNLocal.toRotationMatrix();
-    dcm_BN = dcm_NB.transpose();
-    rDDotBNLoc_B = dcm_BN * rDDotBNLoc_N;
+    //! Grab necessary values from manager
+    Eigen::Vector3d const omegaDotBNLoc_B = omegaDot_BN_B;
+    Eigen::Vector3d const rDDotBNLoc_N = rDDotNonGrav_BN_N;  // second time deriv of rBN in N frame
+    Eigen::MRPd const sigmaBNLocal{(Eigen::Vector3d) this->hubSigma->getState()};
+    Eigen::Matrix3d const dcm_NB = sigmaBNLocal.toRotationMatrix();  // direction cosine matrix from B to N
+    Eigen::Matrix3d const dcm_BN = dcm_NB.transpose();               // direction cosine matrix from N to B
+    Eigen::Vector3d const rDDotBNLoc_B = dcm_BN * rDDotBNLoc_N;      // second time deriv of rBN in B frame
 
     //! - Compute Derivatives
     for (RWConfigMsgPayload const* RWIt : this->ReactionWheelData) {
@@ -337,8 +323,7 @@ void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload* NewRW) {
     this->ReactionWheelData.push_back(NewRW);
 
     /* add a RW state log output message for this wheel */
-    Message<RWConfigLogMsgPayload>* msg;
-    msg = new Message<RWConfigLogMsgPayload>;
+    Message<RWConfigLogMsgPayload>* msg = new Message<RWConfigLogMsgPayload>;
     this->rwOutMsgs.push_back(msg);
 }
 
@@ -381,13 +366,12 @@ void ReactionWheelStateEffector::reset([[maybe_unused]] uint64_t CurrenSimNanos)
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
     RWConfigMsgPayload test;
-    RWConfigLogMsgPayload tmpRW;
     for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
         RWConfigMsgPayload* it = this->ReactionWheelData[i];
         if (numRWJitter > 0) { it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0); }
         it->Omega = this->OmegasState->getState()(static_cast<Eigen::Index>(i), 0);
 
-        tmpRW = RWConfigLogMsgPayload{};
+        auto tmpRW = RWConfigLogMsgPayload{};
         tmpRW.theta = it->theta;
         tmpRW.u_current = it->u_current;
         tmpRW.frictionTorque = it->frictionTorque;
