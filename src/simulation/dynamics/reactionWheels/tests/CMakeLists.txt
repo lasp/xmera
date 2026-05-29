@@ -36,4 +36,25 @@ if(XMERA_ENABLE_FUZZTESTS)
     PROPERTIES
       LABELS "fuzz;fuzz-smoke"
   )
+
+  # Heavier conservation target: drives a full Spacecraft + integrator, so it
+  # also pulls in spacecraft.cpp directly (same approach as the benchmark).
+  add_executable(test_reactionWheelStateEffector_conservation_fuzz
+    ../reactionWheelStateEffector.cpp
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../spacecraft/spacecraft.cpp"
+    test_reactionWheelStateEffector_conservation_fuzz.cpp
+  )
+  target_include_directories(test_reactionWheelStateEffector_conservation_fuzz PRIVATE "${CMAKE_SOURCE_DIR}")
+  target_link_libraries(test_reactionWheelStateEffector_conservation_fuzz PRIVATE
+    Xmera::Core
+    ArchitectureUtilities
+    dynamicsCommon
+    Eigen3::Eigen
+    fuzztest::fuzztest
+    fuzztest::fuzztest_gtest_main
+  )
+  gtest_discover_tests(test_reactionWheelStateEffector_conservation_fuzz
+    PROPERTIES
+      LABELS "fuzz;fuzz-smoke"
+  )
 endif()
