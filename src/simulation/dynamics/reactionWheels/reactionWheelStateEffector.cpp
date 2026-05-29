@@ -38,10 +38,12 @@ void ReactionWheelStateEffector::registerStates(DynParamManager &states) {
         this->numRW++;
     }
 
-    this->OmegasState = states.registerState((uint32_t) this->numRW, 1, this->nameOfReactionWheelOmegasState);
+    this->OmegasState =
+        states.registerState(static_cast<uint32_t>(this->numRW), 1, this->nameOfReactionWheelOmegasState);
 
     if (numRWJitter > 0) {
-        this->thetasState = states.registerState((uint32_t) this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
+        this->thetasState =
+            states.registerState(static_cast<uint32_t>(this->numRWJitter), 1, this->nameOfReactionWheelThetasState);
     }
 
     this->OmegasState->setState(omegasForInit);
@@ -250,7 +252,7 @@ void ReactionWheelStateEffector::computeDerivatives(
     //! Grab necessary values from manager
     Eigen::Vector3d const omegaDotBNLoc_B = omegaDot_BN_B;
     Eigen::Vector3d const rDDotBNLoc_N = rDDotNonGrav_BN_N;  // second time deriv of rBN in N frame
-    Eigen::MRPd const sigmaBNLocal{(Eigen::Vector3d) this->hubSigma->getState()};
+    Eigen::MRPd const sigmaBNLocal{static_cast<Eigen::Vector3d>(this->hubSigma->getState())};
     Eigen::Matrix3d const dcm_NB = sigmaBNLocal.toRotationMatrix();  // direction cosine matrix from B to N
     Eigen::Matrix3d const dcm_BN = dcm_NB.transpose();               // direction cosine matrix from N to B
     Eigen::Vector3d const rDDotBNLoc_B = dcm_BN * rDDotBNLoc_N;      // second time deriv of rBN in B frame
