@@ -21,8 +21,8 @@ ReactionWheelStateEffector::ReactionWheelStateEffector() {
 }
 
 ReactionWheelStateEffector::~ReactionWheelStateEffector() {
-    for (long unsigned int c = 0; c < this->rwOutMsgs.size(); c++) { free(this->rwOutMsgs.at(c)); }
-    return;
+    for (Message<RWConfigLogMsgPayload>* msg : this->rwOutMsgs) { delete msg; }
+    this->rwOutMsgs.clear();
 }
 
 void ReactionWheelStateEffector::linkInStates(DynParamManager &statesIn) {
