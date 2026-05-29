@@ -11,6 +11,12 @@
 #include <cstring>
 #include <iostream>
 
+namespace {
+    //! Constants for the Stribeck friction model.
+    double const SQRT_2 = std::sqrt(2.0);
+    double const SQRT_2E = std::sqrt(2.0 * std::exp(1.0));  //!< peak factor of the Stribeck curve
+}  // namespace
+
 ReactionWheelStateEffector::~ReactionWheelStateEffector() {
     for (Message<RWConfigLogMsgPayload>* msg : this->rwOutMsgs) { delete msg; }
     this->rwOutMsgs.clear();
@@ -162,16 +168,16 @@ void ReactionWheelStateEffector::updateContributions(
         double frictionForceAtLimitCycle;
         // Friction model which uses static, stribeck, coulomb, and viscous friction models
         if (RWIt->frictionStribeck) {
-            frictionForce = sqrt(2.0 * exp(1.0)) * (RWIt->fStatic - RWIt->fCoulomb)
+            frictionForce = SQRT_2E * (RWIt->fStatic - RWIt->fCoulomb)
                               * exp(-(RWIt->Omega / RWIt->betaStatic) * (RWIt->Omega / RWIt->betaStatic) / 2.0)
-                              * RWIt->Omega / (RWIt->betaStatic * sqrt(2.0))
+                              * RWIt->Omega / (RWIt->betaStatic * SQRT_2)
                           + RWIt->fCoulomb * tanh(RWIt->Omega * 10.0 / RWIt->betaStatic) + RWIt->cViscous * RWIt->Omega;
             frictionForceAtLimitCycle =
-                sqrt(2.0 * exp(1.0)) * (RWIt->fStatic - RWIt->fCoulomb)
+                SQRT_2E * (RWIt->fStatic - RWIt->fCoulomb)
                     * exp(
                         -(RWIt->omegaLimitCycle / RWIt->betaStatic) * (RWIt->omegaLimitCycle / RWIt->betaStatic) / 2.0
                     )
-                    * RWIt->omegaLimitCycle / (RWIt->betaStatic * sqrt(2.0))
+                    * RWIt->omegaLimitCycle / (RWIt->betaStatic * SQRT_2)
                 + RWIt->fCoulomb * tanh(RWIt->omegaLimitCycle * 10.0 / RWIt->betaStatic)
                 + RWIt->cViscous * RWIt->omegaLimitCycle;
         } else {
