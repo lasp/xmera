@@ -4,6 +4,9 @@
 .idea
 xml/*
 
+# clangd language-server index (regenerable, per-developer)
+.cache/
+
 #CMake
 CMakeFiles/
 **/_VizFiles/
