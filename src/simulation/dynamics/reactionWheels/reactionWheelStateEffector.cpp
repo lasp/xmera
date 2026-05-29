@@ -63,7 +63,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager &states) {
     return;
 }
 
-void ReactionWheelStateEffector::updateEffectorMassProps(double integTime) {
+void ReactionWheelStateEffector::updateEffectorMassProps([[maybe_unused]] double integTime) {
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
     this->effProps.rEff_CB_B.setZero();
@@ -137,10 +137,10 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime) {
 }
 
 void ReactionWheelStateEffector::updateContributions(
-    double integTime,
+    [[maybe_unused]] double integTime,
     BackSubMatrices &backSubContr,
-    Eigen::Vector3d sigma_BN,
-    Eigen::Vector3d omega_BN_B
+    [[maybe_unused]] Eigen::Vector3d sigma_BN,
+    [[maybe_unused]] Eigen::Vector3d omega_BN_B
 ) {
     Eigen::Vector3d omegaLoc_BN_B;
     Eigen::Vector3d tempF;
@@ -254,10 +254,10 @@ void ReactionWheelStateEffector::updateContributions(
 }
 
 void ReactionWheelStateEffector::computeDerivatives(
-    double integTime,
+    [[maybe_unused]] double integTime,
     Eigen::Vector3d rDDotNonGrav_BN_N,
     Eigen::Vector3d omegaDot_BN_B,
-    Eigen::Vector3d sigma_BN
+    [[maybe_unused]] Eigen::Vector3d sigma_BN
 ) {
     Eigen::MatrixXd OmegasDot(this->numRW, 1);
     Eigen::MatrixXd thetasDot(this->numRWJitter, 1);
@@ -299,10 +299,10 @@ void ReactionWheelStateEffector::computeDerivatives(
 }
 
 void ReactionWheelStateEffector::updateEnergyMomContributions(
-    double integTime,
+    [[maybe_unused]] double integTime,
     Eigen::Vector3d &rotAngMomPntCContr_B,
     double &rotEnergyContr,
-    Eigen::Vector3d omega_BN_B
+    [[maybe_unused]] Eigen::Vector3d omega_BN_B
 ) {
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcm_BN; /*! direction cosine matrix from N to B */
@@ -345,7 +345,7 @@ void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload* NewRW) {
 /*! Reset the module to origina configuration values.
  @return void
  */
-void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos) {
+void ReactionWheelStateEffector::reset([[maybe_unused]] uint64_t CurrenSimNanos) {
     RWCmdMsgPayload RWCmdInitializer;
     RWCmdInitializer.u_cmd = 0.0;
 
@@ -455,7 +455,7 @@ void ReactionWheelStateEffector::ReadInputs() {
  @return void
  @param CurrentTime The current simulation time converted to a double
  */
-void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime) {
+void ReactionWheelStateEffector::ConfigureRWRequests([[maybe_unused]] double CurrentTime) {
     // loop through commands
     for (size_t RWIter = 0; RWIter < this->NewRWCmds.size(); RWIter++) {
         RWCmdMsgPayload &cmd = this->NewRWCmds[RWIter];
