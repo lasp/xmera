@@ -14,3 +14,26 @@ target_link_libraries(test_reactionWheelStateEffector PRIVATE
   Eigen3::Eigen
 )
 gtest_discover_tests(test_reactionWheelStateEffector)
+
+if(XMERA_ENABLE_FUZZTESTS)
+  fuzztest_setup_fuzzing_flags()
+
+  # Lightweight single-method invariants: saturation, friction, mass-props.
+  add_executable(test_reactionWheelStateEffector_fuzz
+    ../reactionWheelStateEffector.cpp
+    test_reactionWheelStateEffector_fuzz.cpp
+  )
+  target_include_directories(test_reactionWheelStateEffector_fuzz PRIVATE "${CMAKE_SOURCE_DIR}")
+  target_link_libraries(test_reactionWheelStateEffector_fuzz PRIVATE
+    Xmera::Core
+    ArchitectureUtilities
+    dynamicsCommon
+    Eigen3::Eigen
+    fuzztest::fuzztest
+    fuzztest::fuzztest_gtest_main
+  )
+  gtest_discover_tests(test_reactionWheelStateEffector_fuzz
+    PROPERTIES
+      LABELS "fuzz;fuzz-smoke"
+  )
+endif()
