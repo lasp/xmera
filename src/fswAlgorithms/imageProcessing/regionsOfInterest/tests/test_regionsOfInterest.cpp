@@ -7,11 +7,8 @@
 #include <array>
 
 // Test constants
-constexpr int32_t DEFAULT_IMAGE_WIDTH = 1024;
-constexpr int32_t DEFAULT_IMAGE_HEIGHT = 768;
 constexpr int32_t DEFAULT_MAX_SEPARATION = 1000;
 constexpr int32_t DEFAULT_MIN_DETECTION = 2;
-constexpr double TEST_TOLERANCE = 1e-6;
 
 /*! @brief Test and validate RegionsOfInterestAlgorithm region identification
  *
