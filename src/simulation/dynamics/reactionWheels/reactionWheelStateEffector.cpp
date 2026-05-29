@@ -11,15 +11,6 @@
 #include <cstring>
 #include <iostream>
 
-ReactionWheelStateEffector::ReactionWheelStateEffector() {
-    prevCommandTime = 0xFFFF'FFFF'FFFF'FFFF;
-
-    this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
-    this->nameOfReactionWheelThetasState = "reactionWheelThetas";
-
-    return;
-}
-
 ReactionWheelStateEffector::~ReactionWheelStateEffector() {
     for (Message<RWConfigLogMsgPayload>* msg : this->rwOutMsgs) { delete msg; }
     this->rwOutMsgs.clear();

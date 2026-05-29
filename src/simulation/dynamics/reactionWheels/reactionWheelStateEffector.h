@@ -28,7 +28,7 @@ class ReactionWheelStateEffector
     : public SysModel
     , public StateEffector {
 public:
-    ReactionWheelStateEffector();
+    ReactionWheelStateEffector() = default;
     ~ReactionWheelStateEffector();
     void registerStates(DynParamManager &states) override;
     void linkInStates(DynParamManager &states) override;
@@ -68,21 +68,21 @@ public:
     Message<RWSpeedMsgPayload> rwSpeedOutMsg;                //!< -- RW speed array output message
     std::vector<Message<RWConfigLogMsgPayload>*> rwOutMsgs;  //!< -- vector of RW log output messages
 
-    std::vector<RWCmdMsgPayload> NewRWCmds;      //!< -- Incoming attitude commands
-    RWSpeedMsgPayload rwSpeedMsgBuffer = {};     //!< (-) Output data from the reaction wheels
-    std::string nameOfReactionWheelOmegasState;  //!< class variable
-    std::string nameOfReactionWheelThetasState;  //!< class variable
-    size_t numRW;                                //!< number of reaction wheels
-    size_t numRWJitter;                          //!< number of RW with jitter
+    std::vector<RWCmdMsgPayload> NewRWCmds;                              //!< -- Incoming attitude commands
+    RWSpeedMsgPayload rwSpeedMsgBuffer = {};                             //!< (-) Output data from the reaction wheels
+    std::string nameOfReactionWheelOmegasState = "reactionWheelOmegas";  //!< wheel angular rate state name
+    std::string nameOfReactionWheelThetasState = "reactionWheelThetas";  //!< wheel angle state name
+    size_t numRW = 0;                                                    //!< number of reaction wheels
+    size_t numRWJitter = 0;                                              //!< number of RW with jitter
 
 private:
     RwMotorTorqueMsgPayload incomingCmdBuffer = {};  //!< -- One-time allocation for savings
-    uint64_t prevCommandTime;                        //!< -- Time for previous valid thruster firing
+    uint64_t prevCommandTime = UINT64_MAX;           //!< -- Time for previous valid thruster firing
 
-    StateData* hubSigma;     //!< class variable
-    StateData* hubOmega;     //!< class variable
-    StateData* OmegasState;  //!< class variable
-    StateData* thetasState;  //!< class variable
+    StateData* hubSigma = nullptr;
+    StateData* hubOmega = nullptr;
+    StateData* OmegasState = nullptr;
+    StateData* thetasState = nullptr;
 };
 
 #endif /* STATE_EFFECTOR_H */
