@@ -63,8 +63,6 @@ void ReactionWheelStateEffector::registerStates(DynParamManager &states) {
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);
     }
-
-    return;
 }
 
 void ReactionWheelStateEffector::updateEffectorMassProps([[maybe_unused]] double integTime) {
@@ -136,8 +134,6 @@ void ReactionWheelStateEffector::updateEffectorMassProps([[maybe_unused]] double
         this->effProps.rEff_CB_B /= this->effProps.mEff;
         this->effProps.rEffPrime_CB_B /= this->effProps.mEff;
     }
-
-    return;
 }
 
 void ReactionWheelStateEffector::updateContributions(
@@ -245,7 +241,6 @@ void ReactionWheelStateEffector::updateContributions(
                 - gsInertiaMoment_B * RWIt->cOmega;
         }
     }
-    return;
 }
 
 void ReactionWheelStateEffector::computeDerivatives(
@@ -312,8 +307,6 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(
             rotAngMomPntCContr_B += RWIt->IRWPntWc_B * omega_WN_B + RWIt->mass * r_WcB_B.cross(rDot_WcB_B);
         }
     }
-
-    return;
 }
 
 /*! add a RW data object to the reactionWheelStateEffector @return void
@@ -389,8 +382,6 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t const CurrentClock
         // Write out config data for eachreaction wheel
         this->rwOutMsgs[i]->write(tmpRW, this->moduleID, CurrentClock);
     }
-
-    return;
 }
 
 /*! This method is here to write the output message structure into the specified
