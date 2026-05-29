@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: ISC
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-// Direct unit tests for FlybyODuKFAlgorithm — no xmera, no messaging. Mirrors
-// the intent of the Python integration test
+// Unit tests for FlybyODuKFAlgorithm — the single composition root that both
+// satisfies SequentialFilter<…, HeadingMeasurement> (via public timeUpdate /
+// measurementUpdate) and drives itself through an internal measurement_queue
+// via update(t0, t1). No xmera, no messaging.
+//
+// Mirrors the intent of the Python integration test
 // (fswAlgorithms/opticalNavigation/flybyODuKF/_UnitTest/test_flybyODuKF.py):
 // two-body propagation conserves energy and grows the covariance without
-// measurements, and heading measurements shrink the covariance and pull the
-// estimate's heading onto the truth.
+// measurements, and heading measurements shrink the velocity covariance and
+// pull the estimate's heading onto the truth. The QueueDriven case proves
+// the queue path produces the same convergence as direct stepping.
 
 #include "flybyODuKFAlgorithm.h"
 
@@ -30,7 +35,6 @@ constexpr double kUnitConversion = 1E-3;             // SI (m) -> km
 constexpr double kAlpha          = 0.02;
 constexpr double kBeta           = 2.0;
 
-// Reference two-body derivative on an SI [m, m/s] 6-state.
 Vector6 twoBodyDeriv(Vector6 const& x) {
     Vector6 dx;
     dx.head<3>() = x.tail<3>();
@@ -38,8 +42,6 @@ Vector6 twoBodyDeriv(Vector6 const& x) {
     return dx;
 }
 
-// One classic RK4 step — the same integrator the filter uses internally, so
-// the filter's propagated mean should match this to near machine precision.
 Vector6 rk4Step(Vector6 const& x, double dt) {
     Vector6 const k1 = twoBodyDeriv(x);
     Vector6 const k2 = twoBodyDeriv(x + 0.5 * dt * k1);
@@ -85,6 +87,8 @@ State toState(Vector6 const& x) {
     return s;
 }
 
+// FilterStateOutput is already in SI (the algorithm undoes the internal
+// unitConversion in getState()).
 Vector6 stateVector(FilterStateOutput const& out) { return out.state; }
 
 void configure(FlybyODuKFAlgorithm& algo, Vector6 const& initial) {
@@ -120,13 +124,16 @@ TEST(FlybyODuKFAlgorithm, ConfigRoundTrip) {
     EXPECT_TRUE(algo.getInitialState().raw().isApprox(initialTruth()));
 }
 
+// Drive the algorithm step-by-step via the SequentialFilter pair
+// (timeUpdate). No measurements — orbital energy is conserved and the
+// uncertainty grows.
 TEST(FlybyODuKFAlgorithm, PropagationConservesEnergyAndGrowsCovariance) {
     Vector6 const x0 = initialTruth();
     FlybyODuKFAlgorithm algo;
     configure(algo, x0);
     algo.reset();
 
-    Matrix6 const sqrtCovar0 = algo.getState().sqrtCovar;
+    Matrix6 const sqrtCovar0 = algo.getSqrtCovar();
     double const covarNorm0  = (sqrtCovar0 * sqrtCovar0.transpose()).norm();
     double const energy0     = orbitalEnergy(x0);
 
@@ -138,24 +145,21 @@ TEST(FlybyODuKFAlgorithm, PropagationConservesEnergyAndGrowsCovariance) {
         algo.timeUpdate(dt);
 
         Vector6 const estimate = stateVector(algo.getState());
-        // The filter's mean is a deterministic RK4 propagation in the
-        // converted unit system; recovered to SI it must track the reference.
         EXPECT_TRUE(estimate.isApprox(truth, 1E-6)) << "step " << i;
         EXPECT_NEAR(orbitalEnergy(estimate), energy0, std::abs(energy0) * 1E-2) << "step " << i;
     }
 
-    Matrix6 const sqrtCovarN = algo.getState().sqrtCovar;
+    Matrix6 const sqrtCovarN = algo.getSqrtCovar();
     double const covarNormN  = (sqrtCovarN * sqrtCovarN.transpose()).norm();
-    // Without measurements the uncertainty must grow substantially (Python
-    // requires > 5x over the same span).
     EXPECT_GT(covarNormN, 5.0 * covarNorm0);
 }
 
+// Drive the algorithm step-by-step with heading measurements folded in
+// directly via measurementUpdate. The velocity-block covariance shrinks and
+// the estimate's position heading converges onto truth.
 TEST(FlybyODuKFAlgorithm, MeasurementUpdatesShrinkCovarianceAndAlignHeading) {
     Vector6 const x0 = initialTruth();
 
-    // Start the estimate offset from truth so the heading measurements have
-    // something to correct.
     Vector6 x0Estimate = x0;
     x0Estimate(0) += 5.0 * 1E3;  // +5 km cross-range bends the heading
     x0Estimate(4) += 5.0;        // +5 m/s
@@ -164,7 +168,7 @@ TEST(FlybyODuKFAlgorithm, MeasurementUpdatesShrinkCovarianceAndAlignHeading) {
     configure(algo, x0Estimate);
     algo.reset();
 
-    Matrix6 const sqrtCovar0 = algo.getState().sqrtCovar;
+    Matrix6 const sqrtCovar0 = algo.getSqrtCovar();
     Matrix6 const covar0     = sqrtCovar0 * sqrtCovar0.transpose();
 
     constexpr double dt    = 1.0;
@@ -184,29 +188,24 @@ TEST(FlybyODuKFAlgorithm, MeasurementUpdatesShrinkCovarianceAndAlignHeading) {
         }
     }
 
-    Matrix6 const sqrtCovarN = algo.getState().sqrtCovar;
+    Matrix6 const sqrtCovarN = algo.getSqrtCovar();
     Matrix6 const covarN     = sqrtCovarN * sqrtCovarN.transpose();
-
-    // Velocity-block uncertainty must shrink relative to the initial guess.
     for (int i = 3; i < 6; ++i) {
         EXPECT_LT(covarN(i, i), covar0(i, i)) << "velocity covariance index " << i;
     }
 
-    // Heading is directly observed, so the estimate's position direction must
-    // converge onto the truth direction.
     Vector6 const estimate = stateVector(algo.getState());
     Eigen::Vector3d const estHeading   = estimate.head<3>().normalized();
     Eigen::Vector3d const truthHeading = truth.head<3>().normalized();
     EXPECT_GT(estHeading.dot(truthHeading), std::cos(1.0 * M_PI / 180.0));
 
-    // Residuals were captured on the last update.
     EXPECT_TRUE(algo.getLastResiduals().valid);
 }
 
-// The host adapter drives the filter through the measurement_queue: enqueue a
-// measurement, then a single update(t0, t1) per window. This must produce the
-// same convergence/covariance behavior as driving timeUpdate/measurementUpdate
-// directly.
+// Same scenario as MeasurementUpdates… but driven through the queue: enqueue
+// at the measurement time, then a single update(t0, t1) per step. Proves the
+// queue-driven path (apply_sequential against *this) produces the same
+// behavior as direct stepping.
 TEST(FlybyODuKFAlgorithm, QueueDrivenUpdateConvergesLikeDirectPath) {
     Vector6 const x0 = initialTruth();
 
@@ -240,8 +239,6 @@ TEST(FlybyODuKFAlgorithm, QueueDrivenUpdateConvergesLikeDirectPath) {
             algo.enqueueMeasurement(meas.timeTag, std::move(meas));
         }
 
-        // Single drive entry point over the window; the queue decides whether
-        // each step is a time update or a measurement update.
         algo.update(t0, t1);
     }
 

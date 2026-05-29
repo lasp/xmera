@@ -16,18 +16,6 @@
 
 namespace filtering {
 
-// Per-filter Spec contract. Any class type X satisfies SrukfSpec if it
-// declares:
-//   - using State = ...;                           (FilterState)
-//   - using ProcessNoiseCov = Eigen::Matrix<...>;  (N x N)
-// Plus, at the call site, a dynamics function compatible with the
-// Dynamics<D, State> concept and one or more Measurement types compatible
-// with Measurement<M, State>.
-template<class Spec>
-concept SrukfSpec = FilterState<typename Spec::State> && requires {
-    typename Spec::ProcessNoiseCov;
-};
-
 // Square-root UKF storage. Plain data — no behavior. Pure functions in the
 // `srukf` namespace operate on it; `SrukfInterface<Spec>` (defined later)
 // is the stateful façade that holds an instance.
@@ -62,7 +50,7 @@ struct SrukfStorage {
     double eta    = 0;
 
     // Sigma-point weights and propagated sigma points carried between
-    // predict() and update().
+    // timeUpdate() and update().
     SigmaWeights              wM = SigmaWeights::Zero();
     SigmaWeights              wC = SigmaWeights::Zero();
     std::array<State, numSigmaPoints> sigmaPoints = {};
@@ -151,13 +139,13 @@ inline Eigen::MatrixXd backSubstitution(Eigen::MatrixXd const& U, Eigen::MatrixX
 
 }  // namespace detail
 
-// ------ Functional core: reset / predict / update ---------------------------
+// ------ Functional core: reset / timeUpdate / update ---------------------------
 
 // Recompute derived tunables, sigma weights, and the Cholesky factors of the
 // initial covariance and process noise. Returns the updated storage.
-template<SrukfSpec Spec>
-SrukfStorage<typename Spec::State> reset(SrukfStorage<typename Spec::State> s) {
-    using Storage = SrukfStorage<typename Spec::State>;
+template<FilterState State>
+SrukfStorage<State> reset(SrukfStorage<State> s) {
+    using Storage = SrukfStorage<State>;
     constexpr int N = Storage::N;
 
     s.mean = s.meanInitial.scale(s.unitConversion);
@@ -184,13 +172,13 @@ SrukfStorage<typename Spec::State> reset(SrukfStorage<typename Spec::State> s) {
 // Time update. Propagates 2N+1 sigma points through Spec::dynamics, recovers
 // the mean (`xBar`) and sqrt-covariance (`sqrtCovar`), and stores the
 // propagated sigma points for use by the next update().
-template<SrukfSpec Spec, Dynamics<typename Spec::State> D>
-SrukfStorage<typename Spec::State> predict(
-    SrukfStorage<typename Spec::State> s,
+template<FilterState State, Dynamics<State> D>
+SrukfStorage<State> timeUpdate(
+    SrukfStorage<State> s,
     D const& dynamics,
     double dt
 ) {
-    using Storage = SrukfStorage<typename Spec::State>;
+    using Storage = SrukfStorage<State>;
     constexpr int N = Storage::N;
     std::array<double, 2> const interval = {0, dt};
 
@@ -200,12 +188,12 @@ SrukfStorage<typename Spec::State> predict(
 
     // The remaining 2N points are mean ± eta * column-of-sqrtCovar.
     for (int i = 1; i <= N; ++i) {
-        typename Spec::State::Storage const offset = s.eta * s.sqrtCovar.col(i - 1);
+        typename State::Storage const offset = s.eta * s.sqrtCovar.col(i - 1);
         // Build offset states by constructing from raw storage, then
         // propagating through the dynamics. (We don't assume State has an
         // addVector(raw_storage) method.)
-        typename Spec::State const plus  = typename Spec::State(s.mean.raw() + offset);
-        typename Spec::State const minus = typename Spec::State(s.mean.raw() - offset);
+        State const plus  = State(s.mean.raw() + offset);
+        State const minus = State(s.mean.raw() - offset);
         s.sigmaPoints[i]     = filtering::propagate(dynamics, plus,  interval, dt);
         s.sigmaPoints[i + N] = filtering::propagate(dynamics, minus, interval, dt);
     }
@@ -245,19 +233,19 @@ struct UpdateResult {
 
 // Measurement update. `m` must satisfy Measurement<M, State> from
 // concepts.hpp.
-template<SrukfSpec Spec, Measurement<typename Spec::State> M>
-UpdateResult<typename Spec::State, M> update(
-    SrukfStorage<typename Spec::State> s,
+template<FilterState State, Measurement<State> M>
+UpdateResult<State, M> update(
+    SrukfStorage<State> s,
     M const& measurement
 ) {
-    using Storage = SrukfStorage<typename Spec::State>;
+    using Storage = SrukfStorage<State>;
     constexpr int N = Storage::N;
     int const numSigma = Storage::numSigmaPoints;
 
     auto const observation  = measurement.observation();
     int  const M_size       = static_cast<int>(observation.size());
 
-    // Pre-fit residuals (using already-propagated sigma points from predict).
+    // Pre-fit residuals (using already-propagated sigma points from timeUpdate).
     Eigen::MatrixXd yMeasPre(M_size, numSigma);
     for (int j = 0; j < numSigma; ++j) {
         yMeasPre.col(j) = measurement.model(s.sigmaPoints[j]);
@@ -301,7 +289,7 @@ UpdateResult<typename Spec::State, M> update(
 
     // State update: mean = xBar + K * (observation - yBar).
     Eigen::VectorXd const innovation = measurement.subtract(observation, yBar);
-    typename Spec::State updatedMean = typename Spec::State(s.xBar.raw() + kMat * innovation);
+    State updatedMean = State(s.xBar.raw() + kMat * innovation);
     s.mean = updatedMean;
 
     // Covariance update: U = K * sy; downdate sqrtCovar by each column of U.
@@ -323,20 +311,19 @@ UpdateResult<typename Spec::State, M> update(
 // SrukfInterface<Spec> — stateful façade matching fp32-fsw-xmera convention.
 //
 // Holds an SrukfStorage by value plus a settable dynamics function. Methods
-// reset() / predict(dt) / update<M>(m) mutate the held storage by delegating
+// reset() / timeUpdate(dt) / update<M>(m) mutate the held storage by delegating
 // to the free functions in `srukf::`. Setters/getters expose tunables and
 // initial conditions; getters expose mean and sqrt-covariance for readout.
 //
 // The (future) C shim for an algorithm built on this façade will wrap a
 // SrukfInterface<Spec> instance behind an opaque handle.
 // ----------------------------------------------------------------------------
-template<SrukfSpec Spec>
+template<FilterState State>
 class SrukfInterface {
 public:
-    using State    = typename Spec::State;
     using StateMat = Eigen::Matrix<double, State::size, State::size>;
 
-    // Public — set by the owning algorithm class. Called from predict().
+    // Public — set by the owning algorithm class. Called from timeUpdate().
     DynamicsModel<State> dynamics;
 
     void setAlpha(double a)              { this->storage.alpha          = a;     }
@@ -352,16 +339,16 @@ public:
     double getMeasurementNoiseScale() const { return this->storage.measNoiseScale; }
 
     void reset() {
-        this->storage = srukf::reset<Spec>(this->storage);
+        this->storage = srukf::reset<State>(this->storage);
     }
 
-    void predict(double dt) {
-        this->storage = srukf::predict<Spec>(this->storage, this->dynamics, dt);
+    void timeUpdate(double dt) {
+        this->storage = srukf::timeUpdate<State>(this->storage, this->dynamics, dt);
     }
 
     template<Measurement<State> M>
     srukf::UpdateResult<State, M> update(M const& measurement) {
-        auto result = srukf::update<Spec, M>(this->storage, measurement);
+        auto result = srukf::update<State, M>(this->storage, measurement);
         this->storage = result.posterior;
         return result;
     }

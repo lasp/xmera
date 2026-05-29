@@ -21,8 +21,8 @@ using State = FlybyODuKFAlgorithm::State;
 struct HeadingMeasurementModel {
     static constexpr int size = 3;
 
-    Eigen::Vector3d observed   = Eigen::Vector3d::Zero();    // normalized rhat_BN_N
-    Eigen::Matrix3d measNoise  = Eigen::Matrix3d::Identity();  // measNoiseScale * covarN
+    Eigen::Vector3d observed  = Eigen::Vector3d::Zero();      // normalized rhat_BN_N
+    Eigen::Matrix3d measNoise = Eigen::Matrix3d::Identity();  // measNoiseScale * covarN
 
     Eigen::Vector3d observation() const { return this->observed; }
 
@@ -76,22 +76,22 @@ FlybyODuKFAlgorithm::getInitialCovariance() const {
     return this->initialCovariance;
 }
 
-// ---- Step -----------------------------------------------------------------
+// ---- Lifecycle + SequentialFilter -----------------------------------------
 
 void FlybyODuKFAlgorithm::reset() {
-    this->filter.setAlpha(this->alpha);
-    this->filter.setBeta(this->beta);
-    this->filter.setMeasurementNoiseScale(this->measNoiseScale);
-    this->filter.setUnitConversion(this->unitConversion);
-    this->filter.setProcessNoise(this->processNoise);
-    this->filter.setInitialMean(this->initialState);
-    this->filter.setInitialCovariance(this->initialCovariance);
+    this->srukf.setAlpha(this->alpha);
+    this->srukf.setBeta(this->beta);
+    this->srukf.setMeasurementNoiseScale(this->measNoiseScale);
+    this->srukf.setUnitConversion(this->unitConversion);
+    this->srukf.setProcessNoise(this->processNoise);
+    this->srukf.setInitialMean(this->initialState);
+    this->srukf.setInitialCovariance(this->initialCovariance);
 
     // Two-body point-mass gravity. The SRUKF core works in the converted unit
     // system (mean is scaled by unitConversion in reset()), so mu — input in
     // m^3/s^2 — is scaled by unitConversion^3 to match.
     double const centralBody = this->mu * std::pow(this->unitConversion, 3);
-    this->filter.dynamics = [centralBody](double /*t*/, State const& state) -> State {
+    this->srukf.dynamics = [centralBody](double /*t*/, State const& state) -> State {
         Eigen::Vector3d const r = state.get<filtering::Position<3>>();
         Eigen::Vector3d const v = state.get<filtering::Velocity<3>>();
 
@@ -101,25 +101,13 @@ void FlybyODuKFAlgorithm::reset() {
         return xDot;
     };
 
-    this->filter.reset();
+    this->srukf.reset();
     this->measurements.clear();
     this->currentTime = 0;
 }
 
-void FlybyODuKFAlgorithm::enqueueMeasurement(double timeTag, HeadingMeasurement measurement) {
-    this->measurements.enqueue(timeTag, std::move(measurement));
-}
-
-void FlybyODuKFAlgorithm::update(double previousSeconds, double currentSeconds) {
-    // applyToFilter walks the queue in time order, calling timeUpdate() for the
-    // intervening predict steps and measurementUpdate() at each measurement,
-    // then a final timeUpdate() to currentSeconds. It empties the queue as it
-    // consumes each measurement.
-    this->measurements.applyToFilter(*this, previousSeconds, currentSeconds);
-}
-
 void FlybyODuKFAlgorithm::timeUpdate(double dt) {
-    this->filter.predict(dt);
+    this->srukf.timeUpdate(dt);
     this->currentTime += dt;
 }
 
@@ -128,7 +116,7 @@ void FlybyODuKFAlgorithm::measurementUpdate(HeadingMeasurement const& measuremen
     model.observed  = measurement.rhat_BN_N.normalized();
     model.measNoise = this->measNoiseScale * measurement.covarN;
 
-    auto const result = this->filter.update(model);
+    auto const result = this->srukf.update(model);
 
     this->lastResiduals.valid       = measurement.valid;
     this->lastResiduals.observation = model.observed;
@@ -138,7 +126,21 @@ void FlybyODuKFAlgorithm::measurementUpdate(HeadingMeasurement const& measuremen
     this->currentTime = measurement.timeTag;
 }
 
-// ---- Readout --------------------------------------------------------------
+// ---- Queue-driven entry ---------------------------------------------------
+
+void FlybyODuKFAlgorithm::enqueueMeasurement(double timeTag, HeadingMeasurement measurement) {
+    this->measurements.enqueue(timeTag, std::move(measurement));
+}
+
+void FlybyODuKFAlgorithm::update(double previousSeconds, double currentSeconds) {
+    // apply_sequential drains the queue in time order, calling this->timeUpdate
+    // between measurements and this->measurementUpdate at each measurement,
+    // then a final this->timeUpdate to currentSeconds. The queue is empty on
+    // return — each measurement is popped as it is consumed.
+    apply_sequential(this->measurements, *this, previousSeconds, currentSeconds);
+}
+
+// ---- Readouts -------------------------------------------------------------
 
 FilterStateOutput FlybyODuKFAlgorithm::getState() const {
     FilterStateOutput out;
@@ -146,11 +148,20 @@ FilterStateOutput FlybyODuKFAlgorithm::getState() const {
     // Undo the internal unit conversion: state scales by 1/unitConversion,
     // and the square-root covariance (sqrt of a 1/unitConversion^2 quantity)
     // by 1/unitConversion as well.
-    out.state     = this->filter.getMean().raw() / this->unitConversion;
-    out.sqrtCovar = this->filter.getSqrtCovar() / this->unitConversion;
+    out.state     = this->srukf.getMean().raw() / this->unitConversion;
+    out.sqrtCovar = this->srukf.getSqrtCovar() / this->unitConversion;
     return out;
 }
 
 ResidualsOutput FlybyODuKFAlgorithm::getLastResiduals() const { return this->lastResiduals; }
+
+FlybyODuKFAlgorithm::State FlybyODuKFAlgorithm::getMean() const { return this->srukf.getMean(); }
+
+Eigen::Matrix<double, FlybyODuKFAlgorithm::N, FlybyODuKFAlgorithm::N>
+FlybyODuKFAlgorithm::getSqrtCovar() const {
+    return this->srukf.getSqrtCovar();
+}
+
+double FlybyODuKFAlgorithm::getCurrentTime() const { return this->currentTime; }
 
 }  // namespace filtering::flybyODuKF
