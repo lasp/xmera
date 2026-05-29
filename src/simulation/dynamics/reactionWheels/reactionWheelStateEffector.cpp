@@ -358,9 +358,15 @@ void ReactionWheelStateEffector::reset([[maybe_unused]] uint64_t CurrenSimNanos)
  @return void
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t const CurrentClock) const {
+    size_t thetaCount = 0;
     for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
         RWConfigMsgPayload* it = this->ReactionWheelData[i];
-        if (this->numRWJitter > 0) { it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0); }
+        //! - theta only exists for jitter wheels; thetasState is sized numRWJitter, so index it
+        //!   with a jitter-only counter rather than the full wheel index.
+        if (it->RWModel == JitterSimple || it->RWModel == JitterFullyCoupled) {
+            it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(thetaCount), 0);
+            thetaCount++;
+        }
         it->Omega = this->OmegasState->getState()(static_cast<Eigen::Index>(i), 0);
 
         auto tmpRW = RWConfigLogMsgPayload{};
@@ -390,11 +396,15 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t const CurrentClock
  @return void
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos) {
+    size_t thetaCount = 0;
     for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
         RWConfigMsgPayload* it = this->ReactionWheelData[i];
-        if (this->numRWJitter > 0) {
-            it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0);
+        //! - theta only exists for jitter wheels; thetasState is sized numRWJitter, so index it
+        //!   with a jitter-only counter rather than the full wheel index.
+        if (it->RWModel == JitterSimple || it->RWModel == JitterFullyCoupled) {
+            it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(thetaCount), 0);
             this->rwSpeedMsgBuffer.wheelThetas[i] = it->theta;
+            thetaCount++;
         }
         it->Omega = this->OmegasState->getState()(static_cast<Eigen::Index>(i), 0);
         this->rwSpeedMsgBuffer.wheelSpeeds[i] = it->Omega;
