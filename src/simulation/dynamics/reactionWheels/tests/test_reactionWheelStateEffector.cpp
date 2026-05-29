@@ -14,6 +14,16 @@
 
 using rwtest::makeRW;
 
+//! addReactionWheel must refuse wheels beyond RW_EFF_CNT so the fixed-size
+//! output/command arrays cannot overflow.
+TEST(ReactionWheelStateEffector, addReactionWheelCapsAtRwEffCnt) {
+    ReactionWheelStateEffector rw;
+    std::vector<RWConfigMsgPayload> configs(RW_EFF_CNT + 5, makeRW(BalancedWheels, Eigen::Vector3d::UnitX()));
+    for (auto &cfg : configs) { rw.addReactionWheel(&cfg); }
+    EXPECT_EQ(rw.ReactionWheelData.size(), static_cast<size_t>(RW_EFF_CNT));
+    EXPECT_EQ(rw.rwOutMsgs.size(), static_cast<size_t>(RW_EFF_CNT));
+}
+
 //! With a mixed configuration (numRWJitter < numRW) each jitter wheel's
 //! theta must map to its own thetasState slot, and non-jitter wheels report 0.
 //! Theta state is set to known, distinct values so the mapping is unambiguous.

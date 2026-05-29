@@ -312,6 +312,18 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(
 /*! add a RW data object to the reactionWheelStateEffector @return void
  */
 void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload* NewRW) {
+    //! - The RW I/O messages (rwSpeedOutMsg wheelSpeeds/wheelThetas and the incoming
+    //!   motorTorque command) use fixed RW_EFF_CNT-length arrays. Refuse wheels beyond
+    //!   that limit rather than overflow those arrays in ReadInputs/writeOutputStateMessages.
+    if (this->ReactionWheelData.size() >= RW_EFF_CNT) {
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "ReactionWheelStateEffector supports at most {} reaction wheels; ignoring additional wheel.",
+                RW_EFF_CNT
+            );
+        return;
+    }
+
     /* store the RW information */
     this->ReactionWheelData.push_back(NewRW);
 
