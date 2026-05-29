@@ -26,6 +26,10 @@ class ReactionWheelStateEffector
 public:
     ReactionWheelStateEffector() = default;
     ~ReactionWheelStateEffector();
+    //! - This effector owns raw Message pointers (rwOutMsgs) released in the destructor,
+    //!   so a shallow copy would double-free. Disable copy and move.
+    ReactionWheelStateEffector(ReactionWheelStateEffector const &) = delete;
+    ReactionWheelStateEffector &operator=(ReactionWheelStateEffector const &) = delete;
     void registerStates(DynParamManager &states) override;
     void linkInStates(DynParamManager &states) override;
     void writeOutputStateMessages(uint64_t integTimeNanos) override;
