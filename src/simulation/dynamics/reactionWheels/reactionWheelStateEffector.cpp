@@ -21,7 +21,12 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager &statesIn) {
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
 
-    return;
+    if (this->hubSigma == nullptr || this->hubOmega == nullptr) {
+        xmera::logging::get(this->modelTag)
+            ->error(
+                "ReactionWheelStateEffector could not link in one or more required hub states (hubSigma, hubOmega)."
+            );
+    }
 }
 
 void ReactionWheelStateEffector::registerStates(DynParamManager &states) {
