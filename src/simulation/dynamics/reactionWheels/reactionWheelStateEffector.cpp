@@ -226,14 +226,14 @@ void ReactionWheelStateEffector::updateContributions(
                                   * omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))
                             + (RWIt->u_current + RWIt->frictionTorque));
 
+            // Gimbal-axis inertia plus imbalance moment; shared by matrixC, matrixD, and vecRot.
+            Eigen::Vector3d const gsInertiaMoment_B =
+                RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B);
+
             backSubContr.matrixA += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->aOmega.transpose();
             backSubContr.matrixB += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->bOmega.transpose();
-            backSubContr.matrixC +=
-                (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B))
-                * RWIt->aOmega.transpose();
-            backSubContr.matrixD +=
-                (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B))
-                * RWIt->bOmega.transpose();
+            backSubContr.matrixC += gsInertiaMoment_B * RWIt->aOmega.transpose();
+            backSubContr.matrixD += gsInertiaMoment_B * RWIt->bOmega.transpose();
             backSubContr.vecTrans +=
                 RWIt->mass * RWIt->d * (OmegaSquared * RWIt->w2Hat_B - RWIt->cOmega * RWIt->w3Hat_B);
             backSubContr.vecRot +=
@@ -242,8 +242,7 @@ void ReactionWheelStateEffector::updateContributions(
                 - omegaLoc_BN_B.cross(
                     RWIt->IRWPntWc_B * RWIt->Omega * RWIt->gsHat_B + RWIt->mass * RWIt->rWcB_B.cross(RWIt->rPrimeWcB_B)
                 )
-                - (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B))
-                      * RWIt->cOmega;
+                - gsInertiaMoment_B * RWIt->cOmega;
         }
     }
     return;
