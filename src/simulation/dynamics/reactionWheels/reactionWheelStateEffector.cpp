@@ -37,15 +37,13 @@ void ReactionWheelStateEffector::registerStates(DynParamManager &states) {
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
     this->numRW = 0;
-    std::vector<RWConfigMsgPayload*>::iterator RWItp;
-    RWConfigMsgPayload* RWIt;
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(), 1);
 
-    for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
-        RWIt = *RWItp;
+    for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
+        RWConfigMsgPayload const* RWIt = this->ReactionWheelData[i];
         if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) { this->numRWJitter++; }
-        omegasForInit(RWItp - this->ReactionWheelData.begin(), 0) = RWIt->Omega;
+        omegasForInit(static_cast<Eigen::Index>(i), 0) = RWIt->Omega;
         this->numRW++;
     }
 
@@ -74,11 +72,9 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime) {
     this->effProps.IEffPrimePntB_B.setZero();
 
     int thetaCount = 0;
-    std::vector<RWConfigMsgPayload*>::iterator RWItp;
-    RWConfigMsgPayload* RWIt;
-    for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
-        RWIt = *RWItp;
-        RWIt->Omega = this->OmegasState->getState()(RWItp - ReactionWheelData.begin(), 0);
+    for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
+        RWConfigMsgPayload* RWIt = this->ReactionWheelData[i];
+        RWIt->Omega = this->OmegasState->getState()(static_cast<Eigen::Index>(i), 0);
         if (RWIt->RWModel == JitterFullyCoupled) {
             RWIt->theta = this->thetasState->getState()(thetaCount, 0);
             Eigen::Matrix3d dcm_WW0 = eigenM1(RWIt->theta);
@@ -156,10 +152,7 @@ void ReactionWheelStateEffector::updateContributions(
 
     omegaLoc_BN_B = this->hubOmega->getState();
 
-    std::vector<RWConfigMsgPayload*>::iterator RWItp;
-    RWConfigMsgPayload* RWIt;
-    for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
-        RWIt = *RWItp;
+    for (RWConfigMsgPayload* RWIt : this->ReactionWheelData) {
         OmegaSquared = RWIt->Omega * RWIt->Omega;
 
         // Determine which friction model to use (if starting from zero include stribeck)
@@ -276,8 +269,6 @@ void ReactionWheelStateEffector::computeDerivatives(
     Eigen::Vector3d rDDotBNLoc_B; /*! second time derivative of rBN in B frame */
     int RWi = 0;
     int thetaCount = 0;
-    std::vector<RWConfigMsgPayload*>::iterator RWItp;
-    RWConfigMsgPayload* RWIt;
 
     //! Grab necessarry values from manager
     omegaDotBNLoc_B = omegaDot_BN_B;
@@ -288,8 +279,7 @@ void ReactionWheelStateEffector::computeDerivatives(
     rDDotBNLoc_B = dcm_BN * rDDotBNLoc_N;
 
     //! - Compute Derivatives
-    for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
-        RWIt = *RWItp;
+    for (RWConfigMsgPayload const* RWIt : this->ReactionWheelData) {
         if (RWIt->RWModel == JitterFullyCoupled || RWIt->RWModel == JitterSimple) {
             // - Set trivial kinemetic derivative
             thetasDot(thetaCount, 0) = RWIt->Omega;
@@ -321,10 +311,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
-    std::vector<RWConfigMsgPayload*>::iterator RWItp;
-    RWConfigMsgPayload* RWIt;
-    for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
-        RWIt = *RWItp;
+    for (RWConfigMsgPayload const* RWIt : this->ReactionWheelData) {
         if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
             rotAngMomPntCContr_B += RWIt->Js * RWIt->gsHat_B * RWIt->Omega;
             rotEnergyContr += 1.0 / 2.0 * RWIt->Js * RWIt->Omega * RWIt->Omega
@@ -368,10 +355,7 @@ void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos) {
         this->NewRWCmds.push_back(RWCmdInitializer);
     }
 
-    std::vector<RWConfigMsgPayload*>::iterator itp;
-    RWConfigMsgPayload* it;
-    for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++) {
-        it = *itp;
+    for (RWConfigMsgPayload* it : this->ReactionWheelData) {
         if (it->betaStatic == 0.0) {
             xmera::logging::get(this->modelTag)
                 ->warn(
@@ -398,13 +382,10 @@ void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos) {
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
     RWConfigMsgPayload test;
     RWConfigLogMsgPayload tmpRW;
-    std::vector<RWConfigMsgPayload*>::iterator itp;
-    RWConfigMsgPayload* it;
-    int c = 0;
-    for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++) {
-        it = *itp;
-        if (numRWJitter > 0) { it->theta = this->thetasState->getState()(itp - ReactionWheelData.begin(), 0); }
-        it->Omega = this->OmegasState->getState()(itp - ReactionWheelData.begin(), 0);
+    for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
+        RWConfigMsgPayload* it = this->ReactionWheelData[i];
+        if (numRWJitter > 0) { it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0); }
+        it->Omega = this->OmegasState->getState()(static_cast<Eigen::Index>(i), 0);
 
         tmpRW = RWConfigLogMsgPayload{};
         tmpRW.theta = it->theta;
@@ -423,8 +404,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
         eigenVectorToCArray(it->gsHat_B, tmpRW.gsHat_B);
         eigenVectorToCArray(it->rWB_B, tmpRW.rWB_B);
         // Write out config data for eachreaction wheel
-        this->rwOutMsgs[c]->write(tmpRW, this->moduleID, CurrentClock);
-        c++;
+        this->rwOutMsgs[i]->write(tmpRW, this->moduleID, CurrentClock);
     }
 
     return;
@@ -436,16 +416,14 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
  @return void
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos) {
-    std::vector<RWConfigMsgPayload*>::iterator itp;
-    RWConfigMsgPayload* it;
-    for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++) {
-        it = *itp;
+    for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
+        RWConfigMsgPayload* it = this->ReactionWheelData[i];
         if (numRWJitter > 0) {
-            it->theta = this->thetasState->getState()(itp - ReactionWheelData.begin(), 0);
-            this->rwSpeedMsgBuffer.wheelThetas[itp - ReactionWheelData.begin()] = it->theta;
+            it->theta = this->thetasState->getState()(static_cast<Eigen::Index>(i), 0);
+            this->rwSpeedMsgBuffer.wheelThetas[i] = it->theta;
         }
-        it->Omega = this->OmegasState->getState()(itp - ReactionWheelData.begin(), 0);
-        this->rwSpeedMsgBuffer.wheelSpeeds[itp - ReactionWheelData.begin()] = it->Omega;
+        it->Omega = this->OmegasState->getState()(static_cast<Eigen::Index>(i), 0);
+        this->rwSpeedMsgBuffer.wheelSpeeds[i] = it->Omega;
     }
 
     // Write this message once for all reaction wheels
@@ -465,11 +443,9 @@ void ReactionWheelStateEffector::ReadInputs() {
         this->incomingCmdBuffer = RwMotorTorqueMsgPayload{};
     }
 
-    //! - Set the NewRWCmds vector.  Using the data() method for raw speed
-    RWCmdMsgPayload* CmdPtr;
-    uint64_t i;
-    for (i = 0, CmdPtr = NewRWCmds.data(); i < ReactionWheelData.size(); CmdPtr++, i++) {
-        CmdPtr->u_cmd = this->incomingCmdBuffer.motorTorque[i];
+    //! - Set the NewRWCmds vector from the incoming motor-torque command array
+    for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
+        this->NewRWCmds[i].u_cmd = this->incomingCmdBuffer.motorTorque[i];
     }
 }
 
@@ -480,51 +456,43 @@ void ReactionWheelStateEffector::ReadInputs() {
  @param CurrentTime The current simulation time converted to a double
  */
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime) {
-    std::vector<RWCmdMsgPayload>::iterator CmdIt;
-    size_t RWIter = 0;
-
     // loop through commands
-    for (CmdIt = NewRWCmds.begin(); CmdIt != NewRWCmds.end(); CmdIt++) {
+    for (size_t RWIter = 0; RWIter < this->NewRWCmds.size(); RWIter++) {
+        RWCmdMsgPayload &cmd = this->NewRWCmds[RWIter];
+        RWConfigMsgPayload* rw = this->ReactionWheelData[RWIter];
+
         // Torque saturation
-        if (this->ReactionWheelData[RWIter]->u_max > 0) {
-            if (CmdIt->u_cmd > this->ReactionWheelData[RWIter]->u_max) {
-                CmdIt->u_cmd = this->ReactionWheelData[RWIter]->u_max;
-            } else if (CmdIt->u_cmd < -this->ReactionWheelData[RWIter]->u_max) {
-                CmdIt->u_cmd = -this->ReactionWheelData[RWIter]->u_max;
+        if (rw->u_max > 0) {
+            if (cmd.u_cmd > rw->u_max) {
+                cmd.u_cmd = rw->u_max;
+            } else if (cmd.u_cmd < -rw->u_max) {
+                cmd.u_cmd = -rw->u_max;
             }
         }
 
         // minimum torque
-        if (std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter]->u_min) { CmdIt->u_cmd = 0.0; }
+        if (std::abs(cmd.u_cmd) < rw->u_min) { cmd.u_cmd = 0.0; }
 
         // Power saturation
-        if (this->ReactionWheelData[RWIter]->P_max > 0) {
-            if (std::abs(CmdIt->u_cmd * this->ReactionWheelData[RWIter]->Omega)
-                >= this->ReactionWheelData[RWIter]->P_max) {
-                CmdIt->u_cmd = std::copysign(
-                    this->ReactionWheelData[RWIter]->P_max / this->ReactionWheelData[RWIter]->Omega,
-                    CmdIt->u_cmd
-                );
+        if (rw->P_max > 0) {
+            if (std::abs(cmd.u_cmd * rw->Omega) >= rw->P_max) {
+                cmd.u_cmd = std::copysign(rw->P_max / rw->Omega, cmd.u_cmd);
             }
         }
 
         // Speed saturation
         if (
-            std::abs(this->ReactionWheelData[RWIter]->Omega) >= this->ReactionWheelData[RWIter]->Omega_max
-            && this->ReactionWheelData[RWIter]->Omega_max
-                   > 0.0 /* negative Omega_max turns of wheel saturation modeling */
-            && this->ReactionWheelData[RWIter]->Omega * CmdIt->u_cmd
-                   >= 0.0  // check if torque would accelerate wheel speed beyond Omega_max
+            std::abs(rw->Omega) >= rw->Omega_max
+            && rw->Omega_max > 0.0           /* negative Omega_max turns off wheel saturation modeling */
+            && rw->Omega * cmd.u_cmd >= 0.0  // check if torque would accelerate wheel speed beyond Omega_max
         ) {
-            CmdIt->u_cmd = 0.0;
+            cmd.u_cmd = 0.0;
         }
 
-        this->ReactionWheelData[RWIter]->u_current = CmdIt->u_cmd;  // save actual torque for reaction wheel motor
+        rw->u_current = cmd.u_cmd;  // save actual torque for reaction wheel motor
 
         // Save the previous omega for next time
-        this->ReactionWheelData[RWIter]->omegaBefore = this->ReactionWheelData[RWIter]->Omega;
-
-        RWIter++;
+        rw->omegaBefore = rw->Omega;
     }
 }
 
