@@ -91,11 +91,11 @@ void SpacecraftReconfig::updateState(uint64_t callTime) {
                          callTime);
 
     /*! - write the module output messages */
-    this->attRefOutMsg.write(&attRefOutMsgBuffer, this->moduleID, callTime);
-    this->burnArrayInfoOutMsg.write(&this->burnArrayInfoOutMsgBuffer, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOutMsgBuffer, this->moduleID, callTime);
+    this->burnArrayInfoOutMsg.write(this->burnArrayInfoOutMsgBuffer, this->moduleID, callTime);
     if (this->thrustOnFlag == 1) {
         // only when thrustOnFlag is 1, thrustOnMessage is output
-        this->onTimeOutMsg.write(&thrustOnMsgBuffer, this->moduleID, callTime);
+        this->onTimeOutMsg.write(thrustOnMsgBuffer, this->moduleID, callTime);
     }
     return;
 }

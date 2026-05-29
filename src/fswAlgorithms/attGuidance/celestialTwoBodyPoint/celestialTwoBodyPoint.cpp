@@ -36,7 +36,7 @@ void CelestialTwoBodyPoint::updateState(uint64_t callTime) {
     AttRefMsgPayload attRefOut = this->algorithm.update(celBodyIn, secCelBodyIn, transNavIn);
 
     /*! - Write the output message */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 }
 
 /**

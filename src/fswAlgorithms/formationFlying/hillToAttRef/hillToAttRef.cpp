@@ -92,7 +92,7 @@ void HillToAttRef::updateState(uint64_t callTime) {
     // std::cout<<"Relative att components: "<<relativeAtt[0]<<" "<<relativeAtt[1]<<" "<<relativeAtt[2]<<std::endl;
     //  Convert that to an inertial attitude and write the attRef msg
     attRefOutPayload = this->relativeToInertialMRP(relativeAtt, baseSigma);
-    this->attRefOutMsg.write(&attRefOutPayload, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOutPayload, this->moduleID, callTime);
 
     // this->matrixIndex += 1;
 }

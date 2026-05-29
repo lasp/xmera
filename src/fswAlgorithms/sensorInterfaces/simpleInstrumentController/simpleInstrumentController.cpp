@@ -71,7 +71,7 @@ void SimpleInstrumentController::updateState(uint64_t callTime) {
     }
 
     // write to the output messages
-    this->deviceCmdOutMsg.write(&deviceCmdOutMsgBuffer, this->moduleID, callTime);
+    this->deviceCmdOutMsg.write(deviceCmdOutMsgBuffer, this->moduleID, callTime);
 
     return;
 }

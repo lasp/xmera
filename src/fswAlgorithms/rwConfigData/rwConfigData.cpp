@@ -41,5 +41,5 @@ void RwConfig::reset(uint64_t callTime) {
     }
 
     /*! - Write output RW config data to the messaging system*/
-    this->rwParamsOutMsg.write(&rwConfigParamsOut, moduleID, callTime);
+    this->rwParamsOutMsg.write(rwConfigParamsOut, moduleID, callTime);
 }

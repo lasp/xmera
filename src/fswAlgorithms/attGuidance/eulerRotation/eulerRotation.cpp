@@ -91,7 +91,7 @@ void EulerRotation::updateState(uint64_t callTime) {
     this->computeEulerRotationReference(inputRef.sigma_RN, inputRef.omega_RN_N, inputRef.domega_RN_N, &attRefOut);
 
     /* - Write output messages */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 
     /* - Update last time the module was called to current call time */
     this->priorTime = callTime;

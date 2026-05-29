@@ -223,6 +223,6 @@ void SpacecraftPointing::updateState(uint64_t callTime) {
     v3Copy(domega_RN_N, attReferenceOutBuffer.domega_RN_N);
 
     /* write the Guidance output message */
-    this->attReferenceOutMsg.write(&attReferenceOutBuffer, this->moduleID, callTime);
+    this->attReferenceOutMsg.write(attReferenceOutBuffer, this->moduleID, callTime);
     return;
 }

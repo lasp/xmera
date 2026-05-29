@@ -23,7 +23,7 @@ void OEStateEphem::reset(uint64_t callTime) {
  */
 void OEStateEphem::updateState(const uint64_t callTime) {
     auto tmpOutputState = this->algorithm.updateState(callTime);
-    this->stateFitOutMsg.write(&tmpOutputState, moduleID, callTime);
+    this->stateFitOutMsg.write(tmpOutputState, moduleID, callTime);
 }
 
 void OEStateEphem::setCentralBodyGravitationalParameter(const double mu) {

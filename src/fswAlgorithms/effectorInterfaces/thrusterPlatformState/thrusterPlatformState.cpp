@@ -60,5 +60,5 @@ void ThrusterPlatformState::updateState(uint64_t callTime) {
     thrusterConfigBOut.maxThrust = thrusterConfigFIn.maxThrust;
 
     /*! write output thruster config msg */
-    this->thrusterConfigBOutMsg.write(&thrusterConfigBOut, this->moduleID, callTime);
+    this->thrusterConfigBOutMsg.write(thrusterConfigBOut, this->moduleID, callTime);
 }

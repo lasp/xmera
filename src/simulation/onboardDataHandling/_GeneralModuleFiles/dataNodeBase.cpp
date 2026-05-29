@@ -38,7 +38,7 @@ void DataNodeBase::reset(uint64_t currentSimNanos) {
  */
 void DataNodeBase::writeMessages(uint64_t CurrentClock) {
     //! - write dataNode output messages - baud rate and name
-    this->nodeDataOutMsg.write(&this->nodeDataMsg, this->moduleID, CurrentClock);
+    this->nodeDataOutMsg.write(this->nodeDataMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);

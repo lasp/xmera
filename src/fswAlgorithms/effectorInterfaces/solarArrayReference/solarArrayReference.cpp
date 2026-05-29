@@ -124,5 +124,5 @@ void SolarArrayReference::updateState(uint64_t callTime) {
     this->count += 1;
 
     /* write output message */
-    this->hingedRigidBodyRefOutMsg.write(&hingedRigidBodyRefOut, this->moduleID, callTime);
+    this->hingedRigidBodyRefOutMsg.write(hingedRigidBodyRefOut, this->moduleID, callTime);
 }

@@ -193,9 +193,9 @@ uint64_t GroundMapping::checkInstrumentFOV() {
 void GroundMapping::WriteMessages(uint64_t CurrentClock) {
     //! - write access message for each spacecraft
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
-        this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
+        this->accessOutMsgs.at(c)->write(this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
         this->currentGroundStateOutMsgs.at(c)->write(
-            &this->currentGroundStateMsgBuffer.at(c), this->moduleID, CurrentClock);
+            this->currentGroundStateMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
 }
 

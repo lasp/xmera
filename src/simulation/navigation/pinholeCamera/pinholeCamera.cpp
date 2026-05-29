@@ -232,7 +232,7 @@ void PinholeCamera::writeOutputMessages(uint64_t CurrentClock) {
         /* Fill landmark output messages */
         this->landmarkMsgBuffer.at(i).isVisible = this->isvisibleLmk(i);
         eigenMatrixXToCArray(this->pixelLmk.row(i), this->landmarkMsgBuffer.at(i).pL);
-        this->landmarkOutMsgs.at(i)->write(&this->landmarkMsgBuffer.at(i), this->moduleID, CurrentClock);
+        this->landmarkOutMsgs.at(i)->write(this->landmarkMsgBuffer.at(i), this->moduleID, CurrentClock);
     }
 }
 

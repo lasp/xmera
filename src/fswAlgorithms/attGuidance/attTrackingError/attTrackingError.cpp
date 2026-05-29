@@ -36,7 +36,7 @@ void AttTrackingError::updateState(uint64_t callTime) {
     NavAttMsgPayload nav = this->attNavInMsg();
 
     AttGuidMsgPayload attGuidOut = this->algorithm.update(callTime, ref, nav);
-    this->attGuidOutMsg.write(&attGuidOut, this->moduleID, callTime);
+    this->attGuidOutMsg.write(attGuidOut, this->moduleID, callTime);
 }
 
 /*! Setter method for sigma_R0R.

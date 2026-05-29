@@ -68,7 +68,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime) 
         eigenVectorToCArray(this->r_FM_M, prescribedTranslationBuffer.r_FM_M);
         eigenVectorToCArray(this->rPrime_FM_M, prescribedTranslationBuffer.rPrime_FM_M);
         eigenVectorToCArray(this->rPrimePrime_FM_M, prescribedTranslationBuffer.rPrimePrime_FM_M);
-        this->prescribedTranslationOutMsg.write(&prescribedTranslationBuffer, this->moduleID, callTime);
+        this->prescribedTranslationOutMsg.write(prescribedTranslationBuffer, this->moduleID, callTime);
     }
 
     // Write the prescribed rotational motion output message if it is linked
@@ -78,7 +78,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime) 
         eigenVectorToCArray(this->omegaPrime_FM_F, prescribedRotationBuffer.omegaPrime_FM_F);
         Eigen::Vector3d sigma_FM_loc = eigenMrpToVector3(this->sigma_FM);
         eigenVectorToCArray(sigma_FM_loc, prescribedRotationBuffer.sigma_FM);
-        this->prescribedRotationOutMsg.write(&prescribedRotationBuffer, this->moduleID, callTime);
+        this->prescribedRotationOutMsg.write(prescribedRotationBuffer, this->moduleID, callTime);
     }
 
     // Write the effector config log message if it is linked
@@ -90,7 +90,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime) 
         eigenVectorToCArray(this->v_FcN_N, configLogMsg.v_BN_N);
         eigenVectorToCArray(this->sigma_FN, configLogMsg.sigma_BN);
         eigenVectorToCArray(this->omega_FN_F, configLogMsg.omega_BN_B);
-        this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, callTime);
+        this->prescribedMotionConfigLogOutMsg.write(configLogMsg, this->moduleID, callTime);
     }
 }
 

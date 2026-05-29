@@ -75,6 +75,6 @@ void TorqueScheduler::updateState(uint64_t callTime) {
     }
 
     /* write output messages */
-    this->motorTorqueOutMsg.write(&motorTorqueOut, this->moduleID, callTime);
-    this->effectorLockOutMsg.write(&effectorLockOut, this->moduleID, callTime);
+    this->motorTorqueOutMsg.write(motorTorqueOut, this->moduleID, callTime);
+    this->effectorLockOutMsg.write(effectorLockOut, this->moduleID, callTime);
 }

@@ -50,7 +50,7 @@ void GravityGradientEffector::addPlanetName(std::string planetName) {
 void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock) {
     GravityGradientMsgPayload outMsg;
     eigenVectorToCArray(this->torqueExternalPntB_B, outMsg.gravityGradientTorque_B);
-    this->gravityGradientOutMsg.write(&outMsg, this->moduleID, CurrentClock);
+    this->gravityGradientOutMsg.write(outMsg, this->moduleID, CurrentClock);
 
     return;
 }

@@ -37,7 +37,7 @@ void TamComm::updateState(uint64_t callTime) {
     m33MultV3(RECAST3X3 this->dcm_BS, localInput.tam_S, this->tamLocalOutput.tam_B);
 
     /*! - Write aggregate output into output message */
-    this->tamOutMsg.write(&tamLocalOutput, moduleID, callTime);
+    this->tamOutMsg.write(tamLocalOutput, moduleID, callTime);
 
     return;
 }

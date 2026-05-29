@@ -66,7 +66,7 @@ void SunSearch_C::updateState(uint64_t currentSimNanos) {
     }
 
     /*! Write the output messages */
-    this->attGuidOutMsg.write(&attGuidOut, this->moduleID, currentSimNanos);
+    this->attGuidOutMsg.write(attGuidOut, this->moduleID, currentSimNanos);
 }
 
 /*! Define this method to compute the kinematic properties of each slew

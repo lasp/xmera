@@ -193,8 +193,8 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
     //! - Check for data validity
     if (!this->measuredCloudBuffer.valid) {
         //! - Write the algorithm output data with zeros are results
-        this->outputSICPData.write(&this->sicpBuffer, this->moduleID, currentSimNanos);
-        this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, currentSimNanos);
+        this->outputSICPData.write(this->sicpBuffer, this->moduleID, currentSimNanos);
+        this->outputPointCloud.write(this->outputCloudBuffer, this->moduleID, currentSimNanos);
     } else {
         Eigen::MatrixXd measuredPoints = cArrayToEigenMatrixX(
             this->measuredCloudBuffer.points, SICP_POINT_DIM, this->measuredCloudBuffer.numberOfPoints);
@@ -265,7 +265,7 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
         this->outputCloudBuffer.numberOfPoints = this->Np;
         this->outputCloudBuffer.timeTag = currentSimNanos;
         //! - Write the algorithm output data with zeros are results
-        this->outputSICPData.write(&this->sicpBuffer, this->moduleID, currentSimNanos);
-        this->outputPointCloud.write(&this->outputCloudBuffer, this->moduleID, currentSimNanos);
+        this->outputSICPData.write(this->sicpBuffer, this->moduleID, currentSimNanos);
+        this->outputPointCloud.write(this->outputCloudBuffer, this->moduleID, currentSimNanos);
     }
 }

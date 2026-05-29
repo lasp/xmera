@@ -56,7 +56,7 @@ void RwMotorVoltage::updateState(uint64_t callTime) {
     RwMotorVoltageMsgPayload voltageOut =
         this->algorithm.update(callTime, torqueCmd, rwAvailability, rwSpeed, rwSpeedMsgIsLinked);
 
-    this->voltageOutMsg.write(&voltageOut, this->moduleID, callTime);
+    this->voltageOutMsg.write(voltageOut, this->moduleID, callTime);
 }
 
 /**

@@ -185,7 +185,7 @@ void OneAxisSolarArrayPoint::updateState(uint64_t callTime) {
     v3Copy(sigma_RN, attRefOut.sigma_RN);
 
     /*! write output message */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 }
 
 /*! This helper function computes the first rotation that aligns the body heading with the inertial heading */

@@ -142,7 +142,7 @@ void MtbEffector::WriteOutputMessages(uint64_t CurrentClock) {
      * Write output message
      */
     eigenVectorToCArray(this->torqueExternalPntB_B, mtbOutMsgBuffer.mtbNetTorque_B);
-    this->mtbOutMsg.write(&mtbOutMsgBuffer, this->moduleID, CurrentClock);
+    this->mtbOutMsg.write(mtbOutMsgBuffer, this->moduleID, CurrentClock);
 
     return;
 }

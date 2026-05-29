@@ -193,7 +193,7 @@ void SunlineSuKF::updateState(uint64_t callTime) {
     v3Copy(this->state, this->outputSunline.vehSunPntBdy);
     v3Normalize(this->outputSunline.vehSunPntBdy, this->outputSunline.vehSunPntBdy);
     this->outputSunline.timeTag = this->timeTag;
-    this->navStateOutMsg.write(&this->outputSunline, this->moduleID, callTime);
+    this->navStateOutMsg.write(this->outputSunline, this->moduleID, callTime);
 
     /*! - Switch the rates back to omega_BN instead of omega_SB */
     vCopy(this->state, SKF_N_STATES_SWITCH, states_BN);
@@ -208,7 +208,7 @@ void SunlineSuKF::updateState(uint64_t callTime) {
     memmove(sunlineDataOutBuffer.covar, this->covar, SKF_N_STATES_SWITCH * SKF_N_STATES_SWITCH * sizeof(double));
     memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH * sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, this->postFits, MAX_N_CSS_MEAS * sizeof(double));
-    this->filtDataOutMsg.write(&sunlineDataOutBuffer, this->moduleID, callTime);
+    this->filtDataOutMsg.write(sunlineDataOutBuffer, this->moduleID, callTime);
 
     return;
 }

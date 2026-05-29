@@ -122,8 +122,8 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
  */
 void InitializeICP::writeOutputMessages(uint64_t currentSimNanos) {
     //! - Write the algorithm output data with zeros are results
-    this->measuredPointCloud.write(&this->normalizedCloudBuffer, this->moduleID, currentSimNanos);
-    this->initializeSICPMsg.write(&this->outputIcpBuffer, this->moduleID, currentSimNanos);
+    this->measuredPointCloud.write(this->normalizedCloudBuffer, this->moduleID, currentSimNanos);
+    this->initializeSICPMsg.write(this->outputIcpBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This module reads a point cloud and performs an normalization on the points, it then reads the last messages

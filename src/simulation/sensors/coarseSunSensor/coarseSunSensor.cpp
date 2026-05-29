@@ -305,7 +305,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock) {
         //! - Set the outgoing data to the scaled computation
         localMessage.OutputData = this->sensedValue;
         //! - Write the outgoing message to the architecture
-        this->cssDataOutMsg.write(&localMessage, this->moduleID, Clock);
+        this->cssDataOutMsg.write(localMessage, this->moduleID, Clock);
     }
 
     // create CSS configuration log message
@@ -319,7 +319,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock) {
         eigenVectorToCArray(this->r_B, configMsg.r_B);
         eigenVectorToCArray(this->nHat_B, configMsg.nHat_B);
 
-        this->cssConfigLogOutMsg.write(&configMsg, this->moduleID, Clock);
+        this->cssConfigLogOutMsg.write(configMsg, this->moduleID, Clock);
     }
 }
 
@@ -389,7 +389,7 @@ void CSSConstellation::updateState(uint64_t currentSimNanos) {
         this->outputBuffer.CosValue[itp - this->sensorList.begin()] = it->sensedValue;
     }
     this->outputBuffer.timeTag = (double) (currentSimNanos * NANO2SEC);
-    this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, currentSimNanos);
+    this->constellationOutMsg.write(this->outputBuffer, this->moduleID, currentSimNanos);
 }
 
 void CSSConstellation::appendCSS(CoarseSunSensor* newSensor) {

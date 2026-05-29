@@ -48,6 +48,6 @@ void EphemDifference::updateState(uint64_t callTime) {
             tmpEphStore.v_BdyZero_N[j] -= tmpBaseEphem.v_BdyZero_N[j];
         }
 
-        this->changeBodies[i].ephOutMsg.write(&tmpEphStore, moduleID, callTime);
+        this->changeBodies[i].ephOutMsg.write(tmpEphStore, moduleID, callTime);
     }
 }

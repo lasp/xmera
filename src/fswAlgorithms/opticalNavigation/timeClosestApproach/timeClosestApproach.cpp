@@ -37,7 +37,7 @@ void TimeClosestApproach::writeMessages(const double tCA, const double sigmaTca,
     tcaMsgBuffer.standardDeviation = sigmaTca;
 
     /*! Write the output messages */
-    this->tcaOutMsg.write(&tcaMsgBuffer, this->moduleID, currentSimNanos);
+    this->tcaOutMsg.write(tcaMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Compute flyby geometry variables f0 & gamma0.

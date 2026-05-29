@@ -125,7 +125,7 @@ void GravityEffector::updateState(uint64_t currentSimNanos) {
 
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos) {
     if (this->centralBodyOutMsg.isLinked() && this->centralBody) {
-        this->centralBodyOutMsg.write(&this->centralBody->localPlanet, this->moduleID, currentSimNanos);
+        this->centralBodyOutMsg.write(this->centralBody->localPlanet, this->moduleID, currentSimNanos);
     }
 }
 

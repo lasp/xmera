@@ -122,7 +122,7 @@ bool SpacecraftLocation::ReadMessages() {
 void SpacecraftLocation::WriteMessages(uint64_t CurrentClock) {
     //! - write access message for each spacecraft
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
-        this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
+        this->accessOutMsgs.at(c)->write(this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
 }
 

@@ -127,10 +127,10 @@ void SunlineSRuKFTemplated::writeOutputMessages(uint64_t currentSimNanos) {
     //        i += 1;
     //    }
     //
-    //    this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, currentSimNanos);
-    //    this->filterOutMsg.write(&filterMsgBuffer, this->moduleID, currentSimNanos);
-    //    this->filterCssResOutMsg.write(&filterCssResMsgBuffer, this->moduleID, currentSimNanos);
-    //    this->filterGyroResOutMsg.write(&filterGyroResMsgBuffer, this->moduleID, currentSimNanos);
+    //    this->navAttOutMsg.write(navAttOutMsgBuffer, this->moduleID, currentSimNanos);
+    //    this->filterOutMsg.write(filterMsgBuffer, this->moduleID, currentSimNanos);
+    //    this->filterCssResOutMsg.write(filterCssResMsgBuffer, this->moduleID, currentSimNanos);
+    //    this->filterGyroResOutMsg.write(filterGyroResMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Read the rate gyro input message

@@ -41,7 +41,7 @@ void RateMsgConverter::updateState(uint64_t callTime) {
     v3Copy(inMsg.AngVelBody, outMsg.omega_BN_B);
 
     /*! - write output message */
-    this->navRateOutMsg.write(&outMsg, this->moduleID, callTime);
+    this->navRateOutMsg.write(outMsg, this->moduleID, callTime);
 
     return;
 }

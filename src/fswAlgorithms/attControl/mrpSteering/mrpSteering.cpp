@@ -27,7 +27,7 @@ void MrpSteering::updateState(uint64_t callTime) {
 
     RateCmdMsgPayload outMsg = this->algorithm.update(guidCmd);
 
-    this->rateCmdOutMsg.write(&outMsg, moduleID, callTime);
+    this->rateCmdOutMsg.write(outMsg, moduleID, callTime);
 }
 
 /*! Set the linear feedback gain K1

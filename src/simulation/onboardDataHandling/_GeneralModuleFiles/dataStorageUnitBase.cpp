@@ -117,7 +117,7 @@ void DataStorageUnitBase::writeMessages(uint64_t CurrentClock) {
         this->storageStatusMsg.storedData.push_back(this->storedData[i].dataInstanceSum);
     }
 
-    this->storageUnitDataOutMsg.write(&this->storageStatusMsg, this->moduleID, CurrentClock);
+    this->storageUnitDataOutMsg.write(this->storageStatusMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);

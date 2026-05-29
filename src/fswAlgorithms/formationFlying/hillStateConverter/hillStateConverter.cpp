@@ -43,7 +43,7 @@ void HillStateConverter::updateState(uint64_t callTime) {
             hillStateOut.v_DC_H);
 
     /*! - write the module output message */
-    this->hillStateOutMsg.write(&hillStateOut, this->moduleID, callTime);
+    this->hillStateOutMsg.write(hillStateOut, this->moduleID, callTime);
 
     return;
 }

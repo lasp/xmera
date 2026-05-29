@@ -38,7 +38,7 @@ void EphemeridesRecenter::updateState(uint64_t callTime) {
 
     for (auto i = 0; i < this->ephemeridesNumber; ++i) {
         this->recenteredEphemerisOutputMsgs[i]->write(
-            &outputPayloads[i].outputEphemerisPayload, this->moduleID, callTime);
+            outputPayloads[i].outputEphemerisPayload, this->moduleID, callTime);
     }
 }
 

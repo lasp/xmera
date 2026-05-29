@@ -65,8 +65,8 @@ void MrpFeedback::updateState(uint64_t callTime) {
 
     MrpFeedbackOutput mrpFeedbackOutput = algorithm.update(callTime, guidCmd, wheelSpeeds, wheelsAvailability);
 
-    this->cmdTorqueOutMsg.write(&mrpFeedbackOutput.controlOut, moduleID, callTime);
-    this->intFeedbackTorqueOutMsg.write(&mrpFeedbackOutput.intFeedbackOut, this->moduleID, callTime);
+    this->cmdTorqueOutMsg.write(mrpFeedbackOutput.controlOut, moduleID, callTime);
+    this->intFeedbackTorqueOutMsg.write(mrpFeedbackOutput.intFeedbackOut, this->moduleID, callTime);
 }
 
 /*! Setter method for the gain K.

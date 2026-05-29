@@ -236,13 +236,13 @@ void MsmForceTorque::updateState(uint64_t currentSimNanos) {
 
         // store net force and torque acting on body
         eigenVectorToCArray(netForce_N, forceMsgBuffer.forceRequestInertial);
-        this->eForceOutMsgs.at(c)->write(&forceMsgBuffer, this->moduleID, currentSimNanos);
+        this->eForceOutMsgs.at(c)->write(forceMsgBuffer, this->moduleID, currentSimNanos);
         eigenVectorToCArray(netTorque_B, torqueMsgBuffer.torqueRequestBody);
-        this->eTorqueOutMsgs.at(c)->write(&torqueMsgBuffer, this->moduleID, currentSimNanos);
+        this->eTorqueOutMsgs.at(c)->write(torqueMsgBuffer, this->moduleID, currentSimNanos);
 
         // store MSM charges to output message
         chargeMsmMsgBuffer.q = q.segment(i0, i1 - i0);
-        this->chargeMsmOutMsgs.at(c)->write(&chargeMsmMsgBuffer, this->moduleID, currentSimNanos);
+        this->chargeMsmOutMsgs.at(c)->write(chargeMsmMsgBuffer, this->moduleID, currentSimNanos);
 
         // set the body sphere start counter
         i0 = i1;

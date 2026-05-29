@@ -172,11 +172,11 @@ void MrpFeedback_C::updateState(uint64_t callTime) {
 
     /*! - set the output message and write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    this->cmdTorqueOutMsg.write(&controlOut, moduleID, callTime);
+    this->cmdTorqueOutMsg.write(controlOut, moduleID, callTime);
 
     /*! - write the output integral feedback torque */
     v3Scale(-1.0, v3_5, intFeedbackOut.torqueRequestBody);
-    this->intFeedbackTorqueOutMsg.write(&intFeedbackOut, this->moduleID, callTime);
+    this->intFeedbackTorqueOutMsg.write(intFeedbackOut, this->moduleID, callTime);
 
     return;
 }

@@ -65,5 +65,5 @@ void SolarFlux::readMessages() {
  */
 void SolarFlux::writeMessages(uint64_t currentSimNanos) {
     SolarFluxMsgPayload fluxMsgOutData = {this->fluxAtSpacecraft};
-    this->solarFluxOutMsg.write(&fluxMsgOutData, this->moduleID, currentSimNanos);
+    this->solarFluxOutMsg.write(fluxMsgOutData, this->moduleID, currentSimNanos);
 }

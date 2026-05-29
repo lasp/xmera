@@ -124,9 +124,9 @@ void MtbMomentumManagement::updateState(uint64_t callTime) {
     /*
      * Write output messages.
      */
-    this->mtbCmdOutMsg.write(&mtbCmdOutputMsgBuffer, moduleID, callTime);
+    this->mtbCmdOutMsg.write(mtbCmdOutputMsgBuffer, moduleID, callTime);
     vAdd(this->tauDesiredRW_W, numRW, rwMotorTorqueOutMsgBuffer.motorTorque, rwMotorTorqueOutMsgBuffer.motorTorque);
-    this->rwMotorTorqueOutMsg.write(&rwMotorTorqueOutMsgBuffer, moduleID, callTime);
+    this->rwMotorTorqueOutMsg.write(rwMotorTorqueOutMsgBuffer, moduleID, callTime);
 
     return;
 }

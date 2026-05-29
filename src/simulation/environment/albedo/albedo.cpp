@@ -301,7 +301,7 @@ void Albedo::writeMessages(uint64_t currentSimNanos) {
         localMessage.albedoAtInstrument = this->albOutData.at(idx)[1];
         localMessage.AfluxAtInstrumentMax = this->albOutData.at(idx)[2];
         localMessage.AfluxAtInstrument = this->albOutData.at(idx)[3];
-        this->albOutMsgs.at(idx)->write(&localMessage, this->moduleID, currentSimNanos);
+        this->albOutMsgs.at(idx)->write(localMessage, this->moduleID, currentSimNanos);
     }
 }
 

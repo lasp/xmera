@@ -56,7 +56,7 @@ void PowerStorageBase::reset(uint64_t currentSimNanos) {
  @return void
  */
 void PowerStorageBase::writeMessages(uint64_t CurrentClock) {
-    this->batPowerOutMsg.write(&this->storageStatusMsg, this->moduleID, CurrentClock);
+    this->batPowerOutMsg.write(this->storageStatusMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);

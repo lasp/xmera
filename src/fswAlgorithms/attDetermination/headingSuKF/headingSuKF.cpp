@@ -157,7 +157,7 @@ void HeadingSuKF::updateState(uint64_t callTime) {
     mCopy(this->covar, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, headingDataOutBuffer.covar);
     vCopy(states_BN, HEAD_N_STATES_SWITCH, headingDataOutBuffer.state);
     v3Copy(this->postFits, headingDataOutBuffer.postFitRes);
-    this->filtDataOutMsg.write(&headingDataOutBuffer, this->moduleID, callTime);
+    this->filtDataOutMsg.write(headingDataOutBuffer, this->moduleID, callTime);
 
     /*! - Write the heading estimate into the copy of the OpNav message structure*/
     opnavOutputBuffer.timeTag = this->timeTag;
@@ -174,7 +174,7 @@ void HeadingSuKF::updateState(uint64_t callTime) {
     }
     opnavOutputBuffer.valid = this->opnavInBuffer.valid;
     opnavOutputBuffer.timeTag = this->opnavInBuffer.timeTag;
-    this->opnavDataOutMsg.write(&opnavOutputBuffer, this->moduleID, callTime);
+    this->opnavDataOutMsg.write(opnavOutputBuffer, this->moduleID, callTime);
 
     return;
 }

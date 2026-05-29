@@ -23,7 +23,7 @@ void RateDamp::updateState(uint64_t currentSimNanos) {
     // Call the algorithm update method
     CmdTorqueBodyMsgPayload cmdTorqueOutBuffer = this->algorithm.update(currentSimNanos, attNavInBuffer);
 
-    this->cmdTorqueOutMsg.write(&cmdTorqueOutBuffer, this->moduleID, currentSimNanos);
+    this->cmdTorqueOutMsg.write(cmdTorqueOutBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Set the module rate feedback gain

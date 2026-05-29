@@ -45,5 +45,5 @@ void ThrMomentumManagementCpp::updateState(uint64_t currentSimNanos) {
 
     CmdTorqueBodyMsgPayload controlOutMsg{};
     eigenVectorToCArray(Delta_H_B, controlOutMsg.torqueRequestBody);
-    this->deltaHOutMsg.write(&controlOutMsg, this->moduleID, currentSimNanos);
+    this->deltaHOutMsg.write(controlOutMsg, this->moduleID, currentSimNanos);
 }

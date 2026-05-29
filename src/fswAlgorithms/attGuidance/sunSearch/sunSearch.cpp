@@ -25,7 +25,7 @@ void SunSearch::updateState(uint64_t currentSimNanos) {
     NavAttMsgPayload navAttIn = this->attNavInMsg();
     AttGuidMsgPayload attGuidOut = this->algorithm.update(currentSimNanos, navAttIn);
 
-    this->attGuidOutMsg.write(&attGuidOut, this->moduleID, currentSimNanos);
+    this->attGuidOutMsg.write(attGuidOut, this->moduleID, currentSimNanos);
 }
 
 /**

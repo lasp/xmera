@@ -92,7 +92,7 @@ void EphemerisConverter::readInputMessages() {
  */
 void EphemerisConverter::writeOutputMessages(uint64_t currentSimNanos) {
     for (long unsigned int c = 0; c < this->ephemOutMsgs.size(); c++) {
-        this->ephemOutMsgs.at(c)->write(&this->ephemOutBuffers.at(c), this->moduleID, currentSimNanos);
+        this->ephemOutMsgs.at(c)->write(this->ephemOutBuffers.at(c), this->moduleID, currentSimNanos);
     }
 }
 

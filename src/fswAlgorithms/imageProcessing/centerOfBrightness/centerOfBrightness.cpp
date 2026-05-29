@@ -61,8 +61,8 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
     CenterOfBrightnessDiagnosticMsgPayload diagnosticBuffer{result.noPixelTrigger,
                                                             result.notExceedingBrightnessIncreaseTrigger};
 
-    this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
-    this->centerOfBrightnessDiagnosticOutMsg.write(&diagnosticBuffer, this->moduleID, currentSimNanos);
+    this->opnavCOBOutMsg.write(cobBuffer, this->moduleID, currentSimNanos);
+    this->centerOfBrightnessDiagnosticOutMsg.write(diagnosticBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Delegating setters/getters for algorithm parameters */

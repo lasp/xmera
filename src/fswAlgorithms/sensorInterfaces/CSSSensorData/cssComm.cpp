@@ -98,7 +98,7 @@ void CSSComm::updateState(uint64_t callTime) {
     }
 
     /*! - Write aggregate output into output message */
-    this->cssArrayOutMsg.write(&outputBuffer, this->moduleID, callTime);
+    this->cssArrayOutMsg.write(outputBuffer, this->moduleID, callTime);
 
     return;
 }

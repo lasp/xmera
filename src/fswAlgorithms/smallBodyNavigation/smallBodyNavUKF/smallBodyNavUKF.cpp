@@ -245,7 +245,7 @@ void SmallBodyNavUKF::writeMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray2D(this->P_k1, smallBodyNavUKFOutMsgBuffer.covar);
 
     /* Write to the C++-wrapped output messages */
-    this->smallBodyNavUKFOutMsg.write(&smallBodyNavUKFOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->smallBodyNavUKFOutMsg.write(smallBodyNavUKFOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This is the main method that gets called every time the module is updated.

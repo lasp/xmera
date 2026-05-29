@@ -69,7 +69,7 @@ void RateServoFullNonlinear::updateState(uint64_t callTime) {
 
     CmdTorqueBodyMsgPayload controlOut = algorithm.update(callTime, guidCmd, rateGuid, wheelSpeeds, wheelsAvailability);
 
-    this->cmdTorqueOutMsg.write(&controlOut, moduleID, callTime);
+    this->cmdTorqueOutMsg.write(controlOut, moduleID, callTime);
 }
 
 /*! Setter method for the gain P.

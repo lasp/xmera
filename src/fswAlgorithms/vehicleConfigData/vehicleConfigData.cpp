@@ -19,5 +19,5 @@ void VehicleConfigData::reset(uint64_t callTime) {
     localConfigData.massSC = this->massSC;
 
     /*! - Write output properties to the messaging system*/
-    this->vecConfigOutMsg.write(&localConfigData, this->moduleID, callTime);
+    this->vecConfigOutMsg.write(localConfigData, this->moduleID, callTime);
 }

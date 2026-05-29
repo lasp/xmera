@@ -86,7 +86,7 @@ void ChebyPosEphem::updateState(uint64_t callTime) {
             &(currRec->velChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
     }
 
-    this->posFitOutMsg.write(&outputState, this->moduleID, callTime);
+    this->posFitOutMsg.write(outputState, this->moduleID, callTime);
 
     return;
 }

@@ -548,7 +548,7 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
     rawMsg.height = H;
     rawMsg.imagePointer = this->rawBuf.data();
     rawMsg.imageBufferLength = static_cast<int32_t>(n * sizeof(uint16_t));
-    rawImageOutMsg.write(&rawMsg, moduleID, callTime);
+    rawImageOutMsg.write(rawMsg, moduleID, callTime);
 
     // Blurred image
     FpgaRawImageMsgPayload blurMsg{};
@@ -557,7 +557,7 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
     blurMsg.height = H;
     blurMsg.imagePointer = this->blurBuf.data();
     blurMsg.imageBufferLength = static_cast<int32_t>(n * sizeof(uint16_t));
-    blurredImageOutMsg.write(&blurMsg, moduleID, callTime);
+    blurredImageOutMsg.write(blurMsg, moduleID, callTime);
 
     // Threshold image
     FpgaThreshImageMsgPayload threshMsg{};
@@ -567,7 +567,7 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
     threshMsg.threshold = this->threshold;
     threshMsg.imagePointer = this->threshBuf.data();
     threshMsg.imageBufferLength = static_cast<int32_t>(this->threshBuf.size());
-    threshImageOutMsg.write(&threshMsg, moduleID, callTime);
+    threshImageOutMsg.write(threshMsg, moduleID, callTime);
 
     // Row/col sums
     FpgaRowColSumMsgPayload rcMsg{};
@@ -578,11 +578,11 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
     rcMsg.colSumPointer = this->colSumBuf.data();
     rcMsg.rowSumBufferLength = static_cast<int32_t>(H * sizeof(uint16_t));
     rcMsg.colSumBufferLength = static_cast<int32_t>(W * sizeof(uint16_t));
-    rowColSumOutMsg.write(&rcMsg, moduleID, callTime);
+    rowColSumOutMsg.write(rcMsg, moduleID, callTime);
 
     // ROI
     roi.timeTag = imageTimeTag;
-    roiOutMsg.write(&roi, moduleID, callTime);
+    roiOutMsg.write(roi, moduleID, callTime);
 
     // Config snapshot
     FpgaPipelineConfigMsgPayload cfgMsg{};
@@ -601,7 +601,7 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
         std::strncpy(cfgMsg.calibImageRef, this->calibImageFile.c_str(), FPGA_CALIB_REF_LEN - 1);
         cfgMsg.calibImageRef[FPGA_CALIB_REF_LEN - 1] = '\0';
     }
-    configOutMsg.write(&cfgMsg, moduleID, callTime);
+    configOutMsg.write(cfgMsg, moduleID, callTime);
 }
 
 // ---------------------------------------------------------------------------

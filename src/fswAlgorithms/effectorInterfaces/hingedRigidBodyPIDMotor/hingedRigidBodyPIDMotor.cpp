@@ -62,5 +62,5 @@ void HingedRigidBodyPIDMotor::updateState(uint64_t callTime) {
     motorTorqueOut.motorTorque[0] = T;
 
     /*! write output message */
-    this->motorTorqueOutMsg.write(&motorTorqueOut, this->moduleID, callTime);
+    this->motorTorqueOutMsg.write(motorTorqueOut, this->moduleID, callTime);
 }

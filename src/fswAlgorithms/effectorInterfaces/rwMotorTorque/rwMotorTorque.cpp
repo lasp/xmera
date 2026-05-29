@@ -57,7 +57,7 @@ void RwMotorTorque::updateState(uint64_t callTime) {
     RwMotorTorqueMsgPayload rwMotorTorques =
         algorithm.update(LrInputMsg, LrInput2Msg, wheelsAvailability, cmdTorque2IsLinked, rwAvailIsLinked);
 
-    this->rwMotorTorqueOutMsg.write(&rwMotorTorques, this->moduleID, callTime);
+    this->rwMotorTorqueOutMsg.write(rwMotorTorques, this->moduleID, callTime);
 }
 
 /*! Setter method for the control axes mapping matrix CB, where each row includes the transpose of a control axis.

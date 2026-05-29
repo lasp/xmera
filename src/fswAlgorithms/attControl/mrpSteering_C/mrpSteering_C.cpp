@@ -44,7 +44,7 @@ void MrpSteering_C::updateState(uint64_t callTime) {
     MRPSteeringLaw(this, guidCmd.sigma_BR, outMsg.omega_BastR_B, outMsg.omegap_BastR_B);
 
     /*! - Store the output message and pass it to the message bus */
-    this->rateCmdOutMsg.write(&outMsg, moduleID, callTime);
+    this->rateCmdOutMsg.write(outMsg, moduleID, callTime);
 
     return;
 }

@@ -153,5 +153,5 @@ void DVAccumulation::updateState(uint64_t callTime) {
     v3Copy(this->vehAccumDV_B, outputData.vehAccumDV);
 
     /*! - write accumulated Dv message */
-    this->dvAcumOutMsg.write(&outputData, this->moduleID, callTime);
+    this->dvAcumOutMsg.write(outputData, this->moduleID, callTime);
 }

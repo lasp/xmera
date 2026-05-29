@@ -121,7 +121,7 @@ void AtmosphereBase::customreset(uint64_t CurrentClock) { return; }
 void AtmosphereBase::writeMessages(uint64_t CurrentClock) {
     //! - write density output messages for each spacecaft's locations
     for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
-        this->envOutMsgs.at(c)->write(&this->envOutBuffer.at(c), this->moduleID, CurrentClock);
+        this->envOutMsgs.at(c)->write(this->envOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
     //! - call the custom method to perform additional output message writing

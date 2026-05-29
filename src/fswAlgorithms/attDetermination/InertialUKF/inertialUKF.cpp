@@ -241,13 +241,13 @@ void InertialUKF::updateState(uint64_t callTime) {
     v3Copy(this->omega_BN_BOut, outputInertial.omega_BN_B);
     outputInertial.timeTag = this->timeTagOut;
 
-    this->navStateOutMsg.write(&outputInertial, this->moduleID, callTime);
+    this->navStateOutMsg.write(outputInertial, this->moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     inertialDataOutBuffer.timeTag = this->timeTag;
     memmove(inertialDataOutBuffer.covar, this->covar, AKF_N_STATES * AKF_N_STATES * sizeof(double));
     memmove(inertialDataOutBuffer.state, this->state, AKF_N_STATES * sizeof(double));
-    this->filtDataOutMsg.write(&inertialDataOutBuffer, this->moduleID, callTime);
+    this->filtDataOutMsg.write(inertialDataOutBuffer, this->moduleID, callTime);
     this->rwSpeedPrev = this->rwSpeeds;
     return;
 }

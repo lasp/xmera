@@ -413,11 +413,11 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     // panel 1 states
     panelOutputStates.theta = this->theta1;
     panelOutputStates.thetaDot = this->theta1Dot;
-    this->dualHingedRigidBodyOutMsgs[0]->write(&panelOutputStates, this->moduleID, CurrentClock);
+    this->dualHingedRigidBodyOutMsgs[0]->write(panelOutputStates, this->moduleID, CurrentClock);
     // panel 2 states
     panelOutputStates.theta = this->theta2;
     panelOutputStates.thetaDot = this->theta2Dot;
-    this->dualHingedRigidBodyOutMsgs[1]->write(&panelOutputStates, this->moduleID, CurrentClock);
+    this->dualHingedRigidBodyOutMsgs[1]->write(panelOutputStates, this->moduleID, CurrentClock);
 
     // write out the panel state config log message
     SCStatesMsgPayload configLogMsg;
@@ -428,7 +428,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
         eigenVectorToCArray(this->v_SN_N[i], configLogMsg.v_BN_N);
         eigenVectorToCArray(this->sigma_SN[i], configLogMsg.sigma_BN);
         eigenVectorToCArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
-        this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
+        this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(configLogMsg, this->moduleID, CurrentClock);
     }
 }
 

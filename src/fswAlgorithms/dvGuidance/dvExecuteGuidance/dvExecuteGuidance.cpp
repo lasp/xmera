@@ -80,13 +80,13 @@ void DvExecuteGuidance::updateState(uint64_t callTime) {
 
     if (this->burnComplete || this->burnExecuting != 1) {
         effCmd = {};
-        this->thrCmdOutMsg.write(&effCmd, this->moduleID, callTime);
+        this->thrCmdOutMsg.write(effCmd, this->moduleID, callTime);
     }
 
     localExeData = {};
     localExeData.burnComplete = this->burnComplete;
     localExeData.burnExecuting = this->burnExecuting;
-    this->burnExecOutMsg.write(&localExeData, this->moduleID, callTime);
+    this->burnExecOutMsg.write(localExeData, this->moduleID, callTime);
 
     return;
 }

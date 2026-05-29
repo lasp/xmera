@@ -169,7 +169,7 @@ void ThrMomentumDumping::updateState(uint64_t callTime) {
     this->priorTime = callTime;
 
     /*! - write out the output message */
-    this->thrusterOnTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
+    this->thrusterOnTimeOutMsg.write(thrOnTimeOut, this->moduleID, callTime);
 
     return;
 }

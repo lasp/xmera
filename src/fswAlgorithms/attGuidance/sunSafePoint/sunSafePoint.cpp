@@ -35,7 +35,7 @@ void SunSafePoint::updateState(uint64_t callTime) {
     // Call the algorithm update method
     AttGuidMsgPayload attGuidanceOutBuffer = this->algorithm.update(callTime, imuMsgPayload, sunDirectionMsgPayload);
 
-    this->attGuidanceOutMsg.write(&attGuidanceOutBuffer, moduleID, callTime);
+    this->attGuidanceOutMsg.write(attGuidanceOutBuffer, moduleID, callTime);
 }
 
 /*! Getter method for the minimally accepted sun body vector norm.

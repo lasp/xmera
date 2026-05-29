@@ -101,7 +101,7 @@ void HillPoint::updateState(uint64_t callTime) {
     computeHillPointingReference(
         navData.r_BN_N, navData.v_BN_N, primPlanet.r_BdyZero_N, primPlanet.v_BdyZero_N, &attRefOut);
 
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 
     return;
 }

@@ -76,7 +76,7 @@ void MrpPD_C::updateState(uint64_t callTime) {
 
     /*! - Store and write the output message */
     v3Copy(Lr, controlOutMsg.torqueRequestBody);
-    this->cmdTorqueOutMsg.write(&controlOutMsg, moduleID, callTime);
+    this->cmdTorqueOutMsg.write(controlOutMsg, moduleID, callTime);
 
     return;
 }

@@ -74,13 +74,13 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         spinningBodyBuffer = HingedRigidBodyMsgPayload{};
         spinningBodyBuffer.theta = this->theta1;
         spinningBodyBuffer.thetaDot = this->theta1Dot;
-        this->spinningBodyOutMsgs[0]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
+        this->spinningBodyOutMsgs[0]->write(spinningBodyBuffer, this->moduleID, CurrentClock);
     }
     if (this->spinningBodyOutMsgs[1]->isLinked()) {
         spinningBodyBuffer = HingedRigidBodyMsgPayload{};
         spinningBodyBuffer.theta = this->theta2;
         spinningBodyBuffer.thetaDot = this->theta2Dot;
-        this->spinningBodyOutMsgs[1]->write(&spinningBodyBuffer, this->moduleID, CurrentClock);
+        this->spinningBodyOutMsgs[1]->write(spinningBodyBuffer, this->moduleID, CurrentClock);
     }
 
     // Write out the spinning body state config log message
@@ -93,7 +93,7 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         eigenVectorToCArray(this->v_Sc1N_N, configLogMsg.v_BN_N);
         eigenVectorToCArray(this->sigma_S1N, configLogMsg.sigma_BN);
         eigenVectorToCArray(this->omega_S1N_S1, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsgs[0]->write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsgs[0]->write(configLogMsg, this->moduleID, CurrentClock);
     }
 
     if (this->spinningBodyConfigLogOutMsgs[1]->isLinked()) {
@@ -105,7 +105,7 @@ void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         eigenVectorToCArray(this->v_Sc2N_N, configLogMsg.v_BN_N);
         eigenVectorToCArray(this->sigma_S2N, configLogMsg.sigma_BN);
         eigenVectorToCArray(this->omega_S2N_S2, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsgs[1]->write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsgs[1]->write(configLogMsg, this->moduleID, CurrentClock);
     }
 }
 

@@ -46,7 +46,7 @@ void SimpleDeadband::updateState(uint64_t callTime) {
     this->applyDBLogic_simpleDeadband();
 
     /*! - Write output guidance message and update module knowledge of control status*/
-    this->attGuidOutMsg.write(&this->attGuidOut, this->moduleID, callTime);
+    this->attGuidOutMsg.write(this->attGuidOut, this->moduleID, callTime);
     return;
 }
 

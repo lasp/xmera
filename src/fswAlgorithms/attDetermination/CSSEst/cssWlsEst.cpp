@@ -147,7 +147,7 @@ void CssWlsEst::updateState(uint64_t callTime) {
         this->filtStatus.numObs = (int)this->numActiveCss;
         this->filtStatus.timeTag = (double)(callTime * NANO2SEC);
         v3Copy(sunlineOutBuffer.vehSunPntBdy, this->filtStatus.state);
-        this->cssWLSFiltResOutMsg.write(&this->filtStatus, this->moduleID, callTime);
+        this->cssWLSFiltResOutMsg.write(this->filtStatus, this->moduleID, callTime);
     }
     /*! Writing Outputs */
     if (status > 0) /*! - If the status from the WLS computation is erroneous, populate the output messages with zeros*/
@@ -158,7 +158,7 @@ void CssWlsEst::updateState(uint64_t callTime) {
         this->priorSignalAvailable = 0;           /* reset the prior heading estimate flag */
     }
     /*! - If the status from the WLS computation good, populate the output messages with the computed data*/
-    this->navStateOutMsg.write(&sunlineOutBuffer, this->moduleID, callTime);
+    this->navStateOutMsg.write(sunlineOutBuffer, this->moduleID, callTime);
     return;
 }
 

@@ -104,7 +104,7 @@ void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
         translatingBodyBuffer = LinearTranslationRigidBodyMsgPayload{};
         translatingBodyBuffer.rho = this->rho;
         translatingBodyBuffer.rhoDot = this->rhoDot;
-        this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, currentSimNanos);
+        this->translatingBodyOutMsg.write(translatingBodyBuffer, this->moduleID, currentSimNanos);
     }
 
     if (this->translatingBodyConfigLogOutMsg.isLinked()) {
@@ -116,7 +116,7 @@ void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
         eigenVectorToCArray(this->v_FcN_N, configLogMsg.v_BN_N);
         eigenVectorToCArray(this->sigma_FN, configLogMsg.sigma_BN);
         eigenVectorToCArray(this->omega_FN_F, configLogMsg.omega_BN_B);
-        this->translatingBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentSimNanos);
+        this->translatingBodyConfigLogOutMsg.write(configLogMsg, this->moduleID, currentSimNanos);
     }
 }
 

@@ -272,14 +272,14 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock) {
     OutputData.GPSSeconds = this->GPSSeconds;
     OutputData.GPSWeek = this->GPSWeek;
     OutputData.GPSRollovers = this->GPSRollovers;
-    this->spiceTimeOutMsg.write(&OutputData, this->moduleID, CurrentClock);
+    this->spiceTimeOutMsg.write(OutputData, this->moduleID, CurrentClock);
 
     //! - Iterate through all of the planets that are on and write their outputs
     for (long unsigned int c = 0; c < this->planetStateOutMsgs.size(); c++) {
-        this->planetStateOutMsgs[c]->write(&this->planetData[c], this->moduleID, CurrentClock);
+        this->planetStateOutMsgs[c]->write(this->planetData[c], this->moduleID, CurrentClock);
         if (this->planetWithSecondary == this->planetNames[c]) {
             auto message = this->populateSecondaryBodyMsg(this->planetData[c]);
-            this->secondaryStateOutMsg.write(&message, this->moduleID, CurrentClock);
+            this->secondaryStateOutMsg.write(message, this->moduleID, CurrentClock);
         }
     }
 
@@ -291,16 +291,16 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock) {
         v3Copy(this->scData[c].VelocityVector, scStateMsgData.v_BN_N);
         v3Copy(this->scData[c].VelocityVector, scStateMsgData.v_CN_N);
         C2MRP(this->scData[c].J20002Pfix, scStateMsgData.sigma_BN);
-        this->scStateOutMsgs[c]->write(&scStateMsgData, this->moduleID, CurrentClock);
+        this->scStateOutMsgs[c]->write(scStateMsgData, this->moduleID, CurrentClock);
 
         AttRefMsgPayload attRefMsgData = {};
         C2MRP(this->scData[c].J20002Pfix, attRefMsgData.sigma_RN);
-        this->attRefStateOutMsgs[c]->write(&attRefMsgData, this->moduleID, CurrentClock);
+        this->attRefStateOutMsgs[c]->write(attRefMsgData, this->moduleID, CurrentClock);
 
         TransRefMsgPayload transRefMsgData = {};
         v3Copy(this->scData[c].PositionVector, transRefMsgData.r_RN_N);
         v3Copy(this->scData[c].VelocityVector, transRefMsgData.v_RN_N);
-        this->transRefStateOutMsgs[c]->write(&transRefMsgData, this->moduleID, CurrentClock);
+        this->transRefStateOutMsgs[c]->write(transRefMsgData, this->moduleID, CurrentClock);
     }
 }
 

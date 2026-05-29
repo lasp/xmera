@@ -79,7 +79,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime) {
     eigenMatrixToCArray(this->dvAccum_CN_N, stateOut.TotalAccumDV_CN_N);
     eigenVectorToCArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVectorToCArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
-    this->scStateOutMsg.write(&stateOut, this->moduleID, clockTime);
+    this->scStateOutMsg.write(stateOut, this->moduleID, clockTime);
 
     // - Populate mass state output message
     SCMassPropsMsgPayload massStateOut;
@@ -87,7 +87,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime) {
     massStateOut.massSC = (*this->m_SC)(0, 0);
     eigenMatrixXToCArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXToCArray2D(*this->ISCPntB_B, massStateOut.ISC_PntB_B);
-    this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
+    this->scMassOutMsg.write(massStateOut, this->moduleID, clockTime);
 }
 
 /*! If the optional attitude reference input message is set, then read in the reference attitude and set it for the

@@ -52,5 +52,5 @@ void Torque2Dipole::updateState(uint64_t callTime) {
     }
 
     /*! - Write output message. This is the Body frame requested dipole from the torque rods.*/
-    this->dipoleRequestOutMsg.write(&dipoleRequestOutMsgBuffer, this->moduleID, callTime);
+    this->dipoleRequestOutMsg.write(dipoleRequestOutMsgBuffer, this->moduleID, callTime);
 }

@@ -30,7 +30,7 @@ void ThrFiringSchmitt::reset(uint64_t callTime) {
 void ThrFiringSchmitt::updateState(uint64_t callTime) {
     THRArrayCmdForceMsgPayload thrForceIn = this->thrForceInMsg();
     THRArrayOnTimeCmdMsgPayload thrOnTimeOut = this->algorithm.update(callTime, thrForceIn);
-    this->onTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
+    this->onTimeOutMsg.write(thrOnTimeOut, this->moduleID, callTime);
 }
 
 /**

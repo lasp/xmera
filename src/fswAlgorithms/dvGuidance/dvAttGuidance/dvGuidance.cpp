@@ -66,7 +66,7 @@ void DvGuidance::updateState(uint64_t callTime) {
     v3SetZero(attCmd.domega_RN_N);
 
     /*! - Write the output message */
-    this->attRefOutMsg.write(&attCmd, this->moduleID, callTime);
+    this->attRefOutMsg.write(attCmd, this->moduleID, callTime);
 
     return;
 }

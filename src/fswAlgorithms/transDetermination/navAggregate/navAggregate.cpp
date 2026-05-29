@@ -65,8 +65,8 @@ void NavAggregate::updateState(uint64_t callTime) {
 
     AggregateOutput navAggregateOut = this->algorithm.update(attMsgsPayloads, transMsgsPayloads);
 
-    this->navAttOutMsg.write(&navAggregateOut.navAttOut, this->moduleID, callTime);
-    this->navTransOutMsg.write(&navAggregateOut.navTransOut, this->moduleID, callTime);
+    this->navAttOutMsg.write(navAggregateOut.navAttOut, this->moduleID, callTime);
+    this->navTransOutMsg.write(navAggregateOut.navTransOut, this->moduleID, callTime);
 }
 
 /**

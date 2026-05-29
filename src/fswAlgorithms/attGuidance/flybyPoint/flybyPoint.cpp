@@ -14,8 +14,8 @@ void FlybyPoint::reset(uint64_t currentSimNanos) {
 void FlybyPoint::updateState(uint64_t currentSimNanos) {
     auto [r_BN_N, v_BN_N] = this->readRelativeState();
     auto [attMsgBuffer, flybyDiagnosticMsgBuffer] = this->algorithm.updateState(currentSimNanos, r_BN_N, v_BN_N);
-    this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, currentSimNanos);
-    this->flybyDiagnosticOutMsg.write(&flybyDiagnosticMsgBuffer, this->moduleID, currentSimNanos);
+    this->attRefOutMsg.write(attMsgBuffer, this->moduleID, currentSimNanos);
+    this->flybyDiagnosticOutMsg.write(flybyDiagnosticMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 std::tuple<Eigen::Vector3d, Eigen::Vector3d> FlybyPoint::readRelativeState() {

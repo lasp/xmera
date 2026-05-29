@@ -101,7 +101,7 @@ void OpticalFlow::updateState(uint64_t currentSimNanos) {
             featurePayload.keyPointsFound = (int)this->secondFeatures.size();
             featurePayload.valid = true;
 
-            this->keyPointsMsg.write(&featurePayload, this->moduleID, currentSimNanos);
+            this->keyPointsMsg.write(featurePayload, this->moduleID, currentSimNanos);
 
             this->secondImagePresent = false;
             /*! Then reset values for next pair of images depending on to the sliding window setting */
@@ -156,12 +156,12 @@ void OpticalFlow::updateState(uint64_t currentSimNanos) {
         }
         /*! -Write a zero message if only one image was processed*/
         featurePayload.valid = false;
-        this->keyPointsMsg.write(&featurePayload, this->moduleID, currentSimNanos);
+        this->keyPointsMsg.write(featurePayload, this->moduleID, currentSimNanos);
     }
     /*! - If no second image is present, write zeros in message and set valid to false*/
     else {
         featurePayload.valid = false;
-        this->keyPointsMsg.write(&featurePayload, this->moduleID, currentSimNanos);
+        this->keyPointsMsg.write(featurePayload, this->moduleID, currentSimNanos);
     }
 }
 

@@ -82,10 +82,10 @@ void SimpleNav::writeOutputMessages(uint64_t Clock) {
     this->estTransState.timeTag = (double) Clock * NANO2SEC;
     this->spacecraftEphemerisState.timeTag = (double) Clock * NANO2SEC;
 
-    this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
-    this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
-    this->scEphemOutMsg.write(&this->spacecraftEphemerisState, this->moduleID, Clock);
-    this->accelDataOutMsg.write(&this->accelDataState, this->moduleID, Clock);
+    this->attOutMsg.write(this->estAttState, this->moduleID, Clock);
+    this->transOutMsg.write(this->estTransState, this->moduleID, Clock);
+    this->scEphemOutMsg.write(this->spacecraftEphemerisState, this->moduleID, Clock);
+    this->accelDataOutMsg.write(this->accelDataState, this->moduleID, Clock);
 }
 
 void SimpleNav::applyErrors() {

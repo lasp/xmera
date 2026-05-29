@@ -53,7 +53,7 @@ void MappingInstrument::updateState(uint64_t currentSimNanos) {
         strcpy(dataNodeOutMsgBuffer.at(c).dataName, mappingPoints[c].c_str());
 
         /* Write the output message */
-        this->dataNodeOutMsgs.at(c)->write(&this->dataNodeOutMsgBuffer.at(c), this->moduleID, currentSimNanos);
+        this->dataNodeOutMsgs.at(c)->write(this->dataNodeOutMsgBuffer.at(c), this->moduleID, currentSimNanos);
     }
 
     return;

@@ -54,7 +54,7 @@ void RwNullSpace::updateState(uint64_t callTime) {
     RwMotorTorqueMsgPayload finalControl = this->algorithm.update(controlRequest, rwSpeeds, rwDesiredSpeeds);
 
     /* write the final RW torque solution to the output message */
-    this->rwMotorTorqueOutMsg.write(&finalControl, this->moduleID, callTime);
+    this->rwMotorTorqueOutMsg.write(finalControl, this->moduleID, callTime);
 }
 
 /**

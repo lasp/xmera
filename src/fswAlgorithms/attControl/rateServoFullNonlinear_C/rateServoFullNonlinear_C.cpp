@@ -173,7 +173,7 @@ void RateServoFullNonlinear_C::updateState(uint64_t callTime) {
 
     /*! - Set output message and pass it to the message bus */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    this->cmdTorqueOutMsg.write(&controlOut, moduleID, callTime);
+    this->cmdTorqueOutMsg.write(controlOut, moduleID, callTime);
 
     return;
 }

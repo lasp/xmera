@@ -600,11 +600,11 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
         tmpVSCMG.U_d = it->U_d;
         tmpVSCMG.VSCMGModel = it->VSCMGModel;
         // Write out config data for each VSCMG
-        this->vscmgOutMsgs.at(it - VSCMGData.begin())->write(&tmpVSCMG, this->moduleID, CurrentClock);
+        this->vscmgOutMsgs.at(it - VSCMGData.begin())->write(tmpVSCMG, this->moduleID, CurrentClock);
     }
 
     // Write this message once for all VSCMGs
-    this->speedOutMsg.write(&this->outputStates, this->moduleID, CurrentClock);
+    this->speedOutMsg.write(this->outputStates, this->moduleID, CurrentClock);
 }
 
 /*! This method is used to read the incoming command message and set the

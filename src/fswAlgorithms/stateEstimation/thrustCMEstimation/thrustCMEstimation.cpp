@@ -121,10 +121,10 @@ void ThrustCMEstimation::updateState(uint64_t currentSimNanos) {
     }
     eigenVectorToCArray(r_CB_error, cmEstDataBuffer.stateError);
     /*! write output msg */
-    this->cmEstDataOutMsg.write(&cmEstDataBuffer, this->moduleID, currentSimNanos);
+    this->cmEstDataOutMsg.write(cmEstDataBuffer, this->moduleID, currentSimNanos);
 
     /*! write CM location to vehicle config buffer msg */
     eigenVectorToCArray(this->r_CB_est, vehConfigOutBuffer.CoM_B);
     /*! write output msg */
-    this->vehConfigOutMsg.write(&vehConfigOutBuffer, this->moduleID, currentSimNanos);
+    this->vehConfigOutMsg.write(vehConfigOutBuffer, this->moduleID, currentSimNanos);
 }

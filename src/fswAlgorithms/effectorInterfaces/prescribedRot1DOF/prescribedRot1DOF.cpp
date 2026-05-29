@@ -132,6 +132,6 @@ void PrescribedRot1DOF::updateState(uint64_t callTime) {
     spinningBodyOut.thetaDot = thetaDot;
 
     // Write the output messages
-    this->spinningBodyOutMsg.write(&spinningBodyOut, this->moduleID, callTime);
-    this->prescribedRotationOutMsg.write(&prescribedRotationOut, this->moduleID, callTime);
+    this->spinningBodyOutMsg.write(spinningBodyOut, this->moduleID, callTime);
+    this->prescribedRotationOutMsg.write(prescribedRotationOut, this->moduleID, callTime);
 }

@@ -109,5 +109,5 @@ void PrescribedTrans::updateState(uint64_t callTime) {
     v3Copy(this->rPrimePrime_FM_M, prescribedTranslationOut.rPrimePrime_FM_M);
 
     // Write the prescribed motion output message
-    this->prescribedTranslationOutMsg.write(&prescribedTranslationOut, this->moduleID, callTime);
+    this->prescribedTranslationOutMsg.write(prescribedTranslationOut, this->moduleID, callTime);
 }

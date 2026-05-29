@@ -91,9 +91,9 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
         eigenMatrixXToCArray(measurement.getPreFitResiduals(), residualsBuffer.preFits);
         this->measurements[0].reset();
     }
-    this->opNavResidualMsg.write(&residualsBuffer, this->moduleID, currentSimNanos);
-    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->opNavFilterMsg.write(&opNavFilterMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavResidualMsg.write(residualsBuffer, this->moduleID, currentSimNanos);
+    this->navTransOutMsg.write(navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavFilterMsg.write(opNavFilterMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Read the message containing the measurement data.

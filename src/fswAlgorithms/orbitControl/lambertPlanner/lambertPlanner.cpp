@@ -108,7 +108,7 @@ void LambertPlanner::writeMessages(uint64_t currentSimNanos) {
     lambertProblemOutMsgBuffer.numRevolutions = this->numRevolutions;
 
     // Write to the output messages
-    this->lambertProblemOutMsg.write(&lambertProblemOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->lambertProblemOutMsg.write(lambertProblemOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method integrates the provided equations of motion using Runge-Kutta 4 (RK4) and returns the time steps and

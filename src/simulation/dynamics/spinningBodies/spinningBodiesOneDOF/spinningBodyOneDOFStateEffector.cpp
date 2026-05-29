@@ -57,7 +57,7 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         spinningBodyBuffer = HingedRigidBodyMsgPayload{};
         spinningBodyBuffer.theta = this->theta;
         spinningBodyBuffer.thetaDot = this->thetaDot;
-        this->spinningBodyOutMsg.write(&spinningBodyBuffer, this->moduleID, CurrentClock);
+        this->spinningBodyOutMsg.write(spinningBodyBuffer, this->moduleID, CurrentClock);
     }
 
     // Write out the spinning body state config log message
@@ -70,7 +70,7 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         eigenVectorToCArray(this->v_ScN_N, configLogMsg.v_BN_N);
         eigenVectorToCArray(this->sigma_SN, configLogMsg.sigma_BN);
         eigenVectorToCArray(this->omega_SN_S, configLogMsg.omega_BN_B);
-        this->spinningBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
+        this->spinningBodyConfigLogOutMsg.write(configLogMsg, this->moduleID, CurrentClock);
     }
 }
 

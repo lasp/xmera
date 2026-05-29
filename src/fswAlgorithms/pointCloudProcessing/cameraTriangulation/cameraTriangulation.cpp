@@ -159,7 +159,7 @@ void CameraTriangulation::writeMessages(uint64_t currentSimNanos) {
     eigenVectorToCArray(this->estimatedCameraLocation, cameraLocationOutMsgBuffer.cameraPos_N);
     eigenMatrixToCArray(this->triangulationCovariance, cameraLocationOutMsgBuffer.covariance_N);
 
-    this->cameraLocationOutMsg.write(&cameraLocationOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->cameraLocationOutMsg.write(cameraLocationOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method performs the triangulation to estimate the unknown location given the known locations and images.

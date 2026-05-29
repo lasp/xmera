@@ -44,7 +44,7 @@ void PixelLineConverter::updateState(uint64_t callTime) {
 
     if (circlesIn.valid == 0) {
         opNavMsgOut.valid = 0;
-        this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+        this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         return;
     }
     reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0] / 2 + 0.5;
@@ -132,7 +132,7 @@ void PixelLineConverter::updateState(uint64_t callTime) {
     opNavMsgOut.timeTag = (double)circlesIn.timeTag;
     opNavMsgOut.valid = 1;
 
-    this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+    this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
 
     return;
 }

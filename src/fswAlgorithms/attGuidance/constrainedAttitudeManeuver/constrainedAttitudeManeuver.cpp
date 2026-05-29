@@ -226,7 +226,7 @@ void ConstrainedAttitudeManeuver::updateState(uint64_t currentSimNanos) {
     v3tMultM33(omegaDot_RN_R, RN, attMsgBuffer.domega_RN_N);
 
     // write output attitude reference message
-    this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, currentSimNanos);
+    this->attRefOutMsg.write(attMsgBuffer, this->moduleID, currentSimNanos);
 
     return;
 }

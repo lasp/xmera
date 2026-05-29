@@ -110,7 +110,7 @@ void MagneticFieldBase::customSetEpochFromVariable() { return; }
  */
 void MagneticFieldBase::writeMessages(uint64_t CurrentClock) {
     for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
-        this->envOutMsgs.at(c)->write(&this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
+        this->envOutMsgs.at(c)->write(this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
     //! - call the custom method to perform additional output message writing

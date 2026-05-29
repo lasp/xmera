@@ -151,8 +151,8 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
     hingedRigidBodyRef2Out.thetaDot = 0;
 
     /*! write output spinning body messages */
-    this->hingedRigidBodyRef1OutMsg.write(&hingedRigidBodyRef1Out, this->moduleID, callTime);
-    this->hingedRigidBodyRef2OutMsg.write(&hingedRigidBodyRef2Out, this->moduleID, callTime);
+    this->hingedRigidBodyRef1OutMsg.write(hingedRigidBodyRef1Out, this->moduleID, callTime);
+    this->hingedRigidBodyRef2OutMsg.write(hingedRigidBodyRef2Out, this->moduleID, callTime);
 
     /*! define mapping between final platform frame and body frame FB */
     double FB[3][3];
@@ -163,7 +163,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
     v3Normalize(bodyHeadingOut.rHat_XB_B, bodyHeadingOut.rHat_XB_B);
 
     /*! write output body heading message */
-    this->bodyHeadingOutMsg.write(&bodyHeadingOut, this->moduleID, callTime);
+    this->bodyHeadingOutMsg.write(bodyHeadingOut, this->moduleID, callTime);
 
     /*! compute thruster torque on the system in body frame coordinates */
     double r_CM_F[3];
@@ -175,7 +175,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
     m33tMultV3(FB, Torque_F, thrusterTorqueOut.torqueRequestBody);
 
     /*! write output commanded torque message */
-    this->thrusterTorqueOutMsg.write(&thrusterTorqueOut, this->moduleID, callTime);
+    this->thrusterTorqueOutMsg.write(thrusterTorqueOut, this->moduleID, callTime);
 
     /*! populate thrusterConfigOut */
     double r_TC_B[3];
@@ -186,7 +186,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
     thrusterConfigOut.maxThrust = v3Norm(T_F);
 
     /*! write output thruster config msg */
-    this->thrusterConfigBOutMsg.write(&thrusterConfigOut, this->moduleID, callTime);
+    this->thrusterConfigBOutMsg.write(thrusterConfigOut, this->moduleID, callTime);
 }
 
 void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3]) {

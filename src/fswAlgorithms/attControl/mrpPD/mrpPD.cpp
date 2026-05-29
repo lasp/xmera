@@ -35,7 +35,7 @@ void MrpPD::updateState(uint64_t callTime) {
     // Call the algorithm update method
     CmdTorqueBodyMsgPayload torqueCmdMsgPayload = this->algorithm.update(callTime, localGuidInMsg);
 
-    this->cmdTorqueOutMsg.write(&torqueCmdMsgPayload, moduleID, callTime);
+    this->cmdTorqueOutMsg.write(torqueCmdMsgPayload, moduleID, callTime);
 }
 
 /*! Setter method for the derivative gain P.

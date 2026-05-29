@@ -98,7 +98,7 @@ void StepperMotor::updateState(uint64_t callTime) {
     stepperMotorOut.stepCount = this->stepCount;
     stepperMotorOut.motorPosition = this->motorPosition;
     stepperMotorOut.isMotorMoving = isMotorMoving;
-    this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
+    this->stepperMotorOutMsg.write(stepperMotorOut, moduleID, callTime);
 }
 
 /*! This method is used to simulate the stepper motor actuation in time.

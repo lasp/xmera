@@ -639,7 +639,7 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
     eigenVectorToCArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
 
     // Write the output messages
-    this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);
+    this->prescribedTranslationOutMsg.write(prescribedTranslationMsgOut, this->moduleID, callTime);
 }
 
 /*! Setter method for the coast option bang duration.

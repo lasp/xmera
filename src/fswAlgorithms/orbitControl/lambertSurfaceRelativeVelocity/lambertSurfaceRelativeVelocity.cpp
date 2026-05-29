@@ -75,5 +75,5 @@ void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos) {
     desiredVelocityOutMsgBuffer.maneuverTime = this->time;
 
     // Write to the output messages
-    this->desiredVelocityOutMsg.write(&desiredVelocityOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->desiredVelocityOutMsg.write(desiredVelocityOutMsgBuffer, this->moduleID, currentSimNanos);
 }

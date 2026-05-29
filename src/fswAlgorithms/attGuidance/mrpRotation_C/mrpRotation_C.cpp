@@ -65,7 +65,7 @@ void MrpRotation_C::updateState(uint64_t callTime) {
     this->computeMRPRotationReference(inputRef.sigma_RN, inputRef.omega_RN_N, inputRef.domega_RN_N, &attRefOut);
 
     /*! - write attitude guidance reference output */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 
     /*! - Update last time the module was called to current call time */
     this->priorTime = callTime;

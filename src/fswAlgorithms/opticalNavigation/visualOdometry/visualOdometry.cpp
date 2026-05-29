@@ -298,5 +298,5 @@ void VisualOdometry::writeMessages(Eigen::Vector3d sprime, Eigen::Matrix3d covar
     sprime_hat = sprime / sprime.norm();
     eigenVectorToCArray(sprime_hat, this->dirMotionBuffer.v_C_hat);
     eigenMatrixToCArray(covar, this->dirMotionBuffer.covar_C);
-    this->dirOfMotionMsgOutput.write(&this->dirMotionBuffer, this->moduleID, currentSimNanos);
+    this->dirOfMotionMsgOutput.write(this->dirMotionBuffer, this->moduleID, currentSimNanos);
 }

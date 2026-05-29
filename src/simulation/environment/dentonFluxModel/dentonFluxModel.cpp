@@ -227,7 +227,7 @@ void DentonFluxModel::updateState(uint64_t currentSimNanos) {
     }
 
     // Write to the output message
-    this->fluxOutMsg.write(&fluxOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->fluxOutMsg.write(fluxOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! method to calculate the local time of the spacecraft within the GEO belt

@@ -75,7 +75,7 @@ void LimbFinding::updateState(uint64_t currentSimNanos) {
         }
     } else {
         /*! - If no image is present, write zeros in message */
-        this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, currentSimNanos);
+        this->opnavLimbOutMsg.write(limbMsg, this->moduleID, currentSimNanos);
         return;
     }
     /*! - Greyscale the image */
@@ -101,7 +101,7 @@ void LimbFinding::updateState(uint64_t currentSimNanos) {
     limbMsg.timeTag = (double)this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
 
-    this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, currentSimNanos);
+    this->opnavLimbOutMsg.write(limbMsg, this->moduleID, currentSimNanos);
 
     return;
 }

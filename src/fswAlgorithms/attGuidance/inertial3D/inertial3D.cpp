@@ -12,7 +12,7 @@
 void Inertial3D::updateState(uint64_t callTime) {
     AttRefMsgPayload attRefOut = algorithm.update();
 
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 }
 
 /*! Setter method for the MRP from frame N to frame R.

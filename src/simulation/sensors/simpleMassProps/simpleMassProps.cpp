@@ -45,7 +45,7 @@ void SimpleMassProps::readInputMessages() {
  */
 void SimpleMassProps::writeOutputMessages(uint64_t CurrentClock) {
     // write the output message
-    this->vehicleConfigOutMsg.write(&this->vehicleConfigMsgBuffer, this->moduleID, CurrentClock);
+    this->vehicleConfigOutMsg.write(this->vehicleConfigMsgBuffer, this->moduleID, CurrentClock);
 
     return;
 }

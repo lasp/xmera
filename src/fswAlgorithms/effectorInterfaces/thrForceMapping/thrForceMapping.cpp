@@ -37,7 +37,7 @@ void ThrForceMapping::updateState(uint64_t callTime) {
     // Call the algorithm update method
     THRArrayCmdForceMsgPayload thrusterForceOut = this->algorithm.update(callTime, LrInputMsg, localVehConfigInMsg);
 
-    this->thrForceCmdOutMsg.write(&thrusterForceOut, this->moduleID, callTime);
+    this->thrForceCmdOutMsg.write(thrusterForceOut, this->moduleID, callTime);
 }
 
 /**

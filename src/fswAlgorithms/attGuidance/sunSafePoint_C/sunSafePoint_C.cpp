@@ -114,7 +114,7 @@ void SunSafePoint_C::updateState(uint64_t callTime) {
     }
 
     /* write the Guidance output message */
-    this->attGuidanceOutMsg.write(&this->attGuidanceOutBuffer, this->moduleID, callTime);
+    this->attGuidanceOutMsg.write(this->attGuidanceOutBuffer, this->moduleID, callTime);
 
     return;
 }

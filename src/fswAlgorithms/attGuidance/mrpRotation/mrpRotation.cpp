@@ -39,7 +39,7 @@ void MrpRotation::updateState(uint64_t callTime) {
     AttRefMsgPayload attRefOut = this->algorithm.update(callTime, inputRef, attStates);
 
     /*! - write attitude guidance reference output */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 }
 
 /*! Setter method for the current MRP attitude coordinate set with respect to the input reference

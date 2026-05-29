@@ -112,7 +112,7 @@ void OkeefeEKF::updateState(uint64_t callTime) {
     v3Copy(this->state, this->outputSunline.vehSunPntBdy);
     v3Normalize(this->outputSunline.vehSunPntBdy, this->outputSunline.vehSunPntBdy);
     this->outputSunline.timeTag = this->timeTag;
-    this->navStateOutMsg.write(&this->outputSunline, this->moduleID, callTime);
+    this->navStateOutMsg.write(this->outputSunline, this->moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = this->timeTag;
@@ -121,7 +121,7 @@ void OkeefeEKF::updateState(uint64_t callTime) {
     memmove(sunlineDataOutBuffer.state, this->state, SKF_N_STATES * sizeof(double));
     memmove(sunlineDataOutBuffer.stateError, this->x, SKF_N_STATES * sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, this->postFits, MAX_N_CSS_MEAS * sizeof(double));
-    this->filtDataOutMsg.write(&sunlineDataOutBuffer, this->moduleID, callTime);
+    this->filtDataOutMsg.write(sunlineDataOutBuffer, this->moduleID, callTime);
 
     return;
 }

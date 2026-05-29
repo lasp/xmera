@@ -35,7 +35,7 @@ void AttRefCorrection::updateState(uint64_t const callTime) {
 
     // write to the output messages
     eigenVectorToCArray(sigma_RN_local, attRefMsgBuffer.sigma_RN);
-    this->attRefOutMsg.write(&attRefMsgBuffer, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefMsgBuffer, this->moduleID, callTime);
 }
 
 /*! Setter method for the current MRP attitude coordinate set with respect to the input reference

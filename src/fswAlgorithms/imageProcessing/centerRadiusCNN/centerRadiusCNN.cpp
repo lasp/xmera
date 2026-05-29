@@ -81,7 +81,7 @@ void CenterRadiusCNN::updateState(uint64_t currentSimNanos) {
         }
     } else {
         /*! - If no image is present, write zeros in message */
-        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
+        this->opnavCirclesOutMsg.write(circleBuffer, this->moduleID, currentSimNanos);
         return;
     }
     /*!-  evaluate CNN on image */
@@ -107,7 +107,7 @@ void CenterRadiusCNN::updateState(uint64_t currentSimNanos) {
         }
     }
 
-    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
+    this->opnavCirclesOutMsg.write(circleBuffer, this->moduleID, currentSimNanos);
 
     return;
 }

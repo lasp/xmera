@@ -61,7 +61,7 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock) {
         v3Copy(it->ThrustOps.opThrustForce_B, tmpThruster.thrustForce_B);
         v3Copy(it->ThrustOps.opThrustTorquePntB_B, tmpThruster.thrustTorquePntB_B);
 
-        this->thrusterOutMsgs[idx]->write(&tmpThruster, this->moduleID, CurrentClock);
+        this->thrusterOutMsgs[idx]->write(tmpThruster, this->moduleID, CurrentClock);
 
         idx++;
     }

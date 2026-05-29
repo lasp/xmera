@@ -35,7 +35,7 @@ void PowerNodeBase::reset(uint64_t currentSimNanos) {
  */
 void PowerNodeBase::writeMessages(uint64_t CurrentClock) {
     //! - write power output message
-    this->nodePowerOutMsg.write(&this->nodePowerMsg, this->moduleID, CurrentClock);
+    this->nodePowerOutMsg.write(this->nodePowerMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);

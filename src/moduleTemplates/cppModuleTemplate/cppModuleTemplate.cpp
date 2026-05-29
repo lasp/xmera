@@ -46,7 +46,7 @@ void CppModuleTemplate::updateState(uint64_t currentSimNanos) {
     v3Copy(Lr, outMsgBuffer.dataVector);
 
     /*! - write the module output message */
-    this->dataOutMsg.write(&outMsgBuffer, this->moduleID, currentSimNanos);
+    this->dataOutMsg.write(outMsgBuffer, this->moduleID, currentSimNanos);
 
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */

@@ -119,8 +119,8 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos) {
     }
 
     // Write to the output messages
-    this->lambertSolutionOutMsg.write(&lambertSolutionOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->lambertPerformanceOutMsg.write(&lambertPerformanceOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->lambertSolutionOutMsg.write(lambertSolutionOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->lambertPerformanceOutMsg.write(lambertPerformanceOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method computes the problem geometry for the given parameters of Lambert's problem.

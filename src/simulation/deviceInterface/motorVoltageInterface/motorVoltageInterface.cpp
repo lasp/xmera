@@ -98,7 +98,7 @@ void MotorVoltageInterface::setBiases(Eigen::VectorXd biases) {
  @param CurrentClock The clock time associated with the model call
  */
 void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock) {
-    this->motorTorqueOutMsg.write(&this->outputTorqueBuffer, this->moduleID, CurrentClock);
+    this->motorTorqueOutMsg.write(this->outputTorqueBuffer, this->moduleID, CurrentClock);
 
     return;
 }

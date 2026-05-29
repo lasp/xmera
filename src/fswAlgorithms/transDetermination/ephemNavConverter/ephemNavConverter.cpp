@@ -28,5 +28,5 @@ void EphemNavConverter::updateState(uint64_t callTime) {
     // Call the algorithm update method
     NavTransMsgPayload navTransMsgPayload = this->algorithm.update(callTime, ephemMsgPayload);
 
-    this->stateOutMsg.write(&navTransMsgPayload, this->moduleID, callTime);
+    this->stateOutMsg.write(navTransMsgPayload, this->moduleID, callTime);
 }

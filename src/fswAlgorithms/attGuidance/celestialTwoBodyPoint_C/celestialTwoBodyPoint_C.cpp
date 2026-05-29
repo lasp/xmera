@@ -36,7 +36,7 @@ void CelestialTwoBodyPoint_C::updateState(uint64_t callTime) {
     /*! - Compute the pointing requirements */
     this->computeCelestialTwoBodyPoint(callTime);
     /*! - Write the output message */
-    this->attRefOutMsg.write(&this->attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(this->attRefOut, this->moduleID, callTime);
 }
 
 /*! This method takes the navigation translational info as well as the spice data of the

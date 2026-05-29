@@ -59,7 +59,7 @@ void RegionsOfInterest::updateState(uint64_t currentSimNanos) {
                                                    .centerOfBrightnessY = centerOfBrightness.y()};
 
     // Write output message
-    this->regionOutMsg.write(&regionOutMsgPayload, this->moduleID, currentSimNanos);
+    this->regionOutMsg.write(regionOutMsgPayload, this->moduleID, currentSimNanos);
 }
 
 /**

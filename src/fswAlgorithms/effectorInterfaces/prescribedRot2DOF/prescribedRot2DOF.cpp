@@ -202,5 +202,5 @@ void PrescribedRot2DOF::updateState(uint64_t callTime) {
     v3Copy(this->sigma_FM, prescribedRotationOut.sigma_FM);
 
     // Write the prescribed rotational motion output message
-    this->prescribedRotationOutMsg.write(&prescribedRotationOut, this->moduleID, callTime);
+    this->prescribedRotationOutMsg.write(prescribedRotationOut, this->moduleID, callTime);
 }

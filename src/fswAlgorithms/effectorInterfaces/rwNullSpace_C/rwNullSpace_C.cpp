@@ -95,7 +95,7 @@ void RwNullSpace_C::updateState(uint64_t callTime) {
     vAdd(finalControl.motorTorque, this->numWheels, cntrRequest.motorTorque, finalControl.motorTorque);
 
     /* write the final RW torque solution to the output message */
-    this->rwMotorTorqueOutMsg.write(&finalControl, this->moduleID, callTime);
+    this->rwMotorTorqueOutMsg.write(finalControl, this->moduleID, callTime);
 
     return;
 }

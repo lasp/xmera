@@ -78,7 +78,7 @@ void MotorThermal::readInputMessages() {
  @param CurrentClock The clock time associated with the model call
  */
 void MotorThermal::writeOutputMessages(uint64_t CurrentClock) {
-    this->temperatureOutMsg.write(&this->temperatureBuffer, this->moduleID, CurrentClock);
+    this->temperatureOutMsg.write(this->temperatureBuffer, this->moduleID, CurrentClock);
 
     return;
 }

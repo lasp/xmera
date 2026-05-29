@@ -70,7 +70,7 @@ void Encoder::readInputMessages() {
  @param CurrentClock The clock time associated with the model call
  */
 void Encoder::writeOutputMessages(uint64_t CurrentClock) {
-    this->rwSpeedOutMsg.write(&this->rwSpeedConverted, this->moduleID, CurrentClock);
+    this->rwSpeedOutMsg.write(this->rwSpeedConverted, this->moduleID, CurrentClock);
 
     return;
 }

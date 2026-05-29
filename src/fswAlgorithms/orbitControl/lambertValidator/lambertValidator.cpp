@@ -204,8 +204,8 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos) {
     eigenVectorToCArray(this->dv_N, lambertValidatorMsgBuffer.dv);
 
     // Write to the output messages
-    this->dvBurnCmdOutMsg.write(&dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->lambertValidatorOutMsg.write(&lambertValidatorMsgBuffer, this->moduleID, currentSimNanos);
+    this->dvBurnCmdOutMsg.write(dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->lambertValidatorOutMsg.write(lambertValidatorMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method creates the initial state vectors that will be propagated by the module

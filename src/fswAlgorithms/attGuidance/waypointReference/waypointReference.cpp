@@ -133,7 +133,7 @@ void WaypointReference::updateState(uint64_t currentSimNanos) {
         }
 
         /* write output attitude reference message */
-        this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, currentSimNanos);
+        this->attRefOutMsg.write(attMsgBuffer, this->moduleID, currentSimNanos);
     }
     return;
 }

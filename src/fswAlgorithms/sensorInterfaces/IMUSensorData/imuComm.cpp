@@ -36,7 +36,7 @@ void ImuComm::updateState(uint64_t callTime) {
     m33MultV3(RECAST3X3 this->dcm_BP, LocalInput.DRFramePlatform, outMsgBuffer.DRFrameBody);
     m33MultV3(RECAST3X3 this->dcm_BP, LocalInput.AngVelPlatform, outMsgBuffer.AngVelBody);
 
-    this->imuSensorOutMsg.write(&outMsgBuffer, moduleID, callTime);
+    this->imuSensorOutMsg.write(outMsgBuffer, moduleID, callTime);
 
     return;
 }

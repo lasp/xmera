@@ -114,7 +114,7 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     /*! Check the validity of the image*/
     if (limbIn.valid == 0) {
         opNavMsgOut.valid = 0;
-        this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+        this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         return;
     }
     /*! Create Q matrix, the square root inverse of the A matrix, eq (6) in Engineering Note*/
@@ -276,7 +276,7 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
     opNavMsgOut.timeTag = limbIn.timeTag;
     opNavMsgOut.valid = 1;
-    this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+    this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
 
     /* free allocated memory */
     free(H);

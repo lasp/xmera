@@ -104,8 +104,8 @@ void EtSphericalControl::updateState(uint64_t callTime) {
                                     &forceBodyOutMsgBuffer);
 
     // - write the module output messages
-    this->forceInertialOutMsg.write(&forceInertialOutMsgBuffer, this->moduleID, callTime);
-    this->forceBodyOutMsg.write(&forceBodyOutMsgBuffer, this->moduleID, callTime);
+    this->forceInertialOutMsg.write(forceInertialOutMsgBuffer, this->moduleID, callTime);
+    this->forceBodyOutMsg.write(forceBodyOutMsgBuffer, this->moduleID, callTime);
 
     return;
 }

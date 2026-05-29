@@ -82,7 +82,7 @@ void HoughCircles::updateState(uint64_t currentSimNanos) {
         }
     } else {
         /*! - If no image is present, write zeros in message */
-        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
+        this->opnavCirclesOutMsg.write(circleBuffer, this->moduleID, currentSimNanos);
         return;
     }
 
@@ -119,7 +119,7 @@ void HoughCircles::updateState(uint64_t currentSimNanos) {
         circleBuffer.planetIds[0] = 2;
     }
 
-    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
+    this->opnavCirclesOutMsg.write(circleBuffer, this->moduleID, currentSimNanos);
 
     //    free(imageBuffer.imagePointer);
     return;

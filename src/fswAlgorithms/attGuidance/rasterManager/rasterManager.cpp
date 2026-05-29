@@ -50,7 +50,7 @@ void RasterManager::updateState(uint64_t callTime) {
         this->bskLogger.bskLog(BSK_INFORMATION, info);
     }
 
-    this->attStateOutMsg.write(&this->attOutSet, this->moduleID, callTime);
+    this->attStateOutMsg.write(this->attOutSet, this->moduleID, callTime);
 
     return;
 }

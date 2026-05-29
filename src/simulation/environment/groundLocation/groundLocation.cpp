@@ -134,9 +134,9 @@ bool GroundLocation::ReadMessages() {
 void GroundLocation::WriteMessages(uint64_t CurrentClock) {
     //! - write access message for each spacecraft
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
-        this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
+        this->accessOutMsgs.at(c)->write(this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
-    this->currentGroundStateOutMsg.write(&this->currentGroundStateBuffer, this->moduleID, CurrentClock);
+    this->currentGroundStateOutMsg.write(this->currentGroundStateBuffer, this->moduleID, CurrentClock);
 }
 
 void GroundLocation::updateInertialPositions() {

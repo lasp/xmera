@@ -141,5 +141,5 @@ void SmallBodyWaypointFeedback::writeMessages(uint64_t currentSimNanos) {
     eigenVectorToCArray(thrust_B, forceOutMsgBuffer.forceRequestBody);
 
     /* Write the message */
-    this->forceOutMsg.write(&forceOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->forceOutMsg.write(forceOutMsgBuffer, this->moduleID, currentSimNanos);
 }

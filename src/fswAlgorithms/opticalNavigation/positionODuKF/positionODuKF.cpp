@@ -162,9 +162,9 @@ void PositionODuKF::writeOutputMessages(uint64_t currentSimNanos) {
         this->opNavResidualMsgBuffer.sizeOfObservations = 3;
     }
 
-    this->navTransOutMsg.write(&this->navTransOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->opNavFilterMsg.write(&this->opNavFilterMsgBuffer, this->moduleID, currentSimNanos);
-    this->opNavResidualMsg.write(&this->opNavResidualMsgBuffer, this->moduleID, currentSimNanos);
+    this->navTransOutMsg.write(this->navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavFilterMsg.write(this->opNavFilterMsgBuffer, this->moduleID, currentSimNanos);
+    this->opNavResidualMsg.write(this->opNavResidualMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Read the message containing the measurement data.

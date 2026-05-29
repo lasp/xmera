@@ -27,8 +27,8 @@ void EphemDifferenceWithUncertainty::updateState(uint64_t currentSimNanos) {
     auto [navTransOutMsgBuffer, filterOutMsgBuffer] =
         this->algorithm.updateState(ephemBaseInBuffer, ephemSecondaryInBuffer);
 
-    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->filterOutMsg.write(&filterOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->navTransOutMsg.write(navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->filterOutMsg.write(filterOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Set the state covariance of the base celestial object (e.g. asteroid)

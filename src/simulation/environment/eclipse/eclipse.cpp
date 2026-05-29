@@ -65,7 +65,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock) {
     for (long unsigned int c = 0; c < this->eclipseOutMsgs.size(); c++) {
         EclipseMsgPayload tmpEclipseMsg = {};
         tmpEclipseMsg.shadowFactor = this->eclipseShadowFactors.at(c);
-        this->eclipseOutMsgs.at(c)->write(&tmpEclipseMsg, this->moduleID, CurrentClock);
+        this->eclipseOutMsgs.at(c)->write(tmpEclipseMsg, this->moduleID, CurrentClock);
     }
 }
 

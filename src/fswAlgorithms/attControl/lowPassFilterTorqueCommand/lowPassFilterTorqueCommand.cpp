@@ -100,7 +100,7 @@ void LowPassFilterTorqueCommand::updateState(uint64_t callTime) {
         store the output message
      */
     v3Copy(this->LrF[0], controlOut.torqueRequestBody);
-    this->cmdTorqueOutMsg.write(&controlOut, this->moduleID, callTime);
+    this->cmdTorqueOutMsg.write(controlOut, this->moduleID, callTime);
 
     return;
 }

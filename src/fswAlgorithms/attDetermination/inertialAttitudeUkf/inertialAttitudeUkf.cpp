@@ -113,11 +113,11 @@ void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
             this->measurements[index].reset();
         }
     }
-    this->attitudeResidualMsg.write(&attitudePayload, this->moduleID, currentSimNanos);
-    this->rateResidualMsg.write(&ratePayload, this->moduleID, currentSimNanos);
+    this->attitudeResidualMsg.write(attitudePayload, this->moduleID, currentSimNanos);
+    this->rateResidualMsg.write(ratePayload, this->moduleID, currentSimNanos);
 
-    this->navAttitudeOutputMsg.write(&navAttPayload, this->moduleID, currentSimNanos);
-    this->inertialFilterOutputMsg.write(&filterPayload, this->moduleID, currentSimNanos);
+    this->navAttitudeOutputMsg.write(navAttPayload, this->moduleID, currentSimNanos);
+    this->inertialFilterOutputMsg.write(filterPayload, this->moduleID, currentSimNanos);
 }
 
 /*! Read current RW speends and populate the accelerations in order to propagate

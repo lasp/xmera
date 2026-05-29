@@ -64,5 +64,5 @@ void MtbFeedforward::updateState(uint64_t callTime) {
     v3Subtract(vehControlOutMsgBuffer.torqueRequestBody, tauMtbFF_B, vehControlOutMsgBuffer.torqueRequestBody);
 
     /*! - Write output message. This used as a feedforward term to the attiude controller.*/
-    this->vehControlOutMsg.write(&vehControlOutMsgBuffer, moduleID, callTime);
+    this->vehControlOutMsg.write(vehControlOutMsgBuffer, moduleID, callTime);
 }

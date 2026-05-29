@@ -162,7 +162,7 @@ void RelODuKF::updateState(uint64_t callTime) {
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N);  // Convert to m
     outputRelOD.timeTag = this->timeTagOut;
 
-    this->navStateOutMsg.write(&outputRelOD, this->moduleID, callTime);
+    this->navStateOutMsg.write(outputRelOD, this->moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = this->timeTag;
@@ -173,7 +173,7 @@ void RelODuKF::updateState(uint64_t callTime) {
     v3Scale(1E3, opNavOutBuffer.postFitRes, opNavOutBuffer.postFitRes);                        // Convert to m
     vScale(1E6, opNavOutBuffer.covar, ODUKF_N_STATES * ODUKF_N_STATES, opNavOutBuffer.covar);  // Convert to m
 
-    this->filtDataOutMsg.write(&opNavOutBuffer, this->moduleID, callTime);
+    this->filtDataOutMsg.write(opNavOutBuffer, this->moduleID, callTime);
 
     return;
 }

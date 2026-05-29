@@ -280,7 +280,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                 pullVector(&iss, scMsg.omega_BN_B);
 
                 /* write spacecraft state message */
-                this->scStateOutMsgs.at(scCounter)->write(&scMsg, this->moduleID, currentSimNanos);
+                this->scStateOutMsgs.at(scCounter)->write(scMsg, this->moduleID, currentSimNanos);
 
                 /* check if thruster states are provided */
                 if (this->thrMsgDataSC.size() > 0) {
@@ -304,7 +304,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
 
                                 this->thrScOutMsgs[scCounter]
                                     .at(thrCounter)
-                                    ->write(&thrMsg, this->moduleID, currentSimNanos);
+                                    ->write(thrMsg, this->moduleID, currentSimNanos);
                                 thrCounter++;
                             }
                             thrClusterCounter++;
@@ -329,7 +329,7 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                             eigenVectorToCArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
 
                             this->rwScOutMsgs[scCounter].at(rwCounter)->write(
-                                &rwOutMsg, this->moduleID, currentSimNanos);
+                                rwOutMsg, this->moduleID, currentSimNanos);
                         }
                     }
                 }

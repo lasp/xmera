@@ -61,5 +61,5 @@ void DipoleMapping::updateState(uint64_t callTime) {
     }
 
     /*! - Write output message. Thiis is the individual torque rod dipoel comands.*/
-    this->dipoleRequestMtbOutMsg.write(&dipoleRequestMtbOutMsgBuffer, this->moduleID, callTime);
+    this->dipoleRequestMtbOutMsg.write(dipoleRequestMtbOutMsgBuffer, this->moduleID, callTime);
 }

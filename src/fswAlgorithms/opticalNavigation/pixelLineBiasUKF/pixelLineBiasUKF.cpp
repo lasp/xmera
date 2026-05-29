@@ -172,7 +172,7 @@ void PixelLineBiasUKF::updateState(uint64_t callTime) {
     v3Copy(&this->state[3], outputRelOD.v_BN_N);
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N);  // Convert to m
     outputRelOD.timeTag = this->timeTagOut;
-    this->navStateOutMsg.write(&outputRelOD, this->moduleId, callTime);
+    this->navStateOutMsg.write(outputRelOD, this->moduleId, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = this->timeTag;
@@ -184,7 +184,7 @@ void PixelLineBiasUKF::updateState(uint64_t callTime) {
            opNavOutBuffer.covar,
            PIXLINE_DYN_STATES * PIXLINE_N_STATES + PIXLINE_DYN_STATES,
            opNavOutBuffer.covar);  // Convert to m
-    this->filtDataOutMsg.write(&opNavOutBuffer, this->moduleId, callTime);
+    this->filtDataOutMsg.write(opNavOutBuffer, this->moduleId, callTime);
 
     return;
 }

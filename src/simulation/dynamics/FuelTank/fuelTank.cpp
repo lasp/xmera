@@ -187,7 +187,7 @@ void FuelTank::writeOutputMessages(uint64_t currentClock) {
     this->fuelTankMassPropMsg.fuelMass = this->effProps.mEff;
     this->fuelTankMassPropMsg.fuelMassDot = this->effProps.mEffDot;
     this->fuelTankMassPropMsg.maxFuelMass = this->fuelTankModel->maxFuelMass;
-    this->fuelTankOutMsg.write(&this->fuelTankMassPropMsg, this->moduleID, currentClock);
+    this->fuelTankOutMsg.write(this->fuelTankMassPropMsg, this->moduleID, currentClock);
 }
 
 /*! Fuel tank writes out its messages

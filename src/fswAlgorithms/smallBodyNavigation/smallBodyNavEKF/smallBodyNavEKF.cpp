@@ -415,7 +415,7 @@ void SmallBodyNavEKF::writeMessages(uint64_t currentSimNanos) {
     }
 
     /* Write to the C++-wrapped output messages */
-    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->smallBodyNavOutMsg.write(&smallBodyNavOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->asteroidEphemerisOutMsg.write(&asteroidEphemerisOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->navTransOutMsg.write(navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->smallBodyNavOutMsg.write(smallBodyNavOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->asteroidEphemerisOutMsg.write(asteroidEphemerisOutMsgBuffer, this->moduleID, currentSimNanos);
 }

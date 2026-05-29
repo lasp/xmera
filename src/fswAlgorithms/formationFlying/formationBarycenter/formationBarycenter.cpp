@@ -132,7 +132,7 @@ void FormationBarycenter::computeBaricenter() {
  */
 void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
     // write C++ output message
-    this->transOutMsg.write(&this->transOutBuffer, this->moduleID, CurrentClock);
+    this->transOutMsg.write(this->transOutBuffer, this->moduleID, CurrentClock);
 }
 
 /*! This is the main method that gets called every time the module is updated.

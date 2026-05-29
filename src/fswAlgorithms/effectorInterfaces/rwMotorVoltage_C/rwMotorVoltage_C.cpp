@@ -108,7 +108,7 @@ void RwMotorVoltage_C::updateState(uint64_t callTime) {
     /*
      store the output message
      */
-    this->voltageOutMsg.write(&voltageOut, this->moduleID, callTime);
+    this->voltageOutMsg.write(voltageOut, this->moduleID, callTime);
 
     return;
 }

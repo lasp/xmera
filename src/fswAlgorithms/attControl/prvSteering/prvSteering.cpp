@@ -41,7 +41,7 @@ void PrvSteering::updateState(uint64_t callTime) {
     PRVSteeringLaw(this, guidCmd.sigma_BR, outMsgBuffer.omega_BastR_B, outMsgBuffer.omegap_BastR_B);
 
     /* Store the output message and pass it to the message bus */
-    this->rateCmdOutMsg.write(&outMsgBuffer, moduleID, callTime);
+    this->rateCmdOutMsg.write(outMsgBuffer, moduleID, callTime);
 
     return;
 }

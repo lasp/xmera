@@ -182,6 +182,6 @@ void LocationPointing::updateState(uint64_t callTime) {
     this->time_old = callTime;
 
     // write to the output messages
-    this->attGuidOutMsg.write(&attGuidOutMsgBuffer, this->moduleID, callTime);
-    this->attRefOutMsg.write(&attRefOutMsgBuffer, this->moduleID, callTime);
+    this->attGuidOutMsg.write(attGuidOutMsgBuffer, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOutMsgBuffer, this->moduleID, callTime);
 }

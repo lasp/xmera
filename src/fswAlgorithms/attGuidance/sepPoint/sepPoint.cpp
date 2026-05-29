@@ -91,5 +91,5 @@ void SepPoint::updateState(uint64_t currentSimNanos) {
     m33tMultV3(RN, omegaDot_RN_R, attRefOut.domega_RN_N);
 
     /*! Write the output messages */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, currentSimNanos);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, currentSimNanos);
 }

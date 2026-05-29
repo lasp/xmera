@@ -111,7 +111,7 @@ void SensorThermal::updateState(uint64_t currentSimNanos) {
  */
 void SensorThermal::writeMessages(uint64_t CurrentClock) {
     //! - write temperature output message
-    this->temperatureOutMsg.write(&this->temperatureMsgBuffer, this->moduleID, CurrentClock);
+    this->temperatureOutMsg.write(this->temperatureMsgBuffer, this->moduleID, CurrentClock);
 
     return;
 }

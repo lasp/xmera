@@ -21,7 +21,7 @@ void DvAttEffect::reset(uint64_t callTime) {
 
     for (uint32_t i = 0; i < this->numThrGroups; i = i + 1) {
         this->thrGroups[i].cmdRequests = {};
-        this->thrGroups[i].thrOnTimeOutMsg.write(&this->thrGroups[i].cmdRequests, this->moduleID, callTime);
+        this->thrGroups[i].thrOnTimeOutMsg.write(this->thrGroups[i].cmdRequests, this->moduleID, callTime);
     }
 }
 
@@ -76,7 +76,7 @@ void computeSingleThrustBlock(ThrustGroupData* thrData,
     for (i = 0; i < thrData->maxNumCmds; i = i + 1) {
         thrData->cmdRequests.OnTimeRequest[sortPairs[i].thrustIndex] = sortPairs[i].onTime;
     }
-    thrData->thrOnTimeOutMsg.write(&thrData->cmdRequests, moduleID, callTime);
+    thrData->thrOnTimeOutMsg.write(thrData->cmdRequests, moduleID, callTime);
 }
 
 void effectorVSort(effPairs* Input, effPairs* Output, size_t dim) {

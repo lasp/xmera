@@ -639,8 +639,8 @@ void PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime) {
     eigenVectorToCArray(sigma_FM, prescribedRotationOut.sigma_FM);
 
     // Write the output messages
-    this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
-    this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
+    this->spinningBodyOutMsg.write(spinningBodyOut, moduleID, callTime);
+    this->prescribedRotationOutMsg.write(prescribedRotationOut, moduleID, callTime);
 }
 
 /*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_FM

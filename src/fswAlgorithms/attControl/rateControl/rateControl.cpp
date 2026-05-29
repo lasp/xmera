@@ -34,7 +34,7 @@ void RateControl::updateState(uint64_t callTime) {
         torqueCmdOut = this->algorithm.update(this->guidInMsg());
     }
 
-    this->cmdTorqueOutMsg.write(&torqueCmdOut, moduleID, callTime);
+    this->cmdTorqueOutMsg.write(torqueCmdOut, moduleID, callTime);
 }
 
 /*! Setter method for the derivative gain P.

@@ -50,7 +50,7 @@ void RegionsOfInterestPrune::updateState(uint64_t callTime) {
         this->lastRegionsOutput.height[k] = static_cast<int>(cand.height);
         this->lastRegionsOutput.numberOfPixels[k] = static_cast<int>(cand.count);
     }
-    this->regionsIdentifiedOutMsg.write(&this->lastRegionsOutput, moduleID, callTime);
+    this->regionsIdentifiedOutMsg.write(this->lastRegionsOutput, moduleID, callTime);
 
     if (this->saveImages && !this->saveDir.empty()) saveVisualization(rcMsg);
 }

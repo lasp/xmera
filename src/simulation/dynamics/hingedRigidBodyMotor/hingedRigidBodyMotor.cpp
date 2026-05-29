@@ -66,5 +66,5 @@ void HingedRigidBodyMotor::updateState(uint64_t currentSimNanos) {
     motorTorqueOutMsgBuffer.motorTorque[0] = torque;
 
     //! write to the output messages
-    this->motorTorqueOutMsg.write(&motorTorqueOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->motorTorqueOutMsg.write(motorTorqueOutMsgBuffer, this->moduleID, currentSimNanos);
 }

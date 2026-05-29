@@ -64,9 +64,9 @@ void CobConverter::updateState(const uint64_t currentSimNanos) {
             currentSimNanos, cameraModelInMsg, cobMsgBuffer, navAttBuffer, sunBuffer, filterMsgBuffer);
     }
 
-    this->opnavUnitVecOutMsg.write(&uVecOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->comCorrectionOutMsg.write(&comMsgBuffer, this->moduleID, currentSimNanos);
-    this->cobConverterDiagnosticOutMsg.write(&diagnosticMsgBuffer, this->moduleID, currentSimNanos);
+    this->opnavUnitVecOutMsg.write(uVecOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->comCorrectionOutMsg.write(comMsgBuffer, this->moduleID, currentSimNanos);
+    this->cobConverterDiagnosticOutMsg.write(diagnosticMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /**

@@ -74,5 +74,5 @@ void MtbMomentumManagementSimple::updateState(uint64_t callTime) {
     /*! - Write the output message. This is the torque we are requesting the torque bars to produce in the Body frame.
          Note that depending on the torque rod/magentic field geometry, torque rod saturation limts, unknown alignments,
          and imperfect sensor readings, this torque may not be perfectly produced.*/
-    this->tauMtbRequestOutMsg.write(&tauMtbRequestOutMsgBuffer, moduleID, callTime);
+    this->tauMtbRequestOutMsg.write(tauMtbRequestOutMsgBuffer, moduleID, callTime);
 }

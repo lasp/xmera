@@ -54,7 +54,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
         this->HRBoutputStates = HingedRigidBodyMsgPayload{};
         this->HRBoutputStates.theta = this->theta;
         this->HRBoutputStates.thetaDot = this->thetaDot;
-        this->hingedRigidBodyOutMsg.write(&this->HRBoutputStates, this->moduleID, CurrentClock);
+        this->hingedRigidBodyOutMsg.write(this->HRBoutputStates, this->moduleID, CurrentClock);
     }
 
     // write out the panel state config log message
@@ -66,7 +66,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
         eigenVectorToCArray(this->v_SN_N, configLogMsg.v_BN_N);
         eigenVectorToCArray(this->sigma_SN, configLogMsg.sigma_BN);
         eigenVectorToCArray(this->omega_SN_S, configLogMsg.omega_BN_B);
-        this->hingedRigidBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
+        this->hingedRigidBodyConfigLogOutMsg.write(configLogMsg, this->moduleID, CurrentClock);
     }
 }
 

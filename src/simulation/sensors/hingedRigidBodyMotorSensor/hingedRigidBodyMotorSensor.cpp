@@ -107,5 +107,5 @@ void HingedRigidBodyMotorSensor::updateState(uint64_t currentSimNanos) {
     hingedRigidBodyMotorSensorOutMsgBuffer.theta = sensedTheta;
     hingedRigidBodyMotorSensorOutMsgBuffer.thetaDot = sensedThetaDot;
     this->hingedRigidBodyMotorSensorOutMsg.write(
-        &hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, currentSimNanos);
+        hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, currentSimNanos);
 }

@@ -23,7 +23,7 @@ void ThrFiringRemainder_C::updateState(uint64_t callTime) {
 
     THRArrayOnTimeCmdMsgPayload thrOnTimeOut = ::updateState(&this->algorithmState, callTime, thrForceIn);
 
-    this->onTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
+    this->onTimeOutMsg.write(thrOnTimeOut, this->moduleID, callTime);
 }
 
 /*! Setter method for thrMinFireTime.

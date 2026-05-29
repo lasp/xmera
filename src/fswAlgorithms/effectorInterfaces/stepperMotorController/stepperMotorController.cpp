@@ -37,7 +37,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
         this->algorithm.update(callTime, hingedRigidBodyMsgTimeWritten, motorRefAngleIn);
 
     if (stepperMotorControllerOutput.writeOutputMessage) {
-        this->motorStepCommandOutMsg.write(&stepperMotorControllerOutput.motorStepCommandOut, moduleID, callTime);
+        this->motorStepCommandOutMsg.write(stepperMotorControllerOutput.motorStepCommandOut, moduleID, callTime);
     }
 }
 

@@ -141,7 +141,7 @@ void ThrustRWDesat::updateState(uint64_t callTime) {
     }
 
     /*! - Write the output message to the thruster system */
-    this->thrCmdOutMsg.write(&outputData, this->moduleID, callTime);
+    this->thrCmdOutMsg.write(outputData, this->moduleID, callTime);
 
     return;
 }

@@ -164,7 +164,7 @@ void PlanetEphemeris::updateState(uint64_t currentSimNanos) {
         }
 
         //! - write output message
-        this->planetOutMsgs.at(c)->write(&newPlanet, this->moduleID, currentSimNanos);
+        this->planetOutMsgs.at(c)->write(newPlanet, this->moduleID, currentSimNanos);
     }
     return;
 }

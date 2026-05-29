@@ -155,7 +155,7 @@ void Triad::updateState(uint64_t callTime) {
     v3Copy(Sigma_RN, attRefOut.sigma_RN);
 
     /*! write output message */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 }
 
 /*! Setter method for sigma_R0R.

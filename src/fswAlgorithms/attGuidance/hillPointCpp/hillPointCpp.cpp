@@ -35,7 +35,7 @@ void HillPointCpp::updateState(uint64_t currentSimNanos) {
                                  (Eigen::Vector3d)primPlanet.v_BdyZero_N,
                                  &AttRefOutBuffer);
 
-    this->attRefOutMsg.write(&AttRefOutBuffer, moduleID, currentSimNanos);
+    this->attRefOutMsg.write(AttRefOutBuffer, moduleID, currentSimNanos);
 }
 
 void HillPointCpp::computeHillPointingReference(Eigen::Vector3d r_BN_N,

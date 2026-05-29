@@ -54,7 +54,7 @@ void SimpleVoltEstimator::readInputMessages() {
  @param Clock The clock time associated with the model call
  */
 void SimpleVoltEstimator::writeOutputMessages(uint64_t Clock) {
-    this->voltOutMsg.write(&this->estVoltState, this->moduleID, Clock);
+    this->voltOutMsg.write(this->estVoltState, this->moduleID, Clock);
 }
 
 void SimpleVoltEstimator::applyErrors() {

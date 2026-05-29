@@ -74,7 +74,7 @@ void ThrMomentumManagement::updateState(uint64_t callTime) {
         /*! - write out the output message */
         v3Copy(Delta_H_B, controlOutMsg.torqueRequestBody);
 
-        this->deltaHOutMsg.write(&controlOutMsg, moduleID, callTime);
+        this->deltaHOutMsg.write(controlOutMsg, moduleID, callTime);
     }
 
     return;

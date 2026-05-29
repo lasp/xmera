@@ -180,7 +180,7 @@ void PointCloudTriangulation::writeMessages(uint64_t currentSimNanos) {
     pointCloudOutMsgBuffer.numberOfPoints = this->pointCloudSize;
 
     eigenMatrixXToCArray(this->measuredPointCloud.transpose(), pointCloudOutMsgBuffer.points);
-    this->pointCloudOutMsg.write(&pointCloudOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->pointCloudOutMsg.write(pointCloudOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method performs the triangulation to estimate the unknown location given the known locations and images

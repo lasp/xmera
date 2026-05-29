@@ -58,5 +58,5 @@ void HingedBodyLinearProfiler::updateState(uint64_t currentSimNanos) {
     hingedRigidBodyReferenceOutMsgBuffer.thetaDot = refThetaDot;
 
     //!<  write to the output messages
-    this->hingedRigidBodyReferenceOutMsg.write(&hingedRigidBodyReferenceOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->hingedRigidBodyReferenceOutMsg.write(hingedRigidBodyReferenceOutMsgBuffer, this->moduleID, currentSimNanos);
 }

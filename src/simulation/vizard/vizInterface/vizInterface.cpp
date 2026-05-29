@@ -1217,7 +1217,7 @@ void VizInterface::requestImage(size_t camCounter, uint64_t currentSimNanos) {
     if (imageBufferLength > 0) {
         imageData.valid = 1;
     }
-    this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, currentSimNanos);
+    this->opnavImageOutMsgs[camCounter]->write(imageData, this->moduleID, currentSimNanos);
 
     /*! -- Clean the messages to avoid memory leaks */
     zmq_msg_close(&length);

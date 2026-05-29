@@ -37,7 +37,7 @@ void StComm::updateState(uint64_t callTime) {
     C2MRP(dcm_BN, attOutBuffer.MRP_BdyInrtl);
     attOutBuffer.timeTag = localInput.timeTag;
 
-    this->stAttOutMsg.write(&attOutBuffer, this->moduleID, callTime);
+    this->stAttOutMsg.write(attOutBuffer, this->moduleID, callTime);
 
     return;
 }

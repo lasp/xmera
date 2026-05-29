@@ -90,7 +90,7 @@ void ClockSynch::updateState(uint64_t currentSimNanos) {
     this->outputData.finalTimeDelta *= NANO2SEC;
 
     //! - Write the composite information into the output synch message.
-    this->clockOutMsg.write(&this->outputData, this->moduleID, currentSimNanos);
+    this->clockOutMsg.write(this->outputData, this->moduleID, currentSimNanos);
 
     if (this->displayTime) {
         bskLogger.bskLog(BSK_INFORMATION, "Seconds Elapsed: %f", currentSimNanos * NANO2SEC);

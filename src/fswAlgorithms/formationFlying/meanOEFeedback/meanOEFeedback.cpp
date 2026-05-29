@@ -61,7 +61,7 @@ void MeanOEFeedback::updateState(uint64_t callTime) {
     /*! - write the module output message */
     this->calcLyapunovFeedback(chiefTransMsg, deputyTransMsg, &forceMsg);
 
-    this->forceOutMsg.write(&forceMsg, this->moduleID, callTime);
+    this->forceOutMsg.write(forceMsg, this->moduleID, callTime);
     return;
 }
 
