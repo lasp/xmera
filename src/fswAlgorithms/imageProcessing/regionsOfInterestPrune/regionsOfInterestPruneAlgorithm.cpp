@@ -95,13 +95,17 @@ std::vector<RoiCandidateEntry> RegionsOfInterestPruneAlgorithm::buildCandidates(
     return candidates;
 }
 
-/*! Sorts candidates by estimated pixel count (descending), truncates to ROI_CANDIDATES_MAX,
+/*! Sorts candidates by estimated pixel count (descending), use window area for tie break, truncates to
+ ROI_CANDIDATES_MAX,
  *  and packs the result into a RoiCandidates ready for publication.
  @return RoiCandidates with numCandidates set and candidates[0] = rank-1.
  @param candidates  Unsorted candidate list (taken by value; sorted in-place).
 */
 RoiCandidates RegionsOfInterestPruneAlgorithm::packOutput(std::vector<RoiCandidateEntry> candidates) {
-    std::ranges::sort(candidates, std::greater{}, &RoiCandidateEntry::count);
+    std::ranges::sort(candidates, [](const RoiCandidateEntry& a, const RoiCandidateEntry& b) {
+        if (a.count != b.count) return a.count > b.count;
+        return a.height * a.width < b.height * b.width;
+    });
     if (candidates.size() > ROI_CANDIDATES_MAX) candidates.resize(ROI_CANDIDATES_MAX);
 
     RoiCandidates outRoi{};
