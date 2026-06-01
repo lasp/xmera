@@ -14,6 +14,17 @@
 
 namespace filtering::flybyODuKF {
 
+using FlybyState = filtering::StateVector<filtering::Position<3>, filtering::Velocity<3>>;
+
+// Two-body point-mass gravity dynamics, stored by value as the SRUKF's
+// concrete dynamics type (no std::function). `centralBody` is mu in the
+// filter's internal unit system; the algorithm sets it in reset(). Body is
+// defined out-of-line in the .cpp to keep this header light.
+struct FlybyTwoBodyDynamics {
+    double centralBody = 0;
+    FlybyState operator()(double t, FlybyState const& state) const;
+};
+
 // Flyby OD square-root unscented Kalman filter. State is a 6-vector
 // (3-position + 3-velocity); the observation is the unit vector from the
 // body toward the target body, expressed in the inertial frame.
@@ -30,7 +41,7 @@ namespace filtering::flybyODuKF {
 // HeadingMeasurement / FilterStateOutput / ResidualsOutput.
 class FlybyODuKFAlgorithm {
 public:
-    using State = filtering::StateVector<filtering::Position<3>, filtering::Velocity<3>>;
+    using State = FlybyState;
     static constexpr int N = State::size;  // 6
 
     // ---- Configuration (call before reset) -----------------------------------
@@ -87,7 +98,7 @@ public:
 
 private:
     // Underlying SRUKF (functional core wrapped in a stateful façade).
-    SrukfInterface<State> srukf;
+    SrukfInterface<State, FlybyTwoBodyDynamics> srukf;
 
     // Bounded queue of pending measurements, drained in time order by update().
     filtering::measurement_queue<HeadingMeasurement, 1> measurements;

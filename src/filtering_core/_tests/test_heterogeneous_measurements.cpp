@@ -89,6 +89,18 @@ struct SpeedModel {
 static_assert(filtering::Measurement<PositionModel, State>);
 static_assert(filtering::Measurement<SpeedModel, State>);
 
+// Constant-velocity dynamics as a concrete functor (the SRUKF stores its
+// dynamics by value, not type-erased): position derivative = velocity,
+// velocity derivative = 0.
+struct ConstantVelocity {
+    State operator()(double /*t*/, State const& s) const {
+        State xDot;
+        xDot.set<filtering::Position<3>>(s.get<filtering::Velocity<3>>());
+        xDot.set<filtering::Velocity<3>>(Eigen::Vector3d::Zero());
+        return xDot;
+    }
+};
+
 // ---- Toy multi-sensor filter ----------------------------------------------
 //
 // Satisfies SequentialFilter<ToyFilter, Measurement>: timeUpdate(dt) +
@@ -104,14 +116,8 @@ public:
         p0.bottomRightCorner<3, 3>() *= 10.0;  // 10 (m/s)^2 velocity
         this->srukf.setInitialCovariance(p0);
         this->srukf.setProcessNoise(Matrix6::Identity() * 1e-6);
-
-        // Constant-velocity dynamics.
-        this->srukf.dynamics = [](double /*t*/, State const& s) -> State {
-            State xDot;
-            xDot.set<filtering::Position<3>>(s.get<filtering::Velocity<3>>());
-            xDot.set<filtering::Velocity<3>>(Eigen::Vector3d::Zero());
-            return xDot;
-        };
+        // Dynamics is the default-constructed ConstantVelocity member — nothing
+        // to set here.
     }
 
     void setInitialState(State const& s) { this->srukf.setInitialMean(s); }
@@ -150,7 +156,7 @@ private:
         this->timeLog.push_back(meas.timeTag);
     }
 
-    SrukfInterface<State> srukf;
+    SrukfInterface<State, ConstantVelocity> srukf;
 };
 
 static_assert(filtering::SequentialFilter<ToyFilter, Measurement>);

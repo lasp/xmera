@@ -45,7 +45,8 @@ concept Measurement = requires(M const m, State const s) {
 };
 
 // A dynamics function maps (time, state) -> state. Anything callable with
-// that signature qualifies — concrete function pointer, lambda, std::function.
+// that signature qualifies — a functor, a function pointer, or a lambda
+// (stored by value as the SRUKF's concrete dynamics type; not type-erased).
 template<class D, class State>
 concept Dynamics = std::invocable<D, double, State>
                 && std::same_as<std::invoke_result_t<D, double, State>, State>;

@@ -40,6 +40,19 @@ struct HeadingMeasurementModel {
 
 }  // namespace
 
+// Two-body point-mass gravity: position derivative = velocity, velocity
+// derivative = -centralBody / |r|^3 * r. centralBody is mu in the filter's
+// internal unit system (set by reset()).
+FlybyState FlybyTwoBodyDynamics::operator()(double /*t*/, FlybyState const& state) const {
+    Eigen::Vector3d const r = state.get<filtering::Position<3>>();
+    Eigen::Vector3d const v = state.get<filtering::Velocity<3>>();
+
+    FlybyState xDot;
+    xDot.set<filtering::Position<3>>(v);
+    xDot.set<filtering::Velocity<3>>(-this->centralBody / std::pow(r.norm(), 3) * r);
+    return xDot;
+}
+
 // ---- Configuration --------------------------------------------------------
 
 void FlybyODuKFAlgorithm::setMu(double mu) { this->mu = mu; }
@@ -90,16 +103,7 @@ void FlybyODuKFAlgorithm::reset() {
     // Two-body point-mass gravity. The SRUKF core works in the converted unit
     // system (mean is scaled by unitConversion in reset()), so mu — input in
     // m^3/s^2 — is scaled by unitConversion^3 to match.
-    double const centralBody = this->mu * std::pow(this->unitConversion, 3);
-    this->srukf.dynamics = [centralBody](double /*t*/, State const& state) -> State {
-        Eigen::Vector3d const r = state.get<filtering::Position<3>>();
-        Eigen::Vector3d const v = state.get<filtering::Velocity<3>>();
-
-        State xDot;
-        xDot.set<filtering::Position<3>>(v);
-        xDot.set<filtering::Velocity<3>>(-centralBody / std::pow(r.norm(), 3) * r);
-        return xDot;
-    };
+    this->srukf.dynamics = FlybyTwoBodyDynamics{this->mu * std::pow(this->unitConversion, 3)};
 
     this->srukf.reset();
     this->measurements.clear();

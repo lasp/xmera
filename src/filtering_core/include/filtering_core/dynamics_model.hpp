@@ -9,16 +9,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <functional>
 
 namespace filtering {
-
-// Convenient alias for "anything that maps (time, state) -> state".
-// Concrete filters typically pass static functions or stateless lambdas
-// matching this signature; the Dynamics<D, State> concept (in concepts.hpp)
-// is the more general gate for what predict() will accept.
-template<class State>
-using DynamicsModel = std::function<State(double time, State const& state)>;
 
 // Runge-Kutta 4 step. Evaluates `dynamics` at four points per step and
 // linearly combines them, hence the LinearlyCombinable constraint on State.

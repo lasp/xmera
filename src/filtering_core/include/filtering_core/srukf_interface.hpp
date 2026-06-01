@@ -308,23 +308,28 @@ UpdateResult<State, M> update(
 }  // namespace srukf
 
 // ----------------------------------------------------------------------------
-// SrukfInterface<Spec> — stateful façade matching fp32-fsw-xmera convention.
+// SrukfInterface<State, Dyn> — stateful façade matching fp32-fsw-xmera convention.
 //
-// Holds an SrukfStorage by value plus a settable dynamics function. Methods
+// Holds an SrukfStorage by value plus a settable dynamics functor. Methods
 // reset() / timeUpdate(dt) / update<M>(m) mutate the held storage by delegating
 // to the free functions in `srukf::`. Setters/getters expose tunables and
 // initial conditions; getters expose mean and sqrt-covariance for readout.
 //
+// `Dyn` is the concrete dynamics type (any type satisfying Dynamics<State> —
+// a functor, a function pointer, a captureless lambda). It is stored by value,
+// not type-erased: no std::function, no heap, freestanding. The owning
+// algorithm sets it (e.g. `srukf.dynamics = TwoBodyDynamics{mu}`) before reset.
+//
 // The (future) C shim for an algorithm built on this façade will wrap a
-// SrukfInterface<Spec> instance behind an opaque handle.
+// SrukfInterface instance behind an opaque handle.
 // ----------------------------------------------------------------------------
-template<FilterState State>
+template<FilterState State, Dynamics<State> Dyn>
 class SrukfInterface {
 public:
     using StateMat = Eigen::Matrix<double, State::size, State::size>;
 
-    // Public — set by the owning algorithm class. Called from timeUpdate().
-    DynamicsModel<State> dynamics;
+    // Public — set by the owning algorithm class. Read by timeUpdate().
+    Dyn dynamics;
 
     void setAlpha(double a)              { this->storage.alpha          = a;     }
     void setBeta(double b)               { this->storage.beta           = b;     }
