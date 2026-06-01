@@ -316,50 +316,27 @@ kind-agnostic:
   (the flyby heading model is size 3; the toy test below also drives a size-1
   model through the same path).
 
-The deployment target is a freestanding C++ environment without ``<variant>``,
-so the filter names its **closed set** as a hand-rolled **tagged union** — an
-``enum`` tag, a ``union`` of the input PODs, and a ``visit()`` that switches
-on the tag. No heap, no exceptions, fixed-size (the storage is the largest
-alternative), no virtual dispatch:
+``std::variant`` is freestanding on the target toolchain (GCC 14+ / C++26
+P2407, ``__cpp_lib_freestanding_variant``), so it is an appropriate closed-set
+mechanism here. The filter that knows its kinds names the set as a
+``std::variant`` and dispatches with ``std::visit`` — fixed-size, no heap, no
+virtual:
 
 .. code-block:: cpp
 
-   struct Measurement {                          // the filter's closed set
-       enum class Kind { Heading, Gyro } kind;
-       union {
-           HeadingMeasurement heading;
-           GyroMeasurement    gyro;
-       };
-       Measurement(HeadingMeasurement m) : kind(Kind::Heading), heading(m) {}
-       Measurement(GyroMeasurement    m) : kind(Kind::Gyro),    gyro(m)    {}
-
-       template<class F> void visit(F&& f) const {
-           switch (kind) {
-               case Kind::Heading: f(heading); break;
-               case Kind::Gyro:    f(gyro);    break;
-           }
-       }
-   };
-
+   using Measurement = std::variant<HeadingMeasurement, GyroMeasurement>;
    filtering::measurement_queue<Measurement, CAP> measurements;   // one timeline
 
    void measurementUpdate(Measurement const& m) {                 // SequentialFilter
-       m.visit([this](auto const& meas){ this->applyMeasurement(meas); });
+       std::visit([this](auto const& meas){ this->applyMeasurement(meas); }, m);
    }
    // one private overload per kind: POD -> model -> srukf.update(model)
    void applyMeasurement(HeadingMeasurement const&);
    void applyMeasurement(GyroMeasurement const&);
 
-The alternatives must be trivially destructible (Eigen fixed-size types are),
-so overwriting the active union member needs no destructor call. If a kind is
-not trivially copy-*assignable* (Eigen defines ``operator=``), give
-``Measurement`` an explicit copy constructor and copy assignment that copy the
-tag and placement-construct the active member — the implicit ones are deleted
-for such a union. See the worked reference for the exact form.
-
 Because every kind shares the one queue timeline, ``apply_sequential``
 interleaves them in time order for free — no per-kind sub-queues, no
-hand-rolled merge. The union is over the **input PODs**; each
+hand-rolled merge. The variant is over the **input PODs**; each
 ``applyMeasurement`` overload builds that kind's **model** (the
 ``Measurement<M, State>`` object) and calls ``srukf.update`` — the same
 POD-vs-model split the single-kind filter uses.
@@ -368,12 +345,12 @@ A worked, compiling reference (real SRUKF, two kinds of observation sizes 3
 and 1) lives in
 ``filtering_core/_tests/test_heterogeneous_measurements.cpp``.
 
-C-shim note: the tagged union doesn't cross a C ABI. The shim exposes one
+C-shim note: a ``std::variant`` doesn't cross a C ABI. The shim exposes one
 ``enqueue_<kind>()`` per kind — it already mirrors each POD as a ``_c`` struct
-— and constructs the union on the C++ side.
+— and constructs the variant on the C++ side.
 
-(FlybyODuKF stays single-kind: it observes only a heading. The tagged-union
-pattern lands for real when the multi-sensor filters are ported.)
+(FlybyODuKF stays single-kind: it observes only a heading. The variant pattern
+lands for real when the multi-sensor filters are ported.)
 
 How to use a filter
 -------------------

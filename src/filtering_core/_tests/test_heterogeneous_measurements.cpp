@@ -7,15 +7,10 @@
 // The filtering_core pieces are kind-agnostic — measurement_queue,
 // apply_sequential, and the SequentialFilter concept all operate over an
 // arbitrary `Measurement` type, and srukf::update<M> is templated per
-// measurement model (each model carries its own M::size). A closed tagged
-// union over the input PODs is just such a `Measurement` type, so it flows
-// through the existing core with no change: the filter that knows its kinds
-// names the union and visits it to a per-kind overload.
-//
-// The deployment target is a freestanding C++ environment without <variant>,
-// so the closed set is a hand-rolled tagged union (enum tag + union + a visit()
-// switch) rather than std::variant — no heap, no exceptions, fixed-size, and
-// trivially copyable (so the union needs no manual destructor).
+// measurement model (each model carries its own M::size). A
+// std::variant<KindA, KindB, ...> is just such a `Measurement` type, so it
+// flows through the existing core with no change: the filter that knows its
+// kinds names the variant and std::visit's to a per-kind overload.
 //
 // This toy filter is the copy-paste reference for a future multi-sensor filter
 // (e.g. sunline = gyro + CSS). It is a real SRUKF (not a stub) and exercises
@@ -31,7 +26,7 @@
 #include <Eigen/Dense>
 
 #include <algorithm>
-#include <new>
+#include <variant>
 #include <vector>
 
 namespace filtering::hetero_test {
@@ -58,51 +53,8 @@ struct SpeedMeas {
     double variance = 1;
 };
 
-// Closed set of kinds this filter consumes, on one shared timeline. A
-// hand-rolled tagged union stands in for std::variant (unavailable in the
-// freestanding target): enum tag + union + a visit() that switches on the tag.
-// No heap, no exceptions, fixed-size (the storage is the largest alternative).
-//
-// The alternatives are trivially destructible (Eigen fixed-size types are),
-// so overwriting the active member needs no destructor call. They are not
-// trivially copy-*assignable*, though — Eigen defines operator= — which deletes
-// the union's implicit copy/assign, so we provide them explicitly: copy the
-// tag and placement-construct the active member.
-struct Measurement {
-    enum class Kind { PositionFix, SpeedMeas } kind;
-    union {
-        PositionFix positionFix;
-        SpeedMeas   speedMeas;
-    };
-
-    Measurement(PositionFix m) : kind(Kind::PositionFix), positionFix(m) {}
-    Measurement(SpeedMeas m) : kind(Kind::SpeedMeas), speedMeas(m) {}
-
-    Measurement(Measurement const& other) { this->constructFrom(other); }
-    Measurement& operator=(Measurement const& other) {
-        if (this != &other) {
-            this->constructFrom(other);
-        }
-        return *this;
-    }
-
-    template<class F>
-    void visit(F&& f) const {
-        switch (this->kind) {
-            case Kind::PositionFix: f(this->positionFix); break;
-            case Kind::SpeedMeas:   f(this->speedMeas);   break;
-        }
-    }
-
-private:
-    void constructFrom(Measurement const& other) {
-        this->kind = other.kind;
-        switch (other.kind) {
-            case Kind::PositionFix: ::new (&this->positionFix) PositionFix(other.positionFix); break;
-            case Kind::SpeedMeas:   ::new (&this->speedMeas) SpeedMeas(other.speedMeas);       break;
-        }
-    }
-};
+// Closed set of kinds this filter consumes, on one shared timeline.
+using Measurement = std::variant<PositionFix, SpeedMeas>;
 
 // ---- Measurement models (satisfy Measurement<M, State>) -------------------
 
@@ -169,7 +121,7 @@ public:
     void timeUpdate(double dt) { this->srukf.timeUpdate(dt); }
 
     void measurementUpdate(Measurement const& m) {
-        m.visit([this](auto const& meas) { this->applyMeasurement(meas); });
+        std::visit([this](auto const& meas) { this->applyMeasurement(meas); }, m);
     }
 
     State   getMean() const { return this->srukf.getMean(); }

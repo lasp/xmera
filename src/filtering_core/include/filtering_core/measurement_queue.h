@@ -20,11 +20,10 @@ namespace filtering {
 // out-of-order rewind, ...) are added as additional free functions without
 // touching this container.
 //
-// `Measurement` may be a single kind (e.g. HeadingMeasurement) or a small
-// closed tagged union (enum tag + union + visit) for a filter that consumes
-// heterogeneous measurements on one timeline — a freestanding stand-in for
-// std::variant. The queue is kind-agnostic either way; a multi-sensor filter
-// visits the union in its measurementUpdate. See
+// `Measurement` may be a single kind (e.g. HeadingMeasurement) or a
+// `std::variant<KindA, KindB, ...>` for a filter that consumes heterogeneous
+// measurements on one timeline. The queue is kind-agnostic either way; a
+// multi-sensor filter std::visit's the variant in its measurementUpdate. See
 // filtering_core/_tests/test_heterogeneous_measurements.cpp.
 template<typename Measurement, std::size_t CAPACITY>
 class measurement_queue final {
