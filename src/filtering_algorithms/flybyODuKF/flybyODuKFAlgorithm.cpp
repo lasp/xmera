@@ -3,7 +3,7 @@
 
 #include "flybyODuKFAlgorithm.h"
 
-#include <cmath>
+#include <math.h>
 #include <utility>
 
 namespace filtering::flybyODuKF {
@@ -49,7 +49,7 @@ FlybyState FlybyTwoBodyDynamics::operator()(double /*t*/, FlybyState const& stat
 
     FlybyState xDot;
     xDot.set<filtering::Position<3>>(v);
-    xDot.set<filtering::Velocity<3>>(-this->centralBody / std::pow(r.norm(), 3) * r);
+    xDot.set<filtering::Velocity<3>>(-this->centralBody / pow(r.norm(), 3) * r);
     return xDot;
 }
 
@@ -103,7 +103,7 @@ void FlybyODuKFAlgorithm::reset() {
     // Two-body point-mass gravity. The SRUKF core works in the converted unit
     // system (mean is scaled by unitConversion in reset()), so mu — input in
     // m^3/s^2 — is scaled by unitConversion^3 to match.
-    this->srukf.dynamics = FlybyTwoBodyDynamics{this->mu * std::pow(this->unitConversion, 3)};
+    this->srukf.dynamics = FlybyTwoBodyDynamics{this->mu * pow(this->unitConversion, 3)};
 
     this->srukf.reset();
     this->measurements.clear();

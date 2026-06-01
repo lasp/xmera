@@ -12,7 +12,7 @@
 #include <Eigen/QR>
 
 #include <array>
-#include <cmath>
+#include <math.h>
 
 namespace filtering {
 
@@ -97,7 +97,7 @@ inline Eigen::MatrixXd choleskyUpDownDate(
 ) {
     Eigen::MatrixXd P = sqrtP * sqrtP.transpose();
     int const sign = (coefficient > 0) ? 1 : -1;
-    P += sign * std::abs(coefficient) * v * v.transpose();
+    P += sign * fabs(coefficient) * v * v.transpose();
 
     Eigen::MatrixXd const A = choleskyDecomposition(P);
     return qrDecompositionJustR(A);
@@ -157,7 +157,7 @@ SrukfStorage<State> reset(SrukfStorage<State> s) {
         detail::choleskyDecomposition(s.unitConversion * s.unitConversion * s.processNoise);
 
     s.lambda = static_cast<double>(N) * (s.alpha * s.alpha - 1.0);
-    s.eta    = std::sqrt(static_cast<double>(N) + s.lambda);
+    s.eta    = sqrt(static_cast<double>(N) + s.lambda);
 
     s.wM(0) = s.lambda / (static_cast<double>(N) + s.lambda);
     s.wC(0) = s.lambda / (static_cast<double>(N) + s.lambda) + (1.0 - s.alpha * s.alpha + s.beta);
@@ -208,7 +208,7 @@ SrukfStorage<State> timeUpdate(
     Eigen::MatrixXd A(N, 3 * N);
     for (int i = 1; i < Storage::numSigmaPoints; ++i) {
         A.col(i - 1) =
-            std::sqrt(s.wC(i)) * (s.sigmaPoints[i].raw() - s.xBar.raw());
+            sqrt(s.wC(i)) * (s.sigmaPoints[i].raw() - s.xBar.raw());
     }
     A.block(0, Storage::numSigmaPoints - 1, N, N) = s.cholProcessNoise;
 
@@ -266,7 +266,7 @@ UpdateResult<State, M> update(
     // QR-decomposition input matrix A for sy = sqrt-covariance of innovation.
     Eigen::MatrixXd A(M_size, 2 * N + M_size);
     for (int i = 1; i < numSigma; ++i) {
-        A.col(i - 1) = std::sqrt(s.wC(1)) * (yMeas.col(i) - yBar);
+        A.col(i - 1) = sqrt(s.wC(1)) * (yMeas.col(i) - yBar);
     }
     A.block(0, numSigma - 1, M_size, M_size) = cholMeasNoise;
 

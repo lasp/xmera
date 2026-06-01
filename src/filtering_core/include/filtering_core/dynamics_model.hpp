@@ -8,7 +8,7 @@
 
 #include <algorithm>
 #include <array>
-#include <cmath>
+#include <math.h>
 
 namespace filtering {
 
@@ -41,7 +41,7 @@ constexpr State propagate(
     double t = interval[0];
     double const tFinal = interval[1];
 
-    double const N = std::ceil((tFinal - t) / dt);
+    double const N = ceil((tFinal - t) / dt);
     for (int i = 0; i < N; i += 1) {
         double const step = std::min(dt, tFinal - t);
         state = rk4(dynamics, state, t, step);
