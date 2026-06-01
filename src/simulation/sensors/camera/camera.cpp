@@ -400,9 +400,7 @@ void Camera::updateState(uint64_t currentSimNanos) {
         }
         /*! - Encode the cv mat into a png for the future modules to decode it the same way */
         std::vector<unsigned char> buf;
-        std::vector<int> compression;
-        compression.push_back(0);
-        cv::imencode(".png", blurred, buf, compression);
+        cv::imencode(".png", blurred, buf);
         /*! - Output the saved image */
         imageOut.valid = 1;
         imageOut.timeTag = imageBuffer.timeTag;
