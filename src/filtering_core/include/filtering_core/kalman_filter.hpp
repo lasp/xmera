@@ -16,10 +16,11 @@ namespace filtering {
 // require a virtual base class; concept-based dispatch lets the queue work
 // with any concrete filter type.
 //
-// `Measurement` may be a single kind or a `std::variant<KindA, KindB, ...>`
-// for a multi-sensor filter; in the variant case the filter's
-// measurementUpdate std::visit's to a per-kind handler (POD -> model ->
-// srukf.update). See filtering_core/_tests/test_heterogeneous_measurements.cpp.
+// `Measurement` may be a single kind or a small closed tagged union (enum tag
+// + union + visit) for a multi-sensor filter — a freestanding stand-in for
+// std::variant; the filter's measurementUpdate visits to a per-kind handler
+// (POD -> model -> srukf.update). See
+// filtering_core/_tests/test_heterogeneous_measurements.cpp.
 template<class Filter, class Measurement>
 concept SequentialFilter = requires(Filter f, Measurement& m, double dt) {
     { f.timeUpdate(dt) };
