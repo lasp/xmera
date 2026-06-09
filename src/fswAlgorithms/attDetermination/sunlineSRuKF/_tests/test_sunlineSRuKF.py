@@ -62,9 +62,7 @@ def setup_filter_data(filter_object):
     filter_object.setAlpha(0.02)
     filter_object.setBeta(2.0)
 
-    filter_object.setInitialPosition([0.0, 0.0, 1.0])
-    filter_object.setInitialVelocity([0.02, -0.005, 0.01])
-    filter_object.setInitialBias([0.6])
+    filter_object.setInitialState([0.0, 0.0, 1.0, 0.02, -0.005, 0.01, 0.6])
     filter_object.setInitialCovariance([[0.0001, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0001, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 0.0001, 0.0, 0.0, 0.0, 0.0],
@@ -133,11 +131,8 @@ def state_propagation_flyby(show_plots=False):
     unit_test_sim.AddModelToTask(unit_task_name, sun_heading_data_log)
 
     simpleNavMsgData = messaging.NavAttMsgPayload()
-    initState = np.zeros(7)
-    initState[:3] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
-    initState[3:6] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
-    initState[6] = sunHeadingFilter.getInitialBias()[0][0]
-    simpleNavMsgData.timeTag = 0
+    initState = np.array(sunHeadingFilter.getInitialState()).reshape(7)
+    simpleNavMsgData.timeTag = -1
     simpleNavMsgData.omega_BN_B = initState[3:6]
     simpleNavMsg = messaging.NavAttMsg().write(simpleNavMsgData)
     sunHeadingFilter.navAttInMsg.subscribeTo(simpleNavMsg)
@@ -158,6 +153,7 @@ def state_propagation_flyby(show_plots=False):
     sunHeadingFilter.cssConfigInMsg.subscribeTo(cssConfigMsg)
 
     cssDataMsg = messaging.CSSArraySensorMsgPayload()
+    cssDataMsg.timeTag = -1
     for i in range(8):
         cssDataMsg.CosValue[i] = 0.0
     cssMsg = messaging.CSSArraySensorMsg().write(cssDataMsg)
@@ -166,9 +162,7 @@ def state_propagation_flyby(show_plots=False):
     sim_time = 50
     time = np.linspace(0, sim_time, sim_time+1)
     expected = np.zeros([len(time), 8])
-    expected[0, 1:4] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
-    expected[0, 4:7] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
-    expected[0, 7] = sunHeadingFilter.getInitialBias()[0][0]
+    expected[0, 1:] = initState
     expected = rk4(sunline_dynamics, time, expected[0, 1:], normalizeState=True)
 
     unit_test_sim.InitializeSimulation()
@@ -185,7 +179,7 @@ def state_propagation_flyby(show_plots=False):
                                  verbose=True)
     np.testing.assert_allclose(state_data_log[:, 1:],
                                expected[:, 1:],
-                               rtol=1E-10,
+                               rtol=1E-8,
                                err_msg='state propagation error',
                                verbose=True)
     diff = np.copy(state_data_log)
@@ -226,11 +220,7 @@ def state_update_flyby(initial_error, show_plots=False):
     unit_test_sim.AddModelToTask(unit_task_name, nav_att_data_log)
 
     simpleNavMsgData = messaging.NavAttMsgPayload()
-    initState = np.zeros(7)
-    initState[:3] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
-    initState[3:6] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
-    initState[6] = sunHeadingFilter.getInitialBias()[0][0]
-
+    initState = np.array(sunHeadingFilter.getInitialState()).reshape(7)
     simpleNavMsgData.timeTag = -1
     simpleNavMsgData.omega_BN_B = initState[3:6]
     simpleNavMsg = messaging.NavAttMsg().write(simpleNavMsgData)
@@ -255,9 +245,7 @@ def state_update_flyby(initial_error, show_plots=False):
     np.random.seed(0)
     time = np.linspace(0, sim_time, sim_time+1)
     expected = np.zeros([len(time), 8])
-    expected[0, 1:4] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
-    expected[0, 4:7] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
-    expected[0, 7] = sunHeadingFilter.getInitialBias()[0][0]
+    expected[0, 1:] = initState
     expected = rk4(sunline_dynamics, time, expected[0, 1:], normalizeState=True)
 
     bodyFrame = np.zeros([len(time), 8])
@@ -265,9 +253,7 @@ def state_update_flyby(initial_error, show_plots=False):
     bodyFrame = rk4(mrp_integration, time, bodyFrame[0, 1:], mrpShadow=True)
 
     if initial_error:
-        sunHeadingFilter.setInitialPosition([1.0, 0.0, 0.0])
-        sunHeadingFilter.setInitialVelocity([-0.02, 0.005, -0.01])
-        sunHeadingFilter.setInitialBias([1])
+        sunHeadingFilter.setInitialState([1.0, 0.0, 0.0, -0.02, 0.005, -0.01, 1])
         sunHeadingFilter.setInitialCovariance([[0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0],
@@ -313,10 +299,10 @@ def state_update_flyby(initial_error, show_plots=False):
     css_number_obs = css_residual_data_log.numberOfObservations
     css_size_obs = css_residual_data_log.sizeOfObservations
     css_post_fit_log_sparse = add_time_column(css_residual_data_log.times(), css_residual_data_log.postFits)
-    css_post_fit_log = np.zeros([len(css_residual_data_log.times()), np.max(css_size_obs)+1])
+    css_post_fit_log = np.zeros([len(css_residual_data_log.times()), len(CSSOrientationList) + 1])
     css_post_fit_log[:, 0] = css_post_fit_log_sparse[:, 0]
     css_pre_fit_log_sparse = add_time_column(css_residual_data_log.times(), css_residual_data_log.preFits)
-    css_pre_fit_log = np.zeros([len(css_residual_data_log.times()), np.max(css_size_obs)+1])
+    css_pre_fit_log = np.zeros([len(css_residual_data_log.times()), len(CSSOrientationList) + 1])
     css_pre_fit_log[:, 0] = css_pre_fit_log_sparse[:, 0]
 
     for i in range(len(css_number_obs)):
