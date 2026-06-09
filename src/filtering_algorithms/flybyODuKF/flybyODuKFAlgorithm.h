@@ -6,9 +6,9 @@
 
 #include "flybyODuKFTypes.h"
 
-#include <filtering_core/kalman_filter.hpp>
-#include <filtering_core/srukf_interface.hpp>
-#include <filtering_core/state.hpp>
+#include <filteringCore/kalmanFilter.hpp>
+#include <filteringCore/srukf.hpp>
+#include <filteringCore/state.hpp>
 
 #include <Eigen/Core>
 
@@ -93,12 +93,12 @@ public:
 
     // Raw readouts in filter-internal units (mainly for tests).
     State getMean() const;
-    Eigen::Matrix<double, N, N> getSqrtCovar() const;
+    Eigen::Matrix<double, N, N> getCovariance() const;
     double getCurrentTime() const;
 
 private:
     // Underlying SRUKF (functional core wrapped in a stateful façade).
-    SrukfInterface<State, FlybyTwoBodyDynamics> srukf;
+    SRuKF<State, FlybyTwoBodyDynamics> srukf;
 
     // Bounded queue of pending measurements, drained in time order by update().
     filtering::measurement_queue<HeadingMeasurement, 1> measurements;

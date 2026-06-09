@@ -133,24 +133,25 @@ TEST(FlybyODuKFAlgorithm, PropagationConservesEnergyAndGrowsCovariance) {
     configure(algo, x0);
     algo.reset();
 
-    Matrix6 const sqrtCovar0 = algo.getSqrtCovar();
-    double const covarNorm0  = (sqrtCovar0 * sqrtCovar0.transpose()).norm();
+    double const covarNorm0  = algo.getCovariance().norm();
     double const energy0     = orbitalEnergy(x0);
 
+    // timeUpdate(T) rewinds to the last-measurement state and propagates by T,
+    // so each iteration here re-integrates from x0 to t = i*dt. Cost is
+    // O(steps²); keep steps modest.
     constexpr double dt    = 10.0;
-    constexpr int    steps = 360;  // 60 minutes, as in the Python test
+    constexpr int    steps = 60;  // 10-minute window
     Vector6 truth = x0;
-    for (int i = 0; i < steps; ++i) {
+    for (int i = 1; i <= steps; ++i) {
         truth = rk4Step(truth, dt);
-        algo.timeUpdate(dt);
+        algo.timeUpdate(static_cast<double>(i) * dt);
 
         Vector6 const estimate = stateVector(algo.getState());
         EXPECT_TRUE(estimate.isApprox(truth, 1E-6)) << "step " << i;
         EXPECT_NEAR(orbitalEnergy(estimate), energy0, std::abs(energy0) * 1E-2) << "step " << i;
     }
 
-    Matrix6 const sqrtCovarN = algo.getSqrtCovar();
-    double const covarNormN  = (sqrtCovarN * sqrtCovarN.transpose()).norm();
+    double const covarNormN  = algo.getCovariance().norm();
     EXPECT_GT(covarNormN, 5.0 * covarNorm0);
 }
 
@@ -168,28 +169,30 @@ TEST(FlybyODuKFAlgorithm, MeasurementUpdatesShrinkCovarianceAndAlignHeading) {
     configure(algo, x0Estimate);
     algo.reset();
 
-    Matrix6 const sqrtCovar0 = algo.getSqrtCovar();
-    Matrix6 const covar0     = sqrtCovar0 * sqrtCovar0.transpose();
+    Matrix6 const covar0 = algo.getCovariance();
 
+    // timeUpdate(dt) is dt since the last measurement — track it manually.
     constexpr double dt    = 1.0;
     constexpr int    steps = 250;
     Vector6 truth = x0;
+    double  lastMeasTime = 0.0;
     for (int i = 1; i <= steps; ++i) {
         truth = rk4Step(truth, dt);
-        algo.timeUpdate(dt);
+        double const currentTime = static_cast<double>(i) * dt;
+        algo.timeUpdate(currentTime - lastMeasTime);
 
         if (i % 10 == 0) {
             HeadingMeasurement meas;
-            meas.timeTag   = static_cast<double>(i) * dt;
+            meas.timeTag   = currentTime;
             meas.rhat_BN_N = truth.head<3>().normalized();
             meas.covarN    = 5E-5 * Eigen::Matrix3d::Identity();
             meas.valid     = true;
             algo.measurementUpdate(meas);
+            lastMeasTime = currentTime;
         }
     }
 
-    Matrix6 const sqrtCovarN = algo.getSqrtCovar();
-    Matrix6 const covarN     = sqrtCovarN * sqrtCovarN.transpose();
+    Matrix6 const covarN = algo.getCovariance();
     for (int i = 3; i < 6; ++i) {
         EXPECT_LT(covarN(i, i), covar0(i, i)) << "velocity covariance index " << i;
     }
@@ -217,10 +220,7 @@ TEST(FlybyODuKFAlgorithm, QueueDrivenUpdateConvergesLikeDirectPath) {
     configure(algo, x0Estimate);
     algo.reset();
 
-    Matrix6 const covar0 = [&] {
-        Matrix6 const s = algo.getState().sqrtCovar;
-        return Matrix6(s * s.transpose());
-    }();
+    Matrix6 const covar0 = algo.getState().covariance;
 
     constexpr double dt    = 1.0;
     constexpr int    steps = 250;
@@ -242,8 +242,7 @@ TEST(FlybyODuKFAlgorithm, QueueDrivenUpdateConvergesLikeDirectPath) {
         algo.update(t0, t1);
     }
 
-    Matrix6 const sqrtCovarN = algo.getState().sqrtCovar;
-    Matrix6 const covarN     = sqrtCovarN * sqrtCovarN.transpose();
+    Matrix6 const covarN = algo.getState().covariance;
     for (int i = 3; i < 6; ++i) {
         EXPECT_LT(covarN(i, i), covar0(i, i)) << "velocity covariance index " << i;
     }

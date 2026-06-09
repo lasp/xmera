@@ -1,6 +1,6 @@
 # flybyODuKF_algorithm — pure C++ implementation of the flyby OD SRUKF.
 #
-# Depends only on filtering_core (and Eigen via filtering_core's transitive
+# Depends only on filteringCore (and Eigen via filteringCore's transitive
 # dependency). No `architecture/messaging`, no msgPayload types, no
 # SysModel. The xmera adapter at `fswAlgorithms/opticalNavigation/flybyODuKF`
 # links to this target and supplies framework-specific marshalling.
@@ -12,7 +12,7 @@ add_library(xmera::flybyODuKF_algorithm ALIAS flybyODuKF_algorithm)
 
 target_link_libraries(flybyODuKF_algorithm
   PUBLIC
-    filtering_core
+    filteringCore
 )
 
 target_include_directories(flybyODuKF_algorithm

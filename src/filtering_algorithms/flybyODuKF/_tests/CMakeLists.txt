@@ -7,7 +7,7 @@ add_executable(test_flybyODuKFAlgorithm
 )
 target_link_libraries(test_flybyODuKFAlgorithm
   PRIVATE
-    flybyODuKF_algorithm   # propagates filtering_core + Eigen include dirs
+    flybyODuKF_algorithm   # propagates filteringCore + Eigen include dirs
     GTest::gtest_main
 )
 gtest_discover_tests(test_flybyODuKFAlgorithm)

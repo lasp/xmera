@@ -92,18 +92,21 @@ FlybyODuKFAlgorithm::getInitialCovariance() const {
 // ---- Lifecycle + SequentialFilter -----------------------------------------
 
 void FlybyODuKFAlgorithm::reset() {
+    // Pre-scale every configuration that crosses into the SRUKF: the core
+    // works in this algorithm's internal units (e.g. km, km/s) for numerical
+    // conditioning. getState() / getCovariance() invert the scaling on the way
+    // back out. The SRUKF itself is unit-agnostic.
+    double const u  = this->unitConversion;
+    double const u2 = u * u;
+
     this->srukf.setAlpha(this->alpha);
     this->srukf.setBeta(this->beta);
-    this->srukf.setMeasurementNoiseScale(this->measNoiseScale);
-    this->srukf.setUnitConversion(this->unitConversion);
-    this->srukf.setProcessNoise(this->processNoise);
-    this->srukf.setInitialMean(this->initialState);
-    this->srukf.setInitialCovariance(this->initialCovariance);
+    this->srukf.setProcessNoise(u2 * this->processNoise);
+    this->srukf.setInitialState(this->initialState.scale(u));
+    this->srukf.setInitialCovariance(u2 * this->initialCovariance);
 
-    // Two-body point-mass gravity. The SRUKF core works in the converted unit
-    // system (mean is scaled by unitConversion in reset()), so mu — input in
-    // m^3/s^2 — is scaled by unitConversion^3 to match.
-    this->srukf.dynamics = FlybyTwoBodyDynamics{this->mu * pow(this->unitConversion, 3)};
+    // mu is in m^3/s^2; raise it to the internal-unit equivalent via u^3.
+    this->srukf.dynamics = FlybyTwoBodyDynamics{this->mu * pow(u, 3)};
 
     this->srukf.reset();
     this->measurements.clear();
@@ -120,7 +123,7 @@ void FlybyODuKFAlgorithm::measurementUpdate(HeadingMeasurement const& measuremen
     model.observed  = measurement.rhat_BN_N.normalized();
     model.measNoise = this->measNoiseScale * measurement.covarN;
 
-    auto const result = this->srukf.update(model);
+    auto const result = this->srukf.measurementUpdate(model);
 
     this->lastResiduals.valid       = measurement.valid;
     this->lastResiduals.observation = model.observed;
@@ -136,34 +139,31 @@ void FlybyODuKFAlgorithm::enqueueMeasurement(double timeTag, HeadingMeasurement 
     this->measurements.enqueue(timeTag, std::move(measurement));
 }
 
-void FlybyODuKFAlgorithm::update(double previousSeconds, double currentSeconds) {
-    // apply_sequential drains the queue in time order, calling this->timeUpdate
-    // between measurements and this->measurementUpdate at each measurement,
-    // then a final this->timeUpdate to currentSeconds. The queue is empty on
-    // return — each measurement is popped as it is consumed.
-    apply_sequential(this->measurements, *this, previousSeconds, currentSeconds);
+void FlybyODuKFAlgorithm::update(double /*previousSeconds*/, double currentSeconds) {
+    // The lower bound now comes from queue.timeOfLastMeasurement() inside
+    // apply_sequential; previousSeconds is retained in the signature for
+    // host-adapter compatibility but unused here.
+    apply_sequential(this->measurements, *this, currentSeconds);
 }
 
 // ---- Readouts -------------------------------------------------------------
 
 FilterStateOutput FlybyODuKFAlgorithm::getState() const {
+    double const u2 = this->unitConversion * this->unitConversion;
     FilterStateOutput out;
-    out.timeTag = this->currentTime;
-    // Undo the internal unit conversion: state scales by 1/unitConversion,
-    // and the square-root covariance (sqrt of a 1/unitConversion^2 quantity)
-    // by 1/unitConversion as well.
-    out.state     = this->srukf.getMean().raw() / this->unitConversion;
-    out.sqrtCovar = this->srukf.getSqrtCovar() / this->unitConversion;
+    out.timeTag    = this->currentTime;
+    out.state      = this->srukf.getState().raw() / this->unitConversion;
+    out.covariance = this->srukf.getCovariance() / u2;
     return out;
 }
 
 ResidualsOutput FlybyODuKFAlgorithm::getLastResiduals() const { return this->lastResiduals; }
 
-FlybyODuKFAlgorithm::State FlybyODuKFAlgorithm::getMean() const { return this->srukf.getMean(); }
+FlybyODuKFAlgorithm::State FlybyODuKFAlgorithm::getMean() const { return this->srukf.getState(); }
 
 Eigen::Matrix<double, FlybyODuKFAlgorithm::N, FlybyODuKFAlgorithm::N>
-FlybyODuKFAlgorithm::getSqrtCovar() const {
-    return this->srukf.getSqrtCovar();
+FlybyODuKFAlgorithm::getCovariance() const {
+    return this->srukf.getCovariance();
 }
 
 double FlybyODuKFAlgorithm::getCurrentTime() const { return this->currentTime; }

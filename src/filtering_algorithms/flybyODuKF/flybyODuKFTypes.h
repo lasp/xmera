@@ -21,13 +21,11 @@ struct HeadingMeasurement {
     bool            valid     = false;
 };
 
-// Snapshot of the filter's mean and square-root covariance, plus the
-// timestamp that mean is valid at. The host adapter writes this into
-// whatever native filter-output message it owns.
+// Snapshot of the filter's mean and covariance, valid at `timeTag`.
 struct FilterStateOutput {
-    double                       timeTag   = 0;
-    Eigen::Matrix<double, 6, 1>  state     = Eigen::Matrix<double, 6, 1>::Zero();
-    Eigen::Matrix<double, 6, 6>  sqrtCovar = Eigen::Matrix<double, 6, 6>::Zero();
+    double                       timeTag    = 0;
+    Eigen::Matrix<double, 6, 1>  state      = Eigen::Matrix<double, 6, 1>::Zero();
+    Eigen::Matrix<double, 6, 6>  covariance = Eigen::Matrix<double, 6, 6>::Zero();
 };
 
 // Pre-fit and post-fit residuals from the most recent measurement update.
