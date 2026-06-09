@@ -4,9 +4,9 @@
 // Demonstrates and pins the heterogeneous-measurement pattern: a single filter
 // consuming more than one *kind* of measurement on one timeline.
 //
-// The filtering_core pieces are kind-agnostic — measurement_queue,
+// The filteringCore pieces are kind-agnostic — measurement_queue,
 // apply_sequential, and the SequentialFilter concept all operate over an
-// arbitrary `Measurement` type, and srukf::update<M> is templated per
+// arbitrary `Measurement` type, and srukf::measurementUpdate<M> is templated per
 // measurement model (each model carries its own M::size). A
 // std::variant<KindA, KindB, ...> is just such a `Measurement` type, so it
 // flows through the existing core with no change: the filter that knows its
@@ -16,10 +16,10 @@
 // (e.g. sunline = gyro + CSS). It is a real SRUKF (not a stub) and exercises
 // two measurement kinds of *different observation sizes* (3 and 1).
 
-#include <filtering_core/concepts.hpp>
-#include <filtering_core/kalman_filter.hpp>
-#include <filtering_core/srukf_interface.hpp>
-#include <filtering_core/state.hpp>
+#include <filteringCore/concepts.hpp>
+#include <filteringCore/kalmanFilter.hpp>
+#include <filteringCore/srukf.hpp>
+#include <filteringCore/state.hpp>
 
 #include <gtest/gtest.h>
 
@@ -120,7 +120,7 @@ public:
         // to set here.
     }
 
-    void setInitialState(State const& s) { this->srukf.setInitialMean(s); }
+    void setInitialState(State const& s) { this->srukf.setInitialState(s); }
     void reset() { this->srukf.reset(); }
 
     // ---- SequentialFilter<ToyFilter, Measurement> ----
@@ -130,8 +130,8 @@ public:
         std::visit([this](auto const& meas) { this->applyMeasurement(meas); }, m);
     }
 
-    State   getMean() const { return this->srukf.getMean(); }
-    Matrix6 getSqrtCovar() const { return this->srukf.getSqrtCovar(); }
+    State   getState() const { return this->srukf.getState(); }
+    Matrix6 getCovariance() const { return this->srukf.getCovariance(); }
 
     // Dispatch record: 0 = PositionFix, 1 = SpeedMeas, in the order applied.
     std::vector<int>    kindLog;
@@ -142,7 +142,7 @@ private:
         PositionModel model;
         model.observed  = fix.r;
         model.measNoise = fix.covar;
-        this->srukf.update(model);
+        this->srukf.measurementUpdate(model);
         this->kindLog.push_back(0);
         this->timeLog.push_back(fix.timeTag);
     }
@@ -151,12 +151,12 @@ private:
         SpeedModel model;
         model.observed(0)  = meas.speed;
         model.measNoise(0) = meas.variance;
-        this->srukf.update(model);
+        this->srukf.measurementUpdate(model);
         this->kindLog.push_back(1);
         this->timeLog.push_back(meas.timeTag);
     }
 
-    SrukfInterface<State, ConstantVelocity> srukf;
+    SRuKF<State, ConstantVelocity> srukf;
 };
 
 static_assert(filtering::SequentialFilter<ToyFilter, Measurement>);
@@ -168,8 +168,8 @@ State makeState(Eigen::Vector3d const& r, Eigen::Vector3d const& v) {
     return s;
 }
 
-double covarNorm(Matrix6 const& sqrtCovar) {
-    return (sqrtCovar * sqrtCovar.transpose()).norm();
+double covarNorm(Matrix6 const& covariance) {
+    return covariance.norm();
 }
 
 }  // namespace
@@ -195,7 +195,7 @@ TEST(HeterogeneousMeasurements, DispatchedInTimeOrderAcrossKinds) {
     queue.enqueue(p1.timeTag, Measurement{p1});
     queue.enqueue(p2.timeTag, Measurement{p2});
 
-    apply_sequential(queue, filter, 0.0, 5.0);
+    apply_sequential(queue, filter, 5.0);
 
     // Position@1.0, Speed@2.5, Position@4.0 — ascending time, mixed kinds.
     ASSERT_EQ(filter.kindLog.size(), 3u);
@@ -211,7 +211,7 @@ TEST(HeterogeneousMeasurements, DispatchedInTimeOrderAcrossKinds) {
 }
 
 // Both kinds — observation sizes 3 (position) and 1 (speed) — run through the
-// same srukf::update<M> and reduce the filter covariance. Proves heterogeneous
+// same srukf::measurementUpdate<M> and reduce the filter covariance. Proves heterogeneous
 // observation dimensions need no special handling.
 TEST(HeterogeneousMeasurements, BothObservationSizesReduceCovariance) {
     ToyFilter filter;
@@ -221,7 +221,7 @@ TEST(HeterogeneousMeasurements, BothObservationSizesReduceCovariance) {
     filter.setInitialState(makeState(r0, v0));
     filter.reset();
 
-    double const covar0 = covarNorm(filter.getSqrtCovar());
+    double const covar0 = covarNorm(filter.getCovariance());
 
     measurement_queue<Measurement, 16> queue;
     // Feed consistent measurements of the constant-velocity truth.
@@ -243,14 +243,14 @@ TEST(HeterogeneousMeasurements, BothObservationSizesReduceCovariance) {
         }
     }
 
-    apply_sequential(queue, filter, 0.0, 7.0);
+    apply_sequential(queue, filter,  7.0);
 
     // Saw at least one of each kind.
     EXPECT_GT(filter.kindLog.size(), 0u);
     EXPECT_NE(std::find(filter.kindLog.begin(), filter.kindLog.end(), 0), filter.kindLog.end());
     EXPECT_NE(std::find(filter.kindLog.begin(), filter.kindLog.end(), 1), filter.kindLog.end());
 
-    double const covarN = covarNorm(filter.getSqrtCovar());
+    double const covarN = covarNorm(filter.getCovariance());
     EXPECT_LT(covarN, covar0);  // measurements of both sizes informed the state
 }
 

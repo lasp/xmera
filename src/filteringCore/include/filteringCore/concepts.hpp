@@ -10,30 +10,22 @@
 
 namespace filtering {
 
-// A type can be linearly combined: it has scale(k) and add(other) returning
-// itself. Used by RK4 / propagate to integrate any state-shaped value, not
-// just numeric vectors.
+/*! Linear combination contract: scale(k) and add(other) return the same type. */
 template<class T>
 concept LinearlyCombinable = requires(T const t, double k) {
     { t.scale(k) } -> std::same_as<T>;
     { t.add(t)   } -> std::same_as<T>;
 };
 
-// Filter state: linearly-combinable, with a static size and a raw() accessor
-// returning a const reference to its underlying Eigen vector.
+/*! Filter state: LinearlyCombinable, with a compile-time `size` and a `raw()` */
 template<class S>
 concept FilterState = LinearlyCombinable<S> && requires(S const s) {
     { S::size } -> std::convertible_to<int>;
     { s.raw()  } -> std::convertible_to<typename S::Storage const&>;
 };
 
-// A measurement model exposes:
-//   - a static `size` (the dimension of the observation vector),
-//   - the actual observation,
-//   - the predicted observation given a state (the measurement function h(x)),
-//   - the noise covariance,
-//   - a subtraction operation (typically observed - predicted, but can be
-//     non-trivial for circular / MRP-shadow / etc. quantities).
+/*! Measurement model: exposes the observation y, the predicted observation
+ *  h(x), the noise covariance R, and a subtraction. */
 template<class M, class State>
 concept Measurement = requires(M const m, State const s) {
     { M::size }        -> std::convertible_to<int>;
@@ -44,9 +36,8 @@ concept Measurement = requires(M const m, State const s) {
                        -> std::convertible_to<Eigen::Vector<double, M::size>>;
 };
 
-// A dynamics function maps (time, state) -> state. Anything callable with
-// that signature qualifies — a functor, a function pointer, or a lambda
-// (stored by value as the SRUKF's concrete dynamics type; not type-erased).
+/*! Dynamics: callable as (time, state) -> state. Functor, function pointer,
+ *  or captureless lambda all qualify — stored by value in the SRuKF. */
 template<class D, class State>
 concept Dynamics = std::invocable<D, double, State>
                 && std::same_as<std::invoke_result_t<D, double, State>, State>;

@@ -4,7 +4,7 @@
 #ifndef FILTERING_CORE_DYNAMICS_MODEL_HPP
 #define FILTERING_CORE_DYNAMICS_MODEL_HPP
 
-#include <filtering_core/concepts.hpp>
+#include <filteringCore/concepts.hpp>
 
 #include <algorithm>
 #include <array>
@@ -12,8 +12,12 @@
 
 namespace filtering {
 
-// Runge-Kutta 4 step. Evaluates `dynamics` at four points per step and
-// linearly combines them, hence the LinearlyCombinable constraint on State.
+/*! Runge-Kutta 4
+ *  @return state advanced by dt
+ *  @param dynamics [-] callable (t, x) -> dx/dt
+ *  @param X0       [-] state at time t0
+ *  @param t0       [s] start time
+ *  @param dt       [s] step size */
 template<LinearlyCombinable State, Dynamics<State> D>
 constexpr State rk4(D const& dynamics, State const& X0, double t0, double dt) {
     auto k1 = dynamics(t0, X0);
@@ -29,21 +33,26 @@ constexpr State rk4(D const& dynamics, State const& X0, double t0, double dt) {
     );
 }
 
-// Propagate `state` from `interval[0]` to `interval[1]` in steps of at most
-// `dt`, using RK4. Returns the propagated state.
+/*! Fixed RK4 sub-step used by `propagate`. */
+inline constexpr double kIntegrationStep = 0.2;
+
+/*! Propagate state across a time interval in RK4 sub-steps.
+ *  @return state at interval[1]
+ *  @param dynamics [-]   callable (t, x) -> dx/dt
+ *  @param state    [-]   state at interval[0]
+ *  @param interval [s,s] {start, end} time pair */
 template<LinearlyCombinable State, Dynamics<State> D>
 constexpr State propagate(
     D const& dynamics,
     State state,
-    std::array<double, 2> interval,
-    double dt
+    std::array<double, 2> interval
 ) {
     double t = interval[0];
     double const tFinal = interval[1];
 
-    double const N = ceil((tFinal - t) / dt);
+    double const N = ceil((tFinal - t) / kIntegrationStep);
     for (int i = 0; i < N; i += 1) {
-        double const step = std::min(dt, tFinal - t);
+        double const step = std::min(kIntegrationStep, tFinal - t);
         state = rk4(dynamics, state, t, step);
         t += step;
     }

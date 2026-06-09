@@ -10,27 +10,24 @@
 
 namespace filtering {
 
-// Bounded-capacity, time-ordered container of measurements.
-//
-// Pure container: enqueue, popEarliest, clear, isFull, isEmpty. Scheduling
-// (how a filter consumes the queue over an update window) is intentionally
-// not a member here — different filter families want different scheduling
-// policies. The canonical sequential-Kalman policy is the free template
-// `apply_sequential` defined below; other styles (batch, iterated,
-// out-of-order rewind, ...) are added as additional free functions without
-// touching this container.
-//
-// `Measurement` may be a single kind (e.g. HeadingMeasurement) or a
-// `std::variant<KindA, KindB, ...>` for a filter that consumes heterogeneous
-// measurements on one timeline. The queue is kind-agnostic either way; a
-// multi-sensor filter std::visit's the variant in its measurementUpdate. See
-// filtering_core/_tests/test_heterogeneous_measurements.cpp.
+/*! Measurement container.  */
 template<typename Measurement, std::size_t CAPACITY>
 class measurement_queue final {
 public:
     bool isEmpty() const { return this->size == 0; }
     bool isFull()  const { return this->size >= CAPACITY; }
 
+    /*! Set the time of last measurement.
+     *  @param t [s] sim time of the last drained measurement */
+    void   setTimeOfLastMeasurement(double t)   { this->lastMeasurementTime = t; }
+    /*! @return time of the most recent measurement processed */
+    double getTimeOfLastMeasurement() const     { return this->lastMeasurementTime; }
+
+
+    /*! Insertion-sort a measurement into the queue by descending timeTag.
+     *  @return true if enqueued, false if the queue was full
+     *  @param timeTag     [s] time the measurement was taken
+     *  @param measurement [-] measurement payload (moved in) */
     bool enqueue(double timeTag, Measurement&& measurement) {
         if (this->isFull()) return false;
 
@@ -49,13 +46,17 @@ public:
         return true;
     }
 
+    /*! Drop all measurements and reset the time anchor to zero. */
     void clear() {
         while (this->size > 0) {
             this->size -= 1;
             this->measurements[this->size] = std::nullopt;
         }
+        this->lastMeasurementTime = 0;
     }
 
+    /*! Remove and return the earliest queued measurement.
+     *  @return std::optional<{timeTag, measurement}>; nullopt if empty */
     std::optional<std::pair<double, Measurement>> popEarliest() {
         if (this->isEmpty()) return std::nullopt;
 
@@ -64,12 +65,9 @@ public:
     }
 
 private:
-    // INVARIANT: `measurements[i].has_value() == (i < size)`
-    //   That is, all initialized values appear before all uninitialized values.
-    // INVARIANT: `measurements[i + 1].value().first <= measurements[i].value().first`
-    //   That is, larger time tags come earlier in the storage array.
-    std::size_t size = 0;
+    std::size_t                                                         size = 0;
     std::array<std::optional<std::pair<double, Measurement>>, CAPACITY> measurements = {};
+    double                                                              lastMeasurementTime = 0;
 };
 
 }  // namespace filtering

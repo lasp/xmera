@@ -71,9 +71,9 @@ include(XmeraFramework)
 add_subdirectory(architecture)
 
 # Framework-agnostic algorithm core (header-only, depends only on Eigen)
-add_subdirectory(filtering_core)
+add_subdirectory(filteringCore)
 
-# Per-filter algorithm libraries (depend on filtering_core, no xmera coupling)
+# Per-filter algorithm libraries (depend on filteringCore, no xmera coupling)
 add_subdirectory(filtering_algorithms)
 
 # Modules (and associated helper libraries)
