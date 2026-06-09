@@ -1,310 +1,209 @@
 // SPDX-License-Identifier: ISC
-// Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+// Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sunlineSRuKF.h"
 
+#include "sunlineSRuKFAlgorithm.h"
+#include "sunlineSRuKFSpecs.h"
+
+#include <architecture/utilities/eigenSupport.h>
+#include <architecture/utilities/macroDefinitions.h>
+
+#include <Eigen/Core>
+
+#include <cassert>
+
+using filtering::sunlineSRuKF::CssData;
+using filtering::sunlineSRuKF::MaxCss;
+using filtering::sunlineSRuKF::RateData;
+using filtering::sunlineSRuKF::SunlineSRuKFAlgorithm;
+using filtering::sunlineSRuKF::SunlineSRuKFOutput;
+using filtering::sunlineSRuKF::SunlineState;
+
+SunlineSRuKF::SunlineSRuKF() : algorithm(std::make_unique<SunlineSRuKFAlgorithm>()) {}
+
+SunlineSRuKF::~SunlineSRuKF() = default;
+
+/*! Latch the CSS geometry from cssConfigInMsg into the algorithm, then reset
+ *  the algorithm and the per-channel freshness trackers.
+ *  @return void
+ *  @param currentSimNanos [ns] sim time at which reset was called */
 void SunlineSRuKF::reset(uint64_t currentSimNanos) {
-    this->customReset();
-    this->writeOutputMessages(currentSimNanos);
-    this->previousSimNanos = currentSimNanos;
-}
-
-void SunlineSRuKF::updateState(const uint64_t currentSimNanos) {
-    this->readFilterMeasurements();
-
-    this->measurements.applyToFilter(
-        this->srukf,
-        (double)this->previousSimNanos * NANO2SEC,
-        (double)currentSimNanos * NANO2SEC
-    );
-    this->previousSimNanos = currentSimNanos;
-
-    this->writeOutputMessages(currentSimNanos);
-    this->customFinalizeUpdate();
-}
-
-/*! Reset the sunline filter to an initial state and
- initializes the internal estimation matrices.
- @return void
- @param currentSimNanos The clock time at which the function was called (nanoseconds)
- */
-void SunlineSRuKF::customReset() {
-    this->srukf.dynamics = &SunlineSRuKF::stateDerivative;
-    /*! - Check if the required messages have been connected */
+    assert(this->navAttInMsg.isLinked());
     assert(this->cssDataInMsg.isLinked());
     assert(this->cssConfigInMsg.isLinked());
-    assert(this->navAttInMsg.isLinked());
 
-    /*! read in CSS configuration message */
-    this->cssConfigInputBuffer = this->cssConfigInMsg();
-}
-
-/*! Normalize the updated sunline estimate
- @return void
- @param currentSimNanos The clock time at which the function was called (nanoseconds)
- */
-void SunlineSRuKF::customFinalizeUpdate() {
-    PositionState<Eigen::Dynamic> heading;
-    heading.setValues(this->srukf.state.getPositionStates().normalized());
-    this->srukf.state.setPosition(heading);
-
-    if (this->srukf.state.hasBias()) {
-        BiasState<Eigen::Dynamic> bias;
-        if (this->srukf.state.getBiasStates().value() < this->biasLowerBound) {
-            Eigen::VectorXd lowerSaturateBias(1);
-            lowerSaturateBias(0) = this->biasLowerBound;
-            bias.setValues(lowerSaturateBias);
-            this->srukf.state.setBias(bias);
-        } else if (this->srukf.state.getBiasStates().value() > this->biasUpperBound) {
-            Eigen::VectorXd upperSaturateBias(1);
-            upperSaturateBias(0) = this->biasUpperBound;
-            bias.setValues(upperSaturateBias);
-            this->srukf.state.setBias(bias);
-        }
-    }
-}
-
-/*! Read the message containing the measurement data.
- It updates class variables relating to measurement data including validity and time tags.
- @return void
- */
-void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
-    NavAttMsgPayload navAttOutMsgBuffer{};
-    FilterMsgPayload filterMsgBuffer{};
-    FilterResidualsMsgPayload filterGyroResMsgBuffer{};
-    FilterResidualsMsgPayload filterCssResMsgBuffer{};
-
-    /*! - Write the sunline estimate into the copy of the navigation message structure*/
-    eigenMatrixXToCArray(this->srukf.state.getPositionStates(), navAttOutMsgBuffer.vehSunPntBdy);
-
-    /*! - Populate the filter states output buffer and write the output message*/
-    filterMsgBuffer.timeTag = (double)this->previousSimNanos * NANO2SEC;
-    eigenMatrixXToCArray(this->srukf.state.returnValues(), filterMsgBuffer.state);
-    eigenMatrixXToCArray(this->srukf.xBar.returnValues(), filterMsgBuffer.stateError);
-    eigenMatrixXToCArray(this->srukf.covar, filterMsgBuffer.covar);
-    filterMsgBuffer.numberOfStates = this->srukf.state.size();
-
-    for (
-        auto it = this->measurements.popEarliest();
-        it.has_value();
-        it = this->measurements.popEarliest()
-    ) {
-        auto& measurement = it.value().second;
-
-        switch (measurement.type) {
-        case SunlineSRuKFMeasurementType::Gyro:
-            filterGyroResMsgBuffer.valid = true;
-            filterGyroResMsgBuffer.numberOfObservations = 1;
-            filterGyroResMsgBuffer.sizeOfObservations = measurement.observation.size();
-            eigenMatrixXToCArray(measurement.observation, filterGyroResMsgBuffer.observation);
-            eigenMatrixXToCArray(measurement.postFitResiduals, filterGyroResMsgBuffer.postFits);
-            eigenMatrixXToCArray(measurement.preFitResiduals, filterGyroResMsgBuffer.preFits);
-            break;
-
-        case SunlineSRuKFMeasurementType::Css:
-            filterCssResMsgBuffer.valid = true;
-            filterCssResMsgBuffer.numberOfObservations = 1;
-            filterCssResMsgBuffer.sizeOfObservations = measurement.observation.size();
-            eigenMatrixXToCArray(measurement.observation, filterCssResMsgBuffer.observation);
-            eigenMatrixXToCArray(measurement.postFitResiduals, filterCssResMsgBuffer.postFits);
-            eigenMatrixXToCArray(measurement.preFitResiduals, filterCssResMsgBuffer.preFits);
-            break;
-        }
-    }
-
-    this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->filterOutMsg.write(&filterMsgBuffer, this->moduleID, currentSimNanos);
-    this->filterCssResOutMsg.write(&filterCssResMsgBuffer, this->moduleID, currentSimNanos);
-    this->filterGyroResOutMsg.write(&filterGyroResMsgBuffer, this->moduleID, currentSimNanos);
-}
-
-/*! Read the rate gyro input message
- @return void
- */
-void SunlineSRuKF::readGyroMeasurements() {
-    /*! Read rate gyro measurements */
-    NavAttMsgPayload navAttInputBuffer = this->navAttInMsg();
-    if (navAttInputBuffer.timeTag < (double)this->previousSimNanos * NANO2SEC) return;
-
-    Eigen::MatrixXd I = Eigen::Matrix3d::Identity();
-
-    auto gyroMeasurement = SunlineSRuKFMeasurementModel();
-    gyroMeasurement.type = SunlineSRuKFMeasurementType::Gyro;
-    gyroMeasurement.observation = cArrayToEigenVector(navAttInputBuffer.omega_BN_B);
-    gyroMeasurement.measNoise = this->measNoiseScaling * pow(this->gyroMeasNoiseStd, 2) * I;
-
-    /*! - Read measurement and cholesky decomposition its noise*/
-    this->measurements.enqueue(navAttInputBuffer.timeTag, std::move(gyroMeasurement));
-}
-
-/*! Read the coarse sun sensor input message
- @return void
- */
-void SunlineSRuKF::readCssMeasurements() {
-    /*! Read css data msg */
-    CSSArraySensorMsgPayload cssInputBuffer = this->cssDataInMsg();
-
-    /*! - Zero the observed active CSS count */
-    this->numActiveCss = 0;
-
-    /*! - Define the linear model matrix H */
-    Eigen::MatrixXd hMatrix;
-    Eigen::VectorXd cssObservation;
-    bool validObservation = false;
-    double observationTimeTag = 0;
-
-    /*! - Loop over the maximum number of sensors to check for good measurements */
-    /*! -# Isolate if measurement is good */
-    /*! -# Set body vector for this measurement */
-    /*! -# Get measurement value into observation vector */
-    /*! -# Set inverse noise matrix */
-    /*! -# increase the number of valid observations */
-    /*! -# Otherwise just continue */
-    for (uint32_t i = 0; i < this->cssConfigInputBuffer.nCSS; ++i) {
-        if (cssInputBuffer.CosValue[i] <= this->sensorUseThresh) continue;
-
-        cssObservation.conservativeResize(this->numActiveCss + 1);
-        cssObservation(this->numActiveCss) = cssInputBuffer.CosValue[i];
-
-        hMatrix.conservativeResize(this->numActiveCss + 1, 3);
+    auto const cssConfig = this->cssConfigInMsg();
+    int const numCss = static_cast<int>(cssConfig.nCSS);
+    Eigen::Matrix<double, MaxCss, 3> nHat  = Eigen::Matrix<double, MaxCss, 3>::Zero();
+    Eigen::Vector<double, MaxCss>    cBias = Eigen::Vector<double, MaxCss>::Zero();
+    for (int i = 0; i < numCss; ++i) {
+        cBias(i) = cssConfig.cssVals[i].CBias;
         for (int j = 0; j < 3; ++j) {
-            hMatrix(this->numActiveCss, j) =
-                this->cssConfigInputBuffer.cssVals[i].CBias * this->cssConfigInputBuffer.cssVals[i].nHat_B[j];
+            nHat(i, j) = cssConfig.cssVals[i].nHat_B[j];
         }
+    }
+    this->algorithm->setCssNHat(nHat);
+    this->algorithm->setCssCBias(cBias);
+    this->algorithm->setNumberOfCss(numCss);  // asserts numCss in [0, MaxCss]
 
-        validObservation = true;
-        observationTimeTag = cssInputBuffer.timeTag;
-        this->numActiveCss += 1;
+    this->algorithm->reset();
+    this->lastNavAttTimeTag = 0;
+    this->lastCssTimeTag    = 0;
+}
+
+/*! Read NavAtt and CSS messages, call algorithm update, and
+ *  write the output state and residuals.
+ *  @return void
+ *  @param currentSimNanos [ns] sim time the filter is advancing to */
+void SunlineSRuKF::updateState(uint64_t currentSimNanos) {
+    double const currentSeconds = static_cast<double>(currentSimNanos) * NANO2SEC;
+
+    RateData rateData{};
+    CssData  cssData{};
+
+    if (auto const navMsgPayload = this->navAttInMsg(); navMsgPayload.timeTag > this->lastNavAttTimeTag) {
+        rateData.timeTag = navMsgPayload.timeTag;
+        rateData.rate    = cArrayToEigenVector(navMsgPayload.omega_BN_B);
+        this->lastNavAttTimeTag = navMsgPayload.timeTag;
     }
 
-    if (!validObservation) return;
-    if (observationTimeTag < (double)this->previousSimNanos * NANO2SEC) return;
-
-    /*! - Read measurement and cholesky decomposition its noise*/
-    Eigen::MatrixXd I(this->numActiveCss, this->numActiveCss);
-    I.setIdentity();
-
-    auto cssMeasurement = SunlineSRuKFMeasurementModel();
-    cssMeasurement.type = SunlineSRuKFMeasurementType::Css;
-    cssMeasurement.observation = cssObservation;
-    cssMeasurement.hMatrix = hMatrix;
-    cssMeasurement.measNoise =
-        ( this->measNoiseScaling
-        * pow(this->cssMeasNoiseStd, 2)
-        * I);
-
-    this->measurements.enqueue(observationTimeTag, std::move(cssMeasurement));
-}
-
-/*! Read the message containing the measurement data.
- * It updates class variables relating to measurement data including validity and time tags.
- @return void
- */
-void SunlineSRuKF::readFilterMeasurements() {
-    /*! zero filter measurement index */
-    this->filterMeasurement = 0;
-
-    this->readGyroMeasurements();
-    this->readCssMeasurements();
-}
-
-/*! Define the equations of motion for the filter dynamics
-    @param double time
-    @return FilterStateVector inputState
-    @return FilterStateVector outputState
-    */
-FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStateVector& state) {
-    FilterStateVector XDot;
-    /*! Implement propagation with rate derivatives set to zero */
-    Eigen::Vector3d sHat = state.getPositionStates();
-    Eigen::Vector3d omega = state.getVelocityStates();
-
-    PositionState<Eigen::Dynamic> xDotPosition;
-    VelocityState<Eigen::Dynamic> xDotVelocity;
-
-    xDotPosition.setValues(sHat.cross(omega));
-    xDotVelocity.setValues(Eigen::VectorXd::Zero(3));
-
-    XDot.setPosition(xDotPosition);
-    XDot.setVelocity(xDotVelocity);
-
-    if (state.hasBias()) {
-        BiasState<Eigen::Dynamic> xDotBias;
-        xDotBias.setValues(Eigen::VectorXd::Zero(1));
-        XDot.setBias(xDotBias);
+    if (auto const [timeTag, CosValue] = this->cssDataInMsg();
+        timeTag > this->lastCssTimeTag) {
+        Eigen::Vector<double, MaxCss> sensorMeasurements{};
+        for (int i = 0; i < this->algorithm->getNumberOfCss(); ++i) {
+            sensorMeasurements[i] = CosValue[i];
+        }
+        cssData.timeTag   = timeTag;
+        cssData.cosValues = sensorMeasurements;
+        this->lastCssTimeTag = timeTag;
     }
 
-    return XDot;
+    SunlineSRuKFOutput const filterOutput =
+        this->algorithm->update(currentSeconds, cssData, rateData);
+    this->writeOutputMessages(currentSimNanos, filterOutput);
 }
 
-/*! Set the CSS measurement noise
-    @param double cssMeasurementNoise
-    @return void
-    */
-void SunlineSRuKF::setCssMeasurementNoiseStd(const double cssMeasurementNoiseStd) {
-    this->cssMeasNoiseStd = cssMeasurementNoiseStd;
+/*! Write the algorithm's output to the four xmera output messages.
+ *  @return void
+ *  @param currentSimNanos [ns] sim time provided to the outgoing messages
+ *  @param filterOutput    [-]  filter data returned by algorithm */
+void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos,
+                                       SunlineSRuKFOutput const& filterOutput) {
+    NavAttMsgPayload          navAttBuf{};
+    FilterMsgPayload          filterBuf{};
+    FilterResidualsMsgPayload gyroResBuf{};
+    FilterResidualsMsgPayload cssResBuf{};
+
+    double const timeTag = static_cast<double>(currentSimNanos) * NANO2SEC;
+
+    eigenMatrixXToCArray(filterOutput.filterState.state.head<3>().eval(), navAttBuf.vehSunPntBdy);
+
+    filterBuf.timeTag        = timeTag;
+    filterBuf.numberOfStates = SunlineSRuKFAlgorithm::N;
+    eigenMatrixXToCArray(filterOutput.filterState.state,      filterBuf.state);
+    eigenMatrixXToCArray(filterOutput.filterState.covariance, filterBuf.covar);
+
+    if (filterOutput.cssResiduals.valid) {
+        cssResBuf.timeTag              = timeTag;
+        cssResBuf.valid                = true;
+        cssResBuf.numberOfObservations = 1;
+        cssResBuf.sizeOfObservations   = filterOutput.cssResiduals.numberOfActiveCss;
+        eigenMatrixXToCArray(filterOutput.cssResiduals.observation, cssResBuf.observation);
+        eigenMatrixXToCArray(filterOutput.cssResiduals.preFit,      cssResBuf.preFits);
+        eigenMatrixXToCArray(filterOutput.cssResiduals.postFit,     cssResBuf.postFits);
+    }
+    if (filterOutput.rateResiduals.valid) {
+        gyroResBuf.timeTag              = timeTag;
+        gyroResBuf.valid                = true;
+        gyroResBuf.numberOfObservations = 1;
+        gyroResBuf.sizeOfObservations   = 3;
+        eigenMatrixXToCArray(filterOutput.rateResiduals.observation, gyroResBuf.observation);
+        eigenMatrixXToCArray(filterOutput.rateResiduals.preFit,      gyroResBuf.preFits);
+        eigenMatrixXToCArray(filterOutput.rateResiduals.postFit,     gyroResBuf.postFits);
+    }
+
+    this->navAttOutMsg.write(&navAttBuf,         this->moduleID, currentSimNanos);
+    this->filterOutMsg.write(&filterBuf,         this->moduleID, currentSimNanos);
+    this->filterGyroResOutMsg.write(&gyroResBuf, this->moduleID, currentSimNanos);
+    this->filterCssResOutMsg.write(&cssResBuf,   this->moduleID, currentSimNanos);
 }
 
-/*! Set the gyro measurement noise
-    @param double gyroMeasurementNoise
-    @return void
-    */
-void SunlineSRuKF::setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseStd) {
-    this->gyroMeasNoiseStd = gyroMeasurementNoiseStd;
+/*! Set the UKF alpha parameter.
+ *  @return void
+ *  @param newAlpha [-] sigma-point spread */
+void   SunlineSRuKF::setAlpha(double newAlpha) { this->algorithm->setAlpha(newAlpha); }
+/*! @return current UKF alpha */
+double SunlineSRuKF::getAlpha() const          { return this->algorithm->getAlpha(); }
+
+/*! Set the UKF beta parameter.
+ *  @return void
+ *  @param newBeta [-] prior-knowledge constant */
+void   SunlineSRuKF::setBeta(double newBeta) { this->algorithm->setBeta(newBeta); }
+/*! @return current UKF beta */
+double SunlineSRuKF::getBeta() const         { return this->algorithm->getBeta(); }
+
+/*! Set the filter process noise.
+ *  @return void
+ *  @param newProcessNoise [-] N x N process noise covariance */
+void SunlineSRuKF::setProcessNoise(Eigen::MatrixXd const& newProcessNoise) {
+    using Mat = Eigen::Matrix<double, SunlineSRuKFAlgorithm::N, SunlineSRuKFAlgorithm::N>;
+    this->algorithm->setProcessNoise(Mat(newProcessNoise));
 }
+/*! @return current filter process noise */
+Eigen::MatrixXd SunlineSRuKF::getProcessNoise() const { return this->algorithm->getProcessNoise(); }
 
-/*! Set the filter measurement noise scale factor if desirable
-    @param double measurementNoiseScale
-    @return void
-    */
-void SunlineSRuKF::setMeasurementNoiseScale(const double measurementNoiseScale) {
-    this->measNoiseScaling = measurementNoiseScale;
+/*! Set the initial state.
+ *  @return void
+ *  @param newInitialState [-] N-element flat state vector */
+void SunlineSRuKF::setInitialState(Eigen::VectorXd const& newInitialState) {
+    using Vec = Eigen::Vector<double, SunlineSRuKFAlgorithm::N>;
+    this->algorithm->setInitialState(SunlineState{Vec(newInitialState)});
 }
+/*! @return current initial state */
+Eigen::VectorXd SunlineSRuKF::getInitialState() const { return this->algorithm->getInitialState().raw(); }
 
-/*! Get the CSS measurement noise
-    @param double cssMeasurementNoise
-    @return void
-    */
-double SunlineSRuKF::getCssMeasurementNoiseStd() const { return this->cssMeasNoiseStd; }
+/*! Set the initial covariance.
+ *  @return void
+ *  @param newInitialCovariance [-] N x N covariance */
+void SunlineSRuKF::setInitialCovariance(Eigen::MatrixXd const& newInitialCovariance) {
+    using Mat = Eigen::Matrix<double, SunlineSRuKFAlgorithm::N, SunlineSRuKFAlgorithm::N>;
+    this->algorithm->setInitialCovariance(Mat(newInitialCovariance));
+}
+/*! @return current initial covariance */
+Eigen::MatrixXd SunlineSRuKF::getInitialCovariance() const { return this->algorithm->getInitialCovariance(); }
 
-/*! Get the gyro measurement noise
-    @param double gyroMeasurementNoise
-    @return void
-    */
-double SunlineSRuKF::getGyroMeasurementNoiseStd() const { return this->gyroMeasNoiseStd; }
+/*! Set the lower bound on the CSS bias state.
+ *  @return void
+ *  @param lowerBound [-] bias lower bound */
+void   SunlineSRuKF::setBiasLowerBound(double lowerBound) { this->algorithm->setBiasLowerBound(lowerBound); }
+/*! @return current bias lower bound */
+double SunlineSRuKF::getBiasLowerBound() const            { return this->algorithm->getBiasLowerBound(); }
 
-/*! Get the filter measurement noise scale factor
-    @return double measurementNoiseScale
-    */
-double SunlineSRuKF::getMeasurementNoiseScale() const { return this->measNoiseScaling; }
+/*! Set the upper bound on the CSS bias state.
+ *  @return void
+ *  @param upperBound [-] bias upper bound */
+void   SunlineSRuKF::setBiasUpperBound(double upperBound) { this->algorithm->setBiasUpperBound(upperBound); }
+/*! @return current bias upper bound */
+double SunlineSRuKF::getBiasUpperBound() const            { return this->algorithm->getBiasUpperBound(); }
 
-/*! Set the threshold value to accept a css measurement
-    @param double threshold
-    @return void
-    */
-void SunlineSRuKF::setSensorThreshold(double threshold) { this->sensorUseThresh = threshold; }
+/*! Set the CSS measurement noise std.
+ *  @return void
+ *  @param noiseStd [-] noise std for each CSS observation */
+void   SunlineSRuKF::setCssMeasurementNoiseStd(double noiseStd)  { this->algorithm->setCssMeasurementNoiseStd(noiseStd); }
+/*! @return current CSS noise std */
+double SunlineSRuKF::getCssMeasurementNoiseStd() const           { return this->algorithm->getCssMeasurementNoiseStd(); }
 
-/*! Get the threshold value to accept a css measurement
-    @return double threshold
-    */
-double SunlineSRuKF::getSensorThreshold() const { return this->sensorUseThresh; }
+/*! Set the gyro measurement noise std.
+ *  @return void
+ *  @param noiseStd [rad/s] noise std for each rate observation */
+void   SunlineSRuKF::setGyroMeasurementNoiseStd(double noiseStd) { this->algorithm->setGyroMeasurementNoiseStd(noiseStd); }
+/*! @return current gyro noise std */
+double SunlineSRuKF::getGyroMeasurementNoiseStd() const          { return this->algorithm->getGyroMeasurementNoiseStd(); }
 
-/*! Set the bias upper bound value it is not allowed to exceed
-    @param double biasUpperBound
-    */
-void SunlineSRuKF::setBiasUpperBound(double biasUpperBound) { this->biasUpperBound = biasUpperBound; }
-
-/*! Get the bias upper bound value it is not allowed to exceed
-    @return double biasUpperBound
-    */
-double SunlineSRuKF::getBiasUpperBound() const { return this->biasUpperBound; }
-
-/*! Set the bias lower bound value it is not allowed to subceed
-    @param double biasUpperBound
-    */
-void SunlineSRuKF::setBiasLowerBound(double biasLowerBound) { this->biasLowerBound = biasLowerBound; }
-
-/*! Get the bias lower bound value it is not allowed to subceed
-    @return double biasUpperBound
-    */
-double SunlineSRuKF::getBiasLowerBound() const { return this->biasLowerBound; }
+/*! Set the CSS measurement threshold.
+ *  @return void
+ *  @param threshold [-] minimum cosValue to count a sensor as active */
+void   SunlineSRuKF::setSensorThreshold(double threshold) { this->algorithm->setSensorThreshold(threshold); }
+/*! @return current CSS activation threshold */
+double SunlineSRuKF::getSensorThreshold() const           { return this->algorithm->getSensorThreshold(); }
