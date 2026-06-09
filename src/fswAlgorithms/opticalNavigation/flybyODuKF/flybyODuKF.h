@@ -22,7 +22,7 @@
 
 // Pimpl onto the framework-agnostic algorithm. Forward-declared (rather than
 // included) so this header — which SWIG parses — never pulls in the
-// concept-heavy filtering_core templates. The full type is included in the
+// concept-heavy filteringCore templates. The full type is included in the
 // .cpp only.
 namespace filtering::flybyODuKF {
 class FlybyODuKFAlgorithm;

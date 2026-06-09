@@ -75,13 +75,11 @@ void FlybyODuKF::writeOutputMessages(uint64_t currentSimNanos, bool measurementP
     eigenMatrixXToCArray(filterState.state.head<3>().eval(), navTransOutMsgBuffer.r_BN_N);
     eigenMatrixXToCArray(filterState.state.tail<3>().eval(), navTransOutMsgBuffer.v_BN_N);
 
-    /*! - Full filter state output. Reconstitute the covariance P = S * S^T. */
-    Eigen::Matrix<double, 6, 6> const covariance =
-        filterState.sqrtCovar * filterState.sqrtCovar.transpose();
+    /*! - Full filter state output. */
     opNavFilterMsgBuffer.timeTag = timeTag;
     opNavFilterMsgBuffer.numberOfStates = FlybyODuKFAlgorithm::N;
     eigenMatrixXToCArray(filterState.state, opNavFilterMsgBuffer.state);
-    eigenMatrixXToCArray(covariance, opNavFilterMsgBuffer.covar);
+    eigenMatrixXToCArray(filterState.covariance, opNavFilterMsgBuffer.covar);
 
     /*! - Residuals output, populated only when a measurement was processed. */
     if (measurementProcessed) {

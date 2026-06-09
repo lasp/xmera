@@ -73,8 +73,10 @@ void LinearODeKF::writeOutputMessages(uint64_t currentSimNanos) {
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavFilterMsgBuffer.timeTag = (double)this->previousSimNanos * NANO2SEC;
-    eigenVectorToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).position, opNavFilterMsgBuffer.state + 0);
-    eigenVectorToCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).velocity, opNavFilterMsgBuffer.state + 3);
+    eigenMatrixXInsertCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).position,
+                             opNavFilterMsgBuffer.state, 0);
+    eigenMatrixXInsertCArray(this->ekf.stateLogged.scale(1 / this->ekf.unitConversion).velocity,
+                             opNavFilterMsgBuffer.state, 3);
     eigenMatrixXToCArray(1 / this->ekf.unitConversion * this->ekf.stateError, opNavFilterMsgBuffer.stateError);
     eigenMatrixXToCArray(1 / this->ekf.unitConversion / this->ekf.unitConversion * this->ekf.covar, opNavFilterMsgBuffer.covar);
     opNavFilterMsgBuffer.numberOfStates = this->ekf.state.size();
