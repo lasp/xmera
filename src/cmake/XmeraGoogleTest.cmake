@@ -3,7 +3,7 @@ option(XMERA_ENABLE_FUZZTESTS "Fetch and build fuzz targets with Google FuzzTest
 if(XMERA_ENABLE_FUZZTESTS)
   include(FetchContent)
 
-  set(XMERA_FUZZTEST_GIT_TAG "2025-08-05"
+  set(XMERA_FUZZTEST_GIT_TAG "2026-02-18"
     CACHE STRING
     "Git tag or commit to use for the Google FuzzTest dependency"
   )
@@ -11,7 +11,7 @@ if(XMERA_ENABLE_FUZZTESTS)
   FetchContent_Declare(
     fuzztest
     GIT_REPOSITORY https://github.com/google/fuzztest.git
-    GIT_TAG main   # or a specific commit/tag
+    GIT_TAG ${XMERA_FUZZTEST_GIT_TAG}   # or a specific commit/tag
   )
 
   # Make fuzztest's own stuff quiet and out of 'all'
