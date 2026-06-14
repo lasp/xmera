@@ -309,17 +309,20 @@ Eigen::Vector3<ScalarT> dcmToMrp(Eigen::Matrix<ScalarT, 3, 3> const &dcm) {
 }
 
 /**
- * Translates a Euler parameter vector into a principal rotation vector.
+ * Translates an Euler parameter vector into a principal rotation vector.
  * @param ep
+ * @param localEps
  * @return Eigen::Vector3d
  */
 template<typename ScalarT>
 Eigen::Vector3<ScalarT> epToPrv(Eigen::Vector4<ScalarT> const &ep, ScalarT localEps = ScalarT(1e-12)) {
     Eigen::Vector3<ScalarT> prv;
-    ScalarT angle = std::acos(ep(0));
-    ScalarT sin_angle = std::sin(angle);
-    if (std::abs(sin_angle) < localEps) { return prv.setZero(); }
-    prv = ep.template tail<3>() / sin_angle * 2.0 * angle;
+    // Use atan2(|vec|, scalar) rather than acos(scalar): atan2
+    // preserving precision in the near- +/-1.
+    ScalarT const vecNorm = ep.template tail<3>().norm();
+    if (vecNorm < localEps) { return prv.setZero(); }
+    ScalarT const angle = ScalarT(2) * std::atan2(vecNorm, ep(0));
+    prv = ep.template tail<3>() / vecNorm * angle;
     return prv;
 }
 
