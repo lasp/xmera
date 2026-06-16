@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "tempMeasurement.h"
+
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -20,9 +21,7 @@ TempMeasurement::~TempMeasurement() = default;
     @return void
 */
 void TempMeasurement::reset(uint64_t currentSimNanos) {
-    if (!this->tempInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "TempMeasurement.tempInMsg was not linked.");
-    }
+    if (!this->tempInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "TempMeasurement.tempInMsg was not linked."); }
 
     if (this->spikeProbability > 1.0 || this->spikeProbability < 0.0) {
         bskLogger.bskLog(BSK_ERROR, "The probability of temperature spike on fault must be between 0 and 1.");
@@ -31,15 +30,15 @@ void TempMeasurement::reset(uint64_t currentSimNanos) {
     this->spikeProbabilityGenerator.seed(this->RNGSeed);
     this->noiseModel.setRNGSeed(this->RNGSeed);
 
-    Eigen::VectorXd nMatrix(1, 1);
+    Eigen::Matrix<double, 1, 1> nMatrix;
     nMatrix(0, 0) = this->senNoiseStd;
     this->noiseModel.setNoiseMatrix(nMatrix);
 
-    Eigen::VectorXd pMatrix(1, 1);
+    Eigen::Matrix<double, 1, 1> pMatrix;
     pMatrix(0, 0) = 1.;
     this->noiseModel.setPropMatrix(pMatrix);
 
-    Eigen::VectorXd bounds(1, 1);
+    Eigen::Matrix<double, 1, 1> bounds;
     bounds(0, 0) = this->walkBounds;
     this->noiseModel.setUpperBounds(bounds);
 }
@@ -55,7 +54,7 @@ void TempMeasurement::applySensorErrors() {
     } else {
         // get current error from gaussMarkov random number generator
         this->noiseModel.computeNextState();
-        Eigen::VectorXd currentErrorEigen = this->noiseModel.getCurrentState();
+        Eigen::Matrix<double, 1, 1> currentErrorEigen = this->noiseModel.getCurrentState();
         double sensorNoise = currentErrorEigen(0, 0);
         sensorError = this->senBias + sensorNoise;
     }
