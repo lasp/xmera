@@ -120,27 +120,6 @@ def unitSimpleVoltEstimator(show_plots):
         plt.show()
         plt.close('all')
 
-    # check if BSK_ERROR is returned if pMatrix is wrong size
-    pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
-    stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
-    sVoltObject.walkBounds = stateBoundsBad
-    sVoltObject.PMatrix = pMatrixBad
-
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(1E8))
-    unitTestSim.ExecuteSimulation()
-
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED")

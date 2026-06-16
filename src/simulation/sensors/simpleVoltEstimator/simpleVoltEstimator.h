@@ -10,12 +10,17 @@
 #include <architecture/msgPayloadDef/VoltMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
+
 #include <Eigen/Dense>
 #include <vector>
 
+//! 1x1 covariance / propagation / error type for the Gauss-Markov error model.
+//! Named so SWIG can match it by name (see swig_eigen.i EIGEN_MAT_WRAP) and expose it to Python.
+typedef Eigen::Matrix<double, 1, 1> VoltErrorMatrix;
+
 /*! @brief simple voltage estimation module class */
 class SimpleVoltEstimator : public SysModel {
-   public:
+public:
     SimpleVoltEstimator();
     ~SimpleVoltEstimator();
 
@@ -26,11 +31,11 @@ class SimpleVoltEstimator : public SysModel {
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
 
-   public:
-    Eigen::MatrixXd
+public:
+    VoltErrorMatrix
         PMatrix;  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::VectorXd walkBounds;          //!< -- "3-sigma" errors to permit for states
-    Eigen::VectorXd voltErrors;          //!< -- Current voltage errors applied to truth
+    VoltErrorMatrix walkBounds;          //!< -- "3-sigma" errors to permit for states
+    VoltErrorMatrix voltErrors;          //!< -- Current voltage errors applied to truth
     Message<VoltMsgPayload> voltOutMsg;  //!< voltage output msg
     VoltMsgPayload trueVoltState;        //!< -- voltage state without errors
     VoltMsgPayload estVoltState;         //!< -- voltage state including errors
@@ -38,8 +43,8 @@ class SimpleVoltEstimator : public SysModel {
 
     ReadFunctor<VoltMsgPayload> voltInMsg;  //!< voltage input msg
 
-   private:
-    Eigen::MatrixXd AMatrix;  //!< -- The matrix used to propagate the state
+private:
+    VoltErrorMatrix AMatrix;  //!< -- The matrix used to propagate the state
     GaussMarkov errorModel;   //!< -- Gauss-markov error states
 };
 
