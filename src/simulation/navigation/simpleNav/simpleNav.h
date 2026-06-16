@@ -16,13 +16,20 @@
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
+
 #include <Eigen/Dense>
 #include <random>
 #include <vector>
 
+//! 18x18 process-noise / propagation matrix type for the Gauss-Markov error model.
+//! Named so SWIG can match it by name (see swig_eigen.i EIGEN_MAT_WRAP) and expose it to Python.
+typedef Eigen::Matrix<double, 18, 18> SimpleNavCovar;
+//! 18-element error / walk-bounds vector type for the Gauss-Markov error model.
+typedef Eigen::Matrix<double, 18, 1> SimpleNavErrorVector;
+
 /*! @brief simple navigation module class */
 class SimpleNav : public SysModel {
-   public:
+public:
     SimpleNav();
     ~SimpleNav();
 
@@ -34,7 +41,7 @@ class SimpleNav : public SysModel {
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
 
-   public:
+public:
     double gyroStandardDeviation = 1E-5;      //!< Standard deviation for each rate component
     double accelStandardDeviation = 1E-8;     //!< Standard deviation for each acceleration component
     double gyroBias = 0;                      //!<  Bias for each rate component
@@ -43,10 +50,10 @@ class SimpleNav : public SysModel {
     double accelErrors[3 * MAX_ACC_BUF_PKT];  //!<  Errors to apply to each accelerometer measurement
     int numberOfGyroBuffers = 100;            //!< Number of gyro measurements per timestep
     int gyroFrequencyPerSecond = 500;         //!< Number of gyro measurements per second
-    Eigen::MatrixXd
+    SimpleNavCovar
         PMatrix;  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::VectorXd walkBounds;                    //!< -- "3-sigma" errors to permit for states
-    Eigen::VectorXd navErrors;                     //!< -- Current navigation errors applied to truth
+    SimpleNavErrorVector walkBounds;               //!< -- "3-sigma" errors to permit for states
+    SimpleNavErrorVector navErrors;                //!< -- Current navigation errors applied to truth
     Message<NavAttMsgPayload> attOutMsg;           //!< attitude navigation output msg
     Message<NavTransMsgPayload> transOutMsg;       //!< translation navigation output msg
     Message<EphemerisMsgPayload> scEphemOutMsg;    //!< translation navigation output msg
@@ -66,10 +73,10 @@ class SimpleNav : public SysModel {
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;           //!< spacecraft state input msg
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< (optional) sun state input input msg
 
-   private:
-    Eigen::MatrixXd AMatrix;  //!< -- The matrix used to propagate the state
-    GaussMarkov errorModel;   //!< -- Gauss-markov error states
-    uint64_t prevTime;        //!< -- Previous simulation time observed
+private:
+    SimpleNavCovar AMatrix;  //!< -- The matrix used to propagate the state
+    GaussMarkov errorModel;  //!< -- Gauss-markov error states
+    uint64_t prevTime;       //!< -- Previous simulation time observed
 };
 
 #endif

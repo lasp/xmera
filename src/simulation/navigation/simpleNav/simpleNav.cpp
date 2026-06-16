@@ -3,10 +3,12 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "simpleNav.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <cstring>
 #include <iostream>
 
@@ -22,15 +24,15 @@ SimpleNav::SimpleNav() {
     this->trueTransState = NavTransMsgPayload{};
     this->accelDataState = AccDataMsgPayload{};
     this->spacecraftEphemerisState = EphemerisMsgPayload{};
-    this->PMatrix.resize(18, 18);
-    this->PMatrix.fill(0.0);
-    this->walkBounds.resize(18);
-    this->walkBounds.fill(0.0);
+    this->PMatrix.setZero();
+    this->walkBounds.setZero();
     this->errorModel = GaussMarkov(18, this->RNGSeed);
 }
 
 /*! Destructor.  Nothing here. */
-SimpleNav::~SimpleNav() { return; }
+SimpleNav::~SimpleNav() {
+    return;
+}
 
 /*! This method is used to reset the module. It
  initializes the various containers used in the model as well as creates the
@@ -46,30 +48,15 @@ SimpleNav::~SimpleNav() { return; }
  */
 void SimpleNav::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
-    if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleNav.scStateInMsg was not linked.");
-    }
-
-    int64_t numStates = 18;
+    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "SimpleNav.scStateInMsg was not linked."); }
 
     //! - Initialize the propagation matrix to default values for use in update
-    this->AMatrix.setIdentity(numStates, numStates);
+    this->AMatrix.setIdentity();
     this->AMatrix(0, 3) = this->AMatrix(1, 4) = this->AMatrix(2, 5) = this->crossTrans ? 1.0 : 0.0;
     this->AMatrix(6, 9) = this->AMatrix(7, 10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
 
-    //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
-    if (this->PMatrix.size() != numStates * numStates) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting",
-                         this->PMatrix.size());
-        return;
-    }
-    //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
-    if (this->walkBounds.size() != numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
-    }
     this->errorModel.setUpperBounds(this->walkBounds);
     vSetZero(this->gyroErrors, 3 * MAX_ACC_BUF_PKT);
     vSetZero(this->accelErrors, 3 * MAX_ACC_BUF_PKT);
@@ -82,9 +69,7 @@ void SimpleNav::readInputMessages() {
     this->inertialState = this->scStateInMsg();
 
     this->sunState = SpicePlanetStateMsgPayload{};
-    if (this->sunStateInMsg.isLinked()) {
-        this->sunState = this->sunStateInMsg();
-    }
+    if (this->sunStateInMsg.isLinked()) { this->sunState = this->sunStateInMsg(); }
 }
 
 /*! This method writes the aggregate nav information into the output state message.
@@ -93,9 +78,9 @@ void SimpleNav::readInputMessages() {
  */
 void SimpleNav::writeOutputMessages(uint64_t Clock) {
     /* time tage the output message */
-    this->estAttState.timeTag = (double)Clock * NANO2SEC;
-    this->estTransState.timeTag = (double)Clock * NANO2SEC;
-    this->spacecraftEphemerisState.timeTag = (double)Clock * NANO2SEC;
+    this->estAttState.timeTag = (double) Clock * NANO2SEC;
+    this->estTransState.timeTag = (double) Clock * NANO2SEC;
+    this->spacecraftEphemerisState.timeTag = (double) Clock * NANO2SEC;
 
     this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
     this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
@@ -109,17 +94,26 @@ void SimpleNav::applyErrors() {
     v3Add(this->trueTransState.v_BN_N, &(this->navErrors.data()[3]), this->estTransState.v_BN_N);
     addMRP(this->trueAttState.sigma_BN, &(this->navErrors.data()[6]), this->estAttState.sigma_BN);
     v3Add(this->trueAttState.omega_BN_B, &(this->navErrors.data()[9]), this->estAttState.omega_BN_B);
-    v3Add(this->spacecraftEphemerisState.r_BdyZero_N,
-          &(this->navErrors.data()[0]),
-          this->spacecraftEphemerisState.r_BdyZero_N);
-    v3Add(this->spacecraftEphemerisState.v_BdyZero_N,
-          &(this->navErrors.data()[3]),
-          this->spacecraftEphemerisState.v_BdyZero_N);
+    v3Add(
+        this->spacecraftEphemerisState.r_BdyZero_N,
+        &(this->navErrors.data()[0]),
+        this->spacecraftEphemerisState.r_BdyZero_N
+    );
+    v3Add(
+        this->spacecraftEphemerisState.v_BdyZero_N,
+        &(this->navErrors.data()[3]),
+        this->spacecraftEphemerisState.v_BdyZero_N
+    );
     addMRP(
-        this->spacecraftEphemerisState.sigma_BN, &(this->navErrors.data()[6]), this->spacecraftEphemerisState.sigma_BN);
-    v3Add(this->spacecraftEphemerisState.omega_BN_B,
-          &(this->navErrors.data()[9]),
-          this->spacecraftEphemerisState.omega_BN_B);
+        this->spacecraftEphemerisState.sigma_BN,
+        &(this->navErrors.data()[6]),
+        this->spacecraftEphemerisState.sigma_BN
+    );
+    v3Add(
+        this->spacecraftEphemerisState.omega_BN_B,
+        &(this->navErrors.data()[9]),
+        this->spacecraftEphemerisState.omega_BN_B
+    );
     v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
 
     //! - Apply accelerometer errors to truth data
@@ -191,7 +185,7 @@ void SimpleNav::computeTrueOutput(uint64_t Clock) {
  */
 void SimpleNav::computeErrors(uint64_t currentSimNanos) {
     double timeStep;
-    Eigen::MatrixXd localProp = this->AMatrix;
+    SimpleNavCovar localProp = this->AMatrix;
     //! - Compute timestep since the last call
     timeStep = (currentSimNanos - this->prevTime) * 1.0E-9;
 
