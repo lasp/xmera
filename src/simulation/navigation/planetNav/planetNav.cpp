@@ -3,10 +3,12 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "planetNav.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <cstring>
 #include <iostream>
 
@@ -18,15 +20,15 @@ PlanetNav::PlanetNav() {
     this->prevTime = 0;
     this->noisePlanetState = EphemerisMsgPayload{};
     this->truePlanetState = EphemerisMsgPayload{};
-    this->PMatrix.resize(12, 12);
-    this->PMatrix.fill(0.0);
-    this->walkBounds.resize(12);
-    this->walkBounds.fill(0.0);
+    this->PMatrix.setZero();
+    this->walkBounds.setZero();
     this->errorModel = GaussMarkov(12, this->RNGSeed);
 }
 
 /*! Module Destructor */
-PlanetNav::~PlanetNav() { return; }
+PlanetNav::~PlanetNav() {
+    return;
+}
 
 /*! This method is used to reset the module and checks that required input messages are connect.
     @return void
@@ -34,43 +36,30 @@ PlanetNav::~PlanetNav() { return; }
 */
 void PlanetNav::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
-    if (!this->ephemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "PlanetNav.ephemerisInMsg was not linked.");
-    }
-
-    int64_t numStates = 12;
+    if (!this->ephemerisInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "PlanetNav.ephemerisInMsg was not linked."); }
 
     //! - Initialize the propagation matrix to default values for use in update
-    this->AMatrix.setIdentity(numStates, numStates);
+    this->AMatrix.setIdentity();
     this->AMatrix(0, 3) = this->AMatrix(1, 4) = this->AMatrix(2, 5) = this->crossTrans ? 1.0 : 0.0;
     this->AMatrix(6, 9) = this->AMatrix(7, 10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
 
-    //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
-    if (this->PMatrix.size() != numStates * numStates) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Your process noise matrix (PMatrix) is not 12*12. Size is %ld.  Quitting",
-                         this->PMatrix.size());
-        return;
-    }
-    //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
-    if (this->walkBounds.size() != numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 12 elements. Quitting");
-    }
     this->errorModel.setUpperBounds(this->walkBounds);
 }
 
 /*! This method reads the input messages associated with the planet state
  */
-void PlanetNav::readInputMessages() { this->truePlanetState = this->ephemerisInMsg(); }
+void PlanetNav::readInputMessages() {
+    this->truePlanetState = this->ephemerisInMsg();
+}
 
 /*! This method writes the aggregate nav information into the output state message.
  @return void
  @param currentSimNanos The clock time associated with the model call
  */
 void PlanetNav::writeOutputMessages(uint64_t currentSimNanos) {
-    this->noisePlanetState.timeTag = (double)currentSimNanos * NANO2SEC;
+    this->noisePlanetState.timeTag = (double) currentSimNanos * NANO2SEC;
     this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, currentSimNanos);
 }
 
@@ -92,7 +81,7 @@ void PlanetNav::applyErrors() {
  */
 void PlanetNav::computeErrors(uint64_t currentSimNanos) {
     double timeStep;
-    Eigen::MatrixXd localProp = this->AMatrix;
+    PlanetNavCovar localProp = this->AMatrix;
     //! - Compute timestep since the last call
     timeStep = (currentSimNanos - this->prevTime) * 1.0E-9;
 

@@ -12,6 +12,12 @@
 %include <architecture/_GeneralModuleFiles/swig_conly_data.i>
 
 %include <architecture/_GeneralModuleFiles/sys_model.i>
+
+// Expose the fixed-size Gauss-Markov matrices/vectors to Python (get/set as lists or
+// numpy arrays, with wrong-size assignments rejected by a ValueError at the boundary).
+EIGEN_MAT_WRAP(PlanetNavCovar, 159)
+EIGEN_MAT_WRAP(PlanetNavErrorVector, 159)
+
 %include "planetNav.h"
 
 %include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
