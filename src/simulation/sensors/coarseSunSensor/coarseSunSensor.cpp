@@ -105,12 +105,9 @@ void CoarseSunSensor::reset(uint64_t currentSimNanos) {
         bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a spacecraft state input message");
     }
 
-    Eigen::VectorXd nMatrix;
-    Eigen::VectorXd pMatrix;
-    Eigen::VectorXd bounds;
-    nMatrix.resize(1, 1);
-    pMatrix.resize(1, 1);
-    bounds.resize(1, 1);
+    Eigen::Matrix<double, 1, 1> nMatrix;
+    Eigen::Matrix<double, 1, 1> pMatrix;
+    Eigen::Matrix<double, 1, 1> bounds;
 
     this->noiseModel.setRNGSeed(this->RNGSeed);
 
@@ -124,12 +121,9 @@ void CoarseSunSensor::reset(uint64_t currentSimNanos) {
     this->noiseModel.setPropMatrix(pMatrix);
 
     // Fault Noise Model
-    Eigen::VectorXd nMatrixFault;
-    Eigen::VectorXd pMatrixFault;
-    Eigen::VectorXd boundsFault;
-    nMatrixFault.resize(1, 1);
-    pMatrixFault.resize(1, 1);
-    boundsFault.resize(1, 1);
+    Eigen::Matrix<double, 1, 1> nMatrixFault;
+    Eigen::Matrix<double, 1, 1> pMatrixFault;
+    Eigen::Matrix<double, 1, 1> boundsFault;
 
     this->faultNoiseModel.setRNGSeed(this->RNGSeed + 1);
 
@@ -265,7 +259,7 @@ void CoarseSunSensor::applySensorErrors() {
     } else {  // include bias and noise
         //! - Get current error from random number generator
         this->noiseModel.computeNextState();
-        Eigen::VectorXd currentErrorEigen = this->noiseModel.getCurrentState();
+        Eigen::Matrix<double, 1, 1> currentErrorEigen = this->noiseModel.getCurrentState();
         double sensorNoise = currentErrorEigen.coeff(0, 0);
         sensorError = this->senBias + sensorNoise;
     }
