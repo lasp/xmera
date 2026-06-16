@@ -16,7 +16,7 @@ SimpleVoltEstimator::SimpleVoltEstimator() {
     this->trueVoltState = VoltMsgPayload{};
     this->PMatrix.setZero();
     this->walkBounds.setZero();
-    this->errorModel = GaussMarkov(1, this->RNGSeed);
+    this->errorModel = GaussMarkov<1>(this->RNGSeed);
 }
 
 /*! Destructor.  Nothing here. */

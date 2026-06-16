@@ -5,22 +5,21 @@
 #ifndef MAGNETOMETER_H
 #define MAGNETOMETER_H
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <random>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/MagneticFieldMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/TAMSensorMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/saturate.h>
+
 #include <Eigen/Dense>
+#include <random>
+#include <vector>
 
 /*! @brief magnetometer class */
 class Magnetometer : public SysModel {
-   public:
+public:
     Magnetometer();
     ~Magnetometer();
     void reset(uint64_t CurrentClock);           //!< Method for reseting the module
@@ -31,11 +30,13 @@ class Magnetometer : public SysModel {
     void applySensorErrors();                    //!< Method to set the actual output of the sensor with errors
     void applySaturation();                      //!< Apply saturation effects to sensed output (floor and ceiling)
     void writeOutputMessages(uint64_t Clock);    //!< Method to write the output message to the system
-    Eigen::Matrix3d setBodyToSensorDCM(double yaw,
-                                       double pitch,
-                                       double roll);  //!< Utility method to configure the sensor DCM
+    Eigen::Matrix3d setBodyToSensorDCM(
+        double yaw,
+        double pitch,
+        double roll
+    );  //!< Utility method to configure the sensor DCM
 
-   public:
+public:
     ReadFunctor<SCStatesMsgPayload> stateInMsg;     //!< [-] input message for spacecraft states
     ReadFunctor<MagneticFieldMsgPayload> magInMsg;  //!< [-] input message for magnetic field data in inertial frame N
     Message<TAMSensorMsgPayload> tamDataOutMsg;     //!< [-] Message for TAM output data in sensor frame S
@@ -52,11 +53,11 @@ class Magnetometer : public SysModel {
     double minOutput;            //!< [T] Minimum output for saturation application
     BSKLogger bskLogger;         //!< -- BSK Logging
 
-   private:
+private:
     MagneticFieldMsgPayload magData;  //!< [-] Magnetic field in inertial N frame
     SCStatesMsgPayload stateCurrent;  //!< [-] Current spacecraft state
     uint64_t numStates;               //!< [-] Number of States for Gauss Markov Models
-    GaussMarkov noiseModel;           //!< [-] Gauss Markov noise generation model
+    GaussMarkov<3> noiseModel;        //!< [-] Gauss Markov noise generation model
     Saturate saturateUtility;         //!< [-] Saturation utility
 };
 

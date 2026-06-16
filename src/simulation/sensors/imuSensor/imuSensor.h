@@ -6,24 +6,23 @@
 #define IMU_SENSOR_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/discretize.h>
-#include <architecture/utilities/gauss_markov.h>
-#include <architecture/utilities/saturate.h>
-#include <random>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/IMUSensorMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/discretize.h>
 #include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/saturate.h>
+
 #include <Eigen/Dense>
+#include <random>
+#include <vector>
 
 /*! @brief IMU sensor class */
 class ImuSensor : public SysModel {
-   public:
+public:
     ImuSensor();
     ~ImuSensor() = default;
 
@@ -45,7 +44,7 @@ class ImuSensor : public SysModel {
     void set_oSatBounds(Eigen::MatrixXd oSatBounds);
     void set_aSatBounds(Eigen::MatrixXd aSatBounds);
 
-   public:
+public:
     ReadFunctor<SCStatesMsgPayload> scStateInMsg; /*!< input essage name for spacecraft state */
     Message<IMUSensorMsgPayload> sensorOutMsg;    /*!< output message name for IMU output data */
     Eigen::Vector3d sensorPos_B;                  /*!< [m] IMU sensor location in body */
@@ -80,13 +79,13 @@ class ImuSensor : public SysModel {
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     uint64_t PreviousTime;             //!< -- Timestamp from previous frame
     int64_t numStates;                 //!< -- Number of States for Gauss Markov Models
     SCStatesMsgPayload StatePrevious;  //!< -- Previous state to delta in IMU
     SCStatesMsgPayload StateCurrent;   //!< -- Current SSBI-relative state
-    GaussMarkov errorModelAccel;       //!< [-] Gauss-markov error states
-    GaussMarkov errorModelGyro;        //!< [-] Gauss-markov error states
+    GaussMarkov<3> errorModelAccel;    //!< [-] Gauss-markov error states
+    GaussMarkov<3> errorModelGyro;     //!< [-] Gauss-markov error states
 
     Eigen::MRPd previous_sigma_BN;                       //!< -- sigma_BN from the previous spacecraft message
     Eigen::MRPd current_sigma_BN;                        //!< -- sigma_BN from the most recent spacecraft message

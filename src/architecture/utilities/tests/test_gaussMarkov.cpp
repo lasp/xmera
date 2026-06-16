@@ -3,8 +3,10 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "architecture/utilities/gauss_markov.h"
-#include <Eigen/Dense>
+
 #include <gtest/gtest.h>
+
+#include <Eigen/Dense>
 
 Eigen::Vector2d calculateSD(Eigen::MatrixXd dat, int64_t numPts) {
     Eigen::Vector2d sum = dat.rowwise().sum();
@@ -26,19 +28,19 @@ Eigen::Vector2d calculateSD(Eigen::MatrixXd dat, int64_t numPts) {
 
 TEST(GausssMarkov, stdDeviationIsExpected) {
     // Test if the std deviation is what we asked for
-    uint64_t seedIn = 1000;
+    uint64_t seedIn = 1'000;
     Eigen::Matrix2d propIn;
     propIn << 1, 1, 0, 1;
     Eigen::Matrix2d covar;
-    covar << 1500, 0, 0, 1.5;
+    covar << 1'500, 0, 0, 1.5;
     Eigen::Vector2d bounds;
     bounds << 1e-15, 1e-15;  // small but non-zero required for "white" noise
-    GaussMarkov errorModel = GaussMarkov(2);
+    GaussMarkov<2> errorModel;
     errorModel.setRNGSeed(seedIn);
     errorModel.setPropMatrix(propIn);
     errorModel.setNoiseMatrix(covar);
     errorModel.setUpperBounds(bounds);
-    int64_t numPts = 100000;
+    int64_t numPts = 100'000;
 
     Eigen::MatrixXd noiseOut;
     noiseOut.resize(2, numPts);
@@ -59,19 +61,19 @@ TEST(GausssMarkov, stdDeviationIsExpected) {
 
 TEST(GaussMarkov, meanIsZero) {
     // Test if the mean is zero
-    uint64_t seedIn = 1000;
+    uint64_t seedIn = 1'000;
     Eigen::Matrix2d propIn;
     propIn << 1, 1, 0, 1;
     Eigen::Matrix2d covar;
-    covar << 1500, 0, 0, 1.5;
+    covar << 1'500, 0, 0, 1.5;
     Eigen::Vector2d bounds;
     bounds << 1e-15, 1e-15;  // small but non-zero required for "white" noise
-    GaussMarkov errorModel = GaussMarkov(2);
+    GaussMarkov<2> errorModel;
     errorModel.setRNGSeed(seedIn);
     errorModel.setPropMatrix(propIn);
     errorModel.setNoiseMatrix(covar);
     errorModel.setUpperBounds(bounds);
-    int64_t numPts = 100000;
+    int64_t numPts = 100'000;
 
     Eigen::MatrixXd noiseOut;
     noiseOut.resize(2, numPts);
@@ -90,20 +92,20 @@ TEST(GaussMarkov, meanIsZero) {
 
 TEST(GaussMarkov, boundsAreRespected) {
     // Test if the bounds are obeyed
-    uint64_t seedIn = 1500;
+    uint64_t seedIn = 1'500;
     Eigen::Matrix2d propIn;
     propIn << 1, 0, 0, 1;
     Eigen::Matrix2d covar;
     covar << 1.5, 0, 0, 0.015;
     Eigen::Vector2d bounds;
     bounds << 10., 0.1;
-    GaussMarkov errorModel = GaussMarkov(2);
+    GaussMarkov<2> errorModel;
     errorModel.setRNGSeed(seedIn);
     errorModel.setPropMatrix(propIn);
     errorModel.setNoiseMatrix(covar);
     errorModel.setUpperBounds(bounds);
 
-    int64_t numPts = 100000;
+    int64_t numPts = 100'000;
     Eigen::MatrixXd noiseOut;
     noiseOut.resize(2, numPts);
 
@@ -112,24 +114,16 @@ TEST(GaussMarkov, boundsAreRespected) {
     Eigen::Vector2d minOut;
     minOut.fill(0.0);
 
-    numPts = (int64_t)1e6;
+    numPts = (int64_t) 1e6;
     noiseOut.resize(2, numPts);
 
     for (int64_t i = 0; i < numPts; i++) {
         errorModel.computeNextState();
         noiseOut.block(0, i, 2, 1) = errorModel.getCurrentState();
-        if (noiseOut(0, i) > maxOut(0)) {
-            maxOut(0) = noiseOut(0, i);
-        }
-        if (noiseOut(0, i) < minOut(0)) {
-            minOut(0) = noiseOut(0, i);
-        }
-        if (noiseOut(1, i) > maxOut(1)) {
-            maxOut(1) = noiseOut(1, i);
-        }
-        if (noiseOut(1, i) < minOut(1)) {
-            minOut(1) = noiseOut(1, i);
-        }
+        if (noiseOut(0, i) > maxOut(0)) { maxOut(0) = noiseOut(0, i); }
+        if (noiseOut(0, i) < minOut(0)) { minOut(0) = noiseOut(0, i); }
+        if (noiseOut(1, i) > maxOut(1)) { maxOut(1) = noiseOut(1, i); }
+        if (noiseOut(1, i) < minOut(1)) { minOut(1) = noiseOut(1, i); }
     }
 
     EXPECT_LT(fabs(12.481655180914322 - maxOut(0)) / 12.481655180914322, 5e-1);

@@ -12,7 +12,7 @@
  */
 TempMeasurement::TempMeasurement()
     : faultState{TEMP_FAULT_NOMINAL}, walkBounds{1E-15}, spikeProbability{0.1}, spikeAmount{2.0} {
-    this->noiseModel = GaussMarkov(1, this->RNGSeed);
+    this->noiseModel = GaussMarkov<1>(this->RNGSeed);
 }
 
 TempMeasurement::~TempMeasurement() = default;

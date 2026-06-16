@@ -74,9 +74,9 @@ public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< (optional) sun state input input msg
 
 private:
-    SimpleNavCovar AMatrix;  //!< -- The matrix used to propagate the state
-    GaussMarkov errorModel;  //!< -- Gauss-markov error states
-    uint64_t prevTime;       //!< -- Previous simulation time observed
+    SimpleNavCovar AMatrix;      //!< -- The matrix used to propagate the state
+    GaussMarkov<18> errorModel;  //!< -- Gauss-markov error states
+    uint64_t prevTime;           //!< -- Previous simulation time observed
 };
 
 #endif

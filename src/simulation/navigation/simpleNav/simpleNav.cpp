@@ -26,7 +26,7 @@ SimpleNav::SimpleNav() {
     this->spacecraftEphemerisState = EphemerisMsgPayload{};
     this->PMatrix.setZero();
     this->walkBounds.setZero();
-    this->errorModel = GaussMarkov(18, this->RNGSeed);
+    this->errorModel = GaussMarkov<18>(this->RNGSeed);
 }
 
 /*! Destructor.  Nothing here. */

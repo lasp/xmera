@@ -49,9 +49,9 @@ public:
     BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
-    PlanetNavCovar AMatrix;  //!< -- The matrix used to propagate the state
-    GaussMarkov errorModel;  //!< -- Gauss-markov error states
-    uint64_t prevTime;       //!< -- Previous simulation time observed
+    PlanetNavCovar AMatrix;      //!< -- The matrix used to propagate the state
+    GaussMarkov<12> errorModel;  //!< -- Gauss-markov error states
+    uint64_t prevTime;           //!< -- Previous simulation time observed
 };
 
 #endif

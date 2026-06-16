@@ -6,8 +6,6 @@
 #define COARSE_SUN_SENSOR_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <vector>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AlbedoMsgPayload.h>
 #include <architecture/msgPayloadDef/CSSArraySensorMsgPayload.h>
@@ -16,12 +14,12 @@
 #include <architecture/msgPayloadDef/EclipseMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/saturate.h>
 
 #include <Eigen/Dense>
+#include <vector>
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time */
@@ -34,7 +32,7 @@ typedef enum {
 
 /*! @brief coarse sun sensor class */
 class CoarseSunSensor : public SysModel {
-   public:
+public:
     CoarseSunSensor();
     ~CoarseSunSensor();
 
@@ -42,19 +40,22 @@ class CoarseSunSensor : public SysModel {
     void updateState(uint64_t currentSimNanos);  //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(
         double cssThetaPerturb,
-        double cssPhiPerturb);  //!< @brief utility method to perturb CSS unit vector
-    void setBodyToPlatformDCM(double yaw,
-                              double pitch,
-                              double roll);  //!< @brief utility method to configure the platform DCM
-    void readInputMessages();                //!< @brief method to read the input messages
-    void computeSunData();                   //!< @brief method to get the sun vector information
-    void computeTrueOutput();                //!< @brief method to compute the true sun-fraction of CSS
+        double cssPhiPerturb
+    );  //!< @brief utility method to perturb CSS unit vector
+    void setBodyToPlatformDCM(
+        double yaw,
+        double pitch,
+        double roll
+    );                         //!< @brief utility method to configure the platform DCM
+    void readInputMessages();  //!< @brief method to read the input messages
+    void computeSunData();     //!< @brief method to get the sun vector information
+    void computeTrueOutput();  //!< @brief method to compute the true sun-fraction of CSS
     void applySensorErrors();  //!< @brief method to set the actual output of the sensor with scaling/kelly
     void scaleSensorValues();  //!< scale the sensor values
     void applySaturation();    //!< apply saturation effects to sensed output (floor and ceiling)
     void writeOutputMessages(uint64_t Clock);  //!< @brief method to write the output message to the system
 
-   public:
+public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;    //!< [-] input message for sun data
     ReadFunctor<SCStatesMsgPayload> stateInMsg;          //!< [-] input message for spacecraft state
     Message<CSSRawDataMsgPayload> cssDataOutMsg;         //!< [-] output message for CSS output data
@@ -96,14 +97,14 @@ class CoarseSunSensor : public SysModel {
     int CSSGroupID = -1;     //!< [-] (optional) CSS group id identifier, -1 means it is not set and default is used
     BSKLogger bskLogger;     //!< -- BSK Logging
 
-   private:
+private:
     SpicePlanetStateMsgPayload sunData;     //!< [-] Unused for now, but including it for future
     SCStatesMsgPayload stateCurrent;        //!< [-] Current SSBI-relative state
     EclipseMsgPayload sunVisibilityFactor;  //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
-    double sunDistanceFactor;     //! [-] Factor to scale cosine curve magnitude based on solar flux at location
-    GaussMarkov noiseModel;       //! [-] Gauss Markov noise generation model
-    GaussMarkov faultNoiseModel;  //! [-] Gauss Markov noise generation model exclusively for CSS fault
-    Saturate saturateUtility;     //! [-] Saturation utility
+    double sunDistanceFactor;        //! [-] Factor to scale cosine curve magnitude based on solar flux at location
+    GaussMarkov<1> noiseModel;       //! [-] Gauss Markov noise generation model
+    GaussMarkov<1> faultNoiseModel;  //! [-] Gauss Markov noise generation model exclusively for CSS fault
+    Saturate saturateUtility;        //! [-] Saturation utility
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
@@ -111,17 +112,18 @@ class CoarseSunSensor : public SysModel {
 It is used to aggregate the output messages of the coarse sun-sensors into a
 a single output for use by downstream models.*/
 class CSSConstellation : public SysModel {
-   public:
+public:
     CSSConstellation();                          //!< @brief [-] Default constructor
     ~CSSConstellation();                         //!< @brief [-] Default Destructor
     void reset(uint64_t CurrentClock);           //!< Method for reseting the module
     void updateState(uint64_t currentSimNanos);  //!< @brief [-] Main update method for CSS constellation
     void appendCSS(CoarseSunSensor* newSensor);  //!< @brief [-] Method for adding sensor to list
 
-   public:
+public:
     Message<CSSArraySensorMsgPayload> constellationOutMsg;  //!< [-] CSS constellation output message
     std::vector<CoarseSunSensor*> sensorList;               //!< [-] List of coarse sun sensors in constellation
-   private:
+
+private:
     CSSArraySensorMsgPayload outputBuffer;  //!< [-] buffer used to write output message
 };
 

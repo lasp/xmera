@@ -44,8 +44,8 @@ public:
     ReadFunctor<VoltMsgPayload> voltInMsg;  //!< voltage input msg
 
 private:
-    VoltErrorMatrix AMatrix;  //!< -- The matrix used to propagate the state
-    GaussMarkov errorModel;   //!< -- Gauss-markov error states
+    VoltErrorMatrix AMatrix;    //!< -- The matrix used to propagate the state
+    GaussMarkov<1> errorModel;  //!< -- Gauss-markov error states
 };
 
 #endif

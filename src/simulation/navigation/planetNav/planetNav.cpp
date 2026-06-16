@@ -22,7 +22,7 @@ PlanetNav::PlanetNav() {
     this->truePlanetState = EphemerisMsgPayload{};
     this->PMatrix.setZero();
     this->walkBounds.setZero();
-    this->errorModel = GaussMarkov(12, this->RNGSeed);
+    this->errorModel = GaussMarkov<12>(this->RNGSeed);
 }
 
 /*! Module Destructor */

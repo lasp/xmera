@@ -12,22 +12,22 @@
 
 StarTracker::StarTracker() {
     this->dcm_CB.setIdentity();
-    this->errorModel = GaussMarkov(3, this->RNGSeed);
+    this->errorModel = GaussMarkov<3>(this->RNGSeed);
     this->PMatrix.fill(0.0);
     this->AMatrix.fill(0.0);
     return;
 }
 
-StarTracker::~StarTracker() { return; }
+StarTracker::~StarTracker() {
+    return;
+}
 
 /*! This method is used to reset the module.
  @param currentSimNanos The current simulation time from the architecture
  @return void */
 void StarTracker::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
-    if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "starTracker.scStateInMsg was not linked.");
-    }
+    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "starTracker.scStateInMsg was not linked."); }
 
     int numStates = 3;
 
@@ -149,31 +149,43 @@ void StarTracker::updateState(uint64_t currentSimNanos) {
  @return void
  @param dcm_CB
 */
-void StarTracker::setDcmCB(const Eigen::Matrix3d& dcm_CB) { this->dcm_CB = dcm_CB; }
+void StarTracker::setDcmCB(Eigen::Matrix3d const &dcm_CB) {
+    this->dcm_CB = dcm_CB;
+}
 
 /*! Setter method for PMatrix.
  @return void
  @param PMatrix
 */
-void StarTracker::setPMatrix(const Eigen::Matrix3d& PMatrix) { this->PMatrix = PMatrix; }
+void StarTracker::setPMatrix(Eigen::Matrix3d const &PMatrix) {
+    this->PMatrix = PMatrix;
+}
 
 /*! Setter method for walkBounds.
  @return void
  @param walkBounds
 */
-void StarTracker::setWalkBounds(const Eigen::Vector3d& walkBounds) { this->walkBounds = walkBounds; }
+void StarTracker::setWalkBounds(Eigen::Vector3d const &walkBounds) {
+    this->walkBounds = walkBounds;
+}
 
 /*! Getter method for dcm_CB.
  @return const Eigen::Matrix3d
 */
-const Eigen::Matrix3d& StarTracker::getDcmCB() const { return this->dcm_CB; }
+Eigen::Matrix3d const &StarTracker::getDcmCB() const {
+    return this->dcm_CB;
+}
 
 /*! Getter method for PMatrix.
  @return const Eigen::Matrix3d
 */
-const Eigen::Matrix3d& StarTracker::getPMatrix() const { return this->PMatrix; }
+Eigen::Matrix3d const &StarTracker::getPMatrix() const {
+    return this->PMatrix;
+}
 
 /*! Getter method for walkBounds.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d& StarTracker::getWalkBounds() const { return this->walkBounds; }
+Eigen::Vector3d const &StarTracker::getWalkBounds() const {
+    return this->walkBounds;
+}
