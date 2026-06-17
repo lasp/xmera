@@ -1308,3 +1308,38 @@ TEST(DomainRobustness, AddPrvExactCancellation) {
     EXPECT_TRUE(result.allFinite());
     EXPECT_LT(result.norm(), 1e-9);
 }
+
+// ---------------------------------------------------------------------------
+// Euler-321 extraction approaching the +-90 deg pitch singularity. The atan2 pitch
+// stays finite and accurate where asin(sin) is ill-conditioned / can NaN on a
+// rounded-past-1 argument.
+// ---------------------------------------------------------------------------
+TEST(Euler321NearGimbalLock, ExtractionAccurateApproachingNinety) {
+    double const yaw = 0.3;
+    double const roll = -0.2;
+    for (double pitchDeg : {89.0, 89.9, 89.99}) {
+        double const pitch = pitchDeg * std::numbers::pi / 180.0;
+        Eigen::Vector3d const eIn(yaw, pitch, roll);
+        Eigen::Vector4d const ep = eulerAngles321ToEp<double>(eIn);
+        Eigen::Vector3d const eFromEp = epToEulerAngles321<double>(ep);
+        Eigen::Vector3d const eFromDcm = dcmToEulerAngles321<double>(epToDcm<double>(ep));
+        EXPECT_TRUE(eFromEp.allFinite());
+        EXPECT_TRUE(eFromDcm.allFinite());
+        EXPECT_LT(relativeErrorNorm(eFromEp, eIn), 1e-9) << "epToEuler pitch=" << pitchDeg;
+        EXPECT_LT(relativeErrorNorm(eFromDcm, eIn), 1e-9) << "dcmToEuler pitch=" << pitchDeg;
+    }
+}
+
+TEST(Euler321NearGimbalLock, ExactNinetyStaysFinite) {
+    // sin(pitch) can round just above 1: asin -> NaN, atan2 -> finite pi/2. At exact gimbal
+    // lock only the pitch is uniquely recoverable (yaw/roll couple), so only pitch is checked.
+    double const pitch = std::numbers::pi / 2.0;
+    Eigen::Vector3d const eIn(0.3, pitch, -0.2);
+    Eigen::Vector4d const ep = eulerAngles321ToEp<double>(eIn);
+    Eigen::Vector3d const eFromEp = epToEulerAngles321<double>(ep);
+    Eigen::Vector3d const eFromDcm = dcmToEulerAngles321<double>(epToDcm<double>(ep));
+    EXPECT_TRUE(eFromEp.allFinite());
+    EXPECT_TRUE(eFromDcm.allFinite());
+    EXPECT_NEAR(eFromEp(1), pitch, 1e-9);
+    EXPECT_NEAR(eFromDcm(1), pitch, 1e-9);
+}
