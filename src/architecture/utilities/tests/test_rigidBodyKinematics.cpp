@@ -1242,3 +1242,44 @@ TYPED_TEST(RepresentationDerivativesTest, tildeMatrix) {
     T const matrixTolerance = std::max(rotationParameterTolerance(expected), TestFixture::accuracy);
     EXPECT_LT(relativeErrorNorm(tildeMatrix<T>(vec), expected), matrixTolerance);
 }
+
+// ---------------------------------------------------------------------------
+// Near-identity conditioning regressions (compared against analytic truth).
+// These exercise the regime where the old 2*acos(cos(phi/2)) formulation loses
+// precision (cos(phi/2) rounds to 1.0) while 2*atan2(|vec|, scalar) stays exact.
+// kCondTol is far tighter than the old acos error (~1e-11) yet loose vs atan2 (~1e-16).
+// ---------------------------------------------------------------------------
+namespace {
+    constexpr double kCondTol = 1e-12;
+    Eigen::Vector3d const kCondAxis = Eigen::Vector3d(1.0, -2.0, 3.0).normalized();
+}  // namespace
+
+TEST(ConditioningNearIdentity, EpToPrvSmallAngle) {
+    for (double phi : {1e-2, 1e-4, 1e-6, 1e-8}) {
+        Eigen::Vector4d ep;
+        ep(0) = std::cos(phi / 2);
+        ep.tail<3>() = std::sin(phi / 2) * kCondAxis;
+        Eigen::Vector3d const expected = phi * kCondAxis;
+        EXPECT_LT(relativeErrorNorm(epToPrv<double>(ep), expected), kCondTol) << "phi=" << phi;
+    }
+}
+
+TEST(ConditioningNearIdentity, SubPrvSmallRelativeRotation) {
+    double const phi = 1.0;  // O(1) inputs, tiny relative rotation -> realPart -> 1
+    for (double eps : {1e-2, 1e-4, 1e-6, 1e-8}) {
+        Eigen::Vector3d const a = phi * kCondAxis;
+        Eigen::Vector3d const b = (phi - eps) * kCondAxis;
+        Eigen::Vector3d const expected = eps * kCondAxis;
+        EXPECT_LT(relativeErrorNorm(subPrv<double>(a, b), expected), kCondTol) << "eps=" << eps;
+    }
+}
+
+TEST(ConditioningNearIdentity, AddPrvNearCancellation) {
+    double const phi = 1.0;  // rotate forward phi, then back (phi - eps): net eps
+    for (double eps : {1e-2, 1e-4, 1e-6, 1e-8}) {
+        Eigen::Vector3d const a = phi * kCondAxis;
+        Eigen::Vector3d const b = -(phi - eps) * kCondAxis;
+        Eigen::Vector3d const expected = eps * kCondAxis;
+        EXPECT_LT(relativeErrorNorm(addPrv<double>(a, b), expected), kCondTol) << "eps=" << eps;
+    }
+}
