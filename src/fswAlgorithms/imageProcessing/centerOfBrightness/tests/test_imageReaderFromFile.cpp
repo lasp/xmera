@@ -7,6 +7,8 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 
+#include <unistd.h>
+
 #include <cstdio>
 #include <filesystem>
 #include <memory>
@@ -26,7 +28,11 @@ class ImageReaderFromFileTest : public ::testing::Test {
     std::array<Eigen::Vector2i, kMaxWindowSize>& output = *outputStorage;
 
     void SetUp() override {
-        tempDir = std::filesystem::temp_directory_path().string() + "/imageReaderFileTest";
+        // Use a temp directory unique per test (and per process).
+        const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+        tempDir = std::filesystem::temp_directory_path().string() + "/imageReaderFileTest_" + info->test_suite_name() +
+                  "_" + info->name() + "_" + std::to_string(::getpid());
+        std::filesystem::remove_all(tempDir);  // clear any stale leftover
         std::filesystem::create_directories(tempDir);
     }
 
