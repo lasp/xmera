@@ -113,8 +113,6 @@ def smallBodyNavUKFTestFunction(show_plots):
         [true_x_hat], np.array([x_hat[-1,:]]), 0.01, "x_hat",
         testFailCount, testMessages)
 
-    plt.figure(1)
-    plt.clf()
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.ticklabel_format(useOffset=False)
     plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,0] / 1000, label='x-pos')
@@ -125,8 +123,6 @@ def smallBodyNavUKFTestFunction(show_plots):
     plt.ylabel('${}^{A}r_{BA}$ (km)')
     plt.title('Estimated Relative Spacecraft Position')
 
-    plt.figure(2)
-    plt.clf()
     plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,3], label='x-vel')
     plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,4], label='y-vel')
@@ -136,8 +132,6 @@ def smallBodyNavUKFTestFunction(show_plots):
     plt.ylabel('${}^{A}v_{BA}$ (m/s)')
     plt.title('Estimated Spacecraft Velocity')
 
-    plt.figure(3)
-    plt.clf()
     plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,6], label='x-acc')
     plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,7], label='y-acc')
