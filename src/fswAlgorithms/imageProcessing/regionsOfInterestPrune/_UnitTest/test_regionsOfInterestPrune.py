@@ -317,9 +317,6 @@ def test_step2_rank2_by_count():
 # Test — end-to-end pipeline on real image
 # ---------------------------------------------------------------------------
 
-OUTPUT_PATH = os.path.join(path, "test_pruning_output.png")
-THRESH_PATH = os.path.join(path, "test_pruning_threshold.png")
-
 PIPELINE_KERNEL = 5
 
 
@@ -361,23 +358,18 @@ def _auto_threshold(image_path, kernel_size, percentile=95.0):
     # ),
 ])
 @pytest.mark.parametrize("row_col_span", [2, 3, 4])
-def test_pruning(test_image_path, row_col_span, threshold=None):
+def test_pruning(test_image_path, row_col_span, tmp_path, threshold=None):
     """End-to-end integration test: real pia_ image through the full
     fpgaImagePipeline → regionsOfInterestPrune chain.
 
     Checks at least one candidate is identified and verifies the published
     regionsIdentifiedOutMsg contains valid center-coordinate regions.
 
-    Writes two diagnostic PNGs to the _UnitTest directory:
-
-        test_pruning_output.png
-            All published regions (up to MAX_NUMBER_REGIONS) drawn in thin yellow
-            from centre coordinates, matching the production saveVisualization style.
-            Rank-1 in RED with filled centre dot and label "R1 (<numberOfPixels>)".
-            Rank-2 in BLUE with filled centre dot (if present).
-
-        test_pruning_threshold.png
-            Above-threshold pixels → 255, below → 0.
+    The module writes a diagnostic PNG ("<timeTag>_pruning_output.png") to the
+    per-test temp directory: all published regions (up to MAX_NUMBER_REGIONS)
+    drawn in thin yellow from centre coordinates, matching the production
+    saveVisualization style. Rank-1 in RED with filled centre dot and label
+    "R1 (<numberOfPixels>)"; Rank-2 in BLUE with filled centre dot (if present).
     """
     if not os.path.isfile(test_image_path):
         pytest.skip(f"Test image not found: {test_image_path}")
@@ -402,7 +394,9 @@ def test_pruning(test_image_path, row_col_span, threshold=None):
     pruner.setMaxRowSpans(row_col_span)
     pruner.setMaxColSpans(row_col_span)
     pruner.setSaveImages(True)
-    pruner.setSaveDir(path)
+    # Write diagnostic images to a unique per-test temp dir
+    save_dir = str(tmp_path)
+    pruner.setSaveDir(save_dir)
 
     roi_log = pruner.regionsIdentifiedOutMsg.recorder()
     _run_once(_make_sim(pipeline, pruner, roi_log))
@@ -420,4 +414,4 @@ def test_pruning(test_image_path, row_col_span, threshold=None):
     if len(regions) >= 2:
         count_str += f"  |  R2 pixel count (approx): {regions[1].numberOfPixels}"
     print(count_str)
-    print(f"test_pruning: {len(regions)} candidate(s); visualisation saved by module to {path}")
+    print(f"test_pruning: {len(regions)} candidate(s); visualisation saved by module to {save_dir}")
