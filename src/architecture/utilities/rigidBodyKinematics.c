@@ -1273,7 +1273,8 @@ void C2Euler313(double C[3][3], double* q) {
  */
 void C2Euler321(double C[3][3], double* q) {
     q[0] = atan2(C[0][1], C[0][0]);
-    q[1] = safeAsin(-C[0][2]);
+    /* atan2(sin, cos) rather than asin(sin) for the pitch: better-conditioned as pitch -> +-90 deg */
+    q[1] = atan2(-C[0][2], sqrt(C[0][0] * C[0][0] + C[0][1] * C[0][1]));
     q[2] = atan2(C[1][2], C[2][2]);
 }
 

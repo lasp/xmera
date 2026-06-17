@@ -347,7 +347,8 @@ Eigen::Vector3<ScalarT> dcmToEulerAngles321(Eigen::Matrix3<ScalarT> const &dcm) 
     Eigen::Vector3<ScalarT> euler321;
 
     euler321[0] = std::atan2(dcm(0, 1), dcm(0, 0));
-    euler321[1] = std::asin(-dcm(0, 2));
+    // atan2(sin, cos) rather than asin(sin) for the pitch: better-conditioned as pitch -> +-90 deg
+    euler321[1] = std::atan2(-dcm(0, 2), std::sqrt(dcm(0, 0) * dcm(0, 0) + dcm(0, 1) * dcm(0, 1)));
     euler321[2] = std::atan2(dcm(1, 2), dcm(2, 2));
 
     return euler321;
