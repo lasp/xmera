@@ -60,6 +60,17 @@ After installing this package you can now pytest such that it distribute tests a
 or replace `auto` with the number of processors (virtual or otherwise) you'd like to dedicate as test executions
 processes.
 
+The C/C++ (Google Test) tests can likewise be distributed across multiple processes by passing
+``--parallel`` to ``ctest``
+
+.. code-block:: console
+
+   ctest --parallel <N>
+
+where ``<N>`` is the number of test processes to run concurrently (alternatively, set the
+``CTEST_PARALLEL_LEVEL`` environment variable). ``run_all_test.py`` already runs the C/C++ tests in
+parallel automatically, scaling to the number of processors on the host machine.
+
 Generating HTML Report of the ``pytest`` Results
 ================================================
 
