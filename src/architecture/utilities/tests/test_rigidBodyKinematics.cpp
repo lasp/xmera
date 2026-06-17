@@ -1283,3 +1283,28 @@ TEST(ConditioningNearIdentity, AddPrvNearCancellation) {
         EXPECT_LT(relativeErrorNorm(addPrv<double>(a, b), expected), kCondTol) << "eps=" << eps;
     }
 }
+
+// ---------------------------------------------------------------------------
+// Domain robustness: degenerate inputs must stay finite (no acos-domain NaN, no 0/0).
+// ---------------------------------------------------------------------------
+TEST(DomainRobustness, EpToPrvSlightlyOffUnit) {
+    // q0 just above 1 from integer-decode / renorm rounding: acos -> NaN, atan2 stays finite.
+    Eigen::Vector4d const ep(1.0 + 1e-9, 1e-6, -2e-6, 5e-7);
+    EXPECT_TRUE(epToPrv<double>(ep).allFinite());
+}
+
+TEST(DomainRobustness, SubPrvIdenticalRotations) {
+    // Relative rotation of identical PRVs is identity: must be a finite zero, not 0/0.
+    Eigen::Vector3d const a(0.3, -0.4, 0.5);
+    Eigen::Vector3d const result = subPrv<double>(a, a);
+    EXPECT_TRUE(result.allFinite());
+    EXPECT_LT(result.norm(), 1e-9);
+}
+
+TEST(DomainRobustness, AddPrvExactCancellation) {
+    // Rotate then undo: identity. Must be a finite zero.
+    Eigen::Vector3d const a(0.3, -0.4, 0.5);
+    Eigen::Vector3d const result = addPrv<double>(a, -a);
+    EXPECT_TRUE(result.allFinite());
+    EXPECT_LT(result.norm(), 1e-9);
+}
