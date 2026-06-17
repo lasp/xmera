@@ -20,9 +20,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-IMAGE_PATH = os.path.abspath(
-    os.path.join(path, "..", "..", "fpgaImagePipeline", "_UnitTest", "pia_958_830.tiff")
-)
+IMAGE_PATH = os.path.join(path, "pia_958_830.tiff")
 
 importErr = False
 reasonErr = ""
@@ -344,18 +342,11 @@ def _auto_threshold(image_path, kernel_size, percentile=95.0):
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
 @pytest.mark.parametrize("test_image_path", [
-    os.path.abspath(
-        os.path.join(path, "..", "..", "fpgaImagePipeline", "_UnitTest", "pia_958_830.tiff")
-    ),
-    # os.path.abspath(
-    #     os.path.join(path, "..", "..", "fpgaImagePipeline", "_UnitTest", "pia_616_592.tiff")
-    # ),
-    # os.path.abspath(
-    #     os.path.join(path, "..", "..", "fpgaImagePipeline", "_UnitTest", "bennu_1024_1024.tiff")
-    # ),
-    # os.path.abspath(
-    #     os.path.join(path, "..", "..", "fpgaImagePipeline", "_UnitTest", "jupiter_3000_3000.tiff")
-    # ),
+    os.path.join(path, "pia_958_830.tiff"),
+    # Additional images can be exercised by copying them into this test directory:
+    # os.path.join(path, "pia_616_592.tiff"),
+    # os.path.join(path, "bennu_1024_1024.tiff"),
+    # os.path.join(path, "jupiter_3000_3000.tiff"),
 ])
 @pytest.mark.parametrize("row_col_span", [2, 3, 4])
 def test_pruning(test_image_path, row_col_span, tmp_path, threshold=None):
