@@ -3700,16 +3700,25 @@ void subPRV(double* q10, double* q20, double* q) {
     v3Copy(&(q1[1]), e1);
     v3Copy(&(q2[1]), e2);
 
-    double p = 2. * safeAcos(cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2));
-    double sp = sin(p / 2.);
+    double realPart = cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2);
 
+    // vector part of the relative quaternion (magnitude == sin(phi/2))
     v3Cross(e1, e2, q1);
     v3Scale(sp1 * sp2, q1, q);
     v3Scale(cp2 * sp1, e1, q1);
     v3Add(q1, q, q);
     v3Scale(cp1 * sp2, e2, q1);
     v3Subtract(q, q1, q);
-    v3Scale(p / sp, q, q);
+
+    // atan2(|vec|, realPart) rather than acos(realPart): conditioned and domain-safe
+    // near identity (realPart -> 1).
+    double vecNorm = v3Norm(q);
+    if (vecNorm < 1.0E-13) {
+        v3SetZero(q);
+        return;
+    }
+    double p = 2. * atan2(vecNorm, realPart);
+    v3Scale(p / vecNorm, q, q);
 }
 
 /*

@@ -892,18 +892,18 @@ Eigen::Vector3<ScalarT> subPrv(Eigen::Vector3<ScalarT> const &prv1, Eigen::Vecto
     Eigen::Vector3<ScalarT> unitVector2 = prv2 / norm2;
 
     ScalarT dotUV = unitVector1.dot(unitVector2);
-    ScalarT acosArg = cosPhi1 * cosPhi2 + sinPhi1 * sinPhi2 * dotUV;
-
-    assert(std::abs(acosArg) <= ScalarT(1));
-
-    ScalarT angle = ScalarT(2) * std::acos(acosArg);
-
-    if (std::abs(angle) < ScalarT(1.0E-13)) { return Eigen::Vector3<ScalarT>::Zero(); }
+    ScalarT realPart = cosPhi1 * cosPhi2 + sinPhi1 * sinPhi2 * dotUV;
 
     Eigen::Vector3<ScalarT> prv = cosPhi2 * sinPhi1 * unitVector1 - cosPhi1 * sinPhi2 * unitVector2
                                 + sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
 
-    return prv * angle / std::sin(angle / ScalarT(2));
+    // Use atan2(|vec|, realPart) rather than acos(realPart): well-conditioned and domain-safe
+    // when the relative rotation is near identity (realPart -> 1). |vec| == sin(angle/2).
+    ScalarT vectorNorm = prv.norm();
+    if (vectorNorm < ScalarT(1.0E-13)) { return Eigen::Vector3<ScalarT>::Zero(); }
+    ScalarT angle = ScalarT(2) * std::atan2(vectorNorm, realPart);
+
+    return prv * angle / vectorNorm;
 }
 
 /**
