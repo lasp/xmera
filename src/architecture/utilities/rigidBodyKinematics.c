@@ -1811,8 +1811,14 @@ void EP2Euler321(double* q, double* e) {
     double q2 = q[2];
     double q3 = q[3];
 
-    e[0] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
-    e[1] = safeAsin(-2 * (q1 * q3 - q0 * q2));
+    /* Row 0 of the DCM; the pitch's cosine is the norm of these two terms. */
+    double r00 = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3;
+    double r01 = 2 * (q1 * q2 + q0 * q3);
+    double r02 = 2 * (q1 * q3 - q0 * q2);
+
+    e[0] = atan2(r01, r00);
+    /* atan2(sin, cos) rather than asin(sin) for the pitch: better-conditioned as pitch -> +-90 deg */
+    e[1] = atan2(-r02, sqrt(r00 * r00 + r01 * r01));
     e[2] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
 }
 

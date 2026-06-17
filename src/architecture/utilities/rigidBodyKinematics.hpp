@@ -507,11 +507,14 @@ template<typename ScalarT>
 Eigen::Vector3<ScalarT> epToEulerAngles321(Eigen::Vector4<ScalarT> const &ep) {
     Eigen::Vector3<ScalarT> euler321;
 
-    euler321(0) = std::atan2(
-        2.0 * (ep(1) * ep(2) + ep(0) * ep(3)),
-        ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3)
-    );
-    euler321(1) = std::asin(-2.0 * (ep(1) * ep(3) - ep(0) * ep(2)));
+    // Row 0 of the DCM; the pitch's cosine is the norm of these two terms.
+    ScalarT const r00 = ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3);
+    ScalarT const r01 = 2.0 * (ep(1) * ep(2) + ep(0) * ep(3));
+    ScalarT const r02 = 2.0 * (ep(1) * ep(3) - ep(0) * ep(2));
+
+    euler321(0) = std::atan2(r01, r00);
+    // atan2(sin, cos) rather than asin(sin) for the pitch: better-conditioned as pitch -> +-90 deg
+    euler321(1) = std::atan2(-r02, std::sqrt(r00 * r00 + r01 * r01));
     euler321(2) = std::atan2(
         2.0 * (ep(2) * ep(3) + ep(0) * ep(1)),
         ep(0) * ep(0) - ep(1) * ep(1) - ep(2) * ep(2) + ep(3) * ep(3)
