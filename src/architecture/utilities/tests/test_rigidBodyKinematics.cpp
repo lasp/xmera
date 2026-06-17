@@ -1343,3 +1343,49 @@ TEST(Euler321NearGimbalLock, ExactNinetyStaysFinite) {
     EXPECT_NEAR(eFromEp(1), pitch, 1e-9);
     EXPECT_NEAR(eFromDcm(1), pitch, 1e-9);
 }
+
+// ---------------------------------------------------------------------------
+// C/C++ parity at near-identity / near-singular inputs. These agree only because the
+// C analogs were switched to atan2 in lockstep; with the old acos/asin C reference they
+// would diverge here.
+// ---------------------------------------------------------------------------
+TEST(CCppParityNearIdentity, EpToPrvSmallAngle) {
+    double const phi = 1e-7;
+    Eigen::Vector4d ep;
+    ep(0) = std::cos(phi / 2);
+    ep.tail<3>() = std::sin(phi / 2) * kCondAxis;
+    double cRef[3] = {};
+    EP2PRV(ep.data(), cRef);
+    EXPECT_LT(relativeErrorNorm(epToPrv<double>(ep), Eigen::Map<Eigen::Vector3d>(cRef)), 1e-12);
+}
+
+TEST(CCppParityNearIdentity, SubPrvNearIdentity) {
+    double const phi = 1.0;
+    double const eps = 1e-7;
+    Eigen::Vector3d a = phi * kCondAxis;
+    Eigen::Vector3d b = (phi - eps) * kCondAxis;
+    double cRef[3] = {};
+    subPRV(a.data(), b.data(), cRef);
+    EXPECT_LT(relativeErrorNorm(subPrv<double>(a, b), Eigen::Map<Eigen::Vector3d>(cRef)), 1e-12);
+}
+
+TEST(CCppParityNearIdentity, AddPrvNearCancellation) {
+    double const phi = 1.0;
+    double const eps = 1e-7;
+    Eigen::Vector3d a = phi * kCondAxis;
+    Eigen::Vector3d b = -(phi - eps) * kCondAxis;
+    double cRef[3] = {};
+    addPRV(a.data(), b.data(), cRef);
+    EXPECT_LT(relativeErrorNorm(addPrv<double>(a, b), Eigen::Map<Eigen::Vector3d>(cRef)), 1e-12);
+}
+
+TEST(CCppParityNearIdentity, Euler321NearGimbal) {
+    double const pitch = 89.99 * std::numbers::pi / 180.0;
+    Eigen::Vector3d const eIn(0.3, pitch, -0.2);
+    Eigen::Matrix3d const dcm = epToDcm<double>(eulerAngles321ToEp<double>(eIn));
+    double cArr[3][3];
+    eigenMatrix3ToCArray(dcm, cArr);
+    double cRef[3] = {};
+    C2Euler321(cArr, cRef);
+    EXPECT_LT(relativeErrorNorm(dcmToEulerAngles321<double>(dcm), Eigen::Map<Eigen::Vector3d>(cRef)), 1e-10);
+}
