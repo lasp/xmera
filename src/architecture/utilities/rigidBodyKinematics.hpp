@@ -783,16 +783,16 @@ Eigen::Vector3<ScalarT> addPrv(Eigen::Vector3<ScalarT> const &prv1, Eigen::Vecto
     ScalarT dotProduct = unitVector1.dot(unitVector2);
     ScalarT realPart = cosPhi1 * cosPhi2 - sinPhi1 * sinPhi2 * dotProduct;
 
-    assert(std::abs(realPart) < 1.0);
-
-    ScalarT angle = 2.0 * std::acos(realPart);
-
-    if (std::abs(angle) < ScalarT(1.0E-13)) { return Eigen::Vector3<ScalarT>::Zero(); }
-
     Eigen::Vector3<ScalarT> vectorPart = cosPhi1 * sinPhi2 * unitVector2 + cosPhi2 * sinPhi1 * unitVector1
                                        + sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
 
-    return vectorPart * angle / std::sin(angle / 2.0);
+    // Use atan2(|vec|, realPart) rather than acos(realPart): well-conditioned and domain-safe
+    // when the composed rotation is near identity (realPart -> 1). |vec| == sin(angle/2).
+    ScalarT vectorNorm = vectorPart.norm();
+    if (vectorNorm < ScalarT(1.0E-13)) { return Eigen::Vector3<ScalarT>::Zero(); }
+    ScalarT angle = ScalarT(2) * std::atan2(vectorNorm, realPart);
+
+    return vectorPart * angle / vectorNorm;
 }
 
 /**

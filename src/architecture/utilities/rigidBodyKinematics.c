@@ -304,19 +304,25 @@ void addPRV(double* qq1, double* qq2, double* result) {
     v3Set(q1[1], q1[2], q1[3], e1);
     v3Set(q2[1], q2[2], q2[3], e2);
 
-    double p = 2 * safeAcos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
-    if (fabs(p) < 1.0E-13) {
-        v3SetZero(result);
-        return;
-    }
-    double sp = sin(p / 2.);
+    double realPart = cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2);
+
+    // vector part of the composed quaternion (magnitude == sin(phi/2))
     v3Scale(cp1 * sp2, e2, q1);
     v3Scale(cp2 * sp1, e1, q2);
     v3Add(q1, q2, result);
     v3Cross(e1, e2, q1);
     v3Scale(sp1 * sp2, q1, q2);
     v3Add(result, q2, result);
-    v3Scale(p / sp, result, result);
+
+    // atan2(|vec|, realPart) rather than acos(realPart): conditioned and domain-safe
+    // near identity (realPart -> 1).
+    double vecNorm = v3Norm(result);
+    if (vecNorm < 1.0E-13) {
+        v3SetZero(result);
+        return;
+    }
+    double p = 2 * atan2(vecNorm, realPart);
+    v3Scale(p / vecNorm, result, result);
 }
 
 /*
