@@ -1854,17 +1854,17 @@ void EP2MRP(double* q1, double* q) {
  * into the principal rotation vector Q.
  */
 void EP2PRV(double* q1, double* q) {
-    double p = 2 * safeAcos(q1[0]);
-    double sp = sin(p / 2);
-    if (fabs(sp) < nearZero) {
+    double vecNorm = sqrt(q1[1] * q1[1] + q1[2] * q1[2] + q1[3] * q1[3]);
+    if (vecNorm < nearZero) {
         q[0] = 0.0;
         q[1] = 0.0;
         q[2] = 0.0;
         return;
     }
-    q[0] = q1[1] / sp * p;
-    q[1] = q1[2] / sp * p;
-    q[2] = q1[3] / sp * p;
+    double p = 2 * atan2(vecNorm, q1[0]);
+    q[0] = q1[1] / vecNorm * p;
+    q[1] = q1[2] / vecNorm * p;
+    q[2] = q1[3] / vecNorm * p;
 }
 
 /*
