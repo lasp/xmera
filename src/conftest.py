@@ -33,6 +33,22 @@ def show_plots(request):
     return request.config.getoption("--show_plots")
 
 
+@pytest.fixture(autouse=True)
+def _close_matplotlib_figures():
+    """Close matplotlib figures left open by a test.
+
+    Tests open figures with hard-coded numbers (``plt.figure(1, figsize=...)``).
+    When a figure with that number survives into a later test, matplotlib ignores
+    the size/dpi arguments and warns ("figure with num: N already exists"). Closing
+    after each test keeps figure numbers from leaking across tests. Only acts when
+    pyplot was actually imported, so non-plotting tests incur no cost.
+    """
+    yield
+    plt = sys.modules.get("matplotlib.pyplot")
+    if plt is not None:
+        plt.close("all")
+
+
 def pytest_make_parametrize_id(config, val, argname):
     return f"{argname}={val}"
 
