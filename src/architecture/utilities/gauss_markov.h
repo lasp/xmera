@@ -35,9 +35,15 @@ public:
         this->setRNGSeed(newSeed);
     }
 
-    /*! This method performs almost all of the work for the Gauss Markov random walk.  It uses the
-        current random walk configuration, propagates the current state, and then applies appropriate
-        errors to the states to set the current error level.
+    /*! @brief Advances the random walk one step: propagates the current state through propMatrix,
+        adds correlated noise (noiseMatrix times standard samples), and applies a soft restoring drift
+        to any state that has a positive bound.
+
+        The bound is "soft": instead of a hard clamp, a state-dependent drift (which grows as a state
+        approaches its bound) is added, so the realized state can briefly overshoot the nominal bound.
+        A non-positive bound disables the restoring drift for that state. The sample standard deviation
+        is 1/3 so a bound is interpreted as a 3-sigma envelope.
+
         @return void */
     void computeNextState() {
         //! - Propagate the state forward in time using the propMatrix and the currentState
@@ -96,15 +102,17 @@ public:
         this->currentState = newState;
     }
 
-    /*!@brief Set the upper bounds on the random walk to newBounds
+    /*!@brief Sets the per-state soft bounds. A non-positive value disables the bound for that state;
+       with the 1/3 sample std, a positive bound is interpreted as a 3-sigma envelope.
        @param newBounds the bounds to put on the random walk states
        @return void*/
     void setUpperBounds(StateVector const &newBounds) {
         this->stateBounds = newBounds;
     }
 
-    /*!@brief Set the noiseMatrix that is used to define error sigmas
-       @param noise The new value to use for the noiseMatrix variable (error sigmas)
+    /*!@brief Sets the noise matrix: the matrix square root (e.g. Cholesky factor) of the covariance,
+       i.e. a "sigma" matrix, NOT the covariance itself.
+       @param noise The matrix square root of the covariance used to apply errors
        @return void*/
     void setNoiseMatrix(StateMatrix const &noise) {
         this->noiseMatrix = noise;
