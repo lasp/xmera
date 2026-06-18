@@ -27,7 +27,7 @@ Eigen::Vector2d calculateSD(Eigen::MatrixXd dat, int64_t numPts) {
     return stnd;
 }
 
-TEST(GausssMarkov, stdDeviationIsExpected) {
+TEST(GaussMarkov, stdDeviationIsExpected) {
     // Test if the std deviation is what we asked for
     uint64_t seedIn = 1'000;
     Eigen::Matrix2d propIn;
