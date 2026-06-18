@@ -74,7 +74,7 @@ public:
        @return void*/
     void setRNGSeed(uint64_t newSeed) {
         this->rGen.seed((unsigned int) newSeed);
-        this->RNGSeed = newSeed;
+        this->rngSeed = newSeed;
     }
 
     /*!@brief Method returns the current random walk state from model
@@ -111,7 +111,7 @@ private:
     StateMatrix noiseMatrix =
         StateMatrix::Zero();  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix
     static constexpr uint64_t defaultSeed = 0x1bad'cad1;            //!< -- Default RNG seed
-    uint64_t RNGSeed = defaultSeed;                                 //!< -- Seed for random number generator
+    uint64_t rngSeed = defaultSeed;                                 //!< -- Seed for random number generator
     std::minstd_rand rGen{static_cast<unsigned int>(defaultSeed)};  //!< -- Random number generator for model
     std::normal_distribution<double> rNum{0.0, 1.0 / 3.0};          //!< -- Random number distribution for model
 };
