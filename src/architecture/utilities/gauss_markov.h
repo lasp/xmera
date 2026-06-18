@@ -27,13 +27,8 @@ public:
     using StateVector = Eigen::Matrix<double, N, 1>;  //!< -- Fixed-size state/bounds vector type
     using StateMatrix = Eigen::Matrix<double, N, N>;  //!< -- Fixed-size propagation/noise matrix type
 
-    /*! The default constructor initializes the random number generator used for the walks. */
-    GaussMarkov() {
-        this->RNGSeed = 0x1bad'cad1;
-        std::normal_distribution<double>::param_type updatePair(0.0, 1.0 / 3.0);
-        this->rGen.seed((unsigned int) this->RNGSeed);
-        this->rNum.param(updatePair);
-    }
+    /*! The default constructor; all members are initialized in-class. */
+    GaussMarkov() = default;
 
     /*! Seeded constructor.
         @param newSeed The seed to use in the random number generator */
@@ -115,9 +110,10 @@ private:
     StateMatrix propMatrix = StateMatrix::Zero();    //!< -- Matrix to propagate error state with
     StateMatrix noiseMatrix =
         StateMatrix::Zero();  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix
-    uint64_t RNGSeed;         //!< -- Seed for random number generator
-    std::minstd_rand rGen;    //!< -- Random number generator for model
-    std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
+    static constexpr uint64_t defaultSeed = 0x1bad'cad1;            //!< -- Default RNG seed
+    uint64_t RNGSeed = defaultSeed;                                 //!< -- Seed for random number generator
+    std::minstd_rand rGen{static_cast<unsigned int>(defaultSeed)};  //!< -- Random number generator for model
+    std::normal_distribution<double> rNum{0.0, 1.0 / 3.0};          //!< -- Random number distribution for model
 };
 
 #endif /* _GaussMarkov_HH_ */
