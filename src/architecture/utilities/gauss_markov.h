@@ -5,9 +5,8 @@
 #ifndef _GaussMarkov_HH_
 #define _GaussMarkov_HH_
 
-#include <stdint.h>
-
 #include <cmath>
+#include <cstdint>
 #include <Eigen/Dense>
 #include <random>
 
