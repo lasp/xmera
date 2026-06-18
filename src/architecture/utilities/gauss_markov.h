@@ -5,8 +5,6 @@
 #ifndef _GaussMarkov_HH_
 #define _GaussMarkov_HH_
 
-#include <architecture/utilities/bskLogging.h>
-
 #include <stdint.h>
 
 #include <cmath>
@@ -116,7 +114,6 @@ public:
     StateMatrix propMatrix = StateMatrix::Zero();    //!< -- Matrix to propagate error state with
     StateMatrix noiseMatrix =
         StateMatrix::Zero();  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix
-    BSKLogger bskLogger;      //!< -- BSK Logging
 
 private:
     uint64_t RNGSeed;                       //!< -- Seed for random number generator
