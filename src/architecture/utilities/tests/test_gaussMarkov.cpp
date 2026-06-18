@@ -6,6 +6,7 @@
 
 #include <gtest/gtest.h>
 
+#include <cmath>
 #include <Eigen/Dense>
 
 Eigen::Vector2d calculateSD(Eigen::MatrixXd dat, int64_t numPts) {
@@ -147,4 +148,68 @@ TEST(GaussMarkov, resetAndSetCurrentState) {
     Eigen::Vector3d target(1.0, 2.0, 3.0);
     model.setCurrentState(target);
     EXPECT_EQ((model.getCurrentState() - target).norm(), 0.0);
+}
+
+TEST(GaussMarkov, deterministicForSameSeed) {
+    // Two identically-seeded, identically-configured models must produce the same sequence.
+    GaussMarkov<3> a(777);
+    GaussMarkov<3> b(777);
+    for (auto* m : {&a, &b}) {
+        m->setNoiseMatrix(Eigen::Matrix3d::Identity());
+        m->setPropMatrix(Eigen::Matrix3d::Identity() * 0.9);
+        m->setUpperBounds(Eigen::Vector3d::Constant(-1.0));
+    }
+    for (int i = 0; i < 50; i++) {
+        a.computeNextState();
+        b.computeNextState();
+    }
+    EXPECT_EQ((a.getCurrentState() - b.getCurrentState()).norm(), 0.0);
+}
+
+template<int N>
+static void runFiniteSteps() {
+    GaussMarkov<N> m(123);
+    m.setNoiseMatrix(Eigen::Matrix<double, N, N>::Identity());
+    m.setPropMatrix(Eigen::Matrix<double, N, N>::Identity());
+    m.setUpperBounds(Eigen::Matrix<double, N, 1>::Constant(5.0));
+    for (int i = 0; i < 100; i++) { m.computeNextState(); }
+    EXPECT_TRUE(m.getCurrentState().allFinite());
+}
+
+TEST(GaussMarkov, runsForVariousSizes) {
+    runFiniteSteps<1>();
+    runFiniteSteps<3>();
+    runFiniteSteps<12>();
+    runFiniteSteps<18>();
+}
+
+TEST(GaussMarkov, memorylessWhenPropZero) {
+    // propMatrix = 0 makes each step independent white noise: std = sigma/3 and lag-1 autocorr ~ 0.
+    GaussMarkov<1> m(2'024);
+    Eigen::Matrix<double, 1, 1> sigma;
+    sigma(0, 0) = 30.0;
+    m.setNoiseMatrix(sigma);
+    m.setPropMatrix(Eigen::Matrix<double, 1, 1>::Zero());
+    Eigen::Matrix<double, 1, 1> noBound;
+    noBound(0, 0) = -1.0;  // disable clamping
+    m.setUpperBounds(noBound);
+
+    int64_t numPts = 200'000;
+    double sum = 0.0, sumSq = 0.0, lagSum = 0.0, prev = 0.0;
+    for (int64_t i = 0; i < numPts; i++) {
+        m.computeNextState();
+        double x = m.getCurrentState()(0, 0);
+        sum += x;
+        sumSq += x * x;
+        if (i > 0) { lagSum += x * prev; }
+        prev = x;
+    }
+    double mean = sum / numPts;
+    double var = sumSq / numPts - mean * mean;
+    double stdDev = std::sqrt(var);
+    double expectedStd = 30.0 / 3.0;  // sigma / 3
+    EXPECT_LT(fabs(stdDev - expectedStd) / expectedStd, 0.05);
+
+    double lag1Corr = (lagSum / (numPts - 1) - mean * mean) / var;
+    EXPECT_LT(fabs(lag1Corr), 0.02);  // memoryless: negligible autocorrelation
 }
