@@ -131,3 +131,20 @@ TEST(GaussMarkov, boundsAreRespected) {
     EXPECT_LT(fabs(-12.230618182796439 - minOut(0)) / -12.230618182796439, 5e-1);
     EXPECT_LT(fabs(-0.12055787311661936 - minOut(1)) / -0.12055787311661936, 5e-1);
 }
+
+TEST(GaussMarkov, resetAndSetCurrentState) {
+    GaussMarkov<3> model(42);
+    model.setNoiseMatrix(Eigen::Matrix3d::Identity());
+    model.setPropMatrix(Eigen::Matrix3d::Identity());
+    model.setUpperBounds(Eigen::Vector3d::Constant(-1.0));  // non-positive disables clamping
+
+    for (int i = 0; i < 100; i++) { model.computeNextState(); }
+    EXPECT_GT(model.getCurrentState().norm(), 0.0);  // the walk has moved away from zero
+
+    model.reset();
+    EXPECT_EQ(model.getCurrentState().norm(), 0.0);  // reset returns to zero
+
+    Eigen::Vector3d target(1.0, 2.0, 3.0);
+    model.setCurrentState(target);
+    EXPECT_EQ((model.getCurrentState() - target).norm(), 0.0);
+}

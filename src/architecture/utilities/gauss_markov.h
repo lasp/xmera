@@ -83,6 +83,20 @@ public:
         return this->currentState;
     }
 
+    /*!@brief Resets the random-walk state to zero. The configuration (matrices, bounds) and the RNG
+       stream are left unchanged.
+       @return void*/
+    void reset() {
+        this->currentState.setZero();
+    }
+
+    /*!@brief Overwrites the current random-walk state.
+       @param newState the state vector to assign
+       @return void*/
+    void setCurrentState(StateVector const &newState) {
+        this->currentState = newState;
+    }
+
     /*!@brief Set the upper bounds on the random walk to newBounds
        @param newBounds the bounds to put on the random walk states
        @return void*/
