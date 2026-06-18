@@ -109,15 +109,14 @@ public:
         this->propMatrix = prop;
     }
 
+private:
     StateVector stateBounds = StateVector::Zero();   //!< -- Upper bounds to use for markov
     StateVector currentState = StateVector::Zero();  //!< -- State of the markov model
     StateMatrix propMatrix = StateMatrix::Zero();    //!< -- Matrix to propagate error state with
     StateMatrix noiseMatrix =
         StateMatrix::Zero();  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix
-
-private:
-    uint64_t RNGSeed;                       //!< -- Seed for random number generator
-    std::minstd_rand rGen;                  //!< -- Random number generator for model
+    uint64_t RNGSeed;         //!< -- Seed for random number generator
+    std::minstd_rand rGen;    //!< -- Random number generator for model
     std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
 };
 
