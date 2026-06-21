@@ -17,7 +17,7 @@ In order to run Xmera on macOS, the following software is necessary
 
     xcode-select --install
 
-Install `HomeBrew <http://brew.sh>`__ and then the following tools via HomeBrew
+Install `Homebrew <http://brew.sh>`__ and then the following tools via Homebrew
 
 - CMake >= 3.30 < 4.0
 - pkg-config >= 0.29.2
@@ -66,8 +66,8 @@ To install Python 3 on macOS there are two common options
 
 #. (Preferred) Download the installer package from `python.org <https://python.org>`__.  This will configure your
    your macOS environment for Python 3 and can readily be upgraded by downloading a newer installer package.
-#. Install python 3 through the `HomeBrew <http://brew.sh>`__ package management system. The site has the
-   command line to install homebrew from a terminal window using ``brew install python3``.
+#. Install python 3 through the `Homebrew <http://brew.sh>`__ package management system. The site has the
+   command line to install Homebrew from a terminal window using ``brew install python3``.
 
 Setting up Python
 -----------------
@@ -77,7 +77,7 @@ Setting up Python
    no ``sudo`` command is required to install and run Xmera, and the user Python folder can readily
    be replaced if needed. If you are familiar with python you can install in other locations as well.
 
-.. Note:: If you wish to use the HomeBrew version of python, or generally have multiple copies of
+.. Note:: If you wish to use the Homebrew version of python, or generally have multiple copies of
    python installed on your system, configure the CMake Python paths as described in
    :ref:`customPython` after following these instructions.
 
