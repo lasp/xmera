@@ -241,9 +241,7 @@ class Recorder : public SysModel {
     ~Recorder() {};
 
     //! -- self initialization
-    void selfInit() {};
-    //! -- cross initialization
-    void integratedInit() {};
+    void selfInit() {}
     //! -- Read and record the message
     void updateState(uint64_t currentSimNanos) {
         if (currentSimNanos >= this->nextUpdateTime) {

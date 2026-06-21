@@ -20,9 +20,6 @@ class SysModel {
     /** Initializes the module, create messages */
     virtual void selfInit() {}
 
-    /** ??? */
-    virtual void integratedInit() {}
-
     /** Reads incoming messages, performs module actions, writes output messages */
     virtual void updateState(uint64_t currentSimNanos) {}
 
