@@ -48,6 +48,7 @@ docs/source/api/msgPayloads/*
 docs/source/api/baseClasses/*
 docs/source/api/modules/*
 docs/generated_cxx_docs/
+docs/doxygen_output_xml/
 examples/MonteCarloExamples/scenario_AttFeedbackMC/
 
 src/moduleTemplates/autoCppModule/*
