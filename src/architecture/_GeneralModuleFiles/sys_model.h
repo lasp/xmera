@@ -27,7 +27,6 @@ class SysModel {
     virtual void reset(uint64_t currentSimNanos) {}
 
     std::string modelTag = "";      //!< -- name for the algorithm to base off of
-    uint64_t CallCounts = 0;        //!< -- Counts on the model being called
     uint32_t RNGSeed = 0x1badcad1;  //!< -- Giving everyone a random seed for ease of MC
     int64_t moduleID;               //!< -- Dynamically generated unique ID for this module
 };

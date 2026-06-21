@@ -38,7 +38,6 @@ void SysModelTask::executeModels(uint64_t currentSimNanos) {
          ModelPair++) {
         SysModel* NonIt = (ModelPair->ModelPtr);
         NonIt->updateState(currentSimNanos);
-        NonIt->CallCounts += 1;
     }
     //! - NextStartTime is set to allow the scheduler to fit the next call in
     this->NextStartTime += this->TaskPeriod;
