@@ -4,7 +4,9 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-static int64_t nextModuleID = 1;
+#include <atomic>
+
+static std::atomic<int64_t> nextModuleID = 1;
 
 SysModel::SysModel() : moduleID(nextModuleID++) {}
 
