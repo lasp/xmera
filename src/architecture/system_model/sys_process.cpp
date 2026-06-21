@@ -168,5 +168,3 @@ void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPerio
                      taskName.c_str(),
                      this->processName.c_str());
 }
-
-uint64_t SysProcess::getPrevRouteTime() const { return this->prevRouteTime; }

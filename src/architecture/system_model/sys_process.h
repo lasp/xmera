@@ -47,7 +47,6 @@ class SysProcess {
         processOnThread = processTaken;
     }  //!< Provides a mechanism to say that this process is allocated to a thread
     uint64_t getNextTaskTime() const { return (this->nextTaskTime); }
-    uint64_t getPrevRouteTime() const;
 
    public:
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
@@ -59,7 +58,6 @@ class SysProcess {
 
    private:
     uint64_t nextTaskTime = 0;   //!< [ns] time for the next Task
-    uint64_t prevRouteTime = 0;  //!< [ns] Time that interfaces were previously routed
 };
 
 #endif /* _SysProcess_H_ */

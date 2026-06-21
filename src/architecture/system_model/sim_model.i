@@ -166,9 +166,9 @@ class SysModel(_SysModel, metaclass=SuperInitChecker):
             deprecated.deprecationWarn(
                     "prevRouteTime",
                     "2025/08/01",
-                    "Using prevRouteTime is deprecated. Use: getPrevRouteTime()\n"
+                    "Using prevRouteTime is deprecated, and always returns 0.\n"
             )
-            return self.getPrevRouteTime()
+            return 0
     %}
 }
 
