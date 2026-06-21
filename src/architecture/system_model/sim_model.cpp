@@ -16,7 +16,6 @@ void activateNewThread(void* threadData) {
             theThread->selfInitProcesses();
             theThread->selfInitNow = false;
         } else if (theThread->crossInitNow) {
-            theThread->crossInitProcesses();
             theThread->crossInitNow = false;
         } else if (theThread->resetNow) {
             theThread->resetProcesses();
@@ -154,17 +153,6 @@ void SimThreadExecution::postInit() {
 void SimThreadExecution::selfInitProcesses() const {
     for (auto const& process : this->processList) {
         process->selfInitialize();
-    }
-}
-
-/*! This method is vestigial and should probably be removed once MT message
-    movement has been completed.
- @return void
- */
-void SimThreadExecution::crossInitProcesses() const {
-    for (auto const* process : this->processList) {
-        static_cast<void>(process);  // "use" the unused variable
-        // process->crossInitProcess();
     }
 }
 

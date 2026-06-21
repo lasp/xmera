@@ -28,7 +28,6 @@ class SimThreadExecution {
     void updateNewStopTime(uint64_t newStopNanos) { stopThreadNanos = newStopNanos; }  //!< Update simulation stop time
     void clearProcessList() { processList.clear(); }                                   //!< Clear the process list
     void selfInitProcesses() const;
-    void crossInitProcesses() const;
     void resetProcesses();
     void addNewProcess(SysProcess* newProc);
     uint64_t procCount() const { return processList.size(); }  //!< Gets the current "thread-count" in the system
