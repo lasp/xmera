@@ -20,25 +20,36 @@ struct ModelPriorityPair {
 class SysModelTask {
 public:
     SysModelTask() = default;
-    explicit SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime = 0);  //!< class method
     ~SysModelTask() = default;
+
+    explicit SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime = 0);
+
     void addModel(SysModel* NewModel, int32_t Priority = -1);
-    // void CrossInitTaskList();
     void executeModels(uint64_t CurrentSimTime);
     void resetModels(uint64_t CurrentSimTime);
-    void reset() { this->NextStartTime = this->FirstTaskTime; }  //!< Resets the task
-    void enable() { this->taskActive = true; }                   //!< Enables the task.  Great comment huh?
-    void disable() { this->taskActive = false; }                 //!< Disables the task.  I know.
-
     void setPeriod(uint64_t newPeriod);
+
+    void reset() {
+        this->NextStartTime = this->FirstTaskTime;
+    }
+
+    void enable() {
+        this->taskActive = true;
+    }
+
+    void disable() {
+        this->taskActive = false;
+    }
+
     uint64_t getNextStartTime() const;
     uint64_t getTaskPeriod() const;
     uint64_t getFirstTaskTime() const;
 
+public:
     std::vector<ModelPriorityPair> TaskModels{};  //!< -- Array that has pointers to all task sysModels
     std::string TaskName{};                       //!< -- Identifier for Task
     bool taskActive = true;                       //!< -- Flag indicating whether the Task has been disabled
-    BSKLogger bskLogger;                          //!< -- BSK Logging
+    BSKLogger bskLogger{};                        //!< -- BSK Logging
 
 private:
     uint64_t NextStartTime = 0;  //!< [ns] Next time to start task
