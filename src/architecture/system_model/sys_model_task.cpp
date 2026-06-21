@@ -15,16 +15,6 @@ SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
 }
 
-/*! This method self-initializes all of the models that have been added to the Task.
- @return void
- */
-void SysModelTask::selfInitTaskList() const {
-    for (auto const& modelPair : this->TaskModels) {
-        SysModel* NonIt = modelPair.ModelPtr;
-        NonIt->selfInit();
-    }
-}
-
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
  * See sys_model_task.h for related method reset()
  @return void

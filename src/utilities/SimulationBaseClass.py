@@ -445,7 +445,7 @@ class SimBaseClass:
 
     def InitializeSimulation(self):
         """
-        Initialize the BSK simulation.  This runs the selfInit() and reset() methods on each module.
+        Initialize the BSK simulation.  This runs the reset() method on each module.
         """
         if(self.simulationInitialized):
             self.TotalSim.resetThreads(self.TotalSim.getThreadCount())

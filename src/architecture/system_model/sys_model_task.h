@@ -23,7 +23,6 @@ class SysModelTask {
     explicit SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime = 0);  //!< class method
     ~SysModelTask() = default;
     void addModel(SysModel* NewModel, int32_t Priority = -1);
-    void selfInitTaskList() const;
     // void CrossInitTaskList();
     void executeModels(uint64_t CurrentSimTime);
     void resetModels(uint64_t CurrentSimTime);

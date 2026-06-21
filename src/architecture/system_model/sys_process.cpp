@@ -13,16 +13,11 @@
  */
 SysProcess::SysProcess(std::string name) : SysProcess() { this->processName = std::move(name); }
 
-/*! This method sets the nextTaskTime = 0 and calls selfInitTaskList() for
- * all process tasks.
+/*! This method sets the nextTaskTime = 0.
  @return void
  */
 void SysProcess::selfInitialize() {
     this->nextTaskTime = 0;
-    for (auto const& process : this->processTasks) {
-        SysModelTask* localTask = process.TaskPtr;
-        localTask->selfInitTaskList();
-    }
 }
 
 /*! This method resets each task and associated model-set inside the process
