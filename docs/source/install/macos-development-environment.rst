@@ -176,6 +176,5 @@ To test your setup you can run one of the :ref:`examples`
 Mac OS FAQs
 -----------
 
-#. Q : Permission denied when using brew
-
-   -  A: Add sudo to the start of the command. If you do not have superuser access, get superuser access.
+Q: Permission denied when using brew
+    A: Add sudo to the start of the command. If you do not have superuser access, get superuser access.
