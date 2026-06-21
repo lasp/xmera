@@ -15,19 +15,19 @@ class SysModel {
     SysModel();
     SysModel(const SysModel& obj);
 
-    virtual ~SysModel() {};
+    virtual ~SysModel() {}
 
     /** Initializes the module, create messages */
-    virtual void selfInit() {};
+    virtual void selfInit() {}
 
     /** ??? */
-    virtual void integratedInit() {};
+    virtual void integratedInit() {}
 
     /** Reads incoming messages, performs module actions, writes output messages */
-    virtual void updateState(uint64_t currentSimNanos) {};
+    virtual void updateState(uint64_t currentSimNanos) {}
 
     /** Called at simulation initialization, resets module to specified time */
-    virtual void reset(uint64_t currentSimNanos) {};
+    virtual void reset(uint64_t currentSimNanos) {}
 
     std::string modelTag = "";      //!< -- name for the algorithm to base off of
     uint64_t CallCounts = 0;        //!< -- Counts on the model being called
