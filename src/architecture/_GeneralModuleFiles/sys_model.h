@@ -2,8 +2,8 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#ifndef _SysModel_HH_
-#define _SysModel_HH_
+#ifndef XMAheader_sys_model
+#define XMAheader_sys_model
 
 #include <architecture/utilities/bskLogging.h>
 #include <stdint.h>
@@ -52,4 +52,4 @@ class SysModel {
 }
 #endif
 
-#endif /* _SYS_MODEL_H_ */
+#endif
