@@ -2,8 +2,8 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#ifndef _SysModelTask_HH_
-#define _SysModelTask_HH_
+#ifndef XMAheader_sys_model_task
+#define XMAheader_sys_model_task
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/bskLogging.h>
@@ -51,4 +51,4 @@ class SysModelTask {
         0;  //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
 };
 
-#endif /* _SysModelTask_H_ */
+#endif
