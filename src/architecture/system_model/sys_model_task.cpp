@@ -53,8 +53,7 @@ void SysModelTask::addModel(SysModel* NewModel, int32_t Priority) {
     //! - Set the local pair with the requested priority and mode
     LocalPair.CurrentModelPriority = Priority;
     LocalPair.ModelPtr = NewModel;
-    //    SystemMessaging::GetInstance()->addModuleToProcess(NewModel->moduleID,
-    //            parentProc);
+
     //! - Loop through the ModelPair vector and if Priority is higher than next, insert
     for (auto ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end(); ModelPair++) {
         if (Priority > ModelPair->CurrentModelPriority) {

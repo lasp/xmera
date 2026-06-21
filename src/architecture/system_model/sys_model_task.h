@@ -29,10 +29,8 @@ class SysModelTask {
     void reset() { this->NextStartTime = this->FirstTaskTime; }  //!< Resets the task
     void enable() { this->taskActive = true; }                   //!< Enables the task.  Great comment huh?
     void disable() { this->taskActive = false; }                 //!< Disables the task.  I know.
+
     void setPeriod(uint64_t newPeriod);
-    void setParentProc(std::string const& parent) {
-        this->parentProc = parent;
-    }  //!< Allows the system to move task to a different process
     uint64_t getNextStartTime() const;
     uint64_t getNextPickupTime() const;
     uint64_t getTaskPeriod() const;
@@ -40,7 +38,6 @@ class SysModelTask {
 
     std::vector<ModelPriorityPair> TaskModels{};  //!< -- Array that has pointers to all task sysModels
     std::string TaskName{};                       //!< -- Identifier for Task
-    std::string parentProc;                       //!< -- Process that calls this task
     bool taskActive = true;                       //!< -- Flag indicating whether the Task has been disabled
     BSKLogger bskLogger;                          //!< -- BSK Logging
    private:
