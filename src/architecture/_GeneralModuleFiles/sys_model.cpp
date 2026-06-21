@@ -6,8 +6,10 @@
 
 #include <atomic>
 
+//! The module ID to be assigned to the next module to be constructed
 static std::atomic<int64_t> nextModuleID = 1;
 
 SysModel::SysModel() : moduleID(nextModuleID++) {}
 
-SysModel::SysModel(const SysModel& obj) : modelTag{obj.modelTag}, RNGSeed{obj.RNGSeed}, moduleID{nextModuleID++} {}
+SysModel::SysModel(SysModel const &other)
+    : modelTag{other.modelTag}, RNGSeed{other.RNGSeed}, moduleID{nextModuleID++} {}
