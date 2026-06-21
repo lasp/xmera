@@ -31,21 +31,4 @@ class SysModel {
     int64_t moduleID;               //!< -- Dynamically generated unique ID for this module
 };
 
-// The following code helps users who defined their own module classes
-// to transition to using the SWIG file for sys_model instead of the header file.
-// After a period of 12 months from 2023/09/15, this message can be removed.
-#ifdef SWIG
-%extend SysModel
-{
-    %pythoncode %{
-        def logger(self, *args, **kwargs):
-            raise TypeError(
-                f"The 'logger' function is not supported for this type ('{type(self).__qualname__}'). "
-                "To fix this, update the SWIG file for this module. Change "
-                """'%include "sys_model.h"' to '%include "sys_model.i"'"""
-            )
-    %}
-}
-#endif
-
 #endif
