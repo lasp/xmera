@@ -34,13 +34,11 @@ void SysModelTask::resetModels(uint64_t CurrentSimTime) {
  @param currentSimNanos The current simulation time in [ns]
  */
 void SysModelTask::executeModels(uint64_t currentSimNanos) {
-    for (auto ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
-         ModelPair++) {
-        SysModel* NonIt = (ModelPair->ModelPtr);
-        NonIt->updateState(currentSimNanos);
-    }
-    //! - NextStartTime is set to allow the scheduler to fit the next call in
     this->NextStartTime += this->TaskPeriod;
+
+    if (!this->taskActive) { return; }
+
+    for (auto &modelPair : this->TaskModels) { modelPair.ModelPtr->updateState(currentSimNanos); }
 }
 
 /*! This method adds a new model into the Task list.  Note that the Priority
