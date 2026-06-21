@@ -10,7 +10,6 @@
 ExtPulsedTorque::ExtPulsedTorque() {
     this->c = 0;
 
-    CallCounts = 0;
     return;
 }
 

@@ -8,8 +8,6 @@
 
 //! The constructor.  Note that you have to overwrite the message names.
 BoreAngCalc::BoreAngCalc() {
-    CallCounts = 0;
-
     // Initialize the pointing vectors
     this->boreVec_Po.setZero();
     this->inertialHeadingVec_N.setZero();

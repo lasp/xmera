@@ -9,7 +9,6 @@
 #include <iostream>
 
 ReactionWheelStateEffector::ReactionWheelStateEffector() {
-    CallCounts = 0;
     prevCommandTime = 0xFFFFFFFFFFFFFFFF;
 
     effProps.mEff = 0.0;

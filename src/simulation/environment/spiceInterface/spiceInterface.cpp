@@ -57,7 +57,6 @@ SpiceInterface::SpiceInterface() {
     SPICEDataPath = "";
     SPICELoaded = false;
     charBufferSize = 512;
-    CallCounts = 0;
     J2000ETInit = 0;
     J2000Current = 0.0;
     julianDateCurrent = 0.0;

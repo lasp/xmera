@@ -11,8 +11,7 @@
 
 /*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()
-    : stepsInRamp(30), mDotTotal(0.0), fuelMass(-1.0), prevFireTime(0.0), prevCommandTime(0xFFFFFFFFFFFFFFFF) {
-    CallCounts = 0;
+    : stepsInRamp(30), mDotTotal(0.0), fuelMass(-1.0), prevFireTime(0.0), prevCommandTime(0xFFFF'FFFF'FFFF'FFFF) {
     forceExternal_B.fill(0.0);
     torqueExternalPntB_B.fill(0.0);
     forceExternal_N.fill(0.0);

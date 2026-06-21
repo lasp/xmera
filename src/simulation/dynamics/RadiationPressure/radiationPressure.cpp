@@ -17,7 +17,6 @@ RadiationPressure::RadiationPressure()
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
-    CallCounts = 0;
     return;
 }
 

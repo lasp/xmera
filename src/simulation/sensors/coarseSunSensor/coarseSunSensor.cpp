@@ -15,7 +15,6 @@
 
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
 CoarseSunSensor::CoarseSunSensor() {
-    //    this->CallCounts = 0;
     this->senBias = 0.0;
     this->senNoiseStd = 0.0;
     this->faultNoiseStd = 0.5;

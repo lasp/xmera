@@ -24,7 +24,6 @@ ThrusterStateEffector::ThrusterStateEffector() {
     this->stateDerivContribution.setZero();
 
     // initialize internal variables
-    CallCounts = 0;
     this->prevCommandTime = -1.0;  // initialize to a negative number to allow an onTime command at t=0
     this->mDotTotal = 0.0;
     this->nameOfKappaState = "kappaState" + std::to_string(this->effectorID);
