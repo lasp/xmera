@@ -211,24 +211,6 @@ class SysModel(_SysModel, metaclass=SuperInitChecker):
             self.setTaskPeriod(value)
 
         @property
-        def NextPickupTime(self):
-            deprecated.deprecationWarn(
-                "NextPickupTime",
-                "2025/08/01",
-                "Using NextPickupTime is deprecated. Use: getNextPickupTime()\n"
-            )
-            return self.getNextPickupTime()
-
-        @NextPickupTime.setter
-        def NextPickupTime(self, value):
-            deprecated.deprecationWarn(
-                "NextPickupTime",
-                "2025/08/01",
-                "Using NextPickupTime is deprecated. Use: setNextPickupTime()\n"
-            )
-            self.setNextPickupTime(value)
-
-        @property
         def FirstTaskTime(self):
             deprecated.deprecationWarn(
                 "FirstTaskTime",

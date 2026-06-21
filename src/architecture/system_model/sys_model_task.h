@@ -32,7 +32,6 @@ class SysModelTask {
 
     void setPeriod(uint64_t newPeriod);
     uint64_t getNextStartTime() const;
-    uint64_t getNextPickupTime() const;
     uint64_t getTaskPeriod() const;
     uint64_t getFirstTaskTime() const;
 
@@ -42,7 +41,6 @@ class SysModelTask {
     BSKLogger bskLogger;                          //!< -- BSK Logging
    private:
     uint64_t NextStartTime = 0;   //!< [ns] Next time to start task
-    uint64_t NextPickupTime = 0;  //!< [ns] Next time read Task outputs
     uint64_t TaskPeriod = 100;    //!< [ns] Cycle rate for Task
     uint64_t FirstTaskTime =
         0;  //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.

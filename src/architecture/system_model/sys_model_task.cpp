@@ -12,7 +12,6 @@
  */
 SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
     : NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime) {
-    this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
 }
 
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
@@ -25,7 +24,6 @@ void SysModelTask::resetModels(uint64_t CurrentSimTime) {
         modelPair.ModelPtr->reset(CurrentSimTime);
     }
     this->NextStartTime = CurrentSimTime;
-    this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
 }
 
 /*! This method executes all of the models on the Task during runtime.
@@ -89,8 +87,6 @@ void SysModelTask::setPeriod(uint64_t newPeriod) {
 }
 
 uint64_t SysModelTask::getNextStartTime() const { return this->NextStartTime; }
-
-uint64_t SysModelTask::getNextPickupTime() const { return this->NextPickupTime; }
 
 uint64_t SysModelTask::getTaskPeriod() const { return this->TaskPeriod; }
 
