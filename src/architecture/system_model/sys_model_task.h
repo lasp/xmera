@@ -105,7 +105,12 @@ public:
      *  the period. Hence, it is safest to invoke this method at the same simulation
      *  time as (but causally after) an update occurs.
      *
-     *  @param updatePeriodNanos
+     *  @important
+     *    This method does not inform any containing `SysProcess` of the new
+     *    next update time. If this task has been added to a running `SysProcess`,
+     *    the `SysProcess::changeTaskPeriod()` method must be used instead.
+     *
+     *  @param[in] updatePeriodNanos
      *    The new interval of nanoseconds that should elapse between updates
      */
     void setPeriod(uint64_t updatePeriodNanos);
