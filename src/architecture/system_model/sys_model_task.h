@@ -11,10 +11,10 @@
 #include <vector>
 
 //! Structure used to pair a model and its requested priority
-typedef struct {
+struct ModelPriorityPair {
     int32_t CurrentModelPriority;  //!< The current model priority. Higher goes first
     SysModel* ModelPtr;            //!< The model associated with this priority
-} ModelPriorityPair;
+};
 
 //! Class used to group a set of models into one "Task" of execution
 class SysModelTask {
