@@ -227,8 +227,11 @@ jobs:
         with:
           name: cmake-logs-${{ matrix.os }}-py${{ matrix.python-version }}
           path: |
-            dist3/CMakeCache.txt
-            dist3/CMakeFiles/CMakeOutput.log
-            dist3/CMakeFiles/CMakeError.log
+            build/CMakeCache.txt
+            build/CMakeFiles/CMakeOutput.log
+            build/CMakeFiles/CMakeError.log
+            build/vcpkg-manifest-install.log
+            ${{ runner.workspace }}/b/vcpkg/buildtrees/**/*.log
             **/Testing/Temporary/LastTest.log
           retention-days: 7
+          if-no-files-found: ignore
