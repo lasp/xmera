@@ -109,8 +109,6 @@ def unitSimpleVoltEstimator(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts - " + str(count))
 
-    plt.figure(1)
-    plt.clf()
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(dataVoltLog.times() * 1.0E-9, volt[:])
 
