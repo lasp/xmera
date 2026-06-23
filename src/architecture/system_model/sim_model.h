@@ -7,11 +7,13 @@
 
 #include <architecture/system_model/sys_process.h>
 #include <architecture/utilities/bskLogging.h>
-#include <architecture/system_model/bskSemaphore.h>
+
 #include <stdint.h>
+
 #include <condition_variable>
 #include <iostream>
 #include <mutex>
+#include <semaphore>
 #include <set>
 #include <thread>
 #include <vector>
@@ -69,8 +71,8 @@ class SimThreadExecution {
     uint64_t NextTaskTime = 0;             //!< [ns] time for the next Task
     bool threadRunning{};                  //!< Flag that will allow for easy concurrent locking
     bool terminateThread{};                //!< Flag that indicates that it is time to take thread down
-    BSKSemaphore parentThreadLock;         //!< Lock that ensures parent thread won't proceed
-    BSKSemaphore selfThreadLock;           //!< Lock that ensures this thread only reaches allowed time
+    std::binary_semaphore parentThreadLock{0};  //!< Lock that ensures parent thread won't proceed
+    std::binary_semaphore selfThreadLock{0};    //!< Lock that ensures this thread only reaches allowed time
     std::vector<SysProcess*> processList;  //!< List of processes associated with thread
     std::mutex initReadyLock;              //!< Lock function to ensure runtime locks are configured
     std::condition_variable initHoldVar;   //!< Conditional variable used to prevent race conditions

@@ -60,7 +60,7 @@ namespace std {
     self.__super_init_called__ = True%}
 %rename("_SysModel") SysModel;
 
-// These three methods block waiting for child simulation threads (via BSKSemaphore::acquire).
+// These three methods block waiting for child simulation threads (via std::binary_semaphore::acquire).
 // They must release the GIL before blocking so that SWIG director callbacks in the child
 // threads can acquire it. The catch blocks re-acquire the GIL (via Py_BLOCK_THREADS, which
 // is valid inside a Py_BEGIN_ALLOW_THREADS scope) before SWIG_exception calls PyErr_SetString.
