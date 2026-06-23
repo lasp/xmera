@@ -181,6 +181,11 @@ jobs:
         working-directory: src
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
+          # macos-15's Homebrew cmake (which vcpkg uses for port builds) is 4.x,
+          # which dropped support for cmake_minimum_required(VERSION <3.5). Several
+          # vendored ports (zeromq, protobuf 3.18, opencv 4.5.5) predate that, so
+          # tell cmake to configure them as if the minimum were 3.5.
+          CMAKE_POLICY_VERSION_MINIMUM: "3.5"
         run: |
           # run-vcpkg sets VCPKG_FORCE_SYSTEM_BINARIES=1 on arm64; unset it so
           # vcpkg can fetch its own nuget (for binary caching) on macos-15.
