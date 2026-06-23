@@ -219,8 +219,6 @@ jobs:
 
       - name: Run C/C++ unit tests (include fuzz-smoke)
         working-directory: ./build
-        env:
-          CTEST_PARALLEL_LEVEL: 1
         run: ctest --output-on-failure -LE fuzz
 
       - name: Upload CMake & test logs on failure
