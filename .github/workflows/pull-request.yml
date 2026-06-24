@@ -63,10 +63,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-14]
+        os: [ubuntu-24.04, macos-15]
         python-version: ["3.9", "3.14"]
         exclude:
-          - os: macos-14
+          - os: macos-15
             python-version: "3.9"
     permissions:
       contents: read
@@ -140,7 +140,10 @@ jobs:
           VCPKG_EXE: ${{ runner.workspace }}/b/vcpkg/vcpkg
         run: |
           set -euo pipefail
-          NUGET="$(${VCPKG_EXE} fetch nuget | tail -n 1)"
+          # run-vcpkg sets VCPKG_FORCE_SYSTEM_BINARIES=1 on arm64, which makes
+          # `vcpkg fetch nuget` require a system nuget (absent on macos-15).
+          # Unset it just for this fetch so vcpkg downloads its own nuget.
+          NUGET="$(env -u VCPKG_FORCE_SYSTEM_BINARIES "${VCPKG_EXE}" fetch nuget | tail -n 1)"
 
           # Build the command invocation safely (handles paths with spaces)
           if [[ "$NUGET" == *.exe ]]; then
@@ -178,7 +181,15 @@ jobs:
         working-directory: src
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
+          # macos-15's Homebrew cmake (which vcpkg uses for port builds) is 4.x,
+          # which dropped support for cmake_minimum_required(VERSION <3.5). Several
+          # vendored ports (zeromq, protobuf 3.18, opencv 4.5.5) predate that, so
+          # tell cmake to configure them as if the minimum were 3.5.
+          CMAKE_POLICY_VERSION_MINIMUM: "3.5"
         run: |
+          # run-vcpkg sets VCPKG_FORCE_SYSTEM_BINARIES=1 on arm64; unset it so
+          # vcpkg can fetch its own nuget (for binary caching) on macos-15.
+          unset VCPKG_FORCE_SYSTEM_BINARIES
           source ${{ github.workspace }}/.venv/bin/activate
           PY_PREFIX=${{ env.pythonLocation }}
           PY_VER=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
@@ -227,8 +238,11 @@ jobs:
         with:
           name: cmake-logs-${{ matrix.os }}-py${{ matrix.python-version }}
           path: |
-            dist3/CMakeCache.txt
-            dist3/CMakeFiles/CMakeOutput.log
-            dist3/CMakeFiles/CMakeError.log
+            build/CMakeCache.txt
+            build/CMakeFiles/CMakeOutput.log
+            build/CMakeFiles/CMakeError.log
+            build/vcpkg-manifest-install.log
+            ${{ runner.workspace }}/b/vcpkg/buildtrees/**/*.log
             **/Testing/Temporary/LastTest.log
           retention-days: 7
+          if-no-files-found: ignore
