@@ -3,6 +3,10 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sim_model.h"
+
+#include <architecture/system_model/sim_instant.h>
+
+#include <algorithm>
 #include <iostream>
 
 void activateNewThread(void* threadData) {
@@ -27,6 +31,25 @@ void activateNewThread(void* threadData) {
         theThread->unlockParent();
     }
     // std::cout << "Killing thread" << std::endl;
+}
+
+//! Step a process until its next update time is after `stopTime`.
+/*!
+ *  @param[in] process
+ *    The process to step
+ *  @param[in] stopTime
+ *    The time up to which (and including which) we want to step tasks.
+ *  @return
+ *    The time at which the next task after `stopTime` will occur.
+ */
+static SimInstant stepProcessUpTo(SysProcess* process, SimInstant stopTime) {
+    while (true) {
+        auto nextTaskTime = SimInstant::atNanos(process->getNextTaskTime()).atPriority(process->processPriority);
+
+        if (stopTime < nextTaskTime) { return nextTaskTime; }
+
+        process->singleStepNextTask(stopTime.realNanos);
+    }
 }
 
 SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos)
@@ -61,33 +84,31 @@ void SimThreadExecution::unlockThread() { this->selfThreadLock.release(); }
  */
 void SimThreadExecution::unlockParent() { this->parentThreadLock.release(); }
 
-/*! This method steps all of the processes forward to the current time.  It also
-    increments the internal simulation time appropriately as the simulation
-    processes are triggered
-    @param stopPri The priority level below which the sim won't go
-    @return void
-*/
-void SimThreadExecution::singleStepProcesses(int64_t stopPri) {
-    uint64_t nextCallTime = ~((uint64_t)0);
-    auto it = this->processList.begin();
+void SimThreadExecution::singleStepProcesses(int64_t const stopPri) {
+    // Advance the simulation clock to the time of the next task.
     this->CurrentNanos = this->NextTaskTime;
-    while (it != this->processList.end() && this->threadValid()) {
-        if (SysProcess* localProc = (*it); localProc->isEnabled()) {
-            while (localProc->getNextTaskTime() < this->CurrentNanos ||
-                   (localProc->getNextTaskTime() == this->CurrentNanos && localProc->processPriority >= stopPri)) {
-                localProc->singleStepNextTask(this->CurrentNanos);
-            }
-            if (localProc->getNextTaskTime() < nextCallTime) {
-                nextCallTime = localProc->getNextTaskTime();
-                this->nextProcPriority = localProc->processPriority;
-            } else if (localProc->getNextTaskTime() == nextCallTime &&
-                       localProc->processPriority > this->nextProcPriority) {
-                this->nextProcPriority = localProc->processPriority;
-            }
-        }
-        it++;
+
+    // Step all processes up to the desired stop instant.
+    // Keep track of the earliest resumption time *following* the stop instant.
+    auto stopTime = SimInstant::atNanos(this->CurrentNanos).atPriority(stopPri);
+    auto nextTaskTime = SimInstant::endOfTime();
+    for (auto &localProc : this->processList) {
+        if (!localProc->isEnabled()) { continue; }
+
+        // Bail early if we're being asked to terminate. Yes, this leaves the
+        // SimThreadExecution object in a bit of a weird state. However, if
+        // we're being asked to terminate, it will be disposed of shortly anyway.
+        if (!this->threadValid()) { return; }
+
+        nextTaskTime = std::min(nextTaskTime, stepProcessUpTo(localProc, stopTime));
     }
-    this->NextTaskTime = nextCallTime != ~((uint64_t)0) ? nextCallTime : this->CurrentNanos;
+
+    // Record the next earliest resumption time. Note that `nextTaskTime` should
+    // only be `endOfTime` if no process was enabled.
+    if (nextTaskTime != SimInstant::endOfTime()) {
+        this->NextTaskTime = nextTaskTime.realNanos;
+        this->nextProcPriority = nextTaskTime.causalPriority;
+    }
 }
 
 /*! This method steps the simulation until the specified stop time and
@@ -171,9 +192,14 @@ void SimThreadExecution::resetProcesses() {
 }
 
 /*! This method pops a new process onto the execution stack for the "child"
-    thread.  It allows the user to put specific processes onto specific threads
-    if that is desired.
- @return void
+ *  thread.  It allows the user to put specific processes onto specific threads
+ *  if that is desired.
+ *
+ *  @todo
+ *    Process priority still needs to be respected in multithreaded simulation.
+ *    We can't guarantee ordering of processes *across* threads, but we can still
+ *    ensure that the processes hosted within a single thread are prioritized
+ *    properly.
  */
 void SimThreadExecution::addNewProcess(SysProcess* newProc) {
     processList.push_back(newProc);
@@ -287,34 +313,26 @@ void SimModel::resetInitSimulation() const {
     }
 }
 
-/*! This method steps all of the processes forward to the current time.  It also
-    increments the internal simulation time appropriately as the simulation
-    processes are triggered
-    @param stopPri The priority level below which the sim won't go
-    @return void
-*/
-
-void SimModel::singleStepProcesses(int64_t stopPri) {
-    uint64_t nextCallTime = ~((uint64_t)0);
-    auto it = this->processList.begin();
+void SimModel::singleStepProcesses(int64_t const stopPri) {
+    // Advance the simulation clock to the time of the next task.
     this->CurrentNanos = this->NextTaskTime;
-    while (it != this->processList.end()) {
-        if (SysProcess* localProc = (*it); localProc->isEnabled()) {
-            while (localProc->getNextTaskTime() < this->CurrentNanos ||
-                   (localProc->getNextTaskTime() == this->CurrentNanos && localProc->processPriority >= stopPri)) {
-                localProc->singleStepNextTask(this->CurrentNanos);
-            }
-            if (localProc->getNextTaskTime() < nextCallTime) {
-                nextCallTime = localProc->getNextTaskTime();
-                this->nextProcPriority = localProc->processPriority;
-            } else if (localProc->getNextTaskTime() == nextCallTime &&
-                       localProc->processPriority > this->nextProcPriority) {
-                this->nextProcPriority = localProc->processPriority;
-            }
-        }
-        it++;
+
+    // Step all processes up to the desired stop instant.
+    // Keep track of the earliest resumption time *following* the stop instant.
+    auto stopTime = SimInstant::atNanos(this->CurrentNanos).atPriority(stopPri);
+    auto nextTaskTime = SimInstant::endOfTime();
+    for (auto &localProc : this->processList) {
+        if (!localProc->isEnabled()) { continue; }
+
+        nextTaskTime = std::min(nextTaskTime, stepProcessUpTo(localProc, stopTime));
     }
-    this->NextTaskTime = nextCallTime != ~((uint64_t)0) ? nextCallTime : this->CurrentNanos;
+
+    // Record the next earliest resumption time. Note that `nextTaskTime` should
+    // only be `endOfTime` if no process was enabled.
+    if (nextTaskTime != SimInstant::endOfTime()) {
+        this->NextTaskTime = nextTaskTime.realNanos;
+        this->nextProcPriority = nextTaskTime.causalPriority;
+    }
 }
 
 /*! This method is used to reset a simulation to time 0. It sets all process and

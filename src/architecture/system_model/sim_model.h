@@ -55,7 +55,18 @@ class SimThreadExecution {
     void lockParent();
     void unlockParent();
     void stepUntilStop();                            //!< Step simulation until stop time reached
-    void singleStepProcesses(int64_t stopPri = -1);  //!< Step only the next task in the simulation
+    //! Step the processes sharing the earliest resumption time
+    /*!
+     *  Of all processes in the simulation, one or more will have the earliest
+     *  resumption time. (If two processes resume at the same time, both are
+     *  "earliest".) This method will allow those processes to resume, but potentially
+     *  only partially: only the tasks within those processes whose priority is
+     *  at least `stopPri` will be allowed to resume.
+     *
+     *  @param stopPri
+     *    The least priority at which processes' tasks will be resumed
+     */
+    void singleStepProcesses(int64_t stopPri = -1);
     void moveProcessMessages() const;
     uint64_t getCurrentNanos() const;
     void setCurrentNanos(uint64_t currentNanos);
@@ -95,7 +106,18 @@ class SimModel {
     void selfInitSimulation();                                  //!< Method to initialize all added Tasks
     void resetInitSimulation() const;                           //!< Method to reset all added tasks
     void stepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
-    void singleStepProcesses(int64_t stopPri = -1);             //!< Step only the next Task in the simulation
+    //! Step the processes sharing the earliest resumption time
+    /*!
+     *  Of all processes in the simulation, one or more will have the earliest
+     *  resumption time. (If two processes resume at the same time, both are "earliest".)
+     *  This method will allow those processes to resume, but potentially only
+     *  partially: only the tasks within those processes whose priority is at least
+     *  `stopPri` will be allowed to resume.
+     *
+     *  @param stopPri
+     *    The least priority at which processes' tasks will be resumed
+     */
+    void singleStepProcesses(int64_t stopPri = -1);
     void addNewProcess(SysProcess* newProc);
     void addProcessToThread(SysProcess* newProc, uint64_t threadSel);
     void resetSimulation();  //!< Reset simulation back to zero
