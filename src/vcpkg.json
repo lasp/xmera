@@ -9,18 +9,18 @@
     {
       "name": "opencv4",
       "default-features": false,
-      "features": [ "dnn", "jpeg", "png", "tiff", "webp"]
+      "features": [ "dnn", "highgui", "jpeg", "png", "tiff", "webp"]
     },
     "protobuf"
   ],
   "overrides": [
     {
       "name": "protobuf",
-      "version": "3.18.0"
+      "version": "6.33.4"
     },
     {
       "name": "opencv4",
-      "version": "4.5.5"
+      "version": "4.12.0"
     }
   ]
 }
