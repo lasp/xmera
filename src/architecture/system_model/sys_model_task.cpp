@@ -70,8 +70,9 @@ void SysModelTask::addModel(SysModel* NewModel, int32_t Priority) {
  */
 void SysModelTask::setPeriod(uint64_t newPeriod) {
     //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
-    if (this->NextStartTime > this->TaskPeriod) {
-        uint64_t newStartTime = (this->NextStartTime / newPeriod) * newPeriod;
+    if (this->NextStartTime > this->FirstTaskTime) {
+        uint64_t newStartTime =
+            (((this->NextStartTime - this->FirstTaskTime) / newPeriod) * newPeriod) + this->FirstTaskTime;
         if (newStartTime <= (this->NextStartTime - this->TaskPeriod)) {
             newStartTime += newPeriod;
         }
