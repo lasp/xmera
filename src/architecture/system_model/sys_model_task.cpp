@@ -13,6 +13,28 @@
 SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
     : NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime) {}
 
+//! Project a time onto this task's lattice of scheduled updates
+/*!
+ *  Let `p` be `TaskPeriod` and `k` be `FirstTaskTime.
+ *  Every update of this task is some multiple of `p` plus an offset `k`.
+ *  In other words, every update `u` is `p*n + k` for some non-negative `n`.
+ *
+ *  This method takes an arbitrary time `t` and finds the latest `u` that is
+ *  no later than `t`.
+ */
+inline uint64_t SysModelTask::projectToCurrentSchedule(uint64_t time) {
+    // Judge everything relative to the origin, `FirstTaskTime`.
+    time -= this->FirstTaskTime;
+
+    // Truncate `time` to the nearest mutiple of `TaskPeriod`.
+    time = (time / this->TaskPeriod) * this->TaskPeriod;
+
+    // Re-add the offset against `FirstTaskTime`.
+    time += this->FirstTaskTime;
+
+    return time;
+}
+
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
  * See sys_model_task.h for related method reset()
  @return void
@@ -22,7 +44,10 @@ void SysModelTask::resetModels(uint64_t CurrentSimTime) {
     for (auto const& modelPair : this->TaskModels) {
         modelPair.ModelPtr->reset(CurrentSimTime);
     }
-    this->NextStartTime = CurrentSimTime;
+
+    // Make sure we stick to our intended schedule.
+    this->NextStartTime = this->projectToCurrentSchedule(CurrentSimTime);
+    if (this->NextStartTime < CurrentSimTime) { this->NextStartTime += this->TaskPeriod; }
 }
 
 /*! This method executes all of the models on the Task during runtime.
@@ -71,19 +96,17 @@ void SysModelTask::addModel(SysModel* NewModel, int32_t Priority) {
 void SysModelTask::setPeriod(uint64_t newPeriod) {
     //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
     if (this->NextStartTime > this->FirstTaskTime) {
-        uint64_t newStartTime =
-            (((this->NextStartTime - this->FirstTaskTime) / newPeriod) * newPeriod) + this->FirstTaskTime;
-        if (newStartTime <= (this->NextStartTime - this->TaskPeriod)) {
-            newStartTime += newPeriod;
-        }
-        this->NextStartTime = newStartTime;
+        uint64_t lastStartTime = this->NextStartTime - this->TaskPeriod;
+
+        this->TaskPeriod = newPeriod;
+        this->NextStartTime = this->projectToCurrentSchedule(this->NextStartTime);
+        if (newStartTime <= lastStartTime) { this->NextStartTime += this->TaskPeriod; }
     }
     //! - Otherwise, we just should keep the original requested first call time for the task
     else {
+        this->TaskPeriod = newPeriod;
         this->NextStartTime = this->FirstTaskTime;
     }
-    //! - Change the period of the task so that future calls will be based on the new period
-    this->TaskPeriod = newPeriod;
 }
 
 uint64_t SysModelTask::getNextStartTime() const { return this->NextStartTime; }
