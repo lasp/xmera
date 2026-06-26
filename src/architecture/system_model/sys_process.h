@@ -20,7 +20,7 @@ typedef struct {
 
 //! Class used to group a set of tasks into one process (task group) of execution
 class SysProcess {
-   public:
+public:
     SysProcess() = default;
     explicit SysProcess(std::string name);  //!< class method
     ~SysProcess() = default;
@@ -46,9 +46,12 @@ class SysProcess {
     void setProcessControlStatus(bool processTaken) {
         processOnThread = processTaken;
     }  //!< Provides a mechanism to say that this process is allocated to a thread
-    uint64_t getNextTaskTime() const { return (this->nextTaskTime); }
 
-   public:
+    uint64_t getNextTaskTime() const {
+        return (this->nextTaskTime);
+    }
+
+public:
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
     std::string processName{};                     //!< -- Identifier for process
     bool processActive{};                          //!< -- Flag indicating whether the Process is active
@@ -56,8 +59,8 @@ class SysProcess {
     int64_t processPriority = -1;  //!< [-] Priority level for process (higher first)
     BSKLogger bskLogger;           //!< -- BSK Logging
 
-   private:
-    uint64_t nextTaskTime = 0;   //!< [ns] time for the next Task
+private:
+    uint64_t nextTaskTime = 0;  //!< [ns] time for the next Task
 };
 
 #endif /* _SysProcess_H_ */
