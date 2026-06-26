@@ -108,7 +108,7 @@ public:
     std::string modelTag = "";
 
     //! A configurable seed to drive any random number generation needed by the module
-    uint32_t RNGSeed = 0x1bad'cad1;
+    uint32_t RNGSeed;
 
     //! A number uniquely identifying this module among all modules in the (system) process
     int64_t const moduleID;
