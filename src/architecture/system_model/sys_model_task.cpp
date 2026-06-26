@@ -11,8 +11,7 @@
         After this time the task is executed at integer amounts of InputPeriod again
  */
 SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
-    : NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime) {
-}
+    : NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime) {}
 
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
  * See sys_model_task.h for related method reset()

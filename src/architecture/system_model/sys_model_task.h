@@ -18,7 +18,7 @@ struct ModelPriorityPair {
 
 //! Class used to group a set of models into one "Task" of execution
 class SysModelTask {
-   public:
+public:
     SysModelTask() = default;
     explicit SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime = 0);  //!< class method
     ~SysModelTask() = default;
@@ -39,11 +39,12 @@ class SysModelTask {
     std::string TaskName{};                       //!< -- Identifier for Task
     bool taskActive = true;                       //!< -- Flag indicating whether the Task has been disabled
     BSKLogger bskLogger;                          //!< -- BSK Logging
-   private:
-    uint64_t NextStartTime = 0;   //!< [ns] Next time to start task
-    uint64_t TaskPeriod = 100;    //!< [ns] Cycle rate for Task
-    uint64_t FirstTaskTime =
-        0;  //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
+
+private:
+    uint64_t NextStartTime = 0;  //!< [ns] Next time to start task
+    uint64_t TaskPeriod = 100;   //!< [ns] Cycle rate for Task
+    uint64_t FirstTaskTime = 0;  //!< [ns] Time to start Task for first time.
+                                 //!<      After this time the normal periodic updates resume.
 };
 
 #endif
