@@ -25,8 +25,17 @@ class SimThreadExecution {
     SimThreadExecution() = default;
     explicit SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos = 0);
     ~SimThreadExecution() = default;
-    void updateNewStopTime(uint64_t newStopNanos) { stopThreadNanos = newStopNanos; }  //!< Update simulation stop time
-    void clearProcessList() { processList.clear(); }                                   //!< Clear the process list
+
+    //! Update simulation stop time
+    void updateNewStopTime(uint64_t newStopNanos) {
+        stopThreadNanos = newStopNanos;
+    }
+
+    //! Clear the process list
+    void clearProcessList() {
+        processList.clear();
+    }
+
     void selfInitProcesses() const;
     void resetProcesses();
     void addNewProcess(SysProcess* newProc);
