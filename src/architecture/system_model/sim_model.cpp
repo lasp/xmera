@@ -60,21 +60,27 @@ SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSim
     execution of a given frame until it is released by the "parent" thread.
  @return void
  */
-void SimThreadExecution::lockThread() { this->selfThreadLock.acquire(); }
+void SimThreadExecution::lockThread() {
+    this->selfThreadLock.acquire();
+}
 
 /*! This method provides a forced synchronization on the "parent" thread so that
     the parent and all other threads in the system can be forced to wait at a
     known time until this thread has finished its execution for that time.
  @return void
  */
-void SimThreadExecution::lockParent() { this->parentThreadLock.acquire(); }
+void SimThreadExecution::lockParent() {
+    this->parentThreadLock.acquire();
+}
 
 /*! This method provides an entry point for the "parent" thread to release the
     child thread for a single frame's execution.  It is intended to only be
     called from the parent thread.
  @return void
  */
-void SimThreadExecution::unlockThread() { this->selfThreadLock.release(); }
+void SimThreadExecution::unlockThread() {
+    this->selfThreadLock.release();
+}
 
 /*! This method provides an entry point for the "child" thread to unlock the
     parent thread after it has finished its execution in a frame.  That way the
@@ -82,7 +88,9 @@ void SimThreadExecution::unlockThread() { this->selfThreadLock.release(); }
     its execution.
  @return void
  */
-void SimThreadExecution::unlockParent() { this->parentThreadLock.release(); }
+void SimThreadExecution::unlockParent() {
+    this->parentThreadLock.release();
+}
 
 void SimThreadExecution::singleStepProcesses(int64_t const stopPri) {
     // Advance the simulation clock to the time of the next task.
@@ -122,9 +130,9 @@ void SimThreadExecution::stepUntilStop() {
      (that's less than all process priorities, so it will run through the next
      process)*/
     int64_t inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
-    while (this->threadValid() &&
-           (this->NextTaskTime < stopThreadNanos ||
-            (this->NextTaskTime == stopThreadNanos && this->nextProcPriority >= stopThreadPriority))) {
+    while (this->threadValid()
+           && (this->NextTaskTime < stopThreadNanos
+               || (this->NextTaskTime == stopThreadNanos && this->nextProcPriority >= stopThreadPriority))) {
         this->singleStepProcesses(inPri);
         inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
     }
@@ -150,9 +158,7 @@ void SimThreadExecution::moveProcessMessages() const {
  */
 void SimThreadExecution::waitOnInit() {
     std::unique_lock<std::mutex> lck(this->initReadyLock);
-    while (!this->threadActive()) {
-        (this)->initHoldVar.wait(lck);
-    }
+    while (!this->threadActive()) { (this)->initHoldVar.wait(lck); }
 }
 
 /*! This method allows the startup activities to alert the parent thread once
@@ -172,9 +178,7 @@ void SimThreadExecution::postInit() {
  @return void
  */
 void SimThreadExecution::selfInitProcesses() const {
-    for (auto const& process : this->processList) {
-        process->selfInitialize();
-    }
+    for (auto const &process : this->processList) { process->selfInitialize(); }
 }
 
 /*! This method allows the "child" thread to reset both its timing/scheduling, as
@@ -186,9 +190,7 @@ void SimThreadExecution::resetProcesses() {
     this->currentThreadNanos = 0;
     this->CurrentNanos = 0;
     this->NextTaskTime = 0;
-    for (auto const& process : this->processList) {
-        process->reset(this->currentThreadNanos);
-    }
+    for (auto const &process : this->processList) { process->reset(this->currentThreadNanos); }
 }
 
 /*! This method pops a new process onto the execution stack for the "child"
@@ -206,17 +208,29 @@ void SimThreadExecution::addNewProcess(SysProcess* newProc) {
     newProc->setProcessControlStatus(true);
 }
 
-uint64_t SimThreadExecution::getCurrentNanos() const { return this->CurrentNanos; }
+uint64_t SimThreadExecution::getCurrentNanos() const {
+    return this->CurrentNanos;
+}
 
-uint64_t SimThreadExecution::getNextTaskTime() const { return this->NextTaskTime; }
+uint64_t SimThreadExecution::getNextTaskTime() const {
+    return this->NextTaskTime;
+}
 
-uint64_t SimThreadExecution::getCurrentThreadNanos() const { return this->currentThreadNanos; }
+uint64_t SimThreadExecution::getCurrentThreadNanos() const {
+    return this->currentThreadNanos;
+}
 
-uint64_t SimThreadExecution::getStopThreadNanos() const { return this->stopThreadNanos; }
+uint64_t SimThreadExecution::getStopThreadNanos() const {
+    return this->stopThreadNanos;
+}
 
-void SimThreadExecution::setNextTaskTime(uint64_t nextTaskTime) { NextTaskTime = nextTaskTime; }
+void SimThreadExecution::setNextTaskTime(uint64_t nextTaskTime) {
+    NextTaskTime = nextTaskTime;
+}
 
-void SimThreadExecution::setCurrentNanos(uint64_t currentNanos) { CurrentNanos = currentNanos; }
+void SimThreadExecution::setCurrentNanos(uint64_t currentNanos) {
+    CurrentNanos = currentNanos;
+}
 
 void SimThreadExecution::setStopThreadNanos(uint64_t stopThreadNanos) {
     SimThreadExecution::stopThreadNanos = stopThreadNanos;
@@ -231,7 +245,9 @@ SimModel::SimModel() {
 }
 
 /*! Nothing to destroy really */
-SimModel::~SimModel() { this->deleteThreads(); }
+SimModel::~SimModel() {
+    this->deleteThreads();
+}
 
 /*! This method steps the simulation until the specified stop time and
  stop priority have been reached.
@@ -241,19 +257,15 @@ SimModel::~SimModel() { this->deleteThreads(); }
  */
 void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
     std::cout << std::flush;
-    for (auto const* simThread : this->threadList) {
-        simThread->moveProcessMessages();
-    }
-    for (auto const& simThread : this->threadList) {
+    for (auto const* simThread : this->threadList) { simThread->moveProcessMessages(); }
+    for (auto const &simThread : this->threadList) {
         simThread->setStopThreadNanos(SimStopTime);
         simThread->stopThreadPriority = stopPri;
-        if (simThread->procCount() > 0) {
-            simThread->unlockThread();
-        }
+        if (simThread->procCount() > 0) { simThread->unlockThread(); }
     }
-    this->NextTaskTime = (uint64_t)~0;
-    this->CurrentNanos = (uint64_t)~0;
-    for (auto const& simThread : this->threadList) {
+    this->NextTaskTime = (uint64_t) ~0;
+    this->CurrentNanos = (uint64_t) ~0;
+    for (auto const &simThread : this->threadList) {
         if (simThread->procCount() > 0) {
             simThread->lockParent();
             this->NextTaskTime =
@@ -287,13 +299,11 @@ void SimModel::addNewProcess(SysProcess* newProc) {
  @return void
  */
 void SimModel::selfInitSimulation() {
-    for (auto const& simThread : this->threadList) {
+    for (auto const &simThread : this->threadList) {
         simThread->selfInitNow = true;
         simThread->unlockThread();
     }
-    for (auto const& simThread : this->threadList) {
-        simThread->lockParent();
-    }
+    for (auto const &simThread : this->threadList) { simThread->lockParent(); }
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
 }
@@ -304,13 +314,11 @@ void SimModel::selfInitSimulation() {
  @return void
  */
 void SimModel::resetInitSimulation() const {
-    for (auto const& simThread : this->threadList) {
+    for (auto const &simThread : this->threadList) {
         simThread->resetNow = true;
         simThread->unlockThread();
     }
-    for (auto const& simThread : this->threadList) {
-        simThread->lockParent();
-    }
+    for (auto const &simThread : this->threadList) { simThread->lockParent(); }
 }
 
 void SimModel::singleStepProcesses(int64_t const stopPri) {
@@ -341,12 +349,10 @@ void SimModel::singleStepProcesses(int64_t const stopPri) {
  @return void
  */
 void SimModel::resetSimulation() {
-    for (auto const& process : this->processList) {
-        process->reInitialize();
-    }
+    for (auto const &process : this->processList) { process->reInitialize(); }
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
-    for (auto const& simThread : this->threadList) {
+    for (auto const &simThread : this->threadList) {
         simThread->setNextTaskTime(0);
         simThread->setCurrentNanos(0);
     }
@@ -358,12 +364,8 @@ void SimModel::resetSimulation() {
  @return void
  */
 void SimModel::clearProcsFromThreads() const {
-    for (auto const& simThread : this->threadList) {
-        simThread->clearProcessList();
-    }
-    for (auto const& process : this->processList) {
-        process->setProcessControlStatus(false);
-    }
+    for (auto const &simThread : this->threadList) { simThread->clearProcessList(); }
+    for (auto const &process : this->processList) { process->setProcessControlStatus(false); }
 }
 
 /*! This method provides an easy mechanism for allowing the user to change the
@@ -390,7 +392,7 @@ void SimModel::resetThreads(uint64_t threadCount) {
  @return void
  */
 void SimModel::deleteThreads() {
-    for (auto const& simThread : this->threadList) {
+    for (auto const &simThread : this->threadList) {
         simThread->killThread();
         simThread->unlockThread();
         if (simThread->threadContext && simThread->threadContext->joinable()) {
@@ -412,16 +414,14 @@ void SimModel::assignRemainingProcs() {
     std::vector<SysProcess*>::iterator it;
     std::vector<SimThreadExecution*>::iterator thrIt;
     for (it = this->processList.begin(), thrIt = threadList.begin(); it != this->processList.end(); it++, thrIt++) {
-        if (thrIt == threadList.end()) {
-            thrIt = threadList.begin();
-        }
+        if (thrIt == threadList.end()) { thrIt = threadList.begin(); }
         if ((*it)->getProcessControlStatus()) {
             thrIt--;  // Didn't get a thread to add, so roll back
         } else {
             (*thrIt)->addNewProcess((*it));
         }
     }
-    for (auto const& simThread : this->threadList) {
+    for (auto const &simThread : this->threadList) {
         it = this->processList.begin();
         simThread->nextProcPriority = (*it)->processPriority;
         simThread->setNextTaskTime(0);
@@ -429,9 +429,7 @@ void SimModel::assignRemainingProcs() {
         // simThread->lockThread();
         simThread->threadContext = new std::thread(activateNewThread, simThread);
     }
-    for (auto const& simThread : this->threadList) {
-        simThread->waitOnInit();
-    }
+    for (auto const &simThread : this->threadList) { simThread->waitOnInit(); }
 }
 
 /*! This method allows the user to specifically place a given process onto a
@@ -450,6 +448,10 @@ void SimModel::addProcessToThread(SysProcess* newProc, uint64_t threadSel) {
     (*thrIt)->addNewProcess(newProc);
 }
 
-uint64_t SimModel::getCurrentNanos() const { return this->CurrentNanos; }
+uint64_t SimModel::getCurrentNanos() const {
+    return this->CurrentNanos;
+}
 
-uint64_t SimModel::getNextTaskTime() const { return this->NextTaskTime; }
+uint64_t SimModel::getNextTaskTime() const {
+    return this->NextTaskTime;
+}

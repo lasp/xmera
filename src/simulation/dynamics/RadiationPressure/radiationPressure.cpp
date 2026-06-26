@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "radiationPressure.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+
 #include <inttypes.h>
 
 /*! This is the constructor.  It sets some default initializers that can be
@@ -21,7 +23,9 @@ RadiationPressure::RadiationPressure()
 }
 
 /*! The destructor.  Nothing of note is performed here*/
-RadiationPressure::~RadiationPressure() { return; }
+RadiationPressure::~RadiationPressure() {
+    return;
+}
 
 /*! Reset the module to origina configuration values.
  @return void
@@ -37,7 +41,7 @@ void RadiationPressure::reset(uint64_t CurrenSimNanos) {
  @return void
  @param states Dynamic parameter manager
  */
-void RadiationPressure::linkInStates(DynParamManager& states) {
+void RadiationPressure::linkInStates(DynParamManager &states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->hubR_N = states.getStateObject("hubPosition");
 }
@@ -70,7 +74,7 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep) {
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
-    Eigen::Vector3d r_N = (Eigen::Vector3d)this->hubR_N->getState();
+    Eigen::Vector3d r_N = (Eigen::Vector3d) this->hubR_N->getState();
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
     Eigen::Vector3d s_N = sun_r_N - r_N;
 
@@ -79,7 +83,7 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep) {
         this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.shadowFactor;
     } else if (this->srpModel == SRP_FACETED_CPU_MODEL) {
         Eigen::MRPd sigmaLocal_NB;
-        sigmaLocal_NB = (Eigen::Vector3d)this->hubSigma->getState();
+        sigmaLocal_NB = (Eigen::Vector3d) this->hubSigma->getState();
         Eigen::Matrix3d dcmLocal_BN = sigmaLocal_NB.toRotationMatrix().transpose();
         Eigen::Vector3d s_B = dcmLocal_BN * (sun_r_N - r_N);
         this->computeLookupModel(s_B);
@@ -94,17 +98,23 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep) {
  @return void
  @param currentSimNanos current simulation time in nanoseconds
  */
-void RadiationPressure::updateState(uint64_t currentSimNanos) { this->readInputMessages(); }
+void RadiationPressure::updateState(uint64_t currentSimNanos) {
+    this->readInputMessages();
+}
 
 /*! Sets the model to the cannonball model in computing the solar radiation force
  @return void
  */
-void RadiationPressure::setUseCannonballModel() { this->srpModel = SRP_CANNONBALL_MODEL; }
+void RadiationPressure::setUseCannonballModel() {
+    this->srpModel = SRP_CANNONBALL_MODEL;
+}
 
 /*! Sets the model to the faceted table-lookup model, evaluted on the CPU, in computing the solar radiation force
  @return void
  */
-void RadiationPressure::setUseFacetedCPUModel() { this->srpModel = SRP_FACETED_CPU_MODEL; }
+void RadiationPressure::setUseFacetedCPUModel() {
+    this->srpModel = SRP_FACETED_CPU_MODEL;
+}
 
 /*! Computes the solar radiation force vector
  *   based on cross-sectional Area and mass of the spacecraft
@@ -121,12 +131,13 @@ void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_N) {
     /* Magnitude of sun vector in the body frame */
     double sunDist = s_N.norm();
     /* Computing the force vector [N]*/
-    double scaleFactor = (-this->coefficientReflection * this->area * SOLAR_FLUX_EARTH * pow(AU * 1000., 2)) /
-                         (SPEED_LIGHT * pow(sunDist, 3));
-    if (stateRead)
+    double scaleFactor = (-this->coefficientReflection * this->area * SOLAR_FLUX_EARTH * pow(AU * 1000., 2))
+                       / (SPEED_LIGHT * pow(sunDist, 3));
+    if (stateRead) {
         this->forceExternal_N = scaleFactor * (s_N);
-    else
+    } else {
         this->forceExternal_N.setZero();
+    }
 }
 
 /*! Computes the solar radiation force vector
@@ -158,7 +169,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B) {
     // @TODO: this lookup search should be optimized, possibly by saving the
     // index for later use and generate lookup table as azimuth and elevation
     // because then we can use a simple gradient decent search to find the nearest next attitude
-    for (int i = 0; i < (int)this->lookupSHat_B.size(); i++) {
+    for (int i = 0; i < (int) this->lookupSHat_B.size(); i++) {
         tmpLookupSHat_B = this->lookupSHat_B[i];
         tmpDotProduct = tmpLookupSHat_B.dot(sHat_B);
         if (tmpDotProduct > currentDotProduct) {
@@ -167,8 +178,8 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B) {
         }
     }
 
-    this->forceExternal_B = this->lookupForce_B[currentIdx] * pow(AU * 1000 / sunDist, 2);
-    this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx] * pow(AU * 1000 / sunDist, 2);
+    this->forceExternal_B = this->lookupForce_B[currentIdx] * pow(AU * 1'000 / sunDist, 2);
+    this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx] * pow(AU * 1'000 / sunDist, 2);
 }
 
 /*! Add force vector in the body frame to lookup table.
@@ -176,18 +187,24 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B) {
  @return void
  @param vec (N) Force vector for particular attitude in lookup table
  */
-void RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec) { this->lookupForce_B.push_back(vec); }
+void RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec) {
+    this->lookupForce_B.push_back(vec);
+}
 
 /*! Add torque vector to lookup table.
  *
  @return void
  @param vec (Nm) Torque vector for particular attitude in lookup table
  */
-void RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec) { this->lookupTorque_B.push_back(vec); }
+void RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec) {
+    this->lookupTorque_B.push_back(vec);
+}
 
 /*! Add sun unit direction vector in body frame to lookup table.
  *
  @return void
  @param vec sun unit direction vector in body frame
  */
-void RadiationPressure::addSHatLookupBEntry(Eigen::Vector3d vec) { this->lookupSHat_B.push_back(vec); }
+void RadiationPressure::addSHatLookupBEntry(Eigen::Vector3d vec) {
+    this->lookupSHat_B.push_back(vec);
+}

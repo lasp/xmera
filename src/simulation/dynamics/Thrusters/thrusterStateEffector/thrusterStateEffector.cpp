@@ -2,13 +2,14 @@
 // Copyright (c) 2022, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#include <iostream>
+#include "thrusterStateEffector.h"
 
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include "thrusterStateEffector.h"
+
+#include <iostream>
 
 /*! The Constructor.*/
 ThrusterStateEffector::ThrusterStateEffector() {
@@ -42,9 +43,7 @@ uint64_t ThrusterStateEffector::effectorID = 1;
 /*! The destructor. */
 ThrusterStateEffector::~ThrusterStateEffector() {
     // Free memory to avoid errors
-    for (long unsigned int c = 0; c < this->thrusterOutMsgs.size(); c++) {
-        free(this->thrusterOutMsgs.at(c));
-    }
+    for (long unsigned int c = 0; c < this->thrusterOutMsgs.size(); c++) { free(this->thrusterOutMsgs.at(c)); }
 
     this->effectorID = 1; /* reset the panel ID*/
 
@@ -164,7 +163,7 @@ void ThrusterStateEffector::UpdateThrusterProperties() {
     Eigen::Vector3d r_BN_N = (Eigen::Vector3d) * this->inertialPositionProperty;
     Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
     Eigen::MRPd sigma_BN;
-    sigma_BN = (Eigen::Vector3d)this->hubSigma->getState();
+    sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = (sigma_BN.toRotationMatrix()).transpose();
 
     // Define the variables related to which body the thruster is attached to. The F frame represents the platform body
@@ -256,24 +255,26 @@ void ThrusterStateEffector::addThruster(THRSimConfig* newThruster, Message<SCSta
  @return void
  @param states The states to link
  */
-void ThrusterStateEffector::linkInStates(DynParamManager& states) {
+void ThrusterStateEffector::linkInStates(DynParamManager &states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->hubOmega = states.getStateObject("hubOmega");
     this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
 }
 
 /*! This method allows the thruster state effector to register its state kappa with the dyn param manager */
-void ThrusterStateEffector::registerStates(DynParamManager& states) {
+void ThrusterStateEffector::registerStates(DynParamManager &states) {
     // - Register the states associated with thruster - kappa
-    this->kappaState = states.registerState((uint32_t)this->thrusterData.size(), 1, this->nameOfKappaState);
+    this->kappaState = states.registerState((uint32_t) this->thrusterData.size(), 1, this->nameOfKappaState);
     Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
     // Loop through all thrusters to initialize each state variable
     for (uint64_t i = 0; i < this->thrusterData.size(); i++) {
         // Make sure that the thruster state is between 0 and 1
         if (this->kappaInit[i] < 0.0 || this->kappaInit[i] > 1.0) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "thrusterStateEffector: the initial condition for the thrust factor must be between 0 and "
-                             "1. Setting it to 0.");
+            bskLogger.bskLog(
+                BSK_ERROR,
+                "thrusterStateEffector: the initial condition for the thrust factor must be between 0 and "
+                "1. Setting it to 0."
+            );
             this->kappaInit[i] = 0.0;
         }
         kappaInitMatrix(i, 0) = this->kappaInit[i];
@@ -284,10 +285,12 @@ void ThrusterStateEffector::registerStates(DynParamManager& states) {
 }
 
 /*! This method is used to find the derivatives for the thruster stateEffector */
-void ThrusterStateEffector::computeDerivatives(double integTime,
-                                               Eigen::Vector3d rDDot_BN_N,
-                                               Eigen::Vector3d omegaDot_BN_B,
-                                               Eigen::Vector3d sigma_BN) {
+void ThrusterStateEffector::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     std::vector<THRSimConfig>::iterator it;
     THROperation* ops;
     uint64_t i;
@@ -385,10 +388,10 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
             BMj.col(0) = BM1;
             BMj.col(1) = BM2;
             BMj.col(2) = BM3;
-            this->torqueOnBodyPntB_B += mDotNozzle *
-                                        (eigenTilde(thrustDirection_B) * eigenTilde(thrustDirection_B).transpose() +
-                                         it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose()) *
-                                        (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
+            this->torqueOnBodyPntB_B += mDotNozzle
+                                      * (eigenTilde(thrustDirection_B) * eigenTilde(thrustDirection_B).transpose()
+                                         + it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose())
+                                      * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
         }
         // - Save force and torque values for messages
         eigenVectorToCArray(SingleThrusterForce, it->ThrustOps.opThrustForce_B);
@@ -398,11 +401,13 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
     return;
 }
 
-void ThrusterStateEffector::updateContributions(double integTime,
-                                                BackSubMatrices& backSubContr,
-                                                Eigen::Vector3d sigma_BN,
-                                                Eigen::Vector3d omega_BN_B,
-                                                Eigen::Vector3d g_N) {
+void ThrusterStateEffector::updateContributions(
+    double integTime,
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d sigma_BN,
+    Eigen::Vector3d omega_BN_B,
+    Eigen::Vector3d g_N
+) {
     // Define the translational and rotational contributions from the computed force and torque
     backSubContr.vecTrans = this->forceOnBody_B;
     backSubContr.vecRot = this->torqueOnBodyPntB_B;
@@ -440,9 +445,7 @@ void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
  */
 void ThrusterStateEffector::updateState(uint64_t currentSimNanos) {
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
-    if (this->ReadInputs()) {
-        this->ConfigureThrustRequests();
-    }
+    if (this->ReadInputs()) { this->ConfigureThrustRequests(); }
     this->UpdateThrusterProperties();
     this->writeOutputStateMessages(currentSimNanos);
 }

@@ -6,7 +6,9 @@
 #define XMAheader_sys_model
 
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
+
 #include <string>
 
 //! The atomic unit of behavior in a χmera simulation

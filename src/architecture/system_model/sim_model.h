@@ -21,7 +21,7 @@
 //! This class handles the management of a given "thread" of execution and provides the main mechanism for running
 //! concurrent jobs inside BSK
 class SimThreadExecution {
-   public:
+public:
     SimThreadExecution() = default;
     explicit SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos = 0);
     ~SimThreadExecution() = default;
@@ -39,22 +39,35 @@ class SimThreadExecution {
     void selfInitProcesses() const;
     void resetProcesses();
     void addNewProcess(SysProcess* newProc);
-    uint64_t procCount() const { return processList.size(); }  //!< Gets the current "thread-count" in the system
+
+    uint64_t procCount() const {
+        return processList.size();
+    }  //!< Gets the current "thread-count" in the system
+
     bool threadActive() const {
         return this->threadRunning;
     }  //!< Is the thread is currently allocated processes and is in execution
-    void threadReady() { this->threadRunning = true; }  //!< Put the thread into a running state
+
+    void threadReady() {
+        this->threadRunning = true;
+    }  //!< Put the thread into a running state
+
     void waitOnInit();
     void postInit();
+
     bool threadValid() const {
         return !this->terminateThread;
     }  //!< Is the thread currently usable or if it has been requested to shutdown
-    void killThread() { this->terminateThread = true; }  //!< Asks the thread to no longer be alive
+
+    void killThread() {
+        this->terminateThread = true;
+    }  //!< Asks the thread to no longer be alive
+
     void lockThread();
     void unlockThread();
     void lockParent();
     void unlockParent();
-    void stepUntilStop();                            //!< Step simulation until stop time reached
+    void stepUntilStop();  //!< Step simulation until stop time reached
     //! Step the processes sharing the earliest resumption time
     /*!
      *  Of all processes in the simulation, one or more will have the earliest
@@ -83,23 +96,24 @@ class SimThreadExecution {
     bool selfInitNow{};                    //!< Flag requesting self init
     bool crossInitNow{};                   //!< Flag requesting cross-init
     bool resetNow{};                       //!< Flag requesting that the thread execute reset
-   private:
-    uint64_t currentThreadNanos = 0;       //!< Current simulation time available at thread
-    uint64_t stopThreadNanos = 0;          //!< Current stop conditions for the thread
-    uint64_t CurrentNanos = 0;             //!< [ns] Current sim time
-    uint64_t NextTaskTime = 0;             //!< [ns] time for the next Task
-    bool threadRunning{};                  //!< Flag that will allow for easy concurrent locking
-    bool terminateThread{};                //!< Flag that indicates that it is time to take thread down
+
+private:
+    uint64_t currentThreadNanos = 0;            //!< Current simulation time available at thread
+    uint64_t stopThreadNanos = 0;               //!< Current stop conditions for the thread
+    uint64_t CurrentNanos = 0;                  //!< [ns] Current sim time
+    uint64_t NextTaskTime = 0;                  //!< [ns] time for the next Task
+    bool threadRunning{};                       //!< Flag that will allow for easy concurrent locking
+    bool terminateThread{};                     //!< Flag that indicates that it is time to take thread down
     std::binary_semaphore parentThreadLock{0};  //!< Lock that ensures parent thread won't proceed
     std::binary_semaphore selfThreadLock{0};    //!< Lock that ensures this thread only reaches allowed time
-    std::vector<SysProcess*> processList;  //!< List of processes associated with thread
-    std::mutex initReadyLock;              //!< Lock function to ensure runtime locks are configured
-    std::condition_variable initHoldVar;   //!< Conditional variable used to prevent race conditions
+    std::vector<SysProcess*> processList;       //!< List of processes associated with thread
+    std::mutex initReadyLock;                   //!< Lock function to ensure runtime locks are configured
+    std::condition_variable initHoldVar;        //!< Conditional variable used to prevent race conditions
 };
 
 //! The top-level container for an entire simulation
 class SimModel {
-   public:
+public:
     SimModel();
     ~SimModel();
 
@@ -125,7 +139,11 @@ class SimModel {
     void resetThreads(uint64_t threadCount);
     void deleteThreads();
     void assignRemainingProcs();
-    uint64_t getThreadCount() const { return threadList.size(); }  //!< returns the number of threads used
+
+    uint64_t getThreadCount() const {
+        return threadList.size();
+    }  //!< returns the number of threads used
+
     uint64_t getCurrentNanos() const;
     uint64_t getNextTaskTime() const;
     BSKLogger bskLogger;
@@ -134,7 +152,7 @@ class SimModel {
     std::string SimulationName;                     //!< -- Identifier for Sim
     int64_t nextProcPriority = -1;                  //!< [-] Priority level for the next process
 
-   private:
+private:
     uint64_t CurrentNanos = 0;  //!< [ns] Current sim time
     uint64_t NextTaskTime = 0;  //!< [ns] time for the next Task
 };

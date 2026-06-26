@@ -7,7 +7,9 @@
 
 #include <architecture/system_model/sys_model_task.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
+
 #include <vector>
 
 //! A task paired with its priority among tasks within its containing process

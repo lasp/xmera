@@ -3,13 +3,15 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "reactionWheelStateEffector.h"
+
 #include <architecture/utilities/eigenSupport.h>
+
 #include <cmath>
 #include <cstring>
 #include <iostream>
 
 ReactionWheelStateEffector::ReactionWheelStateEffector() {
-    prevCommandTime = 0xFFFFFFFFFFFFFFFF;
+    prevCommandTime = 0xFFFF'FFFF'FFFF'FFFF;
 
     effProps.mEff = 0.0;
     effProps.IEffPntB_B.setZero();
@@ -24,13 +26,11 @@ ReactionWheelStateEffector::ReactionWheelStateEffector() {
 }
 
 ReactionWheelStateEffector::~ReactionWheelStateEffector() {
-    for (long unsigned int c = 0; c < this->rwOutMsgs.size(); c++) {
-        free(this->rwOutMsgs.at(c));
-    }
+    for (long unsigned int c = 0; c < this->rwOutMsgs.size(); c++) { free(this->rwOutMsgs.at(c)); }
     return;
 }
 
-void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn) {
+void ReactionWheelStateEffector::linkInStates(DynParamManager &statesIn) {
     //! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
@@ -40,7 +40,7 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn) {
     return;
 }
 
-void ReactionWheelStateEffector::registerStates(DynParamManager& states) {
+void ReactionWheelStateEffector::registerStates(DynParamManager &states) {
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
     this->numRW = 0;
@@ -51,17 +51,15 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states) {
 
     for (RWItp = ReactionWheelData.begin(); RWItp != ReactionWheelData.end(); RWItp++) {
         RWIt = *RWItp;
-        if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) {
-            this->numRWJitter++;
-        }
+        if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) { this->numRWJitter++; }
         omegasForInit(RWItp - this->ReactionWheelData.begin(), 0) = RWIt->Omega;
         this->numRW++;
     }
 
-    this->OmegasState = states.registerState((uint32_t)this->numRW, 1, this->nameOfReactionWheelOmegasState);
+    this->OmegasState = states.registerState((uint32_t) this->numRW, 1, this->nameOfReactionWheelOmegasState);
 
     if (numRWJitter > 0) {
-        this->thetasState = states.registerState((uint32_t)this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
+        this->thetasState = states.registerState((uint32_t) this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
     }
 
     this->OmegasState->setState(omegasForInit);
@@ -122,9 +120,9 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime) {
             this->effProps.IEffPntB_B +=
                 RWIt->IRWPntWc_B + RWIt->mass * RWIt->rTildeWcB_B * RWIt->rTildeWcB_B.transpose();
             this->effProps.rEffPrime_CB_B += RWIt->mass * RWIt->rPrimeWcB_B;
-            this->effProps.IEffPrimePntB_B += RWIt->IPrimeRWPntWc_B +
-                                              RWIt->mass * rPrimeTildeWcB_B * RWIt->rTildeWcB_B.transpose() +
-                                              RWIt->mass * RWIt->rTildeWcB_B * rPrimeTildeWcB_B.transpose();
+            this->effProps.IEffPrimePntB_B += RWIt->IPrimeRWPntWc_B
+                                            + RWIt->mass * rPrimeTildeWcB_B * RWIt->rTildeWcB_B.transpose()
+                                            + RWIt->mass * RWIt->rTildeWcB_B * rPrimeTildeWcB_B.transpose();
             thetaCount++;
         } else if (RWIt->RWModel == JitterSimple) {
             RWIt->theta = this->thetasState->getState()(thetaCount, 0);
@@ -149,11 +147,13 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime) {
     return;
 }
 
-void ReactionWheelStateEffector::updateContributions(double integTime,
-                                                     BackSubMatrices& backSubContr,
-                                                     Eigen::Vector3d sigma_BN,
-                                                     Eigen::Vector3d omega_BN_B,
-                                                     Eigen::Vector3d g_N) {
+void ReactionWheelStateEffector::updateContributions(
+    double integTime,
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d sigma_BN,
+    Eigen::Vector3d omega_BN_B,
+    Eigen::Vector3d g_N
+) {
     Eigen::Vector3d omegaLoc_BN_B;
     Eigen::Vector3d tempF;
     double omegas;
@@ -170,7 +170,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime,
     gLocal_N = *this->g_N;
 
     //! - Find dcm_BN
-    sigmaBNLocal = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
     //! - Map gravity to body frame
@@ -185,9 +185,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime,
         OmegaSquared = RWIt->Omega * RWIt->Omega;
 
         // Determine which friction model to use (if starting from zero include stribeck)
-        if (fabs(RWIt->Omega) < 0.10 * RWIt->omegaLimitCycle && RWIt->betaStatic > 0) {
-            RWIt->frictionStribeck = 1;
-        }
+        if (fabs(RWIt->Omega) < 0.10 * RWIt->omegaLimitCycle && RWIt->betaStatic > 0) { RWIt->frictionStribeck = 1; }
         double signOfOmega = ((RWIt->Omega > 0) - (RWIt->Omega < 0));
         double omegaDot = RWIt->Omega - RWIt->omegaBefore;
         double signOfOmegaDot = ((omegaDot > 0) - (omegaDot < 0));
@@ -201,16 +199,18 @@ void ReactionWheelStateEffector::updateContributions(double integTime,
         double frictionForceAtLimitCycle;
         // Friction model which uses static, stribeck, coulomb, and viscous friction models
         if (RWIt->frictionStribeck == 1) {
-            frictionForce = sqrt(2.0 * exp(1.0)) * (RWIt->fStatic - RWIt->fCoulomb) *
-                                exp(-(RWIt->Omega / RWIt->betaStatic) * (RWIt->Omega / RWIt->betaStatic) / 2.0) *
-                                RWIt->Omega / (RWIt->betaStatic * sqrt(2.0)) +
-                            RWIt->fCoulomb * tanh(RWIt->Omega * 10.0 / RWIt->betaStatic) + RWIt->cViscous * RWIt->Omega;
-            frictionForceAtLimitCycle = sqrt(2.0 * exp(1.0)) * (RWIt->fStatic - RWIt->fCoulomb) *
-                                            exp(-(RWIt->omegaLimitCycle / RWIt->betaStatic) *
-                                                (RWIt->omegaLimitCycle / RWIt->betaStatic) / 2.0) *
-                                            RWIt->omegaLimitCycle / (RWIt->betaStatic * sqrt(2.0)) +
-                                        RWIt->fCoulomb * tanh(RWIt->omegaLimitCycle * 10.0 / RWIt->betaStatic) +
-                                        RWIt->cViscous * RWIt->omegaLimitCycle;
+            frictionForce = sqrt(2.0 * exp(1.0)) * (RWIt->fStatic - RWIt->fCoulomb)
+                              * exp(-(RWIt->Omega / RWIt->betaStatic) * (RWIt->Omega / RWIt->betaStatic) / 2.0)
+                              * RWIt->Omega / (RWIt->betaStatic * sqrt(2.0))
+                          + RWIt->fCoulomb * tanh(RWIt->Omega * 10.0 / RWIt->betaStatic) + RWIt->cViscous * RWIt->Omega;
+            frictionForceAtLimitCycle =
+                sqrt(2.0 * exp(1.0)) * (RWIt->fStatic - RWIt->fCoulomb)
+                    * exp(
+                        -(RWIt->omegaLimitCycle / RWIt->betaStatic) * (RWIt->omegaLimitCycle / RWIt->betaStatic) / 2.0
+                    )
+                    * RWIt->omegaLimitCycle / (RWIt->betaStatic * sqrt(2.0))
+                + RWIt->fCoulomb * tanh(RWIt->omegaLimitCycle * 10.0 / RWIt->betaStatic)
+                + RWIt->cViscous * RWIt->omegaLimitCycle;
         } else {
             frictionForce = signOfOmega * RWIt->fCoulomb + RWIt->cViscous * RWIt->Omega;
             frictionForceAtLimitCycle = RWIt->fCoulomb + RWIt->cViscous * RWIt->omegaLimitCycle;
@@ -226,8 +226,8 @@ void ReactionWheelStateEffector::updateContributions(double integTime,
 
         if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
             backSubContr.matrixD -= RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
-            backSubContr.vecRot -= RWIt->gsHat_B * (RWIt->u_current + RWIt->frictionTorque) +
-                                   RWIt->Js * RWIt->Omega * omegaLoc_BN_B.cross(RWIt->gsHat_B);
+            backSubContr.vecRot -= RWIt->gsHat_B * (RWIt->u_current + RWIt->frictionTorque)
+                                 + RWIt->Js * RWIt->Omega * omegaLoc_BN_B.cross(RWIt->gsHat_B);
 
             //! imbalance torque (simplified external)
             if (RWIt->RWModel == JitterSimple) {
@@ -250,41 +250,44 @@ void ReactionWheelStateEffector::updateContributions(double integTime,
             dSquared = RWIt->d * RWIt->d;
 
             RWIt->aOmega = -RWIt->mass * RWIt->d / (RWIt->Js + RWIt->mass * dSquared) * RWIt->w3Hat_B;
-            RWIt->bOmega = -1.0 / (RWIt->Js + RWIt->mass * dSquared) *
-                           ((RWIt->Js + RWIt->mass * dSquared) * RWIt->gsHat_B + RWIt->J13 * RWIt->w3Hat_B +
-                            RWIt->mass * RWIt->d * RWIt->rWB_B.cross(RWIt->w3Hat_B));
-            RWIt->cOmega = 1.0 / (RWIt->Js + RWIt->mass * dSquared) *
-                           (omegaw2 * omegaw3 * (-RWIt->mass * dSquared) - RWIt->J13 * omegaw2 * omegas -
-                            RWIt->mass * RWIt->d * RWIt->w3Hat_B.transpose() *
-                                omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B)) +
-                            (RWIt->u_current + RWIt->frictionTorque) + RWIt->gsHat_B.dot(gravityTorquePntW_B));
+            RWIt->bOmega = -1.0 / (RWIt->Js + RWIt->mass * dSquared)
+                         * ((RWIt->Js + RWIt->mass * dSquared) * RWIt->gsHat_B + RWIt->J13 * RWIt->w3Hat_B
+                            + RWIt->mass * RWIt->d * RWIt->rWB_B.cross(RWIt->w3Hat_B));
+            RWIt->cOmega = 1.0 / (RWIt->Js + RWIt->mass * dSquared)
+                         * (omegaw2 * omegaw3 * (-RWIt->mass * dSquared) - RWIt->J13 * omegaw2 * omegas
+                            - RWIt->mass * RWIt->d * RWIt->w3Hat_B.transpose()
+                                  * omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))
+                            + (RWIt->u_current + RWIt->frictionTorque) + RWIt->gsHat_B.dot(gravityTorquePntW_B));
 
             backSubContr.matrixA += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->aOmega.transpose();
             backSubContr.matrixB += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->bOmega.transpose();
             backSubContr.matrixC +=
-                (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B)) *
-                RWIt->aOmega.transpose();
+                (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B))
+                * RWIt->aOmega.transpose();
             backSubContr.matrixD +=
-                (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B)) *
-                RWIt->bOmega.transpose();
+                (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B))
+                * RWIt->bOmega.transpose();
             backSubContr.vecTrans +=
                 RWIt->mass * RWIt->d * (OmegaSquared * RWIt->w2Hat_B - RWIt->cOmega * RWIt->w3Hat_B);
             backSubContr.vecRot +=
-                RWIt->mass * RWIt->d * OmegaSquared * RWIt->rWcB_B.cross(RWIt->w2Hat_B) -
-                RWIt->IPrimeRWPntWc_B * RWIt->Omega * RWIt->gsHat_B -
-                omegaLoc_BN_B.cross(RWIt->IRWPntWc_B * RWIt->Omega * RWIt->gsHat_B +
-                                    RWIt->mass * RWIt->rWcB_B.cross(RWIt->rPrimeWcB_B)) -
-                (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B)) *
-                    RWIt->cOmega;
+                RWIt->mass * RWIt->d * OmegaSquared * RWIt->rWcB_B.cross(RWIt->w2Hat_B)
+                - RWIt->IPrimeRWPntWc_B * RWIt->Omega * RWIt->gsHat_B
+                - omegaLoc_BN_B.cross(
+                    RWIt->IRWPntWc_B * RWIt->Omega * RWIt->gsHat_B + RWIt->mass * RWIt->rWcB_B.cross(RWIt->rPrimeWcB_B)
+                )
+                - (RWIt->IRWPntWc_B * RWIt->gsHat_B + RWIt->mass * RWIt->d * RWIt->rWcB_B.cross(RWIt->w3Hat_B))
+                      * RWIt->cOmega;
         }
     }
     return;
 }
 
-void ReactionWheelStateEffector::computeDerivatives(double integTime,
-                                                    Eigen::Vector3d rDDot_BN_N,
-                                                    Eigen::Vector3d omegaDot_BN_B,
-                                                    Eigen::Vector3d sigma_BN) {
+void ReactionWheelStateEffector::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     Eigen::MatrixXd OmegasDot(this->numRW, 1);
     Eigen::MatrixXd thetasDot(this->numRWJitter, 1);
     Eigen::Vector3d omegaDotBNLoc_B;
@@ -301,7 +304,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime,
     //! Grab necessarry values from manager
     omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
     rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
-    sigmaBNLocal = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
     rDDotBNLoc_B = dcm_BN * rDDotBNLoc_N;
@@ -324,15 +327,15 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime,
     }
 
     OmegasState->setDerivative(OmegasDot);
-    if (this->numRWJitter > 0) {
-        thetasState->setDerivative(thetasDot);
-    }
+    if (this->numRWJitter > 0) { thetasState->setDerivative(thetasDot); }
 }
 
-void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime,
-                                                              Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                              double& rotEnergyContr,
-                                                              Eigen::Vector3d omega_BN_B) {
+void ReactionWheelStateEffector::updateEnergyMomContributions(
+    double integTime,
+    Eigen::Vector3d &rotAngMomPntCContr_B,
+    double &rotEnergyContr,
+    Eigen::Vector3d omega_BN_B
+) {
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcm_BN; /*! direction cosine matrix from N to B */
     Eigen::Matrix3d dcm_NB; /*! direction cosine matrix from B to N */
@@ -346,15 +349,15 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime,
         RWIt = *RWItp;
         if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
             rotAngMomPntCContr_B += RWIt->Js * RWIt->gsHat_B * RWIt->Omega;
-            rotEnergyContr += 1.0 / 2.0 * RWIt->Js * RWIt->Omega * RWIt->Omega +
-                              RWIt->Js * RWIt->Omega * RWIt->gsHat_B.dot(omegaLoc_BN_B);
+            rotEnergyContr += 1.0 / 2.0 * RWIt->Js * RWIt->Omega * RWIt->Omega
+                            + RWIt->Js * RWIt->Omega * RWIt->gsHat_B.dot(omegaLoc_BN_B);
         } else if (RWIt->RWModel == JitterFullyCoupled) {
             Eigen::Vector3d omega_WN_B = omegaLoc_BN_B + RWIt->Omega * RWIt->gsHat_B;
             Eigen::Vector3d r_WcB_B = RWIt->rWcB_B;
             Eigen::Vector3d rDot_WcB_B = RWIt->d * RWIt->Omega * RWIt->w3Hat_B + omegaLoc_BN_B.cross(RWIt->rWcB_B);
 
-            rotEnergyContr += 0.5 * omega_WN_B.transpose() * RWIt->IRWPntWc_B * omega_WN_B +
-                              0.5 * RWIt->mass * rDot_WcB_B.dot(rDot_WcB_B);
+            rotEnergyContr += 0.5 * omega_WN_B.transpose() * RWIt->IRWPntWc_B * omega_WN_B
+                            + 0.5 * RWIt->mass * rDot_WcB_B.dot(rDot_WcB_B);
             rotAngMomPntCContr_B += RWIt->IRWPntWc_B * omega_WN_B + RWIt->mass * r_WcB_B.cross(rDot_WcB_B);
         }
     }
@@ -392,9 +395,11 @@ void ReactionWheelStateEffector::reset(uint64_t CurrenSimNanos) {
     for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++) {
         it = *itp;
         if (it->betaStatic == 0.0) {
-            bskLogger.bskLog(BSK_WARNING,
-                             "Stribeck coefficent currently zero and should be positive to active this friction model, "
-                             "or negative to turn it off!");
+            bskLogger.bskLog(
+                BSK_WARNING,
+                "Stribeck coefficent currently zero and should be positive to active this friction model, "
+                "or negative to turn it off!"
+            );
         }
         //! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
         if (it->RWModel == JitterFullyCoupled) {
@@ -420,9 +425,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
     int c = 0;
     for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++) {
         it = *itp;
-        if (numRWJitter > 0) {
-            it->theta = this->thetasState->getState()(itp - ReactionWheelData.begin(), 0);
-        }
+        if (numRWJitter > 0) { it->theta = this->thetasState->getState()(itp - ReactionWheelData.begin(), 0); }
         it->Omega = this->OmegasState->getState()(itp - ReactionWheelData.begin(), 0);
 
         tmpRW = RWConfigLogMsgPayload{};
@@ -514,24 +517,26 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime) {
         }
 
         // minimum torque
-        if (std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter]->u_min) {
-            CmdIt->u_cmd = 0.0;
-        }
+        if (std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter]->u_min) { CmdIt->u_cmd = 0.0; }
 
         // Power saturation
         if (this->ReactionWheelData[RWIter]->P_max > 0) {
-            if (std::abs(CmdIt->u_cmd * this->ReactionWheelData[RWIter]->Omega) >=
-                this->ReactionWheelData[RWIter]->P_max) {
+            if (std::abs(CmdIt->u_cmd * this->ReactionWheelData[RWIter]->Omega)
+                >= this->ReactionWheelData[RWIter]->P_max) {
                 CmdIt->u_cmd = std::copysign(
-                    this->ReactionWheelData[RWIter]->P_max / this->ReactionWheelData[RWIter]->Omega, CmdIt->u_cmd);
+                    this->ReactionWheelData[RWIter]->P_max / this->ReactionWheelData[RWIter]->Omega,
+                    CmdIt->u_cmd
+                );
             }
         }
 
         // Speed saturation
-        if (std::abs(this->ReactionWheelData[RWIter]->Omega) >= this->ReactionWheelData[RWIter]->Omega_max &&
-            this->ReactionWheelData[RWIter]->Omega_max > 0.0 /* negative Omega_max turns of wheel saturation modeling */
-            && this->ReactionWheelData[RWIter]->Omega * CmdIt->u_cmd >=
-                   0.0  // check if torque would accelerate wheel speed beyond Omega_max
+        if (
+            std::abs(this->ReactionWheelData[RWIter]->Omega) >= this->ReactionWheelData[RWIter]->Omega_max
+            && this->ReactionWheelData[RWIter]->Omega_max
+                   > 0.0 /* negative Omega_max turns of wheel saturation modeling */
+            && this->ReactionWheelData[RWIter]->Omega * CmdIt->u_cmd
+                   >= 0.0  // check if torque would accelerate wheel speed beyond Omega_max
         ) {
             CmdIt->u_cmd = 0.0;
         }

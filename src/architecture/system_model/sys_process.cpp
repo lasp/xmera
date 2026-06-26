@@ -21,7 +21,7 @@ void SysProcess::reset(uint64_t initialSimNanos) {
 
 void SysProcess::reInitialize() {
     // Reset the next update time for every task in this process.
-    for (auto const& task : this->processTasks) {
+    for (auto const &task : this->processTasks) {
         SysModelTask* localTask = task.TaskPtr;
         localTask->reset();
     }
@@ -30,9 +30,7 @@ void SysProcess::reInitialize() {
     // (This shouldn't really be necessary...)
     std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
     this->processTasks.clear();
-    for (auto const& task : taskPtrs) {
-        this->addTask(task.TaskPtr, task.taskPriority);
-    }
+    for (auto const &task : taskPtrs) { this->addTask(task.TaskPtr, task.taskPriority); }
 }
 
 std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {

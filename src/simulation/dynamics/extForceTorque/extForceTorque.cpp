@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "extForceTorque.h"
+
 #include <architecture/utilities/eigenSupport.h>
+
 #include <iostream>
 
 /*! This is the constructor.  It sets some default initializers that can be
@@ -18,7 +20,9 @@ ExtForceTorque::ExtForceTorque() {
 }
 
 /*! The destructor.  Nothing of note is performed here*/
-ExtForceTorque::~ExtForceTorque() { return; }
+ExtForceTorque::~ExtForceTorque() {
+    return;
+}
 
 /*! This method is used to reset the module.
  @return void
@@ -30,7 +34,7 @@ void ExtForceTorque::reset(uint64_t currentSimNanos) {
     this->incomingCmdForceInertialBuffer = CmdForceInertialMsgPayload{};
 }
 
-void ExtForceTorque::linkInStates(DynParamManager& statesIn) {}
+void ExtForceTorque::linkInStates(DynParamManager &statesIn) {}
 
 /*! This module does not write any output messages.
  @param currentClock The current time used for time-stamping the message
@@ -43,12 +47,8 @@ void ExtForceTorque::writeOutputMessages(uint64_t currentClock) {}
  @return void
  */
 void ExtForceTorque::readInputMessages() {
-    if (this->cmdTorqueInMsg.isLinked()) {
-        this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg();
-    }
-    if (this->cmdForceBodyInMsg.isLinked()) {
-        this->incomingCmdForceBodyBuffer = this->cmdForceBodyInMsg();
-    }
+    if (this->cmdTorqueInMsg.isLinked()) { this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg(); }
+    if (this->cmdForceBodyInMsg.isLinked()) { this->incomingCmdForceBodyBuffer = this->cmdForceBodyInMsg(); }
     if (this->cmdForceInertialInMsg.isLinked()) {
         this->incomingCmdForceInertialBuffer = this->cmdForceInertialInMsg();
     }
@@ -89,4 +89,6 @@ void ExtForceTorque::computeForceTorque(double integTime, double timeStep) {
     return;
 }
 
-void ExtForceTorque::updateState(uint64_t currentSimNanos) { this->readInputMessages(); }
+void ExtForceTorque::updateState(uint64_t currentSimNanos) {
+    this->readInputMessages();
+}

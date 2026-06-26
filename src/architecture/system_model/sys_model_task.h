@@ -7,7 +7,9 @@
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/bskLogging.h>
+
 #include <stdint.h>
+
 #include <vector>
 
 //! A module paired with its priority among modules within its containing task
