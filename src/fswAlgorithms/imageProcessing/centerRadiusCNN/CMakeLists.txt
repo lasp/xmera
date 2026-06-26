@@ -14,6 +14,7 @@ target_sources("${module}" PRIVATE
 target_link_libraries("${module}" PRIVATE
   opencv_imgcodecs
   opencv_video
+  Eigen3::Eigen
 )
 
 # Suppress OpenCV warnings on clang due to its vcpkg distribution
