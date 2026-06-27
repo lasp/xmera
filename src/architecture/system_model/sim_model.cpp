@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <iostream>
 
-void activateNewThread(void* threadData) {
+static void activateNewThread(void* threadData) {
     auto* theThread = static_cast<SimThreadExecution*>(threadData);
     // std::cout << "Starting thread yes" << std::endl;
     theThread->postInit();
@@ -50,46 +50,6 @@ static SimInstant stepProcessUpTo(SysProcess* process, SimInstant stopTime) {
 
         process->singleStepNextTask(stopTime.realNanos);
     }
-}
-
-SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos)
-    : threadID(threadIdent), currentThreadNanos(currentSimNanos) {}
-
-/*! This method provides a synchronization mechanism for the "child" thread
-    ensuring that it can be held at a fixed point after it finishes the
-    execution of a given frame until it is released by the "parent" thread.
- @return void
- */
-void SimThreadExecution::lockThread() {
-    this->selfThreadLock.acquire();
-}
-
-/*! This method provides a forced synchronization on the "parent" thread so that
-    the parent and all other threads in the system can be forced to wait at a
-    known time until this thread has finished its execution for that time.
- @return void
- */
-void SimThreadExecution::lockParent() {
-    this->parentThreadLock.acquire();
-}
-
-/*! This method provides an entry point for the "parent" thread to release the
-    child thread for a single frame's execution.  It is intended to only be
-    called from the parent thread.
- @return void
- */
-void SimThreadExecution::unlockThread() {
-    this->selfThreadLock.release();
-}
-
-/*! This method provides an entry point for the "child" thread to unlock the
-    parent thread after it has finished its execution in a frame.  That way the
-    parent and all of its other children have to wait for this child to finish
-    its execution.
- @return void
- */
-void SimThreadExecution::unlockParent() {
-    this->parentThreadLock.release();
 }
 
 void SimThreadExecution::singleStepProcesses(int64_t const stopPri) {
@@ -206,34 +166,6 @@ void SimThreadExecution::resetProcesses() {
 void SimThreadExecution::addNewProcess(SysProcess* newProc) {
     processList.push_back(newProc);
     newProc->setProcessControlStatus(true);
-}
-
-uint64_t SimThreadExecution::getCurrentNanos() const {
-    return this->CurrentNanos;
-}
-
-uint64_t SimThreadExecution::getNextTaskTime() const {
-    return this->NextTaskTime;
-}
-
-uint64_t SimThreadExecution::getCurrentThreadNanos() const {
-    return this->currentThreadNanos;
-}
-
-uint64_t SimThreadExecution::getStopThreadNanos() const {
-    return this->stopThreadNanos;
-}
-
-void SimThreadExecution::setNextTaskTime(uint64_t nextTaskTime) {
-    NextTaskTime = nextTaskTime;
-}
-
-void SimThreadExecution::setCurrentNanos(uint64_t currentNanos) {
-    CurrentNanos = currentNanos;
-}
-
-void SimThreadExecution::setStopThreadNanos(uint64_t stopThreadNanos) {
-    SimThreadExecution::stopThreadNanos = stopThreadNanos;
 }
 
 /*! This Constructor is used to initialize the top-level sim model.
