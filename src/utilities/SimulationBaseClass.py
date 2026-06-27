@@ -447,9 +447,6 @@ class SimBaseClass:
         """
         Initialize the BSK simulation.  This runs the reset() method on each module.
         """
-        if(self.simulationInitialized):
-            self.TotalSim.resetThreads(self.TotalSim.getThreadCount())
-        self.TotalSim.assignRemainingProcs()
         self.TotalSim.resetSimulation()
         self.TotalSim.selfInitSimulation()
         self.TotalSim.resetInitSimulation()

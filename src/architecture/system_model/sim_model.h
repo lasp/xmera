@@ -231,16 +231,7 @@ public:
      */
     void singleStepProcesses(int64_t stopPri = -1);
     void addNewProcess(SysProcess* newProc);
-    void addProcessToThread(SysProcess* newProc, uint64_t threadSel);
     void resetSimulation();  //!< Reset simulation back to zero
-    void clearProcsFromThreads() const;
-    void resetThreads(uint64_t threadCount);
-    void deleteThreads();
-    void assignRemainingProcs();
-
-    uint64_t getThreadCount() const {
-        return threadList.size();
-    }  //!< returns the number of threads used
 
     uint64_t getCurrentNanos() const;
     uint64_t getNextTaskTime() const;
