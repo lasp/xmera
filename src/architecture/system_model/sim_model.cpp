@@ -9,28 +9,25 @@
 #include <algorithm>
 #include <iostream>
 
-static void activateNewThread(void* threadData) {
-    auto* theThread = static_cast<SimThreadExecution*>(threadData);
-    // std::cout << "Starting thread yes" << std::endl;
-    theThread->postInit();
+static void activateNewThread(SimThreadExecution &theThread) {
+    theThread.postInit();
 
-    while (theThread->threadValid()) {
-        theThread->lockThread();
-        if (theThread->selfInitNow) {
-            theThread->selfInitProcesses();
-            theThread->selfInitNow = false;
-        } else if (theThread->crossInitNow) {
-            theThread->crossInitNow = false;
-        } else if (theThread->resetNow) {
-            theThread->resetProcesses();
-            theThread->resetNow = false;
+    while (theThread.threadValid()) {
+        theThread.lockThread();
+
+        if (theThread.selfInitNow) {
+            theThread.selfInitProcesses();
+            theThread.selfInitNow = false;
+        } else if (theThread.crossInitNow) {
+            theThread.crossInitNow = false;
+        } else if (theThread.resetNow) {
+            theThread.resetProcesses();
+            theThread.resetNow = false;
         } else {
-            theThread->stepUntilStop();
+            theThread.stepUntilStop();
         }
-        // std::cout << "Stepping thread"<<std::endl;
-        theThread->unlockParent();
+        theThread.unlockParent();
     }
-    // std::cout << "Killing thread" << std::endl;
 }
 
 //! Step a process until its next update time is after `stopTime`.
@@ -359,7 +356,7 @@ void SimModel::assignRemainingProcs() {
         simThread->setNextTaskTime(0);
         simThread->setCurrentNanos(0);
         // simThread->lockThread();
-        simThread->threadContext = new std::thread(activateNewThread, simThread);
+        simThread->threadContext = new std::thread([=]() { activateNewThread(*simThread); });
     }
     for (auto const &simThread : this->threadList) { simThread->waitOnInit(); }
 }
