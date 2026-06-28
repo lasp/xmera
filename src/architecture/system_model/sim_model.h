@@ -2,8 +2,8 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#ifndef _SimModel_HH_
-#define _SimModel_HH_
+#ifndef XMAheader_sim_model
+#define XMAheader_sim_model
 
 #include <architecture/system_model/sys_process.h>
 
@@ -12,9 +12,28 @@
 #include <vector>
 
 //! The top-level container for an entire simulation
-class SimModel {
+class SimModel final {
 public:
-    void stepUntilStop(uint64_t SimStopTime, int64_t stopPri = -1);  //!< Step simulation until stop time uint64_t reached
+    //! Add a process to be simulated
+    /*!
+     *  The priority of the given process dictates the order in which it is reset,
+     *  and the order in which it is updated if multiple processes update at the
+     *  same time. Higher priorities go first; if two processes have the same
+     *  priority, the first to be added to the simulation takes precedence.
+     *
+     *  @important
+     *    This method must not be invoked during simulation; it must only be
+     *    invoked before `resetSimulation` occurs for any given simulation run.
+     */
+    void addNewProcess(SysProcess* newProc);
+
+    //! Reset all simulation elements to the initial state
+    /*!
+     *  This method recursively resets all processes, tasks, and models in the
+     *  simulation, ensuring that everything is synchronized at time 0.
+     */
+    void resetSimulation();
+
     //! Step the processes sharing the earliest resumption time
     /*!
      *  Of all processes in the simulation, one or more will have the earliest
@@ -23,21 +42,52 @@ public:
      *  partially: only the tasks within those processes whose priority is at least
      *  `stopPri` will be allowed to resume.
      *
-     *  @param stopPri
-     *    The least priority at which processes' tasks will be resumed
+     *  @important
+     *    This method must only be invoked once `resetSimulation` has been invoked
+     *    at least once.
+     *
+     *  @param[in] stopPri
+     *    The least priority at which processes should be updated
      */
     void singleStepProcesses(int64_t stopPri = -1);
-    void addNewProcess(SysProcess* newProc);
-    void resetSimulation();  //!< Reset simulation back to zero
 
+    //! Step the simulation forward until the next update would occur after the given stop time
+    /*!
+     *  This helper method invokes `singleStepProcesses` repeatedly, stopping
+     *  only once the given time has been reached.
+     *
+     *  @important
+     *    This method must only be invoked once `resetSimulation` has been invoked
+     *    at least once.
+     *
+     *  @param[in] SimStopTime
+     *    The latest time at which processes should be updated
+     *  @param[in] stopPri
+     *    The least priority at which processes should be updated
+     */
+    void stepUntilStop(uint64_t SimStopTime, int64_t stopPri = -1);
+
+    //! Get the time at which the simulation was last stepped or reset
     uint64_t getCurrentNanos() const {
         return this->CurrentNanos;
     }
 
+    //! Get the time at which the simulation will next be stepped
+    /*!
+     *  This method should only be used during a simulation. If called before
+     *  a simulation begins, or after adding new processes, its value will be
+     *  unreliable.
+     */
     uint64_t getNextTaskTime() const {
         return this->NextTaskTime;
     }
 
+    //! Get the priority of the next process to be updated
+    /*!
+     *  This method should only be used during a simulation. If called before
+     *  a simulation begins, or after adding new processes, its value will be
+     *  unreliable.
+     */
     int64_t getNextProcPriority() const {
         return this->nextProcPriority;
     }
@@ -53,11 +103,17 @@ public:
     }
 
 private:
-    uint64_t CurrentNanos    = 0;   //!< [ns] Current sim time
-    uint64_t NextTaskTime    = 0;   //!< [ns] time for the next Task
-    int64_t nextProcPriority = -1;  //!< [-] Priority level for the next process
+    //! The time at which the simulation was last updated or reset
+    uint64_t CurrentNanos = 0;
 
-    std::vector<SysProcess*> processList;  //!< -- List of processes we've created
+    //! The time at which the simulation will next be updated
+    uint64_t NextTaskTime = 0;
+
+    //! The priority of the next process to be updated
+    int64_t nextProcPriority = -1;
+
+    //! The collection of processes to be simulated, in priority order
+    std::vector<SysProcess*> processList = {};
 };
 
-#endif /* _SimModel_H_ */
+#endif

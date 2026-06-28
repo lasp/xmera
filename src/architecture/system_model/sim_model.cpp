@@ -28,43 +28,30 @@ static SimInstant stepProcessUpTo(SysProcess* process, SimInstant stopTime) {
     }
 }
 
-/*! This method steps the simulation until the specified stop time and
- stop priority have been reached.
- @param SimStopTime Nanoseconds to step the simulation for
- @param stopPri The priority level below which the sim won't go
- @return void
- */
 void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
+    //! @todo Remove this misplaced flush on stdout.
     std::cout << std::flush;
 
-    /*! - Note that we have to step until both the time is greater and the next
-     Task's start time is in the future. If the NextTaskTime is less than
-     SimStopTime, then the inPri shouldn't come into effect, so set it to -1
-     (that's less than all process priorities, so it will run through the next
-     process)*/
+    // Keep single-stepping until the next process would occur after the stop time.
     auto simStopTime = SimInstant::atNanos(SimStopTime).atPriority(stopPri);
     while (true) {
         auto nextTaskTime = SimInstant::atNanos(this->NextTaskTime).atPriority(this->nextProcPriority);
 
         if (nextTaskTime > simStopTime) { break; }
 
-        int64_t inPri = (SimStopTime == this->NextTaskTime) ? stopPri : -1;
+        // If we're not stopping at this time, run processes of *all* priorities.
+        int64_t inPri = (SimStopTime == this->NextTaskTime) ? stopPri : SimInstant::endOfTime().causalPriority;
         this->singleStepProcesses(inPri);
     }
 }
 
-/*! This method allows the user to attach a process to the simulation for
-    execution.  Note that the priority level of the process determines what
-    order it gets called in: higher priorities are called before lower
-    priorities. If priorities are the same, the proc added first goes first.
-    @return void
-    @param newProc the new process to be added
-*/
 void SimModel::addNewProcess(SysProcess* newProc) {
+    // Find the index separating lower priorities from higher priorities.
     auto it = this->processList.begin();
     for (; it != this->processList.end(); ++it) {
         if (newProc->processPriority > (*it)->processPriority) { break; }
     }
+
     this->processList.insert(it, newProc);
 }
 
@@ -90,12 +77,9 @@ void SimModel::singleStepProcesses(int64_t const stopPri) {
     }
 }
 
-/*! This method is used to reset a simulation to time 0. It fully resets all
- * processes, tasks, and modules.
- @return void
- */
 void SimModel::resetSimulation() {
     // Reset all processes
+    //! @todo Should we skip resetting disabled processes?
     this->CurrentNanos = 0;
     for (auto &process : this->processList) { process->reset(this->CurrentNanos); }
 
