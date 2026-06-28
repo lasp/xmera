@@ -22,6 +22,7 @@ static SimInstant stepProcessUpTo(SysProcess* process, SimInstant stopTime) {
     while (true) {
         auto nextTaskTime = SimInstant::atNanos(process->getNextTaskTime()).atPriority(process->processPriority);
 
+        if (nextTaskTime.realNanos == SimInstant::endOfTime().realNanos) { return nextTaskTime; }
         if (stopTime < nextTaskTime) { return nextTaskTime; }
 
         process->singleStepNextTask(stopTime.realNanos);
