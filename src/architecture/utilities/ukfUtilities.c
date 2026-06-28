@@ -95,7 +95,7 @@ int32_t ukfUInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat) 
 
 int32_t ukfLUD(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat, int32_t* indx) {
     double vv[UKF_MAX_DIM];
-    int32_t rowIndicator, i, j, k, imax;
+    int32_t i, j, k, imax;
     double big, dum, sum, temp;
     double TINY = 1.0E-14;
 
@@ -108,7 +108,6 @@ int32_t ukfLUD(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat, i
     }
     mCopy(sourceMat, (size_t)nRow, (size_t)nCol, destMat);
     vSetZero(vv, (size_t)nRow);
-    rowIndicator = 1;
     for (i = 0; i < nRow; i++) {
         big = 0.0;
         for (j = 0; j < nRow; j++) {
@@ -148,7 +147,6 @@ int32_t ukfLUD(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat, i
                 destMat[imax * nRow + k] = destMat[j * nRow + k];
                 destMat[j * nRow + k] = dum;
             }
-            rowIndicator += 1;
             vv[imax] = vv[j];
         }
         indx[j] = imax;
