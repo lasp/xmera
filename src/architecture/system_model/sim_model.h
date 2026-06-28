@@ -216,7 +216,7 @@ public:
     ~SimModel();
 
     void selfInitSimulation();                                  //!< Method to initialize all added Tasks
-    void resetInitSimulation() const;                           //!< Method to reset all added tasks
+    void resetInitSimulation();                                 //!< Method to reset all added tasks
     void stepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
     //! Step the processes sharing the earliest resumption time
     /*!
@@ -236,14 +236,15 @@ public:
     uint64_t getCurrentNanos() const;
     uint64_t getNextTaskTime() const;
     BSKLogger bskLogger;
-    std::vector<SysProcess*> processList;           //!< -- List of processes we've created
-    std::vector<SimThreadExecution*> threadList{};  //!< -- Array of threads that we're running on
-    std::string SimulationName;                     //!< -- Identifier for Sim
-    int64_t nextProcPriority = -1;                  //!< [-] Priority level for the next process
+    std::vector<SysProcess*> processList;  //!< -- List of processes we've created
+    std::string SimulationName;            //!< -- Identifier for Sim
+    int64_t nextProcPriority = -1;         //!< [-] Priority level for the next process
 
 private:
     uint64_t CurrentNanos = 0;  //!< [ns] Current sim time
     uint64_t NextTaskTime = 0;  //!< [ns] time for the next Task
+
+    SimThreadExecution workerThread{0, 0};
 };
 
 #endif /* _SimModel_H_ */
