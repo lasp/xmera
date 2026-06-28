@@ -28,93 +28,6 @@ static SimInstant stepProcessUpTo(SysProcess* process, SimInstant stopTime) {
     }
 }
 
-void SimThreadExecution::singleStepProcesses(int64_t const stopPri) {
-    // Advance the simulation clock to the time of the next task.
-    this->CurrentNanos = this->NextTaskTime;
-
-    // Step all processes up to the desired stop instant.
-    // Keep track of the earliest resumption time *following* the stop instant.
-    auto stopTime = SimInstant::atNanos(this->CurrentNanos).atPriority(stopPri);
-    auto nextTaskTime = SimInstant::endOfTime();
-    for (auto &localProc : this->processList) {
-        if (!localProc->isEnabled()) { continue; }
-
-        nextTaskTime = std::min(nextTaskTime, stepProcessUpTo(localProc, stopTime));
-    }
-
-    // Record the next earliest resumption time. Note that `nextTaskTime` should
-    // only be `endOfTime` if no process was enabled.
-    if (nextTaskTime != SimInstant::endOfTime()) {
-        this->NextTaskTime = nextTaskTime.realNanos;
-        this->nextProcPriority = nextTaskTime.causalPriority;
-    }
-}
-
-/*! This method steps the simulation until the specified stop time and
- stop priority have been reached.
- @return void
- */
-void SimThreadExecution::stepUntilStop() {
-    /*! - Note that we have to step until both the time is greater and the next
-     Task's start time is in the future. If the NextTaskTime is less than
-     SimStopTime, then the inPri shouldn't come into effect, so set it to -1
-     (that's less than all process priorities, so it will run through the next
-     process)*/
-    int64_t inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
-    while (this->NextTaskTime < stopThreadNanos
-           || (this->NextTaskTime == stopThreadNanos && this->nextProcPriority >= stopThreadPriority)) {
-        this->singleStepProcesses(inPri);
-        inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
-    }
-}
-
-/*! This method is currently vestigial and needs to be populated once the message
-    sharing process between different threads is handled.
-    TODO: Make this method move messages safely between threads
- @return void
- */
-void SimThreadExecution::moveProcessMessages() const {
-    for (auto const* process : this->processList) {
-        static_cast<void>(process);  // "use" the unused variable
-        // process->routeInterfaces(this->CurrentNanos);
-    }
-}
-
-/*! This method is used by the "child" thread to walk through all of its tasks
-    and processes and initialize them serially.  Note that other threads can also
-    be initializing their systems simultaneously.
- @return void
- */
-void SimThreadExecution::selfInitProcesses() const {
-    for (auto const &process : this->processList) { process->selfInitialize(); }
-}
-
-/*! This method allows the "child" thread to reset both its timing/scheduling, as
-    well as all of its allocated tasks/modules when commanded.  This is always
-    called during init, but can be called during runtime as well.
- @return void
- */
-void SimThreadExecution::resetProcesses() {
-    this->currentThreadNanos = 0;
-    this->CurrentNanos = 0;
-    this->NextTaskTime = 0;
-    for (auto const &process : this->processList) { process->reset(this->currentThreadNanos); }
-}
-
-/*! This method pops a new process onto the execution stack for the "child"
- *  thread.  It allows the user to put specific processes onto specific threads
- *  if that is desired.
- *
- *  @todo
- *    Process priority still needs to be respected in multithreaded simulation.
- *    We can't guarantee ordering of processes *across* threads, but we can still
- *    ensure that the processes hosted within a single thread are prioritized
- *    properly.
- */
-void SimThreadExecution::addNewProcess(SysProcess* newProc) {
-    processList.push_back(newProc);
-}
-
 /*! This method steps the simulation until the specified stop time and
  stop priority have been reached.
  @param SimStopTime Nanoseconds to step the simulation for
@@ -124,13 +37,20 @@ void SimThreadExecution::addNewProcess(SysProcess* newProc) {
 void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
     std::cout << std::flush;
 
-    this->workerThread.stopThreadPriority = stopPri;
-    this->workerThread.moveProcessMessages();
-    this->workerThread.setStopThreadNanos(SimStopTime);
-    this->workerThread.stepUntilStop();
+    /*! - Note that we have to step until both the time is greater and the next
+     Task's start time is in the future. If the NextTaskTime is less than
+     SimStopTime, then the inPri shouldn't come into effect, so set it to -1
+     (that's less than all process priorities, so it will run through the next
+     process)*/
+    auto simStopTime = SimInstant::atNanos(SimStopTime).atPriority(stopPri);
+    while (true) {
+        auto nextTaskTime = SimInstant::atNanos(this->NextTaskTime).atPriority(this->nextProcPriority);
 
-    this->NextTaskTime = std::min(this->workerThread.getNextTaskTime(), this->NextTaskTime);
-    this->CurrentNanos = std::min(this->workerThread.getCurrentNanos(), this->CurrentNanos);
+        if (nextTaskTime > simStopTime) { break; }
+
+        int64_t inPri = (SimStopTime == this->NextTaskTime) ? stopPri : -1;
+        this->singleStepProcesses(inPri);
+    }
 }
 
 /*! This method allows the user to attach a process to the simulation for
@@ -141,13 +61,11 @@ void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
     @param newProc the new process to be added
 */
 void SimModel::addNewProcess(SysProcess* newProc) {
-    for (auto it = this->processList.begin(); it != this->processList.end(); it++) {
-        if (newProc->processPriority > (*it)->processPriority) {
-            this->processList.insert(it, newProc);
-            return;
-        }
+    auto it = this->processList.begin();
+    for (; it != this->processList.end(); ++it) {
+        if (newProc->processPriority > (*it)->processPriority) { break; }
     }
-    this->processList.push_back(newProc);
+    this->processList.insert(it, newProc);
 }
 
 /*! This method goes through all of the processes in the simulation,
@@ -156,10 +74,10 @@ void SimModel::addNewProcess(SysProcess* newProc) {
  @return void
  */
 void SimModel::selfInitSimulation() {
-    this->workerThread.selfInitProcesses();
-
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
+
+    for (auto const &process : this->processList) { process->selfInitialize(); }
 }
 
 /*! This method goes through all of the processes in the simulation,
@@ -168,7 +86,10 @@ void SimModel::selfInitSimulation() {
  @return void
  */
 void SimModel::resetInitSimulation() {
-    this->workerThread.resetProcesses();
+    this->CurrentNanos = 0;
+    this->NextTaskTime = 0;
+
+    for (auto const &process : this->processList) { process->reset(0); }
 }
 
 void SimModel::singleStepProcesses(int64_t const stopPri) {
@@ -199,22 +120,12 @@ void SimModel::singleStepProcesses(int64_t const stopPri) {
  @return void
  */
 void SimModel::resetSimulation() {
-    this->NextTaskTime = 0;
     this->CurrentNanos = 0;
+    this->NextTaskTime = 0;
+    this->nextProcPriority = (!this->processList.empty()) ? this->processList.front()->processPriority : -1;
 
-    // Re-initialize worker thread
-    this->workerThread.setNextTaskTime(this->CurrentNanos);
-    this->workerThread.setCurrentNanos(this->CurrentNanos);
-    this->workerThread.nextProcPriority =
-        (!this->processList.empty()) ? this->processList.front()->processPriority : -1;
-
-    this->workerThread.clearProcessList();
-    for (auto &process : this->processList) {
-        process->setProcessControlStatus(false);
-        process->reInitialize();
-
-        this->workerThread.addNewProcess(process);
-    }
+    // Re-initialize all processes
+    for (auto &process : this->processList) { process->reInitialize(); }
 }
 
 uint64_t SimModel::getCurrentNanos() const {
