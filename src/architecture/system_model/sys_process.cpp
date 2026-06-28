@@ -55,10 +55,6 @@ void SysProcess::addTask(SysModelTask* task, int32_t priority) {
         .taskPriority = priority,
         .TaskPtr = task,
     });
-
-    // It may be surprising to users that adding a task might re-enable
-    // a process that was previously disabled...
-    this->enable();
 }
 
 void SysProcess::scheduleTask(ModelScheduleEntry const &scheduleEntry) {

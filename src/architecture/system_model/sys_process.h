@@ -164,16 +164,7 @@ public:
     std::string processName;
 
     //! Whether the process is currently participating in simulation at all
-    /*!
-     *  @todo
-     *    Why is this `false` by default? Currently, this is automatically set
-     *    to `true` whenever a task is scheduled -- even if a client explicitly
-     *    called `disable()` and intended for the process to be disabled at the
-     *    start of simulation. If an enabled process with no tasks is updated,
-     *    it will just return immediately without fault. So it's entirely unclear
-     *    why we want or need a process to start out disabled.
-     */
-    bool processActive = false;
+    bool processActive = true;
 
     //! The priority of this process among others within its containing thread
     /*!
