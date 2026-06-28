@@ -12,8 +12,7 @@
 void SysProcess::reset(uint64_t initialSimNanos) {
     // Reset all tasks and modules
     for (auto &task : this->processTasks) {
-        task.TaskPtr->reset();
-        task.TaskPtr->resetModels(initialSimNanos);
+        task.TaskPtr->reset(initialSimNanos);
 
         task.NextTaskStart = task.TaskPtr->getNextStartTime();
         task.TaskUpdatePeriod = task.TaskPtr->getTaskPeriod();

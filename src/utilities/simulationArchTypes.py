@@ -49,4 +49,4 @@ class TaskBaseClass(object):
         self.TaskData.enable()
 
     def reset(self, callTime):
-        self.TaskData.resetModels(callTime)
+        self.TaskData.reset(callTime)

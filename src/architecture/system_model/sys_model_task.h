@@ -91,7 +91,7 @@ public:
      *  @param[in] initialSimNanos
      *    The simulation instant associated with the initial simulation state
      */
-    void resetModels(uint64_t initialSimNanos);
+    void reset(uint64_t initialSimNanos);
 
     //! Change the update period of the task
     /*!
@@ -116,21 +116,6 @@ public:
      *    The new interval of nanoseconds that should elapse between updates
      */
     void setPeriod(uint64_t updatePeriodNanos);
-
-    //! Roll back the next update time to the *first* update time
-    /*!
-     *  This method must be used in conjunction with `resetModels()`, and must
-     *  not be used while a simulation is still in progress.
-     *
-     *  @todo
-     *    This method should be folded into `resetModels()`; it's silly that they're
-     *    separate. Invoking one method without the other would decohere the
-     *    simulation time understood by the task from the simulation time understood
-     *    by its modules.
-     */
-    void reset() {
-        this->nextUpdateNanos = this->firstUpdateNanos;
-    }
 
     //! Get the next scheduled update time for this task
     /*!
