@@ -9,27 +9,6 @@
 #include <algorithm>
 #include <iostream>
 
-static void activateNewThread(SimThreadExecution &theThread) {
-    theThread.postInit();
-
-    while (theThread.threadValid()) {
-        theThread.lockThread();
-
-        if (theThread.selfInitNow) {
-            theThread.selfInitProcesses();
-            theThread.selfInitNow = false;
-        } else if (theThread.crossInitNow) {
-            theThread.crossInitNow = false;
-        } else if (theThread.resetNow) {
-            theThread.resetProcesses();
-            theThread.resetNow = false;
-        } else {
-            theThread.stepUntilStop();
-        }
-        theThread.unlockParent();
-    }
-}
-
 //! Step a process until its next update time is after `stopTime`.
 /*!
  *  @param[in] process
@@ -60,11 +39,6 @@ void SimThreadExecution::singleStepProcesses(int64_t const stopPri) {
     for (auto &localProc : this->processList) {
         if (!localProc->isEnabled()) { continue; }
 
-        // Bail early if we're being asked to terminate. Yes, this leaves the
-        // SimThreadExecution object in a bit of a weird state. However, if
-        // we're being asked to terminate, it will be disposed of shortly anyway.
-        if (!this->threadValid()) { return; }
-
         nextTaskTime = std::min(nextTaskTime, stepProcessUpTo(localProc, stopTime));
     }
 
@@ -87,9 +61,8 @@ void SimThreadExecution::stepUntilStop() {
      (that's less than all process priorities, so it will run through the next
      process)*/
     int64_t inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
-    while (this->threadValid()
-           && (this->NextTaskTime < stopThreadNanos
-               || (this->NextTaskTime == stopThreadNanos && this->nextProcPriority >= stopThreadPriority))) {
+    while (this->NextTaskTime < stopThreadNanos
+           || (this->NextTaskTime == stopThreadNanos && this->nextProcPriority >= stopThreadPriority)) {
         this->singleStepProcesses(inPri);
         inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
     }
@@ -105,28 +78,6 @@ void SimThreadExecution::moveProcessMessages() const {
         static_cast<void>(process);  // "use" the unused variable
         // process->routeInterfaces(this->CurrentNanos);
     }
-}
-
-/*! Once threads are released for execution, this method ensures that they finish
-    their startup before the system starts to go through its initialization
-    activities.  It's very similar to the locking process, but provides different
-    functionality.
- @return void
- */
-void SimThreadExecution::waitOnInit() {
-    std::unique_lock<std::mutex> lck(this->initReadyLock);
-    while (!this->threadActive()) { (this)->initHoldVar.wait(lck); }
-}
-
-/*! This method allows the startup activities to alert the parent thread once
-    they have cleared their construction phase and are ready to go through
-    initialization.
- @return void
- */
-void SimThreadExecution::postInit() {
-    std::unique_lock<std::mutex> lck(this->initReadyLock);
-    this->threadReady();
-    this->initHoldVar.notify_one();
 }
 
 /*! This method is used by the "child" thread to walk through all of its tasks
@@ -162,28 +113,6 @@ void SimThreadExecution::resetProcesses() {
  */
 void SimThreadExecution::addNewProcess(SysProcess* newProc) {
     processList.push_back(newProc);
-    newProc->setProcessControlStatus(true);
-}
-
-/*! This Constructor is used to initialize the top-level sim model.
- */
-SimModel::SimModel() {
-    // Capture only the `workerThread` field in the thread
-    auto &self = this->workerThread;
-    this->workerThread.threadContext = new std::thread([&self]() { activateNewThread(self); });
-    this->workerThread.waitOnInit();
-}
-
-/*! This method walks through all of the child threads that have been created in
-    the system, detaches them from the architecture, and then cleans up any
-    memory that has been allocated to them in the architecture.  It just ensures
-    clean shutdown of any existing runtime stuff.
- */
-SimModel::~SimModel() {
-    this->workerThread.killThread();
-    this->workerThread.unlockThread();
-    this->workerThread.threadContext->join();
-    delete this->workerThread.threadContext;
 }
 
 /*! This method steps the simulation until the specified stop time and
@@ -195,12 +124,10 @@ SimModel::~SimModel() {
 void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
     std::cout << std::flush;
 
+    this->workerThread.stopThreadPriority = stopPri;
     this->workerThread.moveProcessMessages();
     this->workerThread.setStopThreadNanos(SimStopTime);
-
-    this->workerThread.stopThreadPriority = stopPri;
-    this->workerThread.unlockThread();
-    this->workerThread.lockParent();
+    this->workerThread.stepUntilStop();
 
     this->NextTaskTime = std::min(this->workerThread.getNextTaskTime(), this->NextTaskTime);
     this->CurrentNanos = std::min(this->workerThread.getCurrentNanos(), this->CurrentNanos);
@@ -229,9 +156,7 @@ void SimModel::addNewProcess(SysProcess* newProc) {
  @return void
  */
 void SimModel::selfInitSimulation() {
-    this->workerThread.selfInitNow = true;
-    this->workerThread.unlockThread();
-    this->workerThread.lockParent();
+    this->workerThread.selfInitProcesses();
 
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
@@ -243,9 +168,7 @@ void SimModel::selfInitSimulation() {
  @return void
  */
 void SimModel::resetInitSimulation() {
-    this->workerThread.resetNow = true;
-    this->workerThread.unlockThread();
-    this->workerThread.lockParent();
+    this->workerThread.resetProcesses();
 }
 
 void SimModel::singleStepProcesses(int64_t const stopPri) {

@@ -10,20 +10,13 @@
 
 #include <stdint.h>
 
-#include <condition_variable>
-#include <iostream>
-#include <mutex>
-#include <semaphore>
-#include <set>
-#include <thread>
 #include <vector>
 
 //! This class handles the management of a given "thread" of execution and provides the main mechanism for running
 //! concurrent jobs inside BSK
 class SimThreadExecution {
 public:
-    explicit SimThreadExecution(uint64_t threadIdent = 0, uint64_t currentSimNanos = 0)
-        : threadID(threadIdent), currentThreadNanos(currentSimNanos) {}
+    explicit SimThreadExecution(uint64_t currentSimNanos = 0) : currentThreadNanos(currentSimNanos) {}
 
     //! Update simulation stop time
     void updateNewStopTime(uint64_t newStopNanos) {
@@ -40,71 +33,6 @@ public:
     void resetProcesses();
 
     void addNewProcess(SysProcess* newProc);
-
-    //! Gets the current "thread-count" in the system
-    uint64_t procCount() const {
-        return this->processList.size();
-    }
-
-    //! Is the thread is currently allocated processes and is in execution
-    bool threadActive() const {
-        return this->threadRunning;
-    }
-
-    //! Put the thread into a running state
-    void threadReady() {
-        this->threadRunning = true;
-    }
-
-    void waitOnInit();
-    void postInit();
-
-    //! Is the thread currently usable or if it has been requested to shutdown
-    bool threadValid() const {
-        return !this->terminateThread;
-    }
-
-    //! Asks the thread to no longer be alive
-    void killThread() {
-        this->terminateThread = true;
-    }
-
-    /*!
-     *  This method provides a synchronization mechanism for the "child" thread
-     *  ensuring that it can be held at a fixed point after it finishes the
-     *  execution of a given frame until it is released by the "parent" thread.
-     */
-    void lockThread() {
-        this->selfThreadLock.acquire();
-    }
-
-    /*!
-     *  This method provides an entry point for the "parent" thread to release the
-     *  child thread for a single frame's execution.  It is intended to only be
-     *  called from the parent thread.
-     */
-    void unlockThread() {
-        this->selfThreadLock.release();
-    }
-
-    /*!
-     *  This method provides a forced synchronization on the "parent" thread so that
-     *  the parent and all other threads in the system can be forced to wait at a
-     *  known time until this thread has finished its execution for that time.
-     */
-    void lockParent() {
-        this->parentThreadLock.acquire();
-    }
-
-    /*!
-     *  This method provides an entry point for the "child" thread to unlock the
-     *  parent thread after it has finished its execution in a frame.  That way the
-     *  parent and all of its other children have to wait for this child to finish
-     *  its execution.
-     */
-    void unlockParent() {
-        this->parentThreadLock.release();
-    }
 
     //< Step simulation until stop time reached
     void stepUntilStop();
@@ -156,23 +84,8 @@ public:
     //! Current stop priority for thread
     int64_t stopThreadPriority = -1;
 
-    //! Identifier for thread
-    uint64_t threadID = 0;
-
-    //! std::thread data for concurrent execution
-    std::thread* threadContext = nullptr;
-
     //! Priority level for the next process
     int64_t nextProcPriority = -1;
-
-    //! Flag requesting self init
-    bool selfInitNow{};
-
-    //! Flag requesting cross-init
-    bool crossInitNow{};
-
-    //! Flag requesting that the thread execute reset
-    bool resetNow{};
 
 private:
     //! Current simulation time available at thread
@@ -193,28 +106,13 @@ private:
     //! Flag that indicates that it is time to take thread down
     bool terminateThread{};
 
-    //! Lock that ensures parent thread won't proceed
-    std::binary_semaphore parentThreadLock{0};
-
-    //! Lock that ensures this thread only reaches allowed time
-    std::binary_semaphore selfThreadLock{0};
-
     //! List of processes associated with thread
     std::vector<SysProcess*> processList;
-
-    //! Lock function to ensure runtime locks are configured
-    std::mutex initReadyLock;
-
-    //! Conditional variable used to prevent race conditions
-    std::condition_variable initHoldVar;
 };
 
 //! The top-level container for an entire simulation
 class SimModel {
 public:
-    SimModel();
-    ~SimModel();
-
     void selfInitSimulation();                                  //!< Method to initialize all added Tasks
     void resetInitSimulation();                                 //!< Method to reset all added tasks
     void stepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
@@ -244,7 +142,7 @@ private:
     uint64_t CurrentNanos = 0;  //!< [ns] Current sim time
     uint64_t NextTaskTime = 0;  //!< [ns] time for the next Task
 
-    SimThreadExecution workerThread{0, 0};
+    SimThreadExecution workerThread{0};
 };
 
 #endif /* _SimModel_H_ */

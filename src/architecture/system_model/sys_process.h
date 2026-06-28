@@ -160,18 +160,6 @@ public:
         for (auto const &entry : this->processTasks) { entry.TaskPtr->enable(); }
     }
 
-    //! Check whether this process has been allocated to a simulation thread
-    /*! @todo Remove this getter. The field is already public! */
-    bool getProcessControlStatus() const {
-        return this->processOnThread;
-    }
-
-    //! Indicate whether this process has been allocated to a simulation thread
-    /*! @todo Remove this setter. The field is already public! */
-    void setProcessControlStatus(bool processTaken) {
-        processOnThread = processTaken;
-    }
-
     //! Determine the next update time of the next-soonest task to update
     uint64_t getNextTaskTime() const {
         return this->nextTaskTime;
@@ -215,17 +203,6 @@ public:
      */
     bool processActive = false;
 
-    //! Whether this process has been added to a thread for execution
-    /*!
-     *  @todo
-     *    This is not the responsibility of `SysProcess` to keep track of.
-     *    No code in this class reads or writes this field except a transparent
-     *    getter/setter pair (which, mind, are redundant for a *public* field).
-     *    This state should be moved to the class that actually cares about it,
-     *    `SimModel`.
-     */
-    bool processOnThread = false;
-
     //! The priority of this process among others within its containing thread
     /*!
      *  Tasks in processes of higher priority will be updated before tasks in
@@ -235,9 +212,9 @@ public:
      *
      *  @todo
      *    Process priority should really be owned by whichever container tracks
-     *    this process (`SimModel` in single-threaded simulations and `SimThreadExecution`
-     *    in multi-thraded simulations). Nothing in this class uses this field
-     *    except a transparent setter (which is redundant for a *public* field).
+     *    this process (`SimModel` in single-threaded simulations). Nothing in
+     *    this class uses this field except a transparent setter (which is redundant
+     *    for a *public* field).
      */
     int64_t processPriority = -1;
 
