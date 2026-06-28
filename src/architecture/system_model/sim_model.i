@@ -7,6 +7,7 @@
    #include "sim_model.h"
 %}
 
+%include <attribute.i>
 %include "std_vector.i"
 %include "std_string.i"
 %include "std_set.i"
@@ -65,6 +66,12 @@ namespace std {
 %include "sys_process.h"
 %include "sim_model.h"
 %include "architecture/utilities/bskLogging.h"
+
+%attribute_readonly(SysModelTask, std::vector<ModelPriorityPair> const&,
+    TaskModels,
+    getModels,
+    self_->getModels()
+);
 
 %pythoncode %{
 class SuperInitChecker(type):

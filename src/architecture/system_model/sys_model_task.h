@@ -145,6 +145,16 @@ public:
         return this->firstUpdateNanos;
     }
 
+    //! Get an immutable view on the list of models in this task
+    /*!
+     *  Note that it is the list of models that is immutable here, not the models
+     *  themselves. It is perfectly legal to mutate one of the models obtained
+     *  from this method, so long as no other protocol of use is violated.
+     */
+    std::vector<ModelPriorityPair> const &getModels() const {
+        return this->TaskModels;
+    }
+
 private:
     //! Project a time onto this task's lattice of scheduled updates
     /*!
@@ -158,17 +168,6 @@ private:
     uint64_t projectToCurrentSchedule(uint64_t time);
 
 public:
-    //! The sequence of modules in this task, ordered by priority
-    /*!
-     *  @important
-     *    This vector *must* remain in sorted priority order. It should never
-     *    be modified by clients of `SysModelTask`.
-     *
-     *  @todo
-     *    This should be `private`. Why is this not `private`??
-     */
-    std::vector<ModelPriorityPair> TaskModels{};
-
     //! A configurable, human-readable name for this task
     std::string TaskName = "";
 
@@ -190,6 +189,14 @@ private:
 
     //! The first time (in nanoseconds) at which the task's modules will be updated
     uint64_t const firstUpdateNanos;
+
+    //! The sequence of modules in this task, ordered by priority
+    /*!
+     *  @important
+     *    This vector *must* remain in sorted priority order. It should never
+     *    be modified by clients of `SysModelTask`.
+     */
+    std::vector<ModelPriorityPair> TaskModels{};
 };
 
 #endif
