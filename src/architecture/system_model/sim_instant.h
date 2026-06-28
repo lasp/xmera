@@ -40,7 +40,7 @@ public:
     static SimInstant endOfTime() {
         return {
             .realNanos = std::numeric_limits<uint64_t>::max(),
-            .causalPriority = std::numeric_limits<int64_t>::max(),
+            .causalPriority = std::numeric_limits<int64_t>::min(),
         };
     }
 
