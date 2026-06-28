@@ -18,11 +18,8 @@ void SysProcess::reset(uint64_t initialSimNanos) {
         task.TaskUpdatePeriod = task.TaskPtr->getTaskPeriod();
     }
 
-    /*! @todo `initialSimNanos` isn't necessarily the right reset value for
-     *  `nextTaskTime`. Instead, we should query each task after reset to
-     *  determine the earliest next update time.
-     */
-    this->nextTaskTime = initialSimNanos;
+    // Record when the next task will update
+    this->nextTaskTime = (!this->processTasks.empty()) ? this->getNextTask()->NextTaskStart : initialSimNanos;
 }
 
 std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {
@@ -39,22 +36,14 @@ std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {
 }
 
 void SysProcess::singleStepNextTask(uint64_t nextSimNanos) {
-    // Find the next soonest task to update
-    auto nextTaskIt = this->getNextTask();
-    if (nextTaskIt == this->processTasks.end()) {
-        return;
-    } else if (nextTaskIt->NextTaskStart > nextSimNanos) {
-        // If the requested time does not meet our next start time, just return
-        this->nextTaskTime = nextTaskIt->NextTaskStart;
-        return;
-    }
+    if (this->processTasks.empty() || this->nextTaskTime > nextSimNanos) { return; }
 
     // Update the next task, and record when it wants to be updated again
-    SysModelTask* localTask = nextTaskIt->TaskPtr;
-    localTask->executeModels(nextSimNanos);
-    nextTaskIt->NextTaskStart = localTask->getNextStartTime();
+    auto nextTaskIt = this->getNextTask();
+    nextTaskIt->TaskPtr->executeModels(nextSimNanos);
+    nextTaskIt->NextTaskStart = nextTaskIt->TaskPtr->getNextStartTime();
 
-    // Figure out when we are going to be called next for scheduling purposes
+    // Record when the next task will update
     this->nextTaskTime = this->getNextTask()->NextTaskStart;
 }
 
@@ -91,6 +80,10 @@ bool SysProcess::changeTaskPeriod(std::string const &taskName, uint64_t newPerio
         entry.TaskPtr->setPeriod(newPeriod);
         entry.NextTaskStart = entry.TaskPtr->getNextStartTime();
         entry.TaskUpdatePeriod = entry.TaskPtr->getTaskPeriod();
+
+        // Determine the new next task time. (If the next task was this one, it
+        // might now be some other task. Worse, it might *still* be this one!)
+        this->nextTaskTime = this->getNextTask()->NextTaskStart;
 
         return true;
     }
