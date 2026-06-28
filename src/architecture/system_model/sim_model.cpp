@@ -97,11 +97,7 @@ void SimModel::singleStepProcesses(int64_t const stopPri) {
 void SimModel::resetSimulation() {
     // Reset all processes
     this->CurrentNanos = 0;
-    for (auto &process : this->processList) {
-        process->reInitialize();
-        process->selfInitialize();
-        process->reset(this->CurrentNanos);
-    }
+    for (auto &process : this->processList) { process->reset(this->CurrentNanos); }
 
     // Figure out which process will update first
     auto nextTaskTime = SimInstant::endOfTime();

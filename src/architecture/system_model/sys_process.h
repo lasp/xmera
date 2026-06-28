@@ -55,23 +55,6 @@ public:
      */
     void addTask(SysModelTask* task, int32_t priority = -1);
 
-    //! Reset the next update time for all tasks in this process
-    /*!
-     *  This method also ensures that processes are correctly ordered by priority.
-     *
-     *  @todo
-     *    Unless a client of `SysProcess` messes with `processTasks` directly,
-     *    it shouldn't be possible for `processTasks` to get out of order to begin
-     *    with. This should be confirmed, the redundant code reduced, and the
-     *    documentation clarified.
-     *
-     *  @todo
-     *    Remove this method. There doesn't seem to be any reason to ever invoke
-     *    this without also invoking `reset()` and `selfInitialize()`, both of
-     *    which also set the process-level next update time.
-     */
-    void reInitialize();
-
     //! Reset all tasks in the process, in priority order
     /*!
      *  @param[in] initialSimNanos
@@ -97,17 +80,6 @@ public:
      *    changed
      */
     bool changeTaskPeriod(std::string const &taskName, uint64_t newPeriod);
-
-    //! Reset the next update time for this process to zero nanoseconds
-    /*!
-     * @todo
-     *   Remove this method. There doesn't seem to be any reason to ever invoke
-     *   this without also invoking `reset()` and `reInitialize()`, and the former
-     *   also sets the next update time (to something more appropriate than 0ns).
-     */
-    void selfInitialize() {
-        this->nextTaskTime = 0;
-    }
 
     //! Allow this process to participate in simulation
     void enable() {

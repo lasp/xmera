@@ -10,27 +10,20 @@
 #include <utility>
 
 void SysProcess::reset(uint64_t initialSimNanos) {
-    for (auto const &task : this->processTasks) { task.TaskPtr->resetModels(initialSimNanos); }
+    // Reset all tasks and modules
+    for (auto &task : this->processTasks) {
+        task.TaskPtr->reset();
+        task.TaskPtr->resetModels(initialSimNanos);
+
+        task.NextTaskStart = task.TaskPtr->getNextStartTime();
+        task.TaskUpdatePeriod = task.TaskPtr->getTaskPeriod();
+    }
 
     /*! @todo `initialSimNanos` isn't necessarily the right reset value for
      *  `nextTaskTime`. Instead, we should query each task after reset to
      *  determine the earliest next update time.
      */
     this->nextTaskTime = initialSimNanos;
-}
-
-void SysProcess::reInitialize() {
-    // Reset the next update time for every task in this process.
-    for (auto const &task : this->processTasks) {
-        SysModelTask* localTask = task.TaskPtr;
-        localTask->reset();
-    }
-
-    // Reform the list of tasks to ensure that it is sorted by priority.
-    // (This shouldn't really be necessary...)
-    std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
-    this->processTasks.clear();
-    for (auto const &task : taskPtrs) { this->addTask(task.TaskPtr, task.taskPriority); }
 }
 
 std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {
