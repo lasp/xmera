@@ -38,6 +38,10 @@ public:
         return this->NextTaskTime;
     }
 
+    int64_t getNextProcPriority() const {
+        return this->nextProcPriority;
+    }
+
     //! Get an immutable view on the list of processes in this simulation
     /*!
      *  Note that it is the list of processes that is immutable here, not the
