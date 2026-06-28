@@ -6,7 +6,6 @@
 #define _SimModel_HH_
 
 #include <architecture/system_model/sys_process.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
@@ -33,9 +32,8 @@ public:
 
     uint64_t getCurrentNanos() const;
     uint64_t getNextTaskTime() const;
-    BSKLogger bskLogger;
+
     std::vector<SysProcess*> processList;  //!< -- List of processes we've created
-    std::string SimulationName;            //!< -- Identifier for Sim
 
 private:
     uint64_t CurrentNanos    = 0;   //!< [ns] Current sim time
