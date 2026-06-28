@@ -7,6 +7,7 @@ target_link_libraries(architecture.sim_model PRIVATE
 
 add_executable(test.architecture.sim_model
   tests/test_sys_model_task.cpp
+  tests/test_sim_model.cpp
 )
 target_link_libraries(test.architecture.sim_model PRIVATE
   GTest::gmock_main
