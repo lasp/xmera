@@ -68,30 +68,6 @@ void SimModel::addNewProcess(SysProcess* newProc) {
     this->processList.insert(it, newProc);
 }
 
-/*! This method goes through all of the processes in the simulation,
- *  all of the tasks within each process, and all of the models within
- *  each task and self-inits them.
- @return void
- */
-void SimModel::selfInitSimulation() {
-    this->NextTaskTime = 0;
-    this->CurrentNanos = 0;
-
-    for (auto const &process : this->processList) { process->selfInitialize(); }
-}
-
-/*! This method goes through all of the processes in the simulation,
- *  all of the tasks within each process, and all of the models within
- *  each task and resets them.
- @return void
- */
-void SimModel::resetInitSimulation() {
-    this->CurrentNanos = 0;
-    this->NextTaskTime = 0;
-
-    for (auto const &process : this->processList) { process->reset(0); }
-}
-
 void SimModel::singleStepProcesses(int64_t const stopPri) {
     // Advance the simulation clock to the time of the next task.
     this->CurrentNanos = this->NextTaskTime;
@@ -114,18 +90,29 @@ void SimModel::singleStepProcesses(int64_t const stopPri) {
     }
 }
 
-/*! This method is used to reset a simulation to time 0. It sets all process and
- * tasks back to the initial call times. It clears all message logs. However,
- * it does not clear all message buffers and does not reset individual models.
+/*! This method is used to reset a simulation to time 0. It fully resets all
+ * processes, tasks, and modules.
  @return void
  */
 void SimModel::resetSimulation() {
+    // Reset all processes
     this->CurrentNanos = 0;
-    this->NextTaskTime = 0;
-    this->nextProcPriority = (!this->processList.empty()) ? this->processList.front()->processPriority : -1;
+    for (auto &process : this->processList) {
+        process->reInitialize();
+        process->selfInitialize();
+        process->reset(this->CurrentNanos);
+    }
 
-    // Re-initialize all processes
-    for (auto &process : this->processList) { process->reInitialize(); }
+    // Figure out which process will update first
+    auto nextTaskTime = SimInstant::endOfTime();
+    for (auto &process : this->processList) {
+        if (!process->isEnabled()) { continue; }
+
+        auto nextProcTime = SimInstant::atNanos(process->getNextTaskTime()).atPriority(process->processPriority);
+        nextTaskTime = std::min(nextTaskTime, nextProcTime);
+    }
+    this->NextTaskTime = nextTaskTime.realNanos;
+    this->nextProcPriority = nextTaskTime.causalPriority;
 }
 
 uint64_t SimModel::getCurrentNanos() const {

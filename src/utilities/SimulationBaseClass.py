@@ -448,8 +448,6 @@ class SimBaseClass:
         Initialize the BSK simulation.  This runs the reset() method on each module.
         """
         self.TotalSim.resetSimulation()
-        self.TotalSim.selfInitSimulation()
-        self.TotalSim.resetInitSimulation()
         self.simulationInitialized = True
 
 
