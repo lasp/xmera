@@ -30,8 +30,13 @@ public:
     void addNewProcess(SysProcess* newProc);
     void resetSimulation();  //!< Reset simulation back to zero
 
-    uint64_t getCurrentNanos() const;
-    uint64_t getNextTaskTime() const;
+    uint64_t getCurrentNanos() const {
+        return this->CurrentNanos;
+    }
+
+    uint64_t getNextTaskTime() const {
+        return this->NextTaskTime;
+    }
 
     //! Get an immutable view on the list of processes in this simulation
     /*!

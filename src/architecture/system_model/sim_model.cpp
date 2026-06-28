@@ -110,11 +110,3 @@ void SimModel::resetSimulation() {
     this->NextTaskTime = nextTaskTime.realNanos;
     this->nextProcPriority = nextTaskTime.causalPriority;
 }
-
-uint64_t SimModel::getCurrentNanos() const {
-    return this->CurrentNanos;
-}
-
-uint64_t SimModel::getNextTaskTime() const {
-    return this->NextTaskTime;
-}
