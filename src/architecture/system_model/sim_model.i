@@ -67,6 +67,12 @@ namespace std {
 %include "sim_model.h"
 %include "architecture/utilities/bskLogging.h"
 
+%attribute_readonly(SimModel, std::vector<SysProcess*> const&,
+    processList,
+    getProcesses,
+    self_->getProcesses()
+);
+
 %attribute_readonly(SysModelTask, std::vector<ModelPriorityPair> const&,
     TaskModels,
     getModels,

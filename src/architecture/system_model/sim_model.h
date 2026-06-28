@@ -33,12 +33,22 @@ public:
     uint64_t getCurrentNanos() const;
     uint64_t getNextTaskTime() const;
 
-    std::vector<SysProcess*> processList;  //!< -- List of processes we've created
+    //! Get an immutable view on the list of processes in this simulation
+    /*!
+     *  Note that it is the list of processes that is immutable here, not the
+     *  processes themselves. It is perfectly legal to mutate one of the processes
+     *  obtained from this method, so long as no other protocol of use is violated.
+     */
+    std::vector<SysProcess*> const &getProcesses() const {
+        return this->processList;
+    }
 
 private:
     uint64_t CurrentNanos    = 0;   //!< [ns] Current sim time
     uint64_t NextTaskTime    = 0;   //!< [ns] time for the next Task
     int64_t nextProcPriority = -1;  //!< [-] Priority level for the next process
+
+    std::vector<SysProcess*> processList;  //!< -- List of processes we've created
 };
 
 #endif /* _SimModel_H_ */
