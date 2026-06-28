@@ -19,7 +19,8 @@ void SysProcess::reset(uint64_t initialSimNanos) {
     }
 
     // Record when the next task will update
-    this->nextTaskTime = (!this->processTasks.empty()) ? this->getNextTask()->NextTaskStart : initialSimNanos;
+    this->nextTaskTime =
+        (!this->processTasks.empty()) ? this->getNextTask()->NextTaskStart : std::numeric_limits<uint64_t>::max();
 }
 
 std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {

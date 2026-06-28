@@ -158,7 +158,7 @@ public:
      *  @todo
      *    This should be `private`. Why is this not `private`??
      */
-    std::vector<ModelScheduleEntry> processTasks;
+    std::vector<ModelScheduleEntry> processTasks = {};
 
     //! A configurable, human-readable name for this process
     std::string processName;
