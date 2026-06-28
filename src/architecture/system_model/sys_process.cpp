@@ -72,27 +72,12 @@ void SysProcess::addTask(SysModelTask* task, int32_t priority) {
 }
 
 void SysProcess::scheduleTask(ModelScheduleEntry const &scheduleEntry) {
-    SimInstant newTaskTime = {
-        .realNanos = scheduleEntry.NextTaskStart,
-        .causalPriority = scheduleEntry.taskPriority,
-    };
-
-    // Find the index separating earlier start times from later start times.
+    // Find the index separating higher priority tasks from lower priority tasks.
+    // Modules will be reset in this order, and modules that update at the same
+    // time will be tie-broken by this order.
     auto it = this->processTasks.begin();
     for (; it != this->processTasks.end(); ++it) {
-        SimInstant itTaskTime = {
-            .realNanos = it->NextTaskStart,
-            .causalPriority = it->taskPriority,
-        };
-
-        /*! @todo Why are we including `realNanos` in the comparison? This throws
-         *  off the order in which modules are reset (which, morally, should be
-         *  pure priority order), and causes lower-priority tasks to appear earlier
-         *  in the list even if they only happen to *start* earlier in the simulation.
-         *  We don't maintain next-resumption-order throughout the simulation,
-         *  so why do we start with it that way?
-         */
-        if (newTaskTime < itTaskTime) { break; }
+        if (scheduleEntry.taskPriority > it->taskPriority) { break; }
     }
 
     // Insert the module at this index. (It's okay if it's the end() iterator.)
