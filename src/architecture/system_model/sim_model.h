@@ -14,7 +14,7 @@
 //! The top-level container for an entire simulation
 class SimModel {
 public:
-    void stepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
+    void stepUntilStop(uint64_t SimStopTime, int64_t stopPri = -1);  //!< Step simulation until stop time uint64_t reached
     //! Step the processes sharing the earliest resumption time
     /*!
      *  Of all processes in the simulation, one or more will have the earliest
