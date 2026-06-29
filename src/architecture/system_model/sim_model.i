@@ -73,6 +73,12 @@ namespace std {
     self_->getProcesses()
 );
 
+%attribute_readonly(SysProcess, std::vector<ModelScheduleEntry> const&,
+    processTasks,
+    getTasks,
+    self_->getTasks()
+);
+
 %attribute_readonly(SysModelTask, std::vector<ModelPriorityPair> const&,
     TaskModels,
     getModels,

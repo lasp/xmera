@@ -137,6 +137,16 @@ public:
         return this->nextTaskTime;
     }
 
+    //! Get an immutable view on the list of tasks in this process
+    /*!
+     *  Note that it is the list of tasks that is immutable here, not the tasks
+     *  themselves. It is perfectly legal to mutate one of the tasks obtained
+     *  from this method, so long as no other protocol of use is violated.
+     */
+    std::vector<ModelScheduleEntry> const &getTasks() const {
+        return this->processTasks;
+    }
+
 private:
     //! Insert a scheduled task entry into the ordered list of tasks in this process
     /*!
@@ -149,17 +159,6 @@ private:
     std::vector<ModelScheduleEntry>::iterator getNextTask();
 
 public:
-    //! The schedule of tasks being performed by this process
-    /*!
-     *  @important
-     *    This vector *must* remain in sorted priority order. It should never
-     *    be modified by clients of `SysProcess`.
-     *
-     *  @todo
-     *    This should be `private`. Why is this not `private`??
-     */
-    std::vector<ModelScheduleEntry> processTasks = {};
-
     //! A configurable, human-readable name for this process
     std::string processName;
 
@@ -184,6 +183,9 @@ public:
 private:
     //! The next soonest time (in nanoseconds) at which some task will be updated
     uint64_t nextTaskTime = 0;
+
+    //! The schedule of tasks being performed by this process
+    std::vector<ModelScheduleEntry> processTasks = {};
 };
 
 #endif
