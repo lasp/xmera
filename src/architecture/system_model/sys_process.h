@@ -97,17 +97,6 @@ public:
         return this->enabled;
     }
 
-    //! Change the priority of this process
-    /*!
-     *  @warning
-     *    If this process has already been added to a simulation container, the
-     *    container will not be notified of the new priority. This may cause the
-     *    process to be reset in an order that doesn't comport with its new priority.
-     */
-    void setPriority(int64_t newPriority) {
-        this->processPriority = newPriority;
-    }
-
     //! Invoke `SysModelTask::disable` on every task in the module
     /*! @todo Remove this; clients should be able to iterate over tasks directly. */
     void disableTasks() {
@@ -156,6 +145,12 @@ public:
      *  processes of lower priority. *Intra*-process priority is still dictated
      *  by the individual priority associated to each task in the same process.
      *  In contrast, processes across different threads are effectively unordered.
+     *
+     *  @warning
+     *    If this process' priority is changed after it has been added to a simulation
+     *    container, the container will not be notified if the priority is changed.
+     *    This may cause the process to be reset or updated in an order that doesn't
+     *    comport with its new priority.
      *
      *  @todo
      *    Process priority should really be owned by whichever container tracks
