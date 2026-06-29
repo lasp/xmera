@@ -3,13 +3,12 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "simulation/dynamics/DynOutput/boreAngCalc/boreAngCalc.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/safeMath.h>
 
 //! The constructor.  Note that you have to overwrite the message names.
 BoreAngCalc::BoreAngCalc() {
-    CallCounts = 0;
-
     // Initialize the pointing vectors
     this->boreVec_Po.setZero();
     this->inertialHeadingVec_N.setZero();
@@ -27,9 +26,7 @@ BoreAngCalc::~BoreAngCalc() = default;
  */
 void BoreAngCalc::reset(uint64_t currentSimNanos) {
     // check if required input messages have not been included
-    if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "boreAngCalc.scStateInMsg was not linked.");
-    }
+    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "boreAngCalc.scStateInMsg was not linked."); }
 
     if (this->celBodyInMsg.isLinked()) {
         this->useCelestialHeading = true;
@@ -38,7 +35,8 @@ void BoreAngCalc::reset(uint64_t currentSimNanos) {
     } else {
         bskLogger.bskLog(
             BSK_ERROR,
-            "Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set.");
+            "Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set."
+        );
     }
 }
 

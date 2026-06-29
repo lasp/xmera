@@ -44,7 +44,7 @@ jobs:
 
       - name: Install clang-format (Linux static binary)
         run: |
-          sudo wget -qO /usr/local/bin/clang-format https://github.com/cpp-linter/clang-tools-static-binaries/releases/latest/download/clang-format-20_linux-amd64
+          sudo wget -qO /usr/local/bin/clang-format https://github.com/cpp-linter/clang-tools-static-binaries/releases/latest/download/clang-format-21_linux-amd64
           sudo chmod a+x /usr/local/bin/clang-format
           clang-format --version
 

@@ -3,19 +3,21 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "coarseSunSensor.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <inttypes.h>
 #include <math.h>
+
 #include <algorithm>
 
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
 CoarseSunSensor::CoarseSunSensor() {
-    //    this->CallCounts = 0;
     this->senBias = 0.0;
     this->senNoiseStd = 0.0;
     this->faultNoiseStd = 0.5;
@@ -49,7 +51,9 @@ CoarseSunSensor::CoarseSunSensor() {
 }
 
 //! There is nothing to do in the default destructor
-CoarseSunSensor::~CoarseSunSensor() { return; }
+CoarseSunSensor::~CoarseSunSensor() {
+    return;
+}
 
 /*!
  * Set the unit direction vector (in the body frame) with applied azimuth and elevation angle perturbations.
@@ -151,17 +155,11 @@ void CoarseSunSensor::readInputMessages() {
     this->stateCurrent = SCStatesMsgPayload{};
 
     //! - If we have a valid sun ID, read Sun ephemeris message
-    if (this->sunInMsg.isLinked()) {
-        this->sunData = this->sunInMsg();
-    }
+    if (this->sunInMsg.isLinked()) { this->sunData = this->sunInMsg(); }
     //! - If we have a valid state ID, read vehicle state ephemeris message
-    if (this->stateInMsg.isLinked()) {
-        this->stateCurrent = this->stateInMsg();
-    }
+    if (this->stateInMsg.isLinked()) { this->stateCurrent = this->stateInMsg(); }
     //! - If we have a valid eclipse ID, read eclipse message
-    if (this->sunEclipseInMsg.isLinked()) {
-        this->sunVisibilityFactor = this->sunEclipseInMsg();
-    }
+    if (this->sunEclipseInMsg.isLinked()) { this->sunVisibilityFactor = this->sunEclipseInMsg(); }
     //! - If we have a valid albedo ID, read albedo message
     if (this->albedoInMsg.isLinked()) {
         AlbedoMsgPayload albMsgData;
@@ -230,9 +228,7 @@ void CoarseSunSensor::computeTrueOutput() {
                 b = sin(this->fovEta);
                 yLim = std::max(-b * pow(1 - pow(x / a, this->n2), 1 / this->n2), -pow(1 - x * x, 0.5));
             }
-            if (fabs(y) > fabs(yLim)) {
-                signal = 0.0;
-            }
+            if (fabs(y) > fabs(yLim)) { signal = 0.0; }
         }
         this->trueValue = signal;
     }
@@ -257,9 +253,7 @@ void CoarseSunSensor::computeTrueOutput() {
     this->trueValue *= this->sunVisibilityFactor.shadowFactor;
 
     // Adding albedo value (if defined by the user)
-    if (this->albedoValue > 0.0) {
-        this->trueValue += this->albedoValue;
-    }
+    if (this->albedoValue > 0.0) { this->trueValue += this->albedoValue; }
 }
 
 /*! This method takes the true observed cosine value and converts
@@ -327,9 +321,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock) {
         configMsg.signal = this->sensedValue;
         configMsg.minSignal = this->minOutput;
         configMsg.maxSignal = this->maxOutput;
-        if (this->CSSGroupID >= 0) {
-            configMsg.CSSGroupID = this->CSSGroupID;
-        }
+        if (this->CSSGroupID >= 0) { configMsg.CSSGroupID = this->CSSGroupID; }
         eigenVectorToCArray(this->r_B, configMsg.r_B);
         eigenVectorToCArray(this->nHat_B, configMsg.nHat_B);
 
@@ -360,10 +352,14 @@ void CoarseSunSensor::updateState(uint64_t currentSimNanos) {
 
 /*! The default constructor for the constellation really just clears the
  sensor list.*/
-CSSConstellation::CSSConstellation() { this->sensorList.clear(); }
+CSSConstellation::CSSConstellation() {
+    this->sensorList.clear();
+}
 
 /*! The default destructor for the constellation just clears the sensor list.*/
-CSSConstellation::~CSSConstellation() { this->sensorList.clear(); }
+CSSConstellation::~CSSConstellation() {
+    this->sensorList.clear();
+}
 
 /*! This method is used to reset the module.
  @param currentSimNanos The current simulation time from the architecture
@@ -398,7 +394,7 @@ void CSSConstellation::updateState(uint64_t currentSimNanos) {
 
         this->outputBuffer.CosValue[itp - this->sensorList.begin()] = it->sensedValue;
     }
-    this->outputBuffer.timeTag = (double)(currentSimNanos * NANO2SEC);
+    this->outputBuffer.timeTag = (double) (currentSimNanos * NANO2SEC);
     this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, currentSimNanos);
 }
 

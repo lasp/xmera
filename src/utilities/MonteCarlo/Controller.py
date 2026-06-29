@@ -770,7 +770,7 @@ class SimulationExecutor:
                     modifications[name] = value
 
             # used if rerunning ICs from a .json file, modifications will contain the
-            # RNGSeeds that need to be set before selfInit()
+            # RNGSeeds that need to be set before reset()
             cls.populateSeeds(simInstance, modifications)
 
             # we may want to disperse parameters

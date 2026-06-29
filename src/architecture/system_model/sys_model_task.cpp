@@ -4,108 +4,56 @@
 
 #include "sys_model_task.h"
 
-/*! A construction option that allows the user to set some task parameters.
- Note that the only required argument is InputPeriod.
- @param InputPeriod The amount of nanoseconds between calls to this Task.
- @param FirstStartTime The amount of time in nanoseconds to hold a task dormant before starting.
-        After this time the task is executed at integer amounts of InputPeriod again
- */
-SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
-    : NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime) {
-    this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
+inline uint64_t SysModelTask::projectToCurrentSchedule(uint64_t time) {
+    // Judge everything relative to the origin, `firstUpdateNanos`.
+    time -= this->firstUpdateNanos;
+
+    // Truncate `time` to the nearest mutiple of `updatePeriodNanos`.
+    time = (time / this->updatePeriodNanos) * this->updatePeriodNanos;
+
+    // Re-add the offset against `firstUpdateNanos`.
+    time += this->firstUpdateNanos;
+
+    return time;
 }
 
-/*! This method self-initializes all of the models that have been added to the Task.
- @return void
- */
-void SysModelTask::selfInitTaskList() const {
-    for (auto const& modelPair : this->TaskModels) {
-        SysModel* NonIt = modelPair.ModelPtr;
-        NonIt->selfInit();
-    }
+void SysModelTask::resetModels(uint64_t initialSimNanos) {
+    for (auto const &modelPair : this->TaskModels) { modelPair.ModelPtr->reset(initialSimNanos); }
+
+    // Make sure we stick to our intended schedule.
+    this->nextUpdateNanos = this->projectToCurrentSchedule(initialSimNanos);
+    if (this->nextUpdateNanos < initialSimNanos) { this->nextUpdateNanos += this->updatePeriodNanos; }
 }
 
-/*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
- * See sys_model_task.h for related method reset()
- @return void
- @param CurrentSimTime The time to start at after reset
-*/
-void SysModelTask::resetModels(uint64_t CurrentSimTime) {
-    for (auto const& modelPair : this->TaskModels) {
-        modelPair.ModelPtr->reset(CurrentSimTime);
-    }
-    this->NextStartTime = CurrentSimTime;
-    this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
+void SysModelTask::executeModels(uint64_t nextSimNanos) {
+    this->nextUpdateNanos += this->updatePeriodNanos;
+
+    if (!this->taskActive) { return; }
+
+    for (auto &modelPair : this->TaskModels) { modelPair.ModelPtr->updateState(nextSimNanos); }
 }
 
-/*! This method executes all of the models on the Task during runtime.
- Then, it sets its NextStartTime appropriately.
- @return void
- @param currentSimNanos The current simulation time in [ns]
- */
-void SysModelTask::executeModels(uint64_t currentSimNanos) {
-    for (auto ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
-         ModelPair++) {
-        SysModel* NonIt = (ModelPair->ModelPtr);
-        NonIt->updateState(currentSimNanos);
-        NonIt->CallCounts += 1;
+void SysModelTask::addModel(SysModel* module, int32_t priority) {
+    // Find the index separating lower priorities from higher priorities.
+    auto it = this->TaskModels.begin();
+    for (; it != this->TaskModels.end(); ++it) {
+        if (priority > it->CurrentModelPriority) { break; }
     }
-    //! - NextStartTime is set to allow the scheduler to fit the next call in
-    this->NextStartTime += this->TaskPeriod;
+
+    // Insert the module at this index. (It's okay if it's the end() iterator.)
+    this->TaskModels.insert(it, {.CurrentModelPriority = priority, .ModelPtr = module});
 }
 
-/*! This method adds a new model into the Task list.  Note that the Priority
- parameter is option as it defaults to -1 (lowest, latest)
- @return void
- @param NewModel The new model that we are adding to the Task
- @param Priority The selected priority of the model being added (highest goes first)
- */
-void SysModelTask::addModel(SysModel* NewModel, int32_t Priority) {
-    ModelPriorityPair LocalPair;
+void SysModelTask::setPeriod(uint64_t updatePeriodNanos) {
+    if (this->nextUpdateNanos > this->firstUpdateNanos) {
+        uint64_t lastUpdateTime = this->nextUpdateNanos - this->updatePeriodNanos;
 
-    //! - Set the local pair with the requested priority and mode
-    LocalPair.CurrentModelPriority = Priority;
-    LocalPair.ModelPtr = NewModel;
-    //    SystemMessaging::GetInstance()->addModuleToProcess(NewModel->moduleID,
-    //            parentProc);
-    //! - Loop through the ModelPair vector and if Priority is higher than next, insert
-    for (auto ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end(); ModelPair++) {
-        if (Priority > ModelPair->CurrentModelPriority) {
-            this->TaskModels.insert(ModelPair, LocalPair);
-            return;
-        }
+        this->updatePeriodNanos = updatePeriodNanos;
+        this->nextUpdateNanos = this->projectToCurrentSchedule(this->nextUpdateNanos);
+        if (this->nextUpdateNanos <= lastUpdateTime) { this->nextUpdateNanos += updatePeriodNanos; }
+    } else {
+        // If we haven't yet performed an update, our next update time is *still*
+        // our first update time.
+        this->updatePeriodNanos = updatePeriodNanos;
     }
-    //! - If we make it to the end of the loop, this is lowest priority, put it at end
-    this->TaskModels.push_back(LocalPair);
 }
-
-/*! This method changes the period of a given task over to the requested period.
-   It attempts to keep the same offset relative to the original offset that
-   was specified at task creation.
- @return void
- @param newPeriod The period that the task should run at going forward
- */
-void SysModelTask::setPeriod(uint64_t newPeriod) {
-    //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
-    if (this->NextStartTime > this->TaskPeriod) {
-        uint64_t newStartTime = (this->NextStartTime / newPeriod) * newPeriod;
-        if (newStartTime <= (this->NextStartTime - this->TaskPeriod)) {
-            newStartTime += newPeriod;
-        }
-        this->NextStartTime = newStartTime;
-    }
-    //! - Otherwise, we just should keep the original requested first call time for the task
-    else {
-        this->NextStartTime = this->FirstTaskTime;
-    }
-    //! - Change the period of the task so that future calls will be based on the new period
-    this->TaskPeriod = newPeriod;
-}
-
-uint64_t SysModelTask::getNextStartTime() const { return this->NextStartTime; }
-
-uint64_t SysModelTask::getNextPickupTime() const { return this->NextPickupTime; }
-
-uint64_t SysModelTask::getTaskPeriod() const { return this->TaskPeriod; }
-
-uint64_t SysModelTask::getFirstTaskTime() const { return this->FirstTaskTime; }

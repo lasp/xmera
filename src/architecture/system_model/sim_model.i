@@ -60,7 +60,7 @@ namespace std {
     self.__super_init_called__ = True%}
 %rename("_SysModel") SysModel;
 
-// These three methods block waiting for child simulation threads (via BSKSemaphore::acquire).
+// These three methods block waiting for child simulation threads (via std::binary_semaphore::acquire).
 // They must release the GIL before blocking so that SWIG director callbacks in the child
 // threads can acquire it. The catch blocks re-acquire the GIL (via Py_BLOCK_THREADS, which
 // is valid inside a Py_BEGIN_ALLOW_THREADS scope) before SWIG_exception calls PyErr_SetString.
@@ -166,9 +166,9 @@ class SysModel(_SysModel, metaclass=SuperInitChecker):
             deprecated.deprecationWarn(
                     "prevRouteTime",
                     "2025/08/01",
-                    "Using prevRouteTime is deprecated. Use: getPrevRouteTime()\n"
+                    "Using prevRouteTime is deprecated, and always returns 0.\n"
             )
-            return self.getPrevRouteTime()
+            return 0
     %}
 }
 
@@ -209,24 +209,6 @@ class SysModel(_SysModel, metaclass=SuperInitChecker):
                 "Using TaskPeriod is deprecated. Use: setTaskPeriod()\n"
             )
             self.setTaskPeriod(value)
-
-        @property
-        def NextPickupTime(self):
-            deprecated.deprecationWarn(
-                "NextPickupTime",
-                "2025/08/01",
-                "Using NextPickupTime is deprecated. Use: getNextPickupTime()\n"
-            )
-            return self.getNextPickupTime()
-
-        @NextPickupTime.setter
-        def NextPickupTime(self, value):
-            deprecated.deprecationWarn(
-                "NextPickupTime",
-                "2025/08/01",
-                "Using NextPickupTime is deprecated. Use: setNextPickupTime()\n"
-            )
-            self.setNextPickupTime(value)
 
         @property
         def FirstTaskTime(self):

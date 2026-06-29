@@ -445,7 +445,7 @@ class SimBaseClass:
 
     def InitializeSimulation(self):
         """
-        Initialize the BSK simulation.  This runs the selfInit() and reset() methods on each module.
+        Initialize the BSK simulation.  This runs the reset() method on each module.
         """
         if(self.simulationInitialized):
             self.TotalSim.resetThreads(self.TotalSim.getThreadCount())
@@ -605,63 +605,57 @@ class SimBaseClass:
 
 
 def SetCArray(InputList, VarType, ArrayPointer):
-    if(isinstance(ArrayPointer, (list, tuple))):
-        raise TypeError('Cannot set a C array if it is actually a python list.  Just assign the variable to the list directly.')
-    CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
-    CurrIndex = 0
-    for CurrElem in InputList:
-        exec (CmdString)
-        CurrIndex += 1
+    setitem = getattr(sim_model, VarType + "Array_setitem")
+
+    for (CurrIndex, CurrElem) in enumerate(InputList):
+        setitem(ArrayPointer, CurrIndex, CurrElem)
 
 
 def getCArray(varType, arrayPointer, arraySize):
-    CmdString = 'outputList.append(sim_model.' + varType + 'Array_getitem(arrayPointer, currIndex))'
-    outputList = []
-    currIndex = 0
-    for currIndex in range(arraySize):
-        exec (CmdString)
-        currIndex += 1
-    return outputList
+    getitem = getattr(sim_model, varType + "Array_getitem")
+
+    return [
+        getitem(arrayPointer, currIndex)
+        for currIndex in range(arraySize)
+    ]
 
 def synchronizeTimeHistories(arrayList):
-    returnArrayList = arrayList
     timeCounter = 0
-    for i in range(len(returnArrayList)):
-        while returnArrayList[i][0,0] > returnArrayList[0][timeCounter,0]:
+    for i in range(len(arrayList)):
+        while arrayList[i][0,0] > arrayList[0][timeCounter,0]:
             timeCounter += 1
-    for i in range(len(returnArrayList)):
-        while(returnArrayList[i][1,0] < returnArrayList[0][timeCounter,0]):
-            returnArrayList[i] = np.delete(returnArrayList[i], 0, 0)
+    for i in range(len(arrayList)):
+        while(arrayList[i][1,0] < arrayList[0][timeCounter,0]):
+            arrayList[i] = np.delete(arrayList[i], 0, 0)
 
     timeCounter = -1
-    for i in range(len(returnArrayList)):
-        while returnArrayList[i][-1,0] < returnArrayList[0][timeCounter,0]:
+    for i in range(len(arrayList)):
+        while arrayList[i][-1,0] < arrayList[0][timeCounter,0]:
                 timeCounter -= 1
-    for i in range(len(returnArrayList)):
-        while(returnArrayList[i][-2,0] > returnArrayList[0][timeCounter,0]):
-            returnArrayList[i] = np.delete(returnArrayList[i], -1, 0)
+    for i in range(len(arrayList)):
+        while(arrayList[i][-2,0] > arrayList[0][timeCounter,0]):
+            arrayList[i] = np.delete(arrayList[i], -1, 0)
 
-    timeNow = returnArrayList[0][0,0] #Desirement is to have synched arrays match primary time
-    outputArrayList = []
-    indexPrev = [0]*len(returnArrayList)
-    outputArrayList = [[]]*len(returnArrayList)
-    timeNow = returnArrayList[0][0,0]
+    timeNow = arrayList[0][0,0] #Desirement is to have synched arrays match primary time
+    indexPrev = [0]*len(arrayList)
 
-    outputArrayList[0] = returnArrayList[0][0:-2, :]
-    for i in range(1, returnArrayList[0].shape[0]-1):
-        for j in range(1, len(returnArrayList)):
-            while(returnArrayList[j][indexPrev[j]+1,0] < returnArrayList[0][i,0]):
+    outputArrayList = [[]]*len(arrayList)
+    outputArrayList[0] = arrayList[0][0:-2, :]
+
+    for i in range(1, arrayList[0].shape[0]-1):
+        for j in range(1, len(arrayList)):
+            while(arrayList[j][indexPrev[j]+1,0] < arrayList[0][i,0]):
                 indexPrev[j] += 1
 
-            dataProp = returnArrayList[j][indexPrev[j]+1,1:] - returnArrayList[j][indexPrev[j],1:]
-            dataProp *= (timeNow - returnArrayList[j][indexPrev[j],0])/(returnArrayList[j][indexPrev[j]+1,0] - returnArrayList[j][indexPrev[j],0])
-            dataProp += returnArrayList[j][indexPrev[j],1:]
+            dataProp = arrayList[j][indexPrev[j]+1,1:] - arrayList[j][indexPrev[j],1:]
+            dataProp *= (timeNow - arrayList[j][indexPrev[j],0])/(arrayList[j][indexPrev[j]+1,0] - arrayList[j][indexPrev[j],0])
+            dataProp += arrayList[j][indexPrev[j],1:]
             dataRow = [timeNow]
             dataRow.extend(dataProp.tolist())
             outputArrayList[j].append(dataRow)
-        timePrevious = timeNow
-        timeNow = returnArrayList[0][i,0]
-    for j in range(1, len(returnArrayList)):
+        timeNow = arrayList[0][i,0]
+
+    for j in range(1, len(arrayList)):
         outputArrayList[j] = np.array(outputArrayList[j])
 
     return outputArrayList

@@ -55,4 +55,10 @@ target_link_libraries(test_imageReaderFromFile PRIVATE
     opencv_imgproc
     opencv_core
 )
+# Suppress OpenCV warnings on clang due to its vcpkg distribution
+# gcc doesn't emit such warnings
+target_link_options(test_imageReaderFromFile PRIVATE
+  "$<$<PLATFORM_ID:Darwin>:-Wl,-no_warn_duplicate_libraries>"
+)
+
 gtest_discover_tests(test_imageReaderFromFile)

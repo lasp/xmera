@@ -3,23 +3,28 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "spiceInterface.h"
+
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/simDefinitions.h>
+
 #include <SpiceUsr.h>
+#include <string.h>
+
 #include <cmath>
 #include <limits>
-#include <string.h>
 #include <sstream>
 
-void SecondaryBody::setPositionOffset(const Eigen::Vector3d& offset) { this->offset = offset; }
+void SecondaryBody::setPositionOffset(Eigen::Vector3d const &offset) {
+    this->offset = offset;
+}
 
-Eigen::Vector3d SecondaryBody::getPositionOffset() const { return this->offset; }
+Eigen::Vector3d SecondaryBody::getPositionOffset() const {
+    return this->offset;
+}
 
 Eigen::Vector3d SecondaryBody::getPositionOffsetAt(double elapsedSeconds) const {
-    if (this->orbitalPeriod <= 0.0) {
-        return this->offset;
-    }
+    if (this->orbitalPeriod <= 0.0) { return this->offset; }
     // The orbit is a circle of radius |offset| centered on the primary. The plane
     // normal is offset x (offset x up): this lies in the offset-up plane, so the
     // orbit plane itself tilts toward the equator (perpendicular to up) rather
@@ -28,7 +33,7 @@ Eigen::Vector3d SecondaryBody::getPositionOffsetAt(double elapsedSeconds) const 
     // |offset x up| / |offset| = sin(angle); when offset is parallel to up this
     // collapses to float roundoff, so detect it with a small multiple of machine eps.
     constexpr double parallelTol = 8.0 * std::numeric_limits<double>::epsilon();
-    const Eigen::Vector3d up(0.0, 0.0, 1.0);
+    Eigen::Vector3d const up(0.0, 0.0, 1.0);
     Eigen::Vector3d intermediate = this->offset.cross(up);
     if (intermediate.norm() < parallelTol * this->offset.norm()) {
         intermediate = this->offset.cross(Eigen::Vector3d(1.0, 0.0, 0.0));
@@ -36,18 +41,26 @@ Eigen::Vector3d SecondaryBody::getPositionOffsetAt(double elapsedSeconds) const 
     Eigen::Vector3d planeNormal = this->offset.cross(intermediate);
     planeNormal.normalize();
 
-    const Eigen::Vector3d perp = planeNormal.cross(this->offset);
-    const double angle = 2.0 * M_PI * elapsedSeconds / this->orbitalPeriod;
+    Eigen::Vector3d const perp = planeNormal.cross(this->offset);
+    double const angle = 2.0 * M_PI * elapsedSeconds / this->orbitalPeriod;
     return std::cos(angle) * this->offset + std::sin(angle) * perp;
 }
 
-void SecondaryBody::setSecondaryName(const std::string& name) { this->secondaryName = name; }
+void SecondaryBody::setSecondaryName(std::string const &name) {
+    this->secondaryName = name;
+}
 
-std::string SecondaryBody::getSecondaryName() const { return this->secondaryName; }
+std::string SecondaryBody::getSecondaryName() const {
+    return this->secondaryName;
+}
 
-void SecondaryBody::setOrbitalPeriod(double period) { this->orbitalPeriod = period; }
+void SecondaryBody::setOrbitalPeriod(double period) {
+    this->orbitalPeriod = period;
+}
 
-double SecondaryBody::getOrbitalPeriod() const { return this->orbitalPeriod; }
+double SecondaryBody::getOrbitalPeriod() const {
+    return this->orbitalPeriod;
+}
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
@@ -57,7 +70,6 @@ SpiceInterface::SpiceInterface() {
     SPICEDataPath = "";
     SPICELoaded = false;
     charBufferSize = 512;
-    CallCounts = 0;
     J2000ETInit = 0;
     J2000Current = 0.0;
     julianDateCurrent = 0.0;
@@ -75,15 +87,17 @@ SpiceInterface::SpiceInterface() {
 
     //! - set default epoch time information
     char string[255];
-    snprintf(string,
-             255,
-             "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)",
-             EPOCH_YEAR,
-             EPOCH_MONTH,
-             EPOCH_DAY,
-             EPOCH_HOUR,
-             EPOCH_MIN,
-             EPOCH_SEC);
+    snprintf(
+        string,
+        255,
+        "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)",
+        EPOCH_YEAR,
+        EPOCH_MONTH,
+        EPOCH_DAY,
+        EPOCH_HOUR,
+        EPOCH_MIN,
+        EPOCH_SEC
+    );
     this->UTCCalInit = string;
     planetWithSecondary = "";
     secondaryBody = SecondaryBody();
@@ -92,22 +106,18 @@ SpiceInterface::SpiceInterface() {
 /*! The only needed activity in the destructor is to delete the spice I/O buffer
  that was allocated in the constructor*/
 SpiceInterface::~SpiceInterface() {
-    for (long unsigned int c = 0; c < this->planetStateOutMsgs.size(); c++) {
-        delete this->planetStateOutMsgs.at(c);
-    }
-    for (long unsigned int c = 0; c < this->scStateOutMsgs.size(); c++) {
-        delete this->scStateOutMsgs.at(c);
-    }
-    for (long unsigned int c = 0; c < this->attRefStateOutMsgs.size(); c++) {
-        delete this->attRefStateOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->planetStateOutMsgs.size(); c++) { delete this->planetStateOutMsgs.at(c); }
+    for (long unsigned int c = 0; c < this->scStateOutMsgs.size(); c++) { delete this->scStateOutMsgs.at(c); }
+    for (long unsigned int c = 0; c < this->attRefStateOutMsgs.size(); c++) { delete this->attRefStateOutMsgs.at(c); }
     for (long unsigned int c = 0; c < this->transRefStateOutMsgs.size(); c++) {
         delete this->transRefStateOutMsgs.at(c);
     }
     delete[] this->spiceBuffer;
 }
 
-void SpiceInterface::clearKeeper() { kclear_c(); }
+void SpiceInterface::clearKeeper() {
+    kclear_c();
+}
 
 /*! Reset the module to original configuration values. */
 void SpiceInterface::reset(uint64_t CurrenSimNanos) {
@@ -118,16 +128,16 @@ void SpiceInterface::reset(uint64_t CurrenSimNanos) {
     }
     //!- Load the SPICE kernels if they haven't already been loaded
     if (!this->SPICELoaded) {
-        if (loadSpiceKernel((char*)"naif0012.tls", this->SPICEDataPath.c_str())) {
+        if (loadSpiceKernel((char*) "naif0012.tls", this->SPICEDataPath.c_str())) {
             bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "naif0012.tls");
         }
-        if (loadSpiceKernel((char*)"pck00010.tpc", this->SPICEDataPath.c_str())) {
+        if (loadSpiceKernel((char*) "pck00010.tpc", this->SPICEDataPath.c_str())) {
             bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "pck00010.tpc");
         }
-        if (loadSpiceKernel((char*)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
+        if (loadSpiceKernel((char*) "de-403-masses.tpc", this->SPICEDataPath.c_str())) {
             bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de-403-masses.tpc");
         }
-        if (loadSpiceKernel((char*)"de430.bsp", this->SPICEDataPath.c_str())) {
+        if (loadSpiceKernel((char*) "de430.bsp", this->SPICEDataPath.c_str())) {
             bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de430.tpc");
         }
         this->SPICELoaded = true;
@@ -182,21 +192,25 @@ void SpiceInterface::initTimeData() {
         EpochMsgPayload epochMsg{};
         epochMsg = this->epochInMsg();
         if (!this->epochInMsg.isWritten()) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "The input epoch message name was set, but the message was never written.  Not using the "
-                             "input message.");
+            bskLogger.bskLog(
+                BSK_ERROR,
+                "The input epoch message name was set, but the message was never written.  Not using the "
+                "input message."
+            );
         } else {
             // Set the epoch information from the input message
             char string[255];
-            snprintf(string,
-                     255,
-                     "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)",
-                     epochMsg.year,
-                     epochMsg.month,
-                     epochMsg.day,
-                     epochMsg.hours,
-                     epochMsg.minutes,
-                     epochMsg.seconds);
+            snprintf(
+                string,
+                255,
+                "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)",
+                epochMsg.year,
+                epochMsg.month,
+                epochMsg.day,
+                epochMsg.hours,
+                epochMsg.minutes,
+                epochMsg.seconds
+            );
             this->UTCCalInit = string;
         }
     }
@@ -220,20 +234,21 @@ void SpiceInterface::computeGPSData() {
     //! - The difference between the epochs in julian date terms is the total
     JDDifference = this->J2000Current - this->JDGPSEpoch;
     //! - Scale the elapsed by a week's worth of seconds to get week
-    this->GPSWeek = (uint16_t)(JDDifference / (7 * 86400));
+    this->GPSWeek = (uint16_t) (JDDifference / (7 * 86'400));
     //! - Subtract out the GPS week scaled up to seconds to get time in week
-    this->GPSSeconds = JDDifference - this->GPSWeek * 7 * 86400;
+    this->GPSSeconds = JDDifference - this->GPSWeek * 7 * 86'400;
 
     //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
-    this->GPSRollovers = this->GPSWeek / 1024;
-    this->GPSWeek = (uint16_t)(this->GPSWeek - this->GPSRollovers * 1024);
+    this->GPSRollovers = this->GPSWeek / 1'024;
+    this->GPSWeek = (uint16_t) (this->GPSWeek - this->GPSRollovers * 1'024);
 }
 
 SpicePlanetStateMsgPayload SpiceInterface::populateSecondaryBodyMsg(
-    const SpicePlanetStateMsgPayload& primaryBody) const {
+    SpicePlanetStateMsgPayload const &primaryBody
+) const {
     SpicePlanetStateMsgPayload message = primaryBody;
-    const double elapsedSeconds = this->J2000Current - this->J2000ETInit;
-    const auto pos = this->secondaryBody.getPositionOffsetAt(elapsedSeconds);
+    double const elapsedSeconds = this->J2000Current - this->J2000ETInit;
+    auto const pos = this->secondaryBody.getPositionOffsetAt(elapsedSeconds);
     message.PositionVector[0] += pos[0];
     message.PositionVector[1] += pos[1];
     message.PositionVector[2] += pos[2];
@@ -316,9 +331,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     std::vector<std::string>::iterator it;
     this->planetNames = planetNames;
     /* clear the planet state message and payload vectors */
-    for (long unsigned int c = 0; c < this->planetStateOutMsgs.size(); c++) {
-        delete this->planetStateOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->planetStateOutMsgs.size(); c++) { delete this->planetStateOutMsgs.at(c); }
     this->planetStateOutMsgs.clear();
     this->planetData.clear();
 
@@ -330,9 +343,11 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
         SpicePlanetStateMsgPayload newPlanet = {};
         m33SetIdentity(newPlanet.J20002Pfix);
         if (it->size() >= MAX_BODY_NAME_LENGTH) {
-            bskLogger.bskLog(BSK_WARNING,
-                             "spiceInterface: Warning, your planet name is too long for me.  Ignoring: %s",
-                             (*it).c_str());
+            bskLogger.bskLog(
+                BSK_WARNING,
+                "spiceInterface: Warning, your planet name is too long for me.  Ignoring: %s",
+                (*it).c_str()
+            );
             continue;
         }
         strcpy(newPlanet.PlanetName, it->c_str());
@@ -352,12 +367,8 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
     SpiceInt frmCode;
 
     /* clear the spacecraft state message and payload vectors */
-    for (long unsigned int c = 0; c < this->scStateOutMsgs.size(); c++) {
-        delete this->scStateOutMsgs.at(c);
-    }
-    for (long unsigned int c = 0; c < this->attRefStateOutMsgs.size(); c++) {
-        delete this->attRefStateOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->scStateOutMsgs.size(); c++) { delete this->scStateOutMsgs.at(c); }
+    for (long unsigned int c = 0; c < this->attRefStateOutMsgs.size(); c++) { delete this->attRefStateOutMsgs.at(c); }
     for (long unsigned int c = 0; c < this->transRefStateOutMsgs.size(); c++) {
         delete this->transRefStateOutMsgs.at(c);
     }
@@ -383,9 +394,11 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
         SpicePlanetStateMsgPayload newSpacecraft = {};
         m33SetIdentity(newSpacecraft.J20002Pfix);
         if (it->size() >= MAX_BODY_NAME_LENGTH) {
-            bskLogger.bskLog(BSK_WARNING,
-                             "spiceInterface: Warning, your spacecraft name is too long for me.  Ignoring: %s",
-                             (*it).c_str());
+            bskLogger.bskLog(
+                BSK_WARNING,
+                "spiceInterface: Warning, your spacecraft name is too long for me.  Ignoring: %s",
+                (*it).c_str()
+            );
             continue;
         }
         strcpy(newSpacecraft.PlanetName, it->c_str());
@@ -406,7 +419,7 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
 @param name Name of the primary celestial body in the planet list
 @param offsetBody The SecondaryBody to attach
  */
-void SpiceInterface::setOffsetBody(const std::string& name, const SecondaryBody& offsetBody) {
+void SpiceInterface::setOffsetBody(std::string const &name, SecondaryBody const &offsetBody) {
     this->planetWithSecondary = name;
     this->secondaryBody = offsetBody;
 }
@@ -414,7 +427,9 @@ void SpiceInterface::setOffsetBody(const std::string& name, const SecondaryBody&
 /*! Stop publishing the secondary state output message. The stored SecondaryBody
  configuration is preserved, so a subsequent setOffsetBody() call re-activates it.
  */
-void SpiceInterface::passivateSecondary() { this->planetWithSecondary = ""; }
+void SpiceInterface::passivateSecondary() {
+    this->planetWithSecondary = "";
+}
 
 /*! This method gets the state of each spice item that has been added to the module
  and saves the information off into the array.
@@ -436,13 +451,15 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spic
         double localState[6];
         std::string planetFrame = "";
 
-        spkezr_c(planit->PlanetName,
-                 this->J2000Current,
-                 this->referenceBase.c_str(),
-                 "NONE",
-                 this->zeroBase.c_str(),
-                 localState,
-                 &lighttime);
+        spkezr_c(
+            planit->PlanetName,
+            this->J2000Current,
+            this->referenceBase.c_str(),
+            "NONE",
+            this->zeroBase.c_str(),
+            localState,
+            &lighttime
+        );
         v3Copy(&localState[0], planit->PositionVector);
         v3Copy(&localState[3], planit->VelocityVector);
         v3Scale(1000., planit->PositionVector, planit->PositionVector);
@@ -484,7 +501,7 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spic
  @param kernelName The name of the kernel we are loading
  @param dataPath The path to the data area on the filesystem
  */
-int SpiceInterface::loadSpiceKernel(char* kernelName, const char* dataPath) {
+int SpiceInterface::loadSpiceKernel(char* kernelName, char const* dataPath) {
     char* fileName = new char[this->charBufferSize];
     SpiceChar* name = new SpiceChar[this->charBufferSize];
 
@@ -501,9 +518,7 @@ int SpiceInterface::loadSpiceKernel(char* kernelName, const char* dataPath) {
     erract_c("SET", this->charBufferSize, name);
     delete[] fileName;
     delete[] name;
-    if (failed_c()) {
-        return 1;
-    }
+    if (failed_c()) { return 1; }
     return 0;
 }
 
@@ -515,7 +530,7 @@ int SpiceInterface::loadSpiceKernel(char* kernelName, const char* dataPath) {
  @param kernelName The name of the kernel we are unloading
  @param dataPath The path to the data area on the filesystem
  */
-int SpiceInterface::unloadSpiceKernel(char* kernelName, const char* dataPath) {
+int SpiceInterface::unloadSpiceKernel(char* kernelName, char const* dataPath) {
     char* fileName = new char[this->charBufferSize];
     SpiceChar* name = new SpiceChar[this->charBufferSize];
 
@@ -528,9 +543,7 @@ int SpiceInterface::unloadSpiceKernel(char* kernelName, const char* dataPath) {
     unload_c(fileName);
     delete[] fileName;
     delete[] name;
-    if (failed_c()) {
-        return 1;
-    }
+    if (failed_c()) { return 1; }
     return 0;
 }
 
@@ -538,18 +551,20 @@ std::string SpiceInterface::getCurrentTimeString() {
     char* spiceOutputBuffer;
     int64_t allowedOutputLength;
 
-    allowedOutputLength = (int64_t)this->timeOutPicture.size() - 5;
+    allowedOutputLength = (int64_t) this->timeOutPicture.size() - 5;
 
     if (allowedOutputLength < 0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "The output format string is not long enough. It should be much larger than 5 characters.  It "
-                         "is currently: %s",
-                         this->timeOutPicture.c_str());
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "The output format string is not long enough. It should be much larger than 5 characters.  It "
+            "is currently: %s",
+            this->timeOutPicture.c_str()
+        );
         return ("");
     }
 
     spiceOutputBuffer = new char[allowedOutputLength];
-    timout_c(this->J2000Current, this->timeOutPicture.c_str(), (SpiceInt)allowedOutputLength, spiceOutputBuffer);
+    timout_c(this->J2000Current, this->timeOutPicture.c_str(), (SpiceInt) allowedOutputLength, spiceOutputBuffer);
     std::string returnTimeString = spiceOutputBuffer;
     delete[] spiceOutputBuffer;
     return (returnTimeString);
