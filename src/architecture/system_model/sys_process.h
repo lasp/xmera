@@ -97,18 +97,6 @@ public:
         return this->processActive;
     }
 
-    //! Change the human-readable name of this process
-    /*! @todo The field is already public. Remove this setter. */
-    void setName(std::string const &newName) {
-        this->processName = newName;
-    }
-
-    //! Obtain the human-readable name of this process
-    /*! @todo The field is already public. Remove this getter. */
-    std::string getName() const {
-        return this->processName;
-    }
-
     //! Change the priority of this process
     /*!
      *  @warning
@@ -160,7 +148,7 @@ private:
 
 public:
     //! A configurable, human-readable name for this process
-    std::string processName;
+    std::string processName = "";
 
     //! Whether the process is currently participating in simulation at all
     bool processActive = true;
