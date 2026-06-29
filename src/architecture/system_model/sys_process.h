@@ -83,18 +83,18 @@ public:
 
     //! Allow this process to participate in simulation
     void enable() {
-        this->processActive = true;
+        this->enabled = true;
     }
 
     //! Prevent this process from participating in simulation
     void disable() {
-        this->processActive = false;
+        this->enabled = false;
     }
 
     //! Determine whether the process is currently participating in simulation
     /*! @todo The field is already public. Remove this getter. */
     bool isEnabled() const {
-        return this->processActive;
+        return this->enabled;
     }
 
     //! Change the priority of this process
@@ -150,9 +150,6 @@ public:
     //! A configurable, human-readable name for this process
     std::string processName = "";
 
-    //! Whether the process is currently participating in simulation at all
-    bool processActive = true;
-
     //! The priority of this process among others within its containing thread
     /*!
      *  Tasks in processes of higher priority will be updated before tasks in
@@ -171,6 +168,9 @@ public:
 private:
     //! The next soonest time (in nanoseconds) at which some task will be updated
     uint64_t nextTaskTime = 0;
+
+    //! Whether the process is currently participating in simulation at all
+    bool enabled = true;
 
     //! The schedule of tasks being performed by this process
     std::vector<ModelScheduleEntry> processTasks = {};
