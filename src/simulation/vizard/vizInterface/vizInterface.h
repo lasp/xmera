@@ -5,31 +5,33 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
-#include "vizMessage.pb.h"
-#include <zmq.h>
-#include <fstream>
-#include <map>
-#include <vector>
-
-#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include "../_GeneralModuleFiles/vizStructures.h"
-
+#include "vizMessage.pb.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/EpochMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/simDefinitions.h>
 
-#define VIZ_MAX_SIZE 100000
+#include <zmq.h>
+
+#include <ctime>
+#include <fstream>
+#include <map>
+#include <vector>
+
+// clang-format off
+#define VIZ_MAX_SIZE 100000  // no digit separator: this header is parsed by SWIG, which cannot read C++ integer separators
+// clang-format on
 
 /*! Defines a data structure for the spacecraft state messages and ID's.
  */
 class VizInterface : public SysModel {
-   public:
+public:
     VizInterface();
     ~VizInterface();
     void reset(uint64_t currentSimNanos);
@@ -38,18 +40,20 @@ class VizInterface : public SysModel {
     void WriteProtobuffer(uint64_t currentSimNanos);
     void addCamMsgToModule(Message<CameraConfigMsgPayload>* tmpMsg);
 
-   public:
+public:
     std::vector<VizSpacecraftData> scData;  //!< [-] vector of spacecraft data containers
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>
         spiceInMsgs;                                //!< [-] vector of input messages of planet Spice data
     std::vector<LocationPbMsg*> locations;          //!< [] vector of ground or spacecraft locations
     std::vector<GravBodyInfo> gravBodyInformation;  //!< [-] vector of gravitational body info
     std::vector<Message<CameraImageMsgPayload>*>
-        opnavImageOutMsgs;           //!< vector of vizard instrument camera output messages
-    int opNavMode;                   /*!< [int] Set non-zero positive value  if Unity/Viz couple in direct
-                                      communication. (1 - regular opNav, 2 - performance opNav) */
-    bool saveFile;                   //!< [Bool] Set True if Vizard should save a file of the data.
-    bool liveStream;                 //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
+        opnavImageOutMsgs;  //!< vector of vizard instrument camera output messages
+    int opNavMode;          /*!< [int] Set non-zero positive value  if Unity/Viz couple in direct
+                             communication. (1 - regular opNav, 2 - performance opNav) */
+    bool saveFile;          //!< [Bool] Set True if Vizard should save a file of the data.
+
+    bool liveStream;       //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
+    bool broadcastStream;  //!< [Bool] Set True if messages should be broadcast for listener Vizards to pick up.
     std::vector<void*> bskImagePtrs; /*!< [RUN] vector of permanent pointers for the images to be used in BSK
                                           without relying on ZMQ because ZMQ will free it (whenever, who knows) */
 
@@ -62,9 +66,13 @@ class VizInterface : public SysModel {
     VizSettings settings;          //!< [-] container for the Viz settings that can be specified from BSK
     LiveVizSettings liveSettings;  //!< [-] container for Viz settings that are updated on each time step
 
-    std::string comProtocol;    //!< Communication protocol to use when connecting to Vizard
-    std::string comAddress;     //!< Communication address to use when connecting to Vizard
-    std::string comPortNumber;  //!< Communication port number to use when connecting to Vizard
+    std::string reqComProtocol;         //!< Communication protocol to use when connecting to 2-way Vizard
+    std::string reqComAddress;          //!< Communication address to use when connecting to 2-way Vizard
+    std::string reqPortNumber;          //!< Communication port number to use when connecting to 2-way Vizard
+    std::string pubComProtocol;         //!< Communication protocol to use when connecting to broadcast Vizard
+    std::string pubComAddress;          //!< Communication address to use when connecting to broadcast Vizard
+    std::string pubPortNumber;          //!< Communication port number to use when connecting to broadcast Vizard
+    double broadcastSettingsSendDelay;  //!< Real-time delay between sending Viz settings to broadcast socket
 
     ReadFunctor<EpochMsgPayload> epochInMsg;  //!< [-] simulation epoch date/time input msg
     MsgCurrStatus epochMsgStatus;             //!< [-] ID of the epoch msg
@@ -72,17 +80,24 @@ class VizInterface : public SysModel {
 
     BSKLogger bskLogger;  //!< [-] BSK Logging object
 
-   private:
+private:
     // ZeroMQ State
-    void* context;
-    void* requester_socket;
-    int firstPass;  //!< Flag to intialize the viz at first timestep
+    void* requester_context;  //!< 2-way context pointer (container for socket management)
+    void* requester_socket;   //!< 2-way socket pointer (ZMQ_REQ)
+    void* publisher_context;  //!< Broadcast context pointer (container for socket management)
+    void* publisher_socket;   //!< Broadcast socket pointer (ZMQ_PUB)
+    int firstPass;            //!< Flag to intialize the viz at first timestep
 
     std::vector<MsgCurrStatus> spiceInMsgStatus;           //!< [-] status of the incoming planets' spice data messages
     std::vector<SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies
     std::ofstream* outputStream;                           //!< [-] Output file stream opened in reset
-    void requestImage(size_t camCounter,
-                      uint64_t currentSimNanos);  //!<   request image from Vizard and store it in output img msg
+    int64_t now;                                           //!< Current system time stamp
+    int64_t lastSettingsSendTime;  //!< System time stamp when settings message was last sent to broadcast socket
+
+    void requestImage(
+        size_t camCounter,
+        uint64_t currentSimNanos
+    );  //!<   request image from Vizard and store it in output img msg
 };
 
 #endif /* VIZ_INTERFACE_H */
