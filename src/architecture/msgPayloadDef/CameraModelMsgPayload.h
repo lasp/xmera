@@ -47,6 +47,12 @@ typedef struct {
                           //!< wavelengths
     char imageFormat[MAX_FORMAT_LENGTH];  //!< image format (raw, png, jpeg)
     int bitDepth;                         //!< bit depth if raw is selected
+    uint32_t darkCurrentPattern;          //!< [-] Seed used to generate the dark current noise pattern
+    double darkCurrentStdDeviation;       //!< [e-/s] Dark current rate standard deviation in electrons per second
+    bool isGrayscale;                     //!< [-] Determines if images are grayscale or not
+    uint32_t pixelDefectPattern;          //!< [-] Seed used to generate the pixel defect pattern
+    double stuckPixelRate;                //!< [-] Probability of a stuck pixel (e.g. 0.01 = 1%)
+    double deadPixelRate;                 //!< [-] Probability of a dead pixel (e.g. 0.01 = 1%)
 } CameraModelMsgPayload;
 
 #endif
