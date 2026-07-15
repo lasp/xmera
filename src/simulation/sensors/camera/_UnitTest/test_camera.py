@@ -148,6 +148,12 @@ def test_camera(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurS
     module.setTransmission(0.9)
     module.setImageFormat("png")
     module.setBitDepth(8)
+    module.setDarkCurrentPattern(42)
+    module.setDarkCurrentStdDeviation(0.02)
+    module.setIsGrayscale(True)
+    module.setPixelDefectPattern(7)
+    module.setStuckPixelRate(0.01)
+    module.setDeadPixelRate(0.03)
 
     # Noise parameters
     module.gaussian = gauss
@@ -251,6 +257,18 @@ def test_camera(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurS
                             "Test failed image format")
     np.testing.assert_equal(dataLogCameraModel.bitDepth, module.getBitDepth(),
                             "Test failed bit depth")
+    np.testing.assert_equal(dataLogCameraModel.darkCurrentPattern, module.getDarkCurrentPattern(),
+                            "Test failed dark current pattern seed")
+    np.testing.assert_equal(dataLogCameraModel.darkCurrentStdDeviation, module.getDarkCurrentStdDeviation(),
+                            "Test failed dark current standard deviation")
+    np.testing.assert_equal(dataLogCameraModel.isGrayscale, module.getIsGrayscale(),
+                            "Test failed grayscale flag")
+    np.testing.assert_equal(dataLogCameraModel.pixelDefectPattern, module.getPixelDefectPattern(),
+                            "Test failed pixel defect pattern seed")
+    np.testing.assert_equal(dataLogCameraModel.stuckPixelRate, module.getStuckPixelRate(),
+                            "Test failed stuck pixel rate")
+    np.testing.assert_equal(dataLogCameraModel.deadPixelRate, module.getDeadPixelRate(),
+                            "Test failed dead pixel rate")
 
     #  Error check for corruption
     err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)) / np.linalg.norm(

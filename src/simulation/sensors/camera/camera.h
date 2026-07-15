@@ -101,6 +101,18 @@ class Camera : public SysModel {
     std::string getImageFormat() const;
     void setBitDepth(int bitDepthValue);
     int getBitDepth() const;
+    void setDarkCurrentPattern(uint32_t darkCurrentPatternValue);
+    uint32_t getDarkCurrentPattern() const;
+    void setDarkCurrentStdDeviation(double darkCurrentStdDeviationValue);
+    double getDarkCurrentStdDeviation() const;
+    void setIsGrayscale(bool isGrayscaleValue);
+    bool getIsGrayscale() const;
+    void setPixelDefectPattern(uint32_t pixelDefectPatternValue);
+    uint32_t getPixelDefectPattern() const;
+    void setStuckPixelRate(double stuckPixelRateValue);
+    double getStuckPixelRate() const;
+    void setDeadPixelRate(double deadPixelRateValue);
+    double getDeadPixelRate() const;
 
    private:
     std::string parentSpacecraftName{};  //!< [-] Name of the parent body to which the camera should be attached
@@ -143,6 +155,12 @@ class Camera : public SysModel {
                                 //!< wavelengths
     std::string imageFormat{};  //!< [-] Image format (raw, png, jpeg)
     int bitDepth{};             //!< [-] Bit depth if raw format is selected
+    uint32_t darkCurrentPattern{};     //!< [-] Seed used to generate the dark current noise pattern
+    double darkCurrentStdDeviation{};  //!< [e-/s] Dark current rate standard deviation in electrons per second
+    bool isGrayscale{};                //!< [-] Determines if images are grayscale or not
+    uint32_t pixelDefectPattern{};     //!< [-] Seed used to generate the pixel defect pattern
+    double stuckPixelRate{};           //!< [-] Probability of a stuck pixel (e.g. 0.01 = 1%)
+    double deadPixelRate{};            //!< [-] Probability of a dead pixel (e.g. 0.01 = 1%)
 
    public:
     std::string filename{};                              //!< Filename for module to read an image directly

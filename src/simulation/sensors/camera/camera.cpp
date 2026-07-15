@@ -355,6 +355,12 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.transmission = this->transmission;
     strcpy(cameraModelMsg.imageFormat, this->imageFormat.c_str());
     cameraModelMsg.bitDepth = this->bitDepth;
+    cameraModelMsg.darkCurrentPattern = this->darkCurrentPattern;
+    cameraModelMsg.darkCurrentStdDeviation = this->darkCurrentStdDeviation;
+    cameraModelMsg.isGrayscale = this->isGrayscale;
+    cameraModelMsg.pixelDefectPattern = this->pixelDefectPattern;
+    cameraModelMsg.stuckPixelRate = this->stuckPixelRate;
+    cameraModelMsg.deadPixelRate = this->deadPixelRate;
 
     /*! - Update the camera config data no matter if an image is present*/
     this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
@@ -771,3 +777,75 @@ void Camera::setBitDepth(const int bitDepthValue) { this->bitDepth = bitDepthVal
     @return int bitDepth
     */
 int Camera::getBitDepth() const { return this->bitDepth; }
+
+/*! Set the dark current noise pattern seed
+    @param darkCurrentPatternValue uint32_t
+    @return void
+    */
+void Camera::setDarkCurrentPattern(const uint32_t darkCurrentPatternValue) {
+    this->darkCurrentPattern = darkCurrentPatternValue;
+}
+
+/*! Get the dark current noise pattern seed
+    @return uint32_t darkCurrentPattern
+    */
+uint32_t Camera::getDarkCurrentPattern() const { return this->darkCurrentPattern; }
+
+/*! Set the dark current rate standard deviation
+    @param darkCurrentStdDeviationValue double
+    @return void
+    */
+void Camera::setDarkCurrentStdDeviation(const double darkCurrentStdDeviationValue) {
+    this->darkCurrentStdDeviation = darkCurrentStdDeviationValue;
+}
+
+/*! Get the dark current rate standard deviation
+    @return double darkCurrentStdDeviation
+    */
+double Camera::getDarkCurrentStdDeviation() const { return this->darkCurrentStdDeviation; }
+
+/*! Set whether images are grayscale
+    @param isGrayscaleValue bool
+    @return void
+    */
+void Camera::setIsGrayscale(const bool isGrayscaleValue) { this->isGrayscale = isGrayscaleValue; }
+
+/*! Get whether images are grayscale
+    @return bool isGrayscale
+    */
+bool Camera::getIsGrayscale() const { return this->isGrayscale; }
+
+/*! Set the pixel defect pattern seed
+    @param pixelDefectPatternValue uint32_t
+    @return void
+    */
+void Camera::setPixelDefectPattern(const uint32_t pixelDefectPatternValue) {
+    this->pixelDefectPattern = pixelDefectPatternValue;
+}
+
+/*! Get the pixel defect pattern seed
+    @return uint32_t pixelDefectPattern
+    */
+uint32_t Camera::getPixelDefectPattern() const { return this->pixelDefectPattern; }
+
+/*! Set the stuck pixel rate
+    @param stuckPixelRateValue double
+    @return void
+    */
+void Camera::setStuckPixelRate(const double stuckPixelRateValue) { this->stuckPixelRate = stuckPixelRateValue; }
+
+/*! Get the stuck pixel rate
+    @return double stuckPixelRate
+    */
+double Camera::getStuckPixelRate() const { return this->stuckPixelRate; }
+
+/*! Set the dead pixel rate
+    @param deadPixelRateValue double
+    @return void
+    */
+void Camera::setDeadPixelRate(const double deadPixelRateValue) { this->deadPixelRate = deadPixelRateValue; }
+
+/*! Get the dead pixel rate
+    @return double deadPixelRate
+    */
+double Camera::getDeadPixelRate() const { return this->deadPixelRate; }
