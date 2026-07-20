@@ -3,7 +3,9 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "architecture/utilities/ukfUtilities.h"
+
 #include "architecture/utilities/linearAlgebra.h"
+
 #include <math.h>
 
 void ukfQRDJustR(double* inMat, int32_t nRow, int32_t nCol, double* destMat) {
@@ -14,8 +16,8 @@ void ukfQRDJustR(double* inMat, int32_t nRow, int32_t nCol, double* destMat) {
 
     mSetZero(qMat, UKF_MAX_DIM, UKF_MAX_DIM);
     mSetZero(sourceMat, UKF_MAX_DIM, UKF_MAX_DIM);
-    mSetZero(destMat, (size_t)nCol, (size_t)nCol);
-    mCopy(inMat, (size_t)nRow, (size_t)nCol, sourceMat);
+    mSetZero(destMat, (size_t) nCol, (size_t) nCol);
+    mCopy(inMat, (size_t) nRow, (size_t) nCol, sourceMat);
 
     for (i = 0; i < nCol; i++) {
         dimi = i * nCol + i;
@@ -24,20 +26,14 @@ void ukfQRDJustR(double* inMat, int32_t nRow, int32_t nCol, double* destMat) {
             destMat[dimi] += sourceMat[dimj + i] * sourceMat[dimj + i];
         }
         destMat[dimi] = sqrt(destMat[dimi]); /* Sum of squares, can't be negative */
-        for (j = 0; j < nRow; j++) {
-            qMat[j * nCol + i] = sourceMat[j * nCol + i] / destMat[dimi];
-        }
+        for (j = 0; j < nRow; j++) { qMat[j * nCol + i] = sourceMat[j * nCol + i] / destMat[dimi]; }
 
         for (j = i + 1; j < nCol; j++) {
             sum = 0;
             dimj = nCol * j;
-            for (k = 0; k < nRow; k++) {
-                sum += sourceMat[k * nCol + j] * qMat[k * nCol + i];
-            }
+            for (k = 0; k < nRow; k++) { sum += sourceMat[k * nCol + j] * qMat[k * nCol + i]; }
             destMat[i * nCol + j] = sum;
-            for (k = 0; k < nRow; k++) {
-                sourceMat[k * nCol + j] -= sum * qMat[k * nCol + i];
-            }
+            for (k = 0; k < nRow; k++) { sourceMat[k * nCol + j] -= sum * qMat[k * nCol + i]; }
         }
     }
 
@@ -47,15 +43,11 @@ void ukfQRDJustR(double* inMat, int32_t nRow, int32_t nCol, double* destMat) {
 int32_t ukfLInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat) {
     int i, j, k, mat_dim;
 
-    mSetZero(destMat, (size_t)nRow, (size_t)nCol);
-    if (nRow != nCol) {
-        return -1;
-    }
+    mSetZero(destMat, (size_t) nRow, (size_t) nCol);
+    if (nRow != nCol) { return -1; }
     mat_dim = nRow;
     for (i = mat_dim - 1; i >= 0; i--) {
-        if (sourceMat[i * mat_dim + i] == 0) {
-            return -1;
-        }
+        if (sourceMat[i * mat_dim + i] == 0) { return -1; }
         destMat[mat_dim * i + i] = 1.0 / sourceMat[i * mat_dim + i];
         for (j = mat_dim - 1; j >= i + 1; j--) {
             destMat[mat_dim * j + i] = 0.0;
@@ -72,15 +64,11 @@ int32_t ukfLInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat) 
 int32_t ukfUInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat) {
     int i, j, k, mat_dim;
 
-    mSetZero(destMat, (size_t)nRow, (size_t)nCol);
-    if (nRow != nCol) {
-        return -1;
-    }
+    mSetZero(destMat, (size_t) nRow, (size_t) nCol);
+    if (nRow != nCol) { return -1; }
     mat_dim = nRow;
     for (i = mat_dim - 1; i >= 0; i--) {
-        if (sourceMat[i * mat_dim + i] == 0) {
-            return -1;
-        }
+        if (sourceMat[i * mat_dim + i] == 0) { return -1; }
         destMat[mat_dim * i + i] = 1.0 / sourceMat[i * mat_dim + i];
         for (j = mat_dim - 1; j >= i + 1; j--) {
             destMat[mat_dim * i + j] = 0.0;
@@ -99,41 +87,31 @@ int32_t ukfLUD(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat, i
     double big, dum, sum, temp;
     double TINY = 1.0E-14;
 
-    mSetZero(destMat, (size_t)nRow, (size_t)nCol);
-    for (i = 0; i < nRow; i++) {
-        indx[i] = i;
-    }
-    if (nRow != nCol) {
-        return -1;
-    }
-    mCopy(sourceMat, (size_t)nRow, (size_t)nCol, destMat);
-    vSetZero(vv, (size_t)nRow);
+    mSetZero(destMat, (size_t) nRow, (size_t) nCol);
+    for (i = 0; i < nRow; i++) { indx[i] = i; }
+    if (nRow != nCol) { return -1; }
+    mCopy(sourceMat, (size_t) nRow, (size_t) nCol, destMat);
+    vSetZero(vv, (size_t) nRow);
     for (i = 0; i < nRow; i++) {
         big = 0.0;
         for (j = 0; j < nRow; j++) {
             temp = fabs(destMat[i * nRow + j]);
             big = temp > big ? temp : big;
         }
-        if (big < TINY) {
-            return -1;
-        }
+        if (big < TINY) { return -1; }
         vv[i] = 1.0 / big;
     }
     for (j = 0; j < nRow; j++) {
         for (i = 0; i < j; i++) {
             sum = destMat[i * nRow + j];
-            for (k = 0; k < i; k++) {
-                sum -= destMat[i * nRow + k] * destMat[k * nRow + j];
-            }
+            for (k = 0; k < i; k++) { sum -= destMat[i * nRow + k] * destMat[k * nRow + j]; }
             destMat[i * nRow + j] = sum;
         }
         big = 0.0;
         imax = j;
         for (i = j; i < nRow; i++) {
             sum = destMat[i * nRow + j];
-            for (k = 0; k < j; k++) {
-                sum -= destMat[i * nRow + k] * destMat[k * nRow + j];
-            }
+            for (k = 0; k < j; k++) { sum -= destMat[i * nRow + k] * destMat[k * nRow + j]; }
             destMat[i * nRow + j] = sum;
             dum = vv[i] * fabs(sum);
             if (dum >= big) {
@@ -150,14 +128,10 @@ int32_t ukfLUD(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat, i
             vv[imax] = vv[j];
         }
         indx[j] = imax;
-        if (destMat[j * nRow + j] == 0.0) {
-            destMat[j * nRow + j] = TINY;
-        }
+        if (destMat[j * nRow + j] == 0.0) { destMat[j * nRow + j] = TINY; }
         if (j != nRow - 1) {
             dum = 1.0 / destMat[j * nRow + j];
-            for (i = j + 1; i < nRow; i++) {
-                destMat[i * nRow + j] *= dum;
-            }
+            for (i = j + 1; i < nRow; i++) { destMat[i * nRow + j] *= dum; }
         }
     }
     return 0;
@@ -168,33 +142,25 @@ int32_t ukfLUBckSlv(double* sourceMat, int32_t nRow, int32_t nCol, int32_t* indx
     int ii = -1;
     double sum;
 
-    vSetZero(destMat, (size_t)nRow);
-    if (nRow != nCol) {
-        return -1;
-    }
-    vCopy(bmat, (size_t)nRow, destMat);
+    vSetZero(destMat, (size_t) nRow);
+    if (nRow != nCol) { return -1; }
+    vCopy(bmat, (size_t) nRow, destMat);
 
     for (i = 0; i < nRow; i++) {
         ip = indx[i];
         sum = destMat[ip];
         destMat[ip] = destMat[i];
         if (ii >= 0) {
-            for (j = ii; j <= i - 1; j++) {
-                sum -= sourceMat[i * nRow + j] * destMat[j];
-            }
-        } else if ((int)sum) {
+            for (j = ii; j <= i - 1; j++) { sum -= sourceMat[i * nRow + j] * destMat[j]; }
+        } else if ((int) sum) {
             ii = i;
         }
         destMat[i] = sum;
     }
     for (i = nRow - 1; i >= 0; i--) {
         sum = destMat[i];
-        for (j = i + 1; j < nRow; j++) {
-            sum -= sourceMat[i * nRow + j] * destMat[j];
-        }
-        if (sourceMat[i * nRow + i] == 0) {
-            return -1;
-        }
+        for (j = i + 1; j < nRow; j++) { sum -= sourceMat[i * nRow + j] * destMat[j]; }
+        if (sourceMat[i * nRow + i] == 0) { return -1; }
         destMat[i] = sum / sourceMat[i * nRow + i];
     }
     return 0;
@@ -207,18 +173,14 @@ int32_t ukfMatInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat
     int indx[UKF_MAX_DIM];
     int32_t i, j, badCall;
 
-    mSetZero(destMat, (size_t)nRow, (size_t)nCol);
-    if (nRow != nCol) {
-        return -1;
-    }
+    mSetZero(destMat, (size_t) nRow, (size_t) nCol);
+    if (nRow != nCol) { return -1; }
     ukfLUD(sourceMat, nRow, nCol, LUMatrix, indx);
     for (j = 0; j < nRow; j++) {
-        vSetZero(colSolve, (size_t)nRow);
+        vSetZero(colSolve, (size_t) nRow);
         colSolve[j] = 1.0;
         badCall = ukfLUBckSlv(LUMatrix, nRow, nCol, indx, colSolve, invCol);
-        for (i = 0; i < nRow; i++) {
-            destMat[i * nRow + j] = invCol[i];
-        }
+        for (i = 0; i < nRow; i++) { destMat[i * nRow + j] = invCol[i]; }
     }
     return badCall;
 }
@@ -227,26 +189,18 @@ int32_t ukfCholDecomp(double* sourceMat, int32_t nRow, int32_t nCol, double* des
     int32_t i, j, k;
     double sigma;
 
-    mSetZero(destMat, (size_t)nRow, (size_t)nCol);
-    if (nRow != nCol) {
-        return -1;
-    }
+    mSetZero(destMat, (size_t) nRow, (size_t) nCol);
+    if (nRow != nCol) { return -1; }
 
     for (i = 0; i < nRow; i++) {
         for (j = 0; j <= i; j++) {
             sigma = sourceMat[nRow * i + j];
-            for (k = 0; k <= (j - 1); k++) {
-                sigma -= destMat[nRow * i + k] * destMat[nRow * j + k];
-            }
+            for (k = 0; k <= (j - 1); k++) { sigma -= destMat[nRow * i + k] * destMat[nRow * j + k]; }
             if (i == j) {
-                if (sigma < 0) {
-                    return -1;
-                }
+                if (sigma < 0) { return -1; }
                 destMat[nRow * i + j] = sqrt(sigma);
             } else {
-                if (destMat[nRow * j + j] == 0) {
-                    return -1;
-                }
+                if (destMat[nRow * j + j] == 0) { return -1; }
                 destMat[nRow * i + j] = sigma / (destMat[nRow * j + j]);
             }
         }
@@ -259,15 +213,13 @@ int32_t ukfCholDownDate(double* rMat, double* xVec, double beta, int32_t nStates
     double wVec[UKF_MAX_DIM];
     double rEl2, bParam, gamma;
 
-    vCopy(xVec, (size_t)nStates, wVec);
-    mSetZero(rOut, (size_t)nStates, (size_t)nStates);
+    vCopy(xVec, (size_t) nStates, wVec);
+    mSetZero(rOut, (size_t) nStates, (size_t) nStates);
 
     bParam = 1.0;
     for (i = 0; i < nStates; i++) {
         rEl2 = rMat[i * nStates + i] * rMat[i * nStates + i];
-        if (rEl2 + beta / bParam * wVec[i] * wVec[i] < 0) {
-            return -1;
-        }
+        if (rEl2 + beta / bParam * wVec[i] * wVec[i] < 0) { return -1; }
         rOut[i * nStates + i] = sqrt(rEl2 + beta / bParam * wVec[i] * wVec[i]);
         gamma = rEl2 * bParam + beta * wVec[i] * wVec[i];
         for (j = i + 1; j < nStates; j++) {
