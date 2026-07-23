@@ -10,37 +10,37 @@
 void CielimInterface::reset(uint64_t currentSimNanos) {
     if (this->opNavMode != ClosedLoopMode::OPEN_LOOP || this->liveStream) {
         this->imagePointer = nullptr;
-        if (!this->connector.isConnected()) this->connector.connect();
+        if (!this->connector.isConnected()) { this->connector.connect(); }
     }
 
     /*! Check spacecraft input message */
     if (this->spacecraftMessage.isLinked()) {
         this->spacecraftMessageStatus.dataFresh = false;
-        this->spacecraftMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        this->spacecraftMessageStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     }
 
     /*! Check Camera input messages */
     if (this->cameraModelMessage.isLinked()) {
         this->cameraModelMessageStatus.dataFresh = false;
-        this->cameraModelMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        this->cameraModelMessageStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     }
 
     /*! Check diagnostic input messages */
     if (this->imageDiagnosticsMessage.isLinked()) {
         this->imageDiagnosticsMessageStatus.dataFresh = false;
-        this->imageDiagnosticsMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        this->imageDiagnosticsMessageStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     }
 
     /*! Check Camera rendering information messages */
     if (this->cameraRenderingMessage.isLinked()) {
         this->cameraRenderingMessageStatus.dataFresh = false;
-        this->cameraRenderingMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        this->cameraRenderingMessageStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     }
 
     /*! Check asteroid parameter information messages */
     if (this->epochMessage.isLinked()) {
         this->epochMessageStatus.dataFresh = false;
-        this->epochMessageStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        this->epochMessageStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     }
 
     this->epochMessageStatus.dataFresh = false;
@@ -48,7 +48,7 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     /*! Check asteroid parameter information messages */
     MessageStatus celestialParametersStatus;
     celestialParametersStatus.dataFresh = false;
-    celestialParametersStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    celestialParametersStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     this->celestialParametersMessageStatus.clear();
     for (int c = 0; c < this->celestialBodiesList.size(); ++c) {
         this->celestialParametersMessageStatus.push_back(celestialParametersStatus);
@@ -57,15 +57,13 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     /*! Check Spice input message */
     MessageStatus spiceStatus;
     spiceStatus.dataFresh = true;
-    spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    spiceStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     this->spiceBodyMessageStatus.clear();
     for (size_t c = 0; c < this->celestialBodiesList.size(); ++c) {
         /*! set default zero translation and rotation states */
         SpicePlanetStateMsgPayload logMsg = {};
         for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                logMsg.J20002Pfix[i][j] = (i == j) ? 1.0 : 0.0;
-            }
+            for (int j = 0; j < 3; ++j) { logMsg.J20002Pfix[i][j] = (i == j) ? 1.0 : 0.0; }
         }
         strcpy(logMsg.PlanetName, this->celestialBodiesList.at(c).name.c_str());
         this->spiceBodyMessageStatus.push_back(spiceStatus);
@@ -75,7 +73,7 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     this->frameNumber = -1;
     if (this->saveFile) {
         std::string temporaryFilename = this->protoFilename;
-        for (int i = 1; i < 1000; ++i) {
+        for (int i = 1; i < 1'000; ++i) {
             if (!std::filesystem::exists(temporaryFilename)) {
                 this->protoFilename = temporaryFilename;
                 break;
@@ -93,8 +91,8 @@ void CielimInterface::readBskMessages() {
     /*! Read spacecraft state msg */
     if (this->spacecraftMessage.isLinked()) {
         SCStatesMsgPayload localSCStateArray = this->spacecraftMessage();
-        if (this->spacecraftMessage.isWritten() &&
-            this->spacecraftMessage.timeWritten() != this->spacecraftMessageStatus.lastTimeTag) {
+        if (this->spacecraftMessage.isWritten()
+            && this->spacecraftMessage.timeWritten() != this->spacecraftMessageStatus.lastTimeTag) {
             this->spacecraftMessageStatus.lastTimeTag = this->spacecraftMessage.timeWritten();
             this->spacecraftMessageStatus.dataFresh = true;
         }
@@ -104,8 +102,8 @@ void CielimInterface::readBskMessages() {
     /*! Read camera model message */
     if (this->cameraModelMessage.isLinked()) {
         CameraModelMsgPayload localCameraConfigArray = this->cameraModelMessage();
-        if (this->cameraModelMessage.isWritten() &&
-            this->cameraModelMessage.timeWritten() != this->cameraModelMessageStatus.lastTimeTag) {
+        if (this->cameraModelMessage.isWritten()
+            && this->cameraModelMessage.timeWritten() != this->cameraModelMessageStatus.lastTimeTag) {
             this->cameraModelMessageStatus.lastTimeTag = this->cameraModelMessage.timeWritten();
             this->cameraModelMessageStatus.dataFresh = true;
         }
@@ -113,8 +111,8 @@ void CielimInterface::readBskMessages() {
 
         /*! Read image diagnostics message */
         if (this->imageDiagnosticsMessage.isLinked()) {
-            if (this->imageDiagnosticsMessage.isWritten() &&
-                this->imageDiagnosticsMessage.timeWritten() != this->imageDiagnosticsMessageStatus.lastTimeTag) {
+            if (this->imageDiagnosticsMessage.isWritten()
+                && this->imageDiagnosticsMessage.timeWritten() != this->imageDiagnosticsMessageStatus.lastTimeTag) {
                 this->imageDiagnosticsMessageStatus.lastTimeTag = this->imageDiagnosticsMessage.timeWritten();
                 this->imageDiagnosticsMessageStatus.dataFresh = true;
             }
@@ -125,8 +123,8 @@ void CielimInterface::readBskMessages() {
     /*! Read camera rendering message */
     if (this->cameraRenderingMessage.isLinked()) {
         CameraRenderingMsgPayload cameraRenderingArray = this->cameraRenderingMessage();
-        if (this->cameraRenderingMessage.isWritten() &&
-            this->cameraRenderingMessage.timeWritten() != this->cameraRenderingMessageStatus.lastTimeTag) {
+        if (this->cameraRenderingMessage.isWritten()
+            && this->cameraRenderingMessage.timeWritten() != this->cameraRenderingMessageStatus.lastTimeTag) {
             this->cameraRenderingMessageStatus.lastTimeTag = this->cameraRenderingMessage.timeWritten();
             this->cameraRenderingMessageStatus.dataFresh = true;
         }
@@ -138,9 +136,9 @@ void CielimInterface::readBskMessages() {
         if (this->celestialBodiesList.at(i).celestialParametersMessage.isLinked()) {
             CelestialBodyParametersMsgPayload celestialParamArray =
                 this->celestialBodiesList.at(i).celestialParametersMessage();
-            if (this->celestialBodiesList.at(i).celestialParametersMessage.isWritten() &&
-                this->celestialBodiesList.at(i).celestialParametersMessage.timeWritten() !=
-                    this->celestialParametersMessageStatus[i].lastTimeTag) {
+            if (this->celestialBodiesList.at(i).celestialParametersMessage.isWritten()
+                && this->celestialBodiesList.at(i).celestialParametersMessage.timeWritten()
+                       != this->celestialParametersMessageStatus[i].lastTimeTag) {
                 this->celestialParametersMessageStatus[i].lastTimeTag =
                     this->celestialBodiesList.at(i).celestialParametersMessage.timeWritten();
                 this->celestialParametersMessageStatus[i].dataFresh = true;
@@ -152,8 +150,8 @@ void CielimInterface::readBskMessages() {
     /*! Read sim epoch msg */
     if (this->epochMessage.isLinked()) {
         EpochMsgPayload epochMessageBuffer = this->epochMessage();
-        if (this->epochMessage.isWritten() &&
-            this->epochMessage.timeWritten() != this->epochMessageStatus.lastTimeTag) {
+        if (this->epochMessage.isWritten()
+            && this->epochMessage.timeWritten() != this->epochMessageStatus.lastTimeTag) {
             this->epochMessageStatus.lastTimeTag = this->epochMessage.timeWritten();
             this->epochMessageStatus.dataFresh = true;
         }
@@ -165,9 +163,9 @@ void CielimInterface::readBskMessages() {
         if (this->celestialBodiesList.at(i).spiceStateMessage.isLinked()) {
             // If the spice msg is not linked then the default zero planet ephemeris is used
             SpicePlanetStateMsgPayload localSpiceArray = this->celestialBodiesList.at(i).spiceStateMessage();
-            if (this->celestialBodiesList.at(i).spiceStateMessage.isWritten() &&
-                this->celestialBodiesList.at(i).spiceStateMessage.timeWritten() !=
-                    this->spiceBodyMessageStatus[i].lastTimeTag) {
+            if (this->celestialBodiesList.at(i).spiceStateMessage.isWritten()
+                && this->celestialBodiesList.at(i).spiceStateMessage.timeWritten()
+                       != this->spiceBodyMessageStatus[i].lastTimeTag) {
                 this->spiceBodyMessageStatus[i].lastTimeTag =
                     this->celestialBodiesList.at(i).spiceStateMessage.timeWritten();
                 this->spiceBodyMessageStatus[i].dataFresh = true;
@@ -186,7 +184,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
     /*! Write timestamp output msg */
     auto* time = new cielimMessage::TimeStamp();
     time->set_framenumber(this->frameNumber);
-    time->set_simtimeelapsed((double)currentSimNanos);
+    time->set_simtimeelapsed((double) currentSimNanos);
     visPayload.set_allocated_currenttime(time);
 
     /*! write epoch msg */
@@ -216,40 +214,50 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
                 celestialBody->add_attitude(this->celestialBodiesList.at(k).spiceStatePayload.J20002Pfix[i][2]);
             }
             celestialBody->set_centralbody(this->celestialBodiesList.at(k).isCentralBody);
-            if (this->celestialBodiesList.at(k).celestialParametersMessage.isLinked() &&
-                this->celestialParametersMessageStatus[k].dataFresh) {
+            if (this->celestialBodiesList.at(k).celestialParametersMessage.isLinked()
+                && this->celestialParametersMessageStatus[k].dataFresh) {
                 auto* meshModel = new cielimMessage::MeshModel();
                 auto* perlinNoise = new cielimMessage::PerlinNoise();
                 auto* reflectanceModel = new cielimMessage::ReflectanceModel();
                 perlinNoise->set_octavecount(
-                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseOctaveCount);
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseOctaveCount
+                );
                 perlinNoise->set_baseamplitude(
-                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseAmplitude);
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseAmplitude
+                );
                 perlinNoise->set_basefrequency(
-                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseFrequency);
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoiseBaseFrequency
+                );
                 perlinNoise->set_persistence(
-                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoisePersistence);
+                    this->celestialBodiesList.at(k).celestialParametersPayload.perlinNoisePersistence
+                );
                 std::string brdfModelName = this->celestialBodiesList.at(k).celestialParametersPayload.brdf;
                 reflectanceModel->set_brdfmodel(brdfModelName);
                 reflectanceModel->set_isotropicscattering(
-                    this->celestialBodiesList.at(k).celestialParametersPayload.isotropicScattering);
+                    this->celestialBodiesList.at(k).celestialParametersPayload.isotropicScattering
+                );
                 for (int i = 0; i < MAX_PARAMETER_LENGTH; ++i) {
                     reflectanceModel->add_reflectanceparameters(
-                        this->celestialBodiesList.at(k).celestialParametersPayload.reflectanceParameters[i]);
+                        this->celestialBodiesList.at(k).celestialParametersPayload.reflectanceParameters[i]
+                    );
                 }
                 meshModel->set_meanradius(this->celestialBodiesList.at(k).celestialParametersPayload.meanRadius);
                 meshModel->set_geometricalbedo(
-                    this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo);
+                    this->celestialBodiesList.at(k).celestialParametersPayload.geometricAlbedo
+                );
                 meshModel->set_allocated_perlinnoise(perlinNoise);
                 meshModel->set_allocated_refmodel(reflectanceModel);
                 for (int i = 0; i < 3; ++i) {
                     meshModel->add_principalaxisdistortion(
-                        this->celestialBodiesList.at(k).celestialParametersPayload.principalAxisDistortion[i]);
+                        this->celestialBodiesList.at(k).celestialParametersPayload.principalAxisDistortion[i]
+                    );
                     meshModel->add_inertialtobodymrp(
-                        this->celestialBodiesList.at(k).celestialParametersPayload.sigma_BN[i]);
+                        this->celestialBodiesList.at(k).celestialParametersPayload.sigma_BN[i]
+                    );
                 }
                 meshModel->set_proceduralrocks(
-                    this->celestialBodiesList.at(k).celestialParametersPayload.proceduralRocks);
+                    this->celestialBodiesList.at(k).celestialParametersPayload.proceduralRocks
+                );
                 meshModel->set_shapemodel(this->celestialBodiesList.at(k).celestialParametersPayload.shapeModel);
                 celestialBody->set_allocated_model(meshModel);
             }
@@ -268,8 +276,8 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         visPayload.set_allocated_spacecraft(spacecraft);
     }
     /*! Write camera output msg */
-    if ((this->cameraModelMessage.isLinked() && this->cameraModelMessageStatus.dataFresh) ||
-        this->cameraModelPayload.cameraId >= 0) {
+    if ((this->cameraModelMessage.isLinked() && this->cameraModelMessageStatus.dataFresh)
+        || this->cameraModelPayload.cameraId >= 0) {
         /*! This corrective attitude allows UE to place the camera as is expected by the python setting.
          * UE5 has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame:
          * z point, x horizontal, y vertical (down) */
@@ -340,18 +348,10 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
 
         if (std::string{this->cameraModelPayload.imageFormat} == "RAW") {
             switch (this->cameraModelPayload.bitDepth) {
-                case 8:
-                    dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_8);
-                    break;
-                case 12:
-                    dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_12);
-                    break;
-                case 16:
-                    dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_16);
-                    break;
-                default:
-                    dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_8);
-                    break;
+            case 8: dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_8); break;
+            case 12: dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_12); break;
+            case 16: dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_16); break;
+            default: dataFormat->set_format(cielimMessage::ImageFormat_Format_RAW_8); break;
             }
         } else {
             dataFormat->set_format(cielimMessage::ImageFormat_Format_PNG);
@@ -393,7 +393,8 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
         strayLightModel->set_ghost3relativesize(this->cameraRenderingPayload.strayLightGhost3RelativeSize);
         strayLightModel->set_ghost4relativesize(this->cameraRenderingPayload.strayLightGhost4RelativeSize);
         strayLightModel->set_ghostbrightnesssizeexponent(
-            this->cameraRenderingPayload.strayLightGhostBrightnessSizeExponent);
+            this->cameraRenderingPayload.strayLightGhostBrightnessSizeExponent
+        );
         strayLightModel->set_coronafalloffexponent(this->cameraRenderingPayload.strayLightCoronaFalloffExponent);
         strayLightModel->set_coronaintensity(this->cameraRenderingPayload.strayLightCoronaIntensity);
         strayLightModel->set_baffleshieldangle(this->cameraRenderingPayload.strayLightBaffleShieldAngle);
@@ -414,25 +415,21 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
      * but provides visual capabilities during OpNav */
     /*!--OpNavMode set to REQUESTED_FRAMES is a faster mode in which the viz only steps forward to the BSK time step
      * if an image is requested. This is a faster run but nothing can be visualized post-run */
-    if (this->opNavMode == ClosedLoopMode::ALL_FRAMES ||
-        (this->opNavMode == ClosedLoopMode::REQUESTED_FRAMES && this->shouldRequestACameraImage(currentSimNanos)) ||
-        this->liveStream) {
+    if (this->opNavMode == ClosedLoopMode::ALL_FRAMES
+        || (this->opNavMode == ClosedLoopMode::REQUESTED_FRAMES && this->shouldRequestACameraImage(currentSimNanos))
+        || this->liveStream) {
         this->connector.send(visPayload);
 
         /*! - If the camera is requesting periodic images, request them */
-        if (this->opNavMode != ClosedLoopMode::OPEN_LOOP &&
-            currentSimNanos % this->cameraModelPayload.renderRate == 0 && this->cameraModelPayload.renderRate > 0) {
+        if (this->opNavMode != ClosedLoopMode::OPEN_LOOP && currentSimNanos % this->cameraModelPayload.renderRate == 0
+            && this->cameraModelPayload.renderRate > 0) {
             this->requestImage(currentSimNanos);
         }
-        if (this->shouldRequestACameraImage(currentSimNanos)) {
-            this->connector.ping();
-        }
+        if (this->shouldRequestACameraImage(currentSimNanos)) { this->connector.ping(); }
     }
 
     /*!  Write protobuf to file */
-    if (this->saveFile) {
-        google::protobuf::util::SerializeDelimitedToOstream(visPayload, &this->outputStream);
-    }
+    if (this->saveFile) { google::protobuf::util::SerializeDelimitedToOstream(visPayload, &this->outputStream); }
 }
 
 /*! UpdateState
@@ -441,9 +438,7 @@ void CielimInterface::writeProtobuffer(uint64_t currentSimNanos) {
 void CielimInterface::updateState(uint64_t currentSimNanos) {
     this->frameNumber += 1;
     this->readBskMessages();
-    if (currentSimNanos > 0) {
-        this->writeProtobuffer(currentSimNanos);
-    }
+    if (currentSimNanos > 0) { this->writeProtobuffer(currentSimNanos); }
 }
 
 /*! Determine if the module should request and image
@@ -470,9 +465,7 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
     imagePayload.imageBufferLength = imageData.imageBufferLength;
     imagePayload.cameraID = this->cameraModelPayload.cameraId;
     imagePayload.imageType = 3;
-    if (imageData.imageBufferLength > 0) {
-        imagePayload.valid = 1;
-    }
+    if (imageData.imageBufferLength > 0) { imagePayload.valid = 1; }
     this->imageOutMessage.write(&imagePayload, this->moduleID, currentSimNanos);
 
     OpNavCOBMsgPayload centerOfBrightnessPayload = {};
@@ -498,39 +491,43 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
         imageDiagnosticsOutputPayload.centerOfBrightness[0] = imageData.centerOfBrightness.value()[0] + 0.5;
         imageDiagnosticsOutputPayload.centerOfBrightness[1] = imageData.centerOfBrightness.value()[1] + 0.5;
     }
-    if (imageData.brightPixels) {
-        imageDiagnosticsOutputPayload.totalBrightPixels = imageData.brightPixels.value();
-    }
-    if (imageData.coverage) {
-        imageDiagnosticsOutputPayload.coverage = imageData.coverage.value();
-    }
+    if (imageData.brightPixels) { imageDiagnosticsOutputPayload.totalBrightPixels = imageData.brightPixels.value(); }
+    if (imageData.coverage) { imageDiagnosticsOutputPayload.coverage = imageData.coverage.value(); }
     this->imageDiagnosticsOutMessage.write(&imageDiagnosticsOutputPayload, this->moduleID, currentSimNanos);
 }
 
 /*! Get the communication mode
 @return ClosedLoopMode enum containing the mode definitions
 */
-ClosedLoopMode CielimInterface::getOpNavMode() const { return this->opNavMode; }
+ClosedLoopMode CielimInterface::getOpNavMode() const {
+    return this->opNavMode;
+}
 
 /*! Set the communication mode
  * @param ClosedLoopMode enum containing the mode definitions
  */
-void CielimInterface::setOpNavMode(ClosedLoopMode mode) { this->opNavMode = mode; }
+void CielimInterface::setOpNavMode(ClosedLoopMode mode) {
+    this->opNavMode = mode;
+}
 
 /*! Set the tcp port number
  * @param std::string port number
  */
-void CielimInterface::setPortNumber(std::string port) { this->connector.setComPortNumber(port); }
+void CielimInterface::setPortNumber(std::string port) {
+    this->connector.setComPortNumber(port);
+}
 
 /*! Get the frame number
  * @return int64_t frame
  */
-int64_t CielimInterface::getFrameNumber() const { return this->frameNumber; }
+int64_t CielimInterface::getFrameNumber() const {
+    return this->frameNumber;
+}
 
 /*! Set the save file path
  * @param std::string path and name to data destination
  */
-void CielimInterface::setSaveFile(const std::string& saveProtobufferFile) {
+void CielimInterface::setSaveFile(std::string const &saveProtobufferFile) {
     assert(saveProtobufferFile != "");
     this->protoFilename = saveProtobufferFile;
     this->saveFile = true;
@@ -539,31 +536,41 @@ void CielimInterface::setSaveFile(const std::string& saveProtobufferFile) {
 /*! Get the save file path
  * @return std::string path and name to data destination
  */
-std::string CielimInterface::getSaveFilename() const { return this->protoFilename; }
+std::string CielimInterface::getSaveFilename() const {
+    return this->protoFilename;
+}
 
 /*! Manually close the save file for read/write control
  */
-void CielimInterface::closeProtobufFile() { this->outputStream.close(); }
+void CielimInterface::closeProtobufFile() {
+    this->outputStream.close();
+}
 
 /*! Toggle live streaming on or off
 @param bool on/off
 */
-void CielimInterface::setLiveStream(bool liveStreaming) { this->liveStream = liveStreaming; }
+void CielimInterface::setLiveStream(bool liveStreaming) {
+    this->liveStream = liveStreaming;
+}
 
 /*! Add a celestial body to the interface
 @param SpiceBody class containing celestial body information
 */
-void CielimInterface::addCelestialBody(const SpiceBody& celestialBodyNames) {
+void CielimInterface::addCelestialBody(SpiceBody const &celestialBodyNames) {
     this->celestialBodiesList.push_back(celestialBodyNames);
 }
 
 /*! Get all celestial body added to the interface
 @return std::vector<SpiceBody> list of bodies
 */
-std::vector<SpiceBody> CielimInterface::getCelestialBodies() const { return this->celestialBodiesList; }
+std::vector<SpiceBody> CielimInterface::getCelestialBodies() const {
+    return this->celestialBodiesList;
+}
 
 /*! A cleaning method to ensure the message buffers are wiped clean.
  @param data The current sim time in nanoseconds
  @param hint
  */
-void message_buffer_deallocate(void* data, void* hint) { free(data); }
+void message_buffer_deallocate(void* data, void* hint) {
+    free(data);
+}
