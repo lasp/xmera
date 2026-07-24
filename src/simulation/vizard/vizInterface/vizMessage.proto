@@ -9,6 +9,7 @@
 
 syntax = "proto3";
 package vizProtobufferMessage;
+option optimize_for = LITE_RUNTIME;
 
 
 //A VizMessage should contain all Basilisk Sim messages needed to visualize a single time step

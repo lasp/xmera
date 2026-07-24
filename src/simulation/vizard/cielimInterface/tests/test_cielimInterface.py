@@ -22,7 +22,7 @@ except ImportError:
     reasonErr = "\nCielim Interface not built ---check build option"
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
-@pytest.mark.parametrize("format", ["RAW", "JPG", "PNG"])
+@pytest.mark.parametrize("format", ["RAW", "PNG"])
 def test_interface(format):
     read_write_test(format)
 
@@ -67,7 +67,22 @@ def read_write_test(format):
     rendering_payload = messaging.CameraRenderingMsgPayload()
     rendering_payload.cameraId = 1
     rendering_payload.cosmicRayStdDeviation = 10
-    rendering_payload.strayLight = 1.0
+    rendering_payload.strayLightEnabled = True
+    rendering_payload.strayLightCoreSize = 1.5
+    rendering_payload.strayLightGhostSize = 0.8
+    rendering_payload.strayLightGhostTransmittance = 0.3
+    rendering_payload.strayLightGhost1RelativeSize = 1.1
+    rendering_payload.strayLightGhost2RelativeSize = 1.2
+    rendering_payload.strayLightGhost3RelativeSize = 1.3
+    rendering_payload.strayLightGhost4RelativeSize = 1.4
+    rendering_payload.strayLightGhostBrightnessSizeExponent = 2.0
+    rendering_payload.strayLightCoronaFalloffExponent = 3.0
+    rendering_payload.strayLightCoronaIntensity = 0.05
+    rendering_payload.strayLightBaffleShieldAngle = 5.0
+    rendering_payload.strayLightIntensity = 0.001
+    rendering_payload.strayLightNumRays = 6.0
+    rendering_payload.strayLightRaySharpness = 24.0
+    rendering_payload.strayLightRayWeight = 0.8
     rendering_payload.starField = True
     rendering_payload.rendering = "Lumen"
     rendering_payload.smear = True
@@ -119,10 +134,16 @@ def read_write_test(format):
     camera_payload.blueQuantumEfficiency = [0.6, 0.7, 0.6]
     camera_payload.horizontalVignetting = [0.1, 0.2, 0.3, 0.4]
     camera_payload.verticalVignetting = [0.5, 0.6, 0.7, 0.8]
-    camera_payload.distortion = [0.2, 0.4, 0.6, 0.8]
+    camera_payload.distortion = [0.2, 0.4, 0.6, 0.8, 1.0]
     camera_payload.transmission = 0.9
     camera_payload.imageFormat = format
     camera_payload.bitDepth = 12
+    camera_payload.darkCurrentPattern = 42
+    camera_payload.darkCurrentStdDeviation = 0.02
+    camera_payload.isGrayscale = True
+    camera_payload.pixelDefectPattern = 7
+    camera_payload.stuckPixelRate = 0.01
+    camera_payload.deadPixelRate = 0.03
     camera_message = messaging.CameraModelMsg().write(camera_payload)
     module.cameraModelMessage.subscribeTo(camera_message)
 
@@ -216,27 +237,36 @@ def read_write_test(format):
     np.testing.assert_equal(cielim_message.camera.lensModel.apertureRadius, camera_payload.apertureRadius)
     np.testing.assert_equal(cielim_message.camera.lensModel.horizontalVignetting, camera_payload.horizontalVignetting)
     np.testing.assert_equal(cielim_message.camera.lensModel.verticalVignetting, camera_payload.verticalVignetting)
-    np.testing.assert_equal(cielim_message.camera.lensModel.distortion, camera_payload.distortion)
-    np.testing.assert_equal(cielim_message.camera.lensModel.transmission, camera_payload.transmission)
+    np.testing.assert_allclose(cielim_message.camera.lensModel.transmission1, camera_payload.transmission, rtol=1e-6)
+    np.testing.assert_allclose(cielim_message.camera.lensModel.transmission2, camera_payload.transmission, rtol=1e-6)
+    np.testing.assert_allclose(cielim_message.camera.lensModel.transmission3, camera_payload.transmission, rtol=1e-6)
+    np.testing.assert_allclose(cielim_message.camera.lensModel.distortionK1, camera_payload.distortion[0], rtol=1e-6)
+    np.testing.assert_allclose(cielim_message.camera.lensModel.distortionK2, camera_payload.distortion[1], rtol=1e-6)
+    np.testing.assert_allclose(cielim_message.camera.lensModel.distortionK3, camera_payload.distortion[2], rtol=1e-6)
+    np.testing.assert_allclose(cielim_message.camera.lensModel.distortionP1, camera_payload.distortion[3], rtol=1e-6)
+    np.testing.assert_allclose(cielim_message.camera.lensModel.distortionP2, camera_payload.distortion[4], rtol=1e-6)
 
     np.testing.assert_equal(cielim_message.camera.sensorModel.resolution, camera_payload.resolution)
     np.testing.assert_equal(cielim_message.camera.sensorModel.renderRate, camera_payload.renderRate)
     np.testing.assert_equal(cielim_message.camera.sensorModel.exposureTime, camera_payload.exposureTime)
     np.testing.assert_equal(cielim_message.camera.sensorModel.readNoise, camera_payload.readNoise)
     np.testing.assert_equal(cielim_message.camera.sensorModel.shotNoise, camera_payload.shotNoise)
-    np.testing.assert_equal(cielim_message.camera.sensorModel.darkCurrent, camera_payload.darkCurrent)
+    np.testing.assert_allclose(cielim_message.camera.sensorModel.darkCurrent, camera_payload.darkCurrent, rtol=1e-6)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.darkCurrentPattern, camera_payload.darkCurrentPattern)
+    np.testing.assert_allclose(cielim_message.camera.sensorModel.darkCurrentStdDeviation, camera_payload.darkCurrentStdDeviation, rtol=1e-6)
     np.testing.assert_equal(cielim_message.camera.sensorModel.systemGain, camera_payload.systemGain)
     np.testing.assert_equal(cielim_message.camera.sensorModel.sensorWidth, camera_payload.sensorWidth)
     np.testing.assert_equal(cielim_message.camera.sensorModel.sensorHeight, camera_payload.sensorHeight)
     np.testing.assert_equal(cielim_message.camera.sensorModel.fullWellCapacity, camera_payload.fullWellCapacity)
     np.testing.assert_equal(cielim_message.camera.sensorModel.gamma, camera_payload.gammaCorrection)
-    np.testing.assert_equal(cielim_message.camera.sensorModel.imageData.bitDepth, camera_payload.bitDepth)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.isGrayscale, camera_payload.isGrayscale)
+    np.testing.assert_equal(cielim_message.camera.sensorModel.pixelDefectPattern, camera_payload.pixelDefectPattern)
+    np.testing.assert_allclose(cielim_message.camera.sensorModel.stuckPixelRate, camera_payload.stuckPixelRate, rtol=1e-6)
+    np.testing.assert_allclose(cielim_message.camera.sensorModel.deadPixelRate, camera_payload.deadPixelRate, rtol=1e-6)
     if format == "PNG":
-        np.testing.assert_equal(cielim_message.camera.sensorModel.imageData.imageFormat, cielimMessage_pb2.ImageData.PNG)
+        np.testing.assert_equal(cielim_message.camera.imageFormat.format, cielimMessage_pb2.ImageFormat.PNG)
     elif format == "RAW":
-        np.testing.assert_equal(cielim_message.camera.sensorModel.imageData.imageFormat, cielimMessage_pb2.ImageData.RAW)
-    elif format == "JPG":
-        np.testing.assert_equal(cielim_message.camera.sensorModel.imageData.imageFormat, cielimMessage_pb2.ImageData.JPG)
+        np.testing.assert_equal(cielim_message.camera.imageFormat.format, cielimMessage_pb2.ImageFormat.RAW_12)
 
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.integrationWeightFactor, camera_payload.integrationWeightFactor)
     np.testing.assert_equal(cielim_message.camera.sensorModel.qeCurve.redValue1, camera_payload.redQuantumEfficiency[0])
@@ -253,7 +283,22 @@ def read_write_test(format):
     np.testing.assert_equal(cielim_message.renderParameters.wavelength2, rendering_payload.wavelengths[1])
     np.testing.assert_equal(cielim_message.renderParameters.wavelength3, rendering_payload.wavelengths[2])
     np.testing.assert_equal(cielim_message.renderParameters.cosmicRayStdDeviation, rendering_payload.cosmicRayStdDeviation)
-    np.testing.assert_equal(cielim_message.renderParameters.strayLight, rendering_payload.strayLight)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.enabled, rendering_payload.strayLightEnabled)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.coreSize, rendering_payload.strayLightCoreSize)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.ghostSize, rendering_payload.strayLightGhostSize)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.ghostTransmittance, rendering_payload.strayLightGhostTransmittance)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.ghost1RelativeSize, rendering_payload.strayLightGhost1RelativeSize)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.ghost2RelativeSize, rendering_payload.strayLightGhost2RelativeSize)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.ghost3RelativeSize, rendering_payload.strayLightGhost3RelativeSize)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.ghost4RelativeSize, rendering_payload.strayLightGhost4RelativeSize)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.ghostBrightnessSizeExponent, rendering_payload.strayLightGhostBrightnessSizeExponent)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.coronaFalloffExponent, rendering_payload.strayLightCoronaFalloffExponent)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.coronaIntensity, rendering_payload.strayLightCoronaIntensity)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.baffleShieldAngle, rendering_payload.strayLightBaffleShieldAngle)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.intensity, rendering_payload.strayLightIntensity)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.numRays, rendering_payload.strayLightNumRays)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.raySharpness, rendering_payload.strayLightRaySharpness)
+    np.testing.assert_equal(cielim_message.renderParameters.strayLightModel.rayWeight, rendering_payload.strayLightRayWeight)
     np.testing.assert_equal(cielim_message.renderParameters.starField, rendering_payload.starField)
     np.testing.assert_equal(cielim_message.renderParameters.rendering, rendering_payload.rendering)
     np.testing.assert_equal(cielim_message.renderParameters.enableSmear, rendering_payload.smear)

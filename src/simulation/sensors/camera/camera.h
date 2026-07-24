@@ -5,57 +5,57 @@
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
-#include <opencv2/core/mat.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/opencv.hpp>
-#include <math.h>
-#include <stdint.h>
-#include <Eigen/Core>
-#include <Eigen/Dense>
-#include <string_view>
-
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CameraConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraImageMsgPayload.h>
 #include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
-
-#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 
+#include <math.h>
+#include <stdint.h>
+
+#include <Eigen/Core>
+#include <Eigen/Dense>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/opencv.hpp>
+#include <string_view>
+
 /*! @brief visual camera class */
 class Camera : public SysModel {
-   public:
+public:
     Camera();
     ~Camera();
 
     void updateState(uint64_t currentSimNanos) override;
     void reset(uint64_t currentSimNanos) override;
-    void hsvAdjust(const cv::Mat&, cv::Mat& mDst);
-    void bgrAdjustPercent(const cv::Mat&, cv::Mat& mDst);
-    void addGaussianNoise(const cv::Mat&, cv::Mat& mDst, double, double);
-    void addSaltPepper(const cv::Mat&, cv::Mat& mDst, float, float);
-    void addCosmicRay(const cv::Mat&, cv::Mat& mDst, float, double, int);
-    void addCosmicRayBurst(const cv::Mat&, cv::Mat& mDst, double);
-    void applyFilters(cv::Mat& mSource, cv::Mat& mDst);
+    void hsvAdjust(cv::Mat const &, cv::Mat &mDst);
+    void bgrAdjustPercent(cv::Mat const &, cv::Mat &mDst);
+    void addGaussianNoise(cv::Mat const &, cv::Mat &mDst, double, double);
+    void addSaltPepper(cv::Mat const &, cv::Mat &mDst, float, float);
+    void addCosmicRay(cv::Mat const &, cv::Mat &mDst, float, double, int);
+    void addCosmicRayBurst(cv::Mat const &, cv::Mat &mDst, double);
+    void applyFilters(cv::Mat &mSource, cv::Mat &mDst);
 
-    void setParentName(const std::string& cameraParentName);
+    void setParentName(std::string const &cameraParentName);
     std::string getParentName() const;
     void setCameraOn();
     void setCameraOff();
     bool isCameraOn() const;
     void setCameraId(int cameraId);
     int getCameraId() const;
-    void setResolution(const Eigen::Vector2i& cameraResolution);
+    void setResolution(Eigen::Vector2i const &cameraResolution);
     Eigen::Vector2i getResolution() const;
-    void setImageCadence(const uint64_t& cameraRenderRate);
+    void setImageCadence(uint64_t const &cameraRenderRate);
     uint64_t getImageCadence() const;
-    void setFieldOfView(const Eigen::Vector2d& fov);
+    void setFieldOfView(Eigen::Vector2d const &fov);
     Eigen::Vector2d getFieldOfView() const;
-    void setCameraBodyFramePosition(const Eigen::Vector3d& cameraPosition_B);
+    void setCameraBodyFramePosition(Eigen::Vector3d const &cameraPosition_B);
     Eigen::Vector3d getCameraBodyFramePosition() const;
-    void setBodyToCameraMrp(const Eigen::Vector3d& cameraMrp_CB);
+    void setBodyToCameraMrp(Eigen::Vector3d const &cameraMrp_CB);
     Eigen::Vector3d getBodyToCameraMrp() const;
     void setFocalLength(double cameraFocalLength);
     double getFocalLength() const;
@@ -83,39 +83,54 @@ class Camera : public SysModel {
     double getIntegrationWeightFactor() const;
     void setFullWellCapacity(double fullWellCapacityValue);
     double getFullWellCapacity() const;
-    void setRedQuantumEfficiency(const Eigen::Vector3d& redQE);
+    void setRedQuantumEfficiency(Eigen::Vector3d const &redQE);
     Eigen::Vector3d getRedQuantumEfficiency() const;
-    void setGreenQuantumEfficiency(const Eigen::Vector3d& greenQE);
+    void setGreenQuantumEfficiency(Eigen::Vector3d const &greenQE);
     Eigen::Vector3d getGreenQuantumEfficiency() const;
-    void setBlueQuantumEfficiency(const Eigen::Vector3d& blueQE);
+    void setBlueQuantumEfficiency(Eigen::Vector3d const &blueQE);
     Eigen::Vector3d getBlueQuantumEfficiency() const;
-    void setHorizontalVignetting(const Eigen::VectorXd& horizontalVignettingCoeffs);
+    void setHorizontalVignetting(Eigen::VectorXd const &horizontalVignettingCoeffs);
     Eigen::VectorXd getHorizontalVignetting() const;
-    void setVerticalVignetting(const Eigen::VectorXd& verticalVignettingCoeffs);
+    void setVerticalVignetting(Eigen::VectorXd const &verticalVignettingCoeffs);
     Eigen::VectorXd getVerticalVignetting() const;
-    void setDistortion(const Eigen::VectorXd& distortionCoeffs);
+    void setDistortion(Eigen::VectorXd const &distortionCoeffs);
     Eigen::VectorXd getDistortion() const;
     void setTransmission(double transmissionValue);
     double getTransmission() const;
-    void setImageFormat(const std::string& imageFormatValue);
+    void setImageFormat(std::string const &imageFormatValue);
     std::string getImageFormat() const;
     void setBitDepth(int bitDepthValue);
     int getBitDepth() const;
+    void setDarkCurrentPattern(uint32_t darkCurrentPatternValue);
+    uint32_t getDarkCurrentPattern() const;
+    void setDarkCurrentStdDeviation(double darkCurrentStdDeviationValue);
+    double getDarkCurrentStdDeviation() const;
+    void setIsGrayscale(bool isGrayscaleValue);
+    bool getIsGrayscale() const;
+    void setPixelDefectPattern(uint32_t pixelDefectPatternValue);
+    uint32_t getPixelDefectPattern() const;
+    void setStuckPixelRate(double stuckPixelRateValue);
+    double getStuckPixelRate() const;
+    void setDeadPixelRate(double deadPixelRateValue);
+    double getDeadPixelRate() const;
 
-   private:
+private:
     std::string parentSpacecraftName{};  //!< [-] Name of the parent body to which the camera should be attached
     bool cameraIsImaging{};              //!< [-] Is the camera currently taking images
     int cameraIdentification{1};         //!< [-] Camera identification
     Eigen::Vector2i resolution{
         512,
-        512};  //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
-    uint64_t imageCadence{static_cast<uint64_t>(
-        60 * 1E9)};  //!< [ns] Frame time interval at which to capture images in units of nanosecond
-    Eigen::Vector2d cameraFieldOfView{0.7, 0.7};  //!< [r] camera y-axis field of view edge-to-edge
-    Eigen::Vector3d cameraBodyFramePosition{};    //!< [m] Camera position in body frame
-    Eigen::Vector3d
-        bodyToCameraMrp{};  //!< [-] MRP defining the orientation of the camera frame relative to the body frame
-    double focalLength{};   //!< [m] Camera focal length
+        512
+    };  //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
+    uint64_t imageCadence{
+        static_cast<uint64_t>(60 * 1E9)
+    };  //!< [ns] Frame time interval at which to capture images in units of nanosecond
+    Eigen::Vector2d cameraFieldOfView{0.7, 0.7};                       //!< [r] camera y-axis field of view edge-to-edge
+    Eigen::Vector3d cameraBodyFramePosition{Eigen::Vector3d::Zero()};  //!< [m] Camera position in body frame
+    Eigen::Vector3d bodyToCameraMrp{
+        Eigen::Vector3d::Zero()
+    };  //!< [-] MRP defining the orientation of the camera frame relative to the body frame
+    double focalLength{};               //!< [m] Camera focal length
     int gaussianPointSpreadFunction{};  //!< Size of square Gaussian kernel to model point spread function, must be odd
     double readNoise{};                 //!< [e-] Read noise standard deviation
     bool shotNoise{};                   //!< [-] Model shot noise true or false
@@ -128,23 +143,36 @@ class Camera : public SysModel {
     double sensorHeight{};              //!< [m] Height of sensor
     double fullWellCapacity{};          //!< [e-] Amount of charge that can be stored within an individual pixel
     double integrationWeightFactor{1};  //!< [-] Weight factor for integration over wavelength to obtain photo-electrons
-    Eigen::Vector3d redQuantumEfficiency{};    //!< [-] Values of QE curve at specified wavelengths (red channel)
-    Eigen::Vector3d greenQuantumEfficiency{};  //!< [-] Values of QE curve at specified wavelengths (green channel)
-    Eigen::Vector3d blueQuantumEfficiency{};   //!< [-] Values of QE curve at specified wavelengths (blue channel)
-    Eigen::VectorXd
-        horizontalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and
-                                 //!< 1) as a function of horizontal distance from camera center (degrees)
-    Eigen::VectorXd
-        verticalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1)
-                               //!< as a function of vertical distance from camera center (degrees)
-    Eigen::VectorXd distortion{};  //!< [-] Polynomial coefficients to form the curve of distortion (values between 0
-                                   //!< and 1) as a function of vertical distance from camera center (degrees)
+    Eigen::Vector3d redQuantumEfficiency{
+        Eigen::Vector3d::Zero()
+    };  //!< [-] Values of QE curve at specified wavelengths (red channel)
+    Eigen::Vector3d greenQuantumEfficiency{
+        Eigen::Vector3d::Zero()
+    };  //!< [-] Values of QE curve at specified wavelengths (green channel)
+    Eigen::Vector3d blueQuantumEfficiency{
+        Eigen::Vector3d::Zero()
+    };  //!< [-] Values of QE curve at specified wavelengths (blue channel)
+    Eigen::VectorXd horizontalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting
+                                             //!< (values between 0 and 1) as a function of horizontal distance
+                                             //!< from camera center (degrees)
+    Eigen::VectorXd verticalVignetting{};    //!< [-] Polynomial coefficients to form the curve of vignetting
+                                             //!< (values between 0 and 1) as a function of vertical distance
+                                             //!< from camera center (degrees)
+    Eigen::VectorXd distortion{};            //!< [-] Polynomial coefficients to form the curve of distortion
+                                             //!< (values between 0 and 1) as a function of vertical distance
+                                             //!< from camera center (degrees)
     double transmission{};      //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
                                 //!< wavelengths
     std::string imageFormat{};  //!< [-] Image format (raw, png, jpeg)
     int bitDepth{};             //!< [-] Bit depth if raw format is selected
+    uint32_t darkCurrentPattern{};     //!< [-] Seed used to generate the dark current noise pattern
+    double darkCurrentStdDeviation{};  //!< [e-/s] Dark current rate standard deviation in electrons per second
+    bool isGrayscale{};                //!< [-] Determines if images are grayscale or not
+    uint32_t pixelDefectPattern{};     //!< [-] Seed used to generate the pixel defect pattern
+    double stuckPixelRate{};           //!< [-] Probability of a stuck pixel (e.g. 0.01 = 1%)
+    double deadPixelRate{};            //!< [-] Probability of a dead pixel (e.g. 0.01 = 1%)
 
-   public:
+public:
     std::string filename{};                              //!< Filename for module to read an image directly
     ReadFunctor<CameraImageMsgPayload> imageInMsg;       //!< camera image input message
     Message<CameraImageMsgPayload> imageOutMsg;          //!< camera image output message
@@ -158,8 +186,9 @@ class Camera : public SysModel {
     char parentName[MAX_STRING_LENGTH]{};  //!< [-] Name of the parent body to which the camera should be attached
     int cameraIsOn{};                      //!< [-] Is the camera currently taking images
     int cameraId{1};                       //!< [-] Is the camera currently taking images
-    uint64_t renderRate{static_cast<uint64_t>(
-        60 * 1E9)};           //!< [ns] Frame time interval at which to capture images in units of nanosecond
+    uint64_t renderRate{
+        static_cast<uint64_t>(60 * 1E9)
+    };  //!< [ns] Frame time interval at which to capture images in units of nanosecond
     double fieldOfView{0.7};  //!< [r] camera y-axis field of view edge-to-edge
     double cameraPos_B[3]{};  //!< [m] Camera position in body frame
     double sigma_CB[3]{};     //!< [-] MRP defining the orientation of the camera frame relative to the body frame
@@ -190,7 +219,7 @@ class Camera : public SysModel {
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 
-   private:
+private:
     uint64_t localcurrentSimNanos{};
     void* pointImageOut{nullptr};  //!< void pointer for image memory passing
 };

@@ -14,10 +14,12 @@
 
 /* modify the path to reflect the new module names */
 #include "camera.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <string.h>
 
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
@@ -43,7 +45,7 @@ void Camera::reset(uint64_t currentSimNanos) {}
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat& mDst) {
+void Camera::hsvAdjust(cv::Mat const &mSrc, cv::Mat &mDst) {
     cv::Mat localHsv;
     cvtColor(mSrc, localHsv, cv::COLOR_BGR2HSV);
 
@@ -54,26 +56,20 @@ void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat& mDst) {
 
             // convert radians to degrees and multiply by 2
             // user assumes range hue range is 0-2pi and not 0-180
-            int input_degrees = (int)(this->hsv[0] * R2D);
+            int input_degrees = (int) (this->hsv[0] * R2D);
             int h_360 = (localHsv.at<cv::Vec3b>(j, i)[0] * 2) + input_degrees;
-            h_360 = (int)(h_360 - 360 * std::floor(h_360 * (1. / 360.)));
+            h_360 = (int) (h_360 - 360 * std::floor(h_360 * (1. / 360.)));
             h_360 = h_360 / 2;
-            if (h_360 == 180) {
-                h_360 = 0;
-            }
-            localHsv.at<cv::Vec3b>(j, i)[0] = (unsigned char)h_360;
+            if (h_360 == 180) { h_360 = 0; }
+            localHsv.at<cv::Vec3b>(j, i)[0] = (unsigned char) h_360;
 
             int values[3];
             for (int k = 1; k < 3; k++) {
-                values[k] = (int)(localHsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k] / 100. + 1.));
+                values[k] = (int) (localHsv.at<cv::Vec3b>(j, i)[k] * (this->hsv[k] / 100. + 1.));
                 // saturate S and V values to [0,255]
-                if (values[k] < 0) {
-                    values[k] = 0;
-                }
-                if (values[k] > 255) {
-                    values[k] = 255;
-                }
-                localHsv.at<cv::Vec3b>(j, i)[k] = (unsigned char)values[k];
+                if (values[k] < 0) { values[k] = 0; }
+                if (values[k] > 255) { values[k] = 255; }
+                localHsv.at<cv::Vec3b>(j, i)[k] = (unsigned char) values[k];
             }
         }
     }
@@ -87,7 +83,7 @@ void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat& mDst) {
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat& mDst) {
+void Camera::bgrAdjustPercent(cv::Mat const &mSrc, cv::Mat &mDst) {
     cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mBGR, mSrc.type());
 
@@ -98,15 +94,11 @@ void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat& mDst) {
         for (int i = 0; i < mSrc.cols; i++) {
             int values[3];
             for (int k = 0; k < 3; k++) {
-                values[k] = (int)(mBGR.at<cv::Vec3b>(j, i)[k] * (this->bgrPercent[k] / 100. + 1.));
+                values[k] = (int) (mBGR.at<cv::Vec3b>(j, i)[k] * (this->bgrPercent[k] / 100. + 1.));
                 // deal with overflow
-                if (values[k] < 0) {
-                    values[k] = 0;
-                }
-                if (values[k] > 255) {
-                    values[k] = 255;
-                }
-                mBGR.at<cv::Vec3b>(j, i)[k] = (unsigned char)values[k];
+                if (values[k] < 0) { values[k] = 0; }
+                if (values[k] > 255) { values[k] = 255; }
+                mBGR.at<cv::Vec3b>(j, i)[k] = (unsigned char) values[k];
             }
         }
     }
@@ -122,7 +114,7 @@ void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat& mDst) {
  * @param StdDev standard deviation of pixel value
  * @return void
  */
-void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat& mDst, double Mean, double StdDev) {
+void Camera::addGaussianNoise(cv::Mat const &mSrc, cv::Mat &mDst, double Mean, double StdDev) {
     cv::Mat mSrc_16SC;
     // CV_16SC3 means signed 16 bit shorts three channels
     cv::Mat mGaussian_noise = cv::Mat(mSrc.size(), CV_16SC3);
@@ -143,7 +135,7 @@ void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat& mDst, double Mean, d
  * @param pb probability of hot pixels
  * @return void
  */
-void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat& mDst, float pa, float pb) {
+void Camera::addSaltPepper(cv::Mat const &mSrc, cv::Mat &mDst, float pa, float pb) {
     /*! These lines will make the hot and dead pixels different every time.*/
     // uint64 initValue = time(0);
     // RNG rng(initValue);
@@ -152,8 +144,8 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat& mDst, float pa, float p
     cv::RNG rng;
 
     /*!  Determines the amount of hot/dead pixels based on the input probabilities.*/
-    int amount1 = (int)(mSrc.rows * mSrc.cols * pa);
-    int amount2 = (int)(mSrc.rows * mSrc.cols * pb);
+    int amount1 = (int) (mSrc.rows * mSrc.cols * pa);
+    int amount2 = (int) (mSrc.rows * mSrc.cols * pb);
 
     cv::Mat mSaltPepper = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mSaltPepper, mSrc.type());
@@ -189,12 +181,12 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat& mDst, float pa, float p
  * @param maxSize max length of cosmic ray
  * @return void
  */
-void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat& mDst, float probThreshhold, double randOffset, int maxSize) {
+void Camera::addCosmicRay(cv::Mat const &mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize) {
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = this->localcurrentSimNanos;
-    cv::RNG rng((uint64)(initValue + time(0) + randOffset));
+    cv::RNG rng((uint64) (initValue + time(0) + randOffset));
 
-    float prob = (float)(rng.uniform(0.0, 1.0));
+    float prob = (float) (rng.uniform(0.0, 1.0));
     if (prob > probThreshhold) {
         cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
         mSrc.convertTo(mCosmic, mSrc.type());
@@ -222,13 +214,13 @@ void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat& mDst, float probThreshho
  * @param num number of cosmic rays to be added
  * @return void
  */
-void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat& mDst, double num) {
+void Camera::addCosmicRayBurst(cv::Mat const &mSrc, cv::Mat &mDst, double num) {
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
     for (int i = 0; i < std::round(num); i++) {
         /*! Threshold defined such that 1 provides a 1/50 chance of getting a ray, and 10 will get about
          * 5 rays per image. Currently length is limited to 50 pixels*/
-        this->addCosmicRay(mCosmic, mCosmic, (float)(1 / (std::pow(num, 2))), i + 1, 50);
+        this->addCosmicRay(mCosmic, mCosmic, (float) (1 / (std::pow(num, 2))), i + 1, 50);
     }
     mCosmic.convertTo(mDst, mSrc.type());
 }
@@ -241,7 +233,7 @@ void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat& mDst, double num) {
  * @param mDst destination of modified image
  * @return void
  */
-void Camera::applyFilters(cv::Mat& mSource, cv::Mat& mDst) {
+void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst) {
     cv::Mat mFilters(mSource.size(), mSource.type());
     mSource.convertTo(mFilters, mSource.type());
 
@@ -251,29 +243,21 @@ void Camera::applyFilters(cv::Mat& mSource, cv::Mat& mDst) {
         cv::threshold(mFilters, mFilters, this->gaussian * 6, 255, cv::THRESH_TOZERO);
     }
     if (this->blurParam > 0) {
-        int blurSize = (int)std::round(this->blurParam);
-        if (blurSize % 2 == 0) {
-            blurSize += 1;
-        }
+        int blurSize = (int) std::round(this->blurParam);
+        if (blurSize % 2 == 0) { blurSize += 1; }
         cv::blur(mFilters, mFilters, cv::Size(blurSize, blurSize), cv::Point(-1, -1));
     }
     if (this->darkCurrentIntensity > 0) {
         float scale = 15;
         this->addGaussianNoise(mFilters, mFilters, this->darkCurrentIntensity * scale, 0.0);
     }
-    if (this->hsv.cwiseAbs().sum() > 0.00001) {
-        this->hsvAdjust(mFilters, mFilters);
-    }
-    if (this->bgrPercent.cwiseAbs().sum() != 0) {
-        this->bgrAdjustPercent(mFilters, mFilters);
-    }
+    if (this->hsv.cwiseAbs().sum() > 0.00001) { this->hsvAdjust(mFilters, mFilters); }
+    if (this->bgrPercent.cwiseAbs().sum() != 0) { this->bgrAdjustPercent(mFilters, mFilters); }
     if (this->saltPepper > 0) {
         float scale = 0.00002f;
-        this->addSaltPepper(mFilters, mFilters, (float)(this->saltPepper * scale), (float)(this->saltPepper * scale));
+        this->addSaltPepper(mFilters, mFilters, (float) (this->saltPepper * scale), (float) (this->saltPepper * scale));
     }
-    if (this->cosmicRays > 0) {
-        this->addCosmicRayBurst(mFilters, mFilters, std::round(this->cosmicRays));
-    }
+    if (this->cosmicRays > 0) { this->addCosmicRayBurst(mFilters, mFilters, std::round(this->cosmicRays)); }
 
     mFilters.convertTo(mDst, mSource.type());
 }
@@ -355,6 +339,12 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.transmission = this->transmission;
     strcpy(cameraModelMsg.imageFormat, this->imageFormat.c_str());
     cameraModelMsg.bitDepth = this->bitDepth;
+    cameraModelMsg.darkCurrentPattern = this->darkCurrentPattern;
+    cameraModelMsg.darkCurrentStdDeviation = this->darkCurrentStdDeviation;
+    cameraModelMsg.isGrayscale = this->isGrayscale;
+    cameraModelMsg.pixelDefectPattern = this->pixelDefectPattern;
+    cameraModelMsg.stuckPixelRate = this->stuckPixelRate;
+    cameraModelMsg.deadPixelRate = this->deadPixelRate;
 
     /*! - Update the camera config data no matter if an image is present*/
     this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
@@ -364,9 +354,7 @@ void Camera::updateState(uint64_t currentSimNanos) {
 
     cv::Mat imageCV;
     cv::Mat blurred;
-    if (this->saveDir != "") {
-        localPath = this->saveDir + std::to_string(currentSimNanos * 1E-9) + ".png";
-    }
+    if (this->saveDir != "") { localPath = this->saveDir + std::to_string(currentSimNanos * 1E-9) + ".png"; }
     /*! - Read in the bitmap*/
     if (this->imageInMsg.isLinked()) {
         imageBuffer = this->imageInMsg();
@@ -383,8 +371,10 @@ void Camera::updateState(uint64_t currentSimNanos) {
         }
     } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
-                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer(
+            (char*) imageBuffer.imagePointer,
+            (char*) imageBuffer.imagePointer + imageBuffer.imageBufferLength
+        );
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
 
         this->applyFilters(imageCV, blurred);
@@ -400,15 +390,13 @@ void Camera::updateState(uint64_t currentSimNanos) {
         }
         /*! - Encode the cv mat into a png for the future modules to decode it the same way */
         std::vector<unsigned char> buf;
-        std::vector<int> compression;
-        compression.push_back(0);
-        cv::imencode(".png", blurred, buf, compression);
+        cv::imencode(".png", blurred, buf);
         /*! - Output the saved image */
         imageOut.valid = 1;
         imageOut.timeTag = imageBuffer.timeTag;
         imageOut.cameraID = imageBuffer.cameraID;
         imageOut.imageType = imageBuffer.imageType;
-        imageOut.imageBufferLength = (int32_t)buf.size();
+        imageOut.imageBufferLength = (int32_t) buf.size();
         this->pointImageOut = malloc(imageOut.imageBufferLength * sizeof(char));
         memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength * sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
@@ -424,112 +412,148 @@ void Camera::updateState(uint64_t currentSimNanos) {
     @param cameraParentName
     @return void
     */
-void Camera::setParentName(const std::string& cameraParentName) { this->parentSpacecraftName = cameraParentName; }
+void Camera::setParentName(std::string const &cameraParentName) {
+    this->parentSpacecraftName = cameraParentName;
+}
 
 /*! Get the name of the parent body to which the camera should be attached
     @return std::string parentSpacecraftName
     */
-std::string Camera::getParentName() const { return this->parentSpacecraftName; }
+std::string Camera::getParentName() const {
+    return this->parentSpacecraftName;
+}
 
 /*! Set the camera to on, allowing it to take images
     @return void
     */
-void Camera::setCameraOn() { this->cameraIsImaging = true; }
+void Camera::setCameraOn() {
+    this->cameraIsImaging = true;
+}
 
 /*! Set the camera to off, not allowing it to take images
     @return void
     */
-void Camera::setCameraOff() { this->cameraIsImaging = false; }
+void Camera::setCameraOff() {
+    this->cameraIsImaging = false;
+}
 
 /*! Get if the camera is currently taking images
     @return int cameraIsImaging
     */
-bool Camera::isCameraOn() const { return this->cameraIsImaging; }
+bool Camera::isCameraOn() const {
+    return this->cameraIsImaging;
+}
 
 /*! Set the camera Id
     @param cameraId int
     @return void
     */
-void Camera::setCameraId(const int cameraId) { this->cameraIdentification = cameraId; }
+void Camera::setCameraId(int const cameraId) {
+    this->cameraIdentification = cameraId;
+}
 
 /*! Get the camera Id
     @return int cameraIdentification
     */
-int Camera::getCameraId() const { return this->cameraIdentification; }
+int Camera::getCameraId() const {
+    return this->cameraIdentification;
+}
 
 /*! Set camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
     @param cameraResolution Eigen::Vector2i
     @return void
     */
-void Camera::setResolution(const Eigen::Vector2i& cameraResolution) { this->resolution = cameraResolution; }
+void Camera::setResolution(Eigen::Vector2i const &cameraResolution) {
+    this->resolution = cameraResolution;
+}
 
 /*! Get camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels
     @return Eigen::Vector2i resolution
     */
-Eigen::Vector2i Camera::getResolution() const { return this->resolution; }
+Eigen::Vector2i Camera::getResolution() const {
+    return this->resolution;
+}
 
 /*! Set the frame time interval at which to capture images in units of nanosecond
     @param cameraImageCadence uint64_t
     @return void
     */
-void Camera::setImageCadence(const uint64_t& cameraImageCadence) { this->imageCadence = cameraImageCadence; }
+void Camera::setImageCadence(uint64_t const &cameraImageCadence) {
+    this->imageCadence = cameraImageCadence;
+}
 
 /*! Get the frame time interval at which to capture images in units of nanosecond
     @return uint64_t imageCadence
     */
-uint64_t Camera::getImageCadence() const { return this->imageCadence; }
+uint64_t Camera::getImageCadence() const {
+    return this->imageCadence;
+}
 
 /*! Set the camera y-axis field of view edge-to-edge
     @param fov Eigen::Vector2d
     @return void
     */
-void Camera::setFieldOfView(const Eigen::Vector2d& fov) { this->cameraFieldOfView = fov; }
+void Camera::setFieldOfView(Eigen::Vector2d const &fov) {
+    this->cameraFieldOfView = fov;
+}
 
 /*! Get the camera y-axis field of view edge-to-edge
     @return Eigen::Vector2d fieldOfView
     */
-Eigen::Vector2d Camera::getFieldOfView() const { return this->cameraFieldOfView; }
+Eigen::Vector2d Camera::getFieldOfView() const {
+    return this->cameraFieldOfView;
+}
 
 /*! Set the camera position in body frame
     @param cameraPosition_B Eigen::Vector3d
     @return void
     */
-void Camera::setCameraBodyFramePosition(const Eigen::Vector3d& cameraPosition_B) {
+void Camera::setCameraBodyFramePosition(Eigen::Vector3d const &cameraPosition_B) {
     this->cameraBodyFramePosition = cameraPosition_B;
 }
 
 /*! Get the camera position in body frame
     @return Eigen::Vector3d cameraPos_B
     */
-Eigen::Vector3d Camera::getCameraBodyFramePosition() const { return this->cameraBodyFramePosition; }
+Eigen::Vector3d Camera::getCameraBodyFramePosition() const {
+    return this->cameraBodyFramePosition;
+}
 
 /*! Set the orientation of the camera frame relative to the body frame
     @param cameraMrp_CB Eigen::Vector3d
     @return void
     */
-void Camera::setBodyToCameraMrp(const Eigen::Vector3d& cameraMrp_CB) { this->bodyToCameraMrp = cameraMrp_CB; }
+void Camera::setBodyToCameraMrp(Eigen::Vector3d const &cameraMrp_CB) {
+    this->bodyToCameraMrp = cameraMrp_CB;
+}
 
 /*! Get the orientation of the camera frame relative to the body frame
     @return Eigen::Vector3d sigma_CB
     */
-Eigen::Vector3d Camera::getBodyToCameraMrp() const { return this->bodyToCameraMrp; }
+Eigen::Vector3d Camera::getBodyToCameraMrp() const {
+    return this->bodyToCameraMrp;
+}
 
 /*! Set the camera focal length
     @param cameraFocalLength double
     @return void
     */
-void Camera::setFocalLength(const double cameraFocalLength) { this->focalLength = cameraFocalLength; }
+void Camera::setFocalLength(double const cameraFocalLength) {
+    this->focalLength = cameraFocalLength;
+}
 
 /*! Get the camera focal length
     @return double focalLength
     */
-double Camera::getFocalLength() const { return this->focalLength; }
+double Camera::getFocalLength() const {
+    return this->focalLength;
+}
 
 /*! Set the size of square Gaussian kernel to model point spread function
     @param cameraGaussianPointSpreadFunction int
     @return void
     */
-void Camera::setGaussianPointSpreadFunction(const int cameraGaussianPointSpreadFunction) {
+void Camera::setGaussianPointSpreadFunction(int const cameraGaussianPointSpreadFunction) {
     // asserts the value of cameraGaussianPointSpreadFunction must be odd
     assert(cameraGaussianPointSpreadFunction % 2 == 1 && "Gaussian point spread function should be odd");
     this->gaussianPointSpreadFunction = cameraGaussianPointSpreadFunction;
@@ -538,114 +562,152 @@ void Camera::setGaussianPointSpreadFunction(const int cameraGaussianPointSpreadF
 /*! Get the size of square Gaussian kernel to model point spread function
     @return int gaussianPointSpreadFunction
     */
-int Camera::getGaussianPointSpreadFunction() const { return this->gaussianPointSpreadFunction; }
+int Camera::getGaussianPointSpreadFunction() const {
+    return this->gaussianPointSpreadFunction;
+}
 
 /*! Set the read noise standard deviation
     @param cameraReadNoise double
     @return void
     */
 
-void Camera::setReadNoise(const double cameraReadNoise) { this->readNoise = cameraReadNoise; }
+void Camera::setReadNoise(double const cameraReadNoise) {
+    this->readNoise = cameraReadNoise;
+}
 
 /*! Get the read noise standard deviation
     @return double readNoise
     */
 
-double Camera::getReadNoise() const { return this->readNoise; }
+double Camera::getReadNoise() const {
+    return this->readNoise;
+}
 
 /*! Set the shot noise standard deviation
     @param cameraShotNoise bool
     @return void
     */
-void Camera::setShotNoise(const bool cameraShotNoise) { this->shotNoise = cameraShotNoise; }
+void Camera::setShotNoise(bool const cameraShotNoise) {
+    this->shotNoise = cameraShotNoise;
+}
 
 /*! Get the shot noise standard deviation
     @return bool shotNoise
     */
-bool Camera::getShotNoise() const { return this->shotNoise; }
+bool Camera::getShotNoise() const {
+    return this->shotNoise;
+}
 
 /*! Set the dark current
     @param cameraDarkCurrent double
     @return void
     */
-void Camera::setDarkCurrent(const double cameraDarkCurrent) { this->darkCurrent = cameraDarkCurrent; }
+void Camera::setDarkCurrent(double const cameraDarkCurrent) {
+    this->darkCurrent = cameraDarkCurrent;
+}
 
 /*! Get the dark current
     @return double darkCurrent
     */
-double Camera::getDarkCurrent() const { return this->darkCurrent; }
+double Camera::getDarkCurrent() const {
+    return this->darkCurrent;
+}
 
 /*! Set the mapping from current to pixel intensity
     @param cameraGain double
     @return void
     */
 
-void Camera::setSystemGain(const double cameraGain) { this->systemGain = cameraGain; }
+void Camera::setSystemGain(double const cameraGain) {
+    this->systemGain = cameraGain;
+}
 
 /*! Get the mapping from current to pixel intensity
     @return double systemGain
     */
 
-double Camera::getSystemGain() const { return this->systemGain; }
+double Camera::getSystemGain() const {
+    return this->systemGain;
+}
 
 /*! Set the camera epxosure time in seconds
     @param openExposureTime double
     @return void
     */
 
-void Camera::setExposureTime(const double openExposureTime) { this->exposureTime = openExposureTime; }
+void Camera::setExposureTime(double const openExposureTime) {
+    this->exposureTime = openExposureTime;
+}
 
 /*! Get the mapping from current to pixel intensity
     @return double exposureTime
     */
 
-double Camera::getExposureTime() const { return this->exposureTime; }
+double Camera::getExposureTime() const {
+    return this->exposureTime;
+}
 
 /*! Set the camera gamma correction factor
     @param gammaCorrection double
     @return void
     */
 
-void Camera::setGammaCorrection(double gammaCorrectionValue) { this->gammaCorrection = gammaCorrectionValue; }
+void Camera::setGammaCorrection(double gammaCorrectionValue) {
+    this->gammaCorrection = gammaCorrectionValue;
+}
 
 /*! Get the gamma correction factor
     @return double gammaCorrection
     */
 
-double Camera::getGammaCorrection() const { return this->gammaCorrection; }
+double Camera::getGammaCorrection() const {
+    return this->gammaCorrection;
+}
 
 /*! Set the aperture radius
     @param apertureRadius double
     @return void
     */
-void Camera::setApertureRadius(double apertureRadiusValue) { this->apertureRadius = apertureRadiusValue; }
+void Camera::setApertureRadius(double apertureRadiusValue) {
+    this->apertureRadius = apertureRadiusValue;
+}
 
 /*! Get the aperture radius
     @return double apertureRadius
     */
-double Camera::getApertureRadius() const { return this->apertureRadius; }
+double Camera::getApertureRadius() const {
+    return this->apertureRadius;
+}
 
 /*! Set the sensor width
     @param sensorWidth double
     @return void
     */
-void Camera::setSensorWidth(double sensorWidthValue) { this->sensorWidth = sensorWidthValue; }
+void Camera::setSensorWidth(double sensorWidthValue) {
+    this->sensorWidth = sensorWidthValue;
+}
 
 /*! Get the sensor width
     @return double sensorWidth
     */
-double Camera::getSensorWidth() const { return this->sensorWidth; }
+double Camera::getSensorWidth() const {
+    return this->sensorWidth;
+}
 
 /*! Set the sensor height
     @param sensorHeight double
     @return void
     */
-void Camera::setSensorHeight(double sensorHeightValue) { this->sensorHeight = sensorHeightValue; }
+void Camera::setSensorHeight(double sensorHeightValue) {
+    this->sensorHeight = sensorHeightValue;
+}
 
 /*! Get the sensor height
     @return double sensorHeight
     */
-double Camera::getSensorHeight() const { return this->sensorHeight; }
+double Camera::getSensorHeight() const {
+    return this->sensorHeight;
+}
 
 /*! Set the integration weight factor
     @param integrationWeightFactor double
@@ -658,118 +720,246 @@ void Camera::setIntegrationWeightFactor(double integrationWeightFactorValue) {
 /*! Get the integration weight factor
     @return double integrationWeightFactor
     */
-double Camera::getIntegrationWeightFactor() const { return this->integrationWeightFactor; }
+double Camera::getIntegrationWeightFactor() const {
+    return this->integrationWeightFactor;
+}
 
 /*! Set the full well capacity
     @param fullWellCapacity double
     @return void
     */
-void Camera::setFullWellCapacity(double fullWellCapacityValue) { this->fullWellCapacity = fullWellCapacityValue; }
+void Camera::setFullWellCapacity(double fullWellCapacityValue) {
+    this->fullWellCapacity = fullWellCapacityValue;
+}
 
 /*! Get the full well capacity
     @return double fullWellCapacity
     */
-double Camera::getFullWellCapacity() const { return this->fullWellCapacity; }
+double Camera::getFullWellCapacity() const {
+    return this->fullWellCapacity;
+}
 
 /*! Set the values of the QE curve at 450, 550 and 650 nm (red channel)
     @param redQE Eigen::Vector3d
     @return void
     */
-void Camera::setRedQuantumEfficiency(const Eigen::Vector3d& redQE) { this->redQuantumEfficiency = redQE; }
+void Camera::setRedQuantumEfficiency(Eigen::Vector3d const &redQE) {
+    this->redQuantumEfficiency = redQE;
+}
 
 /*! Get the values of the QE curve at 450, 550 and 650 nm (red channel)
     @return Eigen::Vector3d redQuantumEfficiency
     */
-Eigen::Vector3d Camera::getRedQuantumEfficiency() const { return this->redQuantumEfficiency; }
+Eigen::Vector3d Camera::getRedQuantumEfficiency() const {
+    return this->redQuantumEfficiency;
+}
 
 /*! Set the values of the QE curve at 450, 550 and 650 nm (green channel)
     @param greenQE Eigen::Vector3d
     @return void
     */
-void Camera::setGreenQuantumEfficiency(const Eigen::Vector3d& greenQE) { this->greenQuantumEfficiency = greenQE; }
+void Camera::setGreenQuantumEfficiency(Eigen::Vector3d const &greenQE) {
+    this->greenQuantumEfficiency = greenQE;
+}
 
 /*! Get the values of the QE curve at 450, 550 and 650 nm (green channel)
     @return Eigen::Vector3d greenQuantumEfficiency
     */
-Eigen::Vector3d Camera::getGreenQuantumEfficiency() const { return this->greenQuantumEfficiency; }
+Eigen::Vector3d Camera::getGreenQuantumEfficiency() const {
+    return this->greenQuantumEfficiency;
+}
 
 /*! Set the values of the QE curve at 450, 550 and 650 nm (blue channel)
     @param blueQE Eigen::Vector3d
     @return void
     */
-void Camera::setBlueQuantumEfficiency(const Eigen::Vector3d& blueQE) { this->blueQuantumEfficiency = blueQE; }
+void Camera::setBlueQuantumEfficiency(Eigen::Vector3d const &blueQE) {
+    this->blueQuantumEfficiency = blueQE;
+}
 
 /*! Get the values of the QE curve at 450, 550 and 650 nm (blue channel)
     @return Eigen::Vector3d blueQuantumEfficiency
     */
-Eigen::Vector3d Camera::getBlueQuantumEfficiency() const { return this->blueQuantumEfficiency; }
+Eigen::Vector3d Camera::getBlueQuantumEfficiency() const {
+    return this->blueQuantumEfficiency;
+}
 
 /*! Set the horizontal vignetting polynomial coefficients
     @param horizontalVignettingCoeffs Eigen::VectorXd
     @return void
     */
-void Camera::setHorizontalVignetting(const Eigen::VectorXd& horizontalVignettingCoeffs) {
+void Camera::setHorizontalVignetting(Eigen::VectorXd const &horizontalVignettingCoeffs) {
     this->horizontalVignetting = horizontalVignettingCoeffs;
 }
 
 /*! Get the horizontal vignetting polynomial coefficients
     @return Eigen::VectorXd horizontalVignetting
     */
-Eigen::VectorXd Camera::getHorizontalVignetting() const { return this->horizontalVignetting; }
+Eigen::VectorXd Camera::getHorizontalVignetting() const {
+    return this->horizontalVignetting;
+}
 
 /*! Set the vertical vignetting polynomial coefficients
     @param verticalVignettingCoeffs Eigen::VectorXd
     @return void
     */
-void Camera::setVerticalVignetting(const Eigen::VectorXd& verticalVignettingCoeffs) {
+void Camera::setVerticalVignetting(Eigen::VectorXd const &verticalVignettingCoeffs) {
     this->verticalVignetting = verticalVignettingCoeffs;
 }
 
 /*! Get the vertical vignetting polynomial coefficients
     @return Eigen::VectorXd verticalVignetting
     */
-Eigen::VectorXd Camera::getVerticalVignetting() const { return this->verticalVignetting; }
+Eigen::VectorXd Camera::getVerticalVignetting() const {
+    return this->verticalVignetting;
+}
 
 /*! Set the distortion polynomial coefficients
     @param distortionCoeffs Eigen::VectorXd
     @return void
     */
-void Camera::setDistortion(const Eigen::VectorXd& distortionCoeffs) { this->distortion = distortionCoeffs; }
+void Camera::setDistortion(Eigen::VectorXd const &distortionCoeffs) {
+    this->distortion = distortionCoeffs;
+}
 
 /*! Get the distortion polynomial coefficients
     @return Eigen::VectorXd distortion
     */
-Eigen::VectorXd Camera::getDistortion() const { return this->distortion; }
+Eigen::VectorXd Camera::getDistortion() const {
+    return this->distortion;
+}
 
 /*! Set the transmission rate of the lens
     @param transmission double
     @return void
     */
-void Camera::setTransmission(double transmissionValue) { this->transmission = transmissionValue; }
+void Camera::setTransmission(double transmissionValue) {
+    this->transmission = transmissionValue;
+}
 
 /*! Get the transmission rate of the lens
     @return double transmission
     */
-double Camera::getTransmission() const { return this->transmission; }
+double Camera::getTransmission() const {
+    return this->transmission;
+}
 
 /*! Set the image format (raw, png, jpeg)
     @param imageFormatValue std::string
     @return void
     */
-void Camera::setImageFormat(const std::string& imageFormatValue) { this->imageFormat = imageFormatValue; }
+void Camera::setImageFormat(std::string const &imageFormatValue) {
+    this->imageFormat = imageFormatValue;
+}
 
 /*! Get the image format
     @return std::string imageFormat
     */
-std::string Camera::getImageFormat() const { return this->imageFormat; }
+std::string Camera::getImageFormat() const {
+    return this->imageFormat;
+}
 
 /*! Set the bit depth (used when raw format is selected)
     @param bitDepthValue int
     @return void
     */
-void Camera::setBitDepth(const int bitDepthValue) { this->bitDepth = bitDepthValue; }
+void Camera::setBitDepth(int const bitDepthValue) {
+    this->bitDepth = bitDepthValue;
+}
 
 /*! Get the bit depth
     @return int bitDepth
     */
-int Camera::getBitDepth() const { return this->bitDepth; }
+int Camera::getBitDepth() const {
+    return this->bitDepth;
+}
+
+/*! Set the dark current noise pattern seed
+    @param darkCurrentPatternValue uint32_t
+    @return void
+    */
+void Camera::setDarkCurrentPattern(uint32_t const darkCurrentPatternValue) {
+    this->darkCurrentPattern = darkCurrentPatternValue;
+}
+
+/*! Get the dark current noise pattern seed
+    @return uint32_t darkCurrentPattern
+    */
+uint32_t Camera::getDarkCurrentPattern() const {
+    return this->darkCurrentPattern;
+}
+
+/*! Set the dark current rate standard deviation
+    @param darkCurrentStdDeviationValue double
+    @return void
+    */
+void Camera::setDarkCurrentStdDeviation(double const darkCurrentStdDeviationValue) {
+    this->darkCurrentStdDeviation = darkCurrentStdDeviationValue;
+}
+
+/*! Get the dark current rate standard deviation
+    @return double darkCurrentStdDeviation
+    */
+double Camera::getDarkCurrentStdDeviation() const {
+    return this->darkCurrentStdDeviation;
+}
+
+/*! Set whether images are grayscale
+    @param isGrayscaleValue bool
+    @return void
+    */
+void Camera::setIsGrayscale(bool const isGrayscaleValue) {
+    this->isGrayscale = isGrayscaleValue;
+}
+
+/*! Get whether images are grayscale
+    @return bool isGrayscale
+    */
+bool Camera::getIsGrayscale() const {
+    return this->isGrayscale;
+}
+
+/*! Set the pixel defect pattern seed
+    @param pixelDefectPatternValue uint32_t
+    @return void
+    */
+void Camera::setPixelDefectPattern(uint32_t const pixelDefectPatternValue) {
+    this->pixelDefectPattern = pixelDefectPatternValue;
+}
+
+/*! Get the pixel defect pattern seed
+    @return uint32_t pixelDefectPattern
+    */
+uint32_t Camera::getPixelDefectPattern() const {
+    return this->pixelDefectPattern;
+}
+
+/*! Set the stuck pixel rate
+    @param stuckPixelRateValue double
+    @return void
+    */
+void Camera::setStuckPixelRate(double const stuckPixelRateValue) {
+    this->stuckPixelRate = stuckPixelRateValue;
+}
+
+/*! Get the stuck pixel rate
+    @return double stuckPixelRate
+    */
+double Camera::getStuckPixelRate() const {
+    return this->stuckPixelRate;
+}
+
+/*! Set the dead pixel rate
+    @param deadPixelRateValue double
+    @return void
+    */
+void Camera::setDeadPixelRate(double const deadPixelRateValue) {
+    this->deadPixelRate = deadPixelRateValue;
+}
+
+/*! Get the dead pixel rate
+    @return double deadPixelRate
+    */
+double Camera::getDeadPixelRate() const {
+    return this->deadPixelRate;
+}
