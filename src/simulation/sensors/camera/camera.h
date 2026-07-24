@@ -125,11 +125,12 @@ private:
     uint64_t imageCadence{
         static_cast<uint64_t>(60 * 1E9)
     };  //!< [ns] Frame time interval at which to capture images in units of nanosecond
-    Eigen::Vector2d cameraFieldOfView{0.7, 0.7};  //!< [r] camera y-axis field of view edge-to-edge
-    Eigen::Vector3d cameraBodyFramePosition{};    //!< [m] Camera position in body frame
-    Eigen::Vector3d
-        bodyToCameraMrp{};  //!< [-] MRP defining the orientation of the camera frame relative to the body frame
-    double focalLength{};   //!< [m] Camera focal length
+    Eigen::Vector2d cameraFieldOfView{0.7, 0.7};                       //!< [r] camera y-axis field of view edge-to-edge
+    Eigen::Vector3d cameraBodyFramePosition{Eigen::Vector3d::Zero()};  //!< [m] Camera position in body frame
+    Eigen::Vector3d bodyToCameraMrp{
+        Eigen::Vector3d::Zero()
+    };  //!< [-] MRP defining the orientation of the camera frame relative to the body frame
+    double focalLength{};               //!< [m] Camera focal length
     int gaussianPointSpreadFunction{};  //!< Size of square Gaussian kernel to model point spread function, must be odd
     double readNoise{};                 //!< [e-] Read noise standard deviation
     bool shotNoise{};                   //!< [-] Model shot noise true or false
@@ -142,17 +143,24 @@ private:
     double sensorHeight{};              //!< [m] Height of sensor
     double fullWellCapacity{};          //!< [e-] Amount of charge that can be stored within an individual pixel
     double integrationWeightFactor{1};  //!< [-] Weight factor for integration over wavelength to obtain photo-electrons
-    Eigen::Vector3d redQuantumEfficiency{};    //!< [-] Values of QE curve at specified wavelengths (red channel)
-    Eigen::Vector3d greenQuantumEfficiency{};  //!< [-] Values of QE curve at specified wavelengths (green channel)
-    Eigen::Vector3d blueQuantumEfficiency{};   //!< [-] Values of QE curve at specified wavelengths (blue channel)
-    Eigen::VectorXd
-        horizontalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and
-                                 //!< 1) as a function of horizontal distance from camera center (degrees)
-    Eigen::VectorXd
-        verticalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting (values between 0 and 1)
-                               //!< as a function of vertical distance from camera center (degrees)
-    Eigen::VectorXd distortion{};  //!< [-] Polynomial coefficients to form the curve of distortion (values between 0
-                                   //!< and 1) as a function of vertical distance from camera center (degrees)
+    Eigen::Vector3d redQuantumEfficiency{
+        Eigen::Vector3d::Zero()
+    };  //!< [-] Values of QE curve at specified wavelengths (red channel)
+    Eigen::Vector3d greenQuantumEfficiency{
+        Eigen::Vector3d::Zero()
+    };  //!< [-] Values of QE curve at specified wavelengths (green channel)
+    Eigen::Vector3d blueQuantumEfficiency{
+        Eigen::Vector3d::Zero()
+    };  //!< [-] Values of QE curve at specified wavelengths (blue channel)
+    Eigen::VectorXd horizontalVignetting{};  //!< [-] Polynomial coefficients to form the curve of vignetting
+                                             //!< (values between 0 and 1) as a function of horizontal distance
+                                             //!< from camera center (degrees)
+    Eigen::VectorXd verticalVignetting{};    //!< [-] Polynomial coefficients to form the curve of vignetting
+                                             //!< (values between 0 and 1) as a function of vertical distance
+                                             //!< from camera center (degrees)
+    Eigen::VectorXd distortion{};            //!< [-] Polynomial coefficients to form the curve of distortion
+                                             //!< (values between 0 and 1) as a function of vertical distance
+                                             //!< from camera center (degrees)
     double transmission{};      //!< [-] Transmission rate of the lens (value between 0 and 1) assumed constant over all
                                 //!< wavelengths
     std::string imageFormat{};  //!< [-] Image format (raw, png, jpeg)
