@@ -317,25 +317,6 @@ class SimBaseClass:
         """
         return simulationArchTypes.ProcessBaseClass(self, self.TotalSim.addNewProcess(procName, priority))
 
-
-    def CreateNewTask(self, TaskName, TaskRate, FirstStart=0):
-        """
-        Creates a simulation task on the C-level with a specific update-frequency (TaskRate), an optional delay, and
-        an optional start time.
-
-        Args:
-            TaskName (str): Name of Task
-            TaskRate (int): Number of nanoseconds to elapse before update() is called
-            InputDelay (int): (depreciated, unimplemented) Number of nanoseconds simulating a lag of the particular task
-            FirstStart (int): Number of nanoseconds to elapse before task is officially enabled
-
-        Returns:
-            simulationArchTypes.TaskBaseClass object
-        """
-        Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, FirstStart)
-        self.TaskList.append(Task)
-        return Task
-
     # When this method is removed, remember to delete the 'oldSyntaxVariableLog' and
     # 'allModels' attributes (as well as any mention of them) as they are no longer needed
     @deprecated.deprecated("2024/09/06",
