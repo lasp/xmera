@@ -44,7 +44,7 @@ def simple_nav_sim(show_plots, noise=False, number_steps=1, sigma_test=3):
 
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     unit_test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    unit_test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, int(1E8)))
+    unit_test_proc.addTask(unit_task_name, int(1E8))
 
     simple_nav_object = simpleNav.SimpleNav()
     unit_test_sim.AddModelToTask(unit_task_name, simple_nav_object)

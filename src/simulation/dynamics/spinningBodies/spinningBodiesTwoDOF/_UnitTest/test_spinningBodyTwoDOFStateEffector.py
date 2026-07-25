@@ -79,7 +79,7 @@ def spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, th
     # Create test thread
     testProcessRate = macros.sec2nano(0.0002)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create two hinged rigid bodies
     spinningBody = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()

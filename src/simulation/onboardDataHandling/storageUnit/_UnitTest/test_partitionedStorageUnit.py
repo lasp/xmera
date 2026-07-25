@@ -47,7 +47,7 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     test_storage_unit = partitionedStorageUnit.PartitionedStorageUnit()
     test_storage_unit.storageCapacity = storageCapacity # bit capacity.
@@ -137,7 +137,7 @@ def test_set_data_buffer(baudRate_1, baudRate_2, partitionName,
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     test_storage_unit = partitionedStorageUnit.PartitionedStorageUnit()
     test_storage_unit.storageCapacity = storageCapacity # bit capacity.
@@ -230,7 +230,7 @@ def test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     test_storage_unit = partitionedStorageUnit.PartitionedStorageUnit()
     test_storage_unit.storageCapacity = storageCapacity # bit capacity.

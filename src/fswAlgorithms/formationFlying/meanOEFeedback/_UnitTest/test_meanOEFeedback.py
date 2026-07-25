@@ -43,7 +43,7 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # process rate
     testProc = unitTestSim.CreateNewProcess(unitProcessName)  # create new process
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # create new task
+    testProc.addTask(unitTaskName, testProcessRate)  # create new task
     # Construct algorithm and associated C++ container
     module = meanOEFeedback.MeanOEFeedback()
     module.modelTag = "meanOEFeedback"  # update python name of test meanOEFeedback

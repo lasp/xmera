@@ -197,7 +197,7 @@ def run(show_plots, damping_parameter, timeStep):
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(timeStep)
     # add task to the dynamical process
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     #  create spacecraft object
     scObject = spacecraft.Spacecraft()

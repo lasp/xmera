@@ -278,7 +278,7 @@ def run(planetCase):
     simulationTimeStep = macros.sec2nano(10.)
 
     # Add the dynamics task to the dynamics process
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # Configure the spacecraft object
     scObject = spacecraft.Spacecraft()

@@ -38,7 +38,7 @@ def unitSimpleVoltEstimator(show_plots):
 
     unitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the task and specify the integration update time
-    unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
+    unitTestProc.addTask(unitTaskName, int(1E8))
 
     # Now initialize the modules that we are using
     sVoltObject = simpleVoltEstimator.SimpleVoltEstimator()

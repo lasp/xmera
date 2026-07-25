@@ -50,7 +50,7 @@ def cssCommTestFunction(numSensors, sensorData):
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate)) # Add a new task to the process
+    testProc.addTask(unitTaskName, testProcessRate) # Add a new task to the process
 
     # Construct the cssComm module
     module = cssComm.CSSComm()

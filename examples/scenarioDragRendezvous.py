@@ -174,8 +174,8 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     simProcess = scSim.CreateNewProcess(simProcessName, 2)
     dynTimeStep = macros.sec2nano(60.0)  # Timestep to evaluate dynamics at
     fswTimeStep = macros.sec2nano(60.0)  # Timestep to evaluate FSW at
-    simProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
-    simProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
+    simProcess.addTask(dynTaskName, dynTimeStep)
+    simProcess.addTask(fswTaskName, fswTimeStep)
 
     ##  Configure environmental parameters
     #   Gravity; includes 2-body plus J2.

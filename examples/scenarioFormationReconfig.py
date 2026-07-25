@@ -99,7 +99,7 @@ def run(show_plots, useRefAttitude):
     dynProcess = scSim.CreateNewProcess(dynProcessName)
     timeStep = 2.0
     dynTimeStep = macros.sec2nano(timeStep)
-    dynProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
+    dynProcess.addTask(dynTaskName, dynTimeStep)
 
     # sc
     scObject = spacecraft.Spacecraft()
@@ -157,7 +157,7 @@ def run(show_plots, useRefAttitude):
     fswTaskName = "fswTask"
     fswProcess = scSim.CreateNewProcess(fswProcessName)
     fswTimeStep = macros.sec2nano(timeStep)
-    fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
+    fswProcess.addTask(fswTaskName, fswTimeStep)
 
     # VehicleConfigFswMsg
     vehicleConfigOut2 = messaging.VehicleConfigMsgPayload()

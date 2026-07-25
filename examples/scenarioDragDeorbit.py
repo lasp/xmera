@@ -150,7 +150,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     scSim = SimulationBaseClass.SimBaseClass()
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(15.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # Initialize atmosphere model and add to sim
     if model == "exponential":
@@ -190,7 +190,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
-    dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
+    dynProcess.addTask(dragEffectorTaskName, simulationTimeStep)
     scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
 
     # Set up the spacecraft

@@ -32,8 +32,7 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
 
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
-    task = sim.CreateNewTask("task", int(1e9))
-    proc.addTask(task)
+    proc.addTask("task", int(1e9))
 
     sunPositionMessage = messaging.SpicePlanetStateMsgPayload()
     sunPositionMessage.PositionVector = [0., 0., 0.]
@@ -48,13 +47,13 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     eclMsg = messaging.EclipseMsg().write(eclipseMessage)
 
     sf = solarFlux.SolarFlux()
-    sim.AddModelToTask(task.Name, sf)
+    sim.AddModelToTask("task", sf)
     sf.sunPositionInMsg.subscribeTo(sunMsg)
     sf.spacecraftStateInMsg.subscribeTo(scMsg)
     sf.eclipseInMsg.subscribeTo(eclMsg)
 
     dataLog = sf.solarFluxOutMsg.recorder()
-    sim.AddModelToTask(task.Name, dataLog)
+    sim.AddModelToTask("task", dataLog)
 
     sim.InitializeSimulation()
     sim.TotalSim.singleStepProcesses()

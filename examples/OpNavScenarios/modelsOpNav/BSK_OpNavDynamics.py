@@ -58,8 +58,8 @@ class BSKDynamicModels():
         self.processTasksTimeStep = mc.sec2nano(dynRate)
 
         # Create task
-        SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep), 1000)
-        SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskCamera, mc.sec2nano(60)), 999)
+        SimBase.dynProc.addTask(self.taskName, self.processTasksTimeStep, priority=1000)
+        SimBase.dynProc.addTask(self.taskCamera, mc.sec2nano(60), priority=999)
 
         # Instantiate Dyn modules as objects
         self.simBasePath = bskPath

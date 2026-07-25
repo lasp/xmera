@@ -50,7 +50,7 @@ from xmera.utilities import SimulationBaseClass, macros
 def _make_sim(*modules):
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("testProcess")
-    proc.addTask(sim.CreateNewTask("testTask", macros.sec2nano(1.0)))
+    proc.addTask("testTask", macros.sec2nano(1.0))
     for mod in modules:
         sim.AddModelToTask("testTask", mod)
     return sim

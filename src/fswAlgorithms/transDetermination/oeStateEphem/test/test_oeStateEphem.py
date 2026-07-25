@@ -46,7 +46,7 @@ def test_zero_inputs(show_plots):
 
     test_process = sim.CreateNewProcess(process_name)
     # create the dynamics task and specify the integration update time
-    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(1)))
+    test_process.addTask(task_name, macros.sec2nano(1))
 
     oe_ephemeris_module = oeStateEphem.OEStateEphem()
     oe_ephemeris_module.modelTag = "oe_ephemeris_module"
@@ -159,7 +159,7 @@ def cheby_fit(show_plots, valid_curve, anomay_flag):
 
     test_process = sim.CreateNewProcess(process_name)
     # create the dynamics task and specify the integration update time
-    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(log_rate)))
+    test_process.addTask(task_name, macros.sec2nano(log_rate))
 
     oe_ephemeris_module = oeStateEphem.OEStateEphem()
     oe_ephemeris_module.modelTag = "oe_ephemeris_module"

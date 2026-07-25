@@ -123,7 +123,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     testProc = unitTestSim.CreateNewProcess(testProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
+    testProc.addTask(testTaskName, testTaskRate)
 
     # Set up first spacecraft
     scObject_0 = spacecraft.Spacecraft()
@@ -313,7 +313,7 @@ def unitEclipseCustom(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     testProc = unitTestSim.CreateNewProcess(testProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
+    testProc.addTask(testTaskName, testTaskRate)
 
     # Set up first spacecraft
     scObject_0 = spacecraft.Spacecraft()

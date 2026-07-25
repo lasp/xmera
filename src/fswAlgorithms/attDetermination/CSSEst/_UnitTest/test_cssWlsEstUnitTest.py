@@ -153,7 +153,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Create test thread
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
+    testProc.addTask(unitTaskName, int(1E8))
 
     # Construct algorithm and associated C++ container
     CSSWlsEstFSW = cssWlsEst.CssWlsEst()
@@ -414,7 +414,7 @@ def cssRateTestFunction(show_plots):
     # Create test thread
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C++ container
     module = cssWlsEst.CssWlsEst()

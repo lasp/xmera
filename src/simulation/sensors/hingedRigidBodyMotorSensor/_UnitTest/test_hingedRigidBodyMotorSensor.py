@@ -59,7 +59,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(timeStep)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # setup module to be tested
     module = hingedRigidBodyMotorSensor.HingedRigidBodyMotorSensor()

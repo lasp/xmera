@@ -20,7 +20,7 @@ def run():
     dynProcess = scSim.CreateNewProcess("dynamicsProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.)))
+    dynProcess.addTask("dynamicsTask", macros.sec2nano(5.))
 
     # create copies of the xmera modules
     mod1 = cppModuleTemplate.CppModuleTemplate()

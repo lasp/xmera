@@ -21,7 +21,7 @@ def test_attTrackingError():
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create instance of attTrackingError
     attitudeTrackingError = attTrackingError.AttTrackingError()

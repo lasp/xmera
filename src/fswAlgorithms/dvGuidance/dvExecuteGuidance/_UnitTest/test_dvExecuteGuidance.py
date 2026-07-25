@@ -59,7 +59,7 @@ def test_dvExecuteGuidance(show_plots, p1_dv, p2_tmin, p3_tmax, p4_tstart):
     updateRate = 0.5
     testProcessRate = macros.sec2nano(updateRate)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C++ container
     module = dvExecuteGuidance.DvExecuteGuidance()

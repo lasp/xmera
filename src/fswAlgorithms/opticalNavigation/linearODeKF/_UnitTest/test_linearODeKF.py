@@ -119,7 +119,7 @@ def state_propagation_flyby(show_plots, dt, filter_type, constant_velocity):
     # Create test thread
     test_process_rate = macros.sec2nano(dt)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     # Add test module to runtime call list
     flyby_module = setup_filter_data(filter_type, constant_velocity)
@@ -206,7 +206,7 @@ def state_update_flyby(show_plots, filter_type, constant_velocity, errors):
 
     test_process_rate = macros.sec2nano(dt)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     # Add test module to runtime call list
     flyby_module = setup_filter_data(filter_type, constant_velocity)

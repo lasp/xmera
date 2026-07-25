@@ -84,7 +84,7 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
 
         self.dynProcess = self.CreateNewProcess(simProcessName)
 
-        self.dynProcess.addTask(self.CreateNewTask(simTaskName, macros.sec2nano(10.)))
+        self.dynProcess.addTask(simTaskName, macros.sec2nano(10.))
 
         scObject = spacecraft.Spacecraft()
         self.AddModelToTask(simTaskName, scObject, 1)

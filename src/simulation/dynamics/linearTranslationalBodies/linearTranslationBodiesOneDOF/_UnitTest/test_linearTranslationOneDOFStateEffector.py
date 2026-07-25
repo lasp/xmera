@@ -79,7 +79,7 @@ def translatingBodyNoInput(show_plots):
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()
@@ -257,7 +257,7 @@ def translatingBodyLockFlag(show_plots):
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()
@@ -441,7 +441,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()
@@ -614,7 +614,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()

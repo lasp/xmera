@@ -75,7 +75,7 @@ def run(show_plots, orbitCase, setEpoch):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = msisAtmosphere.MsisAtmosphere()
@@ -92,7 +92,7 @@ def run(show_plots, orbitCase, setEpoch):
     elif setEpoch == "Direct":
         newAtmo.epochDoy = 1  # setting epoch day of year info directly
 
-    dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
+    dynProcess.addTask(atmoTaskName, simulationTimeStep)
     scSim.AddModelToTask(atmoTaskName, newAtmo)
 
     # initialize spacecraft object and set properties

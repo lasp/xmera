@@ -90,7 +90,7 @@ def run(show_plots, useClassicElem, numOrbits):
     dynTaskName = "dynTask"
     dynProcess = scSim.CreateNewProcess(dynProcessName, 2)
     dynTimeStep = macros.sec2nano(15.0)
-    dynProcess.addTask(scSim.CreateNewTask(dynTaskName, dynTimeStep))
+    dynProcess.addTask(dynTaskName, dynTimeStep)
 
     # sc
     scObject = spacecraft.Spacecraft()
@@ -139,7 +139,7 @@ def run(show_plots, useClassicElem, numOrbits):
     fswTaskName = "fswTask"
     fswProcess = scSim.CreateNewProcess(fswProcessName, 1)
     fswTimeStep = macros.sec2nano(15.0)
-    fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
+    fswProcess.addTask(fswTaskName, fswTimeStep)
 
     # meanOEFeedback
     meanOEFeedbackObj = meanOEFeedback.MeanOEFeedback()

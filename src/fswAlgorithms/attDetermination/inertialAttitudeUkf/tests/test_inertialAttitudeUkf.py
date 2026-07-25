@@ -175,7 +175,7 @@ def test_propagation_kf(show_plots):
     # Create test thread
     test_process_rate = macros.sec2nano(1.0)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     # Construct algorithm and associated C++ container
     allMeasurements = inertialAttitudeUkf.AttitudeFilterMethod_AllMeasurements
@@ -305,7 +305,7 @@ def test_measurements_ukf(show_plots, initial_error, method):
     step_size = 1
     test_process_rate = macros.sec2nano(step_size)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     inertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(method)
     unit_test_sim.AddModelToTask(unit_task_name, inertialAttitudeFilter)
@@ -513,7 +513,7 @@ def test_measurements_ukf_with_bias(show_plots, initial_error, method):
     step_size = 1
     test_process_rate = macros.sec2nano(step_size)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
     inertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(method)
     unit_test_sim.AddModelToTask(unit_task_name, inertialAttitudeFilter)
 
@@ -731,7 +731,7 @@ def test_tuning_consistent(show_plots, initial_error, method, process_noise_tuni
     step_size = 1
     test_process_rate = macros.sec2nano(step_size)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     intertialAttitudeFilter = inertialAttitudeUkf.InertialAttitudeUkf(method)
     unit_test_sim.AddModelToTask(unit_task_name, intertialAttitudeFilter)

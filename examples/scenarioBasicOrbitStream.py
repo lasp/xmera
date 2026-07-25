@@ -114,7 +114,7 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(timeStep)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     #
     #   setup the simulation tasks/objects

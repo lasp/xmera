@@ -47,7 +47,7 @@ def test_logging():
     process = simulation.CreateNewProcess("testProcess")
 
     task1Name = "task1"
-    process.addTask(simulation.CreateNewTask(task1Name, macros.sec2nano(1.0)))
+    process.addTask(task1Name, macros.sec2nano(1.0))
 
     testModule = TickerModule()
     testModule.modelTag = "helloworldModule"

@@ -52,7 +52,7 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
     scSim = SimulationBaseClass.SimBaseClass()
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(1.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     #   Initialize new atmosphere and drag model, add them to task
     module = spacecraftLocation.SpacecraftLocation()

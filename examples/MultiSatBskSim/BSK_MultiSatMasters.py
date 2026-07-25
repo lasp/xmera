@@ -112,7 +112,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
         # Create an independt process for barycenter calculation
         self.relNavProc = self.CreateNewProcess(processName, 150)
-        self.relNavProc.addTask(self.CreateNewTask(self.relativeNavigationTaskName, processTasksTimeStep), 20)
+        self.relNavProc.addTask(self.relativeNavigationTaskName, processTasksTimeStep, priority=20)
 
         # Add the formationBarycenter module
         self.relativeNavigationModule = formationBarycenter.FormationBarycenter()

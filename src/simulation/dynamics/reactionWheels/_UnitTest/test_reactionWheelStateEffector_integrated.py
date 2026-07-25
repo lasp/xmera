@@ -68,7 +68,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         stepSize = 0.00001
     testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # add RW devices
     # The clearRWSetup() is critical if the script is to run multiple times

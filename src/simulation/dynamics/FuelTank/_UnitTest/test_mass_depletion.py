@@ -39,7 +39,7 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # add thruster devices
     thFactory = simIncludeThruster.thrusterFactory()

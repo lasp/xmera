@@ -65,7 +65,7 @@ def icp_init_sim(validICP = True, validCloud = True, normalize = True, rotation_
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     process_rate = macros.sec2nano(0.5)
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, process_rate))
+    test_process.addTask(unit_task_name, process_rate)
 
     # setup module to be tested
     module = initializeICP.InitializeICP()

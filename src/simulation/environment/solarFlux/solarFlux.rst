@@ -69,13 +69,12 @@ The names below are only special in that they are useful defaults and are actual
 
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
-    task = sim.CreateNewTask("task", int(1e9))
-    proc.addTask(task)
+    proc.addTask("task", int(1e9))
 
     sf = solarFlux.SolarFlux()
     sf.sunPositionInMsg.subscribeTo(sunMsg)
     sf.spacecraftStateInMsg.subscribeTo(scMsg)
     sf.eclipseInMsg.subscribeTo(eclMsg)
-    sim.AddModelToTask(task.Name, sf)
+    sim.AddModelToTask("task", sf)
 
     dataLog = sf.solarFluxOutMsg.recorder()

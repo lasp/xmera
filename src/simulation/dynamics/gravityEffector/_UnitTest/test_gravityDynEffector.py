@@ -273,7 +273,7 @@ def singleGravityBody(show_plots):
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
+    DynUnitTestProc.addTask(unitTaskName, macros.sec2nano(0.1))
 
     # Initialize the modules that we are using.
     SpiceObject = spiceInterface.SpiceInterface()
@@ -423,7 +423,7 @@ def multiBodyGravity(show_plots):
     #
     DynUnitTestProc = multiSim.CreateNewProcess(unitProcessName)
     # # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(multiSim.CreateNewTask(unitTaskName, macros.sec2nano(1000.0)))
+    DynUnitTestProc.addTask(unitTaskName, macros.sec2nano(1000.0))
 
     #Create dynParamManager to feed fake spacecraft data to so that the gravityEffector can access it.
     #This places the spacecraft at the coordinate frame origin so that planets can be placed around it.

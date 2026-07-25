@@ -107,7 +107,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
     simulationTime = macros.sec2nano(simTime)
 
     # create Earth Gravity Body

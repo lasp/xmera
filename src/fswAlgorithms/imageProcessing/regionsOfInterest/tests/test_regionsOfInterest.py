@@ -66,7 +66,7 @@ def test_single_region_basic(show_plots):
     # Create simulation
     sim = SimulationBaseClass.SimBaseClass()
     test_process = sim.CreateNewProcess(process_name)
-    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(0.1)))
+    test_process.addTask(task_name, macros.sec2nano(0.1))
 
     # Create module
     roi_module = regionsOfInterest.RegionsOfInterest()
@@ -119,7 +119,7 @@ def test_zero_regions(show_plots):
 
     sim = SimulationBaseClass.SimBaseClass()
     test_process = sim.CreateNewProcess(process_name)
-    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(0.1)))
+    test_process.addTask(task_name, macros.sec2nano(0.1))
 
     roi_module = regionsOfInterest.RegionsOfInterest()
     roi_module.modelTag = "roi_module"
@@ -152,7 +152,7 @@ def test_region_merging(show_plots):
 
     sim = SimulationBaseClass.SimBaseClass()
     test_process = sim.CreateNewProcess(process_name)
-    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(0.1)))
+    test_process.addTask(task_name, macros.sec2nano(0.1))
 
     roi_module = regionsOfInterest.RegionsOfInterest()
     roi_module.modelTag = "roi_module"
@@ -204,7 +204,7 @@ def test_windowing(show_plots):
 
     sim = SimulationBaseClass.SimBaseClass()
     test_process = sim.CreateNewProcess(process_name)
-    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(0.1)))
+    test_process.addTask(task_name, macros.sec2nano(0.1))
 
     roi_module = regionsOfInterest.RegionsOfInterest()
     roi_module.modelTag = "roi_module"
@@ -252,7 +252,7 @@ def region_identification(show_plots, num_regions, use_windowing):
     # Create simulation
     sim = SimulationBaseClass.SimBaseClass()
     test_process = sim.CreateNewProcess(process_name)
-    test_process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(log_rate)))
+    test_process.addTask(task_name, macros.sec2nano(log_rate))
 
     # Create module
     roi_module = regionsOfInterest.RegionsOfInterest()

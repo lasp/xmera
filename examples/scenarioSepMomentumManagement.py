@@ -133,9 +133,9 @@ def run(momentumManagement, cmEstimation, showPlots):
     simulationTimeStepDyn = macros.sec2nano(0.5)
     simulationTimeStepFsw = macros.sec2nano(2)
     simulationTimeStepPlt = macros.hour2nano(1)
-    dynProcess.addTask(scSim.CreateNewTask(dynTask, simulationTimeStepDyn))
-    dynProcess.addTask(scSim.CreateNewTask(pltRefTask, simulationTimeStepPlt))
-    dynProcess.addTask(scSim.CreateNewTask(fswTask, simulationTimeStepFsw))
+    dynProcess.addTask(dynTask, simulationTimeStepDyn)
+    dynProcess.addTask(pltRefTask, simulationTimeStepPlt)
+    dynProcess.addTask(fswTask, simulationTimeStepFsw)
 
     #
     # setup the simulation tasks/objects

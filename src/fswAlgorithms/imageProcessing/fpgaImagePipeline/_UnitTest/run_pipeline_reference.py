@@ -312,7 +312,7 @@ def main():
     log_roi_out_msg = mod.roiOutMsg.recorder()
     sim = SimulationBaseClass.SimBaseClass()
     testProc = sim.CreateNewProcess("refProcess")
-    testProc.addTask(sim.CreateNewTask("refTask", macros.sec2nano(1.0)))
+    testProc.addTask("refTask", macros.sec2nano(1.0))
     sim.AddModelToTask("refTask", mod)
     sim.AddModelToTask("refTask", log_roi_out_msg)
     sim.InitializeSimulation()

@@ -68,7 +68,7 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(dT)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     #   setup the FSW algorithm tasks
 

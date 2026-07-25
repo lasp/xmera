@@ -23,8 +23,7 @@ def test_hillStateConverter(show_plots):
     procName = 'process'
     taskName = 'task'
     proc = sim.CreateNewProcess(procName)
-    task =  sim.CreateNewTask(taskName, macros.sec2nano(1.0))
-    proc.addTask(task)
+    proc.addTask(taskName, macros.sec2nano(1.0))
 
     #   Set up two spacecraft position messages
     chief_r = [7100,0,0]

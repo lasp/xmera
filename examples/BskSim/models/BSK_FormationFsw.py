@@ -37,14 +37,14 @@ class BSKFswModels():
         self.processTasksTimeStep = mc.sec2nano(fswRate)
 
         # Create tasks
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
+        SimBase.fswProc.addTask("inertial3DPointTask", self.processTasksTimeStep, priority=20)
+        SimBase.fswProc.addTask("mrpFeedbackRWsTask", self.processTasksTimeStep, priority=10)
 
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask2", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask2", self.processTasksTimeStep), 10)
+        SimBase.fswProc.addTask("inertial3DPointTask2", self.processTasksTimeStep, priority=20)
+        SimBase.fswProc.addTask("mrpFeedbackRWsTask2", self.processTasksTimeStep, priority=10)
 
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("spacecraftPointingTask", self.processTasksTimeStep))
+        SimBase.fswProc.addTask("mrpFeedbackTask", self.processTasksTimeStep, priority=10)
+        SimBase.fswProc.addTask("spacecraftPointingTask", self.processTasksTimeStep)
 
         # Create modules
         self.inertial3D = inertial3D.Inertial3D()

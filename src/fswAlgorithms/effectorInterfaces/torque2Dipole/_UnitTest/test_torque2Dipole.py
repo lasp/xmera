@@ -57,7 +57,7 @@ def torque2DipoleModuleTestFunction():
     # Create test thread
     testProcessRate = macros.sec2nano(0.01)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Initialize module under test's config message and add module to runtime call list
     module = torque2Dipole.Torque2Dipole()

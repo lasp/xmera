@@ -57,7 +57,7 @@ def cameraTriangulationTestFunction(show_plots, p1_f, p2_cam, p3_scRot, p4_noise
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(100)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # set up the transfer orbit using classical orbit elements
     mu = 3.986004418e14

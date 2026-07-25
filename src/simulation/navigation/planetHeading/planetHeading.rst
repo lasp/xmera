@@ -69,12 +69,11 @@ The user can only instantiate this module and add it to a task.
 
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
-    task = sim.CreateNewTask("task", int(1e9))
-    proc.addTask(task)
+    proc.addTask("task", int(1e9))
 
     ph = planetHeading.PlanetHeading()
     ph.planetPositionInMsg.subscribeTo(earthMsg)
     ph.spacecraftStateInMsg.subscribeTo(scMsg)
-    sim.AddModelToTask(task.Name, ph)
+    sim.AddModelToTask("task", ph)
 
     dataLog = ph.planetHeadingOutMsg.recorder()
