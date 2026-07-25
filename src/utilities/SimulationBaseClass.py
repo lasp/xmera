@@ -318,7 +318,7 @@ class SimBaseClass:
         return simulationArchTypes.ProcessBaseClass(self, self.TotalSim.addNewProcess(procName, priority))
 
 
-    def CreateNewTask(self, TaskName, TaskRate, InputDelay=None, FirstStart=0):
+    def CreateNewTask(self, TaskName, TaskRate, FirstStart=0):
         """
         Creates a simulation task on the C-level with a specific update-frequency (TaskRate), an optional delay, and
         an optional start time.
@@ -332,11 +332,6 @@ class SimBaseClass:
         Returns:
             simulationArchTypes.TaskBaseClass object
         """
-
-        if InputDelay is not self.CreateNewTask.__defaults__[0]:
-            deprecated.deprecationWarn("InputDelay", "2024/12/13",
-                                       "This input variable is non-functional and now depreciated.")
-
         Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, FirstStart)
         self.TaskList.append(Task)
         return Task
