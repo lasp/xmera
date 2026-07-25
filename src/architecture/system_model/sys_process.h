@@ -44,7 +44,7 @@ public:
      *  @param[in] name
      *    A human-readable name for this process
      */
-    explicit SysProcess(std::string name = "") : processName{name} {}
+    explicit SysProcess(std::string name = "", int64_t priority = -1) : processName{name}, processPriority{priority} {}
 
     //! Insert a task with a given priority into the process's collection of tasks
     /*!
@@ -146,19 +146,13 @@ public:
      *  by the individual priority associated to each task in the same process.
      *  In contrast, processes across different threads are effectively unordered.
      *
-     *  @warning
-     *    If this process' priority is changed after it has been added to a simulation
-     *    container, the container will not be notified if the priority is changed.
-     *    This may cause the process to be reset or updated in an order that doesn't
-     *    comport with its new priority.
-     *
      *  @todo
      *    Process priority should really be owned by whichever container tracks
      *    this process (`SimModel` in single-threaded simulations). Nothing in
      *    this class uses this field except a transparent setter (which is redundant
      *    for a *public* field).
      */
-    int64_t processPriority = -1;
+    int64_t const processPriority = -1;
 
 private:
     //! The next soonest time (in nanoseconds) at which some task will be updated
