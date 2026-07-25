@@ -18,14 +18,14 @@
  *  @return
  *    The time at which the next task after `stopTime` will occur.
  */
-static SimInstant stepProcessUpTo(SysProcess* process, SimInstant stopTime) {
+static SimInstant stepProcessUpTo(SysProcess &process, SimInstant stopTime) {
     while (true) {
-        auto nextTaskTime = SimInstant::atNanos(process->getNextTaskTime()).atPriority(process->processPriority);
+        auto nextTaskTime = SimInstant::atNanos(process.getNextTaskTime()).atPriority(process.processPriority);
 
         if (nextTaskTime.realNanos == SimInstant::endOfTime().realNanos) { return nextTaskTime; }
         if (stopTime < nextTaskTime) { return nextTaskTime; }
 
-        process->singleStepNextTask(stopTime.realNanos);
+        process.singleStepNextTask(stopTime.realNanos);
     }
 }
 
@@ -46,14 +46,18 @@ void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
     }
 }
 
-void SimModel::addNewProcess(SysProcess* newProc) {
+SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
+
     // Find the index separating lower priorities from higher priorities.
     auto it = this->processList.begin();
     for (; it != this->processList.end(); ++it) {
-        if (newProc->processPriority > (*it)->processPriority) { break; }
+        if (priority > (*it)->processPriority) { break; }
     }
 
-    this->processList.insert(it, newProc);
+    it = this->processList.emplace(it, std::make_unique<SysProcess>(name));
+    (*it)->processPriority = priority;
+
+    return *it->get();
 }
 
 void SimModel::singleStepProcesses(int64_t const stopPri) {
@@ -67,7 +71,7 @@ void SimModel::singleStepProcesses(int64_t const stopPri) {
     for (auto &localProc : this->processList) {
         if (!localProc->isEnabled()) { continue; }
 
-        nextTaskTime = std::min(nextTaskTime, stepProcessUpTo(localProc, stopTime));
+        nextTaskTime = std::min(nextTaskTime, stepProcessUpTo(*localProc, stopTime));
     }
 
     // Record the next earliest resumption time. Note that `nextTaskTime` should
