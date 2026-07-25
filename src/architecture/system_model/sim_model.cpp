@@ -47,15 +47,13 @@ void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
 }
 
 SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
-
     // Find the index separating lower priorities from higher priorities.
     auto it = this->processList.begin();
     for (; it != this->processList.end(); ++it) {
         if (priority > (*it)->processPriority) { break; }
     }
 
-    it = this->processList.emplace(it, std::make_unique<SysProcess>(name));
-    (*it)->processPriority = priority;
+    it = this->processList.emplace(it, std::make_unique<SysProcess>(name, priority));
 
     return *it->get();
 }
