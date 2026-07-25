@@ -11,6 +11,7 @@
 using testing::ElementsAre;
 using testing::Eq;
 using testing::IsEmpty;
+using testing::Pointer;
 
 TEST(SimModel, getProcesses) {
     RecordProperty(
@@ -18,15 +19,6 @@ TEST(SimModel, getProcesses) {
         ("getProcesses() should reflect the priority order of the processes added"
          " to the simulation.")
     );
-
-    auto process1 = SysProcess();
-    process1.processPriority = 1;
-
-    auto process2a = SysProcess();
-    process2a.processPriority = 2;
-
-    auto process2b = SysProcess();
-    process2b.processPriority = 2;
 
     auto sim = SimModel();
 
@@ -37,24 +29,24 @@ TEST(SimModel, getProcesses) {
     EXPECT_THAT(processes, IsEmpty());
 
     // If we add a process, there should be exactly that process.
-    sim.addNewProcess(&process1);
-    EXPECT_THAT(processes, ElementsAre(&process1));
+    auto &process1 = sim.addNewProcess("", 1);
+    EXPECT_THAT(processes, ElementsAre(Pointer(&process1)));
 
     // If we add a higher-priority process, it should appear first.
-    sim.addNewProcess(&process2a);
-    EXPECT_THAT(processes, ElementsAre(&process2a, &process1));
+    auto &process2a = sim.addNewProcess("", 2);
+    EXPECT_THAT(processes, ElementsAre(Pointer(&process2a), Pointer(&process1)));
 
     // If we add another process at the same priority, it should appear later.
-    sim.addNewProcess(&process2b);
-    EXPECT_THAT(processes, ElementsAre(&process2a, &process2b, &process1));
+    auto &process2b = sim.addNewProcess("", 2);
+    EXPECT_THAT(processes, ElementsAre(Pointer(&process2a), Pointer(&process2b), Pointer(&process1)));
 
     // Resetting the simulation shouldn't change the collection of processes.
     sim.resetSimulation();
-    EXPECT_THAT(processes, ElementsAre(&process2a, &process2b, &process1));
+    EXPECT_THAT(processes, ElementsAre(Pointer(&process2a), Pointer(&process2b), Pointer(&process1)));
 
     // The collection of processes shouldn't change over the course of simulation.
     sim.singleStepProcesses();
-    EXPECT_THAT(processes, ElementsAre(&process2a, &process2b, &process1));
+    EXPECT_THAT(processes, ElementsAre(Pointer(&process2a), Pointer(&process2b), Pointer(&process1)));
 }
 
 TEST(SimModel, taskTimings_withEmptySim) {
@@ -89,17 +81,9 @@ TEST(SimModel, taskTimings_withDisabledProcesses) {
          " jump from 0 to the latest possible time.")
     );
 
-    auto process1 = SysProcess();
-    process1.processPriority = 1;
-    process1.disable();
-
-    auto process2 = SysProcess();
-    process2.processPriority = 2;
-    process2.disable();
-
     auto sim = SimModel();
-    sim.addNewProcess(&process1);
-    sim.addNewProcess(&process2);
+    sim.addNewProcess("", 1).disable();
+    sim.addNewProcess("", 2).disable();
 
     // Immediately after a reset, the "next" task should occur "at the end of time".
     // (Why? Well, the sim never has to update. UINT_MAX and INT_MIN are our best
@@ -124,17 +108,9 @@ TEST(SimModel, taskTimings_withEmptyProcesses) {
          " 0 to the latest possible time.")
     );
 
-    auto process1 = SysProcess();
-    process1.processPriority = 1;
-    process1.enable();
-
-    auto process2 = SysProcess();
-    process2.processPriority = 2;
-    process2.enable();
-
     auto sim = SimModel();
-    sim.addNewProcess(&process1);
-    sim.addNewProcess(&process2);
+    auto &process1 [[maybe_unused]] = sim.addNewProcess("", 1);
+    auto &process2 = sim.addNewProcess("", 2);
 
     // Immediately after a reset, the "next" task should occur "at the end of time".
     // (Nevertheless, the next priority is that of the highest-priority process.)

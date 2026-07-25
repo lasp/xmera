@@ -6,8 +6,7 @@ def test_SimModel_bindings():
     """
     sim = sim_model.SimModel()
 
-    process = sim_model.SysProcess("process name")
-    assert sim.addNewProcess(process) is None
+    assert type(sim.addNewProcess("process name")) is sim_model.SysProcess
 
     assert sim.resetSimulation() is None
     assert sim.singleStepProcesses() is None

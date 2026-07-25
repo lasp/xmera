@@ -9,23 +9,24 @@
 
 #include <stdint.h>
 
+#include <memory>
 #include <vector>
 
 //! The top-level container for an entire simulation
 class SimModel final {
 public:
-    //! Add a process to be simulated
+    //! Add a new process to be simulated
     /*!
      *  The priority of the given process dictates the order in which it is reset,
      *  and the order in which it is updated if multiple processes update at the
      *  same time. Higher priorities go first; if two processes have the same
-     *  priority, the first to be added to the simulation takes precedence.
+     *  priority, the one added earlier takes precedence.
      *
      *  @important
      *    This method must not be invoked during simulation; it must only be
      *    invoked before `resetSimulation` occurs for any given simulation run.
      */
-    void addNewProcess(SysProcess* newProc);
+    SysProcess &addNewProcess(std::string name = "", int64_t priority = -1);
 
     //! Reset all simulation elements to the initial state
     /*!
@@ -98,7 +99,7 @@ public:
      *  processes themselves. It is perfectly legal to mutate one of the processes
      *  obtained from this method, so long as no other protocol of use is violated.
      */
-    std::vector<SysProcess*> const &getProcesses() const {
+    std::vector<std::unique_ptr<SysProcess>> const &getProcesses() const {
         return this->processList;
     }
 
@@ -113,7 +114,7 @@ private:
     int64_t nextProcPriority = -1;
 
     //! The collection of processes to be simulated, in priority order
-    std::vector<SysProcess*> processList = {};
+    std::vector<std::unique_ptr<SysProcess>> processList = {};
 };
 
 #endif
