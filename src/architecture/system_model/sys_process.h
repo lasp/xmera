@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 
+#include <memory>
 #include <vector>
 
 //! A task paired with its priority among tasks within its containing process
@@ -46,14 +47,16 @@ public:
      */
     explicit SysProcess(std::string name = "", int64_t priority = -1) : processName{name}, processPriority{priority} {}
 
-    //! Insert a task with a given priority into the process's collection of tasks
+    //! Add a new task with the given update schedule and priority
     /*!
-     *  @param[in] task
-     *    A non-owning pointer to the module to be added to the task
+     *  @param[in] updatePeriodNanos
+     *    The interval of nanoseconds that should elapse between updates
+     *  @param[in] firstUpdateNanos
+     *    The time at which the task should be first updated
      *  @param[in] priority
-     *    The priority of the given module (higher is earlier).
+     *    The priority of the given task (higher is earlier).
      */
-    void addTask(SysModelTask* task, int32_t priority = -1);
+    SysModelTask &addTask(uint64_t updatePeriodNanos = 100, uint64_t firstUpdateNanos = 0, int32_t priority = -1);
 
     //! Reset all tasks in the process, in priority order
     /*!
@@ -163,6 +166,9 @@ private:
 
     //! The schedule of tasks being performed by this process
     std::vector<ModelScheduleEntry> processTasks = {};
+
+    //! The collection of tasks in this process, sans scheduling information
+    std::vector<std::unique_ptr<SysModelTask>> allocatedTasks = {};
 };
 
 #endif
