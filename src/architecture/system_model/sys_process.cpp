@@ -48,13 +48,17 @@ void SysProcess::singleStepNextTask(uint64_t nextSimNanos) {
     this->nextTaskTime = this->getNextTask()->NextTaskStart;
 }
 
-void SysProcess::addTask(SysModelTask* task, int32_t priority) {
+SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
+    auto &task = this->allocatedTasks.emplace_back(std::make_unique<SysModelTask>(updatePeriodNanos, firstUpdateNanos));
+
     this->scheduleTask({
         .NextTaskStart = task->getNextStartTime(),
         .TaskUpdatePeriod = task->getTaskPeriod(),
         .taskPriority = priority,
-        .TaskPtr = task,
+        .TaskPtr = task.get(),
     });
+
+    return *task.get();
 }
 
 void SysProcess::scheduleTask(ModelScheduleEntry const &scheduleEntry) {
