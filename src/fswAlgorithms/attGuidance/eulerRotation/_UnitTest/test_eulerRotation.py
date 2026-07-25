@@ -44,7 +44,7 @@ def run(show_plots):
     # Create test thread
     testProcessRate = mc.sec2nano(updateTime)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
 
     # Construct algorithm and associated C++ container
@@ -175,7 +175,7 @@ def run2(show_plots):
     # Create test thread
     testProcessRate = mc.sec2nano(updateTime)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C++ container
     module = eulerRotation.EulerRotation()

@@ -55,7 +55,7 @@ def mtbMomentumManagementSimpleTestFunction():
     # Create test thread
     testProcessRate = macros.sec2nano(0.01)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C++ container
     module = mtbMomentumManagementSimple.MtbMomentumManagementSimple()

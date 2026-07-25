@@ -29,7 +29,7 @@ def test_thrFiringSchmitt(show_plots, resetCheck, dvOn):
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     module = thrFiringSchmitt.ThrFiringSchmitt()
     module.modelTag = "thrFiringSchmitt"

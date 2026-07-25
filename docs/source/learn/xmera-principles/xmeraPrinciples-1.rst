@@ -66,18 +66,18 @@ Like processes, tasks have a default priority of -1. You can assign a priority e
 
 .. code-block:: python
 
-    dynProcess.addTask(scSim.CreateNewTask("name", updateRate, priority))
+    dynProcess.addTask("name", updateRate, priority=priority)
 
 Delayed Task Start
 ------------------
 
-You can delay the start of a task using the optional ``FirstStart`` parameter (in nanoseconds). The task will first
-execute at ``FirstStart``, and continue at the regular ``updateRate`` thereafter. For example:
+You can delay the start of a task using the optional ``FirstStart`` parameter (in nanoseconds). For example:
 
 .. code-block:: python
 
-    dynProcess.addTask(scSim.CreateNewTask("name", updateRate, priority, FirstStart=delayStartTime))
+    dynProcess.addTask("name", updateRate, FirstStart=delayStartTime, priority=priority)
 
+The task will first execute at ``delayStartTime``, and continue at the regular ``updateRate`` thereafter.
 If ``delayStartTime`` is 1s and ``updateRate`` is 5s, then the task executes at 1s, 6s, 11s, 16s, etc.
 
 Simulation Execution

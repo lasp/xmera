@@ -22,7 +22,7 @@ def test_hillPointCpp(show_plots, celMsgSet):
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = sim.CreateNewProcess(processName)
-    testProc.addTask(sim.CreateNewTask(taskName, testProcessRate))
+    testProc.addTask(taskName, testProcessRate)
 
     module = hillPointCpp.HillPointCpp()
     module.modelTag = "hillPointCpp"

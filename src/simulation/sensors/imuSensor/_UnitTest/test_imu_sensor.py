@@ -104,8 +104,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     unitProcRate_s = procRate
     unitProcRate = macros.sec2nano(unitProcRate_s)
     unitProc = unitSim.CreateNewProcess(unitProcName)
-    unitTask = unitSim.CreateNewTask(unitTaskName, unitProcRate)
-    unitProc.addTask(unitTask)
+    unitProc.addTask(unitTaskName, unitProcRate)
 
     # Set-up the fake kinematics vectors
     # Note: No conservative accelerations are used in this test

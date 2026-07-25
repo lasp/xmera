@@ -193,7 +193,7 @@ class moduleGenerator:
         testFile += '    unitTestSim = SimulationBaseClass.SimBaseClass()\n'
         testFile += '    testProcessRate = macros.sec2nano(0.5)\n'
         testFile += '    testProc = unitTestSim.CreateNewProcess(unitProcessName)\n'
-        testFile += '    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))\n'
+        testFile += '    testProc.addTask(unitTaskName, testProcessRate)\n'
         testFile += '\n'
         testFile += '    # setup module to be tested\n'
         if type == "C++":

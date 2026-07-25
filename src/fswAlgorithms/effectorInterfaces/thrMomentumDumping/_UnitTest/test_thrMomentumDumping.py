@@ -56,7 +56,7 @@ def test_thrMomentumDumping(show_plots, resetCheck, largeMinFireTime, maxNumOfDt
         testProcessRate = macros.sec2nano(0.5)     # update process rate update time
         simTime = 3.0
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
 
     # Construct algorithm and associated C++ container

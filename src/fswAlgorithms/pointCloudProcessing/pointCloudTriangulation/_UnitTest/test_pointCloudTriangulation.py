@@ -56,7 +56,7 @@ def pointCloudTriangulationTestFunction(show_plots, p1_n, p2_cam, p3_scRot, accu
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(10)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # setup module to be tested
     module = pointCloudTriangulation.PointCloudTriangulation()

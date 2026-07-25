@@ -95,7 +95,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     testProcessRate = macros.sec2nano(dtSeconds)
     simulationTime = macros.sec2nano(simTimeSeconds)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # create the simulation data file
     rB1N = [6761.48, 1569.01, 905.867]

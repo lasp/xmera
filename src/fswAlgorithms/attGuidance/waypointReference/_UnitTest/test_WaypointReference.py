@@ -100,7 +100,7 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
     testProcessRate = macros.sec2nano(dtSeconds)
     simulationTime = macros.sec2nano(simTimeSeconds)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # create the simulation data file
     # dataFileName

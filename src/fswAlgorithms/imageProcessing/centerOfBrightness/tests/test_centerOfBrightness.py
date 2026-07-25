@@ -58,7 +58,7 @@ def setup_cob_sim(image_path, blur, pixel_threshold, roi_center, roi_size,
 
     sim = SimulationBaseClass.SimBaseClass()
     process = sim.CreateNewProcess("test_process")
-    process.addTask(sim.CreateNewTask("test_task", PROCESS_RATE))
+    process.addTask("test_task", PROCESS_RATE)
     sim.AddModelToTask("test_task", module)
 
     roi_msg_data = messaging.RegionOfInterestMsgPayload()

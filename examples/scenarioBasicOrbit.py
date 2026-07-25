@@ -252,7 +252,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # setup the simulation tasks/objects
     # initialize spacecraft object and set properties

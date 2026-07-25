@@ -82,7 +82,7 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
     # Create test thread
     testProcessRate = macros.sec2nano(1.0)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C++ container
     module = simpleInstrumentController.SimpleInstrumentController()

@@ -30,8 +30,8 @@ def test_momentumBiasIntegrated(show_plots):
     simProcess = scSim.CreateNewProcess(simProcessName)
     fswTimeStep = macros.sec2nano(1)
     dynTimeStep = macros.sec2nano(0.1)
-    simProcess.addTask(scSim.CreateNewTask(dynTask, dynTimeStep))
-    simProcess.addTask(scSim.CreateNewTask(fswTask, fswTimeStep))
+    simProcess.addTask(dynTask, dynTimeStep)
+    simProcess.addTask(fswTask, fswTimeStep)
 
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()

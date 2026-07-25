@@ -73,7 +73,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     unitTestSim = SimulationBaseClass.SimBaseClass()
     # Ensure simulation is empty
     testProc = unitTestSim.CreateNewProcess(testProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
+    testProc.addTask(testTaskName, testTaskRate)
 
     #
     #   Input Message Setup

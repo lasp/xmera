@@ -116,7 +116,7 @@ def run(show_plots, attType):
     # create the dynamics task and specify the simulation time step information
     simulationTimeStep = macros.sec2nano(timeStepSeconds)
     simulationTime = macros.sec2nano(simulationTimeSeconds)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # setup Earth Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()

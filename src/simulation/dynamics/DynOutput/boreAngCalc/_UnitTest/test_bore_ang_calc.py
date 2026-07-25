@@ -87,7 +87,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(1.0)))
+    DynUnitTestProc.addTask(unitTaskName, macros.sec2nano(1.0))
 
     spiceMessage = messaging.SpicePlanetStateMsgPayload()
     stateMessage = messaging.SCStatesMsgPayload()

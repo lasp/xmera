@@ -23,7 +23,7 @@ def test_ck_read_write(show_plots):
     process = simulation.CreateNewProcess("testProcess")
     taskName = "task"
     dynTaskRate = macros.sec2nano(1.0)
-    process.addTask(simulation.CreateNewTask(taskName, dynTaskRate))
+    process.addTask(taskName, dynTaskRate)
 
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraft"

@@ -31,7 +31,7 @@ def test_rw_null_space(num_wheels, default_desired):
     # Create test thread
     test_process_rate = macros.sec2nano(0.5)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))  # Add a new task to the process
+    test_proc.addTask(unit_task_name, test_process_rate)  # Add a new task to the process
 
     # Construct the rwNullSpace module
     module = rwNullSpace.RwNullSpace()

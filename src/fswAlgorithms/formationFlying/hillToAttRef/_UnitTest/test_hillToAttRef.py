@@ -34,8 +34,7 @@ def runner(show_plots, use_limits, msg_type):
     procName = 'process'
     taskName = 'task'
     proc = sim.CreateNewProcess(procName)
-    task =  sim.CreateNewTask(taskName, macros.sec2nano(1.0))
-    proc.addTask(task)
+    proc.addTask(taskName, macros.sec2nano(1.0))
 
     #   Set up a test relative state vector
     relative_state = [1000, 0, 0,

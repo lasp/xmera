@@ -140,8 +140,8 @@ def run(show_plots):
     fswProcessRate = macros.sec2nano(fswTimeStep)  # [ns]
     dataRecRate = macros.sec2nano(dataRecStep)  # [ns]
     simProc = scSim.CreateNewProcess(simProcessName)
-    simProc.addTask(scSim.CreateNewTask(dynTaskName, dynProcessRate))
-    simProc.addTask(scSim.CreateNewTask(fswTaskName, fswProcessRate))
+    simProc.addTask(dynTaskName, dynProcessRate)
+    simProc.addTask(fswTaskName, fswProcessRate)
 
     # Add the spacecraft module
     scObject = spacecraft.Spacecraft()

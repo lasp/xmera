@@ -170,7 +170,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         simulationTimeStep = macros.sec2nano(10.)
     else:
         simulationTimeStep = macros.sec2nano(simTimeStep)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
     # Create sun message
     sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
     sunPositionMsg.PositionVector = [-om.AU * 1000., 0.0, 0.0]

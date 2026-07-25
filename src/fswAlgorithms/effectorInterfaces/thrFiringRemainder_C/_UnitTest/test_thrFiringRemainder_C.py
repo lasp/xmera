@@ -27,7 +27,7 @@ def test_thrFiringRemainderC(show_plots, resetCheck, dvOn):
     defaultControlPeriod = 3.0
     testProcessRate = macros.sec2nano(fswRate)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     module = thrFiringRemainder_C.ThrFiringRemainder_C()
     module.modelTag = "thrFiringRemainder_C"

@@ -121,7 +121,7 @@ def run(show_plots):
 
     # Create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()

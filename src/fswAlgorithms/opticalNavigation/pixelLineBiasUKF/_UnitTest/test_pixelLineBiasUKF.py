@@ -230,7 +230,7 @@ def StatePropRelOD(show_plots, dt):
     state = [250, 32000, 1000, 5, 3, 2, 1, 1, 1]
     testProcessRate = macros.sec2nano(dt)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C++ container
     module = pixelLineBiasUKF.PixelLineBiasUKF()

@@ -18,7 +18,7 @@ def test_att_ref_correction():
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     test_process_rate = macros.sec2nano(0.5)
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     # setup module to be tested
     module = attRefCorrection.AttRefCorrection()

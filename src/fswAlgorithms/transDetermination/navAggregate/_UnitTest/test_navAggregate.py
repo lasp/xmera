@@ -63,7 +63,7 @@ def test_navAggregate(show_plots, numAttNav, numTransNav):
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct an instance of the module being tested
     module = navAggregate.NavAggregate()

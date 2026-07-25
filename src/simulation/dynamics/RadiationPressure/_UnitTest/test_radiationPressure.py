@@ -61,7 +61,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     unitTestSim = SimulationBaseClass.SimBaseClass()
     # Ensure simulation is empty
     testProc = unitTestSim.CreateNewProcess(testProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
+    testProc.addTask(testTaskName, testTaskRate)
 
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraft"

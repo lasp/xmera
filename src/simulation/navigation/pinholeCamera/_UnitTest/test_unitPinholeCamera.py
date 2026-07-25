@@ -43,7 +43,7 @@ def test_visibility():
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(simTime)
     simulationTimeStep = macros.sec2nano(1.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # Set the landmarks distribution to be tested
     # The first five landmarks shall correspond to center and corners of the image (for the prescribed situation)

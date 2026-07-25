@@ -44,7 +44,7 @@ def test_range(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(10.)
     simulationTimeStep = macros.sec2nano(1.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
@@ -137,7 +137,7 @@ def test_rotation(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTime = macros.sec2nano(simTime)
     simulationTimeStep = macros.sec2nano(1.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     #   Initialize new atmosphere and drag model, add them to task
     groundTarget = groundLocation.GroundLocation()
@@ -205,7 +205,7 @@ def test_AzElR_rates():
     dt = 1.0
     simulationTimeStep = macros.sec2nano(dt)
     simulationTime = simulationTimeStep
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()

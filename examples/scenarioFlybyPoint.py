@@ -87,7 +87,7 @@ def run(show_plots, zeroEarthGravity, dtFilterData):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(0.5)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # # Specify orbital parameters of the asteroid
     timeInitString = "2011 January 1 0:00:00.0"

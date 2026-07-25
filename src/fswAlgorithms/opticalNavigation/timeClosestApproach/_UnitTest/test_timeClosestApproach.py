@@ -30,7 +30,7 @@ def test_time_closest_approach(show_plots, position, velocity, filter_covariance
     # Create test thread
     test_process_rate = macros.sec2nano(0.1)     # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     # setup TimeClosestApproach guidance module
     tca_module = timeClosestApproach.TimeClosestApproach()

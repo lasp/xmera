@@ -155,7 +155,7 @@ def run(show_plots, planetCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # Construct algorithm and associated C++ container
     # change module to tabAtmo
@@ -192,8 +192,8 @@ def run(show_plots, planetCase):
     dragEffector.coreParams.dragCoeff = dragCoeff
     dragEffector.coreParams.comOffset = [1., 0., 0.]
 
-    dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
-    dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
+    dynProcess.addTask(atmoTaskName, simulationTimeStep)
+    dynProcess.addTask(dragEffectorTaskName, simulationTimeStep)
     scSim.AddModelToTask(atmoTaskName, tabAtmo)
 
     # Add test module to runtime call list

@@ -160,7 +160,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # # create the dynamics task and specify the integration update time
     testProcessRate = macros.sec2nano(1.0)
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, testProcessRate))
+    DynUnitTestProc.addTask(unitTaskName, testProcessRate)
 
     # Initialize the modules that we are using.
     orb_elemObject = orbElemConvert.OrbElemConvert()
@@ -305,7 +305,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
 
         # # create the dynamics task and specify the integration update time
         testProcessRate = macros.sec2nano(1.0)
-        DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, testProcessRate))
+        DynUnitTestProc.addTask(unitTaskName, testProcessRate)
 
         # Initialize the modules that we are using.
         orb_elemObject = orbElemConvert.OrbElemConvert()

@@ -159,7 +159,7 @@ def runModule(data, reference, numberPoints, iters = 100):
 
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
     sicp = scalingIterativeClosestPoint.ScalingIterativeClosestPoint()
     sicp.maxIterations = iters
     sicp.numberScalePoints = 100

@@ -69,7 +69,7 @@ def test_singleAxisProfiler(show_plots, theta, thetaDot, thetaDDot, rotAxis_MAng
     testTimeStepSec = 0.1  # [s]
     testProcessRate = macros.sec2nano(testTimeStepSec)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create an instance of the singleAxisProfiler module to be tested
     rotAxis_M = np.array([np.cos(rotAxis_MAngle), np.sin(rotAxis_MAngle), 0.0])

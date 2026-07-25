@@ -26,7 +26,7 @@ def test_mrp_feedback(show_plots, int_gain, rw_num, integral_limit, ctrl_law, us
     #   Create test thread
     test_process_rate = macros.sec2nano(0.5)     # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     #   Construct algorithm and associated C++ container
     module = mrpFeedback.MrpFeedback()

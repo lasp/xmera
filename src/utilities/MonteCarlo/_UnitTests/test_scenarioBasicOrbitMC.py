@@ -57,7 +57,7 @@ def myCreationFunction():
 
     # Create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # Setup the simulation modules
     # Initialize spacecraft object and set properties
