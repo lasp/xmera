@@ -307,7 +307,7 @@ class SimBaseClass:
                 return
         raise ValueError(f"Could not find a Task with name: {TaskName}")
 
-    def CreateNewProcess(self, procName, priority = -1):
+    def CreateNewProcess(self, procName = "", priority = -1):
         """
         Creates a process and adds it to the sim
 
@@ -315,10 +315,7 @@ class SimBaseClass:
         :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return: simulationArchTypes.ProcessBaseClass object
         """
-        proc = simulationArchTypes.ProcessBaseClass(procName, priority)
-        self.procList.append(proc)
-        self.TotalSim.addNewProcess(proc.processData)
-        return proc
+        return simulationArchTypes.ProcessBaseClass(self, self.TotalSim.addNewProcess(procName, priority))
 
 
     def CreateNewTask(self, TaskName, TaskRate, InputDelay=None, FirstStart=0):

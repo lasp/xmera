@@ -8,10 +8,12 @@ from xmera.architecture import sim_model
 
 class ProcessBaseClass(object):
     """Class for a BSK process"""
-    def __init__(self, procName, procPriority=-1):
-        self.Name = procName
-        self.processData = sim_model.SysProcess(procName)
-        self.processData.processPriority = procPriority
+    def __init__(self, simulation, processData):
+        self.simulation = simulation
+        self.processData = processData
+        self.Name = processData.processName
+
+        self.simulation.procList.append(self)
 
     def addTask(self, newTask, taskPriority=-1):
         self.processData.addTask(newTask.TaskData, taskPriority)
