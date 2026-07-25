@@ -186,7 +186,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
 
     # Create a new process for the unit test task and add the module to tasking
     testProc = TotalSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(TotalSim.CreateNewTask(unitTaskName, testRate))
+    testProc.addTask(unitTaskName, testRate)
     TotalSim.AddModelToTask(unitTaskName, thrusterSet)
     TotalSim.scObject = spacecraft.Spacecraft()
     TotalSim.scObject.modelTag = "spacecraftBody"

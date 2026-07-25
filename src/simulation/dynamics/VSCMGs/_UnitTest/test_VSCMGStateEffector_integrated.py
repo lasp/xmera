@@ -127,7 +127,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         duration = 1.
     testProcessRate = macros.sec2nano(dt)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # add RW devices
     VSCMGs = []

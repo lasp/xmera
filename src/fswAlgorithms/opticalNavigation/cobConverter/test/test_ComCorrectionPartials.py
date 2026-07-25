@@ -76,7 +76,7 @@ def com_correction_partials(sunDirection,distance):
 
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     R_object = 30 * 1e3
     R_object_uncer = 1 * 1e3

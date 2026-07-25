@@ -157,7 +157,7 @@ def run(show_plots, missionType, saveVizardFile):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(.1)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     if missionType ==  'dscovr':

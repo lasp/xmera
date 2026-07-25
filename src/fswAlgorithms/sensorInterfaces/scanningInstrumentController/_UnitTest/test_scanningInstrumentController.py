@@ -92,7 +92,7 @@ def scanningInstrumentControllerTestFunction(att_limit = 0.1, att_mag = 0.1,
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(1.0)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # setup module to be tested
     module = scanningInstrumentController.ScanningInstrumentController()

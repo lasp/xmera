@@ -57,7 +57,7 @@ def singleGravityBody(show_plots):
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(10.0)))
+    DynUnitTestProc.addTask(unitTaskName, macros.sec2nano(10.0))
 
 
     # setup Gravity Bodies
@@ -179,7 +179,7 @@ def multiBodyGravity(show_plots):
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(5.0)))
+    DynUnitTestProc.addTask(unitTaskName, macros.sec2nano(5.0))
 
     # setup Gravity Bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -303,7 +303,7 @@ def polyGravityBody(show_plots):
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
     intTime = 30.0
-    DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(intTime)))
+    DynUnitTestProc.addTask(unitTaskName, macros.sec2nano(intTime))
 
     # specify orbit of polyhedral body
     oePolyBody = planetEphemeris.ClassicElements()

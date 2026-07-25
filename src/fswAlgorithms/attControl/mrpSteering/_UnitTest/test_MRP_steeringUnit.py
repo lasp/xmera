@@ -26,7 +26,7 @@ def test_mrp_steering_tracking(show_plots, K1, K3, omega_max, ignore_feed_forwar
     # Create test thread
     test_process_rate = macros.sec2nano(0.5)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     module = mrpSteering.MrpSteering()
     module.modelTag = "mrpSteering"

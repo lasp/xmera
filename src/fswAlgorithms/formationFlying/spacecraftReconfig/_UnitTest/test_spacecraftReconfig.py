@@ -44,7 +44,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # process rate
     testProc = unitTestSim.CreateNewProcess(unitProcessName)  # create new process
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # create new task
+    testProc.addTask(unitTaskName, testProcessRate)  # create new task
     # Construct algorithm and associated C++ container
     module = spacecraftReconfig.SpacecraftReconfig()
     module.modelTag = "spacecraftReconfig"  # update python name of test spacecraftReconfig

@@ -57,7 +57,7 @@ def test_stepper_motor_nominal(show_plots,
     test_time_step_sec = 0.01
     test_process_rate = macros.sec2nano(test_time_step_sec)
     test_process = test_sim.CreateNewProcess(process_name)
-    test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
+    test_process.addTask(task_name, test_process_rate)
 
     # Create the stepperMotor module
     stepper_motor = stepperMotor.StepperMotor()
@@ -196,7 +196,7 @@ def test_stepper_motor_interrupt(show_plots, steps_commanded_1, steps_commanded_
     test_time_step_sec = 0.01
     test_process_rate = macros.sec2nano(test_time_step_sec)
     test_process = test_sim.CreateNewProcess(process_name)
-    test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
+    test_process.addTask(task_name, test_process_rate)
 
     # Create the stepperMotor module
     step_time = 1.0  # [s]
@@ -338,7 +338,7 @@ def test_stepper_motor_timestep_overshoot(show_plots, steps_commanded, step_time
     test_sim = SimulationBaseClass.SimBaseClass()
     test_process_rate = macros.sec2nano(test_time_step_sec)
     test_process = test_sim.CreateNewProcess(process_name)
-    test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
+    test_process.addTask(task_name, test_process_rate)
 
     # Create the stepperMotor module
     step_angle = 1.0 * macros.D2R  # [rad]
@@ -432,7 +432,7 @@ def test_stepper_motor_single_step(show_plots, steps_commanded, step_angle, step
     test_time_step_sec = 0.01
     test_process_rate = macros.sec2nano(test_time_step_sec)
     test_process = test_sim.CreateNewProcess(process_name)
-    test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
+    test_process.addTask(task_name, test_process_rate)
 
     # Create the stepperMotor module
     stepper_motor = stepperMotor.StepperMotor()
@@ -520,7 +520,7 @@ def test_stepper_motor_rapid_commands(show_plots, steps_commanded_1, steps_comma
     test_time_step_sec = 0.01
     test_process_rate = macros.sec2nano(test_time_step_sec)
     test_process = test_sim.CreateNewProcess(process_name)
-    test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
+    test_process.addTask(task_name, test_process_rate)
 
     # Create the stepperMotor module
     step_time = 1.0  # [s]

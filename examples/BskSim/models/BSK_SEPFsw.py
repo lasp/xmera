@@ -38,15 +38,15 @@ class BSKFswModels:
         self.processPlatformTimeStep = mc.sec2nano(platRefRate)
 
         # Create tasks
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("cmEstimationTask" + str(spacecraftIndex), self.processTasksTimeStep), 30)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("thrusterPlatformReferenceTask" + str(spacecraftIndex), self.processPlatformTimeStep), 25)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("thrusterPlatformTask" + str(spacecraftIndex), self.processTasksTimeStep), 25)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("earthPointTask" + str(spacecraftIndex), self.processTasksTimeStep), 20)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("sepPointTask" + str(spacecraftIndex), self.processTasksTimeStep), 20)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("cruisePointTask" + str(spacecraftIndex), self.processTasksTimeStep), 20)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("solarArrayReferenceTask" + str(spacecraftIndex), self.processTasksTimeStep), 15)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("trackingErrorTask" + str(spacecraftIndex), self.processTasksTimeStep), 10)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.processTasksTimeStep), 5)
+        SimBase.fswProc[spacecraftIndex].addTask("cmEstimationTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=30)
+        SimBase.fswProc[spacecraftIndex].addTask("thrusterPlatformReferenceTask" + str(spacecraftIndex), self.processPlatformTimeStep, priority=25)
+        SimBase.fswProc[spacecraftIndex].addTask("thrusterPlatformTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=25)
+        SimBase.fswProc[spacecraftIndex].addTask("earthPointTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=20)
+        SimBase.fswProc[spacecraftIndex].addTask("sepPointTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=20)
+        SimBase.fswProc[spacecraftIndex].addTask("cruisePointTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=20)
+        SimBase.fswProc[spacecraftIndex].addTask("solarArrayReferenceTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=15)
+        SimBase.fswProc[spacecraftIndex].addTask("trackingErrorTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=10)
+        SimBase.fswProc[spacecraftIndex].addTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=5)
 
         # Create module data and module wraps
         self.earthPointData = oneAxisSolarArrayPoint.OneAxisSolarArrayPointConfig()

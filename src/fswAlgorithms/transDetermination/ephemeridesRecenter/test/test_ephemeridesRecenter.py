@@ -33,7 +33,7 @@ def mars_central_body():
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName,  int(0.5e9)))
+    testProc.addTask(unitTaskName,  int(0.5e9))
 
     ephemRecenter = ephemeridesRecenter.EphemeridesRecenter()
     ephemRecenter.modelTag = "ephemeridesRecenter"
@@ -171,7 +171,7 @@ def moon_central_body():
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName,  int(0.5e9)))
+    testProc.addTask(unitTaskName,  int(0.5e9))
 
     ephemRecenter = ephemeridesRecenter.EphemeridesRecenter()
     ephemRecenter.modelTag = "ephemeridesRecenter"
@@ -322,7 +322,7 @@ def clearing_values():
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName,  int(0.5e9)))
+    testProc.addTask(unitTaskName,  int(0.5e9))
 
     ephemRecenter = ephemeridesRecenter.EphemeridesRecenter()
     ephemRecenter.modelTag = "ephemeridesRecenter"

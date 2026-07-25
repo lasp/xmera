@@ -72,7 +72,7 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # setup module to be tested
     module = dentonFluxModel.DentonFluxModel()

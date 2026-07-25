@@ -57,7 +57,7 @@ def my_creation_function():
 
     sim_task_name = "simTask"
     dyn_process = sim.CreateNewProcess("process")
-    dyn_process.addTask(sim.CreateNewTask(sim_task_name, simulation_time_step))
+    dyn_process.addTask(sim_task_name, simulation_time_step)
 
     # Initialize the spacecraft object and set its properties
     sc_object = spacecraft.Spacecraft()

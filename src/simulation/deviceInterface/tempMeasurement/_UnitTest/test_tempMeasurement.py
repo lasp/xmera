@@ -64,7 +64,7 @@ def run(tempFault):
 
     testProcessRate = macros.sec2nano(1.0)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     #
     #   set up the simulation tasks/objects

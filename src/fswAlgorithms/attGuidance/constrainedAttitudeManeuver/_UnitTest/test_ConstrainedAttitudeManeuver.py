@@ -505,7 +505,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
     simulationTime = macros.min2nano(2)
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     testModule = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(N)
     testModule.sigma_BN_goal = SCTargetAttitude

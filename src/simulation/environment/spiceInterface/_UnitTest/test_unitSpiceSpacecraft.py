@@ -40,7 +40,7 @@ def unit_spice_sc(show_plots):
 
     total_sim = SimulationBaseClass.SimBaseClass()
     dyn_unit_test_proc = total_sim.CreateNewProcess(unit_process_name)
-    dyn_unit_test_proc.addTask(total_sim.CreateNewTask(unit_task_name, macros.sec2nano(0.1)))
+    dyn_unit_test_proc.addTask(unit_task_name, macros.sec2nano(0.1))
     date_spice = "2015 February 10, 00:00:00.0 TDB"
 
     spice_object = spiceInterface.SpiceInterface()

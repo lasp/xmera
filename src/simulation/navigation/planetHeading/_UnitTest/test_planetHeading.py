@@ -30,8 +30,7 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
 """
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
-    task = sim.CreateNewTask("task", int(1e9))
-    proc.addTask(task)
+    proc.addTask("task", int(1e9))
 
     earthPositionMessage = messaging.SpicePlanetStateMsgPayload()
     earthPositionMessage.PositionVector = [0., 0., 0.]
@@ -43,13 +42,13 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
 
     ph = planetHeading.PlanetHeading()
     ph.modelTag = "planetHeading"
-    sim.AddModelToTask(task.Name, ph)
+    sim.AddModelToTask("task", ph)
 
     ph.planetPositionInMsg.subscribeTo(plMsg)
     ph.spacecraftStateInMsg.subscribeTo(scMsg)
 
     dataLog = ph.planetHeadingOutMsg.recorder()
-    sim.AddModelToTask(task.Name, dataLog)
+    sim.AddModelToTask("task", dataLog)
 
     sim.InitializeSimulation()
     sim.TotalSim.singleStepProcesses()

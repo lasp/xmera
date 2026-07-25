@@ -40,7 +40,7 @@ def test_mrpPD(show_plots, setExtTorque):
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # Update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create the mrpPD module
     mrp_pd = mrpPD.MrpPD()

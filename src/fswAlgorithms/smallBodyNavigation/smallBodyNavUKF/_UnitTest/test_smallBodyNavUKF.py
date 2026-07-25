@@ -38,7 +38,7 @@ def smallBodyNavUKFTestFunction(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(15)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # setup module to be tested
     module = smallBodyNavUKF.SmallBodyNavUKF()

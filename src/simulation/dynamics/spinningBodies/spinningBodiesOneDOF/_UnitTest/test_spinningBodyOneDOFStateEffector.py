@@ -73,7 +73,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create the spacecraft module
     scObject = spacecraft.Spacecraft()

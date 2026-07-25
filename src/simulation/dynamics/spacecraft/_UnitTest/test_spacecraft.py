@@ -72,7 +72,7 @@ def sc_translation(show_plots):
     # Create test thread
     test_process_rate = macros.sec2nano(0.01)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
@@ -199,7 +199,7 @@ def sc_trans_and_rotation(show_plots):
     # Create test thread
     test_process_rate = macros.sec2nano(0.001)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
@@ -371,10 +371,17 @@ def sc_rotation(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     time_step = 0.001
     test_process_rate = macros.sec2nano(time_step)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    timeStep = 0.001
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
@@ -591,10 +598,17 @@ def sc_trans_boe(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     time_step = 0.1
     test_process_rate = macros.sec2nano(time_step)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
@@ -733,9 +747,15 @@ def sc_point_b_vs_point_c(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     test_process_rate = macros.sec2nano(0.01)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
@@ -786,9 +806,15 @@ def sc_point_b_vs_point_c(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     test_process_rate = macros.sec2nano(0.01)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
@@ -892,10 +918,17 @@ def sc_optional_ref(show_plots, accuracy):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     time_step = 0.1
     test_process_rate = macros.sec2nano(time_step)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
@@ -993,10 +1026,17 @@ def sc_accum_dv():
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     time_step = 0.1
     test_process_rate = macros.sec2nano(time_step)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
@@ -1071,10 +1111,17 @@ def sc_accum_dv_ext_force():
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     time_step = 0.1
     test_process_rate = macros.sec2nano(time_step)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     # Add test module to runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)

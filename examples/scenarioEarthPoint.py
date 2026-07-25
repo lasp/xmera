@@ -90,8 +90,8 @@ def run( showPlots):
     simulationTime = macros.hour2nano(2)
     simulationTimeStepDyn = macros.sec2nano(0.05)
     simulationTimeStepFsw = macros.sec2nano(0.5)
-    dynProcess.addTask(scSim.CreateNewTask(dynTask, simulationTimeStepDyn))
-    dynProcess.addTask(scSim.CreateNewTask(fswTask, simulationTimeStepFsw))
+    dynProcess.addTask(dynTask, simulationTimeStepDyn)
+    dynProcess.addTask(fswTask, simulationTimeStepFsw)
 
 
 #

@@ -39,7 +39,7 @@ def test_hinged_rigid_body_gravity(show_plots):
     # Create test thread
     test_process_rate = macros.sec2nano(0.001)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     # Create two hinged rigid bodies
     unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -318,9 +318,15 @@ def test_hinged_rigid_body_no_gravity(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     test_process_rate = macros.sec2nano(0.001)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -533,9 +539,15 @@ def test_hinged_rigid_body_no_gravity_damping(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     test_process_rate = macros.sec2nano(0.001)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -706,10 +718,17 @@ def test_hinged_rigid_body_theta_ss(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     step_size = 0.1
     test_process_rate = macros.sec2nano(step_size)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    stepSize = 0.1
+    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -883,10 +902,17 @@ def test_hinged_rigid_body_frequency_amp(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     step_size = 0.1
     test_process_rate = macros.sec2nano(step_size)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    stepSize = 0.1
+    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -1147,9 +1173,15 @@ def test_hinged_rigid_body_motor_torque(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     test_process_rate = macros.sec2nano(0.01)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -1367,10 +1399,17 @@ def test_hinged_rigid_body_lagrang_vs_xmera(show_plots):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
+<<<<<<< HEAD
     step_size = 0.1
     test_process_rate = macros.sec2nano(step_size)  # update process rate update time
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
     test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+=======
+    stepSize = 0.1
+    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTaskName, testProcessRate)
+>>>>>>> 051b0d2ad (Remove all uses of CreateNewTask)
 
     unit_test_sim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     unit_test_sim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()

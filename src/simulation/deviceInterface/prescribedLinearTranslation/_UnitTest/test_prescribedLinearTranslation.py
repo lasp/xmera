@@ -90,7 +90,7 @@ def test_prescribedLinearTranslation(show_plots,
     testTimeStepSec = 0.1  # [s]
     testProcessRate = macros.sec2nano(testTimeStepSec)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create an instance of the prescribedLinearTranslation module to be tested
     transAxis_M = np.array([1.0, 0.0, 0.0])  # Axis of translation

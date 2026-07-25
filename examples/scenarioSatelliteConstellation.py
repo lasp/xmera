@@ -119,7 +119,7 @@ def run(show_plots, a, i, T, P, F):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(30.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()

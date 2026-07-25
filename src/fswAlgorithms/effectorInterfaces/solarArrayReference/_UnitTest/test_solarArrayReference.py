@@ -117,7 +117,7 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     # Create test thread
     testProcessRate = macros.sec2nano(1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct tested module and associated C container
     solarArray = solarArrayReference.SolarArrayReference()

@@ -39,7 +39,7 @@ def test_rateControl(setExtTorque):
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create an instance of the rateControl module
     rateCntrl = rateControl.RateControl()

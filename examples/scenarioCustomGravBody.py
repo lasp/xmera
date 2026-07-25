@@ -108,7 +108,7 @@ def run(show_plots):
     # create the dynamics task and specify the simulation time step information
     simulationTimeStep = macros.sec2nano(10.0)
     simulationTime = macros.min2nano(1120.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()

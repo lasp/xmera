@@ -62,7 +62,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
     timeStep = 0.1
     testProcessRate = macros.sec2nano(timeStep)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # setup
     pHat_B = np.array([1, 0, 0])

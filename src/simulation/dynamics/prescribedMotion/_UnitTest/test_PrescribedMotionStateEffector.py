@@ -67,7 +67,7 @@ def test_PrescribedMotionStateEffector_Rotation(show_plots, theta_init, theta_re
     test_increment = 0.001  # [s]
     test_process_rate = macros.sec2nano(test_increment)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     # Add the spacecraft module to test file
     sc_object = spacecraft.Spacecraft()
@@ -238,7 +238,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     test_increment = 0.001  # [s]
     test_process_rate = macros.sec2nano(test_increment)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     # Add the spacecraft module to test file
     sc_object = spacecraft.Spacecraft()

@@ -37,18 +37,12 @@ class BSKFswModels:
         self.processTasksTimeStep = mc.sec2nano(fswRate)
 
         # Create tasks
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("inertialPointTask" + str(spacecraftIndex),
-                                                                       self.processTasksTimeStep), 20)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("sunPointTask" + str(spacecraftIndex),
-                                                                       self.processTasksTimeStep), 20)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("locPointTask" + str(spacecraftIndex),
-                                                                       self.processTasksTimeStep), 20)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("spacecraftReconfigTask" + str(spacecraftIndex),
-                                                                       self.processTasksTimeStep), 15)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("trackingErrorTask" + str(spacecraftIndex),
-                                                                       self.processTasksTimeStep), 10)
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask" + str(spacecraftIndex),
-                                                                       self.processTasksTimeStep), 5)
+        SimBase.fswProc[spacecraftIndex].addTask("inertialPointTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=20)
+        SimBase.fswProc[spacecraftIndex].addTask("sunPointTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=20)
+        SimBase.fswProc[spacecraftIndex].addTask("locPointTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=20)
+        SimBase.fswProc[spacecraftIndex].addTask("spacecraftReconfigTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=15)
+        SimBase.fswProc[spacecraftIndex].addTask("trackingErrorTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=10)
+        SimBase.fswProc[spacecraftIndex].addTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.processTasksTimeStep, priority=5)
 
         # Create module data and module wraps
         self.inertial3DPoint = inertial3D.Inertial3D()

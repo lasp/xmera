@@ -66,7 +66,7 @@ def sunSafePointTestFunction(show_plots, case):
     # Create test thread
     testProcessRate = mc.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
 
     # Construct algorithm and associated C container

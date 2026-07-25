@@ -63,7 +63,7 @@ def test_sunSearch(show_plots, axis1, axis2, axis3, omega_BN_B, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(1.1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     theta1 = np.pi/2
     theta2 = np.pi

@@ -48,7 +48,7 @@ def storage_limits(show_plots):
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     test_battery = simpleBattery.SimpleBattery()
     test_battery.storedCharge_Init = 5.

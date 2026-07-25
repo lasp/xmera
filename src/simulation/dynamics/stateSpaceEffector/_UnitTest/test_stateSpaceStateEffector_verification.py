@@ -27,7 +27,7 @@ def test_flexiblePaneTestFunction(show_plots, frequency):
     simulationTime = macros.min2nano(0.1)
     dynProcess = scSim.CreateNewProcess(dynProcessName)
     simTimeStep = macros.sec2nano(0.0001)
-    dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
+    dynProcess.addTask(dynTaskName, simTimeStep)
 
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "scObject"

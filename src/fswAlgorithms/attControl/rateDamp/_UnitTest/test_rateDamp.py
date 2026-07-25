@@ -21,7 +21,7 @@ def test_rateDamp(show_plots, P):
     # Create test thread
     testProcessRate = macros.sec2nano(1.1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create the rateDamp module
     attControl = rateDamp.RateDamp()

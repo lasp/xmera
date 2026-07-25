@@ -28,7 +28,7 @@ class BSKEnvironmentModel:
         processTasksTimeStep = mc.sec2nano(envRate)
 
         # Create task
-        SimBase.envProc.addTask(SimBase.CreateNewTask(self.envTaskName, processTasksTimeStep))
+        SimBase.envProc.addTask(self.envTaskName, processTasksTimeStep)
 
         # Instantiate Env modules as objects
         self.gravFactory = simIncludeGravBody.gravBodyFactory()

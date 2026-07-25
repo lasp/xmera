@@ -37,7 +37,7 @@ def test_customFovCss(show_plots, xi, eta, zeta, sunLocation, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(1.1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     lHat_B = [1, 0, 0]
     mHat_B = [0, 1, 0]

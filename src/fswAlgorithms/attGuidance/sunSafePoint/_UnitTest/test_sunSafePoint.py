@@ -31,7 +31,7 @@ def test_sunSafePoint(show_plots, case):
     # Create test thread
     testProcessRate = mc.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Create the sunSafePoint module
     sun_safe_point = sunSafePoint.SunSafePoint()

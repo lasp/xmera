@@ -66,7 +66,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     dynProcess = unitTestSim.CreateNewProcess(unitProcessName)
     simulationTimeStep = macros.sec2nano(0.1)
     unitTaskName = "simTask"
-    dynProcess.addTask(unitTestSim.CreateNewTask(unitTaskName, simulationTimeStep))
+    dynProcess.addTask(unitTaskName, simulationTimeStep)
 
     # Create the Sun
     gravFactory = simIncludeGravBody.gravBodyFactory()

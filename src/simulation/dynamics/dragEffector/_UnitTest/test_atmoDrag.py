@@ -98,7 +98,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
 
 
@@ -118,8 +118,8 @@ def run(show_plots, orbitCase, planetCase):
     dragEffector.coreParams.dragCoeff = dragCoeff
     dragEffector.coreParams.comOffset = [1., 0., 0.]
 
-    dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
-    dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
+    dynProcess.addTask(atmoTaskName, simulationTimeStep)
+    dynProcess.addTask(dragEffectorTaskName, simulationTimeStep)
     scSim.AddModelToTask(atmoTaskName, newAtmo)
 
     #

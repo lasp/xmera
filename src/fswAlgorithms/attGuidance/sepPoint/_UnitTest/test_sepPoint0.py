@@ -121,7 +121,7 @@ def test_(show_plots, alpha, delta, alignmentPriority, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(1.1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C++ container
     attGuid = sepPoint.SepPoint()

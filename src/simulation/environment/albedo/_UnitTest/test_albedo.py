@@ -70,7 +70,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     testProc = unitTestSim.CreateNewProcess(testProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
+    testProc.addTask(testTaskName, testTaskRate)
 
     # create planet input message
     planetInMsg = messaging.SpicePlanetStateMsg()

@@ -195,7 +195,7 @@ def run(show_plots, useCentral):
 
     # Create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(5.0)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()

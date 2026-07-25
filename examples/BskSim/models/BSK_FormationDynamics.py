@@ -25,8 +25,8 @@ class BSKDynamicModels():
         self.processTasksTimeStep = mc.sec2nano(dynRate)
 
         # Create task
-        SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep))
-        SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName2, self.processTasksTimeStep))
+        SimBase.dynProc.addTask(self.taskName, self.processTasksTimeStep)
+        SimBase.dynProc.addTask(self.taskName2, self.processTasksTimeStep)
 
         # Instantiate Dyn modules as objects
         self.scObject = spacecraft.Spacecraft()

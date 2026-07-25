@@ -87,7 +87,7 @@ def run(show_plots):
     # Create test thread
     testProcessRate = macros.sec2nano(1.0)     # update process rate update time
     testProc = scenarioSim.CreateNewProcess(processname)
-    testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
+    testProc.addTask(taskName, testProcessRate)
 
     # Create a spacecraft around Earth
     scObject = spacecraft.Spacecraft()

@@ -101,7 +101,7 @@ def run(show_plots):
     # Create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
 
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     scObject = spacecraft.Spacecraft()
     scObject.modelTag = "spacecraftBody"

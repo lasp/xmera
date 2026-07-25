@@ -149,7 +149,7 @@ def cob_converter_test_function(show_plots, cameraResolution, centerOfBrightness
 
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
     R_object = 25. * 1e3
     R_object_uncer = 8 * 1e3
     att_sigma = 0.001
@@ -341,7 +341,7 @@ def test_coberror_outlier(
 
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
     R_object = 25. * 1e3
     R_object_uncer = 8 * 1e3
     att_sigma = 0.001
@@ -499,7 +499,7 @@ def test_brown_conrady_calibration(k1, k2, k3, p1, p2, label, centerOfBrightness
 
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     R_object = 25.0 * 1e3
     module = cobConverter.CobConverter(noCorr, R_object)

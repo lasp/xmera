@@ -28,7 +28,7 @@ def test_flexiblePaneTestFunction(show_plots, frequency):
     dynProcess = scSim.CreateNewProcess(dynProcessName)
 
     simTimeStep = macros.sec2nano(0.0001)
-    dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
+    dynProcess.addTask(dynTaskName, simTimeStep)
 
     massHub = 720
     r_BcB_B = np.array([0.0, 0.0, 0.0])

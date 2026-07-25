@@ -60,7 +60,7 @@ def run(cssFault):
 
     # Ensure simulation is empty
     testProc = unitTestSim.CreateNewProcess(testProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
+    testProc.addTask(testTaskName, testTaskRate)
 
     # Input Message Setup
     # Creates inputs from sun, spacecraft, and eclipse so that those modules don't have to be included

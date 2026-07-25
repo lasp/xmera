@@ -59,7 +59,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
 
     dynProcess = scSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
+    dynProcess.addTask(unitTaskName, macros.sec2nano(0.1))
 
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.modelTag = "externalDisturbance"

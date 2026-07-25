@@ -132,7 +132,7 @@ def unit_spice(test_plotting_fixture, show_plots, date_spice, date_plot,
 
     total_sim = SimulationBaseClass.SimBaseClass()
     dyn_unit_test_proc = total_sim.CreateNewProcess(unit_process_name)
-    dyn_unit_test_proc.addTask(total_sim.CreateNewTask(unit_task_name, macros.sec2nano(0.1)))
+    dyn_unit_test_proc.addTask(unit_task_name, macros.sec2nano(0.1))
 
     spice_object = spiceInterface.SpiceInterface()
     spice_object.modelTag = "SpiceInterfaceData"

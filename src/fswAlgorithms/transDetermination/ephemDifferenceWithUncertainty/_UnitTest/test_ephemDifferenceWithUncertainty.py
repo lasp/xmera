@@ -27,7 +27,7 @@ def test_ephem_difference_with_uncertainty(r_1_N, r_2_N, v_1_N, v_2_N, sig_1_N, 
 
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     covar_1 = np.identity(6) * sig_1_N**2
     covar_1[0, 2] = 0.5123  # populate off-diagonal elements to make sure Matrix is accurately reshaped from 6x6 to 36x1

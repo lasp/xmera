@@ -72,7 +72,7 @@ def test_celestial_two_body_point_test_function(secondary_body):
 
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     module = celestialTwoBodyPoint.CelestialTwoBodyPoint()
     module.modelTag = "celestialTwoBodyPoint"

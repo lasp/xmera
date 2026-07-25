@@ -52,7 +52,7 @@ def bore_ang_calc_inertial_heading_func(show_plots, inertialHeading, eulerLoc):
     # Create the sim module, process and task
     TotalSim = SimulationBaseClass.SimBaseClass()
     UnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
-    UnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, mc.sec2nano(1.0)))
+    UnitTestProc.addTask(unitTaskName, mc.sec2nano(1.0))
 
     # Create the state message and populate it
     stateMessage = messaging.SCStatesMsgPayload()

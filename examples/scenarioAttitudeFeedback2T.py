@@ -167,9 +167,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
 
     # create the dynamics task and specify the integration update time
     simTimeStep = macros.sec2nano(0.1)
-    dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
+    dynProcess.addTask(dynTaskName, simTimeStep)
     fswTimeStep = macros.sec2nano(0.5)
-    fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
+    fswProcess.addTask(fswTaskName, fswTimeStep)
 
     #
     #   setup the simulation tasks/objects

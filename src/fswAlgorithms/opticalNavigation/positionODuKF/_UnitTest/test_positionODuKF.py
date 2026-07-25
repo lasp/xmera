@@ -102,7 +102,7 @@ def state_update_test(show_plots):
 
     test_process_rate = macros.sec2nano(dt)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     # Construct algorithm and associated C++ container
     module_config = positionODuKF.PositionODuKF()
@@ -218,7 +218,7 @@ def state_propagation_test(show_plots, dt):
     # Create test thread
     test_process_rate = macros.sec2nano(dt)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     # Construct algorithm and associated C++ container
     module_config = positionODuKF.PositionODuKF()

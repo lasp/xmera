@@ -40,7 +40,7 @@ def test_starTracker(show_plots, use_flag, test_case):
     unit_proc_rate = macros.sec2nano(0.1)
     unit_proc_rate_s = macros.NANO2SEC*unit_proc_rate
     unit_proc = unit_sim.CreateNewProcess(unit_proc_name)
-    unit_proc.addTask(unit_sim.CreateNewTask(unit_task_name, unit_proc_rate))
+    unit_proc.addTask(unit_task_name, unit_proc_rate)
 
     # Configure the starTracker module
     str_tracker = starTracker.StarTracker()

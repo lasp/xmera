@@ -74,7 +74,7 @@ def torqueSchedulerTestFunction(lockFlag, tSwitch, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(1)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C container
     scheduler = torqueScheduler.TorqueScheduler()

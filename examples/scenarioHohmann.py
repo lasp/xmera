@@ -174,7 +174,7 @@ def run(show_plots, rFirst, rSecond):
 
     # Create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1)
-    scSim.dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep), 10)
+    scSim.dynProcess.addTask(simTaskName, simulationTimeStep, priority=10)
 
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
@@ -232,7 +232,7 @@ def run(show_plots, rFirst, rSecond):
     firstBurn = velocityPoint.VelocityPoint()
     firstBurn.modelTag = "velocityPoint"
     firstBurn.mu = mu
-    scSim.fswProcess.addTask(scSim.CreateNewTask("firstBurnTask", simulationTimeStep), 5)
+    scSim.fswProcess.addTask("firstBurnTask", simulationTimeStep, priority=5)
     scSim.AddModelToTask("firstBurnTask", firstBurn)
 
     firstBurnMRPRotation = mrpRotation.MrpRotation()
@@ -245,7 +245,7 @@ def run(show_plots, rFirst, rSecond):
     secondBurn = velocityPoint.VelocityPoint()
     secondBurn.modelTag = "velocityPoint"
     secondBurn.mu = mu
-    scSim.fswProcess.addTask(scSim.CreateNewTask("secondBurnTask", simulationTimeStep), 5)
+    scSim.fswProcess.addTask("secondBurnTask", simulationTimeStep, priority=5)
     scSim.AddModelToTask("secondBurnTask", secondBurn)
 
     # Need to get this reference attitude to rotate 180
@@ -258,13 +258,13 @@ def run(show_plots, rFirst, rSecond):
     # Set up hill point guidance module
     attGuidanceHillPoint = hillPoint.HillPoint()
     attGuidanceHillPoint.modelTag = "hillPoint"
-    scSim.fswProcess.addTask(scSim.CreateNewTask("hillPointTask", simulationTimeStep), 5)
+    scSim.fswProcess.addTask("hillPointTask", simulationTimeStep, priority=5)
     scSim.AddModelToTask("hillPointTask", attGuidanceHillPoint)
     attGuidanceHillPoint.attRefOutMsg = attRefMsg
 
     # Create flight software task to hold the remaining modules
     fswTaskName = "fswTask"
-    scSim.fswProcess.addTask(scSim.CreateNewTask(fswTaskName, simulationTimeStep), 0)
+    scSim.fswProcess.addTask(fswTaskName, simulationTimeStep, priority=0)
 
     # Set up the attitude tracking error evaluation module
     attError = attTrackingError.AttTrackingError()

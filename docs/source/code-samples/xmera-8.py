@@ -20,8 +20,8 @@ def run():
     dynProcess = scSim.CreateNewProcess("dynamicsProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("task1", macros.sec2nano(1.)))
-    dynProcess.addTask(scSim.CreateNewTask("task2", macros.sec2nano(1.)))
+    dynProcess.addTask("task1", macros.sec2nano(1.))
+    dynProcess.addTask("task2", macros.sec2nano(1.))
 
     # create modules
     mod2 = cppModuleTemplate.CppModuleTemplate()

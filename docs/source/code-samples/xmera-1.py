@@ -20,9 +20,9 @@ def run():
     fswProcess = scSim.CreateNewProcess("fswProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(5.)))
-    dynProcess.addTask(scSim.CreateNewTask("sensorTask", macros.sec2nano(10.)))
-    fswProcess.addTask(scSim.CreateNewTask("fswTask", macros.sec2nano(10.)))
+    dynProcess.addTask("dynamicsTask", macros.sec2nano(5.))
+    dynProcess.addTask("sensorTask", macros.sec2nano(10.))
+    fswProcess.addTask("fswTask", macros.sec2nano(10.))
 
     #  initialize Simulation:
     scSim.InitializeSimulation()

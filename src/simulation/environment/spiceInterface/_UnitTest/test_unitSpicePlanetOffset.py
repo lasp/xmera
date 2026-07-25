@@ -46,7 +46,7 @@ def build_sim(orbital_period, stop_time_sec, time_step_sec=0.1, attach_secondary
     (spice, secondary_rec, primary_rec)."""
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("TestProcess")
-    proc.addTask(sim.CreateNewTask("unitTask", macros.sec2nano(time_step_sec)))
+    proc.addTask("unitTask", macros.sec2nano(time_step_sec))
 
     spice = spiceInterface.SpiceInterface()
     spice.modelTag = "SpiceInterface"

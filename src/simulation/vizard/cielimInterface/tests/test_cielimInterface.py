@@ -35,7 +35,7 @@ def read_write_test(format):
     # Create test thread
     test_process_rate = int(1E9)  # update process rate update time
     test_process = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_process.addTask(unit_task_name, test_process_rate)
 
     module = cielimInterface.CielimInterface()
     module.modelTag = "cielim_interface"

@@ -78,7 +78,7 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
     dt = 1
     testProcessRate = macros.sec2nano(dt)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Construct algorithm and associated C++ container
     moduleConfig = opticalFlow.OpticalFlow()

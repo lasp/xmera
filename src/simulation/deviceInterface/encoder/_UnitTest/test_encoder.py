@@ -34,7 +34,7 @@ def test_encoder():
 
     sim = SimulationBaseClass.SimBaseClass()
     process = sim.CreateNewProcess("TestProcess")
-    process.addTask(sim.CreateNewTask(task_name, macros.sec2nano(1)))
+    process.addTask(task_name, macros.sec2nano(1))
 
     speed_payload = messaging.RWSpeedMsgPayload()
     speed_payload.wheelSpeeds = [100, 200, 300]

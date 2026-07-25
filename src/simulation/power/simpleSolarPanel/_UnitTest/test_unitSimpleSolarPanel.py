@@ -77,7 +77,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(1.0)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     #   Input message set-up
     eclipseMessage = messaging.EclipseMsgPayload()

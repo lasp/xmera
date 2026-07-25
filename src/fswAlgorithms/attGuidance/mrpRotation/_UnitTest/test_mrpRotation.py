@@ -134,7 +134,7 @@ def test_mrp_rotation(show_plots, cmd_state_flag, test_reset):
     # Create test thread
     test_process_rate = mc.sec2nano(update_time)
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     # Construct algorithm and associated C++ container
     module = mrpRotation.MrpRotation()

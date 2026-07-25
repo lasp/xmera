@@ -138,11 +138,11 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     unitProcessName2 = "TestProcess2"  # arbitrary name (don't change)
     unitProcessName3 = "TestProcess3"  # arbitrary name (don't change)
     testProc1 = TotalSim.CreateNewProcess(unitProcessName1, 10)
-    testProc1.addTask(TotalSim.CreateNewTask(unitTaskName1, testRate))
+    testProc1.addTask(unitTaskName1, testRate)
     testProc2 = TotalSim.CreateNewProcess(unitProcessName2, 0)
-    testProc2.addTask(TotalSim.CreateNewTask(unitTaskName2, testRate))
+    testProc2.addTask(unitTaskName2, testRate)
     testProc3 = TotalSim.CreateNewProcess(unitProcessName3, 5)
-    testProc3.addTask(TotalSim.CreateNewTask(unitTaskName3, testRate))
+    testProc3.addTask(unitTaskName3, testRate)
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()

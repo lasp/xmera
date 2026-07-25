@@ -91,7 +91,7 @@ def nHingedRigidBody(show_plots, testCase):
     testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     plottingRate = 0.01
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     unitTestSim.effector1 = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
     unitTestSim.effector2 = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()

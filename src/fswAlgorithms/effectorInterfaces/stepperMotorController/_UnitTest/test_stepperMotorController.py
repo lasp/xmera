@@ -56,7 +56,7 @@ def test_stepper_motor_controller_nominal(show_plots, motor_step_angle, motor_st
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     test_process_rate = macros.sec2nano(motor_step_time)
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     # Create the stepperMotorController module
     motor_controller = stepperMotorController.StepperMotorController()
@@ -134,7 +134,7 @@ def test_stepper_motor_controller_invalid(show_plots, motor_theta_ref):
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     test_process_rate = macros.sec2nano(1.0)
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     # Create the stepperMotorController module
     motor_controller = stepperMotorController.StepperMotorController()
@@ -203,7 +203,7 @@ def test_stepper_motor_controller_interrupt(show_plots, motor_theta_ref1, motor_
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     test_process_rate = macros.sec2nano(0.1)
     test_proc = unit_test_sim.CreateNewProcess(unit_process_name)
-    test_proc.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
+    test_proc.addTask(unit_task_name, test_process_rate)
 
     # Create the stepperMotorController module
     motor_step_angle = 1.0 * macros.D2R  # [rad]

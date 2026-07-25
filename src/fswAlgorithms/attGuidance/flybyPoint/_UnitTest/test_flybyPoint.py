@@ -53,7 +53,7 @@ def test_flybyPoint_diagnostic_collinearity(
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     process_rate = macros.sec2nano(sim_dt)
     test_process = unit_test_sim.CreateNewProcess("unit_process")
-    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+    test_process.addTask("unit_task", process_rate)
 
     # setup flybyPoint guidance module
     flyby_guidance = flybyPoint.FlybyPoint()
@@ -116,7 +116,7 @@ def test_flybyPoint_maxrate(
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     process_rate = macros.sec2nano(sim_dt)
     test_process = unit_test_sim.CreateNewProcess("unit_process")
-    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+    test_process.addTask("unit_task", process_rate)
 
     # setup flybyPoint guidance module
     flyby_guidance = flybyPoint.FlybyPoint()
@@ -179,7 +179,7 @@ def test_flybyPoint_maxacc(
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     process_rate = macros.sec2nano(sim_dt)
     test_process = unit_test_sim.CreateNewProcess("unit_process")
-    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+    test_process.addTask("unit_task", process_rate)
 
     # setup flybyPoint guidance module
     flyby_guidance = flybyPoint.FlybyPoint()
@@ -243,7 +243,7 @@ def test_flybyPoint_diagnostic_positionknowledge(
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     process_rate = macros.sec2nano(sim_dt)
     test_process = unit_test_sim.CreateNewProcess("unit_process")
-    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+    test_process.addTask("unit_task", process_rate)
 
     # setup flybyPoint guidance module
     flyby_guidance = flybyPoint.FlybyPoint()
@@ -299,7 +299,7 @@ def flybyPointTestFunction(show_plots, initial_position, initial_velocity, filte
     unit_test_sim = SimulationBaseClass.SimBaseClass()
     process_rate = macros.sec2nano(sim_dt)
     test_process = unit_test_sim.CreateNewProcess("unit_process")
-    test_process.addTask(unit_test_sim.CreateNewTask("unit_task", process_rate))
+    test_process.addTask("unit_task", process_rate)
 
     # setup flybyPoint guidance module
     flyby_guidance = flybyPoint.FlybyPoint()

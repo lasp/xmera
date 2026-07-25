@@ -44,7 +44,7 @@ def extForceBodyAndTorque():
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -132,7 +132,7 @@ def extForceInertialAndTorque():
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)

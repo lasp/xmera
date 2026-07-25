@@ -47,7 +47,7 @@ def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(5.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
@@ -179,7 +179,7 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(10.)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()

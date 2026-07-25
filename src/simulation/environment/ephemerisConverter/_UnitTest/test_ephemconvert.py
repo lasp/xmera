@@ -46,7 +46,7 @@ def unitephemeris_converter(show_plots):
     samplingTime = simulationTime // (numDataPoints-1)
     DynUnitTestProc = sim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(sim.CreateNewTask(unitTaskName, samplingTime))
+    DynUnitTestProc.addTask(unitTaskName, samplingTime)
 
     # List of planets tested
     planets = ["earth", "mars barycenter", "sun"]

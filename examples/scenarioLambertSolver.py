@@ -140,8 +140,8 @@ def run(show_plots):
     fswStep = 30.
     simTimeStep = macros.sec2nano(simStep)
     fswTimeStep = macros.sec2nano(fswStep)
-    dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
-    fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
+    dynProcess.addTask(dynTaskName, simTimeStep)
+    fswProcess.addTask(fswTaskName, fswTimeStep)
 
     # Create gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()

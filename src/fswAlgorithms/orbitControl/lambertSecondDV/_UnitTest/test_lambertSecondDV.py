@@ -56,7 +56,7 @@ def lambertSecondDVTestFunction(show_plots, p1_dv, p2_tm, p3_valid, accuracy):
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(100)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     dv_N = p1_dv
     tm = p2_tm

@@ -57,7 +57,7 @@ def hingedBodyLinearProfilerTestFunction(show_plots, startTime, endTime, startTh
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    testProc.addTask(unitTaskName, testProcessRate)
 
     # setup module to be tested
     module = hingedBodyLinearProfiler.HingedBodyLinearProfiler()

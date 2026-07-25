@@ -113,7 +113,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # create the dynamics task and specify the simulation time and integration update time
     simulationTime = macros.min2nano(3.5)
     simulationTimeStep = macros.sec2nano(0.01)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    dynProcess.addTask(simTaskName, simulationTimeStep)
 
     #
     # setup the simulation tasks/objects
