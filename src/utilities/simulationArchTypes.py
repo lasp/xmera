@@ -18,9 +18,8 @@ class ProcessBaseClass(object):
     def addTask(self, name="", TaskRate=100, FirstStart=0, priority=-1):
         taskData = self.processData.addTask(TaskRate, FirstStart, priority)
         taskData.TaskName = name
-        newTask = TaskBaseClass(name, taskData)
 
-        self.simulation.TaskList.append(newTask)
+        return TaskBaseClass(self.simulation, name, taskData)
 
     def addInterfaceRef(self, newInt):
         self.processData.addInterfaceRef(newInt)
@@ -42,10 +41,20 @@ class ProcessBaseClass(object):
 
 
 class TaskBaseClass(object):
-    def __init__(self, TaskName, TaskData):
+    def __init__(self, simulation, TaskName, TaskData):
+        self.simulation = simulation
         self.Name = TaskName
         self.TaskData = TaskData
         self.TaskModels = []
+
+        self.simulation.TaskList.append(self)
+
+    def addModel(self, model, priority=-1):
+        self.TaskData.addModel(model, priority)
+        self.TaskModels.append(model)
+
+        model.bskLogger = self.simulation.bskLogger
+        self.simulation.allModels.append((model, None, self))
 
     def disable(self):
         self.TaskData.disable()
