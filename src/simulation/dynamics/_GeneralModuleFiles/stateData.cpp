@@ -9,11 +9,11 @@ StateData::StateData(const StateData& inState) : state(inState.state),
     stateEnabled(inState.stateEnabled) {
 }
 
-StateData::StateData(std::string const &inName, const Eigen::MatrixXd& newState) : stateName(inName) {
-    setState(newState);
-    if (state.innerSize() != stateDeriv.innerSize() || state.outerSize() != stateDeriv.outerSize()) {
-        stateDeriv = state;
-    }
+StateData::StateData(std::string const &inName, const Eigen::MatrixXd& newState) :
+    state(newState),
+    stateDeriv(state),
+    stateName(inName) {
+
     stateDeriv.setZero();
 }
 
