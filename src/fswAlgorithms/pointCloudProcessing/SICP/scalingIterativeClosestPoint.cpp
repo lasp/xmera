@@ -178,8 +178,8 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
 
     //! - If initial condition message exists populate the initial conditions, otherwise use defaults
     if (initicalConditionValidity) {
-        this->R_init =
-            cArrayToEigenMatrixX(this->initialConditionBuffer.rotationMatrix, SICP_POINT_DIM, SICP_POINT_DIM);
+        //! - The rotation matrices in this message are stored row-major, so read them with the row-major helper
+        this->R_init = cArrayToEigenMatrix3(this->initialConditionBuffer.rotationMatrix);
         this->t_init = Eigen::Map<Eigen::VectorXd>(this->initialConditionBuffer.translation, SICP_POINT_DIM, 1);
         this->s_init = this->initialConditionBuffer.scaleFactor[0];
     } else {
