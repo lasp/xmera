@@ -17,7 +17,7 @@ inline uint64_t SysModelTask::projectToCurrentSchedule(uint64_t time) {
     return time;
 }
 
-void SysModelTask::resetModels(uint64_t initialSimNanos) {
+void SysModelTask::reset(uint64_t initialSimNanos) {
     for (auto const &modelPair : this->TaskModels) { modelPair.ModelPtr->reset(initialSimNanos); }
 
     // Make sure we stick to our intended schedule.

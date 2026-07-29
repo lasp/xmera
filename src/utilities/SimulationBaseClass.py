@@ -447,12 +447,7 @@ class SimBaseClass:
         """
         Initialize the BSK simulation.  This runs the reset() method on each module.
         """
-        if(self.simulationInitialized):
-            self.TotalSim.resetThreads(self.TotalSim.getThreadCount())
-        self.TotalSim.assignRemainingProcs()
         self.TotalSim.resetSimulation()
-        self.TotalSim.selfInitSimulation()
-        self.TotalSim.resetInitSimulation()
         self.simulationInitialized = True
 
 
@@ -475,7 +470,6 @@ class SimBaseClass:
         self.initializeEventChecks()
 
         nextStopTime = self.TotalSim.getNextTaskTime()
-        nextPriority = -1
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
         while self.TotalSim.getNextTaskTime() <= self.StopTime and not self.terminate:
             if self.TotalSim.getCurrentNanos() >= self.nextEventTime >= 0:
@@ -483,12 +477,10 @@ class SimBaseClass:
                 self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
             if 0 <= self.nextEventTime < nextStopTime:
                 nextStopTime = self.nextEventTime
-                nextPriority = -1
             if self.terminate:
                 break
-            self.TotalSim.stepUntilStop(nextStopTime, nextPriority)
+            self.TotalSim.stepUntilStop(nextStopTime)
             progressBar.update(self.TotalSim.getNextTaskTime())
-            nextPriority = -1
             nextStopTime = self.StopTime
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
         self.terminate = False

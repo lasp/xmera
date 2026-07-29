@@ -10,27 +10,17 @@
 #include <utility>
 
 void SysProcess::reset(uint64_t initialSimNanos) {
-    for (auto const &task : this->processTasks) { task.TaskPtr->resetModels(initialSimNanos); }
+    // Reset all tasks and modules
+    for (auto &task : this->processTasks) {
+        task.TaskPtr->reset(initialSimNanos);
 
-    /*! @todo `initialSimNanos` isn't necessarily the right reset value for
-     *  `nextTaskTime`. Instead, we should query each task after reset to
-     *  determine the earliest next update time.
-     */
-    this->nextTaskTime = initialSimNanos;
-}
-
-void SysProcess::reInitialize() {
-    // Reset the next update time for every task in this process.
-    for (auto const &task : this->processTasks) {
-        SysModelTask* localTask = task.TaskPtr;
-        localTask->reset();
+        task.NextTaskStart = task.TaskPtr->getNextStartTime();
+        task.TaskUpdatePeriod = task.TaskPtr->getTaskPeriod();
     }
 
-    // Reform the list of tasks to ensure that it is sorted by priority.
-    // (This shouldn't really be necessary...)
-    std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
-    this->processTasks.clear();
-    for (auto const &task : taskPtrs) { this->addTask(task.TaskPtr, task.taskPriority); }
+    // Record when the next task will update
+    this->nextTaskTime =
+        (!this->processTasks.empty()) ? this->getNextTask()->NextTaskStart : std::numeric_limits<uint64_t>::max();
 }
 
 std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {
@@ -47,22 +37,14 @@ std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {
 }
 
 void SysProcess::singleStepNextTask(uint64_t nextSimNanos) {
-    // Find the next soonest task to update
-    auto nextTaskIt = this->getNextTask();
-    if (nextTaskIt == this->processTasks.end()) {
-        return;
-    } else if (nextTaskIt->NextTaskStart > nextSimNanos) {
-        // If the requested time does not meet our next start time, just return
-        this->nextTaskTime = nextTaskIt->NextTaskStart;
-        return;
-    }
+    if (this->processTasks.empty() || this->nextTaskTime > nextSimNanos) { return; }
 
     // Update the next task, and record when it wants to be updated again
-    SysModelTask* localTask = nextTaskIt->TaskPtr;
-    localTask->executeModels(nextSimNanos);
-    nextTaskIt->NextTaskStart = localTask->getNextStartTime();
+    auto nextTaskIt = this->getNextTask();
+    nextTaskIt->TaskPtr->executeModels(nextSimNanos);
+    nextTaskIt->NextTaskStart = nextTaskIt->TaskPtr->getNextStartTime();
 
-    // Figure out when we are going to be called next for scheduling purposes
+    // Record when the next task will update
     this->nextTaskTime = this->getNextTask()->NextTaskStart;
 }
 
@@ -73,34 +55,15 @@ void SysProcess::addTask(SysModelTask* task, int32_t priority) {
         .taskPriority = priority,
         .TaskPtr = task,
     });
-
-    // It may be surprising to users that adding a task might re-enable
-    // a process that was previously disabled...
-    this->enable();
 }
 
 void SysProcess::scheduleTask(ModelScheduleEntry const &scheduleEntry) {
-    SimInstant newTaskTime = {
-        .realNanos = scheduleEntry.NextTaskStart,
-        .causalPriority = scheduleEntry.taskPriority,
-    };
-
-    // Find the index separating earlier start times from later start times.
+    // Find the index separating higher priority tasks from lower priority tasks.
+    // Modules will be reset in this order, and modules that update at the same
+    // time will be tie-broken by this order.
     auto it = this->processTasks.begin();
     for (; it != this->processTasks.end(); ++it) {
-        SimInstant itTaskTime = {
-            .realNanos = it->NextTaskStart,
-            .causalPriority = it->taskPriority,
-        };
-
-        /*! @todo Why are we including `realNanos` in the comparison? This throws
-         *  off the order in which modules are reset (which, morally, should be
-         *  pure priority order), and causes lower-priority tasks to appear earlier
-         *  in the list even if they only happen to *start* earlier in the simulation.
-         *  We don't maintain next-resumption-order throughout the simulation,
-         *  so why do we start with it that way?
-         */
-        if (newTaskTime < itTaskTime) { break; }
+        if (scheduleEntry.taskPriority > it->taskPriority) { break; }
     }
 
     // Insert the module at this index. (It's okay if it's the end() iterator.)
@@ -114,6 +77,10 @@ bool SysProcess::changeTaskPeriod(std::string const &taskName, uint64_t newPerio
         entry.TaskPtr->setPeriod(newPeriod);
         entry.NextTaskStart = entry.TaskPtr->getNextStartTime();
         entry.TaskUpdatePeriod = entry.TaskPtr->getTaskPeriod();
+
+        // Determine the new next task time. (If the next task was this one, it
+        // might now be some other task. Worse, it might *still* be this one!)
+        this->nextTaskTime = this->getNextTask()->NextTaskStart;
 
         return true;
     }

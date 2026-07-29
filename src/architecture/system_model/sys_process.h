@@ -55,23 +55,6 @@ public:
      */
     void addTask(SysModelTask* task, int32_t priority = -1);
 
-    //! Reset the next update time for all tasks in this process
-    /*!
-     *  This method also ensures that processes are correctly ordered by priority.
-     *
-     *  @todo
-     *    Unless a client of `SysProcess` messes with `processTasks` directly,
-     *    it shouldn't be possible for `processTasks` to get out of order to begin
-     *    with. This should be confirmed, the redundant code reduced, and the
-     *    documentation clarified.
-     *
-     *  @todo
-     *    Remove this method. There doesn't seem to be any reason to ever invoke
-     *    this without also invoking `reset()` and `selfInitialize()`, both of
-     *    which also set the process-level next update time.
-     */
-    void reInitialize();
-
     //! Reset all tasks in the process, in priority order
     /*!
      *  @param[in] initialSimNanos
@@ -98,54 +81,20 @@ public:
      */
     bool changeTaskPeriod(std::string const &taskName, uint64_t newPeriod);
 
-    //! Reset the next update time for this process to zero nanoseconds
-    /*!
-     * @todo
-     *   Remove this method. There doesn't seem to be any reason to ever invoke
-     *   this without also invoking `reset()` and `reInitialize()`, and the former
-     *   also sets the next update time (to something more appropriate than 0ns).
-     */
-    void selfInitialize() {
-        this->nextTaskTime = 0;
-    }
-
     //! Allow this process to participate in simulation
     void enable() {
-        this->processActive = true;
+        this->enabled = true;
     }
 
     //! Prevent this process from participating in simulation
     void disable() {
-        this->processActive = false;
+        this->enabled = false;
     }
 
     //! Determine whether the process is currently participating in simulation
     /*! @todo The field is already public. Remove this getter. */
     bool isEnabled() const {
-        return this->processActive;
-    }
-
-    //! Change the human-readable name of this process
-    /*! @todo The field is already public. Remove this setter. */
-    void setName(std::string const &newName) {
-        this->processName = newName;
-    }
-
-    //! Obtain the human-readable name of this process
-    /*! @todo The field is already public. Remove this getter. */
-    std::string getName() const {
-        return this->processName;
-    }
-
-    //! Change the priority of this process
-    /*!
-     *  @warning
-     *    If this process has already been added to a simulation container, the
-     *    container will not be notified of the new priority. This may cause the
-     *    process to be reset in an order that doesn't comport with its new priority.
-     */
-    void setPriority(int64_t newPriority) {
-        this->processPriority = newPriority;
+        return this->enabled;
     }
 
     //! Invoke `SysModelTask::disable` on every task in the module
@@ -160,21 +109,19 @@ public:
         for (auto const &entry : this->processTasks) { entry.TaskPtr->enable(); }
     }
 
-    //! Check whether this process has been allocated to a simulation thread
-    /*! @todo Remove this getter. The field is already public! */
-    bool getProcessControlStatus() const {
-        return this->processOnThread;
-    }
-
-    //! Indicate whether this process has been allocated to a simulation thread
-    /*! @todo Remove this setter. The field is already public! */
-    void setProcessControlStatus(bool processTaken) {
-        processOnThread = processTaken;
-    }
-
     //! Determine the next update time of the next-soonest task to update
     uint64_t getNextTaskTime() const {
         return this->nextTaskTime;
+    }
+
+    //! Get an immutable view on the list of tasks in this process
+    /*!
+     *  Note that it is the list of tasks that is immutable here, not the tasks
+     *  themselves. It is perfectly legal to mutate one of the tasks obtained
+     *  from this method, so long as no other protocol of use is violated.
+     */
+    std::vector<ModelScheduleEntry> const &getTasks() const {
+        return this->processTasks;
     }
 
 private:
@@ -189,42 +136,8 @@ private:
     std::vector<ModelScheduleEntry>::iterator getNextTask();
 
 public:
-    //! The schedule of tasks being performed by this process
-    /*!
-     *  @important
-     *    This vector *must* remain in sorted priority order. It should never
-     *    be modified by clients of `SysProcess`.
-     *
-     *  @todo
-     *    This should be `private`. Why is this not `private`??
-     */
-    std::vector<ModelScheduleEntry> processTasks;
-
     //! A configurable, human-readable name for this process
-    std::string processName;
-
-    //! Whether the process is currently participating in simulation at all
-    /*!
-     *  @todo
-     *    Why is this `false` by default? Currently, this is automatically set
-     *    to `true` whenever a task is scheduled -- even if a client explicitly
-     *    called `disable()` and intended for the process to be disabled at the
-     *    start of simulation. If an enabled process with no tasks is updated,
-     *    it will just return immediately without fault. So it's entirely unclear
-     *    why we want or need a process to start out disabled.
-     */
-    bool processActive = false;
-
-    //! Whether this process has been added to a thread for execution
-    /*!
-     *  @todo
-     *    This is not the responsibility of `SysProcess` to keep track of.
-     *    No code in this class reads or writes this field except a transparent
-     *    getter/setter pair (which, mind, are redundant for a *public* field).
-     *    This state should be moved to the class that actually cares about it,
-     *    `SimModel`.
-     */
-    bool processOnThread = false;
+    std::string processName = "";
 
     //! The priority of this process among others within its containing thread
     /*!
@@ -233,17 +146,29 @@ public:
      *  by the individual priority associated to each task in the same process.
      *  In contrast, processes across different threads are effectively unordered.
      *
+     *  @warning
+     *    If this process' priority is changed after it has been added to a simulation
+     *    container, the container will not be notified if the priority is changed.
+     *    This may cause the process to be reset or updated in an order that doesn't
+     *    comport with its new priority.
+     *
      *  @todo
      *    Process priority should really be owned by whichever container tracks
-     *    this process (`SimModel` in single-threaded simulations and `SimThreadExecution`
-     *    in multi-thraded simulations). Nothing in this class uses this field
-     *    except a transparent setter (which is redundant for a *public* field).
+     *    this process (`SimModel` in single-threaded simulations). Nothing in
+     *    this class uses this field except a transparent setter (which is redundant
+     *    for a *public* field).
      */
     int64_t processPriority = -1;
 
 private:
     //! The next soonest time (in nanoseconds) at which some task will be updated
     uint64_t nextTaskTime = 0;
+
+    //! Whether the process is currently participating in simulation at all
+    bool enabled = true;
+
+    //! The schedule of tasks being performed by this process
+    std::vector<ModelScheduleEntry> processTasks = {};
 };
 
 #endif

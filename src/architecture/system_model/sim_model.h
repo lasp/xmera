@@ -2,124 +2,38 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#ifndef _SimModel_HH_
-#define _SimModel_HH_
+#ifndef XMAheader_sim_model
+#define XMAheader_sim_model
 
 #include <architecture/system_model/sys_process.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
-#include <condition_variable>
-#include <iostream>
-#include <mutex>
-#include <semaphore>
-#include <set>
-#include <thread>
 #include <vector>
 
-//! This class handles the management of a given "thread" of execution and provides the main mechanism for running
-//! concurrent jobs inside BSK
-class SimThreadExecution {
+//! The top-level container for an entire simulation
+class SimModel final {
 public:
-    SimThreadExecution() = default;
-    explicit SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos = 0);
-    ~SimThreadExecution() = default;
-
-    //! Update simulation stop time
-    void updateNewStopTime(uint64_t newStopNanos) {
-        stopThreadNanos = newStopNanos;
-    }
-
-    //! Clear the process list
-    void clearProcessList() {
-        processList.clear();
-    }
-
-    void selfInitProcesses() const;
-    void resetProcesses();
+    //! Add a process to be simulated
+    /*!
+     *  The priority of the given process dictates the order in which it is reset,
+     *  and the order in which it is updated if multiple processes update at the
+     *  same time. Higher priorities go first; if two processes have the same
+     *  priority, the first to be added to the simulation takes precedence.
+     *
+     *  @important
+     *    This method must not be invoked during simulation; it must only be
+     *    invoked before `resetSimulation` occurs for any given simulation run.
+     */
     void addNewProcess(SysProcess* newProc);
 
-    uint64_t procCount() const {
-        return processList.size();
-    }  //!< Gets the current "thread-count" in the system
-
-    bool threadActive() const {
-        return this->threadRunning;
-    }  //!< Is the thread is currently allocated processes and is in execution
-
-    void threadReady() {
-        this->threadRunning = true;
-    }  //!< Put the thread into a running state
-
-    void waitOnInit();
-    void postInit();
-
-    bool threadValid() const {
-        return !this->terminateThread;
-    }  //!< Is the thread currently usable or if it has been requested to shutdown
-
-    void killThread() {
-        this->terminateThread = true;
-    }  //!< Asks the thread to no longer be alive
-
-    void lockThread();
-    void unlockThread();
-    void lockParent();
-    void unlockParent();
-    void stepUntilStop();  //!< Step simulation until stop time reached
-    //! Step the processes sharing the earliest resumption time
+    //! Reset all simulation elements to the initial state
     /*!
-     *  Of all processes in the simulation, one or more will have the earliest
-     *  resumption time. (If two processes resume at the same time, both are
-     *  "earliest".) This method will allow those processes to resume, but potentially
-     *  only partially: only the tasks within those processes whose priority is
-     *  at least `stopPri` will be allowed to resume.
-     *
-     *  @param stopPri
-     *    The least priority at which processes' tasks will be resumed
+     *  This method recursively resets all processes, tasks, and models in the
+     *  simulation, ensuring that everything is synchronized at time 0.
      */
-    void singleStepProcesses(int64_t stopPri = -1);
-    void moveProcessMessages() const;
-    uint64_t getCurrentNanos() const;
-    void setCurrentNanos(uint64_t currentNanos);
-    uint64_t getNextTaskTime() const;
-    void setNextTaskTime(uint64_t nextTaskTime);
-    uint64_t getCurrentThreadNanos() const;
-    uint64_t getStopThreadNanos() const;
-    void setStopThreadNanos(uint64_t stopThreadNanos);
+    void resetSimulation();
 
-    int64_t stopThreadPriority = -1;       //!< Current stop priority for thread
-    uint64_t threadID = 0;                 //!< Identifier for thread
-    std::thread* threadContext = nullptr;  //!< std::thread data for concurrent execution
-    int64_t nextProcPriority = -1;         //!< [-] Priority level for the next process
-    bool selfInitNow{};                    //!< Flag requesting self init
-    bool crossInitNow{};                   //!< Flag requesting cross-init
-    bool resetNow{};                       //!< Flag requesting that the thread execute reset
-
-private:
-    uint64_t currentThreadNanos = 0;            //!< Current simulation time available at thread
-    uint64_t stopThreadNanos = 0;               //!< Current stop conditions for the thread
-    uint64_t CurrentNanos = 0;                  //!< [ns] Current sim time
-    uint64_t NextTaskTime = 0;                  //!< [ns] time for the next Task
-    bool threadRunning{};                       //!< Flag that will allow for easy concurrent locking
-    bool terminateThread{};                     //!< Flag that indicates that it is time to take thread down
-    std::binary_semaphore parentThreadLock{0};  //!< Lock that ensures parent thread won't proceed
-    std::binary_semaphore selfThreadLock{0};    //!< Lock that ensures this thread only reaches allowed time
-    std::vector<SysProcess*> processList;       //!< List of processes associated with thread
-    std::mutex initReadyLock;                   //!< Lock function to ensure runtime locks are configured
-    std::condition_variable initHoldVar;        //!< Conditional variable used to prevent race conditions
-};
-
-//! The top-level container for an entire simulation
-class SimModel {
-public:
-    SimModel();
-    ~SimModel();
-
-    void selfInitSimulation();                                  //!< Method to initialize all added Tasks
-    void resetInitSimulation() const;                           //!< Method to reset all added tasks
-    void stepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
     //! Step the processes sharing the earliest resumption time
     /*!
      *  Of all processes in the simulation, one or more will have the earliest
@@ -128,33 +42,78 @@ public:
      *  partially: only the tasks within those processes whose priority is at least
      *  `stopPri` will be allowed to resume.
      *
-     *  @param stopPri
-     *    The least priority at which processes' tasks will be resumed
+     *  @important
+     *    This method must only be invoked once `resetSimulation` has been invoked
+     *    at least once.
+     *
+     *  @param[in] stopPri
+     *    The least priority at which processes should be updated
      */
     void singleStepProcesses(int64_t stopPri = -1);
-    void addNewProcess(SysProcess* newProc);
-    void addProcessToThread(SysProcess* newProc, uint64_t threadSel);
-    void resetSimulation();  //!< Reset simulation back to zero
-    void clearProcsFromThreads() const;
-    void resetThreads(uint64_t threadCount);
-    void deleteThreads();
-    void assignRemainingProcs();
 
-    uint64_t getThreadCount() const {
-        return threadList.size();
-    }  //!< returns the number of threads used
+    //! Step the simulation forward until the next update would occur after the given stop time
+    /*!
+     *  This helper method invokes `singleStepProcesses` repeatedly, stopping
+     *  only once the given time has been reached.
+     *
+     *  @important
+     *    This method must only be invoked once `resetSimulation` has been invoked
+     *    at least once.
+     *
+     *  @param[in] SimStopTime
+     *    The latest time at which processes should be updated
+     *  @param[in] stopPri
+     *    The least priority at which processes should be updated
+     */
+    void stepUntilStop(uint64_t SimStopTime, int64_t stopPri = -1);
 
-    uint64_t getCurrentNanos() const;
-    uint64_t getNextTaskTime() const;
-    BSKLogger bskLogger;
-    std::vector<SysProcess*> processList;           //!< -- List of processes we've created
-    std::vector<SimThreadExecution*> threadList{};  //!< -- Array of threads that we're running on
-    std::string SimulationName;                     //!< -- Identifier for Sim
-    int64_t nextProcPriority = -1;                  //!< [-] Priority level for the next process
+    //! Get the time at which the simulation was last stepped or reset
+    uint64_t getCurrentNanos() const {
+        return this->CurrentNanos;
+    }
+
+    //! Get the time at which the simulation will next be stepped
+    /*!
+     *  This method should only be used during a simulation. If called before
+     *  a simulation begins, or after adding new processes, its value will be
+     *  unreliable.
+     */
+    uint64_t getNextTaskTime() const {
+        return this->NextTaskTime;
+    }
+
+    //! Get the priority of the next process to be updated
+    /*!
+     *  This method should only be used during a simulation. If called before
+     *  a simulation begins, or after adding new processes, its value will be
+     *  unreliable.
+     */
+    int64_t getNextProcPriority() const {
+        return this->nextProcPriority;
+    }
+
+    //! Get an immutable view on the list of processes in this simulation
+    /*!
+     *  Note that it is the list of processes that is immutable here, not the
+     *  processes themselves. It is perfectly legal to mutate one of the processes
+     *  obtained from this method, so long as no other protocol of use is violated.
+     */
+    std::vector<SysProcess*> const &getProcesses() const {
+        return this->processList;
+    }
 
 private:
-    uint64_t CurrentNanos = 0;  //!< [ns] Current sim time
-    uint64_t NextTaskTime = 0;  //!< [ns] time for the next Task
+    //! The time at which the simulation was last updated or reset
+    uint64_t CurrentNanos = 0;
+
+    //! The time at which the simulation will next be updated
+    uint64_t NextTaskTime = 0;
+
+    //! The priority of the next process to be updated
+    int64_t nextProcPriority = -1;
+
+    //! The collection of processes to be simulated, in priority order
+    std::vector<SysProcess*> processList = {};
 };
 
-#endif /* _SimModel_H_ */
+#endif
