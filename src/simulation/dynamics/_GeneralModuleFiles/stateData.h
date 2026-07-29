@@ -6,7 +6,6 @@
 #define STATE_DATA_H
 #include <Eigen/Dense>
 #include <stdint.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! @brief state data class*/
 class StateData {
@@ -15,7 +14,6 @@ class StateData {
     Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
     std::string stateName;       //!< [-] Name of the state
     bool stateEnabled = false;           //!< [-] Flag indicating state is enabled
-    BSKLogger bskLogger;         //!< -- BSK Logging
 
    public:
     StateData() = default;
