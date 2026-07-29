@@ -3,16 +3,11 @@
 
 #include "stateData.h"
 
-StateData::StateData() { return; }
-
-StateData::StateData(const StateData& inState) {
-    state = inState.state;
-    stateDeriv = inState.stateDeriv;
-    stateName = inState.stateName;
-    stateEnabled = inState.stateEnabled;
+StateData::StateData(const StateData& inState) : state(inState.state),
+    stateDeriv(inState.stateDeriv),
+    stateName(inState.stateName),
+    stateEnabled(inState.stateEnabled) {
 }
-
-StateData::~StateData() { return; }
 
 StateData::StateData(std::string inName, const Eigen::MatrixXd& newState) {
     stateName = inName;

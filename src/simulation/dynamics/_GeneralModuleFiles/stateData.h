@@ -14,14 +14,14 @@ class StateData {
     Eigen::MatrixXd state;       //!< [-] State value storage
     Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
     std::string stateName;       //!< [-] Name of the state
-    bool stateEnabled;           //!< [-] Flag indicating state is enabled
+    bool stateEnabled = false;           //!< [-] Flag indicating state is enabled
     BSKLogger bskLogger;         //!< -- BSK Logging
 
    public:
-    StateData();
+    StateData() = default;
     StateData(std::string inName, const Eigen::MatrixXd& newState);  //!< class method
     StateData(const StateData& inState);                             //!< class method
-    ~StateData();
+    ~StateData() = default;
     void setState(const Eigen::MatrixXd& newState);                           //!< class method
     void propagateState(double dt);                                           //!< class method
     void setDerivative(const Eigen::MatrixXd& newDeriv);                      //!< class method
