@@ -19,7 +19,7 @@ class StateData {
 
    public:
     StateData() = default;
-    StateData(std::string inName, const Eigen::MatrixXd& newState);  //!< class method
+    StateData(std::string const &inName, const Eigen::MatrixXd& newState);  //!< class method
     StateData(const StateData& inState);                             //!< class method
     ~StateData() = default;
     void setState(const Eigen::MatrixXd& newState);                           //!< class method
