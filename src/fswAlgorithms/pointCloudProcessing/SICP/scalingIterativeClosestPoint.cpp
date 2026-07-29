@@ -249,7 +249,7 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
             //! - Save intermediate algorithm data
             this->sicpBuffer.scaleFactor[iteration] = s_k;
             eigenMatrixXInsertCArray(R_k, this->sicpBuffer.rotationMatrix, iteration * SICP_POINT_DIM * SICP_POINT_DIM);
-            eigenMatrixXInsertCArray(R_k, this->sicpBuffer.translation, iteration * SICP_POINT_DIM);
+            eigenMatrixXInsertCArray(t_k, this->sicpBuffer.translation, iteration * SICP_POINT_DIM);
             this->sicpBuffer.numberOfIteration += 1;
 
             R_kmin1 = R_k;
