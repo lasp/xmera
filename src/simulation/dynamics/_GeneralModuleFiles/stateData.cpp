@@ -21,15 +21,17 @@ void StateData::setState(const Eigen::MatrixXd& newState) {
     state = newState;
 }
 
-void StateData::propagateState(double dt) { state += stateDeriv * dt; }
+void StateData::propagateState(const double dt) { state += stateDeriv * dt; }
 
 void StateData::setDerivative(const Eigen::MatrixXd& newDeriv) { stateDeriv = newDeriv; }
 
-void StateData::scaleState(double scaleFactor) { state *= scaleFactor; }
+void StateData::scaleState(const double scaleFactor) { state *= scaleFactor; }
 
-StateData StateData::operator+(const StateData& operand) { return StateData(stateName, state + operand.getState()); }
+StateData StateData::operator+(const StateData& operand) const {
+    return StateData(stateName, state + operand.getState());
+}
 
-StateData StateData::operator*(double scaleFactor) {
+StateData StateData::operator*(const double scaleFactor) const {
     StateData newState(stateName, state);
     newState.scaleState(scaleFactor);
     return newState;

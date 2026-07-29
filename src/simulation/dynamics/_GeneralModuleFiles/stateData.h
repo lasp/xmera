@@ -35,8 +35,8 @@ class StateData {
     void enable() { stateEnabled = true; }                                    //!< class method
     void scaleState(double scaleFactor);                                      //!< class method
 
-    StateData operator+(const StateData& operand);  //!< class method
-    StateData operator*(double scaleFactor);        //!< class method
+    StateData operator+(const StateData& operand) const;  //!< class method
+    StateData operator*(double scaleFactor) const;        //!< class method
 };
 
 #endif /* STATE_DATA_H */
