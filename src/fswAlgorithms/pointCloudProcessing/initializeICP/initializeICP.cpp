@@ -68,10 +68,9 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
 
     //!< When a valid ICP solution has been computed, use that instead of ephemeris information as a priority
     if (sicpBuffer.valid) {
-        this->R_logged = cArrayToEigenMatrixX(
-            &sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM * SICP_POINT_DIM],
-            SICP_POINT_DIM,
-            SICP_POINT_DIM
+        //!< The rotation matrices in this message are stored row-major, so read them with the row-major helper
+        this->R_logged = cArrayToEigenMatrix3(
+            &sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM * SICP_POINT_DIM]
         );
         this->t_logged = cArrayToEigenMatrixX(
             &sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM],

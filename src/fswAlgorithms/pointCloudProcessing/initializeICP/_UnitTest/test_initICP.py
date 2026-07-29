@@ -42,8 +42,23 @@ def test_valid_ICP():
     """
     icp_init_sim(validICP = True, validCloud = False, normalize = True)
 
+def test_non_symmetric_rotation_round_trip():
+    """
+    Unit test that the rotation matrix read from the input ICP message is handed
+    back unchanged.
 
-def icp_init_sim(validICP = True, validCloud = True, normalize = True):
+    The other cases all pass the identity matrix, which is symmetric and so reads
+    the same whether the nine values are interpreted row-major or column-major.
+    A general rotation matrix distinguishes the two. The matrix is written to the
+    message row-major, matching the layout the SICP module produces.
+    """
+    icp_init_sim(validICP = True, validCloud = True, normalize = True,
+                 rotation_matrix = rbk.MRP2C([0.1, -0.05, 0.2]))
+
+
+def icp_init_sim(validICP = True, validCloud = True, normalize = True, rotation_matrix = None):
+    if rotation_matrix is None:
+        rotation_matrix = np.identity(3)
     unit_task_name = "unitTask"
     unit_process_name = "TestProcess"
 
@@ -81,7 +96,7 @@ def icp_init_sim(validICP = True, validCloud = True, normalize = True):
     module.inputMeasuredPointCloud.subscribeTo(pointcloud_input_msg)
 
     icp_input_msg_buffer = messaging.SICPMsgPayload()
-    icp_input_msg_buffer.rotationMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    icp_input_msg_buffer.rotationMatrix = np.array(rotation_matrix).flatten().tolist()
     icp_input_msg_buffer.translation = [1, 0, 0]
     icp_input_msg_buffer.scaleFactor = [1.05]
     icp_input_msg_buffer.numberOfIteration = 1
