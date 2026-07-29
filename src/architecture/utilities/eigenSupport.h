@@ -48,11 +48,29 @@
 //    sensor arrays, scenario-driven reaction wheel counts, etc.) and the
 //    FSW compile-time guarantees aren't applicable.
 //
-// 3. Row-major C array convention, regardless of Eigen storage order.
-//    All matrix <-> C-array conversions read and write row-major. Column-
-//    major Eigen inputs are transposed internally; row-major inputs go
-//    through unchanged. Callers don't need to reason about Eigen's default
-//    storage order.
+// 3. C array layout differs by direction, so read this before adding a
+//    conversion or a round trip.
+//    Output side (Eigen -> C array): `eigenMatrixToCArray`,
+//    `eigenMatrixXToCArray`, `eigenMatrixToCArray2D`,
+//    `eigenMatrixXToCArray2D` and `eigenMatrixXInsertCArray` always write
+//    row-major. Column-major Eigen inputs are transposed internally;
+//    row-major inputs go through unchanged. Callers don't need to reason
+//    about Eigen's storage order.
+//    Input side (C array -> Eigen): the general-shape functions
+//    `cArrayToEigenMatrix` and `cArrayToEigenMatrixX` read column-major,
+//    matching Eigen's default storage order. Callers depend on this, because
+//    the message buffers they read pack one 3-element axis or point per
+//    entry - `GsMatrix_B[i * 3]`, `points[i * 3]` - and column-major reading
+//    places each of those entries in a column of the resulting 3 x N matrix.
+//    The fixed 3 x 3 helpers `cArrayToEigenMatrix3` and
+//    `c2DArrayToEigenMatrix3` are the exception: they read row-major, which
+//    is the layout used for direction cosine matrices in message payloads.
+//    Because the two directions disagree, the output and general-shape input
+//    functions are NOT inverses. A buffer written by `eigenMatrixToCArray` or
+//    `eigenMatrixXToCArray` and read back through `cArrayToEigenMatrix` or
+//    `cArrayToEigenMatrixX` comes back transposed when the matrix is square,
+//    and with entries reordered when it isn't. Transpose explicitly at one
+//    end when a round trip is intended.
 //
 // 4. Accept any Eigen expression on the output side.
 //    Output-side functions take `const Eigen::MatrixBase<Derived>&`, not
@@ -87,7 +105,8 @@ inline constexpr bool is_fixed_v =
  *
  * Works for compile-time sized matrices or expressions. Values are flattened
  * in row-major order. Column-major inputs are internally transposed to produce
- * the desired layout.
+ * the desired layout. Note that `cArrayToEigenMatrix` reads column-major and so
+ * does not invert this function; see rule 3 at the top of this header.
  *
  * @tparam Derived Fixed-size Eigen expression type.
  * @tparam Size Extent of the destination array (rows × cols).
@@ -122,9 +141,11 @@ void eigenMatrixToCArray(Eigen::MatrixBase<Derived> const &inMat, typename Deriv
 /**
  * @brief Copy a dynamic-size Eigen matrix into a row-major C array.
  *
- * Only the first `inMat.size()` elements of `out` are written, allowing the
- * destination buffer to be larger than the matrix. If the buffer is too small,
- * the function terminates the program.
+ * Values are flattened in row-major order. Only the first `inMat.size()`
+ * elements of `out` are written, allowing the destination buffer to be larger
+ * than the matrix. If the buffer is too small, the function terminates the
+ * program. Note that `cArrayToEigenMatrixX` reads column-major and so does not
+ * invert this function; see rule 3 at the top of this header.
  *
  * @tparam Derived Eigen dynamic expression type.
  * @tparam Size Compile-time extent of the destination buffer.
@@ -282,12 +303,19 @@ void eigenVectorToCArray(Eigen::MatrixBase<Derived> const &inVec, typename Deriv
 }
 
 /**
- * @brief Map a row-major C array onto a fixed-size Eigen matrix.
+ * @brief Map a column-major C array onto a fixed-size Eigen matrix.
+ *
+ * The input is read in Eigen's default column-major order, so the first `rows`
+ * elements of `inArray` become the first column of the result. This is the
+ * layout of message buffers that pack one 3-element axis or point per entry.
+ * For row-major input use `cArrayToEigenMatrix3` or `c2DArrayToEigenMatrix3`,
+ * or transpose the result. This function does not invert
+ * `eigenMatrixToCArray`, which writes row-major.
  *
  * @tparam ScalarT Scalar type of the matrix.
  * @tparam rows Number of rows in the output matrix.
  * @tparam cols Number of columns in the output matrix.
- * @param inArray Pointer to `rows * cols` elements in row-major order.
+ * @param inArray Pointer to `rows * cols` elements in column-major order.
  * @return Eigen matrix populated with the values from `inArray`.
  */
 template<typename ScalarT, int rows, int cols>
@@ -296,10 +324,16 @@ Eigen::Matrix<ScalarT, rows, cols> cArrayToEigenMatrix(ScalarT const* inArray) {
 }
 
 /**
- * @brief Map a row-major C array onto a dynamic Eigen matrix.
+ * @brief Map a column-major C array onto a dynamic Eigen matrix.
+ *
+ * The input is read in Eigen's default column-major order, so the first `nRows`
+ * elements of `inArray` become the first column of the result. This is the
+ * layout of message buffers that pack one 3-element axis or point per entry.
+ * For row-major input, transpose the result. This function does not invert
+ * `eigenMatrixXToCArray`, which writes row-major.
  *
  * @tparam ScalarT Scalar type of the matrix.
- * @param inArray Pointer to `nRows * nCols` elements in row-major order.
+ * @param inArray Pointer to `nRows * nCols` elements in column-major order.
  * @param nRows Desired number of rows of the output matrix.
  * @param nCols Desired number of columns of the output matrix.
  * @return Eigen dynamic matrix containing the mapped values.
