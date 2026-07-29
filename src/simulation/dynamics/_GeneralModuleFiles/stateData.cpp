@@ -20,7 +20,6 @@ StateData::StateData(std::string inName, const Eigen::MatrixXd& newState) {
 
 void StateData::setState(const Eigen::MatrixXd& newState) {
     state = newState;
-    return;
 }
 
 void StateData::propagateState(double dt) { state += stateDeriv * dt; }
@@ -34,5 +33,5 @@ StateData StateData::operator+(const StateData& operand) { return StateData(stat
 StateData StateData::operator*(double scaleFactor) {
     StateData newState(stateName, state);
     newState.scaleState(scaleFactor);
-    return (newState);
+    return newState;
 }
