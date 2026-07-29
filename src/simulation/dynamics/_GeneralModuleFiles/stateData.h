@@ -25,8 +25,8 @@ class StateData {
     void setState(const Eigen::MatrixXd& newState);                           //!< class method
     void propagateState(double dt);                                           //!< class method
     void setDerivative(const Eigen::MatrixXd& newDeriv);                      //!< class method
-    Eigen::MatrixXd getState() const { return state; }                        //!< class method
-    Eigen::MatrixXd getStateDeriv() const { return stateDeriv; }              //!< class method
+    Eigen::MatrixXd const &getState() const { return state; }                        //!< class method
+    Eigen::MatrixXd const &getStateDeriv() const { return stateDeriv; }              //!< class method
     std::string getName() const { return stateName; }                         //!< class method
     uint32_t getRowSize() const { return ((uint32_t)state.innerSize()); }     //!< class method
     uint32_t getColumnSize() const { return ((uint32_t)state.outerSize()); }  //!< class method

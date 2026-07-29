@@ -440,6 +440,12 @@ void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond
     if (PyErr_Occurred()) SWIG_fail;
 }
 
+%typemap(out, optimal="1", fragment="fillPyObjList") type const & {
+    $result = PyList_New(0);
+    fillPyObjList<type>($result, *$1);
+    if (PyErr_Occurred()) SWIG_fail;
+}
+
 %typemap(typecheck) type & = type;
 %typemap(typecheck) type && = type;
 
