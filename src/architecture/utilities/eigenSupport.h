@@ -93,9 +93,15 @@
 //
 // =============================================================================
 
+//! True when an Eigen expression type stores its coefficients row-major. Note
+//! that Eigen normalizes vector shapes: a 1 x N expression is always row-major
+//! and an N x 1 expression is always column-major, whatever options were
+//! requested.
 template<class Derived>
-inline constexpr bool is_row_major_v = (Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0;
+inline constexpr bool is_row_major_v = Derived::IsRowMajor != 0;
 
+//! True when both dimensions of an Eigen expression type are known at compile
+//! time, which is what the fixed-size conversions in this header require.
 template<class Derived>
 inline constexpr bool is_fixed_v =
     (Derived::RowsAtCompileTime != Eigen::Dynamic) && (Derived::ColsAtCompileTime != Eigen::Dynamic);
