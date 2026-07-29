@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "simpleVoltEstimator.h"
+
 #include <architecture/utilities/eigenSupport.h>
+
 #include <cstring>
 #include <iostream>
 
@@ -12,15 +14,15 @@
 SimpleVoltEstimator::SimpleVoltEstimator() {
     this->estVoltState = VoltMsgPayload{};
     this->trueVoltState = VoltMsgPayload{};
-    this->PMatrix.resize(1, 1);
-    this->PMatrix.fill(0.0);
-    this->walkBounds.resize(1);
-    this->walkBounds.fill(0.0);
-    this->errorModel = GaussMarkov(1, this->RNGSeed);
+    this->PMatrix.setZero();
+    this->walkBounds.setZero();
+    this->errorModel = GaussMarkov<1>(this->RNGSeed);
 }
 
 /*! Destructor.  Nothing here. */
-SimpleVoltEstimator::~SimpleVoltEstimator() { return; }
+SimpleVoltEstimator::~SimpleVoltEstimator() {
+    return;
+}
 
 /*! This method is used to reset the module. It
  initializes the various containers used in the model as well as creates the
@@ -31,36 +33,21 @@ SimpleVoltEstimator::~SimpleVoltEstimator() { return; }
  */
 void SimpleVoltEstimator::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
-    if (!this->voltInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleVoltEstimator.voltInMsg was not linked.");
-    }
-
-    int64_t numStates = 1;
+    if (!this->voltInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "SimpleVoltEstimator.voltInMsg was not linked."); }
 
     //! - Initialize the propagation matrix to default values for use in update
-    this->AMatrix.setIdentity(numStates, numStates);
+    this->AMatrix.setIdentity();
 
-    //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
-    if (this->PMatrix.size() != numStates * numStates) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Your process noise matrix (PMatrix) is not %ld*%ld. Size is %ld.  Quitting",
-                         numStates,
-                         numStates,
-                         this->PMatrix.size());
-        return;
-    }
-    //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
-    if (this->walkBounds.size() != numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not %ld elements. Quitting", numStates);
-    }
     this->errorModel.setUpperBounds(this->walkBounds);
 }
 
 /*! This method reads the input message associated with the spacecraft voltage
  */
-void SimpleVoltEstimator::readInputMessages() { this->trueVoltState = this->voltInMsg(); }
+void SimpleVoltEstimator::readInputMessages() {
+    this->trueVoltState = this->voltInMsg();
+}
 
 /*! This method writes the voltage information into the output state message.
  @return void
@@ -80,7 +67,7 @@ void SimpleVoltEstimator::applyErrors() {
  @return void
  */
 void SimpleVoltEstimator::computeErrors() {
-    Eigen::MatrixXd localProp = this->AMatrix;
+    VoltErrorMatrix localProp = this->AMatrix;
 
     //! - Set the GaussMarkov propagation matrix and compute errors
     this->errorModel.setPropMatrix(localProp);

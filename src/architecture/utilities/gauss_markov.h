@@ -5,64 +5,136 @@
 #ifndef _GaussMarkov_HH_
 #define _GaussMarkov_HH_
 
-#include <string>
-#include <stdint.h>
-#include <vector>
-#include <random>
+#include <cmath>
+#include <cstdint>
 #include <Eigen/Dense>
-#include <architecture/utilities/bskLogging.h>
+#include <random>
 
 /*! @brief This module is used to apply a second-order bounded Gauss-Markov random walk
     on top of an upper level process.  The intent is that the caller will perform
     the set methods (setUpperBounds, setNoiseMatrix, setPropMatrix) as often as
-    they need to, call computeNextState, and then call getCurrentState cyclically
+    they need to, call computeNextState, and then call getCurrentState cyclically.
+
+    The number of states N is a compile-time template parameter, so all storage is
+    fixed-size and dimension mismatches are caught at compile time.
 */
+template<int N>
 class GaussMarkov {
-   public:
-    GaussMarkov();
-    GaussMarkov(uint64_t size, uint64_t newSeed = 0x1badcad1);  //!< class constructor
-    ~GaussMarkov();
-    void computeNextState();
+    static_assert(N > 0, "GaussMarkov requires a positive number of states");
+
+public:
+    using StateVector = Eigen::Matrix<double, N, 1>;  //!< -- Fixed-size state/bounds vector type
+    using StateMatrix = Eigen::Matrix<double, N, N>;  //!< -- Fixed-size propagation/noise matrix type
+
+    /*! The default constructor; all members are initialized in-class. */
+    GaussMarkov() = default;
+
+    /*! Seeded constructor.
+        @param newSeed The seed to use in the random number generator */
+    explicit GaussMarkov(uint64_t newSeed) : GaussMarkov() {
+        this->setRNGSeed(newSeed);
+    }
+
+    /*! @brief Advances the random walk one step: propagates the current state through propMatrix,
+        adds correlated noise (noiseMatrix times standard samples), and applies a soft restoring drift
+        to any state that has a positive bound.
+
+        The bound is "soft": instead of a hard clamp, a state-dependent drift (which grows as a state
+        approaches its bound) is added, so the realized state can briefly overshoot the nominal bound.
+        A non-positive bound disables the restoring drift for that state. The sample standard deviation
+        is 1/3 so a bound is interpreted as a 3-sigma envelope.
+
+        @return void */
+    void computeNextState() {
+        //! - Propagate the state forward in time using the propMatrix and the currentState
+        StateVector errorVector = this->currentState;
+        this->currentState = this->propMatrix * errorVector;
+
+        //! - Compute the random numbers used for each state.  Note that the same generator is used for all
+        StateVector ranNums;
+        for (int i = 0; i < N; i++) {
+            ranNums[i] = this->rNum(this->rGen);
+            if (this->stateBounds[i] > 0.0) {
+                double stateCalc = std::fabs(this->currentState[i]) > this->stateBounds[i] * 1E-10
+                                     ? std::fabs(this->currentState[i])
+                                     : this->stateBounds[i];
+
+                double boundCheck = (this->stateBounds[i] * 2.0 - stateCalc) / stateCalc;
+                boundCheck = boundCheck > this->stateBounds[i] * 1E-10 ? boundCheck : this->stateBounds[i] * 1E-10;
+                boundCheck = 1.0 / std::exp(boundCheck * boundCheck * boundCheck);
+                boundCheck *= std::copysign(boundCheck, -this->currentState[i]);
+                ranNums[i] += boundCheck;
+            }
+        }
+
+        //! - Apply the noise matrix to the random numbers to get error values
+        errorVector = this->noiseMatrix * ranNums;
+
+        //! - Add the new errors to the currentState to get a good currentState
+        this->currentState += errorVector;
+    }
 
     /*!@brief Method does just what it says, seeds the random number generator
        @param newSeed The seed to use in the random number generator
        @return void*/
     void setRNGSeed(uint64_t newSeed) {
-        rGen.seed((unsigned int)newSeed);
-        RNGSeed = newSeed;
+        this->rGen.seed((unsigned int) newSeed);
+        this->rngSeed = newSeed;
     }
 
     /*!@brief Method returns the current random walk state from model
        @return The private currentState which is the vector of random walk values*/
-    Eigen::VectorXd getCurrentState() { return (currentState); }
+    StateVector const &getCurrentState() const {
+        return this->currentState;
+    }
 
-    /*!@brief Set the upper bounds on the random walk to newBounds
+    /*!@brief Resets the random-walk state to zero. The configuration (matrices, bounds) and the RNG
+       stream are left unchanged.
+       @return void*/
+    void reset() {
+        this->currentState.setZero();
+    }
+
+    /*!@brief Overwrites the current random-walk state.
+       @param newState the state vector to assign
+       @return void*/
+    void setCurrentState(StateVector const &newState) {
+        this->currentState = newState;
+    }
+
+    /*!@brief Sets the per-state soft bounds. A non-positive value disables the bound for that state;
+       with the 1/3 sample std, a positive bound is interpreted as a 3-sigma envelope.
        @param newBounds the bounds to put on the random walk states
        @return void*/
-    void setUpperBounds(Eigen::VectorXd newBounds) { stateBounds = newBounds; }
+    void setUpperBounds(StateVector const &newBounds) {
+        this->stateBounds = newBounds;
+    }
 
-    /*!@brief Set the noiseMatrix that is used to define error sigmas
-       @param noise The new value to use for the noiseMatrix variable (error sigmas)
+    /*!@brief Sets the noise matrix: the matrix square root (e.g. Cholesky factor) of the covariance,
+       i.e. a "sigma" matrix, NOT the covariance itself.
+       @param noise The matrix square root of the covariance used to apply errors
        @return void*/
-    void setNoiseMatrix(Eigen::MatrixXd noise) { noiseMatrix = noise; }
+    void setNoiseMatrix(StateMatrix const &noise) {
+        this->noiseMatrix = noise;
+    }
 
     /*!@brief Set the propagation matrix that is used to propagate the state.
        @param prop The new value for the state propagation matrix
        @return void*/
-    void setPropMatrix(Eigen::MatrixXd prop) { propMatrix = prop; }
+    void setPropMatrix(StateMatrix const &prop) {
+        this->propMatrix = prop;
+    }
 
-    Eigen::VectorXd stateBounds;   //!< -- Upper bounds to use for markov
-    Eigen::VectorXd currentState;  //!< -- State of the markov model
-    Eigen::MatrixXd propMatrix;    //!< -- Matrix to propagate error state with
-    Eigen::MatrixXd
-        noiseMatrix;  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    BSKLogger bskLogger;  //!< -- BSK Logging
-
-   private:
-    uint64_t RNGSeed;                       //!< -- Seed for random number generator
-    std::minstd_rand rGen;                  //!< -- Random number generator for model
-    std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
-    uint64_t numStates;                     //!< -- Number of states to generate noise for
+private:
+    StateVector stateBounds = StateVector::Zero();   //!< -- Upper bounds to use for markov
+    StateVector currentState = StateVector::Zero();  //!< -- State of the markov model
+    StateMatrix propMatrix = StateMatrix::Zero();    //!< -- Matrix to propagate error state with
+    StateMatrix noiseMatrix =
+        StateMatrix::Zero();  //!< -- Cholesky-decomposition or matrix square root of the covariance matrix
+    static constexpr uint64_t defaultSeed = 0x1bad'cad1;            //!< -- Default RNG seed
+    uint64_t rngSeed = defaultSeed;                                 //!< -- Seed for random number generator
+    std::minstd_rand rGen{static_cast<unsigned int>(defaultSeed)};  //!< -- Random number generator for model
+    std::normal_distribution<double> rNum{0.0, 1.0 / 3.0};          //!< -- Random number distribution for model
 };
 
 #endif /* _GaussMarkov_HH_ */

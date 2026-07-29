@@ -12,7 +12,6 @@ add_library(ArchitectureUtilities STATIC
   geodeticConversion.cpp
   signalProcessing.cpp
   discretize.cpp
-  gauss_markov.cpp
   BSpline.cpp
   keplerianOrbit.cpp
 )

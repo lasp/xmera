@@ -4,14 +4,14 @@
 
 #include "imuSensor.h"
 
-#include <inttypes.h>
-
-#include <cstring>
-
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
+#include <inttypes.h>
+
+#include <cstring>
 
 ImuSensor::ImuSensor() {
     this->numStates = 3;
@@ -20,11 +20,11 @@ ImuSensor::ImuSensor() {
     this->StatePrevious = SCStatesMsgPayload{};
     this->StateCurrent = SCStatesMsgPayload{};
 
-    this->errorModelGyro = GaussMarkov(this->numStates, this->RNGSeed);
-    this->errorModelAccel = GaussMarkov(this->numStates, this->RNGSeed);
+    this->errorModelGyro = GaussMarkov<3>(this->RNGSeed);
+    this->errorModelAccel = GaussMarkov<3>(this->RNGSeed);
 
-    this->aDisc = Discretize((uint8_t)this->numStates);
-    this->oDisc = Discretize((uint8_t)this->numStates);
+    this->aDisc = Discretize((uint8_t) this->numStates);
+    this->oDisc = Discretize((uint8_t) this->numStates);
 
     this->aSat = Saturate(this->numStates);
     this->oSat = Saturate(this->numStates);
@@ -74,9 +74,7 @@ void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll) {
  */
 void ImuSensor::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
-    if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "imuSensor.scStateInMsg was not linked.");
-    }
+    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "imuSensor.scStateInMsg was not linked."); }
 
     this->AMatrixAccel.setIdentity(this->numStates, this->numStates);
 
@@ -126,9 +124,7 @@ void ImuSensor::reset(uint64_t currentSimNanos) {
  */
 void ImuSensor::readInputMessages() {
     this->StateCurrent = SCStatesMsgPayload{};
-    if (this->scStateInMsg.isLinked()) {
-        this->StateCurrent = this->scStateInMsg();
-    }
+    if (this->scStateInMsg.isLinked()) { this->StateCurrent = this->scStateInMsg(); }
     this->current_sigma_BN = cArrayToEigenVector(this->StateCurrent.sigma_BN);
     this->current_omega_BN_B = cArrayToEigenVector(this->StateCurrent.omega_BN_B);
     this->current_nonConservativeAccelpntB_B = cArrayToEigenVector(this->StateCurrent.nonConservativeAccelpntB_B);
@@ -198,13 +194,17 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime) {
     set o saturation bounds
     @param oSatBounds
  */
-void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds) { this->oSat.setBounds(oSatBounds); }
+void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds) {
+    this->oSat.setBounds(oSatBounds);
+}
 
 /*!
     set a saturation bounds
     @param aSatBounds
  */
-void ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds) { this->aSat.setBounds(aSatBounds); }
+void ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds) {
+    this->aSat.setBounds(aSatBounds);
+}
 
 /*!
     scale truth method
@@ -256,17 +256,13 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime) {
     Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
     this->omega_PN_P_out = this->oSat.saturate(omega_PN_P_in);
     for (int64_t i = 0; i < this->numStates; i++) {
-        if (this->omega_PN_P_out(i) != omega_PN_P_in(i)) {
-            this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt;
-        }
+        if (this->omega_PN_P_out(i) != omega_PN_P_in(i)) { this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt; }
     }
 
     Eigen::Vector3d accel_SN_P_in = this->accel_SN_P_out;
     this->accel_SN_P_out = this->aSat.saturate(accel_SN_P_in);
     for (int64_t i = 0; i < this->numStates; i++) {
-        if (this->accel_SN_P_out(i) != accel_SN_P_in(i)) {
-            this->DV_SN_P_out(i) = this->accel_SN_P_out(i) * dt;
-        }
+        if (this->accel_SN_P_out(i) != accel_SN_P_in(i)) { this->DV_SN_P_out(i) = this->accel_SN_P_out(i) * dt; }
     }
 }
 
@@ -282,8 +278,8 @@ void ImuSensor::computePlatformDR() {
 
     // Calculated time averaged cumulative rotation
     Eigen::Matrix3d dcm_P2P1;  // direction cosine matrix from P at time 1 to P at time 2
-    dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose() *
-               (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
+    dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose()
+             * (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
     eigenMatrixToCArray(dcm_P2P1, dcm_P2P1_cArray);         // makes a 9x1
     C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray);        // makes it back into a 3x3
     this->prv_PN_out = cArrayToEigenVector(prv_PN_cArray);  // writes it back to the variable to be passed along.
@@ -304,8 +300,8 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime) {
     // Calculate "instantaneous" linear acceleration
     Eigen::Vector3d
         rDotDot_SN_B;  // sensor non conservative acceleration relative to inertial frame in body frame coordinates
-    rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B) +
-                   this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));
+    rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B)
+                 + this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));
     this->accel_SN_P_out = this->dcm_PB * rDotDot_SN_B;
 
     // Calculate time-average cumulative delta v
@@ -314,10 +310,10 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime) {
     Eigen::Matrix3d dcm_NB_2;  // direction cosine matrix from N to B at time 2
     dcm_NB_2 = this->current_sigma_BN.toRotationMatrix();
 
-    this->DV_SN_P_out = this->dcm_PB * dcm_NB_2.transpose() *
-                        ((dcm_NB_2 * this->current_TotalAccumDV_BN_B - dcm_NB_1 * this->previous_TotalAccumDV_BN_B) +
-                         ((dcm_NB_2 * this->current_omega_BN_B).cross(dcm_NB_2 * this->sensorPos_B) -
-                          (dcm_NB_1 * this->previous_omega_BN_B).cross(dcm_NB_1 * this->sensorPos_B)));
+    this->DV_SN_P_out = this->dcm_PB * dcm_NB_2.transpose()
+                      * ((dcm_NB_2 * this->current_TotalAccumDV_BN_B - dcm_NB_1 * this->previous_TotalAccumDV_BN_B)
+                         + ((dcm_NB_2 * this->current_omega_BN_B).cross(dcm_NB_2 * this->sensorPos_B)
+                            - (dcm_NB_1 * this->previous_omega_BN_B).cross(dcm_NB_1 * this->sensorPos_B)));
 }
 
 /*!

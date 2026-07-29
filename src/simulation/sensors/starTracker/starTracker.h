@@ -5,9 +5,6 @@
 #ifndef STAR_TRACKER_H
 #define STAR_TRACKER_H
 
-#include <Eigen/Dense>
-#include <vector>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
@@ -17,9 +14,12 @@
 #include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/macroDefinitions.h>
 
+#include <Eigen/Dense>
+#include <vector>
+
 /*! @brief star tracker class */
 class StarTracker : public SysModel {
-   public:
+public:
     StarTracker();
     ~StarTracker();
 
@@ -32,19 +32,19 @@ class StarTracker : public SysModel {
     void computeTrueOutput();
     void computeQuaternion(Eigen::Vector3d* sigma, STSensorMsgPayload* sensorValue);
     void computeAngularVelocity(uint64_t currentSimNanos);
-    void setDcmCB(const Eigen::Matrix3d& dcm_CB);
-    void setPMatrix(const Eigen::Matrix3d& PMatrix);
-    void setWalkBounds(const Eigen::Vector3d& walkBounds);
-    const Eigen::Matrix3d& getDcmCB() const;
-    const Eigen::Matrix3d& getPMatrix() const;
-    const Eigen::Vector3d& getWalkBounds() const;
+    void setDcmCB(Eigen::Matrix3d const &dcm_CB);
+    void setPMatrix(Eigen::Matrix3d const &PMatrix);
+    void setWalkBounds(Eigen::Vector3d const &walkBounds);
+    Eigen::Matrix3d const &getDcmCB() const;
+    Eigen::Matrix3d const &getPMatrix() const;
+    Eigen::Vector3d const &getWalkBounds() const;
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;  //!< Sc input state message
     Message<STSensorMsgPayload> sensorOutMsg;      //!< Sensor output state message
 
     BSKLogger bskLogger;  //!< BSK Logging
 
-   private:
+private:
     uint64_t sensorTimeTag = 0;  //!< [ns] Current time tag for sensor out
     Eigen::Matrix3d
         PMatrix;  //!< Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
@@ -56,12 +56,14 @@ class StarTracker : public SysModel {
     Eigen::Vector3d mrpErrors{0.0, 0.0, 0.0};   //!< Errors to be applied to the input MRP set indicating whether
     SCStatesMsgPayload scState;                 //!< Module variable where the input State Data message is stored
     Eigen::Matrix3d AMatrix;                    //!< AMatrix that we use for error propagation
-    GaussMarkov errorModel;                     //!< Gauss-markov error states
+    GaussMarkov<3> errorModel;                  //!< Gauss-markov error states
     uint64_t previousSimTime = 0;               //!< [ns] Previous sim time
-    Eigen::Vector4d betaPrevious_CN{1.0,
-                                    0.0,
-                                    0.0,
-                                    0.0};  //!< Previous sensed quaternion from inertial to platform case frame
+    Eigen::Vector4d betaPrevious_CN{
+        1.0,
+        0.0,
+        0.0,
+        0.0
+    };  //!< Previous sensed quaternion from inertial to platform case frame
 };
 
 #endif

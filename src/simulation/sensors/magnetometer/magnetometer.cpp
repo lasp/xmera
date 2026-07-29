@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "magnetometer.h"
+
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
 
 /*! This is the constructor, setting variables to default values. */
@@ -14,7 +16,7 @@ Magnetometer::Magnetometer() {
     this->senBias.fill(0.0);       // Tesla
     this->senNoiseStd.fill(-1.0);  // Tesla
     this->walkBounds.fill(0.0);
-    this->noiseModel = GaussMarkov(this->numStates);
+    this->noiseModel = GaussMarkov<3>();
     this->scaleFactor = 1.0;
     this->maxOutput = 1e200;   // Tesla
     this->minOutput = -1e200;  // Tesla
@@ -24,7 +26,9 @@ Magnetometer::Magnetometer() {
 }
 
 /*! This is the destructor, nothing to report here. */
-Magnetometer::~Magnetometer() { return; }
+Magnetometer::~Magnetometer() {
+    return;
+}
 
 //! - This method composes the transformation matrix from Body to Sensor frame.
 Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, double roll) {
@@ -46,7 +50,7 @@ void Magnetometer::reset(uint64_t currentSimNanos) {
     }
 
     this->noiseModel.setUpperBounds(this->walkBounds);
-    auto nMatrix = (this->senNoiseStd * 1.5).asDiagonal();
+    Eigen::Matrix3d nMatrix = (this->senNoiseStd * 1.5).asDiagonal();
     this->noiseModel.setNoiseMatrix(nMatrix);
     this->noiseModel.setRNGSeed(this->RNGSeed);
     Eigen::MatrixXd satBounds;
@@ -84,7 +88,9 @@ void Magnetometer::computeMagData() {
 }
 
 /*! This method computes the true sensed values for the sensor. */
-void Magnetometer::computeTrueOutput() { this->tamTrue_S = this->tam_S; }
+void Magnetometer::computeTrueOutput() {
+    this->tamTrue_S = this->tam_S;
+}
 
 /*! This method takes the true values (tamTrue_S) and converts
  it over to an errored value.  It applies Gaussian noise, constant bias and scale factor to the truth. */
@@ -92,9 +98,7 @@ void Magnetometer::applySensorErrors() {
     //! - If any of the standard deviation vector elements is not positive, do not use noise error from RNG.
     bool anyNoiseComponentUninitialized = false;
     for (unsigned i = 0; i < this->senNoiseStd.size(); i++) {
-        if ((this->senNoiseStd(i) <= 0.0)) {
-            anyNoiseComponentUninitialized = true;
-        }
+        if ((this->senNoiseStd(i) <= 0.0)) { anyNoiseComponentUninitialized = true; }
     }
     if (anyNoiseComponentUninitialized) {
         this->tamSensed_S = this->tamTrue_S;
@@ -112,7 +116,9 @@ void Magnetometer::applySensorErrors() {
 }
 
 /*! This method applies saturation using the given bounds. */
-void Magnetometer::applySaturation() { this->tamSensed_S = this->saturateUtility.saturate(this->tamSensed_S); }
+void Magnetometer::applySaturation() {
+    this->tamSensed_S = this->saturateUtility.saturate(this->tamSensed_S);
+}
 
 /*! This method writes the output messages. */
 void Magnetometer::writeOutputMessages(uint64_t Clock) {
