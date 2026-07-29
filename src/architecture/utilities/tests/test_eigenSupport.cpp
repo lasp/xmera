@@ -164,6 +164,75 @@ TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenMatrixXPreservesColumnMajor
     ExpectMatricesApproxEqual(original, reconstructed, GetTolerance<Scalar>());
 }
 
+// The output side writes row-major and the general-shape input side reads
+// column-major (rule 3 at the top of eigenSupport.h), so the two are not
+// inverses. The next two tests pin that asymmetry down. They are not asserting
+// that it is desirable - they exist so that changing the layout on one side
+// alone fails here, rather than silently transposing matrices in the modules
+// that round-trip through a message buffer.
+TYPED_TEST(EigenSupportConversionsTest, RoundTripThroughCArrayTransposesSquareInput) {
+    using Scalar = TypeParam;
+    constexpr int dim = 3;
+    Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(dim, dim);
+    for (int i = 0; i < dim; ++i) {
+        for (int j = 0; j < dim; ++j) { input(i, j) = static_cast<Scalar>(i * dim + j + 1); }
+    }
+
+    Scalar buffer[dim * dim] = {};
+    eigenMatrixXToCArray(input, buffer);
+    auto roundTripped = cArrayToEigenMatrixX(buffer, dim, dim);
+
+    ExpectMatricesApproxEqual(input.transpose(), roundTripped, GetTolerance<Scalar>());
+    // Stated the other way: the round trip is not the identity. A symmetric
+    // matrix cannot tell the two layouts apart, which is why callers that only
+    // ever exercise the identity matrix don't notice the difference.
+    EXPECT_NE(input(0, 1), roundTripped(0, 1));
+}
+
+TYPED_TEST(EigenSupportConversionsTest, RoundTripThroughCArrayNeedsSwappedDimsForNonSquare) {
+    using Scalar = TypeParam;
+    constexpr int rows = 3;
+    constexpr int cols = 2;
+    Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(rows, cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) { input(i, j) = static_cast<Scalar>(i * cols + j + 1); }
+    }
+
+    Scalar buffer[rows * cols] = {};
+    eigenMatrixXToCArray(input, buffer);
+
+    // Reading back with the original dimensions reorders entries rather than
+    // transposing: what was input(0, 1) lands at (1, 0) of a 3 x 2 result.
+    auto sameDims = cArrayToEigenMatrixX(buffer, rows, cols);
+    EXPECT_NEAR(sameDims(1, 0), input(0, 1), GetTolerance<Scalar>());
+
+    // Reading back with the dimensions swapped recovers the exact transpose.
+    auto swappedDims = cArrayToEigenMatrixX(buffer, cols, rows);
+    ExpectMatricesApproxEqual(input.transpose(), swappedDims, GetTolerance<Scalar>());
+}
+
+// The pairing that is the identity: the output side writes row-major, and
+// cArrayToEigenMatrix3 reads row-major. Both the flat and the strided writer
+// are covered, because a C array can hold either a single 3 x 3 matrix or a
+// sequence of them packed one after another.
+TYPED_TEST(EigenSupportConversionsTest, RowMajorWriteRoundTripsThroughCArrayToEigenMatrix3) {
+    using Scalar = TypeParam;
+    constexpr int dim = 3;
+    Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> input(dim, dim);
+    for (int i = 0; i < dim; ++i) {
+        for (int j = 0; j < dim; ++j) { input(i, j) = static_cast<Scalar>(i * dim + j + 1); }
+    }
+
+    Scalar flat[dim * dim] = {};
+    eigenMatrixXToCArray(input, flat);
+    ExpectMatricesApproxEqual(input, cArrayToEigenMatrix3(flat), GetTolerance<Scalar>());
+
+    // Second slot of a two-matrix buffer, as a strided write produces it.
+    Scalar strided[2 * dim * dim] = {};
+    eigenMatrixXInsertCArray(input, strided, dim * dim);
+    ExpectMatricesApproxEqual(input, cArrayToEigenMatrix3(&strided[dim * dim]), GetTolerance<Scalar>());
+}
+
 TYPED_TEST(EigenSupportConversionsTest, CArrayToEigenVectorCopiesElements) {
     using Scalar = TypeParam;
     constexpr std::size_t size = 5;
