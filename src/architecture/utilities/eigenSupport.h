@@ -121,10 +121,7 @@ inline constexpr bool is_fixed_v =
  */
 template<class Derived, std::size_t size>
 void eigenMatrixToCArray(Eigen::MatrixBase<Derived> const &inMat, typename Derived::Scalar (&out)[size]) {
-    static_assert(
-        Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
-        "Input must be a fixed-size Eigen type."
-    );
+    static_assert(is_fixed_v<Derived>, "Input must be a fixed-size Eigen type.");
 
     using Scalar = Derived::Scalar;
     constexpr int Rows = Derived::RowsAtCompileTime;
@@ -135,7 +132,7 @@ void eigenMatrixToCArray(Eigen::MatrixBase<Derived> const &inMat, typename Deriv
         "Output array size must equal rows*cols of input."
     );
 
-    if constexpr ((Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0) {
+    if constexpr (is_row_major_v<Derived>) {
         Eigen::Matrix<Scalar, Rows, Cols, Eigen::RowMajor> tmp = inMat;
         std::copy(tmp.data(), tmp.data() + tmp.size(), out);
     } else {
@@ -185,10 +182,7 @@ void eigenMatrixXToCArray(Eigen::MatrixBase<Derived> const &inMat, typename Deri
  */
 template<class Derived, std::size_t N, std::size_t M>
 void eigenMatrixToCArray2D(Eigen::MatrixBase<Derived> const &inMat, typename Derived::Scalar (&out)[N][M]) {
-    static_assert(
-        Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
-        "Input must be a fixed-size Eigen type."
-    );
+    static_assert(is_fixed_v<Derived>, "Input must be a fixed-size Eigen type.");
 
     using Scalar = Derived::Scalar;
     constexpr int R = Derived::RowsAtCompileTime;
@@ -199,7 +193,7 @@ void eigenMatrixToCArray2D(Eigen::MatrixBase<Derived> const &inMat, typename Der
         "2D output shape must match input rows x cols."
     );
 
-    if constexpr ((Eigen::internal::traits<Derived>::Flags & Eigen::RowMajorBit) != 0) {
+    if constexpr (is_row_major_v<Derived>) {
         Eigen::Matrix<Scalar, R, C, Eigen::RowMajor> tmp = inMat;
         std::copy(tmp.data(), tmp.data() + tmp.size(), &out[0][0]);
     } else {
@@ -294,10 +288,7 @@ void eigenMatrixXInsertCArray(
  */
 template<class Derived, std::size_t size>
 void eigenVectorToCArray(Eigen::MatrixBase<Derived> const &inVec, typename Derived::Scalar (&out)[size]) {
-    static_assert(
-        Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic,
-        "Input must be a fixed-size Eigen type."
-    );
+    static_assert(is_fixed_v<Derived>, "Input must be a fixed-size Eigen type.");
     static_assert(Derived::ColsAtCompileTime == 1, "Input must be a column vector.");
     static_assert(
         static_cast<std::size_t>(Derived::RowsAtCompileTime) == size,
@@ -497,7 +488,7 @@ Eigen::Matrix3<typename Eigen::MatrixBase<Derived>::Scalar> eigenTilde(Eigen::Ma
         "eigenTilde requires a 3-element column vector (fixed-size or dynamic)."
     );
 
-    if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic || Derived::ColsAtCompileTime == Eigen::Dynamic) {
+    if constexpr (!is_fixed_v<Derived>) {
         if (vec.rows() != 3 || vec.cols() != 1) { std::terminate(); }
     }
 
