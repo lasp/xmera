@@ -5,8 +5,7 @@
 
 StateData::StateData(const StateData& inState) : state(inState.state),
     stateDeriv(inState.stateDeriv),
-    stateName(inState.stateName),
-    stateEnabled(inState.stateEnabled) {
+    stateName(inState.stateName) {
 }
 
 StateData::StateData(std::string const &inName, const Eigen::MatrixXd& newState) :

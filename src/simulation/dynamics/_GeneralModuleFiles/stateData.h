@@ -13,7 +13,6 @@ class StateData {
     Eigen::MatrixXd state;       //!< [-] State value storage
     Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
     std::string stateName;       //!< [-] Name of the state
-    bool stateEnabled = false;           //!< [-] Flag indicating state is enabled
 
    public:
     StateData() = default;
@@ -28,9 +27,6 @@ class StateData {
     std::string getName() const { return stateName; }                         //!< class method
     uint32_t getRowSize() const { return ((uint32_t)state.innerSize()); }     //!< class method
     uint32_t getColumnSize() const { return ((uint32_t)state.outerSize()); }  //!< class method
-    bool isStateActive() { return stateEnabled; }                             //!< class method
-    void disable() { stateEnabled = false; }                                  //!< class method
-    void enable() { stateEnabled = true; }                                    //!< class method
     void scaleState(double scaleFactor);                                      //!< class method
 
     StateData operator+(const StateData& operand) const;  //!< class method
