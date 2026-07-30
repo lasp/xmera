@@ -3,27 +3,31 @@
 
 #include "stateData.h"
 
-StateData::StateData(const Eigen::MatrixXd& newState) :
-    state(newState),
-    stateDeriv(state) {
+StateData::StateData(Eigen::MatrixXd const &newState) : state(newState), stateDeriv(state) {
     stateDeriv.setZero();
 }
 
-void StateData::setState(const Eigen::MatrixXd& newState) {
+void StateData::setState(Eigen::MatrixXd const &newState) {
     state = newState;
 }
 
-void StateData::propagateState(const double dt) { state += stateDeriv * dt; }
+void StateData::propagateState(double const dt) {
+    state += stateDeriv * dt;
+}
 
-void StateData::setDerivative(const Eigen::MatrixXd& newDeriv) { stateDeriv = newDeriv; }
+void StateData::setDerivative(Eigen::MatrixXd const &newDeriv) {
+    stateDeriv = newDeriv;
+}
 
-void StateData::scaleState(const double scaleFactor) { state *= scaleFactor; }
+void StateData::scaleState(double const scaleFactor) {
+    state *= scaleFactor;
+}
 
-StateData StateData::operator+(const StateData& operand) const {
+StateData StateData::operator+(StateData const &operand) const {
     return StateData(state + operand.getState());
 }
 
-StateData StateData::operator*(const double scaleFactor) const {
+StateData StateData::operator*(double const scaleFactor) const {
     StateData newState(state);
     newState.state *= scaleFactor;
     return newState;

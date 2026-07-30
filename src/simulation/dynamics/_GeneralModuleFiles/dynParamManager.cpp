@@ -2,11 +2,16 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 
 #include "dynParamManager.h"
+
 #include <iostream>
 
-DynParamManager::DynParamManager() { return; }
+DynParamManager::DynParamManager() {
+    return;
+}
 
-DynParamManager::~DynParamManager() { return; }
+DynParamManager::~DynParamManager() {
+    return;
+}
 
 StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName) {
     if (stateName == "") {
@@ -17,13 +22,16 @@ StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::str
     std::map<std::string, StateData>::iterator it;
     it = stateContainer.stateMap.find(stateName);
     if (it != stateContainer.stateMap.end()) {
-        bskLogger.bskLog(BSK_WARNING,
-                         "You created a state with the name: %s more than once.  Go ahead and don't do this.",
-                         stateName.c_str());
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "You created a state with the name: %s more than once.  Go ahead and don't do this.",
+            stateName.c_str()
+        );
         if (it->second.getRowSize() != nRow || it->second.getColumnSize() != nCol) {
             bskLogger.bskLog(
                 BSK_ERROR,
-                "In addition to that, you tried to change the size of the state in question.  Come on.  You get null.");
+                "In addition to that, you tried to change the size of the state in question.  Come on.  You get null."
+            );
             return nullptr;
         }
     } else {
@@ -42,27 +50,29 @@ StateData* DynParamManager::getStateObject(std::string stateName) {
 
     statePtr = nullptr;
     it = stateContainer.stateMap.find(stateName);
-    if (it != stateContainer.stateMap.end()) {
-        statePtr = &(it->second);
-    }
+    if (it != stateContainer.stateMap.end()) { statePtr = &(it->second); }
 
     if (statePtr == nullptr) {
         /*  The requested state could not be found.
             Either the state name was miss-spelled, or the state simply
             doesn't exit in the current simulaiton setup (i.e. asking for the
             hub attitude in a translation only simulation setup */
-        bskLogger.bskLog(BSK_WARNING,
-                         "You requested this non-existent state name: %s You either miss-typed the stateName, or you "
-                         "asked for a state that doesn't exist in your simulation setup.",
-                         stateName.c_str());
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "You requested this non-existent state name: %s You either miss-typed the stateName, or you "
+            "asked for a state that doesn't exist in your simulation setup.",
+            stateName.c_str()
+        );
     }
 
     return (statePtr);
 }
 
-StateVector DynParamManager::getStateVector() { return (stateContainer); }
+StateVector DynParamManager::getStateVector() {
+    return (stateContainer);
+}
 
-void DynParamManager::updateStateVector(const StateVector& newState) {
+void DynParamManager::updateStateVector(StateVector const &newState) {
     std::map<std::string, StateData>::iterator it;
     std::map<std::string, StateData>::const_iterator inIt;
     for (it = stateContainer.stateMap.begin(), inIt = newState.stateMap.begin();
@@ -79,7 +89,7 @@ void DynParamManager::propagateStateVector(double dt) {
     }
 }
 
-StateVector StateVector::operator+(const StateVector& operand) {
+StateVector StateVector::operator+(StateVector const &operand) {
     std::map<std::string, StateData>::iterator it;
     std::map<std::string, StateData>::const_iterator opIt;
     StateVector outVector;
@@ -101,15 +111,17 @@ StateVector StateVector::operator*(double scaleFactor) {
     return outVector;
 }
 
-Eigen::MatrixXd* DynParamManager::createProperty(std::string propName, const Eigen::MatrixXd& propValue) {
+Eigen::MatrixXd* DynParamManager::createProperty(std::string propName, Eigen::MatrixXd const &propValue) {
     std::map<std::string, Eigen::MatrixXd>::iterator it;
     it = dynProperties.find(propName);
     if (it == dynProperties.end()) {
         dynProperties.insert(std::pair<std::string, Eigen::MatrixXd>(propName, propValue));
     } else {
-        bskLogger.bskLog(BSK_WARNING,
-                         "You created the dynamic property: %s more than once.  You shouldn't be doing that.",
-                         propName.c_str());
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "You created the dynamic property: %s more than once.  You shouldn't be doing that.",
+            propName.c_str()
+        );
         it->second = propValue;
     }
     return (&(dynProperties.find(propName)->second));
@@ -119,21 +131,23 @@ Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName) {
     std::map<std::string, Eigen::MatrixXd>::iterator it;
     it = dynProperties.find(propName);
     if (it == dynProperties.end()) {
-        bskLogger.bskLog(
-            BSK_ERROR, "You requested the property: %s which doesn't exist.  Null returned.", propName.c_str());
+        bskLogger
+            .bskLog(BSK_ERROR, "You requested the property: %s which doesn't exist.  Null returned.", propName.c_str());
         return nullptr;
     } else {
         return (&(it->second));
     }
 }
 
-void DynParamManager::setPropertyValue(const std::string propName, const Eigen::MatrixXd& propValue) {
+void DynParamManager::setPropertyValue(std::string const propName, Eigen::MatrixXd const &propValue) {
     std::map<std::string, Eigen::MatrixXd>::iterator it;
     it = dynProperties.find(propName);
     if (it == dynProperties.end()) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "You tried to set the property value for: %s which has not been created yet. I can't do that.",
-                         propName.c_str());
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "You tried to set the property value for: %s which has not been created yet. I can't do that.",
+            propName.c_str()
+        );
     } else {
         it->second = propValue;
     }
