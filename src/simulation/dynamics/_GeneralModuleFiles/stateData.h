@@ -12,19 +12,17 @@ class StateData {
    public:
     Eigen::MatrixXd state;       //!< [-] State value storage
     Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
-    std::string stateName;       //!< [-] Name of the state
 
    public:
     StateData() = default;
-    StateData(std::string const &inName, const Eigen::MatrixXd& newState);  //!< class method
-    StateData(const StateData& inState);                             //!< class method
+    StateData(const StateData& inState) = default;                            //!< class method
+    explicit StateData(const Eigen::MatrixXd& newState);                      //!< class method
     ~StateData() = default;
     void setState(const Eigen::MatrixXd& newState);                           //!< class method
     void propagateState(double dt);                                           //!< class method
     void setDerivative(const Eigen::MatrixXd& newDeriv);                      //!< class method
     Eigen::MatrixXd const &getState() const { return state; }                        //!< class method
     Eigen::MatrixXd const &getStateDeriv() const { return stateDeriv; }              //!< class method
-    std::string getName() const { return stateName; }                         //!< class method
     uint32_t getRowSize() const { return ((uint32_t)state.innerSize()); }     //!< class method
     uint32_t getColumnSize() const { return ((uint32_t)state.outerSize()); }  //!< class method
     void scaleState(double scaleFactor);                                      //!< class method

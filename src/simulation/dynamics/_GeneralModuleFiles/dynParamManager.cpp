@@ -29,7 +29,7 @@ StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::str
     } else {
         Eigen::MatrixXd stateMatrix;
         stateMatrix.resize(nRow, nCol);
-        StateData newState(stateName, stateMatrix);
+        StateData newState(stateMatrix);
         stateContainer.stateMap.insert(std::pair<std::string, StateData>(stateName, newState));
         it = stateContainer.stateMap.find(stateName);
     }

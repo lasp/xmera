@@ -3,16 +3,9 @@
 
 #include "stateData.h"
 
-StateData::StateData(const StateData& inState) : state(inState.state),
-    stateDeriv(inState.stateDeriv),
-    stateName(inState.stateName) {
-}
-
-StateData::StateData(std::string const &inName, const Eigen::MatrixXd& newState) :
+StateData::StateData(const Eigen::MatrixXd& newState) :
     state(newState),
-    stateDeriv(state),
-    stateName(inName) {
-
+    stateDeriv(state) {
     stateDeriv.setZero();
 }
 
@@ -27,11 +20,11 @@ void StateData::setDerivative(const Eigen::MatrixXd& newDeriv) { stateDeriv = ne
 void StateData::scaleState(const double scaleFactor) { state *= scaleFactor; }
 
 StateData StateData::operator+(const StateData& operand) const {
-    return StateData(stateName, state + operand.getState());
+    return StateData(state + operand.getState());
 }
 
 StateData StateData::operator*(const double scaleFactor) const {
-    StateData newState(stateName, state);
-    newState.scaleState(scaleFactor);
+    StateData newState(state);
+    newState.state *= scaleFactor;
     return newState;
 }
