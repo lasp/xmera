@@ -11,15 +11,13 @@ from xmera.simulation import stateArchitecture
 def test_stateData(show_plots):
 
     stateUse = [[10.0], [20.0]]
-    stateName = "position"
-    newState = stateArchitecture.StateData(stateName, stateUse)
+    newState = stateArchitecture.StateData(stateUse)
     newState.setState(stateUse)
 
     predictedDerivative = [[0.0], [0.0]]
 
     assert newState.getRowSize() == len(stateUse), "State row sized incorrectly"
     assert newState.getColumnSize() == len(stateUse[0]), "State column sized incorrectly"
-    assert newState.getName() == stateName, "State name incorrect"
     assert newState.getState() == stateUse, "State equality check failure."
     assert newState.getStateDeriv() == predictedDerivative, "State derivative zero check failure."
 
@@ -104,15 +102,10 @@ def test_stateArchitecture(show_plots):
     flexState = newManager.registerState(flexDim[0], flexDim[1], flexName)
     assert posState.getRowSize() == stateDim[0] or posState.getColumnSize() == stateDim[1], \
         "Position state returned improper size"
-    assert velState.getName() == velocityName, "Failed to return proper state name for velocity"
-    assert newManager.registerState(stateDim[0], stateDim[1], positionName).getName() == positionName, \
-        "Failed to return proper state name in overload of call"
 
     newManager.registerState(stateDim[0], stateDim[1]+2, positionName)
 
     positionStateLookup = newManager.getStateObject("Array1_flex")
-
-    assert positionStateLookup.getName() == flexName, "State lookup for solar array flex failed"
 
     vectorFactor = 4.0
     vecStart = [[1.0], [2.0], [3.5]]
