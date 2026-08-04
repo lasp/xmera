@@ -16,33 +16,33 @@ public:
 
 public:
     StateData() = default;
-    StateData(StateData const &inState) = default;        //!< class method
-    explicit StateData(Eigen::MatrixXd const &newState);  //!< class method
+    StateData(StateData const &inState) = default;
+    explicit StateData(Eigen::MatrixXd const &newState);
     ~StateData() = default;
-    void setState(Eigen::MatrixXd const &newState);       //!< class method
-    void propagateState(double dt);                       //!< class method
-    void setDerivative(Eigen::MatrixXd const &newDeriv);  //!< class method
+    void setState(Eigen::MatrixXd const &newState);
+    void propagateState(double dt);
+    void setDerivative(Eigen::MatrixXd const &newDeriv);
 
     Eigen::MatrixXd const &getState() const {
         return state;
-    }  //!< class method
+    }
 
     Eigen::MatrixXd const &getStateDeriv() const {
         return stateDeriv;
-    }  //!< class method
+    }
 
     uint32_t getRowSize() const {
         return ((uint32_t) state.innerSize());
-    }  //!< class method
+    }
 
     uint32_t getColumnSize() const {
         return ((uint32_t) state.outerSize());
-    }  //!< class method
+    }
 
-    void scaleState(double scaleFactor);  //!< class method
+    void scaleState(double scaleFactor);
 
-    StateData operator+(StateData const &operand) const;  //!< class method
-    StateData operator*(double scaleFactor) const;        //!< class method
+    StateData operator+(StateData const &operand) const;
+    StateData operator*(double scaleFactor) const;
 };
 
 #endif /* STATE_DATA_H */
