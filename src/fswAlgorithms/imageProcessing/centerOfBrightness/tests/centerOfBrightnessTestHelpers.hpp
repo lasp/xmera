@@ -65,11 +65,22 @@ class FuzzImageReader : public ImageReaderInterface {
             windowedPixels(this->pixels, center, windowSize, this->getFullImageSize(0));
         size_t const writeCount = std::min(inside.size(), static_cast<size_t>(kMaxWindowSize));
 
-        output.fill(Eigen::Vector2i::Zero());
-        for (size_t i = 0; i < writeCount; ++i) {
-            output[i] = inside[i];
+        if (&output != this->lastBuffer) {
+            // The reader sees this buffer for the first time, thus its contents are
+            // indeterminate and all of it must be cleared. Each later call clears only the
+            // prefix that this reader wrote. This keeps an 8 MB fill out of each iteration.
+            output.fill(Eigen::Vector2i::Zero());
+            this->lastBuffer = &output;
+            this->lastWrittenCount = 0;
         }
+        for (size_t i = 0; i < this->lastWrittenCount; ++i) { output[i] = Eigen::Vector2i::Zero(); }
+        for (size_t i = 0; i < writeCount; ++i) { output[i] = inside[i]; }
+        this->lastWrittenCount = writeCount;
     }
+
+private:
+    std::array<Eigen::Vector2i, kMaxWindowSize>* lastBuffer{nullptr};  //!< buffer the previous call wrote to
+    size_t lastWrittenCount{};                                         //!< how far into that buffer it wrote
 };
 
 // ============================================================================
