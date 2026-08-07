@@ -280,6 +280,14 @@ void addMRP(double* q1, double* q2, double* result) {
  * addPRV(Q1,Q2,Q) provides the principal rotation vector
  * which corresponds to performing to successive
  * prinicipal rotations Q1 and Q2.
+ *
+ * The function calculates the angle as 2*atan2(|vector part|, real part). It does not use
+ * 2*acos(real part). The code calculates the vector part of the composed quaternion first, because
+ * atan2 must have its magnitude, which is equal to sin(angle/2).
+ *
+ * When the two rotations almost cancel, the real part becomes equal to 1 and acos gives 0. The
+ * previous code thus discarded a net rotation of less than a few times 1e-8 radians. atan2 also
+ * accepts a real part that is more than 1, and safeAcos is no longer necessary to clamp it.
  */
 void addPRV(double* qq1, double* qq2, double* result) {
     double e1[3];
@@ -314,8 +322,6 @@ void addPRV(double* qq1, double* qq2, double* result) {
     v3Scale(sp1 * sp2, q1, q2);
     v3Add(result, q2, result);
 
-    // atan2(|vec|, realPart) rather than acos(realPart): conditioned and domain-safe
-    // near identity (realPart -> 1).
     double vecNorm = v3Norm(result);
     if (vecNorm < 1.0E-13) {
         v3SetZero(result);
@@ -1270,10 +1276,15 @@ void C2Euler313(double C[3][3], double* q) {
 /*
  * C2Euler321(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (3-2-1) Euler angle set.
+ *
+ * The function calculates the pitch with atan2(sin(pitch), cos(pitch)). It does not use
+ * asin(sin(pitch)). The cosine comes from the norm of the two other entries of row 0. This keeps
+ * more precision when the pitch is almost +/-90 degrees. safeAsin is also no longer necessary to
+ * clamp a -C[0][2] that rounding makes more than 1. The other Euler sequences in this file still
+ * calculate their middle angle with safeAcos or safeAsin.
  */
 void C2Euler321(double C[3][3], double* q) {
     q[0] = atan2(C[0][1], C[0][0]);
-    /* atan2(sin, cos) rather than asin(sin) for the pitch: better-conditioned as pitch -> +-90 deg */
     q[1] = atan2(-C[0][2], sqrt(C[0][0] * C[0][0] + C[0][1] * C[0][1]));
     q[2] = atan2(C[1][2], C[2][2]);
 }
@@ -1804,6 +1815,11 @@ void EP2Euler313(double* q, double* e) {
 /*
  * EP2Euler321(Q,E) translates the Euler parameter vector
  * Q into the corresponding (3-2-1) Euler angle set.
+ *
+ * The function calculates the pitch with atan2(sin(pitch), cos(pitch)) and not asin(sin(pitch)).
+ * Refer to C2Euler321 for the reasons. The code calculates the three row 0 terms of the direction
+ * cosine matrix one time and then uses them again. The norm of the first two terms is the cosine of
+ * the pitch.
  */
 void EP2Euler321(double* q, double* e) {
     double q0 = q[0];
@@ -1811,13 +1827,11 @@ void EP2Euler321(double* q, double* e) {
     double q2 = q[2];
     double q3 = q[3];
 
-    /* Row 0 of the DCM; the pitch's cosine is the norm of these two terms. */
     double r00 = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3;
     double r01 = 2 * (q1 * q2 + q0 * q3);
     double r02 = 2 * (q1 * q3 - q0 * q2);
 
     e[0] = atan2(r01, r00);
-    /* atan2(sin, cos) rather than asin(sin) for the pitch: better-conditioned as pitch -> +-90 deg */
     e[1] = atan2(-r02, sqrt(r00 * r00 + r01 * r01));
     e[2] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
 }
@@ -1865,6 +1879,15 @@ void EP2MRP(double* q1, double* q) {
 /*
  * EP2PRV(Q1,Q) translates the Euler parameter vector Q1
  * into the principal rotation vector Q.
+ *
+ * The function calculates the angle as 2*atan2(|Q1[1..3]|, Q1[0]). It does not use 2*acos(Q1[0]).
+ * For a unit quaternion, the magnitude of the vector part is sin(angle/2). Thus atan2 receives the
+ * sine and the cosine of the half angle.
+ *
+ * For a rotation of less than approximately 2e-8 radians, Q1[0] becomes equal to 1. Then acos gives
+ * 0 and the previous code gave a zero vector. atan2 also accepts a Q1[0] that is more than 1, and
+ * safeAcos is no longer necessary to clamp it. A decode step or a normalize step can make such a
+ * value.
  */
 void EP2PRV(double* q1, double* q) {
     double vecNorm = sqrt(q1[1] * q1[1] + q1[2] * q1[2] + q1[3] * q1[3]);
@@ -3691,6 +3714,14 @@ void subMRP(double* q1, double* q2, double* q) {
  * subPRV(Q1,Q2,Q) provides the prinipal rotation vector
  * which corresponds to relative principal rotation from Q2
  * to Q1.
+ *
+ * The function calculates the angle as 2*atan2(|vector part|, real part). It does not use
+ * 2*acos(real part). The code calculates the vector part of the relative quaternion first, because
+ * atan2 must have its magnitude, which is equal to sin(angle/2).
+ *
+ * This has the most effect when the function measures a small attitude error. When the two rotations
+ * are almost the same, the real part becomes equal to 1 and acos gives 0. The previous code thus
+ * gave a zero result for a relative rotation of less than a few times 1e-8 radians.
  */
 void subPRV(double* q10, double* q20, double* q) {
     double q1[4];
@@ -3717,8 +3748,6 @@ void subPRV(double* q10, double* q20, double* q) {
     v3Scale(cp1 * sp2, e2, q1);
     v3Subtract(q, q1, q);
 
-    // atan2(|vec|, realPart) rather than acos(realPart): conditioned and domain-safe
-    // near identity (realPart -> 1).
     double vecNorm = v3Norm(q);
     if (vecNorm < 1.0E-13) {
         v3SetZero(q);
