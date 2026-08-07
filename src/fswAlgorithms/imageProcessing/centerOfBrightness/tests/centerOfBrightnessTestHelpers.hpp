@@ -171,20 +171,15 @@ inline void fuzzCenterOfBrightness(int32_t roiCenterX,
                                    int32_t roiCenterY,
                                    int32_t roiSizeW,
                                    int32_t roiSizeH,
-                                   int32_t numPixels,
                                    std::vector<int32_t> pixelXs,
                                    std::vector<int32_t> pixelYs,
                                    double brightnessThreshold,
                                    int32_t avgWindowSize) {
-    numPixels = std::min(numPixels, static_cast<int32_t>(pixelXs.size()));
-    numPixels = std::min(numPixels, static_cast<int32_t>(pixelYs.size()));
-
     // Build pixel vector
+    size_t const numPixels = std::min(pixelXs.size(), pixelYs.size());
     std::vector<Eigen::Vector2i> pixels;
-    pixels.reserve(static_cast<size_t>(numPixels));
-    for (int32_t i = 0; i < numPixels; ++i) {
-        pixels.emplace_back(pixelXs[static_cast<size_t>(i)], pixelYs[static_cast<size_t>(i)]);
-    }
+    pixels.reserve(numPixels);
+    for (size_t i = 0; i < numPixels; ++i) { pixels.emplace_back(pixelXs[i], pixelYs[i]); }
 
     // The algorithm contains an 8 MB pixel buffer, and the reader records how much of that
     // buffer it wrote. Thus both must stay alive between iterations.
