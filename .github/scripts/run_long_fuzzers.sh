@@ -37,7 +37,8 @@ if [[ -n "$CORPUS_DIR" ]]; then
   mkdir -p "$CORPUS_DIR"
 fi
 
-FUZZ_BINS=$(BUILD_DIR="$BUILD_DIR" python - <<'PY'
+# Stage one: which executables carry the fuzz label.
+FUZZ_BINS=$(BUILD_DIR="$BUILD_DIR" python3 - <<'PY'
 import json, os, subprocess
 build_dir = os.environ["BUILD_DIR"]
 proc = subprocess.run(
@@ -60,22 +61,36 @@ if [[ -z "$FUZZ_BINS" ]]; then
   echo "No fuzz executables discovered via CTest labels." >&2
   exit 1
 fi
+
+# Stage two, for each executable: which FUZZ_TESTs it contains. The CTest listing
+# cannot give this. A fuzz binary that includes its unit-test translation unit gives
+# those unit tests the same label. If you give a non-fuzz name to --fuzz, the binary
+# prints "No FUZZ_TEST matches the name" and stops with a non-zero exit code.
 while IFS= read -r fuzz_bin; do
   [[ -z "$fuzz_bin" ]] && continue
   fuzz_name="$(basename "$fuzz_bin")"
-  echo ">>> Running long fuzz session for ${fuzz_name}"
-  cmd=("$fuzz_bin")
-  if [[ -n "$FUZZ_DURATION" ]]; then
-    cmd+=("--fuzz_for=${FUZZ_DURATION}")
+
+  fuzz_tests=$("$fuzz_bin" --list_fuzz_tests </dev/null | sed -n 's/^\[\*\] Fuzz test: //p')
+  if [[ -z "$fuzz_tests" ]]; then
+    echo "No FUZZ_TESTs registered in ${fuzz_name}, but it carries the fuzz label." >&2
+    exit 1
   fi
-  env_vars=()
-  if [[ -n "$CORPUS_DIR" ]]; then
-    fuzz_corpus_dir="${CORPUS_DIR}/${fuzz_name}"
-    mkdir -p "$fuzz_corpus_dir"
-    env_vars+=(
-      "FUZZTEST_TESTSUITE_OUT_DIR=${fuzz_corpus_dir}"
-      "FUZZTEST_TESTSUITE_IN_DIR=${fuzz_corpus_dir}"
-    )
-  fi
-  env "${env_vars[@]}" "${cmd[@]}" 2>&1 | tee "$LOG_DIR/${fuzz_name}.log" || true
+
+  while IFS= read -r test_name; do
+    [[ -z "$test_name" ]] && continue
+    echo ">>> Running long fuzz session for ${fuzz_name} / ${test_name}"
+
+    # One corpus directory for each fuzz test. Each FUZZ_TEST serializes its own
+    # parameter signature. Thus if two tests use the same directory, each test rejects
+    # the files of the other test with "Unexpected intermediate representation".
+    if [[ -n "$CORPUS_DIR" ]]; then
+      test_corpus_dir="${CORPUS_DIR}/${fuzz_name}/${test_name}"
+      mkdir -p "$test_corpus_dir"
+      export FUZZTEST_TESTSUITE_IN_DIR="$test_corpus_dir"
+      export FUZZTEST_TESTSUITE_OUT_DIR="$test_corpus_dir"
+    fi
+
+    "$fuzz_bin" --fuzz="$test_name" --fuzz_for="$FUZZ_DURATION" </dev/null 2>&1 \
+      | tee "${LOG_DIR}/${fuzz_name}.${test_name}.log" || true
+  done <<< "$fuzz_tests"
 done <<< "$FUZZ_BINS"
