@@ -66,6 +66,8 @@ fi
 # cannot give this. A fuzz binary that includes its unit-test translation unit gives
 # those unit tests the same label. If you give a non-fuzz name to --fuzz, the binary
 # prints "No FUZZ_TEST matches the name" and stops with a non-zero exit code.
+failures=()
+
 while IFS= read -r fuzz_bin; do
   [[ -z "$fuzz_bin" ]] && continue
   fuzz_name="$(basename "$fuzz_bin")"
@@ -90,7 +92,26 @@ while IFS= read -r fuzz_bin; do
       export FUZZTEST_TESTSUITE_OUT_DIR="$test_corpus_dir"
     fi
 
+    set +e
     "$fuzz_bin" --fuzz="$test_name" --fuzz_for="$FUZZ_DURATION" </dev/null 2>&1 \
-      | tee "${LOG_DIR}/${fuzz_name}.${test_name}.log" || true
+      | tee "${LOG_DIR}/${fuzz_name}.${test_name}.log"
+    status=${PIPESTATUS[0]}
+    set -e
+
+    if [[ $status -ne 0 ]]; then
+      failures+=("${fuzz_name} / ${test_name} (exit ${status})")
+    fi
   done <<< "$fuzz_tests"
 done <<< "$FUZZ_BINS"
+
+if [[ ${#failures[@]} -gt 0 ]]; then
+  echo
+  echo "Fuzz targets with findings:"
+  for failure in "${failures[@]}"; do
+    echo "  ${failure}"
+  done
+  exit 1
+fi
+
+echo
+echo "All fuzz targets completed without findings."
