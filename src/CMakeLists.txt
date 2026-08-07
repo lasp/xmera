@@ -67,6 +67,8 @@ endif ()
 
 include(XmeraFramework)
 
+message(STATUS "Using mission parameters from ${XMERA_MISSION_PARAMETERS_DIR}/mission/parameters.h")
+
 # Xmera core libraries
 add_subdirectory(architecture)
 

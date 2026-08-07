@@ -16,6 +16,11 @@ set(XMERA_ENABLE_INTERNAL "NO"
   "Whether to enable modules that are marked as INTERNAL (default NO)"
 )
 
+set(XMERA_MISSION_PARAMETERS_DIR "${CMAKE_SOURCE_DIR}/defaults"
+  CACHE STRING
+  "Directory containing the mission/parameters.h that defines the mission sizing constants"
+)
+
 if(APPLE)
   set(XMERA_RPATH_ORIGIN "@loader_path")
 else()
@@ -104,6 +109,8 @@ function(xmera_add_swig_module module)
     "${CMAKE_BINARY_DIR}"
     # @TODO add architecture/_GeneralModuleFiles to a global interface target or similar
     "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles"
+    # Mission-configurable includes
+    "${XMERA_MISSION_PARAMETERS_DIR}"
   )
 
   target_link_libraries("${module}" PRIVATE
@@ -211,6 +218,8 @@ function(xmera_add_swig_message message)
     "${CMAKE_CURRENT_SOURCE_DIR}"
     # Project-wide includes
     "${CMAKE_SOURCE_DIR}"
+    # Mission-configurable includes
+    "${XMERA_MISSION_PARAMETERS_DIR}"
   )
 
   target_link_libraries("${message}" PRIVATE

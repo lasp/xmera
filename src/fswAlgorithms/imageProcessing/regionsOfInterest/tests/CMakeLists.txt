@@ -6,6 +6,7 @@ add_executable(test_regionsOfInterest
 target_include_directories(test_regionsOfInterest PRIVATE "../..")
 target_include_directories(test_regionsOfInterest PRIVATE "..")
 target_include_directories(test_regionsOfInterest PRIVATE "${CMAKE_SOURCE_DIR}")
+target_include_directories(test_regionsOfInterest PRIVATE "${XMERA_MISSION_PARAMETERS_DIR}")
 
 target_link_libraries(test_regionsOfInterest PRIVATE
     Eigen3::Eigen
@@ -25,6 +26,7 @@ if(XMERA_ENABLE_FUZZTESTS)
   target_include_directories(test_regionsOfInterest_fuzz PRIVATE "../..")
   target_include_directories(test_regionsOfInterest_fuzz PRIVATE "..")
   target_include_directories(test_regionsOfInterest_fuzz PRIVATE "${CMAKE_SOURCE_DIR}")
+  target_include_directories(test_regionsOfInterest_fuzz PRIVATE "${XMERA_MISSION_PARAMETERS_DIR}")
 
   target_link_libraries(test_regionsOfInterest_fuzz PRIVATE
     Eigen3::Eigen
