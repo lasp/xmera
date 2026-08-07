@@ -38,9 +38,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .fuzztest_corpus
-          key: fuzz-corpus-${{ runner.os }}-${{ github.run_id }}
+          key: fuzz-corpus-v2-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
-            fuzz-corpus-${{ runner.os }}-
+            fuzz-corpus-v2-${{ runner.os }}-
 
       - name: Ensure fuzz corpus directory exists
         run: mkdir -p .fuzztest_corpus
@@ -154,4 +154,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .fuzztest_corpus
-          key: fuzz-corpus-${{ runner.os }}-${{ github.run_id }}
+          key: fuzz-corpus-v2-${{ runner.os }}-${{ github.run_id }}
