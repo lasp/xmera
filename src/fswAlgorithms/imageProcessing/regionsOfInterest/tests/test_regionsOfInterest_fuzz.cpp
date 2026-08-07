@@ -3,7 +3,6 @@
 
 #include "../regionsOfInterestAlgorithm.h"
 #include "gtest/gtest.h"
-#include "test_regionsOfInterest.cpp"
 #include <fuzztest/fuzztest.h>
 
 #include <algorithm>
