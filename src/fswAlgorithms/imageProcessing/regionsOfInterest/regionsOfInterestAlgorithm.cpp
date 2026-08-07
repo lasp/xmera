@@ -80,8 +80,10 @@ std::array<RegionOfInterest, MAX_NUMBER_REGIONS> RegionsOfInterestAlgorithm::app
 std::array<RegionOfInterest, MAX_NUMBER_REGIONS> RegionsOfInterestAlgorithm::orderRegions(
     const std::array<RegionOfInterest, MAX_NUMBER_REGIONS>& regions) {
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> sorted = regions;
+    // The comparator must be a strict weak ordering. A reflexive comparator (>=) causes
+    // undefined behavior, and std::sort can then read data after the end of the range.
     std::ranges::sort(sorted.begin(), sorted.end(), [](const RegionOfInterest& a, const RegionOfInterest& b) {
-        return a.numberOfPixels >= b.numberOfPixels;
+        return a.numberOfPixels > b.numberOfPixels;
     });
     return sorted;
 }
