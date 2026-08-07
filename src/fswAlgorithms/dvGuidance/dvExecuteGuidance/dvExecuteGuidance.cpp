@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dvExecuteGuidance.h"
+
 #include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <string.h>
 
 /*! @brief This resets the module.
@@ -55,7 +57,7 @@ void DvExecuteGuidance::updateState(uint64_t callTime) {
         burnDt = this->defaultControlPeriod;
     } else {
         /*! - compute burn time delta-t (control time period) */
-        burnDt = (double)((int64_t)callTime - (int64_t)this->prevCallTime) * NANO2SEC;
+        burnDt = (double) ((int64_t) callTime - (int64_t) this->prevCallTime) * NANO2SEC;
     }
     this->prevCallTime = callTime;
     v3SetZero(burnAccum);
@@ -65,9 +67,7 @@ void DvExecuteGuidance::updateState(uint64_t callTime) {
         this->burnComplete = 0;
     }
 
-    if (this->burnExecuting) {
-        this->burnTime += burnDt;
-    }
+    if (this->burnExecuting) { this->burnTime += burnDt; }
 
     v3Subtract(navData.vehAccumDV, this->dvInit, burnAccum);
 

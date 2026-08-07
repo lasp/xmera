@@ -3,11 +3,14 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "groundMapping.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
+
 #include <math.h>
+
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -42,22 +45,16 @@ GroundMapping::~GroundMapping() {
 */
 void GroundMapping::reset(uint64_t currentSimNanos) {
     // check that required input messages are connected
-    if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "GroundMapping.scStateInMsg was not linked.");
-    }
+    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "GroundMapping.scStateInMsg was not linked."); }
 
     // check that the direction of the camera is provided
-    if (this->nHat_B.isZero()) {
-        bskLogger.bskLog(BSK_ERROR, "GroundMapping.nHat_B vector not set.");
-    }
+    if (this->nHat_B.isZero()) { bskLogger.bskLog(BSK_ERROR, "GroundMapping.nHat_B vector not set."); }
 }
 
 /*! Read module messages
  */
 void GroundMapping::ReadMessages() {
-    if (this->planetInMsg.isLinked()) {
-        this->planetInMsgBuffer = this->planetInMsg();
-    }
+    if (this->planetInMsg.isLinked()) { this->planetInMsgBuffer = this->planetInMsg(); }
 
     this->scStateInMsgBuffer = this->scStateInMsg();
 }
@@ -65,7 +62,7 @@ void GroundMapping::ReadMessages() {
 /*! Method to add map points
  * @param r_LP_P_init: mapping point in planet-fixed frame
  */
-void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init) {
+void GroundMapping::addPointToModel(Eigen::Vector3d &r_LP_P_init) {
     /* Add the mapping point */
     this->mappingPoints.push_back(r_LP_P_init);
 
@@ -121,21 +118,21 @@ void GroundMapping::computeAccess(uint64_t c) {
     this->accessMsgBuffer.at(c).azimuth = atan2(sin_az, cos_az);
 
     Eigen::Vector3d v_BL_L =
-        this->dcm_LP * this->dcm_PN *
-        (cArrayToEigenVector(scStateInMsgBuffer.v_BN_N) -
-         this->w_PN.cross(r_BP_N));  // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
+        this->dcm_LP * this->dcm_PN
+        * (cArrayToEigenVector(scStateInMsgBuffer.v_BN_N)
+           - this->w_PN.cross(r_BP_N));  // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
     eigenVectorToCArray(v_BL_L, this->accessMsgBuffer.at(c).v_BL_L);
     this->accessMsgBuffer.at(c).range_dot = v_BL_L.dot(r_BL_L) / r_BL_mag;
     double xy_norm = sqrt(pow(r_BL_L[0], 2) + pow(r_BL_L[1], 2));
     this->accessMsgBuffer.at(c).az_dot = (-r_BL_L[0] * v_BL_L[1] + r_BL_L[1] * v_BL_L[0]) / pow(xy_norm, 2);
     this->accessMsgBuffer.at(c).el_dot =
-        (v_BL_L[2] / xy_norm - r_BL_L[2] * (r_BL_L[0] * v_BL_L[0] + r_BL_L[1] * v_BL_L[1]) / pow(xy_norm, 3)) /
-        (1 + pow(r_BL_L[2] / xy_norm, 2));
+        (v_BL_L[2] / xy_norm - r_BL_L[2] * (r_BL_L[0] * v_BL_L[0] + r_BL_L[1] * v_BL_L[1]) / pow(xy_norm, 3))
+        / (1 + pow(r_BL_L[2] / xy_norm, 2));
 
     uint64_t within_view = this->checkInstrumentFOV();
 
-    if ((viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0) &&
-        within_view) {
+    if ((viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)
+        && within_view) {
         this->accessMsgBuffer.at(c).hasAccess = 1;
     } else {
         this->accessMsgBuffer.at(c).hasAccess = 0;
@@ -194,8 +191,8 @@ void GroundMapping::WriteMessages(uint64_t CurrentClock) {
     //! - write access message for each spacecraft
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
         this->accessOutMsgs.at(c)->write(this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
-        this->currentGroundStateOutMsgs.at(c)->write(
-            this->currentGroundStateMsgBuffer.at(c), this->moduleID, CurrentClock);
+        this->currentGroundStateOutMsgs.at(c)
+            ->write(this->currentGroundStateMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
 }
 
@@ -210,9 +207,7 @@ void GroundMapping::updateState(uint64_t currentSimNanos) {
     this->updateInertialPositions();
 
     // Loop through each mapping point and perform computations
-    for (long unsigned int c = 0; c < this->mappingPoints.size(); c++) {
-        this->computeAccess(c);
-    }
+    for (long unsigned int c = 0; c < this->mappingPoints.size(); c++) { this->computeAccess(c); }
 
     // Write output messages
     this->WriteMessages(currentSimNanos);

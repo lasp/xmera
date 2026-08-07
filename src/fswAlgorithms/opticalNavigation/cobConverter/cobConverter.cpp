@@ -9,7 +9,7 @@
  * @param radiusObject Object radius in meters (must be > 0).
  * @note The radius is validated with an assertion.
  */
-CobConverter::CobConverter(const PhaseAngleCorrectionMethod method, const double radiusObject)
+CobConverter::CobConverter(PhaseAngleCorrectionMethod const method, double const radiusObject)
     : algorithm(enumMap.at(method), radiusObject) {}
 
 /** @brief Default destructor. */
@@ -31,12 +31,8 @@ void CobConverter::reset(uint64_t currentSimNanos) {
     if (!this->cameraConfigInMsg.isLinked()) {
         throw std::invalid_argument("CobConverter.cameraConfigInMsg wasn't connected.");
     }
-    if (!this->navAttInMsg.isLinked()) {
-        throw std::invalid_argument("CobConverter.navAttInMsg wasn't connected.");
-    }
-    if (!this->sunInMsg.isLinked()) {
-        throw std::invalid_argument("CobConverter.sunInMsg wasn't connected.");
-    }
+    if (!this->navAttInMsg.isLinked()) { throw std::invalid_argument("CobConverter.navAttInMsg wasn't connected."); }
+    if (!this->sunInMsg.isLinked()) { throw std::invalid_argument("CobConverter.sunInMsg wasn't connected."); }
 }
 
 /**
@@ -48,7 +44,7 @@ void CobConverter::reset(uint64_t currentSimNanos) {
  *
  * @param currentSimNanos Current simulation time in nanoseconds.
  */
-void CobConverter::updateState(const uint64_t currentSimNanos) {
+void CobConverter::updateState(uint64_t const currentSimNanos) {
     CameraModelMsgPayload cameraModelInMsg = this->cameraConfigInMsg();
     OpNavCOBMsgPayload cobMsgBuffer = this->opnavCOBInMsg();
     NavAttMsgPayload navAttBuffer = this->navAttInMsg();
@@ -60,8 +56,9 @@ void CobConverter::updateState(const uint64_t currentSimNanos) {
     CobConverterDiagnosticMsgPayload diagnosticMsgBuffer{};
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0) {
-        std::tie(uVecOutMsgBuffer, comMsgBuffer, diagnosticMsgBuffer) = this->algorithm.updateState(
-            currentSimNanos, cameraModelInMsg, cobMsgBuffer, navAttBuffer, sunBuffer, filterMsgBuffer);
+        std::tie(uVecOutMsgBuffer, comMsgBuffer, diagnosticMsgBuffer) =
+            this->algorithm
+                .updateState(currentSimNanos, cameraModelInMsg, cobMsgBuffer, navAttBuffer, sunBuffer, filterMsgBuffer);
     }
 
     this->opnavUnitVecOutMsg.write(uVecOutMsgBuffer, this->moduleID, currentSimNanos);
@@ -73,7 +70,7 @@ void CobConverter::updateState(const uint64_t currentSimNanos) {
  * @brief Set the object radius.
  * @param radius Object radius in meters (must be > 0).
  */
-void CobConverter::setRadius(const double radius) {
+void CobConverter::setRadius(double const radius) {
     assert(radius > 0);
     this->algorithm.setRadius(radius);
 }
@@ -91,7 +88,7 @@ double CobConverter::getRadius() const {
  * @brief Set the object radius uncertainty.
  * @param radiusUncertainty Object radius uncertainty in meters (>= 0).
  */
-void CobConverter::setRadiusUncertainty(const double radiusUncertainty) {
+void CobConverter::setRadiusUncertainty(double const radiusUncertainty) {
     assert(radiusUncertainty >= 0);
     this->algorithm.setRadiusUncertainty(radiusUncertainty);
 }
@@ -100,13 +97,15 @@ void CobConverter::setRadiusUncertainty(const double radiusUncertainty) {
  * @brief Get the object radius uncertainty.
  * @return Object radius uncertainty in meters.
  */
-double CobConverter::getRadiusUncertainty() const { return this->algorithm.getRadiusUncertainty(); }
+double CobConverter::getRadiusUncertainty() const {
+    return this->algorithm.getRadiusUncertainty();
+}
 
 /**
  * @brief Set the attitude error covariance matrix in body frame (for unit vector measurements).
  * @param covAtt_BN_B 3x3 attitude covariance in body frame.
  */
-void CobConverter::setAttitudeCovariance(const Eigen::Matrix3d& covAtt_BN_B) {
+void CobConverter::setAttitudeCovariance(Eigen::Matrix3d const &covAtt_BN_B) {
     this->algorithm.setAttitudeCovariance(covAtt_BN_B);
 }
 
@@ -114,13 +113,15 @@ void CobConverter::setAttitudeCovariance(const Eigen::Matrix3d& covAtt_BN_B) {
  * @brief Get the attitude error covariance matrix in body frame (for unit vector measurements).
  * @return 3x3 attitude covariance in body frame.
  */
-Eigen::Matrix3d CobConverter::getAttitudeCovariance() const { return this->algorithm.getAttitudeCovariance(); }
+Eigen::Matrix3d CobConverter::getAttitudeCovariance() const {
+    return this->algorithm.getAttitudeCovariance();
+}
 
 /**
  * @brief Set the number of standard deviations for outlier gating.
  * @param num Number of sigmas (> 0).
  */
-void CobConverter::setNumStandardDeviations(const double num) {
+void CobConverter::setNumStandardDeviations(double const num) {
     assert(num > 0.0);
     this->algorithm.setNumStandardDeviations(num);
 }
@@ -129,14 +130,16 @@ void CobConverter::setNumStandardDeviations(const double num) {
  * @brief Get the configured number of standard deviations for outlier gating.
  * @return Number of sigmas.
  */
-double CobConverter::getNumStandardDeviations() const { return this->algorithm.getNumStandardDeviations(); }
+double CobConverter::getNumStandardDeviations() const {
+    return this->algorithm.getNumStandardDeviations();
+}
 
 /**
  * @brief Set an explicit standard deviation for the expected COB error.
  * @param num Standard deviation (> 0).
  * @note When set, outlier detection will use this fixed value instead of deriving one.
  */
-void CobConverter::setStandardDeviation(const double num) {
+void CobConverter::setStandardDeviation(double const num) {
     assert(num > 0.0);
     this->algorithm.setStandardDeviation(num);
 }
@@ -145,35 +148,45 @@ void CobConverter::setStandardDeviation(const double num) {
  * @brief Get the explicitly specified standard deviation (if set).
  * @return Standard deviation value.
  */
-double CobConverter::getStandardDeviation() const { return this->algorithm.getStandardDeviation(); }
+double CobConverter::getStandardDeviation() const {
+    return this->algorithm.getStandardDeviation();
+}
 
 /**
  * @brief Determine whether a standard deviation has been explicitly specified.
  * @return True if specified, false otherwise.
  */
-bool CobConverter::isStandardDeviationSpecified() const { return this->algorithm.isStandardDeviationSpecified(); }
+bool CobConverter::isStandardDeviationSpecified() const {
+    return this->algorithm.isStandardDeviationSpecified();
+}
 
 /**
  * @brief Enable COB outlier detection.
  */
-void CobConverter::enableOutlierDetection() { this->algorithm.enableOutlierDetection(); }
+void CobConverter::enableOutlierDetection() {
+    this->algorithm.enableOutlierDetection();
+}
 
 /**
  * @brief Disable COB outlier detection.
  */
-void CobConverter::disableOutlierDetection() { this->algorithm.disableOutlierDetection(); }
+void CobConverter::disableOutlierDetection() {
+    this->algorithm.disableOutlierDetection();
+}
 
 /**
  * @brief Check whether COB outlier detection is enabled.
  * @return True if enabled, false otherwise.
  */
-bool CobConverter::isOutlierDetectionEnabled() const { return this->algorithm.isOutlierDetectionEnabled(); }
+bool CobConverter::isOutlierDetectionEnabled() const {
+    return this->algorithm.isOutlierDetectionEnabled();
+}
 
 /**
  * @brief Set the Brown-Conrady coefficients.
  * @param coefficients CalibrationCoefficients
  */
-void CobConverter::setBrownConradyCoefficients(const CalibrationCoefficients& coefficients) {
+void CobConverter::setBrownConradyCoefficients(CalibrationCoefficients const &coefficients) {
     this->algorithm.setBrownConradyCoefficients(coefficients);
 }
 

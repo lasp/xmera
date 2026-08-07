@@ -16,7 +16,9 @@ RegionsOfInterest::~RegionsOfInterest() = default;
  *
  * @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void RegionsOfInterest::reset(uint64_t currentSimNanos) { this->algorithm.reset(); }
+void RegionsOfInterest::reset(uint64_t currentSimNanos) {
+    this->algorithm.reset();
+}
 
 /**
  * @brief Updates the module state and processes detected regions
@@ -49,14 +51,16 @@ void RegionsOfInterest::updateState(uint64_t currentSimNanos) {
     // Process regions through algorithm
     auto [timeTag, regionCenter, regionSize, centerOfBrightness, numberOfPixels] = this->algorithm.update(regionsInput);
     // Convert result back to message payload format
-    RegionOfInterestMsgPayload regionOutMsgPayload{.timeTag = timeTag,
-                                                   .centerX = regionCenter.x(),
-                                                   .centerY = regionCenter.y(),
-                                                   .width = regionCenter.y(),
-                                                   .height = regionSize.y(),
-                                                   .numberOfPixels = numberOfPixels,
-                                                   .centerOfBrightnessX = centerOfBrightness.x(),
-                                                   .centerOfBrightnessY = centerOfBrightness.y()};
+    RegionOfInterestMsgPayload regionOutMsgPayload{
+        .timeTag = timeTag,
+        .centerX = regionCenter.x(),
+        .centerY = regionCenter.y(),
+        .width = regionCenter.y(),
+        .height = regionSize.y(),
+        .numberOfPixels = numberOfPixels,
+        .centerOfBrightnessX = centerOfBrightness.x(),
+        .centerOfBrightnessY = centerOfBrightness.y()
+    };
 
     // Write output message
     this->regionOutMsg.write(regionOutMsgPayload, this->moduleID, currentSimNanos);
@@ -69,7 +73,7 @@ void RegionsOfInterest::updateState(uint64_t currentSimNanos) {
  *
  * @param pixelSeparation Maximum separation distance in pixels
  */
-void RegionsOfInterest::setMaxRoiSeparation(const int32_t pixelSeparation) {
+void RegionsOfInterest::setMaxRoiSeparation(int32_t const pixelSeparation) {
     this->algorithm.setMaxRoiSeparation(pixelSeparation);
 }
 
@@ -80,7 +84,9 @@ void RegionsOfInterest::setMaxRoiSeparation(const int32_t pixelSeparation) {
  *
  * @return int32_t Maximum separation in pixels
  */
-int32_t RegionsOfInterest::getMaxRoiSeparation() const { return this->algorithm.getMaxRoiSeparation(); }
+int32_t RegionsOfInterest::getMaxRoiSeparation() const {
+    return this->algorithm.getMaxRoiSeparation();
+}
 
 /**
  * @brief Sets the center point of the windowing mask
@@ -90,8 +96,8 @@ int32_t RegionsOfInterest::getMaxRoiSeparation() const { return this->algorithm.
  *
  * @param center Center point coordinates as generic Eigen vector
  */
-void RegionsOfInterest::setWindowCenter(const Eigen::Vector2i& center) {
-    const Eigen::Vector2i windowCenter = {center.x(), center.y()};
+void RegionsOfInterest::setWindowCenter(Eigen::Vector2i const &center) {
+    Eigen::Vector2i const windowCenter = {center.x(), center.y()};
     this->algorithm.setWindowCenter(windowCenter);
 }
 
@@ -117,7 +123,7 @@ Eigen::Vector2i RegionsOfInterest::getWindowCenter() const {
  * @param width Window width in pixels
  * @param height Window height in pixels
  */
-void RegionsOfInterest::setWindowSize(const int32_t width, const int32_t height) {
+void RegionsOfInterest::setWindowSize(int32_t const width, int32_t const height) {
     this->algorithm.setWindowSize(width, height);
 }
 
@@ -143,7 +149,7 @@ Eigen::Vector2i RegionsOfInterest::getWindowSize() const {
  * @param width X pixels
  * @param height Y pixels
  */
-void RegionsOfInterest::setImageSize(const int32_t width, const int32_t height) {
+void RegionsOfInterest::setImageSize(int32_t const width, int32_t const height) {
     this->algorithm.setImageSize(width, height);
 }
 
@@ -152,4 +158,6 @@ void RegionsOfInterest::setImageSize(const int32_t width, const int32_t height) 
  *
  * @return Eigen::Vector2i Image size as (x, y) in pixels
  */
-Eigen::Vector2i RegionsOfInterest::getImageSize() const { return this->algorithm.getImageSize(); }
+Eigen::Vector2i RegionsOfInterest::getImageSize() const {
+    return this->algorithm.getImageSize();
+}

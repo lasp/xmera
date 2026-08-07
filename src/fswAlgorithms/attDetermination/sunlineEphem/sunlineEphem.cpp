@@ -4,7 +4,9 @@
 
 #include "sunlineEphem.h"
 
-SunlineEphem::SunlineEphem() { this->algorithm = SunlineEphemAlgorithm(); }
+SunlineEphem::SunlineEphem() {
+    this->algorithm = SunlineEphemAlgorithm();
+}
 
 void SunlineEphem::reset(uint64_t callTime) {
     assert(this->sunPositionInMsg.isLinked());

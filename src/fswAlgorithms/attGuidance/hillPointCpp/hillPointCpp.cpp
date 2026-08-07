@@ -2,6 +2,7 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "hillPointCpp.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
@@ -23,26 +24,28 @@ void HillPointCpp::updateState(uint64_t currentSimNanos) {
 
     /* zero the local planet ephemeris message */
     EphemerisMsgPayload primPlanet = EphemerisMsgPayload(); /* zero'd as default, even if not connected */
-    if (this->planetMsgIsLinked) {
-        primPlanet = this->celBodyInMsg();
-    }
+    if (this->planetMsgIsLinked) { primPlanet = this->celBodyInMsg(); }
     NavTransMsgPayload navData = this->transNavInMsg();
 
     /*! - Compute and store output message */
-    computeHillPointingReference((Eigen::Vector3d)navData.r_BN_N,
-                                 (Eigen::Vector3d)navData.v_BN_N,
-                                 (Eigen::Vector3d)primPlanet.r_BdyZero_N,
-                                 (Eigen::Vector3d)primPlanet.v_BdyZero_N,
-                                 &AttRefOutBuffer);
+    computeHillPointingReference(
+        (Eigen::Vector3d) navData.r_BN_N,
+        (Eigen::Vector3d) navData.v_BN_N,
+        (Eigen::Vector3d) primPlanet.r_BdyZero_N,
+        (Eigen::Vector3d) primPlanet.v_BdyZero_N,
+        &AttRefOutBuffer
+    );
 
     this->attRefOutMsg.write(AttRefOutBuffer, moduleID, currentSimNanos);
 }
 
-void HillPointCpp::computeHillPointingReference(Eigen::Vector3d r_BN_N,
-                                                Eigen::Vector3d v_BN_N,
-                                                Eigen::Vector3d celBdyPositonVector,
-                                                Eigen::Vector3d celBdyVelocityVector,
-                                                AttRefMsgPayload* attRefOut) {
+void HillPointCpp::computeHillPointingReference(
+    Eigen::Vector3d r_BN_N,
+    Eigen::Vector3d v_BN_N,
+    Eigen::Vector3d celBdyPositonVector,
+    Eigen::Vector3d celBdyVelocityVector,
+    AttRefMsgPayload* attRefOut
+) {
     /*! - Compute relative position and velocity of the spacecraft with respect to the main celestial body */
     Eigen::Vector3d relPosVector = r_BN_N - celBdyPositonVector;
     Eigen::Vector3d relVelVector = v_BN_N - celBdyVelocityVector;
@@ -79,9 +82,15 @@ void HillPointCpp::computeHillPointingReference(Eigen::Vector3d r_BN_N,
     }
 
     Eigen::Vector3d omega_RN_R = {
-        0.0, 0.0, dfdt}; /* reference angular velocity vector in Reference frame R components */
+        0.0,
+        0.0,
+        dfdt
+    }; /* reference angular velocity vector in Reference frame R components */
     Eigen::Vector3d domega_RN_R = {
-        0.0, 0.0, ddfdt2}; /* reference angular acceleration vector in Reference frame R components */
+        0.0,
+        0.0,
+        ddfdt2
+    }; /* reference angular acceleration vector in Reference frame R components */
 
     Eigen::Vector3d temp = dcm_RN.transpose() * omega_RN_R;
     eigenVectorToCArray(temp, attRefOut->omega_RN_N);

@@ -2,13 +2,17 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "lambertPlanner.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <array>
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-LambertPlanner::LambertPlanner() { this->useSolverIzzoMethod(); }
+LambertPlanner::LambertPlanner() {
+    this->useSolverIzzoMethod();
+}
 
 /*! Module Destructor */
 LambertPlanner::~LambertPlanner() = default;
@@ -24,12 +28,12 @@ void LambertPlanner::reset(uint64_t currentSimNanos) {
     }
 
     // check that the provided input module parameters are valid
-    if (this->mu < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "lambertPlanner: mu must be positive.");
-    }
+    if (this->mu < 0.0) { bskLogger.bskLog(BSK_ERROR, "lambertPlanner: mu must be positive."); }
     if (this->finalTime - this->maneuverTime < 0.0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime."
+        );
     }
 }
 
@@ -69,12 +73,16 @@ void LambertPlanner::updateState(uint64_t currentSimNanos) {
 /*! This method sets the lambert solver algorithm that should be used to the method by Izzo.
     @return void
 */
-void LambertPlanner::useSolverIzzoMethod() { this->solverMethod = IZZO; }
+void LambertPlanner::useSolverIzzoMethod() {
+    this->solverMethod = IZZO;
+}
 
 /*! This method sets the lambert solver algorithm that should be used to the method by Gooding.
     @return void
 */
-void LambertPlanner::useSolverGoodingMethod() { this->solverMethod = GOODING; }
+void LambertPlanner::useSolverGoodingMethod() {
+    this->solverMethod = GOODING;
+}
 
 /*! This method reads the input messages each call of updateState.
     It also checks if the message contents are valid for this module.
@@ -120,10 +128,11 @@ void LambertPlanner::writeMessages(uint64_t currentSimNanos) {
     @return std::pair<std::vector<double>, std::vector<Eigen::VectorXd>>
 */
 std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertPlanner::propagate(
-    const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &EOM,
     std::array<double, 2> interval,
-    const Eigen::VectorXd& X0,
-    double dt) {
+    Eigen::VectorXd const &X0,
+    double dt
+) {
     double t0 = interval[0];
     double tf = interval[1];
 
@@ -135,9 +144,7 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertPlanner::pro
     for (int c = 0; c < N; c++) {
         double step = std::min(dt, abs(tf - t.at(c)));  // for last time step, step size might be smaller than dt
         // special case for backwards propagation
-        if (tf < t0) {
-            step = -step;
-        }
+        if (tf < t0) { step = -step; }
 
         Eigen::VectorXd Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
         double tnew = t.at(c) + step;
@@ -157,10 +164,12 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertPlanner::pro
     @param dt time step
     @return Eigen::VectorXd
 */
-Eigen::VectorXd LambertPlanner::RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                                    const Eigen::VectorXd& X0,
-                                    double t0,
-                                    double dt) {
+Eigen::VectorXd LambertPlanner::RK4(
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &ODEfunction,
+    Eigen::VectorXd const &X0,
+    double t0,
+    double dt
+) {
     double h = dt;
 
     Eigen::VectorXd k1 = ODEfunction(t0, X0);

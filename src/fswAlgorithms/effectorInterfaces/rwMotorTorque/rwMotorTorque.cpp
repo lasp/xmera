@@ -65,11 +65,13 @@ void RwMotorTorque::updateState(uint64_t callTime) {
  @return void
  @param controlMappingMatrix Known external torque expressed in body frame components
 */
-void RwMotorTorque::setControlAxes(const Eigen::Matrix3d& controlMappingMatrix) {
+void RwMotorTorque::setControlAxes(Eigen::Matrix3d const &controlMappingMatrix) {
     this->algorithm.setControlAxes(controlMappingMatrix);
 }
 
 /*! Getter method for the control axes mapping matrix CB.
  @return const Eigen::Matrix3d
 */
-Eigen::Matrix3d RwMotorTorque::getControlAxes() const { return this->algorithm.getControlAxes(); }
+Eigen::Matrix3d RwMotorTorque::getControlAxes() const {
+    return this->algorithm.getControlAxes();
+}

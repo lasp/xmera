@@ -3,14 +3,20 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "orbElemConvert.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <iostream>
 
 //! The constructor.  Note that you may want to overwrite the message names.
-OrbElemConvert::OrbElemConvert() { return; }
+OrbElemConvert::OrbElemConvert() {
+    return;
+}
 
 //! The destructor.  So tired of typing this.
-OrbElemConvert::~OrbElemConvert() { return; }
+OrbElemConvert::~OrbElemConvert() {
+    return;
+}
 
 /*! This method is used to reset the module.
  @return void
@@ -27,15 +33,9 @@ void OrbElemConvert::reset(uint64_t currentSimNanos) {
     numOutputs += this->spiceStateOutMsg.isLinked();
     numOutputs += this->elemOutMsg.isLinked();
 
-    if (numInputs == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No input message was connected.");
-    }
-    if (numOutputs == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No output message was connected.");
-    }
-    if (numInputs > 1) {
-        bskLogger.bskLog(BSK_ERROR, "Found %d input messages.  There can be only one.", numInputs);
-    }
+    if (numInputs == 0) { bskLogger.bskLog(BSK_ERROR, "No input message was connected."); }
+    if (numOutputs == 0) { bskLogger.bskLog(BSK_ERROR, "No output message was connected."); }
+    if (numInputs > 1) { bskLogger.bskLog(BSK_ERROR, "Found %d input messages.  There can be only one.", numInputs); }
 }
 
 /*! This method writes the output data out into the messaging system.  It does
@@ -78,12 +78,16 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock) {
 /*! The name kind of says it all right?  Converts CurrentElem to pos/vel.
  @return void
  */
-void OrbElemConvert::Elements2Cartesian() { elem2rv(mu, &CurrentElem, r_N, v_N); }
+void OrbElemConvert::Elements2Cartesian() {
+    elem2rv(mu, &CurrentElem, r_N, v_N);
+}
 
 /*! The name kind of says it all right?  Converts pos/vel to CurrentElem.
  @return void
  */
-void OrbElemConvert::Cartesian2Elements() { rv2elem(mu, r_N, v_N, &CurrentElem); }
+void OrbElemConvert::Cartesian2Elements() {
+    rv2elem(mu, r_N, v_N, &CurrentElem);
+}
 
 /*! This method reads the input message in from the system and sets the
  appropriate parameters based on which direction the module is running

@@ -2,9 +2,10 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 
 #include "thrFiringRemainder_C.h"
+
 #include "thrFiringRemainderAlgorithm_C.h"
 
-void ThrFiringRemainder_C::reset(const uint64_t callTime) {
+void ThrFiringRemainder_C::reset(uint64_t const callTime) {
     // check if the required input messages are included
     if (!this->thrConfInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: thrFiringRemainder.thrConfInMsg wasn't connected.");
@@ -14,12 +15,12 @@ void ThrFiringRemainder_C::reset(const uint64_t callTime) {
     }
 
     /*! - read in the support messages */
-    const THRArrayConfigMsgPayload localThrusterData = this->thrConfInMsg();
+    THRArrayConfigMsgPayload const localThrusterData = this->thrConfInMsg();
     ::reset(&this->algorithmState, localThrusterData);
 }
 
 void ThrFiringRemainder_C::updateState(uint64_t callTime) {
-    const THRArrayCmdForceMsgPayload thrForceIn = this->thrForceInMsg();
+    THRArrayCmdForceMsgPayload const thrForceIn = this->thrForceInMsg();
 
     THRArrayOnTimeCmdMsgPayload thrOnTimeOut = ::updateState(&this->algorithmState, callTime, thrForceIn);
 
@@ -30,37 +31,43 @@ void ThrFiringRemainder_C::updateState(uint64_t callTime) {
  @return void
  @param thrMinFireTime
 */
-void ThrFiringRemainder_C::setThrMinFireTime(const double thrMinFireTime) {
+void ThrFiringRemainder_C::setThrMinFireTime(double const thrMinFireTime) {
     this->algorithmState.thrMinFireTime = thrMinFireTime;
 }
 
 /*! Getter method for thrMinFireTime.
  @return const double
 */
-double ThrFiringRemainder_C::getThrMinFireTime() const { return this->algorithmState.thrMinFireTime; }
+double ThrFiringRemainder_C::getThrMinFireTime() const {
+    return this->algorithmState.thrMinFireTime;
+}
 
 /*! Setter method for baseThrustState.
  @return void
  @param baseThrustState
 */
-void ThrFiringRemainder_C::setBaseThrustState(const int baseThrustState) {
+void ThrFiringRemainder_C::setBaseThrustState(int const baseThrustState) {
     this->algorithmState.baseThrustState = baseThrustState;
 }
 
 /*! Getter method for baseThrustState.
  @return const int
 */
-int ThrFiringRemainder_C::getBaseThrustState() const { return this->algorithmState.baseThrustState; }
+int ThrFiringRemainder_C::getBaseThrustState() const {
+    return this->algorithmState.baseThrustState;
+}
 
 /*! Setter method for defaultControlPeriod.
  @return void
  @param defaultControlPeriod
 */
-void ThrFiringRemainder_C::setDefaultControlPeriod(const double defaultControlPeriod) {
+void ThrFiringRemainder_C::setDefaultControlPeriod(double const defaultControlPeriod) {
     this->algorithmState.defaultControlPeriod = defaultControlPeriod;
 }
 
 /*! Getter method for defaultControlPeriod.
  @return const double
 */
-double ThrFiringRemainder_C::getDefaultControlPeriod() const { return this->algorithmState.defaultControlPeriod; }
+double ThrFiringRemainder_C::getDefaultControlPeriod() const {
+    return this->algorithmState.defaultControlPeriod;
+}

@@ -9,7 +9,9 @@
 
 /* modify the path to reflect the new module names */
 #include "rwConfigData.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <string.h>
 
 /*
@@ -29,9 +31,7 @@ void RwConfig::reset(uint64_t callTime) {
         {}; /*!< struct to populate input RW config parameters in structural S frame */
     RWArrayConfigMsgPayload rwConfigParamsOut =
         {}; /*!< struct to populate ouput RW config parameters in body B frame */
-    if (this->rwConstellationInMsg.isLinked()) {
-        rwConstellation = this->rwConstellationInMsg();
-    }
+    if (this->rwConstellationInMsg.isLinked()) { rwConstellation = this->rwConstellationInMsg(); }
     rwConfigParamsOut.numRW = rwConstellation.numRW;
 
     for (i = 0; i < rwConfigParamsOut.numRW; i = i + 1) {

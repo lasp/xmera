@@ -14,16 +14,17 @@ void FlybyODuKF::customreset() {
     /*! - Initialize filter parameters and change units to km and s */
     this->muCentral *= pow(this->unitConversion, 3);  // mu is input in meters
     double centralBody = this->muCentral;
-    std::function<FilterStateVector(double, const FilterStateVector)> twoBodyDynamics =
-        [centralBody](double t, const FilterStateVector& state) {
+    std::function<FilterStateVector(double, FilterStateVector const)> twoBodyDynamics =
+        [centralBody](double t, FilterStateVector const &state) {
             FilterStateVector XDot;
             /*! Implement propagation with rate derivatives set to zero */
             /*! Implement point mass gravity for the propagation */
             PositionState flybyPosition;
             VelocityState flybyVelocity;
             flybyPosition.setValues(state.getVelocityStates());
-            flybyVelocity.setValues(-centralBody / pow(state.getPositionStates().norm(), 3) *
-                                    state.getPositionStates());
+            flybyVelocity.setValues(
+                -centralBody / pow(state.getPositionStates().norm(), 3) * state.getPositionStates()
+            );
 
             XDot.setPosition(flybyPosition);
             XDot.setVelocity(flybyVelocity);
@@ -87,10 +88,14 @@ void FlybyODuKF::readFilterMeasurements() {
         /*! - Read measurement and cholesky decomposition its noise*/
         headingMeasurement.setObservation(cArrayToEigenVector(this->opNavHeadingBuffer.rhat_BN_N));
         headingMeasurement.getObservation().normalize();
-        headingMeasurement.setMeasurementNoise(this->measNoiseScaling *
-                                               cArrayToEigenMatrixX(this->opNavHeadingBuffer.covar_N,
-                                                                    (int)headingMeasurement.size(),
-                                                                    (int)headingMeasurement.size()));
+        headingMeasurement.setMeasurementNoise(
+            this->measNoiseScaling
+            * cArrayToEigenMatrixX(
+                this->opNavHeadingBuffer.covar_N,
+                (int) headingMeasurement.size(),
+                (int) headingMeasurement.size()
+            )
+        );
         headingMeasurement.setMeasurementModel(MeasurementModel::normalizedPositionStates);
         this->measurements[0] = headingMeasurement;
     }
@@ -100,9 +105,13 @@ void FlybyODuKF::readFilterMeasurements() {
     @param double muInput
     @return void
     */
-void FlybyODuKF::setCentralBodyGravitationParameter(const double muInput) { this->muCentral = muInput; }
+void FlybyODuKF::setCentralBodyGravitationParameter(double const muInput) {
+    this->muCentral = muInput;
+}
 
 /*! Get gravitational parameter used for orbit propagation
     @return double muCentral
     */
-double FlybyODuKF::getCentralBodyGravitationParameter() const { return this->muCentral; }
+double FlybyODuKF::getCentralBodyGravitationParameter() const {
+    return this->muCentral;
+}

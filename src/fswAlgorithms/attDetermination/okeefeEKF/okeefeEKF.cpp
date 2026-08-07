@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "okeefeEKF.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/safeMath.h>
+
 #include <string.h>
 
 /*! This method resets the sunline attitude filter to an initial state and
@@ -31,9 +33,11 @@ void OkeefeEKF::reset(uint64_t callTime) {
     /*! - Read in coarse sun sensor configuration information.*/
     cssConfigInBuffer = this->cssConfigInMsg();
     if (cssConfigInBuffer.nCSS > MAX_N_CSS_MEAS) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "okeefeEKF.cssConfigInMsg.nCSS must not be greater than "
-                               "MAX_N_CSS_MEAS value.");
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "okeefeEKF.cssConfigInMsg.nCSS must not be greater than "
+            "MAX_N_CSS_MEAS value."
+        );
     }
 
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
@@ -105,8 +109,8 @@ void OkeefeEKF::updateState(uint64_t callTime) {
     }
 
     /* Compute post fit residuals once that data has been processed */
-    mMultM(this->measMat, (size_t)this->numObs, SKF_N_STATES, this->x, SKF_N_STATES, 1, Hx);
-    mSubtract(this->yMeas, (size_t)this->numObs, 1, Hx, this->postFits);
+    mMultM(this->measMat, (size_t) this->numObs, SKF_N_STATES, this->x, SKF_N_STATES, 1, Hx);
+    mSubtract(this->yMeas, (size_t) this->numObs, 1, Hx, this->postFits);
 
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
     v3Copy(this->state, this->outputSunline.vehSunPntBdy);
@@ -116,7 +120,7 @@ void OkeefeEKF::updateState(uint64_t callTime) {
 
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = this->timeTag;
-    sunlineDataOutBuffer.numObs = (int)this->numObs;
+    sunlineDataOutBuffer.numObs = (int) this->numObs;
     memmove(sunlineDataOutBuffer.covar, this->covar, SKF_N_STATES_HALF * SKF_N_STATES_HALF * sizeof(double));
     memmove(sunlineDataOutBuffer.state, this->state, SKF_N_STATES * sizeof(double));
     memmove(sunlineDataOutBuffer.stateError, this->x, SKF_N_STATES * sizeof(double));
@@ -151,20 +155,32 @@ void OkeefeEKF::sunlineTimeUpdate(double updateTime) {
     /*Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T*/
     mTranspose(this->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, stmT);
     mMultM(this->covar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, stmT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covPhiT);
-    mMultM(this->stateTransition,
-           SKF_N_STATES_HALF,
-           SKF_N_STATES_HALF,
-           covPhiT,
-           SKF_N_STATES_HALF,
-           SKF_N_STATES_HALF,
-           this->covarBar);
+    mMultM(
+        this->stateTransition,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        covPhiT,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        this->covarBar
+    );
 
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
     double Gamma[3][3] = {
-        {this->dt * this->dt / 2, 0, 0}, {0, this->dt * this->dt / 2, 0}, {0, 0, this->dt * this->dt / 2}};
+        {this->dt * this->dt / 2, 0, 0},
+        {0, this->dt * this->dt / 2, 0},
+        {0, 0, this->dt * this->dt / 2}
+    };
 
     mMultMt(
-        this->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES_HALF, SKF_N_STATES_HALF, qGammaT);
+        this->procNoise,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        Gamma,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        qGammaT
+    );
     mMultM(Gamma, SKF_N_STATES_HALF, SKF_N_STATES_HALF, qGammaT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, gammaQGammaT);
     mAdd(this->covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, gammaQGammaT, this->covarBar);
 
@@ -179,21 +195,23 @@ void OkeefeEKF::sunlineTimeUpdate(double updateTime) {
  */
 void OkeefeEKF::sunlineMeasUpdate(double updateTime) {
     /*! - Compute the valid observations and the measurement model for all observations*/
-    int numObsInt = (int)this->numObs;
-    sunlineHMatrixYMeas(this->state,
-                        this->numCSSTotal,
-                        this->cssSensorInBuffer.CosValue,
-                        this->sensorUseThresh,
-                        this->cssNHat_B,
-                        this->CBias,
-                        this->obs,
-                        this->yMeas,
-                        &(numObsInt),
-                        this->measMat);
-    this->numObs = (size_t)numObsInt;
+    int numObsInt = (int) this->numObs;
+    sunlineHMatrixYMeas(
+        this->state,
+        this->numCSSTotal,
+        this->cssSensorInBuffer.CosValue,
+        this->sensorUseThresh,
+        this->cssNHat_B,
+        this->CBias,
+        this->obs,
+        this->yMeas,
+        &(numObsInt),
+        this->measMat
+    );
+    this->numObs = (size_t) numObsInt;
 
     /*! - Compute the Kalman Gain. */
-    sunlineKalmanGainOkeefe(this->covarBar, this->measMat, this->qObsVal, (int)this->numObs, this->kalmanGain);
+    sunlineKalmanGainOkeefe(this->covarBar, this->measMat, this->qObsVal, (int) this->numObs, this->kalmanGain);
 
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead
      * to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance,
@@ -201,27 +219,31 @@ void OkeefeEKF::sunlineMeasUpdate(double updateTime) {
 
     if (vMaxAbs(this->covar, SKF_N_STATES_HALF * SKF_N_STATES_HALF) > this->eKFSwitch) {
         /*! - Compute the update with a CKF */
-        sunlineCKFUpdateOkeefe(this->xBar,
-                               this->kalmanGain,
-                               this->covarBar,
-                               this->qObsVal,
-                               (int)this->numObs,
-                               this->yMeas,
-                               this->measMat,
-                               this->x,
-                               this->covar);
+        sunlineCKFUpdateOkeefe(
+            this->xBar,
+            this->kalmanGain,
+            this->covarBar,
+            this->qObsVal,
+            (int) this->numObs,
+            this->yMeas,
+            this->measMat,
+            this->x,
+            this->covar
+        );
     } else {
         /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by
          * the filter update */
-        okeefeEKFUpdate(this->kalmanGain,
-                        this->covarBar,
-                        this->qObsVal,
-                        (int)this->numObs,
-                        this->yMeas,
-                        this->measMat,
-                        this->state,
-                        this->x,
-                        this->covar);
+        okeefeEKFUpdate(
+            this->kalmanGain,
+            this->covarBar,
+            this->qObsVal,
+            (int) this->numObs,
+            this->yMeas,
+            this->measMat,
+            this->state,
+            this->x,
+            this->covar
+        );
     }
 }
 
@@ -232,18 +254,18 @@ void OkeefeEKF::sunlineMeasUpdate(double updateTime) {
     @param prev_states The states saved from previous step for this purpose
     @param omega Pointer to the rotation rate
  */
-void sunlineRateCompute(double states[SKF_N_STATES_HALF],
-                        double dt,
-                        double prev_states[SKF_N_STATES_HALF],
-                        double* omega) {
+void sunlineRateCompute(
+    double states[SKF_N_STATES_HALF],
+    double dt,
+    double prev_states[SKF_N_STATES_HALF],
+    double* omega
+) {
     double dk_dot_dkmin1_normal, dk_cross_dkmin1_normal[SKF_N_STATES_HALF];
     double dk_hat[SKF_N_STATES_HALF], dkmin1_hat[SKF_N_STATES_HALF];
 
     if (dt < 1E-10) {
         v3SetZero(omega);
-    }
-
-    else {
+    } else {
         if (v3IsZero(prev_states, 1E-10)) {
             v3SetZero(omega);
         } else {
@@ -285,12 +307,14 @@ void sunlineRateCompute(double states[SKF_N_STATES_HALF],
     @param prevstates pointer to previous states
     @param stateTransition pointer to state transition matrix
  */
-void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
-                         double dt,
-                         double omega[SKF_N_STATES_HALF],
-                         double* stateInOut,
-                         double* prevstates,
-                         double* stateTransition) {
+void sunlineStateSTMProp(
+    double dynMat[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
+    double dt,
+    double omega[SKF_N_STATES_HALF],
+    double* stateInOut,
+    double* prevstates,
+    double* stateTransition
+) {
     double propagatedVel[SKF_N_STATES_HALF];
     double omegaCrossd[SKF_N_STATES_HALF];
     double deltatASTM[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
@@ -351,22 +375,24 @@ void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double* 
  @param covar Pointer to the covariance after update
  */
 
-void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
-                            double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
-                            double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
-                            double qObsVal,
-                            int numObsInt,
-                            double yObs[MAX_N_CSS_MEAS],
-                            double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                            double* x,
-                            double* covar) {
+void sunlineCKFUpdateOkeefe(
+    double xBar[SKF_N_STATES_HALF],
+    double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
+    double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
+    double qObsVal,
+    int numObsInt,
+    double yObs[MAX_N_CSS_MEAS],
+    double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
+    double* x,
+    double* covar
+) {
     double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[SKF_N_STATES_HALF];
     double eye[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kH[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double eyeKalH[SKF_N_STATES_HALF * SKF_N_STATES_HALF], eyeKalHT[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double eyeKalHCovarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kalR[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];
     double kalT[MAX_N_CSS_MEAS * SKF_N_STATES_HALF], kalRKalT[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double noiseMat[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];
-    size_t numObs = (size_t)numObsInt;
+    size_t numObs = (size_t) numObsInt;
 
     /* Set variables to zero */
     mSetZero(kH, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
@@ -395,9 +421,23 @@ void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
     mSubtract(eye, SKF_N_STATES_HALF, SKF_N_STATES_HALF, kH, eyeKalH);
     mTranspose(eyeKalH, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHT);
     mMultM(
-        eyeKalH, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHCovarBar);
+        eyeKalH,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        covarBar,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        eyeKalHCovarBar
+    );
     mMultM(
-        eyeKalHCovarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covar);
+        eyeKalHCovarBar,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        eyeKalHT,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        covar
+    );
 
     /* Add noise to the covariance*/
     mMultM(kalmanGain, SKF_N_STATES_HALF, numObs, noiseMat, numObs, numObs, kalR);
@@ -418,21 +458,23 @@ void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
  @param x Pointer to the state error for modification
  @param covar Pointer to the covariance after update
  */
-void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
-                     double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
-                     double qObsVal,
-                     int numObsInt,
-                     double yObs[MAX_N_CSS_MEAS],
-                     double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                     double* states,
-                     double* x,
-                     double* covar) {
+void okeefeEKFUpdate(
+    double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
+    double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
+    double qObsVal,
+    int numObsInt,
+    double yObs[MAX_N_CSS_MEAS],
+    double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
+    double* states,
+    double* x,
+    double* covar
+) {
     double eye[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kH[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double eyeKalH[SKF_N_STATES_HALF * SKF_N_STATES_HALF], eyeKalHT[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double eyeKalHCovarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kalR[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];
     double kalT[MAX_N_CSS_MEAS * SKF_N_STATES_HALF], kalRKalT[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double noiseMat[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];
-    size_t numObs = (size_t)numObsInt;
+    size_t numObs = (size_t) numObsInt;
 
     /* Set variables to zero */
     mSetZero(kH, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
@@ -461,14 +503,28 @@ void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
     mSubtract(eye, SKF_N_STATES_HALF, SKF_N_STATES_HALF, kH, eyeKalH);
     mTranspose(eyeKalH, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHT);
     mMultM(
-        eyeKalH, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHCovarBar);
+        eyeKalH,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        covarBar,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        eyeKalHCovarBar
+    );
     mMultM(
-        eyeKalHCovarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, eyeKalHT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covar);
+        eyeKalHCovarBar,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        eyeKalHT,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        covar
+    );
 
     /* Add noise to the covariance*/
-    mMultM(kalmanGain, SKF_N_STATES_HALF, numObs, noiseMat, (size_t)numObs, (size_t)numObs, kalR);
-    mTranspose(kalmanGain, SKF_N_STATES_HALF, (size_t)numObs, kalT);
-    mMultM(kalR, SKF_N_STATES_HALF, (size_t)numObs, kalT, (size_t)numObs, SKF_N_STATES_HALF, kalRKalT);
+    mMultM(kalmanGain, SKF_N_STATES_HALF, numObs, noiseMat, (size_t) numObs, (size_t) numObs, kalR);
+    mTranspose(kalmanGain, SKF_N_STATES_HALF, (size_t) numObs, kalT);
+    mMultM(kalR, SKF_N_STATES_HALF, (size_t) numObs, kalT, (size_t) numObs, SKF_N_STATES_HALF, kalRKalT);
     mAdd(covar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, kalRKalT, covar);
 }
 
@@ -488,16 +544,18 @@ void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
  @param CBias Vector of biases
  */
 
-void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
-                         size_t numCSS,
-                         double cssSensorCos[MAX_N_CSS_MEAS],
-                         double sensorUseThresh,
-                         double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
-                         double CBias[MAX_NUM_CSS_SENSORS],
-                         double* obs,
-                         double* yMeas,
-                         int* numObs,
-                         double* measMat) {
+void sunlineHMatrixYMeas(
+    double states[SKF_N_STATES_HALF],
+    size_t numCSS,
+    double cssSensorCos[MAX_N_CSS_MEAS],
+    double sensorUseThresh,
+    double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
+    double CBias[MAX_NUM_CSS_SENSORS],
+    double* obs,
+    double* yMeas,
+    int* numObs,
+    double* measMat
+) {
     uint32_t i, obsCounter;
     double sensorNormal[3];
 
@@ -517,7 +575,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
             obsCounter++;
         }
     }
-    *numObs = (int)obsCounter;
+    *numObs = (int) obsCounter;
 }
 
 /*! This method computes the Kalman gain given the measurements.
@@ -529,17 +587,19 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
  @param kalmanGain Pointer to the Kalman Gain
  */
 
-void sunlineKalmanGainOkeefe(double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
-                             double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                             double qObsVal,
-                             int numObsInt,
-                             double* kalmanGain) {
+void sunlineKalmanGainOkeefe(
+    double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
+    double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
+    double qObsVal,
+    int numObsInt,
+    double* kalmanGain
+) {
     double hObsT[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];
     double covHT[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];
     double hCovar[MAX_N_CSS_MEAS * SKF_N_STATES_HALF], hCovarHT[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];
     double rMat[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];
     size_t numObs;
-    numObs = (size_t)numObsInt;
+    numObs = (size_t) numObsInt;
 
     /* Setting all local variables to zero */
     mSetZero(hObsT, SKF_N_STATES_HALF, MAX_N_CSS_MEAS);
@@ -548,20 +608,20 @@ void sunlineKalmanGainOkeefe(double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HA
     mSetZero(hCovarHT, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
     mSetZero(rMat, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
 
-    mTranspose(hObs, (size_t)numObs, SKF_N_STATES_HALF, hObsT);
+    mTranspose(hObs, (size_t) numObs, SKF_N_STATES_HALF, hObsT);
 
-    mMultM(covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, hObsT, SKF_N_STATES_HALF, (size_t)numObs, covHT);
-    mMultM(hObs, (size_t)numObs, SKF_N_STATES_HALF, covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, hCovar);
-    mMultM(hCovar, (size_t)numObs, SKF_N_STATES_HALF, hObsT, SKF_N_STATES_HALF, (size_t)numObs, hCovarHT);
+    mMultM(covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, hObsT, SKF_N_STATES_HALF, (size_t) numObs, covHT);
+    mMultM(hObs, (size_t) numObs, SKF_N_STATES_HALF, covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, hCovar);
+    mMultM(hCovar, (size_t) numObs, SKF_N_STATES_HALF, hObsT, SKF_N_STATES_HALF, (size_t) numObs, hCovarHT);
 
-    mSetIdentity(rMat, (size_t)numObs, (size_t)numObs);
-    mScale(qObsVal, rMat, (size_t)numObs, (size_t)numObs, rMat);
+    mSetIdentity(rMat, (size_t) numObs, (size_t) numObs);
+    mScale(qObsVal, rMat, (size_t) numObs, (size_t) numObs, rMat);
 
     /*! - Add measurement noise */
-    mAdd(hCovarHT, (size_t)numObs, (size_t)numObs, rMat, hCovarHT);
+    mAdd(hCovarHT, (size_t) numObs, (size_t) numObs, rMat, hCovarHT);
 
     /*! - Invert the previous matrix */
-    mInverse(hCovarHT, (size_t)numObs, hCovarHT);
+    mInverse(hCovarHT, (size_t) numObs, hCovarHT);
 
     /*! - Compute the Kalman Gain */
     mMultM(covHT, SKF_N_STATES_HALF, numObs, hCovarHT, numObs, numObs, kalmanGain);

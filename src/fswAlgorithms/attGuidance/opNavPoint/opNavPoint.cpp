@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "opNavPoint.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
@@ -31,12 +32,14 @@ void OpNavPoint::reset(uint64_t callTime) {
     /* compute an Eigen axis orthogonal to alignAxis_C */
     if (v3Norm(this->alignAxis_C) < 0.1) {
         char info[MAX_LOGGING_LENGTH];
-        snprintf(info,
-                 sizeof(info),
-                 "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
-                 this->alignAxis_C[0],
-                 this->alignAxis_C[1],
-                 this->alignAxis_C[2]);
+        snprintf(
+            info,
+            sizeof(info),
+            "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
+            this->alignAxis_C[0],
+            this->alignAxis_C[1],
+            this->alignAxis_C[2]
+        );
         this->bskLogger.bskLog(BSK_ERROR, info);
     } else {
         v3Set(1., 0., 0., v1);

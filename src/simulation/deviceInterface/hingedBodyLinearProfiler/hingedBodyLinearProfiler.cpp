@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "hingedBodyLinearProfiler.h"
+
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable

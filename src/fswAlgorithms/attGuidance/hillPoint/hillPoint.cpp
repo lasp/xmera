@@ -8,17 +8,20 @@
  */
 
 #include "hillPoint.h"
+
 #include <string.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
-static void computeHillPointingReference(double r_BN_N[3],
-                                         double v_BN_N[3],
-                                         double celBdyPositonVector[3],
-                                         double celBdyVelocityVector[3],
-                                         AttRefMsgPayload* attRefOut) {
+static void computeHillPointingReference(
+    double r_BN_N[3],
+    double v_BN_N[3],
+    double celBdyPositonVector[3],
+    double celBdyVelocityVector[3],
+    AttRefMsgPayload* attRefOut
+) {
     double relPosVector[3];
     double relVelVector[3];
     double dcm_RN[3][3]; /* DCM from inertial to reference frame */
@@ -92,14 +95,17 @@ void HillPoint::updateState(uint64_t callTime) {
     EphemerisMsgPayload primPlanet = {};
     AttRefMsgPayload attRefOut = {};
 
-    if (this->planetMsgIsLinked) {
-        primPlanet = this->celBodyInMsg();
-    }
+    if (this->planetMsgIsLinked) { primPlanet = this->celBodyInMsg(); }
     navData = this->transNavInMsg();
 
     /*! - Compute and store output message */
     computeHillPointingReference(
-        navData.r_BN_N, navData.v_BN_N, primPlanet.r_BdyZero_N, primPlanet.v_BdyZero_N, &attRefOut);
+        navData.r_BN_N,
+        navData.v_BN_N,
+        primPlanet.r_BdyZero_N,
+        primPlanet.v_BdyZero_N,
+        &attRefOut
+    );
 
     this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 

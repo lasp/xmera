@@ -2,6 +2,7 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "visualOdometry.h"
+
 #include <cmath>
 
 VisualOdometry::VisualOdometry() = default;
@@ -127,11 +128,13 @@ void VisualOdometry::computeAframeDCM() {
 */
 void VisualOdometry::computeSampsonPartials(int i) {
     this->dhdu_firstImage.push_back(
-        -eigenTilde(this->cameraCalibrationMatrixInverse * this->pixelCoord_secondImage.col(i)) * this->CkCkmin1 *
-        this->cameraCalibrationMatrixInverse);
+        -eigenTilde(this->cameraCalibrationMatrixInverse * this->pixelCoord_secondImage.col(i)) * this->CkCkmin1
+        * this->cameraCalibrationMatrixInverse
+    );
     this->dhdu_secondImage.push_back(
-        eigenTilde(this->CkCkmin1 * this->cameraCalibrationMatrixInverse * this->pixelCoord_firstImage.col(i)) *
-        this->cameraCalibrationMatrixInverse);
+        eigenTilde(this->CkCkmin1 * this->cameraCalibrationMatrixInverse * this->pixelCoord_firstImage.col(i))
+        * this->cameraCalibrationMatrixInverse
+    );
 }
 
 /*! Compute the Gamma for each feature pair, equation 69 in the reference document
@@ -159,8 +162,10 @@ void VisualOdometry::computeGammas(int i) {
       @return void
 */
 void VisualOdometry::computeKsis(int i) {
-    this->ksis.push_back(this->dhdu_firstImage[i] * this->R_uv * this->dhdu_firstImage[i].transpose() +
-                         this->dhdu_secondImage[i] * this->R_uv * this->dhdu_secondImage[i].transpose());
+    this->ksis.push_back(
+        this->dhdu_firstImage[i] * this->R_uv * this->dhdu_firstImage[i].transpose()
+        + this->dhdu_secondImage[i] * this->R_uv * this->dhdu_secondImage[i].transpose()
+    );
 }
 
 /*! Compute the H^T H as the sum of gammas
@@ -168,16 +173,14 @@ void VisualOdometry::computeKsis(int i) {
 */
 void VisualOdometry::computeHTH() {
     this->HtransposeH.setZero();
-    for (int i = 0; i < this->numberFeatures; i++) {
-        this->HtransposeH += this->gammas[i];
-    }
+    for (int i = 0; i < this->numberFeatures; i++) { this->HtransposeH += this->gammas[i]; }
 }
 
 /*! Compute extract the last column of the V matrix from an SVD decomposition
       @param Eigen::Matrix3d : Matrix that needs to be svd'ed
       @return void
 */
-Eigen::Vector3d VisualOdometry::svdLastColumn(Eigen::Matrix3d& A) const {
+Eigen::Vector3d VisualOdometry::svdLastColumn(Eigen::Matrix3d &A) const {
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
     Eigen::Matrix3d Vmat = svd.matrixV();
     Eigen::Matrix3d Umat = svd.matrixU();
@@ -193,7 +196,7 @@ Eigen::Vector3d VisualOdometry::svdLastColumn(Eigen::Matrix3d& A) const {
       @param Eigen::Vector3d : current direction of motion estimate
       @return void
 */
-void VisualOdometry::computeRinv(Eigen::Vector3d& sPrime) {
+void VisualOdometry::computeRinv(Eigen::Vector3d &sPrime) {
     this->Rinv.setZero();
     for (int i = 0; i < this->numberFeatures; i++) {
         Eigen::Vector3d ksiS = this->ksis[i] * sPrime;
@@ -221,9 +224,8 @@ void VisualOdometry::computeX() {
 int VisualOdometry::cheiralityTest(Eigen::Vector3d sPrime) {
     Eigen::VectorXd y(6, 1);
     y.head(3) << 0, 0, 0;
-    y.tail(3) =
-        -eigenTilde(this->CkCkmin1 * this->cameraCalibrationMatrixInverse * this->pixelCoord_firstImage.col(0)) *
-        sPrime;
+    y.tail(3) = -eigenTilde(this->CkCkmin1 * this->cameraCalibrationMatrixInverse * this->pixelCoord_firstImage.col(0))
+              * sPrime;
 
     Eigen::MatrixXd A(6, 3);
     A.block(0, 0, 3, 3) = eigenTilde(this->cameraCalibrationMatrixInverse * this->pixelCoord_secondImage.col(0));

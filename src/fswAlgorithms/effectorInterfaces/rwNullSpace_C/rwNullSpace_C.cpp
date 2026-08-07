@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "rwNullSpace_C.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 
@@ -34,13 +35,13 @@ void RwNullSpace_C::reset(uint64_t callTime) {
     localRWData = this->rwConfigInMsg();
 
     /* create the 3xN [Gs] RW spin axis projection matrix */
-    this->numWheels = (uint32_t)localRWData.numRW;
+    this->numWheels = (uint32_t) localRWData.numRW;
     if (this->numWheels > RW_EFF_CNT) {
         this->bskLogger.bskLog(BSK_ERROR, "Error: rwNullSpace.numWheels is larger that max effector count.");
     }
     for (uint32_t i = 0; i < this->numWheels; i = i + 1) {
         for (int j = 0; j < 3; j = j + 1) {
-            GsMatrix[j * (int)this->numWheels + i] = localRWData.reactionWheels[i].gsHat_B[j];
+            GsMatrix[j * (int) this->numWheels + i] = localRWData.reactionWheels[i].gsHat_B[j];
         }
     }
 
@@ -49,14 +50,16 @@ void RwNullSpace_C::reset(uint64_t callTime) {
     mMultM(GsMatrix, 3, this->numWheels, GsTranspose, this->numWheels, 3, GsInvHalf); /* find [Gs].[Gs]^T */
     m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);                             /* find ([Gs].[Gs]^T)^-1 */
     mMultM(GsInvHalf, 3, 3, GsMatrix, 3, this->numWheels, this->tau);                 /* find ([Gs].[Gs]^T)^-1.[Gs] */
-    mMultM(
-        GsTranspose, this->numWheels, 3, this->tau, 3, this->numWheels, GsTemp); /* find [Gs]^T.([Gs].[Gs]^T)^-1.[Gs] */
+    mMultM(GsTranspose, this->numWheels, 3, this->tau, 3, this->numWheels, GsTemp); /* find [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]
+                                                                                     */
     mSetIdentity(identMatrix, this->numWheels, this->numWheels);
-    mSubtract(identMatrix,
-              this->numWheels,
-              this->numWheels, /* find ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
-              GsTemp,
-              this->tau);
+    mSubtract(
+        identMatrix,
+        this->numWheels,
+        this->numWheels, /* find ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
+        GsTemp,
+        this->tau
+    );
 }
 
 /*! This method takes the input reaction wheel commands as well as the observed
@@ -80,9 +83,7 @@ void RwNullSpace_C::updateState(uint64_t callTime) {
     /* Read the RW speeds*/
     rwSpeeds = this->rwSpeedsInMsg();
 
-    if (this->rwDesiredSpeedsInMsg.isLinked()) {
-        rwDesiredSpeeds = this->rwDesiredSpeedsInMsg();
-    }
+    if (this->rwDesiredSpeedsInMsg.isLinked()) { rwDesiredSpeeds = this->rwDesiredSpeedsInMsg(); }
 
     /* compute the wheel speed control vector d = -K.DeltaOmega */
     vSubtract(rwSpeeds.wheelSpeeds, this->numWheels, rwDesiredSpeeds.wheelSpeeds, DeltaOmega);

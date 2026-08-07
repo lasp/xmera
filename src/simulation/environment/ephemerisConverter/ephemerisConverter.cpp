@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "ephemerisConverter.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -11,9 +12,7 @@
 EphemerisConverter::EphemerisConverter() {}
 
 EphemerisConverter::~EphemerisConverter() {
-    for (long unsigned int c = 0; c < this->ephemOutMsgs.size(); c++) {
-        free(this->ephemOutMsgs.at(c));
-    }
+    for (long unsigned int c = 0; c < this->ephemOutMsgs.size(); c++) { free(this->ephemOutMsgs.at(c)); }
 }
 
 /*! Reset the module to origina configuration values.
@@ -21,9 +20,7 @@ EphemerisConverter::~EphemerisConverter() {
  */
 void EphemerisConverter::reset(uint64_t CurrenSimNanos) {
     // check if the spiceInMsgs is empty or not
-    if (this->spiceInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "ephemerisConverter.spiceInMsgs is empty.");
-    }
+    if (this->spiceInMsgs.size() == 0) { bskLogger.bskLog(BSK_ERROR, "ephemerisConverter.spiceInMsgs is empty."); }
 }
 
 /*!

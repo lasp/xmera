@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "spacecraftLocation.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
@@ -30,9 +31,7 @@ SpacecraftLocation::SpacecraftLocation() {
  @return void
  */
 SpacecraftLocation::~SpacecraftLocation() {
-    for (long unsigned int c = 0; c < this->accessOutMsgs.size(); c++) {
-        delete this->accessOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->accessOutMsgs.size(); c++) { delete this->accessOutMsgs.at(c); }
     return;
 }
 
@@ -41,7 +40,8 @@ void SpacecraftLocation::reset(uint64_t currentSimNanos) {
     if (this->scStateInMsgs.size() == 0) {
         bskLogger.bskLog(
             BSK_ERROR,
-            "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
+            "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`"
+        );
     }
 
     if (!this->primaryScStateInMsg.isLinked()) {
@@ -52,9 +52,7 @@ void SpacecraftLocation::reset(uint64_t currentSimNanos) {
         bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation rEquator must be set to the planet equatorial radius");
     }
     /* if the polar radius is not specified, then it is set equal to the equatorial radius */
-    if (this->rEquator > 0.0 && this->rPolar < 0.0) {
-        this->rPolar = rEquator;
-    }
+    if (this->rEquator > 0.0 && this->rPolar < 0.0) { this->rPolar = rEquator; }
     this->zScale = this->rEquator / this->rPolar;
 
     if (this->aHat_B.norm() > 0.1) {
@@ -175,9 +173,7 @@ void SpacecraftLocation::computeAccess() {
             this->accessMsgBuffer.at(c).hasAccess = 1;
 
             // check for out of range condition
-            if (this->maximumRange > 0 && range > this->maximumRange) {
-                this->accessMsgBuffer.at(c).hasAccess = 0;
-            }
+            if (this->maximumRange > 0 && range > this->maximumRange) { this->accessMsgBuffer.at(c).hasAccess = 0; }
 
             // check if other spacecraft is within sensor/communication boresight axis
             if (this->theta > 0.0) {

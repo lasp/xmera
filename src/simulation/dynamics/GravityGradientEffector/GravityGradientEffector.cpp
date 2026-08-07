@@ -3,14 +3,20 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "GravityGradientEffector.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <iostream>
 
-GravityGradientEffector::GravityGradientEffector() { return; }
+GravityGradientEffector::GravityGradientEffector() {
+    return;
+}
 
 /*! The destructor.*/
-GravityGradientEffector::~GravityGradientEffector() { return; }
+GravityGradientEffector::~GravityGradientEffector() {
+    return;
+}
 
 /*! This method is used to set the effector, and check same module variables
 @return void
@@ -24,7 +30,8 @@ void GravityGradientEffector::reset(uint64_t currentSimNanos) {
     if (this->planetPropertyNames.size() == 0) {
         bskLogger.bskLog(
             BSK_ERROR,
-            "planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
+            "planetPropertyNames array is empty, you must specify at least one planet using addPlanetName()."
+        );
     }
 
     /* empty the vector of planet state pointers */
@@ -60,7 +67,7 @@ void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock) {
  @return void
  */
 
-void GravityGradientEffector::linkInStates(DynParamManager& states) {
+void GravityGradientEffector::linkInStates(DynParamManager &states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->r_BN_N = states.getStateObject("hubPosition");
     this->ISCPntB_B = states.getPropertyReference("inertiaSC");
@@ -82,7 +89,7 @@ void GravityGradientEffector::computeForceTorque(double integTime, double timeSt
 
     /* compute DCN [BN] */
     Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBN = (Eigen::Vector3d) this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
     /* evaluate inertia tensor about center of mass */

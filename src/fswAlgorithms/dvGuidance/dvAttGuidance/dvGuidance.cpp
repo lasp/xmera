@@ -3,9 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dvGuidance.h"
+
 #include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! @brief This resets the module.
  @return void
@@ -48,7 +49,7 @@ void DvGuidance::updateState(uint64_t callTime) {
     v3Normalize(dcm_BubN[2], dcm_BubN[2]);
 
     /*! - evaluate the time since the burn start time */
-    burnTime = ((int64_t)callTime - (int64_t)localBurnData.burnStartTime) * NANO2SEC;
+    burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime) * NANO2SEC;
 
     /*! - evaluate the DCM from inertial to the current Burn frame.
      The current frame differs from the base burn frame via a constant 3-axis rotation */

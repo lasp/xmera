@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "locationPointing.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
@@ -27,13 +28,16 @@ void LocationPointing::reset(uint64_t callTime) {
     int numInMsgs = this->locationInMsg.isLinked() + this->celBodyInMsg.isLinked() + this->scTargetInMsg.isLinked();
 
     if (numInMsgs == 0) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "Error: In the locationPointing module no target messages were not connected.");
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "Error: In the locationPointing module no target messages were not connected."
+        );
     } else if (numInMsgs > 1) {
         this->bskLogger.bskLog(
             BSK_ERROR,
             "Error: In the locationPointing module multiple target messages were connected. Defaulting to either "
-            "ground location, planet location or spacecraft location, in that order.");
+            "ground location, planet location or spacecraft location, in that order."
+        );
     }
 
     this->init = 1;
@@ -44,12 +48,14 @@ void LocationPointing::reset(uint64_t callTime) {
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
     if (v3Norm(this->pHat_B) < 0.1) {
         char info[MAX_LOGGING_LENGTH];
-        snprintf(info,
-                 sizeof(info),
-                 "locationPoint: vector pHat_B is not setup as a unit vector [%f, %f %f]",
-                 this->pHat_B[0],
-                 this->pHat_B[1],
-                 this->pHat_B[2]);
+        snprintf(
+            info,
+            sizeof(info),
+            "locationPoint: vector pHat_B is not setup as a unit vector [%f, %f %f]",
+            this->pHat_B[0],
+            this->pHat_B[1],
+            this->pHat_B[2]
+        );
         this->bskLogger.bskLog(BSK_ERROR, info);
     } else {
         double v1[3];
@@ -118,9 +124,7 @@ void LocationPointing::updateState(uint64_t callTime) {
     m33MultV3(dcmBN, r_LS_N, r_LS_B);
     v3Normalize(r_LS_B, rHat_LS_B);
     dum1 = v3Dot(this->pHat_B, rHat_LS_B);
-    if (fabs(dum1) > 1.0) {
-        dum1 = dum1 / fabs(dum1);
-    }
+    if (fabs(dum1) > 1.0) { dum1 = dum1 / fabs(dum1); }
     phi = safeAcos(dum1);
 
     /* calculate sigma_BR */

@@ -4,12 +4,12 @@
 
 #include "meanOEFeedback.h"
 
-#include <math.h>
-
-#include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
+#include <math.h>
 
 static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
 static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
@@ -72,9 +72,11 @@ void MeanOEFeedback::updateState(uint64_t callTime) {
  @param deputyTransMsg Deputy's position and velocity
  @param forceMsg force output (3-axis)
  */
-void MeanOEFeedback::calcLyapunovFeedback(NavTransMsgPayload chiefTransMsg,
-                                          NavTransMsgPayload deputyTransMsg,
-                                          CmdForceInertialMsgPayload* forceMsg) {
+void MeanOEFeedback::calcLyapunovFeedback(
+    NavTransMsgPayload chiefTransMsg,
+    NavTransMsgPayload deputyTransMsg,
+    CmdForceInertialMsgPayload* forceMsg
+) {
     // position&velocity to osculating classic orbital elements
     ClassicElements oe_cl_osc_c, oe_cl_osc_d;
     rv2elem(this->mu, chiefTransMsg.r_BN_N, chiefTransMsg.v_BN_N, &oe_cl_osc_c);
@@ -258,11 +260,7 @@ static double adjust_range(double lower, double upper, double angle) {
     }
     double width = upper - lower;
     double adjusted_angle = angle;
-    while (adjusted_angle > upper) {
-        adjusted_angle = adjusted_angle - width;
-    }
-    while (adjusted_angle < lower) {
-        adjusted_angle = adjusted_angle + width;
-    }
+    while (adjusted_angle > upper) { adjusted_angle = adjusted_angle - width; }
+    while (adjusted_angle < lower) { adjusted_angle = adjusted_angle + width; }
     return adjusted_angle;
 }

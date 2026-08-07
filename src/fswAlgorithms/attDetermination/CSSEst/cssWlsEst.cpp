@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "cssWlsEst.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/safeMath.h>
+
 #include <string.h>
 
 int computeWlsmn(int numActiveCss, double* H, double* W, double* y, double x[3]);
@@ -27,9 +29,11 @@ void CssWlsEst::reset(uint64_t callTime) {
 
     this->cssConfigInBuffer = this->cssConfigInMsg();
     if (this->cssConfigInBuffer.nCSS > MAX_N_CSS_MEAS) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "cssWIsEst.cssDataInMsg.nCSS must not be greater than "
-                               "MAX_N_CSS_MEAS value.");
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "cssWIsEst.cssDataInMsg.nCSS must not be greater than "
+            "MAX_N_CSS_MEAS value."
+        );
     }
 
     this->priorSignalAvailable = 0;
@@ -88,9 +92,11 @@ void CssWlsEst::updateState(uint64_t callTime) {
     /*! -# Otherwise just continue */
     for (uint32_t i = 0; i < this->cssConfigInBuffer.nCSS; i = i + 1) {
         if (InputBuffer.CosValue[i] > this->sensorUseThresh) {
-            v3Scale(this->cssConfigInBuffer.cssVals[i].CBias,
-                    this->cssConfigInBuffer.cssVals[i].nHat_B,
-                    &H[this->numActiveCss * 3]);
+            v3Scale(
+                this->cssConfigInBuffer.cssVals[i].CBias,
+                this->cssConfigInBuffer.cssVals[i].nHat_B,
+                &H[this->numActiveCss * 3]
+            );
             y[this->numActiveCss] = InputBuffer.CosValue[i];
             this->numActiveCss = this->numActiveCss + 1;
         }
@@ -106,7 +112,11 @@ void CssWlsEst::updateState(uint64_t callTime) {
         v3SetZero(sunlineOutBuffer.omega_BN_B);   /* zero the rate measure */
         this->priorSignalAvailable = 0;           /* reset the prior heading estimate flag */
         computeWlsResiduals(
-            InputBuffer.CosValue, &this->cssConfigInBuffer, sunlineOutBuffer.vehSunPntBdy, this->filtStatus.postFitRes);
+            InputBuffer.CosValue,
+            &this->cssConfigInBuffer,
+            sunlineOutBuffer.vehSunPntBdy,
+            this->filtStatus.postFitRes
+        );
     } else {
         /*! - If at least one CSS got a strong enough signal.  Proceed with the sun heading estimation */
         /*! -# Configuration option to weight the measurements, otherwise set
@@ -117,9 +127,13 @@ void CssWlsEst::updateState(uint64_t callTime) {
             mSetIdentity(W, this->numActiveCss, this->numActiveCss);
         }
         /*! -# Get least squares fit for sun pointing vector*/
-        status = computeWlsmn((int)this->numActiveCss, H, W, y, sunlineOutBuffer.vehSunPntBdy);
+        status = computeWlsmn((int) this->numActiveCss, H, W, y, sunlineOutBuffer.vehSunPntBdy);
         computeWlsResiduals(
-            InputBuffer.CosValue, &this->cssConfigInBuffer, sunlineOutBuffer.vehSunPntBdy, this->filtStatus.postFitRes);
+            InputBuffer.CosValue,
+            &this->cssConfigInBuffer,
+            sunlineOutBuffer.vehSunPntBdy,
+            this->filtStatus.postFitRes
+        );
 
         v3Normalize(sunlineOutBuffer.vehSunPntBdy, sunlineOutBuffer.vehSunPntBdy);
 
@@ -131,8 +145,8 @@ void CssWlsEst::updateState(uint64_t callTime) {
             v3Normalize(sunlineOutBuffer.omega_BN_B, sunlineOutBuffer.omega_BN_B);
             /* compute principal rotation angle between sun heading measurements */
             dOldDotNew = v3Dot(dHatNew, dHatOld);
-            if (dOldDotNew > 1.0) dOldDotNew = 1.0;
-            if (dOldDotNew < -1.0) dOldDotNew = -1.0;
+            if (dOldDotNew > 1.0) { dOldDotNew = 1.0; }
+            if (dOldDotNew < -1.0) { dOldDotNew = -1.0; }
             v3Scale(safeAcos(dOldDotNew) / dt, sunlineOutBuffer.omega_BN_B, sunlineOutBuffer.omega_BN_B);
         } else {
             this->priorSignalAvailable = 1;
@@ -144,8 +158,8 @@ void CssWlsEst::updateState(uint64_t callTime) {
     /*! Residual Computation */
     /*! - If the residual fit output message is set, then compute the residuals and stor them in the output message */
     if (this->cssWLSFiltResOutMsg.isLinked()) {
-        this->filtStatus.numObs = (int)this->numActiveCss;
-        this->filtStatus.timeTag = (double)(callTime * NANO2SEC);
+        this->filtStatus.numObs = (int) this->numActiveCss;
+        this->filtStatus.timeTag = (double) (callTime * NANO2SEC);
         v3Copy(sunlineOutBuffer.vehSunPntBdy, this->filtStatus.state);
         this->cssWLSFiltResOutMsg.write(this->filtStatus, this->moduleID, callTime);
     }
@@ -209,9 +223,7 @@ int computeWlsmn(int numActiveCss, double* H, double* W, double* y, double x[3])
     /*! - If we only have one sensor, output best guess (cone of possiblities)*/
     if (numActiveCss == 1) {
         /* Here's a guess.  Do with it what you will. */
-        for (i = 0; i < 3; i = i + 1) {
-            x[i] = H[0 * MAX_NUM_CSS_SENSORS + i] * y[0];
-        }
+        for (i = 0; i < 3; i = i + 1) { x[i] = H[0 * MAX_NUM_CSS_SENSORS + i] * y[0]; }
     } else if (numActiveCss == 2) { /*! - If we have two, then do a 2x2 fit */
 
         /*!   -# Find minimum norm solution */
@@ -222,13 +234,13 @@ int computeWlsmn(int numActiveCss, double* H, double* W, double* y, double x[3])
         mMultV(m32, 3, 2, y, x);
     } else if (numActiveCss > 2) { /*! - If we have more than 2, do true LSQ fit*/
         /*!    -# Use the weights to compute (HtWH)^-1HW*/
-        mtMultM(H, (size_t)numActiveCss, 3, W, (size_t)numActiveCss, (size_t)numActiveCss, m3N);
-        mMultM(m3N, 3, (size_t)numActiveCss, H, (size_t)numActiveCss, 3, m33);
+        mtMultM(H, (size_t) numActiveCss, 3, W, (size_t) numActiveCss, (size_t) numActiveCss, m3N);
+        mMultM(m3N, 3, (size_t) numActiveCss, H, (size_t) numActiveCss, 3, m33);
         status = m33Inverse(RECAST3X3 m33, RECAST3X3 m33_2);
-        mMultMt(m33_2, 3, 3, H, (size_t)numActiveCss, 3, m3N);
-        mMultM(m3N, 3, (size_t)numActiveCss, W, (size_t)numActiveCss, (size_t)numActiveCss, m3N_2);
+        mMultMt(m33_2, 3, 3, H, (size_t) numActiveCss, 3, m3N);
+        mMultM(m3N, 3, (size_t) numActiveCss, W, (size_t) numActiveCss, (size_t) numActiveCss, m3N_2);
         /*!    -# Multiply the LSQ matrix by the obs vector for best fit*/
-        mMultV(m3N_2, 3, (size_t)numActiveCss, y, x);
+        mMultV(m3N_2, 3, (size_t) numActiveCss, y, x);
     }
 
     return (status);

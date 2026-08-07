@@ -9,13 +9,14 @@
  */
 
 #include "velocityPoint.h"
-#include <string.h>
+
 #include <math.h>
+#include <string.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/orbitalMotion.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
 /*! This method performs the module reset capability.  This module has no actions.
  @return void
@@ -40,25 +41,30 @@ void VelocityPoint::updateState(uint64_t callTime) {
     EphemerisMsgPayload primPlanet = {};
     AttRefMsgPayload attRefOut = {};
 
-    if (this->planetMsgIsLinked) {
-        primPlanet = this->celBodyInMsg();
-    }
+    if (this->planetMsgIsLinked) { primPlanet = this->celBodyInMsg(); }
     navData = this->transNavInMsg();
 
     /*! - Compute and store output message */
     computeVelocityPointingReference(
-        navData.r_BN_N, navData.v_BN_N, primPlanet.r_BdyZero_N, primPlanet.v_BdyZero_N, &attRefOut);
+        navData.r_BN_N,
+        navData.v_BN_N,
+        primPlanet.r_BdyZero_N,
+        primPlanet.v_BdyZero_N,
+        &attRefOut
+    );
 
     this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 
     return;
 }
 
-void VelocityPoint::computeVelocityPointingReference(double r_BN_N[3],
-                                                     double v_BN_N[3],
-                                                     double celBdyPositonVector[3],
-                                                     double celBdyVelocityVector[3],
-                                                     AttRefMsgPayload* attRefOut) {
+void VelocityPoint::computeVelocityPointingReference(
+    double r_BN_N[3],
+    double v_BN_N[3],
+    double celBdyPositonVector[3],
+    double celBdyVelocityVector[3],
+    AttRefMsgPayload* attRefOut
+) {
     double dcm_RN[3][3]; /* DCM from inertial to reference frame */
 
     double r[3]; /* relative position vector of the spacecraft with respect to the orbited planet */

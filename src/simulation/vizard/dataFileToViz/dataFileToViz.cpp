@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dataFileToViz.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <sstream>
 #include <string>
 
@@ -30,9 +32,7 @@ DataFileToViz::~DataFileToViz() {
         bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
     }
 
-    for (long unsigned int c = 0; c < this->scStateOutMsgs.size(); c++) {
-        delete this->scStateOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->scStateOutMsgs.size(); c++) { delete this->scStateOutMsgs.at(c); }
 
     return;
 }
@@ -54,48 +54,53 @@ void DataFileToViz::reset(uint64_t currentSimNanos) {
             bskLogger.bskLog(
                 BSK_ERROR,
                 "DataFileToViz: you set appendThrClusterMap() %d times, but set number of spacecraft to %d",
-                (int)this->thrMsgDataSC.size(),
-                (int)this->scStateOutMsgs.size());
+                (int) this->thrMsgDataSC.size(),
+                (int) this->scStateOutMsgs.size()
+            );
         }
 
         /* check vector dimensions */
-        if (this->numThr != (int)this->thrPosList.size()) {
+        if (this->numThr != (int) this->thrPosList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrPosList must the same size as the number of thrusters.");
         }
 
-        if (this->numThr != (int)this->thrDirList.size()) {
+        if (this->numThr != (int) this->thrDirList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: thrDirList must the same size as the number of thrusters.");
         }
 
-        if (this->numThr != (int)this->thrForceMaxList.size()) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "DataFileToViz: thrForceMaxList must the same size as the number of thrusters.");
+        if (this->numThr != (int) this->thrForceMaxList.size()) {
+            bskLogger.bskLog(
+                BSK_ERROR,
+                "DataFileToViz: thrForceMaxList must the same size as the number of thrusters."
+            );
         }
     }
 
     /* check RW states */
     if (this->rwScOutMsgs.size() > 0) {
         if (this->scStateOutMsgs.size() != this->rwScOutMsgs.size()) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "DataFileToViz: you set appendRwMsg %d times, but set number of spacecraft to %d",
-                             (int)this->rwScOutMsgs.size(),
-                             (int)this->scStateOutMsgs.size());
+            bskLogger.bskLog(
+                BSK_ERROR,
+                "DataFileToViz: you set appendRwMsg %d times, but set number of spacecraft to %d",
+                (int) this->rwScOutMsgs.size(),
+                (int) this->scStateOutMsgs.size()
+            );
         }
 
         /* check vector dimensions */
-        if (this->numRW != (int)this->rwPosList.size()) {
+        if (this->numRW != (int) this->rwPosList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwPosList must the same size as the total number of RWs.");
         }
 
-        if (this->numRW != (int)this->rwDirList.size()) {
+        if (this->numRW != (int) this->rwDirList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwDirList must the same size as the total number of RWs.");
         }
 
-        if (this->numRW != (int)this->rwOmegaMaxList.size()) {
+        if (this->numRW != (int) this->rwOmegaMaxList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwOmegaMaxList must the same size as the total number of RWs.");
         }
 
-        if (this->numRW != (int)this->rwUMaxList.size()) {
+        if (this->numRW != (int) this->rwUMaxList.size()) {
             bskLogger.bskLog(BSK_ERROR, "DataFileToViz: rwUMaxList must the same size as the total number of RWs.");
         }
     }
@@ -136,7 +141,9 @@ void DataFileToViz::setNumOfSatellites(int numSat) {
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void DataFileToViz::appendThrPos(double pos_B[3]) { this->thrPosList.push_back(cArrayToEigenVector3(pos_B)); }
+void DataFileToViz::appendThrPos(double pos_B[3]) {
+    this->thrPosList.push_back(cArrayToEigenVector3(pos_B));
+}
 
 /*!
  Add a thruster 3d unit direction vector to the list.  The input vectors gets normalized before being added to the list.
@@ -149,7 +156,9 @@ void DataFileToViz::appendThrDir(double dir_B[3]) {
 /*!
  Add a thruster maximum force value to the list of thrusters.
  */
-void DataFileToViz::appendThrForceMax(double forceMax) { this->thrForceMaxList.push_back(forceMax); }
+void DataFileToViz::appendThrForceMax(double forceMax) {
+    this->thrForceMaxList.push_back(forceMax);
+}
 
 /*!
  Add a thruster cluster map for each spacecraft
@@ -198,17 +207,23 @@ void DataFileToViz::appendNumOfRWs(int numRW) {
 /*!
  Add a RW maximum motor torque value to the list
  */
-void DataFileToViz::appendUMax(double uMax) { this->rwUMaxList.push_back(uMax); }
+void DataFileToViz::appendUMax(double uMax) {
+    this->rwUMaxList.push_back(uMax);
+}
 
 /*!
  Add a RW wheel rate value to the list
  */
-void DataFileToViz::appendOmegaMax(double OmegaMax) { this->rwOmegaMaxList.push_back(OmegaMax); }
+void DataFileToViz::appendOmegaMax(double OmegaMax) {
+    this->rwOmegaMaxList.push_back(OmegaMax);
+}
 
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void DataFileToViz::appendRwPos(double pos_B[3]) { this->rwPosList.push_back(cArrayToEigenVector3(pos_B)); }
+void DataFileToViz::appendRwPos(double pos_B[3]) {
+    this->rwPosList.push_back(cArrayToEigenVector3(pos_B));
+}
 
 /*!
  Add a RW spin axis unit direction vector to the list.  The input vectors gets normalized before being added to the
@@ -260,22 +275,22 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                     pullVector4(&iss, att);
                 }
                 switch (this->attitudeType) {
-                    case 0:
-                        /* MRPs */
-                        v3Copy(att, scMsg.sigma_BN);
-                        break;
-                    case 1:
-                        /* quaternions (q0, q1, q2, q3) */
-                        EP2MRP(att, scMsg.sigma_BN);
-                        break;
-                    case 2:
-                        /* (3-2-1) Euler Angles */
-                        Euler3212MRP(att, scMsg.sigma_BN);
-                        break;
-                    default:
-                        bskLogger.bskLog(
-                            BSK_ERROR, "DataFileToViz: unknown attitudeType encountered: %d", this->attitudeType);
-                        break;
+                case 0:
+                    /* MRPs */
+                    v3Copy(att, scMsg.sigma_BN);
+                    break;
+                case 1:
+                    /* quaternions (q0, q1, q2, q3) */
+                    EP2MRP(att, scMsg.sigma_BN);
+                    break;
+                case 2:
+                    /* (3-2-1) Euler Angles */
+                    Euler3212MRP(att, scMsg.sigma_BN);
+                    break;
+                default:
+                    bskLogger
+                        .bskLog(BSK_ERROR, "DataFileToViz: unknown attitudeType encountered: %d", this->attitudeType);
+                    break;
                 }
                 pullVector(&iss, scMsg.omega_BN_B);
 
@@ -291,7 +306,8 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                         for (thrSet = this->thrMsgDataSC[scCounter].begin();
                              thrSet != this->thrMsgDataSC[scCounter].end();
                              thrSet++) {
-                            for (uint32_t idx = 0; idx < (uint32_t)this->numThrPerCluster[scCounter][thrClusterCounter];
+                            for (uint32_t idx = 0;
+                                 idx < (uint32_t) this->numThrPerCluster[scCounter][thrClusterCounter];
                                  idx++) {
                                 THROutputMsgPayload thrMsg;
                                 thrMsg = THROutputMsgPayload{};
@@ -329,7 +345,10 @@ void DataFileToViz::updateState(uint64_t currentSimNanos) {
                             eigenVectorToCArray(this->rwDirList[rwCounter], rwOutMsg.gsHat_B);
 
                             this->rwScOutMsgs[scCounter].at(rwCounter)->write(
-                                rwOutMsg, this->moduleID, currentSimNanos);
+                                rwOutMsg,
+                                this->moduleID,
+                                currentSimNanos
+                            );
                         }
                     }
                 }
@@ -366,7 +385,7 @@ void DataFileToViz::pullVector4(std::istringstream* iss, double* vec) {
 /*! pull a double from the input stream
  */
 double DataFileToViz::pullScalar(std::istringstream* iss) {
-    const char delimiterString = *this->delimiter.c_str();
+    char const delimiterString = *this->delimiter.c_str();
     std::string item;
 
     getline(*iss, item, delimiterString);

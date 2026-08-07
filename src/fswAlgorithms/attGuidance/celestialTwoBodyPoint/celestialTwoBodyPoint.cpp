@@ -29,9 +29,7 @@ void CelestialTwoBodyPoint::updateState(uint64_t callTime) {
     NavTransMsgPayload transNavIn = this->transNavInMsg();
     EphemerisMsgPayload celBodyIn = this->celBodyInMsg();
     EphemerisMsgPayload secCelBodyIn{};
-    if (this->secCelBodyIsLinked) {
-        secCelBodyIn = this->secCelBodyInMsg();
-    }
+    if (this->secCelBodyIsLinked) { secCelBodyIn = this->secCelBodyInMsg(); }
 
     AttRefMsgPayload attRefOut = this->algorithm.update(celBodyIn, secCelBodyIn, transNavIn);
 
@@ -43,10 +41,14 @@ void CelestialTwoBodyPoint::updateState(uint64_t callTime) {
  * @brief Set the singularity threshold
  * @param thresh singularity threshold
  */
-void CelestialTwoBodyPoint::setSingularityThresh(double thresh) { this->algorithm.setSingularityThresh(thresh); }
+void CelestialTwoBodyPoint::setSingularityThresh(double thresh) {
+    this->algorithm.setSingularityThresh(thresh);
+}
 
 /**
  * @brief Get the singularity threshold
  * @return double singularity threshold
  */
-double CelestialTwoBodyPoint::getSingularityThresh() const { return this->algorithm.getSingularityThresh(); }
+double CelestialTwoBodyPoint::getSingularityThresh() const {
+    return this->algorithm.getSingularityThresh();
+}

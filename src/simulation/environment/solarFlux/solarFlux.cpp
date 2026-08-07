@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "solarFlux.h"
+
 #include <architecture/utilities/astroConstants.h>
 
 /*! This method is used to reset the module. Currently no tasks are required.
@@ -30,7 +31,7 @@ void SolarFlux::updateState(uint64_t currentSimNanos) {
     auto r_SSc_N = this->r_SN_N - this->r_ScN_N;
 
     /*! - compute the scalar distance to the sun.  The following math requires this to be in km. */
-    double dist_SSc_N = r_SSc_N.norm() / 1000;  // to km
+    double dist_SSc_N = r_SSc_N.norm() / 1'000;  // to km
 
     /*! - compute the local solar flux value */
     this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2) * this->eclipseFactor;

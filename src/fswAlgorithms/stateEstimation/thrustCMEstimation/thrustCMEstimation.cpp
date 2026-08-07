@@ -2,6 +2,7 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "thrustCMEstimation.h"
+
 #include <cmath>
 
 /*! Reset the flyby OD filter to an initial state and
@@ -17,9 +18,7 @@ void ThrustCMEstimation::reset(uint64_t currentSimNanos) {
     if (!this->intFeedbackTorqueInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, " intFeedbackTorqueInMsg wasn't connected.");
     }
-    if (!this->attGuidInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, " attGuidInMsg wasn't connected.");
-    }
+    if (!this->attGuidInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, " attGuidInMsg wasn't connected."); }
     if (this->vehConfigInMsg.isLinked()) {
         this->cmKnowledge = true;
     } else {
@@ -100,9 +99,7 @@ void ThrustCMEstimation::updateState(uint64_t currentSimNanos) {
 
     /*! compute state 1-sigma covariance */
     Eigen::Vector3d sigma;
-    for (int i = 0; i < 3; ++i) {
-        sigma[i] = pow(this->P(i, i), 0.5);
-    }
+    for (int i = 0; i < 3; ++i) { sigma[i] = pow(this->P(i, i), 0.5); }
 
     /*! write estimation data to msg buffer */
     cmEstDataBuffer.attError = attError;

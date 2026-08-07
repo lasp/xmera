@@ -2,9 +2,11 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "lambertValidator.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/orbitalMotion.h>
+
 #include <array>
 #include <cmath>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -12,7 +14,9 @@
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-LambertValidator::LambertValidator() { this->prevDv_N.fill(0.0); }
+LambertValidator::LambertValidator() {
+    this->prevDv_N.fill(0.0);
+}
 
 /*! Module Destructor */
 LambertValidator::~LambertValidator() = default;
@@ -38,8 +42,10 @@ void LambertValidator::reset(uint64_t currentSimNanos) {
 
     // check that the provided input module parameters are valid
     if (this->finalTime - this->maneuverTime < 0.0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertValidator: Maneuver start time maneuverTime must be before final time finalTime.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "lambertValidator: Maneuver start time maneuverTime must be before final time finalTime."
+        );
     }
 }
 
@@ -137,9 +143,11 @@ void LambertValidator::readMessages() {
         this->numIterLambert = lambertPerformanceInMsgBuffer.numIterSol2;
         this->errXLambert = lambertPerformanceInMsgBuffer.errXSol2;
     } else {
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
-                         "Lambert solution should be used must be either 1 or 2.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
+            "Lambert solution should be used must be either 1 or 2."
+        );
     }
 }
 
@@ -174,27 +182,17 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos) {
     double dvDifference = (dv_N - prevDv_N).norm();
 
     // Lambert Validator Message content: specify why no Delta-V command was returned
-    if (this->validLambert != 1) {
-        lambertValidatorMsgBuffer.failedValidLambert = 1;
-    }
-    if (this->numIterLambert >= this->maxNumIterLambert) {
-        lambertValidatorMsgBuffer.failedNumIterationsLambert = 1;
-    }
-    if (abs(this->errXLambert) >= this->xToleranceLambert) {
-        lambertValidatorMsgBuffer.failedXToleranceLambert = 1;
-    }
+    if (this->validLambert != 1) { lambertValidatorMsgBuffer.failedValidLambert = 1; }
+    if (this->numIterLambert >= this->maxNumIterLambert) { lambertValidatorMsgBuffer.failedNumIterationsLambert = 1; }
+    if (abs(this->errXLambert) >= this->xToleranceLambert) { lambertValidatorMsgBuffer.failedXToleranceLambert = 1; }
     if (abs(solutionDifference) >= this->xConvergenceTolerance) {
         lambertValidatorMsgBuffer.failedXSolutionConvergence = 1;
     }
     if (abs(dvDifference) >= this->dvConvergenceTolerance) {
         lambertValidatorMsgBuffer.failedDvSolutionConvergence = 1;
     }
-    if (this->violationsDistanceTarget != 0) {
-        lambertValidatorMsgBuffer.failedDistanceTargetConstraint = 1;
-    }
-    if (this->violationsOrbitRadius != 0) {
-        lambertValidatorMsgBuffer.failedOrbitRadiusConstraint = 1;
-    }
+    if (this->violationsDistanceTarget != 0) { lambertValidatorMsgBuffer.failedDistanceTargetConstraint = 1; }
+    if (this->violationsOrbitRadius != 0) { lambertValidatorMsgBuffer.failedOrbitRadiusConstraint = 1; }
     // Lambert Validator Message content: extra information
     lambertValidatorMsgBuffer.xSolutionDifference = solutionDifference;
     lambertValidatorMsgBuffer.dvSolutionDifference = dvDifference;
@@ -322,9 +320,7 @@ void LambertValidator::checkConstraintViolations(std::vector<double> t, std::vec
     // check maximum distance from target at final time constraint
     Eigen::Vector3d rf_BN_N = X.back().head(3);
     Eigen::Vector3d rf_BT_N = rf_BN_N - this->r_TN_N;
-    if (rf_BT_N.norm() > this->maxDistanceTarget) {
-        this->violationsDistanceTarget++;
-    }
+    if (rf_BT_N.norm() > this->maxDistanceTarget) { this->violationsDistanceTarget++; }
     // check minimum orbit radius constraint
     for (int c = 0; c < t.size(); c++) {
         Eigen::Vector3d r_BN_N = X.at(c).head(3);
@@ -349,13 +345,13 @@ bool LambertValidator::checkPerformance() const {
        doesn't violate any constraints.
        Also return good solution if constraint violations (and convergence) should be ignored,
        as long as the Lambert solution is valid. */
-    if ((this->validLambert == 1 &&
-         this->numIterLambert < this->maxNumIterLambert &&  // Lambert module should usually take only 2-3 iterations,
+    if ((this->validLambert == 1 && this->numIterLambert < this->maxNumIterLambert
+         &&  // Lambert module should usually take only 2-3 iterations,
          // so maxNumIterLambert is intentionally lower than in lambertSolver module
-         abs(this->errXLambert) < this->xToleranceLambert && abs(solutionDifference) < this->xConvergenceTolerance &&
-         abs(dvDifference) < this->dvConvergenceTolerance && this->violationsDistanceTarget == 0 &&
-         this->violationsOrbitRadius == 0) ||
-        (this->validLambert == 1 && this->ignoreConstraintViolations)) {
+         abs(this->errXLambert) < this->xToleranceLambert && abs(solutionDifference) < this->xConvergenceTolerance
+         && abs(dvDifference) < this->dvConvergenceTolerance && this->violationsDistanceTarget == 0
+         && this->violationsOrbitRadius == 0)
+        || (this->validLambert == 1 && this->ignoreConstraintViolations)) {
         goodSolution = true;
     }
 
@@ -371,10 +367,11 @@ bool LambertValidator::checkPerformance() const {
     @return std::pair<std::vector<double>, std::vector<Eigen::VectorXd>>
 */
 std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertValidator::propagate(
-    const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &EOM,
     std::array<double, 2> interval,
-    const Eigen::VectorXd& X0,
-    double dt) {
+    Eigen::VectorXd const &X0,
+    double dt
+) {
     double t0 = interval[0];
     double tf = interval[1];
 
@@ -386,9 +383,7 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertValidator::p
     for (int c = 0; c < N; c++) {
         double step = std::min(dt, abs(tf - t.at(c)));  // for last time step, step size might be smaller than dt
         // special case for backwards propagation
-        if (tf < t0) {
-            step = -step;
-        }
+        if (tf < t0) { step = -step; }
 
         Eigen::VectorXd Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
         double tnew = t.at(c) + step;
@@ -408,10 +403,12 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertValidator::p
     @param dt time step
     @return Eigen::VectorXd
 */
-Eigen::VectorXd LambertValidator::RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                                      const Eigen::VectorXd& X0,
-                                      double t0,
-                                      double dt) {
+Eigen::VectorXd LambertValidator::RK4(
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> const &ODEfunction,
+    Eigen::VectorXd const &X0,
+    double t0,
+    double dt
+) {
     double h = dt;
 
     Eigen::VectorXd k1 = ODEfunction(t0, X0);

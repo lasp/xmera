@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "mtbFeedforward.h"
-#include <string.h>
+
 #include <architecture/utilities/linearAlgebra.h>
+
+#include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -53,11 +55,13 @@ void MtbFeedforward::updateState(uint64_t callTime) {
     CmdTorqueBodyMsgPayload vehControlOutMsgBuffer = this->vehControlInMsg();
 
     /*! -  Compute net torque produced on the vehicle from the torque bars.*/
-    mMultV(this->mtbArrayConfigParams.GtMatrix_B,
-           3,
-           this->mtbArrayConfigParams.numMTB,
-           dipoleRequestMtbInMsgBuffer.mtbDipoleCmds,
-           mtbDipoleCmd_B);
+    mMultV(
+        this->mtbArrayConfigParams.GtMatrix_B,
+        3,
+        this->mtbArrayConfigParams.numMTB,
+        dipoleRequestMtbInMsgBuffer.mtbDipoleCmds,
+        mtbDipoleCmd_B
+    );
     v3Cross(mtbDipoleCmd_B, tamSensorBodyInMsgBuffer.tam_B, tauMtbFF_B);
 
     /*! -  Negate the net rod torque to spin wheels in appropriate direction. */

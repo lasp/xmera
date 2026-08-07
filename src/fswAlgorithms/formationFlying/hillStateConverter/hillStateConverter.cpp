@@ -35,12 +35,14 @@ void HillStateConverter::updateState(uint64_t callTime) {
     depStateIn = this->depStateInMsg();
 
     /*! - Add the module specific code */
-    rv2hill(chiefStateIn.r_BN_N,
-            chiefStateIn.v_BN_N,
-            depStateIn.r_BN_N,
-            depStateIn.v_BN_N,
-            hillStateOut.r_DC_H,
-            hillStateOut.v_DC_H);
+    rv2hill(
+        chiefStateIn.r_BN_N,
+        chiefStateIn.v_BN_N,
+        depStateIn.r_BN_N,
+        depStateIn.v_BN_N,
+        hillStateOut.r_DC_H,
+        hillStateOut.v_DC_H
+    );
 
     /*! - write the module output message */
     this->hillStateOutMsg.write(hillStateOut, this->moduleID, callTime);

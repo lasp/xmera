@@ -2,9 +2,10 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
+#include "pixelLineConverter.h"
+
 #include <math.h>
 #include <string.h>
-#include "pixelLineConverter.h"
 
 /*! This resets the module to original states.
  @return void
@@ -49,7 +50,7 @@ void PixelLineConverter::updateState(uint64_t callTime) {
     }
     reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0] / 2 + 0.5;
     reCentered[1] = circlesIn.circlesCenters[1] - cameraSpecs.resolution[1] / 2 + 0.5;
-    this->planetTarget = (int32_t)circlesIn.planetIds[0];
+    this->planetTarget = (int32_t) circlesIn.planetIds[0];
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_NC);
@@ -101,9 +102,9 @@ void PixelLineConverter::updateState(uint64_t callTime) {
         /*! - Compute the uncertainty */
         x_map = planetRad / denom * (X);
         y_map = planetRad / denom * (Y);
-        rho_map =
-            planetRad * (X / (sqrt(1 + pow(circlesIn.circlesRadii[0] * X, 2))) -
-                         1.0 / X * sqrt(1 + pow(circlesIn.circlesRadii[0] * X, 2)) / pow(circlesIn.circlesRadii[0], 2));
+        rho_map = planetRad
+                * (X / (sqrt(1 + pow(circlesIn.circlesRadii[0] * X, 2)))
+                   - 1.0 / X * sqrt(1 + pow(circlesIn.circlesRadii[0] * X, 2)) / pow(circlesIn.circlesRadii[0], 2));
         mSetIdentity(covar_map_C, 3, 3);
         covar_map_C[0] = x_map;
         covar_map_C[4] = y_map;
@@ -129,7 +130,7 @@ void PixelLineConverter::updateState(uint64_t callTime) {
     vScale(1E6, opNavMsgOut.covar_C, 3 * 3, opNavMsgOut.covar_C);  // in m
     mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
     vScale(1E6, opNavMsgOut.covar_B, 3 * 3, opNavMsgOut.covar_B);  // in m
-    opNavMsgOut.timeTag = (double)circlesIn.timeTag;
+    opNavMsgOut.timeTag = (double) circlesIn.timeTag;
     opNavMsgOut.valid = 1;
 
     this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);

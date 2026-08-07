@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "motorThermal.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -17,16 +19,16 @@ MotorThermal::MotorThermal() {
 }
 
 /*! Module Destructor.  */
-MotorThermal::~MotorThermal() { return; }
+MotorThermal::~MotorThermal() {
+    return;
+}
 
 /*! This method is used to reset the module.
  @return void
  */
 void MotorThermal::reset(uint64_t currentSimNanos) {
     // check if input message is linked
-    if (!this->rwStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "motorThermal.rwStateInMsg is not linked.");
-    }
+    if (!this->rwStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "motorThermal.rwStateInMsg is not linked."); }
 
     // if the current temperature is at or below absolute zero, it means either the temperature wasn't set properly or
     // some error occurred
@@ -36,23 +38,29 @@ void MotorThermal::reset(uint64_t currentSimNanos) {
 
     // throw an error if the efficiency is not between 0.0 and 1.0
     if (this->efficiency <= 0.0 || this->efficiency >= 1.0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "motorThermal: efficiency is %f, must be a value greater than 0.0 and smaller than 1.0.",
-                         this->efficiency);
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "motorThermal: efficiency is %f, must be a value greater than 0.0 and smaller than 1.0.",
+            this->efficiency
+        );
     }
 
     // if the ambient heat capacity is at or below zero, it means either the value wasn't set properly
     if (this->ambientThermalResistance <= 0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "motorThermal: current ambient thermal resistance is at or below zero, must be a positive "
-                         "number. The value has either not been set, or has not been set properly.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "motorThermal: current ambient thermal resistance is at or below zero, must be a positive "
+            "number. The value has either not been set, or has not been set properly."
+        );
     }
 
     // if the motor heat capacity is at or below zero, it means either the value wasn't set properly
     if (this->motorHeatCapacity <= 0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Current ambient heat capacity is at or below zero, must be a positive number. The value has "
-                         "either not been set, or has not been set properly.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "Current ambient heat capacity is at or below zero, must be a positive number. The value has "
+            "either not been set, or has not been set properly."
+        );
     }
 
     // reset the previous time

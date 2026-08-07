@@ -31,7 +31,9 @@ HoughCircles::HoughCircles() {
 }
 
 /*! This is the destructor */
-HoughCircles::~HoughCircles() { return; }
+HoughCircles::~HoughCircles() {
+    return;
+}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between
  function calls are reset to their default values.
@@ -40,9 +42,7 @@ HoughCircles::~HoughCircles() { return; }
  */
 void HoughCircles::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
-    if (!this->imageInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HoughCircles.imageInMsg wasn't connected.");
-    }
+    if (!this->imageInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "HoughCircles.imageInMsg wasn't connected."); }
 }
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle
@@ -72,8 +72,10 @@ void HoughCircles::updateState(uint64_t currentSimNanos) {
         imageCV = cv::imread(this->filename, cv::IMREAD_COLOR);
     } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
-                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer(
+            (char*) imageBuffer.imagePointer,
+            (char*) imageBuffer.imagePointer + imageBuffer.imageBufferLength
+        );
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
         if (this->saveImages == 1) {
             if (!cv::imwrite(this->saveDir, imageCV)) {
@@ -92,19 +94,21 @@ void HoughCircles::updateState(uint64_t currentSimNanos) {
 
     std::vector<cv::Vec4f> circles;
     /*! - Apply the Hough Transform to find the circles*/
-    cv::HoughCircles(blurred,
-                     circles,
-                     cv::HOUGH_GRADIENT,
-                     this->dpValue,
-                     this->houghMinDist,
-                     this->cannyThresh,
-                     this->voteThresh,
-                     this->houghMinRadius,
-                     this->houghMaxRadius);
+    cv::HoughCircles(
+        blurred,
+        circles,
+        cv::HOUGH_GRADIENT,
+        this->dpValue,
+        this->houghMinDist,
+        this->cannyThresh,
+        this->voteThresh,
+        this->houghMinRadius,
+        this->houghMaxRadius
+    );
 
     circleBuffer.timeTag = this->sensorTimeTag;
     circleBuffer.cameraID = imageBuffer.cameraID;
-    for (int i = 0; i < this->expectedCircles && i < (int)circles.size(); i++) {
+    for (int i = 0; i < this->expectedCircles && i < (int) circles.size(); i++) {
         circleBuffer.circlesCenters[2 * i] = circles[i][0];
         circleBuffer.circlesCenters[2 * i + 1] = circles[i][1];
         circleBuffer.circlesRadii[i] = circles[i][2];

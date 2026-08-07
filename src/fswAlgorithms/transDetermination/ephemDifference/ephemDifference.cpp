@@ -15,7 +15,7 @@ void EphemDifference::reset(uint64_t callTime) {
     }
 
     this->ephBdyCount = 0;
-    for (const auto& cfg : this->changeBodies) {
+    for (auto const &cfg : this->changeBodies) {
         if (cfg.ephInMsg.isLinked()) {
             this->ephBdyCount++;
         } else {
@@ -24,9 +24,11 @@ void EphemDifference::reset(uint64_t callTime) {
     }
 
     if (this->ephBdyCount == 0) {
-        this->bskLogger.bskLog(BSK_WARNING,
-                               "Your outgoing ephemeris message count is zero. "
-                               "Be sure to specify desired output messages.");
+        this->bskLogger.bskLog(
+            BSK_WARNING,
+            "Your outgoing ephemeris message count is zero. "
+            "Be sure to specify desired output messages."
+        );
     }
 }
 

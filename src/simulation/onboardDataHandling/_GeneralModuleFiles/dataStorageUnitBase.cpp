@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dataStorageUnitBase.h"
+
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <iostream>
 
 /*! This method initializes some basic parameters for the module.
@@ -15,16 +17,16 @@ DataStorageUnitBase::DataStorageUnitBase() {
     this->storedDataSum = 0;          //! - Initialize the dataSum to 0.
     this->netBaud = 0.0;              //! - Initialize the netBaudRate to 0.
     //! - Zero out the partitions
-    for (uint64_t i = 0; i < this->storedData.size(); i++) {
-        this->storedData[i].dataInstanceSum = 0;
-    }
+    for (uint64_t i = 0; i < this->storedData.size(); i++) { this->storedData[i].dataInstanceSum = 0; }
     return;
 }
 
 /*! Destructor.
  @return void
  */
-DataStorageUnitBase::~DataStorageUnitBase() { return; }
+DataStorageUnitBase::~DataStorageUnitBase() {
+    return;
+}
 
 /*! This method is used to reset the module.
  @param currentSimNanos
@@ -141,13 +143,13 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime) {
 
         //! - If the storage capacity has not been reached or the baudRate is less than 0 and won't take below 0, then
         //! add the data
-        if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) <= this->storageCapacity) ||
-            (it->baudRate < 0)) {
+        if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) <= this->storageCapacity)
+            || (it->baudRate < 0)) {
             //! - if a dataNode exists in storedData vector, integrate and add to current amount
             if (index != -1) {
                 //! Only perform if this operation will not take the sum below zero
-                if ((this->storedData[(size_t)index].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
-                    this->storedData[(size_t)index].dataInstanceSum += round(it->baudRate * this->currentTimestep);
+                if ((this->storedData[(size_t) index].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
+                    this->storedData[(size_t) index].dataInstanceSum += round(it->baudRate * this->currentTimestep);
                 }
                 //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add
                 //! amount
@@ -178,9 +180,7 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload* tmpNodeMsg
 
     // Loop through storedData. If dataName is found, set index = i
     for (uint64_t i = 0; i < this->storedData.size(); i++) {
-        if (strcmp(this->storedData[i].dataInstanceName, tmpNodeMsg->dataName) == 0) {
-            index = (int)i;
-        }
+        if (strcmp(this->storedData[i].dataInstanceName, tmpNodeMsg->dataName) == 0) { index = (int) i; }
     }
     return index;
 }
@@ -192,9 +192,7 @@ int64_t DataStorageUnitBase::sumAllData() {
     double dataSum = 0;
 
     std::vector<dataInstance>::iterator it;
-    for (it = storedData.begin(); it != storedData.end(); it++) {
-        dataSum += it->dataInstanceSum;
-    }
+    for (it = storedData.begin(); it != storedData.end(); it++) { dataSum += it->dataInstanceSum; }
 
     return dataSum;
 }
@@ -202,17 +200,23 @@ int64_t DataStorageUnitBase::sumAllData() {
 /*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void DataStorageUnitBase::customreset(uint64_t CurrentClock) { return; }
+void DataStorageUnitBase::customreset(uint64_t CurrentClock) {
+    return;
+}
 
 /*! custom Write method, similar to customSelfInit.
  @return void
  */
-void DataStorageUnitBase::customWriteMessages(uint64_t CurrentClock) { return; }
+void DataStorageUnitBase::customWriteMessages(uint64_t CurrentClock) {
+    return;
+}
 
 /*! Custom read method, similar to customSelfInit; returns `true' by default.
  @return void
  */
-bool DataStorageUnitBase::customReadMessages() { return true; }
+bool DataStorageUnitBase::customReadMessages() {
+    return true;
+}
 
 /*! Adds a specific amount of data to the storedData vector once
  @param partitionName //Name of the partition to add data to
@@ -224,9 +228,7 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
 
     int index = -1;
     for (uint64_t i = 0; i < this->storedData.size(); i++) {
-        if (strcmp(this->storedData[i].dataInstanceName, partitionName.c_str()) == 0) {
-            index = (int)i;
-        }
+        if (strcmp(this->storedData[i].dataInstanceName, partitionName.c_str()) == 0) { index = (int) i; }
     }
 
     //! - If the new data won't overflow the storage capacity, then add the data
@@ -234,8 +236,8 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
         //! - if a dataNode exists in storedData vector, integrate and add to current amount
         if (index != -1) {
             //! Only perform if this operation will not take the sum below zero
-            if ((this->storedData[(size_t)index].dataInstanceSum + data) >= 0) {
-                this->storedData[(size_t)index].dataInstanceSum += data;
+            if ((this->storedData[(size_t) index].dataInstanceSum + data) >= 0) {
+                this->storedData[(size_t) index].dataInstanceSum += data;
             }
 
         }
@@ -244,9 +246,7 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
             strncpy(tmpDataInstance.dataInstanceName, partitionName.c_str(), sizeof(tmpDataInstance.dataInstanceName));
             //! Only perform this operation if the resulting sum in the partition is not negative. If it is, initialize
             //! to zero.
-            if (data < 0) {
-                data = 0;
-            }
+            if (data < 0) { data = 0; }
             tmpDataInstance.dataInstanceSum = data;
             this->storedData.push_back(tmpDataInstance);
         }

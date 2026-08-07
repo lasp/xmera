@@ -11,16 +11,12 @@
  @param callTime [ns] Time the method is called
 */
 void RateControl::reset(uint64_t callTime) {
-    if (!this->guidInMsg.isLinked()) {
-        throw std::invalid_argument("rateControl.guidInMsg wasn't connected.");
-    }
+    if (!this->guidInMsg.isLinked()) { throw std::invalid_argument("rateControl.guidInMsg wasn't connected."); }
     if (!this->vehConfigInMsg.isLinked()) {
         throw std::invalid_argument("rateControl.vehConfigInMsg wasn't connected.");
     }
 
-    if (this->vehConfigInMsg.isWritten()) {
-        this->algorithm.setSpacecraftInertia(this->vehConfigInMsg());
-    }
+    if (this->vehConfigInMsg.isWritten()) { this->algorithm.setSpacecraftInertia(this->vehConfigInMsg()); }
 }
 
 /*! This method takes the attitude and rate errors relative to the reference frame, as well as
@@ -30,9 +26,7 @@ the reference frame angular rates and acceleration, and computes the required co
 */
 void RateControl::updateState(uint64_t callTime) {
     CmdTorqueBodyMsgPayload torqueCmdOut{};
-    if (this->guidInMsg.isWritten()) {
-        torqueCmdOut = this->algorithm.update(this->guidInMsg());
-    }
+    if (this->guidInMsg.isWritten()) { torqueCmdOut = this->algorithm.update(this->guidInMsg()); }
 
     this->cmdTorqueOutMsg.write(torqueCmdOut, moduleID, callTime);
 }
@@ -41,22 +35,28 @@ void RateControl::updateState(uint64_t callTime) {
  @return void
  @param P [N*m*s] Rate error feedback gain applied
 */
-void RateControl::setDerivativeGainP(const double P) { this->algorithm.setDerivativeGainP(P); }
+void RateControl::setDerivativeGainP(double const P) {
+    this->algorithm.setDerivativeGainP(P);
+}
 
 /*! Getter method for the derivative gain P.
  @return const double
 */
-double RateControl::getDerivativeGainP() const { return this->algorithm.getDerivativeGainP(); }
+double RateControl::getDerivativeGainP() const {
+    return this->algorithm.getDerivativeGainP();
+}
 
 /*! Setter method for the known external torque about point B.
  @return void
  @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
 */
-void RateControl::setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B) {
+void RateControl::setKnownTorquePntB_B(Eigen::Vector3d const &knownTorquePntB_B) {
     this->algorithm.setKnownTorquePntB_B(knownTorquePntB_B);
 }
 
 /*! Getter method for the known torque about point B.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d& RateControl::getKnownTorquePntB_B() const { return this->algorithm.getKnownTorquePntB_B(); }
+Eigen::Vector3d const &RateControl::getKnownTorquePntB_B() const {
+    return this->algorithm.getKnownTorquePntB_B();
+}

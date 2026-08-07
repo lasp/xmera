@@ -18,7 +18,9 @@ MotorVoltageInterface::MotorVoltageInterface() {
 }
 
 /*! Destructor.  Nothing here. */
-MotorVoltageInterface::~MotorVoltageInterface() { return; }
+MotorVoltageInterface::~MotorVoltageInterface() {
+    return;
+}
 
 /*! Reset the module to original configuration values.
  @return void

@@ -30,7 +30,7 @@ void TimeClosestApproach::readMessages() {
 * @param currentSimNanos Current sim nano
 
 */
-void TimeClosestApproach::writeMessages(const double tCA, const double sigmaTca, const uint64_t currentSimNanos) {
+void TimeClosestApproach::writeMessages(double const tCA, double const sigmaTca, uint64_t const currentSimNanos) {
     /*! create and zero the output message */
     TimeClosestApproachMsgPayload tcaMsgBuffer{};
     tcaMsgBuffer.timeClosestApproach = tCA;
@@ -53,7 +53,7 @@ void TimeClosestApproach::computeGeometry() {
 
     double product = -r_BN_N_hat.dot(v_BN_N_hat);
     product = std::max(-1.0, std::min(1.0, product));
-    const double theta = std::acos(product);
+    double const theta = std::acos(product);
 
     // compute flight path angle at the time of read
     this->flightPathAngle = theta - M_PI / 2.0;
@@ -62,7 +62,9 @@ void TimeClosestApproach::computeGeometry() {
 /*! Compute time of closest approach.
  * @return double time of closest approach in sec
  */
-double TimeClosestApproach::computeTca() const { return -std::sin(this->flightPathAngle) / this->ratio; }
+double TimeClosestApproach::computeTca() const {
+    return -std::sin(this->flightPathAngle) / this->ratio;
+}
 
 /*! Compute standard deviation of time closest approach.
  @return double standard deviation of time closest approach.
@@ -79,8 +81,8 @@ double TimeClosestApproach::computeTcaStandardDeviation() const {
         covariance_map_to_tca.tail(3) =
             1.0 / v_BN_N.norm() * (r_BN_N_hat - std::sin(this->flightPathAngle) * v_BN_N_hat);
     }
-    const double mappedCovariance = covariance_map_to_tca.transpose() * this->filterCovariance * covariance_map_to_tca;
-    const double tCA_covariance = (1.0 / std::pow(this->ratio, 2)) * mappedCovariance;
+    double const mappedCovariance = covariance_map_to_tca.transpose() * this->filterCovariance * covariance_map_to_tca;
+    double const tCA_covariance = (1.0 / std::pow(this->ratio, 2)) * mappedCovariance;
 
     return std::sqrt(tCA_covariance);
 }
@@ -89,10 +91,10 @@ double TimeClosestApproach::computeTcaStandardDeviation() const {
  @return void
  @param currentSimNanos The current simulation time for system
  */
-void TimeClosestApproach::updateState(const uint64_t currentSimNanos) {
+void TimeClosestApproach::updateState(uint64_t const currentSimNanos) {
     this->readMessages();
     this->computeGeometry();
-    const double tCA = this->computeTca();
-    const double sigmaTca = this->computeTcaStandardDeviation();
+    double const tCA = this->computeTca();
+    double const sigmaTca = this->computeTcaStandardDeviation();
     this->writeMessages(tCA, sigmaTca, currentSimNanos);
 }

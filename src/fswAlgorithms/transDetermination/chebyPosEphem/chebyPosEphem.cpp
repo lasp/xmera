@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "chebyPosEphem.h"
-#include <fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h>
-#include <architecture/utilities/macroDefinitions.h>
+
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+
+#include <fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h>
 #include <math.h>
 #include <string.h>
 
@@ -37,9 +39,7 @@ void ChebyPosEphem::reset(uint64_t callTime) {
             }
             currRec->velChebyCoeff[k * n + 1] = 4.0 * tempCVec[2];
             currRec->velChebyCoeff[k * n + 0] = tempCVec[1];
-            for (j = 0; j < n; j++) {
-                currRec->velChebyCoeff[k * n + j] *= 1.0 / currRec->ephemTimeRad;
-            }
+            for (j = 0; j < n; j++) { currRec->velChebyCoeff[k * n + j] *= 1.0 / currRec->ephemTimeRad; }
         }
     }
 }
@@ -73,17 +73,21 @@ void ChebyPosEphem::updateState(uint64_t callTime) {
 
     currRec = &(this->ephArray[this->coeffSelector]);
     currentScaledValue = (currentEphTime - currRec->ephemTimeMid) / currRec->ephemTimeRad;
-    if (fabs(currentScaledValue) > 1.0) {
-        currentScaledValue = currentScaledValue / fabs(currentScaledValue);
-    }
+    if (fabs(currentScaledValue) > 1.0) { currentScaledValue = currentScaledValue / fabs(currentScaledValue); }
 
     this->outputState.timeTag = callTime * NANO2SEC;
 
     for (i = 0; i < 3; i++) {
         this->outputState.r_BdyZero_N[i] = calculateChebyValue(
-            &(currRec->posChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
+            &(currRec->posChebyCoeff[i * currRec->nChebCoeff]),
+            currRec->nChebCoeff,
+            currentScaledValue
+        );
         this->outputState.v_BdyZero_N[i] = calculateChebyValue(
-            &(currRec->velChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
+            &(currRec->velChebyCoeff[i * currRec->nChebCoeff]),
+            currRec->nChebCoeff,
+            currentScaledValue
+        );
     }
 
     this->posFitOutMsg.write(outputState, this->moduleID, callTime);

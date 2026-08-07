@@ -8,11 +8,12 @@
  */
 
 #include "rateServoFullNonlinear_C.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
-#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 
+#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 #include <math.h>
 #include <string.h>
 
@@ -49,14 +50,10 @@ void RateServoFullNonlinear_C::reset(uint64_t callTime) {
     }
 
     sc = this->vehConfigInMsg();
-    for (i = 0; i < 9; i++) {
-        this->ISCPntB_B[i] = sc.ISCPntB_B[i];
-    };
+    for (i = 0; i < 9; i++) { this->ISCPntB_B[i] = sc.ISCPntB_B[i]; };
 
     this->rwConfigParams.numRW = 0;
-    if (this->rwParamsInMsg.isLinked()) {
-        this->rwConfigParams = this->rwParamsInMsg();
-    }
+    if (this->rwParamsInMsg.isLinked()) { this->rwConfigParams = this->rwParamsInMsg(); }
 
     /* Reset the integral measure of the rate tracking error */
     v3SetZero(this->z);
@@ -112,9 +109,7 @@ void RateServoFullNonlinear_C::updateState(uint64_t callTime) {
 
     if (this->rwConfigParams.numRW > 0) {
         wheelSpeeds = this->rwSpeedsInMsg();
-        if (this->rwAvailInMsg.isLinked()) {
-            wheelsAvailability = this->rwAvailInMsg();
-        }
+        if (this->rwAvailInMsg.isLinked()) { wheelsAvailability = this->rwAvailInMsg(); }
     }
 
     /*! - compute body rate */
@@ -130,9 +125,7 @@ void RateServoFullNonlinear_C::updateState(uint64_t callTime) {
         v3Add(v3_1, this->z, this->z); /* z = integral(del_omega) */
         for (i = 0; i < 3; i++) {
             intLimCheck = fabs(this->z[i]);
-            if (intLimCheck > this->integralLimit) {
-                this->z[i] *= this->integralLimit / intLimCheck;
-            }
+            if (intLimCheck > this->integralLimit) { this->z[i] *= this->integralLimit / intLimCheck; }
         }
     } else {
         /* integral feedback is turned off through a negative gain setting */
@@ -149,9 +142,11 @@ void RateServoFullNonlinear_C::updateState(uint64_t callTime) {
     for (i = 0; i < this->rwConfigParams.numRW; i++) {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) { /* check if wheel is available */
             wheelGs = &(this->rwConfigParams.GsMatrix_B[i * 3]);
-            v3Scale(this->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
-                    wheelGs,
-                    v3_4);
+            v3Scale(
+                this->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
+                wheelGs,
+                v3_4
+            );
             v3Add(v3_4, v3_3, v3_3);
         }
     }

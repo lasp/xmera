@@ -2,9 +2,10 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
+#include "faultDetection.h"
+
 #include <math.h>
 #include <string.h>
-#include "faultDetection.h"
 
 /*! This resets the module to original states.
  @return void

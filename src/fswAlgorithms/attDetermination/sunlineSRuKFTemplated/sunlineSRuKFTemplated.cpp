@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: ISC
 
 #include "sunlineSRuKFTemplated.hpp"
-#include "SRUnscentedKalmanFilter.hpp"
+
 #include "GyroModel.hpp"
 #include "Measurement.hpp"
+#include "SRUnscentedKalmanFilter.hpp"
 
 #include <Eigen/Core>
 
-static const int STATE_DIM = 6;
+static int const STATE_DIM = 6;
 
 /*! Define the equations of motion for the filter dynamics
     @param double time
     @return FilterStateVector inputState
     @return FilterStateVector outputState
     */
-static State<6> stateDerivative(double t, const State<6>& state) {
+static State<6> stateDerivative(double t, State<6> const &state) {
     State<6> XDot;
     /*! Implement propagation with rate derivatives set to zero */
     Eigen::Vector3d sHat = state.x.segment(0, 3);
@@ -33,7 +34,7 @@ static State<6> stateDerivative(double t, const State<6>& state) {
     //    }
 
     return XDot;
-};
+}
 
 SunlineSRuKFTemplated::SunlineSRuKFTemplated() {
     //    this->ukf = SRUnscentedKalmanFilter<6>();
@@ -47,6 +48,7 @@ SunlineSRuKFTemplated::SunlineSRuKFTemplated() {
 
     ukf.setDynamicsModel(stateDerivative);
 }
+
 /*! Reset the sunline filter to an initial state and
  initializes the internal estimation matrices.
  @return void
@@ -76,7 +78,7 @@ void SunlineSRuKFTemplated::updateState(uint64_t currentSimNanos) {
 
     ukf.updateState(currentSimNanos, measurements);
 
-    const auto& state = ukf.getState();
+    auto const &state = ukf.getState();
     std::cout << "Post-update state x:\n" << state.x << "\n";
     std::cout << "Post-update covariance P:\n" << state.P << "\n";
     this->writeOutputMessages(currentSimNanos);
@@ -256,7 +258,7 @@ void SunlineSRuKFTemplated::readFilterMeasurements() {
     @param double cssMeasurementNoise
     @return void
     */
-void SunlineSRuKFTemplated::setCssMeasurementNoiseStd(const double cssMeasurementNoiseStd) {
+void SunlineSRuKFTemplated::setCssMeasurementNoiseStd(double const cssMeasurementNoiseStd) {
     this->cssMeasNoiseStd = cssMeasurementNoiseStd;
 }
 
@@ -264,7 +266,7 @@ void SunlineSRuKFTemplated::setCssMeasurementNoiseStd(const double cssMeasuremen
     @param double gyroMeasurementNoise
     @return void
     */
-void SunlineSRuKFTemplated::setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseStd) {
+void SunlineSRuKFTemplated::setGyroMeasurementNoiseStd(double const gyroMeasurementNoiseStd) {
     this->gyroMeasNoiseStd = gyroMeasurementNoiseStd;
 }
 
@@ -272,41 +274,57 @@ void SunlineSRuKFTemplated::setGyroMeasurementNoiseStd(const double gyroMeasurem
     @param double cssMeasurementNoise
     @return void
     */
-double SunlineSRuKFTemplated::getCssMeasurementNoiseStd() const { return this->cssMeasNoiseStd; }
+double SunlineSRuKFTemplated::getCssMeasurementNoiseStd() const {
+    return this->cssMeasNoiseStd;
+}
 
 /*! Get the gyro measurement noise
     @param double gyroMeasurementNoise
     @return void
     */
-double SunlineSRuKFTemplated::getGyroMeasurementNoiseStd() const { return this->gyroMeasNoiseStd; }
+double SunlineSRuKFTemplated::getGyroMeasurementNoiseStd() const {
+    return this->gyroMeasNoiseStd;
+}
 
 /*! Set the threshold value to accept a css measurement
     @param double threshold
     @return void
     */
-void SunlineSRuKFTemplated::setSensorThreshold(double threshold) { this->sensorUseThresh = threshold; }
+void SunlineSRuKFTemplated::setSensorThreshold(double threshold) {
+    this->sensorUseThresh = threshold;
+}
 
 /*! Get the threshold value to accept a css measurement
     @return double threshold
     */
-double SunlineSRuKFTemplated::getSensorThreshold() const { return this->sensorUseThresh; }
+double SunlineSRuKFTemplated::getSensorThreshold() const {
+    return this->sensorUseThresh;
+}
 
 /*! Set the bias upper bound value it is not allowed to exceed
     @param double biasUpperBound
     */
-void SunlineSRuKFTemplated::setBiasUpperBound(double biasUpperBound) { this->biasUpperBound = biasUpperBound; }
+void SunlineSRuKFTemplated::setBiasUpperBound(double biasUpperBound) {
+    this->biasUpperBound = biasUpperBound;
+}
 
 /*! Get the bias upper bound value it is not allowed to exceed
     @return double biasUpperBound
     */
-double SunlineSRuKFTemplated::getBiasUpperBound() const { return this->biasUpperBound; }
+double SunlineSRuKFTemplated::getBiasUpperBound() const {
+    return this->biasUpperBound;
+}
 
 /*! Set the bias lower bound value it is not allowed to subceed
     @param double biasUpperBound
     */
-void SunlineSRuKFTemplated::setBiasLowerBound(double biasLowerBound) { this->biasLowerBound = biasLowerBound; }
+void SunlineSRuKFTemplated::setBiasLowerBound(double biasLowerBound) {
+    this->biasLowerBound = biasLowerBound;
+}
 
 /*! Get the bias lower bound value it is not allowed to subceed
     @return double biasUpperBound
     */
-double SunlineSRuKFTemplated::getBiasLowerBound() const { return this->biasLowerBound; }
+double SunlineSRuKFTemplated::getBiasLowerBound() const {
+    return this->biasLowerBound;
+}

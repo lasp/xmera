@@ -4,35 +4,41 @@
 
 #include "oneAxisSolarArrayPoint.h"
 
-#include <math.h>
-
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
-void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3]);
-void oasapComputeSecondRotation(double hRefHat_B[3],
-                                double rHat_SB_R1[3],
-                                double a1Hat_B[3],
-                                double a2Hat_B[3],
-                                double R2R1[3][3],
-                                RefFrameSolution* refFrameSolution);
-void oasapComputeThirdRotation(int alignmentPriority,
-                               double hRefHat_B[3],
-                               double rHat_SB_R2[3],
-                               double a1Hat_B[3],
-                               double R3R2[3][3]);
-void oasapComputeFinalRotation(CelestialBody celestialBody,
-                               AlignmentPriority alignmentPriority,
-                               double BN[3][3],
-                               double rHat_SB_B[3],
-                               double hRefHat_B[3],
-                               double hReqHat_B[3],
-                               double a1Hat_B[3],
-                               double a2Hat_B[3],
-                               double RN[3][3]);
+#include <math.h>
 
-const double epsilon = 1e-12;  // module tolerance for zero
+void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3]);
+void oasapComputeSecondRotation(
+    double hRefHat_B[3],
+    double rHat_SB_R1[3],
+    double a1Hat_B[3],
+    double a2Hat_B[3],
+    double R2R1[3][3],
+    RefFrameSolution* refFrameSolution
+);
+void oasapComputeThirdRotation(
+    int alignmentPriority,
+    double hRefHat_B[3],
+    double rHat_SB_R2[3],
+    double a1Hat_B[3],
+    double R3R2[3][3]
+);
+void oasapComputeFinalRotation(
+    CelestialBody celestialBody,
+    AlignmentPriority alignmentPriority,
+    double BN[3][3],
+    double rHat_SB_B[3],
+    double hRefHat_B[3],
+    double hReqHat_B[3],
+    double a1Hat_B[3],
+    double a2Hat_B[3],
+    double RN[3][3]
+);
+
+double const epsilon = 1e-12;  // module tolerance for zero
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -52,7 +58,8 @@ void OneAxisSolarArrayPoint::reset(uint64_t callTime) {
     } else {
         this->bskLogger.bskLog(
             BSK_ERROR,
-            " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
+            " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified."
+        );
     }
 
     // check how the input inertial heading is provided
@@ -62,13 +69,16 @@ void OneAxisSolarArrayPoint::reset(uint64_t callTime) {
             this->bskLogger.bskLog(
                 BSK_WARNING,
                 " both oneAxisSolarArrayPoint.inertialHeadingInMsg and oneAxisSolarArrayPoint.ephemerisInMsg were "
-                "linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg");
+                "linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg"
+            );
         }
     } else if (this->ephemerisInMsg.isLinked()) {
         if (!this->transNavInMsg.isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                   " oneAxisSolarArrayPoint.ephemerisInMsg was specified but "
-                                   "oneAxisSolarArrayPoint.transNavInMsg was not.");
+            this->bskLogger.bskLog(
+                BSK_ERROR,
+                " oneAxisSolarArrayPoint.ephemerisInMsg was specified but "
+                "oneAxisSolarArrayPoint.transNavInMsg was not."
+            );
         } else {
             this->inertialAxisInput = inputEphemerisMsg;
         }
@@ -79,7 +89,8 @@ void OneAxisSolarArrayPoint::reset(uint64_t callTime) {
             this->bskLogger.bskLog(
                 BSK_ERROR,
                 " neither oneAxisSolarArrayPoint.inertialHeadingInMsg nor oneAxisSolarArrayPoint.ephemerisInMsg were "
-                "connected and no inertial heading h_N was specified.");
+                "connected and no inertial heading h_N was specified."
+            );
         }
     }
 }
@@ -145,7 +156,16 @@ void OneAxisSolarArrayPoint::updateState(uint64_t callTime) {
     /*! compute the total rotation DCM */
     double RN[3][3];
     oasapComputeFinalRotation(
-        this->celestialBodyInput, this->alignmentPriority, BN, rHat_SB_B, hRefHat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+        this->celestialBodyInput,
+        this->alignmentPriority,
+        BN,
+        rHat_SB_B,
+        hRefHat_B,
+        hReqHat_B,
+        a1Hat_B,
+        a2Hat_B,
+        RN
+    );
 
     /*! compute the relative rotation DCM and Sun direction in relative frame */
     double RB[3][3];
@@ -159,15 +179,17 @@ void OneAxisSolarArrayPoint::updateState(uint64_t callTime) {
 
     if (v3Norm(this->h2Hat_BInput) > epsilon) {
         // compute second reference frame
-        oasapComputeFinalRotation(this->celestialBodyInput,
-                                  this->alignmentPriority,
-                                  BN,
-                                  rHat_SB_B,
-                                  this->h2Hat_BInput,
-                                  hReqHat_B,
-                                  a1Hat_B,
-                                  a2Hat_B,
-                                  RN);
+        oasapComputeFinalRotation(
+            this->celestialBodyInput,
+            this->alignmentPriority,
+            BN,
+            rHat_SB_B,
+            this->h2Hat_BInput,
+            hReqHat_B,
+            a1Hat_B,
+            a2Hat_B,
+            RN
+        );
 
         // compute the relative rotation DCM and Sun direction in relative frame
         m33MultM33t(RN, BN, RB);
@@ -212,12 +234,14 @@ void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double 
 
 /*! This helper function computes the second rotation that achieves the best incidence on the solar arrays maintaining
  * the heading alignment */
-void oasapComputeSecondRotation(double hRefHat_B[3],
-                                double rHat_SB_R1[3],
-                                double a1Hat_B[3],
-                                double a2Hat_B[3],
-                                double R2R1[3][3],
-                                RefFrameSolution* refFrameSolution) {
+void oasapComputeSecondRotation(
+    double hRefHat_B[3],
+    double rHat_SB_R1[3],
+    double a1Hat_B[3],
+    double a2Hat_B[3],
+    double R2R1[3][3],
+    RefFrameSolution* refFrameSolution
+) {
     /*! define second rotation vector to coincide with the thrust direction in B coordinates */
     double e_psi[3];
     v3Copy(hRefHat_B, e_psi);
@@ -261,9 +285,7 @@ void oasapComputeSecondRotation(double hRefHat_B[3],
         }
         // choose which returns a smaller fcn value between t1 and t2
         psi = psi1;
-        if (fabs(y2) < fabs(y1)) {
-            psi = psi2;
-        }
+        if (fabs(y2) < fabs(y1)) { psi = psi2; }
     } else if (Delta > epsilon) {
         if (fabs(A) < epsilon) {
             t1 = -B / C;
@@ -280,17 +302,13 @@ void oasapComputeSecondRotation(double hRefHat_B[3],
             y2 = (E * t2 * t2 + F * t2 + G) / (1 + t2 * t2);
         }
         psi = psi1;
-        if ((fabs(v3Dot(hRefHat_B, a2Hat_B) - 1) > epsilon) && (y2 - y1 > epsilon)) {
-            psi = psi2;
-        }
+        if ((fabs(v3Dot(hRefHat_B, a2Hat_B) - 1) > epsilon) && (y2 - y1 > epsilon)) { psi = psi2; }
     } else {
         if (fabs(A) > epsilon) {
             psi = 2 * atan(-B / (2 * A));
         } else {
             psi = MPI;
-            if (fabs(C) < epsilon) {
-                *refFrameSolution = indeterminate;
-            }
+            if (fabs(C) < epsilon) { *refFrameSolution = indeterminate; }
         }
     }
 
@@ -302,25 +320,23 @@ void oasapComputeSecondRotation(double hRefHat_B[3],
 
 /*! This helper function computes the third rotation that breaks the heading alignment if needed, to achieve maximum
  * incidence on solar arrays */
-void oasapComputeThirdRotation(int alignmentPriority,
-                               double hRefHat_B[3],
-                               double rHat_SB_R2[3],
-                               double a1Hat_B[3],
-                               double R3R2[3][3]) {
+void oasapComputeThirdRotation(
+    int alignmentPriority,
+    double hRefHat_B[3],
+    double rHat_SB_R2[3],
+    double a1Hat_B[3],
+    double R3R2[3][3]
+) {
     double PRV_theta[3];
 
     if (alignmentPriority == prioritizeAxisAlignment) {
-        for (int i = 0; i < 3; i++) {
-            PRV_theta[i] = 0;
-        }
+        for (int i = 0; i < 3; i++) { PRV_theta[i] = 0; }
     } else {
         double sTheta = v3Dot(rHat_SB_R2, a1Hat_B);
         double theta = asin(fmin(fmax(fabs(sTheta), -1), 1));
         if (fabs(theta) < epsilon) {
             // if Sun direction and solar array drive are already perpendicular, third rotation is null
-            for (int i = 0; i < 3; i++) {
-                PRV_theta[i] = 0;
-            }
+            for (int i = 0; i < 3; i++) { PRV_theta[i] = 0; }
         } else {
             // if Sun direction and solar array drive are not perpendicular, project solar array drive a1Hat_B onto
             // perpendicular plane (aPHat_B) and compute third rotation
@@ -333,9 +349,7 @@ void oasapComputeThirdRotation(int alignmentPriority,
             } else {
                 // rotate about the axis that minimizes variation in hRefHat_B direction
                 v3Cross(rHat_SB_R2, hRefHat_B, aPHat_B);
-                if (v3Norm(aPHat_B) < epsilon) {
-                    v3Perpendicular(rHat_SB_R2, aPHat_B);
-                }
+                if (v3Norm(aPHat_B) < epsilon) { v3Perpendicular(rHat_SB_R2, aPHat_B); }
                 v3Cross(a1Hat_B, aPHat_B, e_theta);
             }
             v3Normalize(e_theta, e_theta);
@@ -348,15 +362,17 @@ void oasapComputeThirdRotation(int alignmentPriority,
 }
 
 /*! This helper function computes the final rotation as a product of the first three DCMs */
-void oasapComputeFinalRotation(CelestialBody celestialBody,
-                               AlignmentPriority alignmentPriority,
-                               double BN[3][3],
-                               double rHat_SB_B[3],
-                               double hRefHat_B[3],
-                               double hReqHat_B[3],
-                               double a1Hat_B[3],
-                               double a2Hat_B[3],
-                               double RN[3][3]) {
+void oasapComputeFinalRotation(
+    CelestialBody celestialBody,
+    AlignmentPriority alignmentPriority,
+    double BN[3][3],
+    double rHat_SB_B[3],
+    double hRefHat_B[3],
+    double hReqHat_B[3],
+    double a1Hat_B[3],
+    double a2Hat_B[3],
+    double RN[3][3]
+) {
     /*! compute the first rotation DCM */
     double R1B[3][3];
     oasapComputeFirstRotation(hRefHat_B, hReqHat_B, R1B);

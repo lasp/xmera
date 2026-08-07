@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "linearTranslationOneDOFStateEffector.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
@@ -28,9 +29,9 @@ linearTranslationOneDOFStateEffector::~linearTranslationOneDOFStateEffector() {
 void linearTranslationOneDOFStateEffector::reset(uint64_t CurrentClock) {}
 
 void linearTranslationOneDOFStateEffector::setMass(double mass) {
-    if (mass > 0.0)
+    if (mass > 0.0) {
         this->mass = mass;
-    else {
+    } else {
         this->bskLogger.bskLog(BSK_ERROR, "Mass must be greater than 0.");
     }
 }
@@ -44,28 +45,28 @@ void linearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
 }
 
 void linearTranslationOneDOFStateEffector::setK(double k) {
-    if (k >= 0.0)
+    if (k >= 0.0) {
         this->k = k;
-    else {
+    } else {
         this->bskLogger.bskLog(BSK_ERROR, "k must be greater than or equal to 0.");
     }
 }
 
 void linearTranslationOneDOFStateEffector::setC(double c) {
-    if (c >= 0.0)
+    if (c >= 0.0) {
         this->c = c;
-    else {
+    } else {
         this->bskLogger.bskLog(BSK_ERROR, "c must be greater than or equal to 0.");
     }
 }
 
-void linearTranslationOneDOFStateEffector::linkInStates(DynParamManager& statesIn) {
+void linearTranslationOneDOFStateEffector::linkInStates(DynParamManager &statesIn) {
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
     this->g_N = statesIn.getPropertyReference("g_N");
 }
 
-void linearTranslationOneDOFStateEffector::registerStates(DynParamManager& states) {
+void linearTranslationOneDOFStateEffector::registerStates(DynParamManager &states) {
     this->rhoState = states.registerState(1, 1, nameOfRhoState);
     Eigen::MatrixXd rhoInitMatrix(1, 1);
     rhoInitMatrix(0, 0) = this->rhoInit;
@@ -144,11 +145,13 @@ void linearTranslationOneDOFStateEffector::updateEffectorMassProps(double integT
         -this->mass * (this->rPrimeTilde_FcB_B * this->rTilde_FcB_B + this->rTilde_FcB_B * this->rPrimeTilde_FcB_B);
 }
 
-void linearTranslationOneDOFStateEffector::updateContributions(double integTime,
-                                                               BackSubMatrices& backSubContr,
-                                                               Eigen::Vector3d sigma_BN,
-                                                               Eigen::Vector3d omega_BN_B,
-                                                               Eigen::Vector3d g_N) {
+void linearTranslationOneDOFStateEffector::updateContributions(
+    double integTime,
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d sigma_BN,
+    Eigen::Vector3d omega_BN_B,
+    Eigen::Vector3d g_N
+) {
     Eigen::MRPd sigmaLocal_BN;
     sigmaLocal_BN = sigma_BN;
     this->dcm_BN = sigmaLocal_BN.toRotationMatrix().transpose();
@@ -162,8 +165,10 @@ void linearTranslationOneDOFStateEffector::updateContributions(double integTime,
     computeBackSubContributions(backSubContr, F_g);
 }
 
-void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMatrices& backSubContr,
-                                                                       const Eigen::Vector3d& F_g) {
+void linearTranslationOneDOFStateEffector::computeBackSubContributions(
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d const &F_g
+) {
     // There are no contributions if the effector is locked
     if (this->isAxisLocked) {
         this->aRho.setZero();
@@ -175,25 +180,29 @@ void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
 
     this->aRho = -this->fHat_B.transpose();
     this->bRho = this->fHat_B.transpose() * this->rTilde_FcB_B;
-    this->cRho = 1.0 / this->mass *
-                 (this->motorForce - this->k * (this->rho - this->rhoRef) - this->c * (this->rhoDot - this->rhoDotRef) +
-                  this->fHat_B.transpose() *
-                      (F_g - this->mass * (2 * this->omegaTilde_BN_B * this->rPrime_FcB_B +
-                                           this->omegaTilde_BN_B * this->omegaTilde_BN_B * this->r_FcB_B)));
+    this->cRho = 1.0 / this->mass
+               * (this->motorForce - this->k * (this->rho - this->rhoRef) - this->c * (this->rhoDot - this->rhoDotRef)
+                  + this->fHat_B.transpose()
+                        * (F_g
+                           - this->mass
+                                 * (2 * this->omegaTilde_BN_B * this->rPrime_FcB_B
+                                    + this->omegaTilde_BN_B * this->omegaTilde_BN_B * this->r_FcB_B)));
 
     backSubContr.matrixA = this->mass * this->fHat_B * this->aRho.transpose();
     backSubContr.matrixB = this->mass * this->fHat_B * this->bRho.transpose();
     backSubContr.matrixC = this->mass * this->rTilde_FcB_B * this->fHat_B * this->aRho.transpose();
     backSubContr.matrixD = this->mass * this->rTilde_FcB_B * this->fHat_B * this->bRho.transpose();
     backSubContr.vecTrans = -this->mass * this->cRho * this->fHat_B;
-    backSubContr.vecRot = -this->mass * this->omegaTilde_BN_B * this->rTilde_FcB_B * this->rPrime_FcB_B -
-                          this->mass * this->cRho * this->rTilde_FcB_B * this->fHat_B;
+    backSubContr.vecRot = -this->mass * this->omegaTilde_BN_B * this->rTilde_FcB_B * this->rPrime_FcB_B
+                        - this->mass * this->cRho * this->rTilde_FcB_B * this->fHat_B;
 }
 
-void linearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
-                                                              Eigen::Vector3d rDDot_BN_N,
-                                                              Eigen::Vector3d omegaDot_BN_B,
-                                                              Eigen::Vector3d sigma_BN) {
+void linearTranslationOneDOFStateEffector::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     Eigen::MRPd sigmaLocal_BN;
     sigmaLocal_BN = sigma_BN;
     this->dcm_BN = sigmaLocal_BN.toRotationMatrix().transpose();
@@ -205,19 +214,21 @@ void linearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
     this->rhoState->setDerivative(this->rhoDotState->getState());
 }
 
-void linearTranslationOneDOFStateEffector::updateEnergyMomContributions(double integTime,
-                                                                        Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                                        double& rotEnergyContr,
-                                                                        Eigen::Vector3d omega_BN_B) {
+void linearTranslationOneDOFStateEffector::updateEnergyMomContributions(
+    double integTime,
+    Eigen::Vector3d &rotAngMomPntCContr_B,
+    double &rotEnergyContr,
+    Eigen::Vector3d omega_BN_B
+) {
     this->omega_BN_B = omega_BN_B;
     this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     Eigen::Vector3d omega_FN_B = this->omega_BN_B;
 
     Eigen::Vector3d rDotFcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
     rotAngMomPntCContr_B = this->IPntFc_B * omega_FN_B + this->mass * this->r_FcB_B.cross(rDotFcB_B);
-    rotEnergyContr = 1.0 / 2.0 * omega_FN_B.dot(this->IPntFc_B * omega_FN_B) +
-                     1.0 / 2.0 * this->mass * rDotFcB_B.dot(rDotFcB_B) +
-                     1.0 / 2.0 * this->k * (this->rho - this->rhoRef) * (this->rho - this->rhoRef);
+    rotEnergyContr = 1.0 / 2.0 * omega_FN_B.dot(this->IPntFc_B * omega_FN_B)
+                   + 1.0 / 2.0 * this->mass * rDotFcB_B.dot(rDotFcB_B)
+                   + 1.0 / 2.0 * this->k * (this->rho - this->rhoRef) * (this->rho - this->rhoRef);
 }
 
 void linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates() {

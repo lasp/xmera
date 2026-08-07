@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dvAttEffect.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <string.h>
 
 void effectorVSort(effPairs* Input, effPairs* Output, size_t dim);
@@ -44,10 +46,12 @@ void DvAttEffect::updateState(uint64_t callTime) {
     return;
 }
 
-void computeSingleThrustBlock(ThrustGroupData* thrData,
-                              uint64_t callTime,
-                              CmdTorqueBodyMsgPayload* contrReq,
-                              int64_t moduleID) {
+void computeSingleThrustBlock(
+    ThrustGroupData* thrData,
+    uint64_t callTime,
+    CmdTorqueBodyMsgPayload* contrReq,
+    int64_t moduleID
+) {
     double unSortOnTime[MAX_EFF_CNT];
     effPairs unSortPairs[MAX_EFF_CNT];
     effPairs sortPairs[MAX_EFF_CNT];
@@ -57,14 +61,10 @@ void computeSingleThrustBlock(ThrustGroupData* thrData,
     v3Copy(contrReq->torqueRequestBody, localRequest); /* to generate a positive torque onto the spacecraft */
     mMultV(thrData->thrOnMap, thrData->numEffectors, 3, localRequest, unSortOnTime);
 
-    for (i = 0; i < thrData->numEffectors; i = i + 1) {
-        unSortOnTime[i] = unSortOnTime[i] + thrData->nomThrustOn;
-    }
+    for (i = 0; i < thrData->numEffectors; i = i + 1) { unSortOnTime[i] = unSortOnTime[i] + thrData->nomThrustOn; }
 
     for (i = 0; i < thrData->numEffectors; i = i + 1) {
-        if (unSortOnTime[i] < thrData->minThrustRequest) {
-            unSortOnTime[i] = 0.0;
-        }
+        if (unSortOnTime[i] < thrData->minThrustRequest) { unSortOnTime[i] = 0.0; }
     }
 
     for (i = 0; i < thrData->numEffectors; i++) {

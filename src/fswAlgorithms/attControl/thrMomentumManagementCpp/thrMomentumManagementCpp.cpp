@@ -2,6 +2,7 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "thrMomentumManagementCpp.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 
@@ -28,16 +29,14 @@ void ThrMomentumManagementCpp::updateState(uint64_t currentSimNanos) {
         RWSpeedMsgPayload rwSpeedMsg = this->rwSpeedsInMsg();
         Eigen::Vector3d hs_B = Eigen::Vector3d::Zero();
         for (int i = 0; i < this->rwConfigParams.numRW; i++) {
-            hs_B += this->rwConfigParams.JsList[i] * rwSpeedMsg.wheelSpeeds[i] *
-                    cArrayToEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
+            hs_B += this->rwConfigParams.JsList[i] * rwSpeedMsg.wheelSpeeds[i]
+                  * cArrayToEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
         }
 
         if (this->hd_B.norm() > 0) {
             Delta_H_B = this->hd_B - hs_B;
         } else {
-            if (double hs = hs_B.norm(); hs >= this->hs_min) {
-                Delta_H_B = -hs_B * (hs - this->hs_min) / hs;
-            }
+            if (double hs = hs_B.norm(); hs >= this->hs_min) { Delta_H_B = -hs_B * (hs - this->hs_min) / hs; }
         }
 
         this->initRequest = 0;

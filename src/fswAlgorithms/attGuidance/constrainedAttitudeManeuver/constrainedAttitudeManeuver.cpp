@@ -3,25 +3,28 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "constrainedAttitudeManeuver.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
+
 #include <map>
 
 /*! This is the constructor for the Node class.  It sets default variable
     values and initializes the various parts of the model */
-Node::Node() { return; }
+Node::Node() {
+    return;
+}
 
 /*! The constructor requires the MRP set, the constraint structure and the sc boresight structure */
 Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct boresights) {
     // MRPswitch(sigma_BN, 1, this->sigma_BN);
     v3Copy(sigma_BN, this->sigma_BN);
     this->isBoundary = false;
-    if (abs(v3Norm(this->sigma_BN) - 1) < 1e-5) {
-        this->isBoundary = true;
-    }
+    if (abs(v3Norm(this->sigma_BN) - 1) < 1e-5) { this->isBoundary = true; }
     this->heuristic = 0;
     this->priority = 0;
     this->neighborCount = 0;
@@ -36,9 +39,7 @@ Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct b
     if (constraints.keepOut) {
         N = boresights.keepOutBoresightCount;
         for (int n = 0; n < N; n++) {
-            for (int j = 0; j < 3; j++) {
-                boresight_B[j] = boresights.keepOutBoresight_B[n][j];
-            }
+            for (int j = 0; j < 3; j++) { boresight_B[j] = boresights.keepOutBoresight_B[n][j]; }
             v3tMultM33(boresight_B, BN, boresight_N);
             if (v3Dot(boresight_N, constraints.keepOutDir_N) >= cos(boresights.keepOutFov[n])) {
                 this->isFree = false;
@@ -51,24 +52,20 @@ Node::Node(double sigma_BN[3], constraintStruct constraints, scBoresightStruct b
         N = boresights.keepInBoresightCount;
         bool isIn = false;
         for (int n = 0; n < N; n++) {
-            for (int j = 0; j < 3; j++) {
-                boresight_B[j] = boresights.keepInBoresight_B[n][j];
-            }
+            for (int j = 0; j < 3; j++) { boresight_B[j] = boresights.keepInBoresight_B[n][j]; }
             v3tMultM33(boresight_B, BN, boresight_N);
-            if (v3Dot(boresight_N, constraints.keepInDir_N) >= cos(boresights.keepInFov[n])) {
-                isIn = true;
-            }
+            if (v3Dot(boresight_N, constraints.keepInDir_N) >= cos(boresights.keepInFov[n])) { isIn = true; }
         }
-        if (!isIn) {
-            this->isFree = false;
-        }
+        if (!isIn) { this->isFree = false; }
     }
 
     return;
 }
 
 /*! Module Destructor.  */
-Node::~Node() { return; }
+Node::~Node() {
+    return;
+}
 
 /*! This method appends a pointer to neighboring node to the neighbors class variable */
 void Node::appendNeighbor(Node* node) {
@@ -84,7 +81,9 @@ NodeList::NodeList() {
 }
 
 /*! Class Destructor. */
-NodeList::~NodeList() { return; }
+NodeList::~NodeList() {
+    return;
+}
 
 /*! This method appends a pointer to the node list. */
 void NodeList::append(Node* node) {
@@ -94,14 +93,14 @@ void NodeList::append(Node* node) {
 
 /*! This method removes the pointer at index M from the node list. */
 void NodeList::pop(int M) {
-    for (int m = M; m < this->N - 1; m++) {
-        this->list[m] = this->list[m + 1];
-    }
+    for (int m = M; m < this->N - 1; m++) { this->list[m] = this->list[m + 1]; }
     this->N -= 1;
 }
 
 /*! This method resets the list counter to 0, effectively clearing the list. */
-void NodeList::clear() { this->N = 0; }
+void NodeList::clear() {
+    this->N = 0;
+}
 
 /*! This method swaps the two pointers at indices m and n. */
 void NodeList::swap(int m, int n) {
@@ -132,16 +131,16 @@ void NodeList::sort() {
 bool NodeList::contains(Node* node) {
     bool flag = false;
     for (int n = 0; n < this->N; n++) {
-        if (node == this->list[n]) {
-            flag = true;
-        }
+        if (node == this->list[n]) { flag = true; }
     }
     return flag;
 }
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver() { return; }
+ConstrainedAttitudeManeuver::ConstrainedAttitudeManeuver() {
+    return;
+}
 
 /*! This is the constructor for the module class. It sets default variable
     values and initializes the various parts of the model */
@@ -178,12 +177,16 @@ void ConstrainedAttitudeManeuver::reset(uint64_t currentSimNanos) {
     Node startNode = Node(this->scStateMsgBuffer.sigma_BN, this->constraints, this->boresights);
     Node goalNode = Node(this->sigma_BN_goal, this->constraints, this->boresights);
     if (!startNode.isFree) {
-        bskLogger.bskLog(BSK_WARNING,
-                         "ConstraintAttitudeManeuver: the initial attitude of the S/C is not constraint-compliant.");
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "ConstraintAttitudeManeuver: the initial attitude of the S/C is not constraint-compliant."
+        );
     }
     if (!goalNode.isFree) {
-        bskLogger.bskLog(BSK_WARNING,
-                         "ConstraintAttitudeManeuver: the target attitude of the S/C is not constraint-compliant.");
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "ConstraintAttitudeManeuver: the target attitude of the S/C is not constraint-compliant."
+        );
     }
     GenerateGrid(startNode, goalNode);
     if (this->costFcnType == 0) {
@@ -239,12 +242,8 @@ void ConstrainedAttitudeManeuver::ReadInputs() {
     double relPosVector[3];
 
     //! - Read the input messages into the correct pointer
-    if (this->scStateInMsg.isWritten()) {
-        this->scStateMsgBuffer = this->scStateInMsg();
-    }
-    if (this->vehicleConfigInMsg.isWritten()) {
-        this->vehicleConfigMsgBuffer = this->vehicleConfigInMsg();
-    }
+    if (this->scStateInMsg.isWritten()) { this->scStateMsgBuffer = this->scStateInMsg(); }
+    if (this->vehicleConfigInMsg.isWritten()) { this->vehicleConfigMsgBuffer = this->vehicleConfigInMsg(); }
     if (this->keepOutCelBodyInMsg.isWritten()) {
         this->keepOutCelBodyMsgBuffer = this->keepOutCelBodyInMsg();
 
@@ -264,7 +263,8 @@ void ConstrainedAttitudeManeuver::ReadInputs() {
     if (!this->keepOutCelBodyInMsg.isWritten() && !this->keepInCelBodyInMsg.isWritten()) {
         bskLogger.bskLog(
             BSK_WARNING,
-            "ConstraintAttitudeManeuver: no celBodyMsgs are connected. There are no rotational constraints. \n");
+            "ConstraintAttitudeManeuver: no celBodyMsgs are connected. There are no rotational constraints. \n"
+        );
     }
 }
 
@@ -274,9 +274,7 @@ void ConstrainedAttitudeManeuver::ReadInputs() {
 void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode) {
     int N = this->N;
     double u[20];
-    for (int n = 0; n < N; n++) {
-        u[n] = n / ((double)N - 1);
-    }
+    for (int n = 0; n < N; n++) { u[n] = n / ((double) N - 1); }
 
     // add internal nodes (|sigma_BN| < 1)
     int indices[3], mirrorIndices[8][3];
@@ -319,8 +317,8 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode) {
                             indices[2] = k;
                             mirrorFunction(indices, mirrorIndices);
                             for (int m = 0; m < 8; m++) {
-                                if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(
-                                        mirrorIndices[m][2]) == 0) {
+                                if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2])
+                                    == 0) {
                                     sigma_BN[0] =
                                         mirrorIndices[m][0] / indices[0] * pow(1 - pow(u[j], 2) - pow(u[k], 2), 0.5);
                                     if (indices[1] != 0) {
@@ -345,8 +343,8 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode) {
                             indices[2] = k;
                             mirrorFunction(indices, mirrorIndices);
                             for (int m = 0; m < 8; m++) {
-                                if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(
-                                        mirrorIndices[m][2]) == 0) {
+                                if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2])
+                                    == 0) {
                                     if (indices[0] != 0) {
                                         sigma_BN[0] = mirrorIndices[m][0] / indices[0] * u[indices[0]];
                                     } else {
@@ -371,8 +369,8 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode) {
                             indices[2] = k + 1;
                             mirrorFunction(indices, mirrorIndices);
                             for (int m = 0; m < 8; m++) {
-                                if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(
-                                        mirrorIndices[m][2]) == 0) {
+                                if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(mirrorIndices[m][2])
+                                    == 0) {
                                     if (indices[0] != 0) {
                                         sigma_BN[0] = mirrorIndices[m][0] / indices[0] * u[indices[0]];
                                     } else {
@@ -408,10 +406,11 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode) {
                 neighboringNodes(indices, neighbors);
                 for (int n = 0; n < 26; n++) {
                     if (this->NodesMap[neighbors[n][0]][neighbors[n][1]].count(neighbors[n][2]) == 1) {
-                        if (this->NodesMap[indices[0]][indices[1]][indices[2]].isFree &&
-                            this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]].isFree) {
+                        if (this->NodesMap[indices[0]][indices[1]][indices[2]].isFree
+                            && this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]].isFree) {
                             this->NodesMap[indices[0]][indices[1]][indices[2]].appendNeighbor(
-                                &this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]]);
+                                &this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]]
+                            );
                         }
                     }
                 }
@@ -437,9 +436,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode) {
                                 flag = false;
                             }
                         }
-                        if (flag == true) {
-                            it3->second.appendNeighbor(this->NodesMap[-i][-j][-k].neighbors[n]);
-                        }
+                        if (flag == true) { it3->second.appendNeighbor(this->NodesMap[-i][-j][-k].neighbors[n]); }
                     }
                 }
             }
@@ -496,16 +493,12 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode) {
     }
     if (startNode.isBoundary) {
         for (int n = 0; n < 3; n++) {
-            if (keyS[n] * startNode.sigma_BN[n] < 0) {
-                keyS[n] = -keyS[n];
-            }
+            if (keyS[n] * startNode.sigma_BN[n] < 0) { keyS[n] = -keyS[n]; }
         }
     }
     if (goalNode.isBoundary) {
         for (int n = 0; n < 3; n++) {
-            if (keyG[n] * goalNode.sigma_BN[n] < 0) {
-                keyG[n] = -keyG[n];
-            }
+            if (keyG[n] * goalNode.sigma_BN[n] < 0) { keyG[n] = -keyG[n]; }
         }
     }
     for (int n = 0; n < this->NodesMap[keyS[0]][keyS[1]][keyS[2]].neighborCount; n++) {
@@ -688,9 +681,7 @@ void ConstrainedAttitudeManeuver::pathHandle() {
             MRPshadow(path.list[n]->sigma_BN, sigma);
         }
         v3Subtract(path.list[n]->sigma_BN, path.list[n + 1]->sigma_BN, delSigma);
-        if (v3Norm(delSigma) > 1) {
-            shadowSet = !shadowSet;
-        }
+        if (v3Norm(delSigma) > 1) { shadowSet = !shadowSet; }
         X1[n] = sigma[0];
         X2[n] = sigma[1];
         X3[n] = sigma[2];
@@ -726,7 +717,7 @@ void ConstrainedAttitudeManeuver::spline() {
     if (this->BSplineType == 0) {
         interpolate(this->Input, 100, 4, &this->Output);
     } else if (this->BSplineType == 1) {
-        approximate(this->Input, 100, (int)this->Input.X1.size(), 4, &this->Output);  // review
+        approximate(this->Input, 100, (int) this->Input.X1.size(), 4, &this->Output);  // review
     } else {
         bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: BSplineType has not been specified.");
     }
@@ -774,7 +765,7 @@ double ConstrainedAttitudeManeuver::effortEvaluation() {
     double L_a[3], L_b[3];
     computeTorque(0, this->vehicleConfigMsgBuffer.ISCPntB_B, L_a);
 
-    N = (int)this->Output.T.size();
+    N = (int) this->Output.T.size();
     for (int n = 0; n < N - 1; n++) {
         computeTorque(n + 1, this->vehicleConfigMsgBuffer.ISCPntB_B, L_b);
         l_a = v3Norm(L_a);
@@ -793,7 +784,7 @@ double ConstrainedAttitudeManeuver::effortEvaluation() {
  */
 double ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord) {
     if (nodeCoord < 0 || nodeCoord > 2 || NodesMap[key[0]][key[1]].count(key[2]) == 0) {
-        return 1000;  // random large number that will cause the UnitTest comparison to fail
+        return 1'000;  // random large number that will cause the UnitTest comparison to fail
     } else {
         return this->NodesMap[key[0]][key[1]][key[2]].sigma_BN[nodeCoord];
     }
@@ -817,7 +808,7 @@ bool ConstrainedAttitudeManeuver::returnNodeState(int key[3]) {
  */
 double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord) {
     if (index < 0 || index > this->path.N - 1) {
-        return 1000;  // random large number that will cause the UnitTest comparison to fail
+        return 1'000;  // random large number that will cause the UnitTest comparison to fail
     } else {
         return this->path.list[index]->sigma_BN[nodeCoord];
     }
@@ -964,9 +955,7 @@ double distance(Node n1, Node n2) {
     }
     D = d[0];
     for (int i = 1; i < 4; i++) {
-        if (d[i] < D) {
-            D = d[i];
-        }
+        if (d[i] < D) { D = d[i]; }
     }
     return D;
 }

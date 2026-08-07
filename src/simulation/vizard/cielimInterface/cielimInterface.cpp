@@ -465,9 +465,7 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
     imagePayload.imageBufferLength = imageData.imageBufferLength;
     imagePayload.cameraID = this->cameraModelPayload.cameraId;
     imagePayload.imageType = 3;
-    if (imageData.imageBufferLength > 0) {
-        imagePayload.valid = 1;
-    }
+    if (imageData.imageBufferLength > 0) { imagePayload.valid = 1; }
     this->imageOutMessage.write(imagePayload, this->moduleID, currentSimNanos);
 
     OpNavCOBMsgPayload centerOfBrightnessPayload = {};
@@ -493,12 +491,8 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
         imageDiagnosticsOutputPayload.centerOfBrightness[0] = imageData.centerOfBrightness.value()[0] + 0.5;
         imageDiagnosticsOutputPayload.centerOfBrightness[1] = imageData.centerOfBrightness.value()[1] + 0.5;
     }
-    if (imageData.brightPixels) {
-        imageDiagnosticsOutputPayload.totalBrightPixels = imageData.brightPixels.value();
-    }
-    if (imageData.coverage) {
-        imageDiagnosticsOutputPayload.coverage = imageData.coverage.value();
-    }
+    if (imageData.brightPixels) { imageDiagnosticsOutputPayload.totalBrightPixels = imageData.brightPixels.value(); }
+    if (imageData.coverage) { imageDiagnosticsOutputPayload.coverage = imageData.coverage.value(); }
     this->imageDiagnosticsOutMessage.write(imageDiagnosticsOutputPayload, this->moduleID, currentSimNanos);
 }
 

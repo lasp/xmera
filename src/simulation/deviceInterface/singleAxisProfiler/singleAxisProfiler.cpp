@@ -2,9 +2,11 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "singleAxisProfiler.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <cmath>
 
 /*! This method checks the input message to ensure it is linked.
@@ -73,9 +75,13 @@ Eigen::Vector3d SingleAxisProfiler::computeSigma_FM(double theta) {
  @return void
  @param rotHat_M Spinning body rotation axis (unit vector)
 */
-void SingleAxisProfiler::setRotHat_M(const Eigen::Vector3d& rotHat_M) { this->rotHat_M = rotHat_M / rotHat_M.norm(); }
+void SingleAxisProfiler::setRotHat_M(Eigen::Vector3d const &rotHat_M) {
+    this->rotHat_M = rotHat_M / rotHat_M.norm();
+}
 
 /*! Getter method for the spinning body rotation axis.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d& SingleAxisProfiler::getRotHat_M() const { return this->rotHat_M; }
+Eigen::Vector3d const &SingleAxisProfiler::getRotHat_M() const {
+    return this->rotHat_M;
+}

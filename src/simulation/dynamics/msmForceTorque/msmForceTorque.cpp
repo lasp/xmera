@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "msmForceTorque.h"
+
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -12,15 +13,9 @@ MsmForceTorque::MsmForceTorque() {}
 /*! Module Destructor */
 MsmForceTorque::~MsmForceTorque() {
     /* free up output message objects */
-    for (long unsigned int c = 0; c < this->eTorqueOutMsgs.size(); c++) {
-        delete this->eTorqueOutMsgs.at(c);
-    }
-    for (long unsigned int c = 0; c < this->eForceOutMsgs.size(); c++) {
-        delete this->eForceOutMsgs.at(c);
-    }
-    for (long unsigned int c = 0; c < this->chargeMsmOutMsgs.size(); c++) {
-        delete this->chargeMsmOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->eTorqueOutMsgs.size(); c++) { delete this->eTorqueOutMsgs.at(c); }
+    for (long unsigned int c = 0; c < this->eForceOutMsgs.size(); c++) { delete this->eForceOutMsgs.at(c); }
+    for (long unsigned int c = 0; c < this->chargeMsmOutMsgs.size(); c++) { delete this->chargeMsmOutMsgs.at(c); }
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
@@ -40,29 +35,30 @@ void MsmForceTorque::reset(uint64_t currentSimNanos) {
         }
     }
 
-    this->numSat = (uint32_t)this->scStateInMsgs.size();
+    this->numSat = (uint32_t) this->scStateInMsgs.size();
     if (this->numSat < 2) {
         bskLogger.bskLog(
-            BSK_ERROR, "MsmForceTorque must have 2 or more spacecraft components added. You added %lu.", this->numSat);
+            BSK_ERROR,
+            "MsmForceTorque must have 2 or more spacecraft components added. You added %lu.",
+            this->numSat
+        );
     }
 
     /* determine number of spheres being modeled */
     this->numSpheres = 0;
-    for (long unsigned int c = 0; c < this->numSat; c++) {
-        this->numSpheres += this->radiiList.at(c).size();
-    }
-    if (this->numSpheres == 0) {
-        bskLogger.bskLog(BSK_ERROR, "MsmForceTorque does not have any spheres added?");
-    }
+    for (long unsigned int c = 0; c < this->numSat; c++) { this->numSpheres += this->radiiList.at(c).size(); }
+    if (this->numSpheres == 0) { bskLogger.bskLog(BSK_ERROR, "MsmForceTorque does not have any spheres added?"); }
 
     return;
 }
 
 /*!   Subscribe to the spacecraft state message and store the corresponding MSM radii and sphere positions
  */
-void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
-                                          std::vector<double> radii,
-                                          std::vector<Eigen::Vector3d> r_SB_B) {
+void MsmForceTorque::addSpacecraftToModel(
+    Message<SCStatesMsgPayload>* tmpScMsg,
+    std::vector<double> radii,
+    std::vector<Eigen::Vector3d> r_SB_B
+) {
     /* add the message reader to the vector of input spacecraft state messages */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
@@ -72,11 +68,13 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
 
     /* store MSM sphere radii and location information */
     if (radii.size() != r_SB_B.size()) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "MsmForceTorque:addSpacecraftToModel() The vector of MSM radii and positions must have the "
-                         "same size, they have sizes %lu and %lu.",
-                         radii.size(),
-                         r_SB_B.size());
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "MsmForceTorque:addSpacecraftToModel() The vector of MSM radii and positions must have the "
+            "same size, they have sizes %lu and %lu.",
+            radii.size(),
+            r_SB_B.size()
+        );
     }
     this->radiiList.push_back(radii);
     this->r_SB_BList.push_back(r_SB_B);
@@ -220,10 +218,12 @@ void MsmForceTorque::updateState(uint64_t currentSimNanos) {
                     if (r_ij > this->radiiList.at(c).at(j - i0)) {
                         force_N -= kc * q(j) * q(i) * r_ij_N / r_ij / r_ij / r_ij;
                     } else {
-                        bskLogger.bskLog(BSK_WARNING,
-                                         "MsmForceTorque: spacecraft %lu, sphere %lu is too close to another sphere.",
-                                         c,
-                                         j - i0);
+                        bskLogger.bskLog(
+                            BSK_WARNING,
+                            "MsmForceTorque: spacecraft %lu, sphere %lu is too close to another sphere.",
+                            c,
+                            j - i0
+                        );
                     }
                 }
             }

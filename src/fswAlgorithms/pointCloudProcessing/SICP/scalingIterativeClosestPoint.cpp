@@ -13,9 +13,7 @@ ScalingIterativeClosestPoint::~ScalingIterativeClosestPoint() = default;
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void ScalingIterativeClosestPoint::reset(uint64_t currentSimNanos) {
-    if (!this->measuredPointCloud.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
-    }
+    if (!this->measuredPointCloud.isLinked()) { bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected."); }
     if (!this->referencePointCloud.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
     }
@@ -32,11 +30,13 @@ void ScalingIterativeClosestPoint::reset(uint64_t currentSimNanos) {
  @param Eigen::MatrixXd measuredPoints : The measured point cloud
  @param Eigen::MatrixXd referencePoints : The reference point cloud
  */
-void ScalingIterativeClosestPoint::computePointCorrespondance(const Eigen::MatrixXd& R_kmin1,
-                                                              const Eigen::MatrixXd& t_kmin1,
-                                                              const double s_kmin1,
-                                                              const Eigen::MatrixXd& measuredPoints,
-                                                              const Eigen::MatrixXd& referencePoints) {
+void ScalingIterativeClosestPoint::computePointCorrespondance(
+    Eigen::MatrixXd const &R_kmin1,
+    Eigen::MatrixXd const &t_kmin1,
+    double const s_kmin1,
+    Eigen::MatrixXd const &measuredPoints,
+    Eigen::MatrixXd const &referencePoints
+) {
     this->correspondingPoints.setZero(SICP_POINT_DIM, this->Np);
     for (int i = 0; i < this->Np; i++) {
         Eigen::Index index;
@@ -53,7 +53,7 @@ void ScalingIterativeClosestPoint::computePointCorrespondance(const Eigen::Matri
  @param Eigen::MatrixXd measuredPoints : The measured point cloud
  @param Eigen::MatrixXd referencePoints : The reference point cloud
  */
-void ScalingIterativeClosestPoint::centerCloud(const Eigen::MatrixXd& measuredPoints) {
+void ScalingIterativeClosestPoint::centerCloud(Eigen::MatrixXd const &measuredPoints) {
     this->q.setZero(SICP_POINT_DIM, this->Np);
     this->n.setZero(SICP_POINT_DIM, this->Np);
     Eigen::VectorXd measAvg = Eigen::VectorXd::Zero(SICP_POINT_DIM);
@@ -77,14 +77,12 @@ void ScalingIterativeClosestPoint::centerCloud(const Eigen::MatrixXd& measuredPo
 @param double s_kmin1 : The scale factor to use for the R computation
 @param double R_kmin1 : The previous rotation
 */
-Eigen::MatrixXd ScalingIterativeClosestPoint::computeRk(const double s_kmin1, const Eigen::MatrixXd& R_kmin1) {
+Eigen::MatrixXd ScalingIterativeClosestPoint::computeRk(double const s_kmin1, Eigen::MatrixXd const &R_kmin1) {
     Eigen::MatrixXd R_k = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
     Eigen::MatrixXd H(SICP_POINT_DIM, SICP_POINT_DIM);
 
     H.setZero();
-    for (int i = 0; i < this->Np; i++) {
-        H += this->q.col(i) * this->n.col(i).transpose();
-    }
+    for (int i = 0; i < this->Np; i++) { H += this->q.col(i) * this->n.col(i).transpose(); }
     H *= s_kmin1 / this->Np;
 
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(H, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -98,9 +96,7 @@ Eigen::MatrixXd ScalingIterativeClosestPoint::computeRk(const double s_kmin1, co
     } else if (std::abs(Rotation.determinant() + 1) < this->errorTolerance) {
         std::vector<Eigen::Index> idxs;
         for (size_t i = 0; i < svd.singularValues().size(); i++) {
-            if (std::abs(svd.singularValues()(i)) < this->errorTolerance) {
-                idxs.push_back(i);
-            }
+            if (std::abs(svd.singularValues()(i)) < this->errorTolerance) { idxs.push_back(i); }
         }
         if (idxs.size() == 1) {
             Eigen::MatrixXd Ireflection = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
@@ -118,7 +114,7 @@ Eigen::MatrixXd ScalingIterativeClosestPoint::computeRk(const double s_kmin1, co
 @param double R_kmin1 : The rotation factor to use for the scale computation
 @param double s_kmin1 : The previous scale factor
 */
-double ScalingIterativeClosestPoint::computeSk(const Eigen::MatrixXd& R_kmin1) {
+double ScalingIterativeClosestPoint::computeSk(Eigen::MatrixXd const &R_kmin1) {
     double s_kn;
     double sumNumerator = 0;
     double sumDenominator = 0;
@@ -132,7 +128,7 @@ double ScalingIterativeClosestPoint::computeSk(const Eigen::MatrixXd& R_kmin1) {
     }
     std::vector<double> costFunction;
     for (int m = 0; m < this->Np + 1; m++) {
-        double s = this->scalingMin + (double)m / this->numberScalePoints * (this->scalingMax - this->scalingMin);
+        double s = this->scalingMin + (double) m / this->numberScalePoints * (this->scalingMax - this->scalingMin);
         costFunction.push_back(std::abs(s - sumNumerator / sumDenominator));
     }
     std::vector<double>::iterator min_element = std::min_element(costFunction.begin(), costFunction.end());
@@ -147,9 +143,11 @@ double ScalingIterativeClosestPoint::computeSk(const Eigen::MatrixXd& R_kmin1) {
 @param double R_k : The rotation to use for the t computation
 @param Eigen::MatrixXd measuredPoints : The measured point cloud
 */
-Eigen::MatrixXd ScalingIterativeClosestPoint::computeTk(const double s_k,
-                                                        const Eigen::MatrixXd& R_k,
-                                                        const Eigen::MatrixXd& measuredPoints) {
+Eigen::MatrixXd ScalingIterativeClosestPoint::computeTk(
+    double const s_k,
+    Eigen::MatrixXd const &R_k,
+    Eigen::MatrixXd const &measuredPoints
+) {
     Eigen::VectorXd tkSum1 = Eigen::VectorXd::Zero(SICP_POINT_DIM);
     Eigen::VectorXd tkSum2 = Eigen::VectorXd::Zero(SICP_POINT_DIM);
     for (int i = 0; i < this->Np; i++) {
@@ -197,9 +195,15 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
         this->outputPointCloud.write(this->outputCloudBuffer, this->moduleID, currentSimNanos);
     } else {
         Eigen::MatrixXd measuredPoints = cArrayToEigenMatrixX(
-            this->measuredCloudBuffer.points, SICP_POINT_DIM, this->measuredCloudBuffer.numberOfPoints);
+            this->measuredCloudBuffer.points,
+            SICP_POINT_DIM,
+            this->measuredCloudBuffer.numberOfPoints
+        );
         Eigen::MatrixXd referencePoints = cArrayToEigenMatrixX(
-            this->referenceCloudBuffer.points, SICP_POINT_DIM, this->referenceCloudBuffer.numberOfPoints);
+            this->referenceCloudBuffer.points,
+            SICP_POINT_DIM,
+            this->referenceCloudBuffer.numberOfPoints
+        );
         //! - Initialize R (rotation matrix), t (translation vector) and s (scale factor).
         //! k and kmin1 refer to the iteration
         Eigen::MatrixXd R_k = Eigen::MatrixXd::Identity(SICP_POINT_DIM, SICP_POINT_DIM);
@@ -238,8 +242,8 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
             t_k = this->computeTk(s_k, R_k, measuredPoints);
 
             //! - Check for method convergence to exit loop, otherwise continue iterating
-            if (std::abs(s_k - s_kmin1) < this->errorTolerance && (R_k - R_kmin1).norm() < this->errorTolerance &&
-                (t_k - t_kmin1).norm() < this->errorTolerance) {
+            if (std::abs(s_k - s_kmin1) < this->errorTolerance && (R_k - R_kmin1).norm() < this->errorTolerance
+                && (t_k - t_kmin1).norm() < this->errorTolerance) {
                 break;
             }
             //! - Save intermediate algorithm data
@@ -258,9 +262,7 @@ void ScalingIterativeClosestPoint::updateState(uint64_t currentSimNanos) {
         this->sicpBuffer.valid = true;
         this->sicpBuffer.timeTag = currentSimNanos;
         Eigen::MatrixXd newPoints = Eigen::MatrixXd::Zero(measuredPoints.rows(), measuredPoints.cols());
-        for (int i = 0; i < this->Np; i++) {
-            newPoints.col(i) = s_k * (R_k * measuredPoints.col(i)) + t_k;
-        }
+        for (int i = 0; i < this->Np; i++) { newPoints.col(i) = s_k * (R_k * measuredPoints.col(i)) + t_k; }
         eigenMatrixXToCArray(newPoints.transpose(), this->outputCloudBuffer.points);
         this->outputCloudBuffer.numberOfPoints = this->Np;
         this->outputCloudBuffer.timeTag = currentSimNanos;

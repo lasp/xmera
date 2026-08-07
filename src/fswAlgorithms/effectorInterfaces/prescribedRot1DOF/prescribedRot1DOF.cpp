@@ -6,11 +6,12 @@
 #include "prescribedRot1DOF.h"
 
 /* Other required files to import */
-#include <stdbool.h>
-#include <math.h>
 #include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+
+#include <math.h>
+#include <stdbool.h>
 
 /*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
  @return void
@@ -40,9 +41,7 @@ void PrescribedRot1DOF::updateState(uint64_t callTime) {
     HingedRigidBodyMsgPayload spinningBodyOut = {};
     PrescribedRotationMsgPayload prescribedRotationOut = {};
 
-    if (this->spinningBodyInMsg.isWritten()) {
-        spinningBodyIn = this->spinningBodyInMsg();
-    }
+    if (this->spinningBodyInMsg.isWritten()) { spinningBodyIn = this->spinningBodyInMsg(); }
 
     /* This loop is entered (a) initially and (b) when each attitude maneuver is complete. The reference angle is
     updated even if a new message is not written */
@@ -82,14 +81,14 @@ void PrescribedRot1DOF::updateState(uint64_t callTime) {
     double theta;
 
     // Compute the prescribed scalar states at the current simulation time
-    if ((t < this->ts || t == this->ts) &&
-        this->tf - this->tInit != 0)  // Entered during the first half of the maneuver
+    if ((t < this->ts || t == this->ts)
+        && this->tf - this->tInit != 0)  // Entered during the first half of the maneuver
     {
         thetaDDot = this->thetaDDotMax;
         thetaDot = thetaDDot * (t - this->tInit) + this->thetaDotInit;
         theta = this->a * (t - this->tInit) * (t - this->tInit) + this->thetaInit;
-    } else if (t > this->ts && t <= this->tf &&
-               this->tf - this->tInit != 0)  // Entered during the second half of the maneuver
+    } else if (t > this->ts && t <= this->tf
+               && this->tf - this->tInit != 0)  // Entered during the second half of the maneuver
     {
         thetaDDot = -1 * this->thetaDDotMax;
         thetaDot = thetaDDot * (t - this->tInit) + this->thetaDotInit - thetaDDot * (this->tf - this->tInit);

@@ -1,8 +1,10 @@
 #include "sensorThermal.h"
+
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
 
 SensorThermal::SensorThermal() {
@@ -19,26 +21,24 @@ SensorThermal::SensorThermal() {
     this->sensorSpecificHeat = 890;     //! - Specific heat of aluminum
     this->T_0 = 30;                     //! - Initial temperature of 30 deg C
     this->sensorPowerDraw = 0.0;        //! - Assuming 0 power draw
-    this->S = 1366;                     //! - Solar constant at 1AU
+    this->S = 1'366;                    //! - Solar constant at 1AU
     this->boltzmannConst = 5.76051e-8;  //! -  Boltzmann constant
     this->CurrentSimSecondsOld = 0;
     this->sensorPowerStatus = 1;  //! - Default is sensor turned on (0 for off)
     return;
 }
 
-SensorThermal::~SensorThermal() { return; }
+SensorThermal::~SensorThermal() {
+    return;
+}
 
 /*! Thermal sensor reset function
  */
 void SensorThermal::reset(uint64_t CurrentClock) {
     this->shadowFactor = 1.0;
 
-    if (this->sensorArea <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The sensorArea must be a positive value");
-    }
-    if (this->sensorMass <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The sensorMass must be a positive value");
-    }
+    if (this->sensorArea <= 0.0) { bskLogger.bskLog(BSK_ERROR, "The sensorArea must be a positive value"); }
+    if (this->sensorMass <= 0.0) { bskLogger.bskLog(BSK_ERROR, "The sensorMass must be a positive value"); }
     if (this->sensorSpecificHeat <= 0.0) {
         bskLogger.bskLog(BSK_ERROR, "The sensorSpecificHeat must be a positive value");
     }
@@ -54,12 +54,8 @@ void SensorThermal::reset(uint64_t CurrentClock) {
         bskLogger.bskLog(BSK_ERROR, "The nHat_B must be set to a non-zero vector");
     }
     // check if required input messages are connected
-    if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "sensorThermal.sunInMsg was not linked.");
-    }
-    if (!this->stateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "sensorThermal.stateInMsg was not linked.");
-    }
+    if (!this->sunInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "sensorThermal.sunInMsg was not linked."); }
+    if (!this->stateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "sensorThermal.stateInMsg was not linked."); }
 
     this->sensorTemp = this->T_0;
 
@@ -145,9 +141,7 @@ void SensorThermal::computeSunData() {
 
     //! - Compute the sensor projected area
     this->projectedArea = this->sensorArea * (sHat_B.dot(this->nHat_B));
-    if (this->projectedArea < 0) {
-        this->projectedArea = 0;
-    }
+    if (this->projectedArea < 0) { this->projectedArea = 0; }
 }
 
 /*! This method evaluates the thermal model. This is evaluated in five steps:
@@ -163,8 +157,8 @@ void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
     this->computeSunData();
 
     //! - Compute Q_in
-    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity +
-                 this->sensorPowerDraw * this->sensorPowerStatus;
+    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity
+               + this->sensorPowerDraw * this->sensorPowerStatus;
 
     //! - Compute Q_out
     this->Q_out =

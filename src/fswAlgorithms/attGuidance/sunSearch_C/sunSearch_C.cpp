@@ -2,19 +2,17 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sunSearch_C.h"
+
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <cmath>
 
 /*! This method is used to reset the module.
  @return void
  */
 void SunSearch_C::reset(uint64_t currentSimNanos) {
-    if (!this->attNavInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
-    }
-    if (!this->vehConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".vehConfigInMsg wasn't connected.");
-    }
+    if (!this->attNavInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected."); }
+    if (!this->vehConfigInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, ".vehConfigInMsg wasn't connected."); }
 
     /*! read vehicle configuration message */
     VehicleConfigMsgPayload vehConfigIn = this->vehConfigInMsg();
@@ -22,9 +20,7 @@ void SunSearch_C::reset(uint64_t currentSimNanos) {
     this->principleInertias[1] = vehConfigIn.ISCPntB_B[4];
     this->principleInertias[2] = vehConfigIn.ISCPntB_B[8];
 
-    for (int index = 0; index < 3; index++) {
-        this->computeKinematicProperties(index);
-    }
+    for (int index = 0; index < 3; index++) { this->computeKinematicProperties(index); }
 
     this->resetTime = currentSimNanos;
 }
@@ -107,14 +103,14 @@ void SunSearch_C::computeKinematicProperties(int const index) {
 /*! Define this method to compute the rate and acceleration as function of time
     @return void
     */
-void SunSearch_C::computeReferenceMotion(uint64_t const currentSimNanos,
-                                         int const index,
-                                         double* omega_RN,
-                                         double* domega_RN) {
+void SunSearch_C::computeReferenceMotion(
+    uint64_t const currentSimNanos,
+    int const index,
+    double* omega_RN,
+    double* domega_RN
+) {
     double zeroTime = 0;
-    for (int i = 0; i < index; ++i) {
-        zeroTime += this->slewProperties[i].slewTotalTime;
-    }
+    for (int i = 0; i < index; ++i) { zeroTime += this->slewProperties[i].slewTotalTime; }
     double localSimSeconds = (currentSimNanos - this->resetTime) * NANO2SEC - zeroTime;
 
     SlewProperties SP = this->slewProperties[index];
@@ -135,7 +131,7 @@ void SunSearch_C::computeReferenceMotion(uint64_t const currentSimNanos,
     @param double slewTime
     @return void
     */
-void SunSearch_C::setSlewTime(double const t1, const double t2, const double t3) {
+void SunSearch_C::setSlewTime(double const t1, double const t2, double const t3) {
     this->slewProperties[0].slewTime = t1;
     this->slewProperties[1].slewTime = t2;
     this->slewProperties[2].slewTime = t3;

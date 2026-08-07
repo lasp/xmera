@@ -2,12 +2,14 @@
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "../regionsOfInterestAlgorithm.h"
+
 #include <gtest/gtest.h>
-#include <cmath>
+
 #include <array>
+#include <cmath>
 
 // Test constants
-constexpr int32_t DEFAULT_MAX_SEPARATION = 1000;
+constexpr int32_t DEFAULT_MAX_SEPARATION = 1'000;
 constexpr int32_t DEFAULT_MIN_DETECTION = 2;
 
 /*! @brief Test and validate RegionsOfInterestAlgorithm region identification
@@ -23,13 +25,15 @@ constexpr int32_t DEFAULT_MIN_DETECTION = 2;
  *  @param windowHeight Optional window height
  *  @param maxSeparation Maximum separation for region merging
  */
-inline void testRegionIdentification(const std::array<RegionOfInterest, MAX_NUMBER_REGIONS>& regions,
-                                     const Eigen::Vector2i& expectedCenter,
-                                     int expectedPixels,
-                                     const Eigen::Vector2i& windowCenter = Eigen::Vector2i::Zero(),
-                                     int32_t windowWidth = 0,
-                                     int32_t windowHeight = 0,
-                                     int32_t maxSeparation = DEFAULT_MAX_SEPARATION) {
+inline void testRegionIdentification(
+    std::array<RegionOfInterest, MAX_NUMBER_REGIONS> const &regions,
+    Eigen::Vector2i const &expectedCenter,
+    int expectedPixels,
+    Eigen::Vector2i const &windowCenter = Eigen::Vector2i::Zero(),
+    int32_t windowWidth = 0,
+    int32_t windowHeight = 0,
+    int32_t maxSeparation = DEFAULT_MAX_SEPARATION
+) {
     RegionsOfInterestAlgorithm algorithm{};
 
     if (!windowCenter.isZero() && windowWidth > 0 && windowHeight > 0) {
@@ -52,7 +56,7 @@ inline void testRegionIdentification(const std::array<RegionOfInterest, MAX_NUMB
 // ============================================================================
 
 class RegionsOfInterestAlgorithmTest : public ::testing::Test {
-   protected:
+protected:
     RegionsOfInterestAlgorithm algorithm{};
 
     void SetUp() override {
@@ -85,7 +89,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, SetAndGetMinimumDetectionSize) {
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, SetAndGetWindowCenter) {
-    const Eigen::Vector2i testCenter(512, 384);
+    Eigen::Vector2i const testCenter(512, 384);
     algorithm.setWindowCenter(testCenter);
     Eigen::Vector2i result = algorithm.getWindowCenter();
     EXPECT_EQ(testCenter[0], result[0]);
@@ -108,14 +112,14 @@ TEST_F(RegionsOfInterestAlgorithmTest, SetAndGetWindowSize) {
 TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowNoWindowDefined) {
     // When no window is defined (center is zero or dimensions are zero),
     // the window should default to the entire image
-    algorithm.setImageSize(1000, 2000);
+    algorithm.setImageSize(1'000, 2'000);
     EXPECT_NO_THROW(algorithm.reset());
     auto center = algorithm.getWindowCenter();
     auto size = algorithm.getWindowSize();
-    EXPECT_EQ(center.x(), 1000 / 2);
-    EXPECT_EQ(center.y(), 2000 / 2);
-    EXPECT_EQ(size.x(), 1000);
-    EXPECT_EQ(size.y(), 2000);
+    EXPECT_EQ(center.x(), 1'000 / 2);
+    EXPECT_EQ(center.y(), 2'000 / 2);
+    EXPECT_EQ(size.x(), 1'000);
+    EXPECT_EQ(size.y(), 2'000);
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowValidWindow) {
@@ -123,7 +127,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowValidWindow) {
     Eigen::Vector2i inputCenter(500, 500);
     algorithm.setWindowCenter(inputCenter);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1000, 1000);
+    algorithm.setImageSize(1'000, 1'000);
 
     EXPECT_NO_THROW(algorithm.reset());
 
@@ -140,7 +144,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowExtendsLeftThrows) {
     Eigen::Vector2i center(50, 384);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(200, 300);
-    algorithm.setImageSize(1000, 1000);
+    algorithm.setImageSize(1'000, 1'000);
 
     EXPECT_THROW(algorithm.reset(), std::invalid_argument);
 }
@@ -150,7 +154,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowExtendsTopThrows) {
     Eigen::Vector2i center(512, 50);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 200);
-    algorithm.setImageSize(1000, 1000);
+    algorithm.setImageSize(1'000, 1'000);
 
     EXPECT_THROW(algorithm.reset(), std::invalid_argument);
 }
@@ -160,7 +164,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowExtendsRightThrows) {
     Eigen::Vector2i center(900, 384);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1000, 1000);
+    algorithm.setImageSize(1'000, 1'000);
 
     EXPECT_THROW(algorithm.reset(), std::invalid_argument);
 }
@@ -170,7 +174,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, ComputeWindowExtendsBottomThrows) {
     Eigen::Vector2i center(512, 750);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1000, 800);
+    algorithm.setImageSize(1'000, 800);
 
     EXPECT_THROW(algorithm.reset(), std::invalid_argument);
 }
@@ -183,7 +187,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, EmptyRegions) {
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1024, 1024);
+    algorithm.setImageSize(1'024, 1'024);
     algorithm.reset();
     // All regions have zero pixels - should return empty region
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
@@ -197,7 +201,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, SingleRegion) {
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1024, 1024);
+    algorithm.setImageSize(1'024, 1'024);
     algorithm.reset();
     // Single region above threshold
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
@@ -219,7 +223,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, MultipleRegionsSelectsLargest) {
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(900, 900);
-    algorithm.setImageSize(1024, 1024);
+    algorithm.setImageSize(1'024, 1'024);
     algorithm.reset();
     // Multiple regions, should select the largest one if they're far apart
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
@@ -240,16 +244,14 @@ TEST_F(RegionsOfInterestAlgorithmTest, MultipleRegionsSelectsLargest) {
     // Should return the largest region (150 pixels)
     EXPECT_EQ(150, result.numberOfPixels);
     Eigen::Vector2i predictedCenter = regions[1].centerOfBrightness;
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, CloseRegionsMerges) {
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1024, 1024);
+    algorithm.setImageSize(1'024, 1'024);
     algorithm.reset();
     // Two regions close together should be merged
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
@@ -266,19 +268,17 @@ TEST_F(RegionsOfInterestAlgorithmTest, CloseRegionsMerges) {
 
     // Should merge: total pixels = 180
     EXPECT_EQ(180, result.numberOfPixels);
-    Eigen::Vector2i predictedCenter = (regions[0].numberOfPixels * regions[0].centerOfBrightness +
-                                       regions[1].numberOfPixels * regions[1].centerOfBrightness) /
-                                      (regions[0].numberOfPixels + regions[1].numberOfPixels);
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    Eigen::Vector2i predictedCenter = (regions[0].numberOfPixels * regions[0].centerOfBrightness
+                                       + regions[1].numberOfPixels * regions[1].centerOfBrightness)
+                                    / (regions[0].numberOfPixels + regions[1].numberOfPixels);
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, ThreeRegionsTwoCloseMerges) {
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1024, 1024);
+    algorithm.setImageSize(1'024, 1'024);
     algorithm.reset();
     // Three regions: two close together, one far away
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
@@ -298,19 +298,17 @@ TEST_F(RegionsOfInterestAlgorithmTest, ThreeRegionsTwoCloseMerges) {
 
     // Should merge the two close regions (180 total pixels)
     EXPECT_EQ(regions[0].numberOfPixels + regions[1].numberOfPixels, result.numberOfPixels);
-    Eigen::Vector2i predictedCenter = (regions[0].numberOfPixels * regions[0].centerOfBrightness +
-                                       regions[1].numberOfPixels * regions[1].centerOfBrightness) /
-                                      (regions[0].numberOfPixels + regions[1].numberOfPixels);
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    Eigen::Vector2i predictedCenter = (regions[0].numberOfPixels * regions[0].centerOfBrightness
+                                       + regions[1].numberOfPixels * regions[1].centerOfBrightness)
+                                    / (regions[0].numberOfPixels + regions[1].numberOfPixels);
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, FiltersRegionsBelowThreshold) {
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1024, 1024);
+    algorithm.setImageSize(1'024, 1'024);
     algorithm.reset();
     // Regions below minimum detection threshold should be filtered
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
@@ -328,16 +326,14 @@ TEST_F(RegionsOfInterestAlgorithmTest, FiltersRegionsBelowThreshold) {
     // Should return empty region since all are below threshold
     EXPECT_EQ(0, result.numberOfPixels);
     Eigen::Vector2i predictedCenter = Eigen::Vector2i::Zero();
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, ExludeRegionsBelowThreshold) {
     Eigen::Vector2i center(512, 512);
     algorithm.setWindowCenter(center);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1024, 1024);
+    algorithm.setImageSize(1'024, 1'024);
     algorithm.reset();
     // Regions below minimum detection threshold should be filtered
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
@@ -358,9 +354,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, ExludeRegionsBelowThreshold) {
     // Should return empty region since all are below threshold
     EXPECT_EQ(20, result.numberOfPixels);
     Eigen::Vector2i predictedCenter = regions[2].centerOfBrightness;
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 // ============================================================================
@@ -372,7 +366,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, WindowingFiltersOutsideRegions) {
     Eigen::Vector2i windowCenter(512, 384);
     algorithm.setWindowCenter(windowCenter);
     algorithm.setWindowSize(400, 300);
-    algorithm.setImageSize(1024, 1024);
+    algorithm.setImageSize(1'024, 1'024);
     algorithm.reset();
 
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
@@ -390,9 +384,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, WindowingFiltersOutsideRegions) {
     // Should only consider the region inside the window (100 pixels)
     EXPECT_EQ(100, result.numberOfPixels);
     Eigen::Vector2i predictedCenter = regions[0].centerOfBrightness;
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 TEST_F(RegionsOfInterestAlgorithmTest, WindowingAllRegionsOutsideReturnsEmpty) {
@@ -416,9 +408,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, WindowingAllRegionsOutsideReturnsEmpty) {
     // Should return empty region
     EXPECT_EQ(0, result.numberOfPixels);
     Eigen::Vector2i predictedCenter = Eigen::Vector2i::Zero();
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 // ============================================================================
@@ -445,9 +435,7 @@ TEST_F(RegionsOfInterestAlgorithmTest, RegionsOrderedByPixelCount) {
     // Should select the largest region (150 pixels) even though it's not first
     EXPECT_EQ(150, result.numberOfPixels);
     Eigen::Vector2i predictedCenter = regions[1].centerOfBrightness;
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 // ============================================================================
@@ -529,13 +517,15 @@ TEST(RegionsOfInterestTest, MultipleTargetsSelectBrightest) {
     regions[2].numberOfPixels = 100;
     regions[2].centerOfBrightness << 700, 500;
 
-    EXPECT_NO_THROW(testRegionIdentification(regions,
-                                             Eigen::Vector2i(512, 384),
-                                             250,
-                                             Eigen::Vector2i::Zero(),
-                                             0,
-                                             0,
-                                             50));  // Small separation
+    EXPECT_NO_THROW(testRegionIdentification(
+        regions,
+        Eigen::Vector2i(512, 384),
+        250,
+        Eigen::Vector2i::Zero(),
+        0,
+        0,
+        50
+    ));  // Small separation
 }
 
 TEST(RegionsOfInterestTest, SplitDetectionMerges) {
@@ -556,12 +546,10 @@ TEST(RegionsOfInterestTest, SplitDetectionMerges) {
 
     // Should merge to 250 total pixels
     EXPECT_EQ(250, result.numberOfPixels);
-    Eigen::Vector2i predictedCenter = (regions[0].numberOfPixels * regions[0].centerOfBrightness +
-                                       regions[1].numberOfPixels * regions[1].centerOfBrightness) /
-                                      (regions[0].numberOfPixels + regions[1].numberOfPixels);
-    for (auto i = 0; i < 2; ++i) {
-        EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]);
-    }
+    Eigen::Vector2i predictedCenter = (regions[0].numberOfPixels * regions[0].centerOfBrightness
+                                       + regions[1].numberOfPixels * regions[1].centerOfBrightness)
+                                    / (regions[0].numberOfPixels + regions[1].numberOfPixels);
+    for (auto i = 0; i < 2; ++i) { EXPECT_EQ(predictedCenter[i], result.centerOfBrightness[i]); }
 }
 
 TEST(RegionsOfInterestTest, WindowedDetectionFiltersSurroundings) {
@@ -577,5 +565,6 @@ TEST(RegionsOfInterestTest, WindowedDetectionFiltersSurroundings) {
     regions[1].centerOfBrightness << 100, 100;
 
     EXPECT_NO_THROW(
-        testRegionIdentification(regions, Eigen::Vector2i(512, 384), 150, Eigen::Vector2i(512, 384), 400, 300));
+        testRegionIdentification(regions, Eigen::Vector2i(512, 384), 150, Eigen::Vector2i(512, 384), 400, 300)
+    );
 }

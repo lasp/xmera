@@ -16,12 +16,8 @@ void InitializeICP::reset(uint64_t currentSimNanos) {
     if (!this->inputMeasuredPointCloud.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Measured Point Cloud wasn't connected.");
     }
-    if (!this->ephemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Ephemeris message wasn't connected.");
-    }
-    if (!this->cameraConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Camera message was not linked.");
-    }
+    if (!this->ephemerisInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "Ephemeris message wasn't connected."); }
+    if (!this->cameraConfigInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "Camera message was not linked."); }
 
     //! If the module is reset, use the ephemeris message for initialization
     this->initialPhase = true;
@@ -75,14 +71,18 @@ void InitializeICP::setInitialConditions(uint64_t currentSimNanos) {
         this->R_logged = cArrayToEigenMatrixX(
             &sicpBuffer.rotationMatrix[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM * SICP_POINT_DIM],
             SICP_POINT_DIM,
-            SICP_POINT_DIM);
+            SICP_POINT_DIM
+        );
         this->t_logged = cArrayToEigenMatrixX(
-            &sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM], 1, SICP_POINT_DIM);
+            &sicpBuffer.translation[(sicpBuffer.numberOfIteration - 1) * SICP_POINT_DIM],
+            1,
+            SICP_POINT_DIM
+        );
         this->s_logged = sicpBuffer.scaleFactor[sicpBuffer.numberOfIteration - 1];
         this->initialPhase = false;
         this->previousTimeTag = sicpBuffer.timeTag;
     }
-    double timeSinceICPSolution = (double)(currentSimNanos - this->previousTimeTag) * 1E-9;
+    double timeSinceICPSolution = (double) (currentSimNanos - this->previousTimeTag) * 1E-9;
     //! - If the current point cloud is valid check if there is a recent ICP solution to use. If there isn't use
     //! ephemeris information
     if (this->normalizedCloudBuffer.valid) {

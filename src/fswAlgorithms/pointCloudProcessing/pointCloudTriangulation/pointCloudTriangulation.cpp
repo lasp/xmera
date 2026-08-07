@@ -2,6 +2,7 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "pointCloudTriangulation.h"
+
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -36,9 +37,7 @@ void PointCloudTriangulation::reset(uint64_t currentSimNanos) {
     @return void
 */
 void PointCloudTriangulation::updateState(uint64_t currentSimNanos) {
-    if (this->numberTimesCalled >= this->numberTimeStepsInitialPhase) {
-        this->initialPhase = false;
-    }
+    if (this->numberTimesCalled >= this->numberTimeStepsInitialPhase) { this->initialPhase = false; }
 
     // read messages
     this->readMessages();
@@ -148,22 +147,24 @@ void PointCloudTriangulation::readMessages() {
     this->dcm_C2C1 = dcm_C2N * dcm_C1N.transpose();
 
     this->valid = false;
-    if (validDOM && validKeyPoints) {
-        this->valid = true;
-    }
+    if (validDOM && validKeyPoints) { this->valid = true; }
 
     // check if cameraIDs and time tags are equal
     if (cameraIDkeyPoints != cameraIDconfig && this->valid) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "pointCloudTriangulation: camera IDs from keyPointsInMsg and "
-                         "cameraConfigInMsg are different, but should be equal.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "pointCloudTriangulation: camera IDs from keyPointsInMsg and "
+            "cameraConfigInMsg are different, but should be equal."
+        );
         this->valid = false;
     }
     if (!(timeTagDOM == this->timeTag2) && this->valid) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "pointCloudTriangulation: time tags from ephemerisInMsg, "
-                         "navTransInMsg, directionOfMotionInMsg and the time tag of the first image from "
-                         "keyPointsInMsg (timeTag_firstImage) are different, but should be equal.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "pointCloudTriangulation: time tags from ephemerisInMsg, "
+            "navTransInMsg, directionOfMotionInMsg and the time tag of the first image from "
+            "keyPointsInMsg (timeTag_firstImage) are different, but should be equal."
+        );
         this->valid = false;
     }
 }
@@ -190,10 +191,12 @@ void PointCloudTriangulation::writeMessages(uint64_t currentSimNanos) {
     @param dcmCamera dcm from frame of interest F to camera frame C
     @return Eigen::Vector3d
 */
-Eigen::Vector3d PointCloudTriangulation::triangulation(std::vector<Eigen::Vector3d> knownLocations,
-                                                       std::vector<Eigen::Vector2d> imagePoints,
-                                                       const Eigen::Matrix3d& cameraCalibrationInverse,
-                                                       std::vector<Eigen::Matrix3d> dcmCamera) const {
+Eigen::Vector3d PointCloudTriangulation::triangulation(
+    std::vector<Eigen::Vector3d> knownLocations,
+    std::vector<Eigen::Vector2d> imagePoints,
+    Eigen::Matrix3d const &cameraCalibrationInverse,
+    std::vector<Eigen::Matrix3d> dcmCamera
+) const {
     unsigned long numLocations = knownLocations.size();
 
     // make sure number of provided locations is equal to number of image points.
@@ -207,9 +210,7 @@ Eigen::Vector3d PointCloudTriangulation::triangulation(std::vector<Eigen::Vector
 
     for (size_t c = 0; c < numLocations; ++c) {
         // update dcm in case they are different for each image point
-        if (dcmCamera.size() != 1) {
-            dcm_CF = dcmCamera.at(c);
-        }
+        if (dcmCamera.size() != 1) { dcm_CF = dcmCamera.at(c); }
 
         // 2D pixel location
         Eigen::Vector2d u = imagePoints.at(c);

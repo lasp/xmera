@@ -2,11 +2,13 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#include <string.h>
 #include "spacecraftPointing.h"
+
 #include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+
+#include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -34,9 +36,7 @@ void SpacecraftPointing::reset(uint64_t callTime) {
     v3Cross(temp_z, this->alignmentVector_B, A_y_B);
     /* If the alignment vector aligns with the z-axis of the body frame, the cross product is performed with a temporary
      * y-axis. */
-    if (v3Norm(A_y_B) < 1e-6) {
-        v3Cross(this->alignmentVector_B, temp_y, A_y_B);
-    }
+    if (v3Norm(A_y_B) < 1e-6) { v3Cross(this->alignmentVector_B, temp_y, A_y_B); }
     v3Normalize(A_y_B, dcm_AB[1]);
     v3Cross(dcm_AB[0], dcm_AB[1], A_z_B);
     v3Normalize(A_z_B, dcm_AB[2]);
@@ -104,9 +104,7 @@ void SpacecraftPointing::updateState(uint64_t callTime) {
     v3Cross(temp_z, dcm_RN[0], R_y_N);
     /* If the rho_N vector aligns with the x-axis of the N-frame, the cross product is performed with a temporary
      * y-axis. */
-    if (v3Norm(R_y_N) < 1e-6) {
-        v3Cross(dcm_RN[0], temp_y, R_y_N);
-    }
+    if (v3Norm(R_y_N) < 1e-6) { v3Cross(dcm_RN[0], temp_y, R_y_N); }
     v3Normalize(R_y_N, dcm_RN[1]);
     v3Cross(dcm_RN[0], dcm_RN[1], R_z_N);
     v3Normalize(R_z_N, dcm_RN[2]);
@@ -137,50 +135,56 @@ void SpacecraftPointing::updateState(uint64_t callTime) {
        t, it turned out that the bevaviour of the simulation significantly improves in case the average of the B-matrix
        of old_sigma_RN and new_sigma_RN is taken, as well as the average of 1/((1+sigma^2)^2) (see Schaub and Junkins
        eq. 3.163). */
-    old_sigma_RN_squared = this->old_sigma_RN[0] * this->old_sigma_RN[0] +
-                           this->old_sigma_RN[1] * this->old_sigma_RN[1] +
-                           this->old_sigma_RN[2] * this->old_sigma_RN[2];
+    old_sigma_RN_squared = this->old_sigma_RN[0] * this->old_sigma_RN[0] + this->old_sigma_RN[1] * this->old_sigma_RN[1]
+                         + this->old_sigma_RN[2] * this->old_sigma_RN[2];
     sigma_RN_squared = sigma_RN[0] * sigma_RN[0] + sigma_RN[1] * sigma_RN[1] + sigma_RN[2] * sigma_RN[2];
 
-    m33Set(1.0 - old_sigma_RN_squared + 2.0 * this->old_sigma_RN[0] * this->old_sigma_RN[0],
-           2.0 * (this->old_sigma_RN[0] * this->old_sigma_RN[1] - this->old_sigma_RN[2]),
-           2.0 * (this->old_sigma_RN[0] * this->old_sigma_RN[2] + this->old_sigma_RN[1]),
-           2.0 * (this->old_sigma_RN[1] * this->old_sigma_RN[0] + this->old_sigma_RN[2]),
-           1.0 - old_sigma_RN_squared + 2.0 * this->old_sigma_RN[1] * this->old_sigma_RN[1],
-           2.0 * (this->old_sigma_RN[1] * this->old_sigma_RN[2] - this->old_sigma_RN[0]),
-           2.0 * (this->old_sigma_RN[2] * this->old_sigma_RN[0] - this->old_sigma_RN[1]),
-           2.0 * (this->old_sigma_RN[2] * this->old_sigma_RN[1] + this->old_sigma_RN[0]),
-           1.0 - old_sigma_RN_squared + 2.0 * this->old_sigma_RN[2] * this->old_sigma_RN[2],
-           old_B_sigma_RN);
+    m33Set(
+        1.0 - old_sigma_RN_squared + 2.0 * this->old_sigma_RN[0] * this->old_sigma_RN[0],
+        2.0 * (this->old_sigma_RN[0] * this->old_sigma_RN[1] - this->old_sigma_RN[2]),
+        2.0 * (this->old_sigma_RN[0] * this->old_sigma_RN[2] + this->old_sigma_RN[1]),
+        2.0 * (this->old_sigma_RN[1] * this->old_sigma_RN[0] + this->old_sigma_RN[2]),
+        1.0 - old_sigma_RN_squared + 2.0 * this->old_sigma_RN[1] * this->old_sigma_RN[1],
+        2.0 * (this->old_sigma_RN[1] * this->old_sigma_RN[2] - this->old_sigma_RN[0]),
+        2.0 * (this->old_sigma_RN[2] * this->old_sigma_RN[0] - this->old_sigma_RN[1]),
+        2.0 * (this->old_sigma_RN[2] * this->old_sigma_RN[1] + this->old_sigma_RN[0]),
+        1.0 - old_sigma_RN_squared + 2.0 * this->old_sigma_RN[2] * this->old_sigma_RN[2],
+        old_B_sigma_RN
+    );
 
-    m33Set(1.0 - sigma_RN_squared + 2.0 * sigma_RN[0] * sigma_RN[0],
-           2.0 * (sigma_RN[0] * sigma_RN[1] - sigma_RN[2]),
-           2.0 * (sigma_RN[0] * sigma_RN[2] + sigma_RN[1]),
-           2.0 * (sigma_RN[1] * sigma_RN[0] + sigma_RN[2]),
-           1.0 - sigma_RN_squared + 2.0 * sigma_RN[1] * sigma_RN[1],
-           2.0 * (sigma_RN[1] * sigma_RN[2] - sigma_RN[0]),
-           2.0 * (sigma_RN[2] * sigma_RN[0] - sigma_RN[1]),
-           2.0 * (sigma_RN[2] * sigma_RN[1] + sigma_RN[0]),
-           1.0 - sigma_RN_squared + 2.0 * sigma_RN[2] * sigma_RN[2],
-           B_sigma_RN);
+    m33Set(
+        1.0 - sigma_RN_squared + 2.0 * sigma_RN[0] * sigma_RN[0],
+        2.0 * (sigma_RN[0] * sigma_RN[1] - sigma_RN[2]),
+        2.0 * (sigma_RN[0] * sigma_RN[2] + sigma_RN[1]),
+        2.0 * (sigma_RN[1] * sigma_RN[0] + sigma_RN[2]),
+        1.0 - sigma_RN_squared + 2.0 * sigma_RN[1] * sigma_RN[1],
+        2.0 * (sigma_RN[1] * sigma_RN[2] - sigma_RN[0]),
+        2.0 * (sigma_RN[2] * sigma_RN[0] - sigma_RN[1]),
+        2.0 * (sigma_RN[2] * sigma_RN[1] + sigma_RN[0]),
+        1.0 - sigma_RN_squared + 2.0 * sigma_RN[2] * sigma_RN[2],
+        B_sigma_RN
+    );
 
     /* Taking the average between entries of the old sigma matrix and the new sigma matrix. */
-    m33Set((old_B_sigma_RN[0][0] + B_sigma_RN[0][0]) / 2,
-           (old_B_sigma_RN[0][1] + B_sigma_RN[0][1]) / 2,
-           (old_B_sigma_RN[0][2] + B_sigma_RN[0][2]) / 2,
-           (old_B_sigma_RN[1][0] + B_sigma_RN[1][0]) / 2,
-           (old_B_sigma_RN[1][1] + B_sigma_RN[1][1]) / 2,
-           (old_B_sigma_RN[1][2] + B_sigma_RN[1][2]) / 2,
-           (old_B_sigma_RN[2][0] + B_sigma_RN[2][0]) / 2,
-           (old_B_sigma_RN[2][1] + B_sigma_RN[2][1]) / 2,
-           (old_B_sigma_RN[2][2] + B_sigma_RN[2][2]) / 2,
-           B_sigma_RN);
+    m33Set(
+        (old_B_sigma_RN[0][0] + B_sigma_RN[0][0]) / 2,
+        (old_B_sigma_RN[0][1] + B_sigma_RN[0][1]) / 2,
+        (old_B_sigma_RN[0][2] + B_sigma_RN[0][2]) / 2,
+        (old_B_sigma_RN[1][0] + B_sigma_RN[1][0]) / 2,
+        (old_B_sigma_RN[1][1] + B_sigma_RN[1][1]) / 2,
+        (old_B_sigma_RN[1][2] + B_sigma_RN[1][2]) / 2,
+        (old_B_sigma_RN[2][0] + B_sigma_RN[2][0]) / 2,
+        (old_B_sigma_RN[2][1] + B_sigma_RN[2][1]) / 2,
+        (old_B_sigma_RN[2][2] + B_sigma_RN[2][2]) / 2,
+        B_sigma_RN
+    );
 
     /* Find the angular velocity of the R-frame with respect to the N-frame according to Schaub and Junkin's chapter
      * about MRPs. */
     m33Transpose(B_sigma_RN, B_trans);
-    average_scale = 0.5 * (1.0 / ((1.0 + sigma_RN_squared) * (1.0 + sigma_RN_squared)) +
-                           1.0 / ((1.0 + old_sigma_RN_squared) * (1.0 + old_sigma_RN_squared)));
+    average_scale = 0.5
+                  * (1.0 / ((1.0 + sigma_RN_squared) * (1.0 + sigma_RN_squared))
+                     + 1.0 / ((1.0 + old_sigma_RN_squared) * (1.0 + old_sigma_RN_squared)));
     m33Scale(average_scale, B_trans, B_sigma_RN_inv);
     m33MultV3(B_sigma_RN_inv, sigma_dot_RN, omega_RN_R);
     v3Scale(4.0, omega_RN_R, omega_RN_R);
@@ -202,9 +206,7 @@ void SpacecraftPointing::updateState(uint64_t callTime) {
         For this reason, these values are set to zero. Take into account that the first data point is an initialization
         datapoint. This is equal to zero for all parameters. So the actual simulation only starts after this first
        initialization datapoint. */
-    if (this->i < 2) {
-        v3SetZero(omega_RN_N);
-    }
+    if (this->i < 2) { v3SetZero(omega_RN_N); }
     if (this->i < 3) {
         v3SetZero(domega_RN_N);
         this->i += 1;

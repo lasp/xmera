@@ -35,7 +35,7 @@ void EphemDifferenceWithUncertainty::updateState(uint64_t currentSimNanos) {
     @param Eigen::MatrixXd covariance
     @return void
     */
-void EphemDifferenceWithUncertainty::setCovarianceBase(const Eigen::MatrixXd stateCovariance) {
+void EphemDifferenceWithUncertainty::setCovarianceBase(Eigen::MatrixXd const stateCovariance) {
     this->algorithm.setCovarianceBase(stateCovariance);
 }
 
@@ -50,7 +50,7 @@ Eigen::MatrixXd EphemDifferenceWithUncertainty::getCovarianceBase() const {
     @param Eigen::MatrixXd covariance
     @return void
     */
-void EphemDifferenceWithUncertainty::setCovarianceSecondary(const Eigen::MatrixXd stateCovariance) {
+void EphemDifferenceWithUncertainty::setCovarianceSecondary(Eigen::MatrixXd const stateCovariance) {
     this->algorithm.setCovarianceSecondary(stateCovariance);
 }
 

@@ -11,8 +11,10 @@
  */
 
 #include "eulerRotation.h"
-#include <math.h>
+
 #include <architecture/utilities/macroDefinitions.h>
+
+#include <math.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include <architecture/utilities/linearAlgebra.h>
@@ -135,10 +137,12 @@ void EulerRotation::computeTimeStep(uint64_t callTime) {
  @param domega_R0N_N The input reference frame angular acceleration vector
  @param attRefOut The output message copy
  */
-void EulerRotation::computeEulerRotationReference(double sigma_R0N[3],
-                                                  double omega_R0N_N[3],
-                                                  double domega_R0N_N[3],
-                                                  AttRefMsgPayload* attRefOut) {
+void EulerRotation::computeEulerRotationReference(
+    double sigma_R0N[3],
+    double omega_R0N_N[3],
+    double domega_R0N_N[3],
+    AttRefMsgPayload* attRefOut
+) {
     /* Compute attitude reference*/
     double attIncrement[3]; /*!< [] increment in attitude coordinates  */
     double RR0[3][3];       /*!< [] DCM rotating from R0 to R */
