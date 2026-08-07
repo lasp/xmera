@@ -6,72 +6,75 @@
 #include "test_regionsOfInterest.cpp"
 #include <fuzztest/fuzztest.h>
 
+#include <algorithm>
+#include <array>
 #include <cmath>
+#include <cstddef>
+#include <vector>
 
 // Fuzz-specific tolerances
 constexpr int32_t FUZZ_MAX_IMAGE_SIZE = 4096;
 constexpr int32_t FUZZ_MIN_IMAGE_SIZE = 64;
 constexpr int32_t FUZZ_MAX_PIXELS = 10000;
 
+/*! @brief Number of regions the fuzzed vectors can describe */
+constexpr size_t FUZZ_MAX_REGIONS = static_cast<size_t>(MAX_NUMBER_REGIONS);
+
 /*! @brief Main fuzz test for RegionsOfInterestAlgorithm
  *
  *  Tests the algorithm across a wide range of region configurations.
  *  Ensures the algorithm doesn't crash and produces reasonable results.
  */
-void fuzzRegionIdentification(int32_t numRegions,
-                              int32_t maxSeparation,
-                              int32_t minDetectionSize,
-                              int32_t region1_x,
-                              int32_t region1_y,
-                              int32_t region1_pixels,
-                              int32_t region2_x,
-                              int32_t region2_y,
-                              int32_t region2_pixels) {
+void fuzzRegionIdentification(
+    int32_t maxSeparation,
+    int32_t minDetectionSize,
+    std::vector<int32_t> regionXs,
+    std::vector<int32_t> regionYs,
+    std::vector<int32_t> regionPixels
+) {
+    size_t const numRegions = std::min({regionXs.size(), regionYs.size(), regionPixels.size(), FUZZ_MAX_REGIONS});
+
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
-
-    // Set up first region if numRegions >= 1
-    if (numRegions >= 1) {
-        regions[0].numberOfPixels = region1_pixels;
-        regions[0].centerOfBrightness << region1_x, region1_y;
-        regions[0].regionCenter << region1_x, region1_y;
-        regions[0].regionSize << 10, 10;
-    }
-
-    // Set up second region if numRegions >= 2
-    if (numRegions >= 2) {
-        regions[1].numberOfPixels = region2_pixels;
-        regions[1].centerOfBrightness << region2_x, region2_y;
-        regions[1].regionCenter << region2_x, region2_y;
-        regions[1].regionSize << 10, 10;
+    int32_t totalInputPixels = 0;
+    for (size_t i = 0; i < numRegions; ++i) {
+        regions[i].numberOfPixels = regionPixels[i];
+        regions[i].centerOfBrightness << regionXs[i], regionYs[i];
+        regions[i].regionCenter << regionXs[i], regionYs[i];
+        totalInputPixels += regionPixels[i];
     }
 
     RegionsOfInterestAlgorithm algorithm;
+    algorithm.setImageSize(FUZZ_MAX_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE);
     algorithm.setMaxRoiSeparation(maxSeparation);
     algorithm.setMinimumDetectionSize(minDetectionSize);
+    // Without reset() the window keeps its default size of 1024x1024 and rejects each
+    // region outside it, whatever image size the test sets above.
+    algorithm.reset();
 
     // Algorithm should not crash regardless of input
     RegionOfInterest result = algorithm.update(regions);
 
-    // Result should have non-negative pixel count
+    // The result must have a pixel count that is not negative, and it cannot add pixels
     EXPECT_GE(result.numberOfPixels, 0);
+    EXPECT_LE(result.numberOfPixels, totalInputPixels);
 
     // If result has pixels, it should have valid region size
     if (result.numberOfPixels > 0) {
         EXPECT_GE(result.regionSize[0], 0);
         EXPECT_GE(result.regionSize[1], 0);
-    };
+    }
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzRegionIdentification)
-    .WithDomains(fuzztest::InRange(0, 5),                    // numRegions
-                 fuzztest::InRange(1, 2000),                 // maxSeparation
-                 fuzztest::InRange(0, 100),                  // minDetectionSize
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region1_x
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region1_y
-                 fuzztest::InRange(0, FUZZ_MAX_PIXELS),      // region1_pixels
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region2_x
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // region2_y
-                 fuzztest::InRange(0, FUZZ_MAX_PIXELS));     // region2_pixels
+    .WithDomains(
+        fuzztest::InRange(1, 2'000),  // maxSeparation
+        fuzztest::InRange(0, 100),    // minDetectionSize
+        // The length of the fuzzed vector gives the region count. Thus each slot
+        // of the MAX_NUMBER_REGIONS array is available, and zero slots also.
+        fuzztest::VectorOf(fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE)).WithMaxSize(FUZZ_MAX_REGIONS),
+        fuzztest::VectorOf(fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE)).WithMaxSize(FUZZ_MAX_REGIONS),
+        fuzztest::VectorOf(fuzztest::InRange(0, FUZZ_MAX_PIXELS)).WithMaxSize(FUZZ_MAX_REGIONS)
+    );
 
 /*! @brief Fuzz test for windowing functionality
  *
@@ -186,63 +189,111 @@ FUZZ_TEST(RegionsOfInterestFuzz, fuzzRegionMerging)
 
 /*! @brief Fuzz test for edge cases with extreme values
  *
- *  Tests the algorithm's robustness with boundary conditions.
+ *  Tests the algorithm with boundary conditions. These are extreme separation values and
+ *  threshold values, with regions at the image corners and at the image center.
  */
-void fuzzEdgeCases(int32_t maxSeparation, int32_t minDetectionSize) {
+void fuzzEdgeCases(
+    int32_t maxSeparation,
+    int32_t minDetectionSize,
+    int32_t regionAX,
+    int32_t regionAY,
+    int32_t regionAPixels,
+    int32_t regionBX,
+    int32_t regionBY,
+    int32_t regionBPixels
+) {
     RegionsOfInterestAlgorithm algorithm;
 
     // Test with extreme parameter values
+    algorithm.setImageSize(FUZZ_MAX_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE);
     algorithm.setMaxRoiSeparation(maxSeparation);
     algorithm.setMinimumDetectionSize(minDetectionSize);
+    algorithm.reset();
 
-    // Create regions at extreme positions
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
-    // Region at origin
-    regions[0].numberOfPixels = minDetectionSize + 10;
-    regions[0].centerOfBrightness << 0, 0;
+    regions[0].numberOfPixels = regionAPixels;
+    regions[0].centerOfBrightness << regionAX, regionAY;
 
-    // Region at max coordinates
-    regions[1].numberOfPixels = minDetectionSize + 20;
-    regions[1].centerOfBrightness << FUZZ_MAX_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE;
+    regions[1].numberOfPixels = regionBPixels;
+    regions[1].centerOfBrightness << regionBX, regionBY;
 
     RegionOfInterest result = algorithm.update(regions);
     EXPECT_GE(result.numberOfPixels, 0);
+    EXPECT_LE(result.numberOfPixels, regionAPixels + regionBPixels);
+}
+
+// The position domains give values at the image edges, adjacent to the edges, and at the
+// middle. regionInWindow uses strict inequalities, thus a value at the edge is outside.
+static auto edgeCasePosition() {
+    return fuzztest::OneOf(
+        fuzztest::InRange(0, 1),
+        fuzztest::InRange(FUZZ_MIN_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE / 2),
+        fuzztest::InRange(FUZZ_MAX_IMAGE_SIZE - 1, FUZZ_MAX_IMAGE_SIZE)
+    );
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzEdgeCases)
-    .WithDomains(fuzztest::OneOf(fuzztest::InRange(1, 10),      // Very small separation
-                                 fuzztest::InRange(100, 500),   // Normal separation
-                                 fuzztest::InRange(1000, 5000)  // Very large separation
-                                 ),
-                 fuzztest::OneOf(fuzztest::InRange(0, 5),    // Very small threshold
-                                 fuzztest::InRange(5, 50),   // Normal threshold
-                                 fuzztest::InRange(50, 500)  // Very large threshold
-                                 ));
+    .WithDomains(
+        fuzztest::OneOf(
+            fuzztest::InRange(1, 10),        // Very small separation
+            fuzztest::InRange(100, 500),     // Normal separation
+            fuzztest::InRange(1'000, 5'000)  // Very large separation
+        ),
+        fuzztest::OneOf(
+            fuzztest::InRange(0, 4),    // Very small threshold
+            fuzztest::InRange(5, 49),   // Normal threshold
+            fuzztest::InRange(50, 500)  // Very large threshold
+        ),
+        edgeCasePosition(),                     // regionAX
+        edgeCasePosition(),                     // regionAY
+        fuzztest::InRange(0, FUZZ_MAX_PIXELS),  // regionAPixels
+        edgeCasePosition(),                     // regionBX
+        edgeCasePosition(),                     // regionBY
+        fuzztest::InRange(0, FUZZ_MAX_PIXELS)
+    );  // regionBPixels
 
 /*! @brief Fuzz test for full region array
  *
  *  Tests with the maximum number of regions to ensure no overflow issues.
  */
-void fuzzFullRegionArray(int32_t maxSeparation, int32_t basePixelCount, int32_t positionSpread) {
+void fuzzFullRegionArray(
+    int32_t maxSeparation,
+    int32_t basePixelCount,
+    int32_t positionStride,
+    int32_t originX,
+    int32_t originY
+) {
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
-    // Fill all region slots
-    for (size_t i = 0; i < MAX_NUMBER_REGIONS; ++i) {
-        regions[i].numberOfPixels = basePixelCount + static_cast<int32_t>(i);
-        regions[i].centerOfBrightness << (i * 10) % positionSpread, (i * 15) % positionSpread;
+    // Fill all region slots. The stride sets the distance between the regions, thus it
+    // multiplies the offset. As a modulus, the small indices can never reach it.
+    int32_t totalInputPixels = 0;
+    for (size_t i = 0; i < FUZZ_MAX_REGIONS; ++i) {
+        auto const step = static_cast<int32_t>(i);
+        regions[i].numberOfPixels = basePixelCount + step;
+        regions[i].centerOfBrightness << originX + step * positionStride, originY + step * positionStride;
         regions[i].regionCenter = regions[i].centerOfBrightness;
-        regions[i].regionSize << 10, 10;
+        totalInputPixels += regions[i].numberOfPixels;
     }
 
     RegionsOfInterestAlgorithm algorithm;
+    algorithm.setImageSize(FUZZ_MAX_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE);
     algorithm.setMaxRoiSeparation(maxSeparation);
+    algorithm.reset();
 
     RegionOfInterest result = algorithm.update(regions);
     EXPECT_GE(result.numberOfPixels, 0);
+    EXPECT_LE(result.numberOfPixels, totalInputPixels);
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzFullRegionArray)
-    .WithDomains(fuzztest::InRange(10, 500),     // maxSeparation
-                 fuzztest::InRange(1, 100),      // basePixelCount
-                 fuzztest::InRange(100, 2048));  // positionSpread
+    // originX/Y plus two strides stays inside the image: 2047 + 2 * 1000 is less than
+    // FUZZ_MAX_IMAGE_SIZE.
+    .WithDomains(
+        fuzztest::InRange(10, 500),                         // maxSeparation
+        fuzztest::InRange(1, 100),                          // basePixelCount
+        fuzztest::InRange(0, 1'000),                        // positionStride
+        fuzztest::InRange(1, FUZZ_MAX_IMAGE_SIZE / 2 - 1),  // originX
+        fuzztest::InRange(1, FUZZ_MAX_IMAGE_SIZE / 2 - 1)
+    );  // originY
