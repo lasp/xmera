@@ -228,9 +228,11 @@ jobs:
           path: junit/test-results-${{ matrix.python-version }}.xml
           retention-days: 7
 
-      - name: Run C/C++ unit tests (include fuzz-smoke)
+      # No label filter. "-LE fuzz" removed the fuzz tests that this step must run. In
+      # smoke mode each FUZZ_TEST uses a small fixed set of seed inputs and takes seconds.
+      - name: Run C/C++ unit tests (includes fuzz smoke)
         working-directory: ./build
-        run: ctest --output-on-failure -LE fuzz
+        run: ctest --output-on-failure
 
       - name: Upload CMake & test logs on failure
         if: ${{ failure() }}
