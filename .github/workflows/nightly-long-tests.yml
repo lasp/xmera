@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       fuzz_duration:
-        description: 'Duration per fuzz target (e.g. 120s, 10m)'
-        default: '120s'
+        description: 'Duration per fuzz test (e.g. 300s, 10m). Total wall clock is this times the number of fuzz tests.'
+        default: '300s'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -121,13 +121,16 @@ jobs:
         working-directory: build
         run: ctest --output-on-failure
 
+      # The duration applies to each fuzz test, not to each binary. The script does each
+      # FUZZ_TEST separately, thus each test can have its own corpus directory. There are
+      # seven fuzz tests, thus 300s gives approximately 35 minutes.
       - name: Run long fuzzers
         working-directory: build
         env:
           ASAN_OPTIONS: detect_leaks=1:strict_string_checks=1:check_initialization_order=1
         run: |
           "${GITHUB_WORKSPACE}/.github/scripts/run_long_fuzzers.sh" "$(pwd)" "${GITHUB_WORKSPACE}/fuzz-logs" \
-            --fuzz-for 600s \
+            --fuzz-for "${{ inputs.fuzz_duration || '300s' }}" \
             --corpus "${XMERA_FUZZTEST_CORPUS_DIR}"
 
       - name: Archive fuzz logs
