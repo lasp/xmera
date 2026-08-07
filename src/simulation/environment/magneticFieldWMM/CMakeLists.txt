@@ -14,3 +14,7 @@ target_link_libraries("${module}" PRIVATE
   ArchitectureUtilities
   environmentCommon
 )
+
+set_source_files_properties(GeomagnetismLibrary.c PROPERTIES
+  COMPILE_OPTIONS -Wno-unused-but-set-variable
+)
