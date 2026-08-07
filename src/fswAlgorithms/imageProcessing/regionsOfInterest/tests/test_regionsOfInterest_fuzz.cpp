@@ -10,6 +10,7 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <stdexcept>
 #include <vector>
 
 // Fuzz-specific tolerances
@@ -78,51 +79,73 @@ FUZZ_TEST(RegionsOfInterestFuzz, fuzzRegionIdentification)
 
 /*! @brief Fuzz test for windowing functionality
  *
- *  Tests the windowing feature with various window configurations.
+ *  Tests the window function with many window configurations. These include windows that
+ *  extend past each image edge, which the algorithm must reject.
  */
-void fuzzWindowingBehavior(int32_t window_center_x,
-                           int32_t window_center_y,
-                           int32_t window_width,
-                           int32_t window_height,
-                           int32_t region_x,
-                           int32_t region_y,
-                           int32_t region_pixels) {
+void fuzzWindowingBehavior(
+    int32_t windowCenterX,
+    int32_t windowCenterY,
+    int32_t windowWidth,
+    int32_t windowHeight,
+    int32_t regionX,
+    int32_t regionY,
+    int32_t regionPixels
+) {
     RegionsOfInterestAlgorithm algorithm;
     algorithm.setImageSize(FUZZ_MAX_IMAGE_SIZE, FUZZ_MAX_IMAGE_SIZE);
-    // Set window parameters
-    if (window_width > 0 && window_height > 0) {
-        Eigen::Vector2i windowCenter(window_center_x, window_center_y);
-        algorithm.setWindowCenter(windowCenter);
-        algorithm.setWindowSize(window_width, window_height);
 
-        EXPECT_NO_THROW(algorithm.reset());
+    Eigen::Vector2i const windowCenter(windowCenterX, windowCenterY);
+    algorithm.setWindowCenter(windowCenter);
+    algorithm.setWindowSize(windowWidth, windowHeight);
+
+    // If the center is zero or a dimension is zero, computeWindow uses the full image,
+    // which always fits. Each other window must stay inside the image, or reset() throws.
+    bool const wholeImage = windowCenter.isZero() || windowWidth == 0 || windowHeight == 0;
+    bool const fits = wholeImage
+                   || (windowCenterX - windowWidth / 2 >= 0 && windowCenterY - windowHeight / 2 >= 0
+                       && windowCenterX + windowWidth / 2 <= FUZZ_MAX_IMAGE_SIZE
+                       && windowCenterY + windowHeight / 2 <= FUZZ_MAX_IMAGE_SIZE);
+
+    if (!fits) {
+        ASSERT_THROW(algorithm.reset(), std::invalid_argument);
+        return;  // the window was rejected, so there is no configured algorithm to drive
+    }
+    ASSERT_NO_THROW(algorithm.reset());
+
+    if (wholeImage) {
+        EXPECT_EQ(algorithm.getWindowCenter().x(), FUZZ_MAX_IMAGE_SIZE / 2);
+        EXPECT_EQ(algorithm.getWindowCenter().y(), FUZZ_MAX_IMAGE_SIZE / 2);
+        EXPECT_EQ(algorithm.getWindowSize().x(), FUZZ_MAX_IMAGE_SIZE);
+        EXPECT_EQ(algorithm.getWindowSize().y(), FUZZ_MAX_IMAGE_SIZE);
     } else {
-        EXPECT_NO_THROW(algorithm.reset());
-        Eigen::Vector2i windowCenter = algorithm.getWindowCenter();
-        Eigen::Vector2i windowSize = algorithm.getWindowSize();
-        EXPECT_EQ(windowCenter.x(), FUZZ_MAX_IMAGE_SIZE / 2);
-        EXPECT_EQ(windowCenter.y(), FUZZ_MAX_IMAGE_SIZE / 2);
-        EXPECT_EQ(windowSize.x(), FUZZ_MAX_IMAGE_SIZE);
-        EXPECT_EQ(windowSize.y(), FUZZ_MAX_IMAGE_SIZE);
+        EXPECT_EQ(algorithm.getWindowCenter().x(), windowCenterX);
+        EXPECT_EQ(algorithm.getWindowCenter().y(), windowCenterY);
+        EXPECT_EQ(algorithm.getWindowSize().x(), windowWidth);
+        EXPECT_EQ(algorithm.getWindowSize().y(), windowHeight);
     }
 
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
-    regions[0].numberOfPixels = region_pixels;
-    regions[0].centerOfBrightness << region_x, region_y;
-    regions[0].regionCenter << region_x, region_y;
+    regions[0].numberOfPixels = regionPixels;
+    regions[0].centerOfBrightness << regionX, regionY;
+    regions[0].regionCenter << regionX, regionY;
 
     RegionOfInterest result = algorithm.update(regions);
     EXPECT_GE(result.numberOfPixels, 0);
+    EXPECT_LE(result.numberOfPixels, regionPixels);
 }
 
 FUZZ_TEST(RegionsOfInterestFuzz, fuzzWindowingBehavior)
-    .WithDomains(fuzztest::InRange(401, FUZZ_MAX_IMAGE_SIZE - 401),  // window_center_x
-                 fuzztest::InRange(301, FUZZ_MAX_IMAGE_SIZE - 301),  // window_center_y
-                 fuzztest::InRange(0, 800),                          // window_width
-                 fuzztest::InRange(0, 600),                          // window_height
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),          // region_x
-                 fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),          // region_y
-                 fuzztest::InRange(0, FUZZ_MAX_PIXELS));             // region_pixels
+    // The window domains use the full range. Thus the fuzzer makes windows that extend
+    // past each of the four image edges, and reset() rejects them.
+    .WithDomains(
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // windowCenterX
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // windowCenterY
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // windowWidth
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // windowHeight
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // regionX
+        fuzztest::InRange(0, FUZZ_MAX_IMAGE_SIZE),  // regionY
+        fuzztest::InRange(0, FUZZ_MAX_PIXELS)
+    );  // regionPixels
 
 /*! @brief Fuzz test for region merging logic
  *
