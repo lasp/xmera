@@ -11,6 +11,7 @@
  */
 
 #include "rasterManager.h"
+
 #include <stdio.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
@@ -37,20 +38,22 @@ void RasterManager::updateState(uint64_t callTime) {
         this->scanSelector += 1;
 
         char info[MAX_LOGGING_LENGTH];
-        snprintf(info,
-                 sizeof(info),
-                 "Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ",
-                 this->scanSelector,
-                 this->attOutSet.state[0],
-                 this->attOutSet.state[1],
-                 this->attOutSet.state[2],
-                 this->attOutSet.rate[0],
-                 this->attOutSet.rate[1],
-                 this->attOutSet.rate[2]);
+        snprintf(
+            info,
+            sizeof(info),
+            "Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ",
+            this->scanSelector,
+            this->attOutSet.state[0],
+            this->attOutSet.state[1],
+            this->attOutSet.state[2],
+            this->attOutSet.rate[0],
+            this->attOutSet.rate[1],
+            this->attOutSet.rate[2]
+        );
         this->bskLogger.bskLog(BSK_INFORMATION, info);
     }
 
-    this->attStateOutMsg.write(&this->attOutSet, this->moduleID, callTime);
+    this->attStateOutMsg.write(this->attOutSet, this->moduleID, callTime);
 
     return;
 }

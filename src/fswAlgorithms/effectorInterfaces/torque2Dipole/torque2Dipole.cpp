@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "torque2Dipole.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -45,12 +46,14 @@ void Torque2Dipole::updateState(uint64_t callTime) {
          magnetic field value. */
     bFieldNormSqrd = v3Dot(tamSensorBodyInMsgBuffer.tam_B, tamSensorBodyInMsgBuffer.tam_B);
     if (bFieldNormSqrd > DB0_EPS) {
-        v3Cross(tamSensorBodyInMsgBuffer.tam_B,
-                tauRequestInMsgBuffer.torqueRequestBody,
-                dipoleRequestOutMsgBuffer.dipole_B);
+        v3Cross(
+            tamSensorBodyInMsgBuffer.tam_B,
+            tauRequestInMsgBuffer.torqueRequestBody,
+            dipoleRequestOutMsgBuffer.dipole_B
+        );
         v3Scale(1 / bFieldNormSqrd, dipoleRequestOutMsgBuffer.dipole_B, dipoleRequestOutMsgBuffer.dipole_B);
     }
 
     /*! - Write output message. This is the Body frame requested dipole from the torque rods.*/
-    this->dipoleRequestOutMsg.write(&dipoleRequestOutMsgBuffer, this->moduleID, callTime);
+    this->dipoleRequestOutMsg.write(dipoleRequestOutMsgBuffer, this->moduleID, callTime);
 }

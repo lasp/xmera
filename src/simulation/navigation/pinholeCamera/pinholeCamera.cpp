@@ -3,12 +3,15 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "pinholeCamera.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
+
 #include <math.h>
+
 #include <iostream>
 
 /*! @brief Creates an instance of the PinholeCamera class with a prescribed focal direction in camera frame and -90º of
@@ -27,9 +30,7 @@ PinholeCamera::PinholeCamera() {
  @return void
  */
 PinholeCamera::~PinholeCamera() {
-    for (long unsigned int i = 0; i < this->landmarkOutMsgs.size(); i++) {
-        delete this->landmarkOutMsgs.at(i);
-    }
+    for (long unsigned int i = 0; i < this->landmarkOutMsgs.size(); i++) { delete this->landmarkOutMsgs.at(i); }
     return;
 }
 
@@ -39,9 +40,7 @@ void PinholeCamera::reset(uint64_t currentSimNanos) {
     this->n = int(this->r_LP_P.size());
 
     /* Check that required input messages are connected */
-    if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "PinholeCamera.scStateInMsg was not linked.");
-    }
+    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "PinholeCamera.scStateInMsg was not linked."); }
     if (!this->ephemerisInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "PinholeCamera.ephemerisInMsg was not linked.");
     }
@@ -55,7 +54,7 @@ void PinholeCamera::reset(uint64_t currentSimNanos) {
  * @param pos: landmark position in planet-rotating frame
  * @param normal: landmark surface normal in planet-rotating frame
  */
-void PinholeCamera::addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal) {
+void PinholeCamera::addLandmark(Eigen::Vector3d &pos, Eigen::Vector3d &normal) {
     /* Add the landmark position and surface normal */
     this->r_LP_P.push_back(pos);
     this->nL_P.push_back(normal);
@@ -201,8 +200,9 @@ void PinholeCamera::processInputs() {
     this->e_SP_P = this->dcm_PN * (-r_PS_N / r_PS_N.norm());
 
     /* Compute spacecraft position in the planet rotating frame P */
-    this->r_BP_P = this->dcm_PN * (cArrayToEigenVector(this->spacecraftState.r_BN_N) -
-                                   cArrayToEigenVector(this->ephemerisPlanet.r_BdyZero_N));
+    this->r_BP_P =
+        this->dcm_PN
+        * (cArrayToEigenVector(this->spacecraftState.r_BN_N) - cArrayToEigenVector(this->ephemerisPlanet.r_BdyZero_N));
 
     /* Compute spacecraft dcm with respect to planet rotating frame */
     double dcm_BN_array[3][3];
@@ -232,7 +232,7 @@ void PinholeCamera::writeOutputMessages(uint64_t CurrentClock) {
         /* Fill landmark output messages */
         this->landmarkMsgBuffer.at(i).isVisible = this->isvisibleLmk(i);
         eigenMatrixXToCArray(this->pixelLmk.row(i), this->landmarkMsgBuffer.at(i).pL);
-        this->landmarkOutMsgs.at(i)->write(&this->landmarkMsgBuffer.at(i), this->moduleID, CurrentClock);
+        this->landmarkOutMsgs.at(i)->write(this->landmarkMsgBuffer.at(i), this->moduleID, CurrentClock);
     }
 }
 
@@ -261,10 +261,12 @@ void PinholeCamera::updateState(uint64_t currentSimNanos) {
  * @param eBatch_SP_P: batch unit-vectors from planet to Sun in planet-rotating frame
  * @param show_progress: boolean variable that prints batch processing status when true
  */
-void PinholeCamera::processBatch(Eigen::MatrixXd rBatch_BP_P,
-                                 Eigen::MatrixXd mrpBatch_BP,
-                                 Eigen::MatrixXd eBatch_SP_P,
-                                 bool show_progress) {
+void PinholeCamera::processBatch(
+    Eigen::MatrixXd rBatch_BP_P,
+    Eigen::MatrixXd mrpBatch_BP,
+    Eigen::MatrixXd eBatch_SP_P,
+    bool show_progress
+) {
     /* Obtain number of samples in the batch to be processed */
     int nBatch;
     nBatch = int(rBatch_BP_P.rows());
@@ -280,17 +282,13 @@ void PinholeCamera::processBatch(Eigen::MatrixXd rBatch_BP_P,
     double mrp_BP[3];
 
     /* Print initialization */
-    if (show_progress) {
-        std::cout << "--- Initialization of loop through " << nBatch << " samples ---" << '\n';
-    }
+    if (show_progress) { std::cout << "--- Initialization of loop through " << nBatch << " samples ---" << '\n'; }
 
     /* Loop through batch */
     for (int i = 0; i < nBatch; i++) {
         /* Print progress after each 5% of the batch is completed */
         if (show_progress) {
-            if (i % (int(nBatch / 20)) == 0) {
-                std::cout << i / (int(nBatch / 100)) << "% completed" << '\n';
-            }
+            if (i % (int(nBatch / 20)) == 0) { std::cout << i / (int(nBatch / 100)) << "% completed" << '\n'; }
         }
 
         /* Extract spacecraft position and Sun's unit-vector in
@@ -316,7 +314,5 @@ void PinholeCamera::processBatch(Eigen::MatrixXd rBatch_BP_P,
     }
 
     /* Declare initialization */
-    if (show_progress) {
-        std::cout << "--- Batch has been processed ---" << '\n';
-    }
+    if (show_progress) { std::cout << "--- Batch has been processed ---" << '\n'; }
 }

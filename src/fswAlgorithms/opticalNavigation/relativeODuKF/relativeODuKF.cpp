@@ -2,10 +2,12 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#include <string.h>
-#include <math.h>
 #include "relativeODuKF.h"
+
 #include <architecture/utilities/ukfUtilities.h>
+
+#include <math.h>
+#include <string.h>
 
 /*! Function for two body dynamics solvers in order to use in the RK4. Only two body dynamics is used currently, but
  SRP, Solar Gravity, spherical harmonics can be added here.
@@ -79,18 +81,16 @@ void RelODuKF::reset(uint64_t callTime) {
     vScale(1E-6, this->covar, ODUKF_N_STATES * ODUKF_N_STATES, this->covar);  // Convert to km
 
     mSetZero(tempMatrix, this->numStates, this->numStates);
-    badUpdate += ukfCholDecomp(this->sBar, (int)this->numStates, (int)this->numStates, tempMatrix);
+    badUpdate += ukfCholDecomp(this->sBar, (int) this->numStates, (int) this->numStates, tempMatrix);
 
-    badUpdate += ukfCholDecomp(this->qNoise, (int)this->numStates, (int)this->numStates, this->sQnoise);
+    badUpdate += ukfCholDecomp(this->qNoise, (int) this->numStates, (int) this->numStates, this->sQnoise);
 
     mCopy(tempMatrix, this->numStates, this->numStates, this->sBar);
     mTranspose(this->sQnoise, this->numStates, this->numStates, this->sQnoise);
 
     this->timeTagOut = this->timeTag;
 
-    if (badUpdate < 0) {
-        this->bskLogger.bskLog(BSK_WARNING, "relODuKF: Reset method contained bad update");
-    }
+    if (badUpdate < 0) { this->bskLogger.bskLog(BSK_WARNING, "relODuKF: Reset method contained bad update"); }
 
     /* check that required input messages are linked */
     if (!this->opNavInMsg.isLinked()) {
@@ -134,9 +134,7 @@ void RelODuKF::updateState(uint64_t callTime) {
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
     newTimeTag = callTime * NANO2SEC;
-    if (newTimeTag >= this->timeTag) {
-        this->relODuKFTimeUpdate(newTimeTag);
-    }
+    if (newTimeTag >= this->timeTag) { this->relODuKFTimeUpdate(newTimeTag); }
 
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit
      * residuals*/
@@ -162,7 +160,7 @@ void RelODuKF::updateState(uint64_t callTime) {
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N);  // Convert to m
     outputRelOD.timeTag = this->timeTagOut;
 
-    this->navStateOutMsg.write(&outputRelOD, this->moduleID, callTime);
+    this->navStateOutMsg.write(outputRelOD, this->moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = this->timeTag;
@@ -173,7 +171,7 @@ void RelODuKF::updateState(uint64_t callTime) {
     v3Scale(1E3, opNavOutBuffer.postFitRes, opNavOutBuffer.postFitRes);                        // Convert to m
     vScale(1E6, opNavOutBuffer.covar, ODUKF_N_STATES * ODUKF_N_STATES, opNavOutBuffer.covar);  // Convert to m
 
-    this->filtDataOutMsg.write(&opNavOutBuffer, this->moduleID, callTime);
+    this->filtDataOutMsg.write(opNavOutBuffer, this->moduleID, callTime);
 
     return;
 }
@@ -188,15 +186,9 @@ void RelODuKF::relODStateProp(double* stateInOut, double dt) {
     double muPlanet;
     double k1[ODUKF_N_STATES], k2[ODUKF_N_STATES], k3[ODUKF_N_STATES], k4[ODUKF_N_STATES];
     double states1[ODUKF_N_STATES], states2[ODUKF_N_STATES], states3[ODUKF_N_STATES];
-    if (this->planetId == 1) {
-        muPlanet = MU_EARTH;
-    }  // in km
-    if (this->planetId == 2) {
-        muPlanet = MU_MARS;
-    }  // in km
-    if (this->planetId == 3) {
-        muPlanet = MU_JUPITER;
-    }  // in km
+    if (this->planetId == 1) { muPlanet = MU_EARTH; }    // in km
+    if (this->planetId == 2) { muPlanet = MU_MARS; }     // in km
+    if (this->planetId == 3) { muPlanet = MU_JUPITER; }  // in km
 
     /*! Start RK4 */
     /*! - Compute k1 */
@@ -252,9 +244,7 @@ int RelODuKF::relODuKFTimeUpdate(double updateTime) {
     mCopy(this->covar, this->numStates, this->numStates, this->covarPrev);
 
     /*! - Read the planet ID from the message*/
-    if (this->planetId == 0) {
-        this->bskLogger.bskLog(BSK_ERROR, "relODuKF: Need a planet to navigate");
-    }
+    if (this->planetId == 0) { this->bskLogger.bskLog(BSK_ERROR, "relODuKF: Need a planet to navigate"); }
 
     mCopy(this->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
@@ -300,13 +290,16 @@ int RelODuKF::relODuKFTimeUpdate(double updateTime) {
             return -1;
         }
         vScale(sqrt(this->wC[i + 1]), aRow, this->numStates, aRow);
-        memcpy((void*)&AT[(size_t)i * this->numStates], (void*)aRow, this->numStates * sizeof(double));
+        memcpy((void*) &AT[(size_t) i * this->numStates], (void*) aRow, this->numStates * sizeof(double));
     }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
     memcpy(
-        &AT[2 * this->countHalfSPs * this->numStates], procNoise, this->numStates * this->numStates * sizeof(double));
+        &AT[2 * this->countHalfSPs * this->numStates],
+        procNoise,
+        this->numStates * this->numStates * sizeof(double)
+    );
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, (int)(2 * this->countHalfSPs + this->numStates), (int)this->countHalfSPs, rAT);
+    ukfQRDJustR(AT, (int) (2 * this->countHalfSPs + this->numStates), (int) this->countHalfSPs, rAT);
 
     mCopy(rAT, this->numStates, this->numStates, sBarT);
     mTranspose(sBarT, this->numStates, this->numStates, this->sBar);
@@ -315,7 +308,7 @@ int RelODuKF::relODuKFTimeUpdate(double updateTime) {
      like in equation 21 in design document.*/
     vScale(-1.0, this->xBar, this->numStates, xErr);
     vAdd(xErr, this->numStates, &this->SP[0], xErr);
-    badUpdate += ukfCholDownDate(this->sBar, xErr, this->wC[0], (int)this->numStates, sBarUp);
+    badUpdate += ukfCholDownDate(this->sBar, xErr, this->wC[0], (int) this->numStates, sBarUp);
 
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, this->numStates, this->numStates, this->sBar);
@@ -340,8 +333,9 @@ void RelODuKF::relODuKFMeasModel() {
     size_t i, j;
     v3Copy(this->opNavInBuffer.r_BN_N, this->obs);
     for (j = 0; j < this->countHalfSPs * 2 + 1; j++) {
-        for (i = 0; i < 3; i++)
-            this->yMeas[i * ((int)this->countHalfSPs * 2 + 1) + j] = this->SP[i + j * ODUKF_N_STATES];
+        for (i = 0; i < 3; i++) {
+            this->yMeas[i * ((int) this->countHalfSPs * 2 + 1) + j] = this->SP[i + j * ODUKF_N_STATES];
+        }
     }
 
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
@@ -388,9 +382,7 @@ int RelODuKF::relODuKFMeasUpdate() {
     for (i = 0; i < this->countHalfSPs * 2; i++) {
         vScale(-1.0, yBar, this->numObs, tempYVec);
         vAdd(tempYVec, this->numObs, &(this->yMeas[(i + 1) * this->numObs]), tempYVec);
-        if (this->wC[i + 1] < 0) {
-            return -1;
-        }
+        if (this->wC[i + 1] < 0) { return -1; }
         vScale(sqrt(this->wC[i + 1]), tempYVec, this->numObs, tempYVec);
         memcpy(&(AT[i * this->numObs]), tempYVec, this->numObs * sizeof(double));
     }
@@ -405,7 +397,7 @@ int RelODuKF::relODuKFMeasUpdate() {
     memcpy(&(AT[2 * this->countHalfSPs * this->numObs]), cholNoise, this->numObs * this->numObs * sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
      current Sy matrix*/
-    ukfQRDJustR(AT, (int)(2 * this->countHalfSPs + this->numObs), (int)this->numObs, rAT);
+    ukfQRDJustR(AT, (int) (2 * this->countHalfSPs + this->numObs), (int) this->numObs, rAT);
 
     mCopy(rAT, this->numObs, this->numObs, syT);
     mTranspose(syT, this->numObs, this->numObs, sy);
@@ -413,7 +405,7 @@ int RelODuKF::relODuKFMeasUpdate() {
      model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, this->numObs, tempYVec);
     vAdd(tempYVec, this->numObs, &(this->yMeas[0]), tempYVec);
-    badUpdate += ukfCholDownDate(sy, tempYVec, this->wC[0], (int)this->numObs, updMat);
+    badUpdate += ukfCholDownDate(sy, tempYVec, this->wC[0], (int) this->numObs, updMat);
 
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, this->numObs, this->numObs, sy);
@@ -435,10 +427,10 @@ int RelODuKF::relODuKFMeasUpdate() {
      The Sy matrix is lower triangular, we can do a back-sub inversion instead of
      a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that
      multiplication is done (equation 27), we have the Kalman Gain.*/
-    ukfUInv(syT, (int)this->numObs, (int)this->numObs, syInv);
+    ukfUInv(syT, (int) this->numObs, (int) this->numObs, syInv);
 
     mMultM(pXY, this->numStates, this->numObs, syInv, this->numObs, this->numObs, kMat);
-    ukfLInv(sy, (int)this->numObs, (int)this->numObs, syInv);
+    ukfLInv(sy, (int) this->numObs, (int) this->numObs, syInv);
     mMultM(kMat, this->numStates, this->numObs, syInv, this->numObs, this->numObs, kMat);
 
     /*! - Difference the yBar and the observations to get the observed error and
@@ -455,7 +447,7 @@ int RelODuKF::relODuKFMeasUpdate() {
      get the total shifted S matrix (called sBar in internal parameters*/
     for (i = 0; i < this->numObs; i++) {
         vCopy(&(Umat[i * this->numStates]), this->numStates, Ucol);
-        badUpdate += ukfCholDownDate(this->sBar, Ucol, -1.0, (int)this->numStates, sBarT);
+        badUpdate += ukfCholDownDate(this->sBar, Ucol, -1.0, (int) this->numStates, sBarT);
         mCopy(sBarT, this->numStates, this->numStates, this->sBar);
     }
 

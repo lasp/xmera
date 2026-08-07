@@ -46,8 +46,10 @@ void EtSphericalControl::reset(uint64_t callTime) {
 
     // m_T and m_D must be positive and non-zero
     if (this->servicerVehicleConfigInMsg().massSC <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "Error in etSphericalControl: servicer mass must be set to a positive value.");
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "Error in etSphericalControl: servicer mass must be set to a positive value."
+        );
     }
     if (this->debrisVehicleConfigInMsg().massSC <= 0.0) {
         this->bskLogger.bskLog(BSK_ERROR, "Error in etSphericalControl: debris mass must be set to a positive value.");
@@ -94,18 +96,20 @@ void EtSphericalControl::updateState(uint64_t callTime) {
     eForceInMsgBuffer = this->eForceInMsg();
 
     // - calculate control force
-    this->calcRelativeMotionControl(servicerTransInMsgBuffer,
-                                    debrisTransInMsgBuffer,
-                                    servicerAttInMsgBuffer,
-                                    servicerVehicleConfigInMsgBuffer,
-                                    debrisVehicleConfigInMsgBuffer,
-                                    eForceInMsgBuffer,
-                                    &forceInertialOutMsgBuffer,
-                                    &forceBodyOutMsgBuffer);
+    this->calcRelativeMotionControl(
+        servicerTransInMsgBuffer,
+        debrisTransInMsgBuffer,
+        servicerAttInMsgBuffer,
+        servicerVehicleConfigInMsgBuffer,
+        debrisVehicleConfigInMsgBuffer,
+        eForceInMsgBuffer,
+        &forceInertialOutMsgBuffer,
+        &forceBodyOutMsgBuffer
+    );
 
     // - write the module output messages
-    this->forceInertialOutMsg.write(&forceInertialOutMsgBuffer, this->moduleID, callTime);
-    this->forceBodyOutMsg.write(&forceBodyOutMsgBuffer, this->moduleID, callTime);
+    this->forceInertialOutMsg.write(forceInertialOutMsgBuffer, this->moduleID, callTime);
+    this->forceBodyOutMsg.write(forceBodyOutMsgBuffer, this->moduleID, callTime);
 
     return;
 }
@@ -122,14 +126,16 @@ void EtSphericalControl::updateState(uint64_t callTime) {
  @param forceInertialOutMsgBuffer inertial force output (3-axis)
  @param forceBodyOutMsgBuffer body force output (3-axis)
  */
-void EtSphericalControl::calcRelativeMotionControl(NavTransMsgPayload servicerTransInMsgBuffer,
-                                                   NavTransMsgPayload debrisTransInMsgBuffer,
-                                                   NavAttMsgPayload servicerAttInMsgBuffer,
-                                                   VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
-                                                   VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
-                                                   CmdForceInertialMsgPayload eForceInMsgBuffer,
-                                                   CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
-                                                   CmdForceBodyMsgPayload* forceBodyOutMsgBuffer) {
+void EtSphericalControl::calcRelativeMotionControl(
+    NavTransMsgPayload servicerTransInMsgBuffer,
+    NavTransMsgPayload debrisTransInMsgBuffer,
+    NavAttMsgPayload servicerAttInMsgBuffer,
+    VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
+    VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
+    CmdForceInertialMsgPayload eForceInMsgBuffer,
+    CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
+    CmdForceBodyMsgPayload* forceBodyOutMsgBuffer
+) {
     // relative motion control according to "Relative Motion Control For Two-Spacecraft Electrostatic Orbit Corrections"
     // https://doi.org/10.2514/1.56118
 
@@ -166,16 +172,18 @@ void EtSphericalControl::calcRelativeMotionControl(NavTransMsgPayload servicerTr
     double phi = safeAsin(-z / L);  // out-of-plane rotation angle
     // more DCMs
     double dcm_SH[3][3];  // [SH] from Hill frame to spherical frame
-    m33Set(cos(phi) * sin(theta),
-           -cos(theta) * cos(phi),
-           -sin(phi),
-           cos(theta),
-           sin(theta),
-           0.,
-           sin(theta) * sin(phi),
-           -cos(theta) * sin(phi),
-           cos(phi),
-           dcm_SH);
+    m33Set(
+        cos(phi) * sin(theta),
+        -cos(theta) * cos(phi),
+        -sin(phi),
+        cos(theta),
+        sin(theta),
+        0.,
+        sin(theta) * sin(phi),
+        -cos(theta) * sin(phi),
+        cos(phi),
+        dcm_SH
+    );
     double dcm_SN[3][3];  // [SN] from inertial frame to spherical frame
     double dcm_NS[3][3];  // [NS] from spherical frame to inertial frame
     double dcm_TN[3][3];  // [TN] from inertial frame to body frame of servicer
@@ -188,16 +196,18 @@ void EtSphericalControl::calcRelativeMotionControl(NavTransMsgPayload servicerTr
     // state vector derivative
     double TransfMatrix[3][3];  // transformation matrix to map state vector derivative from Hill components to
                                 // spherical components
-    m33Set(cos(phi) * sin(theta),
-           -cos(theta) * cos(phi),
-           -sin(phi),
-           cos(theta) / cos(phi) / L,
-           1. / cos(phi) * sin(theta) / L,
-           0.,
-           -sin(theta) * sin(phi) / L,
-           cos(theta) * sin(phi) / L,
-           -cos(phi) / L,
-           TransfMatrix);
+    m33Set(
+        cos(phi) * sin(theta),
+        -cos(theta) * cos(phi),
+        -sin(phi),
+        cos(theta) / cos(phi) / L,
+        1. / cos(phi) * sin(theta) / L,
+        0.,
+        -sin(theta) * sin(phi) / L,
+        cos(theta) * sin(phi) / L,
+        -cos(phi) / L,
+        TransfMatrix
+    );
     double XDot[3];  // state vector derivative
     m33MultV3(TransfMatrix, rhoPrime_H, XDot);
     double LDot = XDot[0];
@@ -211,14 +221,16 @@ void EtSphericalControl::calcRelativeMotionControl(NavTransMsgPayload servicerTr
     double n = sqrt(mu / a / a / a);  // mean motion
 
     double Fvector[3];
-    v3Set(1. / 4. * L *
-              (n * n * (-6. * cos(2. * theta) * cos(phi) * cos(phi) + 5. * cos(2. * phi) + 1.) +
-               4. * thetaDot * cos(phi) * cos(phi) * (2. * n + thetaDot) + 4. * phiDot * phiDot),
-          (3. * n * n * sin(theta) * cos(theta) + 2. * phiDot * tan(phi) * (n + thetaDot)) -
-              2. * LDot / L * (n + thetaDot),
-          1. / 4. * sin(2. * phi) * (n * n * (3. * cos(2. * theta) - 5.) - 2. * thetaDot * (2. * n + thetaDot)) -
-              2. * LDot / L * phiDot,
-          Fvector);
+    v3Set(
+        1. / 4. * L
+            * (n * n * (-6. * cos(2. * theta) * cos(phi) * cos(phi) + 5. * cos(2. * phi) + 1.)
+               + 4. * thetaDot * cos(phi) * cos(phi) * (2. * n + thetaDot) + 4. * phiDot * phiDot),
+        (3. * n * n * sin(theta) * cos(theta) + 2. * phiDot * tan(phi) * (n + thetaDot))
+            - 2. * LDot / L * (n + thetaDot),
+        1. / 4. * sin(2. * phi) * (n * n * (3. * cos(2. * theta) - 5.) - 2. * thetaDot * (2. * n + thetaDot))
+            - 2. * LDot / L * phiDot,
+        Fvector
+    );
     double GmatrixInv[3][3];  // inverse of [G]
     m33Set(1., 0., 0., 0., L * cos(phi), 0., 0., 0., -L, GmatrixInv);
     // desired state vector

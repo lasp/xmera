@@ -3,14 +3,20 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "simpleMassProps.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <iostream>
 
 /*! This is the constructor for the module class. */
-SimpleMassProps::SimpleMassProps() { return; }
+SimpleMassProps::SimpleMassProps() {
+    return;
+}
 
 /*! Module Destructor.  */
-SimpleMassProps::~SimpleMassProps() { return; }
+SimpleMassProps::~SimpleMassProps() {
+    return;
+}
 
 /*! This method is used to reset the module.
     @return void
@@ -45,7 +51,7 @@ void SimpleMassProps::readInputMessages() {
  */
 void SimpleMassProps::writeOutputMessages(uint64_t CurrentClock) {
     // write the output message
-    this->vehicleConfigOutMsg.write(&this->vehicleConfigMsgBuffer, this->moduleID, CurrentClock);
+    this->vehicleConfigOutMsg.write(this->vehicleConfigMsgBuffer, this->moduleID, CurrentClock);
 
     return;
 }

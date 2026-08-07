@@ -7,6 +7,7 @@
  */
 
 #include "rwMotorTorque_C.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 
@@ -24,9 +25,7 @@ void RwMotorTorque_C::reset(uint64_t callTime) {
     this->numControlAxes = 0;
     for (i = 0; i < 3; i++) {
         pAxis = this->controlAxes_B + 3 * this->numControlAxes;
-        if (v3Norm(pAxis) > 0.0) {
-            this->numControlAxes += 1;
-        }
+        if (v3Norm(pAxis) > 0.0) { this->numControlAxes += 1; }
     }
     if (this->numControlAxes == 0) {
         this->bskLogger.bskLog(BSK_INFORMATION, "rwMotorTorque() is not setup to control any axes!");
@@ -116,7 +115,7 @@ void RwMotorTorque_C::updateState(uint64_t callTime) {
     /*! - Compute minimum norm inverse for us = [CGs].T inv([CGs][CGs].T) [Lr_C]
      Having at least the same # of RW as # of control axes is necessary condition to guarantee inverse matrix exists. If
      matrix to invert it not full rank, the control torque output is zero. */
-    if (this->numAvailRW >= (int)this->numControlAxes) {
+    if (this->numAvailRW >= (int) this->numControlAxes) {
         double v3_temp[3];           /* inv([M]) [Lr_C] */
         double M33[3][3];            /* [M] = [CGs][CGs].T */
         double us_avail[RW_EFF_CNT]; /* matrix of available RW motor torques */
@@ -126,9 +125,7 @@ void RwMotorTorque_C::updateState(uint64_t callTime) {
         for (uint32_t i = 0; i < this->numControlAxes; i++) {
             for (uint32_t j = 0; j < this->numControlAxes; j++) {
                 M33[i][j] = 0.0;
-                for (int k = 0; k < this->numAvailRW; k++) {
-                    M33[i][j] += CGs[i][k] * CGs[j][k];
-                }
+                for (int k = 0; k < this->numAvailRW; k++) { M33[i][j] += CGs[i][k] * CGs[j][k]; }
             }
         }
         m33Inverse(M33, M33);
@@ -138,9 +135,7 @@ void RwMotorTorque_C::updateState(uint64_t callTime) {
         /* us = [CGs].T v3_temp */
         vSetZero(us_avail, RW_EFF_CNT);
         for (int i = 0; i < this->numAvailRW; i++) {
-            for (uint32_t j = 0; j < this->numControlAxes; j++) {
-                us_avail[i] += CGs[j][i] * v3_temp[j];
-            }
+            for (uint32_t j = 0; j < this->numControlAxes; j++) { us_avail[i] += CGs[j][i] * v3_temp[j]; }
         }
 
         /*! - map the desired RW motor torques to the available RWs */
@@ -156,7 +151,7 @@ void RwMotorTorque_C::updateState(uint64_t callTime) {
     /* store the output message */
     RwMotorTorqueMsgPayload rwMotorTorques = {};
     vCopy(us, this->rwConfigParams.numRW, rwMotorTorques.motorTorque);
-    this->rwMotorTorqueOutMsg.write(&rwMotorTorques, this->moduleID, callTime);
+    this->rwMotorTorqueOutMsg.write(rwMotorTorques, this->moduleID, callTime);
 
     return;
 }

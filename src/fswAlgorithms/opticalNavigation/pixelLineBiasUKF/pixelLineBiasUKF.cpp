@@ -90,21 +90,23 @@ void PixelLineBiasUKF::reset(uint64_t callTime) {
     vScale(1E-6, this->sBar, PIXLINE_DYN_STATES * PIXLINE_N_STATES + PIXLINE_DYN_STATES, this->sBar);  // Convert to km
     mCopy(this->covarInit, this->numStates, this->numStates, this->covar);
     vScale(
-        1E-6, this->covar, PIXLINE_DYN_STATES * PIXLINE_N_STATES + PIXLINE_DYN_STATES, this->covar);  // Convert to km
+        1E-6,
+        this->covar,
+        PIXLINE_DYN_STATES * PIXLINE_N_STATES + PIXLINE_DYN_STATES,
+        this->covar
+    );  // Convert to km
 
     mSetZero(tempMatrix, this->numStates, this->numStates);
-    badUpdate += ukfCholDecomp(this->sBar, (int)this->numStates, (int)this->numStates, tempMatrix);
+    badUpdate += ukfCholDecomp(this->sBar, (int) this->numStates, (int) this->numStates, tempMatrix);
 
-    badUpdate += ukfCholDecomp(this->qNoise, (int)this->numStates, (int)this->numStates, this->sQnoise);
+    badUpdate += ukfCholDecomp(this->qNoise, (int) this->numStates, (int) this->numStates, this->sQnoise);
 
     mCopy(tempMatrix, this->numStates, this->numStates, this->sBar);
     mTranspose(this->sQnoise, this->numStates, this->numStates, this->sQnoise);
 
     this->timeTagOut = this->timeTag;
 
-    if (badUpdate < 0) {
-        this->bskLogger.bskLog(BSK_WARNING, "Reset method contained bad update");
-    }
+    if (badUpdate < 0) { this->bskLogger.bskLog(BSK_WARNING, "Reset method contained bad update"); }
     return;
 }
 
@@ -121,7 +123,7 @@ void PixelLineBiasUKF::updateState(uint64_t callTime) {
     PixelLineFilterMsgPayload opNavOutBuffer = {}; /* [-] Output filter info*/
     NavTransMsgPayload outputRelOD = {};
     OpNavCirclesMsgPayload inputCircles;
-    this->moduleId = (int)moduleId;
+    this->moduleId = (int) moduleId;
 
     computePostFits = 0;
     v3SetZero(this->postFits);
@@ -137,7 +139,7 @@ void PixelLineBiasUKF::updateState(uint64_t callTime) {
     newTimeTag = this->attInMsg.timeWritten() * NANO2SEC;
     if (newTimeTag >= this->timeTag && this->attInMsg.isWritten() && inputCircles.valid == 1) {
         this->circlesInBuffer = inputCircles;
-        this->planetId = (int)inputCircles.planetIds[0];
+        this->planetId = (int) inputCircles.planetIds[0];
         pixelLineBiasUKFTimeUpdate(newTimeTag);
         pixelLineBiasUKFMeasUpdate();
         computePostFits = 1;
@@ -145,9 +147,7 @@ void PixelLineBiasUKF::updateState(uint64_t callTime) {
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
     newTimeTag = callTime * NANO2SEC;
-    if (newTimeTag > this->timeTag) {
-        pixelLineBiasUKFTimeUpdate(newTimeTag);
-    }
+    if (newTimeTag > this->timeTag) { pixelLineBiasUKFTimeUpdate(newTimeTag); }
 
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit
      * residuals*/
@@ -172,7 +172,7 @@ void PixelLineBiasUKF::updateState(uint64_t callTime) {
     v3Copy(&this->state[3], outputRelOD.v_BN_N);
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N);  // Convert to m
     outputRelOD.timeTag = this->timeTagOut;
-    this->navStateOutMsg.write(&outputRelOD, this->moduleId, callTime);
+    this->navStateOutMsg.write(outputRelOD, this->moduleId, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = this->timeTag;
@@ -180,11 +180,13 @@ void PixelLineBiasUKF::updateState(uint64_t callTime) {
     memmove(opNavOutBuffer.state, this->state, PIXLINE_N_STATES * sizeof(double));
     memmove(opNavOutBuffer.postFitRes, this->postFits, PIXLINE_N_MEAS * sizeof(double));
     v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state);  // Convert to m
-    vScale(1E6,
-           opNavOutBuffer.covar,
-           PIXLINE_DYN_STATES * PIXLINE_N_STATES + PIXLINE_DYN_STATES,
-           opNavOutBuffer.covar);  // Convert to m
-    this->filtDataOutMsg.write(&opNavOutBuffer, this->moduleId, callTime);
+    vScale(
+        1E6,
+        opNavOutBuffer.covar,
+        PIXLINE_DYN_STATES * PIXLINE_N_STATES + PIXLINE_DYN_STATES,
+        opNavOutBuffer.covar
+    );  // Convert to m
+    this->filtDataOutMsg.write(opNavOutBuffer, this->moduleId, callTime);
 
     return;
 }
@@ -199,15 +201,9 @@ void PixelLineBiasUKF::relODStateProp(double* stateInOut, double dt) {
     double muPlanet;
     double k1[PIXLINE_DYN_STATES], k2[PIXLINE_DYN_STATES], k3[PIXLINE_DYN_STATES], k4[PIXLINE_DYN_STATES];
     double states1[PIXLINE_DYN_STATES], states2[PIXLINE_DYN_STATES], states3[PIXLINE_DYN_STATES];
-    if (this->planetId == 1) {
-        muPlanet = MU_EARTH;
-    }  // in km
-    if (this->planetId == 2) {
-        muPlanet = MU_MARS;
-    }  // in km
-    if (this->planetId == 3) {
-        muPlanet = MU_JUPITER;
-    }  // in km
+    if (this->planetId == 1) { muPlanet = MU_EARTH; }    // in km
+    if (this->planetId == 2) { muPlanet = MU_MARS; }     // in km
+    if (this->planetId == 3) { muPlanet = MU_JUPITER; }  // in km
 
     /*! Start RK4 */
     /*! - Compute k1 */
@@ -248,8 +244,8 @@ void PixelLineBiasUKF::relODStateProp(double* stateInOut, double dt) {
 int PixelLineBiasUKF::pixelLineBiasUKFTimeUpdate(double updateTime) {
     uint64_t i, Index;
     double sBarT[PIXLINE_N_STATES * PIXLINE_N_STATES];  // Sbar transpose (chol decomp of covar)
-    double xComp[PIXLINE_N_STATES], AT[(2 * PIXLINE_N_STATES + PIXLINE_N_STATES) *
-                                       PIXLINE_N_STATES];  // Intermediate state, process noise chol decomp
+    double xComp[PIXLINE_N_STATES], AT[(2 * PIXLINE_N_STATES + PIXLINE_N_STATES)
+                                       * PIXLINE_N_STATES];  // Intermediate state, process noise chol decomp
     double aRow[PIXLINE_N_STATES], rAT[PIXLINE_N_STATES * PIXLINE_N_STATES],
         xErr[PIXLINE_N_STATES];                             // Row of A mat, R of QR decomp of A, state error
     double sBarUp[PIXLINE_N_STATES * PIXLINE_N_STATES];     // S bar cholupdate
@@ -263,9 +259,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFTimeUpdate(double updateTime) {
     mCopy(this->covar, this->numStates, this->numStates, this->covarPrev);
 
     /*! - Read the planet ID from the message*/
-    if (this->planetId == 0) {
-        this->bskLogger.bskLog(BSK_ERROR, "Need a planet to navigate");
-    }
+    if (this->planetId == 0) { this->bskLogger.bskLog(BSK_ERROR, "Need a planet to navigate"); }
 
     mCopy(this->sQnoise, PIXLINE_N_STATES, PIXLINE_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
@@ -311,13 +305,16 @@ int PixelLineBiasUKF::pixelLineBiasUKFTimeUpdate(double updateTime) {
             return -1;
         }
         vScale(sqrt(this->wC[i + 1]), aRow, this->numStates, aRow);
-        memcpy((void*)&AT[i * this->numStates], (void*)aRow, this->numStates * sizeof(double));
+        memcpy((void*) &AT[i * this->numStates], (void*) aRow, this->numStates * sizeof(double));
     }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
     memcpy(
-        &AT[2 * this->countHalfSPs * this->numStates], procNoise, this->numStates * this->numStates * sizeof(double));
+        &AT[2 * this->countHalfSPs * this->numStates],
+        procNoise,
+        this->numStates * this->numStates * sizeof(double)
+    );
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, (int)(2 * this->countHalfSPs + this->numStates), (int)this->countHalfSPs, rAT);
+    ukfQRDJustR(AT, (int) (2 * this->countHalfSPs + this->numStates), (int) this->countHalfSPs, rAT);
 
     mCopy(rAT, this->numStates, this->numStates, sBarT);
     mTranspose(sBarT, this->numStates, this->numStates, this->sBar);
@@ -326,7 +323,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFTimeUpdate(double updateTime) {
      like in equation 21 in design document.*/
     vScale(-1.0, this->xBar, this->numStates, xErr);
     vAdd(xErr, this->numStates, &this->SP[0], xErr);
-    badUpdate += ukfCholDownDate(this->sBar, xErr, this->wC[0], (int)this->numStates, sBarUp);
+    badUpdate += ukfCholDownDate(this->sBar, xErr, this->wC[0], (int) this->numStates, sBarUp);
 
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, this->numStates, this->numStates, this->sBar);
@@ -354,10 +351,12 @@ void PixelLineBiasUKF::pixelLineBiasUKFMeasModel() {
     double reCentered[2], rNorm, denom, planetRad;
     double r_C[3];
 
-    v3Set(this->circlesInBuffer.circlesCenters[0],
-          this->circlesInBuffer.circlesCenters[1],
-          this->circlesInBuffer.circlesRadii[0],
-          this->obs);
+    v3Set(
+        this->circlesInBuffer.circlesCenters[0],
+        this->circlesInBuffer.circlesCenters[1],
+        this->circlesInBuffer.circlesRadii[0],
+        this->obs
+    );
 
     MRP2C(this->cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(this->attInfo.sigma_BN, dcm_BN);
@@ -365,8 +364,8 @@ void PixelLineBiasUKF::pixelLineBiasUKFMeasModel() {
     double X, Y;
     double pX, pY;
     /* compute sensorSize/focalLength = 2*tan(FOV/2) */
-    pX = 2. *
-         tan(this->cameraSpecs.fieldOfView * this->cameraSpecs.resolution[0] / this->cameraSpecs.resolution[1] / 2.0);
+    pX = 2.
+       * tan(this->cameraSpecs.fieldOfView * this->cameraSpecs.resolution[0] / this->cameraSpecs.resolution[1] / 2.0);
     pY = 2. * tan(this->cameraSpecs.fieldOfView / 2.0);
     X = pX / this->cameraSpecs.resolution[0];
     Y = pY / this->cameraSpecs.resolution[1];
@@ -467,9 +466,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFMeasUpdate() {
     for (i = 0; i < this->countHalfSPs * 2; i++) {
         vScale(-1.0, yBar, this->numObs, tempYVec);
         vAdd(tempYVec, this->numObs, &(this->yMeas[(i + 1) * this->numObs]), tempYVec);
-        if (this->wC[i + 1] < 0) {
-            return -1;
-        }
+        if (this->wC[i + 1] < 0) { return -1; }
         vScale(sqrt(this->wC[i + 1]), tempYVec, this->numObs, tempYVec);
         memcpy(&(AT[i * this->numObs]), tempYVec, this->numObs * sizeof(double));
     }
@@ -484,7 +481,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFMeasUpdate() {
     memcpy(&(AT[2 * this->countHalfSPs * this->numObs]), cholNoise, this->numObs * this->numObs * sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
      current Sy matrix*/
-    ukfQRDJustR(AT, (int)(2 * this->countHalfSPs + this->numObs), (int)this->numObs, rAT);
+    ukfQRDJustR(AT, (int) (2 * this->countHalfSPs + this->numObs), (int) this->numObs, rAT);
 
     mCopy(rAT, this->numObs, this->numObs, syT);
     mTranspose(syT, this->numObs, this->numObs, sy);
@@ -492,7 +489,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFMeasUpdate() {
      model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, this->numObs, tempYVec);
     vAdd(tempYVec, this->numObs, &(this->yMeas[0]), tempYVec);
-    badUpdate += ukfCholDownDate(sy, tempYVec, this->wC[0], (int)this->numObs, updMat);
+    badUpdate += ukfCholDownDate(sy, tempYVec, this->wC[0], (int) this->numObs, updMat);
 
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, this->numObs, this->numObs, sy);
@@ -514,10 +511,10 @@ int PixelLineBiasUKF::pixelLineBiasUKFMeasUpdate() {
      The Sy matrix is lower triangular, we can do a back-sub inversion instead of
      a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that
      multiplication is done (equation 27), we have the Kalman Gain.*/
-    ukfUInv(syT, (int)this->numObs, (int)this->numObs, syInv);
+    ukfUInv(syT, (int) this->numObs, (int) this->numObs, syInv);
 
     mMultM(pXY, this->numStates, this->numObs, syInv, this->numObs, this->numObs, kMat);
-    ukfLInv(sy, (int)this->numObs, (int)this->numObs, syInv);
+    ukfLInv(sy, (int) this->numObs, (int) this->numObs, syInv);
     mMultM(kMat, this->numStates, this->numObs, syInv, this->numObs, this->numObs, kMat);
 
     /*! - Difference the yBar and the observations to get the observed error and
@@ -526,9 +523,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFMeasUpdate() {
     vSubtract(this->obs, this->numObs, yBar, tempYVec);
     mMultM(kMat, this->numStates, this->numObs, tempYVec, this->numObs, 1, xHat);
     vAdd(this->state, this->numStates, xHat, this->state);
-    for (i = 6; i < 9; i++) {
-        this->state[i] = round(this->state[i]);
-    }
+    for (i = 6; i < 9; i++) { this->state[i] = round(this->state[i]); }
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it
      so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, this->numStates, this->numObs, sy, this->numObs, this->numObs, Umat);
@@ -537,7 +532,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFMeasUpdate() {
      get the total shifted S matrix (called sBar in internal parameters*/
     for (i = 0; i < this->numObs; i++) {
         vCopy(&(Umat[i * this->numStates]), this->numStates, Ucol);
-        badUpdate += ukfCholDownDate(this->sBar, Ucol, -1.0, (int)this->numStates, sBarT);
+        badUpdate += ukfCholDownDate(this->sBar, Ucol, -1.0, (int) this->numStates, sBarT);
         mCopy(sBarT, this->numStates, this->numStates, this->sBar);
     }
 

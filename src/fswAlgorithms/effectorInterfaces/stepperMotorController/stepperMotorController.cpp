@@ -2,7 +2,9 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "stepperMotorController.h"
+
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <stdexcept>
 
 /*! This method performs a complete reset of the module. The input message is checked to ensure it is linked.
@@ -37,7 +39,7 @@ void StepperMotorController::updateState(uint64_t callTime) {
         this->algorithm.update(callTime, hingedRigidBodyMsgTimeWritten, motorRefAngleIn);
 
     if (stepperMotorControllerOutput.writeOutputMessage) {
-        this->motorStepCommandOutMsg.write(&stepperMotorControllerOutput.motorStepCommandOut, moduleID, callTime);
+        this->motorStepCommandOutMsg.write(stepperMotorControllerOutput.motorStepCommandOut, moduleID, callTime);
     }
 }
 
@@ -45,53 +47,73 @@ void StepperMotorController::updateState(uint64_t callTime) {
  @return void
  @param thetaInit [rad] Initial motor angle
 */
-void StepperMotorController::setThetaInit(const double thetaInit) { this->algorithm.setThetaInit(thetaInit); }
+void StepperMotorController::setThetaInit(double const thetaInit) {
+    this->algorithm.setThetaInit(thetaInit);
+}
 
 /*! Getter method for the initial motor angle.
  @return double
 */
-double StepperMotorController::getThetaInit() const { return this->algorithm.getThetaInit(); }
+double StepperMotorController::getThetaInit() const {
+    return this->algorithm.getThetaInit();
+}
 
 /*! Setter method for the motor upper actuation limit.
  @return void
  @param thetaMax [rad] Motor upper actuation limit
 */
-void StepperMotorController::setThetaMax(const double thetaMax) { this->algorithm.setThetaMax(thetaMax); }
+void StepperMotorController::setThetaMax(double const thetaMax) {
+    this->algorithm.setThetaMax(thetaMax);
+}
 
 /*! Getter method for the motor upper actuation limit.
  @return double
 */
-double StepperMotorController::getThetaMax() const { return this->algorithm.getThetaMax(); }
+double StepperMotorController::getThetaMax() const {
+    return this->algorithm.getThetaMax();
+}
 
 /*! Setter method for the motor lower actuation limit.
  @return void
  @param thetaMin [rad] Motor lower actuation limit
 */
-void StepperMotorController::setThetaMin(const double thetaMin) { this->algorithm.setThetaMin(thetaMin); }
+void StepperMotorController::setThetaMin(double const thetaMin) {
+    this->algorithm.setThetaMin(thetaMin);
+}
 
 /*! Getter method for the motor lower actuation limit.
  @return double
 */
-double StepperMotorController::getThetaMin() const { return this->algorithm.getThetaMin(); }
+double StepperMotorController::getThetaMin() const {
+    return this->algorithm.getThetaMin();
+}
 
 /*! Setter method for the motor step angle.
  @return void
  @param stepAngle [rad] Motor step angle
 */
-void StepperMotorController::setStepAngle(const double stepAngle) { this->algorithm.setStepAngle(stepAngle); }
+void StepperMotorController::setStepAngle(double const stepAngle) {
+    this->algorithm.setStepAngle(stepAngle);
+}
 
 /*! Getter method for the motor step angle.
  @return double
 */
-double StepperMotorController::getStepAngle() const { return this->algorithm.getStepAngle(); }
+double StepperMotorController::getStepAngle() const {
+    return this->algorithm.getStepAngle();
+}
 
 /*! Setter method for the motor step time.
  @return void
  @param stepTime [s] Motor step time
 */
-void StepperMotorController::setStepTime(const double stepTime) { this->algorithm.setStepTime(stepTime); }
+void StepperMotorController::setStepTime(double const stepTime) {
+    this->algorithm.setStepTime(stepTime);
+}
 
 /*! Getter method for the motor step time.
  @return double
 */
-double StepperMotorController::getStepTime() const { return this->algorithm.getStepTime(); }
+double StepperMotorController::getStepTime() const {
+    return this->algorithm.getStepTime();
+}

@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "magneticFieldBase.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -23,12 +24,12 @@ MagneticFieldBase::MagneticFieldBase() {
     this->envMaxReach = -1;
 
     //! - set the default epoch information
-    this->epochDateTime.tm_year = EPOCH_YEAR - 1900;
+    this->epochDateTime.tm_year = EPOCH_YEAR - 1'900;
     this->epochDateTime.tm_mon = EPOCH_MONTH - 1;
     this->epochDateTime.tm_mday = EPOCH_DAY;
     this->epochDateTime.tm_hour = EPOCH_HOUR;
     this->epochDateTime.tm_min = EPOCH_MIN;
-    this->epochDateTime.tm_sec = (int)round(EPOCH_SEC);
+    this->epochDateTime.tm_sec = (int) round(EPOCH_SEC);
     this->epochDateTime.tm_isdst = -1;
 
     //! - zero the planet message, and set the DCM to an identity matrix
@@ -42,9 +43,7 @@ MagneticFieldBase::MagneticFieldBase() {
  @return void
  */
 MagneticFieldBase::~MagneticFieldBase() {
-    for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
-        delete this->envOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) { delete this->envOutMsgs.at(c); }
     return;
 }
 
@@ -80,12 +79,12 @@ void MagneticFieldBase::reset(uint64_t currentSimNanos) {
         // Read in the epoch message and set the internal time structure
         EpochMsgPayload epochMsg;
         epochMsg = this->epochInMsg();
-        this->epochDateTime.tm_year = epochMsg.year - 1900;
+        this->epochDateTime.tm_year = epochMsg.year - 1'900;
         this->epochDateTime.tm_mon = epochMsg.month - 1;
         this->epochDateTime.tm_mday = epochMsg.day;
         this->epochDateTime.tm_hour = epochMsg.hours;
         this->epochDateTime.tm_min = epochMsg.minutes;
-        this->epochDateTime.tm_sec = (int)round(epochMsg.seconds);
+        this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
         mktime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
@@ -96,13 +95,17 @@ void MagneticFieldBase::reset(uint64_t currentSimNanos) {
 /*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void MagneticFieldBase::customreset(uint64_t CurrentClock) { return; }
+void MagneticFieldBase::customreset(uint64_t CurrentClock) {
+    return;
+}
 
 /*! Custom customSetEpochFromVariable() method.  This allows a child class to specify how the module epoch information
  is set by a module variable.
  @return void
  */
-void MagneticFieldBase::customSetEpochFromVariable() { return; }
+void MagneticFieldBase::customSetEpochFromVariable() {
+    return;
+}
 
 /*! This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
@@ -110,7 +113,7 @@ void MagneticFieldBase::customSetEpochFromVariable() { return; }
  */
 void MagneticFieldBase::writeMessages(uint64_t CurrentClock) {
     for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
-        this->envOutMsgs.at(c)->write(&this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
+        this->envOutMsgs.at(c)->write(this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
     //! - call the custom method to perform additional output message writing
@@ -122,7 +125,9 @@ void MagneticFieldBase::writeMessages(uint64_t CurrentClock) {
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
  @return void
  */
-void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock) { return; }
+void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock) {
+    return;
+}
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
@@ -167,7 +172,9 @@ bool MagneticFieldBase::readMessages() {
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
  @return void
  */
-bool MagneticFieldBase::customReadMessages() { return true; }
+bool MagneticFieldBase::customReadMessages() {
+    return true;
+}
 
 /*! This method is used to update the local magnetic field based on each spacecraft's position.
   @return void
@@ -227,9 +234,7 @@ void MagneticFieldBase::updateState(uint64_t currentSimNanos) {
         *it = MagneticFieldMsgPayload{};
     }
     //! - update local neutral density information
-    if (this->readMessages()) {
-        updateLocalMagField(currentSimNanos * NANO2SEC);
-    }
+    if (this->readMessages()) { updateLocalMagField(currentSimNanos * NANO2SEC); }
 
     //! - write out neutral density message
     this->writeMessages(currentSimNanos);

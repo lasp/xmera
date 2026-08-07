@@ -8,8 +8,10 @@
  */
 
 #include "rwMotorVoltage_C.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <string.h>
 
 /*! This method performs a reset of the module as far as closed loop control is concerned.  Local module variables that
@@ -54,13 +56,9 @@ void RwMotorVoltage_C::updateState(uint64_t callTime) {
     torqueCmd = this->torqueInMsg();
 
     RWSpeedMsgPayload rwSpeed = {}; /*!< [r/s] Reaction wheel speed estimates */
-    if (this->rwSpeedInMsg.isLinked()) {
-        rwSpeed = this->rwSpeedInMsg();
-    }
+    if (this->rwSpeedInMsg.isLinked()) { rwSpeed = this->rwSpeedInMsg(); }
     RWAvailabilityMsgPayload rwAvailability = {};
-    if (this->rwAvailInMsg.isLinked()) {
-        rwAvailability = this->rwAvailInMsg();
-    }
+    if (this->rwAvailInMsg.isLinked()) { rwAvailability = this->rwAvailInMsg(); }
 
     /* zero the output voltage vector */
     double voltage[RW_EFF_CNT]; /*!< [V]   RW voltage output commands */
@@ -89,26 +87,22 @@ void RwMotorVoltage_C::updateState(uint64_t callTime) {
     for (int i = 0; i < this->rwConfigParams.numRW; i++) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
             voltage[i] = (this->VMax - this->VMin) / this->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
-            if (voltage[i] > 0.0) voltage[i] += this->VMin;
-            if (voltage[i] < 0.0) voltage[i] -= this->VMin;
+            if (voltage[i] > 0.0) { voltage[i] += this->VMin; }
+            if (voltage[i] < 0.0) { voltage[i] -= this->VMin; }
         }
     }
 
     /* check for voltage saturation */
     for (int i = 0; i < this->rwConfigParams.numRW; i++) {
-        if (voltage[i] > this->VMax) {
-            voltage[i] = this->VMax;
-        }
-        if (voltage[i] < -this->VMax) {
-            voltage[i] = -this->VMax;
-        }
+        if (voltage[i] > this->VMax) { voltage[i] = this->VMax; }
+        if (voltage[i] < -this->VMax) { voltage[i] = -this->VMax; }
         voltageOut.voltage[i] = voltage[i];
     }
 
     /*
      store the output message
      */
-    this->voltageOutMsg.write(&voltageOut, this->moduleID, callTime);
+    this->voltageOutMsg.write(voltageOut, this->moduleID, callTime);
 
     return;
 }

@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "simpleInstrumentController.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <stdio.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -59,9 +61,9 @@ void SimpleInstrumentController::updateState(uint64_t callTime) {
         if (!this->imaged) {
             /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the
             rate error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
-            if ((sigma_BR_norm <= this->attErrTolerance) &&
-                (!this->useRateTolerance ||
-                 (omega_BR_norm <= this->rateErrTolerance))  // Check rate tolerance if useRateTolerance enabled
+            if ((sigma_BR_norm <= this->attErrTolerance)
+                && (!this->useRateTolerance
+                    || (omega_BR_norm <= this->rateErrTolerance))  // Check rate tolerance if useRateTolerance enabled
                 && (accessInMsgBuffer.hasAccess)) {
                 deviceCmdOutMsgBuffer.deviceCmd = 1;
                 this->imaged = 1;
@@ -71,7 +73,7 @@ void SimpleInstrumentController::updateState(uint64_t callTime) {
     }
 
     // write to the output messages
-    this->deviceCmdOutMsg.write(&deviceCmdOutMsgBuffer, this->moduleID, callTime);
+    this->deviceCmdOutMsg.write(deviceCmdOutMsgBuffer, this->moduleID, callTime);
 
     return;
 }

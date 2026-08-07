@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "smallBodyWaypointFeedback.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -63,8 +65,8 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t currentSimNanos) {
 
     /* Compute F_dot and F_ddot */
     F_dot = sqrt(mu_sun / (pow(oe_ast.a * (1 - pow(oe_ast.e, 2)), 3))) * pow(1 + (oe_ast.e) * cos(oe_ast.f), 2);
-    F_ddot = -2 * (oe_ast.e) * (sqrt(mu_sun / (pow(oe_ast.a * (1 - pow(oe_ast.e, 2)), 3)))) * sin(oe_ast.f) *
-             (1 + oe_ast.e * cos(oe_ast.f)) * (F_dot);
+    F_ddot = -2 * (oe_ast.e) * (sqrt(mu_sun / (pow(oe_ast.a * (1 - pow(oe_ast.e, 2)), 3)))) * sin(oe_ast.f)
+           * (1 + oe_ast.e * cos(oe_ast.f)) * (F_dot);
 
     /* Compute the hill frame DCM of the small body */
     double dcm_ON_array[3][3];
@@ -86,12 +88,14 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t currentSimNanos) {
     /* Compute x1, x2 from the input messages */
     double r_BO_O[3];
     double v_BO_O[3];
-    rv2hill(asteroidEphemerisInMsgBuffer.r_BdyZero_N,
-            asteroidEphemerisInMsgBuffer.v_BdyZero_N,
-            navTransInMsgBuffer.r_BN_N,
-            navTransInMsgBuffer.v_BN_N,
-            r_BO_O,
-            v_BO_O);
+    rv2hill(
+        asteroidEphemerisInMsgBuffer.r_BdyZero_N,
+        asteroidEphemerisInMsgBuffer.v_BdyZero_N,
+        navTransInMsgBuffer.r_BN_N,
+        navTransInMsgBuffer.v_BN_N,
+        r_BO_O,
+        v_BO_O
+    );
     x1 = cArrayToEigenVector(r_BO_O);
     x2 = cArrayToEigenVector(v_BO_O);
 
@@ -100,18 +104,18 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t currentSimNanos) {
     dx2 = x2 - x2_ref;
 
     /* Now compute current f */
-    f_curr = -F_ddot * o_hat_3_tilde * x1 - 2 * F_dot * o_hat_3_tilde * x2 -
-             pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1 - mu_ast * x1 / pow(x1.norm(), 3) +
-             mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1 /
-                 pow(r_SO_O.norm(), 3) +
-             C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
+    f_curr = -F_ddot * o_hat_3_tilde * x1 - 2 * F_dot * o_hat_3_tilde * x2
+           - pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1 - mu_ast * x1 / pow(x1.norm(), 3)
+           + mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1
+                 / pow(r_SO_O.norm(), 3)
+           + C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
 
     /* Now compute reference f */
-    f_ref = -F_ddot * o_hat_3_tilde * x1_ref - 2 * F_dot * o_hat_3_tilde * x2_ref -
-            pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1_ref - mu_ast * x1_ref / pow(x1_ref.norm(), 3) +
-            mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1_ref /
-                pow(r_SO_O.norm(), 3) +
-            C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
+    f_ref = -F_ddot * o_hat_3_tilde * x1_ref - 2 * F_dot * o_hat_3_tilde * x2_ref
+          - pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1_ref - mu_ast * x1_ref / pow(x1_ref.norm(), 3)
+          + mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1_ref
+                / pow(r_SO_O.norm(), 3)
+          + C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
 
     /* Compute the thrust in the small body's hill frame */
     thrust_O = -(f_curr - f_ref) - K1 * dx1 - K2 * dx2;
@@ -141,5 +145,5 @@ void SmallBodyWaypointFeedback::writeMessages(uint64_t currentSimNanos) {
     eigenVectorToCArray(thrust_B, forceOutMsgBuffer.forceRequestBody);
 
     /* Write the message */
-    this->forceOutMsg.write(&forceOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->forceOutMsg.write(forceOutMsgBuffer, this->moduleID, currentSimNanos);
 }

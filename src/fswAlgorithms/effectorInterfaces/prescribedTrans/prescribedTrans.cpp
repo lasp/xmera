@@ -6,9 +6,10 @@
 #include "prescribedTrans.h"
 
 /*! Import other required files */
-#include <math.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
+
+#include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values. This method also checks
@@ -78,14 +79,14 @@ void PrescribedTrans::updateState(uint64_t callTime) {
     double scalarPos;
 
     // Compute the prescribed scalar states: scalarAccel, scalarVel, and scalarPos
-    if ((t < this->ts || t == this->ts) &&
-        this->tf - this->tInit != 0)  // Entered during the first half of the maneuver
+    if ((t < this->ts || t == this->ts)
+        && this->tf - this->tInit != 0)  // Entered during the first half of the maneuver
     {
         scalarAccel = this->scalarAccelMax;
         scalarVel = scalarAccel * (t - this->tInit) + this->scalarVelInit;
         scalarPos = this->a * (t - this->tInit) * (t - this->tInit) + this->scalarPosInit;
-    } else if (t > this->ts && t <= this->tf &&
-               this->tf - this->tInit != 0)  // Entered during the second half of the maneuver
+    } else if (t > this->ts && t <= this->tf
+               && this->tf - this->tInit != 0)  // Entered during the second half of the maneuver
     {
         scalarAccel = -1 * this->scalarAccelMax;
         scalarVel = scalarAccel * (t - this->tInit) + this->scalarVelInit - scalarAccel * (this->tf - this->tInit);
@@ -109,5 +110,5 @@ void PrescribedTrans::updateState(uint64_t callTime) {
     v3Copy(this->rPrimePrime_FM_M, prescribedTranslationOut.rPrimePrime_FM_M);
 
     // Write the prescribed motion output message
-    this->prescribedTranslationOutMsg.write(&prescribedTranslationOut, this->moduleID, callTime);
+    this->prescribedTranslationOutMsg.write(prescribedTranslationOut, this->moduleID, callTime);
 }

@@ -9,10 +9,10 @@
 
 #include "thrMomentumDumping.h"
 
-#include <string.h>
-
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
+
+#include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -42,9 +42,7 @@ void ThrMomentumDumping::reset(uint64_t callTime) {
     /*! - read in number of thrusters installed and maximum thrust values */
     localThrusterData = this->thrusterConfInMsg();
     this->numThrusters = localThrusterData.numThrusters;
-    for (i = 0; i < this->numThrusters; i++) {
-        this->thrMaxForce[i] = localThrusterData.thrusters[i].maxThrust;
-    }
+    for (i = 0; i < this->numThrusters; i++) { this->thrMaxForce[i] = localThrusterData.thrusters[i].maxThrust; }
 
     /*! - reset dumping counter */
     this->thrDumpingCounter = 0;
@@ -96,9 +94,7 @@ void ThrMomentumDumping::updateState(uint64_t callTime) {
 
         /* - compute control update time */
         dt = (callTime - this->priorTime) * NANO2SEC;
-        if (dt < 0.0) {
-            dt = 0.0;
-        } /* ensure no negative numbers are used */
+        if (dt < 0.0) { dt = 0.0; } /* ensure no negative numbers are used */
 
         /*! - Read the requester thruster impulse input message */
         thrusterImpulseInMsg = this->thrusterImpulseInMsg();
@@ -110,15 +106,13 @@ void ThrMomentumDumping::updateState(uint64_t callTime) {
         timeOfDeltaHMsg = this->deltaHInMsg.timeWritten();
         if (this->lastDeltaHInMsgTime == timeOfDeltaHMsg) {
             /* identical net thruster impulse request case, continue with existing RW momentum dumping */
-            if (this->thrDumpingCounter <= 0 ||
-                this->thrDumpingCounter > (this->maxCounterValue - this->maxNumOfDtFiringTimes + 1)) {
+            if (this->thrDumpingCounter <= 0
+                || this->thrDumpingCounter > (this->maxCounterValue - this->maxNumOfDtFiringTimes + 1)) {
                 /* time to fire thrusters again */
                 mCopy(this->thrOnTimeRemaining, 1, this->numThrusters, tOnOut);
                 /* subtract next control period from remaining impulse time */
                 for (i = 0; i < this->numThrusters; i++) {
-                    if (this->thrOnTimeRemaining[i] > 0.0) {
-                        this->thrOnTimeRemaining[i] -= dt;
-                    }
+                    if (this->thrOnTimeRemaining[i] > 0.0) { this->thrOnTimeRemaining[i] -= dt; }
                 }
                 /* reset the dumping counter */
                 if (this->thrDumpingCounter <= 0) {
@@ -144,32 +138,24 @@ void ThrMomentumDumping::updateState(uint64_t callTime) {
             /* reset the dumping counter */
             this->thrDumpingCounter = maxCounterValue;
             /* subtract next control period from remaining impulse time */
-            for (i = 0; i < this->numThrusters; i++) {
-                this->thrOnTimeRemaining[i] -= dt;
-            }
+            for (i = 0; i < this->numThrusters; i++) { this->thrOnTimeRemaining[i] -= dt; }
         }
 
         /*! - check for negative, saturated firing times or negative remaining times */
         for (i = 0; i < this->numThrusters; i++) {
             /* if thruster on time is less than the minimum firing time, set thrust time command to zero */
-            if (tOnOut[i] < this->thrMinFireTime) {
-                tOnOut[i] = 0.0;
-            }
+            if (tOnOut[i] < this->thrMinFireTime) { tOnOut[i] = 0.0; }
             /* if the thruster time remainder is negative, zero out the remainder */
-            if (this->thrOnTimeRemaining[i] < 0.0) {
-                this->thrOnTimeRemaining[i] = 0.0;
-            }
+            if (this->thrOnTimeRemaining[i] < 0.0) { this->thrOnTimeRemaining[i] = 0.0; }
             /* if the thruster on time is larger than the control period, set it equal to control period */
-            if (tOnOut[i] > maxNumOfDtFiringTimes * dt) {
-                tOnOut[i] = maxNumOfDtFiringTimes * dt;
-            }
+            if (tOnOut[i] > maxNumOfDtFiringTimes * dt) { tOnOut[i] = maxNumOfDtFiringTimes * dt; }
         }
     }
 
     this->priorTime = callTime;
 
     /*! - write out the output message */
-    this->thrusterOnTimeOutMsg.write(&thrOnTimeOut, this->moduleID, callTime);
+    this->thrusterOnTimeOutMsg.write(thrOnTimeOut, this->moduleID, callTime);
 
     return;
 }

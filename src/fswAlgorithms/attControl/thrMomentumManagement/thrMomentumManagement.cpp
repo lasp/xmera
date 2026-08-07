@@ -8,7 +8,9 @@
  */
 
 #include "thrMomentumManagement.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -55,9 +57,11 @@ void ThrMomentumManagement::updateState(uint64_t callTime) {
         /*! - compute net RW momentum magnitude */
         v3SetZero(hs_B);
         for (i = 0; i < this->rwConfigParams.numRW; i++) {
-            v3Scale(this->rwConfigParams.JsList[i] * rwSpeedMsg.wheelSpeeds[i],
-                    &this->rwConfigParams.GsMatrix_B[i * 3],
-                    vec3);
+            v3Scale(
+                this->rwConfigParams.JsList[i] * rwSpeedMsg.wheelSpeeds[i],
+                &this->rwConfigParams.GsMatrix_B[i * 3],
+                vec3
+            );
             v3Add(hs_B, vec3, hs_B);
         }
         hs = v3Norm(hs_B);
@@ -74,7 +78,7 @@ void ThrMomentumManagement::updateState(uint64_t callTime) {
         /*! - write out the output message */
         v3Copy(Delta_H_B, controlOutMsg.torqueRequestBody);
 
-        this->deltaHOutMsg.write(&controlOutMsg, moduleID, callTime);
+        this->deltaHOutMsg.write(controlOutMsg, moduleID, callTime);
     }
 
     return;

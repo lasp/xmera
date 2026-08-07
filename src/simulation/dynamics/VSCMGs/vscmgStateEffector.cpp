@@ -3,11 +3,12 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "vscmgStateEffector.h"
+
 #include <cmath>
 #include <iostream>
 
 VSCMGStateEffector::VSCMGStateEffector() {
-    this->prevCommandTime = 0xFFFFFFFFFFFFFFFF;
+    this->prevCommandTime = 0xFFFF'FFFF'FFFF'FFFF;
 
     this->effProps.mEff = 0.0;
     this->effProps.IEffPntB_B.setZero();
@@ -24,13 +25,11 @@ VSCMGStateEffector::VSCMGStateEffector() {
 }
 
 VSCMGStateEffector::~VSCMGStateEffector() {
-    for (long unsigned int c = 0; c < this->vscmgOutMsgs.size(); c++) {
-        free(this->vscmgOutMsgs.at(c));
-    }
+    for (long unsigned int c = 0; c < this->vscmgOutMsgs.size(); c++) { free(this->vscmgOutMsgs.at(c)); }
     return;
 }
 
-void VSCMGStateEffector::linkInStates(DynParamManager& statesIn) {
+void VSCMGStateEffector::linkInStates(DynParamManager &statesIn) {
     //! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
@@ -40,7 +39,7 @@ void VSCMGStateEffector::linkInStates(DynParamManager& statesIn) {
     return;
 }
 
-void VSCMGStateEffector::registerStates(DynParamManager& states) {
+void VSCMGStateEffector::registerStates(DynParamManager &states) {
     //! - Find number of VSCMGs and number of VSCMGs with jitter
     this->numVSCMGJitter = 0;
     this->numVSCMG = 0;
@@ -200,22 +199,22 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime) {
             it->rWcG_B = it->L * it->ggHat_B + it->l * it->gsHat_B + it->d * it->w2Hat_B;
             it->rWcB_B = it->rGB_B + it->rWcG_B;
             it->rTildeWcB_B = eigenTilde(it->rWcB_B);
-            it->rPrimeWcB_B = it->d * it->Omega * it->w3Hat_B - it->d * it->gammaDot * cos(it->theta) * it->gsHat_B +
-                              it->l * it->gammaDot * it->gtHat_B;
+            it->rPrimeWcB_B = it->d * it->Omega * it->w3Hat_B - it->d * it->gammaDot * cos(it->theta) * it->gsHat_B
+                            + it->l * it->gammaDot * it->gtHat_B;
             it->rPrimeTildeWcB_B = eigenTilde(it->rPrimeWcB_B);
 
             //! - Give the mass of the VSCMG to the effProps mass
             this->effProps.mEff += it->massV;
             this->effProps.rEff_CB_B += it->massG * it->rGcB_B + it->massW * it->rWcB_B;
-            this->effProps.IEffPntB_B += it->IWPntWc_B + it->IGPntGc_B +
-                                         it->massG * it->rTildeGcB_B * it->rTildeGcB_B.transpose() +
-                                         it->massW * it->rTildeWcB_B * it->rTildeWcB_B.transpose();
+            this->effProps.IEffPntB_B += it->IWPntWc_B + it->IGPntGc_B
+                                       + it->massG * it->rTildeGcB_B * it->rTildeGcB_B.transpose()
+                                       + it->massW * it->rTildeWcB_B * it->rTildeWcB_B.transpose();
             this->effProps.rEffPrime_CB_B += it->massG * it->rPrimeGcB_B + it->massW * it->rPrimeWcB_B;
             this->effProps.IEffPrimePntB_B +=
-                it->IPrimeGPntGc_B + it->massG * it->rPrimeTildeGcB_B * it->rTildeGcB_B.transpose() +
-                it->massG * it->rTildeGcB_B * it->rPrimeTildeGcB_B.transpose() + it->IPrimeWPntWc_B +
-                it->massW * it->rPrimeTildeWcB_B * it->rTildeWcB_B.transpose() +
-                it->massW * it->rTildeWcB_B * it->rPrimeTildeWcB_B.transpose();
+                it->IPrimeGPntGc_B + it->massG * it->rPrimeTildeGcB_B * it->rTildeGcB_B.transpose()
+                + it->massG * it->rTildeGcB_B * it->rPrimeTildeGcB_B.transpose() + it->IPrimeWPntWc_B
+                + it->massW * it->rPrimeTildeWcB_B * it->rTildeWcB_B.transpose()
+                + it->massW * it->rTildeWcB_B * it->rPrimeTildeWcB_B.transpose();
         }
     }
 
@@ -228,11 +227,13 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime) {
     return;
 }
 
-void VSCMGStateEffector::updateContributions(double integTime,
-                                             BackSubMatrices& backSubContr,
-                                             Eigen::Vector3d sigma_BN,
-                                             Eigen::Vector3d omega_BN_B,
-                                             Eigen::Vector3d g_N) {
+void VSCMGStateEffector::updateContributions(
+    double integTime,
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d sigma_BN,
+    Eigen::Vector3d omega_BN_B,
+    Eigen::Vector3d g_N
+) {
     Eigen::Vector3d omegaLoc_BN_B;
     Eigen::Vector3d tempF;
     double omegas;
@@ -257,7 +258,7 @@ void VSCMGStateEffector::updateContributions(double integTime,
     Eigen::Vector3d komega;
 
     //! - Find dcm_BN
-    sigmaBNLocal = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
     //! - Map gravity to body frame
@@ -277,10 +278,10 @@ void VSCMGStateEffector::updateContributions(double integTime,
             backSubContr.matrixD -=
                 it->IV3 * it->ggHat_B * it->ggHat_B.transpose() + it->IW1 * it->gsHat_B * it->gsHat_B.transpose();
             backSubContr.vecRot -=
-                (it->u_s_current - it->IW1 * omegat * it->gammaDot) * it->gsHat_B +
-                it->IW1 * it->Omega * it->gammaDot * it->gtHat_B +
-                (it->u_g_current + (it->IV1 - it->IV2) * omegas * omegat + it->IW1 * it->Omega * omegat) * it->ggHat_B +
-                omegaTilde * it->IGPntGc_B * it->gammaDot * it->ggHat_B + omegaTilde * it->IWPntWc_B * omega_WB_B;
+                (it->u_s_current - it->IW1 * omegat * it->gammaDot) * it->gsHat_B
+                + it->IW1 * it->Omega * it->gammaDot * it->gtHat_B
+                + (it->u_g_current + (it->IV1 - it->IV2) * omegas * omegat + it->IW1 * it->Omega * omegat) * it->ggHat_B
+                + omegaTilde * it->IGPntGc_B * it->gammaDot * it->ggHat_B + omegaTilde * it->IWPntWc_B * omega_WB_B;
             if (it->VSCMGModel == vscmgJitterSimple) {
                 /* static imbalance force: Fs = Us * Omega^2 */
                 tempF = it->U_s * OmegaSquared * it->w2Hat_B;
@@ -310,8 +311,8 @@ void VSCMGStateEffector::updateContributions(double integTime,
             Eigen::Vector3d rWcVc_B = it->rWcG_B - rVcG_B;
             Eigen::Matrix3d rTildeGcVc_B = eigenTilde(rGcVc_B);
             Eigen::Matrix3d rTildeWcVc_B = eigenTilde(rWcVc_B);
-            Eigen::Matrix3d IVPntVc_B = it->IGPntGc_B + it->massG * rTildeGcVc_B * rTildeGcVc_B.transpose() +
-                                        it->IWPntWc_B + it->massW * rTildeWcVc_B * rTildeWcVc_B.transpose();
+            Eigen::Matrix3d IVPntVc_B = it->IGPntGc_B + it->massG * rTildeGcVc_B * rTildeGcVc_B.transpose()
+                                      + it->IWPntWc_B + it->massW * rTildeWcVc_B * rTildeWcVc_B.transpose();
             Eigen::Vector3d rPrimeGcG_B = it->rPrimeGcB_B;
             Eigen::Vector3d rPrimeWcG_B = it->rPrimeWcB_B;
             Eigen::Vector3d rPrimeVcG_B = it->rhoG * rPrimeGcG_B + it->rhoW * rPrimeWcG_B;
@@ -324,75 +325,79 @@ void VSCMGStateEffector::updateContributions(double integTime,
             Eigen::Matrix3d Q =
                 it->massG * it->rhoW * rTildeGcVc_B - it->massW * it->rhoG * rTildeWcVc_B + it->massG * rTildeVcG_B;
 
-            it->egamma = it->ggHat_B.dot(it->IGPntGc_B * it->ggHat_B + it->IWPntWc_B * it->ggHat_B +
-                                         P * (it->l * it->gtHat_B - it->d * cos(it->theta) * it->gsHat_B) +
-                                         Q * ggHatTilde_B * it->rGcG_B);
+            it->egamma = it->ggHat_B.dot(
+                it->IGPntGc_B * it->ggHat_B + it->IWPntWc_B * it->ggHat_B
+                + P * (it->l * it->gtHat_B - it->d * cos(it->theta) * it->gsHat_B) + Q * ggHatTilde_B * it->rGcG_B
+            );
             it->agamma = 1.0 / it->egamma * it->massV * rTildeVcG_B * it->ggHat_B;
-            it->bgamma = -1.0 / it->egamma *
-                         (IVPntVc_B.transpose() * it->ggHat_B - it->massV * rTildeVcB_B * rTildeVcG_B * it->ggHat_B);
-            it->cgamma = -1.0 / it->egamma *
-                         (it->ggHat_B.dot(it->IWPntWc_B * it->gsHat_B) + it->d * it->ggHat_B.dot(P * it->w3Hat_B));
+            it->bgamma = -1.0 / it->egamma
+                       * (IVPntVc_B.transpose() * it->ggHat_B - it->massV * rTildeVcB_B * rTildeVcG_B * it->ggHat_B);
+            it->cgamma = -1.0 / it->egamma
+                       * (it->ggHat_B.dot(it->IWPntWc_B * it->gsHat_B) + it->d * it->ggHat_B.dot(P * it->w3Hat_B));
             it->dgamma =
-                -1.0 / it->egamma *
-                    it->ggHat_B.dot(
-                        it->gammaDot * Q * ggHatTilde_B * rPrimeGcG_B +
-                        P * ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared) *
-                                 it->gsHat_B -
-                             it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B -
-                             it->d * OmegaSquared * it->w2Hat_B) +
-                        it->IPrimeGPntGc_B * omega_GN_B + omegaTilde * it->IGPntGc_B * omega_GN_B +
-                        it->IWPntWc_B * it->Omega * it->gammaDot * it->gtHat_B + it->IPrimeWPntWc_B * omega_WN_B +
-                        omegaTilde * it->IWPntWc_B * omega_WN_B +
-                        it->massG * rTildeGcVc_B *
-                            (2.0 * omegaTilde * rPrimeGcVc_B + omegaTilde * omegaTilde * rGcVc_B) +
-                        it->massW * rTildeWcVc_B * (2.0 * omegaTilde * rPrimeWcVc_B + omegaTildeSquared * rWcVc_B) +
-                        it->massV * rTildeVcG_B * (2.0 * omegaTilde * rPrimeVcB_B + omegaTildeSquared * rVcB_B)) +
-                1.0 / it->egamma * (it->u_g_current + it->gravityTorqueGimbal_g);
+                -1.0 / it->egamma
+                    * it->ggHat_B.dot(
+                        it->gammaDot * Q * ggHatTilde_B * rPrimeGcG_B
+                        + P
+                              * ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared)
+                                     * it->gsHat_B
+                                 - it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B
+                                 - it->d * OmegaSquared * it->w2Hat_B)
+                        + it->IPrimeGPntGc_B * omega_GN_B + omegaTilde * it->IGPntGc_B * omega_GN_B
+                        + it->IWPntWc_B * it->Omega * it->gammaDot * it->gtHat_B + it->IPrimeWPntWc_B * omega_WN_B
+                        + omegaTilde * it->IWPntWc_B * omega_WN_B
+                        + it->massG * rTildeGcVc_B
+                              * (2.0 * omegaTilde * rPrimeGcVc_B + omegaTilde * omegaTilde * rGcVc_B)
+                        + it->massW * rTildeWcVc_B * (2.0 * omegaTilde * rPrimeWcVc_B + omegaTildeSquared * rWcVc_B)
+                        + it->massV * rTildeVcG_B * (2.0 * omegaTilde * rPrimeVcB_B + omegaTildeSquared * rVcB_B)
+                    )
+                + 1.0 / it->egamma * (it->u_g_current + it->gravityTorqueGimbal_g);
 
             it->eOmega = it->IW1 + it->massW * dSquared;
             it->aOmega = -1.0 / it->eOmega * it->massW * it->d * it->w3Hat_B;
-            it->bOmega = -1.0 / it->eOmega *
-                         (it->IWPntWc_B.transpose() * it->gsHat_B -
-                          it->massW * it->d * it->rTildeWcB_B * w2HatTilde_B * it->gsHat_B);
+            it->bOmega = -1.0 / it->eOmega
+                       * (it->IWPntWc_B.transpose() * it->gsHat_B
+                          - it->massW * it->d * it->rTildeWcB_B * w2HatTilde_B * it->gsHat_B);
             it->cOmega = -1.0 / it->eOmega * (it->IW13 * cos(it->theta) - it->massW * it->d * it->l * sin(it->theta));
-            it->dOmega =
-                -1.0 / it->eOmega *
-                    (it->gsHat_B.dot(it->IPrimeWPntWc_B * omega_WN_B) +
-                     it->gsHat_B.transpose() * omegaTilde * it->IWPntWc_B * omega_WN_B +
-                     it->massW * it->d * it->gsHat_B.transpose() * w2HatTilde_B *
-                         (2.0 * it->rPrimeTildeWcB_B.transpose() * omegaLoc_BN_B +
-                          omegaTilde * omegaTilde * it->rWcB_B)) +
-                (1.0 / it->eOmega) * (it->IW13 * sin(it->theta) * it->Omega * it->gammaDot -
-                                      it->massW * dSquared * gammaDotSquared * cos(it->theta) * sin(it->theta) +
-                                      it->u_s_current + it->gravityTorqueWheel_s);
+            it->dOmega = -1.0 / it->eOmega
+                           * (it->gsHat_B.dot(it->IPrimeWPntWc_B * omega_WN_B)
+                              + it->gsHat_B.transpose() * omegaTilde * it->IWPntWc_B * omega_WN_B
+                              + it->massW * it->d * it->gsHat_B.transpose() * w2HatTilde_B
+                                    * (2.0 * it->rPrimeTildeWcB_B.transpose() * omegaLoc_BN_B
+                                       + omegaTilde * omegaTilde * it->rWcB_B))
+                       + (1.0 / it->eOmega)
+                             * (it->IW13 * sin(it->theta) * it->Omega * it->gammaDot
+                                - it->massW * dSquared * gammaDotSquared * cos(it->theta) * sin(it->theta)
+                                + it->u_s_current + it->gravityTorqueWheel_s);
 
             it->p = (it->aOmega + it->cOmega * it->agamma) / (1.0 - it->cOmega * it->cgamma);
             it->q = (it->bOmega + it->cOmega * it->bgamma) / (1.0 - it->cOmega * it->cgamma);
             it->s = (it->dOmega + it->cOmega * it->dgamma) / (1.0 - it->cOmega * it->cgamma);
 
-            ur = it->massG * ggHatTilde_B * it->rGcG_B - it->massW * it->d * cos(it->theta) * it->gsHat_B +
-                 it->massW * it->l * it->gtHat_B;
+            ur = it->massG * ggHatTilde_B * it->rGcG_B - it->massW * it->d * cos(it->theta) * it->gsHat_B
+               + it->massW * it->l * it->gtHat_B;
             vr = it->massW * it->d * it->w3Hat_B;
-            kr =
-                it->massG * it->gammaDot * ggHatTilde_B * it->rPrimeGcB_B +
-                it->massW *
-                    ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared) * it->gsHat_B -
-                     it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B - it->d * OmegaSquared * it->w2Hat_B);
+            kr = it->massG * it->gammaDot * ggHatTilde_B * it->rPrimeGcB_B
+               + it->massW
+                     * ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared)
+                            * it->gsHat_B
+                        - it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B - it->d * OmegaSquared * it->w2Hat_B);
 
-            uomega = it->IGPntGc_B * it->ggHat_B + it->massG * it->rTildeGcB_B * ggHatTilde_B * it->rGcG_B +
-                     it->IWPntWc_B * it->ggHat_B +
-                     it->massW * it->rTildeWcB_B * (it->l * it->gtHat_B - it->d * cos(it->theta) * it->gsHat_B);
+            uomega = it->IGPntGc_B * it->ggHat_B + it->massG * it->rTildeGcB_B * ggHatTilde_B * it->rGcG_B
+                   + it->IWPntWc_B * it->ggHat_B
+                   + it->massW * it->rTildeWcB_B * (it->l * it->gtHat_B - it->d * cos(it->theta) * it->gsHat_B);
             vomega = it->IWPntWc_B * it->gsHat_B + it->massW * it->d * it->rTildeWcB_B * it->w3Hat_B;
             komega =
-                it->IPrimeGPntGc_B * it->gammaDot * it->ggHat_B +
-                omegaTilde * it->IGPntGc_B * it->gammaDot * it->ggHat_B +
-                it->massG * omegaTilde * it->rTildeGcB_B * it->rPrimeGcB_B +
-                it->massG * it->gammaDot * it->rTildeGcB_B * ggHatTilde_B * rPrimeGcG_B +
-                it->IWPntWc_B * it->Omega * it->gammaDot * it->gtHat_B + it->IPrimeWPntWc_B * omega_WB_B +
-                omegaTilde * it->IWPntWc_B * omega_WB_B + it->massW * omegaTilde * it->rTildeWcB_B * it->rPrimeWcB_B +
-                it->massW * it->rTildeWcB_B *
-                    ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared) * it->gsHat_B -
-                     it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B - it->d * OmegaSquared * it->w2Hat_B);
+                it->IPrimeGPntGc_B * it->gammaDot * it->ggHat_B
+                + omegaTilde * it->IGPntGc_B * it->gammaDot * it->ggHat_B
+                + it->massG * omegaTilde * it->rTildeGcB_B * it->rPrimeGcB_B
+                + it->massG * it->gammaDot * it->rTildeGcB_B * ggHatTilde_B * rPrimeGcG_B
+                + it->IWPntWc_B * it->Omega * it->gammaDot * it->gtHat_B + it->IPrimeWPntWc_B * omega_WB_B
+                + omegaTilde * it->IWPntWc_B * omega_WB_B + it->massW * omegaTilde * it->rTildeWcB_B * it->rPrimeWcB_B
+                + it->massW * it->rTildeWcB_B
+                      * ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared)
+                             * it->gsHat_B
+                         - it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B - it->d * OmegaSquared * it->w2Hat_B);
 
             backSubContr.matrixA += ur * it->agamma.transpose() + (vr + ur * it->cgamma) * it->p.transpose();
             backSubContr.matrixB += ur * it->bgamma.transpose() + (vr + ur * it->cgamma) * it->q.transpose();
@@ -407,10 +412,12 @@ void VSCMGStateEffector::updateContributions(double integTime,
     return;
 }
 
-void VSCMGStateEffector::computeDerivatives(double integTime,
-                                            Eigen::Vector3d rDDot_BN_N,
-                                            Eigen::Vector3d omegaDot_BN_B,
-                                            Eigen::Vector3d sigma_BN) {
+void VSCMGStateEffector::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     Eigen::MatrixXd OmegasDot(this->numVSCMG, 1);
     Eigen::MatrixXd thetasDot(this->numVSCMGJitter, 1);
     Eigen::MatrixXd gammasDot(this->numVSCMG, 1);
@@ -432,7 +439,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime,
     omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
     omegaLoc_BN_B = this->hubOmega->getState();
     rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
-    sigmaBNLocal = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBNLocal = (Eigen::Vector3d) this->hubSigma->getState();
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
     rDDotBNLoc_B = dcm_BN * rDDotBNLoc_N;
@@ -449,16 +456,16 @@ void VSCMGStateEffector::computeDerivatives(double integTime,
             thetaCount++;
         }
         if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
-            OmegasDot(VSCMGi, 0) = -omegat * it->gammaDot - it->gsHat_B.transpose() * omegaDotBNLoc_B +
-                                   (it->u_s_current + it->gravityTorqueWheel_s) / it->IW1;
+            OmegasDot(VSCMGi, 0) = -omegat * it->gammaDot - it->gsHat_B.transpose() * omegaDotBNLoc_B
+                                 + (it->u_s_current + it->gravityTorqueWheel_s) / it->IW1;
             gammaDotsDot(VSCMGi, 0) =
-                1 / it->IV3 *
-                ((it->u_g_current + it->gravityTorqueGimbal_g) + (it->IV1 - it->IV2) * omegas * omegat +
-                 it->IW1 * it->Omega * omegat - it->IV3 * it->ggHat_B.transpose() * omegaDotBNLoc_B);
+                1 / it->IV3
+                * ((it->u_g_current + it->gravityTorqueGimbal_g) + (it->IV1 - it->IV2) * omegas * omegat
+                   + it->IW1 * it->Omega * omegat - it->IV3 * it->ggHat_B.transpose() * omegaDotBNLoc_B);
         } else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
             OmegasDot(VSCMGi, 0) = it->p.dot(rDDotBNLoc_B) + it->q.dot(omegaDotBNLoc_B) + it->s;
-            gammaDotsDot(VSCMGi, 0) = it->agamma.dot(rDDotBNLoc_B) + it->bgamma.dot(omegaDotBNLoc_B) +
-                                      it->cgamma * OmegasDot(VSCMGi, 0) + it->dgamma;
+            gammaDotsDot(VSCMGi, 0) = it->agamma.dot(rDDotBNLoc_B) + it->bgamma.dot(omegaDotBNLoc_B)
+                                    + it->cgamma * OmegasDot(VSCMGi, 0) + it->dgamma;
         }
         VSCMGi++;
     }
@@ -466,15 +473,15 @@ void VSCMGStateEffector::computeDerivatives(double integTime,
     OmegasState->setDerivative(OmegasDot);
     gammasState->setDerivative(gammasDot);
     gammaDotsState->setDerivative(gammaDotsDot);
-    if (this->numVSCMGJitter > 0) {
-        thetasState->setDerivative(thetasDot);
-    }
+    if (this->numVSCMGJitter > 0) { thetasState->setDerivative(thetasDot); }
 }
 
-void VSCMGStateEffector::updateEnergyMomContributions(double integTime,
-                                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                      double& rotEnergyContr,
-                                                      Eigen::Vector3d omega_BN_B) {
+void VSCMGStateEffector::updateEnergyMomContributions(
+    double integTime,
+    Eigen::Vector3d &rotAngMomPntCContr_B,
+    double &rotEnergyContr,
+    Eigen::Vector3d omega_BN_B
+) {
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcm_BN; /* direction cosine matrix from N to B */
     Eigen::Matrix3d dcm_NB; /* direction cosine matrix from B to N */
@@ -491,18 +498,18 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime,
             Eigen::Vector3d rDotWcB_B = omegaLoc_BN_B.cross(it->rWcB_B);
             rotAngMomPntCContr_B +=
                 it->IWPntWc_B * omega_WN_B + it->IGPntGc_B * omega_GN_B + it->massV * it->rWcB_B.cross(rDotWcB_B);
-            rotEnergyContr += 1.0 / 2.0 * omega_WN_B.dot(it->IWPntWc_B * omega_WN_B) +
-                              1.0 / 2.0 * omega_GN_B.dot(it->IGPntGc_B * omega_GN_B) +
-                              1.0 / 2.0 * it->massV * rDotWcB_B.dot(rDotWcB_B);
+            rotEnergyContr += 1.0 / 2.0 * omega_WN_B.dot(it->IWPntWc_B * omega_WN_B)
+                            + 1.0 / 2.0 * omega_GN_B.dot(it->IGPntGc_B * omega_GN_B)
+                            + 1.0 / 2.0 * it->massV * rDotWcB_B.dot(rDotWcB_B);
         } else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
             Eigen::Vector3d rDotWcB_B = it->rPrimeWcB_B + omegaLoc_BN_B.cross(it->rWcB_B);
             Eigen::Vector3d rDotGcB_B = it->rPrimeGcB_B + omegaLoc_BN_B.cross(it->rGcB_B);
             rotAngMomPntCContr_B += it->IWPntWc_B * omega_WN_B + it->massW * it->rWcB_B.cross(rDotWcB_B);
             rotAngMomPntCContr_B += it->IGPntGc_B * omega_GN_B + it->massG * it->rGcB_B.cross(rDotGcB_B);
-            rotEnergyContr += 1.0 / 2.0 * omega_WN_B.transpose() * it->IWPntWc_B * omega_WN_B +
-                              1.0 / 2.0 * it->massW * rDotWcB_B.dot(rDotWcB_B);
-            rotEnergyContr += 1.0 / 2.0 * omega_GN_B.transpose() * it->IGPntGc_B * omega_GN_B +
-                              1.0 / 2.0 * it->massG * rDotGcB_B.dot(rDotGcB_B);
+            rotEnergyContr += 1.0 / 2.0 * omega_WN_B.transpose() * it->IWPntWc_B * omega_WN_B
+                            + 1.0 / 2.0 * it->massW * rDotWcB_B.dot(rDotWcB_B);
+            rotEnergyContr += 1.0 / 2.0 * omega_GN_B.transpose() * it->IGPntGc_B * omega_GN_B
+                            + 1.0 / 2.0 * it->massG * rDotGcB_B.dot(rDotGcB_B);
         }
     }
 
@@ -600,11 +607,11 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
         tmpVSCMG.U_d = it->U_d;
         tmpVSCMG.VSCMGModel = it->VSCMGModel;
         // Write out config data for each VSCMG
-        this->vscmgOutMsgs.at(it - VSCMGData.begin())->write(&tmpVSCMG, this->moduleID, CurrentClock);
+        this->vscmgOutMsgs.at(it - VSCMGData.begin())->write(tmpVSCMG, this->moduleID, CurrentClock);
     }
 
     // Write this message once for all VSCMGs
-    this->speedOutMsg.write(&this->outputStates, this->moduleID, CurrentClock);
+    this->speedOutMsg.write(this->outputStates, this->moduleID, CurrentClock);
 }
 
 /*! This method is used to read the incoming command message and set the
@@ -681,19 +688,16 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime) {
 
         //! minimum wheel torque
         //! set u_s_min to less than zero to disable minimum torque
-        if (std::abs(CmdIt->u_s_cmd) < this->VSCMGData[it].u_s_min) {
-            CmdIt->u_s_cmd = 0.0;
-        }
+        if (std::abs(CmdIt->u_s_cmd) < this->VSCMGData[it].u_s_min) { CmdIt->u_s_cmd = 0.0; }
 
         //! minimum gimbal torque
         //! set u_g_min to less than zero to disable minimum torque
-        if (std::abs(CmdIt->u_g_cmd) < this->VSCMGData[it].u_g_min) {
-            CmdIt->u_g_cmd = 0.0;
-        }
+        if (std::abs(CmdIt->u_g_cmd) < this->VSCMGData[it].u_g_min) { CmdIt->u_g_cmd = 0.0; }
 
         // Speed saturation
-        if (std::abs(this->VSCMGData[it].Omega) >= this->VSCMGData[it].Omega_max &&
-            this->VSCMGData[it].Omega_max > 0.0 /* negative Omega_max turns of wheel saturation modeling */
+        if (
+            std::abs(this->VSCMGData[it].Omega) >= this->VSCMGData[it].Omega_max
+            && this->VSCMGData[it].Omega_max > 0.0 /* negative Omega_max turns of wheel saturation modeling */
         ) {
             CmdIt->u_s_cmd = 0.0;
             //            printf("Omega_max = %f\n", this->VSCMGData[it].Omega_max);
@@ -706,7 +710,8 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime) {
             if (this->VSCMGData[it].Omega_max < 0.0) {
                 bskLogger.bskLog(
                     BSK_ERROR,
-                    "VSCMGStateEffector: Omega_max must be set to a positive value to use wheelLinearFrictionRatio.");
+                    "VSCMGStateEffector: Omega_max must be set to a positive value to use wheelLinearFrictionRatio."
+                );
             }
             omegaCritical = this->VSCMGData[it].Omega_max * this->VSCMGData[it].wheelLinearFrictionRatio;
         } else {

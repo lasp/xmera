@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "waypointReference.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <sstream>
 #include <string>
 
@@ -98,42 +100,52 @@ void WaypointReference::updateState(uint64_t currentSimNanos) {
                 double normDeltaSigma = v3Norm(deltaSigma);
                 /* if norm <= 1 interpolate between waypoints */
                 if (normDeltaSigma <= 1) {
-                    linearInterpolation(this->t_a,
-                                        this->attRefMsg_a.sigma_RN,
-                                        this->t_b,
-                                        this->attRefMsg_b.sigma_RN,
-                                        t,
-                                        &attMsgBuffer.sigma_RN[0]);
+                    linearInterpolation(
+                        this->t_a,
+                        this->attRefMsg_a.sigma_RN,
+                        this->t_b,
+                        this->attRefMsg_b.sigma_RN,
+                        t,
+                        &attMsgBuffer.sigma_RN[0]
+                    );
                 }
                 /* if norm > 1 interpolate between waypoint a and shadow set of waypoint b */
                 else {
                     double sigma_RN_b_S[3];
                     MRPshadow(this->attRefMsg_b.sigma_RN, sigma_RN_b_S);
                     linearInterpolation(
-                        this->t_a, this->attRefMsg_a.sigma_RN, this->t_b, sigma_RN_b_S, t, &attMsgBuffer.sigma_RN[0]);
+                        this->t_a,
+                        this->attRefMsg_a.sigma_RN,
+                        this->t_b,
+                        sigma_RN_b_S,
+                        t,
+                        &attMsgBuffer.sigma_RN[0]
+                    );
                 }
-                linearInterpolation(this->t_a,
-                                    this->attRefMsg_a.omega_RN_N,
-                                    this->t_b,
-                                    this->attRefMsg_b.omega_RN_N,
-                                    t,
-                                    &attMsgBuffer.omega_RN_N[0]);
-                linearInterpolation(this->t_a,
-                                    this->attRefMsg_a.domega_RN_N,
-                                    this->t_b,
-                                    this->attRefMsg_b.domega_RN_N,
-                                    t,
-                                    &attMsgBuffer.domega_RN_N[0]);
+                linearInterpolation(
+                    this->t_a,
+                    this->attRefMsg_a.omega_RN_N,
+                    this->t_b,
+                    this->attRefMsg_b.omega_RN_N,
+                    t,
+                    &attMsgBuffer.omega_RN_N[0]
+                );
+                linearInterpolation(
+                    this->t_a,
+                    this->attRefMsg_a.domega_RN_N,
+                    this->t_b,
+                    this->attRefMsg_b.domega_RN_N,
+                    t,
+                    &attMsgBuffer.domega_RN_N[0]
+                );
             }
         }
         /* for CurrentTime > t_b and t_b is the last time step in file, hold final attitude with zero angular rates and
          * accelerations */
-        if (t > this->t_b && this->endOfFile == true) {
-            v3Copy(this->attRefMsg_b.sigma_RN, attMsgBuffer.sigma_RN);
-        }
+        if (t > this->t_b && this->endOfFile == true) { v3Copy(this->attRefMsg_b.sigma_RN, attMsgBuffer.sigma_RN); }
 
         /* write output attitude reference message */
-        this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, currentSimNanos);
+        this->attRefOutMsg.write(attMsgBuffer, this->moduleID, currentSimNanos);
     }
     return;
 }
@@ -150,7 +162,7 @@ void WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t)
         *attRefMsg_t = AttRefMsgPayload{};
 
         /* pull time, this is not used in the BSK msg */
-        *t = (uint64_t)(pullScalar(&iss) * SEC2NANO);
+        *t = (uint64_t) (pullScalar(&iss) * SEC2NANO);
 
         /* get inertial attitude of reference frame R with respect to N and store in msg */
         double attNorm;
@@ -158,37 +170,36 @@ void WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t)
         double att4[4];
         double att4Norm[4];
         switch (this->attitudeType) {
-            case 0:
-                /* 3D attitude coordinate set */
-                /* if MRP norm <= 1 save the MRP set immediately,
-                   if not map to the shadow set and saves the shadow set */
-                pullVector(&iss, att3);
-                attNorm = v3Norm(att3);
-                if (attNorm <= 1) {
-                    v3Copy(att3, attRefMsg_t->sigma_RN);
-                } else {
-                    MRPshadow(att3, attRefMsg_t->sigma_RN);
-                }
-                break;
-            case 1:
-                /* 4D attitude coordinate set (q0, q1, q2, q3) */
-                pullVector4(&iss, att4);
-                vNormalize(att4, 4, att4Norm);
-                EP2MRP(att4Norm, attRefMsg_t->sigma_RN);
-                break;
-            case 2:
-                /* 4D attitude coordinate set (q1, q2, q3, qs) */
-                double attBuffer[4];
-                pullVector4(&iss, attBuffer);
-                att4[0] = attBuffer[3];
-                att4[1] = attBuffer[0];
-                att4[2] = attBuffer[1];
-                att4[3] = attBuffer[2];
-                vNormalize(att4, 4, att4Norm);
-                EP2MRP(att4Norm, attRefMsg_t->sigma_RN);
-                break;
-            default:
-                bskLogger.bskLog(BSK_ERROR, "WaypointReference: the attitude type provided is invalid.");
+        case 0:
+            /* 3D attitude coordinate set */
+            /* if MRP norm <= 1 save the MRP set immediately,
+               if not map to the shadow set and saves the shadow set */
+            pullVector(&iss, att3);
+            attNorm = v3Norm(att3);
+            if (attNorm <= 1) {
+                v3Copy(att3, attRefMsg_t->sigma_RN);
+            } else {
+                MRPshadow(att3, attRefMsg_t->sigma_RN);
+            }
+            break;
+        case 1:
+            /* 4D attitude coordinate set (q0, q1, q2, q3) */
+            pullVector4(&iss, att4);
+            vNormalize(att4, 4, att4Norm);
+            EP2MRP(att4Norm, attRefMsg_t->sigma_RN);
+            break;
+        case 2:
+            /* 4D attitude coordinate set (q1, q2, q3, qs) */
+            double attBuffer[4];
+            pullVector4(&iss, attBuffer);
+            att4[0] = attBuffer[3];
+            att4[1] = attBuffer[0];
+            att4[2] = attBuffer[1];
+            att4[3] = attBuffer[2];
+            vNormalize(att4, 4, att4Norm);
+            EP2MRP(att4Norm, attRefMsg_t->sigma_RN);
+            break;
+        default: bskLogger.bskLog(BSK_ERROR, "WaypointReference: the attitude type provided is invalid.");
         }
 
         if (this->useReferenceFrame == false) {
@@ -246,7 +257,7 @@ void WaypointReference::pullVector4(std::istringstream* iss, double* vec) {
 /*! pull a double from the input stream
  */
 double WaypointReference::pullScalar(std::istringstream* iss) {
-    const char delimiterString = *this->delimiter.c_str();
+    char const delimiterString = *this->delimiter.c_str();
     std::string item;
 
     getline(*iss, item, delimiterString);
@@ -256,13 +267,13 @@ double WaypointReference::pullScalar(std::istringstream* iss) {
 
 /*! linearly interpolate between two vectors v_a and v_b
  */
-void WaypointReference::linearInterpolation(uint64_t t_a,
-                                            double v_a[3],
-                                            uint64_t t_b,
-                                            double v_b[3],
-                                            uint64_t t,
-                                            double* v) {
-    for (int i = 0; i < 3; i++) {
-        *(v + i) = v_a[i] + (v_b[i] - v_a[i]) / (t_b - t_a) * (t - t_a);
-    }
+void WaypointReference::linearInterpolation(
+    uint64_t t_a,
+    double v_a[3],
+    uint64_t t_b,
+    double v_b[3],
+    uint64_t t,
+    double* v
+) {
+    for (int i = 0; i < 3; i++) { *(v + i) = v_a[i] + (v_b[i] - v_a[i]) / (t_b - t_a) * (t - t_a); }
 }

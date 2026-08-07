@@ -129,7 +129,7 @@ void StarTracker::computeTrueOutput() {
  */
 void StarTracker::writeOutputMessages(uint64_t currentSimNanos) {
     this->sensedValues.timeTag = currentSimNanos * NANO2SEC;
-    this->sensorOutMsg.write(&this->sensedValues, this->moduleID, currentSimNanos);
+    this->sensorOutMsg.write(this->sensedValues, this->moduleID, currentSimNanos);
 }
 
 /*!

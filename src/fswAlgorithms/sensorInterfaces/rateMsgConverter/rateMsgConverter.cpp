@@ -12,9 +12,11 @@
 
  */
 
-#include <string.h>
 #include "rateMsgConverter.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
+#include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -41,7 +43,7 @@ void RateMsgConverter::updateState(uint64_t callTime) {
     v3Copy(inMsg.AngVelBody, outMsg.omega_BN_B);
 
     /*! - write output message */
-    this->navRateOutMsg.write(&outMsg, this->moduleID, callTime);
+    this->navRateOutMsg.write(outMsg, this->moduleID, callTime);
 
     return;
 }

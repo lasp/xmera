@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "torqueScheduler.h"
+
 #include <architecture/utilities/macroDefinitions.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -40,41 +41,40 @@ void TorqueScheduler::updateState(uint64_t callTime) {
     motorTorqueOut.motorTorque[1] = motorTorque2In.motorTorque[0];
 
     switch (this->lockFlag) {
-        case 0:
-            effectorLockOut.effectorLockFlag[0] = 0;
-            effectorLockOut.effectorLockFlag[1] = 0;
-            break;
+    case 0:
+        effectorLockOut.effectorLockFlag[0] = 0;
+        effectorLockOut.effectorLockFlag[1] = 0;
+        break;
 
-        case 1:
-            if (t > this->tSwitch) {
-                effectorLockOut.effectorLockFlag[0] = 1;
-                effectorLockOut.effectorLockFlag[1] = 0;
-            } else {
-                effectorLockOut.effectorLockFlag[0] = 0;
-                effectorLockOut.effectorLockFlag[1] = 1;
-            }
-            break;
-
-        case 2:
-            if (t > this->tSwitch) {
-                effectorLockOut.effectorLockFlag[0] = 0;
-                effectorLockOut.effectorLockFlag[1] = 1;
-            } else {
-                effectorLockOut.effectorLockFlag[0] = 1;
-                effectorLockOut.effectorLockFlag[1] = 0;
-            }
-            break;
-
-        case 3:
+    case 1:
+        if (t > this->tSwitch) {
             effectorLockOut.effectorLockFlag[0] = 1;
+            effectorLockOut.effectorLockFlag[1] = 0;
+        } else {
+            effectorLockOut.effectorLockFlag[0] = 0;
             effectorLockOut.effectorLockFlag[1] = 1;
-            break;
+        }
+        break;
 
-        default:
-            this->bskLogger.bskLog(BSK_ERROR, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
+    case 2:
+        if (t > this->tSwitch) {
+            effectorLockOut.effectorLockFlag[0] = 0;
+            effectorLockOut.effectorLockFlag[1] = 1;
+        } else {
+            effectorLockOut.effectorLockFlag[0] = 1;
+            effectorLockOut.effectorLockFlag[1] = 0;
+        }
+        break;
+
+    case 3:
+        effectorLockOut.effectorLockFlag[0] = 1;
+        effectorLockOut.effectorLockFlag[1] = 1;
+        break;
+
+    default: this->bskLogger.bskLog(BSK_ERROR, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
     }
 
     /* write output messages */
-    this->motorTorqueOutMsg.write(&motorTorqueOut, this->moduleID, callTime);
-    this->effectorLockOutMsg.write(&effectorLockOut, this->moduleID, callTime);
+    this->motorTorqueOutMsg.write(motorTorqueOut, this->moduleID, callTime);
+    this->effectorLockOutMsg.write(effectorLockOut, this->moduleID, callTime);
 }

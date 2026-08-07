@@ -45,7 +45,7 @@ void BoreAngCalc::reset(uint64_t currentSimNanos) {
  @param CurrentClock The current time in the system for output stamping
  */
 void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock) {
-    this->angOutMsg.write(&this->boresightAng, this->moduleID, CurrentClock);
+    this->angOutMsg.write(this->boresightAng, this->moduleID, CurrentClock);
 }
 
 /*! This method reads the input messages in from the system and sets the

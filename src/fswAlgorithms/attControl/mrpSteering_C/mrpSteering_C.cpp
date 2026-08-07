@@ -8,8 +8,10 @@
  */
 
 #include "mrpSteering_C.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
 
 static void MRPSteeringLaw(MrpSteering_C* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
@@ -44,7 +46,7 @@ void MrpSteering_C::updateState(uint64_t callTime) {
     MRPSteeringLaw(this, guidCmd.sigma_BR, outMsg.omega_BastR_B, outMsg.omegap_BastR_B);
 
     /*! - Store the output message and pass it to the message bus */
-    this->rateCmdOutMsg.write(&outMsg, moduleID, callTime);
+    this->rateCmdOutMsg.write(outMsg, moduleID, callTime);
 
     return;
 }
@@ -68,9 +70,11 @@ void MRPSteeringLaw(MrpSteering_C* configData, double sigma_BR[3], double omega_
     /* Equation (18): Determine the desired steering rates  */
     for (i = 0; i < 3; i++) {
         sigma_i = sigma_BR[i];
-        value = atan(M_PI_2 / configData->omega_max *
-                     (configData->K1 * sigma_i + configData->K3 * sigma_i * sigma_i * sigma_i)) /
-                M_PI_2 * configData->omega_max;
+        value = atan(
+                    M_PI_2 / configData->omega_max
+                    * (configData->K1 * sigma_i + configData->K3 * sigma_i * sigma_i * sigma_i)
+                )
+              / M_PI_2 * configData->omega_max;
         omega_ast[i] = -value;
     }
     v3SetZero(omega_ast_p);
@@ -81,11 +85,11 @@ void MRPSteeringLaw(MrpSteering_C* configData, double sigma_BR[3], double omega_
         v3Scale(0.25, sigma_p, sigma_p);
         for (i = 0; i < 3; i++) {
             sigma_i = sigma_BR[i];
-            value = (3 * configData->K3 * sigma_i * sigma_i + configData->K1) /
-                    (pow(M_PI_2 / configData->omega_max *
-                             (configData->K1 * sigma_i + configData->K3 * sigma_i * sigma_i * sigma_i),
-                         2) +
-                     1);
+            value = (3 * configData->K3 * sigma_i * sigma_i + configData->K1)
+                  / (pow(M_PI_2 / configData->omega_max
+                             * (configData->K1 * sigma_i + configData->K3 * sigma_i * sigma_i * sigma_i),
+                         2)
+                     + 1);
             omega_ast_p[i] = -value * sigma_p[i];
         }
     }

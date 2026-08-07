@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "celestialTwoBodyPoint_C.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/safeMath.h>
@@ -36,7 +37,7 @@ void CelestialTwoBodyPoint_C::updateState(uint64_t callTime) {
     /*! - Compute the pointing requirements */
     this->computeCelestialTwoBodyPoint(callTime);
     /*! - Write the output message */
-    this->attRefOutMsg.write(&this->attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(this->attRefOut, this->moduleID, callTime);
 }
 
 /*! This method takes the navigation translational info as well as the spice data of the
@@ -77,8 +78,8 @@ void CelestialTwoBodyPoint_C::parseInputMessages() {
     }
 
     /*! - Cross the P1 states to get R_P2, v_p2 and a_P2 */
-    if (!this->secCelBodyIsLinked || fabs(platAngDiff) < this->singularityThresh ||
-        fabs(platAngDiff) > M_PI - this->singularityThresh) {
+    if (!this->secCelBodyIsLinked || fabs(platAngDiff) < this->singularityThresh
+        || fabs(platAngDiff) > M_PI - this->singularityThresh) {
         v3Cross(this->R_P1B_N, this->v_P1B_N, this->R_P2B_N);
         v3Cross(this->R_P1B_N, this->a_P1B_N, this->v_P2B_N);
         v3Cross(this->v_P1B_N, this->a_P1B_N, this->a_P2B_N);

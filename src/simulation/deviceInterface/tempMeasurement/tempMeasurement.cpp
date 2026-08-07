@@ -96,5 +96,5 @@ void TempMeasurement::updateState(uint64_t currentSimNanos) {
     tempOutMsgBuffer.temperature = this->sensedTemperature;
 
     // write to the output messages
-    this->tempOutMsg.write(&tempOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->tempOutMsg.write(tempOutMsgBuffer, this->moduleID, currentSimNanos);
 }

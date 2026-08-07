@@ -347,10 +347,10 @@ void Camera::updateState(uint64_t currentSimNanos) {
     cameraModelMsg.deadPixelRate = this->deadPixelRate;
 
     /*! - Update the camera config data no matter if an image is present*/
-    this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
+    this->cameraConfigOutMsg.write(cameraMsg, this->moduleID, currentSimNanos);
 
     /*! - Update the camera model data no matter if an image is present*/
-    this->cameraModelOutMsg.write(&cameraModelMsg, this->moduleID, currentSimNanos);
+    this->cameraModelOutMsg.write(cameraModelMsg, this->moduleID, currentSimNanos);
 
     cv::Mat imageCV;
     cv::Mat blurred;
@@ -401,10 +401,10 @@ void Camera::updateState(uint64_t currentSimNanos) {
         memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength * sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
 
-        this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
+        this->imageOutMsg.write(imageOut, this->moduleID, currentSimNanos);
     } else {
         /*! - If no image is present, write zeros in message */
-        this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
+        this->imageOutMsg.write(imageOut, this->moduleID, currentSimNanos);
     }
 }
 

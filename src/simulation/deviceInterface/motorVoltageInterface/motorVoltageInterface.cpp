@@ -18,7 +18,9 @@ MotorVoltageInterface::MotorVoltageInterface() {
 }
 
 /*! Destructor.  Nothing here. */
-MotorVoltageInterface::~MotorVoltageInterface() { return; }
+MotorVoltageInterface::~MotorVoltageInterface() {
+    return;
+}
 
 /*! Reset the module to original configuration values.
  @return void
@@ -98,7 +100,7 @@ void MotorVoltageInterface::setBiases(Eigen::VectorXd biases) {
  @param CurrentClock The clock time associated with the model call
  */
 void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock) {
-    this->motorTorqueOutMsg.write(&this->outputTorqueBuffer, this->moduleID, CurrentClock);
+    this->motorTorqueOutMsg.write(this->outputTorqueBuffer, this->moduleID, CurrentClock);
 
     return;
 }

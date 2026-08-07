@@ -11,7 +11,9 @@
 CppModuleTemplate::CppModuleTemplate() {}
 
 /*! Module Destructor.  */
-CppModuleTemplate::~CppModuleTemplate() { return; }
+CppModuleTemplate::~CppModuleTemplate() {
+    return;
+}
 
 /*! This method is used to reset the module.
     @return void
@@ -46,10 +48,10 @@ void CppModuleTemplate::updateState(uint64_t currentSimNanos) {
     v3Copy(Lr, outMsgBuffer.dataVector);
 
     /*! - write the module output message */
-    this->dataOutMsg.write(&outMsgBuffer, this->moduleID, currentSimNanos);
+    this->dataOutMsg.write(outMsgBuffer, this->moduleID, currentSimNanos);
 
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
-    bskLogger.bskLog(
-        BSK_INFORMATION, "Module ID %lld ran Update at %fs", this->moduleID, (double)currentSimNanos / (1e9));
+    bskLogger
+        .bskLog(BSK_INFORMATION, "Module ID %lld ran Update at %fs", this->moduleID, (double) currentSimNanos / (1e9));
 }

@@ -4,31 +4,26 @@
 #include <cstring>
 #include <fstream>
 #include <numeric>
-#include <stdexcept>
-
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
+#include <stdexcept>
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 uint16_t FpgaImagePipeline::clamp12(int32_t v) {
-    if (v < 0) return 0;
-    if (v > 4095) return 4095;
+    if (v < 0) { return 0; }
+    if (v > 4'095) { return 4'095; }
     return static_cast<uint16_t>(v);
 }
 
-uint8_t FpgaImagePipeline::blurShift(const uint8_t kernelSize) {
+uint8_t FpgaImagePipeline::blurShift(uint8_t const kernelSize) {
     switch (kernelSize) {
-        case 5:
-            return 1;
-        case 7:
-            return 2;
-        case 9:
-            return 3;
-        default:
-            return 1;
+    case 5: return 1;
+    case 7: return 2;
+    case 9: return 3;
+    default: return 1;
     }
 }
 
@@ -36,82 +31,138 @@ uint8_t FpgaImagePipeline::blurShift(const uint8_t kernelSize) {
 // Configuration setters / getters
 // ---------------------------------------------------------------------------
 
-void FpgaImagePipeline::setImageWidth(const uint32_t w) { this->imageWidth = w; }
-uint32_t FpgaImagePipeline::getImageWidth() const { return this->imageWidth; }
+void FpgaImagePipeline::setImageWidth(uint32_t const w) {
+    this->imageWidth = w;
+}
 
-void FpgaImagePipeline::setImageHeight(const uint32_t h) { this->imageHeight = h; }
-uint32_t FpgaImagePipeline::getImageHeight() const { return this->imageHeight; }
+uint32_t FpgaImagePipeline::getImageWidth() const {
+    return this->imageWidth;
+}
 
-void FpgaImagePipeline::setKernelSize(const uint8_t k) { this->kernelSize = k; }
-uint8_t FpgaImagePipeline::getKernelSize() const { return this->kernelSize; }
+void FpgaImagePipeline::setImageHeight(uint32_t const h) {
+    this->imageHeight = h;
+}
 
-void FpgaImagePipeline::setThreshold(const uint16_t t) { this->threshold = t; }
-uint16_t FpgaImagePipeline::getThreshold() const { return this->threshold; }
+uint32_t FpgaImagePipeline::getImageHeight() const {
+    return this->imageHeight;
+}
 
-void FpgaImagePipeline::setRoiRegionSize(const uint32_t s) { this->roiRegionSize = s; }
-uint32_t FpgaImagePipeline::getRoiRegionSize() const { return this->roiRegionSize; }
+void FpgaImagePipeline::setKernelSize(uint8_t const k) {
+    this->kernelSize = k;
+}
 
-void FpgaImagePipeline::setCalibRegA(const uint16_t v) { this->calibRegA = v; }
-uint16_t FpgaImagePipeline::getCalibRegA() const { return this->calibRegA; }
+uint8_t FpgaImagePipeline::getKernelSize() const {
+    return this->kernelSize;
+}
 
-void FpgaImagePipeline::setCalibRegB(const uint16_t v) { this->calibRegB = v; }
-uint16_t FpgaImagePipeline::getCalibRegB() const { return this->calibRegB; }
+void FpgaImagePipeline::setThreshold(uint16_t const t) {
+    this->threshold = t;
+}
 
-void FpgaImagePipeline::setCalibRegC(const uint16_t v) { this->calibRegC = v; }
-uint16_t FpgaImagePipeline::getCalibRegC() const { return this->calibRegC; }
+uint16_t FpgaImagePipeline::getThreshold() const {
+    return this->threshold;
+}
 
-void FpgaImagePipeline::setCalibRegD(const uint16_t v) { this->calibRegD = v; }
-uint16_t FpgaImagePipeline::getCalibRegD() const { return this->calibRegD; }
+void FpgaImagePipeline::setRoiRegionSize(uint32_t const s) {
+    this->roiRegionSize = s;
+}
 
-void FpgaImagePipeline::setCalibEnabled(const bool e) { this->calibEnabled = e; }
-bool FpgaImagePipeline::getCalibEnabled() const { return this->calibEnabled; }
+uint32_t FpgaImagePipeline::getRoiRegionSize() const {
+    return this->roiRegionSize;
+}
 
-void FpgaImagePipeline::setCalibImageFile(const std::string& path) { this->calibImageFile = path; }
-void FpgaImagePipeline::setImageFileName(const std::string& path) { this->imageFileName = path; }
+void FpgaImagePipeline::setCalibRegA(uint16_t const v) {
+    this->calibRegA = v;
+}
 
-void FpgaImagePipeline::setSaveImages(const bool save) { this->saveImages = save; }
-bool FpgaImagePipeline::getSaveImages() const { return this->saveImages; }
-void FpgaImagePipeline::setSaveDir(const std::string& dir) { this->saveDir = dir; }
-std::string FpgaImagePipeline::getSaveDir() const { return this->saveDir; }
+uint16_t FpgaImagePipeline::getCalibRegA() const {
+    return this->calibRegA;
+}
+
+void FpgaImagePipeline::setCalibRegB(uint16_t const v) {
+    this->calibRegB = v;
+}
+
+uint16_t FpgaImagePipeline::getCalibRegB() const {
+    return this->calibRegB;
+}
+
+void FpgaImagePipeline::setCalibRegC(uint16_t const v) {
+    this->calibRegC = v;
+}
+
+uint16_t FpgaImagePipeline::getCalibRegC() const {
+    return this->calibRegC;
+}
+
+void FpgaImagePipeline::setCalibRegD(uint16_t const v) {
+    this->calibRegD = v;
+}
+
+uint16_t FpgaImagePipeline::getCalibRegD() const {
+    return this->calibRegD;
+}
+
+void FpgaImagePipeline::setCalibEnabled(bool const e) {
+    this->calibEnabled = e;
+}
+
+bool FpgaImagePipeline::getCalibEnabled() const {
+    return this->calibEnabled;
+}
+
+void FpgaImagePipeline::setCalibImageFile(std::string const &path) {
+    this->calibImageFile = path;
+}
+
+void FpgaImagePipeline::setImageFileName(std::string const &path) {
+    this->imageFileName = path;
+}
+
+void FpgaImagePipeline::setSaveImages(bool const save) {
+    this->saveImages = save;
+}
+
+bool FpgaImagePipeline::getSaveImages() const {
+    return this->saveImages;
+}
+
+void FpgaImagePipeline::setSaveDir(std::string const &dir) {
+    this->saveDir = dir;
+}
+
+std::string FpgaImagePipeline::getSaveDir() const {
+    return this->saveDir;
+}
 
 // ---------------------------------------------------------------------------
 // Internal buffer accessors (for testing/verification)
 // ---------------------------------------------------------------------------
 
-uint16_t FpgaImagePipeline::getRawPixel(const uint32_t idx) const {
-    if (idx >= this->rawBuf.size()) {
-        throw std::out_of_range("getRawPixel: index out of range");
-    }
+uint16_t FpgaImagePipeline::getRawPixel(uint32_t const idx) const {
+    if (idx >= this->rawBuf.size()) { throw std::out_of_range("getRawPixel: index out of range"); }
     return this->rawBuf[idx];
 }
 
-uint16_t FpgaImagePipeline::getBlurPixel(const uint32_t idx) const {
-    if (idx >= this->blurBuf.size()) {
-        throw std::out_of_range("getBlurPixel: index out of range");
-    }
+uint16_t FpgaImagePipeline::getBlurPixel(uint32_t const idx) const {
+    if (idx >= this->blurBuf.size()) { throw std::out_of_range("getBlurPixel: index out of range"); }
     return this->blurBuf[idx];
 }
 
-bool FpgaImagePipeline::getThreshBit(const uint32_t idx) const {
-    const uint32_t byteIdx = idx / 8;
-    if (byteIdx >= this->threshBuf.size()) {
-        throw std::out_of_range("getThreshBit: index out of range");
-    }
-    const uint8_t bitIdx = static_cast<uint8_t>(7u - (idx % 8u));
+bool FpgaImagePipeline::getThreshBit(uint32_t const idx) const {
+    uint32_t const byteIdx = idx / 8;
+    if (byteIdx >= this->threshBuf.size()) { throw std::out_of_range("getThreshBit: index out of range"); }
+    uint8_t const bitIdx = static_cast<uint8_t>(7u - (idx % 8u));
     return (this->threshBuf[byteIdx] >> bitIdx) & 0x01;
 }
 
-uint16_t FpgaImagePipeline::getRowSum(const uint32_t row) const {
-    if (row >= this->rowSumBuf.size()) {
-        throw std::out_of_range("getRowSum: index out of range");
-    }
+uint16_t FpgaImagePipeline::getRowSum(uint32_t const row) const {
+    if (row >= this->rowSumBuf.size()) { throw std::out_of_range("getRowSum: index out of range"); }
     return this->rowSumBuf[row];
 }
 
-uint16_t FpgaImagePipeline::getColSum(const uint32_t col) const {
-    if (col >= this->colSumBuf.size()) {
-        throw std::out_of_range("getColSum: index out of range");
-    }
+uint16_t FpgaImagePipeline::getColSum(uint32_t const col) const {
+    if (col >= this->colSumBuf.size()) { throw std::out_of_range("getColSum: index out of range"); }
     return this->colSumBuf[col];
 }
 
@@ -130,8 +181,8 @@ void FpgaImagePipeline::reset(uint64_t /*callTime*/) {
         throw std::invalid_argument("FpgaImagePipeline: roiRegionSize must be 64, 128, or 256");
     }
 
-    const size_t n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
-    const size_t threshBytes = (n + 7) / 8;
+    size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
+    size_t const threshBytes = (n + 7) / 8;
 
     this->rawBuf.assign(n, 0);
     this->blurBuf.assign(n, 0);
@@ -144,24 +195,23 @@ void FpgaImagePipeline::reset(uint64_t /*callTime*/) {
     if (!this->calibImageFile.empty()) {
         cv::Mat calibMat = cv::imread(this->calibImageFile, cv::IMREAD_ANYDEPTH | cv::IMREAD_GRAYSCALE);
         if (calibMat.empty()) {
-            bskLogger.bskLog(BSK_WARNING,
-                             "FpgaImagePipeline: failed to load calibration image from '%s'",
-                             this->calibImageFile.c_str());
+            bskLogger.bskLog(
+                BSK_WARNING,
+                "FpgaImagePipeline: failed to load calibration image from '%s'",
+                this->calibImageFile.c_str()
+            );
         } else {
-            const uint32_t cw = static_cast<uint32_t>(calibMat.cols);
-            const uint32_t ch = static_cast<uint32_t>(calibMat.rows);
+            uint32_t const cw = static_cast<uint32_t>(calibMat.cols);
+            uint32_t const ch = static_cast<uint32_t>(calibMat.rows);
             if (cw != this->imageWidth || ch != this->imageHeight) {
                 throw std::invalid_argument(
-                    "FpgaImagePipeline: calibration image dimensions do not match this->imageWidth/this->imageHeight");
+                    "FpgaImagePipeline: calibration image dimensions do not match this->imageWidth/this->imageHeight"
+                );
             }
-            if (calibMat.depth() != CV_16U) {
-                calibMat.convertTo(calibMat, CV_16U);
-            }
+            if (calibMat.depth() != CV_16U) { calibMat.convertTo(calibMat, CV_16U); }
             this->calibImage.resize(n);
             for (uint32_t r = 0; r < ch; r++) {
-                for (uint32_t c = 0; c < cw; c++) {
-                    this->calibImage[r * cw + c] = calibMat.at<uint16_t>(r, c);
-                }
+                for (uint32_t c = 0; c < cw; c++) { this->calibImage[r * cw + c] = calibMat.at<uint16_t>(r, c); }
             }
         }
     }
@@ -173,9 +223,7 @@ void FpgaImagePipeline::reset(uint64_t /*callTime*/) {
 
 void FpgaImagePipeline::updateState(uint64_t callTime) {
     uint64_t imageTimeTag = 0;
-    if (!loadImage(callTime, imageTimeTag)) {
-        return;
-    }
+    if (!loadImage(callTime, imageTimeTag)) { return; }
 
     this->applyCalibration();
     this->applyBlurAndThreshold();
@@ -186,23 +234,21 @@ void FpgaImagePipeline::updateState(uint64_t callTime) {
 
     this->publishOutputs(callTime, imageTimeTag, roi);
 
-    if (this->saveImages && !this->saveDir.empty()) {
-        this->saveDataToDisk(imageTimeTag, roi);
-    }
+    if (this->saveImages && !this->saveDir.empty()) { this->saveDataToDisk(imageTimeTag, roi); }
 }
 
 // ---------------------------------------------------------------------------
 // loadImage()
 // ---------------------------------------------------------------------------
 
-bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut) {
+bool FpgaImagePipeline::loadImage(uint64_t const callTime, uint64_t &timeTagOut) {
     bool imageSourceIsConfigured = false;
 
     if (!this->imageFileName.empty()) {
         cv::Mat img = cv::imread(this->imageFileName, cv::IMREAD_ANYDEPTH | cv::IMREAD_GRAYSCALE);
         if (img.empty()) {
-            bskLogger.bskLog(
-                BSK_WARNING, "FpgaImagePipeline: failed to load image from '%s'", this->imageFileName.c_str());
+            bskLogger
+                .bskLog(BSK_WARNING, "FpgaImagePipeline: failed to load image from '%s'", this->imageFileName.c_str());
         }
 
         // Normalise to 16-bit so img.at<uint16_t> is always valid.
@@ -216,20 +262,22 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
             img.convertTo(img, CV_16U);
         }
 
-        const auto fileWidth = static_cast<uint32_t>(img.cols);
+        auto const fileWidth = static_cast<uint32_t>(img.cols);
         // If dimensions differ from allocated buffers, resize everything
-        if (const auto fileHeight = static_cast<uint32_t>(img.rows);
+        if (auto const fileHeight = static_cast<uint32_t>(img.rows);
             fileWidth != this->imageWidth || fileHeight != this->imageHeight) {
-            bskLogger.bskLog(BSK_WARNING,
-                             "FpgaImagePipeline: image file dimensions %ux%u differ from "
-                             "configured %ux%u; re-allocating buffers",
-                             fileWidth,
-                             fileHeight,
-                             this->imageWidth,
-                             this->imageHeight);
+            bskLogger.bskLog(
+                BSK_WARNING,
+                "FpgaImagePipeline: image file dimensions %ux%u differ from "
+                "configured %ux%u; re-allocating buffers",
+                fileWidth,
+                fileHeight,
+                this->imageWidth,
+                this->imageHeight
+            );
             this->imageWidth = fileWidth;
             this->imageHeight = fileHeight;
-            const size_t newN = static_cast<size_t>(this->imageWidth) * this->imageHeight;
+            size_t const newN = static_cast<size_t>(this->imageWidth) * this->imageHeight;
             this->rawBuf.assign(newN, 0);
             this->blurBuf.assign(newN, 0);
             this->threshBuf.assign((newN + 7) / 8, 0);
@@ -239,27 +287,25 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
 
         for (uint32_t r = 0; r < this->imageHeight; r++) {
             for (uint32_t c = 0; c < this->imageWidth; c++) {
-                this->rawBuf[r * this->imageWidth + c] = std::min(img.at<uint16_t>(r, c), uint16_t{4095});
+                this->rawBuf[r * this->imageWidth + c] = std::min(img.at<uint16_t>(r, c), uint16_t{4'095});
             }
         }
         timeTagOut = callTime;
         imageSourceIsConfigured = true;
 
     } else if (imageInMsg.isLinked()) {
-        const CameraImageMsgPayload imgMsg = imageInMsg();
-        if (!imgMsg.valid || imgMsg.imagePointer == nullptr) {
-            return imageSourceIsConfigured;
-        }
+        CameraImageMsgPayload const imgMsg = imageInMsg();
+        if (!imgMsg.valid || imgMsg.imagePointer == nullptr) { return imageSourceIsConfigured; }
 
         // Detect PNG magic bytes: if the buffer starts with \x89PNG, decode it;
         // otherwise treat the buffer as packed uint16_t 12-bit grayscale pixels.
         static constexpr uint8_t kPngMagic[4] = {0x89, 0x50, 0x4E, 0x47};
-        const auto* bytes = static_cast<const uint8_t*>(imgMsg.imagePointer);
-        const bool isPng = imgMsg.imageBufferLength >= 4 && bytes[0] == kPngMagic[0] && bytes[1] == kPngMagic[1] &&
-                           bytes[2] == kPngMagic[2] && bytes[3] == kPngMagic[3];
+        auto const* bytes = static_cast<uint8_t const*>(imgMsg.imagePointer);
+        bool const isPng = imgMsg.imageBufferLength >= 4 && bytes[0] == kPngMagic[0] && bytes[1] == kPngMagic[1]
+                        && bytes[2] == kPngMagic[2] && bytes[3] == kPngMagic[3];
 
         if (isPng) {
-            const std::vector<uint8_t> buf(bytes, bytes + imgMsg.imageBufferLength);
+            std::vector<uint8_t> const buf(bytes, bytes + imgMsg.imageBufferLength);
             cv::Mat decoded = cv::imdecode(buf, cv::IMREAD_COLOR);
             if (decoded.empty()) {
                 bskLogger.bskLog(BSK_WARNING, "FpgaImagePipeline: PNG decode failed");
@@ -271,18 +317,20 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
             cv::Mat gray16;
             gray.convertTo(gray16, CV_16U, 16.0);
 
-            const auto msgWidth = static_cast<uint32_t>(gray16.cols);
-            const auto msgHeight = static_cast<uint32_t>(gray16.rows);
+            auto const msgWidth = static_cast<uint32_t>(gray16.cols);
+            auto const msgHeight = static_cast<uint32_t>(gray16.rows);
             if (msgWidth != this->imageWidth || msgHeight != this->imageHeight) {
-                bskLogger.bskLog(BSK_WARNING,
-                                 "FpgaImagePipeline: PNG dimensions %ux%u differ from configured %ux%u; re-allocating",
-                                 msgWidth,
-                                 msgHeight,
-                                 this->imageWidth,
-                                 this->imageHeight);
+                bskLogger.bskLog(
+                    BSK_WARNING,
+                    "FpgaImagePipeline: PNG dimensions %ux%u differ from configured %ux%u; re-allocating",
+                    msgWidth,
+                    msgHeight,
+                    this->imageWidth,
+                    this->imageHeight
+                );
                 this->imageWidth = msgWidth;
                 this->imageHeight = msgHeight;
-                const size_t newN = static_cast<size_t>(msgWidth) * msgHeight;
+                size_t const newN = static_cast<size_t>(msgWidth) * msgHeight;
                 this->rawBuf.assign(newN, 0);
                 this->blurBuf.assign(newN, 0);
                 this->threshBuf.assign((newN + 7) / 8, 0);
@@ -292,16 +340,14 @@ bool FpgaImagePipeline::loadImage(const uint64_t callTime, uint64_t& timeTagOut)
             for (uint32_t r = 0; r < this->imageHeight; ++r) {
                 for (uint32_t c = 0; c < this->imageWidth; ++c) {
                     this->rawBuf[r * this->imageWidth + c] =
-                        std::min(gray16.at<uint16_t>(static_cast<int>(r), static_cast<int>(c)), uint16_t{4095});
+                        std::min(gray16.at<uint16_t>(static_cast<int>(r), static_cast<int>(c)), uint16_t{4'095});
                 }
             }
         } else {
             // Raw uint16_t 12-bit grayscale pixels
-            const size_t n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
-            const auto* src = reinterpret_cast<const uint16_t*>(imgMsg.imagePointer);
-            for (size_t i = 0; i < n; i++) {
-                this->rawBuf[i] = src[i] & 0x0FFF;
-            }
+            size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
+            auto const* src = reinterpret_cast<uint16_t const*>(imgMsg.imagePointer);
+            for (size_t i = 0; i < n; i++) { this->rawBuf[i] = src[i] & 0x0FFF; }
         }
         timeTagOut = imgMsg.timeTag;
         imageSourceIsConfigured = true;
@@ -320,71 +366,48 @@ void FpgaImagePipeline::applyCalibration() {
         return;  // this->rawBuf already holds the uncalibrated 12-bit pixels
     }
 
-    const size_t n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
+    size_t const n = static_cast<size_t>(this->imageWidth) * this->imageHeight;
     for (size_t i = 0; i < n; i++) {
         uint16_t raw = this->rawBuf[i];
-        const uint16_t calibWord = this->calibImage[i];
-        const uint8_t opCode = static_cast<uint8_t>((calibWord >> 12) & 0x0F);
-        const uint16_t calibVal = calibWord & 0x0FFF;
+        uint16_t const calibWord = this->calibImage[i];
+        uint8_t const opCode = static_cast<uint8_t>((calibWord >> 12) & 0x0F);
+        uint16_t const calibVal = calibWord & 0x0FFF;
 
         // Select register value based on opCode
         uint16_t regVal = 0;
         switch (opCode) {
-            case 0x1:
-            case 0x6:
-            case 0xb:
-                regVal = this->calibRegA;
-                break;
-            case 0x2:
-            case 0x7:
-            case 0xc:
-                regVal = this->calibRegB;
-                break;
-            case 0x3:
-            case 0x8:
-            case 0xd:
-                regVal = this->calibRegC;
-                break;
-            case 0x4:
-            case 0x9:
-            case 0xe:
-                regVal = this->calibRegD;
-                break;
-            default:
-                regVal = calibVal;
-                break;
+        case 0x1:
+        case 0x6:
+        case 0xb: regVal = this->calibRegA; break;
+        case 0x2:
+        case 0x7:
+        case 0xc: regVal = this->calibRegB; break;
+        case 0x3:
+        case 0x8:
+        case 0xd: regVal = this->calibRegC; break;
+        case 0x4:
+        case 0x9:
+        case 0xe: regVal = this->calibRegD; break;
+        default: regVal = calibVal; break;
         }
 
         switch (opCode) {
-            case 0x0:
-                break;  // pass
-            case 0x1:
-            case 0x2:
-            case 0x3:
-            case 0x4:
-                raw = regVal;
-                break;  // set to reg
-            case 0x5:
-                raw = calibVal;
-                break;  // set to literal
-            case 0x6:
-            case 0x7:
-            case 0x8:
-            case 0x9:
-                raw = clamp12(static_cast<int32_t>(raw) + static_cast<int32_t>(regVal));
-                break;
-            case 0xa:
-                raw = clamp12(static_cast<int32_t>(raw) + static_cast<int32_t>(calibVal));
-                break;
-            case 0xb:
-            case 0xc:
-            case 0xd:
-            case 0xe:
-                raw = clamp12(static_cast<int32_t>(raw) - static_cast<int32_t>(regVal));
-                break;
-            case 0xf:
-                raw = clamp12(static_cast<int32_t>(raw) - static_cast<int32_t>(calibVal));
-                break;
+        case 0x0: break;  // pass
+        case 0x1:
+        case 0x2:
+        case 0x3:
+        case 0x4: raw = regVal; break;    // set to reg
+        case 0x5: raw = calibVal; break;  // set to literal
+        case 0x6:
+        case 0x7:
+        case 0x8:
+        case 0x9: raw = clamp12(static_cast<int32_t>(raw) + static_cast<int32_t>(regVal)); break;
+        case 0xa: raw = clamp12(static_cast<int32_t>(raw) + static_cast<int32_t>(calibVal)); break;
+        case 0xb:
+        case 0xc:
+        case 0xd:
+        case 0xe: raw = clamp12(static_cast<int32_t>(raw) - static_cast<int32_t>(regVal)); break;
+        case 0xf: raw = clamp12(static_cast<int32_t>(raw) - static_cast<int32_t>(calibVal)); break;
         }
         this->rawBuf[i] = raw;
     }
@@ -395,21 +418,21 @@ void FpgaImagePipeline::applyCalibration() {
 // ---------------------------------------------------------------------------
 
 void FpgaImagePipeline::applyBlurAndThreshold() {
-    const uint32_t W = this->imageWidth;
-    const uint32_t H = this->imageHeight;
-    const uint32_t k = this->kernelSize;
-    const uint32_t half = (k - 1) / 2;
-    const uint8_t shift = blurShift(k);
+    uint32_t const W = this->imageWidth;
+    uint32_t const H = this->imageHeight;
+    uint32_t const k = this->kernelSize;
+    uint32_t const half = (k - 1) / 2;
+    uint8_t const shift = blurShift(k);
 
     // Border pixels receive no kernel output — zero both output buffers up front.
     std::ranges::fill(this->blurBuf, uint16_t{0});
     std::ranges::fill(this->threshBuf, uint8_t{0});
 
-    if (W < k || H < k) return;
+    if (W < k || H < k) { return; }
 
     // Number of valid kernel positions in each direction.
-    const uint32_t numOutCols = W - k + 1;  // left edge c = 0 .. W-k
-    const uint32_t numOutRows = H - k + 1;  // top  edge r = 0 .. H-k
+    uint32_t const numOutCols = W - k + 1;  // left edge c = 0 .. W-k
+    uint32_t const numOutRows = H - k + 1;  // top  edge r = 0 .. H-k
 
     // Running 1-D row sums: rowSums[i] holds the horizontal window sum for the
     // i-th row of the current k-row block.  Size is exactly k (5, 7, or 9).
@@ -419,37 +442,33 @@ void FpgaImagePipeline::applyBlurAndThreshold() {
         // Initialise each row's sliding sum over columns [0 .. k-1].
         for (uint32_t i = 0; i < k; i++) {
             rowSums[i] = 0;
-            for (uint32_t j = 0; j < k; j++) {
-                rowSums[i] += this->rawBuf[(rStart + i) * W + j];
-            }
+            for (uint32_t j = 0; j < k; j++) { rowSums[i] += this->rawBuf[(rStart + i) * W + j]; }
         }
 
         // Slide the 1-D window one column at a time across the valid range.
         for (uint32_t c = 0; c < numOutCols; c++) {
             // Vertical reduction: sum the k row sums → 2-D box sum for this position.
             uint32_t colSum = 0;
-            for (uint32_t i = 0; i < k; i++) {
-                colSum += rowSums[i];
-            }
+            for (uint32_t i = 0; i < k; i++) { colSum += rowSums[i]; }
 
             // Write the normalised blurred pixel at the centre of the k×k footprint.
-            const uint32_t outRow = rStart + half;
-            const uint32_t outCol = c + half;
-            const uint16_t blurred = static_cast<uint16_t>(colSum >> shift);
+            uint32_t const outRow = rStart + half;
+            uint32_t const outCol = c + half;
+            uint16_t const blurred = static_cast<uint16_t>(colSum >> shift);
             this->blurBuf[outRow * W + outCol] = blurred;
 
             // Threshold inline — mirrors the FPGA pipeline where each blurred pixel
             // is compared against the threshold immediately as it exits the blur stage.
             if (blurred > this->threshold) {
-                const size_t pixIdx = static_cast<size_t>(outRow) * W + outCol;
-                const uint32_t byteIdx = static_cast<uint32_t>(pixIdx / 8);
-                const uint8_t bitIdx = static_cast<uint8_t>(7u - (pixIdx % 8u));
+                size_t const pixIdx = static_cast<size_t>(outRow) * W + outCol;
+                uint32_t const byteIdx = static_cast<uint32_t>(pixIdx / 8);
+                uint8_t const bitIdx = static_cast<uint8_t>(7u - (pixIdx % 8u));
                 this->threshBuf[byteIdx] |= static_cast<uint8_t>(1u << bitIdx);
             }
 
             // Advance each row's window: add the pixel entering the right edge,
             // subtract the pixel leaving the left edge.
-            if (const uint32_t cNext = c + k; cNext < W) {
+            if (uint32_t const cNext = c + k; cNext < W) {
                 for (uint32_t i = 0; i < k; i++) {
                     rowSums[i] += this->rawBuf[(rStart + i) * W + cNext];
                     rowSums[i] -= this->rawBuf[(rStart + i) * W + c];
@@ -467,13 +486,13 @@ void FpgaImagePipeline::computeRowColSums() {
     std::ranges::fill(this->rowSumBuf, uint16_t{0});
     std::ranges::fill(this->colSumBuf, uint16_t{0});
 
-    const uint32_t W = this->imageWidth;
-    const uint32_t H = this->imageHeight;
+    uint32_t const W = this->imageWidth;
+    uint32_t const H = this->imageHeight;
     for (uint32_t r = 0; r < H; r++) {
         for (uint32_t c = 0; c < W; c++) {
-            const size_t idx = static_cast<size_t>(r) * W + c;
-            const uint32_t byteIdx = static_cast<uint32_t>(idx / 8);
-            const uint8_t bitIdx = static_cast<uint8_t>(7u - (idx % 8u));
+            size_t const idx = static_cast<size_t>(r) * W + c;
+            uint32_t const byteIdx = static_cast<uint32_t>(idx / 8);
+            uint8_t const bitIdx = static_cast<uint8_t>(7u - (idx % 8u));
             if ((this->threshBuf[byteIdx] >> bitIdx) & 0x01) {
                 this->rowSumBuf[r]++;
                 this->colSumBuf[c]++;
@@ -486,25 +505,25 @@ void FpgaImagePipeline::computeRowColSums() {
 // computeRoi()
 // ---------------------------------------------------------------------------
 
-void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload& roi) const {
-    const uint32_t W = this->imageWidth;
-    const uint32_t H = this->imageHeight;
-    const uint32_t rSize = this->roiRegionSize;
+void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload &roi) const {
+    uint32_t const W = this->imageWidth;
+    uint32_t const H = this->imageHeight;
+    uint32_t const rSize = this->roiRegionSize;
 
-    const uint32_t numRegionCols = W / rSize;
-    const uint32_t numRegionRows = H / rSize;
-    const uint32_t numRegions = numRegionCols * numRegionRows;
+    uint32_t const numRegionCols = W / rSize;
+    uint32_t const numRegionRows = H / rSize;
+    uint32_t const numRegions = numRegionCols * numRegionRows;
 
     std::vector<uint32_t> regionCounts(numRegions, 0);
 
     for (uint32_t r = 0; r < numRegionRows * rSize; r++) {
         for (uint32_t c = 0; c < numRegionCols * rSize; c++) {
-            const size_t idx = static_cast<size_t>(r) * W + c;
-            const auto byteIdx = static_cast<uint32_t>(idx / 8);
-            const auto bitIdx = static_cast<uint8_t>(7u - (idx % 8u));
+            size_t const idx = static_cast<size_t>(r) * W + c;
+            auto const byteIdx = static_cast<uint32_t>(idx / 8);
+            auto const bitIdx = static_cast<uint8_t>(7u - (idx % 8u));
             if (((this->threshBuf[byteIdx] >> bitIdx) & 0x01) != 0) {
-                const uint32_t regionRow = r / rSize;
-                const uint32_t regionCol = c / rSize;
+                uint32_t const regionRow = r / rSize;
+                uint32_t const regionCol = c / rSize;
                 regionCounts[regionRow * numRegionCols + regionCol]++;
             }
         }
@@ -513,7 +532,7 @@ void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload& roi) const {
     // Partial sort to find top FPGA_ROI_TOP_COUNT regions by count
     std::vector<uint32_t> indices(numRegions);
     std::iota(indices.begin(), indices.end(), 0);
-    const uint32_t topCount = (numRegions < FPGA_ROI_TOP_COUNT) ? numRegions : FPGA_ROI_TOP_COUNT;
+    uint32_t const topCount = (numRegions < FPGA_ROI_TOP_COUNT) ? numRegions : FPGA_ROI_TOP_COUNT;
     std::ranges::partial_sort(indices, indices.begin() + topCount, [&regionCounts](uint32_t a, uint32_t b) {
         return regionCounts[a] > regionCounts[b];
     });
@@ -522,7 +541,7 @@ void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload& roi) const {
     roi.numValidRegions = topCount;
     for (uint32_t k = 0; k < FPGA_ROI_TOP_COUNT; k++) {
         if (k < topCount) {
-            const uint32_t idx = indices[k];
+            uint32_t const idx = indices[k];
             roi.topBins[k].row = static_cast<uint16_t>(idx / numRegionCols);
             roi.topBins[k].col = static_cast<uint16_t>(idx % numRegionCols);
             roi.topBins[k].count = regionCounts[idx];
@@ -536,10 +555,10 @@ void FpgaImagePipeline::computeRoi(FpgaBinsMsgPayload& roi) const {
 // publishOutputs()
 // ---------------------------------------------------------------------------
 
-void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t imageTimeTag, FpgaBinsMsgPayload& roi) {
-    const uint32_t W = this->imageWidth;
-    const uint32_t H = this->imageHeight;
-    const size_t n = static_cast<size_t>(W) * H;
+void FpgaImagePipeline::publishOutputs(uint64_t const callTime, uint64_t const imageTimeTag, FpgaBinsMsgPayload &roi) {
+    uint32_t const W = this->imageWidth;
+    uint32_t const H = this->imageHeight;
+    size_t const n = static_cast<size_t>(W) * H;
 
     // Raw image
     FpgaRawImageMsgPayload rawMsg{};
@@ -548,7 +567,7 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
     rawMsg.height = H;
     rawMsg.imagePointer = this->rawBuf.data();
     rawMsg.imageBufferLength = static_cast<int32_t>(n * sizeof(uint16_t));
-    rawImageOutMsg.write(&rawMsg, moduleID, callTime);
+    rawImageOutMsg.write(rawMsg, moduleID, callTime);
 
     // Blurred image
     FpgaRawImageMsgPayload blurMsg{};
@@ -557,7 +576,7 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
     blurMsg.height = H;
     blurMsg.imagePointer = this->blurBuf.data();
     blurMsg.imageBufferLength = static_cast<int32_t>(n * sizeof(uint16_t));
-    blurredImageOutMsg.write(&blurMsg, moduleID, callTime);
+    blurredImageOutMsg.write(blurMsg, moduleID, callTime);
 
     // Threshold image
     FpgaThreshImageMsgPayload threshMsg{};
@@ -567,7 +586,7 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
     threshMsg.threshold = this->threshold;
     threshMsg.imagePointer = this->threshBuf.data();
     threshMsg.imageBufferLength = static_cast<int32_t>(this->threshBuf.size());
-    threshImageOutMsg.write(&threshMsg, moduleID, callTime);
+    threshImageOutMsg.write(threshMsg, moduleID, callTime);
 
     // Row/col sums
     FpgaRowColSumMsgPayload rcMsg{};
@@ -578,11 +597,11 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
     rcMsg.colSumPointer = this->colSumBuf.data();
     rcMsg.rowSumBufferLength = static_cast<int32_t>(H * sizeof(uint16_t));
     rcMsg.colSumBufferLength = static_cast<int32_t>(W * sizeof(uint16_t));
-    rowColSumOutMsg.write(&rcMsg, moduleID, callTime);
+    rowColSumOutMsg.write(rcMsg, moduleID, callTime);
 
     // ROI
     roi.timeTag = imageTimeTag;
-    roiOutMsg.write(&roi, moduleID, callTime);
+    roiOutMsg.write(roi, moduleID, callTime);
 
     // Config snapshot
     FpgaPipelineConfigMsgPayload cfgMsg{};
@@ -601,14 +620,14 @@ void FpgaImagePipeline::publishOutputs(const uint64_t callTime, const uint64_t i
         std::strncpy(cfgMsg.calibImageRef, this->calibImageFile.c_str(), FPGA_CALIB_REF_LEN - 1);
         cfgMsg.calibImageRef[FPGA_CALIB_REF_LEN - 1] = '\0';
     }
-    configOutMsg.write(&cfgMsg, moduleID, callTime);
+    configOutMsg.write(cfgMsg, moduleID, callTime);
 }
 
 // ---------------------------------------------------------------------------
 // saveDataToDisk()
 // ---------------------------------------------------------------------------
 
-void FpgaImagePipeline::saveDataToDisk(uint64_t timeTagNs, const FpgaBinsMsgPayload& roi) {
+void FpgaImagePipeline::saveDataToDisk(uint64_t timeTagNs, FpgaBinsMsgPayload const &roi) {
     std::string const prefix = this->saveDir + "/" + std::to_string(timeTagNs) + "_";
     uint32_t const W = this->imageWidth;
     uint32_t const H = this->imageHeight;
@@ -625,29 +644,25 @@ void FpgaImagePipeline::saveDataToDisk(uint64_t timeTagNs, const FpgaBinsMsgPayl
     // threshold.png — 8-bit grayscale (unpack 1-bit buffer to 0/255)
     std::vector<uint8_t> threshUnpacked(n);
     for (size_t i = 0; i < n; i++) {
-        const uint32_t byteIdx = static_cast<uint32_t>(i / 8);
-        const uint8_t bitIdx = static_cast<uint8_t>(7u - (i % 8u));
+        uint32_t const byteIdx = static_cast<uint32_t>(i / 8);
+        uint8_t const bitIdx = static_cast<uint8_t>(7u - (i % 8u));
         threshUnpacked[i] = ((this->threshBuf[byteIdx] >> bitIdx) & 0x01) ? 255 : 0;
     }
-    const cv::Mat threshMat(static_cast<int>(H), static_cast<int>(W), CV_8UC1, threshUnpacked.data());
+    cv::Mat const threshMat(static_cast<int>(H), static_cast<int>(W), CV_8UC1, threshUnpacked.data());
     cv::imwrite(prefix + "threshold.png", threshMat);
 
     // row_sums.csv
     {
         std::ofstream f(prefix + "row_sums.csv");
         f << "row,count\n";
-        for (uint32_t r = 0; r < H; r++) {
-            f << r << "," << this->rowSumBuf[r] << "\n";
-        }
+        for (uint32_t r = 0; r < H; r++) { f << r << "," << this->rowSumBuf[r] << "\n"; }
     }
 
     // col_sums.csv
     {
         std::ofstream f(prefix + "col_sums.csv");
         f << "col,count\n";
-        for (uint32_t c = 0; c < W; c++) {
-            f << c << "," << this->colSumBuf[c] << "\n";
-        }
+        for (uint32_t c = 0; c < W; c++) { f << c << "," << this->colSumBuf[c] << "\n"; }
     }
 
     // roi.csv

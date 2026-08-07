@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "mtbMomentumManagement.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/svd.h>
+
 #include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -100,11 +102,13 @@ void MtbMomentumManagement::updateState(uint64_t callTime) {
      * Saturate dipoles.
      */
     for (j = 0; j < numMTB; j++) {
-        if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] > this->mtbConfigParams.maxMtbDipoles[j])
+        if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] > this->mtbConfigParams.maxMtbDipoles[j]) {
             mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] = this->mtbConfigParams.maxMtbDipoles[j];
+        }
 
-        if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] < -this->mtbConfigParams.maxMtbDipoles[j])
+        if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] < -this->mtbConfigParams.maxMtbDipoles[j]) {
             mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] = -this->mtbConfigParams.maxMtbDipoles[j];
+        }
     }
 
     /*! - Compute the desired Body torque produced by the torque bars.*/
@@ -124,9 +128,9 @@ void MtbMomentumManagement::updateState(uint64_t callTime) {
     /*
      * Write output messages.
      */
-    this->mtbCmdOutMsg.write(&mtbCmdOutputMsgBuffer, moduleID, callTime);
+    this->mtbCmdOutMsg.write(mtbCmdOutputMsgBuffer, moduleID, callTime);
     vAdd(this->tauDesiredRW_W, numRW, rwMotorTorqueOutMsgBuffer.motorTorque, rwMotorTorqueOutMsgBuffer.motorTorque);
-    this->rwMotorTorqueOutMsg.write(&rwMotorTorqueOutMsgBuffer, moduleID, callTime);
+    this->rwMotorTorqueOutMsg.write(rwMotorTorqueOutMsgBuffer, moduleID, callTime);
 
     return;
 }

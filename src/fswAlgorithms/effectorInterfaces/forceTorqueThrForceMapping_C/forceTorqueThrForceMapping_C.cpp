@@ -2,6 +2,7 @@
 // Copyright (c) 2021, Autonomous Vehicle System Lab, University of Colorado at Boulder
 
 #include "forceTorqueThrForceMapping_C.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -26,12 +27,14 @@ void ForceTorqueThrForceMapping_C::reset(uint64_t callTime) {
     vehConfigInMsgBuffer = this->vehConfigInMsg();
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
-    this->numThrusters = (uint32_t)thrConfigInMsgBuffer.numThrusters;
+    this->numThrusters = (uint32_t) thrConfigInMsgBuffer.numThrusters;
     v3Copy(vehConfigInMsgBuffer.CoM_B, this->CoM_B);
     if (this->numThrusters > MAX_EFF_CNT) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "Error: forceTorqueThrForceMapping thruster configuration input message has a number of "
-                               "thrusters that is larger than MAX_EFF_CNT");
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "Error: forceTorqueThrForceMapping thruster configuration input message has a number of "
+            "thrusters that is larger than MAX_EFF_CNT"
+        );
     }
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
@@ -39,9 +42,11 @@ void ForceTorqueThrForceMapping_C::reset(uint64_t callTime) {
         v3Copy(thrConfigInMsgBuffer.thrusters[i].rThrust_B, this->rThruster_B[i]);
         v3Copy(thrConfigInMsgBuffer.thrusters[i].tHatThrust_B, this->gtThruster_B[i]);
         if (thrConfigInMsgBuffer.thrusters[i].maxThrust <= 0.0) {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                   "Error: forceTorqueThrForceMapping: A configured thruster has a non-sensible "
-                                   "saturation limit of <= 0 N!");
+            this->bskLogger.bskLog(
+                BSK_ERROR,
+                "Error: forceTorqueThrForceMapping: A configured thruster has a non-sensible "
+                "saturation limit of <= 0 N!"
+            );
         }
     }
 }
@@ -56,14 +61,10 @@ void ForceTorqueThrForceMapping_C::updateState(uint64_t callTime) {
     THRArrayCmdForceMsgPayload thrForceCmdOutMsgBuffer = {};  //!< local copy of message buffer
 
     /* Check if torque message is linked and read, zero out if not*/
-    if (this->cmdTorqueInMsg.isLinked()) {
-        cmdTorqueInMsgBuffer = this->cmdTorqueInMsg();
-    }
+    if (this->cmdTorqueInMsg.isLinked()) { cmdTorqueInMsgBuffer = this->cmdTorqueInMsg(); }
 
     /* Check if force message is linked and read, zero out if not*/
-    if (this->cmdForceInMsg.isLinked()) {
-        cmdForceInMsgBuffer = this->cmdForceInMsg();
-    }
+    if (this->cmdForceInMsg.isLinked()) { cmdForceInMsgBuffer = this->cmdForceInMsg(); }
 
     /* Initialize variables */
     double DG[6][MAX_EFF_CNT];
@@ -75,13 +76,11 @@ void ForceTorqueThrForceMapping_C::updateState(uint64_t callTime) {
     double force_B[MAX_EFF_CNT];
     double forceTorque_B[6];
     double forceSubtracted_B[MAX_EFF_CNT];
-    vSetZero(force_B, (size_t)MAX_EFF_CNT);
-    vSetZero(forceSubtracted_B, (size_t)MAX_EFF_CNT);
+    vSetZero(force_B, (size_t) MAX_EFF_CNT);
+    vSetZero(forceSubtracted_B, (size_t) MAX_EFF_CNT);
 
     for (uint32_t i = 0; i < 6; i++) {
-        for (uint32_t j = 0; j < MAX_EFF_CNT; j++) {
-            DG[i][j] = 0.0;
-        }
+        for (uint32_t j = 0; j < MAX_EFF_CNT; j++) { DG[i][j] = 0.0; }
     }
 
     /* Create the torque and force vector */
@@ -99,14 +98,10 @@ void ForceTorqueThrForceMapping_C::updateState(uint64_t callTime) {
     for (uint32_t i = 0; i < this->numThrusters; i++) {
         /* Compute moment arm and fill in */
         v3Cross(rThrusterRelCOM_B[i], this->gtThruster_B[i], rCrossGt);
-        for (uint32_t j = 0; j < 3; j++) {
-            DG[j][i] = rCrossGt[j];
-        }
+        for (uint32_t j = 0; j < 3; j++) { DG[j][i] = rCrossGt[j]; }
 
         /* Fill in control axes */
-        for (uint32_t j = 0; j < 3; j++) {
-            DG[j + 3][i] = this->gtThruster_B[i][j];
-        }
+        for (uint32_t j = 0; j < 3; j++) { DG[j + 3][i] = this->gtThruster_B[i][j]; }
     }
 
     /* Check DG for zero rows */
@@ -123,7 +118,7 @@ void ForceTorqueThrForceMapping_C::updateState(uint64_t callTime) {
 
     /* Create the DG w/ zero rows removed */
     double DG_full[6 * MAX_EFF_CNT];
-    vSetZero(DG_full, (size_t)6 * MAX_EFF_CNT);
+    vSetZero(DG_full, (size_t) 6 * MAX_EFF_CNT);
     uint32_t zeroesPassed;
     zeroesPassed = 0;
     for (uint32_t i = 0; i < 6; i++) {
@@ -138,25 +133,21 @@ void ForceTorqueThrForceMapping_C::updateState(uint64_t callTime) {
 
     /* Compute the minimum norm inverse of DG*/
     double DGT_DGDGT_inv[6 * 6];
-    mMinimumNormInverse(DG_full, (size_t)6 - numZeroes, (size_t)MAX_EFF_CNT, DGT_DGDGT_inv);
+    mMinimumNormInverse(DG_full, (size_t) 6 - numZeroes, (size_t) MAX_EFF_CNT, DGT_DGDGT_inv);
 
     /* Compute the force for each thruster */
-    mMultV(DGT_DGDGT_inv, (size_t)this->numThrusters, (size_t)6 - numZeroes, forceTorque_B, force_B);
+    mMultV(DGT_DGDGT_inv, (size_t) this->numThrusters, (size_t) 6 - numZeroes, forceTorque_B, force_B);
 
     /* Find the minimum force */
     double min_force = force_B[0];
     for (uint32_t i = 1; i < this->numThrusters; i++) {
-        if (force_B[i] < min_force) {
-            min_force = force_B[i];
-        }
+        if (force_B[i] < min_force) { min_force = force_B[i]; }
     }
 
     /* Subtract the minimum force */
-    for (uint32_t i = 0; i < this->numThrusters; i++) {
-        forceSubtracted_B[i] = force_B[i] - min_force;
-    }
+    for (uint32_t i = 0; i < this->numThrusters; i++) { forceSubtracted_B[i] = force_B[i] - min_force; }
 
     /* Write to the output messages */
     vCopy(forceSubtracted_B, this->numThrusters, thrForceCmdOutMsgBuffer.thrForce);
-    this->thrForceCmdOutMsg.write(&thrForceCmdOutMsgBuffer, this->moduleID, callTime);
+    this->thrForceCmdOutMsg.write(thrForceCmdOutMsgBuffer, this->moduleID, callTime);
 }

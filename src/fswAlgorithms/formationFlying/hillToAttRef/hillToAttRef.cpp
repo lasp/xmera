@@ -3,10 +3,12 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "hillToAttRef.h"
-#include <string.h>
-#include <math.h>
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
+#include <math.h>
+#include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between
  function calls are reset to their default values.
@@ -23,8 +25,10 @@ void HillToAttRef::reset(uint64_t callTime) {
     }
 
     if (!this->attRefInMsg.isLinked() && !this->attNavInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "Error: hillToAttRef must have one of attRefInMsg and attNavInMsg connected.");
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "Error: hillToAttRef must have one of attRefInMsg and attNavInMsg connected."
+        );
     }
 
     return;
@@ -92,7 +96,7 @@ void HillToAttRef::updateState(uint64_t callTime) {
     // std::cout<<"Relative att components: "<<relativeAtt[0]<<" "<<relativeAtt[1]<<" "<<relativeAtt[2]<<std::endl;
     //  Convert that to an inertial attitude and write the attRef msg
     attRefOutPayload = this->relativeToInertialMRP(relativeAtt, baseSigma);
-    this->attRefOutMsg.write(&attRefOutPayload, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOutPayload, this->moduleID, callTime);
 
     // this->matrixIndex += 1;
 }

@@ -2,8 +2,10 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "lambertSecondDV.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <cmath>
 #include <unsupported/Eigen/MatrixFunctions>
 
@@ -59,9 +61,11 @@ void LambertSecondDV::readMessages() {
         this->vExpected_N = cArrayToEigenVector(lambertSolutionInMsgBuffer.v2Sol2);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
     } else {
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
-                         "Lambert solution should be used must be either 1 or 2.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
+            "Lambert solution should be used must be either 1 or 2."
+        );
     }
 
     // desired velocity
@@ -92,5 +96,5 @@ void LambertSecondDV::writeMessages(uint64_t currentSimNanos) {
     }
 
     // Write to the output messages
-    this->dvBurnCmdOutMsg.write(&dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->dvBurnCmdOutMsg.write(dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
 }

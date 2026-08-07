@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "thrustRWDesat.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <string.h>
 
 void ThrustRWDesat::reset(uint64_t callTime) {
@@ -70,9 +72,7 @@ void ThrustRWDesat::updateState(uint64_t callTime) {
     THRArrayOnTimeCmdMsgPayload outputData = {}; /* Local output firings */
 
     /*! - If we haven't met the cooldown threshold, do nothing */
-    if ((callTime - this->previousFiring) * 1.0E-9 < this->thrFiringPeriod) {
-        return;
-    }
+    if ((callTime - this->previousFiring) * 1.0E-9 < this->thrFiringPeriod) { return; }
 
     /*! - Read the input rwheel speeds from the reaction wheels*/
     rwSpeeds = this->rwSpeedInMsg();
@@ -85,9 +85,7 @@ void ThrustRWDesat::updateState(uint64_t callTime) {
     }
 
     /*! - If we are within the specified threshold for the momentum, stop desaturation.*/
-    if (v3Norm(observedSpeedVec) < this->DMThresh) {
-        return;
-    }
+    if (v3Norm(observedSpeedVec) < this->DMThresh) { return; }
 
     /*! - Iterate through the list of thrusters and find the "best" match for the
           observed momentum vector that does not continue to perturb the velocity
@@ -104,9 +102,7 @@ void ThrustRWDesat::updateState(uint64_t callTime) {
                 bestMatch = fireValue - currentMatch;
             }
         }
-        if (selectedThruster >= 0) {
-            v3Normalize(&this->thrTorqueMap[selectedThruster * 3], this->currDMDir);
-        }
+        if (selectedThruster >= 0) { v3Normalize(&this->thrTorqueMap[selectedThruster * 3], this->currDMDir); }
     }
 
     /*! - Zero out the thruster commands prior to setting the selected thruster.
@@ -132,8 +128,8 @@ void ThrustRWDesat::updateState(uint64_t callTime) {
         outputData.OnTimeRequest[selectedThruster] =
             v3Dot(this->currDMDir, &(this->thrTorqueMap[selectedThruster * 3]));
         outputData.OnTimeRequest[selectedThruster] = outputData.OnTimeRequest[selectedThruster] > this->maxFiring
-                                                         ? this->maxFiring
-                                                         : outputData.OnTimeRequest[selectedThruster];
+                                                       ? this->maxFiring
+                                                       : outputData.OnTimeRequest[selectedThruster];
         this->previousFiring = callTime;
         this->totalAccumFiring += outputData.OnTimeRequest[selectedThruster];
         v3Scale(outputData.OnTimeRequest[selectedThruster], &(this->thrAlignMap[selectedThruster * 3]), singleSpeedVec);
@@ -141,7 +137,7 @@ void ThrustRWDesat::updateState(uint64_t callTime) {
     }
 
     /*! - Write the output message to the thruster system */
-    this->thrCmdOutMsg.write(&outputData, this->moduleID, callTime);
+    this->thrCmdOutMsg.write(outputData, this->moduleID, callTime);
 
     return;
 }

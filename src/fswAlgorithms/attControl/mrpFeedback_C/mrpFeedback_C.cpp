@@ -8,6 +8,7 @@
  */
 
 #include "mrpFeedback_C.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
@@ -28,7 +29,9 @@ void MrpFeedback_C::reset(uint64_t callTime) {
     if (this->rwParamsInMsg.isLinked()) {
         if (!this->rwSpeedsInMsg.isLinked()) {
             this->bskLogger.bskLog(
-                BSK_ERROR, "Error: the mrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+                BSK_ERROR,
+                "Error: the mrpFeedback.rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected."
+            );
         }
     }
 
@@ -43,9 +46,7 @@ void MrpFeedback_C::reset(uint64_t callTime) {
     /*! - zero and read in vehicle configuration message */
     VehicleConfigMsgPayload sc = this->vehConfigInMsg();
     /*! - copy over spacecraft inertia tensor */
-    for (i = 0; i < 9; i++) {
-        this->ISCPntB_B[i] = sc.ISCPntB_B[i];
-    };
+    for (i = 0; i < 9; i++) { this->ISCPntB_B[i] = sc.ISCPntB_B[i]; };
 
     /*! - zero the number of RW by default */
     this->rwConfigParams.numRW = 0;
@@ -101,9 +102,7 @@ void MrpFeedback_C::updateState(uint64_t callTime) {
     /*! - read in optional RW speed and availability message */
     if (this->rwConfigParams.numRW > 0) {
         wheelSpeeds = this->rwSpeedsInMsg();
-        if (this->rwAvailInMsg.isLinked()) {
-            wheelsAvailability = this->rwAvailInMsg();
-        }
+        if (this->rwAvailInMsg.isLinked()) { wheelsAvailability = this->rwAvailInMsg(); }
     }
 
     /*! - compute control update time */
@@ -125,12 +124,13 @@ void MrpFeedback_C::updateState(uint64_t callTime) {
 
         for (i = 0; i < 3; i++) {
             intCheck = fabs(this->int_sigma[i]);
-            if (intCheck > this->integralLimit) {
-                this->int_sigma[i] *= this->integralLimit / intCheck;
-            }
+            if (intCheck > this->integralLimit) { this->int_sigma[i] *= this->integralLimit / intCheck; }
         } /* keep int_sigma less than integralLimit */
         m33MultV3(
-            RECAST3X3 this->ISCPntB_B, guidCmd.omega_BR_B, v3_2); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+            RECAST3X3 this->ISCPntB_B,
+            guidCmd.omega_BR_B,
+            v3_2
+        ); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
         v3Add(this->int_sigma, v3_2, this->z);
     }
 
@@ -147,9 +147,11 @@ void MrpFeedback_C::updateState(uint64_t callTime) {
     for (i = 0; i < this->rwConfigParams.numRW; i++) {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) { /* check if wheel is available */
             wheelGs = &(this->rwConfigParams.GsMatrix_B[i * 3]);
-            v3Scale(this->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
-                    wheelGs,
-                    v3_7); /* h_s_i */
+            v3Scale(
+                this->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
+                wheelGs,
+                v3_7
+            ); /* h_s_i */
             v3Add(v3_6, v3_7, v3_6);
         }
     }
@@ -172,11 +174,11 @@ void MrpFeedback_C::updateState(uint64_t callTime) {
 
     /*! - set the output message and write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    this->cmdTorqueOutMsg.write(&controlOut, moduleID, callTime);
+    this->cmdTorqueOutMsg.write(controlOut, moduleID, callTime);
 
     /*! - write the output integral feedback torque */
     v3Scale(-1.0, v3_5, intFeedbackOut.torqueRequestBody);
-    this->intFeedbackTorqueOutMsg.write(&intFeedbackOut, this->moduleID, callTime);
+    this->intFeedbackTorqueOutMsg.write(intFeedbackOut, this->moduleID, callTime);
 
     return;
 }

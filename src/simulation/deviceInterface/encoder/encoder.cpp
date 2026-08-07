@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "encoder.h"
+
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/simDefinitions.h>
+
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -17,16 +19,16 @@ Encoder::Encoder() {
 }
 
 /*! Module Destructor.  */
-Encoder::~Encoder() { return; }
+Encoder::~Encoder() {
+    return;
+}
 
 /*! This method is used to reset the module.
  @return void
  */
 void Encoder::reset(uint64_t currentSimNanos) {
     // check if input message is linked
-    if (!this->rwSpeedInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "encoder.rwSpeedInMsg is not linked.");
-    }
+    if (!this->rwSpeedInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "encoder.rwSpeedInMsg is not linked."); }
 
     // if the number of clicks is not greater than 0, throw a warning message
     if (this->clicksPerRotation <= 0) {
@@ -35,8 +37,10 @@ void Encoder::reset(uint64_t currentSimNanos) {
 
     // if the number of reaction wheels is not greater than 0, throw a warning message
     if (this->numRW <= 0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "encoder: number of reaction wheels must be a positive integer. It may not have been set.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "encoder: number of reaction wheels must be a positive integer. It may not have been set."
+        );
     }
 
     // reset the previous time
@@ -70,7 +74,7 @@ void Encoder::readInputMessages() {
  @param CurrentClock The clock time associated with the model call
  */
 void Encoder::writeOutputMessages(uint64_t CurrentClock) {
-    this->rwSpeedOutMsg.write(&this->rwSpeedConverted, this->moduleID, CurrentClock);
+    this->rwSpeedOutMsg.write(this->rwSpeedConverted, this->moduleID, CurrentClock);
 
     return;
 }
@@ -119,8 +123,8 @@ void Encoder::encode(uint64_t currentSimNanos) {
             } else if (this->rwSignalState[i] == SIGNAL_STUCK) {
                 // if the encoder is stuck, it will output the previous results
             } else {
-                bskLogger.bskLog(
-                    BSK_ERROR, "encoder: un-modeled encoder signal mode %d selected.", this->rwSignalState[i]);
+                bskLogger
+                    .bskLog(BSK_ERROR, "encoder: un-modeled encoder signal mode %d selected.", this->rwSignalState[i]);
             }
         }
     }

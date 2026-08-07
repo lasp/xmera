@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dentonFluxModel.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <cmath>
 #include <fstream>
 
@@ -20,9 +22,7 @@ DentonFluxModel::~DentonFluxModel() = default;
 */
 void DentonFluxModel::reset(uint64_t currentSimNanos) {
     // Check that required input messages are connected
-    if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.scStateInMsg was not linked.");
-    }
+    if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.scStateInMsg was not linked."); }
 
     if (!this->earthStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.earthStateInMsg was not linked.");
@@ -32,23 +32,19 @@ void DentonFluxModel::reset(uint64_t currentSimNanos) {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.sunStateInMsg was not linked.");
     }
     // Check that required parameters are set
-    if (this->numOutputEnergies < 0) {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set.");
-    }
-    if (this->kpIndex == "") {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set.");
-    }
-    if (this->dataPath == "") {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.dataPath was not set.");
-    }
+    if (this->numOutputEnergies < 0) { bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set."); }
+    if (this->kpIndex == "") { bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set."); }
+    if (this->dataPath == "") { bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.dataPath was not set."); }
     // Check the desired array size is not larger than the maximum value
     if (this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE) {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum denton space weather array size exceeded.");
     }
     // Check that the Kp index is a string of length 2
     if (!(this->kpIndex.length() == 2)) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc."
+        );
     }
     // Convert Kp index (such as '0o', '1-', '5+' etc.) to Kp index counter (int 0-27)
     char kpMain = this->kpIndex[0];  // main Kp index, between 0 and 9
@@ -68,8 +64,10 @@ void DentonFluxModel::reset(uint64_t currentSimNanos) {
     }
     // Check that Kp index is between 0o and 9o (corresponding to Kp index counter 0-27)
     if (this->kpIndexCounter < 0 || this->kpIndexCounter > MAX_NUM_KPS - 1) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist."
+        );
     }
 
     // convert energies to log10 values
@@ -79,15 +77,13 @@ void DentonFluxModel::reset(uint64_t currentSimNanos) {
     }
 
     // Define Energy Array
-    double step = (40000 - 1) / this->numOutputEnergies;
+    double step = (40'000 - 1) / this->numOutputEnergies;
 
     // start at 100eV
     // (fluxes of smaller energies are unreliable due to contamination with secondary electrons and photoelectrons,
     // according to Denton)
     this->inputEnergies[0] = 100;
-    for (int i = 1; i < numOutputEnergies; i++) {
-        this->inputEnergies[i] = this->inputEnergies[i - 1] + step;
-    }
+    for (int i = 1; i < numOutputEnergies; i++) { this->inputEnergies[i] = this->inputEnergies[i - 1] + step; }
 
     // Read in Denton data files
     readDentonDataFile(this->eDataFileName, this->mean_e_flux);
@@ -127,8 +123,10 @@ void DentonFluxModel::updateState(uint64_t currentSimNanos) {
     double r_GEO = 42000e3;  // GEO orbit radius
     double tol = 4000e3;     // tolerance how far spacecraft can be away from GEO
     if (v2Norm(r_BE_N) < r_GEO - tol || v2Norm(r_BE_N) > r_GEO + tol || abs(r_BE_N[2]) > tol) {
-        bskLogger.bskLog(BSK_WARNING,
-                         "DentonFluxModel: Spacecraft not in GEO regime. Denton Model not valid outside of GEO.");
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "DentonFluxModel: Spacecraft not in GEO regime. Denton Model not valid outside of GEO."
+        );
     }
 
     // Find local lime from spacecraft and Earth state messages
@@ -191,15 +189,17 @@ void DentonFluxModel::updateState(uint64_t currentSimNanos) {
         flux14 = this->mean_e_flux[this->kpIndexCounter][eHigherIndex][localTimeCeil];
 
         // ELECTRON: Find flux (differential flux in units of [cm^-2 s^-1 sr^-2 eV^-1])
-        finalElec = bilinear(localTimeFloor,
-                             localTimeCeil,
-                             logEnElec[eLowerIndex],
-                             logEnElec[eHigherIndex],
-                             logInputEnergy,
-                             flux11,
-                             flux12,
-                             flux13,
-                             flux14);
+        finalElec = bilinear(
+            localTimeFloor,
+            localTimeCeil,
+            logEnElec[eLowerIndex],
+            logEnElec[eHigherIndex],
+            logInputEnergy,
+            flux11,
+            flux12,
+            flux13,
+            flux14
+        );
         finalElec = pow(10.0, finalElec);
 
         // ION: Gather four nearest *MEAN* flux values
@@ -209,15 +209,17 @@ void DentonFluxModel::updateState(uint64_t currentSimNanos) {
         flux14 = this->mean_i_flux[this->kpIndexCounter][iHigherIndex][localTimeCeil];
 
         // ION: Find flux (differential flux in units of [cm^-2 s^-1 sr^-2 eV^-1])
-        finalIon = bilinear(localTimeFloor,
-                            localTimeCeil,
-                            logEnProt[iLowerIndex],
-                            logEnProt[iHigherIndex],
-                            logInputEnergy,
-                            flux11,
-                            flux12,
-                            flux13,
-                            flux14);
+        finalIon = bilinear(
+            localTimeFloor,
+            localTimeCeil,
+            logEnProt[iLowerIndex],
+            logEnProt[iHigherIndex],
+            logInputEnergy,
+            flux11,
+            flux12,
+            flux13,
+            flux14
+        );
         finalIon = pow(10.0, finalIon);
 
         // Store the output message (differential flux in units of [m^-2 s^-1 sr^-2 eV^-1])
@@ -227,7 +229,7 @@ void DentonFluxModel::updateState(uint64_t currentSimNanos) {
     }
 
     // Write to the output message
-    this->fluxOutMsg.write(&fluxOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->fluxOutMsg.write(fluxOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! method to calculate the local time of the spacecraft within the GEO belt
@@ -260,15 +262,8 @@ void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3]) {
 /*! Bilinear interpolation method
     @return void
 */
-double DentonFluxModel::bilinear(int x1,
-                                 int x2,
-                                 double y1,
-                                 double y2,
-                                 double y,
-                                 double f11,
-                                 double f12,
-                                 double f13,
-                                 double f14) {
+double DentonFluxModel::
+    bilinear(int x1, int x2, double y1, double y2, double y, double f11, double f12, double f13, double f14) {
     // Define variables
     double R1, R2, bilinear = 0.0;
     double x = this->localTime;
@@ -288,8 +283,10 @@ double DentonFluxModel::bilinear(int x1,
     @param data data array pointer
     @return void
 */
-void DentonFluxModel::readDentonDataFile(std::string fileName,
-                                         double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]) {
+void DentonFluxModel::readDentonDataFile(
+    std::string fileName,
+    double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]
+) {
     double temp = 0.0;
 
     // Input file stream object

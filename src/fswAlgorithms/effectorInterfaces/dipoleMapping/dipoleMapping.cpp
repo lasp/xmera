@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dipoleMapping.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -45,21 +46,25 @@ void DipoleMapping::updateState(uint64_t callTime) {
     MTBCmdMsgPayload dipoleRequestMtbOutMsgBuffer = {};
 
     /*! - Map the requested Body frame dipole request to individual torque rod dipoles.*/
-    mMultV(this->steeringMatrix,
-           this->mtbArrayConfigParams.numMTB,
-           3,
-           dipoleRequestBodyInMsgBuffer.dipole_B,
-           dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds);
+    mMultV(
+        this->steeringMatrix,
+        this->mtbArrayConfigParams.numMTB,
+        3,
+        dipoleRequestBodyInMsgBuffer.dipole_B,
+        dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds
+    );
 
     /*! - Saturate the dipole commands if necesarry.*/
     for (j = 0; j < this->mtbArrayConfigParams.numMTB; j++) {
-        if (dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] > this->mtbArrayConfigParams.maxMtbDipoles[j])
+        if (dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] > this->mtbArrayConfigParams.maxMtbDipoles[j]) {
             dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] = this->mtbArrayConfigParams.maxMtbDipoles[j];
+        }
 
-        if (dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] < -this->mtbArrayConfigParams.maxMtbDipoles[j])
+        if (dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] < -this->mtbArrayConfigParams.maxMtbDipoles[j]) {
             dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] = -this->mtbArrayConfigParams.maxMtbDipoles[j];
+        }
     }
 
     /*! - Write output message. Thiis is the individual torque rod dipoel comands.*/
-    this->dipoleRequestMtbOutMsg.write(&dipoleRequestMtbOutMsgBuffer, this->moduleID, callTime);
+    this->dipoleRequestMtbOutMsg.write(dipoleRequestMtbOutMsgBuffer, this->moduleID, callTime);
 }

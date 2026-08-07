@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "mappingInstrument.h"
+
 #include <string.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -11,9 +12,7 @@ MappingInstrument::MappingInstrument() {}
 
 /*! Module Destructor */
 MappingInstrument::~MappingInstrument() {
-    for (long unsigned int c = 0; c < this->dataNodeOutMsgs.size(); c++) {
-        delete this->dataNodeOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->dataNodeOutMsgs.size(); c++) { delete this->dataNodeOutMsgs.at(c); }
 }
 
 /*! This method is used to reset the module. The nodeBaudRate is checked for a non-zero value.
@@ -53,7 +52,7 @@ void MappingInstrument::updateState(uint64_t currentSimNanos) {
         strcpy(dataNodeOutMsgBuffer.at(c).dataName, mappingPoints[c].c_str());
 
         /* Write the output message */
-        this->dataNodeOutMsgs.at(c)->write(&this->dataNodeOutMsgBuffer.at(c), this->moduleID, currentSimNanos);
+        this->dataNodeOutMsgs.at(c)->write(this->dataNodeOutMsgBuffer.at(c), this->moduleID, currentSimNanos);
     }
 
     return;

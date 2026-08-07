@@ -3,23 +3,25 @@
 
 #include "thrusterPlatformReference.h"
 
-#include <math.h>
-
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
+#include <math.h>
+
 void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3]);
-void tprComputeSecondRotation(double r_CM_F[3],
-                              double r_TM_F[3],
-                              double r_CT_F[3],
-                              double T_F_hat[3],
-                              double FF1[3][3]);
+void tprComputeSecondRotation(
+    double r_CM_F[3],
+    double r_TM_F[3],
+    double r_CT_F[3],
+    double T_F_hat[3],
+    double FF1[3][3]
+);
 void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3]);
 void tprComputeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3]);
 
-const double epsilon = 1e-12;  // module tolerance for zero
+double const epsilon = 1e-12;  // module tolerance for zero
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -88,9 +90,11 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
         double hs_B[3];
         v3SetZero(hs_B);
         for (int i = 0; i < this->rwConfigParams.numRW; i++) {
-            v3Scale(this->rwConfigParams.JsList[i] * rwSpeedMsgIn.wheelSpeeds[i],
-                    &this->rwConfigParams.GsMatrix_B[i * 3],
-                    vec3);
+            v3Scale(
+                this->rwConfigParams.JsList[i] * rwSpeedMsgIn.wheelSpeeds[i],
+                &this->rwConfigParams.GsMatrix_B[i * 3],
+                vec3
+            );
             v3Add(hs_B, vec3, hs_B);
         }
         double hs_M[3];
@@ -151,8 +155,8 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
     hingedRigidBodyRef2Out.thetaDot = 0;
 
     /*! write output spinning body messages */
-    this->hingedRigidBodyRef1OutMsg.write(&hingedRigidBodyRef1Out, this->moduleID, callTime);
-    this->hingedRigidBodyRef2OutMsg.write(&hingedRigidBodyRef2Out, this->moduleID, callTime);
+    this->hingedRigidBodyRef1OutMsg.write(hingedRigidBodyRef1Out, this->moduleID, callTime);
+    this->hingedRigidBodyRef2OutMsg.write(hingedRigidBodyRef2Out, this->moduleID, callTime);
 
     /*! define mapping between final platform frame and body frame FB */
     double FB[3][3];
@@ -163,7 +167,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
     v3Normalize(bodyHeadingOut.rHat_XB_B, bodyHeadingOut.rHat_XB_B);
 
     /*! write output body heading message */
-    this->bodyHeadingOutMsg.write(&bodyHeadingOut, this->moduleID, callTime);
+    this->bodyHeadingOutMsg.write(bodyHeadingOut, this->moduleID, callTime);
 
     /*! compute thruster torque on the system in body frame coordinates */
     double r_CM_F[3];
@@ -175,7 +179,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
     m33tMultV3(FB, Torque_F, thrusterTorqueOut.torqueRequestBody);
 
     /*! write output commanded torque message */
-    this->thrusterTorqueOutMsg.write(&thrusterTorqueOut, this->moduleID, callTime);
+    this->thrusterTorqueOutMsg.write(thrusterTorqueOut, this->moduleID, callTime);
 
     /*! populate thrusterConfigOut */
     double r_TC_B[3];
@@ -186,7 +190,7 @@ void ThrusterPlatformReference::updateState(uint64_t callTime) {
     thrusterConfigOut.maxThrust = v3Norm(T_F);
 
     /*! write output thruster config msg */
-    this->thrusterConfigBOutMsg.write(&thrusterConfigOut, this->moduleID, callTime);
+    this->thrusterConfigBOutMsg.write(thrusterConfigOut, this->moduleID, callTime);
 }
 
 void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3]) {
@@ -224,11 +228,13 @@ void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3
     PRV2C(PRV_phi, F1M);
 }
 
-void tprComputeSecondRotation(double r_CM_F[3],
-                              double r_TM_F[3],
-                              double r_CT_F[3],
-                              double THat_F[3],
-                              double F2F1[3][3]) {
+void tprComputeSecondRotation(
+    double r_CM_F[3],
+    double r_TM_F[3],
+    double r_CT_F[3],
+    double THat_F[3],
+    double F2F1[3][3]
+) {
     // define offset vector aVec
     double aVec[3];
     v3Copy(r_TM_F, aVec);
@@ -304,23 +310,17 @@ void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3]
 
                 // choose which returns a smaller fcn value between t1 and t2
                 t = t1;
-                if (fabs(y2) < fabs(y1)) {
-                    t = t2;
-                }
+                if (fabs(y2) < fabs(y1)) { t = t2; }
             }
             theta = 2 * atan(t);
             y = (A * t * t + B * t + C) / (1 + t * t);
             // check if the absolute fcn minimum is for theta = MPI
-            if (fabs(A) < fabs(y)) {
-                theta = MPI;
-            }
+            if (fabs(A) < fabs(y)) { theta = MPI; }
         } else {
             t1 = (-B + sqrt(Delta)) / (2 * A);
             t2 = (-B - sqrt(Delta)) / (2 * A);
             t = t1;
-            if (fabs(t2) < fabs(t1)) {
-                t = t2;
-            }
+            if (fabs(t2) < fabs(t1)) { t = t2; }
 
             theta = 2 * atan(t);
         }

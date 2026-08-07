@@ -466,7 +466,7 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
     imagePayload.cameraID = this->cameraModelPayload.cameraId;
     imagePayload.imageType = 3;
     if (imageData.imageBufferLength > 0) { imagePayload.valid = 1; }
-    this->imageOutMessage.write(&imagePayload, this->moduleID, currentSimNanos);
+    this->imageOutMessage.write(imagePayload, this->moduleID, currentSimNanos);
 
     OpNavCOBMsgPayload centerOfBrightnessPayload = {};
     centerOfBrightnessPayload.timeTag = currentSimNanos;
@@ -476,7 +476,7 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
         centerOfBrightnessPayload.centerOfBrightness[0] = imageData.centerOfBrightness.value()[0] + 0.5;
         centerOfBrightnessPayload.centerOfBrightness[1] = imageData.centerOfBrightness.value()[1] + 0.5;
     }
-    this->centerOfBrightnessOutMessage.write(&centerOfBrightnessPayload, this->moduleID, currentSimNanos);
+    this->centerOfBrightnessOutMessage.write(centerOfBrightnessPayload, this->moduleID, currentSimNanos);
 
     ImageDiagnosticsPayload imageDiagnosticsOutputPayload = {};
     imageDiagnosticsOutputPayload.threshold = this->imageDiagnosticsPayload.threshold;
@@ -493,7 +493,7 @@ void CielimInterface::requestImage(uint64_t currentSimNanos) {
     }
     if (imageData.brightPixels) { imageDiagnosticsOutputPayload.totalBrightPixels = imageData.brightPixels.value(); }
     if (imageData.coverage) { imageDiagnosticsOutputPayload.coverage = imageData.coverage.value(); }
-    this->imageDiagnosticsOutMessage.write(&imageDiagnosticsOutputPayload, this->moduleID, currentSimNanos);
+    this->imageDiagnosticsOutMessage.write(imageDiagnosticsOutputPayload, this->moduleID, currentSimNanos);
 }
 
 /*! Get the communication mode

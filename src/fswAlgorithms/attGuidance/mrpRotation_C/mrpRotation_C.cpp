@@ -8,6 +8,7 @@
  */
 
 #include "mrpRotation_C.h"
+
 #include <architecture/utilities/macroDefinitions.h>
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
@@ -65,7 +66,7 @@ void MrpRotation_C::updateState(uint64_t callTime) {
     this->computeMRPRotationReference(inputRef.sigma_RN, inputRef.omega_RN_N, inputRef.domega_RN_N, &attRefOut);
 
     /*! - write attitude guidance reference output */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 
     /*! - Update last time the module was called to current call time */
     this->priorTime = callTime;
@@ -110,10 +111,12 @@ void MrpRotation_C::computeTimeStep(uint64_t callTime) {
  @param domega_R0N_N The input reference frame angular acceleration vector
  @param attRefOut The output message copy
  */
-void MrpRotation_C::computeMRPRotationReference(double sigma_R0N[3],
-                                                double omega_R0N_N[3],
-                                                double domega_R0N_N[3],
-                                                AttRefMsgPayload* attRefOut) {
+void MrpRotation_C::computeMRPRotationReference(
+    double sigma_R0N[3],
+    double omega_R0N_N[3],
+    double domega_R0N_N[3],
+    AttRefMsgPayload* attRefOut
+) {
     double attIncrement[3]; /* [] increment in MRP attitude coordinates  */
     double RR0[3][3];       /* [] DCM rotating from R0 to R */
     double R0N[3][3];       /* [] DCM rotating from N to R0 */

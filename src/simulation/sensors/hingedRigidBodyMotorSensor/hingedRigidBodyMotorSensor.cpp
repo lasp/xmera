@@ -3,13 +3,16 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "hingedRigidBodyMotorSensor.h"
+
 #include <stdint.h>
+
 #include <cmath>
 #include <random>
+
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
 HingedRigidBodyMotorSensor::HingedRigidBodyMotorSensor() {
-    this->rGen.seed((unsigned int)this->RNGSeed);  //! RNGSeed is an attribute of all modules
+    this->rGen.seed((unsigned int) this->RNGSeed);  //! RNGSeed is an attribute of all modules
 
     this->thetaNoiseStd = 0.0;
     this->thetaDotNoiseStd = 0.0;
@@ -37,7 +40,9 @@ void HingedRigidBodyMotorSensor::reset(uint64_t currentSimNanos) {
 /*! This allows the RNGSeed to be changed.
     @return void
 */
-void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed) { this->rGen.seed((unsigned int)newSeed); }
+void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed) {
+    this->rGen.seed((unsigned int) newSeed);
+}
 
 /*! This is the main method that gets called every time the module is updated.  Adds Gaussian noise and bias and
    diescretizes output.
@@ -83,10 +88,10 @@ void HingedRigidBodyMotorSensor::updateState(uint64_t currentSimNanos) {
     //!< apply discretization (rounds to nearest multiple of LSB)
     if (this->thetaLSB > 0.0) {
         numLSB = floor(
-            abs(sensedTheta) /
-            this->thetaLSB);  //! number of times the LSB goes into the absolute value of the sensed continuous theta
-        workingTheta = numLSB * this->thetaLSB *
-                       copysign(1.0, sensedTheta);  //! multiply back the signed value of theta times the number of LSBs
+            abs(sensedTheta) / this->thetaLSB
+        );  //! number of times the LSB goes into the absolute value of the sensed continuous theta
+        workingTheta = numLSB * this->thetaLSB
+                     * copysign(1.0, sensedTheta);  //! multiply back the signed value of theta times the number of LSBs
         remainder = sensedTheta - workingTheta;
         if (abs(remainder) > (this->thetaLSB / 2.0)) {  //! add an extra LSB if needed to round up/down
             workingTheta += this->thetaLSB * copysign(1.0, sensedTheta);
@@ -106,6 +111,6 @@ void HingedRigidBodyMotorSensor::updateState(uint64_t currentSimNanos) {
     //! write to the output messages
     hingedRigidBodyMotorSensorOutMsgBuffer.theta = sensedTheta;
     hingedRigidBodyMotorSensorOutMsgBuffer.thetaDot = sensedThetaDot;
-    this->hingedRigidBodyMotorSensorOutMsg.write(
-        &hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->hingedRigidBodyMotorSensorOutMsg
+        .write(hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, currentSimNanos);
 }

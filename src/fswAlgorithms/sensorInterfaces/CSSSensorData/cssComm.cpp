@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "cssComm.h"
+
 #include <architecture/utilities/linearAlgebra.h>
-#include <string.h>
+
 #include <stdio.h>
+#include <string.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -21,12 +23,14 @@ void CSSComm::reset(uint64_t callTime) {
     /*! - Check to make sure that number of sensors is less than the max and warn if none are set*/
     if (this->numSensors > MAX_NUM_CSS_SENSORS) {
         char info[MAX_LOGGING_LENGTH];
-        snprintf(info,
-                 sizeof(info),
-                 "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to "
-                 "the max.",
-                 this->numSensors,
-                 MAX_NUM_CSS_SENSORS);
+        snprintf(
+            info,
+            sizeof(info),
+            "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to "
+            "the max.",
+            this->numSensors,
+            MAX_NUM_CSS_SENSORS
+        );
         this->bskLogger.bskLog(BSK_WARNING, info);
         this->numSensors = MAX_NUM_CSS_SENSORS;
     } else if (this->numSensors == 0) {
@@ -34,9 +38,11 @@ void CSSComm::reset(uint64_t callTime) {
     }
 
     if (this->maxSensorValue == 0) {
-        this->bskLogger.bskLog(BSK_WARNING,
-                               "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, "
-                               "inducing faux saturation!");
+        this->bskLogger.bskLog(
+            BSK_WARNING,
+            "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, "
+            "inducing faux saturation!"
+        );
     }
 
     return;
@@ -68,7 +74,7 @@ void CSSComm::updateState(uint64_t callTime) {
          -# If sensor output range is incorrect, set output value to zero
      */
     for (i = 0; i < this->numSensors; i++) {
-        outputBuffer.CosValue[i] = (float)inputValues[i] / this->maxSensorValue; /* Scale Sensor Data */
+        outputBuffer.CosValue[i] = (float) inputValues[i] / this->maxSensorValue; /* Scale Sensor Data */
 
         /* Seed the polynomial computations */
         ValueMult = 2.0 * outputBuffer.CosValue[i];
@@ -98,7 +104,7 @@ void CSSComm::updateState(uint64_t callTime) {
     }
 
     /*! - Write aggregate output into output message */
-    this->cssArrayOutMsg.write(&outputBuffer, this->moduleID, callTime);
+    this->cssArrayOutMsg.write(outputBuffer, this->moduleID, callTime);
 
     return;
 }

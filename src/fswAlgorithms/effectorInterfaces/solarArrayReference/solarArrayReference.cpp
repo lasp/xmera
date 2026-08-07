@@ -3,15 +3,16 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "solarArrayReference.h"
-#include <string.h>
-#include <math.h>
 
-#include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/astroConstants.h>
+#include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
 
-const double epsilon = 1e-12;  // module tolerance for zero
+#include <math.h>
+#include <string.h>
+
+double const epsilon = 1e-12;  // module tolerance for zero
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -51,19 +52,16 @@ void SolarArrayReference::updateState(uint64_t callTime) {
     double RB[3][3];      // body to reference DCM
     v3Normalize(attNavIn.vehSunPntBdy, rHat_SB_B);
     switch (this->attitudeFrame) {
-        case referenceFrame:
-            MRP2C(attNavIn.sigma_BN, BN);
-            MRP2C(attRefIn.sigma_RN, RN);
-            m33MultM33t(RN, BN, RB);
-            m33MultV3(RB, rHat_SB_B, rHat_SB_R);
-            break;
+    case referenceFrame:
+        MRP2C(attNavIn.sigma_BN, BN);
+        MRP2C(attRefIn.sigma_RN, RN);
+        m33MultM33t(RN, BN, RB);
+        m33MultV3(RB, rHat_SB_B, rHat_SB_R);
+        break;
 
-        case bodyFrame:
-            v3Copy(rHat_SB_B, rHat_SB_R);
-            break;
+    case bodyFrame: v3Copy(rHat_SB_B, rHat_SB_R); break;
 
-        default:
-            this->bskLogger.bskLog(BSK_ERROR, "solarArrayAngle.bodyFrame input can be either 0 or 1.");
+    default: this->bskLogger.bskLog(BSK_ERROR, "solarArrayAngle.bodyFrame input can be either 0 or 1.");
     }
 
     /*! compute solar array frame axes at zero rotation */
@@ -79,9 +77,7 @@ void SolarArrayReference::updateState(uint64_t callTime) {
     double a1Hat_R[3];
     double a2Hat_R[3];
     double dotP = v3Dot(a1Hat_B, rHat_SB_R);
-    for (int n = 0; n < 3; n++) {
-        a2Hat_R[n] = rHat_SB_R[n] - dotP * a1Hat_B[n];
-    }
+    for (int n = 0; n < 3; n++) { a2Hat_R[n] = rHat_SB_R[n] - dotP * a1Hat_B[n]; }
     v3Normalize(a2Hat_R, a2Hat_R);
     v3Cross(a2Hat_B, a2Hat_R, a1Hat_R);
 
@@ -97,9 +93,7 @@ void SolarArrayReference::updateState(uint64_t callTime) {
     } else {
         double thetaR = acos(fmin(fmax(v3Dot(a2Hat_B, a2Hat_R), -1), 1));
         // if a1Hat_B and a1Hat_R are opposite, take the negative of thetaR
-        if (v3Dot(a1Hat_B, a1Hat_R) < 0) {
-            thetaR = -thetaR;
-        }
+        if (v3Dot(a1Hat_B, a1Hat_R) < 0) { thetaR = -thetaR; }
         // always make the absolute difference |thetaR-thetaC| smaller that 2*pi
         if (thetaR - thetaC > MPI) {
             hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC - 2 * MPI;
@@ -115,7 +109,7 @@ void SolarArrayReference::updateState(uint64_t callTime) {
     if (this->count == 0) {
         hingedRigidBodyRefOut.thetaDot = 0;
     } else {
-        dt = (double)(callTime - this->priorT) * NANO2SEC;
+        dt = (double) (callTime - this->priorT) * NANO2SEC;
         hingedRigidBodyRefOut.thetaDot = (hingedRigidBodyRefOut.theta - this->priorThetaR) / dt;
     }
     // update stored variables
@@ -124,5 +118,5 @@ void SolarArrayReference::updateState(uint64_t callTime) {
     this->count += 1;
 
     /* write output message */
-    this->hingedRigidBodyRefOutMsg.write(&hingedRigidBodyRefOut, this->moduleID, callTime);
+    this->hingedRigidBodyRefOutMsg.write(hingedRigidBodyRefOut, this->moduleID, callTime);
 }

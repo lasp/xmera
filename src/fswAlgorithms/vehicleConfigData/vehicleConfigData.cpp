@@ -2,6 +2,7 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "vehicleConfigData.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 
@@ -19,5 +20,5 @@ void VehicleConfigData::reset(uint64_t callTime) {
     localConfigData.massSC = this->massSC;
 
     /*! - Write output properties to the messaging system*/
-    this->vecConfigOutMsg.write(&localConfigData, this->moduleID, callTime);
+    this->vecConfigOutMsg.write(localConfigData, this->moduleID, callTime);
 }

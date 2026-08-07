@@ -36,7 +36,7 @@ void Inertial3D_C::updateState(uint64_t callTime) {
     computeInertialPointingReference(this->sigma_R0N, &attRefOut);
 
     /*! - Write output message */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, callTime);
 
     return;
 }

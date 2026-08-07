@@ -445,7 +445,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
         eigenVectorToCArray(it->gsHat_B, tmpRW.gsHat_B);
         eigenVectorToCArray(it->rWB_B, tmpRW.rWB_B);
         // Write out config data for eachreaction wheel
-        this->rwOutMsgs[c]->write(&tmpRW, this->moduleID, CurrentClock);
+        this->rwOutMsgs[c]->write(tmpRW, this->moduleID, CurrentClock);
         c++;
     }
 
@@ -471,7 +471,7 @@ void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNano
     }
 
     // Write this message once for all reaction wheels
-    this->rwSpeedOutMsg.write(&this->rwSpeedMsgBuffer, this->moduleID, integTimeNanos);
+    this->rwSpeedOutMsg.write(this->rwSpeedMsgBuffer, this->moduleID, integTimeNanos);
 }
 
 /*! This method is used to read the incoming command message and set the

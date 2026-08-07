@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dvAccumulation.h"
-#include <architecture/utilities/macroDefinitions.h>
+
 #include <architecture/utilities/linearAlgebra.h>
+#include <architecture/utilities/macroDefinitions.h>
+
 #include <assert.h>
 #include <string.h>
 
@@ -69,6 +71,7 @@ void dvAccumulation_QuickSort(AccPktDataMsgPayload* A, int start, int end) {
         }
     }
 }
+
 /* Experimenting QuickSort END */
 
 void DVAccumulation::reset(uint64_t callTime) {
@@ -122,8 +125,9 @@ void DVAccumulation::updateState(uint64_t callTime) {
     dvAccumulation_QuickSort(
         &(inputAccData.accPkts[0]),
         0,
-        MAX_ACC_BUF_PKT - 1); /* measTime is the array we want to sort. We're sorting the time calculated for each
-                                 measurement taken from the accelerometer in order in terms of time. */
+        MAX_ACC_BUF_PKT - 1
+    ); /* measTime is the array we want to sort. We're sorting the time calculated for each
+          measurement taken from the accelerometer in order in terms of time. */
 
     /*! - Ensure that the computed dt doesn't get huge.*/
     if (this->dvInitialized == 0) {
@@ -153,5 +157,5 @@ void DVAccumulation::updateState(uint64_t callTime) {
     v3Copy(this->vehAccumDV_B, outputData.vehAccumDV);
 
     /*! - write accumulated Dv message */
-    this->dvAcumOutMsg.write(&outputData, this->moduleID, callTime);
+    this->dvAcumOutMsg.write(outputData, this->moduleID, callTime);
 }

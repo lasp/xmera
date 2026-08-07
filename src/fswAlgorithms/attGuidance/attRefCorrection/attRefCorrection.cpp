@@ -2,9 +2,10 @@
 // Copyright (c) 2021, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
+#include "attRefCorrection.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
-#include "attRefCorrection.h"
 
 #include <stdexcept>
 
@@ -35,16 +36,20 @@ void AttRefCorrection::updateState(uint64_t const callTime) {
 
     // write to the output messages
     eigenVectorToCArray(sigma_RN_local, attRefMsgBuffer.sigma_RN);
-    this->attRefOutMsg.write(&attRefMsgBuffer, this->moduleID, callTime);
+    this->attRefOutMsg.write(attRefMsgBuffer, this->moduleID, callTime);
 }
 
 /*! Setter method for the current MRP attitude coordinate set with respect to the input reference
  @return void
  @param sigmaRR0 [-] current MRP attitude coordinate set with respect to the input reference
 */
-void AttRefCorrection::setSigmaRR0(const Eigen::Vector3d& sigma) { this->sigma_RR0 = sigma; }
+void AttRefCorrection::setSigmaRR0(Eigen::Vector3d const &sigma) {
+    this->sigma_RR0 = sigma;
+}
 
 /*! Getter method for the current MRP attitude coordinate set with respect to the input reference
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d AttRefCorrection::getSigmaRR0() const { return this->sigma_RR0; }
+Eigen::Vector3d const AttRefCorrection::getSigmaRR0() const {
+    return this->sigma_RR0;
+}

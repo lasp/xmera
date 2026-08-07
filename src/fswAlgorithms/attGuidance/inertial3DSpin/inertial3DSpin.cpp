@@ -12,6 +12,7 @@
 
 /* modify the path to reflect the new module names */
 #include "inertial3DSpin.h"
+
 #include <architecture/utilities/macroDefinitions.h>
 
 /*
@@ -39,9 +40,7 @@ void Inertial3DSpin::updateState(uint64_t callTime) {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer = {};
 
-    if (this->attRefInMsg.isLinked()) {
-        attRefInMsgBuffer = this->attRefInMsg();
-    }
+    if (this->attRefInMsg.isLinked()) { attRefInMsgBuffer = this->attRefInMsg(); }
 
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
@@ -56,7 +55,7 @@ void Inertial3DSpin::updateState(uint64_t callTime) {
     this->attRefOutBuffer = {};
     this->computeReference_inertial3DSpin(attRefInMsgBuffer.omega_RN_N, attRefInMsgBuffer.domega_RN_N, dt);
     /*! - Write output message */
-    this->attRefOutMsg.write(&this->attRefOutBuffer, this->moduleID, callTime);
+    this->attRefOutMsg.write(this->attRefOutBuffer, this->moduleID, callTime);
 
     /*! Update prior time to current for next evaluation */
     this->priorTime = callTime;

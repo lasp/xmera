@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "atmosphereBase.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -21,12 +22,12 @@ AtmosphereBase::AtmosphereBase() {
     this->envOutMsgs.clear();
 
     //! - set the default epoch information
-    this->epochDateTime.tm_year = EPOCH_YEAR - 1900;
+    this->epochDateTime.tm_year = EPOCH_YEAR - 1'900;
     this->epochDateTime.tm_mon = EPOCH_MONTH - 1;
     this->epochDateTime.tm_mday = EPOCH_DAY;
     this->epochDateTime.tm_hour = EPOCH_HOUR;
     this->epochDateTime.tm_min = EPOCH_MIN;
-    this->epochDateTime.tm_sec = (int)round(EPOCH_SEC);
+    this->epochDateTime.tm_sec = (int) round(EPOCH_SEC);
     this->epochDateTime.tm_isdst = -1;
 
     //! - turn off minimum and maximum reach features
@@ -48,9 +49,7 @@ AtmosphereBase::AtmosphereBase() {
  @return void
  */
 AtmosphereBase::~AtmosphereBase() {
-    for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
-        delete this->envOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) { delete this->envOutMsgs.at(c); }
     return;
 }
 
@@ -85,16 +84,14 @@ void AtmosphereBase::reset(uint64_t currentSimNanos) {
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
         EpochMsgPayload epochMsg;
-        if (!this->epochInMsg.isWritten()) {
-            bskLogger.bskLog(BSK_ERROR, "An un-written epoch msg was linked in!");
-        }
+        if (!this->epochInMsg.isWritten()) { bskLogger.bskLog(BSK_ERROR, "An un-written epoch msg was linked in!"); }
         epochMsg = this->epochInMsg();
-        this->epochDateTime.tm_year = epochMsg.year - 1900;
+        this->epochDateTime.tm_year = epochMsg.year - 1'900;
         this->epochDateTime.tm_mon = epochMsg.month - 1;
         this->epochDateTime.tm_mday = epochMsg.day;
         this->epochDateTime.tm_hour = epochMsg.hours;
         this->epochDateTime.tm_min = epochMsg.minutes;
-        this->epochDateTime.tm_sec = (int)round(epochMsg.seconds);
+        this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
         mktime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
@@ -107,12 +104,16 @@ void AtmosphereBase::reset(uint64_t currentSimNanos) {
  is set by a module variable.
  @return void
  */
-void AtmosphereBase::customSetEpochFromVariable() { return; }
+void AtmosphereBase::customSetEpochFromVariable() {
+    return;
+}
 
 /*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void AtmosphereBase::customreset(uint64_t CurrentClock) { return; }
+void AtmosphereBase::customreset(uint64_t CurrentClock) {
+    return;
+}
 
 /*! This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
@@ -121,7 +122,7 @@ void AtmosphereBase::customreset(uint64_t CurrentClock) { return; }
 void AtmosphereBase::writeMessages(uint64_t CurrentClock) {
     //! - write density output messages for each spacecaft's locations
     for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
-        this->envOutMsgs.at(c)->write(&this->envOutBuffer.at(c), this->moduleID, CurrentClock);
+        this->envOutMsgs.at(c)->write(this->envOutBuffer.at(c), this->moduleID, CurrentClock);
     }
 
     //! - call the custom method to perform additional output message writing
@@ -133,7 +134,9 @@ void AtmosphereBase::writeMessages(uint64_t CurrentClock) {
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
  @return void
  */
-void AtmosphereBase::customWriteMessages(uint64_t CurrentClock) { return; }
+void AtmosphereBase::customWriteMessages(uint64_t CurrentClock) {
+    return;
+}
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
@@ -178,7 +181,9 @@ bool AtmosphereBase::readMessages() {
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
  @return void
  */
-bool AtmosphereBase::customReadMessages() { return true; }
+bool AtmosphereBase::customReadMessages() {
+    return true;
+}
 
 /*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
@@ -216,8 +221,8 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime) {
         *envMsgIt = AtmoPropsMsgPayload{};
 
         //! - check if radius is in permissible range
-        if (this->orbitAltitude > this->envMinReach &&
-            (this->orbitAltitude < this->envMaxReach || this->envMaxReach < 0)) {
+        if (this->orbitAltitude > this->envMinReach
+            && (this->orbitAltitude < this->envMaxReach || this->envMaxReach < 0)) {
             //! - compute the local atmosphere data.  The evaluateMageticFieldModel() method must be implement for each
             //! model
             evaluateAtmosphereModel(&(*envMsgIt), currentTime);
@@ -234,13 +239,9 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime) {
 void AtmosphereBase::updateState(uint64_t currentSimNanos) {
     //! - clear the output buffer
     std::vector<AtmoPropsMsgPayload>::iterator it;
-    for (it = this->envOutBuffer.begin(); it != this->envOutBuffer.end(); it++) {
-        *it = AtmoPropsMsgPayload{};
-    }
+    for (it = this->envOutBuffer.begin(); it != this->envOutBuffer.end(); it++) { *it = AtmoPropsMsgPayload{}; }
     //! - update local neutral density information
-    if (this->readMessages()) {
-        this->updateLocalAtmosphere(currentSimNanos * NANO2SEC);
-    }
+    if (this->readMessages()) { this->updateLocalAtmosphere(currentSimNanos * NANO2SEC); }
 
     //! - write out neutral density message
     this->writeMessages(currentSimNanos);

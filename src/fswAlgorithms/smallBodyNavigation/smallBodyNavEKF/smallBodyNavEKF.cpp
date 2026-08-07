@@ -3,9 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "smallBodyNavEKF.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -55,9 +57,7 @@ void SmallBodyNavEKF::reset(uint64_t currentSimNanos) {
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.navTransInMsg was not linked.");
     }
-    if (!this->navAttInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.navAttInMsg was not linked.");
-    }
+    if (!this->navAttInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.navAttInMsg was not linked."); }
     if (!this->asteroidEphemerisInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.asteroidEphemerisInMsg was not linked.");
     }
@@ -80,8 +80,9 @@ void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload>* tmpThrus
 */
 void SmallBodyNavEKF::readMessages(uint64_t currentSimNanos) {
     /* Read in the input messages */
-    if ((this->navTransInMsg.timeWritten() + this->navAttInMsg.timeWritten() +
-         this->asteroidEphemerisInMsg.timeWritten() - 3 * currentSimNanos) == 0) {
+    if ((this->navTransInMsg.timeWritten() + this->navAttInMsg.timeWritten()
+         + this->asteroidEphemerisInMsg.timeWritten() - 3 * currentSimNanos)
+        == 0) {
         this->newMeasurements = true;
     } else {
         this->newMeasurements = false;
@@ -121,8 +122,8 @@ void SmallBodyNavEKF::predict(uint64_t currentSimNanos) {
 
     /* Compute F_dot and F_ddot */
     F_dot = sqrt(mu_sun / (pow(oe_ast.a * (1 - pow(oe_ast.e, 2)), 3))) * pow(1 + (oe_ast.e) * cos(oe_ast.f), 2);
-    F_ddot = -2 * (oe_ast.e) * (sqrt(mu_sun / (pow(oe_ast.a * (1 - pow(oe_ast.e, 2)), 3)))) * sin(oe_ast.f) *
-             (1 + oe_ast.e * cos(oe_ast.f)) * (F_dot);
+    F_ddot = -2 * (oe_ast.e) * (sqrt(mu_sun / (pow(oe_ast.a * (1 - pow(oe_ast.e, 2)), 3)))) * sin(oe_ast.f)
+           * (1 + oe_ast.e * cos(oe_ast.f)) * (F_dot);
 
     /* Compute the hill frame DCM of the small body */
     double dcm_ON_array[3][3];
@@ -212,13 +213,12 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
     Eigen::Matrix3d dcm_OB;
     dcm_OB = dcm_ON * cArrayToEigenMatrix3(*dcm_BN_meas).transpose();
     /* Now compute x2_dot */
-    x_hat_dot_k.segment(3, 3) = -F_ddot * o_hat_3_tilde * x_1 - 2 * F_dot * o_hat_3_tilde * x_2 -
-                                pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x_1 -
-                                mu_ast * x_1 / pow(x_1.norm(), 3) +
-                                mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) *
-                                    x_1 / pow(r_SO_O.norm(), 3) +
-                                C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * o_hat_1 / pow(r_SO_O.norm(), 2) +
-                                dcm_OB * thrust_B / M_sc + dcm_OB * cmdForce_B / M_sc;
+    x_hat_dot_k.segment(3, 3) = -F_ddot * o_hat_3_tilde * x_1 - 2 * F_dot * o_hat_3_tilde * x_2
+                              - pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x_1 - mu_ast * x_1 / pow(x_1.norm(), 3)
+                              + mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x_1
+                                    / pow(r_SO_O.norm(), 3)
+                              + C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * o_hat_1 / pow(r_SO_O.norm(), 2)
+                              + dcm_OB * thrust_B / M_sc + dcm_OB * cmdForce_B / M_sc;
 
     /* x3_dot */
     x_hat_dot_k.segment(6, 3) =
@@ -289,12 +289,14 @@ void SmallBodyNavEKF::measurementUpdate() {
     /* Subtract the asteroid position from the spacecraft position and rotate it into the small body's hill frame*/
     Eigen::VectorXd y_k1;
     y_k1.setZero(this->numStates);
-    y_k1.segment(0, 3) = dcm_ON * (cArrayToEigenVector(navTransInMsgBuffer.r_BN_N) -
-                                   cArrayToEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
+    y_k1.segment(0, 3) = dcm_ON
+                       * (cArrayToEigenVector(navTransInMsgBuffer.r_BN_N)
+                          - cArrayToEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
 
     /* Perform a similar operation for the relative velocity */
-    y_k1.segment(3, 3) = dcm_ON * (cArrayToEigenVector(navTransInMsgBuffer.v_BN_N) -
-                                   cArrayToEigenVector(asteroidEphemerisInMsgBuffer.v_BdyZero_N));
+    y_k1.segment(3, 3) = dcm_ON
+                       * (cArrayToEigenVector(navTransInMsgBuffer.v_BN_N)
+                          - cArrayToEigenVector(asteroidEphemerisInMsgBuffer.v_BdyZero_N));
 
     /* Small body attitude from the ephemeris msg */
     y_k1.segment(6, 3) = cArrayToEigenVector(asteroidEphemerisInMsgBuffer.sigma_BN);
@@ -316,8 +318,8 @@ void SmallBodyNavEKF::measurementUpdate() {
     x_hat_k1 = x_hat_k1_ + K_k1 * (y_k1 - x_hat_k1_);
 
     /* Update the covariance */
-    P_k1 = (I_full - K_k1 * H_k1) * P_k1_ * (I_full - K_k1 * H_k1).transpose() +
-           K_k1 * M * R * M.transpose() * K_k1.transpose();
+    P_k1 = (I_full - K_k1 * H_k1) * P_k1_ * (I_full - K_k1 * H_k1).transpose()
+         + K_k1 * M * R * M.transpose() * K_k1.transpose();
 
     /* Assign the state estimate and covariance to k for the next iteration */
     x_hat_k = x_hat_k1;
@@ -347,9 +349,9 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat) {
 
     /* x_2 partial */
     A_k.block(3, 0, 3, 3) =
-        -F_ddot * o_hat_3_tilde - pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde - mu_ast / pow(x_1.norm(), 3) * I +
-        3 * mu_ast * x_1 * x_1.transpose() / pow(x_1.norm(), 5) +
-        mu_sun * (3 * (r_SO_O * r_SO_O.transpose()) / pow(r_SO_O.norm(), 2) - I) / pow(r_SO_O.norm(), 3);
+        -F_ddot * o_hat_3_tilde - pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde - mu_ast / pow(x_1.norm(), 3) * I
+        + 3 * mu_ast * x_1 * x_1.transpose() / pow(x_1.norm(), 5)
+        + mu_sun * (3 * (r_SO_O * r_SO_O.transpose()) / pow(r_SO_O.norm(), 2) - I) / pow(r_SO_O.norm(), 3);
 
     A_k.block(3, 3, 3, 3) = -2 * F_dot * o_hat_3_tilde;
 
@@ -390,18 +392,26 @@ void SmallBodyNavEKF::writeMessages(uint64_t currentSimNanos) {
     navTransOutMsgBuffer.timeTag = navTransInMsgBuffer.timeTag;
     eigenMatrixXToCArray(
         cArrayToEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N) + dcm_ON.transpose() * x_hat_k.segment(0, 3),
-        navTransOutMsgBuffer.r_BN_N);
+        navTransOutMsgBuffer.r_BN_N
+    );
     eigenMatrixXToCArray(
         cArrayToEigenVector(asteroidEphemerisInMsgBuffer.v_BdyZero_N) + dcm_ON.transpose() * x_hat_k.segment(3, 3),
-        navTransOutMsgBuffer.v_BN_N);
-    v3Copy(navTransOutMsgBuffer.vehAccumDV,
-           navTransInMsgBuffer.vehAccumDV);  // Not an estimated parameter, pass through
+        navTransOutMsgBuffer.v_BN_N
+    );
+    v3Copy(
+        navTransOutMsgBuffer.vehAccumDV,
+        navTransInMsgBuffer.vehAccumDV
+    );  // Not an estimated parameter, pass through
 
     /* Assign values to the asteroid ephemeris output message */
-    v3Copy(asteroidEphemerisOutMsgBuffer.r_BdyZero_N,
-           asteroidEphemerisInMsgBuffer.r_BdyZero_N);  // Not an estimated parameter
-    v3Copy(asteroidEphemerisOutMsgBuffer.v_BdyZero_N,
-           asteroidEphemerisInMsgBuffer.v_BdyZero_N);  // Not an estimated parameter
+    v3Copy(
+        asteroidEphemerisOutMsgBuffer.r_BdyZero_N,
+        asteroidEphemerisInMsgBuffer.r_BdyZero_N
+    );  // Not an estimated parameter
+    v3Copy(
+        asteroidEphemerisOutMsgBuffer.v_BdyZero_N,
+        asteroidEphemerisInMsgBuffer.v_BdyZero_N
+    );  // Not an estimated parameter
     eigenMatrixXToCArray(x_hat_k.segment(6, 3), asteroidEphemerisOutMsgBuffer.sigma_BN);
     eigenMatrixXToCArray(x_hat_k.segment(9, 3), asteroidEphemerisOutMsgBuffer.omega_BN_B);
     asteroidEphemerisOutMsgBuffer.timeTag = asteroidEphemerisInMsgBuffer.timeTag;
@@ -415,7 +425,7 @@ void SmallBodyNavEKF::writeMessages(uint64_t currentSimNanos) {
     }
 
     /* Write to the C++-wrapped output messages */
-    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->smallBodyNavOutMsg.write(&smallBodyNavOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->asteroidEphemerisOutMsg.write(&asteroidEphemerisOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->navTransOutMsg.write(navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->smallBodyNavOutMsg.write(smallBodyNavOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->asteroidEphemerisOutMsg.write(asteroidEphemerisOutMsgBuffer, this->moduleID, currentSimNanos);
 }

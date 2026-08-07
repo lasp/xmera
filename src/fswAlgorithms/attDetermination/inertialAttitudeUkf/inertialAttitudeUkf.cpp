@@ -3,12 +3,14 @@
 
 #include "inertialAttitudeUkf.h"
 
-InertialAttitudeUkf::InertialAttitudeUkf(AttitudeFilterMethod method) { this->measurementAcceptanceMethod = method; }
+InertialAttitudeUkf::InertialAttitudeUkf(AttitudeFilterMethod method) {
+    this->measurementAcceptanceMethod = method;
+}
 
 void InertialAttitudeUkf::customreset() {
     /*! No custom reset for this module */
-    std::function<FilterStateVector(double, const FilterStateVector)> attitudeDynamics =
-        [this](double t, const FilterStateVector& state) {
+    std::function<FilterStateVector(double, FilterStateVector const)> attitudeDynamics =
+        [this](double t, FilterStateVector const &state) {
             Eigen::Vector3d mrp(state.getPositionStates());
             Eigen::Vector3d omega(state.getVelocityStates());
             Eigen::MatrixXd bMat = bmatMrp(mrp);
@@ -25,8 +27,9 @@ void InertialAttitudeUkf::customreset() {
             }
 
             VelocityState omegaDot;
-            omegaDot.setValues(-this->spacecraftInertiaInverse *
-                               (tildeMatrix(omega) * this->spacecraftInertia * omega + wheelTorque));
+            omegaDot.setValues(
+                -this->spacecraftInertiaInverse * (tildeMatrix(omega) * this->spacecraftInertia * omega + wheelTorque)
+            );
             stateDerivative.setVelocity(omegaDot);
 
             if (state.hasBias()) {
@@ -45,12 +48,16 @@ void InertialAttitudeUkf::customreset() {
 /*! Before every update, check the MRP norm for a shadow set switch
  @return void
  */
-void InertialAttitudeUkf::customInitializeUpdate() { this->switchStateCovariance(); }
+void InertialAttitudeUkf::customInitializeUpdate() {
+    this->switchStateCovariance();
+}
 
 /*! After every update, check the MRP norm for a shadow set switch
  @return void
  */
-void InertialAttitudeUkf::customFinalizeUpdate() { this->switchStateCovariance(); }
+void InertialAttitudeUkf::customFinalizeUpdate() {
+    this->switchStateCovariance();
+}
 
 /*! Check the norm of the mrp and switch both the position state of the state vector (the mrp) and the covariance
  * if above the desired threshold
@@ -62,8 +69,8 @@ void InertialAttitudeUkf::switchStateCovariance() {
         PositionState mrp;
         mrp.setValues(mrpSwitch(sigma, this->mrpSwitchThreshold));
         this->state.setPosition(mrp);
-        Eigen::Matrix3d switchMatrix = 2 * std::pow(sigma.norm(), 4) * sigma * sigma.transpose() -
-                                       std::pow(sigma.norm(), 2) * Eigen::Matrix3d::Identity();
+        Eigen::Matrix3d switchMatrix = 2 * std::pow(sigma.norm(), 4) * sigma * sigma.transpose()
+                                     - std::pow(sigma.norm(), 2) * Eigen::Matrix3d::Identity();
         this->covar.block(0, 0, 3, 3) = switchMatrix * this->covar.block(0, 0, 3, 3) * switchMatrix.transpose();
         this->covar.block(0, 3, 3, 3) = switchMatrix * this->covar.block(0, 3, 3, 3);
         this->covar.block(3, 0, 3, 3) = this->covar.block(3, 0, 3, 3) * switchMatrix.transpose();
@@ -113,11 +120,11 @@ void InertialAttitudeUkf::writeOutputMessages(uint64_t currentSimNanos) {
             this->measurements[index].reset();
         }
     }
-    this->attitudeResidualMsg.write(&attitudePayload, this->moduleID, currentSimNanos);
-    this->rateResidualMsg.write(&ratePayload, this->moduleID, currentSimNanos);
+    this->attitudeResidualMsg.write(attitudePayload, this->moduleID, currentSimNanos);
+    this->rateResidualMsg.write(ratePayload, this->moduleID, currentSimNanos);
 
-    this->navAttitudeOutputMsg.write(&navAttPayload, this->moduleID, currentSimNanos);
-    this->inertialFilterOutputMsg.write(&filterPayload, this->moduleID, currentSimNanos);
+    this->navAttitudeOutputMsg.write(navAttPayload, this->moduleID, currentSimNanos);
+    this->inertialFilterOutputMsg.write(filterPayload, this->moduleID, currentSimNanos);
 }
 
 /*! Read current RW speends and populate the accelerations in order to propagate
@@ -158,21 +165,21 @@ void InertialAttitudeUkf::readAttitudeData() {
             /*! - Get the mapping from camera frame to inertial for the noise matrix */
             Eigen::Matrix3d dcm_CB = cArrayToEigenMatrix3(attitude.dcm_CB);
 
-            attitudeMeasurement.setMeasurementNoise(this->measNoiseScaling * dcm_CB.transpose() *
-                                                    this->attitudeMessages[index].measurementNoise_C * dcm_CB);
+            attitudeMeasurement.setMeasurementNoise(
+                this->measNoiseScaling * dcm_CB.transpose() * this->attitudeMessages[index].measurementNoise_C * dcm_CB
+            );
             attitudeMeasurement.setObservation(
-                mrpSwitch(Eigen::Map<Eigen::Vector3d>(attitude.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold));
+                mrpSwitch(Eigen::Map<Eigen::Vector3d>(attitude.MRP_BdyInrtl).eval(), this->mrpSwitchThreshold)
+            );
             attitudeMeasurement.setMeasurementModel(MeasurementModel::positionStates);
 
-            std::function<const Eigen::VectorXd(const Eigen::Vector3d&, const Eigen::Vector3d&)> mrpSub =
-                [](Eigen::Vector3d const& observed, const Eigen::Vector3d& predicted) {
+            std::function<Eigen::VectorXd const(Eigen::Vector3d const &, Eigen::Vector3d const &)> mrpSub =
+                [](Eigen::Vector3d const &observed, Eigen::Vector3d const &predicted) {
                     Eigen::Vector3d yMeas = observed - predicted;
                     if (observed.norm() > 0.95 && predicted.norm() > 0.95) {
-                        const Eigen::Vector3d predictedShadow = mrpShadow(predicted);
+                        Eigen::Vector3d const predictedShadow = mrpShadow(predicted);
                         Eigen::Vector3d yMeasShadow = observed - predictedShadow;
-                        if (yMeasShadow.norm() < yMeas.norm()) {
-                            return yMeasShadow;
-                        }
+                        if (yMeasShadow.norm() < yMeas.norm()) { return yMeasShadow; }
                     }
                     return yMeas;
                 };
@@ -182,9 +189,7 @@ void InertialAttitudeUkf::readAttitudeData() {
             this->measurementIndex += 1;
             this->validAttitude = true;
             /*! - Only consider the filter started once a Star Tracker image is processed */
-            if (this->firstFilterPass) {
-                this->firstFilterPass = false;
-            }
+            if (this->firstFilterPass) { this->firstFilterPass = false; }
         } else {
             this->validAttitude = false;
         }
@@ -230,9 +235,7 @@ void InertialAttitudeUkf::readFilterMeasurements() {
     /*! - Read star tracker measurements*/
     readAttitudeData();
     /*! Only add the rate measurements to processing if the filter is in a mode that desires that */
-    if (this->measurementAcceptanceMethod == AttitudeFilterMethod::AllMeasurements) {
-        readRateData();
-    }
+    if (this->measurementAcceptanceMethod == AttitudeFilterMethod::AllMeasurements) { readRateData(); }
     if (measurementAcceptanceMethod == AttitudeFilterMethod::RateMeasurementsWhenNoStars && !this->validAttitude) {
         readRateData();
     }
@@ -242,17 +245,21 @@ void InertialAttitudeUkf::readFilterMeasurements() {
     @param Eigen::Matrix3d rateNoise
     @return void
     */
-void InertialAttitudeUkf::setRateNoise(const Eigen::Matrix3d& rateNoiseInput) { this->rateNoise = rateNoiseInput; }
+void InertialAttitudeUkf::setRateNoise(Eigen::Matrix3d const &rateNoiseInput) {
+    this->rateNoise = rateNoiseInput;
+}
 
 /*! Get the rate measurement noise matrix
     @return Eigen::Matrix3d rateNoise
     */
-Eigen::Matrix3d InertialAttitudeUkf::getRateNoise() const { return this->rateNoise; }
+Eigen::Matrix3d InertialAttitudeUkf::getRateNoise() const {
+    return this->rateNoise;
+}
 
 /*! Add a star tracker to the filter solution using the attitudeMessage class
     @return attitudeMessage attitude
     */
-void InertialAttitudeUkf::addAttitudeInput(const AttitudeMessage& attitudeMsg) {
+void InertialAttitudeUkf::addAttitudeInput(AttitudeMessage const &attitudeMsg) {
     this->attitudeMessages[this->numberOfStarTackers] = attitudeMsg;
     this->numberOfStarTackers += 1;
 }

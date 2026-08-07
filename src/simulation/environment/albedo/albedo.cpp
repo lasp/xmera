@@ -56,9 +56,7 @@ Albedo::Albedo() {
  @return void
  */
 Albedo::~Albedo() {
-    for (long unsigned int c = 0; c < this->albOutMsgs.size(); c++) {
-        delete this->albOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->albOutMsgs.size(); c++) { delete this->albOutMsgs.at(c); }
     return;
 }
 
@@ -69,7 +67,9 @@ Config::Config() {
     return;
 }
 
-Config::~Config() { return; }
+Config::~Config() {
+    return;
+}
 
 /*! Adds the instrument configuration and automatically creates an output message name (overloaded function)
  @return void
@@ -83,10 +83,12 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
     // Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (configMsg.fov < 0.0) {
         this->fovs.push_back(this->fov_default);
-        bskLogger.bskLog(BSK_WARNING,
-                         "Albedo Module (addInstrumentConfig): For the instrument (%lu)'s half field of view angle "
-                         "(fov), the default value is used.",
-                         (int)this->albOutMsgs.size() - 1);
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "Albedo Module (addInstrumentConfig): For the instrument (%lu)'s half field of view angle "
+            "(fov), the default value is used.",
+            (int) this->albOutMsgs.size() - 1
+        );
     } else {
         this->fovs.push_back(configMsg.fov);
     }
@@ -99,10 +101,12 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
         this->nHat_Bs.push_back(configMsg.nHat_B / configMsg.nHat_B.norm());
     } else {
         this->nHat_Bs.push_back(nHat_B_default);
-        bskLogger.bskLog(BSK_WARNING,
-                         "Albedo Module (addInstrumentConfig): For the instrument (%lu)'s unit normal vector (nHat_B), "
-                         "the default vector is used.",
-                         this->albOutMsgs.size() - 1);
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "Albedo Module (addInstrumentConfig): For the instrument (%lu)'s unit normal vector (nHat_B), "
+            "the default vector is used.",
+            this->albOutMsgs.size() - 1
+        );
     }
     return;
 }
@@ -119,10 +123,12 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
     // Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (fov < 0.0) {
         this->fovs.push_back(this->fov_default);
-        bskLogger.bskLog(BSK_WARNING,
-                         "Albedo Module (addInstrumentConfig): Instrument (%lu)'s half field of view angle (fov) "
-                         "cannot be negative, the default value is used instead.",
-                         this->albOutMsgs.size() - 1);
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "Albedo Module (addInstrumentConfig): Instrument (%lu)'s half field of view angle (fov) "
+            "cannot be negative, the default value is used instead.",
+            this->albOutMsgs.size() - 1
+        );
     } else {
         this->fovs.push_back(fov);
     }
@@ -135,10 +141,12 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
         this->nHat_Bs.push_back(nHat_B / nHat_B.norm());
     } else {
         this->nHat_Bs.push_back(nHat_B_default);
-        bskLogger.bskLog(BSK_WARNING,
-                         "Albedo Module (addInstrumentConfig): Instrument (%lu)'s unit normal vector (nHat_B) cannot "
-                         "be composed of all zeros, the default vector is used instead.",
-                         this->albOutMsgs.size() - 1);
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "Albedo Module (addInstrumentConfig): Instrument (%lu)'s unit normal vector (nHat_B) cannot "
+            "be composed of all zeros, the default vector is used instead.",
+            this->albOutMsgs.size() - 1
+        );
     }
 
     return;
@@ -168,10 +176,12 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>*
 /*! This method subscribes to the  planet msg and sets the albedo average model (overloaded function)
  @return void
  */
-void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* planetSpiceMsg,
-                                            double ALB_avg,
-                                            int numLat,
-                                            int numLon) {
+void Albedo::addPlanetandAlbedoAverageModel(
+    Message<SpicePlanetStateMsgPayload>* planetSpiceMsg,
+    double ALB_avg,
+    int numLat,
+    int numLon
+) {
     std::string modelName = "ALBEDO_AVG";
     this->modelNames.push_back(modelName);
     this->fileNames.push_back("");
@@ -190,9 +200,11 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>*
 /*! This method subscribes to the planet msg and sets the albedo data model
  @return void
  */
-void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload>* planetSpiceMsg,
-                                         std::string dataPath,
-                                         std::string fileName) {
+void Albedo::addPlanetandAlbedoDataModel(
+    Message<SpicePlanetStateMsgPayload>* planetSpiceMsg,
+    std::string dataPath,
+    std::string fileName
+) {
     std::string modelName = "ALBEDO_DATA";
     this->modelNames.push_back(modelName);
     this->fileNames.push_back(fileName);
@@ -301,7 +313,7 @@ void Albedo::writeMessages(uint64_t currentSimNanos) {
         localMessage.albedoAtInstrument = this->albOutData.at(idx)[1];
         localMessage.AfluxAtInstrumentMax = this->albOutData.at(idx)[2];
         localMessage.AfluxAtInstrument = this->albOutData.at(idx)[3];
-        this->albOutMsgs.at(idx)->write(&localMessage, this->moduleID, currentSimNanos);
+        this->albOutMsgs.at(idx)->write(localMessage, this->moduleID, currentSimNanos);
     }
 }
 
@@ -340,7 +352,8 @@ void Albedo::getPlanetRadius(std::string planetSpiceName) {
         bskLogger.bskLog(
             BSK_ERROR,
             "Albedo Module (getPlanetRadius): The planet's radius cannot be obtained. The planet (%s) is not found.",
-            planetSpiceName.c_str());
+            planetSpiceName.c_str()
+        );
     }
     return;
 }
@@ -381,7 +394,8 @@ double Albedo::getAlbedoAverage(std::string planetSpiceName) {
         bskLogger.bskLog(
             BSK_ERROR,
             "Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet (%s).",
-            planetSpiceName.c_str());
+            planetSpiceName.c_str()
+        );
         return 0.;
     }
 }
@@ -399,12 +413,8 @@ void Albedo::evaluateAlbedoModel(int idx) {
     //! - Obtain the parameters of the specified model
     if (modelName == "ALBEDO_AVG") {
         //! - Albedo model based on an average value
-        if (numLat < 0.0) {
-            numLat = this->defaultNumLat;
-        }
-        if (numLon < 0.0) {
-            numLon = this->defaultNumLon;
-        }
+        if (numLat < 0.0) { numLat = this->defaultNumLat; }
+        if (numLon < 0.0) { numLon = this->defaultNumLon; }
         auto albAvg = this->ALB_avgs.at(idx);
         if (albAvg < 0.0) {
             // set the albedo average automatically based on the planet's name
@@ -423,8 +433,8 @@ void Albedo::evaluateAlbedoModel(int idx) {
         }
         fileName = dataPath + "/" + fileName;
     } else {
-        bskLogger.bskLog(
-            BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Check the model name (%s).", modelName.c_str());
+        bskLogger
+            .bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Check the model name (%s).", modelName.c_str());
     }
     //! - Read the albedo coefficient file if the model requires
     if (this->readFile) {
@@ -434,16 +444,18 @@ void Albedo::evaluateAlbedoModel(int idx) {
         }
         std::ifstream input(fileName);
         if (!input) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "Albedo Module (evaluateAlbedoModel): Albedo module is unable to load file %s",
-                             fileName.c_str());
+            bskLogger.bskLog(
+                BSK_ERROR,
+                "Albedo Module (evaluateAlbedoModel): Albedo module is unable to load file %s",
+                fileName.c_str()
+            );
             // return to avoid reading/attempting to process the invalid file below
             return;
         }
         //! - Read the albedo coefficients
         std::string line, field;
-        std::vector<std::vector<std::string> > array;  // the 2D array
-        std::vector<std::string> v;                    // array of values for one line only
+        std::vector<std::vector<std::string>> array;  // the 2D array
+        std::vector<std::string> v;                   // array of values for one line only
         while (getline(input, line)) {
             v.clear();
             std::stringstream ss(line);
@@ -453,17 +465,18 @@ void Albedo::evaluateAlbedoModel(int idx) {
             }
             array.push_back(v);
         }
-        numLat = (int)array.size();
-        numLon = (int)array[0].size();
+        numLat = (int) array.size();
+        numLon = (int) array[0].size();
         //! - Compare if the numLat/numLon are not zero
         if (!numLat || !numLon) {
             bskLogger.bskLog(
                 BSK_ERROR,
                 "Albedo Module (evaluateAlbedoModel): There has been an error in reading albedo data from (%s).",
-                fileName.c_str());
+                fileName.c_str()
+            );
         }
         //! - Define the albedo array based on the number of grid points
-        this->ALB[idx] = std::vector<std::vector<double> >(numLat, std::vector<double>(numLon, 0.0));
+        this->ALB[idx] = std::vector<std::vector<double>>(numLat, std::vector<double>(numLon, 0.0));
 
         //! - Albedo coefficients (2d array) from string array to double
         for (auto i = 0; i < numLat; ++i) {
@@ -472,7 +485,7 @@ void Albedo::evaluateAlbedoModel(int idx) {
             }
         }
     } else {
-        this->ALB[idx] = std::vector<std::vector<double> >(1, std::vector<double>(1, 0.0));
+        this->ALB[idx] = std::vector<std::vector<double>>(1, std::vector<double>(1, 0.0));
     }
     //! - Construct the latitude and longitude points
     //! - Geodetic latitude and longitude grid points in radian for albedo calculations
@@ -485,10 +498,10 @@ void Albedo::evaluateAlbedoModel(int idx) {
     this->latDiff[idx] = (180.0 / numLat) * M_PI / 180.0;
     this->lonDiff[idx] = (360.0 / numLon) * M_PI / 180.0;
     for (ilat = -halfLat; ilat < halfLat; ilat++) {
-        this->gdlat[idx][(int64_t)(ilat + halfLat)] = (ilat + 0.5) * this->latDiff[idx];
+        this->gdlat[idx][(int64_t) (ilat + halfLat)] = (ilat + 0.5) * this->latDiff[idx];
     }
     for (ilon = -halfLon; ilon < halfLon; ilon++) {
-        this->gdlon[idx][(int64_t)(ilon + halfLon)] = (ilon + 0.5) * this->lonDiff[idx];
+        this->gdlon[idx][(int64_t) (ilon + halfLon)] = (ilon + 0.5) * this->lonDiff[idx];
     }
     this->numLons.at(idx) = numLon;
     this->numLats.at(idx) = numLat;
@@ -497,11 +510,13 @@ void Albedo::evaluateAlbedoModel(int idx) {
 /*! This method calculates the albedo at instrument
  @return void
  */
-void Albedo::computeAlbedo(size_t idx,
-                           size_t instIdx,
-                           SpicePlanetStateMsgPayload planetMsg,
-                           bool albArray,
-                           double outData[]) {
+void Albedo::computeAlbedo(
+    size_t idx,
+    size_t instIdx,
+    SpicePlanetStateMsgPayload planetMsg,
+    bool albArray,
+    double outData[]
+) {
     //! - Letters denoting the frames:
     //! - P: planet frame
     //! - B: spacecraft body frame
@@ -551,10 +566,12 @@ void Albedo::computeAlbedo(size_t idx,
     /* Return zeross if the rate of the instrument's altitude
     to the planet's radius exceeds the specified limit */
     if (this->altitudeRateLimit >= 0 && alti_I / RA_planet > this->altitudeRateLimit) {
-        bskLogger.bskLog(BSK_WARNING,
-                         "Albedo Module (computeAlbedo): The rate (altitude to planet's radii) limit is exceeded for "
-                         "the planet (%s) and albedo set to zero.",
-                         planetMsg.PlanetName);
+        bskLogger.bskLog(
+            BSK_WARNING,
+            "Albedo Module (computeAlbedo): The rate (altitude to planet's radii) limit is exceeded for "
+            "the planet (%s) and albedo set to zero.",
+            planetMsg.PlanetName
+        );
         outData[0] = 0.0;
         outData[1] = 0.0;
         outData[2] = 0.0;
@@ -600,9 +617,7 @@ void Albedo::computeAlbedo(size_t idx,
                     //! - Sunlit portion of the planet seen by the instrument's position (max)
                     //! - Shadow factor at dA (optional)
                     shadowFactorAtdA = this->shadowFactorAtdA;
-                    if (this->eclipseCase) {
-                        shadowFactorAtdA = computeEclipseAtdA(RA_planet, r_dAP_N, r_SP_N);
-                    }
+                    if (this->eclipseCase) { shadowFactorAtdA = computeEclipseAtdA(RA_planet, r_dAP_N, r_SP_N); }
                     //! - Area of the incremental area
                     dArea = (fabs(lon1 - lon2) * fabs(sin(lat1) - sin(lat2)) * pow(r_dAP_N.norm(), 2));
                     //! - Maximum albedo flux ratio at instrument's position [-]
@@ -645,7 +660,7 @@ void Albedo::computeAlbedo(size_t idx,
         auto albedoAtInstrumentMax = alb_Imax;
         auto albedoAtInstrument = alb_I;
         //! - Compute the solar flux value at instrument [W/m^2]
-        this->SfluxAtInstrument = SOLAR_FLUX_EARTH * pow(AU * 1000, 2) / pow((r_SI_N.norm()), 2);
+        this->SfluxAtInstrument = SOLAR_FLUX_EARTH * pow(AU * 1'000, 2) / pow((r_SI_N.norm()), 2);
         //! - Total albedo flux [W/m^2]
         auto AfluxAtInstrumentMax = (this->SfluxAtInstrument) * alb_Imax;
         auto AfluxAtInstrument = (this->SfluxAtInstrument) * alb_I;
@@ -665,8 +680,8 @@ double Albedo::computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen
     //! - Note that the eclipse module computes the shadow factor at the spacecraft position
     auto r_SdA_N = r_SP_N - r_dAP_N;  //! - [m] position vector from dA to Sun (inertial)
     auto s = r_dAP_N.norm();
-    auto f_1 = safeAsin((REQ_SUN * 1000 + Rplanet) / r_SP_N.norm());
-    auto f_2 = safeAsin((REQ_SUN * 1000 - Rplanet) / r_SP_N.norm());
+    auto f_1 = safeAsin((REQ_SUN * 1'000 + Rplanet) / r_SP_N.norm());
+    auto f_2 = safeAsin((REQ_SUN * 1'000 - Rplanet) / r_SP_N.norm());
     auto s_0 = (-r_dAP_N.dot(r_SP_N)) / r_SP_N.norm();
     auto c_1 = s_0 + Rplanet / sin(f_1);
     auto c_2 = s_0 - Rplanet / sin(f_2);
@@ -674,9 +689,9 @@ double Albedo::computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen
     auto l_1 = c_1 * tan(f_1);
     auto l_2 = c_2 * tan(f_2);
     double area = 0.0;
-    double shadowFactorAtdA = 1.0;                         //! - Initialise the value for no eclipse
-    double a = safeAsin(REQ_SUN * 1000 / r_SdA_N.norm());  //! - Apparent radius of sun
-    double b = safeAsin(Rplanet / r_dAP_N.norm());         //! - Apparent radius of occulting body
+    double shadowFactorAtdA = 1.0;                          //! - Initialise the value for no eclipse
+    double a = safeAsin(REQ_SUN * 1'000 / r_SdA_N.norm());  //! - Apparent radius of sun
+    double b = safeAsin(Rplanet / r_dAP_N.norm());          //! - Apparent radius of occulting body
     double c = safeAcos((-r_dAP_N.dot(r_SdA_N)) / (r_dAP_N.norm() * r_SdA_N.norm()));
     if (fabs(l) < fabs(l_2) || fabs(l) < fabs(l_1)) {
         // The order of the conditionals is important.

@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "powerStorageBase.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
@@ -23,7 +24,9 @@ PowerStorageBase::PowerStorageBase() {
 /*! Destructor.
  @return void
  */
-PowerStorageBase::~PowerStorageBase() { return; }
+PowerStorageBase::~PowerStorageBase() {
+    return;
+}
 
 /*! Adds a PowerNodeUsageMsgPayload input message to iterate over
  @return void
@@ -56,7 +59,7 @@ void PowerStorageBase::reset(uint64_t currentSimNanos) {
  @return void
  */
 void PowerStorageBase::writeMessages(uint64_t CurrentClock) {
-    this->batPowerOutMsg.write(&this->storageStatusMsg, this->moduleID, CurrentClock);
+    this->batPowerOutMsg.write(this->storageStatusMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
@@ -101,9 +104,7 @@ double PowerStorageBase::sumAllInputs() {
     double currentSum = 0.0;
 
     std::vector<PowerNodeUsageMsgPayload>::iterator it;
-    for (it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) {
-        currentSum += (*it).netPower;
-    }
+    for (it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) { currentSum += (*it).netPower; }
 
     return currentSum;
 }
@@ -142,14 +143,20 @@ void PowerStorageBase::updateState(uint64_t currentSimNanos) {
 /*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void PowerStorageBase::customreset(uint64_t CurrentClock) { return; }
+void PowerStorageBase::customreset(uint64_t CurrentClock) {
+    return;
+}
 
 /*! custom Write method, similar to customSelfInit.
  @return void
  */
-void PowerStorageBase::customWriteMessages(uint64_t CurrentClock) { return; }
+void PowerStorageBase::customWriteMessages(uint64_t CurrentClock) {
+    return;
+}
 
 /*! Custom read method, similar to customSelfInit; returns `true' by default.
  @return void
  */
-bool PowerStorageBase::customReadMessages() { return true; }
+bool PowerStorageBase::customReadMessages() {
+    return true;
+}

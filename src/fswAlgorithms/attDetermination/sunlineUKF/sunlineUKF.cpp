@@ -3,12 +3,14 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sunlineUKF.h"
-#include <architecture/utilities/ukfUtilities.h>
+
 #include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include <string.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/ukfUtilities.h>
+
 #include <math.h>
+#include <string.h>
 
 static void sunlineUKFTimeUpdate(SunlineUKF* configData, double updateTime);
 static void sunlineUKFMeasUpdate(SunlineUKF* configData, double updateTime);
@@ -39,9 +41,11 @@ void SunlineUKF::reset(uint64_t callTime) {
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     cssConfigInBuffer = this->cssConfigInMsg();
     if (cssConfigInBuffer.nCSS > MAX_N_CSS_MEAS) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "sunlineUKF.cssConfigInMsg.nCSS must not be greater than "
-                               "MAX_N_CSS_MEAS value.");
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "sunlineUKF.cssConfigInMsg.nCSS must not be greater than "
+            "MAX_N_CSS_MEAS value."
+        );
     }
 
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
@@ -120,9 +124,7 @@ void SunlineUKF::updateState(uint64_t callTime) {
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
     newTimeTag = callTime * NANO2SEC;
-    if (newTimeTag > this->timeTag) {
-        sunlineUKFTimeUpdate(this, newTimeTag);
-    }
+    if (newTimeTag > this->timeTag) { sunlineUKFTimeUpdate(this, newTimeTag); }
 
     /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
     sunlineUKFMeasModel(this);
@@ -142,7 +144,7 @@ void SunlineUKF::updateState(uint64_t callTime) {
     v3Copy(this->state, this->outputSunline.vehSunPntBdy);
     v3Normalize(this->outputSunline.vehSunPntBdy, this->outputSunline.vehSunPntBdy);
     this->outputSunline.timeTag = this->timeTag;
-    this->navStateOutMsg.write(&this->outputSunline, this->moduleID, callTime);
+    this->navStateOutMsg.write(this->outputSunline, this->moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = this->timeTag;
@@ -150,7 +152,7 @@ void SunlineUKF::updateState(uint64_t callTime) {
     memmove(sunlineDataOutBuffer.covar, this->covar, SKF_N_STATES * SKF_N_STATES * sizeof(double));
     memmove(sunlineDataOutBuffer.state, this->state, SKF_N_STATES * sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, this->postFits, MAX_N_CSS_MEAS * sizeof(double));
-    this->filtDataOutMsg.write(&sunlineDataOutBuffer, this->moduleID, callTime);
+    this->filtDataOutMsg.write(sunlineDataOutBuffer, this->moduleID, callTime);
 
     return;
 }
@@ -202,7 +204,11 @@ void sunlineUKFTimeUpdate(SunlineUKF* configData, double updateTime) {
     sunlineStateProp(&(configData->SP[0 * configData->numStates + 0]), configData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
     vScale(
-        configData->wM[0], &(configData->SP[0 * configData->numStates + 0]), configData->numStates, configData->xBar);
+        configData->wM[0],
+        &(configData->SP[0 * configData->numStates + 0]),
+        configData->numStates,
+        configData->xBar
+    );
     /*! - Get the transpose of the sBar matrix because it is easier to extract Rows vs columns*/
     mTranspose(configData->sBar, configData->numStates, configData->numStates, sBarT);
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
@@ -235,12 +241,14 @@ void sunlineUKFTimeUpdate(SunlineUKF* configData, double updateTime) {
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates, &(configData->SP[(i + 1) * configData->numStates]), aRow);
         vScale(sqrt(configData->wC[i + 1]), aRow, configData->numStates, aRow);
-        memcpy((void*)&AT[i * configData->numStates], (void*)aRow, configData->numStates * sizeof(double));
+        memcpy((void*) &AT[i * configData->numStates], (void*) aRow, configData->numStates * sizeof(double));
     }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
-    memcpy(&AT[2 * configData->countHalfSPs * configData->numStates],
-           configData->sQnoise,
-           configData->numStates * configData->numStates * sizeof(double));
+    memcpy(
+        &AT[2 * configData->countHalfSPs * configData->numStates],
+        configData->sQnoise,
+        configData->numStates * configData->numStates * sizeof(double)
+    );
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates, configData->countHalfSPs, rAT);
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
@@ -255,13 +263,15 @@ void sunlineUKFTimeUpdate(SunlineUKF* configData, double updateTime) {
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, configData->numStates, configData->numStates, configData->sBar);
     mTranspose(configData->sBar, configData->numStates, configData->numStates, configData->covar);
-    mMultM(configData->sBar,
-           configData->numStates,
-           configData->numStates,
-           configData->covar,
-           configData->numStates,
-           configData->numStates,
-           configData->covar);
+    mMultM(
+        configData->sBar,
+        configData->numStates,
+        configData->numStates,
+        configData->covar,
+        configData->numStates,
+        configData->numStates,
+        configData->covar
+    );
     vCopy(&(configData->SP[0]), configData->numStates, configData->state);
 
     configData->timeTag = updateTime;
@@ -344,9 +354,11 @@ void sunlineUKFMeasUpdate(SunlineUKF* configData, double updateTime) {
     mSetIdentity(configData->qObs, configData->numObs, configData->numObs);
     mScale(configData->qObsVal, configData->qObs, configData->numObs, configData->numObs, configData->qObs);
     ukfCholDecomp(configData->qObs, configData->numObs, configData->numObs, qChol);
-    memcpy(&(AT[2 * configData->countHalfSPs * configData->numObs]),
-           qChol,
-           configData->numObs * configData->numObs * sizeof(double));
+    memcpy(
+        &(AT[2 * configData->countHalfSPs * configData->numObs]),
+        qChol,
+        configData->numObs * configData->numObs * sizeof(double)
+    );
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
           current Sy matrix*/
     ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numObs, configData->numObs, rAT);
@@ -402,11 +414,13 @@ void sunlineUKFMeasUpdate(SunlineUKF* configData, double updateTime) {
     }
     /*! - Compute equivalent covariance based on updated sBar matrix*/
     mTranspose(configData->sBar, configData->numStates, configData->numStates, configData->covar);
-    mMultM(configData->sBar,
-           configData->numStates,
-           configData->numStates,
-           configData->covar,
-           configData->numStates,
-           configData->numStates,
-           configData->covar);
+    mMultM(
+        configData->sBar,
+        configData->numStates,
+        configData->numStates,
+        configData->covar,
+        configData->numStates,
+        configData->numStates,
+        configData->covar
+    );
 }

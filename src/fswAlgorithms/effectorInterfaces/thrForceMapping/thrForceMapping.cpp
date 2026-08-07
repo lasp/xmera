@@ -12,9 +12,7 @@ void ThrForceMapping::reset(uint64_t callTime) {
     assert(this->thrConfigInMsg.isLinked() && this->vehConfigInMsg.isLinked() && this->cmdTorqueInMsg.isLinked());
 
     auto localThrConfigInMsg = THRArrayConfigMsgPayload();
-    if (this->thrConfigInMsg.isWritten()) {
-        localThrConfigInMsg = this->thrConfigInMsg();
-    }
+    if (this->thrConfigInMsg.isWritten()) { localThrConfigInMsg = this->thrConfigInMsg(); }
 
     // Call the algorithm reset method
     this->algorithm.reset(callTime, localThrConfigInMsg);
@@ -26,88 +24,108 @@ void ThrForceMapping::reset(uint64_t callTime) {
  */
 void ThrForceMapping::updateState(uint64_t callTime) {
     auto LrInputMsg = CmdTorqueBodyMsgPayload();
-    if (this->cmdTorqueInMsg.isWritten()) {
-        LrInputMsg = this->cmdTorqueInMsg();
-    }
+    if (this->cmdTorqueInMsg.isWritten()) { LrInputMsg = this->cmdTorqueInMsg(); }
     auto localVehConfigInMsg = VehicleConfigMsgPayload();
-    if (this->vehConfigInMsg.isWritten()) {
-        localVehConfigInMsg = this->vehConfigInMsg();
-    }
+    if (this->vehConfigInMsg.isWritten()) { localVehConfigInMsg = this->vehConfigInMsg(); }
 
     // Call the algorithm update method
     THRArrayCmdForceMsgPayload thrusterForceOut = this->algorithm.update(callTime, LrInputMsg, localVehConfigInMsg);
 
-    this->thrForceCmdOutMsg.write(&thrusterForceOut, this->moduleID, callTime);
+    this->thrForceCmdOutMsg.write(thrusterForceOut, this->moduleID, callTime);
 }
 
 /**
  * @brief Get the control axes in the body frame.
  * @return 3x3 matrix representing the control axes in the body frame.
  */
-Eigen::Matrix3d ThrForceMapping::getControlAxesB() const { return this->algorithm.getControlAxesB(); }
+Eigen::Matrix3d ThrForceMapping::getControlAxesB() const {
+    return this->algorithm.getControlAxesB();
+}
 
 /**
  * @brief Set the control axes in body frame.
  * @param axes A 3x3 matrix representing the control axes in body frame.
  */
-void ThrForceMapping::setControlAxesB(const Eigen::Matrix3d& axes) { this->algorithm.setControlAxesB(axes); }
+void ThrForceMapping::setControlAxesB(Eigen::Matrix3d const &axes) {
+    this->algorithm.setControlAxesB(axes);
+}
 
 /**
  * @brief Get the thruster force magnitudes.
  * @return A vector of thruster force magnitudes.
  */
-Vector36d ThrForceMapping::getThrForceMag() const { return this->algorithm.getThrForceMag(); }
+Vector36d ThrForceMapping::getThrForceMag() const {
+    return this->algorithm.getThrForceMag();
+}
 
 /**
  * @brief Set the thruster force magnitudes.
  * @param forceMag A vector of thruster force magnitudes.
  */
-void ThrForceMapping::setThrForceMag(const Vector36d& forceMag) { this->algorithm.setThrForceMag(forceMag); }
+void ThrForceMapping::setThrForceMag(Vector36d const &forceMag) {
+    this->algorithm.setThrForceMag(forceMag);
+}
 
 /**
  * @brief Get the sign of the thruster forces.
  * @return The sign of the thruster forces (POSITIVE or NEGATIVE).
  */
-ThrForceSign ThrForceMapping::getThrForceSign() const { return this->algorithm.getThrForceSign(); }
+ThrForceSign ThrForceMapping::getThrForceSign() const {
+    return this->algorithm.getThrForceSign();
+}
 
 /**
  * @brief Set the sign of the thruster forces.
  * @param sign The sign of the thruster forces (POSITIVE or NEGATIVE).
  */
-void ThrForceMapping::setThrForceSign(ThrForceSign sign) { this->algorithm.setThrForceSign(sign); }
+void ThrForceMapping::setThrForceSign(ThrForceSign sign) {
+    this->algorithm.setThrForceSign(sign);
+}
 
 /**
  * @brief Get the angular error threshold.
  * @return The angular error threshold.
  */
-double ThrForceMapping::getAngErrThresh() const { return this->algorithm.getAngErrThresh(); }
+double ThrForceMapping::getAngErrThresh() const {
+    return this->algorithm.getAngErrThresh();
+}
 
 /**
  * @brief Set the angular error threshold.
  * @param The new angular error threshold.
  */
-void ThrForceMapping::setAngErrThresh(double thresh) { this->algorithm.setAngErrThresh(thresh); }
+void ThrForceMapping::setAngErrThresh(double thresh) {
+    this->algorithm.setAngErrThresh(thresh);
+}
 
 /**
  * @brief Get the epsilon value.
  * @return The epsilon value.
  */
-double ThrForceMapping::getEpsilon() const { return this->algorithm.getEpsilon(); }
+double ThrForceMapping::getEpsilon() const {
+    return this->algorithm.getEpsilon();
+}
 
 /**
  * @brief Set the epsilon value.
  * @param The new epsilon value.
  */
-void ThrForceMapping::setEpsilon(double eps) { this->algorithm.setEpsilon(eps); }
+void ThrForceMapping::setEpsilon(double eps) {
+    this->algorithm.setEpsilon(eps);
+}
 
 /**
  * @brief Check if the second least squares fitting loop should be used.
  * @return True if the 2nd loop should be used, false otherwise.
  */
-bool ThrForceMapping::getUse2ndLoop() const { return this->algorithm.getUse2ndLoop(); }
+bool ThrForceMapping::getUse2ndLoop() const {
+    return this->algorithm.getUse2ndLoop();
+}
 
 /**
  * @brief Set if the second least squares fitting loop should be used.
  * @return True if the 2nd loop should be used, false otherwise.
  */
-void ThrForceMapping::setUse2ndLoop(bool loopFlag) { this->algorithm.setUse2ndLoop(loopFlag); }
+void ThrForceMapping::setUse2ndLoop(bool loopFlag) {
+    this->algorithm.setUse2ndLoop(loopFlag);
+}

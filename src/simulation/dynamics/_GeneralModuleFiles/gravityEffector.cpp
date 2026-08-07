@@ -2,30 +2,31 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#include <functional>
+#include "gravityEffector.h"
 
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include "gravityEffector.h"
+
+#include <functional>
 
 namespace {
-// Prevents casting to int64_t from uint64_t, which could inccur information
-// loss and might raise warnings in some compilers
-double computeDtInSeconds(uint64_t lhs, uint64_t rhs) {
-    if (lhs > rhs) {
-        return ((lhs - rhs) * NANO2SEC);
-    } else {
-        return -((rhs - lhs) * NANO2SEC);
+    // Prevents casting to int64_t from uint64_t, which could inccur information
+    // loss and might raise warnings in some compilers
+    double computeDtInSeconds(uint64_t lhs, uint64_t rhs) {
+        if (lhs > rhs) {
+            return ((lhs - rhs) * NANO2SEC);
+        } else {
+            return -((rhs - lhs) * NANO2SEC);
+        }
     }
-}
 }  // namespace
 
 GravBodyData::GravBodyData()
     : gravityModel{std::make_shared<PointMassGravityModel>()}, localPlanet{std::invoke([]() {
-          SpicePlanetStateMsgPayload payload{};
-          m33SetIdentity(payload.J20002Pfix);  // Initialize rotation matrix to identity
-          return payload;
-      })} {}
+        SpicePlanetStateMsgPayload payload{};
+        m33SetIdentity(payload.J20002Pfix);  // Initialize rotation matrix to identity
+        return payload;
+    })} {}
 
 void GravBodyData::initBody(int64_t moduleID) {
     std::optional<std::string> errorMessage;
@@ -75,7 +76,7 @@ void GravBodyData::loadEphemeris() {
     }
 }
 
-void GravBodyData::registerProperties(DynParamManager& statesIn) {
+void GravBodyData::registerProperties(DynParamManager &statesIn) {
     if (this->planetName == "") {
         auto errorMessage = "You must specify a planetary body name in GravBodyData";
         this->bskLogger.bskLog(BSK_ERROR, errorMessage);
@@ -91,24 +92,24 @@ void GravBodyData::registerProperties(DynParamManager& statesIn) {
 
     this->J20002Pfix =
         statesIn.createProperty(this->planetName + ".J20002Pfix", c2DArrayToEigenMatrix3(this->localPlanet.J20002Pfix));
-    this->J20002Pfix_dot = statesIn.createProperty(this->planetName + ".J20002Pfix_dot",
-                                                   c2DArrayToEigenMatrix3(this->localPlanet.J20002Pfix_dot));
+    this->J20002Pfix_dot = statesIn.createProperty(
+        this->planetName + ".J20002Pfix_dot",
+        c2DArrayToEigenMatrix3(this->localPlanet.J20002Pfix_dot)
+    );
 }
 
 void GravityEffector::reset(uint64_t currentSimNanos) {
     // Initializes the bodies
-    for (auto&& body : this->gravBodies) {
-        body->initBody(this->moduleID);
-    }
+    for (auto &&body : this->gravBodies) { body->initBody(this->moduleID); }
 }
 
 void GravityEffector::updateState(uint64_t currentSimNanos) {
     // Updates the central body
     this->centralBody.reset();
-    for (auto&& body : this->gravBodies) {
+    for (auto &&body : this->gravBodies) {
         body->loadEphemeris();
 
-        if (!body->isCentralBody) continue;
+        if (!body->isCentralBody) { continue; }
 
         if (this->centralBody)  // A centralBody was already set
         {
@@ -125,7 +126,7 @@ void GravityEffector::updateState(uint64_t currentSimNanos) {
 
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos) {
     if (this->centralBodyOutMsg.isLinked() && this->centralBody) {
-        this->centralBodyOutMsg.write(&this->centralBody->localPlanet, this->moduleID, currentSimNanos);
+        this->centralBodyOutMsg.write(this->centralBody->localPlanet, this->moduleID, currentSimNanos);
     }
 }
 
@@ -135,8 +136,8 @@ void GravityEffector::prependSpacecraftNameToStates() {
     this->vehicleGravityPropName = this->nameOfSpacecraftAttachedTo + this->vehicleGravityPropName;
 }
 
-void GravityEffector::registerProperties(DynParamManager& statesIn) {
-    static const Eigen::Vector3d zeroVector3d = Eigen::Vector3d::Zero();
+void GravityEffector::registerProperties(DynParamManager &statesIn) {
+    static Eigen::Vector3d const zeroVector3d = Eigen::Vector3d::Zero();
 
     this->gravProperty = statesIn.createProperty(this->vehicleGravityPropName, zeroVector3d);
     this->inertialPositionProperty = statesIn.createProperty(this->inertialPositionPropName, zeroVector3d);
@@ -144,17 +145,15 @@ void GravityEffector::registerProperties(DynParamManager& statesIn) {
 
     // register planet position and velocity state vectors as parameters in the
     // state engine
-    for (auto&& body : this->gravBodies) {
-        body->registerProperties(statesIn);
-    }
+    for (auto &&body : this->gravBodies) { body->registerProperties(statesIn); }
 }
 
-void GravityEffector::linkInStates(DynParamManager& statesIn) {
+void GravityEffector::linkInStates(DynParamManager &statesIn) {
     this->timeCorr = statesIn.getPropertyReference(this->systemTimeCorrPropName);
 }
 
 void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N) {
-    uint64_t systemClock = (uint64_t)this->timeCorr->data()[0];
+    uint64_t systemClock = (uint64_t) this->timeCorr->data()[0];
     Eigen::Vector3d r_cN_N = Eigen::Vector3d::Zero();  // position of s/c CoM wrt N
     Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero();  // inertial position of central body if there is one. Big C is
                                                        // central body. Little c is CoM of s/c
@@ -171,7 +170,7 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3
     // acceleration of CoM of s/c wrt Frame in which it is stored/integrated in spacecraft
     Eigen::Vector3d rDotDot_cF_N = Eigen::Vector3d::Zero();
 
-    for (auto&& body : this->gravBodies) {
+    for (auto &&body : this->gravBodies) {
         // position of Planet being queried wrt N
         Eigen::Vector3d r_PN_N = getEulerSteppedGravBodyPosition(body);
         Eigen::Vector3d r_cP_N = r_cN_N - r_PN_N;  // position of s/c CoM wrt planet in N
@@ -213,14 +212,14 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
 }
 
 Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData) {
-    uint64_t systemClock = (uint64_t)this->timeCorr->data()[0];
+    uint64_t systemClock = (uint64_t) this->timeCorr->data()[0];
     double dt = computeDtInSeconds(systemClock, bodyData->timeWritten);
     Eigen::Vector3d r_PN_N = cArrayToEigenVector(bodyData->localPlanet.PositionVector);
     r_PN_N += cArrayToEigenVector(bodyData->localPlanet.VelocityVector) * dt;
     return r_PN_N;
 }
 
-void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double& orbPotEnergyContr) {
+void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double &orbPotEnergyContr) {
     Eigen::Vector3d r_CN_N = Eigen::Vector3d::Zero();  // C is central body. position of C wrt N in N
     Eigen::Vector3d r_cN_N = Eigen::Vector3d::Zero();  // position c wrt N in N
 
@@ -233,7 +232,7 @@ void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double& 
         r_cN_N = r_cF_N;
     }
 
-    for (auto&& body : this->gravBodies) {
+    for (auto &&body : this->gravBodies) {
         // P is planet being queried. position of planet wrt N in N
         Eigen::Vector3d r_PN_N = getEulerSteppedGravBodyPosition(body);
         // c is s/c CoM. position of c wrt P in N
@@ -254,4 +253,6 @@ void GravityEffector::setGravBodies(std::vector<std::shared_ptr<GravBodyData>> g
     this->gravBodies = std::move(gravBodies);
 }
 
-void GravityEffector::addGravBody(std::shared_ptr<GravBodyData> gravBody) { this->gravBodies.push_back(gravBody); }
+void GravityEffector::addGravBody(std::shared_ptr<GravBodyData> gravBody) {
+    this->gravBodies.push_back(gravBody);
+}

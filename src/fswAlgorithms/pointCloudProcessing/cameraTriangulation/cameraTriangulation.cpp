@@ -2,6 +2,7 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "cameraTriangulation.h"
+
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -39,11 +40,12 @@ void CameraTriangulation::updateState(uint64_t currentSimNanos) {
     this->readMessages();
 
     if (this->validInputs == 1) {
-        std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulationResult =
-            this->triangulation(this->pointCloud,
-                                this->keyPoints,
-                                this->cameraCalibrationMatrixInverse,
-                                std::vector<Eigen::Matrix3d>{this->dcm_CN});
+        std::pair<Eigen::Vector3d, Eigen::Matrix3d> triangulationResult = this->triangulation(
+            this->pointCloud,
+            this->keyPoints,
+            this->cameraCalibrationMatrixInverse,
+            std::vector<Eigen::Matrix3d>{this->dcm_CN}
+        );
         this->estimatedCameraLocation = triangulationResult.first;
         this->triangulationCovariance = triangulationResult.second;
     }
@@ -114,32 +116,36 @@ void CameraTriangulation::readMessages() {
     this->dcm_CN = dcm_CB * dcm_BN;
 
     this->validInputs = false;
-    if (validPointCloud && validKeyPoints) {
-        this->validInputs = true;
-    }
+    if (validPointCloud && validKeyPoints) { this->validInputs = true; }
 
     // check if cameraIDs, time tags, and number of features are equal
     if (cameraIDkeyPoints == cameraIDconfig) {
         this->cameraID = cameraIDkeyPoints;
     } else if (this->validInputs) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "cameraTriangulation: camera IDs from keyPointsInMsg and "
-                         "cameraConfigInMsg are different, but should be equal.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "cameraTriangulation: camera IDs from keyPointsInMsg and "
+            "cameraConfigInMsg are different, but should be equal."
+        );
         this->validInputs = false;
     }
     if (timeTagPointCloud == timeTagKeyPoints) {
         this->timeTag = timeTagPointCloud;
     } else if (this->validInputs) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "cameraTriangulation: time tags from pointCloudInMsg and "
-                         "keyPointsInMsg (timeTag_secondImage) are different, but should be equal.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "cameraTriangulation: time tags from pointCloudInMsg and "
+            "keyPointsInMsg (timeTag_secondImage) are different, but should be equal."
+        );
         this->validInputs = false;
     }
     if (pointCloudSize != numberKeyPoints && this->validInputs) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "cameraTriangulation: number of features from pointCloudInMsg "
-                         "(pointCloudSize) and keyPointsInMsg (numberKeyPoints) are different, "
-                         "but should be equal.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "cameraTriangulation: number of features from pointCloudInMsg "
+            "(pointCloudSize) and keyPointsInMsg (numberKeyPoints) are different, "
+            "but should be equal."
+        );
         this->validInputs = false;
     }
 }
@@ -159,7 +165,7 @@ void CameraTriangulation::writeMessages(uint64_t currentSimNanos) {
     eigenVectorToCArray(this->estimatedCameraLocation, cameraLocationOutMsgBuffer.cameraPos_N);
     eigenMatrixToCArray(this->triangulationCovariance, cameraLocationOutMsgBuffer.covariance_N);
 
-    this->cameraLocationOutMsg.write(&cameraLocationOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->cameraLocationOutMsg.write(cameraLocationOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This method performs the triangulation to estimate the unknown location given the known locations and images.
@@ -173,8 +179,9 @@ void CameraTriangulation::writeMessages(uint64_t currentSimNanos) {
 std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
     Eigen::MatrixXd knownLocations,
     std::vector<Eigen::Vector2d> imagePoints,
-    const Eigen::Matrix3d& cameraCalibrationInverse,
-    std::vector<Eigen::Matrix3d> dcmCamera) const {
+    Eigen::Matrix3d const &cameraCalibrationInverse,
+    std::vector<Eigen::Matrix3d> dcmCamera
+) const {
     unsigned long numLocations = knownLocations.cols();
 
     // make sure number of provided locations is equal to number of image points.
@@ -221,9 +228,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> CameraTriangulation::triangulation(
             // dcm for measurement j
             // (only equal to the dcm for measurement i if only a single dcm is provided to function)
             Eigen::Matrix3d dcm_FCj = dcm_FC;
-            if (dcmCamera.size() != 1) {
-                dcm_FCj = dcmCamera.at(c2).transpose();
-            }
+            if (dcmCamera.size() != 1) { dcm_FCj = dcmCamera.at(c2).transpose(); }
             Eigen::Vector2d uj = imagePoints.at(c2);
             Eigen::Vector3d ujBar;
             ujBar << uj, 1.;

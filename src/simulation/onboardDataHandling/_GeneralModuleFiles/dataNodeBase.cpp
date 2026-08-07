@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "dataNodeBase.h"
+
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <string.h>
 
 /*! Constructor.
@@ -19,7 +21,9 @@ DataNodeBase::DataNodeBase() {
 /*! Destructor.
  @return void
  */
-DataNodeBase::~DataNodeBase() { return; }
+DataNodeBase::~DataNodeBase() {
+    return;
+}
 
 /*! This method is used to reset the module. In general, no functionality is reset.
  @param currentSimNanos
@@ -38,7 +42,7 @@ void DataNodeBase::reset(uint64_t currentSimNanos) {
  */
 void DataNodeBase::writeMessages(uint64_t CurrentClock) {
     //! - write dataNode output messages - baud rate and name
-    this->nodeDataOutMsg.write(&this->nodeDataMsg, this->moduleID, CurrentClock);
+    this->nodeDataOutMsg.write(this->nodeDataMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
@@ -97,14 +101,20 @@ void DataNodeBase::updateState(uint64_t currentSimNanos) {
 /*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void DataNodeBase::customreset(uint64_t CurrentClock) { return; }
+void DataNodeBase::customreset(uint64_t CurrentClock) {
+    return;
+}
 
 /*! custom Write method, similar to customSelfInit.
  @return void
  */
-void DataNodeBase::customWriteMessages(uint64_t CurrentClock) { return; }
+void DataNodeBase::customWriteMessages(uint64_t CurrentClock) {
+    return;
+}
 
 /*! Custom read method, similar to customSelfInit; returns `true' by default.
  @return void
  */
-bool DataNodeBase::customReadMessages() { return true; }
+bool DataNodeBase::customReadMessages() {
+    return true;
+}

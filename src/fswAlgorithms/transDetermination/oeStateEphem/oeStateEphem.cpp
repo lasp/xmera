@@ -21,102 +21,113 @@ void OEStateEphem::reset(uint64_t callTime) {
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void OEStateEphem::updateState(const uint64_t callTime) {
+void OEStateEphem::updateState(uint64_t const callTime) {
     auto tmpOutputState = this->algorithm.updateState(callTime);
-    this->stateFitOutMsg.write(&tmpOutputState, moduleID, callTime);
+    this->stateFitOutMsg.write(tmpOutputState, moduleID, callTime);
 }
 
-void OEStateEphem::setCentralBodyGravitationalParameter(const double mu) {
+void OEStateEphem::setCentralBodyGravitationalParameter(double const mu) {
     this->algorithm.setCentralBodyGravitationalParameter(mu);
-};
+}
 
 double OEStateEphem::getCentralBodyGravitationalParameter() const {
     return this->algorithm.getCentralBodyGravitationalParameter();
-};
+}
 
-void OEStateEphem::setArcNumberOfCoefficients(const unsigned int arcNumber, const unsigned int numberOfCoefficients) {
+void OEStateEphem::setArcNumberOfCoefficients(unsigned int const arcNumber, unsigned int const numberOfCoefficients) {
     this->algorithm.setArcNumberOfCoefficients(arcNumber, numberOfCoefficients);
-};
+}
 
-unsigned int OEStateEphem::getArcNumberOfCoefficients(const unsigned int arcNumber) const {
+unsigned int OEStateEphem::getArcNumberOfCoefficients(unsigned int const arcNumber) const {
     return this->algorithm.getArcNumberOfCoefficients(arcNumber);
-};
+}
 
-void OEStateEphem::setArcMiddleTime(const unsigned int arcNumber, const double timeMiddle) {
+void OEStateEphem::setArcMiddleTime(unsigned int const arcNumber, double const timeMiddle) {
     this->algorithm.setArcMiddleTime(arcNumber, timeMiddle);
-};
+}
 
-double OEStateEphem::getArcMiddleTime(const unsigned int arcNumber) const {
+double OEStateEphem::getArcMiddleTime(unsigned int const arcNumber) const {
     return this->algorithm.getArcMiddleTime(arcNumber);
-};
+}
 
-void OEStateEphem::setArcRadiusTime(const unsigned int arcNumber, const double timeRadius) {
+void OEStateEphem::setArcRadiusTime(unsigned int const arcNumber, double const timeRadius) {
     this->algorithm.setArcRadiusTime(arcNumber, timeRadius);
-};
+}
 
-double OEStateEphem::getArcRadiusTime(const unsigned int arcNumber) const {
+double OEStateEphem::getArcRadiusTime(unsigned int const arcNumber) const {
     return this->algorithm.getArcRadiusTime(arcNumber);
-};
+}
 
-void OEStateEphem::setArcAnomalyFlag(const unsigned int arcNumber, const unsigned int anomalyFlag) {
+void OEStateEphem::setArcAnomalyFlag(unsigned int const arcNumber, unsigned int const anomalyFlag) {
     this->algorithm.setArcAnomalyFlag(arcNumber, anomalyFlag);
-};
+}
 
 unsigned int OEStateEphem::getArcAnomalyFlag(unsigned int arcNumber) const {
     return this->algorithm.getArcAnomalyFlag(arcNumber);
-};
+}
 
 void OEStateEphem::setArcRadiusPeriapsisCoefficients(
-    const unsigned int arcNumber,
-    const std::array<double, MAX_OE_COEFF>& radiusPeriapsisCoefficients) {
+    unsigned int const arcNumber,
+    std::array<double, MAX_OE_COEFF> const &radiusPeriapsisCoefficients
+) {
     this->algorithm.setArcRadiusPeriapsisCoefficients(arcNumber, radiusPeriapsisCoefficients);
-};
+}
 
-std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRadiusPeriapsisCoefficients(const unsigned int arcNumber) {
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRadiusPeriapsisCoefficients(unsigned int const arcNumber) {
     return this->algorithm.getArcRadiusPeriapsisCoefficients(arcNumber);
-};
+}
 
-void OEStateEphem::setArcEccentricityCoefficients(const unsigned int arcNumber,
-                                                  const std::array<double, MAX_OE_COEFF>& eccentricityCoefficients) {
+void OEStateEphem::setArcEccentricityCoefficients(
+    unsigned int const arcNumber,
+    std::array<double, MAX_OE_COEFF> const &eccentricityCoefficients
+) {
     this->algorithm.setArcEccentricityCoefficients(arcNumber, eccentricityCoefficients);
-};
+}
 
-std::array<double, MAX_OE_COEFF> OEStateEphem::getArcEccentricityCoefficients(const unsigned int arcNumber) {
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcEccentricityCoefficients(unsigned int const arcNumber) {
     return this->algorithm.getArcEccentricityCoefficients(arcNumber);
-};
+}
 
-void OEStateEphem::setArcInclinationCoefficients(const unsigned int arcNumber,
-                                                 const std::array<double, MAX_OE_COEFF>& inclinationCoefficients) {
+void OEStateEphem::setArcInclinationCoefficients(
+    unsigned int const arcNumber,
+    std::array<double, MAX_OE_COEFF> const &inclinationCoefficients
+) {
     this->algorithm.setArcInclinationCoefficients(arcNumber, inclinationCoefficients);
-};
+}
 
-std::array<double, MAX_OE_COEFF> OEStateEphem::getArcInclinationCoefficients(const unsigned int arcNumber) {
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcInclinationCoefficients(unsigned int const arcNumber) {
     return this->algorithm.getArcInclinationCoefficients(arcNumber);
-};
+}
 
-void OEStateEphem::setArcArgPeriapsisCoefficients(const unsigned int arcNumber,
-                                                  const std::array<double, MAX_OE_COEFF>& argPeriapsisCoefficients) {
+void OEStateEphem::setArcArgPeriapsisCoefficients(
+    unsigned int const arcNumber,
+    std::array<double, MAX_OE_COEFF> const &argPeriapsisCoefficients
+) {
     this->algorithm.setArcArgPeriapsisCoefficients(arcNumber, argPeriapsisCoefficients);
-};
+}
 
-std::array<double, MAX_OE_COEFF> OEStateEphem::getArcArgPeriapsisCoefficients(const unsigned int arcNumber) {
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcArgPeriapsisCoefficients(unsigned int const arcNumber) {
     return this->algorithm.getArcArgPeriapsisCoefficients(arcNumber);
-};
+}
 
-void OEStateEphem::setArcRaanCoefficients(const unsigned int arcNumber,
-                                          const std::array<double, MAX_OE_COEFF>& raanCoefficients) {
+void OEStateEphem::setArcRaanCoefficients(
+    unsigned int const arcNumber,
+    std::array<double, MAX_OE_COEFF> const &raanCoefficients
+) {
     this->algorithm.setArcRaanCoefficients(arcNumber, raanCoefficients);
-};
+}
 
-std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRaanCoefficients(const unsigned int arcNumber) {
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcRaanCoefficients(unsigned int const arcNumber) {
     return this->algorithm.getArcRaanCoefficients(arcNumber);
-};
+}
 
-void OEStateEphem::setArcTrueAnomalyCoefficients(const unsigned int arcNumber,
-                                                 const std::array<double, MAX_OE_COEFF>& trueAnomalyCoefficients) {
+void OEStateEphem::setArcTrueAnomalyCoefficients(
+    unsigned int const arcNumber,
+    std::array<double, MAX_OE_COEFF> const &trueAnomalyCoefficients
+) {
     this->algorithm.setArcTrueAnomalyCoefficients(arcNumber, trueAnomalyCoefficients);
-};
+}
 
-std::array<double, MAX_OE_COEFF> OEStateEphem::getArcTrueAnomalyCoefficients(const unsigned int arcNumber) {
+std::array<double, MAX_OE_COEFF> OEStateEphem::getArcTrueAnomalyCoefficients(unsigned int const arcNumber) {
     return this->algorithm.getArcTrueAnomalyCoefficients(arcNumber);
-};
+}

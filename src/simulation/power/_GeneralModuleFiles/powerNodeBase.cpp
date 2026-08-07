@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "powerNodeBase.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/macroDefinitions.h>
 
@@ -18,7 +19,9 @@ PowerNodeBase::PowerNodeBase() {
 /*! Destructor.
  @return void
  */
-PowerNodeBase::~PowerNodeBase() { return; }
+PowerNodeBase::~PowerNodeBase() {
+    return;
+}
 
 /*! This method is used to reset the module. In general, no functionality must be reset.
  @return void
@@ -35,7 +38,7 @@ void PowerNodeBase::reset(uint64_t currentSimNanos) {
  */
 void PowerNodeBase::writeMessages(uint64_t CurrentClock) {
     //! - write power output message
-    this->nodePowerOutMsg.write(&this->nodePowerMsg, this->moduleID, CurrentClock);
+    this->nodePowerOutMsg.write(this->nodePowerMsg, this->moduleID, CurrentClock);
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
@@ -99,14 +102,20 @@ void PowerNodeBase::updateState(uint64_t currentSimNanos) {
 /*! Custom reset() method.  This allows a child class to add additional functionality to the reset() method
  @return void
  */
-void PowerNodeBase::customreset(uint64_t CurrentClock) { return; }
+void PowerNodeBase::customreset(uint64_t CurrentClock) {
+    return;
+}
 
 /*! custom Write method, similar to customSelfInit.
  @return void
  */
-void PowerNodeBase::customWriteMessages(uint64_t CurrentClock) { return; }
+void PowerNodeBase::customWriteMessages(uint64_t CurrentClock) {
+    return;
+}
 
 /*! Custom read method, similar to customSelfInit; returns `true' by default.
  @return void
  */
-bool PowerNodeBase::customReadMessages() { return true; }
+bool PowerNodeBase::customReadMessages() {
+    return true;
+}

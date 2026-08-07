@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "mtbMomentumManagementSimple.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <stdio.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -37,7 +39,7 @@ void MtbMomentumManagementSimple::reset(uint64_t callTime) {
     /*
      * Sanity check configs.
      */
-    if (this->Kp < 0.0) this->bskLogger.bskLog(BSK_ERROR, "Error: k < 0.0");
+    if (this->Kp < 0.0) { this->bskLogger.bskLog(BSK_ERROR, "Error: k < 0.0"); }
 
     return;
 }
@@ -63,7 +65,11 @@ void MtbMomentumManagementSimple::updateState(uint64_t callTime) {
     /*! - Compute wheel momentum in Body frame components by calculating it first in the wheel frame and then
          transforming it from the wheel space into the body frame using Gs.*/
     vElementwiseMult(
-        rwSpeedsInMsgBuffer.wheelSpeeds, this->rwConfigParams.numRW, this->rwConfigParams.JsList, hWheels_W);
+        rwSpeedsInMsgBuffer.wheelSpeeds,
+        this->rwConfigParams.numRW,
+        this->rwConfigParams.JsList,
+        hWheels_W
+    );
     mMultV(this->Gs, 3, this->rwConfigParams.numRW, hWheels_W, hWheels_B);
 
     /*! - Compute the feedback torque command by multiplying the wheel momentum in the Body frame by the proportional
@@ -74,5 +80,5 @@ void MtbMomentumManagementSimple::updateState(uint64_t callTime) {
     /*! - Write the output message. This is the torque we are requesting the torque bars to produce in the Body frame.
          Note that depending on the torque rod/magentic field geometry, torque rod saturation limts, unknown alignments,
          and imperfect sensor readings, this torque may not be perfectly produced.*/
-    this->tauMtbRequestOutMsg.write(&tauMtbRequestOutMsgBuffer, moduleID, callTime);
+    this->tauMtbRequestOutMsg.write(tauMtbRequestOutMsgBuffer, moduleID, callTime);
 }

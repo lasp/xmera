@@ -6,10 +6,11 @@
 #include "prescribedRot2DOF.h"
 
 /* Import other required files. */
-#include <math.h>
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/macroDefinitions.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
+#include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values. A check is also
@@ -28,9 +29,7 @@ void PrescribedRot2DOF::reset(uint64_t callTime) {
     }
 
     // Check that the user-configurable variables are set
-    if (this->phiDDotMax < 0) {
-        this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.phiDDotMax wasn't set.");
-    }
+    if (this->phiDDotMax < 0) { this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.phiDDotMax wasn't set."); }
 
     if (v3Norm(this->rotAxis1_M) < 1e-6) {
         this->bskLogger.bskLog(BSK_ERROR, "prescribedRot2DOF.rotAxis1_M wasn't set.");
@@ -64,18 +63,14 @@ void PrescribedRot2DOF::updateState(uint64_t callTime) {
     PrescribedRotationMsgPayload prescribedRotationOut = {};
 
     // Read the input messages
-    if (this->spinningBodyRef1InMsg.isWritten()) {
-        spinningBodyRef1In = this->spinningBodyRef1InMsg();
-    }
+    if (this->spinningBodyRef1InMsg.isWritten()) { spinningBodyRef1In = this->spinningBodyRef1InMsg(); }
 
-    if (this->spinningBodyRef2InMsg.isWritten()) {
-        spinningBodyRef2In = this->spinningBodyRef2InMsg();
-    }
+    if (this->spinningBodyRef2InMsg.isWritten()) { spinningBodyRef2In = this->spinningBodyRef2InMsg(); }
 
     /* This loop is entered when the spinning body attitude converges to the reference attitude. The PRV angle and axis
      reference parameters are updated along with the profiled trajectory parameters. */
-    if ((this->spinningBodyRef1InMsg.isWritten() <= callTime || this->spinningBodyRef2InMsg.isWritten() <= callTime) &&
-        this->isManeuverComplete) {
+    if ((this->spinningBodyRef1InMsg.isWritten() <= callTime || this->spinningBodyRef2InMsg.isWritten() <= callTime)
+        && this->isManeuverComplete) {
         // Define the initial time
         this->maneuverStartTime = callTime * NANO2SEC;
 
@@ -133,12 +128,12 @@ void PrescribedRot2DOF::updateState(uint64_t callTime) {
         this->maneuverSwitchTime = convTime / 2 + this->maneuverStartTime;
 
         // Define the maneuver parabolic constants
-        this->a = 0.5 * this->phiRef /
-                  ((this->maneuverSwitchTime - this->maneuverStartTime) *
-                   (this->maneuverSwitchTime - this->maneuverStartTime));
+        this->a = 0.5 * this->phiRef
+                / ((this->maneuverSwitchTime - this->maneuverStartTime)
+                   * (this->maneuverSwitchTime - this->maneuverStartTime));
         this->b =
-            -0.5 * this->phiRef /
-            ((this->maneuverSwitchTime - this->maneuverEndTime) * (this->maneuverSwitchTime - this->maneuverEndTime));
+            -0.5 * this->phiRef
+            / ((this->maneuverSwitchTime - this->maneuverEndTime) * (this->maneuverSwitchTime - this->maneuverEndTime));
 
         // Set the convergence to false until the attitude maneuver is complete
         this->isManeuverComplete = false;
@@ -152,15 +147,15 @@ void PrescribedRot2DOF::updateState(uint64_t callTime) {
     double phiDot;
 
     // Compute the prescribed states at the current time for the profiled trajectory
-    if ((t < this->maneuverSwitchTime || t == this->maneuverSwitchTime) &&
-        this->maneuverEndTime != this->maneuverStartTime)  // Entered during the first half of the attitude maneuver
+    if ((t < this->maneuverSwitchTime || t == this->maneuverSwitchTime)
+        && this->maneuverEndTime != this->maneuverStartTime)  // Entered during the first half of the attitude maneuver
     {
         phiDDot = this->phiDDotMax;
         phiDot = phiDDot * (t - this->maneuverStartTime);
         this->phi = this->a * (t - this->maneuverStartTime) * (t - this->maneuverStartTime);
-    } else if (t > this->maneuverSwitchTime && t <= this->maneuverEndTime &&
-               this->maneuverEndTime !=
-                   this->maneuverStartTime)  // Entered during the second half of the attitude maneuver
+    } else if (t > this->maneuverSwitchTime && t <= this->maneuverEndTime
+               && this->maneuverEndTime
+                      != this->maneuverStartTime)  // Entered during the second half of the attitude maneuver
     {
         phiDDot = -1 * this->phiDDotMax;
         phiDot = phiDDot * (t - this->maneuverEndTime);
@@ -202,5 +197,5 @@ void PrescribedRot2DOF::updateState(uint64_t callTime) {
     v3Copy(this->sigma_FM, prescribedRotationOut.sigma_FM);
 
     // Write the prescribed rotational motion output message
-    this->prescribedRotationOutMsg.write(&prescribedRotationOut, this->moduleID, callTime);
+    this->prescribedRotationOutMsg.write(prescribedRotationOut, this->moduleID, callTime);
 }

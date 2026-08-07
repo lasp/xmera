@@ -2,9 +2,10 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
+#include "faultDetection.h"
+
 #include <math.h>
 #include <string.h>
-#include "faultDetection.h"
 
 /*! This resets the module to original states.
  @return void
@@ -59,28 +60,28 @@ void FaultDetection::updateState(uint64_t callTime) {
     /*! - If none of the message contain valid nav data, unvalidate the nav and populate a zero message */
     if (opNavIn1.valid == 0 && opNavIn2.valid == 0) {
         opNavMsgOut.valid = 0;
-        this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+        this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
     }
     /*! - Only one of two are valid */
     else if (opNavIn1.valid == 1 && opNavIn2.valid == 0) {
         /*! - Only one of two are valid */
         if (this->faultMode < 2) {
             opNavMsgOut = opNavIn1;
-            this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+            this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         } else {
             opNavMsgOut.valid = 0;
-            this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+            this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         }
     } else if (opNavIn1.valid == 0 && opNavIn2.valid == 1) {
         /*! - If secondary measurments are trusted use them as primary */
         if (this->faultMode == 0) {
             opNavMsgOut = opNavIn2;
-            this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+            this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         }
         /*! - If secondaries are not trusted, do not risk corrupting measurment */
         if (this->faultMode > 0) {
             opNavMsgOut.valid = 0;
-            this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+            this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         }
     }
     /*! - If they are both valid proceed to the fault detection */
@@ -100,13 +101,13 @@ void FaultDetection::updateState(uint64_t callTime) {
         if (faultNorm > this->sigmaFault * sqrt((vNorm(opNavIn1.covar_C, 9) + vNorm(opNavIn2.covar_C, 9)))) {
             opNavMsgOut = opNavIn2;
             opNavMsgOut.faultDetected = 1;
-            this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+            this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         }
         /*! If the difference between vectors is low, use primary */
         else if (this->faultMode > 0) {
             /*! Bring all the measurements and covariances into their respective frames */
             opNavMsgOut = opNavIn1;
-            this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+            this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         }
         /*! -- Merge mode combines the two measurements and uncertainties if they are similar */
         else if (this->faultMode == 0) {
@@ -140,7 +141,7 @@ void FaultDetection::updateState(uint64_t callTime) {
             opNavMsgOut.timeTag = opNavIn1.timeTag;
             opNavMsgOut.planetID = opNavIn1.planetID;
         }
-        this->opNavOutMsg.write(&opNavMsgOut, moduleID, callTime);
+        this->opNavOutMsg.write(opNavMsgOut, moduleID, callTime);
     }
 
     return;

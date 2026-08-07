@@ -60,7 +60,7 @@ void PlanetNav::readInputMessages() {
  */
 void PlanetNav::writeOutputMessages(uint64_t currentSimNanos) {
     this->noisePlanetState.timeTag = (double) currentSimNanos * NANO2SEC;
-    this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, currentSimNanos);
+    this->ephemerisOutMsg.write(this->noisePlanetState, this->moduleID, currentSimNanos);
 }
 
 /*! This method applies the errors to the truePlanetState

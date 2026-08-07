@@ -8,8 +8,10 @@
  */
 
 #include "prvSteering.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -41,7 +43,7 @@ void PrvSteering::updateState(uint64_t callTime) {
     PRVSteeringLaw(this, guidCmd.sigma_BR, outMsgBuffer.omega_BastR_B, outMsgBuffer.omegap_BastR_B);
 
     /* Store the output message and pass it to the message bus */
-    this->rateCmdOutMsg.write(&outMsgBuffer, moduleID, callTime);
+    this->rateCmdOutMsg.write(outMsgBuffer, moduleID, callTime);
 
     return;
 }
@@ -71,13 +73,13 @@ void PRVSteeringLaw(PrvSteering* configData, double sigma_BR[3], double omega_as
     }
     phi = 4. * atan(sigma_Norm);
 
-    value = atan(M_PI_2 / configData->omega_max * (configData->K1 * phi + configData->K3 * phi * phi * phi)) / M_PI_2 *
-            configData->omega_max;
+    value = atan(M_PI_2 / configData->omega_max * (configData->K1 * phi + configData->K3 * phi * phi * phi)) / M_PI_2
+          * configData->omega_max;
 
     v3Scale(-value, e_hat, omega_ast);
 
-    value *= (3 * configData->K3 * phi * phi + configData->K1) /
-             (pow(M_PI_2 / configData->omega_max * (configData->K1 * phi + configData->K3 * phi * phi * phi), 2) + 1);
+    value *= (3 * configData->K3 * phi * phi + configData->K1)
+           / (pow(M_PI_2 / configData->omega_max * (configData->K1 * phi + configData->K3 * phi * phi * phi), 2) + 1);
 
     v3Scale(value, e_hat, omega_ast_p);
 

@@ -19,9 +19,7 @@ CenterOfBrightness::~CenterOfBrightness() = default;
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void CenterOfBrightness::reset(uint64_t currentSimNanos) {
-    if (!this->roiInMsg.isLinked()) {
-        throw std::invalid_argument("CenterOfBrightness.roiInMsg wasn't connected.");
-    }
+    if (!this->roiInMsg.isLinked()) { throw std::invalid_argument("CenterOfBrightness.roiInMsg wasn't connected."); }
     this->algorithm.reset();
     this->previousImageTimeTag = 0;
 }
@@ -58,11 +56,13 @@ void CenterOfBrightness::updateState(uint64_t currentSimNanos) {
         cobBuffer.cameraID = this->cameraID;
     }
 
-    CenterOfBrightnessDiagnosticMsgPayload diagnosticBuffer{result.noPixelTrigger,
-                                                            result.notExceedingBrightnessIncreaseTrigger};
+    CenterOfBrightnessDiagnosticMsgPayload diagnosticBuffer{
+        result.noPixelTrigger,
+        result.notExceedingBrightnessIncreaseTrigger
+    };
 
-    this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, currentSimNanos);
-    this->centerOfBrightnessDiagnosticOutMsg.write(&diagnosticBuffer, this->moduleID, currentSimNanos);
+    this->opnavCOBOutMsg.write(cobBuffer, this->moduleID, currentSimNanos);
+    this->centerOfBrightnessDiagnosticOutMsg.write(diagnosticBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Delegating setters/getters for algorithm parameters */
@@ -85,6 +85,10 @@ int32_t CenterOfBrightness::getNumberOfPointsBrightnessAverage() const {
 
 /*! Adapter-only setters/getters */
 
-void CenterOfBrightness::setCameraID(int32_t id) { this->cameraID = id; }
+void CenterOfBrightness::setCameraID(int32_t id) {
+    this->cameraID = id;
+}
 
-int32_t CenterOfBrightness::getCameraID() const { return this->cameraID; }
+int32_t CenterOfBrightness::getCameraID() const {
+    return this->cameraID;
+}

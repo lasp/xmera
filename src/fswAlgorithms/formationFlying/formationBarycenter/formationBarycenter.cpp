@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "formationBarycenter.h"
+
 #include <architecture/utilities/orbitalMotion.h>
+
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -20,21 +22,25 @@ void FormationBarycenter::reset(uint64_t currentSimNanos) {
     if (this->scNavInMsgs.size() == 0 || this->scPayloadInMsgs.size() == 0) {
         bskLogger.bskLog(
             BSK_ERROR,
-            "FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");
+            "FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`"
+        );
     }
 
     // check if the gravitational parameter is set if using orbital elements averaging
     if (this->mu == 0 && this->useOrbitalElements) {
         bskLogger.bskLog(
             BSK_ERROR,
-            "FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
+            "FormationBarycenter module requires defining a gravitational parameter if using orbital elements."
+        );
     }
 }
 
 /*! Adds a scNav and scPayload messages name to the vector of names to be subscribed to.
  */
-void FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg,
-                                               Message<VehicleConfigMsgPayload>* tmpScPayloadMsg) {
+void FormationBarycenter::addSpacecraftToModel(
+    Message<NavTransMsgPayload>* tmpScNavMsg,
+    Message<VehicleConfigMsgPayload>* tmpScPayloadMsg
+) {
     this->scNavInMsgs.push_back(tmpScNavMsg->addSubscriber());
     this->scPayloadInMsgs.push_back(tmpScPayloadMsg->addSubscriber());
 }
@@ -132,7 +138,7 @@ void FormationBarycenter::computeBaricenter() {
  */
 void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
     // write C++ output message
-    this->transOutMsg.write(&this->transOutBuffer, this->moduleID, CurrentClock);
+    this->transOutMsg.write(this->transOutBuffer, this->moduleID, CurrentClock);
 }
 
 /*! This is the main method that gets called every time the module is updated.

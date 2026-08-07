@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "thrusterPlatformState.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
@@ -60,5 +61,5 @@ void ThrusterPlatformState::updateState(uint64_t callTime) {
     thrusterConfigBOut.maxThrust = thrusterConfigFIn.maxThrust;
 
     /*! write output thruster config msg */
-    this->thrusterConfigBOutMsg.write(&thrusterConfigBOut, this->moduleID, callTime);
+    this->thrusterConfigBOutMsg.write(thrusterConfigBOut, this->moduleID, callTime);
 }

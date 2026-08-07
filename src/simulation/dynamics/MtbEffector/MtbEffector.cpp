@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "MtbEffector.h"
+
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/linearAlgebra.h>
@@ -21,15 +22,9 @@ void MtbEffector::reset(uint64_t currentSimNanos) {
     /*
      * Check that required input messages are connected.
      */
-    if (!this->mtbCmdInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbCmdInMsg was not linked.");
-    }
-    if (!this->magInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "MtbEffector.magInMsg was not linked.");
-    }
-    if (!this->mtbParamsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbParamsInMsg was not linked.");
-    }
+    if (!this->mtbCmdInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbCmdInMsg was not linked."); }
+    if (!this->magInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "MtbEffector.magInMsg was not linked."); }
+    if (!this->mtbParamsInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbParamsInMsg was not linked."); }
 
     /*
      * Zero the effector output forces and torques.
@@ -56,7 +51,7 @@ void MtbEffector::updateState(uint64_t currentSimNanos) {
 /*! This method is used to link the magnetic torque bar effector to the hub attitude.
  @return void
  */
-void MtbEffector::linkInStates(DynParamManager& states) {
+void MtbEffector::linkInStates(DynParamManager &states) {
     /*
      * Link the Body relative to Inertial frame modified modriguez parameter.
      */
@@ -96,7 +91,7 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep) {
     /*
      * Construct bTilde matrix.
      */
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBN = (Eigen::Vector3d) this->hubSigma->getState();
     dcm_BN = sigmaBN.toRotationMatrix().transpose();
     magField_N = cArrayToEigenVector(this->magInMsgBuffer.magField_N);
     magField_B = dcm_BN * magField_N;
@@ -142,7 +137,7 @@ void MtbEffector::WriteOutputMessages(uint64_t CurrentClock) {
      * Write output message
      */
     eigenVectorToCArray(this->torqueExternalPntB_B, mtbOutMsgBuffer.mtbNetTorque_B);
-    this->mtbOutMsg.write(&mtbOutMsgBuffer, this->moduleID, CurrentClock);
+    this->mtbOutMsg.write(mtbOutMsgBuffer, this->moduleID, CurrentClock);
 
     return;
 }

@@ -26,7 +26,9 @@ LimbFinding::LimbFinding() {
 }
 
 /*! This is the destructor */
-LimbFinding::~LimbFinding() { return; }
+LimbFinding::~LimbFinding() {
+    return;
+}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between
  function calls are reset to their default values.
@@ -35,9 +37,7 @@ LimbFinding::~LimbFinding() { return; }
  */
 void LimbFinding::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
-    if (!this->imageInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "LimbFinding.imageInMsg wasn't connected.");
-    }
+    if (!this->imageInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "LimbFinding.imageInMsg wasn't connected."); }
 }
 
 /*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It
@@ -67,15 +67,15 @@ void LimbFinding::updateState(uint64_t currentSimNanos) {
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
     } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
-                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer(
+            (char*) imageBuffer.imagePointer,
+            (char*) imageBuffer.imagePointer + imageBuffer.imageBufferLength
+        );
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-        if (this->saveImages == 1) {
-            cv::imwrite(dirName, imageCV);
-        }
+        if (this->saveImages == 1) { cv::imwrite(dirName, imageCV); }
     } else {
         /*! - If no image is present, write zeros in message */
-        this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, currentSimNanos);
+        this->opnavLimbOutMsg.write(limbMsg, this->moduleID, currentSimNanos);
         return;
     }
     /*! - Greyscale the image */
@@ -98,10 +98,10 @@ void LimbFinding::updateState(uint64_t currentSimNanos) {
         limbMsg.planetIds = 2;
     }
 
-    limbMsg.timeTag = (double)this->sensorTimeTag;
+    limbMsg.timeTag = (double) this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
 
-    this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, currentSimNanos);
+    this->opnavLimbOutMsg.write(limbMsg, this->moduleID, currentSimNanos);
 
     return;
 }

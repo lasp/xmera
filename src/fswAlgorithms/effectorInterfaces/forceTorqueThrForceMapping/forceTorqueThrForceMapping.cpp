@@ -12,7 +12,7 @@
  @return void
  @param callTime [ns] time the method is called
 */
-void ForceTorqueThrForceMapping::reset(const uint64_t callTime) {
+void ForceTorqueThrForceMapping::reset(uint64_t const callTime) {
     if (!this->thrConfigInMsg.isLinked()) {
         throw std::invalid_argument("forceTorqueThrForceMapping.thrConfigInMsg was not connected.");
     }
@@ -30,22 +30,18 @@ void ForceTorqueThrForceMapping::reset(const uint64_t callTime) {
  @return void
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void ForceTorqueThrForceMapping::updateState(const uint64_t callTime) {
+void ForceTorqueThrForceMapping::updateState(uint64_t const callTime) {
     CmdTorqueBodyMsgPayload cmdTorqueInMsgBuffer{};
     CmdForceBodyMsgPayload cmdForceInMsgBuffer{};
 
     /* Check if torque message is linked and read, zero out if not*/
-    if (this->cmdTorqueInMsg.isLinked()) {
-        cmdTorqueInMsgBuffer = this->cmdTorqueInMsg();
-    }
+    if (this->cmdTorqueInMsg.isLinked()) { cmdTorqueInMsgBuffer = this->cmdTorqueInMsg(); }
 
     /* Check if force message is linked and read, zero out if not*/
-    if (this->cmdForceInMsg.isLinked()) {
-        cmdForceInMsgBuffer = this->cmdForceInMsg();
-    }
+    if (this->cmdForceInMsg.isLinked()) { cmdForceInMsgBuffer = this->cmdForceInMsg(); }
 
     THRArrayCmdForceMsgPayload thrForceCmdOutMsgBuffer =
         this->algorithm.update(cmdTorqueInMsgBuffer, cmdForceInMsgBuffer);
 
-    this->thrForceCmdOutMsg.write(&thrForceCmdOutMsgBuffer, this->moduleID, callTime);
+    this->thrForceCmdOutMsg.write(thrForceCmdOutMsgBuffer, this->moduleID, callTime);
 }

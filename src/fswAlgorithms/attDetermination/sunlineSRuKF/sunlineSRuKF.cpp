@@ -89,10 +89,10 @@ void SunlineSRuKF::writeOutputMessages(uint64_t currentSimNanos) {
         i += 1;
     }
 
-    this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, currentSimNanos);
-    this->filterOutMsg.write(&filterMsgBuffer, this->moduleID, currentSimNanos);
-    this->filterCssResOutMsg.write(&filterCssResMsgBuffer, this->moduleID, currentSimNanos);
-    this->filterGyroResOutMsg.write(&filterGyroResMsgBuffer, this->moduleID, currentSimNanos);
+    this->navAttOutMsg.write(navAttOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->filterOutMsg.write(filterMsgBuffer, this->moduleID, currentSimNanos);
+    this->filterCssResOutMsg.write(filterCssResMsgBuffer, this->moduleID, currentSimNanos);
+    this->filterGyroResOutMsg.write(filterGyroResMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Read the rate gyro input message
@@ -156,12 +156,10 @@ void SunlineSRuKF::readCssMeasurements() {
         }
     }
 
-    std::function<const Eigen::VectorXd(const FilterStateVector)> linearModel =
-        [hMatrix](const FilterStateVector& state) {
+    std::function<Eigen::VectorXd const(FilterStateVector const)> linearModel =
+        [hMatrix](FilterStateVector const &state) {
             Eigen::VectorXd observed = hMatrix * state.getPositionStates();
-            if (state.hasBias()) {
-                observed = observed * state.getBiasStates().value();
-            }
+            if (state.hasBias()) { observed = observed * state.getBiasStates().value(); }
             return observed;
         };
 
@@ -195,7 +193,7 @@ void SunlineSRuKF::readFilterMeasurements() {
     @return FilterStateVector inputState
     @return FilterStateVector outputState
     */
-FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStateVector& state) {
+FilterStateVector SunlineSRuKF::stateDerivative(double const t, FilterStateVector const &state) {
     FilterStateVector XDot;
     /*! Implement propagation with rate derivatives set to zero */
     Eigen::Vector3d sHat = state.getPositionStates();
@@ -217,13 +215,13 @@ FilterStateVector SunlineSRuKF::stateDerivative(const double t, const FilterStat
     }
 
     return XDot;
-};
+}
 
 /*! Set the CSS measurement noise
     @param double cssMeasurementNoise
     @return void
     */
-void SunlineSRuKF::setCssMeasurementNoiseStd(const double cssMeasurementNoiseStd) {
+void SunlineSRuKF::setCssMeasurementNoiseStd(double const cssMeasurementNoiseStd) {
     this->cssMeasNoiseStd = cssMeasurementNoiseStd;
 }
 
@@ -231,7 +229,7 @@ void SunlineSRuKF::setCssMeasurementNoiseStd(const double cssMeasurementNoiseStd
     @param double gyroMeasurementNoise
     @return void
     */
-void SunlineSRuKF::setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseStd) {
+void SunlineSRuKF::setGyroMeasurementNoiseStd(double const gyroMeasurementNoiseStd) {
     this->gyroMeasNoiseStd = gyroMeasurementNoiseStd;
 }
 
@@ -239,41 +237,57 @@ void SunlineSRuKF::setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseS
     @param double cssMeasurementNoise
     @return void
     */
-double SunlineSRuKF::getCssMeasurementNoiseStd() const { return this->cssMeasNoiseStd; }
+double SunlineSRuKF::getCssMeasurementNoiseStd() const {
+    return this->cssMeasNoiseStd;
+}
 
 /*! Get the gyro measurement noise
     @param double gyroMeasurementNoise
     @return void
     */
-double SunlineSRuKF::getGyroMeasurementNoiseStd() const { return this->gyroMeasNoiseStd; }
+double SunlineSRuKF::getGyroMeasurementNoiseStd() const {
+    return this->gyroMeasNoiseStd;
+}
 
 /*! Set the threshold value to accept a css measurement
     @param double threshold
     @return void
     */
-void SunlineSRuKF::setSensorThreshold(double threshold) { this->sensorUseThresh = threshold; }
+void SunlineSRuKF::setSensorThreshold(double threshold) {
+    this->sensorUseThresh = threshold;
+}
 
 /*! Get the threshold value to accept a css measurement
     @return double threshold
     */
-double SunlineSRuKF::getSensorThreshold() const { return this->sensorUseThresh; }
+double SunlineSRuKF::getSensorThreshold() const {
+    return this->sensorUseThresh;
+}
 
 /*! Set the bias upper bound value it is not allowed to exceed
     @param double biasUpperBound
     */
-void SunlineSRuKF::setBiasUpperBound(double biasUpperBound) { this->biasUpperBound = biasUpperBound; }
+void SunlineSRuKF::setBiasUpperBound(double biasUpperBound) {
+    this->biasUpperBound = biasUpperBound;
+}
 
 /*! Get the bias upper bound value it is not allowed to exceed
     @return double biasUpperBound
     */
-double SunlineSRuKF::getBiasUpperBound() const { return this->biasUpperBound; }
+double SunlineSRuKF::getBiasUpperBound() const {
+    return this->biasUpperBound;
+}
 
 /*! Set the bias lower bound value it is not allowed to subceed
     @param double biasUpperBound
     */
-void SunlineSRuKF::setBiasLowerBound(double biasLowerBound) { this->biasLowerBound = biasLowerBound; }
+void SunlineSRuKF::setBiasLowerBound(double biasLowerBound) {
+    this->biasLowerBound = biasLowerBound;
+}
 
 /*! Get the bias lower bound value it is not allowed to subceed
     @return double biasUpperBound
     */
-double SunlineSRuKF::getBiasLowerBound() const { return this->biasLowerBound; }
+double SunlineSRuKF::getBiasLowerBound() const {
+    return this->biasLowerBound;
+}

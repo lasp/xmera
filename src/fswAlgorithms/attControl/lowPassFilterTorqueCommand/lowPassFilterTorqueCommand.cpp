@@ -9,7 +9,9 @@
 
 /* modify the path to reflect the new module names */
 #include "lowPassFilterTorqueCommand.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 #include <math.h>
 
@@ -53,14 +55,10 @@ void LowPassFilterTorqueCommand::updateState(uint64_t callTime) {
      */
     if (this->shouldBeReset) {
         /* populate the filter history with 1st input */
-        for (i = 1; i < NUM_LPF; i++) {
-            v3Copy(this->Lr[0], this->Lr[i]);
-        }
+        for (i = 1; i < NUM_LPF; i++) { v3Copy(this->Lr[0], this->Lr[i]); }
 
         /* zero the history of filtered outputs */
-        for (i = 0; i < NUM_LPF; i++) {
-            v3SetZero(this->LrF[i]);
-        }
+        for (i = 0; i < NUM_LPF; i++) { v3SetZero(this->LrF[i]); }
 
         /* compute h times the prewarped critical filter frequency */
         this->hw = tan(this->wc * this->h / 2.0) * 2.0;
@@ -100,7 +98,7 @@ void LowPassFilterTorqueCommand::updateState(uint64_t callTime) {
         store the output message
      */
     v3Copy(this->LrF[0], controlOut.torqueRequestBody);
-    this->cmdTorqueOutMsg.write(&controlOut, this->moduleID, callTime);
+    this->cmdTorqueOutMsg.write(controlOut, this->moduleID, callTime);
 
     return;
 }

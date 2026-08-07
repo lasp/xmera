@@ -10,8 +10,9 @@
 void EphemeridesRecenter::reset(uint64_t callTime) {
     for (auto i = 0; i < this->ephemeridesNumber; ++i) {
         if (!this->ephemerides[i].inputEphemerisMsg.isLinked()) {
-            throw std::invalid_argument("Input ephemeris message was not connected for " +
-                                        this->ephemerides[i].bodySpiceName);
+            throw std::invalid_argument(
+                "Input ephemeris message was not connected for " + this->ephemerides[i].bodySpiceName
+            );
         }
     }
     this->ephemeridesNumber = this->getNumberOfBodies();
@@ -37,8 +38,8 @@ void EphemeridesRecenter::updateState(uint64_t callTime) {
     auto outputPayloads = this->algorithm.updateState(bodyPayloads);
 
     for (auto i = 0; i < this->ephemeridesNumber; ++i) {
-        this->recenteredEphemerisOutputMsgs[i]->write(
-            &outputPayloads[i].outputEphemerisPayload, this->moduleID, callTime);
+        this->recenteredEphemerisOutputMsgs[i]
+            ->write(outputPayloads[i].outputEphemerisPayload, this->moduleID, callTime);
     }
 }
 
@@ -46,7 +47,7 @@ void EphemeridesRecenter::updateState(uint64_t callTime) {
  @return void
  @param ephemerisBody BodyEphemeris : A new celestial body instance
  */
-void EphemeridesRecenter::addBodyEphemerisToRecenter(const BodyEphemeris& ephemerisBody) {
+void EphemeridesRecenter::addBodyEphemerisToRecenter(BodyEphemeris const &ephemerisBody) {
     if (this->ephemeridesNumber + 1 > MAX_NUM_CHANGE_BODIES) {
         throw std::invalid_argument("Adding one body too many to the list");
     }
@@ -60,17 +61,21 @@ void EphemeridesRecenter::addBodyEphemerisToRecenter(const BodyEphemeris& epheme
  @return void
  @param bodyName std::string : the new zero base
  */
-void EphemeridesRecenter::setNewZeroBase(const std::string& bodyName) { this->algorithm.setNewZeroBaseName(bodyName); }
+void EphemeridesRecenter::setNewZeroBase(std::string const &bodyName) {
+    this->algorithm.setNewZeroBaseName(bodyName);
+}
 
 /*! @brief Get the new celestial body center by name
  @return std::string : the new zero base
  */
-std::string EphemeridesRecenter::getNewZeroBase() const { return this->algorithm.getNewZeroBase(); }
+std::string EphemeridesRecenter::getNewZeroBase() const {
+    return this->algorithm.getNewZeroBase();
+}
 
 /*! @brief Set the previous common zero base of all the celestial bodies entered
  @param bodyName std::string : the new zero base
  */
-void EphemeridesRecenter::setPreviousCommonZeroBase(const std::string& bodyName) {
+void EphemeridesRecenter::setPreviousCommonZeroBase(std::string const &bodyName) {
     this->algorithm.setPreviousCommonZeroBase(bodyName);
 }
 
@@ -84,13 +89,15 @@ std::string EphemeridesRecenter::getPreviousCommonZeroBase() const {
 /*! @brief Get the number of bodies that were entered into the module
  @return size_t : the number of bodies
  */
-size_t EphemeridesRecenter::getNumberOfBodies() const { return this->algorithm.getNumberOfBodies(); }
+size_t EphemeridesRecenter::getNumberOfBodies() const {
+    return this->algorithm.getNumberOfBodies();
+}
 
 /*! @brief Get the index of a body
  @param celestialBodyName std::string : celestial body name
  @return size_t : whether or not the index was found
  */
-size_t EphemeridesRecenter::getBodyIndexFromName(const std::string& celestialBodyName) const {
+size_t EphemeridesRecenter::getBodyIndexFromName(std::string const &celestialBodyName) const {
     return this->algorithm.getBodyIndexFromName(celestialBodyName);
 }
 

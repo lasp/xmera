@@ -2,9 +2,12 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "flybyPoint.h"
+
 #include <architecture/utilities/eigenSupport.h>
 
-FlybyPoint::FlybyPoint() { this->algorithm = FlybyPointAlgorithm(); }
+FlybyPoint::FlybyPoint() {
+    this->algorithm = FlybyPointAlgorithm();
+}
 
 void FlybyPoint::reset(uint64_t currentSimNanos) {
     assert(this->filterInMsg.isLinked());
@@ -14,8 +17,8 @@ void FlybyPoint::reset(uint64_t currentSimNanos) {
 void FlybyPoint::updateState(uint64_t currentSimNanos) {
     auto [r_BN_N, v_BN_N] = this->readRelativeState();
     auto [attMsgBuffer, flybyDiagnosticMsgBuffer] = this->algorithm.updateState(currentSimNanos, r_BN_N, v_BN_N);
-    this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, currentSimNanos);
-    this->flybyDiagnosticOutMsg.write(&flybyDiagnosticMsgBuffer, this->moduleID, currentSimNanos);
+    this->attRefOutMsg.write(attMsgBuffer, this->moduleID, currentSimNanos);
+    this->flybyDiagnosticOutMsg.write(flybyDiagnosticMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 std::tuple<Eigen::Vector3d, Eigen::Vector3d> FlybyPoint::readRelativeState() {
@@ -51,14 +54,26 @@ void FlybyPoint::setPositionKnowledgeSigma(double positionKnowledgeStd) {
     this->algorithm.setPositionKnowledgeSigma(positionKnowledgeStd);
 }
 
-double FlybyPoint::getTimeBetweenFilterData() const { return this->algorithm.getTimeBetweenFilterData(); }
+double FlybyPoint::getTimeBetweenFilterData() const {
+    return this->algorithm.getTimeBetweenFilterData();
+}
 
-double FlybyPoint::getToleranceForCollinearity() const { return this->algorithm.getToleranceForCollinearity(); }
+double FlybyPoint::getToleranceForCollinearity() const {
+    return this->algorithm.getToleranceForCollinearity();
+}
 
-int FlybyPoint::getSignOfOrbitNormalFrameVector() const { return this->algorithm.getSignOfOrbitNormalFrameVector(); }
+int FlybyPoint::getSignOfOrbitNormalFrameVector() const {
+    return this->algorithm.getSignOfOrbitNormalFrameVector();
+}
 
-double FlybyPoint::getMaximumAccelerationThreshold() const { return this->algorithm.getMaximumAccelerationThreshold(); }
+double FlybyPoint::getMaximumAccelerationThreshold() const {
+    return this->algorithm.getMaximumAccelerationThreshold();
+}
 
-double FlybyPoint::getMaximumRateThreshold() const { return this->algorithm.getMaximumRateThreshold(); }
+double FlybyPoint::getMaximumRateThreshold() const {
+    return this->algorithm.getMaximumRateThreshold();
+}
 
-double FlybyPoint::getPositionKnowledgeSigma() const { return this->algorithm.getPositionKnowledgeSigma(); }
+double FlybyPoint::getPositionKnowledgeSigma() const {
+    return this->algorithm.getPositionKnowledgeSigma();
+}

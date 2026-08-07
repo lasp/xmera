@@ -143,7 +143,7 @@ void ImuSensor::writeOutputMessages(uint64_t Clock) {
     eigenVectorToCArray(this->omega_PN_P_out, localOutput.AngVelPlatform);
     eigenVectorToCArray(this->prv_PN_out, localOutput.DRFramePlatform);
     localOutput.timeTag = Clock * NANO2SEC;
-    this->sensorOutMsg.write(&localOutput, this->moduleID, Clock);
+    this->sensorOutMsg.write(localOutput, this->moduleID, Clock);
 }
 
 /*!

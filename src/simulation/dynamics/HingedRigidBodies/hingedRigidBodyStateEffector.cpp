@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "hingedRigidBodyStateEffector.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.hpp>
+
 #include <string>
 
 /*! This is the constructor, setting variables to default values */
@@ -54,7 +56,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
         this->HRBoutputStates = HingedRigidBodyMsgPayload{};
         this->HRBoutputStates.theta = this->theta;
         this->HRBoutputStates.thetaDot = this->thetaDot;
-        this->hingedRigidBodyOutMsg.write(&this->HRBoutputStates, this->moduleID, CurrentClock);
+        this->hingedRigidBodyOutMsg.write(this->HRBoutputStates, this->moduleID, CurrentClock);
     }
 
     // write out the panel state config log message
@@ -66,7 +68,7 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
         eigenVectorToCArray(this->v_SN_N, configLogMsg.v_BN_N);
         eigenVectorToCArray(this->sigma_SN, configLogMsg.sigma_BN);
         eigenVectorToCArray(this->omega_SN_S, configLogMsg.omega_BN_B);
-        this->hingedRigidBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
+        this->hingedRigidBodyConfigLogOutMsg.write(configLogMsg, this->moduleID, CurrentClock);
     }
 }
 
@@ -78,7 +80,7 @@ void HingedRigidBodyStateEffector::prependSpacecraftNameToStates() {
 }
 
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
-void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn) {
+void HingedRigidBodyStateEffector::linkInStates(DynParamManager &statesIn) {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
     std::string tmpMsgName;
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassSC";
@@ -95,7 +97,7 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn) {
 }
 
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
-void HingedRigidBodyStateEffector::registerStates(DynParamManager& states) {
+void HingedRigidBodyStateEffector::registerStates(DynParamManager &states) {
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     this->thetaState = states.registerState(1, 1, this->nameOfThetaState);
     Eigen::MatrixXd thetaInitMatrix(1, 1);
@@ -135,8 +137,8 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime) {
     // - Find the inertia of the hinged rigid body about point B
     // - Define rTilde_SB_B
     this->rTilde_SP_P = eigenTilde(this->r_SP_P);
-    this->effProps.IEffPntB_B = this->dcm_SP.transpose() * this->IPntS_S * this->dcm_SP +
-                                this->mass * this->rTilde_SP_P * this->rTilde_SP_P.transpose();
+    this->effProps.IEffPntB_B = this->dcm_SP.transpose() * this->IPntS_S * this->dcm_SP
+                              + this->mass * this->rTilde_SP_P * this->rTilde_SP_P.transpose();
 
     // - Find rPrime_SB_B
     this->rPrime_SP_P = this->d * this->thetaDot * this->sHat3_P;
@@ -146,22 +148,25 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime) {
     // - Define tilde matrix of rPrime_SB_B
     this->rPrimeTilde_SP_P = eigenTilde(this->rPrime_SP_P);
     // - Find body time derivative of IPntS_B
-    this->ISPrimePntS_P = this->thetaDot * (this->IPntS_S(2, 2) - this->IPntS_S(0, 0)) *
-                          (this->sHat1_P * this->sHat3_P.transpose() + this->sHat3_P * this->sHat1_P.transpose());
+    this->ISPrimePntS_P = this->thetaDot * (this->IPntS_S(2, 2) - this->IPntS_S(0, 0))
+                        * (this->sHat1_P * this->sHat3_P.transpose() + this->sHat3_P * this->sHat1_P.transpose());
     // - Find body time derivative of IPntB_B
-    this->effProps.IEffPrimePntB_B = this->ISPrimePntS_P - this->mass * (this->rPrimeTilde_SP_P * this->rTilde_SP_P +
-                                                                         this->rTilde_SP_P * this->rPrimeTilde_SP_P);
+    this->effProps.IEffPrimePntB_B =
+        this->ISPrimePntS_P
+        - this->mass * (this->rPrimeTilde_SP_P * this->rTilde_SP_P + this->rTilde_SP_P * this->rPrimeTilde_SP_P);
 
     return;
 }
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
  method */
-void HingedRigidBodyStateEffector::updateContributions(double integTime,
-                                                       BackSubMatrices& backSubContr,
-                                                       Eigen::Vector3d sigma_BN,
-                                                       Eigen::Vector3d omega_BN_B,
-                                                       Eigen::Vector3d g_N) {
+void HingedRigidBodyStateEffector::updateContributions(
+    double integTime,
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d sigma_BN,
+    Eigen::Vector3d omega_BN_B,
+    Eigen::Vector3d g_N
+) {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_PN;
     sigmaLocal_PN = sigma_BN;
@@ -187,49 +192,52 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime,
 
     // - Define bTheta
     this->rTilde_HP_P = eigenTilde(this->r_HP_P);
-    this->bTheta = -1.0 / (this->IPntS_S(1, 1) + this->mass * this->d * this->d) *
-                   ((this->IPntS_S(1, 1) + this->mass * this->d * this->d) * this->sHat2_P +
-                    this->mass * this->d * this->rTilde_HP_P * this->sHat3_P);
+    this->bTheta = -1.0 / (this->IPntS_S(1, 1) + this->mass * this->d * this->d)
+                 * ((this->IPntS_S(1, 1) + this->mass * this->d * this->d) * this->sHat2_P
+                    + this->mass * this->d * this->rTilde_HP_P * this->sHat3_P);
 
     // - Define cTheta
     Eigen::Vector3d gravityTorquePntH_P;
     gravityTorquePntH_P = -this->d * this->sHat1_P.cross(this->mass * g_P);
-    this->cTheta = 1.0 / (this->IPntS_S(1, 1) + this->mass * this->d * this->d) *
-                   (this->u - this->k * (this->theta - this->thetaRef) -
-                    this->c * (this->thetaDot - this->thetaDotRef) + this->sHat2_P.dot(gravityTorquePntH_P) +
-                    (this->IPntS_S(2, 2) - this->IPntS_S(0, 0) + this->mass * this->d * this->d) * this->omega_PN_S(2) *
-                        this->omega_PN_S(0) -
-                    this->mass * this->d * this->sHat3_P.transpose() * this->omegaTildeLoc_PN_P *
-                        this->omegaTildeLoc_PN_P * this->r_HP_P);
+    this->cTheta = 1.0 / (this->IPntS_S(1, 1) + this->mass * this->d * this->d)
+                 * (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef)
+                    + this->sHat2_P.dot(gravityTorquePntH_P)
+                    + (this->IPntS_S(2, 2) - this->IPntS_S(0, 0) + this->mass * this->d * this->d) * this->omega_PN_S(2)
+                          * this->omega_PN_S(0)
+                    - this->mass * this->d * this->sHat3_P.transpose() * this->omegaTildeLoc_PN_P
+                          * this->omegaTildeLoc_PN_P * this->r_HP_P);
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
     backSubContr.matrixA = this->mass * this->d * this->sHat3_P * this->aTheta.transpose();
     backSubContr.matrixB = this->mass * this->d * this->sHat3_P * this->bTheta.transpose();
-    backSubContr.vecTrans = -(this->mass * this->d * this->thetaDot * this->thetaDot * this->sHat1_P +
-                              this->mass * this->d * this->cTheta * this->sHat3_P);
+    backSubContr.vecTrans =
+        -(this->mass * this->d * this->thetaDot * this->thetaDot * this->sHat1_P
+          + this->mass * this->d * this->cTheta * this->sHat3_P);
 
     // - Define rotational matrice contributions
     backSubContr.matrixC =
-        (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P) *
-        this->aTheta.transpose();
+        (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P)
+        * this->aTheta.transpose();
     backSubContr.matrixD =
-        (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P) *
-        this->bTheta.transpose();
+        (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P)
+        * this->bTheta.transpose();
     Eigen::Matrix3d intermediateMatrix;
     backSubContr.vecRot =
-        -((this->thetaDot * this->omegaTildeLoc_PN_P + this->cTheta * intermediateMatrix.Identity()) *
-              (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P) +
-          this->mass * this->d * this->thetaDot * this->thetaDot * this->rTilde_SP_P * this->sHat1_P);
+        -((this->thetaDot * this->omegaTildeLoc_PN_P + this->cTheta * intermediateMatrix.Identity())
+              * (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P)
+          + this->mass * this->d * this->thetaDot * this->thetaDot * this->rTilde_SP_P * this->sHat1_P);
 
     return;
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void HingedRigidBodyStateEffector::computeDerivatives(double integTime,
-                                                      Eigen::Vector3d rDDot_BN_N,
-                                                      Eigen::Vector3d omegaDot_BN_B,
-                                                      Eigen::Vector3d sigma_BN) {
+void HingedRigidBodyStateEffector::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
     Eigen::MRPd sigmaLocal_PN;
@@ -254,10 +262,12 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime,
 }
 
 /*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
-void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime,
-                                                                Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                                double& rotEnergyContr,
-                                                                Eigen::Vector3d omega_BN_B) {
+void HingedRigidBodyStateEffector::updateEnergyMomContributions(
+    double integTime,
+    Eigen::Vector3d &rotAngMomPntCContr_B,
+    double &rotEnergyContr,
+    Eigen::Vector3d omega_BN_B
+) {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_PN_P;
     omegaLocal_PN_P = omega_BN_B;
@@ -274,12 +284,13 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
     rotAngMomPntCContr_B = IPntS_P * omega_SN_P + this->mass * this->r_SP_P.cross(rDot_SP_P);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0 / 2.0 * omega_SN_P.dot(IPntS_P * omega_SN_P) +
-                     1.0 / 2.0 * this->mass * rDot_SP_P.dot(rDot_SP_P) +
-                     1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
+    rotEnergyContr = 1.0 / 2.0 * omega_SN_P.dot(IPntS_P * omega_SN_P)
+                   + 1.0 / 2.0 * this->mass * rDot_SP_P.dot(rDot_SP_P)
+                   + 1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
 
     return;
 }
+
 /*! This method is used so that the simulation will ask HRB to update messages.
  @return void
  @param currentSimNanos The current simulation time in nanoseconds
@@ -317,20 +328,21 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime, Eigen
     thetaDDotLocal = thetaDotState->getStateDeriv()(0, 0);
 
     // - Calculate force that the HRB is applying to the spacecraft
-    this->forceOnBody_B = -(this->mass * this->d * this->sHat3_P * thetaDDotLocal +
-                            this->mass * this->d * this->thetaDot * this->thetaDot * this->sHat1_P +
-                            2.0 * omegaLocalTilde_PN_P * this->mass * this->d * this->thetaDot * this->sHat3_P);
+    this->forceOnBody_B =
+        -(this->mass * this->d * this->sHat3_P * thetaDDotLocal
+          + this->mass * this->d * this->thetaDot * this->thetaDot * this->sHat1_P
+          + 2.0 * omegaLocalTilde_PN_P * this->mass * this->d * this->thetaDot * this->sHat3_P);
 
     // - Calculate torque that the HRB is applying about point B
     this->torqueOnBodyPntB_B =
-        -((this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P) *
-              thetaDDotLocal +
-          (this->ISPrimePntS_P -
-           this->mass * (this->rPrimeTilde_SP_P * rTilde_SP_P + this->rTilde_SP_P * this->rPrimeTilde_SP_P)) *
-              omegaLocal_PN_P +
-          this->thetaDot * omegaLocalTilde_PN_P *
-              (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P) +
-          this->mass * this->d * this->thetaDot * this->thetaDot * this->rTilde_SP_P * this->sHat1_P);
+        -((this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P)
+              * thetaDDotLocal
+          + (this->ISPrimePntS_P
+             - this->mass * (this->rPrimeTilde_SP_P * rTilde_SP_P + this->rTilde_SP_P * this->rPrimeTilde_SP_P))
+                * omegaLocal_PN_P
+          + this->thetaDot * omegaLocalTilde_PN_P
+                * (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->rTilde_SP_P * this->sHat3_P)
+          + this->mass * this->d * this->thetaDot * this->thetaDot * this->rTilde_SP_P * this->sHat1_P);
 
     // - Define values needed to get the torque about point C
     Eigen::Vector3d cLocal_B = *this->c_B;
@@ -342,12 +354,12 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime, Eigen
 
     // - Calculate the torque about point C
     this->torqueOnBodyPntC_B =
-        -((this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * rTilde_SC_B * this->sHat3_P) * thetaDDotLocal +
-          (this->ISPrimePntS_P - this->mass * (rPrimeTilde_SC_B * rTilde_SC_B + rTilde_SC_B * rPrimeTilde_SC_B)) *
-              omegaLocal_PN_P +
-          this->thetaDot * omegaLocalTilde_PN_P *
-              (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * rTilde_SC_B * this->sHat3_P) +
-          this->mass * this->d * this->thetaDot * this->thetaDot * rTilde_SC_B * this->sHat1_P);
+        -((this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * rTilde_SC_B * this->sHat3_P) * thetaDDotLocal
+          + (this->ISPrimePntS_P - this->mass * (rPrimeTilde_SC_B * rTilde_SC_B + rTilde_SC_B * rPrimeTilde_SC_B))
+                * omegaLocal_PN_P
+          + this->thetaDot * omegaLocalTilde_PN_P
+                * (this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * rTilde_SC_B * this->sHat3_P)
+          + this->mass * this->d * this->thetaDot * this->thetaDot * rTilde_SC_B * this->sHat1_P);
 
     return;
 }
@@ -358,7 +370,7 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime, Eigen
 void HingedRigidBodyStateEffector::computePanelInertialStates() {
     // inertial attitude
     Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->sigma_BN->getState();
+    sigmaBN = (Eigen::Vector3d) this->sigma_BN->getState();
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP * dcm_NP.transpose();
@@ -366,15 +378,15 @@ void HingedRigidBodyStateEffector::computePanelInertialStates() {
 
     // inertial angular velocity
     Eigen::Vector3d omega_BN_B;
-    omega_BN_B = (Eigen::Vector3d)this->omega_BN_B->getState();
+    omega_BN_B = (Eigen::Vector3d) this->omega_BN_B->getState();
     this->omega_SN_S = this->dcm_SP * (omega_BN_B + this->thetaDot * this->sHat2_P);
 
     // inertial position vector
-    this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d)(*this->inertialPositionProperty);
+    this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d) (*this->inertialPositionProperty);
 
     // inertial velocity vector
-    this->v_SN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty) + this->d * this->thetaDot * this->sHat3_P -
-                   this->d * (omega_BN_B.cross(this->sHat1_P)) + omega_BN_B.cross(this->r_HP_P);
+    this->v_SN_N = (Eigen::Vector3d) (*this->inertialVelocityProperty) + this->d * this->thetaDot * this->sHat3_P
+                 - this->d * (omega_BN_B.cross(this->sHat1_P)) + omega_BN_B.cross(this->r_HP_P);
 
     return;
 }

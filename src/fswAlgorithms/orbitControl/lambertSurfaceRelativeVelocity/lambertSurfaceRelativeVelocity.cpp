@@ -2,7 +2,9 @@
 // Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "lambertSurfaceRelativeVelocity.h"
+
 #include <architecture/utilities/linearAlgebra.h>
+
 #include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -75,5 +77,5 @@ void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos) {
     desiredVelocityOutMsgBuffer.maneuverTime = this->time;
 
     // Write to the output messages
-    this->desiredVelocityOutMsg.write(&desiredVelocityOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->desiredVelocityOutMsg.write(desiredVelocityOutMsgBuffer, this->moduleID, currentSimNanos);
 }

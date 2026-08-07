@@ -3,11 +3,13 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sunlineSEKF.h"
+
 #include <architecture/utilities/linearAlgebra.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include <string.h>
+#include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
+#include <string.h>
 
 /*! This method resets the sunline attitude filter to an initial state and
  initializes the internal estimation matrices.
@@ -32,9 +34,11 @@ void SunlineSEKF::reset(uint64_t callTime) {
     /*! - Read coarse sun sensor configuration information.*/
     cssConfigInBuffer = this->cssConfigInMsg();
     if (cssConfigInBuffer.nCSS > MAX_N_CSS_MEAS) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "sunlineSEKF.cssConfigInMsg.nCSS must not be greater than "
-                               "MAX_N_CSS_MEAS value.");
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "sunlineSEKF.cssConfigInMsg.nCSS must not be greater than "
+            "MAX_N_CSS_MEAS value."
+        );
     }
 
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
@@ -129,16 +133,16 @@ void SunlineSEKF::updateState(uint64_t callTime) {
     v3Copy(this->state, this->outputSunline.vehSunPntBdy);
     v3Normalize(this->outputSunline.vehSunPntBdy, this->outputSunline.vehSunPntBdy);
     this->outputSunline.timeTag = this->timeTag;
-    this->navStateOutMsg.write(&this->outputSunline, this->moduleID, callTime);
+    this->navStateOutMsg.write(this->outputSunline, this->moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = this->timeTag;
-    sunlineDataOutBuffer.numObs = (int)this->numObs;
+    sunlineDataOutBuffer.numObs = (int) this->numObs;
     memmove(sunlineDataOutBuffer.covar, this->covar, EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH * sizeof(double));
     memmove(sunlineDataOutBuffer.state, states_BN, EKF_N_STATES_SWITCH * sizeof(double));
     memmove(sunlineDataOutBuffer.stateError, this->x, SKF_N_STATES * sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, this->postFits, MAX_N_CSS_MEAS * sizeof(double));
-    this->filtDataOutMsg.write(&sunlineDataOutBuffer, this->moduleID, callTime);
+    this->filtDataOutMsg.write(sunlineDataOutBuffer, this->moduleID, callTime);
 
     return;
 }
@@ -173,14 +177,23 @@ void sunlineTimeUpdate(SunlineSEKF* data, double updateTime) {
     /*Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T*/
     mTranspose(data->stateTransition, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, stmT);
     mMultM(
-        data->covar, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, stmT, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, covPhiT);
-    mMultM(data->stateTransition,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           covPhiT,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           data->covarBar);
+        data->covar,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        stmT,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        covPhiT
+    );
+    mMultM(
+        data->stateTransition,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        covPhiT,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        data->covarBar
+    );
 
     sunlineSEKFComputeDCM_BS(data->state, data->bVec_B, &dcm_BS[0][0]);
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
@@ -195,20 +208,24 @@ void sunlineTimeUpdate(SunlineSEKF* data, double updateTime) {
     mSetSubMatrix(&(d_tilde[1][1]), 1, 2, Gamma, 5, 2, 1, 0);
     mSetSubMatrix(&(d_tilde[2][1]), 1, 2, Gamma, 5, 2, 2, 0);
 
-    mMultMt(data->procNoise,
-            (EKF_N_STATES_SWITCH - 3),
-            (EKF_N_STATES_SWITCH - 3),
-            Gamma,
-            EKF_N_STATES_SWITCH,
-            (EKF_N_STATES_SWITCH - 3),
-            qGammaT);
-    mMultM(Gamma,
-           EKF_N_STATES_SWITCH,
-           (EKF_N_STATES_SWITCH - 3),
-           qGammaT,
-           (EKF_N_STATES_SWITCH - 3),
-           EKF_N_STATES_SWITCH,
-           gammaQGammaT);
+    mMultMt(
+        data->procNoise,
+        (EKF_N_STATES_SWITCH - 3),
+        (EKF_N_STATES_SWITCH - 3),
+        Gamma,
+        EKF_N_STATES_SWITCH,
+        (EKF_N_STATES_SWITCH - 3),
+        qGammaT
+    );
+    mMultM(
+        Gamma,
+        EKF_N_STATES_SWITCH,
+        (EKF_N_STATES_SWITCH - 3),
+        qGammaT,
+        (EKF_N_STATES_SWITCH - 3),
+        EKF_N_STATES_SWITCH,
+        gammaQGammaT
+    );
     mAdd(data->covarBar, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, gammaQGammaT, data->covarBar);
 
     data->timeTag = updateTime;
@@ -224,11 +241,13 @@ void sunlineTimeUpdate(SunlineSEKF* data, double updateTime) {
     @param dt time step
     @param stateTransition
  */
-void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
-                         double bVec[SKF_N_STATES],
-                         double dt,
-                         double* stateInOut,
-                         double* stateTransition) {
+void sunlineStateSTMProp(
+    double dynMat[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
+    double bVec[SKF_N_STATES],
+    double dt,
+    double* stateInOut,
+    double* stateTransition
+) {
     double deltatASTM[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
     double propagatedVel[SKF_N_STATES_HALF];
     double omegaCrossd[SKF_N_STATES_HALF];
@@ -288,7 +307,15 @@ void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
 
     /* - omega_tilde in dynamics */
     mSetSubMatrix(
-        skewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, 0, 0);
+        skewOmega,
+        SKF_N_STATES_HALF,
+        SKF_N_STATES_HALF,
+        dynMat,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        0,
+        0
+    );
 
     /* Populate the first 3x3 matrix of the dynamics matrix*/
     mTranspose(dynMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, dynMat);
@@ -309,17 +336,19 @@ void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
  */
 void sunlineMeasUpdate(SunlineSEKF* data, double updateTime) {
     /*! - Compute the valid observations and the measurement model for all observations*/
-    int numObsInt = (int)data->numObs;
-    sunlineHMatrixYMeas(data->state,
-                        data->numCSSTotal,
-                        data->cssSensorInBuffer.CosValue,
-                        data->sensorUseThresh,
-                        data->cssNHat_B,
-                        data->obs,
-                        data->yMeas,
-                        &(numObsInt),
-                        data->measMat);
-    data->numObs = (size_t)numObsInt;
+    int numObsInt = (int) data->numObs;
+    sunlineHMatrixYMeas(
+        data->state,
+        data->numCSSTotal,
+        data->cssSensorInBuffer.CosValue,
+        data->sensorUseThresh,
+        data->cssNHat_B,
+        data->obs,
+        data->yMeas,
+        &(numObsInt),
+        data->measMat
+    );
+    data->numObs = (size_t) numObsInt;
 
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(data->covarBar, data->measMat, data->qObsVal, data->numObs, data->kalmanGain);
@@ -330,27 +359,31 @@ void sunlineMeasUpdate(SunlineSEKF* data, double updateTime) {
 
     if (vMaxAbs(data->covar, EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH) > data->eKFSwitch) {
         /*! - Compute the update with a CKF */
-        sunlineCKFUpdate(data->xBar,
-                         data->kalmanGain,
-                         data->covarBar,
-                         data->qObsVal,
-                         data->numObs,
-                         data->yMeas,
-                         data->measMat,
-                         data->x,
-                         data->covar);
+        sunlineCKFUpdate(
+            data->xBar,
+            data->kalmanGain,
+            data->covarBar,
+            data->qObsVal,
+            data->numObs,
+            data->yMeas,
+            data->measMat,
+            data->x,
+            data->covar
+        );
     } else {
         /* - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by
          * the filter update */
-        sunlineSEKFUpdate(data->kalmanGain,
-                          data->covarBar,
-                          data->qObsVal,
-                          data->numObs,
-                          data->yMeas,
-                          data->measMat,
-                          data->state,
-                          data->x,
-                          data->covar);
+        sunlineSEKFUpdate(
+            data->kalmanGain,
+            data->covarBar,
+            data->qObsVal,
+            data->numObs,
+            data->yMeas,
+            data->measMat,
+            data->state,
+            data->x,
+            data->covar
+        );
     }
 }
 
@@ -367,15 +400,17 @@ void sunlineMeasUpdate(SunlineSEKF* data, double updateTime) {
  @param covar Pointer to the covariance after update
  */
 
-void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH],
-                      double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
-                      double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
-                      double qObsVal,
-                      size_t numObs,
-                      double yObs[MAX_N_CSS_MEAS],
-                      double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
-                      double* x,
-                      double* covar) {
+void sunlineCKFUpdate(
+    double xBar[EKF_N_STATES_SWITCH],
+    double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
+    double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
+    double qObsVal,
+    size_t numObs,
+    double yObs[MAX_N_CSS_MEAS],
+    double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
+    double* x,
+    double* covar
+) {
     double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[EKF_N_STATES_SWITCH];
     double eye[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], kH[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
     double eyeKalH[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], eyeKalHT[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
@@ -409,20 +444,24 @@ void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH],
     mSetIdentity(eye, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH);
     mSubtract(eye, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, kH, eyeKalH);
     mTranspose(eyeKalH, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, eyeKalHT);
-    mMultM(eyeKalH,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           covarBar,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           eyeKalHCovarBar);
-    mMultM(eyeKalHCovarBar,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           eyeKalHT,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           covar);
+    mMultM(
+        eyeKalH,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        covarBar,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        eyeKalHCovarBar
+    );
+    mMultM(
+        eyeKalHCovarBar,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        eyeKalHT,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        covar
+    );
 
     /* Add noise to the covariance*/
     mMultM(kalmanGain, EKF_N_STATES_SWITCH, numObs, noiseMat, numObs, numObs, kalR);
@@ -443,15 +482,17 @@ void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH],
  @param x Pointer to the state error for modification
  @param covar Pointer to the covariance after update
  */
-void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
-                       double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
-                       double qObsVal,
-                       size_t numObs,
-                       double yObs[MAX_N_CSS_MEAS],
-                       double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
-                       double* states,
-                       double* x,
-                       double* covar) {
+void sunlineSEKFUpdate(
+    double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
+    double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
+    double qObsVal,
+    size_t numObs,
+    double yObs[MAX_N_CSS_MEAS],
+    double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
+    double* states,
+    double* x,
+    double* covar
+) {
     double eye[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], kH[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
     double eyeKalH[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], eyeKalHT[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
     double eyeKalHCovarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], kalR[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS];
@@ -484,20 +525,24 @@ void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
     mSetIdentity(eye, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH);
     mSubtract(eye, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, kH, eyeKalH);
     mTranspose(eyeKalH, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, eyeKalHT);
-    mMultM(eyeKalH,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           covarBar,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           eyeKalHCovarBar);
-    mMultM(eyeKalHCovarBar,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           eyeKalHT,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           covar);
+    mMultM(
+        eyeKalH,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        covarBar,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        eyeKalHCovarBar
+    );
+    mMultM(
+        eyeKalHCovarBar,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        eyeKalHT,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        covar
+    );
 
     /* Add noise to the covariance*/
     mMultM(kalmanGain, EKF_N_STATES_SWITCH, numObs, noiseMat, numObs, numObs, kalR);
@@ -521,15 +566,17 @@ void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
  @param measMat Point to the H measurement matrix
  */
 
-void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH],
-                         size_t numCSS,
-                         double cssSensorCos[MAX_N_CSS_MEAS],
-                         double sensorUseThresh,
-                         double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
-                         double* obs,
-                         double* yMeas,
-                         int* numObs,
-                         double* measMat) {
+void sunlineHMatrixYMeas(
+    double states[EKF_N_STATES_SWITCH],
+    size_t numCSS,
+    double cssSensorCos[MAX_N_CSS_MEAS],
+    double sensorUseThresh,
+    double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
+    double* obs,
+    double* yMeas,
+    int* numObs,
+    double* measMat
+) {
     uint32_t i, obsCounter;
     double sensorNormal[3];
 
@@ -549,7 +596,7 @@ void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH],
             obsCounter++;
         }
     }
-    *numObs = (int)obsCounter;
+    *numObs = (int) obsCounter;
 }
 
 /*! This method computes the Kalman gain given the measurements.
@@ -561,11 +608,13 @@ void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH],
  @param kalmanGain Pointer to the Kalman Gain
  */
 
-void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
-                       double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
-                       double qObsVal,
-                       size_t numObs,
-                       double* kalmanGain) {
+void sunlineKalmanGain(
+    double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
+    double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
+    double qObsVal,
+    size_t numObs,
+    double* kalmanGain
+) {
     double hObsT[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS];
     double covHT[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS];
     double hCovar[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH], hCovarHT[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];
@@ -640,21 +689,25 @@ void sunlineSEKFSwitch(double* bVec_B, double* states, double* covar) {
     mSetSubMatrix(&dcm_SnewSold[2][1], 1, 2, &switchMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, 4, 3);
 
     mMultV(switchMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, states, states);
-    mMultM(switchMat,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           covar,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           switchMatP);
+    mMultM(
+        switchMat,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        covar,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        switchMatP
+    );
     mTranspose(switchMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, switchMat);
-    mMultM(switchMatP,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           switchMat,
-           EKF_N_STATES_SWITCH,
-           EKF_N_STATES_SWITCH,
-           covar);
+    mMultM(
+        switchMatP,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        switchMat,
+        EKF_N_STATES_SWITCH,
+        EKF_N_STATES_SWITCH,
+        covar
+    );
     return;
 }
 

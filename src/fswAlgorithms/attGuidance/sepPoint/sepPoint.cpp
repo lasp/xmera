@@ -3,21 +3,18 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sepPoint.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
-const double epsilon = 1e-12;  // module tolerance for zero
+double const epsilon = 1e-12;  // module tolerance for zero
 
 /*! This method is used to reset the module.
  @return void
  */
 void SepPoint::reset(uint64_t currentSimNanos) {
-    if (!this->attNavInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
-    }
-    if (!this->bodyHeadingInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".bodyHeadingInMsg wasn't connected.");
-    }
+    if (!this->attNavInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected."); }
+    if (!this->bodyHeadingInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, ".bodyHeadingInMsg wasn't connected."); }
     if (!this->inertialHeadingInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, ".inertialHeadingInMsg wasn't connected.");
     }
@@ -66,7 +63,17 @@ void SepPoint::updateState(uint64_t currentSimNanos) {
     /*! compute reference frame RN */
     double RN[3][3];
     computeReferenceFrame(
-        hRefHat_B, hReqHat_N, rHat_SB_B, a1Hat_B, a2Hat_B, this->beta, BN, this->alignmentPriority, epsilon, RN);
+        hRefHat_B,
+        hReqHat_N,
+        rHat_SB_B,
+        a1Hat_B,
+        a2Hat_B,
+        this->beta,
+        BN,
+        this->alignmentPriority,
+        epsilon,
+        RN
+    );
 
     /*! compute reference MRP */
     double sigma_RN[3];
@@ -76,20 +83,22 @@ void SepPoint::updateState(uint64_t currentSimNanos) {
     /*! compute reference angular rates and accelerations via finite differences */
     double omega_RN_R[3];
     double omegaDot_RN_R[3];
-    finiteDifferencesRatesAndAcc(sigma_RN,
-                                 this->sigma_RN_1,
-                                 this->sigma_RN_2,
-                                 &currentSimNanos,
-                                 &this->T1NanoSeconds,
-                                 &this->T2NanoSeconds,
-                                 &this->callCount,
-                                 omega_RN_R,
-                                 omegaDot_RN_R);
+    finiteDifferencesRatesAndAcc(
+        sigma_RN,
+        this->sigma_RN_1,
+        this->sigma_RN_2,
+        &currentSimNanos,
+        &this->T1NanoSeconds,
+        &this->T2NanoSeconds,
+        &this->callCount,
+        omega_RN_R,
+        omegaDot_RN_R
+    );
 
     /*! compute angular rates and accelerations in N frame and store in buffer msg */
     m33tMultV3(RN, omega_RN_R, attRefOut.omega_RN_N);
     m33tMultV3(RN, omegaDot_RN_R, attRefOut.domega_RN_N);
 
     /*! Write the output messages */
-    this->attRefOutMsg.write(&attRefOut, this->moduleID, currentSimNanos);
+    this->attRefOutMsg.write(attRefOut, this->moduleID, currentSimNanos);
 }

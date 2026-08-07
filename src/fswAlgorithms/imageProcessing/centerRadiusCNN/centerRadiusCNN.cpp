@@ -11,6 +11,7 @@
 
 /* modify the path to reflect the new module names */
 #include "centerRadiusCNN.h"
+
 #include <fstream>
 #include <opencv2/dnn/dnn.hpp>
 
@@ -18,14 +19,14 @@
 CenterRadiusCNN::CenterRadiusCNN() {
     this->filename = "";
     this->saveImages = 0;
-    for (int i = 0; i < 3; i++) {
-        this->pixelNoise[i] = 5;
-    }
+    for (int i = 0; i < 3; i++) { this->pixelNoise[i] = 5; }
     this->pathToNetwork = "./position_net2_trained_11-14.onnx";
 }
 
 /*! This is the destructor */
-CenterRadiusCNN::~CenterRadiusCNN() { return; }
+CenterRadiusCNN::~CenterRadiusCNN() {
+    return;
+}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between
  function calls are reset to their default values.
@@ -34,15 +35,11 @@ CenterRadiusCNN::~CenterRadiusCNN() { return; }
  */
 void CenterRadiusCNN::reset(uint64_t currentSimNanos) {
     // check that the required message has not been connected
-    if (!this->imageInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CenterRadiusCNN.imageInMsg wasn't connected.");
-    }
+    if (!this->imageInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "CenterRadiusCNN.imageInMsg wasn't connected."); }
 
     /*! - Read in the CNN */
     std::ifstream test(this->pathToNetwork);
-    if (!test) {
-        std::cout << "The CNN file was not found" << std::endl;
-    }
+    if (!test) { std::cout << "The CNN file was not found" << std::endl; }
     this->positionNet2 = cv::dnn::readNetFromONNX(this->pathToNetwork);
     this->positionNet2.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
     this->positionNet2.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
@@ -73,15 +70,15 @@ void CenterRadiusCNN::updateState(uint64_t currentSimNanos) {
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
     } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos) {
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
-                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer(
+            (char*) imageBuffer.imagePointer,
+            (char*) imageBuffer.imagePointer + imageBuffer.imageBufferLength
+        );
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-        if (this->saveImages == 1) {
-            cv::imwrite(filenamePre, imageCV);
-        }
+        if (this->saveImages == 1) { cv::imwrite(filenamePre, imageCV); }
     } else {
         /*! - If no image is present, write zeros in message */
-        this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
+        this->opnavCirclesOutMsg.write(circleBuffer, this->moduleID, currentSimNanos);
         return;
     }
     /*!-  evaluate CNN on image */
@@ -99,15 +96,13 @@ void CenterRadiusCNN::updateState(uint64_t currentSimNanos) {
         circleBuffer.valid = 1;
         circleBuffer.cameraID = 1;
         circleBuffer.planetIds[0] = 2;
-        circleBuffer.circlesCenters[0] = (double)x_pred;  // Recasting to double, as per the message definition
-        circleBuffer.circlesCenters[1] = (double)y_pred;
-        circleBuffer.circlesRadii[0] = (double)rad_pred;
-        for (int j = 0; j < 3; j++) {
-            circleBuffer.uncertainty[j + 3 * j] = this->pixelNoise[j];
-        }
+        circleBuffer.circlesCenters[0] = (double) x_pred;  // Recasting to double, as per the message definition
+        circleBuffer.circlesCenters[1] = (double) y_pred;
+        circleBuffer.circlesRadii[0] = (double) rad_pred;
+        for (int j = 0; j < 3; j++) { circleBuffer.uncertainty[j + 3 * j] = this->pixelNoise[j]; }
     }
 
-    this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, currentSimNanos);
+    this->opnavCirclesOutMsg.write(circleBuffer, this->moduleID, currentSimNanos);
 
     return;
 }

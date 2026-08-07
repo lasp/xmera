@@ -15,9 +15,7 @@ Eclipse::Eclipse() {
 }
 
 Eclipse::~Eclipse() {
-    for (long unsigned int c = 0; c < this->eclipseOutMsgs.size(); c++) {
-        delete this->eclipseOutMsgs.at(c);
-    }
+    for (long unsigned int c = 0; c < this->eclipseOutMsgs.size(); c++) { delete this->eclipseOutMsgs.at(c); }
     return;
 }
 
@@ -32,12 +30,15 @@ void Eclipse::reset(uint64_t CurrenSimNanos) {
     if (this->positionInMsgs.size() == 0) {
         bskLogger.bskLog(
             BSK_ERROR,
-            "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft.");
+            "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft."
+        );
     }
 
     if (this->planetInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Eclipse: planetInMsgs is empty.  Must use addPlanetToModel() to add at least one planet.");
+        bskLogger.bskLog(
+            BSK_ERROR,
+            "Eclipse: planetInMsgs is empty.  Must use addPlanetToModel() to add at least one planet."
+        );
     }
 }
 
@@ -65,7 +66,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock) {
     for (long unsigned int c = 0; c < this->eclipseOutMsgs.size(); c++) {
         EclipseMsgPayload tmpEclipseMsg = {};
         tmpEclipseMsg.shadowFactor = this->eclipseShadowFactors.at(c);
-        this->eclipseOutMsgs.at(c)->write(&tmpEclipseMsg, this->moduleID, CurrentClock);
+        this->eclipseOutMsgs.at(c)->write(tmpEclipseMsg, this->moduleID, CurrentClock);
     }
 }
 
@@ -135,8 +136,8 @@ void Eclipse::updateState(uint64_t currentSimNanos) {
             double s = s_BP_N.norm();
             std::string plName(this->planetBuffer[eclipsePlanetKey].PlanetName);
             double planetRadius = this->getPlanetEquatorialRadius(plName);
-            double f_1 = safeAsin((REQ_SUN * 1000 + planetRadius) / s_HP_N.norm());
-            double f_2 = safeAsin((REQ_SUN * 1000 - planetRadius) / s_HP_N.norm());
+            double f_1 = safeAsin((REQ_SUN * 1'000 + planetRadius) / s_HP_N.norm());
+            double f_2 = safeAsin((REQ_SUN * 1'000 - planetRadius) / s_HP_N.norm());
             double s_0 = (-s_BP_N.dot(s_HP_N)) / s_HP_N.norm();
             double c_1 = s_0 + planetRadius / sin(f_1);
             double c_2 = s_0 - planetRadius / sin(f_2);
@@ -171,8 +172,8 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     double shadowFraction = 1.0;  // Initialise to value for no eclipse
     double normR_HB_N = r_HB_N.norm();
     double normS_BP_N = s_BP_N.norm();
-    double a = safeAsin(REQ_SUN * 1000 / normR_HB_N);  // apparent radius of sun
-    double b = safeAsin(planetRadius / normS_BP_N);    // apparent radius of occulting body
+    double a = safeAsin(REQ_SUN * 1'000 / normR_HB_N);  // apparent radius of sun
+    double b = safeAsin(planetRadius / normS_BP_N);     // apparent radius of occulting body
     double c = safeAcos((-s_BP_N.dot(r_HB_N)) / (normS_BP_N * normR_HB_N));
 
     // The order of these conditionals is important.

@@ -2,10 +2,11 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
 #include "horizonOpNav.h"
+
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*! This performs a QR decomposition on a input matrix. In this method it's used on the H matrix made up of the limb
  points
@@ -19,9 +20,9 @@ void QRDecomp(double* inMat, int32_t nRow, double* Q, double* R) {
     int32_t i, j;
     double *sourceMatT, *QT;
     double* proj;
-    proj = (double*)malloc(nRow * sizeof(double));
-    sourceMatT = (double*)malloc(MAX_LIMB_PNTS * 3 * sizeof(double));
-    QT = (double*)malloc(MAX_LIMB_PNTS * 3 * sizeof(double));
+    proj = (double*) malloc(nRow * sizeof(double));
+    sourceMatT = (double*) malloc(MAX_LIMB_PNTS * 3 * sizeof(double));
+    QT = (double*) malloc(MAX_LIMB_PNTS * 3 * sizeof(double));
 
     mSetZero(Q, nRow, 3);
     mSetZero(sourceMatT, 3, MAX_LIMB_PNTS);
@@ -65,9 +66,7 @@ void BackSub(double* R, double* inVec, int32_t nRow, double* n) {
     n[nRow - 1] = inVec[nRow - 1] / R[nRow * nRow - 1];
     for (i = nRow - 2; i >= 0; i--) {
         sum = 0;
-        for (j = i + 1; j < nRow; j++) {
-            sum += R[i * nRow + j] * n[j];
-        }
+        for (j = i + 1; j < nRow; j++) { sum += R[i * nRow + j] * n[j]; }
         n[i] = (inVec[i] - sum) / R[i * nRow + i];
     }
 
@@ -114,7 +113,7 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     /*! Check the validity of the image*/
     if (limbIn.valid == 0) {
         opNavMsgOut.valid = 0;
-        this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+        this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
         return;
     }
     /*! Create Q matrix, the square root inverse of the A matrix, eq (6) in Engineering Note*/
@@ -139,7 +138,7 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     sigma_pix = this->noiseSF * cameraSpecs.resolution[0] / (numPoints);
 
     /*! Build DCMs */
-    this->planetTarget = (int32_t)limbIn.planetIds;
+    this->planetTarget = (int32_t) limbIn.planetIds;
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_NC);
@@ -151,9 +150,9 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     double R_s[3][3], s[3], J[3];
     int i;
     double *H, *s_bar, *R_yInv;
-    H = (double*)malloc(MAX_LIMB_PNTS * 3 * sizeof(double));     /*! Matrix of all the limb points*/
-    s_bar = (double*)malloc(MAX_LIMB_PNTS * 3 * sizeof(double)); /*! variables for covariance */
-    R_yInv = (double*)malloc(MAX_LIMB_PNTS * MAX_LIMB_PNTS * sizeof(double));
+    H = (double*) malloc(MAX_LIMB_PNTS * 3 * sizeof(double));     /*! Matrix of all the limb points*/
+    s_bar = (double*) malloc(MAX_LIMB_PNTS * 3 * sizeof(double)); /*! variables for covariance */
+    R_yInv = (double*) malloc(MAX_LIMB_PNTS * MAX_LIMB_PNTS * sizeof(double));
 
     vSetZero(H, MAX_LIMB_PNTS * 3);
     /* To do: replace alpha by a skew read from the camera message */
@@ -169,7 +168,17 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     m33SetZero(tranf);
     /*! Set the map from pixel to position eq (8) in Journal*/
     m33Set(
-        1 / d_x, -alpha / (d_x * d_y), (alpha * v_p - d_y * u_p) / (d_x * d_y), 0, 1 / d_y, -v_p / d_y, 0, 0, 1, tranf);
+        1 / d_x,
+        -alpha / (d_x * d_y),
+        (alpha * v_p - d_y * u_p) / (d_x * d_y),
+        0,
+        1 / d_y,
+        -v_p / d_y,
+        0,
+        0,
+        1,
+        tranf
+    );
 
     /*! Set the noise matrix in pix eq (53) in Engineering Note*/
     m33Set((sigma_pix * sigma_pix) / (d_x * d_x), 0, 0, 0, (sigma_pix * sigma_pix) / (d_x * d_x), 0, 0, 0, 0, R_s);
@@ -202,8 +211,8 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     double RHS_vec[3], n[3], IminusOuter[3][3], outer[3][3], sNorm;
     double scaleFactor, nNorm2, sbarPrime[3]; /*! Useful scalars for the rest of the implementation */
     double *Q_decomp, *ones;
-    Q_decomp = (double*)malloc(MAX_LIMB_PNTS * 3 * sizeof(double));
-    ones = (double*)malloc(MAX_LIMB_PNTS * sizeof(double));
+    Q_decomp = (double*) malloc(MAX_LIMB_PNTS * 3 * sizeof(double));
+    ones = (double*) malloc(MAX_LIMB_PNTS * sizeof(double));
 
     /*! - QR decomp */
     QRDecomp(H, numPoints, Q_decomp, R_decomp);
@@ -233,7 +242,7 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     double Pn[3][3];
     double F[3][3];
     double* Rtemp;
-    Rtemp = (double*)malloc(MAX_LIMB_PNTS * 3 * sizeof(double));
+    Rtemp = (double*) malloc(MAX_LIMB_PNTS * 3 * sizeof(double));
 
     m33SetIdentity(Pn);
     mMultM(R_yInv, numPoints, numPoints, H, numPoints, 3, Rtemp);
@@ -276,7 +285,7 @@ void HorizonOpNav::updateState(uint64_t callTime) {
     mCopy(covar_In_B, 3, 3, opNavMsgOut.covar_B);
     opNavMsgOut.timeTag = limbIn.timeTag;
     opNavMsgOut.valid = 1;
-    this->opNavOutMsg.write(&opNavMsgOut, this->moduleID, callTime);
+    this->opNavOutMsg.write(opNavMsgOut, this->moduleID, callTime);
 
     /* free allocated memory */
     free(H);

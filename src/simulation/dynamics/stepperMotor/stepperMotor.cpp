@@ -2,7 +2,9 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "stepperMotor.h"
+
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <cassert>
 #include <cmath>
 
@@ -50,9 +52,7 @@ void StepperMotor::updateState(uint64_t callTime) {
             if (motorStepCommandIn.stopMotorCommand) {
                 // Honor the stop only if the motor is currently actuating; the current step is
                 // allowed to finish before halting (motor cannot physically stop mid-step).
-                if (!this->actuationComplete) {
-                    this->pendingStop = true;
-                }
+                if (!this->actuationComplete) { this->pendingStop = true; }
             } else {
                 this->stepsCommanded = motorStepCommandIn.stepsCommanded;
                 this->pendingStop = false;
@@ -79,9 +79,7 @@ void StepperMotor::updateState(uint64_t callTime) {
     bool isMotorMoving = false;
     if (!(this->actuationComplete)) {
         // Reset the motor immediately after a new non-interrupting request is received
-        if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) {
-            this->resetMotor();
-        }
+        if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) { this->resetMotor(); }
         this->actuateMotor(t);
         isMotorMoving = true;
     } else {
@@ -98,7 +96,7 @@ void StepperMotor::updateState(uint64_t callTime) {
     stepperMotorOut.stepCount = this->stepCount;
     stepperMotorOut.motorPosition = this->motorPosition;
     stepperMotorOut.isMotorMoving = isMotorMoving;
-    this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
+    this->stepperMotorOutMsg.write(stepperMotorOut, moduleID, callTime);
 }
 
 /*! This method is used to simulate the stepper motor actuation in time.
@@ -164,7 +162,9 @@ void StepperMotor::updateStepParameters() {
  @return bool
  @param t [s] Time the method is called
 */
-bool StepperMotor::isInStepFirstHalf(double t) { return (t < this->ts && std::abs(this->ts - t) > 1e-5); }
+bool StepperMotor::isInStepFirstHalf(double t) {
+    return (t < this->ts && std::abs(this->ts - t) > 1e-5);
+}
 
 /*! This method computes the motor states during the first half of each step.
  @return void
@@ -225,42 +225,50 @@ void StepperMotor::computeStepComplete(double t) {
     }
 
     // Update the actuationComplete boolean variable only when motor actuation is complete
-    if ((this->stepCount == this->stepsCommanded) && !this->interruptMsg) {
-        this->actuationComplete = true;
-    }
+    if ((this->stepCount == this->stepsCommanded) && !this->interruptMsg) { this->actuationComplete = true; }
 }
 
 /*! Getter method for the initial motor angle.
  @return double
 */
-double StepperMotor::getThetaInit() const { return this->thetaInit; }
+double StepperMotor::getThetaInit() const {
+    return this->thetaInit;
+}
 
 /*! Getter method for the motor step angle.
  @return double
 */
-double StepperMotor::getStepAngle() const { return this->stepAngle; }
+double StepperMotor::getStepAngle() const {
+    return this->stepAngle;
+}
 
 /*! Getter method for the motor step time.
  @return double
 */
-double StepperMotor::getStepTime() const { return this->stepTime; }
+double StepperMotor::getStepTime() const {
+    return this->stepTime;
+}
 
 /*! Getter method for the maximum motor angular acceleration.
  @return double
 */
-double StepperMotor::getThetaDDotMax() const { return this->thetaDDotMax; }
+double StepperMotor::getThetaDDotMax() const {
+    return this->thetaDDotMax;
+}
 
 /*! Setter method for the initial motor angle.
  @return void
  @param thetaInit [rad] Initial motor angle
 */
-void StepperMotor::setThetaInit(const double thetaInit) { this->thetaInit = thetaInit; }
+void StepperMotor::setThetaInit(double const thetaInit) {
+    this->thetaInit = thetaInit;
+}
 
 /*! Setter method for the motor step angle.
  @return void
  @param stepAngle [rad] Motor step angle
 */
-void StepperMotor::setStepAngle(const double stepAngle) {
+void StepperMotor::setStepAngle(double const stepAngle) {
     assert(stepAngle > 0.0);
     this->stepAngle = std::abs(stepAngle);
 }
@@ -269,7 +277,7 @@ void StepperMotor::setStepAngle(const double stepAngle) {
  @return void
  @param stepTime [s] Motor step time
 */
-void StepperMotor::setStepTime(const double stepTime) {
+void StepperMotor::setStepTime(double const stepTime) {
     assert(stepTime > 0.0);
     this->stepTime = std::abs(stepTime);
 }

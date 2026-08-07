@@ -127,7 +127,7 @@ void Magnetometer::writeOutputMessages(uint64_t Clock) {
     localMessage = TAMSensorMsgPayload{};
     eigenVectorToCArray(this->tamSensed_S, localMessage.tam_S);
     //! - Write the outgoing message to the architecture
-    this->tamDataOutMsg.write(&localMessage, this->moduleID, Clock);
+    this->tamDataOutMsg.write(localMessage, this->moduleID, Clock);
 }
 
 /*! This method is called at a specified rate by the architecture.  It makes the

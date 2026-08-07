@@ -7,12 +7,8 @@
  @return void
  */
 void SunSearch::reset(uint64_t currentSimNanos) {
-    if (!this->attNavInMsg.isLinked()) {
-        throw std::invalid_argument("SunSearch.attNavInMsg wasn't connected.");
-    }
-    if (!this->vehConfigInMsg.isLinked()) {
-        throw std::invalid_argument("SunSearch.vehConfigInMsg wasn't connected.");
-    }
+    if (!this->attNavInMsg.isLinked()) { throw std::invalid_argument("SunSearch.attNavInMsg wasn't connected."); }
+    if (!this->vehConfigInMsg.isLinked()) { throw std::invalid_argument("SunSearch.vehConfigInMsg wasn't connected."); }
 
     this->algorithm.reset(currentSimNanos, this->vehConfigInMsg());
 }
@@ -25,7 +21,7 @@ void SunSearch::updateState(uint64_t currentSimNanos) {
     NavAttMsgPayload navAttIn = this->attNavInMsg();
     AttGuidMsgPayload attGuidOut = this->algorithm.update(currentSimNanos, navAttIn);
 
-    this->attGuidOutMsg.write(&attGuidOut, this->moduleID, currentSimNanos);
+    this->attGuidOutMsg.write(attGuidOut, this->moduleID, currentSimNanos);
 }
 
 /**
@@ -50,4 +46,6 @@ void SunSearch::modifySlewProperties(SlewProperties slewPropertiesInput, uint32_
  * @param index index of the slew maneuver
  * @return SlewProperties the properties of the slew maneuver
  */
-SlewProperties SunSearch::getSlewProperties(uint32_t index) const { return this->algorithm.getSlewProperties(index); }
+SlewProperties SunSearch::getSlewProperties(uint32_t index) const {
+    return this->algorithm.getSlewProperties(index);
+}

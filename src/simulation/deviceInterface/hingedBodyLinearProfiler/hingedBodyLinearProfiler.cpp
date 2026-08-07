@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "hingedBodyLinearProfiler.h"
+
 #include <architecture/utilities/macroDefinitions.h>
+
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -58,5 +60,5 @@ void HingedBodyLinearProfiler::updateState(uint64_t currentSimNanos) {
     hingedRigidBodyReferenceOutMsgBuffer.thetaDot = refThetaDot;
 
     //!<  write to the output messages
-    this->hingedRigidBodyReferenceOutMsg.write(&hingedRigidBodyReferenceOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->hingedRigidBodyReferenceOutMsg.write(hingedRigidBodyReferenceOutMsgBuffer, this->moduleID, currentSimNanos);
 }

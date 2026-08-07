@@ -3,8 +3,10 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "smallBodyNavUKF.h"
+
 #include <architecture/utilities/linearAlgebra.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -115,9 +117,9 @@ void SmallBodyNavUKF::processUT(uint64_t currentSimNanos) {
         v_sigma_k << x_sigma_k.segment(3, 3);
         a_sigma_k << x_sigma_k.segment(6, 3);
         x_sigma_dot_k.segment(0, 3) = v_sigma_k;
-        x_sigma_dot_k.segment(3, 3) = -2 * this->omega_AN_A.cross(v_sigma_k) -
-                                      this->omega_AN_A.cross(this->omega_AN_A.cross(r_sigma_k)) -
-                                      this->mu_ast * r_sigma_k / pow(r_sigma_k.norm(), 3) + a_sigma_k;
+        x_sigma_dot_k.segment(3, 3) = -2 * this->omega_AN_A.cross(v_sigma_k)
+                                    - this->omega_AN_A.cross(this->omega_AN_A.cross(r_sigma_k))
+                                    - this->mu_ast * r_sigma_k / pow(r_sigma_k.norm(), 3) + a_sigma_k;
 
         /* Use Euler integration to propagate */
         this->X_sigma_k1_.col(i) = x_sigma_k + x_sigma_dot_k * (currentSimNanos - prevTime) * NANO2SEC;
@@ -213,8 +215,9 @@ void SmallBodyNavUKF::kalmanUpdate() {
     /* Subtract the asteroid position from the spacecraft position */
     Eigen::VectorXd y_k1;
     y_k1.setZero(this->numMeas);
-    y_k1.segment(0, 3) = this->dcm_AN * (cArrayToEigenVector(navTransInMsgBuffer.r_BN_N) -
-                                         cArrayToEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
+    y_k1.segment(0, 3) = this->dcm_AN
+                       * (cArrayToEigenVector(navTransInMsgBuffer.r_BN_N)
+                          - cArrayToEigenVector(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
 
     /* Compute Kalman gain */
     this->K = this->H * this->R_k1_.inverse();
@@ -245,7 +248,7 @@ void SmallBodyNavUKF::writeMessages(uint64_t currentSimNanos) {
     eigenMatrixXToCArray2D(this->P_k1, smallBodyNavUKFOutMsgBuffer.covar);
 
     /* Write to the C++-wrapped output messages */
-    this->smallBodyNavUKFOutMsg.write(&smallBodyNavUKFOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->smallBodyNavUKFOutMsg.write(smallBodyNavUKFOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! This is the main method that gets called every time the module is updated.

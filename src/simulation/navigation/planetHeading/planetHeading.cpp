@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "planetHeading.h"
+
 #include <architecture/utilities/astroConstants.h>
 #include <architecture/utilities/eigenSupport.h>
 
@@ -48,7 +49,7 @@ void PlanetHeading::writeMessages(uint64_t currentSimNanos) {
     eigenVectorToCArray(this->rHat_PB_B, planetHeadingOutMsgData.rHat_XB_B);
 
     /*! - write the output message */
-    this->planetHeadingOutMsg.write(&planetHeadingOutMsgData, this->moduleID, currentSimNanos);
+    this->planetHeadingOutMsg.write(planetHeadingOutMsgData, this->moduleID, currentSimNanos);
 }
 
 /*! This method is used to reset the module. Currently no tasks are required.
