@@ -186,13 +186,15 @@ inline void fuzzCenterOfBrightness(int32_t roiCenterX,
         pixels.emplace_back(pixelXs[static_cast<size_t>(i)], pixelYs[static_cast<size_t>(i)]);
     }
 
-    // Set up algorithm
-    CenterOfBrightnessAlgorithm alg;
+    // The algorithm contains an 8 MB pixel buffer, and the reader records how much of that
+    // buffer it wrote. Thus both must stay alive between iterations.
+    static CenterOfBrightnessAlgorithm alg;
+    static FuzzImageReader reader;
+
+    // reset() clears the brightness history, which is the only state kept between runs
+    alg.reset();
     alg.setRelativeBrightnessIncreaseThreshold(brightnessThreshold);
     alg.setNumberOfPointsBrightnessAverage(avgWindowSize);
-
-    // Set up fake image reader
-    FuzzImageReader reader;
     reader.pixels = pixels;
 
     // Set up ROI
@@ -265,14 +267,17 @@ inline void fuzzCenterOfBrightness(int32_t roiCenterX,
 inline void fuzzMultiStepBrightness(int32_t avgWindowSize,
                                     double brightnessThreshold,
                                     std::vector<int32_t> pixelCountsPerStep) {
-    CenterOfBrightnessAlgorithm alg;
+    // Refer to fuzzCenterOfBrightness for why these stay alive between iterations
+    static CenterOfBrightnessAlgorithm alg;
+    static FuzzImageReader reader;
+
+    alg.reset();
     alg.setRelativeBrightnessIncreaseThreshold(brightnessThreshold);
     alg.setNumberOfPointsBrightnessAverage(avgWindowSize);
 
     ReferenceState refState;
     refState.maxHistorySize = avgWindowSize;
 
-    FuzzImageReader reader;
     CobRegionOfInterest roi;
     roi.center = Eigen::Vector2i(500, 500);
     roi.size = Eigen::Vector2i(100, 100);
