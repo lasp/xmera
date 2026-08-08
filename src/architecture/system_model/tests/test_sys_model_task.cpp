@@ -117,8 +117,7 @@ TEST(SysModelTaskTest, normalLifecycleSucceeds) {
     // Run the task through some number of simulations at its scheduled cadence,
     // with each simulation starting at a different time.
     for (auto initialTime = 0; initialTime < 30; initialTime += 10) {
-        // The initial time should be passed directly to the module.
-        task.reset(initialTime);
+        module.reset(initialTime);
         EXPECT_THAT(module.hasBeenReset, IsTrue());
         EXPECT_THAT(module.lastUpdateTime, Eq(initialTime));
 

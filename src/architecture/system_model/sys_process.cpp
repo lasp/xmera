@@ -9,20 +9,6 @@
 #include <iostream>
 #include <utility>
 
-void SysProcess::reset(uint64_t initialSimNanos) {
-    // Reset all tasks and modules
-    for (auto &task : this->processTasks) {
-        task.TaskPtr->reset(initialSimNanos);
-
-        task.NextTaskStart = task.TaskPtr->getNextStartTime();
-        task.TaskUpdatePeriod = task.TaskPtr->getTaskPeriod();
-    }
-
-    // Record when the next task will update
-    this->nextTaskTime =
-        (!this->processTasks.empty()) ? this->getNextTask()->NextTaskStart : std::numeric_limits<uint64_t>::max();
-}
-
 std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {
     auto nextTaskIt = this->processTasks.begin();
 

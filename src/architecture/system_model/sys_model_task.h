@@ -55,6 +55,8 @@ struct ModelPriorityPair final {
  *  \endparblock
  */
 class SysModelTask final {
+    friend class SimModel;
+
 public:
     //! Obtain an empty task with a given update period and start time
     /*!
@@ -85,13 +87,6 @@ public:
      *    The simulation instant associated with the desired simulation state
      */
     void executeModels(uint64_t nextSimNanos);
-
-    //! Reset all modules in the task, in priority order
-    /*!
-     *  @param[in] initialSimNanos
-     *    The simulation instant associated with the initial simulation state
-     */
-    void reset(uint64_t initialSimNanos);
 
     //! Change the update period of the task
     /*!

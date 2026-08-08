@@ -39,6 +39,8 @@ struct ModelScheduleEntry final {
  *  of as an integrated multi-model simulation.
  */
 class SysProcess final {
+    friend class SimModel;
+
 public:
     //! Obtain an empty simulation process
     /*!
@@ -57,13 +59,6 @@ public:
      *    The priority of the given task (higher is earlier).
      */
     SysModelTask &addTask(uint64_t updatePeriodNanos = 100, uint64_t firstUpdateNanos = 0, int32_t priority = -1);
-
-    //! Reset all tasks in the process, in priority order
-    /*!
-     *  @param[in] initialSimNanos
-     *    The simulation instant associated with the initial simulation state
-     */
-    void reset(uint64_t initialSimNanos);
 
     //! Step the task with the earliest next update time at or before the argument
     /*!

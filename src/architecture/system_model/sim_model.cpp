@@ -81,17 +81,33 @@ void SimModel::singleStepProcesses(int64_t const stopPri) {
 }
 
 void SimModel::resetSimulation() {
-    // Reset all processes
-    //! @todo Should we skip resetting disabled processes?
     this->CurrentNanos = 0;
-    for (auto &process : this->processList) { process->reset(this->CurrentNanos); }
+
+    // Reset all processes, tasks, and modules
+    //! @todo Should we skip resetting disabled tasks?
+    for (auto &process : this->processList) {
+        auto nextTaskNanos = std::numeric_limits<uint64_t>::max();
+        for (auto &task : process->processTasks) {
+            task.TaskPtr->nextUpdateNanos = task.TaskPtr->firstUpdateNanos;
+            for (auto const &modelPair : task.TaskPtr->TaskModels) {
+                modelPair.ModelPtr->reset(this->CurrentNanos);
+            }
+
+            task.NextTaskStart = task.TaskPtr->nextUpdateNanos;
+            task.TaskUpdatePeriod = task.TaskPtr->updatePeriodNanos;
+
+            nextTaskNanos = std::min(nextTaskNanos, task.TaskPtr->nextUpdateNanos);
+        }
+
+        process->nextTaskTime = nextTaskNanos;
+    }
 
     // Figure out which process will update first
     auto nextTaskTime = SimInstant::endOfTime();
     for (auto &process : this->processList) {
-        if (!process->isEnabled()) { continue; }
+        if (!process->enabled) { continue; }
 
-        auto nextProcTime = SimInstant::atNanos(process->getNextTaskTime()).atPriority(process->processPriority);
+        auto nextProcTime = SimInstant::atNanos(process->nextTaskTime).atPriority(process->processPriority);
         nextTaskTime = std::min(nextTaskTime, nextProcTime);
     }
     this->NextTaskTime = nextTaskTime.realNanos;
