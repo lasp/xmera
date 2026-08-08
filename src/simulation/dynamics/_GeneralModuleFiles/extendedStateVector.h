@@ -75,35 +75,11 @@ class ExtendedStateVector : public std::unordered_map<ExtendedStateId, Eigen::Ma
      */
     static ExtendedStateVector fromStateDerivs(const std::vector<DynamicObject*>& dynPtrs);
 
-    /**
-     * This method will call the given std::function for every
-     * state in the ExtendedStateVector. The arguments to the functor
-     * are the index of the DynamicObject corresponding to the state,
-     * the name of the state, and the value of the state stored in ExtendedStateVector.
-     * A new ExtendedStateVector is built from the results of each call
-     * of the functor.
-     */
-    ExtendedStateVector map(
-        std::function<Eigen::MatrixXd(const size_t&, const std::string&, const Eigen::MatrixXd&)> functor) const;
-
-    /**
-     * Similar to the map method, except that no
-     * ExtendedStateVector is returned because the given functor
-     * does not produce any values.
-     */
-    void apply(std::function<void(const size_t&, const std::string&, const Eigen::MatrixXd&)> functor) const;
-
-    /**
-     * Modifies each Eigen::MatrixXd stored in this object according to
-     * the given functor
-     */
-    void modify(std::function<void(const size_t&, const std::string&, Eigen::MatrixXd&)> functor);
-
     /** Adds the values of `rhs` to this
      *
      * This functions as a state-wise addition operation.
      */
-    ExtendedStateVector operator+=(const ExtendedStateVector& rhs);
+    ExtendedStateVector &operator+=(const ExtendedStateVector& rhs);
 
     /** Returns a new ExtendedStateVector that is the result of multiplying each state by a constant
      */
@@ -111,10 +87,6 @@ class ExtendedStateVector : public std::unordered_map<ExtendedStateId, Eigen::Ma
 
     /** Calls StateData::setState for every entry in in this */
     void setStates(std::vector<DynamicObject*>& dynPtrs) const;
-
-   private:
-    static ExtendedStateVector fromStateData(const std::vector<DynamicObject*>& dynPtrs,
-                                             std::function<Eigen::MatrixXd(const StateData&)>);
 };
 
 #endif /* extendedStateVector_h */

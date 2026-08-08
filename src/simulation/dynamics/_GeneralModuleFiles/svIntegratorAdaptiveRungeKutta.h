@@ -307,14 +307,14 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::computeMaxRelativeError(
     // We care only about the largest relationship between
     // truncation error and tolerance.
     double maxRelativeError = 0;
-    auto maxRelativeErrorRef = std::ref(maxRelativeError);
-    candidateNextState.apply([this, &maxRelativeErrorRef, &truncationError](const size_t& dynObjIndex,
-                                                                            const std::string& stateName,
-                                                                            const Eigen::MatrixXd& thisState) {
+    for (auto&& [extendedStateId, thisState] : candidateNextState) {
+        auto&& [dynObjIndex, stateName] = extendedStateId;
+
         double thisTruncationError = truncationError.at({dynObjIndex, stateName}).norm();
         double thisErrorTolerance = this->getTolerance(dynObjIndex, stateName, thisState.norm());
-        maxRelativeErrorRef.get() = std::max(maxRelativeErrorRef.get(), thisTruncationError / thisErrorTolerance);
-    });
+
+        maxRelativeError = std::max(maxRelativeError, thisTruncationError / thisErrorTolerance);
+    }
 
     return maxRelativeError;
 }
