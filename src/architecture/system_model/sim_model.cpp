@@ -29,9 +29,6 @@ SimInstant SimModel::stepProcessUpTo(SysProcess &process, SimInstant stopTime) {
 }
 
 void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
-    //! @todo Remove this misplaced flush on stdout.
-    std::cout << std::flush;
-
     // Keep single-stepping until the next process would occur after the stop time.
     auto simStopTime = SimInstant::atNanos(SimStopTime).atPriority(stopPri);
     while (true) {
