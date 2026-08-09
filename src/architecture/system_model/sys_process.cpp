@@ -13,8 +13,8 @@ std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {
     auto nextTaskIt = this->processTasks.begin();
 
     for (auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
-        auto currentUpdateTime = SimInstant::atNanos(it->NextTaskStart).atPriority(it->taskPriority);
-        auto earliestUpdateTime = SimInstant::atNanos(nextTaskIt->NextTaskStart).atPriority(nextTaskIt->taskPriority);
+        auto currentUpdateTime = SimInstant::atNanos(it->TaskPtr->getNextStartTime()).atPriority(it->taskPriority);
+        auto earliestUpdateTime = SimInstant::atNanos(nextTaskIt->TaskPtr->getNextStartTime()).atPriority(nextTaskIt->taskPriority);
 
         if (currentUpdateTime < earliestUpdateTime) { nextTaskIt = it; }
     }
@@ -26,8 +26,6 @@ SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpda
     auto &task = this->allocatedTasks.emplace_back(std::make_unique<SysModelTask>(updatePeriodNanos, firstUpdateNanos));
 
     this->scheduleTask({
-        .NextTaskStart = task->getNextStartTime(),
-        .TaskUpdatePeriod = task->getTaskPeriod(),
         .taskPriority = priority,
         .TaskPtr = task.get(),
     });
@@ -53,12 +51,10 @@ bool SysProcess::changeTaskPeriod(std::string const &taskName, uint64_t newPerio
         if (entry.TaskPtr->TaskName != taskName) { continue; }
 
         entry.TaskPtr->setPeriod(newPeriod);
-        entry.NextTaskStart = entry.TaskPtr->getNextStartTime();
-        entry.TaskUpdatePeriod = entry.TaskPtr->getTaskPeriod();
 
         // Determine the new next task time. (If the next task was this one, it
         // might now be some other task. Worse, it might *still* be this one!)
-        this->nextTaskTime = this->getNextTask()->NextTaskStart;
+        this->nextTaskTime = this->getNextTask()->TaskPtr->getNextStartTime();
 
         return true;
     }

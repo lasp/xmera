@@ -25,8 +25,6 @@ SimInstant SimModel::stepProcessUpTo(SysProcess &process, SimInstant stopTime) {
                 modelPair.ModelPtr->updateState(stopTime.realNanos);
             }
         }
-
-        nextTaskIt->NextTaskStart = nextTaskIt->TaskPtr->nextUpdateNanos;
     }
 }
 
@@ -93,9 +91,6 @@ void SimModel::resetSimulation() {
             for (auto const &modelPair : task.TaskPtr->TaskModels) {
                 modelPair.ModelPtr->reset(this->CurrentNanos);
             }
-
-            task.NextTaskStart = task.TaskPtr->nextUpdateNanos;
-            task.TaskUpdatePeriod = task.TaskPtr->updatePeriodNanos;
 
             nextTaskNanos = std::min(nextTaskNanos, task.TaskPtr->nextUpdateNanos);
         }

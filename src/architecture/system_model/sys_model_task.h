@@ -40,19 +40,6 @@ struct ModelPriorityPair final {
  *  re-enabled, the updates occurring afterwards will occur on schedule as if
  *  the task was never disabled, although updates while the task was disabled
  *  will not have occurred at all.
- *
- *  @todo \parblock
- *    This ought to be an opaque `SysModel`. It's doing two jobs: it represents
- *    a sequential composition of other `SysModel`s, and it manages its own update
- *    schedule. These jobs ought to be separated out, and arguably the latter
- *    should be the job of the containing `SysProcess`. Heck, `SysProcess` *already*
- *    keeps a copy of the `NextTaskStart` and `TaskUpdatePeriod` for each task.
- *
- *    On top of that, `resetModules()` and `reset()` are weirdly separated when
- *    neither should be invoked without the other also. If those can be combined,
- *    then `resetModules()` and `executeModules()` are exactly implementing
- *    `SysModel::reset()` and `SysModel::updateState()`.
- *  \endparblock
  */
 class SysModelTask final {
     friend class SimModel;

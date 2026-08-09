@@ -15,12 +15,6 @@
 
 //! A task paired with its priority among tasks within its containing process
 struct ModelScheduleEntry final {
-    //! The cached value of `SysModelTask::getNextStartTime()`
-    uint64_t NextTaskStart;
-
-    //! The cached value of `SysModelTask::getTaskPeriod()`
-    uint64_t TaskUpdatePeriod;
-
     //! The priority of this task among others within its containing process
     int32_t taskPriority;
 
