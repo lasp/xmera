@@ -4,28 +4,29 @@
 
 #include "sim_model.h"
 
-#include <architecture/system_model/sim_instant.h>
-
 #include <algorithm>
 #include <iostream>
 
-//! Step a process until its next update time is after `stopTime`.
-/*!
- *  @param[in] process
- *    The process to step
- *  @param[in] stopTime
- *    The time up to which (and including which) we want to step tasks.
- *  @return
- *    The time at which the next task after `stopTime` will occur.
- */
-static SimInstant stepProcessUpTo(SysProcess &process, SimInstant stopTime) {
+SimInstant SimModel::stepProcessUpTo(SysProcess &process, SimInstant stopTime) {
+    if (process.processTasks.empty()) { return SimInstant::endOfTime().atPriority(process.processPriority); }
+
     while (true) {
-        auto nextTaskTime = SimInstant::atNanos(process.getNextTaskTime()).atPriority(process.processPriority);
+        auto nextTaskIt = process.getNextTask();
+        auto nextTaskTime = SimInstant::atNanos(nextTaskIt->TaskPtr->nextUpdateNanos).atPriority(process.processPriority);
+        process.nextTaskTime = nextTaskTime.realNanos;
 
-        if (nextTaskTime.realNanos == SimInstant::endOfTime().realNanos) { return nextTaskTime; }
         if (stopTime < nextTaskTime) { return nextTaskTime; }
+        if (nextTaskTime.realNanos == SimInstant::endOfTime().realNanos) { return nextTaskTime; }
 
-        process.singleStepNextTask(stopTime.realNanos);
+        // Update the next task, and record when it wants to be updated again
+        nextTaskIt->TaskPtr->nextUpdateNanos += nextTaskIt->TaskPtr->updatePeriodNanos;
+        if (nextTaskIt->TaskPtr->taskActive) {
+            for (auto &modelPair : nextTaskIt->TaskPtr->TaskModels) {
+                modelPair.ModelPtr->updateState(stopTime.realNanos);
+            }
+        }
+
+        nextTaskIt->NextTaskStart = nextTaskIt->TaskPtr->nextUpdateNanos;
     }
 }
 

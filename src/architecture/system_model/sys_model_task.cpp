@@ -17,14 +17,6 @@ inline uint64_t SysModelTask::projectToCurrentSchedule(uint64_t time) {
     return time;
 }
 
-void SysModelTask::executeModels(uint64_t nextSimNanos) {
-    this->nextUpdateNanos += this->updatePeriodNanos;
-
-    if (!this->taskActive) { return; }
-
-    for (auto &modelPair : this->TaskModels) { modelPair.ModelPtr->updateState(nextSimNanos); }
-}
-
 void SysModelTask::addModel(SysModel* module, int32_t priority) {
     // Find the index separating lower priorities from higher priorities.
     auto it = this->TaskModels.begin();

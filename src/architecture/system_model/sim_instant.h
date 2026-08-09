@@ -6,6 +6,7 @@
 
 #include <compare>
 #include <limits>
+#include <stdint.h>
 
 //! A simulation-time instant, comprising a nanosecond offset and an infinitesimal priority
 /*!

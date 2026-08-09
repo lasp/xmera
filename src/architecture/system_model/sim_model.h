@@ -5,6 +5,7 @@
 #ifndef XMAheader_sim_model
 #define XMAheader_sim_model
 
+#include <architecture/system_model/sim_instant.h>
 #include <architecture/system_model/sys_process.h>
 
 #include <stdint.h>
@@ -102,6 +103,18 @@ public:
     std::vector<std::unique_ptr<SysProcess>> const &getProcesses() const {
         return this->processList;
     }
+
+private:
+    //! Step a process until its next update time is after `stopTime`.
+    /*!
+     *  @param[in] process
+     *    The process to step
+     *  @param[in] stopTime
+     *    The time up to which (and including which) we want to step tasks.
+     *  @return
+     *    The time at which the next task after `stopTime` will occur.
+     */
+    static SimInstant stepProcessUpTo(SysProcess &process, SimInstant stopTime);
 
 private:
     //! The time at which the simulation was last updated or reset

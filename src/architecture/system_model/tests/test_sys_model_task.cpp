@@ -105,29 +105,3 @@ TEST(LifecycleCheckModuleTest, nonmonotonicUpdateFails) {
     module.updateState(15);
     EXPECT_ANY_THROW(module.updateState(0));
 }
-
-TEST(SysModelTaskTest, normalLifecycleSucceeds) {
-    RecordProperty("description", "Normal usage of a task upholds the lifecycle contract of its modules");
-
-    auto module = LifecycleCheckModule{};
-
-    auto task = SysModelTask(100, 0);
-    task.addModel(&module);
-
-    // Run the task through some number of simulations at its scheduled cadence,
-    // with each simulation starting at a different time.
-    for (auto initialTime = 0; initialTime < 30; initialTime += 10) {
-        module.reset(initialTime);
-        EXPECT_THAT(module.hasBeenReset, IsTrue());
-        EXPECT_THAT(module.lastUpdateTime, Eq(initialTime));
-
-        for (auto i = 0; i < 10; ++i) {
-            auto nextUpdateTime = task.getNextStartTime();
-
-            // The update time should be passed directly to the module.
-            task.executeModels(nextUpdateTime);
-            EXPECT_THAT(module.hasBeenReset, IsTrue());
-            EXPECT_THAT(module.lastUpdateTime, Eq(nextUpdateTime));
-        }
-    }
-}

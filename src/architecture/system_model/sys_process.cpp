@@ -22,18 +22,6 @@ std::vector<ModelScheduleEntry>::iterator SysProcess::getNextTask() {
     return nextTaskIt;
 }
 
-void SysProcess::singleStepNextTask(uint64_t nextSimNanos) {
-    if (this->processTasks.empty() || this->nextTaskTime > nextSimNanos) { return; }
-
-    // Update the next task, and record when it wants to be updated again
-    auto nextTaskIt = this->getNextTask();
-    nextTaskIt->TaskPtr->executeModels(nextSimNanos);
-    nextTaskIt->NextTaskStart = nextTaskIt->TaskPtr->getNextStartTime();
-
-    // Record when the next task will update
-    this->nextTaskTime = this->getNextTask()->NextTaskStart;
-}
-
 SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
     auto &task = this->allocatedTasks.emplace_back(std::make_unique<SysModelTask>(updatePeriodNanos, firstUpdateNanos));
 

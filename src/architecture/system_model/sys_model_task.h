@@ -77,17 +77,6 @@ public:
      */
     void addModel(SysModel* module, int32_t priority = -1);
 
-    //! Update all modules in the task, in priority order
-    /*!
-     *  The argument to this method should always be equal to `getNextUpdateTime()`.
-     *  On return, `getNextUpdateTime()` will indicate the next time at which this
-     *  method should be called.
-     *
-     *  @param[in] nextSimNanos
-     *    The simulation instant associated with the desired simulation state
-     */
-    void executeModels(uint64_t nextSimNanos);
-
     //! Change the update period of the task
     /*!
      *  If the task has already been updated since its last reset, the next update

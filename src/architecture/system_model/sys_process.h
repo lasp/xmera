@@ -60,13 +60,6 @@ public:
      */
     SysModelTask &addTask(uint64_t updatePeriodNanos = 100, uint64_t firstUpdateNanos = 0, int32_t priority = -1);
 
-    //! Step the task with the earliest next update time at or before the argument
-    /*!
-     *  @param[in] nextSimNanos
-     *    The simulation instant associated with the desired simulation state
-     */
-    void singleStepNextTask(uint64_t nextSimNanos);
-
     //! Change a named task's period and recompute its next update time
     /*!
      *  @param[in] taskName
