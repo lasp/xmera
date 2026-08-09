@@ -162,11 +162,6 @@ private:
     uint64_t const firstUpdateNanos;
 
     //! The sequence of modules in this task, ordered by priority
-    /*!
-     *  @important
-     *    This vector *must* remain in sorted priority order. It should never
-     *    be modified by clients of `SysModelTask`.
-     */
     std::vector<ModelPriorityPair> TaskModels{};
 };
 
