@@ -50,6 +50,14 @@ class SimModel final {
     };
 
 public:
+    SimModel() = default;
+
+    SimModel(SimModel const&) = delete;
+    SimModel& operator=(SimModel const&) = delete;
+
+    SimModel(SimModel&&) = delete;
+    SimModel& operator=(SimModel&&) = delete;
+
     //! Add a new process to be simulated
     /*!
      *  The priority of the given process dictates the order in which it is reset,

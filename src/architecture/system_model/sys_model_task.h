@@ -45,6 +45,12 @@ class SysModelTask final {
     friend class SimModel;
 
 public:
+    SysModelTask(SysModelTask const&) = delete;
+    SysModelTask& operator=(SysModelTask const&) = delete;
+
+    SysModelTask(SysModelTask&&) = delete;
+    SysModelTask& operator=(SysModelTask&&) = delete;
+
     //! Obtain an empty task with a given update period and start time
     /*!
      *  @param[in] updatePeriodNanos

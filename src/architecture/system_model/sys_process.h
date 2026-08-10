@@ -27,6 +27,12 @@ class SysProcess final {
     friend class SimModel;
 
 public:
+    SysProcess(SysProcess const&) = delete;
+    SysProcess& operator=(SysProcess const&) = delete;
+
+    SysProcess(SysProcess&&) = delete;
+    SysProcess& operator=(SysProcess&&) = delete;
+
     //! Obtain an empty simulation process
     /*!
      *  @param[in] name
