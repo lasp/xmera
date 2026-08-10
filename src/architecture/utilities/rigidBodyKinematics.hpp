@@ -320,18 +320,21 @@ Eigen::Vector3<ScalarT> dcmToMrp(Eigen::Matrix<ScalarT, 3, 3> const &dcm) {
  * part and keeps the rotation. Second, atan2 accepts an ep(0) that is more than 1. A decode step or
  * a normalize step can make this value, and acos gives NaN for it.
  *
+ * The result is a zero vector only when the vector part is exactly zero, which is the identity
+ * quaternion. Every other input has a direction, and the division by the norm gives a unit vector
+ * for it. stableNorm scales the terms before it squares them, so the norm of a vector part that is
+ * near the smallest number of the scalar type is not zero.
+ *
  * @param ep Euler parameters, scalar part first
- * @param localEps Vector part norm that is the limit for a rotation equal to identity
  * @return Eigen::Vector3d
  */
 template<typename ScalarT>
-Eigen::Vector3<ScalarT> epToPrv(Eigen::Vector4<ScalarT> const &ep, ScalarT localEps = ScalarT(1e-12)) {
-    Eigen::Vector3<ScalarT> prv;
-    ScalarT const vecNorm = ep.template tail<3>().norm();
-    if (vecNorm < localEps) { return prv.setZero(); }
+Eigen::Vector3<ScalarT> epToPrv(Eigen::Vector4<ScalarT> const &ep) {
+    Eigen::Vector3<ScalarT> const vec = ep.template tail<3>();
+    ScalarT const vecNorm = vec.stableNorm();
+    if (vecNorm == ScalarT(0)) { return Eigen::Vector3<ScalarT>::Zero(); }
     ScalarT const angle = ScalarT(2) * std::atan2(vecNorm, ep(0));
-    prv = ep.template tail<3>() / vecNorm * angle;
-    return prv;
+    return vec / vecNorm * angle;
 }
 
 /**
@@ -794,6 +797,9 @@ addEulerAngles321(Eigen::Vector3<ScalarT> const &euler3211, Eigen::Vector3<Scala
  * than -1 and less than 1. This assert is not possible, because cancellation makes realPart equal
  * to 1. Rounding can also make realPart more than 1, and then acos gives NaN.
  *
+ * The result is a zero vector only when the vector part of the composed quaternion is exactly zero,
+ * which is a composition equal to identity.
+ *
  * @param prv1 Eigen::Vector3d
  * @param prv2 Eigen::Vector3d
  * @return Eigen::Vector3d
@@ -819,8 +825,8 @@ Eigen::Vector3<ScalarT> addPrv(Eigen::Vector3<ScalarT> const &prv1, Eigen::Vecto
     Eigen::Vector3<ScalarT> vectorPart = cosPhi1 * sinPhi2 * unitVector2 + cosPhi2 * sinPhi1 * unitVector1
                                        + sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
 
-    ScalarT vectorNorm = vectorPart.norm();
-    if (vectorNorm < ScalarT(1.0E-13)) { return Eigen::Vector3<ScalarT>::Zero(); }
+    ScalarT vectorNorm = vectorPart.stableNorm();
+    if (vectorNorm == ScalarT(0)) { return Eigen::Vector3<ScalarT>::Zero(); }
     ScalarT angle = ScalarT(2) * std::atan2(vectorNorm, realPart);
 
     return vectorPart * angle / vectorNorm;
@@ -912,6 +918,9 @@ Eigen::Vector3<ScalarT> subMrp(Eigen::Vector3<ScalarT> const &mrp1, Eigen::Vecto
  * realPart more than 1. Then acos gives NaN, and the previous assert on its argument stopped the
  * program.
  *
+ * The result is a zero vector only when the vector part of the relative quaternion is exactly zero,
+ * which is a relative rotation equal to identity.
+ *
  * @param prv1
  * @param prv2
  * @return Eigen::Vector3d
@@ -939,8 +948,8 @@ Eigen::Vector3<ScalarT> subPrv(Eigen::Vector3<ScalarT> const &prv1, Eigen::Vecto
     Eigen::Vector3<ScalarT> prv = cosPhi2 * sinPhi1 * unitVector1 - cosPhi1 * sinPhi2 * unitVector2
                                 + sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
 
-    ScalarT vectorNorm = prv.norm();
-    if (vectorNorm < ScalarT(1.0E-13)) { return Eigen::Vector3<ScalarT>::Zero(); }
+    ScalarT vectorNorm = prv.stableNorm();
+    if (vectorNorm == ScalarT(0)) { return Eigen::Vector3<ScalarT>::Zero(); }
     ScalarT angle = ScalarT(2) * std::atan2(vectorNorm, realPart);
 
     return prv * angle / vectorNorm;
