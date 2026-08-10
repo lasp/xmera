@@ -25,6 +25,7 @@
  */
 class SysProcess final {
     friend class SimModel;
+    struct Passkey {};
 
 public:
     SysProcess(SysProcess const&) = delete;
@@ -38,7 +39,11 @@ public:
      *  @param[in] name
      *    A human-readable name for this process
      */
-    explicit SysProcess(std::string name = "", int64_t priority = -1) : processName{name}, processPriority{priority} {}
+    explicit SysProcess(
+        SysProcess::Passkey _ignored,
+        std::string name = "",
+        int64_t priority = -1
+    ) : processName{name}, processPriority{priority} {}
 
     //! Add a new task with the given update schedule and priority
     /*!

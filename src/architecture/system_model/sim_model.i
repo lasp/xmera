@@ -61,6 +61,8 @@ namespace std {
     self.__super_init_called__ = True%}
 %rename("_SysModel") SysModel;
 
+%ignore SysProcess::SysProcess;
+
 %include "cSysModel.i"
 %include "sys_model_task.h"
 %include "sys_process.h"

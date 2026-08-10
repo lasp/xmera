@@ -60,7 +60,7 @@ SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
         if (priority > (*it)->processPriority) { break; }
     }
 
-    it = this->processList.emplace(it, std::make_unique<SysProcess>(name, priority));
+    it = this->processList.emplace(it, std::make_unique<SysProcess>(SysProcess::Passkey{}, name, priority));
 
     return *it->get();
 }
