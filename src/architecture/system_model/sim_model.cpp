@@ -5,40 +5,51 @@
 #include "sim_model.h"
 
 #include <algorithm>
-#include <iostream>
 
-SimInstant SimModel::stepProcessUpTo(SysProcess &process, SimInstant stopTime) {
-    if (process.processTasks.empty()) { return SimInstant::endOfTime().atPriority(process.processPriority); }
+void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
+    if (this->jobHeap.empty()) { return; }
 
-    while (true) {
-        auto nextTaskIt = process.getNextTask();
-        auto nextTaskTime = SimInstant::atNanos((*nextTaskIt)->nextUpdateNanos).atPriority(process.processPriority);
-        process.nextTaskTime = nextTaskTime.realNanos;
+    // If reprioritizations or other heap-invalidating modifications have occurred, re-heap the heap.
+    // Delaying heapification to this point allows us to amortize the impact of a series of independent,
+    // uncorrelated modifications by re-heaping just once before we require the heap property again.
+    if (!this->isHeap) {
+        std::make_heap(this->jobHeap.begin(), this->jobHeap.end());
+        this->isHeap = true;
+    }
 
-        if (stopTime < nextTaskTime) { return nextTaskTime; }
-        if (nextTaskTime.realNanos == SimInstant::endOfTime().realNanos) { return nextTaskTime; }
+    auto stopTime =
+        (stopNanos == std::numeric_limits<uint64_t>::max())
+            ? SimInstant::atNanos(std::numeric_limits<uint64_t>::max() - 1).atPriority(std::numeric_limits<int64_t>::min())
+            : SimInstant::atNanos(stopNanos).atPriority(stopPriority);
 
-        // Update the next task, and record when it wants to be updated again
-        (*nextTaskIt)->nextUpdateNanos += (*nextTaskIt)->updatePeriodNanos;
-        if ((*nextTaskIt)->taskActive) {
-            for (auto &modelPair : (*nextTaskIt)->TaskModels) {
-                modelPair.ModelPtr->updateState(stopTime.realNanos);
+    while (this->jobHeap.front().nextProcessTime() <= stopTime) {
+        // Extract the front element from the heap (moving it to the back).
+        std::pop_heap(this->jobHeap.begin(), this->jobHeap.end());
+
+        // Act on the soonest job (now at the back of the vector).
+        {
+            auto &job = this->jobHeap.back();
+
+            // Advance the simulation clock to the time of this job.
+            this->CurrentNanos = job.task->nextUpdateNanos;
+            if (this->CurrentNanos == SimInstant::endOfTime().realNanos) { return; }
+
+            // Re-schedule the job in the future (using saturating addition).
+            job.task->nextUpdateNanos += job.task->updatePeriodNanos;
+            if (job.task->nextUpdateNanos < job.task->updatePeriodNanos) {
+                job.task->nextUpdateNanos = SimInstant::endOfTime().realNanos;
+            }
+
+            // Execute the job.
+            if (job.process->enabled && job.task->taskActive) {
+                for (auto &modelPair : job.task->TaskModels) {
+                    modelPair.ModelPtr->updateState(this->CurrentNanos);
+                }
             }
         }
-    }
-}
 
-void SimModel::stepUntilStop(uint64_t SimStopTime, int64_t stopPri) {
-    // Keep single-stepping until the next process would occur after the stop time.
-    auto simStopTime = SimInstant::atNanos(SimStopTime).atPriority(stopPri);
-    while (true) {
-        auto nextTaskTime = SimInstant::atNanos(this->NextTaskTime).atPriority(this->nextProcPriority);
-
-        if (nextTaskTime > simStopTime) { break; }
-
-        // If we're not stopping at this time, run processes of *all* priorities.
-        int64_t inPri = (SimStopTime == this->NextTaskTime) ? stopPri : SimInstant::endOfTime().causalPriority;
-        this->singleStepProcesses(inPri);
+        // Insert the rescheduled job back into the heap.
+        std::push_heap(this->jobHeap.begin(), this->jobHeap.end());
     }
 }
 
@@ -54,56 +65,37 @@ SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
     return *it->get();
 }
 
-void SimModel::singleStepProcesses(int64_t const stopPri) {
-    // Advance the simulation clock to the time of the next task.
-    this->CurrentNanos = this->NextTaskTime;
-
-    // Step all processes up to the desired stop instant.
-    // Keep track of the earliest resumption time *following* the stop instant.
-    auto stopTime = SimInstant::atNanos(this->CurrentNanos).atPriority(stopPri);
-    auto nextTaskTime = SimInstant::endOfTime();
-    for (auto &localProc : this->processList) {
-        if (!localProc->isEnabled()) { continue; }
-
-        nextTaskTime = std::min(nextTaskTime, stepProcessUpTo(*localProc, stopTime));
-    }
-
-    // Record the next earliest resumption time. Note that `nextTaskTime` should
-    // only be `endOfTime` if no process was enabled.
-    if (nextTaskTime != SimInstant::endOfTime()) {
-        this->NextTaskTime = nextTaskTime.realNanos;
-        this->nextProcPriority = nextTaskTime.causalPriority;
-    }
-}
-
 void SimModel::resetSimulation() {
     this->CurrentNanos = 0;
 
-    // Reset all processes, tasks, and modules
-    //! @todo Should we skip resetting disabled tasks?
+    // Reset all processes, tasks, and modules.
     for (auto &process : this->processList) {
-        auto nextTaskNanos = std::numeric_limits<uint64_t>::max();
         for (auto &task : process->processTasks) {
             task->nextUpdateNanos = task->firstUpdateNanos;
             for (auto const &modelPair : task->TaskModels) {
                 modelPair.ModelPtr->reset(this->CurrentNanos);
             }
+        }
+    }
 
-            nextTaskNanos = std::min(nextTaskNanos, task->nextUpdateNanos);
+    // Gather all simulation jobs.
+    //! @todo Move this responsibility into `SysProcess::addTask`.
+    this->jobHeap.clear();
+    this->isHeap = false;
+    size_t process_id = 0;
+    size_t task_id = 0;
+    for (auto const &process : this->processList) {
+        for (auto const &task : process->processTasks) {
+            this->jobHeap.push_back({
+                .process = process.get(),
+                .process_id = process_id,
+                .task = task,
+                .task_id = task_id,
+            });
+
+            task_id += 1;
         }
 
-        process->nextTaskTime = nextTaskNanos;
+        process_id += 1;
     }
-
-    // Figure out which process will update first
-    auto nextTaskTime = SimInstant::endOfTime();
-    for (auto &process : this->processList) {
-        if (!process->enabled) { continue; }
-
-        auto nextProcTime = SimInstant::atNanos(process->nextTaskTime).atPriority(process->processPriority);
-        nextTaskTime = std::min(nextTaskTime, nextProcTime);
-
-    }
-    this->NextTaskTime = nextTaskTime.realNanos;
-    this->nextProcPriority = nextTaskTime.causalPriority;
 }

@@ -85,11 +85,6 @@ public:
         for (auto const &entry : this->processTasks) { entry->enable(); }
     }
 
-    //! Determine the next update time of the next-soonest task to update
-    uint64_t getNextTaskTime() const {
-        return this->nextTaskTime;
-    }
-
     //! Get an immutable view on the list of tasks in this process
     /*!
      *  Note that it is the list of tasks that is immutable here, not the tasks
@@ -127,9 +122,6 @@ public:
     int64_t const processPriority = -1;
 
 private:
-    //! The next soonest time (in nanoseconds) at which some task will be updated
-    uint64_t nextTaskTime = 0;
-
     //! Whether the process is currently participating in simulation at all
     bool enabled = true;
 

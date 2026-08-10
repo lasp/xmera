@@ -110,19 +110,19 @@ TEST(SimModel, taskTimings_withEmptyProcesses) {
 
     auto sim = SimModel();
     auto &process1 [[maybe_unused]] = sim.addNewProcess("", 1);
-    auto &process2 = sim.addNewProcess("", 2);
+    auto &process2 [[maybe_unused]] = sim.addNewProcess("", 2);
 
     // Immediately after a reset, the "next" task should occur "at the end of time".
     // (Nevertheless, the next priority is that of the highest-priority process.)
     sim.resetSimulation();
     EXPECT_THAT(sim.getCurrentNanos(), Eq(0));
-    EXPECT_THAT(sim.getNextTaskTime(), Eq(process2.getNextTaskTime()));
-    EXPECT_THAT(sim.getNextProcPriority(), Eq(process2.processPriority));
+    EXPECT_THAT(sim.getNextTaskTime(), Eq(std::numeric_limits<uint64_t>::max()));
+    EXPECT_THAT(sim.getNextProcPriority(), Eq(std::numeric_limits<int64_t>::min()));
 
     // After stepping, the "next" task should still occur "at the end of time".
     // (What else could it be?)
     sim.singleStepProcesses();
-    EXPECT_THAT(sim.getCurrentNanos(), Eq(process2.getNextTaskTime()));
-    EXPECT_THAT(sim.getNextTaskTime(), Eq(process2.getNextTaskTime()));
-    EXPECT_THAT(sim.getNextProcPriority(), Eq(process2.processPriority));
+    EXPECT_THAT(sim.getCurrentNanos(), Eq(std::numeric_limits<uint64_t>::max()));
+    EXPECT_THAT(sim.getNextTaskTime(), Eq(std::numeric_limits<uint64_t>::max()));
+    EXPECT_THAT(sim.getNextProcPriority(), Eq(std::numeric_limits<int64_t>::min()));
 }

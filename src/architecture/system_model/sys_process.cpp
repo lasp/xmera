@@ -52,11 +52,6 @@ bool SysProcess::changeTaskPeriod(std::string const &taskName, uint64_t newPerio
         if (entry->TaskName != taskName) { continue; }
 
         entry->setPeriod(newPeriod);
-
-        // Determine the new next task time. (If the next task was this one, it
-        // might now be some other task. Worse, it might *still* be this one!)
-        this->nextTaskTime = (*this->getNextTask())->getNextStartTime();
-
         return true;
     }
 

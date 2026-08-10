@@ -10,11 +10,45 @@
 
 #include <stdint.h>
 
+#include <compare>
 #include <memory>
 #include <vector>
 
 //! The top-level container for an entire simulation
 class SimModel final {
+    //! A record of a job to be performed during simulation
+    // A "job" is just a task paired with its containing process, made comparable for priority queueing.
+    struct Job final {
+        //! The process containing the task to be updated by this job
+        SysProcess const* process;
+        //! The creation-ordered ID of the process
+        size_t process_id;
+        //! The task to be updated by this job
+        SysModelTask* task;
+        //! The creation-ordered ID of the task
+        size_t task_id;
+
+        //! Get the time at which this job should be performed relative to those of other processes
+        SimInstant nextProcessTime() const {
+            return SimInstant::atNanos(this->task->getNextStartTime()).atPriority(this->process->processPriority);
+        }
+
+        //! Compare two jobs lexicographically by their next update time, their inter-process priority, and their inter-process priority
+        std::weak_ordering operator<=>(Job const &other) const {
+            return (other.task->getNextStartTime() < this->task->getNextStartTime()) ? std::weak_ordering::less
+                 : (other.task->getNextStartTime() > this->task->getNextStartTime()) ? std::weak_ordering::greater
+                 : (this->process->processPriority < other.process->processPriority) ? std::weak_ordering::less
+                 : (this->process->processPriority > other.process->processPriority) ? std::weak_ordering::greater
+                 : (other.process_id < this->process_id) ? std::weak_ordering::less
+                 : (other.process_id > this->process_id) ? std::weak_ordering::greater
+                 : (this->task->priority < other.task->priority) ? std::weak_ordering::less
+                 : (this->task->priority > other.task->priority) ? std::weak_ordering::greater
+                 : (other.task_id < this->task_id) ? std::weak_ordering::less
+                 : (other.task_id > this->task_id) ? std::weak_ordering::greater
+                 : std::weak_ordering::equivalent;
+        }
+    };
+
 public:
     //! Add a new process to be simulated
     /*!
@@ -51,7 +85,9 @@ public:
      *  @param[in] stopPri
      *    The least priority at which processes should be updated
      */
-    void singleStepProcesses(int64_t stopPri = -1);
+    void singleStepProcesses(int64_t const stopPriority = -1) {
+        this->stepUntilStop(this->getNextTaskTime());
+    }
 
     //! Step the simulation forward until the next update would occur after the given stop time
     /*!
@@ -62,12 +98,12 @@ public:
      *    This method must only be invoked once `resetSimulation` has been invoked
      *    at least once.
      *
-     *  @param[in] SimStopTime
+     *  @param[in] stopNanos
      *    The latest time at which processes should be updated
-     *  @param[in] stopPri
+     *  @param[in] stopPriority
      *    The least priority at which processes should be updated
      */
-    void stepUntilStop(uint64_t SimStopTime, int64_t stopPri = -1);
+    void stepUntilStop(uint64_t stopNanos, int64_t stopPriority  = -1);
 
     //! Get the time at which the simulation was last stepped or reset
     uint64_t getCurrentNanos() const {
@@ -81,7 +117,7 @@ public:
      *  unreliable.
      */
     uint64_t getNextTaskTime() const {
-        return this->NextTaskTime;
+        return (!this->jobHeap.empty()) ? jobHeap.front().task->getNextStartTime() : SimInstant::endOfTime().realNanos;
     }
 
     //! Get the priority of the next process to be updated
@@ -91,7 +127,7 @@ public:
      *  unreliable.
      */
     int64_t getNextProcPriority() const {
-        return this->nextProcPriority;
+        return (!this->jobHeap.empty()) ? jobHeap.front().process->processPriority : SimInstant::endOfTime().causalPriority;
     }
 
     //! Get an immutable view on the list of processes in this simulation
@@ -105,26 +141,14 @@ public:
     }
 
 private:
-    //! Step a process until its next update time is after `stopTime`.
-    /*!
-     *  @param[in] process
-     *    The process to step
-     *  @param[in] stopTime
-     *    The time up to which (and including which) we want to step tasks.
-     *  @return
-     *    The time at which the next task after `stopTime` will occur.
-     */
-    static SimInstant stepProcessUpTo(SysProcess &process, SimInstant stopTime);
-
-private:
     //! The time at which the simulation was last updated or reset
     uint64_t CurrentNanos = 0;
 
-    //! The time at which the simulation will next be updated
-    uint64_t NextTaskTime = 0;
+    //! A prioritized heap of simulation jobs
+    std::vector<Job> jobHeap = {};
 
-    //! The priority of the next process to be updated
-    int64_t nextProcPriority = -1;
+    //! Whether the `jobHeap` field currently has the heap property.
+    bool isHeap = false;
 
     //! The collection of processes to be simulated, in priority order
     std::vector<std::unique_ptr<SysProcess>> processList = {};
