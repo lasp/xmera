@@ -9,9 +9,21 @@
 #include "safeMath.h"
 
 #include <assert.h>
+#include <math.h>
 #include <string.h>
 
 #define nearZero 0.0000000000001
+
+/*
+ * v3StableNorm(V) returns the length of the 3 vector V.
+ * hypot scales its terms before it squares them. Thus the length of a vector
+ * whose terms are near the smallest double is not zero, which the square of
+ * such a term would be. The angle recovery below divides by this length and
+ * must therefore know that it is zero only for the zero vector.
+ */
+static double v3StableNorm(double* v) {
+    return hypot(hypot(v[0], v[1]), v[2]);
+}
 
 /*
  * Q = addEP(B1,B2) provides the Euler parameter vector
@@ -322,8 +334,8 @@ void addPRV(double* qq1, double* qq2, double* result) {
     v3Scale(sp1 * sp2, q1, q2);
     v3Add(result, q2, result);
 
-    double vecNorm = v3Norm(result);
-    if (vecNorm < 1.0E-13) {
+    double vecNorm = v3StableNorm(result);
+    if (vecNorm == 0.0) {
         v3SetZero(result);
         return;
     }
@@ -1890,8 +1902,8 @@ void EP2MRP(double* q1, double* q) {
  * value.
  */
 void EP2PRV(double* q1, double* q) {
-    double vecNorm = sqrt(q1[1] * q1[1] + q1[2] * q1[2] + q1[3] * q1[3]);
-    if (vecNorm < nearZero) {
+    double vecNorm = v3StableNorm(&(q1[1]));
+    if (vecNorm == 0.0) {
         q[0] = 0.0;
         q[1] = 0.0;
         q[2] = 0.0;
@@ -3748,8 +3760,8 @@ void subPRV(double* q10, double* q20, double* q) {
     v3Scale(cp1 * sp2, e2, q1);
     v3Subtract(q, q1, q);
 
-    double vecNorm = v3Norm(q);
-    if (vecNorm < 1.0E-13) {
+    double vecNorm = v3StableNorm(q);
+    if (vecNorm == 0.0) {
         v3SetZero(q);
         return;
     }
