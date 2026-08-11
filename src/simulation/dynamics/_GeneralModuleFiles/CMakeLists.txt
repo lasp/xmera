@@ -7,7 +7,6 @@ add_library(dynamicsCommon OBJECT
   hubEffector.cpp
   pointMassGravityModel.cpp
   stateData.cpp
-  stateEffector.cpp
   stateVecIntegrator.cpp
   svIntegratorRK4.cpp
 )
