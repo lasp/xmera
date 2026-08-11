@@ -57,7 +57,7 @@ public:
     void reset(uint64_t currentSimNanos) override;
     void addReactionWheel(RWConfigMsgPayload* NewRW);
     void updateState(uint64_t currentSimNanos) override;
-    void WriteOutputMessages(uint64_t CurrentClock);
+    void WriteOutputMessages(uint64_t CurrentClock) const;
     void ReadInputs();
     void ConfigureRWRequests(double CurrentTime);
 

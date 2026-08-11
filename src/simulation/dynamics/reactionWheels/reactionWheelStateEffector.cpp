@@ -364,7 +364,7 @@ void ReactionWheelStateEffector::reset([[maybe_unused]] uint64_t CurrenSimNanos)
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
-void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock) {
+void ReactionWheelStateEffector::WriteOutputMessages(uint64_t const CurrentClock) const {
     RWConfigMsgPayload test;
     for (size_t i = 0; i < this->ReactionWheelData.size(); i++) {
         RWConfigMsgPayload* it = this->ReactionWheelData[i];
