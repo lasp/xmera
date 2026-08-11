@@ -9,21 +9,25 @@
 
 #include <Eigen/Dense>
 
-/*! back substitution matrix structure*/
+/*! @brief Back-substitution contributions of one state effector.
+ *
+ * The dynamicObject adds the contributions of all of its effectors, then solves
+ * [matrixA matrixB; matrixC matrixD] [rDDot_BN_N; omegaDot_BN_B] = [vecTrans; vecRot] for the
+ * acceleration of the spacecraft hub.
+ */
 struct BackSubMatrices {
-    Eigen::Matrix3d matrixA;   //!< -- Back-Substitution matrix A
-    Eigen::Matrix3d matrixB;   //!< -- Back-Substitution matrix B
-    Eigen::Matrix3d matrixC;   //!< -- Back-Substitution matrix C
-    Eigen::Matrix3d matrixD;   //!< -- Back-Substitution matrix D
-    Eigen::Vector3d vecTrans;  //!< -- Back-Substitution translation vector
-    Eigen::Vector3d vecRot;    //!< -- Back-Substitution rotation vector
+    Eigen::Matrix3d matrixA;   //!< [kg] Back-substitution matrix A
+    Eigen::Matrix3d matrixB;   //!< [kg m] Back-substitution matrix B
+    Eigen::Matrix3d matrixC;   //!< [kg m] Back-substitution matrix C
+    Eigen::Matrix3d matrixD;   //!< [kg m^2] Back-substitution matrix D
+    Eigen::Vector3d vecTrans;  //!< [N] Back-substitution translation vector
+    Eigen::Vector3d vecRot;    //!< [N-m] Back-substitution rotation vector
 };
 
-/*! @brief Abstract class that is used to implement an effector attached to the dynamicObject that has a state that
- needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc */
+/*! @brief Mass properties that a state effector gives to its parent spacecraft. */
 struct EffectorMassProps {
     double mEff = 0;     //!< [kg] Mass of the effector
-    double mEffDot = 0;  //!< [kg/s] Time derivate of mEff
+    double mEffDot = 0;  //!< [kg/s] Time derivative of mEff
     Eigen::Matrix3d IEffPntB_B =
         Eigen::Matrix3d::Zero();  //!< [kg m^2] Inertia of effector relative to point B in B frame components
     Eigen::Vector3d rEff_CB_B =
@@ -34,49 +38,67 @@ struct EffectorMassProps {
         Eigen::Matrix3d::Zero();  //!< [kg m^2/s] Time derivative with respect to the body of IEffPntB_B
 };
 
-/*! @brief state effector class */
+/*! @brief Base class for an effector that attaches to a dynamicObject and holds states for the integrator.
+ *
+ * Examples are reaction wheels, flexible solar panels and fuel slosh.
+ */
 class StateEffector {
 public:
-    std::string nameOfSpacecraftAttachedTo;  //!< class variable
-    std::string parentSpacecraftName;        //!< -- name of the spacecraft the state effector is attached to
-    EffectorMassProps effProps;              //!< -- stateEffectors instantiation of effector mass props
-    Eigen::VectorXd
-        stateDerivContribution;  //!< -- stateEffector contribution to another stateEffector to prevent double-counting
-    Eigen::Vector3d forceOnBody_B = Eigen::Vector3d::Zero();  //!< [N] Force that the state effector applies to the s/c
+    std::string nameOfSpacecraftAttachedTo;  //!< [-] Name prefix of the parent spacecraft. The effector adds it in
+                                             //!< front of its own state and property names.
+    std::string parentSpacecraftName;        //!< [-] Name of the spacecraft that the effector attaches to
+    EffectorMassProps effProps;              //!< Mass properties that this effector gives to the spacecraft
+    Eigen::VectorXd stateDerivContribution;  //!< Contribution of this effector to another effector, which prevents
+                                             //!< double-counting
+    Eigen::Vector3d forceOnBody_B = Eigen::Vector3d::Zero();  //!< [N] Force that the effector applies to the spacecraft
     Eigen::Vector3d torqueOnBodyPntB_B =
-        Eigen::Vector3d::Zero();  //!< [N] Torque that the state effector applies to the body about point B
+        Eigen::Vector3d::Zero();  //!< [N-m] Torque that the effector applies to the body about point B
     Eigen::Vector3d torqueOnBodyPntC_B =
-        Eigen::Vector3d::Zero();  //!< [N] Torque that the state effector applies to the body about point B
-    Eigen::Vector3d r_BP_P =
-        Eigen::Vector3d::Zero();  //!< position vector of the spacecraft mody frame origin B relative to the primary
-                                  //!< spacecraft body frame P.  This is used in the SpacecraftSystem module where
-                                  //!< multiple spacecraft hubs can be a single spacecraft
-    Eigen::Matrix3d dcm_BP = Eigen::Matrix3d::Identity();  //!< DCM of the spacecraft body frame B relative to primary
-                                                           //!< spacecraft body frame P
+        Eigen::Vector3d::Zero();  //!< [N-m] Torque that the effector applies to the body about point C
+    Eigen::Vector3d r_BP_P = Eigen::Vector3d::Zero();      //!< [m] Position of body frame origin B relative to primary
+                                                           //!< body frame origin P, in P frame components
+    Eigen::Matrix3d dcm_BP = Eigen::Matrix3d::Identity();  //!< [-] DCM of body frame B relative to primary body frame P
 
 public:
     StateEffector() = default;
     virtual ~StateEffector() = default;
 
-    /*! This method is for the state effector to provide its contributions of mass and mass rates to the dynamicObject.
-     * This allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates*/
-    virtual void updateEffectorMassProps(double integTime) {
-    }  //!< -- Method for stateEffector to give mass contributions
+    /*! @brief Gives the mass and the mass rate contributions of the effector to the dynamicObject.
+     *
+     * The dynamicObject uses these contributions to get the total mass, the total inertia, and the
+     * time derivatives of both.
+     *
+     * @param integTime [s] Integration time
+     */
+    virtual void updateEffectorMassProps(double integTime) {}
 
-    /*! This method is strictly for the back-substituion method for computing the dynamics of the spacecraft.
-     * The back-sub method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions
-     * from the state effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using
-     * rDDot_BN_N omegaDot_BN_B*/
+    /*! @brief Gives the back-substitution contributions of the effector.
+     *
+     * The back-substitution method first calculates rDDot_BN_N and omegaDot_BN_B for the spacecraft
+     * from these contributions. computeDerivatives() then uses rDDot_BN_N and omegaDot_BN_B to
+     * calculate the state derivatives of the effector.
+     *
+     * @param integTime [s] Integration time
+     * @param[in,out] backSubContr Back-substitution contributions that the effector adds to
+     * @param sigma_BN [-] MRP attitude of body frame B relative to inertial frame N
+     * @param omega_BN_B [rad/s] Angular velocity of frame B relative to frame N, in B frame components
+     * @param g_N [m/s^2] Gravitational acceleration, in N frame components
+     */
     virtual void updateContributions(
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
         Eigen::Vector3d omega_BN_B,
         Eigen::Vector3d g_N
-    ) {}  //!< -- Back-sub contributions
+    ) {}
 
-    /*! This method allows for an individual stateEffector to add its energy and momentum calculations to the
-     * dynamicObject. */
+    /*! @brief Adds the energy and the momentum contributions of the effector.
+     *
+     * @param integTime [s] Integration time
+     * @param[in,out] rotAngMomPntCContr_B [kg m^2/s] Angular momentum about point C, in B frame components
+     * @param[in,out] rotEnergyContr [J] Rotational energy contribution
+     * @param omega_BN_B [rad/s] Angular velocity of frame B relative to frame N, in B frame components
+     */
     virtual void updateEnergyMomContributions(
         double integTime,
         Eigen::Vector3d &rotAngMomPntCContr_B,
@@ -84,29 +106,57 @@ public:
         Eigen::Vector3d omega_BN_B
     ) {}
 
-    /*! This method allows for an individual stateEffector to modify their states after integration*/
+    /*! @brief Changes the states of the effector after integration.
+     *
+     * @param integTime [s] Integration time
+     */
     virtual void modifyStates(double integTime) {}
 
-    /*! This method allows for an individual stateEffector to find the force and torque that the
-     * stateEffector is placing on to the body */
-    virtual void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B) {
-    }  //!< -- Force and torque on s/c due to stateEffector
+    /*! @brief Calculates the force and the torque that the effector applies to the body.
+     *
+     * The effector writes the results to forceOnBody_B, torqueOnBodyPntB_B and torqueOnBodyPntC_B.
+     *
+     * @param integTime [s] Integration time
+     * @param omega_BN_B [rad/s] Angular velocity of frame B relative to frame N, in B frame components
+     */
+    virtual void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B) {}
 
-    /*! This method ensures that all dynamics states have their messages written after integration */
+    /*! @brief Writes the output messages of the effector after integration.
+     *
+     * @param integTimeNanos [ns] Integration time
+     */
     virtual void writeOutputStateMessages(uint64_t integTimeNanos) {}
 
-    virtual void registerStates(DynParamManager &states) = 0;  //!< -- Method for stateEffectors to register states
+    /*! @brief Adds the states of the effector to the state manager.
+     *
+     * @param[in,out] states State manager of the dynamicObject
+     */
+    virtual void registerStates(DynParamManager &states) = 0;
 
-    virtual void linkInStates(DynParamManager &states) = 0;  //!< -- Method for stateEffectors to get other states
+    /*! @brief Gets the states that the effector needs from the state manager.
+     *
+     * @param[in] states State manager of the dynamicObject
+     */
+    virtual void linkInStates(DynParamManager &states) = 0;
 
+    /*! @brief Calculates the state derivatives of the effector.
+     *
+     * @param integTime [s] Integration time
+     * @param rDDot_BN_N [m/s^2] Acceleration of point B relative to frame N, in N frame components
+     * @param omegaDot_BN_B [rad/s^2] Angular acceleration of frame B relative to frame N, in B frame components
+     * @param sigma_BN [-] MRP attitude of body frame B relative to inertial frame N
+     */
     virtual void computeDerivatives(
         double integTime,
         Eigen::Vector3d rDDot_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
-    ) = 0;  //!< -- Method for each stateEffector to calculate derivatives
+    ) = 0;
 
-    /*! This method ensures that stateEffectors can be implemented using the multi-spacecraft architecture */
+    /*! @brief Adds the name of the parent spacecraft in front of the names of the effector states.
+     *
+     * Each spacecraft needs its own state names when more than one spacecraft is in the simulation.
+     */
     virtual void prependSpacecraftNameToStates() {}
 };
 
