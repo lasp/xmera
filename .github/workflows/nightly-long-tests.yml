@@ -102,7 +102,7 @@ jobs:
           "${NUGET_CMD[@]}" setapikey "${{ secrets.GH_VCPKG_PACKAGES_TOKEN }}" \
             -Source "${FEED_URL}"
 
-      - name: Configure long-test preset (ASan fuzzing)
+      - name: Configure long-test preset (ASan/UBSan fuzzing)
         working-directory: src
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,${{ env.FEED_URL }},readwrite"
@@ -128,6 +128,7 @@ jobs:
         working-directory: build
         env:
           ASAN_OPTIONS: detect_leaks=1:strict_string_checks=1:check_initialization_order=1
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
         run: |
           "${GITHUB_WORKSPACE}/.github/scripts/run_long_fuzzers.sh" "$(pwd)" "${GITHUB_WORKSPACE}/fuzz-logs" \
             --fuzz-for "${{ inputs.fuzz_duration || '300s' }}" \
