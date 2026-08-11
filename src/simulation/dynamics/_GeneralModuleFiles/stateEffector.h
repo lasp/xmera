@@ -6,8 +6,6 @@
 #define STATE_EFFECTOR_H
 
 #include "dynParamManager.h"
-#include <architecture/utilities/bskLogging.h>
-#include <architecture/utilities/eigenMRP.h>
 
 #include <Eigen/Dense>
 
@@ -55,7 +53,6 @@ public:
                                   //!< multiple spacecraft hubs can be a single spacecraft
     Eigen::Matrix3d dcm_BP = Eigen::Matrix3d::Identity();  //!< DCM of the spacecraft body frame B relative to primary
                                                            //!< spacecraft body frame P
-    BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 public:
     StateEffector() = default;

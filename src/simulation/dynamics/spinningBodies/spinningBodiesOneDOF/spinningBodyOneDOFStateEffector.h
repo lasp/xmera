@@ -80,6 +80,8 @@ public:
     void prependSpacecraftNameToStates() override;  //!< Method used for multiple spacecraft
     void computeSpinningBodyInertialStates();       //!< Method for computing the SB's states
 
+    BSKLogger bskLogger;  //!< -- BSK Logging
+
 private:
     static uint64_t effectorID;  //!< [] ID number of this panel
     double u = 0.0;              //!< [N-m] optional motor torque

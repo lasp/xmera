@@ -121,6 +121,8 @@ public:
         return dcm_FB;
     }
 
+    BSKLogger bskLogger;  //!< -- BSK Logging
+
 private:
     double mass = 1.0;                      //!< [kg] mass of effector
     double k = 0;                           //!< [N/m] linear spring constant
