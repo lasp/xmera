@@ -111,8 +111,6 @@ public:
 
     /*! This method ensures that stateEffectors can be implemented using the multi-spacecraft architecture */
     virtual void prependSpacecraftNameToStates() {}
-
-    virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP);
 };
 
 #endif /* STATE_EFFECTOR_H */
