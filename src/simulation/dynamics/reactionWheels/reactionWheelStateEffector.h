@@ -30,31 +30,33 @@ class ReactionWheelStateEffector
 public:
     ReactionWheelStateEffector();
     ~ReactionWheelStateEffector();
-    void registerStates(DynParamManager &states);
-    void linkInStates(DynParamManager &states);
-    void writeOutputStateMessages(uint64_t integTimeNanos);
+    void registerStates(DynParamManager &states) override;
+    void linkInStates(DynParamManager &states) override;
+    void writeOutputStateMessages(uint64_t integTimeNanos) override;
     void computeDerivatives(
         double integTime,
         Eigen::Vector3d rDDotNonGrav_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
-    );
-    void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
+    ) override;
+    void updateEffectorMassProps(
+        double integTime
+    ) override;  //!< -- Method for stateEffector to give mass contributions
     void updateContributions(
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
         Eigen::Vector3d omega_BN_B
-    );  //!< -- Back-sub contributions
+    ) override;  //!< -- Back-sub contributions
     void updateEnergyMomContributions(
         double integTime,
         Eigen::Vector3d &rotAngMomPntCContr_B,
         double &rotEnergyContr,
         Eigen::Vector3d omega_BN_B
-    );  //!< -- Energy and momentum calculations
-    void reset(uint64_t currentSimNanos);
+    ) override;  //!< -- Energy and momentum calculations
+    void reset(uint64_t currentSimNanos) override;
     void addReactionWheel(RWConfigMsgPayload* NewRW);
-    void updateState(uint64_t currentSimNanos);
+    void updateState(uint64_t currentSimNanos) override;
     void WriteOutputMessages(uint64_t CurrentClock);
     void ReadInputs();
     void ConfigureRWRequests(double CurrentTime);
