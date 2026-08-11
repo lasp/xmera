@@ -58,8 +58,8 @@ public:
     BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 public:
-    StateEffector();           //!< -- Contructor
-    virtual ~StateEffector();  //!< -- Destructor
+    StateEffector() = default;
+    virtual ~StateEffector() = default;
 
     /*! This method is for the state effector to provide its contributions of mass and mass rates to the dynamicObject.
      * This allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates*/

@@ -3,14 +3,6 @@
 
 #include "stateEffector.h"
 
-StateEffector::StateEffector() {}
-
-/*! This is the destructor, nothing to report here */
-StateEffector::~StateEffector() {
-    return;
-}
-
-
 void StateEffector::receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP) {
     this->r_BP_P = rSC_BP_P;
     this->dcm_BP = dcmSC_BP;
