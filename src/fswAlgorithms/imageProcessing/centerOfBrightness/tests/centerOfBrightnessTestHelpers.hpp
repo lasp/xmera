@@ -42,10 +42,6 @@ inline std::vector<Eigen::Vector2i> windowedPixels(
     return inside;
 }
 
-// ============================================================================
-// FUZZ IMAGE READER
-// ============================================================================
-
 class FuzzImageReader : public ImageReaderInterface {
    public:
     std::vector<Eigen::Vector2i> pixels;  //!< what the fake camera sees, before windowing
@@ -83,18 +79,10 @@ private:
     size_t lastWrittenCount{};                                         //!< how far into that buffer it wrote
 };
 
-// ============================================================================
-// REFERENCE STATE (brightness history for multi-step testing)
-// ============================================================================
-
 struct ReferenceState {
     std::deque<double> brightnessHistory;
     int32_t maxHistorySize = 1;
 };
-
-// ============================================================================
-// REFERENCE IMPLEMENTATION
-// ============================================================================
 
 inline CenterOfBrightnessResult referenceUpdate(const std::vector<Eigen::Vector2i>& pixels,
                                                 double brightnessThreshold,
@@ -162,10 +150,6 @@ inline CenterOfBrightnessResult referenceUpdate(const std::vector<Eigen::Vector2
 
     return result;
 }
-
-// ============================================================================
-// FUZZ TEST: single step
-// ============================================================================
 
 inline void fuzzCenterOfBrightness(int32_t roiCenterX,
                                    int32_t roiCenterY,
@@ -254,10 +238,6 @@ inline void fuzzCenterOfBrightness(int32_t roiCenterX,
         EXPECT_LE(result.centerOfBrightness[1], static_cast<double>(maxY) + 1e-9);
     }
 }
-
-// ============================================================================
-// FUZZ TEST: multi-step (rolling average statefulness)
-// ============================================================================
 
 inline void fuzzMultiStepBrightness(int32_t avgWindowSize,
                                     double brightnessThreshold,
