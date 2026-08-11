@@ -5,12 +5,14 @@
 #define CENTER_OF_BRIGHTNESS_TEST_HELPERS_HPP
 
 #include "../centerOfBrightnessAlgorithm.h"
-#include <Eigen/Core>
+
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <deque>
-#include <gtest/gtest.h>
+#include <Eigen/Core>
 #include <vector>
 
 //! [pix] Width and height of the image that the fake reader gives
@@ -43,14 +45,16 @@ inline std::vector<Eigen::Vector2i> windowedPixels(
 }
 
 class FuzzImageReader : public ImageReaderInterface {
-   public:
+public:
     std::vector<Eigen::Vector2i> pixels;  //!< what the fake camera sees, before windowing
 
     Eigen::Vector2i getFullImageSize(int32_t /*cameraId*/) override {
         return {kFuzzImageSize, kFuzzImageSize};
     }
 
-    int64_t getCurrentImageTimeTag(int32_t /*cameraId*/, int64_t /*previousImageTimeTag*/) override { return 1; }
+    int64_t getCurrentImageTimeTag(int32_t /*cameraId*/, int64_t /*previousImageTimeTag*/) override {
+        return 1;
+    }
 
     void getImageAsArray(
         Eigen::Vector2i const &center,
@@ -84,23 +88,18 @@ struct ReferenceState {
     int32_t maxHistorySize = 1;
 };
 
-inline CenterOfBrightnessResult referenceUpdate(const std::vector<Eigen::Vector2i>& pixels,
-                                                double brightnessThreshold,
-                                                ReferenceState& state) {
+inline CenterOfBrightnessResult
+referenceUpdate(std::vector<Eigen::Vector2i> const &pixels, double brightnessThreshold, ReferenceState &state) {
     // Compute centroid of non-zero pixels
     Eigen::Vector2d centroid = Eigen::Vector2d::Zero();
     int32_t count = 0;
-    for (const auto& p : pixels) {
-        if (p.isZero()) {
-            continue;
-        }
+    for (auto const &p : pixels) {
+        if (p.isZero()) { continue; }
         centroid[0] += p[0];
         centroid[1] += p[1];
         ++count;
     }
-    if (count > 0) {
-        centroid /= count;
-    }
+    if (count > 0) { centroid /= count; }
 
     // Build result (matching defaults in CenterOfBrightnessResult)
     CenterOfBrightnessResult result{};
@@ -110,9 +109,7 @@ inline CenterOfBrightnessResult referenceUpdate(const std::vector<Eigen::Vector2
         double avgOld = 0.0;
         if (!state.brightnessHistory.empty()) {
             double sum = 0.0;
-            for (double v : state.brightnessHistory) {
-                sum += v;
-            }
+            for (double v : state.brightnessHistory) { sum += v; }
             avgOld = sum / static_cast<double>(state.brightnessHistory.size());
         }
 
@@ -127,16 +124,12 @@ inline CenterOfBrightnessResult referenceUpdate(const std::vector<Eigen::Vector2
 
         // Compute new brightness average
         double sumNew = 0.0;
-        for (double v : state.brightnessHistory) {
-            sumNew += v;
-        }
+        for (double v : state.brightnessHistory) { sumNew += v; }
         double avgNew = sumNew / static_cast<double>(state.brightnessHistory.size());
 
         // Compute relative increase
         double brightnessIncrease = 0.0;
-        if (avgOld > 0.0) {
-            brightnessIncrease = (avgNew - avgOld) / avgOld;
-        }
+        if (avgOld > 0.0) { brightnessIncrease = (avgNew - avgOld) / avgOld; }
 
         result.noPixelTrigger = false;
         if (brightnessIncrease >= brightnessThreshold) {
@@ -151,14 +144,16 @@ inline CenterOfBrightnessResult referenceUpdate(const std::vector<Eigen::Vector2
     return result;
 }
 
-inline void fuzzCenterOfBrightness(int32_t roiCenterX,
-                                   int32_t roiCenterY,
-                                   int32_t roiSizeW,
-                                   int32_t roiSizeH,
-                                   std::vector<int32_t> pixelXs,
-                                   std::vector<int32_t> pixelYs,
-                                   double brightnessThreshold,
-                                   int32_t avgWindowSize) {
+inline void fuzzCenterOfBrightness(
+    int32_t roiCenterX,
+    int32_t roiCenterY,
+    int32_t roiSizeW,
+    int32_t roiSizeH,
+    std::vector<int32_t> pixelXs,
+    std::vector<int32_t> pixelYs,
+    double brightnessThreshold,
+    int32_t avgWindowSize
+) {
     // Build pixel vector
     size_t const numPixels = std::min(pixelXs.size(), pixelYs.size());
     std::vector<Eigen::Vector2i> pixels;
@@ -239,9 +234,8 @@ inline void fuzzCenterOfBrightness(int32_t roiCenterX,
     }
 }
 
-inline void fuzzMultiStepBrightness(int32_t avgWindowSize,
-                                    double brightnessThreshold,
-                                    std::vector<int32_t> pixelCountsPerStep) {
+inline void
+fuzzMultiStepBrightness(int32_t avgWindowSize, double brightnessThreshold, std::vector<int32_t> pixelCountsPerStep) {
     // Refer to fuzzCenterOfBrightness for why these stay alive between iterations
     static CenterOfBrightnessAlgorithm alg;
     static FuzzImageReader reader;

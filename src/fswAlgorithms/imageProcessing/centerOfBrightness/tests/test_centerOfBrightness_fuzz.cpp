@@ -2,6 +2,7 @@
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "centerOfBrightnessTestHelpers.hpp"
+
 #include <fuzztest/fuzztest.h>
 
 constexpr int32_t kMaxFuzzPixels = 100;
@@ -26,7 +27,8 @@ constexpr int32_t kMaxFuzzSteps = 10;
 constexpr int32_t kMaxStepPixels = 50;
 
 FUZZ_TEST(CenterOfBrightnessFuzz, fuzzMultiStepBrightness)
-    .WithDomains(fuzztest::InRange(1, 20),       // avgWindowSize
-                 fuzztest::InRange(-1.0, 10.0),  // brightnessThreshold
-                 fuzztest::VectorOf(fuzztest::InRange(0, kMaxStepPixels)).WithSize(kMaxFuzzSteps)  // pixelCountsPerStep
+    .WithDomains(
+        fuzztest::InRange(1, 20),                                                         // avgWindowSize
+        fuzztest::InRange(-1.0, 10.0),                                                    // brightnessThreshold
+        fuzztest::VectorOf(fuzztest::InRange(0, kMaxStepPixels)).WithSize(kMaxFuzzSteps)  // pixelCountsPerStep
     );
