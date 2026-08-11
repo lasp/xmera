@@ -23,14 +23,18 @@ struct BackSubMatrices {
 
 /*! @brief Abstract class that is used to implement an effector attached to the dynamicObject that has a state that
  needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc */
-typedef struct {
-    double mEff;                      //!< [kg] Mass of the effector
-    double mEffDot;                   //!< [kg/s] Time derivate of mEff
-    Eigen::Matrix3d IEffPntB_B;       //!< [kg m^2] Inertia of effector relative to point B in B frame components
-    Eigen::Vector3d rEff_CB_B;        //!< [m] Center of mass of effector with respect to point B in B frame comp
-    Eigen::Vector3d rEffPrime_CB_B;   //!< [m/s] Time derivative with respect to the body of rEff_CB_B
-    Eigen::Matrix3d IEffPrimePntB_B;  //!< [kg m^2/s] Time derivative with respect to the body of IEffPntB_B
-} EffectorMassProps;
+struct EffectorMassProps {
+    double mEff = 0;     //!< [kg] Mass of the effector
+    double mEffDot = 0;  //!< [kg/s] Time derivate of mEff
+    Eigen::Matrix3d IEffPntB_B =
+        Eigen::Matrix3d::Zero();  //!< [kg m^2] Inertia of effector relative to point B in B frame components
+    Eigen::Vector3d rEff_CB_B =
+        Eigen::Vector3d::Zero();  //!< [m] Center of mass of effector with respect to point B in B frame comp
+    Eigen::Vector3d rEffPrime_CB_B =
+        Eigen::Vector3d::Zero();  //!< [m/s] Time derivative with respect to the body of rEff_CB_B
+    Eigen::Matrix3d IEffPrimePntB_B =
+        Eigen::Matrix3d::Zero();  //!< [kg m^2/s] Time derivative with respect to the body of IEffPntB_B
+};
 
 /*! @brief state effector class */
 class StateEffector {
