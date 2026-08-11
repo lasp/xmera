@@ -3,16 +3,7 @@
 
 #include "stateEffector.h"
 
-StateEffector::StateEffector() {
-    // - set force and torques equal to zero
-    this->forceOnBody_B.setZero();
-    this->torqueOnBodyPntB_B.setZero();
-    this->torqueOnBodyPntC_B.setZero();
-
-    this->nameOfSpacecraftAttachedTo = "";
-    this->r_BP_P.setZero();
-    this->dcm_BP.setIdentity();
-}
+StateEffector::StateEffector() {}
 
 /*! This is the destructor, nothing to report here */
 StateEffector::~StateEffector() {

@@ -39,19 +39,23 @@ struct EffectorMassProps {
 /*! @brief state effector class */
 class StateEffector {
 public:
-    std::string nameOfSpacecraftAttachedTo = "";  //!< class variable
-    std::string parentSpacecraftName = "";        //!< -- name of the spacecraft the state effector is attached to
-    EffectorMassProps effProps;                   //!< -- stateEffectors instantiation of effector mass props
+    std::string nameOfSpacecraftAttachedTo;  //!< class variable
+    std::string parentSpacecraftName;        //!< -- name of the spacecraft the state effector is attached to
+    EffectorMassProps effProps;              //!< -- stateEffectors instantiation of effector mass props
     Eigen::VectorXd
         stateDerivContribution;  //!< -- stateEffector contribution to another stateEffector to prevent double-counting
-    Eigen::Vector3d forceOnBody_B;       //!< [N] Force that the state effector applies to the s/c
-    Eigen::Vector3d torqueOnBodyPntB_B;  //!< [N] Torque that the state effector applies to the body about point B
-    Eigen::Vector3d torqueOnBodyPntC_B;  //!< [N] Torque that the state effector applies to the body about point B
-    Eigen::Vector3d r_BP_P;  //!< position vector of the spacecraft mody frame origin B relative to the primary
-                             //!< spacecraft body frame P.  This is used in the SpacecraftSystem module where multiple
-                             //!< spacecraft hubs can be a single spacecraft
-    Eigen::Matrix3d dcm_BP;  //!< DCM of the spacecraft body frame B relative to primary spacecraft body frame P
-    BSKLogger bskLogger;     //!< -- BSK Logging
+    Eigen::Vector3d forceOnBody_B = Eigen::Vector3d::Zero();  //!< [N] Force that the state effector applies to the s/c
+    Eigen::Vector3d torqueOnBodyPntB_B =
+        Eigen::Vector3d::Zero();  //!< [N] Torque that the state effector applies to the body about point B
+    Eigen::Vector3d torqueOnBodyPntC_B =
+        Eigen::Vector3d::Zero();  //!< [N] Torque that the state effector applies to the body about point B
+    Eigen::Vector3d r_BP_P =
+        Eigen::Vector3d::Zero();  //!< position vector of the spacecraft mody frame origin B relative to the primary
+                                  //!< spacecraft body frame P.  This is used in the SpacecraftSystem module where
+                                  //!< multiple spacecraft hubs can be a single spacecraft
+    Eigen::Matrix3d dcm_BP = Eigen::Matrix3d::Identity();  //!< DCM of the spacecraft body frame B relative to primary
+                                                           //!< spacecraft body frame P
+    BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 public:
     StateEffector();           //!< -- Contructor
