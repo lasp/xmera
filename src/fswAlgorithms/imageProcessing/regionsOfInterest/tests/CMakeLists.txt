@@ -32,6 +32,17 @@ if(XMERA_ENABLE_FUZZTESTS)
     fuzztest::fuzztest_gtest_main
   )
 
+  # Refer to the note in centerOfBrightness/tests/CMakeLists.txt.
+  if(FUZZTEST_FUZZING_MODE)
+    target_compile_options(test_regionsOfInterest_fuzz PRIVATE
+      -fsanitize=undefined -fno-sanitize=vptr -fno-sanitize-recover=undefined
+    )
+    set_source_files_properties(test_regionsOfInterest_fuzz.cpp PROPERTIES COMPILE_OPTIONS
+      "-fno-sanitize=undefined"
+    )
+    target_link_options(test_regionsOfInterest_fuzz PRIVATE -fsanitize=undefined)
+  endif()
+
   gtest_discover_tests(test_regionsOfInterest_fuzz
     TEST_LIST roiFuzzTests
   )
