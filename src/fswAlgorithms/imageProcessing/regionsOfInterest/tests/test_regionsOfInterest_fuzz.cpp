@@ -3,6 +3,7 @@
 
 #include "../regionsOfInterestAlgorithm.h"
 #include "gtest/gtest.h"
+
 #include <fuzztest/fuzztest.h>
 
 #include <algorithm>
@@ -13,9 +14,9 @@
 #include <vector>
 
 // Fuzz-specific tolerances
-constexpr int32_t FUZZ_MAX_IMAGE_SIZE = 4096;
+constexpr int32_t FUZZ_MAX_IMAGE_SIZE = 4'096;
 constexpr int32_t FUZZ_MIN_IMAGE_SIZE = 64;
-constexpr int32_t FUZZ_MAX_PIXELS = 10000;
+constexpr int32_t FUZZ_MAX_PIXELS = 10'000;
 
 /*! @brief Number of regions the fuzzed vectors can describe */
 constexpr size_t FUZZ_MAX_REGIONS = static_cast<size_t>(MAX_NUMBER_REGIONS);
@@ -184,17 +185,19 @@ FUZZ_TEST(RegionsOfInterestFuzz, fuzzWindowingBehavior)
  *  inside the image, thus the window keeps each region. The test can then compare the
  *  merged center directly against the inputs.
  */
-void fuzzRegionMerging(int32_t maxSeparation,
-                       int32_t minDetectionSize,
-                       int32_t region1X,
-                       int32_t region1Y,
-                       int32_t region1Pixels,
-                       int32_t region2X,
-                       int32_t region2Y,
-                       int32_t region2Pixels,
-                       int32_t region3X,
-                       int32_t region3Y,
-                       int32_t region3Pixels) {
+void fuzzRegionMerging(
+    int32_t maxSeparation,
+    int32_t minDetectionSize,
+    int32_t region1X,
+    int32_t region1Y,
+    int32_t region1Pixels,
+    int32_t region2X,
+    int32_t region2Y,
+    int32_t region2Pixels,
+    int32_t region3X,
+    int32_t region3Y,
+    int32_t region3Pixels
+) {
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> regions{};
 
     regions[0].numberOfPixels = region1Pixels;

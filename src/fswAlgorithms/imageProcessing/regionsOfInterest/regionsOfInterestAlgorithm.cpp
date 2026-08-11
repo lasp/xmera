@@ -15,7 +15,9 @@ RegionsOfInterestAlgorithm::~RegionsOfInterestAlgorithm() = default;
  * Local module variables that retain time varying states between function calls
  * are reset to their default values. This method recomputes the window parameters.
  */
-void RegionsOfInterestAlgorithm::reset() { this->computeWindow(); }
+void RegionsOfInterestAlgorithm::reset() {
+    this->computeWindow();
+}
 
 /**
  * @brief Main update method that processes regions and identifies the key ROI
@@ -29,7 +31,8 @@ void RegionsOfInterestAlgorithm::reset() { this->computeWindow(); }
  * @return RegionOfInterest The identified key region of interest
  */
 RegionOfInterest RegionsOfInterestAlgorithm::update(
-    const std::array<RegionOfInterest, MAX_NUMBER_REGIONS>& regions) const {
+    std::array<RegionOfInterest, MAX_NUMBER_REGIONS> const &regions
+) const {
     RegionOfInterest outputRegion{};
 
     // Apply spatial windowing to filter regions
@@ -54,12 +57,13 @@ RegionOfInterest RegionsOfInterestAlgorithm::update(
  * @return std::array<RegionOfInterest, MAX_NUMBER_REGIONS> Filtered regions within window bounds
  */
 std::array<RegionOfInterest, MAX_NUMBER_REGIONS> RegionsOfInterestAlgorithm::applyWindow(
-    const std::array<RegionOfInterest, MAX_NUMBER_REGIONS>& regions) const {
+    std::array<RegionOfInterest, MAX_NUMBER_REGIONS> const &regions
+) const {
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> checkedRegions{};
     size_t index = 0;
 
     // Check each region against window bounds
-    for (auto const& region : regions) {
+    for (auto const &region : regions) {
         if (this->regionInWindow(region)) {
             checkedRegions.at(index) = region;
             ++index;
@@ -78,11 +82,12 @@ std::array<RegionOfInterest, MAX_NUMBER_REGIONS> RegionsOfInterestAlgorithm::app
  * @return std::array<RegionOfInterest, MAX_NUMBER_REGIONS> Sorted array with largest regions first
  */
 std::array<RegionOfInterest, MAX_NUMBER_REGIONS> RegionsOfInterestAlgorithm::orderRegions(
-    const std::array<RegionOfInterest, MAX_NUMBER_REGIONS>& regions) {
+    std::array<RegionOfInterest, MAX_NUMBER_REGIONS> const &regions
+) {
     std::array<RegionOfInterest, MAX_NUMBER_REGIONS> sorted = regions;
     // The comparator must be a strict weak ordering. A reflexive comparator (>=) causes
     // undefined behavior, and std::sort can then read data after the end of the range.
-    std::ranges::sort(sorted.begin(), sorted.end(), [](const RegionOfInterest& a, const RegionOfInterest& b) {
+    std::ranges::sort(sorted.begin(), sorted.end(), [](RegionOfInterest const &a, RegionOfInterest const &b) {
         return a.numberOfPixels > b.numberOfPixels;
     });
     return sorted;
@@ -97,10 +102,12 @@ std::array<RegionOfInterest, MAX_NUMBER_REGIONS> RegionsOfInterestAlgorithm::ord
  * @param region The region to check
  * @return bool True if center of brightness is within window bounds, false otherwise
  */
-bool RegionsOfInterestAlgorithm::regionInWindow(const RegionOfInterest& region) const {
+bool RegionsOfInterestAlgorithm::regionInWindow(RegionOfInterest const &region) const {
     Eigen::Vector2i centerOfBrightness = region.centerOfBrightness;
-    return (windowPointTopLeft.x() < centerOfBrightness.x() && windowPointTopLeft.y() < centerOfBrightness.y() &&
-            windowPointBottomRight.x() > centerOfBrightness.x() && windowPointBottomRight.y() > centerOfBrightness.y());
+    return (
+        windowPointTopLeft.x() < centerOfBrightness.x() && windowPointTopLeft.y() < centerOfBrightness.y()
+        && windowPointBottomRight.x() > centerOfBrightness.x() && windowPointBottomRight.y() > centerOfBrightness.y()
+    );
 }
 
 /**
@@ -133,12 +140,8 @@ void RegionsOfInterestAlgorithm::computeWindow() {
     this->windowPointBottomRight.y() = this->windowCenter.y() + this->windowHeight / 2;
 
     // Validate window boundaries
-    if (windowPointTopLeft.x() < 0) {
-        throw std::invalid_argument("Window went outside of the image to the left");
-    }
-    if (windowPointTopLeft.y() < 0) {
-        throw std::invalid_argument("Window went outside of the image to the top");
-    }
+    if (windowPointTopLeft.x() < 0) { throw std::invalid_argument("Window went outside of the image to the left"); }
+    if (windowPointTopLeft.y() < 0) { throw std::invalid_argument("Window went outside of the image to the top"); }
     if (windowPointBottomRight.x() > this->imageSize.x()) {
         throw std::invalid_argument("Window went outside of the image to the right");
     }
@@ -168,28 +171,28 @@ void RegionsOfInterestAlgorithm::computeWindow() {
  * @return RegionOfInterest The identified key region, or empty region if none found
  */
 RegionOfInterest RegionsOfInterestAlgorithm::identifyRoi(
-    const std::array<RegionOfInterest, MAX_NUMBER_REGIONS>& regions) const {
+    std::array<RegionOfInterest, MAX_NUMBER_REGIONS> const &regions
+) const {
     RegionOfInterest keyRegion{};
     Eigen::Vector2i cobBarycenter = Eigen::Vector2i::Zero();
     auto threshold = this->minDetectionPixel;
 
     // Check if all regions are below detection threshold
-    const auto all_zero = std::ranges::all_of(
-        regions, [threshold](const RegionOfInterest& item) { return item.numberOfPixels <= threshold; });
+    auto const all_zero = std::ranges::all_of(regions, [threshold](RegionOfInterest const &item) {
+        return item.numberOfPixels <= threshold;
+    });
 
     if (!all_zero) {
         std::array<RegionOfInterest, MAX_NUMBER_REGIONS> nonZeroRegions{};
         auto index = 0;
-        for (auto const& region : regions) {
-            if (region.numberOfPixels > threshold) {
-                nonZeroRegions.at(index) = region;
-            }
+        for (auto const &region : regions) {
+            if (region.numberOfPixels > threshold) { nonZeroRegions.at(index) = region; }
             ++index;
         }
 
         // Calculate weighted barycenter of all regions
         auto totalPixels = 0;
-        for (auto const& region : nonZeroRegions) {
+        for (auto const &region : nonZeroRegions) {
             cobBarycenter += region.numberOfPixels * region.centerOfBrightness;
             totalPixels += region.numberOfPixels;
         }
@@ -197,7 +200,7 @@ RegionOfInterest RegionsOfInterestAlgorithm::identifyRoi(
 
         // Count regions close to barycenter
         auto numberOfRegionsCloseToBarycenter = 0;
-        for (auto const& region : nonZeroRegions) {
+        for (auto const &region : nonZeroRegions) {
             if (auto distanceToBarycenter = region.centerOfBrightness - cobBarycenter;
                 distanceToBarycenter.norm() < this->maxSeparation) {
                 ++numberOfRegionsCloseToBarycenter;
@@ -216,8 +219,10 @@ RegionOfInterest RegionsOfInterestAlgorithm::identifyRoi(
         }
 
         // Set region size based on maxSeparation (square inscribed in separation circle)
-        keyRegion.regionSize = Eigen::Vector2i(std::floor(this->maxSeparation / std::sqrt(2)),
-                                               std::floor(this->maxSeparation / std::sqrt(2)));
+        keyRegion.regionSize = Eigen::Vector2i(
+            std::floor(this->maxSeparation / std::sqrt(2)),
+            std::floor(this->maxSeparation / std::sqrt(2))
+        );
     }
 
     return keyRegion;
@@ -231,7 +236,7 @@ RegionOfInterest RegionsOfInterestAlgorithm::identifyRoi(
  *
  * @param pixelSeparation Maximum separation distance in pixels
  */
-void RegionsOfInterestAlgorithm::setMaxRoiSeparation(const int32_t pixelSeparation) {
+void RegionsOfInterestAlgorithm::setMaxRoiSeparation(int32_t const pixelSeparation) {
     this->maxSeparation = pixelSeparation;
 }
 
@@ -240,21 +245,27 @@ void RegionsOfInterestAlgorithm::setMaxRoiSeparation(const int32_t pixelSeparati
  *
  * @return int32_t Maximum separation in pixels
  */
-int32_t RegionsOfInterestAlgorithm::getMaxRoiSeparation() const { return this->maxSeparation; }
+int32_t RegionsOfInterestAlgorithm::getMaxRoiSeparation() const {
+    return this->maxSeparation;
+}
 
 /**
  * @brief Sets the camera ID for this algorithm instance
  *
  * @param id Camera identifier
  */
-void RegionsOfInterestAlgorithm::setCameraId(int32_t id) { this->cameraId = id; }
+void RegionsOfInterestAlgorithm::setCameraId(int32_t id) {
+    this->cameraId = id;
+}
 
 /**
  * @brief Gets the current camera ID
  *
  * @return int32_t Camera identifier
  */
-int32_t RegionsOfInterestAlgorithm::getCameraId() const { return this->cameraId; }
+int32_t RegionsOfInterestAlgorithm::getCameraId() const {
+    return this->cameraId;
+}
 
 /**
  * @brief Sets the minimum detection size threshold
@@ -264,14 +275,18 @@ int32_t RegionsOfInterestAlgorithm::getCameraId() const { return this->cameraId;
  *
  * @param pixels Minimum number of pixels required for valid detection
  */
-void RegionsOfInterestAlgorithm::setMinimumDetectionSize(int32_t pixels) { this->minDetectionPixel = pixels; }
+void RegionsOfInterestAlgorithm::setMinimumDetectionSize(int32_t pixels) {
+    this->minDetectionPixel = pixels;
+}
 
 /**
  * @brief Gets the current minimum detection size
  *
  * @return int32_t Minimum number of pixels for detection
  */
-int32_t RegionsOfInterestAlgorithm::getMinimumDetectionSize() const { return this->minDetectionPixel; }
+int32_t RegionsOfInterestAlgorithm::getMinimumDetectionSize() const {
+    return this->minDetectionPixel;
+}
 
 /**
  * @brief Sets the center point of the windowing mask
@@ -281,14 +296,18 @@ int32_t RegionsOfInterestAlgorithm::getMinimumDetectionSize() const { return thi
  *
  * @param center Center point coordinates (x, y) in pixels
  */
-void RegionsOfInterestAlgorithm::setWindowCenter(const Eigen::Vector2i& center) { this->windowCenter = center; }
+void RegionsOfInterestAlgorithm::setWindowCenter(Eigen::Vector2i const &center) {
+    this->windowCenter = center;
+}
 
 /**
  * @brief Gets the current window center coordinates
  *
  * @return Eigen::Vector2i Window center as (x, y) in pixels
  */
-Eigen::Vector2i RegionsOfInterestAlgorithm::getWindowCenter() const { return this->windowCenter; }
+Eigen::Vector2i RegionsOfInterestAlgorithm::getWindowCenter() const {
+    return this->windowCenter;
+}
 
 /**
  * @brief Sets the image size
@@ -298,7 +317,7 @@ Eigen::Vector2i RegionsOfInterestAlgorithm::getWindowCenter() const { return thi
  * @param width X pixels
  * @param height Y pixels
  */
-void RegionsOfInterestAlgorithm::setImageSize(const int32_t width, const int32_t height) {
+void RegionsOfInterestAlgorithm::setImageSize(int32_t const width, int32_t const height) {
     this->imageSize << width, height;
 }
 
@@ -307,7 +326,9 @@ void RegionsOfInterestAlgorithm::setImageSize(const int32_t width, const int32_t
  *
  * @return Eigen::Vector2i Image size as (x, y) in pixels
  */
-Eigen::Vector2i RegionsOfInterestAlgorithm::getImageSize() const { return this->imageSize; }
+Eigen::Vector2i RegionsOfInterestAlgorithm::getImageSize() const {
+    return this->imageSize;
+}
 
 /**
  * @brief Sets the dimensions of the windowing mask
@@ -317,7 +338,7 @@ Eigen::Vector2i RegionsOfInterestAlgorithm::getImageSize() const { return this->
  * @param width Window width in pixels
  * @param height Window height in pixels
  */
-void RegionsOfInterestAlgorithm::setWindowSize(const int32_t width, const int32_t height) {
+void RegionsOfInterestAlgorithm::setWindowSize(int32_t const width, int32_t const height) {
     this->windowWidth = width;
     this->windowHeight = height;
 }
