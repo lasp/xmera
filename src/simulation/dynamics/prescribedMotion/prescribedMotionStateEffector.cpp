@@ -12,13 +12,6 @@
 
 /*! The constructor sets the module variables to default values. */
 PrescribedMotionStateEffector::PrescribedMotionStateEffector() {
-    // Zero the effector's mass properties and mass property rate contributions
-    this->effProps.mEff = 0.0;
-    this->effProps.rEff_CB_B.fill(0.0);
-    this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.rEffPrime_CB_B.fill(0.0);
-    this->effProps.IEffPrimePntB_B.fill(0.0);
-
     // Initialize the effector's hub-relative states
     this->r_FM_M.setZero();
     this->rPrime_FM_M.setZero();

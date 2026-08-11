@@ -8,12 +8,6 @@
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
 linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector() {
-    this->effProps.mEff = 0.0;
-    this->effProps.IEffPntB_B.setZero();
-    this->effProps.rEff_CB_B.setZero();
-    this->effProps.rEffPrime_CB_B.setZero();
-    this->effProps.IEffPrimePntB_B.setZero();
-
     this->nameOfRhoState = "linearTranslationRho" + std::to_string(linearTranslationOneDOFStateEffector::effectorID);
     this->nameOfRhoDotState =
         "linearTranslationRhoDot" + std::to_string(linearTranslationOneDOFStateEffector::effectorID);

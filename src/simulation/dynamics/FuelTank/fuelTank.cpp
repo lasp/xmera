@@ -7,11 +7,6 @@
 #include <iostream>
 
 FuelTank::FuelTank() {
-    this->effProps.mEff = 0.0;
-    this->effProps.IEffPntB_B.setZero();
-    this->effProps.rEff_CB_B.setZero();
-    this->effProps.rEffPrime_CB_B.setZero();
-    this->effProps.IEffPrimePntB_B.setZero();
     this->dcm_TB = Eigen::Matrix3d::Identity();
     this->r_TB_B.setZero();
     this->ITankPntT_B = Eigen::Matrix3d::Identity();

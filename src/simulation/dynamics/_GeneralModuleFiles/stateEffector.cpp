@@ -5,14 +5,6 @@
 
 /*! This is the constructor, just setting the variables to zero */
 StateEffector::StateEffector() {
-    // - Set effector mass props to zero
-    this->effProps.mEff = 0.0;
-    this->effProps.mEffDot = 0.0;
-    this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.IEffPrimePntB_B.fill(0.0);
-    this->effProps.rEff_CB_B.fill(0.0);
-    this->effProps.rEffPrime_CB_B.fill(0.0);
-
     // - set force and torques equal to zero
     this->forceOnBody_B = this->torqueOnBodyPntB_B = this->torqueOnBodyPntC_B.setZero();
 

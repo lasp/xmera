@@ -17,13 +17,6 @@ StateSpaceStateEffector::StateSpaceStateEffector(int n) : sizeOfStateSpace(n) {
     this->BEff = Eigen::MatrixXd::Zero(sizeOfStateSpace, 3);
     this->CEff = Eigen::VectorXd::Zero(sizeOfStateSpace);
 
-    // Zero the mass props and mass prop rates contributions
-    this->effProps.mEff = 0.0;
-    this->effProps.rEff_CB_B.fill(0.0);
-    this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.rEffPrime_CB_B.fill(0.0);
-    this->effProps.IEffPrimePntB_B.fill(0.0);
-
     this->nameOfXState = "X" + std::to_string(StateSpaceStateEffector::effectorID);
     this->nameOfXDotState = "XDot" + std::to_string(StateSpaceStateEffector::effectorID);
     StateSpaceStateEffector::effectorID++;

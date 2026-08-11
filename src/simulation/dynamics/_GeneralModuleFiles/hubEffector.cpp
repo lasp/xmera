@@ -10,11 +10,6 @@
 HubEffector::HubEffector() {
     // - zero certain variables
     this->MRPSwitchCount = 0;
-    this->effProps.mEff = 0.0;
-    this->effProps.rEff_CB_B.setZero();
-    this->effProps.IEffPntB_B.setZero();
-    this->effProps.rEffPrime_CB_B.setZero();
-    this->effProps.IEffPrimePntB_B.setZero();
     this->r_CN_NInit.setZero();
     this->v_CN_NInit.setZero();
     this->sigma_BNInit.setZero();

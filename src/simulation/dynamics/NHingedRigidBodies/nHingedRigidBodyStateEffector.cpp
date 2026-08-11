@@ -10,12 +10,6 @@
 
 /*! This is the constructor, setting variables to default values */
 NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector() {
-    // - zero the mass props and mass prop rates contributions
-    this->effProps.mEff = 0.0;
-    this->effProps.rEff_CB_B.fill(0.0);
-    this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.rEffPrime_CB_B.fill(0.0);
-    this->effProps.IEffPrimePntB_B.fill(0.0);
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
     this->nameOfThetaState = "nHingedRigidBody" + std::to_string(this->effectorID) + "Theta";

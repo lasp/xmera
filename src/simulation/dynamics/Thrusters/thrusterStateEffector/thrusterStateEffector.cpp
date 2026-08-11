@@ -13,13 +13,6 @@
 
 /*! The Constructor.*/
 ThrusterStateEffector::ThrusterStateEffector() {
-    // - zero the mass props and mass prop rates contributions
-    this->effProps.mEff = 0.0;
-    this->effProps.rEff_CB_B.fill(0.0);
-    this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.rEffPrime_CB_B.fill(0.0);
-    this->effProps.IEffPrimePntB_B.fill(0.0);
-
     // initialize the state derivative contribution for mass rate
     this->stateDerivContribution.resize(1);
     this->stateDerivContribution.setZero();

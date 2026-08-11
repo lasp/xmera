@@ -8,13 +8,6 @@
 
 /*! This is the constructor, setting variables to default values */
 LinearSpringMassDamper::LinearSpringMassDamper() {
-    // - zero the contributions for mass props and mass rates
-    this->effProps.mEff = 0.0;
-    this->effProps.IEffPntB_B.setZero();
-    this->effProps.rEff_CB_B.setZero();
-    this->effProps.rEffPrime_CB_B.setZero();
-    this->effProps.IEffPrimePntB_B.setZero();
-
     // - Initialize the variables to working values
     this->massSMD = 1.0;
     this->r_PB_B.setZero();
