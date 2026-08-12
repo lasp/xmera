@@ -93,16 +93,15 @@ void SimModel::ensureHeap() const {
 }
 
 SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
-    // Find the index separating lower priorities from higher priorities.
-    auto it = this->processList.begin();
-    for (; it != this->processList.end(); ++it) {
-        if (priority > (*it)->processPriority) { break; }
-    }
-
     auto processId = this->processList.size();
-    it = this->processList.emplace(it, std::make_unique<SysProcess>(SysProcess::Passkey{}, *this, processId, name, priority));
-
-    return *it->get();
+    auto &ptr = this->processList.emplace_back(std::make_unique<SysProcess>(
+        SysProcess::Passkey{},
+        *this,
+        processId,
+        name,
+        priority
+    ));
+    return *ptr.get();
 }
 
 void SimModel::resetSimulation() {

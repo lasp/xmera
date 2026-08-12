@@ -176,7 +176,7 @@ public:
     int32_t const priority;
 
 private:
-    //! The `SimModel` that contains this task.
+    //! The `SimModel` that contains this task
     SimModel &owner;
 
     //! The next time (in nanoseconds) at which the task's modules will be updated
