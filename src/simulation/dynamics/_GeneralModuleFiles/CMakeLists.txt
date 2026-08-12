@@ -1,6 +1,5 @@
 add_library(dynamicsCommon OBJECT
   dynParamManager.cpp
-  dynamicEffector.cpp
   dynamicObject.cpp
   extendedStateVector.cpp
   gravityEffector.cpp
