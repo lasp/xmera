@@ -58,6 +58,8 @@ public:
     size_t numArticulatedFacets;                       //!< Number of articulated facets
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;  //!< Sun spice ephemeris input message
 
+    BSKLogger bskLogger;  //!< -- BSK Logging
+
 private:
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>>
         articulatedFacetDataInMsgs;                  //!< Articulated facet angle data input message

@@ -47,6 +47,8 @@ public:
     Eigen::Vector3d v_B = Eigen::Vector3d::Zero();   //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B = Eigen::Vector3d::Zero();  //!< -- Drag force direction in the inertial frame
 
+    BSKLogger bskLogger;  //!< -- BSK Logging
+
 private:
     AtmoPropsMsgPayload atmoInData;
 };
