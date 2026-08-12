@@ -14,8 +14,8 @@
 /*! @brief dynamic effector class */
 class DynamicEffector {
 public:
-    DynamicEffector();           //!< -- Constructor
-    virtual ~DynamicEffector();  //!< -- Destructor
+    DynamicEffector() = default;
+    virtual ~DynamicEffector() = default;
 
     virtual void computeStateContribution(double integTime) {}
 
