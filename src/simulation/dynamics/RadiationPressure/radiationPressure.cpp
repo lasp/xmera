@@ -15,9 +15,6 @@
 RadiationPressure::RadiationPressure()
     : area(0.0f), coefficientReflection(1.2), srpModel(SRP_CANNONBALL_MODEL), stateRead(false) {
     this->sunVisibilityFactor.shadowFactor = 1.0;
-    this->forceExternal_N.setZero();
-    this->forceExternal_B.setZero();
-    this->torqueExternalPntB_B.setZero();
 
     return;
 }

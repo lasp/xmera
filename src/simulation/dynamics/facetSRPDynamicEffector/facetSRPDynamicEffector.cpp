@@ -15,8 +15,6 @@ double const solarRadFlux = 1368.0;     // [W/m^2] Solar radiation flux at 1 AU
 
 /*! The constructor */
 FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
-    this->forceExternal_B.fill(0.0);
-    this->torqueExternalPntB_B.fill(0.0);
     this->numFacets = 0;
     this->numArticulatedFacets = 0;
     this->facetAngleMsgRead = false;
