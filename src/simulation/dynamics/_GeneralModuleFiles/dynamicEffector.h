@@ -16,7 +16,9 @@ class DynamicEffector {
 public:
     DynamicEffector();           //!< -- Constructor
     virtual ~DynamicEffector();  //!< -- Destructor
-    virtual void computeStateContribution(double integTime);
+
+    virtual void computeStateContribution(double integTime) {}
+
     virtual void linkInStates(DynParamManager &states) = 0;  //!< -- Method to get access to other states/stateEffectors
     virtual void computeForceTorque(
         double integTime,
