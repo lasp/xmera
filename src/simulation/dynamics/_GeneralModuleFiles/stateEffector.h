@@ -5,9 +5,10 @@
 #ifndef STATE_EFFECTOR_H
 #define STATE_EFFECTOR_H
 
+#include "dynParamManager.h"
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
-#include "dynParamManager.h"
+
 #include <Eigen/Dense>
 
 /*! back substitution matrix structure*/
@@ -33,7 +34,7 @@ typedef struct {
 
 /*! @brief state effector class */
 class StateEffector {
-   public:
+public:
     std::string nameOfSpacecraftAttachedTo = "";  //!< class variable
     std::string parentSpacecraftName = "";        //!< -- name of the spacecraft the state effector is attached to
     EffectorMassProps effProps;                   //!< -- stateEffectors instantiation of effector mass props
@@ -48,31 +49,37 @@ class StateEffector {
     Eigen::Matrix3d dcm_BP;  //!< DCM of the spacecraft body frame B relative to primary spacecraft body frame P
     BSKLogger bskLogger;     //!< -- BSK Logging
 
-   public:
+public:
     StateEffector();                                         //!< -- Contructor
     virtual ~StateEffector();                                //!< -- Destructor
     virtual void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
-    virtual void updateContributions(double integTime,
-                                     BackSubMatrices& backSubContr,
-                                     Eigen::Vector3d sigma_BN,
-                                     Eigen::Vector3d omega_BN_B,
-                                     Eigen::Vector3d g_N);  //!< -- Back-sub contributions
-    virtual void updateEnergyMomContributions(double integTime,
-                                              Eigen::Vector3d& rotAngMomPntCContr_B,
-                                              double& rotEnergyContr,
-                                              Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
+    virtual void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N
+    );  //!< -- Back-sub contributions
+    virtual void updateEnergyMomContributions(
+        double integTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    );                                            //!< -- Energy and momentum calculations
     virtual void modifyStates(double integTime);  //!< -- Modify state values after integration
     virtual void calcForceTorqueOnBody(
         double integTime,
-        Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to stateEffector
+        Eigen::Vector3d omega_BN_B
+    );  //!< -- Force and torque on s/c due to stateEffector
     virtual void writeOutputStateMessages(uint64_t integTimeNanos);  //!< -- Write State Messages after integration
-    virtual void registerStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to register states
-    virtual void linkInStates(DynParamManager& states) = 0;    //!< -- Method for stateEffectors to get other states
+    virtual void registerStates(DynParamManager &states) = 0;  //!< -- Method for stateEffectors to register states
+    virtual void linkInStates(DynParamManager &states) = 0;    //!< -- Method for stateEffectors to get other states
     virtual void computeDerivatives(
         double integTime,
         Eigen::Vector3d rDDot_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
-        Eigen::Vector3d sigma_BN) = 0;  //!< -- Method for each stateEffector to calculate derivatives
+        Eigen::Vector3d sigma_BN
+    ) = 0;  //!< -- Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates();
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP);  //!< class method
 };

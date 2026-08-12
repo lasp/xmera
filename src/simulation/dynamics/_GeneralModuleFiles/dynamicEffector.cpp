@@ -14,8 +14,12 @@ DynamicEffector::DynamicEffector() {
 }
 
 /*! This is the destructor, nothing to report here */
-DynamicEffector::~DynamicEffector() { return; }
+DynamicEffector::~DynamicEffector() {
+    return;
+}
 
 /*! This method is an optional method by a dynamic effector and allows the dynamics effector to add direct contributions
     to a state effector derivative. Example - a thruster's mDot will impact a fuel tanks total mDot */
-void DynamicEffector::computeStateContribution(double integTime) { return; }
+void DynamicEffector::computeStateContribution(double integTime) {
+    return;
+}

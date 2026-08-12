@@ -6,19 +6,21 @@
 #define LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/bskLogging.h>
-#include <architecture/utilities/eigenMRP.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h>
 #include <architecture/msgPayloadDef/ArrayMotorForceMsgPayload.h>
 #include <architecture/msgPayloadDef/LinearTranslationRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 
 /*! @brief linear spring mass damper state effector class */
-class linearTranslationOneDOFStateEffector : public StateEffector, public SysModel {
-   public:
+class linearTranslationOneDOFStateEffector
+    : public StateEffector
+    , public SysModel {
+public:
     Message<LinearTranslationRigidBodyMsgPayload> translatingBodyOutMsg;  //!< state output message
     Message<SCStatesMsgPayload> translatingBodyConfigLogOutMsg;           //!< translating body state config log message
     ReadFunctor<ArrayMotorForceMsgPayload> motorForceInMsg;               //!< (optional) motor force input message
@@ -35,43 +37,91 @@ class linearTranslationOneDOFStateEffector : public StateEffector, public SysMod
     void setK(double k);
     /** setter for `c` property */
     void setC(double c);
+
     /** setter for `rhoInit` property */
-    void setRhoInit(double rhoInit) { this->rhoInit = rhoInit; };
+    void setRhoInit(double rhoInit) {
+        this->rhoInit = rhoInit;
+    }
+
     /** setter for `rhoDotInit` property */
-    void setRhoDotInit(double rhoDotInit) { this->rhoDotInit = rhoDotInit; };
+    void setRhoDotInit(double rhoDotInit) {
+        this->rhoDotInit = rhoDotInit;
+    }
+
     /** setter for `fHat_B` property */
     void setFHat_B(Eigen::Vector3d fHat_B);
+
     /** setter for `r_FcF_F` property */
-    void setR_FcF_F(Eigen::Vector3d r_FcF_F) { this->r_FcF_F = r_FcF_F; };
+    void setR_FcF_F(Eigen::Vector3d r_FcF_F) {
+        this->r_FcF_F = r_FcF_F;
+    }
+
     /** setter for `r_F0B_B` property */
-    void setR_F0B_B(Eigen::Vector3d r_F0B_B) { this->r_F0B_B = r_F0B_B; };
+    void setR_F0B_B(Eigen::Vector3d r_F0B_B) {
+        this->r_F0B_B = r_F0B_B;
+    }
+
     /** setter for `IPntFc_F` property */
-    void setIPntFc_F(Eigen::Matrix3d IPntFc_F) { this->IPntFc_F = IPntFc_F; };
+    void setIPntFc_F(Eigen::Matrix3d IPntFc_F) {
+        this->IPntFc_F = IPntFc_F;
+    }
+
     /** setter for `dcm_FB` property */
-    void setDCM_FB(Eigen::Matrix3d dcm_FB) { this->dcm_FB = dcm_FB; };
+    void setDCM_FB(Eigen::Matrix3d dcm_FB) {
+        this->dcm_FB = dcm_FB;
+    }
 
     /** setter for `mass` property */
-    double getMass() const { return this->mass; };
-    /** setter for `k` property */
-    double getK() const { return this->k; };
-    /** setter for `c` property */
-    double getC() const { return this->c; };
-    /** setter for `rhoInit` property */
-    double getRhoInit() const { return this->rhoInit; };
-    /** setter for `rhoDotInit` property */
-    double getRhoDotInit() const { return this->rhoDotInit; };
-    /** setter for `fHat_B` property */
-    Eigen::Vector3d getFHat_B() const { return this->fHat_B; };
-    /** setter for `r_FcF_F` property */
-    Eigen::Vector3d getR_FcF_F() const { return this->r_FcF_F; };
-    /** setter for `r_F0B_B` property */
-    Eigen::Vector3d getR_F0B_B() const { return this->r_F0B_B; };
-    /** setter for `IPntFc_F` property */
-    Eigen::Matrix3d getIPntFc_F() const { return IPntFc_F; };
-    /** setter for `dcm_FB` property */
-    Eigen::Matrix3d getDCM_FB() const { return dcm_FB; };
+    double getMass() const {
+        return this->mass;
+    }
 
-   private:
+    /** setter for `k` property */
+    double getK() const {
+        return this->k;
+    }
+
+    /** setter for `c` property */
+    double getC() const {
+        return this->c;
+    }
+
+    /** setter for `rhoInit` property */
+    double getRhoInit() const {
+        return this->rhoInit;
+    }
+
+    /** setter for `rhoDotInit` property */
+    double getRhoDotInit() const {
+        return this->rhoDotInit;
+    }
+
+    /** setter for `fHat_B` property */
+    Eigen::Vector3d getFHat_B() const {
+        return this->fHat_B;
+    }
+
+    /** setter for `r_FcF_F` property */
+    Eigen::Vector3d getR_FcF_F() const {
+        return this->r_FcF_F;
+    }
+
+    /** setter for `r_F0B_B` property */
+    Eigen::Vector3d getR_F0B_B() const {
+        return this->r_F0B_B;
+    }
+
+    /** setter for `IPntFc_F` property */
+    Eigen::Matrix3d getIPntFc_F() const {
+        return IPntFc_F;
+    }
+
+    /** setter for `dcm_FB` property */
+    Eigen::Matrix3d getDCM_FB() const {
+        return dcm_FB;
+    }
+
+private:
     double mass = 1.0;                      //!< [kg] mass of effector
     double k = 0;                           //!< [N/m] linear spring constant
     double c = 0;                           //!< [N-s/m] linear damping term
@@ -133,27 +183,33 @@ class linearTranslationOneDOFStateEffector : public StateEffector, public SysMod
         Eigen::Vector3d::Zero();  //!< [rad/s] inertial translating body frame angular velocity vector
 
     void reset(uint64_t CurrentClock) override;
-    void registerStates(DynParamManager& states) override;
-    void linkInStates(DynParamManager& states) override;
+    void registerStates(DynParamManager &states) override;
+    void linkInStates(DynParamManager &states) override;
     void writeOutputStateMessages(uint64_t currentSimNanos) override;
     void updateEffectorMassProps(double integTime) override;
-    void updateContributions(double integTime,
-                             BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
-                             Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N) override;
-    void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B) override;
-    void computeDerivatives(double integTime,
-                            Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) override;
+    void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N
+    ) override;
+    void updateEnergyMomContributions(
+        double integTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    ) override;
+    void computeDerivatives(
+        double integTime,
+        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::Vector3d sigma_BN
+    ) override;
     void updateState(uint64_t currentSimNanos) override;
 
     void computeTranslatingBodyInertialStates();
-    void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g);
+    void computeBackSubContributions(BackSubMatrices &backSubContr, Eigen::Vector3d const &F_g);
     void readInputMessages();
 };
 

@@ -3,8 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "sphericalPendulum.h"
+
 #include <architecture/utilities/eigenSupport.h>
+
 #include <math.h>
+
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
@@ -51,7 +54,7 @@ SphericalPendulum::~SphericalPendulum() {
 }
 
 /*! Method for spherical pendulum to access the states that it needs. It needs gravity and the hub states */
-void SphericalPendulum::linkInStates(DynParamManager& statesIn) {
+void SphericalPendulum::linkInStates(DynParamManager &statesIn) {
     // - Grab access to the hub states
 
     this->omegaState = statesIn.getStateObject("hubOmega");
@@ -65,7 +68,7 @@ void SphericalPendulum::linkInStates(DynParamManager& statesIn) {
 }
 
 /*! This is the method for the spherical pendulum to register its states: l and lDot */
-void SphericalPendulum::registerStates(DynParamManager& states) {
+void SphericalPendulum::registerStates(DynParamManager &states) {
     // - Register phi, theta, phiDot and thetaDot
     this->phiState = states.registerState(1, 1, nameOfPhiState);
     Eigen::MatrixXd phiInitMatrix(1, 1);
@@ -154,10 +157,11 @@ void SphericalPendulum::updateEffectorMassProps(double integTime) {
     this->thetaDot = this->thetaDotState->getState()(0, 0);
 
     // define the derivative of l in P0 frame
-    this->lPrime_P0 << this->pendulumRadius * (-this->phiDot * sin(this->phi) * cos(this->theta) -
-                                               this->thetaDot * cos(this->phi) * sin(this->theta)),
-        this->pendulumRadius *
-            (this->phiDot * cos(this->phi) * cos(this->theta) - this->thetaDot * sin(this->phi) * sin(this->theta)),
+    this->lPrime_P0 << this->pendulumRadius
+                           * (-this->phiDot * sin(this->phi) * cos(this->theta)
+                              - this->thetaDot * cos(this->phi) * sin(this->theta)),
+        this->pendulumRadius
+            * (this->phiDot * cos(this->phi) * cos(this->theta) - this->thetaDot * sin(this->phi) * sin(this->theta)),
         -this->pendulumRadius * (this->thetaDot * cos(this->theta));
     // rotate l derivative in B frame
     this->lPrime_B = dcm_B_P0 * this->lPrime_P0;
@@ -182,16 +186,18 @@ void SphericalPendulum::retrieveMassValue(double integTime) {
 }
 
 /*! This method is for the FSP to add its contributions to the back-sub method */
-void SphericalPendulum::updateContributions(double integTime,
-                                            BackSubMatrices& backSubContr,
-                                            Eigen::Vector3d sigma_BN,
-                                            Eigen::Vector3d omega_BN_B,
-                                            Eigen::Vector3d g_N) {
+void SphericalPendulum::updateContributions(
+    double integTime,
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d sigma_BN,
+    Eigen::Vector3d omega_BN_B,
+    Eigen::Vector3d g_N
+) {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d)this->sigmaState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
@@ -201,11 +207,11 @@ void SphericalPendulum::updateContributions(double integTime,
     lTilde = eigenTilde(this->l_B);
 
     // - Define aPhi.transpose()
-    this->aPhi = -(this->pHat_03.transpose() * lTilde) /
-                 (this->pendulumRadius * this->pendulumRadius * cos(this->theta) * cos(this->theta));
+    this->aPhi = -(this->pHat_03.transpose() * lTilde)
+               / (this->pendulumRadius * this->pendulumRadius * cos(this->theta) * cos(this->theta));
     // - Define bPhi.transpose()
-    this->bPhi = this->pHat_03.transpose() * lTilde * (lTilde + dTilde) /
-                 (this->pendulumRadius * this->pendulumRadius * cos(this->theta) * cos(this->theta));
+    this->bPhi = this->pHat_03.transpose() * lTilde * (lTilde + dTilde)
+               / (this->pendulumRadius * this->pendulumRadius * cos(this->theta) * cos(this->theta));
 
     // - Map gravity to body frame
     Eigen::Vector3d gLocal_N;
@@ -219,16 +225,19 @@ void SphericalPendulum::updateContributions(double integTime,
     Eigen::Vector3d omega_BN_B_local = this->omegaState->getState();
     Eigen::Matrix3d omegaTilde_BN_B_local;
     omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
-    this->cPhi =
-        1.0 / (this->massFSP * this->pendulumRadius * this->pendulumRadius * cos(this->theta) * cos(this->theta)) *
-        (-this->massFSP *
-             this->pHat_03.transpose().dot(lTilde * omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->d) +
-         this->pHat_03.transpose() * (L_T) +
-         2 * this->massFSP * this->pendulumRadius * this->pendulumRadius * this->phiDot * this->thetaDot *
-             cos(this->theta) * sin(this->theta) -
-         this->massFSP *
-             this->pHat_03.transpose().dot(lTilde * (2 * omegaTilde_BN_B_local * this->lPrime_B +
-                                                     omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->l_B)));
+    this->cPhi = 1.0
+               / (this->massFSP * this->pendulumRadius * this->pendulumRadius * cos(this->theta) * cos(this->theta))
+               * (-this->massFSP
+                      * this->pHat_03.transpose().dot(lTilde * omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->d)
+                  + this->pHat_03.transpose() * (L_T)
+                  + 2 * this->massFSP * this->pendulumRadius * this->pendulumRadius * this->phiDot * this->thetaDot
+                        * cos(this->theta) * sin(this->theta)
+                  - this->massFSP
+                        * this->pHat_03.transpose().dot(
+                            lTilde
+                            * (2 * omegaTilde_BN_B_local * this->lPrime_B
+                               + omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->l_B)
+                        ));
 
     // Define pHat_02_Prime axes of rotation of theta in P0 frame
     Eigen::Vector3d pHat_02_Prime_P0;
@@ -244,96 +253,103 @@ void SphericalPendulum::updateContributions(double integTime,
         pHat_02_Prime.transpose() * lTilde * (lTilde + dTilde) / (this->pendulumRadius * this->pendulumRadius);
     // Define cTheta
     this->cTheta =
-        1.0 / (this->massFSP * this->pendulumRadius * this->pendulumRadius) *
-        (-this->massFSP *
-             pHat_02_Prime.transpose().dot(lTilde * omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->d) +
-         pHat_02_Prime.transpose() * (L_T) -
-         this->massFSP * this->pendulumRadius * this->pendulumRadius * this->phiDot * this->phiDot * cos(this->theta) *
-             sin(this->theta) -
-         this->massFSP *
-             pHat_02_Prime.transpose().dot(lTilde * (2 * omegaTilde_BN_B_local * this->lPrime_B +
-                                                     omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->l_B)));
+        1.0 / (this->massFSP * this->pendulumRadius * this->pendulumRadius)
+        * (-this->massFSP
+               * pHat_02_Prime.transpose().dot(lTilde * omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->d)
+           + pHat_02_Prime.transpose() * (L_T)
+           - this->massFSP * this->pendulumRadius * this->pendulumRadius * this->phiDot * this->phiDot
+                 * cos(this->theta) * sin(this->theta)
+           - this->massFSP
+                 * pHat_02_Prime.transpose().dot(
+                     lTilde
+                     * (2 * omegaTilde_BN_B_local * this->lPrime_B
+                        + omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->l_B)
+                 ));
 
     // - Compute matrix/vector contributions
     backSubContr.matrixA =
-        -this->massFSP * this->pendulumRadius *
-        ((sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02) *
-             this->aPhi.transpose() +
-         (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02 +
-          cos(this->theta) * this->pHat_03) *
-             this->aTheta.transpose());
+        -this->massFSP * this->pendulumRadius
+        * ((sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02)
+               * this->aPhi.transpose()
+           + (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02
+              + cos(this->theta) * this->pHat_03)
+                 * this->aTheta.transpose());
 
     backSubContr.matrixB =
-        -this->massFSP * this->pendulumRadius *
-        ((sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02) *
-             this->bPhi.transpose() +
-         (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02 +
-          cos(this->theta) * this->pHat_03) *
-             this->bTheta.transpose());
+        -this->massFSP * this->pendulumRadius
+        * ((sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02)
+               * this->bPhi.transpose()
+           + (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02
+              + cos(this->theta) * this->pHat_03)
+                 * this->bTheta.transpose());
 
     backSubContr.matrixC =
-        -this->massFSP * this->pendulumRadius * this->rTilde_PcB_B *
-        ((sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02) *
-             this->aPhi.transpose() +
-         (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02 +
-          cos(this->theta) * this->pHat_03) *
-             this->aTheta.transpose());
+        -this->massFSP * this->pendulumRadius * this->rTilde_PcB_B
+        * ((sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02)
+               * this->aPhi.transpose()
+           + (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02
+              + cos(this->theta) * this->pHat_03)
+                 * this->aTheta.transpose());
 
     backSubContr.matrixD =
-        -this->massFSP * this->pendulumRadius * this->rTilde_PcB_B *
-        ((sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02) *
-             this->bPhi.transpose() +
-         (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02 +
-          cos(this->theta) * this->pHat_03) *
-             this->bTheta.transpose());
+        -this->massFSP * this->pendulumRadius * this->rTilde_PcB_B
+        * ((sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02)
+               * this->bPhi.transpose()
+           + (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02
+              + cos(this->theta) * this->pHat_03)
+                 * this->bTheta.transpose());
 
     backSubContr.vecTrans =
-        -this->massFSP * this->pendulumRadius *
-        ((-cos(this->phi) * cos(this->theta) * this->pHat_01 - sin(this->phi) * cos(this->theta) * this->pHat_02) *
-             this->phiDot * this->phiDot +
-         (-cos(this->phi) * cos(this->theta) * this->pHat_01 - sin(this->phi) * cos(this->theta) * this->pHat_02 +
-          sin(this->theta) * this->pHat_03) *
-             this->thetaDot * this->thetaDot +
-         (2 * sin(this->phi) * sin(this->theta) * this->pHat_01 -
-          2 * cos(this->phi) * sin(this->theta) * this->pHat_02) *
-             this->phiDot * this->thetaDot -
-         (sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02) *
-             this->cPhi -
-         (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02 +
-          cos(theta) * this->pHat_03) *
-             this->cTheta);
+        -this->massFSP * this->pendulumRadius
+        * ((-cos(this->phi) * cos(this->theta) * this->pHat_01 - sin(this->phi) * cos(this->theta) * this->pHat_02)
+               * this->phiDot * this->phiDot
+           + (-cos(this->phi) * cos(this->theta) * this->pHat_01 - sin(this->phi) * cos(this->theta) * this->pHat_02
+              + sin(this->theta) * this->pHat_03)
+                 * this->thetaDot * this->thetaDot
+           + (2 * sin(this->phi) * sin(this->theta) * this->pHat_01
+              - 2 * cos(this->phi) * sin(this->theta) * this->pHat_02)
+                 * this->phiDot * this->thetaDot
+           - (sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02)
+                 * this->cPhi
+           - (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02
+              + cos(theta) * this->pHat_03)
+                 * this->cTheta);
 
     backSubContr.vecRot =
-        -this->massFSP *
-        (omegaTilde_BN_B_local * this->rTilde_PcB_B * this->rPrime_PcB_B +
-         this->pendulumRadius * rTilde_PcB_B *
-             ((-cos(this->phi) * cos(this->theta) * this->pHat_01 - sin(this->phi) * cos(this->theta) * this->pHat_02) *
-                  this->phiDot * this->phiDot +
-              (-cos(this->phi) * cos(this->theta) * this->pHat_01 - sin(this->phi) * cos(this->theta) * this->pHat_02 +
-               sin(this->theta) * this->pHat_03) *
-                  this->thetaDot * this->thetaDot +
-              (2 * sin(this->phi) * sin(this->theta) * this->pHat_01 -
-               2 * cos(this->phi) * sin(this->theta) * this->pHat_02) *
-                  this->phiDot * this->thetaDot -
-              (sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02) *
-                  this->cPhi -
-              (cos(this->phi) * sin(this->theta) * this->pHat_01 + sin(this->phi) * sin(this->theta) * this->pHat_02 +
-               cos(theta) * this->pHat_03) *
-                  this->cTheta));
+        -this->massFSP
+        * (omegaTilde_BN_B_local * this->rTilde_PcB_B * this->rPrime_PcB_B
+           + this->pendulumRadius * rTilde_PcB_B
+                 * ((-cos(this->phi) * cos(this->theta) * this->pHat_01
+                     - sin(this->phi) * cos(this->theta) * this->pHat_02)
+                        * this->phiDot * this->phiDot
+                    + (-cos(this->phi) * cos(this->theta) * this->pHat_01
+                       - sin(this->phi) * cos(this->theta) * this->pHat_02 + sin(this->theta) * this->pHat_03)
+                          * this->thetaDot * this->thetaDot
+                    + (2 * sin(this->phi) * sin(this->theta) * this->pHat_01
+                       - 2 * cos(this->phi) * sin(this->theta) * this->pHat_02)
+                          * this->phiDot * this->thetaDot
+                    - (sin(this->phi) * cos(this->theta) * this->pHat_01
+                       - cos(this->phi) * cos(this->theta) * this->pHat_02)
+                          * this->cPhi
+                    - (cos(this->phi) * sin(this->theta) * this->pHat_01
+                       + sin(this->phi) * sin(this->theta) * this->pHat_02 + cos(theta) * this->pHat_03)
+                          * this->cTheta));
 
     return;
 }
 
 /*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is
  derived using the back-sub method */
-void SphericalPendulum::computeDerivatives(double integTime,
-                                           Eigen::Vector3d rDDot_BN_N,
-                                           Eigen::Vector3d omegaDot_BN_B,
-                                           Eigen::Vector3d sigma_BN) {
+void SphericalPendulum::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     // - Find DCM
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
-    sigmaLocal_BN = (Eigen::Vector3d)this->sigmaState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
     dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
     // - Set the derivative of l to lDot
@@ -360,10 +376,12 @@ void SphericalPendulum::computeDerivatives(double integTime,
 }
 
 /*! This method is for the FSP to add its contributions to energy and momentum */
-void SphericalPendulum::updateEnergyMomContributions(double integTime,
-                                                     Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                     double& rotEnergyContr,
-                                                     Eigen::Vector3d omega_BN_B) {
+void SphericalPendulum::updateEnergyMomContributions(
+    double integTime,
+    Eigen::Vector3d &rotAngMomPntCContr_B,
+    double &rotEnergyContr,
+    Eigen::Vector3d omega_BN_B
+) {
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getState();

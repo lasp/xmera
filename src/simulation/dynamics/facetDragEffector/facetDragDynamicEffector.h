@@ -4,16 +4,17 @@
 #ifndef FACET_DRAG_DYNAMIC_EFFECTOR_H
 #define FACET_DRAG_DYNAMIC_EFFECTOR_H
 
-#include <Eigen/Dense>
-#include <vector>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AtmoPropsMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
+
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+
+#include <Eigen/Dense>
+#include <vector>
 
 /*! @brief spacecraft geometry data */
 typedef struct {
@@ -24,10 +25,12 @@ typedef struct {
 } SpacecraftGeometryData;
 
 /*! @brief faceted atmospheric drag dynamic effector */
-class FacetDragDynamicEffector : public SysModel, public DynamicEffector {
-   public:
+class FacetDragDynamicEffector
+    : public SysModel
+    , public DynamicEffector {
+public:
     FacetDragDynamicEffector();
-    void linkInStates(DynParamManager& states) override;
+    void linkInStates(DynParamManager &states) override;
     void computeForceTorque(double integTime, double timeStep) override;
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
@@ -40,7 +43,7 @@ class FacetDragDynamicEffector : public SysModel, public DynamicEffector {
     Eigen::Vector3d v_B;                             //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                         //!< class variable
 
-   private:
+private:
     bool readInputs();
     void plateDrag();
     void updateDragDir();

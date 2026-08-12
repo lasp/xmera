@@ -3,6 +3,7 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "hubEffector.h"
+
 #include <architecture/utilities/eigenSupport.h>
 
 /*! This is the constructor, setting variables to default values */
@@ -36,11 +37,13 @@ HubEffector::HubEffector() {
 }
 
 /*! This is the destructor, nothing to report here */
-HubEffector::~HubEffector() { return; }
+HubEffector::~HubEffector() {
+    return;
+}
 
 /*! This method allows the hub access to gravity and also gets access to the properties in the dyn Manager because uses
  these values in the computeDerivatives method call */
-void HubEffector::linkInStates(DynParamManager& statesIn) {
+void HubEffector::linkInStates(DynParamManager &statesIn) {
     this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
     return;
 }
@@ -57,7 +60,7 @@ void HubEffector::prependSpacecraftNameToStates() {
 }
 
 /*! This method allows the hub to register its states: r_BN_N, v_BN_N, sigma_BN and omega_BN_B */
-void HubEffector::registerStates(DynParamManager& states) {
+void HubEffector::registerStates(DynParamManager &states) {
     // - Register the hub states and set with initial values
     this->posState = states.registerState(3, 1, this->nameOfHubPosition);
     this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
@@ -102,10 +105,12 @@ void HubEffector::updateEffectorMassProps(double integTime) {
 
 /*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
  derivatives */
-void HubEffector::computeDerivatives(double integTime,
-                                     Eigen::Vector3d rDDot_BN_N,
-                                     Eigen::Vector3d omegaDot_BN_B,
-                                     Eigen::Vector3d sigma_BN) {
+void HubEffector::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     // - Get variables from state manager
     Eigen::Vector3d rDotLocal_BN_N;
     Eigen::MRPd sigmaLocal_BN;
@@ -114,7 +119,7 @@ void HubEffector::computeDerivatives(double integTime,
     Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d gLocal_N;
     rDotLocal_BN_N = velocityState->getState();
-    sigmaLocal_BN = (Eigen::Vector3d)sigmaState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d) sigmaState->getState();
     omegaLocal_BN_B = omegaState->getState();
     gLocal_N = *this->g_N;
 
@@ -131,17 +136,19 @@ void HubEffector::computeDerivatives(double integTime,
     Eigen::Vector3d omegaDotLocal_BN_B;
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
-    intermediateVector = this->hubBackSubMatrices.vecRot - this->hubBackSubMatrices.matrixC *
-                                                               this->hubBackSubMatrices.matrixA.inverse() *
-                                                               this->hubBackSubMatrices.vecTrans;
-    intermediateMatrix = hubBackSubMatrices.matrixD -
-                         hubBackSubMatrices.matrixC * hubBackSubMatrices.matrixA.inverse() * hubBackSubMatrices.matrixB;
+    intermediateVector = this->hubBackSubMatrices.vecRot
+                       - this->hubBackSubMatrices.matrixC * this->hubBackSubMatrices.matrixA.inverse()
+                             * this->hubBackSubMatrices.vecTrans;
+    intermediateMatrix = hubBackSubMatrices.matrixD
+                       - hubBackSubMatrices.matrixC * hubBackSubMatrices.matrixA.inverse() * hubBackSubMatrices.matrixB;
     omegaDotLocal_BN_B = intermediateMatrix.inverse() * intermediateVector;
     omegaState->setDerivative(omegaDotLocal_BN_B);
 
     // - Solve for rDDot_BN_N
-    velocityState->setDerivative(dcm_NB * hubBackSubMatrices.matrixA.inverse() *
-                                 (hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB * omegaDotLocal_BN_B));
+    velocityState->setDerivative(
+        dcm_NB * hubBackSubMatrices.matrixA.inverse()
+        * (hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB * omegaDotLocal_BN_B)
+    );
 
     // - Set gravity velocity derivatives
     gravVelocityState->setDerivative(gLocal_N);
@@ -154,10 +161,12 @@ void HubEffector::computeDerivatives(double integTime,
 }
 
 /*! This method is for computing the energy and momentum contributions from the hub */
-void HubEffector::updateEnergyMomContributions(double integTime,
-                                               Eigen::Vector3d& rotAngMomPntCContr_B,
-                                               double& rotEnergyContr,
-                                               Eigen::Vector3d omega_BN_B) {
+void HubEffector::updateEnergyMomContributions(
+    double integTime,
+    Eigen::Vector3d &rotAngMomPntCContr_B,
+    double &rotEnergyContr,
+    Eigen::Vector3d omega_BN_B
+) {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getState();
@@ -178,7 +187,7 @@ void HubEffector::updateEnergyMomContributions(double integTime,
 void HubEffector::modifyStates(double integTime) {
     // Lets switch those MRPs!!
     Eigen::Vector3d sigmaBNLoc;
-    sigmaBNLoc = (Eigen::Vector3d)this->sigmaState->getState();
+    sigmaBNLoc = (Eigen::Vector3d) this->sigmaState->getState();
     if (sigmaBNLoc.norm() > 1) {
         sigmaBNLoc = -sigmaBNLoc / (sigmaBNLoc.dot(sigmaBNLoc));
         this->sigmaState->setState(sigmaBNLoc);

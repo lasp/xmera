@@ -40,10 +40,12 @@ bool FacetDragDynamicEffector::readInputs() {
     @param B_normal_hat
     @param B_location
  */
-void FacetDragDynamicEffector::addFacet(double area,
-                                        double dragCoeff,
-                                        Eigen::Vector3d B_normal_hat,
-                                        Eigen::Vector3d B_location) {
+void FacetDragDynamicEffector::addFacet(
+    double area,
+    double dragCoeff,
+    Eigen::Vector3d B_normal_hat,
+    Eigen::Vector3d B_location
+) {
     this->scGeometry.facetAreas.push_back(area);
     this->scGeometry.facetCoeffs.push_back(dragCoeff);
     this->scGeometry.facetNormals_B.push_back(B_normal_hat);
@@ -57,7 +59,7 @@ which are required for calculating drag forces and torques.
  @param states dynamic parameter states
  */
 
-void FacetDragDynamicEffector::linkInStates(DynParamManager& states) {
+void FacetDragDynamicEffector::linkInStates(DynParamManager &states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->hubVelocity = states.getStateObject("hubVelocity");
 }
@@ -66,7 +68,7 @@ void FacetDragDynamicEffector::linkInStates(DynParamManager& states) {
  */
 void FacetDragDynamicEffector::updateDragDir() {
     Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBN = (Eigen::Vector3d) this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
     this->v_B = dcm_BN * this->hubVelocity->getState();  // [m/s] sc velocity
@@ -94,8 +96,8 @@ void FacetDragDynamicEffector::plateDrag() {
         projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
         projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
         if (projectedArea > 0.0) {
-            facetDragForce = 0.5 * pow(this->v_B.norm(), 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea *
-                             this->atmoInData.neutralDensity * (-1.0) * this->v_hat_B;
+            facetDragForce = 0.5 * pow(this->v_B.norm(), 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea
+                           * this->atmoInData.neutralDensity * (-1.0) * this->v_hat_B;
             facetDragTorque = (-1) * facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
             totalDragForce = totalDragForce + facetDragForce;
             totalDragTorque = totalDragTorque + facetDragTorque;
@@ -120,4 +122,6 @@ Naturally, this means that conditions are held piecewise-constant over an integr
  @return void
  @param currentSimNanos The current simulation time in nanoseconds
  */
-void FacetDragDynamicEffector::updateState(uint64_t currentSimNanos) { this->readInputs(); }
+void FacetDragDynamicEffector::updateState(uint64_t currentSimNanos) {
+    this->readInputs();
+}

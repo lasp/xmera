@@ -4,14 +4,14 @@
 
 #include "facetSRPDynamicEffector.h"
 
-#include <cmath>
-
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/rigidBodyKinematics.h>
 
-const double speedLight = 299792458.0;  // [m/s] Speed of light
-const double AstU = 149597870700.0;     // [m] Astronomical unit
-const double solarRadFlux = 1368.0;     // [W/m^2] Solar radiation flux at 1 AU
+#include <cmath>
+
+double const speedLight = 299792458.0;  // [m/s] Speed of light
+double const AstU = 149597870700.0;     // [m] Astronomical unit
+double const solarRadFlux = 1368.0;     // [W/m^2] Solar radiation flux at 1 AU
 
 /*! The constructor */
 FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
@@ -30,9 +30,7 @@ FacetSRPDynamicEffector::~FacetSRPDynamicEffector() {}
  @param currentSimNanos  [ns] Time the method is called
 */
 void FacetSRPDynamicEffector::reset(uint64_t currentSimNanos) {
-    if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "FacetSRPDynamicEffector.sunInMsg was not linked.");
-    }
+    if (!this->sunInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "FacetSRPDynamicEffector.sunInMsg was not linked."); }
 }
 
 /*! This method populates the spacecraft facet geometry structure with user-input facet information
@@ -44,12 +42,14 @@ void FacetSRPDynamicEffector::reset(uint64_t currentSimNanos) {
  @param locationPntB_B  [m] Facet location wrt point B expressed in B frame components
  @param rotAxis_B  Facet articulation axis expressed in B frame components
 */
-void FacetSRPDynamicEffector::addFacet(double area,
-                                       double specCoeff,
-                                       double diffCoeff,
-                                       Eigen::Vector3d normal_B,
-                                       Eigen::Vector3d locationPntB_B,
-                                       Eigen::Vector3d rotAxis_B) {
+void FacetSRPDynamicEffector::addFacet(
+    double area,
+    double specCoeff,
+    double diffCoeff,
+    Eigen::Vector3d normal_B,
+    Eigen::Vector3d locationPntB_B,
+    Eigen::Vector3d rotAxis_B
+) {
     this->scGeometry.facetAreas.push_back(area);
     this->scGeometry.facetSpecCoeffs.push_back(specCoeff);
     this->scGeometry.facetDiffCoeffs.push_back(diffCoeff);
@@ -72,7 +72,7 @@ which are required for calculating SRP forces and torques
  @return void
  @param states  Dynamic parameter states
 */
-void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
+void FacetSRPDynamicEffector::linkInStates(DynParamManager &states) {
     this->hubSigma = states.getStateObject("hubSigma");
     this->hubPosition = states.getStateObject("hubPosition");
 }
@@ -119,7 +119,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
 
     // Compute dcm_BN
     Eigen::MRPd sigma_BN;
-    sigma_BN = (Eigen::Vector3d)this->hubSigma->getState();
+    sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
 
     // Grab the current spacecraft inertial position
@@ -148,15 +148,17 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
         Eigen::Matrix3d dcm_BB0 = Eigen::Matrix3d::Zero();
 
         // Determine the current facet normal vector if the facet articulates
-        if ((this->numArticulatedFacets != 0) && (i >= (this->numFacets - this->numArticulatedFacets)) &&
-            this->facetAngleMsgRead) {
+        if ((this->numArticulatedFacets != 0) && (i >= (this->numFacets - this->numArticulatedFacets))
+            && this->facetAngleMsgRead) {
             uint64_t articulatedIndex = this->numArticulatedFacets - (this->numFacets - i);
             double articulationAngle = facetArticulationAngleList.at(articulatedIndex);
 
             // Determine the required DCM that rotates the facet normal vector through the articulation angle
-            double prv_BB0[3] = {-articulationAngle * scGeometry.facetRotAxes_B[i][0],
-                                 -articulationAngle * scGeometry.facetRotAxes_B[i][1],
-                                 -articulationAngle * scGeometry.facetRotAxes_B[i][2]};
+            double prv_BB0[3] = {
+                -articulationAngle * scGeometry.facetRotAxes_B[i][0],
+                -articulationAngle * scGeometry.facetRotAxes_B[i][1],
+                -articulationAngle * scGeometry.facetRotAxes_B[i][2]
+            };
             double dcmBB0[3][3];
             PRV2C(prv_BB0, dcmBB0);
             dcm_BB0 = c2DArrayToEigenMatrix3(dcmBB0);
@@ -172,10 +174,10 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
         // Compute the SRP force and torque acting on the facet only if the facet is in view of the Sun
         if (projectedArea > 0.0) {
             facetSRPForcePntB_B =
-                -SRPPressure * projectedArea *
-                ((1 - this->scGeometry.facetSpecCoeffs[i]) * sHat +
-                 2 * ((this->scGeometry.facetDiffCoeffs[i] / 3) + this->scGeometry.facetSpecCoeffs[i] * cosTheta) *
-                     this->scGeometry.facetNormals_B[i]);
+                -SRPPressure * projectedArea
+                * ((1 - this->scGeometry.facetSpecCoeffs[i]) * sHat
+                   + 2 * ((this->scGeometry.facetDiffCoeffs[i] / 3) + this->scGeometry.facetSpecCoeffs[i] * cosTheta)
+                         * this->scGeometry.facetNormals_B[i]);
             facetSRPTorquePntB_B = this->scGeometry.facetLocationsPntB_B[i].cross(facetSRPForcePntB_B);
 
             // Add the facet contribution to the total SRP force and torque acting on the spacecraft
@@ -184,8 +186,8 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
         }
 
         // Reset the articulating facet normals to the original directions given
-        if ((this->numArticulatedFacets != 0) && (i >= (this->numFacets - this->numArticulatedFacets)) &&
-            this->facetAngleMsgRead) {
+        if ((this->numArticulatedFacets != 0) && (i >= (this->numFacets - this->numArticulatedFacets))
+            && this->facetAngleMsgRead) {
             this->scGeometry.facetNormals_B[i] = dcm_BB0.transpose() * this->scGeometry.facetNormals_B[i];
         }
     }
