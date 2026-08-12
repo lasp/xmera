@@ -1,3 +1,1 @@
-
-Abstract class that is used to implement an effector impacting a dynamic body that does not itself maintain a
-state or represent a changing component of the body (for example: gravity, thrusters, SRP, etc.)
+Base class for an effector that applies a force or a torque to a dynamicObject but holds no states for the integrator. Examples are thrusters, atmospheric drag and solar radiation pressure.
