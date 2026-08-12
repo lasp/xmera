@@ -106,14 +106,14 @@ SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
 }
 
 void SimModel::resetSimulation() {
-    this->CurrentNanos = 0;
+    this->lastUpdateNanos = 0;
 
     // Reset all processes, tasks, and modules.
     for (auto &process : this->processList) {
         for (auto &task : process->processTasks) {
             task->nextUpdateNanos = task->firstUpdateNanos;
             for (auto const &modelPair : task->TaskModels) {
-                modelPair.ModelPtr->reset(this->CurrentNanos);
+                modelPair.ModelPtr->reset(this->lastUpdateNanos);
             }
         }
     }
@@ -144,7 +144,7 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
         auto job = this->jobHeap.back();
 
         // Advance the simulation clock to the time of this job.
-        this->CurrentNanos = job.task->nextUpdateNanos;
+        this->lastUpdateNanos = job.task->nextUpdateNanos;
 
         // Re-schedule the job in the future (using saturating addition).
         job.task->nextUpdateNanos += job.task->updatePeriodNanos;
@@ -156,7 +156,7 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
         // Execute the job.
         if (job.process->enabled && job.task->taskActive) {
             for (auto &modelPair : job.task->TaskModels) {
-                modelPair.ModelPtr->updateState(this->CurrentNanos);
+                modelPair.ModelPtr->updateState(this->lastUpdateNanos);
             }
         }
 

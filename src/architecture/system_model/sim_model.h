@@ -426,7 +426,7 @@ public:
 
     //! Get the time at which the simulation was last stepped or reset
     uint64_t getCurrentNanos() const {
-        return this->CurrentNanos;
+        return this->lastUpdateNanos;
     }
 
     //! Get the time at which the simulation will next be stepped
@@ -473,7 +473,7 @@ private:
 
 private:
     //! The time at which the simulation was last updated or reset
-    uint64_t CurrentNanos = 0;
+    uint64_t lastUpdateNanos = 0;
 
     //! The collection of processes to be simulated, in priority order
     std::vector<std::unique_ptr<SysProcess>> processList = {};
