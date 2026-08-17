@@ -33,10 +33,12 @@ if(XMERA_ENABLE_FUZZTESTS)
     fuzztest::fuzztest_gtest_main
   )
 
+  # The labels come from xmera_label_discovered_tests, not from PROPERTIES. Refer to the
+  # note on that function in src/cmake/XmeraGoogleTest.cmake.
   gtest_discover_tests(test_centerOfBrightness_fuzz
-    PROPERTIES
-      LABELS "fuzz\;fuzz-smoke"
+    TEST_LIST cobFuzzTests
   )
+  xmera_label_discovered_tests(test_centerOfBrightness_fuzz cobFuzzTests fuzz fuzz-smoke)
 endif()
 
 find_package(OpenCV REQUIRED)
