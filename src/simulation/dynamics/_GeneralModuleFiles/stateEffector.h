@@ -54,38 +54,61 @@ public:
     BSKLogger bskLogger;     //!< -- BSK Logging
 
 public:
-    StateEffector();                                         //!< -- Contructor
-    virtual ~StateEffector();                                //!< -- Destructor
-    virtual void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
+    StateEffector();           //!< -- Contructor
+    virtual ~StateEffector();  //!< -- Destructor
+
+    /*! This method is for the state effector to provide its contributions of mass and mass rates to the dynamicObject.
+     * This allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates*/
+    virtual void updateEffectorMassProps(double integTime) {
+    }  //!< -- Method for stateEffector to give mass contributions
+
+    /*! This method is strictly for the back-substituion method for computing the dynamics of the spacecraft.
+     * The back-sub method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions
+     * from the state effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using
+     * rDDot_BN_N omegaDot_BN_B*/
     virtual void updateContributions(
         double integTime,
         BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
         Eigen::Vector3d omega_BN_B,
         Eigen::Vector3d g_N
-    );  //!< -- Back-sub contributions
+    ) {}  //!< -- Back-sub contributions
+
+    /*! This method allows for an individual stateEffector to add its energy and momentum calculations to the
+     * dynamicObject. */
     virtual void updateEnergyMomContributions(
         double integTime,
         Eigen::Vector3d &rotAngMomPntCContr_B,
         double &rotEnergyContr,
         Eigen::Vector3d omega_BN_B
-    );                                            //!< -- Energy and momentum calculations
-    virtual void modifyStates(double integTime);  //!< -- Modify state values after integration
-    virtual void calcForceTorqueOnBody(
-        double integTime,
-        Eigen::Vector3d omega_BN_B
-    );  //!< -- Force and torque on s/c due to stateEffector
-    virtual void writeOutputStateMessages(uint64_t integTimeNanos);  //!< -- Write State Messages after integration
+    ) {}
+
+    /*! This method allows for an individual stateEffector to modify their states after integration*/
+    virtual void modifyStates(double integTime) {}
+
+    /*! This method allows for an individual stateEffector to find the force and torque that the
+     * stateEffector is placing on to the body */
+    virtual void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B) {
+    }  //!< -- Force and torque on s/c due to stateEffector
+
+    /*! This method ensures that all dynamics states have their messages written after integration */
+    virtual void writeOutputStateMessages(uint64_t integTimeNanos) {}
+
     virtual void registerStates(DynParamManager &states) = 0;  //!< -- Method for stateEffectors to register states
-    virtual void linkInStates(DynParamManager &states) = 0;    //!< -- Method for stateEffectors to get other states
+
+    virtual void linkInStates(DynParamManager &states) = 0;  //!< -- Method for stateEffectors to get other states
+
     virtual void computeDerivatives(
         double integTime,
         Eigen::Vector3d rDDot_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
         Eigen::Vector3d sigma_BN
     ) = 0;  //!< -- Method for each stateEffector to calculate derivatives
-    virtual void prependSpacecraftNameToStates();
-    virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP);  //!< class method
+
+    /*! This method ensures that stateEffectors can be implemented using the multi-spacecraft architecture */
+    virtual void prependSpacecraftNameToStates() {}
+
+    virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP);
 };
 
 #endif /* STATE_EFFECTOR_H */
