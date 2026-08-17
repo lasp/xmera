@@ -5,9 +5,6 @@
 #ifndef FACET_SRP_DYNAMIC_EFFECTOR_H
 #define FACET_SRP_DYNAMIC_EFFECTOR_H
 
-#include <Eigen/Dense>
-#include <vector>
-
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
@@ -15,8 +12,12 @@
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+
+#include <Eigen/Dense>
+#include <vector>
 
 /*! @brief Spacecraft Geometry Data */
 typedef struct {
@@ -30,20 +31,26 @@ typedef struct {
 } FacetedSRPSpacecraftGeometryData;
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
-class FacetSRPDynamicEffector : public SysModel, public DynamicEffector {
-   public:
+class FacetSRPDynamicEffector
+    : public SysModel
+    , public DynamicEffector {
+public:
     FacetSRPDynamicEffector();                            //!< The module constructor
     ~FacetSRPDynamicEffector();                           //!< The module destructor
-    void linkInStates(DynParamManager& states) override;  //!< Method for giving the effector access to the hub states
-    void computeForceTorque(double callTime,
-                            double timeStep) override;  //!< Method for computing the SRP force and torque about point B
-    void reset(uint64_t currentSimNanos) override;      //!< Reset method
-    void addFacet(double area,
-                  double specCoeff,
-                  double diffCoeff,
-                  Eigen::Vector3d normal_B,
-                  Eigen::Vector3d locationPntB_B,
-                  Eigen::Vector3d rotAxis_B);  //!< Method for adding facets to the spacecraft geometry structure
+    void linkInStates(DynParamManager &states) override;  //!< Method for giving the effector access to the hub states
+    void computeForceTorque(
+        double callTime,
+        double timeStep
+    ) override;                                     //!< Method for computing the SRP force and torque about point B
+    void reset(uint64_t currentSimNanos) override;  //!< Reset method
+    void addFacet(
+        double area,
+        double specCoeff,
+        double diffCoeff,
+        Eigen::Vector3d normal_B,
+        Eigen::Vector3d locationPntB_B,
+        Eigen::Vector3d rotAxis_B
+    );  //!< Method for adding facets to the spacecraft geometry structure
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload>* tmpMsg);
     void ReadMessages();
 
@@ -51,7 +58,9 @@ class FacetSRPDynamicEffector : public SysModel, public DynamicEffector {
     size_t numArticulatedFacets;                       //!< Number of articulated facets
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;  //!< Sun spice ephemeris input message
 
-   private:
+    BSKLogger bskLogger;  //!< -- BSK Logging
+
+private:
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>>
         articulatedFacetDataInMsgs;                  //!< Articulated facet angle data input message
     std::vector<double> facetArticulationAngleList;  //!< [rad] Vector of facet rotation angles

@@ -9,13 +9,6 @@
 
 VSCMGStateEffector::VSCMGStateEffector() {
     this->prevCommandTime = 0xFFFF'FFFF'FFFF'FFFF;
-
-    this->effProps.mEff = 0.0;
-    this->effProps.IEffPntB_B.setZero();
-    this->effProps.rEff_CB_B.setZero();
-    this->effProps.IEffPrimePntB_B.setZero();
-    this->effProps.rEffPrime_CB_B.setZero();
-
     this->nameOfVSCMGOmegasState = "VSCMGOmegas";
     this->nameOfVSCMGThetasState = "VSCMGThetas";
     this->nameOfVSCMGGammasState = "VSCMGGammas";

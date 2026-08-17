@@ -3,17 +3,11 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "linearSpringMassDamper.h"
+
 #include <architecture/utilities/eigenSupport.h>
 
 /*! This is the constructor, setting variables to default values */
 LinearSpringMassDamper::LinearSpringMassDamper() {
-    // - zero the contributions for mass props and mass rates
-    this->effProps.mEff = 0.0;
-    this->effProps.IEffPntB_B.setZero();
-    this->effProps.rEff_CB_B.setZero();
-    this->effProps.rEffPrime_CB_B.setZero();
-    this->effProps.IEffPrimePntB_B.setZero();
-
     // - Initialize the variables to working values
     this->massSMD = 1.0;
     this->r_PB_B.setZero();
@@ -40,7 +34,7 @@ LinearSpringMassDamper::~LinearSpringMassDamper() {
 }
 
 /*! Method for spring mass damper particle to access the states that it needs. It needs gravity and the hub states */
-void LinearSpringMassDamper::linkInStates(DynParamManager& statesIn) {
+void LinearSpringMassDamper::linkInStates(DynParamManager &statesIn) {
     // - Grab access to the hub states
     this->omegaState = statesIn.getStateObject("hubOmega");
     this->sigmaState = statesIn.getStateObject("hubSigma");
@@ -57,7 +51,7 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& statesIn) {
 }
 
 /*! This is the method for the spring mass damper particle to register its states: rho and rhoDot */
-void LinearSpringMassDamper::registerStates(DynParamManager& states) {
+void LinearSpringMassDamper::registerStates(DynParamManager &states) {
     // - Register rho and rhoDot
     this->rhoState = states.registerState(1, 1, nameOfRhoState);
     Eigen::MatrixXd rhoInitMatrix(1, 1);
@@ -114,16 +108,18 @@ void LinearSpringMassDamper::retrieveMassValue(double integTime) {
 }
 
 /*! This method is for the SMD to add its contributions to the back-sub method */
-void LinearSpringMassDamper::updateContributions(double integTime,
-                                                 BackSubMatrices& backSubContr,
-                                                 Eigen::Vector3d sigma_BN,
-                                                 Eigen::Vector3d omega_BN_B,
-                                                 Eigen::Vector3d g_N) {
+void LinearSpringMassDamper::updateContributions(
+    double integTime,
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d sigma_BN,
+    Eigen::Vector3d omega_BN_B,
+    Eigen::Vector3d g_N
+) {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d)this->sigmaState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
@@ -143,10 +139,10 @@ void LinearSpringMassDamper::updateContributions(double integTime,
     Eigen::Vector3d omega_BN_B_local = this->omegaState->getState();
     Eigen::Matrix3d omegaTilde_BN_B_local;
     omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
-    cRho = 1.0 / (this->massSMD) *
-           (this->pHat_B.dot(this->massSMD * g_B) - this->k * this->rho - this->c * this->rhoDot -
-            2 * this->massSMD * this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B) -
-            this->massSMD * this->pHat_B.dot(omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->r_PcB_B));
+    cRho = 1.0 / (this->massSMD)
+         * (this->pHat_B.dot(this->massSMD * g_B) - this->k * this->rho - this->c * this->rhoDot
+            - 2 * this->massSMD * this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B)
+            - this->massSMD * this->pHat_B.dot(omegaTilde_BN_B_local * omegaTilde_BN_B_local * this->r_PcB_B));
 
     // - Compute matrix/vector contributions
     backSubContr.matrixA = this->massSMD * this->pHat_B * this->aRho.transpose();
@@ -154,21 +150,23 @@ void LinearSpringMassDamper::updateContributions(double integTime,
     backSubContr.matrixC = this->massSMD * this->rTilde_PcB_B * this->pHat_B * this->aRho.transpose();
     backSubContr.matrixD = this->massSMD * this->rTilde_PcB_B * this->pHat_B * this->bRho.transpose();
     backSubContr.vecTrans = -this->massSMD * this->cRho * this->pHat_B;
-    backSubContr.vecRot = -this->massSMD * omegaTilde_BN_B_local * this->rTilde_PcB_B * this->rPrime_PcB_B -
-                          this->massSMD * this->cRho * this->rTilde_PcB_B * this->pHat_B;
+    backSubContr.vecRot = -this->massSMD * omegaTilde_BN_B_local * this->rTilde_PcB_B * this->rPrime_PcB_B
+                        - this->massSMD * this->cRho * this->rTilde_PcB_B * this->pHat_B;
     return;
 }
 
 /*! This method is used to define the derivatives of the SMD. One is the trivial kinematic derivative and the other is
  derived using the back-sub method */
-void LinearSpringMassDamper::computeDerivatives(double integTime,
-                                                Eigen::Vector3d rDDot_BN_N,
-                                                Eigen::Vector3d omegaDot_BN_B,
-                                                Eigen::Vector3d sigma_BN) {
+void LinearSpringMassDamper::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     // - Find DCM
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
-    sigmaLocal_BN = (Eigen::Vector3d)this->sigmaState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
     dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
     // - Set the derivative of rho to rhoDot
@@ -190,10 +188,12 @@ void LinearSpringMassDamper::computeDerivatives(double integTime,
 }
 
 /*! This method is for the SMD to add its contributions to energy and momentum */
-void LinearSpringMassDamper::updateEnergyMomContributions(double integTime,
-                                                          Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                          double& rotEnergyContr,
-                                                          Eigen::Vector3d omega_BN_B) {
+void LinearSpringMassDamper::updateEnergyMomContributions(
+    double integTime,
+    Eigen::Vector3d &rotAngMomPntCContr_B,
+    double &rotEnergyContr,
+    Eigen::Vector3d omega_BN_B
+) {
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getState();
@@ -221,15 +221,17 @@ void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime, Eigen::Vect
     rhoDDotLocal = rhoDotState->getStateDeriv()(0, 0);
 
     // - Calculate force that the FSP is applying to the spacecraft
-    this->forceOnBody_B = -(this->massSMD * this->pHat_B * rhoDDotLocal +
-                            2 * omegaLocalTilde_BN_B * this->massSMD * this->rhoDot * this->pHat_B);
+    this->forceOnBody_B =
+        -(this->massSMD * this->pHat_B * rhoDDotLocal
+          + 2 * omegaLocalTilde_BN_B * this->massSMD * this->rhoDot * this->pHat_B);
 
     // - Calculate torque that the FSP is applying about point B
-    this->torqueOnBodyPntB_B = -(
-        this->massSMD * this->rTilde_PcB_B * this->pHat_B * rhoDDotLocal +
-        this->massSMD * omegaLocalTilde_BN_B * this->rTilde_PcB_B * this->rPrime_PcB_B -
-        this->massSMD * (this->rPrimeTilde_PcB_B * this->rTilde_PcB_B + this->rTilde_PcB_B * this->rPrimeTilde_PcB_B) *
-            omegaLocal_BN_B);
+    this->torqueOnBodyPntB_B =
+        -(this->massSMD * this->rTilde_PcB_B * this->pHat_B * rhoDDotLocal
+          + this->massSMD * omegaLocalTilde_BN_B * this->rTilde_PcB_B * this->rPrime_PcB_B
+          - this->massSMD
+                * (this->rPrimeTilde_PcB_B * this->rTilde_PcB_B + this->rTilde_PcB_B * this->rPrimeTilde_PcB_B)
+                * omegaLocal_BN_B);
 
     // - Define values needed to get the torque about point C
     Eigen::Vector3d cLocal_B = *this->c_B;
@@ -241,9 +243,9 @@ void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime, Eigen::Vect
 
     // - Calculate the torque about point C
     this->torqueOnBodyPntC_B =
-        -(this->massSMD * rTilde_PcC_B * this->pHat_B * rhoDDotLocal +
-          this->massSMD * omegaLocalTilde_BN_B * rTilde_PcC_B * rPrime_PcC_B -
-          this->massSMD * (rPrimeTilde_PcC_B * rTilde_PcC_B + rTilde_PcC_B * rPrimeTilde_PcC_B) * omegaLocal_BN_B);
+        -(this->massSMD * rTilde_PcC_B * this->pHat_B * rhoDDotLocal
+          + this->massSMD * omegaLocalTilde_BN_B * rTilde_PcC_B * rPrime_PcC_B
+          - this->massSMD * (rPrimeTilde_PcC_B * rTilde_PcC_B + rTilde_PcC_B * rPrimeTilde_PcC_B) * omegaLocal_BN_B);
 
     return;
 }

@@ -10,13 +10,6 @@
 #include <string>
 
 DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector() {
-    // - zero the mass props and mass prop rates contributions
-    this->effProps.mEff = 0.0;
-    this->effProps.mEffDot = 0.0;
-    this->effProps.rEff_CB_B.setZero();
-    this->effProps.IEffPntB_B.setZero();
-    this->effProps.rEffPrime_CB_B.setZero();
-    this->effProps.IEffPrimePntB_B.setZero();
     this->matrixFDHRB.resize(2, 3);
     this->matrixGDHRB.resize(2, 3);
 

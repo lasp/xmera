@@ -13,12 +13,6 @@
 ReactionWheelStateEffector::ReactionWheelStateEffector() {
     prevCommandTime = 0xFFFF'FFFF'FFFF'FFFF;
 
-    effProps.mEff = 0.0;
-    effProps.IEffPntB_B.setZero();
-    effProps.rEff_CB_B.setZero();
-    effProps.IEffPrimePntB_B.setZero();
-    effProps.rEffPrime_CB_B.setZero();
-
     this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
     this->nameOfReactionWheelThetasState = "reactionWheelThetas";
 

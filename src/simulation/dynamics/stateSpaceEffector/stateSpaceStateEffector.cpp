@@ -3,7 +3,9 @@
 // Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "stateSpaceStateEffector.h"
+
 #include <architecture/utilities/eigenSupport.h>
+
 #include <string>
 
 StateSpaceStateEffector::StateSpaceStateEffector(int n) : sizeOfStateSpace(n) {
@@ -15,13 +17,6 @@ StateSpaceStateEffector::StateSpaceStateEffector(int n) : sizeOfStateSpace(n) {
     this->BEff = Eigen::MatrixXd::Zero(sizeOfStateSpace, 3);
     this->CEff = Eigen::VectorXd::Zero(sizeOfStateSpace);
 
-    // Zero the mass props and mass prop rates contributions
-    this->effProps.mEff = 0.0;
-    this->effProps.rEff_CB_B.fill(0.0);
-    this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.rEffPrime_CB_B.fill(0.0);
-    this->effProps.IEffPrimePntB_B.fill(0.0);
-
     this->nameOfXState = "X" + std::to_string(StateSpaceStateEffector::effectorID);
     this->nameOfXDotState = "XDot" + std::to_string(StateSpaceStateEffector::effectorID);
     StateSpaceStateEffector::effectorID++;
@@ -29,21 +24,23 @@ StateSpaceStateEffector::StateSpaceStateEffector(int n) : sizeOfStateSpace(n) {
 
 uint64_t StateSpaceStateEffector::effectorID = 1;
 
-StateSpaceStateEffector::~StateSpaceStateEffector() { StateSpaceStateEffector::effectorID--; }
+StateSpaceStateEffector::~StateSpaceStateEffector() {
+    StateSpaceStateEffector::effectorID--;
+}
 
 void StateSpaceStateEffector::prependSpacecraftNameToStates() {
     this->nameOfXState = this->nameOfSpacecraftAttachedTo + this->nameOfXState;
     this->nameOfXDotState = this->nameOfSpacecraftAttachedTo + this->nameOfXDotState;
 }
 
-void StateSpaceStateEffector::linkInStates(DynParamManager& statesIn) {
+void StateSpaceStateEffector::linkInStates(DynParamManager &statesIn) {
     this->m_SC = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "m_SC");
     this->c_B = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "centerOfMassSC");
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
 }
 
-void StateSpaceStateEffector::registerStates(DynParamManager& states) {
+void StateSpaceStateEffector::registerStates(DynParamManager &states) {
     this->XState = states.registerState(this->sizeOfStateSpace, 1, this->nameOfXState);
     this->XDotState = states.registerState(this->sizeOfStateSpace, 1, this->nameOfXDotState);
 
@@ -69,11 +66,13 @@ void StateSpaceStateEffector::updateEffectorMassProps(double integTime) {
     this->effProps.IEffPntB_B = ISPntB_B;
 }
 
-void StateSpaceStateEffector::updateContributions(double integTime,
-                                                  BackSubMatrices& backSubContr,
-                                                  Eigen::Vector3d sigma_BN,
-                                                  Eigen::Vector3d omega_BN_B,
-                                                  Eigen::Vector3d g_N) {
+void StateSpaceStateEffector::updateContributions(
+    double integTime,
+    BackSubMatrices &backSubContr,
+    Eigen::Vector3d sigma_BN,
+    Eigen::Vector3d omega_BN_B,
+    Eigen::Vector3d g_N
+) {
     // Grab states
     this->X = this->XState->getState();
     this->XDot = this->XDotState->getState();
@@ -94,14 +93,14 @@ void StateSpaceStateEffector::updateContributions(double integTime,
     Eigen::MatrixXd AEffStar = -this->M.block(0, 0, 3, this->sizeOfStateSpace).transpose();
     Eigen::MatrixXd BEffStar = -this->M.block(3, 0, 3, this->sizeOfStateSpace).transpose();
     Eigen::VectorXd CEffStar = Eigen::VectorXd::Zero(this->sizeOfStateSpace);
-    CEffStar.block<3, 1>(0, 0) = -this->mass * omegaTilde_BN_F * omegaTilde_BN_F * r_ScB_F -
-                                 this->K.block<3, 3>(0, 0) * this->X.block<3, 1>(0, 0) -
-                                 this->C.block<3, 3>(0, 0) * this->XDot.block<3, 1>(0, 0);
-    CEffStar.block<3, 1>(3, 0) = -omegaTilde_BN_F * ISPntS_F * omega_BN_F -
-                                 this->K.block<3, 3>(3, 3) * this->X.block<3, 1>(3, 0) -
-                                 this->C.block<3, 3>(3, 3) * this->XDot.block<3, 1>(3, 0);
-    CEffStar.block<1, 1>(6, 0) = -this->K.block<1, 1>(6, 6) * this->X.block<1, 1>(6, 0) -
-                                 this->C.block<1, 1>(6, 6) * this->XDot.block<1, 1>(6, 0);
+    CEffStar.block<3, 1>(0, 0) = -this->mass * omegaTilde_BN_F * omegaTilde_BN_F * r_ScB_F
+                               - this->K.block<3, 3>(0, 0) * this->X.block<3, 1>(0, 0)
+                               - this->C.block<3, 3>(0, 0) * this->XDot.block<3, 1>(0, 0);
+    CEffStar.block<3, 1>(3, 0) = -omegaTilde_BN_F * ISPntS_F * omega_BN_F
+                               - this->K.block<3, 3>(3, 3) * this->X.block<3, 1>(3, 0)
+                               - this->C.block<3, 3>(3, 3) * this->XDot.block<3, 1>(3, 0);
+    CEffStar.block<1, 1>(6, 0) = -this->K.block<1, 1>(6, 6) * this->X.block<1, 1>(6, 0)
+                               - this->C.block<1, 1>(6, 6) * this->XDot.block<1, 1>(6, 0);
 
     // Find effector matrices
     this->AEff = this->M.inverse() * AEffStar;
@@ -119,10 +118,12 @@ void StateSpaceStateEffector::updateContributions(double integTime,
     backSubContr.vecRot = -this->dcm_FB.transpose() * vRotLHS * this->CEff;
 }
 
-void StateSpaceStateEffector::computeDerivatives(double integTime,
-                                                 Eigen::Vector3d rDDot_BN_N,
-                                                 Eigen::Vector3d omegaDot_BN_B,
-                                                 Eigen::Vector3d sigma_BN) {
+void StateSpaceStateEffector::computeDerivatives(
+    double integTime,
+    Eigen::Vector3d rDDot_BN_N,
+    Eigen::Vector3d omegaDot_BN_B,
+    Eigen::Vector3d sigma_BN
+) {
     // Grab states
     this->XDot = this->XDotState->getState();
     this->sigma_BN = sigma_BN;
@@ -138,10 +139,12 @@ void StateSpaceStateEffector::computeDerivatives(double integTime,
     this->XDotState->setDerivative(XDDot);
 }
 
-void StateSpaceStateEffector::updateEnergyMomContributions(double integTime,
-                                                           Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                           double& rotEnergyContr,
-                                                           Eigen::Vector3d omega_BN_B) {
+void StateSpaceStateEffector::updateEnergyMomContributions(
+    double integTime,
+    Eigen::Vector3d &rotAngMomPntCContr_B,
+    double &rotEnergyContr,
+    Eigen::Vector3d omega_BN_B
+) {
     // Grabe states
     this->X = this->XState->getState();
     this->XDot = this->XDotState->getState();

@@ -11,13 +11,6 @@
 
 /*! This is the constructor, setting variables to default values */
 SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector() {
-    // Zero the mass props and mass prop rates contributions
-    this->effProps.mEff = 0.0;
-    this->effProps.rEff_CB_B.fill(0.0);
-    this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.rEffPrime_CB_B.fill(0.0);
-    this->effProps.IEffPrimePntB_B.fill(0.0);
-
     // Initialize variables to working values
     this->IS1PntSc1_S1.setIdentity();
     this->IS2PntSc2_S2.setIdentity();

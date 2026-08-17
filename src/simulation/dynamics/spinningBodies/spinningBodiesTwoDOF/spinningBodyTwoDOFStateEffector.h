@@ -6,22 +6,24 @@
 #define SPINNING_BODY_TWO_DOF_STATE_EFFECTOR_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/eigenMRP.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
-#include <Eigen/Dense>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/ArrayEffectorLockMsgPayload.h>
 #include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+
+#include <Eigen/Dense>
 
 /*! @brief spinning body state effector class */
-class SpinningBodyTwoDOFStateEffector : public StateEffector, public SysModel {
-   public:
+class SpinningBodyTwoDOFStateEffector
+    : public StateEffector
+    , public SysModel {
+public:
     double mass1 = 0.0;                //!< [kg] mass of lower spinning body (can be 0)
     double mass2 = 1.0;                //!< [kg] mass of upper spinning body
     double k1 = 0.0;                   //!< [N-m/rad] torsional spring constant for first rotation axis
@@ -40,7 +42,8 @@ class SpinningBodyTwoDOFStateEffector : public StateEffector, public SysModel {
     Eigen::Vector3d r_S1B_B{
         0.0,
         0.0,
-        0.0};  //!< [m] vector pointing from body frame B origin to lower spinning frame S1 origin in B frame components
+        0.0
+    };  //!< [m] vector pointing from body frame B origin to lower spinning frame S1 origin in B frame components
     Eigen::Vector3d r_S2S1_S1{0.0, 0.0, 0.0};   //!< [m] vector pointing from lower spinning frame S1 origin to upper
                                                 //!< spinning frame S2 origin in S1 frame components
     Eigen::Vector3d r_Sc1S1_S1{0.0, 0.0, 0.0};  //!< [m] vector pointing from lower spinning frame S1 origin to point
@@ -55,42 +58,52 @@ class SpinningBodyTwoDOFStateEffector : public StateEffector, public SysModel {
     Eigen::Matrix3d dcm_S20S1;     //!< -- DCM from the S1 frame to the S20 frame (S2 frame for theta2=0)
     std::vector<Message<HingedRigidBodyMsgPayload>*> spinningBodyOutMsgs{
         new Message<HingedRigidBodyMsgPayload>,
-        new Message<HingedRigidBodyMsgPayload>};  //!< vector of state output messages
+        new Message<HingedRigidBodyMsgPayload>
+    };  //!< vector of state output messages
     std::vector<Message<SCStatesMsgPayload>*> spinningBodyConfigLogOutMsgs{
         new Message<SCStatesMsgPayload>,
-        new Message<SCStatesMsgPayload>};                      //!< vector of spinning body state config log messages
+        new Message<SCStatesMsgPayload>
+    };  //!< vector of spinning body state config log messages
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;  //!< -- (optional) motor torque input message name
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;   //!< -- (optional) motor lock input message name
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> spinningBodyRefInMsgs{
         ReadFunctor<HingedRigidBodyMsgPayload>(),
-        ReadFunctor<HingedRigidBodyMsgPayload>()};  //!< (optional) vector of spinning body reference input messages
+        ReadFunctor<HingedRigidBodyMsgPayload>()
+    };  //!< (optional) vector of spinning body reference input messages
 
     SpinningBodyTwoDOFStateEffector();                     //!< -- Contructor
     ~SpinningBodyTwoDOFStateEffector();                    //!< -- Destructor
     void reset(uint64_t CurrentClock);                     //!< -- Method for reset
     void writeOutputStateMessages(uint64_t CurrentClock);  //!< -- Method for writing the output messages
     void updateState(uint64_t currentSimNanos);            //!< -- Method for updating information
-    void registerStates(DynParamManager& statesIn);        //!< -- Method for registering the SB states
-    void linkInStates(DynParamManager& states);            //!< -- Method for getting access to other states
-    void updateContributions(double integTime,
-                             BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
-                             Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N);  //!< -- Method for back-substitution contributions
-    void computeDerivatives(double integTime,
-                            Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN);  //!< -- Method for SB to compute its derivatives
+    void registerStates(DynParamManager &statesIn);        //!< -- Method for registering the SB states
+    void linkInStates(DynParamManager &states);            //!< -- Method for getting access to other states
+    void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N
+    );  //!< -- Method for back-substitution contributions
+    void computeDerivatives(
+        double integTime,
+        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::Vector3d sigma_BN
+    );                                               //!< -- Method for SB to compute its derivatives
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(
         double integTime,
-        Eigen::Vector3d& rotAngMomPntCContr_B,
-        double& rotEnergyContr,
-        Eigen::Vector3d omega_BN_B);           //!< -- Method for computing energy and momentum for SBs
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    );                                         //!< -- Method for computing energy and momentum for SBs
     void prependSpacecraftNameToStates();      //!< Method used for multiple spacecraft
     void computeSpinningBodyInertialStates();  //!< Method for computing the SB's states
 
-   private:
+    BSKLogger bskLogger;  //!< -- BSK Logging
+
+private:
     static uint64_t effectorID;  //!< [] ID number of this panel
     double u1 = 0.0;             //!< [N-m] optional motor torque for first axis
     double u2 = 0.0;             //!< [N-m] optional motor torque for second axis
@@ -112,25 +125,30 @@ class SpinningBodyTwoDOFStateEffector : public StateEffector, public SysModel {
     Eigen::Vector3d r_Sc1S1_B{
         0.0,
         0.0,
-        0.0};  //!< [m] vector pointing from lower spinning frame S1 origin to point Sc1 in B frame components
+        0.0
+    };  //!< [m] vector pointing from lower spinning frame S1 origin to point Sc1 in B frame components
     Eigen::Vector3d r_Sc1B_B{
         0.0,
         0.0,
-        0.0};  //!< [m] vector pointing from body frame B origin to point Sc1 in B frame components.
+        0.0
+    };  //!< [m] vector pointing from body frame B origin to point Sc1 in B frame components.
     Eigen::Vector3d r_Sc2S2_B{
         0.0,
         0.0,
-        0.0};  //!< [m] vector pointing from upper spinning frame S2 origin to point Sc2 in B frame components
+        0.0
+    };  //!< [m] vector pointing from upper spinning frame S2 origin to point Sc2 in B frame components
     Eigen::Vector3d r_S2S1_B{0.0, 0.0, 0.0};  //!< [m] vector pointing from lower spinning frame S1 origin to upper
                                               //!< spinning frame S2 origin in B frame components
     Eigen::Vector3d r_Sc2S1_B{
         0.0,
         0.0,
-        0.0};  //!< [m] vector pointing from lower spinning frame S1 origin to point Sc2 in B frame components
+        0.0
+    };  //!< [m] vector pointing from lower spinning frame S1 origin to point Sc2 in B frame components
     Eigen::Vector3d r_Sc2B_B{
         0.0,
         0.0,
-        0.0};  //!< [m] vector pointing from body frame B origin to point Sc2 in B frame components.
+        0.0
+    };  //!< [m] vector pointing from body frame B origin to point Sc2 in B frame components.
     Eigen::Vector3d r_ScB_B{0.0, 0.0, 0.0};  //!< [m] vector pointing from body frame B origin to point Sc (center of
                                              //!< mass of the spinner system) in B frame components.
     Eigen::Vector3d rPrime_Sc1S1_B{0.0, 0.0, 0.0};  //!< [m/s] body frame time derivative of r_Sc1S1_B
@@ -145,26 +163,33 @@ class SpinningBodyTwoDOFStateEffector : public StateEffector, public SysModel {
     Eigen::Vector3d omega_S1B_B{
         0.0,
         0.0,
-        0.0};  //!< [rad/s] angular velocity of the S1 frame wrt the B frame in B frame components
+        0.0
+    };  //!< [rad/s] angular velocity of the S1 frame wrt the B frame in B frame components
     Eigen::Vector3d omega_S2S1_B{
         0.0,
         0.0,
-        0.0};  //!< [rad/s] angular velocity of the S2 frame wrt the S1 frame in B frame components
+        0.0
+    };  //!< [rad/s] angular velocity of the S2 frame wrt the S1 frame in B frame components
     Eigen::Vector3d omega_S2B_B{
         0.0,
         0.0,
-        0.0};  //!< [rad/s] angular velocity of the S2 frame wrt the B frame in B frame components
-    Eigen::Vector3d omega_BN_B{0.0,
-                               0.0,
-                               0.0};  //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components
+        0.0
+    };  //!< [rad/s] angular velocity of the S2 frame wrt the B frame in B frame components
+    Eigen::Vector3d omega_BN_B{
+        0.0,
+        0.0,
+        0.0
+    };  //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components
     Eigen::Vector3d omega_S1N_B{
         0.0,
         0.0,
-        0.0};  //!< [rad/s] angular velocity of the S1 frame wrt the N frame in B frame components
+        0.0
+    };  //!< [rad/s] angular velocity of the S1 frame wrt the N frame in B frame components
     Eigen::Vector3d omega_S2N_B{
         0.0,
         0.0,
-        0.0};  //!< [rad/s] angular velocity of the S2 frame wrt the N frame in B frame components
+        0.0
+    };  //!< [rad/s] angular velocity of the S2 frame wrt the N frame in B frame components
     Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};  //!< -- body frame attitude wrt to the N frame in MRPs
 
     // Matrix quantities
@@ -192,12 +217,16 @@ class SpinningBodyTwoDOFStateEffector : public StateEffector, public SysModel {
     Eigen::Vector3d v_Sc2N_N{0.0, 0.0, 0.0};   //!< [m/s] inertial velocity vector of Sc2 relative to inertial frame
     Eigen::Vector3d sigma_S1N{0.0, 0.0, 0.0};  //!< -- MRP attitude of frame S1 relative to inertial frame
     Eigen::Vector3d sigma_S2N{0.0, 0.0, 0.0};  //!< -- MRP attitude of frame S2 relative to inertial frame
-    Eigen::Vector3d omega_S1N_S1{0.0,
-                                 0.0,
-                                 0.0};  //!< [rad/s] inertial lower spinning body frame angular velocity vector
-    Eigen::Vector3d omega_S2N_S2{0.0,
-                                 0.0,
-                                 0.0};  //!< [rad/s] inertial upper spinning body frame angular velocity vector
+    Eigen::Vector3d omega_S1N_S1{
+        0.0,
+        0.0,
+        0.0
+    };  //!< [rad/s] inertial lower spinning body frame angular velocity vector
+    Eigen::Vector3d omega_S2N_S2{
+        0.0,
+        0.0,
+        0.0
+    };  //!< [rad/s] inertial upper spinning body frame angular velocity vector
 
     // States
     double theta1 = 0.0;     //!< [rad] first axis angle
