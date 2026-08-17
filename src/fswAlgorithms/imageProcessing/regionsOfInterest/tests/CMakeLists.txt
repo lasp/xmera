@@ -33,7 +33,7 @@ if(XMERA_ENABLE_FUZZTESTS)
   )
 
   gtest_discover_tests(test_regionsOfInterest_fuzz
-    PROPERTIES
-      LABELS "fuzz\;fuzz-smoke"
+    TEST_LIST roiFuzzTests
   )
+  xmera_label_discovered_tests(test_regionsOfInterest_fuzz roiFuzzTests fuzz fuzz-smoke)
 endif()
