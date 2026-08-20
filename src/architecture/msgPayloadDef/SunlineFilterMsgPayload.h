@@ -5,11 +5,12 @@
 #ifndef SUNLINE_FILTER_MESSAGE_H
 #define SUNLINE_FILTER_MESSAGE_H
 
+#include <mission/parameters.h>
+
 #define SKF_N_STATES 6
 #define SKF_N_STATES_SWITCH 6
 #define EKF_N_STATES_SWITCH 5
 #define SKF_N_STATES_HALF 3
-#define MAX_N_CSS_MEAS 32
 
 /*! @brief structure for filter-states output for the unscented kalman filter
  implementation of the sunline state estimator*/

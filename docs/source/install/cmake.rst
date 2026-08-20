@@ -67,6 +67,9 @@ them with ``-D`` on the command line.
     * - ``XMERA_ENABLE_FUZZTESTS``
       - ``OFF``
       - Fetch and build fuzz targets with Google FuzzTest
+    * - ``XMERA_MISSION_PARAMETERS_DIR``
+      - (empty)
+      - The directory in which the mission custom ``mission/parameters.h`` is found
     * - ``URL_SPICE_KERNEL``
       - (JPL URL)
       - URL from which to download the ``de430.bsp`` SPICE kernel
