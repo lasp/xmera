@@ -13,11 +13,8 @@
 #include <stdint.h>
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
-class MrpSteering : public SysModel {
+class MrpSteering final : public SysModel {
    public:
-    MrpSteering() = default;
-    ~MrpSteering() final = default;
-
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

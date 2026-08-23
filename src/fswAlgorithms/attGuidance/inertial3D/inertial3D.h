@@ -13,11 +13,8 @@
 
 /*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.
  */
-class Inertial3D : public SysModel {
+class Inertial3D final : public SysModel {
    public:
-    Inertial3D() = default;
-    ~Inertial3D() final = default;
-
     void updateState(uint64_t callTime) override;
     void setSigmaR0N(const Eigen::Vector3d& sigma_RN);
     const Eigen::Vector3d& getSigmaR0N() const;

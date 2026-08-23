@@ -11,11 +11,8 @@
 #include "stepperMotorControllerAlgorithm.h"
 
 /*! @brief Stepper Motor Controller Class */
-class StepperMotorController : public SysModel {
+class StepperMotorController final : public SysModel {
    public:
-    StepperMotorController() = default;
-    ~StepperMotorController() final = default;
-
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
     void setThetaInit(const double thetaInit);

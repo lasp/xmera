@@ -15,11 +15,8 @@
 #include <Eigen/Core>
 
 /*! @brief MRP Rotation class */
-class MrpRotation : public SysModel {
+class MrpRotation final : public SysModel {
    public:
-    MrpRotation() = default;
-    ~MrpRotation() final = default;
-
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

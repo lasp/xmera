@@ -15,11 +15,8 @@
 #include <stdint.h>
 
 /*! @brief The configuration structure for the rwNullSpace module.  */
-class RwNullSpace : public SysModel {
+class RwNullSpace final : public SysModel {
    public:
-    RwNullSpace() = default;
-    ~RwNullSpace() final = default;
-
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 

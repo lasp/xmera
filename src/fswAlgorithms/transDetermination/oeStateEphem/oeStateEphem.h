@@ -19,11 +19,8 @@
            coefficients and then use the input time to determine where
            a given body is in space
 */
-class OEStateEphem : public SysModel {
+class OEStateEphem final : public SysModel {
    public:
-    OEStateEphem() = default;
-    ~OEStateEphem() final = default;
-
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 

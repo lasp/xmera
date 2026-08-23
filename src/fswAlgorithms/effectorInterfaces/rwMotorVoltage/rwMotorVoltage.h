@@ -18,10 +18,9 @@
 
 #include <Eigen/Core>
 
-class RwMotorVoltage : public SysModel {
+class RwMotorVoltage final : public SysModel {
    public:
     RwMotorVoltage(const double minVoltageMagnitude, const double maxVoltageMagnitude);
-    ~RwMotorVoltage() final = default;
 
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;

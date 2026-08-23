@@ -34,10 +34,10 @@ const std::map<PhaseAngleCorrectionMethod, PhaseAngleCorrectionMethodAlgorithm> 
  *        (camera, body, inertial frames), with optional phase-angle correction
  *        and outlier detection.
  */
-class CobConverter : public SysModel {
+class CobConverter final : public SysModel {
    public:
     CobConverter(PhaseAngleCorrectionMethod method, double radiusObject);
-    ~CobConverter() final;
+    ~CobConverter();
 
     void updateState(uint64_t currentSimNanos) override;
     void reset(uint64_t currentSimNanos) override;
