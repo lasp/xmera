@@ -103,7 +103,7 @@ void Triad::updateState(uint64_t callTime) {
     }
 
     /*! get body frame heading */
-    Eigen::Vector3d hRefHat_B;
+    Eigen::Vector3d hRefHat_B = {0.0, 0.0, 0.0};
     if (this->bodyAxisInput == BodyAxisInput::inputBodyHeadingParameter) {
         hRefHat_B = this->h1Hat_B.normalized();
     } else if (this->bodyAxisInput == BodyAxisInput::inputBodyHeadingMsg) {

@@ -29,7 +29,7 @@ void VisualOdometry::reset(uint64_t currentSimNanos) {
     @return void
 */
 void VisualOdometry::updateState(uint64_t currentSimNanos) {
-    Eigen::Vector3d sPrime;
+    Eigen::Vector3d sPrime = {0.0, 0.0, 0.0};
     Eigen::Matrix3d covar;
     int sign = 1;
     /*! -read messages */

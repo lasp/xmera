@@ -171,7 +171,7 @@ int32_t ukfMatInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat
     double invCol[UKF_MAX_DIM];
     double colSolve[UKF_MAX_DIM];
     int indx[UKF_MAX_DIM];
-    int32_t i, j, badCall;
+    int32_t i, j, badCall = -1;
 
     mSetZero(destMat, (size_t) nRow, (size_t) nCol);
     if (nRow != nCol) { return -1; }
