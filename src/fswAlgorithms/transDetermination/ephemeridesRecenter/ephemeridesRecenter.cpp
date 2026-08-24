@@ -8,7 +8,7 @@
  @param callTime : The clock time at which the function was called (nanoseconds)
  */
 void EphemeridesRecenter::reset(uint64_t callTime) {
-    for (auto i = 0; i < this->ephemeridesNumber; ++i) {
+    for (size_t i = 0; i < this->ephemeridesNumber; ++i) {
         if (!this->ephemerides[i].inputEphemerisMsg.isLinked()) {
             throw std::invalid_argument(
                 "Input ephemeris message was not connected for " + this->ephemerides[i].bodySpiceName
@@ -27,7 +27,7 @@ void EphemeridesRecenter::reset(uint64_t callTime) {
  */
 void EphemeridesRecenter::updateState(uint64_t callTime) {
     std::array<BodyEphemerisPayload, MAX_NUM_CHANGE_BODIES> bodyPayloads{};
-    for (auto i = 0; i < this->ephemeridesNumber; ++i) {
+    for (size_t i = 0; i < this->ephemeridesNumber; ++i) {
         BodyEphemerisPayload newBodyPayload{};
         newBodyPayload.bodySpiceName = this->ephemerides[i].bodySpiceName;
         newBodyPayload.originalCentralBodyName = this->ephemerides[i].originalCentralBodyName;
@@ -37,7 +37,7 @@ void EphemeridesRecenter::updateState(uint64_t callTime) {
 
     auto outputPayloads = this->algorithm.updateState(bodyPayloads);
 
-    for (auto i = 0; i < this->ephemeridesNumber; ++i) {
+    for (size_t i = 0; i < this->ephemeridesNumber; ++i) {
         this->recenteredEphemerisOutputMsgs[i]
             ->write(outputPayloads[i].outputEphemerisPayload, this->moduleID, callTime);
     }

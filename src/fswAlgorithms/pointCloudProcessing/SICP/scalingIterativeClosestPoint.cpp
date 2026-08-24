@@ -95,7 +95,7 @@ Eigen::MatrixXd ScalingIterativeClosestPoint::computeRk(double const s_kmin1, Ei
         R_k = Rotation;
     } else if (std::abs(Rotation.determinant() + 1) < this->errorTolerance) {
         std::vector<Eigen::Index> idxs;
-        for (size_t i = 0; i < svd.singularValues().size(); i++) {
+        for (long i = 0; i < svd.singularValues().size(); i++) {
             if (std::abs(svd.singularValues()(i)) < this->errorTolerance) { idxs.push_back(i); }
         }
         if (idxs.size() == 1) {

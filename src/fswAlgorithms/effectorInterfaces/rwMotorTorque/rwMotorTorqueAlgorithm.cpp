@@ -73,7 +73,7 @@ RwMotorTorqueMsgPayload RwMotorTorqueAlgorithm::update(CmdTorqueBodyMsgPayload& 
         this->G_s_B.setZero();
 
         /*! - create the current [Gs] projection matrix with the available RWs */
-        for (uint32_t i = 0; i < this->rwConfigParams.numRW; ++i) {
+        for (int i = 0; i < this->rwConfigParams.numRW; ++i) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) {
                 this->G_s_B.col(numAvailWheels) = cArrayToEigenVector3(&this->rwConfigParams.GsMatrix_B[i * 3]);
                 numAvailWheels += 1;
@@ -103,7 +103,7 @@ RwMotorTorqueMsgPayload RwMotorTorqueAlgorithm::update(CmdTorqueBodyMsgPayload& 
 
         /*! - map the desired RW motor torques to the available RWs */
         uint32_t j = 0;
-        for (uint32_t i = 0; i < this->rwConfigParams.numRW; ++i) {
+        for (int i = 0; i < this->rwConfigParams.numRW; ++i) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) {
                 us[i] = us_avail[j];
                 j += 1;

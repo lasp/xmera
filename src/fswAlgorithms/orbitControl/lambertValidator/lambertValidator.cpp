@@ -322,7 +322,7 @@ void LambertValidator::checkConstraintViolations(std::vector<double> t, std::vec
     Eigen::Vector3d rf_BT_N = rf_BN_N - this->r_TN_N;
     if (rf_BT_N.norm() > this->maxDistanceTarget) { this->violationsDistanceTarget++; }
     // check minimum orbit radius constraint
-    for (int c = 0; c < t.size(); c++) {
+    for (size_t c = 0; c < t.size(); c++) {
         Eigen::Vector3d r_BN_N = X.at(c).head(3);
         if (r_BN_N.norm() < this->minOrbitRadius) {
             this->violationsOrbitRadius++;

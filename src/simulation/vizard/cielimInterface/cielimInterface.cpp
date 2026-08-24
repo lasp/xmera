@@ -50,7 +50,7 @@ void CielimInterface::reset(uint64_t currentSimNanos) {
     celestialParametersStatus.dataFresh = false;
     celestialParametersStatus.lastTimeTag = 0xFFFF'FFFF'FFFF'FFFF;
     this->celestialParametersMessageStatus.clear();
-    for (int c = 0; c < this->celestialBodiesList.size(); ++c) {
+    for (size_t c = 0; c < this->celestialBodiesList.size(); ++c) {
         this->celestialParametersMessageStatus.push_back(celestialParametersStatus);
     }
 
