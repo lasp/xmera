@@ -111,7 +111,7 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUs
                         this->storageUnitMsgsBuffer.back().storedDataName[maxIndex].c_str(),
                         sizeof(this->nodeDataName));
                 // strncpy nodeDataName to the name of the output message
-                strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+                strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName) - 1);
                 this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
                 // Check to see if maxVal is less than packet size or if it will downlink more data than is available
@@ -123,7 +123,7 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUs
                     this->packetTransmitted = 0;
                 }
             } else {
-                strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+                strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName) - 1);
                 this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
                 // Check to see if maxVal is less than packet size.

@@ -38,7 +38,7 @@ void PartitionedStorageUnit::customreset(uint64_t currentClock) {
  */
 void PartitionedStorageUnit::addPartition(std::string dataName) {
     dataInstance tmpDataInstance;
-    strncpy(tmpDataInstance.dataInstanceName, dataName.c_str(), sizeof(tmpDataInstance.dataInstanceName));
+    strncpy(tmpDataInstance.dataInstanceName, dataName.c_str(), sizeof(tmpDataInstance.dataInstanceName) - 1);
     tmpDataInstance.dataInstanceSum = 0;
     this->storedData.push_back(tmpDataInstance);
     return;

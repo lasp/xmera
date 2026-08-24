@@ -71,7 +71,7 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimM
                     sizeof(this->nodeDataName));
 
             // strncpy nodeDataName to the name of the output message
-            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName) - 1);
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
             // Check to see if maxVal is less than packet size.
@@ -82,7 +82,7 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimM
                 this->packetTransmitted = 0;
             }
         } else {
-            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName) - 1);
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
             // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
             // Both of these variables are negative so the comparison is non-intuitive
