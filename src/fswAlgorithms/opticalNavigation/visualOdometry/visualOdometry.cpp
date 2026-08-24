@@ -182,14 +182,7 @@ void VisualOdometry::computeHTH() {
 */
 Eigen::Vector3d VisualOdometry::svdLastColumn(Eigen::Matrix3d &A) const {
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    Eigen::Matrix3d Vmat = svd.matrixV();
-    Eigen::Matrix3d Umat = svd.matrixU();
-    Eigen::Vector3d singular = svd.singularValues();
-    Eigen::DiagonalMatrix<double, 3> Dmat(singular(0), singular(1), singular(2));
-
-    assert((Umat * Dmat * Vmat.transpose() - A).norm());
-    assert(singular(0) >= singular(1) && singular(1) >= singular(2));
-    return Vmat.col(2);
+    return svd.matrixV().col(2);
 }
 
 /*! Compute the R inverse, equation 74 from the reference document
