@@ -4,18 +4,16 @@
 #ifndef _COB_CONVERT_H_
 #define _COB_CONVERT_H_
 
+#include "cobConverterAlgorithm.h"
+#include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
-
 #include <architecture/msgPayloadDef/CameraModelMsgPayload.h>
+#include <architecture/msgPayloadDef/CobConverterDiagnosticMsgPayload.h>
 #include <architecture/msgPayloadDef/FilterMsgPayload.h>
 #include <architecture/msgPayloadDef/NavAttMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCOBMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavCOMMsgPayload.h>
 #include <architecture/msgPayloadDef/OpNavUnitVecMsgPayload.h>
-#include <architecture/msgPayloadDef/CobConverterDiagnosticMsgPayload.h>
-
-#include <architecture/_GeneralModuleFiles/sys_model.h>
-#include "cobConverterAlgorithm.h"
 
 /**
  * @enum PhaseAngleCorrectionMethod
@@ -23,10 +21,11 @@
  */
 enum class PhaseAngleCorrectionMethod { NoCorrection, Lambertian, Binary };
 
-const std::map<PhaseAngleCorrectionMethod, PhaseAngleCorrectionMethodAlgorithm> enumMap = {
+std::map<PhaseAngleCorrectionMethod, PhaseAngleCorrectionMethodAlgorithm> const enumMap = {
     {PhaseAngleCorrectionMethod::NoCorrection, PhaseAngleCorrectionMethodAlgorithm::NoCorrectionAlg},
     {PhaseAngleCorrectionMethod::Lambertian, PhaseAngleCorrectionMethodAlgorithm::LambertianAlg},
-    {PhaseAngleCorrectionMethod::Binary, PhaseAngleCorrectionMethodAlgorithm::BinaryAlg}};
+    {PhaseAngleCorrectionMethod::Binary, PhaseAngleCorrectionMethodAlgorithm::BinaryAlg}
+};
 
 /**
  * @class CobConverter
@@ -35,7 +34,7 @@ const std::map<PhaseAngleCorrectionMethod, PhaseAngleCorrectionMethodAlgorithm> 
  *        and outlier detection.
  */
 class CobConverter final : public SysModel {
-   public:
+public:
     CobConverter(PhaseAngleCorrectionMethod method, double radiusObject);
     ~CobConverter();
 
@@ -46,7 +45,7 @@ class CobConverter final : public SysModel {
     double getRadius() const;
     void setRadiusUncertainty(double radiusUncertainty);
     double getRadiusUncertainty() const;
-    void setAttitudeCovariance(const Eigen::Matrix3d& covAtt_BN_B);
+    void setAttitudeCovariance(Eigen::Matrix3d const &covAtt_BN_B);
     Eigen::Matrix3d getAttitudeCovariance() const;
     void setNumStandardDeviations(double num);
     double getNumStandardDeviations() const;
@@ -56,10 +55,10 @@ class CobConverter final : public SysModel {
     void enableOutlierDetection();
     void disableOutlierDetection();
     bool isOutlierDetectionEnabled() const;
-    void setBrownConradyCoefficients(const CalibrationCoefficients& coefficients);
+    void setBrownConradyCoefficients(CalibrationCoefficients const &coefficients);
     CalibrationCoefficients getBrownConradyCoefficients() const;
 
-   public:
+public:
     // Output messages
     Message<OpNavUnitVecMsgPayload> opnavUnitVecOutMsg;
     Message<OpNavCOMMsgPayload> comCorrectionOutMsg;
@@ -72,7 +71,7 @@ class CobConverter final : public SysModel {
     ReadFunctor<NavAttMsgPayload> navAttInMsg;
     ReadFunctor<NavAttMsgPayload> sunInMsg;
 
-   private:
+private:
     CobConverterAlgorithm algorithm;
 };
 

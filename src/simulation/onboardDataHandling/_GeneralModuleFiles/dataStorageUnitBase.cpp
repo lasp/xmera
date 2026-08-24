@@ -243,7 +243,11 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
         }
         //! - if a dataNode does not exist in storedData, add it to storedData, and add amount
         else if (strcmp(partitionName.c_str(), "") != 0) {
-            strncpy(tmpDataInstance.dataInstanceName, partitionName.c_str(), sizeof(tmpDataInstance.dataInstanceName) - 1);
+            strncpy(
+                tmpDataInstance.dataInstanceName,
+                partitionName.c_str(),
+                sizeof(tmpDataInstance.dataInstanceName) - 1
+            );
             //! Only perform this operation if the resulting sum in the partition is not negative. If it is, initialize
             //! to zero.
             if (data < 0) { data = 0; }

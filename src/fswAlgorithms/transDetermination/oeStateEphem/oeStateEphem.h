@@ -5,11 +5,11 @@
 #ifndef _OE_STATE_EPHEM_H_
 #define _OE_STATE_EPHEM_H_
 
+#include "oeStateEphemAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/EphemerisMsgPayload.h>
 #include <architecture/msgPayloadDef/TDBVehicleClockCorrelationMsgPayload.h>
-#include "oeStateEphemAlgorithm.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20
@@ -20,7 +20,7 @@
            a given body is in space
 */
 class OEStateEphem final : public SysModel {
-   public:
+public:
     void updateState(uint64_t callTime) override;
     void reset(uint64_t callTime) override;
 
@@ -42,25 +42,35 @@ class OEStateEphem final : public SysModel {
     void setArcAnomalyFlag(unsigned int arcNumber, unsigned int anomalyFlag);
     unsigned int getArcAnomalyFlag(unsigned int arcNumber) const;
 
-    void setArcRadiusPeriapsisCoefficients(unsigned int arcNumber,
-                                           const std::array<double, MAX_OE_COEFF>& radiusPeriapsisCoefficients);
+    void setArcRadiusPeriapsisCoefficients(
+        unsigned int arcNumber,
+        std::array<double, MAX_OE_COEFF> const &radiusPeriapsisCoefficients
+    );
     std::array<double, MAX_OE_COEFF> getArcRadiusPeriapsisCoefficients(unsigned int arcNumber);
-    void setArcEccentricityCoefficients(unsigned int arcNumber,
-                                        const std::array<double, MAX_OE_COEFF>& eccentricityCoefficients);
+    void setArcEccentricityCoefficients(
+        unsigned int arcNumber,
+        std::array<double, MAX_OE_COEFF> const &eccentricityCoefficients
+    );
     std::array<double, MAX_OE_COEFF> getArcEccentricityCoefficients(unsigned int arcNumber);
-    void setArcInclinationCoefficients(unsigned int arcNumber,
-                                       const std::array<double, MAX_OE_COEFF>& inclinationCoefficients);
+    void setArcInclinationCoefficients(
+        unsigned int arcNumber,
+        std::array<double, MAX_OE_COEFF> const &inclinationCoefficients
+    );
     std::array<double, MAX_OE_COEFF> getArcInclinationCoefficients(unsigned int arcNumber);
-    void setArcArgPeriapsisCoefficients(unsigned int arcNumber,
-                                        const std::array<double, MAX_OE_COEFF>& argPeriapsisCoefficients);
+    void setArcArgPeriapsisCoefficients(
+        unsigned int arcNumber,
+        std::array<double, MAX_OE_COEFF> const &argPeriapsisCoefficients
+    );
     std::array<double, MAX_OE_COEFF> getArcArgPeriapsisCoefficients(unsigned int arcNumber);
-    void setArcRaanCoefficients(unsigned int arcNumber, const std::array<double, MAX_OE_COEFF>& raanCoefficients);
+    void setArcRaanCoefficients(unsigned int arcNumber, std::array<double, MAX_OE_COEFF> const &raanCoefficients);
     std::array<double, MAX_OE_COEFF> getArcRaanCoefficients(unsigned int arcNumber);
-    void setArcTrueAnomalyCoefficients(unsigned int arcNumber,
-                                       const std::array<double, MAX_OE_COEFF>& trueAnomalyCoefficients);
+    void setArcTrueAnomalyCoefficients(
+        unsigned int arcNumber,
+        std::array<double, MAX_OE_COEFF> const &trueAnomalyCoefficients
+    );
     std::array<double, MAX_OE_COEFF> getArcTrueAnomalyCoefficients(unsigned int arcNumber);
 
-   private:
+private:
     OEStateEphemAlgorithm algorithm{};
 };
 

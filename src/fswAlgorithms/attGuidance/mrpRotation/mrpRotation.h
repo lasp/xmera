@@ -5,31 +5,32 @@
 #ifndef MRP_ROTATION_H
 #define MRP_ROTATION_H
 
-#include <stdint.h>
-
+#include "mrpRotationAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttRefMsgPayload.h>
 #include <architecture/msgPayloadDef/AttStateMsgPayload.h>
-#include "mrpRotationAlgorithm.h"
+
+#include <stdint.h>
+
 #include <Eigen/Core>
 
 /*! @brief MRP Rotation class */
 class MrpRotation final : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    void setSigmaRR0(const Eigen::Vector3d& sigma);
-    const Eigen::Vector3d getSigmaRR0() const;
-    void setOmegaRR0(const Eigen::Vector3d& omega);
-    const Eigen::Vector3d getOmegaRR0() const;
+    void setSigmaRR0(Eigen::Vector3d const &sigma);
+    Eigen::Vector3d const getSigmaRR0() const;
+    void setOmegaRR0(Eigen::Vector3d const &omega);
+    Eigen::Vector3d const getOmegaRR0() const;
 
     Message<AttRefMsgPayload> attRefOutMsg;           //!< output message containing the Reference
     ReadFunctor<AttRefMsgPayload> attRefInMsg;        //!< guidance reference input message
     ReadFunctor<AttStateMsgPayload> desiredAttInMsg;  //!< incoming message containing the desired attitude set
 
-   private:
+private:
     MrpRotationAlgorithm algorithm{};
 };
 

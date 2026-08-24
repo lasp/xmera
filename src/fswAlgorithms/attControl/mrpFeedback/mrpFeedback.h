@@ -5,8 +5,7 @@
 #ifndef MRP_FEEDBACK_H
 #define MRP_FEEDBACK_H
 
-#include <stdint.h>
-
+#include "mrpFeedbackAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
@@ -15,27 +14,28 @@
 #include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
 #include <architecture/msgPayloadDef/RWSpeedMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include "mrpFeedbackAlgorithm.h"
+
+#include <stdint.h>
 
 #include <Eigen/Core>
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
 class MrpFeedback final : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    void setK(const double gain);
+    void setK(double const gain);
     double getK() const;
-    void setP(const double gain);
+    void setP(double const gain);
     double getP() const;
-    void setKi(const double gain);
+    void setKi(double const gain);
     double getKi() const;
-    void setIntegralLimit(const double limit);
+    void setIntegralLimit(double const limit);
     double getIntegralLimit() const;
-    void setControlLawType(const int type);
+    void setControlLawType(int const type);
     int getControlLawType() const;
-    void setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B);
+    void setKnownTorquePntB_B(Eigen::Vector3d const &knownTorquePntB_B);
     Eigen::Vector3d getKnownTorquePntB_B() const;
 
     /* declare module IO interfaces */
@@ -48,7 +48,7 @@ class MrpFeedback final : public SysModel {
     ReadFunctor<AttGuidMsgPayload> guidInMsg;             //!< attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;  //!< vehicle configuration input message
 
-   private:
+private:
     MrpFeedbackAlgorithm algorithm{};
     uint32_t numRW{};  //!< number of reaction wheels
 };

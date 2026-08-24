@@ -3,7 +3,9 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "simpleTransmitter.h"
+
 #include <architecture/utilities/bskLogging.h>
+
 #include <array>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
@@ -17,7 +19,9 @@ SimpleTransmitter::SimpleTransmitter() {
     return;
 }
 
-SimpleTransmitter::~SimpleTransmitter() { return; }
+SimpleTransmitter::~SimpleTransmitter() {
+    return;
+}
 
 /*! Adds a dataStorageStatusMsgPayload to be accessed by transmitter.
  @return void
@@ -66,9 +70,11 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimM
     if (this->currentIndex != -1) {
         if (this->packetTransmitted == 0.0) {
             // Set nodeDataName to the maximum data name
-            strncpy(this->nodeDataName,
-                    this->storageUnitMsgs.back().storedDataName[this->currentIndex].c_str(),
-                    sizeof(this->nodeDataName));
+            strncpy(
+                this->nodeDataName,
+                this->storageUnitMsgs.back().storedDataName[this->currentIndex].c_str(),
+                sizeof(this->nodeDataName)
+            );
 
             // strncpy nodeDataName to the name of the output message
             strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName) - 1);
@@ -86,9 +92,7 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimM
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
             // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
             // Both of these variables are negative so the comparison is non-intuitive
-            if (this->packetTransmitted <= this->packetSize) {
-                this->packetTransmitted = 0.0;
-            }
+            if (this->packetTransmitted <= this->packetSize) { this->packetTransmitted = 0.0; }
         }
     } else {
         dataUsageSimMsg->baudRate = 0;
@@ -105,7 +109,7 @@ int SimpleTransmitter::getMaxIndex() {
     for (long unsigned int i = 0; i < this->storageUnitMsgs.back().storedData.size(); i++) {
         if (this->storageUnitMsgs.back().storedData[i] > maxVal) {
             maxVal = this->storageUnitMsgs.back().storedData[i];
-            maxIndex = (int)i;
+            maxIndex = (int) i;
         }
     }
 

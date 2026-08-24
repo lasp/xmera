@@ -5,7 +5,7 @@
 #ifndef FORCE_TORQUE_THR_FORCE_MAPPING_H
 #define FORCE_TORQUE_THR_FORCE_MAPPING_H
 
-#include <cstdint>
+#include "forceTorqueThrForceMappingAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CmdForceBodyMsgPayload.h>
@@ -13,12 +13,13 @@
 #include <architecture/msgPayloadDef/THRArrayCmdForceMsgPayload.h>
 #include <architecture/msgPayloadDef/THRArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/VehicleConfigMsgPayload.h>
-#include "forceTorqueThrForceMappingAlgorithm.h"
+
+#include <cstdint>
 
 /*! @brief This module maps thruster forces for arbitrary forces and torques
  */
 class ForceTorqueThrForceMapping final : public SysModel {
-   public:
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
@@ -29,7 +30,7 @@ class ForceTorqueThrForceMapping final : public SysModel {
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;    //!< vehicle config input message
     Message<THRArrayCmdForceMsgPayload> thrForceCmdOutMsg;  //!< thruster force command output message
 
-   private:
+private:
     ForceTorqueThrForceMappingAlgorithm algorithm{};
 };
 

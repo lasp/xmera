@@ -2,10 +2,11 @@
 // Copyright (c) 2016, Autonomous Vehicle System Lab, University of Colorado at Boulder
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#include <cstdint>
+#include "partitionedStorageUnit.h"
 
 #include <architecture/utilities/bskLogging.h>
-#include "partitionedStorageUnit.h"
+
+#include <cstdint>
 
 /*! The constructor creates a partitionedStorageUnit instance with zero stored data
  @return void;
@@ -19,7 +20,9 @@ PartitionedStorageUnit::PartitionedStorageUnit() {
 /*! Destructor.
  @return void
  */
-PartitionedStorageUnit::~PartitionedStorageUnit() { return; }
+PartitionedStorageUnit::~PartitionedStorageUnit() {
+    return;
+}
 
 /*! Custom reset function.
  @param currentClock
