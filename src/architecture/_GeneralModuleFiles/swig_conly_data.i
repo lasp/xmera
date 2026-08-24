@@ -119,7 +119,7 @@ ARRAYASLIST(unsigned int)
     for (i = 0; i < PySequence_Length($input); i++) {
         PyObject *o = PySequence_GetItem($input,i);
         if (PyNumber_Check(o)) {
-            temp[i] = (type)PyInt_AsLong(o);
+            temp[i] = (type)PyLong_AsLong(o);
         } else {
             resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
             if (!SWIG_IsOK(resOut)) {
@@ -147,7 +147,7 @@ ARRAYASLIST(unsigned int)
         locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
 
         if(PyNumber_Check(locOutObj)){
-            PyObject *outObject = PyInt_FromLong((long) $1[i]);
+            PyObject *outObject = PyLong_FromLong((long) $1[i]);
             PyList_Append($result,outObject);
             Py_DECREF(outObject);
             Py_DECREF(locOutObj);
