@@ -348,7 +348,7 @@ int PixelLineBiasUKF::pixelLineBiasUKFTimeUpdate(double updateTime) {
 void PixelLineBiasUKF::pixelLineBiasUKFMeasModel() {
     size_t i, j;
     double dcm_CN[3][3], dcm_CB[3][3], dcm_BN[3][3];
-    double reCentered[2], rNorm, denom, planetRad;
+    double reCentered[2], rNorm, denom, planetRad = 0;
     double r_C[3];
 
     v3Set(

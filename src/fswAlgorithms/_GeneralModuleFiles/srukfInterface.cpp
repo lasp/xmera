@@ -22,15 +22,15 @@ void SRukfInterface::reset(uint64_t currentSimNanos) {
     this->cholProcessNoise.setZero(this->state.size(), this->state.size());
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
-    this->lambda = (double)this->state.size() * (this->alpha * this->alpha - 1);
-    this->eta = sqrt((double)this->state.size() + this->lambda);
+    this->lambda = (double) this->state.size() * (this->alpha * this->alpha - 1);
+    this->eta = sqrt((double) this->state.size() + this->lambda);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    this->wM(0) = this->lambda / ((double)this->state.size() + this->lambda);
+    this->wM(0) = this->lambda / ((double) this->state.size() + this->lambda);
     this->wC(0) =
-        this->lambda / ((double)this->state.size() + this->lambda) + (1 - this->alpha * this->alpha + this->beta);
+        this->lambda / ((double) this->state.size() + this->lambda) + (1 - this->alpha * this->alpha + this->beta);
     for (size_t i = 1; i < this->numberSigmaPoints; ++i) {
-        this->wM(i) = 1.0 / (2.0 * ((double)this->state.size() + this->lambda));
+        this->wM(i) = 1.0 / (2.0 * ((double) this->state.size() + this->lambda));
         this->wC(i) = this->wM(i);
     }
 
@@ -63,7 +63,7 @@ void SRukfInterface::timeUpdate(double updateTime) {
 
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
      Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-    for (size_t i = 1; i < this->state.size() + 1; ++i) {
+    for (long i = 1; i < this->state.size() + 1; ++i) {
         /*! - Adding covariance columns from sigma points*/
         this->sigmaPoints[i] = dynamics.propagate(time, this->state.addVector(this->eta * this->sBar.col(i - 1)), dt);
         /*! - Subtracting covariance columns from sigma points*/
@@ -104,7 +104,7 @@ void SRukfInterface::timeUpdate(double updateTime) {
  @param Measurement
  @return void
  */
-void SRukfInterface::measurementUpdate(const MeasurementModel& measurement) {
+void SRukfInterface::measurementUpdate(MeasurementModel const &measurement) {
     this->cholMeasNoise.setZero(measurement.size(), measurement.size());
     this->cholMeasNoise = this->choleskyDecomposition(measurement.getMeasurementNoise());
     /*! - Compute the valid observations and the measurement model for all observations*/
@@ -118,17 +118,13 @@ void SRukfInterface::measurementUpdate(const MeasurementModel& measurement) {
      time update section of the reference document*/
     Eigen::VectorXd yBar;
     yBar.setZero(measurement.size());
-    for (size_t i = 0; i < this->numberSigmaPoints; ++i) {
-        yBar += this->wM(i) * yMeas.col(i);
-    }
+    for (size_t i = 0; i < this->numberSigmaPoints; ++i) { yBar += this->wM(i) * yMeas.col(i); }
 
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement
      update section of the code.  This is based on the difference between the yBar
      parameter and the calculated measurement models.  Equation 24. */
     Eigen::MatrixXd A(measurement.size(), 2 * this->state.size() + measurement.size());
-    for (size_t i = 1; i < this->numberSigmaPoints; ++i) {
-        A.col(i - 1) = sqrt(this->wC(1)) * (yMeas.col(i) - yBar);
-    }
+    for (size_t i = 1; i < this->numberSigmaPoints; ++i) { A.col(i - 1) = sqrt(this->wC(1)) * (yMeas.col(i) - yBar); }
     A.block(0, this->numberSigmaPoints - 1, measurement.size(), measurement.size()) = this->cholMeasNoise;
 
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
@@ -191,7 +187,7 @@ void SRukfInterface::measurementUpdate(const MeasurementModel& measurement) {
 @param Measurement
 @return Eigen::VectorXd
  */
-Eigen::VectorXd SRukfInterface::computeResiduals(const MeasurementModel& measurement) {
+Eigen::VectorXd SRukfInterface::computeResiduals(MeasurementModel const &measurement) {
     /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
     Eigen::MatrixXd yMeas(measurement.size(), this->numberSigmaPoints);
     for (size_t j = 0; j < this->numberSigmaPoints; ++j) {
@@ -201,9 +197,7 @@ Eigen::VectorXd SRukfInterface::computeResiduals(const MeasurementModel& measure
     /*! - Compute the value for the yBar parameter (equation 23)*/
     Eigen::VectorXd yBar;
     yBar.setZero(measurement.size());
-    for (size_t i = 0; i < this->numberSigmaPoints; ++i) {
-        yBar += this->wM(i) * yMeas.col(i);
-    }
+    for (size_t i = 0; i < this->numberSigmaPoints; ++i) { yBar += this->wM(i) * yMeas.col(i); }
     return measurement.subMeasurements(measurement.getObservation(), yBar);
 }
 
@@ -212,7 +206,7 @@ Eigen::VectorXd SRukfInterface::computeResiduals(const MeasurementModel& measure
  @return Eigen::MatrixXd
  @param Eigen::MatrixXd input : The input matrix. If not square, provide it with more cols then rows
  */
-Eigen::MatrixXd SRukfInterface::qrDecompositionJustR(const Eigen::MatrixXd& input) const {
+Eigen::MatrixXd SRukfInterface::qrDecompositionJustR(Eigen::MatrixXd const &input) const {
     Eigen::HouseholderQR<Eigen::MatrixXd> qrDecomposition(input.transpose());
     Eigen::MatrixXd R_tilde;
     R_tilde.setZero(input.rows(), input.rows());
@@ -228,9 +222,7 @@ Eigen::MatrixXd SRukfInterface::qrDecompositionJustR(const Eigen::MatrixXd& inpu
 
     /*! Zero all terms that should be zero to avoid errors accumulating */
     for (int i = 0; i < R_tilde.rows(); ++i) {
-        for (int j = 0; j < i; ++j) {
-            R_tilde(i, j) = 0;
-        }
+        for (int j = 0; j < i; ++j) { R_tilde(i, j) = 0; }
     }
 
     return R_tilde.transpose();
@@ -244,9 +236,11 @@ Eigen::MatrixXd SRukfInterface::qrDecompositionJustR(const Eigen::MatrixXd& inpu
  @param Eigen::VectorXd inputVector : Take it's outer product V.V^T to add into the recomposed P matrix
  @param Eigen::VectorXd coefficient : Factor that is square rooted and scales the outer product P +/- sqrt(v)V.V^T
  */
-Eigen::MatrixXd SRukfInterface::choleskyUpDownDate(const Eigen::MatrixXd& input,
-                                                   const Eigen::VectorXd& inputVector,
-                                                   const double coefficient) const {
+Eigen::MatrixXd SRukfInterface::choleskyUpDownDate(
+    Eigen::MatrixXd const &input,
+    Eigen::VectorXd const &inputVector,
+    double const coefficient
+) const {
     Eigen::MatrixXd P;
     P.setZero(inputVector.size(), inputVector.size());
 
@@ -265,7 +259,7 @@ Eigen::MatrixXd SRukfInterface::choleskyUpDownDate(const Eigen::MatrixXd& input,
  @return Eigen::MatrixXd
  @param Eigen::MatrixXd input : The input matrix
  */
-Eigen::MatrixXd SRukfInterface::choleskyDecomposition(const Eigen::MatrixXd& input) const {
+Eigen::MatrixXd SRukfInterface::choleskyDecomposition(Eigen::MatrixXd const &input) const {
     Eigen::LLT<Eigen::MatrixXd> choleskyDecomp(input);
     return choleskyDecomp.matrixL();
 }
@@ -275,7 +269,7 @@ Eigen::MatrixXd SRukfInterface::choleskyDecomposition(const Eigen::MatrixXd& inp
  @param Eigen::MatrixXd U, an upper triangular matrix
  @param Eigen::MatrixXd b, the right hand side of the Ux = b
  */
-Eigen::MatrixXd SRukfInterface::backSubstitution(const Eigen::MatrixXd& U, const Eigen::MatrixXd& b) const {
+Eigen::MatrixXd SRukfInterface::backSubstitution(Eigen::MatrixXd const &U, Eigen::MatrixXd const &b) const {
     assert(U.rows() == b.rows());
 
     Eigen::MatrixXd x;
@@ -286,9 +280,7 @@ Eigen::MatrixXd SRukfInterface::backSubstitution(const Eigen::MatrixXd& U, const
         xCol.setZero(b.rows());
         for (long i = U.rows() - 1; i >= 0; --i) {
             xCol(i) = b(i, col);
-            for (long j = i + 1; j < U.rows(); ++j) {
-                xCol(i) = xCol(i) - U(i, j) * xCol(j);
-            }
+            for (long j = i + 1; j < U.rows(); ++j) { xCol(i) = xCol(i) - U(i, j) * xCol(j); }
             xCol(i) = xCol(i) / U(i, i);
         }
         x.col(col) = xCol;
@@ -302,7 +294,7 @@ Eigen::MatrixXd SRukfInterface::backSubstitution(const Eigen::MatrixXd& U, const
  @param Eigen::MatrixXd L, an lower triangular matrix
  @param Eigen::MatrixXd b, the right hand side of the Ux = b
  */
-Eigen::MatrixXd SRukfInterface::forwardSubstitution(const Eigen::MatrixXd& L, const Eigen::MatrixXd& b) const {
+Eigen::MatrixXd SRukfInterface::forwardSubstitution(Eigen::MatrixXd const &L, Eigen::MatrixXd const &b) const {
     assert(L.rows() == b.rows());
 
     Eigen::MatrixXd x;
@@ -313,9 +305,7 @@ Eigen::MatrixXd SRukfInterface::forwardSubstitution(const Eigen::MatrixXd& L, co
         xCol.setZero(b.rows());
         for (int i = 0; i < L.rows(); ++i) {
             xCol(i) = b(i, col);
-            for (int j = 0; j < i; ++j) {
-                xCol(i) = xCol(i) - L(i, j) * xCol(j);
-            }
+            for (int j = 0; j < i; ++j) { xCol(i) = xCol(i) - L(i, j) * xCol(j); }
             xCol(i) = xCol(i) / L(i, i);
         }
         x.col(col) = xCol;
@@ -327,20 +317,28 @@ Eigen::MatrixXd SRukfInterface::forwardSubstitution(const Eigen::MatrixXd& L, co
     @param double alphaInput
     @return void
     */
-void SRukfInterface::setAlpha(const double alphaInput) { this->alpha = alphaInput; }
+void SRukfInterface::setAlpha(double const alphaInput) {
+    this->alpha = alphaInput;
+}
 
 /*! Get the filter alpha parameter
     @return double alpha
     */
-double SRukfInterface::getAlpha() const { return this->alpha; }
+double SRukfInterface::getAlpha() const {
+    return this->alpha;
+}
 
 /*! Set the filter beta parameter
     @param double betaInput
     @return void
     */
-void SRukfInterface::setBeta(const double betaInput) { this->beta = betaInput; }
+void SRukfInterface::setBeta(double const betaInput) {
+    this->beta = betaInput;
+}
 
 /*! Get the filter beta parameter
     @return double beta
     */
-double SRukfInterface::getBeta() const { return this->beta; }
+double SRukfInterface::getBeta() const {
+    return this->beta;
+}

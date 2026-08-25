@@ -5,35 +5,33 @@
 #ifndef MRP_STEERING_H
 #define MRP_STEERING_H
 
+#include "mrpSteeringAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/AttGuidMsgPayload.h>
 #include <architecture/msgPayloadDef/RateCmdMsgPayload.h>
-#include "mrpSteeringAlgorithm.h"
+
 #include <stdint.h>
 
 /*! @brief Data structure for the MRP feedback attitude control routine. */
-class MrpSteering : public SysModel {
-   public:
-    MrpSteering() = default;
-    ~MrpSteering() final = default;
-
+class MrpSteering final : public SysModel {
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    void setK1(const double gain);
+    void setK1(double const gain);
     double getK1() const;
-    void setK3(const double gain);
+    void setK3(double const gain);
     double getK3() const;
-    void setOmegaMax(const double omega);
+    void setOmegaMax(double const omega);
     double getOmegaMax() const;
-    void setIgnoreFeedforward(const bool ignore);
+    void setIgnoreFeedforward(bool const ignore);
     bool getIgnoreFeedforward() const;
 
     Message<RateCmdMsgPayload> rateCmdOutMsg;  //!< rate command output message
     ReadFunctor<AttGuidMsgPayload> guidInMsg;  //!< attitude guidance input message
 
-   private:
+private:
     MrpSteeringAlgorithm algorithm{};
 };
 

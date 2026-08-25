@@ -5,28 +5,25 @@
 #ifndef RW_MOTOR_TORQUE_H
 #define RW_MOTOR_TORQUE_H
 
-#include <stdint.h>
-
+#include "rwMotorTorqueAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/CmdTorqueBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/RWArrayConfigMsgPayload.h>
 #include <architecture/msgPayloadDef/RWAvailabilityMsgPayload.h>
 #include <architecture/msgPayloadDef/RwMotorTorqueMsgPayload.h>
-#include "rwMotorTorqueAlgorithm.h"
+
+#include <stdint.h>
 
 #include <Eigen/Core>
 
 /*! @brief Top level structure for the sub-module routines. */
-class RwMotorTorque : public SysModel {
-   public:
-    RwMotorTorque() = default;
-    ~RwMotorTorque() final = default;
-
+class RwMotorTorque final : public SysModel {
+public:
     void reset(uint64_t callTime) override;
     void updateState(uint64_t callTime) override;
 
-    void setControlAxes(const Eigen::Matrix3d& controlMappingMatrix);
+    void setControlAxes(Eigen::Matrix3d const &controlMappingMatrix);
     Eigen::Matrix3d getControlAxes() const;
 
     /* declare module IO interfaces */
@@ -36,7 +33,7 @@ class RwMotorTorque : public SysModel {
     ReadFunctor<RWArrayConfigMsgPayload> rwParamsInMsg;     //!<  RW Array input message
     ReadFunctor<RWAvailabilityMsgPayload> rwAvailInMsg;     //!< optional RWs availability input message
 
-   private:
+private:
     RwMotorTorqueAlgorithm algorithm{};
 };
 

@@ -101,7 +101,7 @@ void PositionODuKF::timeUpdate(double updateTime) {
 
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
      Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-    for (size_t i = 1; i < this->state.size() + 1; i++) {
+    for (long i = 1; i < this->state.size() + 1; i++) {
         /*! - Adding covariance columns from sigma points*/
         this->sigmaPoints.col(i) = propagate(time, this->state + this->etaParameter * this->sBar.col(i - 1), this->dt);
         /*! - Subtracting covariance columns from sigma points*/

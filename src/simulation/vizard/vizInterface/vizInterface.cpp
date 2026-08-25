@@ -360,7 +360,7 @@ void VizInterface::ReadBSKMessages() {
                 if (scIt->msmInfo.msmChargeInMsg.isWritten()) {
                     ChargeMsmMsgPayload msmChargeMsgBuffer;
                     msmChargeMsgBuffer = scIt->msmInfo.msmChargeInMsg();
-                    if (msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
+                    if (static_cast<unsigned long>(msmChargeMsgBuffer.q.size()) == scIt->msmInfo.msmList.size()) {
                         for (size_t idx = 0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
                             scIt->msmInfo.msmList[idx]->currentValue = msmChargeMsgBuffer.q[idx];
                         }

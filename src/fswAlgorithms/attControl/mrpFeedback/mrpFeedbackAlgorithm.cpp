@@ -3,10 +3,12 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "mrpFeedbackAlgorithm.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
 
 #include <math.h>
+
 #include <stdexcept>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -16,9 +18,11 @@
  @param rwConfigMsg reaction wheel config message
  @param rwIsLinked boolean indicating whether reaction wheel config message is linked
 */
-void MrpFeedbackAlgorithm::reset(VehicleConfigMsgPayload vehConfigMsg,
-                                 RWArrayConfigMsgPayload rwConfigMsg,
-                                 bool rwIsLinked) {
+void MrpFeedbackAlgorithm::reset(
+    VehicleConfigMsgPayload vehConfigMsg,
+    RWArrayConfigMsgPayload rwConfigMsg,
+    bool rwIsLinked
+) {
     /*! - copy over spacecraft inertia tensor */
     this->ISCPntB_B = cArrayToEigenMatrix3(vehConfigMsg.ISCPntB_B);
 
@@ -47,10 +51,12 @@ void MrpFeedbackAlgorithm::reset(VehicleConfigMsgPayload vehConfigMsg,
  @param wheelSpeeds Reaction wheel speed message
  @param wheelsAvailability Reaction wheel availability message
 */
-MrpFeedbackOutput MrpFeedbackAlgorithm::update(uint64_t callTime,
-                                               AttGuidMsgPayload guidCmd,
-                                               RWSpeedMsgPayload wheelSpeeds,
-                                               RWAvailabilityMsgPayload wheelsAvailability) {
+MrpFeedbackOutput MrpFeedbackAlgorithm::update(
+    uint64_t callTime,
+    AttGuidMsgPayload guidCmd,
+    RWSpeedMsgPayload wheelSpeeds,
+    RWAvailabilityMsgPayload wheelsAvailability
+) {
     CmdTorqueBodyMsgPayload controlOut{};     /* output message */
     CmdTorqueBodyMsgPayload intFeedbackOut{}; /* output int feedback msg */
 
@@ -63,10 +69,10 @@ MrpFeedbackOutput MrpFeedbackAlgorithm::update(uint64_t callTime,
     }
     this->priorTime = callTime;
 
-    Eigen::Vector3d sigma_BR = Eigen::Map<const Eigen::Vector3d>(guidCmd.sigma_BR);
-    Eigen::Vector3d omega_BR_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.omega_BR_B);
-    Eigen::Vector3d omega_RN_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.omega_RN_B);
-    Eigen::Vector3d domega_RN_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.domega_RN_B);
+    Eigen::Vector3d sigma_BR = Eigen::Map<Eigen::Vector3d const>(guidCmd.sigma_BR);
+    Eigen::Vector3d omega_BR_B = Eigen::Map<Eigen::Vector3d const>(guidCmd.omega_BR_B);
+    Eigen::Vector3d omega_RN_B = Eigen::Map<Eigen::Vector3d const>(guidCmd.omega_RN_B);
+    Eigen::Vector3d domega_RN_B = Eigen::Map<Eigen::Vector3d const>(guidCmd.domega_RN_B);
 
     /*! - compute body rate */
     Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
@@ -79,9 +85,7 @@ MrpFeedbackOutput MrpFeedbackAlgorithm::update(uint64_t callTime,
         /* keep int_sigma less than integralLimit */
         for (uint32_t i = 0; i < 3; i++) {
             double intCheck = fabs(this->int_sigma[i]);
-            if (intCheck > this->integralLimit) {
-                this->int_sigma[i] *= this->integralLimit / intCheck;
-            }
+            if (intCheck > this->integralLimit) { this->int_sigma[i] *= this->integralLimit / intCheck; }
         }
         z = this->int_sigma + this->ISCPntB_B * omega_BR_B;
     }
@@ -93,7 +97,7 @@ MrpFeedbackOutput MrpFeedbackAlgorithm::update(uint64_t callTime,
         cArrayToEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
 
     Eigen::Vector3d H_B = this->ISCPntB_B * omega_BN_B;
-    for (uint32_t i = 0; i < this->rwConfigParams.numRW; i++) {
+    for (int i = 0; i < this->rwConfigParams.numRW; i++) {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) { /* check if wheel is available */
             Eigen::Vector3d G_s_B_i = G_s_B.col(i);
             Eigen::Vector3d h_s_i =
@@ -127,76 +131,90 @@ MrpFeedbackOutput MrpFeedbackAlgorithm::update(uint64_t callTime,
  @return void
  @param gain [N*m] Attitude error feedback gain
 */
-void MrpFeedbackAlgorithm::setK(const double gain) {
-    if (gain < 0.0) {
-        throw std::invalid_argument("Feedback gain K must not be negative");
-    }
+void MrpFeedbackAlgorithm::setK(double const gain) {
+    if (gain < 0.0) { throw std::invalid_argument("Feedback gain K must not be negative"); }
     this->K = gain;
 }
 
 /*! Getter method for the gain K.
  @return const double
 */
-double MrpFeedbackAlgorithm::getK() const { return this->K; }
+double MrpFeedbackAlgorithm::getK() const {
+    return this->K;
+}
 
 /*! Setter method for the gain P.
  @return void
  @param gain [N*m*s] Rate error feedback gain
 */
-void MrpFeedbackAlgorithm::setP(const double gain) {
-    if (gain < 0.0) {
-        throw std::invalid_argument("Feedback gain P must not be negative");
-    }
+void MrpFeedbackAlgorithm::setP(double const gain) {
+    if (gain < 0.0) { throw std::invalid_argument("Feedback gain P must not be negative"); }
     this->P = gain;
 }
 
 /*! Getter method for the gain P.
  @return const double
 */
-double MrpFeedbackAlgorithm::getP() const { return this->P; }
+double MrpFeedbackAlgorithm::getP() const {
+    return this->P;
+}
 
 /*! Setter method for the gain Ki.
  @return void
  @param gain [N*m] Integral feedback gain
 */
-void MrpFeedbackAlgorithm::setKi(const double gain) { this->Ki = gain; }
+void MrpFeedbackAlgorithm::setKi(double const gain) {
+    this->Ki = gain;
+}
 
 /*! Getter method for the gain Ki.
  @return const double
 */
-double MrpFeedbackAlgorithm::getKi() const { return this->Ki; }
+double MrpFeedbackAlgorithm::getKi() const {
+    return this->Ki;
+}
 
 /*! Setter method for the integral limit.
  @return void
  @param limit [N*m*s] Integral limit
 */
-void MrpFeedbackAlgorithm::setIntegralLimit(const double limit) { this->integralLimit = limit; }
+void MrpFeedbackAlgorithm::setIntegralLimit(double const limit) {
+    this->integralLimit = limit;
+}
 
 /*! Getter method for the integral limit.
  @return const double
 */
-double MrpFeedbackAlgorithm::getIntegralLimit() const { return this->integralLimit; }
+double MrpFeedbackAlgorithm::getIntegralLimit() const {
+    return this->integralLimit;
+}
 
 /*! Setter method for the control law type.
  @return void
  @param type control law type
 */
-void MrpFeedbackAlgorithm::setControlLawType(const int type) { this->controlLawType = type; }
+void MrpFeedbackAlgorithm::setControlLawType(int const type) {
+    this->controlLawType = type;
+}
 
 /*! Getter method for the control law type.
  @return const int
 */
-int MrpFeedbackAlgorithm::getControlLawType() const { return this->controlLawType; }
+int MrpFeedbackAlgorithm::getControlLawType() const {
+    return this->controlLawType;
+}
 
 /*! Setter method for the known external torque about point B.
  @return void
  @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
 */
-void MrpFeedbackAlgorithm::setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B) {
+void MrpFeedbackAlgorithm::setKnownTorquePntB_B(Eigen::Vector3d const &knownTorquePntB_B) {
     this->knownTorquePntB_B = knownTorquePntB_B;
 }
 
 /*! Getter method for the known torque about point B.
  @return const Eigen::Vector3d
 */
-Eigen::Vector3d MrpFeedbackAlgorithm::getKnownTorquePntB_B() const { return this->knownTorquePntB_B; }
+Eigen::Vector3d MrpFeedbackAlgorithm::getKnownTorquePntB_B() const {
+    return this->knownTorquePntB_B;
+}

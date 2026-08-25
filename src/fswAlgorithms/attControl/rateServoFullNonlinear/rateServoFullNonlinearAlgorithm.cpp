@@ -3,11 +3,13 @@
 // Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include "rateServoFullNonlinearAlgorithm.h"
+
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 
+#include <fswAlgorithms/fswUtilities/fswDefinitions.h>
 #include <math.h>
+
 #include <stdexcept>
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -17,15 +19,15 @@
  @param rwConfigMsg reaction wheel config message
  @param rwIsLinked boolean indicating whether reaction wheel config message is linked
  */
-void RateServoFullNonlinearAlgorithm::reset(VehicleConfigMsgPayload vehConfigMsg,
-                                            RWArrayConfigMsgPayload rwConfigMsg,
-                                            bool rwIsLinked) {
+void RateServoFullNonlinearAlgorithm::reset(
+    VehicleConfigMsgPayload vehConfigMsg,
+    RWArrayConfigMsgPayload rwConfigMsg,
+    bool rwIsLinked
+) {
     this->ISCPntB_B = cArrayToEigenMatrix3(vehConfigMsg.ISCPntB_B);
 
     this->rwConfigParams.numRW = 0;
-    if (rwIsLinked) {
-        this->rwConfigParams = rwConfigMsg;
-    }
+    if (rwIsLinked) { this->rwConfigParams = rwConfigMsg; }
 
     /* Reset the integral measure of the rate tracking error */
     this->z = Eigen::Vector3d::Zero();
@@ -44,11 +46,13 @@ void RateServoFullNonlinearAlgorithm::reset(VehicleConfigMsgPayload vehConfigMsg
  @param wheelSpeeds Reaction wheel speed message
  @param wheelsAvailability Reaction wheel availability message
  */
-CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(uint64_t callTime,
-                                                                AttGuidMsgPayload guidCmd,
-                                                                RateCmdMsgPayload rateCmd,
-                                                                RWSpeedMsgPayload wheelSpeeds,
-                                                                RWAvailabilityMsgPayload wheelsAvailability) {
+CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(
+    uint64_t callTime,
+    AttGuidMsgPayload guidCmd,
+    RateCmdMsgPayload rateCmd,
+    RWSpeedMsgPayload wheelSpeeds,
+    RWAvailabilityMsgPayload wheelsAvailability
+) {
     CmdTorqueBodyMsgPayload controlOut{}; /*!< commanded torque output message */
 
     /*! - compute control update time */
@@ -60,12 +64,12 @@ CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(uint64_t callTim
     }
     this->priorTime = callTime;
 
-    Eigen::Vector3d omega_BR_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.omega_BR_B);
-    Eigen::Vector3d omega_RN_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.omega_RN_B);
-    Eigen::Vector3d domega_RN_B = Eigen::Map<const Eigen::Vector3d>(guidCmd.domega_RN_B);
+    Eigen::Vector3d omega_BR_B = Eigen::Map<Eigen::Vector3d const>(guidCmd.omega_BR_B);
+    Eigen::Vector3d omega_RN_B = Eigen::Map<Eigen::Vector3d const>(guidCmd.omega_RN_B);
+    Eigen::Vector3d domega_RN_B = Eigen::Map<Eigen::Vector3d const>(guidCmd.domega_RN_B);
 
-    Eigen::Vector3d omega_BastR_B = Eigen::Map<const Eigen::Vector3d>(rateCmd.omega_BastR_B);
-    Eigen::Vector3d omegap_BastR_B = Eigen::Map<const Eigen::Vector3d>(rateCmd.omegap_BastR_B);
+    Eigen::Vector3d omega_BastR_B = Eigen::Map<Eigen::Vector3d const>(rateCmd.omega_BastR_B);
+    Eigen::Vector3d omegap_BastR_B = Eigen::Map<Eigen::Vector3d const>(rateCmd.omegap_BastR_B);
 
     /*! - compute body rate */
     Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
@@ -79,9 +83,7 @@ CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(uint64_t callTim
         this->z += omega_BBast_B * dt;
         for (uint32_t i = 0; i < 3; i++) {
             double intLimCheck = fabs(this->z[i]);
-            if (intLimCheck > this->integralLimit) {
-                this->z[i] *= this->integralLimit / intLimCheck;
-            }
+            if (intLimCheck > this->integralLimit) { this->z[i] *= this->integralLimit / intLimCheck; }
         }
     } else {
         /* integral feedback is turned off through a negative gain setting */
@@ -95,7 +97,7 @@ CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(uint64_t callTim
         cArrayToEigenMatrix<double, 3, RW_EFF_CNT>(this->rwConfigParams.GsMatrix_B);
 
     Eigen::Vector3d H_B = this->ISCPntB_B * omega_BN_B;
-    for (uint32_t i = 0; i < this->rwConfigParams.numRW; i++) {
+    for (int i = 0; i < this->rwConfigParams.numRW; i++) {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) { /* check if wheel is available */
             Eigen::Vector3d G_s_B_i = G_s_B.col(i);
             Eigen::Vector3d h_s_i =
@@ -120,49 +122,59 @@ CmdTorqueBodyMsgPayload RateServoFullNonlinearAlgorithm::update(uint64_t callTim
  @return void
  @param gain [N*m*s] Rate error feedback gain
 */
-void RateServoFullNonlinearAlgorithm::setP(const double gain) {
-    if (gain < 0.0) {
-        throw std::invalid_argument("Feedback gain P must not be negative");
-    }
+void RateServoFullNonlinearAlgorithm::setP(double const gain) {
+    if (gain < 0.0) { throw std::invalid_argument("Feedback gain P must not be negative"); }
     this->P = gain;
 }
 
 /*! Getter method for the gain P.
  @return const double
 */
-double RateServoFullNonlinearAlgorithm::getP() const { return this->P; }
+double RateServoFullNonlinearAlgorithm::getP() const {
+    return this->P;
+}
 
 /*! Setter method for the gain Ki.
  @return void
  @param gain [N*m] Integral feedback gain
 */
-void RateServoFullNonlinearAlgorithm::setKi(const double gain) { this->Ki = gain; }
+void RateServoFullNonlinearAlgorithm::setKi(double const gain) {
+    this->Ki = gain;
+}
 
 /*! Getter method for the gain Ki.
  @return const double
 */
-double RateServoFullNonlinearAlgorithm::getKi() const { return this->Ki; }
+double RateServoFullNonlinearAlgorithm::getKi() const {
+    return this->Ki;
+}
 
 /*! Setter method for the integral limit.
  @return void
  @param limit [N*m*s] Integral limit
 */
-void RateServoFullNonlinearAlgorithm::setIntegralLimit(const double limit) { this->integralLimit = limit; }
+void RateServoFullNonlinearAlgorithm::setIntegralLimit(double const limit) {
+    this->integralLimit = limit;
+}
 
 /*! Getter method for the integral limit.
  @return const double
 */
-double RateServoFullNonlinearAlgorithm::getIntegralLimit() const { return this->integralLimit; }
+double RateServoFullNonlinearAlgorithm::getIntegralLimit() const {
+    return this->integralLimit;
+}
 
 /*! Setter method for the known external torque about point B.
  @return void
  @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
 */
-void RateServoFullNonlinearAlgorithm::setKnownTorquePntB_B(const Eigen::Vector3d& knownTorquePntB_B) {
+void RateServoFullNonlinearAlgorithm::setKnownTorquePntB_B(Eigen::Vector3d const &knownTorquePntB_B) {
     this->knownTorquePntB_B = knownTorquePntB_B;
 }
 
 /*! Getter method for the known torque about point B.
  @return const Eigen::Vector3d
 */
-Eigen::Vector3d RateServoFullNonlinearAlgorithm::getKnownTorquePntB_B() const { return this->knownTorquePntB_B; }
+Eigen::Vector3d RateServoFullNonlinearAlgorithm::getKnownTorquePntB_B() const {
+    return this->knownTorquePntB_B;
+}

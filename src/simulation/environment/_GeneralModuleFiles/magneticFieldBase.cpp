@@ -181,12 +181,11 @@ bool MagneticFieldBase::customReadMessages() {
  */
 void MagneticFieldBase::updateLocalMagField(double currentTime) {
     std::vector<SCStatesMsgPayload>::iterator it;
-    uint64_t atmoInd = 0;
 
     //! - loop over all the spacecraft
     std::vector<MagneticFieldMsgPayload>::iterator magMsgIt;
     magMsgIt = this->magFieldOutBuffer.begin();
-    for (it = scStates.begin(); it != scStates.end(); it++, atmoInd++, magMsgIt++) {
+    for (it = scStates.begin(); it != scStates.end(); it++, magMsgIt++) {
         //! - Computes planet relative state vector
         this->updateRelativePos(&(this->planetState), &(*it));
 

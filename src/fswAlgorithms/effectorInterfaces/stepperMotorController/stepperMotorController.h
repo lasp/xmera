@@ -4,35 +4,32 @@
 #ifndef STEPPERMOTORCONTROLLER_H
 #define STEPPERMOTORCONTROLLER_H
 
+#include "stepperMotorControllerAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>
-#include "stepperMotorControllerAlgorithm.h"
 
 /*! @brief Stepper Motor Controller Class */
-class StepperMotorController : public SysModel {
-   public:
-    StepperMotorController() = default;
-    ~StepperMotorController() final = default;
-
+class StepperMotorController final : public SysModel {
+public:
     void reset(uint64_t currentSimNanos) override;
     void updateState(uint64_t currentSimNanos) override;
-    void setThetaInit(const double thetaInit);
+    void setThetaInit(double const thetaInit);
     double getThetaInit() const;
-    void setThetaMax(const double thetaMax);
+    void setThetaMax(double const thetaMax);
     double getThetaMax() const;
-    void setThetaMin(const double thetaMin);
+    void setThetaMin(double const thetaMin);
     double getThetaMin() const;
-    void setStepAngle(const double stepAngle);
+    void setStepAngle(double const stepAngle);
     double getStepAngle() const;
-    void setStepTime(const double stepTime);
+    void setStepTime(double const stepTime);
     double getStepTime() const;
 
     ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;   //!< Intput msg for the motor reference angle message
     Message<MotorStepCommandMsgPayload> motorStepCommandOutMsg;  //!< Output msg for the number of commanded motor steps
 
-   private:
+private:
     StepperMotorControllerAlgorithm algorithm{};
 };
 
