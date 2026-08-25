@@ -13,32 +13,38 @@
 struct svIntegratorRK4 final : public StateVecIntegrator {
     //! Performs the integration of the associated dynamic object up to time currentTime+timeStep
     void integrate(DynamicObject &dyn, double currentTime, double timeStep) override {
-        auto prevState = dyn.dynManager.stateContainer;
-        auto nextState = prevState;
+        this->prevState = dyn.dynManager.stateContainer;
+        this->nextState = this->prevState;
 
         dyn.equationsOfMotion(currentTime, timeStep);
-        nextState.setDerivativesFrom(dyn.dynManager.stateContainer);
-        nextState.propagateState(timeStep / 6.0);
+        this->nextState.setDerivativesFrom(dyn.dynManager.stateContainer);
+        this->nextState.propagateState(timeStep / 6.0);
 
-        dyn.dynManager.updateStateVector(prevState);
+        dyn.dynManager.updateStateVector(this->prevState);
         dyn.dynManager.propagateStateVector(timeStep / 2.0);
         dyn.equationsOfMotion(currentTime + timeStep / 2.0, timeStep);
-        nextState.setDerivativesFrom(dyn.dynManager.stateContainer);
-        nextState.propagateState(timeStep / 3.0);
+        this->nextState.setDerivativesFrom(dyn.dynManager.stateContainer);
+        this->nextState.propagateState(timeStep / 3.0);
 
-        dyn.dynManager.updateStateVector(prevState);
+        dyn.dynManager.updateStateVector(this->prevState);
         dyn.dynManager.propagateStateVector(timeStep / 2.0);
         dyn.equationsOfMotion(currentTime + timeStep / 2.0, timeStep);
-        nextState.setDerivativesFrom(dyn.dynManager.stateContainer);
-        nextState.propagateState(timeStep / 3.0);
+        this->nextState.setDerivativesFrom(dyn.dynManager.stateContainer);
+        this->nextState.propagateState(timeStep / 3.0);
 
-        dyn.dynManager.updateStateVector(prevState);
+        dyn.dynManager.updateStateVector(this->prevState);
         dyn.dynManager.propagateStateVector(timeStep);
         dyn.equationsOfMotion(currentTime + timeStep, timeStep);
 
-        dyn.dynManager.updateStateVector(nextState);
+        dyn.dynManager.updateStateVector(this->nextState);
         dyn.dynManager.propagateStateVector(timeStep / 6.0);
     }
+
+private:
+    // A cached allocation for reuse, under the assumption that repeated calls to `integrate`
+    // use the same `DynamicObject` with the same named states.
+    mutable StateVector prevState;
+    mutable StateVector nextState;
 };
 
 #endif
