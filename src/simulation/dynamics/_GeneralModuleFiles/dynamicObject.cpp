@@ -9,24 +9,12 @@ void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator) {
         return;
     }
 
-    if (newIntegrator->dynPtr != this) {
-        bskLogger.bskLog(BSK_ERROR, "New integrator must have been created using this DynamicObject");
-        return;
-    }
-
-    // If there was already an integrator set, then whatever dynPtr that the
-    // original integrator had take priority over the dynPtr of newIntegrator
-    if (this->integrator) {
-        newIntegrator->dynPtr = this->integrator->dynPtr;
-    }
-
     delete this->integrator;
-
     this->integrator = newIntegrator;
 }
 
 void DynamicObject::integrateState(double integrateToThisTime) {
-    this->integrator->dynPtr->preIntegration(integrateToThisTime);
-    this->integrator->integrate(this->timeBefore, this->timeStep);
-    this->integrator->dynPtr->postIntegration(integrateToThisTime);
+    this->preIntegration(integrateToThisTime);
+    this->integrator->integrate(*this, this->timeBefore, this->timeStep);
+    this->postIntegration(integrateToThisTime);
 }

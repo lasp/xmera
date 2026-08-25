@@ -26,7 +26,7 @@ Spacecraft::Spacecraft() {
     this->dvAccum_CN_N.setZero();
 
     // - Set integrator as RK4 by default
-    this->integrator = new svIntegratorRK4(this);
+    this->integrator = new svIntegratorRK4();
 }
 
 /*! This is the destructor, nothing to report here */

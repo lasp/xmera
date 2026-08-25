@@ -7,16 +7,10 @@
 class DynamicObject;
 
 /*! @brief state vector integrator class */
-class StateVecIntegrator {
-public:
-    StateVecIntegrator(DynamicObject* dynIn) : dynPtr(dynIn) {}
-
+struct StateVecIntegrator {
     virtual ~StateVecIntegrator() = default;
 
-    virtual void integrate(double currentTime, double timeStep) = 0;
-
-    //! This is an object that contains the method equationsOfMotion(), also known as the F function.
-    DynamicObject* dynPtr;
+    virtual void integrate(DynamicObject &dyn, double currentTime, double timeStep) = 0;
 };
 
 #endif /* StateVecIntegrator_h */
