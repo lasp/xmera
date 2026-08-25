@@ -5,13 +5,11 @@
 %module svIntegrators
 
 %{
-   #include <vector>
    #include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
    #include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
    #include <architecture/_GeneralModuleFiles/sys_model.h>
 %}
 
-%include <std_vector.i>
 %include <architecture/_GeneralModuleFiles/sys_model.i>
 %include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
 %include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>

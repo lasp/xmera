@@ -8,16 +8,40 @@
 #include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
 #include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
-#include <simulation/dynamics/_GeneralModuleFiles/extendedStateVector.h>
 
-/*! @brief 4th order Runge-Kutta integrator */
-class svIntegratorRK4 final : public StateVecIntegrator {
-public:
-    svIntegratorRK4(DynamicObject* dyn);  //!< class method
+//! 4th order Runge-Kutta integrator
+struct svIntegratorRK4 final : public StateVecIntegrator {
+    svIntegratorRK4(DynamicObject* dyn)
+        : StateVecIntegrator(dyn) {}
 
-    /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep
-     */
-    void integrate(double currentTime, double timeStep) override;
+    //! Performs the integration of the associated dynamic object up to time currentTime+timeStep
+    void integrate(double currentTime, double timeStep) override {
+        auto prevState = this->dynPtr->dynManager.stateContainer;
+        auto nextState = prevState;
+
+        this->dynPtr->equationsOfMotion(currentTime, timeStep);
+        nextState.setDerivativesFrom(this->dynPtr->dynManager.stateContainer);
+        nextState.propagateState(timeStep / 6.0);
+
+        this->dynPtr->dynManager.updateStateVector(prevState);
+        this->dynPtr->dynManager.propagateStateVector(timeStep / 2.0);
+        this->dynPtr->equationsOfMotion(currentTime + timeStep / 2.0, timeStep);
+        nextState.setDerivativesFrom(this->dynPtr->dynManager.stateContainer);
+        nextState.propagateState(timeStep / 3.0);
+
+        this->dynPtr->dynManager.updateStateVector(prevState);
+        this->dynPtr->dynManager.propagateStateVector(timeStep / 2.0);
+        this->dynPtr->equationsOfMotion(currentTime + timeStep / 2.0, timeStep);
+        nextState.setDerivativesFrom(this->dynPtr->dynManager.stateContainer);
+        nextState.propagateState(timeStep / 3.0);
+
+        this->dynPtr->dynManager.updateStateVector(prevState);
+        this->dynPtr->dynManager.propagateStateVector(timeStep);
+        this->dynPtr->equationsOfMotion(currentTime + timeStep, timeStep);
+
+        this->dynPtr->dynManager.updateStateVector(nextState);
+        this->dynPtr->dynManager.propagateStateVector(timeStep / 6.0);
+    }
 };
 
-#endif /* svIntegratorRK4_h */
+#endif

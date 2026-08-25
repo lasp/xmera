@@ -57,12 +57,7 @@ class DynamicObject : public SysModel {
     /** Sets a new integrator in use */
     void setIntegrator(StateVecIntegrator* newIntegrator);
 
-    /** Connects the integration of a DynamicObject to the integration of this DynamicObject. */
-    void syncDynamicsIntegration(DynamicObject* dynPtr);
-
    public:
-    /** flag indicating that another spacecraft object is controlling the integration */
-    bool isDynamicsSynced = false;
     double timeStep;   /**< [s] integration time step */
     double timeBefore; /**< [s] prior time value */
 };
