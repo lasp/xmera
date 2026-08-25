@@ -5,14 +5,19 @@
 #ifndef svIntegratorRK4_h
 #define svIntegratorRK4_h
 
-#include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynamicObject.h>
+#include <simulation/dynamics/_GeneralModuleFiles/dynParamManager.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
+#include <simulation/dynamics/_GeneralModuleFiles/extendedStateVector.h>
 
 /*! @brief 4th order Runge-Kutta integrator */
-class svIntegratorRK4 : public svIntegratorRungeKutta<4> {
-   public:
+class svIntegratorRK4 final : public StateVecIntegrator {
+public:
     svIntegratorRK4(DynamicObject* dyn);  //!< class method
-   private:
-    static RKCoefficients<4> getCoefficients();
+
+    /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep
+     */
+    void integrate(double currentTime, double timeStep) override;
 };
 
 #endif /* svIntegratorRK4_h */

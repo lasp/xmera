@@ -3,18 +3,52 @@
 
 #include "svIntegratorRK4.h"
 
-svIntegratorRK4::svIntegratorRK4(DynamicObject* dyn)
-    : svIntegratorRungeKutta(dyn, svIntegratorRK4::getCoefficients()) {}
+svIntegratorRK4::svIntegratorRK4(DynamicObject* dynIn)
+    : StateVecIntegrator(dynIn) {}
 
-RKCoefficients<4> svIntegratorRK4::getCoefficients() {
-    RKCoefficients<4> coefficients;
-    coefficients.aMatrix.at(1).at(0) = 0.5;
-    coefficients.aMatrix.at(2).at(1) = 0.5;
-    coefficients.aMatrix.at(3).at(2) = 1.0;
+void svIntegratorRK4::integrate(double currentTime, double timeStep) {
+    auto prevState = ExtendedStateVector::fromStates(this->dynPtrs);
+    auto nextState = prevState;
 
-    coefficients.bArray = {1. / 6., 1. / 3., 1. / 3., 1. / 6.};
+    {
+        for (auto dynPtr : this->dynPtrs) { dynPtr->equationsOfMotion(currentTime, timeStep); }
 
-    coefficients.cArray = {0., 1. / 2., 1. / 2., 1.};
+        auto kValue = ExtendedStateVector::fromStateDerivs(this->dynPtrs);
+        nextState += kValue * (timeStep / 6.0);
 
-    return coefficients;
+        auto predictedState = prevState;
+        predictedState += kValue * (timeStep / 2.0);
+        predictedState.setStates(this->dynPtrs);
+    }
+
+    {
+        for (auto dynPtr : this->dynPtrs) { dynPtr->equationsOfMotion(currentTime + timeStep / 2.0, timeStep); }
+
+        auto kValue = ExtendedStateVector::fromStateDerivs(this->dynPtrs);
+        nextState += kValue * (timeStep / 3.0);
+
+        auto predictedState = prevState;
+        predictedState += kValue * (timeStep / 2.0);
+        predictedState.setStates(this->dynPtrs);
+    }
+
+    {
+        for (auto dynPtr : this->dynPtrs) { dynPtr->equationsOfMotion(currentTime + timeStep / 2.0, timeStep); }
+
+        auto kValue = ExtendedStateVector::fromStateDerivs(this->dynPtrs);
+        nextState += kValue * (timeStep / 3.0);
+
+        auto predictedState = prevState;
+        predictedState += kValue * timeStep;
+        predictedState.setStates(this->dynPtrs);
+    }
+
+    {
+        for (auto dynPtr : this->dynPtrs) { dynPtr->equationsOfMotion(currentTime + timeStep, timeStep); }
+
+        auto kValue = ExtendedStateVector::fromStateDerivs(this->dynPtrs);
+        nextState += kValue * (timeStep / 6.0);
+    }
+
+    nextState.setStates(this->dynPtrs);
 }
