@@ -2,8 +2,8 @@
 Executive Summary
 -----------------
 
-This module provides an implementation of the behavior of thrusters. Thrusters are modeled dynamically using a first-order ordinary differential equation, which is compatible with variable time step integrators.
-With this module, there are now two different thruster implementations. See :ref:`thrusterDynamicEffector` for the previous version, which implemented thrusters using on and off-ramps, although not compatible with variable time step integrators.
+This module provides an implementation of the behavior of thrusters. Thrusters are modeled dynamically using a first-order ordinary differential equation, so the thrust is a continuous state that is integrated along with the rest of the spacecraft.
+With this module, there are now two different thruster implementations. See :ref:`thrusterDynamicEffector` for the previous version, which implemented thrusters using on and off-ramps instead.
 
 Message Connection Descriptions
 -------------------------------

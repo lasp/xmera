@@ -17,10 +17,6 @@ The module
 contains further information on this module's function,
 how to run it, as well as testing.
 
-.. danger::
-
-    This thruster module is not compatible with variable time step integrators.
-
 
 Message Connection Descriptions
 -------------------------------
