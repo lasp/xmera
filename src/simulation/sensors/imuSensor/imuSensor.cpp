@@ -59,7 +59,7 @@ ImuSensor::ImuSensor() {
     set body orientation DCM relative to platform
  */
 void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll) {
-    this->dcm_PB = eigenM1(roll) * eigenM2(pitch) * eigenM3(yaw);
+    this->dcm_PB = eulerAngles321ToDcm(Eigen::Vector3d(yaw, pitch, roll));
 }
 
 /*! Reset the module
