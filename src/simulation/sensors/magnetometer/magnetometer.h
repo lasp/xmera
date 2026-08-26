@@ -11,7 +11,6 @@
 #include <architecture/msgPayloadDef/TAMSensorMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
-#include <architecture/utilities/saturate.h>
 
 #include <Eigen/Dense>
 #include <random>
@@ -58,7 +57,6 @@ private:
     SCStatesMsgPayload stateCurrent;  //!< [-] Current spacecraft state
     uint64_t numStates;               //!< [-] Number of States for Gauss Markov Models
     GaussMarkov<3> noiseModel;        //!< [-] Gauss Markov noise generation model
-    Saturate saturateUtility;         //!< [-] Saturation utility
 };
 
 #endif

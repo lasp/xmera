@@ -20,7 +20,6 @@ Magnetometer::Magnetometer() {
     this->scaleFactor = 1.0;
     this->maxOutput = 1e200;   // Tesla
     this->minOutput = -1e200;  // Tesla
-    this->saturateUtility = Saturate(this->numStates);
     this->dcm_SB.setIdentity(3, 3);
     return;
 }
@@ -53,15 +52,6 @@ void Magnetometer::reset(uint64_t currentSimNanos) {
     Eigen::Matrix3d nMatrix = (this->senNoiseStd * 1.5).asDiagonal();
     this->noiseModel.setNoiseMatrix(nMatrix);
     this->noiseModel.setRNGSeed(this->RNGSeed);
-    Eigen::MatrixXd satBounds;
-    satBounds.resize(this->numStates, 2);
-    satBounds(0, 0) = this->minOutput;
-    satBounds(0, 1) = this->maxOutput;
-    satBounds(1, 0) = this->minOutput;
-    satBounds(1, 1) = this->maxOutput;
-    satBounds(2, 0) = this->minOutput;
-    satBounds(2, 1) = this->maxOutput;
-    this->saturateUtility.setBounds(satBounds);
     return;
 }
 
@@ -117,7 +107,7 @@ void Magnetometer::applySensorErrors() {
 
 /*! This method applies saturation using the given bounds. */
 void Magnetometer::applySaturation() {
-    this->tamSensed_S = this->saturateUtility.saturate(this->tamSensed_S);
+    this->tamSensed_S = this->tamSensed_S.cwiseMax(this->minOutput).cwiseMin(this->maxOutput);
 }
 
 /*! This method writes the output messages. */
