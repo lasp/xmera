@@ -34,7 +34,6 @@ CoarseSunSensor::CoarseSunSensor() {
     this->pastValue = 0.0;
     this->maxOutput = 1e6;
     this->minOutput = 0.0;
-    this->saturateUtility = Saturate(1);
     this->fov = 1.0471975512;
     this->phi = 0.785398163397;
     this->theta = 0.0;
@@ -135,12 +134,6 @@ void CoarseSunSensor::reset(uint64_t currentSimNanos) {
 
     pMatrixFault(0, 0) = 1.0;  // propagation matrix
     this->faultNoiseModel.setPropMatrix(pMatrixFault);
-
-    Eigen::MatrixXd satBounds;
-    satBounds.resize(1, 2);
-    satBounds(0, 0) = this->minOutput;
-    satBounds(0, 1) = this->maxOutput;
-    this->saturateUtility.setBounds(satBounds);
 }
 
 void CoarseSunSensor::readInputMessages() {
@@ -292,7 +285,7 @@ void CoarseSunSensor::scaleSensorValues() {
 }
 
 void CoarseSunSensor::applySaturation() {
-    this->sensedValue = this->saturateUtility.saturate(Eigen::Vector<double, 1>{this->sensedValue})[0];
+    this->sensedValue = std::clamp(this->sensedValue, this->minOutput, this->maxOutput);
 }
 
 /*! This method writes the output message.  The output message contains the
