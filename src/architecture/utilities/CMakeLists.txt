@@ -8,7 +8,6 @@ add_library(ArchitectureUtilities STATIC
   svd.c
 
   orbitalMotion.cpp
-  saturate.cpp
   geodeticConversion.cpp
   signalProcessing.cpp
   discretize.cpp

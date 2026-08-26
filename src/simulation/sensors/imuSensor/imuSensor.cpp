@@ -7,14 +7,11 @@
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 
 #include <inttypes.h>
 
-#include <cstring>
-
 ImuSensor::ImuSensor() {
-    this->numStates = 3;
     this->setBodyToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
     this->StatePrevious = SCStatesMsgPayload{};
@@ -23,11 +20,8 @@ ImuSensor::ImuSensor() {
     this->errorModelGyro = GaussMarkov<3>(this->RNGSeed);
     this->errorModelAccel = GaussMarkov<3>(this->RNGSeed);
 
-    this->aDisc = Discretize((uint8_t) this->numStates);
-    this->oDisc = Discretize((uint8_t) this->numStates);
-
-    this->aSat = Saturate(this->numStates);
-    this->oSat = Saturate(this->numStates);
+    this->aDisc = Discretize(3);
+    this->oDisc = Discretize(3);
 
     this->PreviousTime = 0;
     this->NominalReady = false;
@@ -65,7 +59,7 @@ ImuSensor::ImuSensor() {
     set body orientation DCM relative to platform
  */
 void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll) {
-    this->dcm_PB = eigenM1(roll) * eigenM2(pitch) * eigenM3(yaw);
+    this->dcm_PB = eulerAngles321ToDcm(Eigen::Vector3d(yaw, pitch, roll));
 }
 
 /*! Reset the module
@@ -76,47 +70,15 @@ void ImuSensor::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "imuSensor.scStateInMsg was not linked."); }
 
-    this->AMatrixAccel.setIdentity(this->numStates, this->numStates);
-
-    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if (this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrixAccel) is not 3*3. Quitting.");
-        return;
-    }
+    this->AMatrixAccel.setIdentity();
     this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
     this->errorModelAccel.setRNGSeed(this->RNGSeed);
     this->errorModelAccel.setUpperBounds(this->walkBoundsAccel);
 
-    this->AMatrixGyro.setIdentity(this->numStates, this->numStates);
-
-    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if (this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrixGyro) is not 3*3. Quitting.");
-        return;
-    }
+    this->AMatrixGyro.setIdentity();
     this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
     this->errorModelGyro.setRNGSeed(this->RNGSeed);
     this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
-
-    Eigen::MatrixXd oSatBounds;
-    oSatBounds.resize(this->numStates, 2);
-    oSatBounds(0, 0) = -this->senRotMax;
-    oSatBounds(0, 1) = this->senRotMax;
-    oSatBounds(1, 0) = -this->senRotMax;
-    oSatBounds(1, 1) = this->senRotMax;
-    oSatBounds(2, 0) = -this->senRotMax;
-    oSatBounds(2, 1) = this->senRotMax;
-    this->oSat.setBounds(oSatBounds);
-
-    Eigen::MatrixXd aSatBounds;
-    aSatBounds.resize(this->numStates, 2);
-    aSatBounds(0, 0) = -this->senTransMax;
-    aSatBounds(0, 1) = this->senTransMax;
-    aSatBounds(1, 0) = -this->senTransMax;
-    aSatBounds(1, 1) = this->senTransMax;
-    aSatBounds(2, 0) = -this->senTransMax;
-    aSatBounds(2, 1) = this->senTransMax;
-    this->aSat.setBounds(aSatBounds);
 }
 
 /*!
@@ -191,22 +153,6 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime) {
 }
 
 /*!
-    set o saturation bounds
-    @param oSatBounds
- */
-void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds) {
-    this->oSat.setBounds(oSatBounds);
-}
-
-/*!
-    set a saturation bounds
-    @param aSatBounds
- */
-void ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds) {
-    this->aSat.setBounds(aSatBounds);
-}
-
-/*!
     scale truth method
  */
 void ImuSensor::scaleTruth() {
@@ -254,14 +200,14 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime) {
     double dt = (CurrentTime - PreviousTime) * 1.0E-9;
 
     Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
-    this->omega_PN_P_out = this->oSat.saturate(omega_PN_P_in);
-    for (int64_t i = 0; i < this->numStates; i++) {
+    this->omega_PN_P_out = omega_PN_P_in.cwiseMax(-this->senRotMax).cwiseMin(this->senRotMax);
+    for (Eigen::Index i = 0; i < this->omega_PN_P_out.size(); i++) {
         if (this->omega_PN_P_out(i) != omega_PN_P_in(i)) { this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt; }
     }
 
     Eigen::Vector3d accel_SN_P_in = this->accel_SN_P_out;
-    this->accel_SN_P_out = this->aSat.saturate(accel_SN_P_in);
-    for (int64_t i = 0; i < this->numStates; i++) {
+    this->accel_SN_P_out = accel_SN_P_in.cwiseMax(-this->senTransMax).cwiseMin(this->senTransMax);
+    for (Eigen::Index i = 0; i < this->accel_SN_P_out.size(); i++) {
         if (this->accel_SN_P_out(i) != accel_SN_P_in(i)) { this->DV_SN_P_out(i) = this->accel_SN_P_out(i) * dt; }
     }
 }
@@ -273,16 +219,11 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime) {
     spacecraft output message and passed through to theother IMU functions which add noise, etc.
  */
 void ImuSensor::computePlatformDR() {
-    double dcm_P2P1_cArray[9];  // dcm_P2P1 as cArray for C2PRV conversion
-    double prv_PN_cArray[3];    // cArray of PRV
-
     // Calculated time averaged cumulative rotation
     Eigen::Matrix3d dcm_P2P1;  // direction cosine matrix from P at time 1 to P at time 2
     dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose()
              * (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
-    eigenMatrixToCArray(dcm_P2P1, dcm_P2P1_cArray);         // makes a 9x1
-    C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray);        // makes it back into a 3x3
-    this->prv_PN_out = cArrayToEigenVector(prv_PN_cArray);  // writes it back to the variable to be passed along.
+    this->prv_PN_out = dcmToPrv(dcm_P2P1);
 
     // calculate "instantaneous" angular rate
     this->omega_PN_P_out = this->dcm_PB * this->current_omega_BN_B;

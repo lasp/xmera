@@ -16,7 +16,6 @@
 #include <architecture/msgPayloadDef/SpicePlanetStateMsgPayload.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/gauss_markov.h>
-#include <architecture/utilities/saturate.h>
 
 #include <Eigen/Dense>
 #include <vector>
@@ -104,7 +103,6 @@ private:
     double sunDistanceFactor;        //! [-] Factor to scale cosine curve magnitude based on solar flux at location
     GaussMarkov<1> noiseModel;       //! [-] Gauss Markov noise generation model
     GaussMarkov<1> faultNoiseModel;  //! [-] Gauss Markov noise generation model exclusively for CSS fault
-    Saturate saturateUtility;        //! [-] Saturation utility
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
