@@ -40,9 +40,6 @@ The folder ``src/architecture/utilities`` contains a number of C code support li
 `rigidBodyKinematics.h`
     Provides a collection of rigid body kinematics transformations.  This includes functions to map between a range of attitude coordinates.
 
-`saturate.h`
-    Used to saturate an output variable.
-
 `signalCondition.h`
     Provides a low-pass filter to an output variable.
 
