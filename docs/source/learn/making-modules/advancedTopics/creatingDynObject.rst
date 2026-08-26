@@ -11,13 +11,7 @@ a Xmera module that is also inheriting from the ``DynamicObject`` class.
 
 In the spacecraft ``updateState()`` method the ``DynamicObject::integrateState()`` method is called.
 This call integrates all the registered spacecraft states, as well as all the connect state
-and dynamic effectors, to the next time step using the connected integrator type.  See
-:ref:`scenarioIntegrators` for an example how how to set the integrator on a dynamic object.
-
-.. note::
-
-    Integrators connected to ``DynamicObject`` instances don't have to be the same.
-    It is possible to use an RK2 integrator on one spacecraft and the RK4 integrator on another.
+and dynamic effectors, to the next time step using the connected integrator.
 
 The ``initializeDynamics()`` virtual method must be defined in the ``DynamicObject`` subclass.
 It typically performs the required setup steps, including registering the ODE states that are
@@ -31,7 +25,6 @@ step the MRP spacecraft attitude states are checked to not have a norm larger th
 component is determined.
 
 Xmera modules that are a subclass of ``DynamicObject`` are not restricted to mechanical integration
-scenarios as with the spacecraft example.  See the discussion in :ref:`xmeraPrinciples-9` on how multiple
-Xmera modules that inherit from the ``DynamicObject`` class can be linked.  If linked,
-then the associated module ordinate differential equations (ODEs) are integrated
-simultaneously.
+scenarios as with the spacecraft example.  Any module that has to solve a set of ordinary differential
+equations can inherit from ``DynamicObject``.  See :ref:`xmeraPrinciples-9` for a discussion of how these
+modules behave in a simulation.

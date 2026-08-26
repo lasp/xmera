@@ -1,7 +1,6 @@
 
-RK4 integrator. It only implements the method integrate() to advance one time step.
+A fourth order Runge-Kutta fixed time step integrator. It only implements the method
+``integrate()`` to advance one time step.
 
-The module
-:download:`PDF Description </../../src/simulation/dynamics/Integrators/_Documentation/Xmera-Integrators20170724.pdf>`
-contains further information on this module's function,
-how to run it, as well as testing.
+This is the integrator that :ref:`spacecraft` sets up when it is created, and it is the only integrator that
+Xmera currently provides.

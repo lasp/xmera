@@ -10,6 +10,11 @@ class DynamicObject;
 struct StateVecIntegrator {
     virtual ~StateVecIntegrator() = default;
 
+    /*! Advances the states of the given dynamic object one time step.
+        @param dyn dynamic object whose states are advanced
+        @param currentTime [s] time at the start of the step
+        @param timeStep [s] length of the step
+     */
     virtual void integrate(DynamicObject &dyn, double currentTime, double timeStep) = 0;
 };
 
