@@ -13,12 +13,8 @@
 #include <architecture/utilities/discretize.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/gauss_markov.h>
-#include <architecture/utilities/macroDefinitions.h>
-#include <architecture/utilities/saturate.h>
 
 #include <Eigen/Dense>
-#include <random>
-#include <vector>
 
 /*! @brief IMU sensor class */
 class ImuSensor : public SysModel {
@@ -41,8 +37,6 @@ public:
     void setLSBs(double LSBa, double LSBo);
     void setCarryError(bool aCarry, bool oCarry);
     void setRoundDirection(roundDirection_t aRound, roundDirection_t oRound);
-    void set_oSatBounds(Eigen::MatrixXd oSatBounds);
-    void set_aSatBounds(Eigen::MatrixXd aSatBounds);
 
 public:
     ReadFunctor<SCStatesMsgPayload> scStateInMsg; /*!< input essage name for spacecraft state */
@@ -74,8 +68,6 @@ public:
 
     Discretize aDisc;  //!<  (-) instance of discretization utility for linear acceleration
     Discretize oDisc;  //!<  (-) instance of idscretization utility for angular rate
-    Saturate aSat;     //!<  (-) instance of saturate utility for linear acceleration
-    Saturate oSat;     //!<  (-) instance of saturate utility for angular rate
 
     BSKLogger bskLogger;  //!< -- BSK Logging
 

@@ -11,8 +11,6 @@
 
 #include <inttypes.h>
 
-#include <cstring>
-
 ImuSensor::ImuSensor() {
     this->numStates = 3;
     this->setBodyToPlatformDCM(0.0, 0.0, 0.0);
@@ -25,9 +23,6 @@ ImuSensor::ImuSensor() {
 
     this->aDisc = Discretize((uint8_t) this->numStates);
     this->oDisc = Discretize((uint8_t) this->numStates);
-
-    this->aSat = Saturate(this->numStates);
-    this->oSat = Saturate(this->numStates);
 
     this->PreviousTime = 0;
     this->NominalReady = false;
@@ -97,26 +92,6 @@ void ImuSensor::reset(uint64_t currentSimNanos) {
     this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
     this->errorModelGyro.setRNGSeed(this->RNGSeed);
     this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
-
-    Eigen::MatrixXd oSatBounds;
-    oSatBounds.resize(this->numStates, 2);
-    oSatBounds(0, 0) = -this->senRotMax;
-    oSatBounds(0, 1) = this->senRotMax;
-    oSatBounds(1, 0) = -this->senRotMax;
-    oSatBounds(1, 1) = this->senRotMax;
-    oSatBounds(2, 0) = -this->senRotMax;
-    oSatBounds(2, 1) = this->senRotMax;
-    this->oSat.setBounds(oSatBounds);
-
-    Eigen::MatrixXd aSatBounds;
-    aSatBounds.resize(this->numStates, 2);
-    aSatBounds(0, 0) = -this->senTransMax;
-    aSatBounds(0, 1) = this->senTransMax;
-    aSatBounds(1, 0) = -this->senTransMax;
-    aSatBounds(1, 1) = this->senTransMax;
-    aSatBounds(2, 0) = -this->senTransMax;
-    aSatBounds(2, 1) = this->senTransMax;
-    this->aSat.setBounds(aSatBounds);
 }
 
 /*!
@@ -191,22 +166,6 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime) {
 }
 
 /*!
-    set o saturation bounds
-    @param oSatBounds
- */
-void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds) {
-    this->oSat.setBounds(oSatBounds);
-}
-
-/*!
-    set a saturation bounds
-    @param aSatBounds
- */
-void ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds) {
-    this->aSat.setBounds(aSatBounds);
-}
-
-/*!
     scale truth method
  */
 void ImuSensor::scaleTruth() {
@@ -254,13 +213,13 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime) {
     double dt = (CurrentTime - PreviousTime) * 1.0E-9;
 
     Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
-    this->omega_PN_P_out = this->oSat.saturate(omega_PN_P_in);
+    this->omega_PN_P_out = omega_PN_P_in.cwiseMax(-this->senRotMax).cwiseMin(this->senRotMax);
     for (int64_t i = 0; i < this->numStates; i++) {
         if (this->omega_PN_P_out(i) != omega_PN_P_in(i)) { this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt; }
     }
 
     Eigen::Vector3d accel_SN_P_in = this->accel_SN_P_out;
-    this->accel_SN_P_out = this->aSat.saturate(accel_SN_P_in);
+    this->accel_SN_P_out = accel_SN_P_in.cwiseMax(-this->senTransMax).cwiseMin(this->senTransMax);
     for (int64_t i = 0; i < this->numStates; i++) {
         if (this->accel_SN_P_out(i) != accel_SN_P_in(i)) { this->DV_SN_P_out(i) = this->accel_SN_P_out(i) * dt; }
     }
