@@ -12,7 +12,6 @@
 #include <inttypes.h>
 
 ImuSensor::ImuSensor() {
-    this->numStates = 3;
     this->setBodyToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
     this->StatePrevious = SCStatesMsgPayload{};
@@ -21,8 +20,8 @@ ImuSensor::ImuSensor() {
     this->errorModelGyro = GaussMarkov<3>(this->RNGSeed);
     this->errorModelAccel = GaussMarkov<3>(this->RNGSeed);
 
-    this->aDisc = Discretize((uint8_t) this->numStates);
-    this->oDisc = Discretize((uint8_t) this->numStates);
+    this->aDisc = Discretize(3);
+    this->oDisc = Discretize(3);
 
     this->PreviousTime = 0;
     this->NominalReady = false;
@@ -71,24 +70,12 @@ void ImuSensor::reset(uint64_t currentSimNanos) {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) { bskLogger.bskLog(BSK_ERROR, "imuSensor.scStateInMsg was not linked."); }
 
-    this->AMatrixAccel.setIdentity(this->numStates, this->numStates);
-
-    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if (this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrixAccel) is not 3*3. Quitting.");
-        return;
-    }
+    this->AMatrixAccel.setIdentity();
     this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
     this->errorModelAccel.setRNGSeed(this->RNGSeed);
     this->errorModelAccel.setUpperBounds(this->walkBoundsAccel);
 
-    this->AMatrixGyro.setIdentity(this->numStates, this->numStates);
-
-    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if (this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrixGyro) is not 3*3. Quitting.");
-        return;
-    }
+    this->AMatrixGyro.setIdentity();
     this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
     this->errorModelGyro.setRNGSeed(this->RNGSeed);
     this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
@@ -214,13 +201,13 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime) {
 
     Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
     this->omega_PN_P_out = omega_PN_P_in.cwiseMax(-this->senRotMax).cwiseMin(this->senRotMax);
-    for (int64_t i = 0; i < this->numStates; i++) {
+    for (Eigen::Index i = 0; i < this->omega_PN_P_out.size(); i++) {
         if (this->omega_PN_P_out(i) != omega_PN_P_in(i)) { this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt; }
     }
 
     Eigen::Vector3d accel_SN_P_in = this->accel_SN_P_out;
     this->accel_SN_P_out = accel_SN_P_in.cwiseMax(-this->senTransMax).cwiseMin(this->senTransMax);
-    for (int64_t i = 0; i < this->numStates; i++) {
+    for (Eigen::Index i = 0; i < this->accel_SN_P_out.size(); i++) {
         if (this->accel_SN_P_out(i) != accel_SN_P_in(i)) { this->DV_SN_P_out(i) = this->accel_SN_P_out(i) * dt; }
     }
 }

@@ -73,7 +73,6 @@ public:
 
 private:
     uint64_t PreviousTime;             //!< -- Timestamp from previous frame
-    int64_t numStates;                 //!< -- Number of States for Gauss Markov Models
     SCStatesMsgPayload StatePrevious;  //!< -- Previous state to delta in IMU
     SCStatesMsgPayload StateCurrent;   //!< -- Current SSBI-relative state
     GaussMarkov<3> errorModelAccel;    //!< [-] Gauss-markov error states
