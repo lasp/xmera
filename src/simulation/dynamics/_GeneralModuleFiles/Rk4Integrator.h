@@ -10,7 +10,7 @@
 #include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
 
 //! 4th order Runge-Kutta integrator
-struct svIntegratorRK4 final : public StateVecIntegrator {
+struct Rk4Integrator final : public StateVecIntegrator {
     //! Performs the integration of the associated dynamic object up to time currentTime+timeStep
     void integrate(DynamicObject &dyn, double currentTime, double timeStep) override {
         this->prevState = dyn.dynManager.stateContainer;

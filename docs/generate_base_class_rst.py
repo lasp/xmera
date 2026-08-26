@@ -21,7 +21,6 @@ CLASS_NAME_MAP = {
     "stateData": "StateData",
     "stateEffector": "StateEffector",
     "stateVecIntegrator": "StateVecIntegrator",
-    "svIntegratorRK4": "svIntegratorRK4",
     "atmosphereBase": "AtmosphereBase",
     "magneticFieldBase": "MagneticFieldBase",
     "dataNodeBase": "DataNodeBase",

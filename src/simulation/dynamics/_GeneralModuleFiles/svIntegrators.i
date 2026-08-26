@@ -6,10 +6,10 @@
 
 %{
    #include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
-   #include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
+   #include <simulation/dynamics/_GeneralModuleFiles/Rk4Integrator.h>
    #include <architecture/_GeneralModuleFiles/sys_model.h>
 %}
 
 %include <architecture/_GeneralModuleFiles/sys_model.i>
 %include <simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h>
-%include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
+%include <simulation/dynamics/_GeneralModuleFiles/Rk4Integrator.h>
