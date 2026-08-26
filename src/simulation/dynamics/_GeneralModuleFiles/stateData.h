@@ -15,9 +15,7 @@ struct StateData {
 
     StateData() = default;
 
-    explicit StateData(Eigen::MatrixXd const &newState)
-       : state(newState), stateDeriv(state)
-    {
+    explicit StateData(Eigen::MatrixXd const &newState) : state(newState), stateDeriv(state) {
         stateDeriv.setZero();
     }
 
