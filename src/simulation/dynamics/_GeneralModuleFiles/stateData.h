@@ -9,19 +9,29 @@
 #include <Eigen/Dense>
 
 /*! @brief state data class*/
-class StateData {
-public:
+struct StateData {
     Eigen::MatrixXd state;       //!< [-] State value storage
     Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
 
-public:
     StateData() = default;
-    StateData(StateData const &inState) = default;
-    explicit StateData(Eigen::MatrixXd const &newState);
-    ~StateData() = default;
-    void setState(Eigen::MatrixXd const &newState);
-    void propagateState(double dt);
-    void setDerivative(Eigen::MatrixXd const &newDeriv);
+
+    explicit StateData(Eigen::MatrixXd const &newState)
+       : state(newState), stateDeriv(state)
+    {
+        stateDeriv.setZero();
+    }
+
+    void setState(Eigen::MatrixXd const &newState) {
+        state = newState;
+    }
+
+    void propagateState(double const dt) {
+        state += stateDeriv * dt;
+    }
+
+    void setDerivative(Eigen::MatrixXd const &newDeriv) {
+        stateDeriv = newDeriv;
+    }
 
     Eigen::MatrixXd const &getState() const {
         return state;
@@ -39,11 +49,21 @@ public:
         return ((uint32_t) state.outerSize());
     }
 
-    void scaleState(double scaleFactor);
+    void scaleState(double const scaleFactor) {
+        state *= scaleFactor;
+    }
 
-    StateData operator+(StateData const &operand) const;
+    StateData operator+(StateData const &operand) const {
+        StateData newState(state);
+        newState.state += operand.getState();
+        return newState;
+    }
 
-    StateData operator*(double scaleFactor) const;
+    StateData operator*(double const scaleFactor) const {
+        StateData newState(state);
+        newState.state *= scaleFactor;
+        return newState;
+    }
 };
 
 #endif /* STATE_DATA_H */
