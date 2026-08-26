@@ -39,19 +39,11 @@ in a 2:1 centered ellipse and a lead-follower configuration with the servicer re
 has a camera instrument attached that is pointing in the 3rd body axis direction.
 The servicer has a light attached to illuminate the debris object.
 
-By default, every :ref:`spacecraft` module instance will integrate its differential equations, and that of
+Every :ref:`spacecraft` module instance integrates its differential equations, and that of
 all the associated state and dynamics effectors, during the module ``Update()`` method.  Thus, the
 second spacecraft ODEs are integrated forward one time step after the first spacecraft, and so on.
-If you require
-both sets of spacecraft differential equations to be integrated at the same time, then the integration
-of the second spacecraft can be synchronized with the integration of the first spacecraft using::
-
-     scObject.syncDynamicsIntegration(scObject2)
-
-This is illustrated in this example script where the debris satellite integration is sync'd with that
-of the servicer satellite.  However, in this scenario this is not required as the ODEs of each spacecraft
-are independent of each other.  If an effector is used that is connected to both spacecraft, then this
-step will allow the effector force and torque evaluations to be properly applied to all sync'd objects.
+In this scenario the ODEs of each spacecraft are independent of each other, so the order in which
+they are integrated does not matter.
 
 This simulation scripts illustrates how to use the ``vizSupport`` methods to record the simulation data such
 that it can be viewed in the Vizard visualization.
@@ -96,7 +88,7 @@ import numpy as np
 from xmera.architecture import messaging
 from xmera.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
-from xmera.simulation import reactionWheelStateEffector, simpleNav, spacecraft, svIntegrators
+from xmera.simulation import reactionWheelStateEffector, simpleNav, spacecraft
 from xmera.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
@@ -230,16 +222,6 @@ def run(show_plots):
           0., 0, 450.]
     scObject2.hub.mHub = 350.0  # kg
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
-    # this next step is not required, just a demonstration how we can ensure that
-    # the Servicer and Debris differential equations are integrated simultaneously
-    scObject.syncDynamicsIntegration(scObject2)
-
-    # Likewise, the following step is not required, as the default integrator
-    # is already RK4. However, this illustrates that you can change the integrator
-    # of the primary after calling sync, but not of the secondary!
-    integratorObject = svIntegrators.svIntegratorRK4(scObject)
-    scObject.setIntegrator(integratorObject)
-    # scObject2.setIntegrator(integratorObject) # <- Will raise an error!
 
     # make another debris object */
     scObject3 = spacecraft.Spacecraft()
