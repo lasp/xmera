@@ -273,9 +273,7 @@ void addMRP(double* q1, double* q2, double* result) {
 
     /* map MRP to inner set */
     mag = v3Dot(result, result);
-    if (mag > 1.0) {
-        v3Scale(-1. / mag, result, result);
-    }
+    if (mag > 1.0) { v3Scale(-1. / mag, result, result); }
 }
 
 /*
@@ -1124,42 +1122,42 @@ void C2EP(double C[3][3], double b[4]) {
     }
 
     switch (i) {
-        case 0:
-            b[0] = sqrt(b2[0]);
-            b[1] = (C[1][2] - C[2][1]) / 4 / b[0];
-            b[2] = (C[2][0] - C[0][2]) / 4 / b[0];
-            b[3] = (C[0][1] - C[1][0]) / 4 / b[0];
-            break;
-        case 1:
-            b[1] = sqrt(b2[1]);
-            b[0] = (C[1][2] - C[2][1]) / 4 / b[1];
-            if (b[0] < 0) {
-                b[1] = -b[1];
-                b[0] = -b[0];
-            }
-            b[2] = (C[0][1] + C[1][0]) / 4 / b[1];
-            b[3] = (C[2][0] + C[0][2]) / 4 / b[1];
-            break;
-        case 2:
-            b[2] = sqrt(b2[2]);
-            b[0] = (C[2][0] - C[0][2]) / 4 / b[2];
-            if (b[0] < 0) {
-                b[2] = -b[2];
-                b[0] = -b[0];
-            }
-            b[1] = (C[0][1] + C[1][0]) / 4 / b[2];
-            b[3] = (C[1][2] + C[2][1]) / 4 / b[2];
-            break;
-        case 3:
-            b[3] = sqrt(b2[3]);
-            b[0] = (C[0][1] - C[1][0]) / 4 / b[3];
-            if (b[0] < 0) {
-                b[3] = -b[3];
-                b[0] = -b[0];
-            }
-            b[1] = (C[2][0] + C[0][2]) / 4 / b[3];
-            b[2] = (C[1][2] + C[2][1]) / 4 / b[3];
-            break;
+    case 0:
+        b[0] = sqrt(b2[0]);
+        b[1] = (C[1][2] - C[2][1]) / 4 / b[0];
+        b[2] = (C[2][0] - C[0][2]) / 4 / b[0];
+        b[3] = (C[0][1] - C[1][0]) / 4 / b[0];
+        break;
+    case 1:
+        b[1] = sqrt(b2[1]);
+        b[0] = (C[1][2] - C[2][1]) / 4 / b[1];
+        if (b[0] < 0) {
+            b[1] = -b[1];
+            b[0] = -b[0];
+        }
+        b[2] = (C[0][1] + C[1][0]) / 4 / b[1];
+        b[3] = (C[2][0] + C[0][2]) / 4 / b[1];
+        break;
+    case 2:
+        b[2] = sqrt(b2[2]);
+        b[0] = (C[2][0] - C[0][2]) / 4 / b[2];
+        if (b[0] < 0) {
+            b[2] = -b[2];
+            b[0] = -b[0];
+        }
+        b[1] = (C[0][1] + C[1][0]) / 4 / b[2];
+        b[3] = (C[1][2] + C[2][1]) / 4 / b[2];
+        break;
+    case 3:
+        b[3] = sqrt(b2[3]);
+        b[0] = (C[0][1] - C[1][0]) / 4 / b[3];
+        if (b[0] < 0) {
+            b[3] = -b[3];
+            b[0] = -b[0];
+        }
+        b[1] = (C[2][0] + C[0][2]) / 4 / b[3];
+        b[2] = (C[1][2] + C[2][1]) / 4 / b[3];
+        break;
     }
 }
 
@@ -1340,9 +1338,7 @@ void dEP(double* q, double* w, double* dq) {
     m33MultV3(B, w, dq);
     for (int i = 0; i < 4; i++) {
         dq[i] = 0.;
-        for (int j = 0; j < 3; j++) {
-            dq[i] += B[i][j] * w[j];
-        }
+        for (int j = 0; j < 3; j++) { dq[i] += B[i][j] * w[j]; }
     }
     v3Scale(.5, dq, dq);
     dq[3] = 0.5 * dq[3];
@@ -1578,9 +1574,7 @@ void ddMRP(double* q, double* dq, double* w, double* dw, double* ddq) {
     BdotmatMRP(q, dq, Bdot);
     m33MultV3(B, dw, s1);
     m33MultV3(Bdot, w, s2);
-    for (int i = 0; i < 3; i++) {
-        ddq[i] = 0.25 * (s1[i] + s2[i]);
-    }
+    for (int i = 0; i < 3; i++) { ddq[i] = 0.25 * (s1[i] + s2[i]); }
 }
 
 /*
@@ -1601,9 +1595,7 @@ void ddMRP2dOmega(double* q, double* dq, double* ddq, double* dw) {
     BdotmatMRP(q, dq, Bdot);
     m33MultV3(B, dq, s1);
     m33MultV3(Bdot, s1, s2);
-    for (int i = 0; i < 3; i++) {
-        s3[i] = ddq[i] - s2[i];
-    }
+    for (int i = 0; i < 3; i++) { s3[i] = ddq[i] - s2[i]; }
     m33MultV3(B, s3, dw);
     v3Scale(4, dw, dw);
 }
@@ -2965,7 +2957,9 @@ void Gibbs2Euler323(double* q, double* e) {
  * Gibbs2MRP(Q1,Q) translates the Gibbs vector Q1
  * into the MRP vector Q.
  */
-void Gibbs2MRP(double* q1, double* q) { v3Scale(1.0 / (1 + sqrt(1 + v3Dot(q1, q1))), q1, q); }
+void Gibbs2MRP(double* q1, double* q) {
+    v3Scale(1.0 / (1 + sqrt(1 + v3Dot(q1, q1))), q1, q);
+}
 
 /*
  * Gibbs2PRV(Q1,Q) translates the Gibbs vector Q1
@@ -3157,7 +3151,9 @@ void MRP2Euler323(double* q, double* e) {
  * MRP2Gibbs(Q1,Q) translates the MRP vector Q1
  * into the Gibbs vector Q.
  */
-void MRP2Gibbs(double* q1, double* q) { v3Scale(2. / (1. - v3Dot(q1, q1)), q1, q); }
+void MRP2Gibbs(double* q1, double* q) {
+    v3Scale(2. / (1. - v3Dot(q1, q1)), q1, q);
+}
 
 /*
  * MRP2PRV(Q1,Q) translates the MRP vector Q1
@@ -3202,13 +3198,9 @@ void MRPshadow(double* qIn, double* qOut) {
 double wrapToPi(double x) {
     double q = x;
 
-    if (x > M_PI) {
-        q = x - 2 * M_PI;
-    }
+    if (x > M_PI) { q = x - 2 * M_PI; }
 
-    if (x < -M_PI) {
-        q = x + 2 * M_PI;
-    }
+    if (x < -M_PI) { q = x + 2 * M_PI; }
 
     return q;
 }
@@ -3679,9 +3671,7 @@ void subMRP(double* q1, double* q2, double* q) {
 
     /* map MRP to inner set */
     mag = v3Dot(q, q);
-    if (mag > 1.0) {
-        v3Scale(-1. / mag, q, q);
-    }
+    if (mag > 1.0) { v3Scale(-1. / mag, q, q); }
 }
 
 /*
@@ -3725,44 +3715,43 @@ void Mi(double theta, int a, double C[3][3]) {
     double s = sin(theta);
 
     switch (a) {
-        case 1:
-            C[0][0] = 1.;
-            C[0][1] = 0.;
-            C[0][2] = 0.;
-            C[1][0] = 0.;
-            C[1][1] = c;
-            C[1][2] = s;
-            C[2][0] = 0.;
-            C[2][1] = -s;
-            C[2][2] = c;
-            break;
+    case 1:
+        C[0][0] = 1.;
+        C[0][1] = 0.;
+        C[0][2] = 0.;
+        C[1][0] = 0.;
+        C[1][1] = c;
+        C[1][2] = s;
+        C[2][0] = 0.;
+        C[2][1] = -s;
+        C[2][2] = c;
+        break;
 
-        case 2:
-            C[0][0] = c;
-            C[0][1] = 0.;
-            C[0][2] = -s;
-            C[1][0] = 0.;
-            C[1][1] = 1.;
-            C[1][2] = 0.;
-            C[2][0] = s;
-            C[2][1] = 0.;
-            C[2][2] = c;
-            break;
+    case 2:
+        C[0][0] = c;
+        C[0][1] = 0.;
+        C[0][2] = -s;
+        C[1][0] = 0.;
+        C[1][1] = 1.;
+        C[1][2] = 0.;
+        C[2][0] = s;
+        C[2][1] = 0.;
+        C[2][2] = c;
+        break;
 
-        case 3:
-            C[0][0] = c;
-            C[0][1] = s;
-            C[0][2] = 0.;
-            C[1][0] = -s;
-            C[1][1] = c;
-            C[1][2] = 0.;
-            C[2][0] = 0.;
-            C[2][1] = 0.;
-            C[2][2] = 1.;
-            break;
+    case 3:
+        C[0][0] = c;
+        C[0][1] = s;
+        C[0][2] = 0.;
+        C[1][0] = -s;
+        C[1][1] = c;
+        C[1][2] = 0.;
+        C[2][0] = 0.;
+        C[2][1] = 0.;
+        C[2][2] = 1.;
+        break;
 
-        default:
-            assert("Mi() error: axis selected not either 1, 2, or 3.");
+    default: assert("Mi() error: axis selected not either 1, 2, or 3.");
     }
 }
 

@@ -5,10 +5,9 @@
 #define RIGIDBODYKINEMATICS_HPP
 
 #include <Eigen/Dense>
-
 #include <limits>
 
-template <typename ScalarT>
+template<typename ScalarT>
 struct Types {
     static constexpr ScalarT eps = std::numeric_limits<ScalarT>::epsilon();
 };
@@ -18,8 +17,8 @@ struct Types {
  * @param mrp
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> mrpShadow(const Eigen::Vector3<ScalarT>& mrp) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> mrpShadow(Eigen::Vector3<ScalarT> const &mrp) {
     return -mrp / mrp.squaredNorm();
 }
 
@@ -29,11 +28,9 @@ Eigen::Vector3<ScalarT> mrpShadow(const Eigen::Vector3<ScalarT>& mrp) {
  * @param s
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> mrpSwitch(const Eigen::Vector3<ScalarT>& mrp, const ScalarT s) {
-    if (mrp.squaredNorm() > s * s) {
-        return mrpShadow(mrp);
-    }
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> mrpSwitch(Eigen::Vector3<ScalarT> const &mrp, ScalarT const s) {
+    if (mrp.squaredNorm() > s * s) { return mrpShadow(mrp); }
     return mrp;
 }
 
@@ -43,8 +40,8 @@ Eigen::Vector3<ScalarT> mrpSwitch(const Eigen::Vector3<ScalarT>& mrp, const Scal
  * @param ep const Eigen::Vector4
  * @return Eigen::Matrix<double, 3, 4>
  */
-template <typename ScalarT>
-Eigen::Matrix<ScalarT, 3, 4> binvEp(const Eigen::Vector4<ScalarT>& ep) {
+template<typename ScalarT>
+Eigen::Matrix<ScalarT, 3, 4> binvEp(Eigen::Vector4<ScalarT> const &ep) {
     Eigen::Matrix<ScalarT, 3, 4> Binv;
 
     Binv << -ep(1), ep(0), ep(3), -ep(2), -ep(2), -ep(3), ep(0), ep(1), -ep(3), ep(2), -ep(1), ep(0);
@@ -58,8 +55,8 @@ Eigen::Matrix<ScalarT, 3, 4> binvEp(const Eigen::Vector4<ScalarT>& ep) {
  * @param mrp Eigen::Vector3d
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> binvMrp(const Eigen::Vector3<ScalarT>& mrp) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> binvMrp(Eigen::Vector3<ScalarT> const &mrp) {
     Eigen::Matrix3<ScalarT> Binv;
 
     ScalarT dotProd = mrp.dot(mrp);
@@ -84,8 +81,8 @@ Eigen::Matrix3<ScalarT> binvMrp(const Eigen::Vector3<ScalarT>& mrp) {
  * @param prv Eigen::Vector3
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> binvPrv(const Eigen::Vector3<ScalarT>& prv) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> binvPrv(Eigen::Vector3<ScalarT> const &prv) {
     ScalarT norm = prv.norm();
     ScalarT norm2 = norm * norm;
     ScalarT norm3 = norm2 * norm;
@@ -115,8 +112,8 @@ Eigen::Matrix3<ScalarT> binvPrv(const Eigen::Vector3<ScalarT>& prv) {
  * @param euler321 Eigen::Vector3d
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> binvEulerAngles321(const Eigen::Vector3<ScalarT>& euler321) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> binvEulerAngles321(Eigen::Vector3<ScalarT> const &euler321) {
     ScalarT sin2 = std::sin(euler321(1));
     ScalarT cos2 = std::cos(euler321(1));
     ScalarT sin3 = std::sin(euler321(2));
@@ -134,8 +131,8 @@ Eigen::Matrix3<ScalarT> binvEulerAngles321(const Eigen::Vector3<ScalarT>& euler3
  * @param ep Eigen::Vector4d
  * @return Eigen::Matrix<double, 4, 3>
  */
-template <typename ScalarT>
-Eigen::Matrix<ScalarT, 4, 3> bmatEp(const Eigen::Vector4<ScalarT>& ep) {
+template<typename ScalarT>
+Eigen::Matrix<ScalarT, 4, 3> bmatEp(Eigen::Vector4<ScalarT> const &ep) {
     Eigen::Matrix<ScalarT, 4, 3> B;
 
     B(0, 0) = -ep(1);
@@ -160,8 +157,8 @@ Eigen::Matrix<ScalarT, 4, 3> bmatEp(const Eigen::Vector4<ScalarT>& ep) {
  * @param mrp
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> bmatMrp(const Eigen::Vector3<ScalarT>& mrp) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> bmatMrp(Eigen::Vector3<ScalarT> const &mrp) {
     Eigen::Matrix3<ScalarT> B;
 
     B(0, 0) = 1 - mrp.dot(mrp) + 2 * mrp(0) * mrp(0);
@@ -185,8 +182,8 @@ Eigen::Matrix3<ScalarT> bmatMrp(const Eigen::Vector3<ScalarT>& mrp) {
  * @param dmrp
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> bmatDotMrp(const Eigen::Vector3<ScalarT>& mrp, const Eigen::Vector3<ScalarT>& dmrp) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> bmatDotMrp(Eigen::Vector3<ScalarT> const &mrp, Eigen::Vector3<ScalarT> const &dmrp) {
     Eigen::Matrix3<ScalarT> B;
 
     B(0, 0) = -2 * mrp.dot(dmrp) + 4 * (mrp(0) * dmrp(0));
@@ -208,8 +205,8 @@ Eigen::Matrix3<ScalarT> bmatDotMrp(const Eigen::Vector3<ScalarT>& mrp, const Eig
  * @param prv
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> bmatPrv(const Eigen::Vector3<ScalarT>& prv) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> bmatPrv(Eigen::Vector3<ScalarT> const &prv) {
     ScalarT normPrv = prv.norm();
     ScalarT c = 1.0 / (normPrv * normPrv) * (1.0 - normPrv / 2.0 / std::tan(normPrv / 2.0));
 
@@ -233,8 +230,8 @@ Eigen::Matrix3<ScalarT> bmatPrv(const Eigen::Vector3<ScalarT>& prv) {
  * @param euler321
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> bmatEulerAngles321(const Eigen::Vector3<ScalarT>& euler321) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> bmatEulerAngles321(Eigen::Vector3<ScalarT> const &euler321) {
     ScalarT sin2 = std::sin(euler321(1));
     ScalarT cos2 = std::cos(euler321(1));
     ScalarT sin3 = std::sin(euler321(2));
@@ -253,8 +250,8 @@ Eigen::Matrix3<ScalarT> bmatEulerAngles321(const Eigen::Vector3<ScalarT>& euler3
  * @param dcm
  * @return Eigen::Vector4d
  */
-template <typename ScalarT>
-Eigen::Vector4<ScalarT> dcmToEp(const Eigen::Matrix3<ScalarT>& dcm) {
+template<typename ScalarT>
+Eigen::Vector4<ScalarT> dcmToEp(Eigen::Matrix3<ScalarT> const &dcm) {
     Eigen::Vector4<ScalarT> ep;
 
     ep(0) = (1.0 + dcm.trace()) / 4.0;
@@ -305,8 +302,8 @@ Eigen::Vector4<ScalarT> dcmToEp(const Eigen::Matrix3<ScalarT>& dcm) {
  * @param dcm
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> dcmToMrp(const Eigen::Matrix<ScalarT, 3, 3>& dcm) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> dcmToMrp(Eigen::Matrix<ScalarT, 3, 3> const &dcm) {
     Eigen::Vector4<ScalarT> ep = dcmToEp(dcm);
     return ep.template tail<3>() / (1.0 + ep(0));
 }
@@ -316,14 +313,12 @@ Eigen::Vector3<ScalarT> dcmToMrp(const Eigen::Matrix<ScalarT, 3, 3>& dcm) {
  * @param ep
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> epToPrv(const Eigen::Vector4<ScalarT>& ep, ScalarT localEps = ScalarT(1e-12)) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> epToPrv(Eigen::Vector4<ScalarT> const &ep, ScalarT localEps = ScalarT(1e-12)) {
     Eigen::Vector3<ScalarT> prv;
     ScalarT angle = std::acos(ep(0));
     ScalarT sin_angle = std::sin(angle);
-    if (std::abs(sin_angle) < localEps) {
-        return prv.setZero();
-    }
+    if (std::abs(sin_angle) < localEps) { return prv.setZero(); }
     prv = ep.template tail<3>() / sin_angle * 2.0 * angle;
     return prv;
 }
@@ -334,8 +329,8 @@ Eigen::Vector3<ScalarT> epToPrv(const Eigen::Vector4<ScalarT>& ep, ScalarT local
  * @param dcm
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> dcmToPrv(const Eigen::Matrix3<ScalarT>& dcm) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> dcmToPrv(Eigen::Matrix3<ScalarT> const &dcm) {
     return epToPrv(dcmToEp(dcm));
 }
 
@@ -344,8 +339,8 @@ Eigen::Vector3<ScalarT> dcmToPrv(const Eigen::Matrix3<ScalarT>& dcm) {
  * @param dcm
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> dcmToEulerAngles321(const Eigen::Matrix3<ScalarT>& dcm) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> dcmToEulerAngles321(Eigen::Matrix3<ScalarT> const &dcm) {
     Eigen::Vector3<ScalarT> euler321;
 
     euler321[0] = std::atan2(dcm(0, 1), dcm(0, 0));
@@ -362,8 +357,8 @@ Eigen::Vector3<ScalarT> dcmToEulerAngles321(const Eigen::Matrix3<ScalarT>& dcm) 
  * @param omega
  * @return Eigen::Vector4d
  */
-template <typename ScalarT>
-Eigen::Vector4<ScalarT> dep(const Eigen::Vector4<ScalarT>& ep, const Eigen::Vector3<ScalarT>& omega) {
+template<typename ScalarT>
+Eigen::Vector4<ScalarT> dep(Eigen::Vector4<ScalarT> const &ep, Eigen::Vector3<ScalarT> const &omega) {
     Eigen::Matrix<ScalarT, 4, 3> B = bmatEp(ep);
     Eigen::Vector4<ScalarT> dep = B * omega;
     return dep / 2.0;
@@ -376,8 +371,8 @@ Eigen::Vector4<ScalarT> dep(const Eigen::Vector4<ScalarT>& ep, const Eigen::Vect
  * @param omega
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> dmrp(const Eigen::Vector3<ScalarT>& mrp, const Eigen::Vector3<ScalarT>& omega) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> dmrp(Eigen::Vector3<ScalarT> const &mrp, Eigen::Vector3<ScalarT> const &omega) {
     Eigen::Matrix3<ScalarT> B = bmatMrp(mrp);
     return B * omega / 4.0;
 }
@@ -389,8 +384,8 @@ Eigen::Vector3<ScalarT> dmrp(const Eigen::Vector3<ScalarT>& mrp, const Eigen::Ve
  * @param dmrp
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> dmrpToOmega(const Eigen::Vector3<ScalarT>& mrp, const Eigen::Vector3<ScalarT>& dmrp) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> dmrpToOmega(Eigen::Vector3<ScalarT> const &mrp, Eigen::Vector3<ScalarT> const &dmrp) {
     Eigen::Matrix3<ScalarT> Binv = binvMrp(mrp);
     return 4.0 * Binv * dmrp;
 }
@@ -405,11 +400,13 @@ Eigen::Vector3<ScalarT> dmrpToOmega(const Eigen::Vector3<ScalarT>& mrp, const Ei
  * @param domega
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> ddmrp(const Eigen::Vector3<ScalarT>& mrp,
-                              const Eigen::Vector3<ScalarT>& dmrp,
-                              const Eigen::Vector3<ScalarT>& omega,
-                              const Eigen::Vector3<ScalarT>& domega) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> ddmrp(
+    Eigen::Vector3<ScalarT> const &mrp,
+    Eigen::Vector3<ScalarT> const &dmrp,
+    Eigen::Vector3<ScalarT> const &omega,
+    Eigen::Vector3<ScalarT> const &domega
+) {
     Eigen::Matrix3<ScalarT> B = bmatMrp(mrp);
     Eigen::Matrix3<ScalarT> Bdot = bmatDotMrp(mrp, dmrp);
 
@@ -424,10 +421,12 @@ Eigen::Vector3<ScalarT> ddmrp(const Eigen::Vector3<ScalarT>& mrp,
  * @param ddmrp
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> ddmrpTodOmega(const Eigen::Vector3<ScalarT>& mrp,
-                                      const Eigen::Vector3<ScalarT>& dmrp,
-                                      const Eigen::Vector3<ScalarT>& ddmrp) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> ddmrpTodOmega(
+    Eigen::Vector3<ScalarT> const &mrp,
+    Eigen::Vector3<ScalarT> const &dmrp,
+    Eigen::Vector3<ScalarT> const &ddmrp
+) {
     Eigen::Matrix3<ScalarT> Binv = binvMrp(mrp);
     Eigen::Matrix3<ScalarT> Bdot = bmatDotMrp(mrp, dmrp);
     Eigen::Vector3<ScalarT> diff = ddmrp - Bdot * Binv * dmrp;
@@ -440,8 +439,8 @@ Eigen::Vector3<ScalarT> ddmrpTodOmega(const Eigen::Vector3<ScalarT>& mrp,
  * @param omega
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> dprv(const Eigen::Vector3<ScalarT>& prv, const Eigen::Vector3<ScalarT>& omega) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> dprv(Eigen::Vector3<ScalarT> const &prv, Eigen::Vector3<ScalarT> const &omega) {
     return bmatPrv(prv) * omega;
 }
 
@@ -453,8 +452,8 @@ Eigen::Vector3<ScalarT> dprv(const Eigen::Vector3<ScalarT>& prv, const Eigen::Ve
  * @param omega
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> deuler321(const Eigen::Vector3<ScalarT>& euler321, const Eigen::Vector3<ScalarT>& omega) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> deuler321(Eigen::Vector3<ScalarT> const &euler321, Eigen::Vector3<ScalarT> const &omega) {
     return bmatEulerAngles321(euler321) * omega;
 }
 
@@ -464,8 +463,8 @@ Eigen::Vector3<ScalarT> deuler321(const Eigen::Vector3<ScalarT>& euler321, const
  * @param ep
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> epToDcm(const Eigen::Vector4<ScalarT>& ep) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> epToDcm(Eigen::Vector4<ScalarT> const &ep) {
     Eigen::Matrix3<ScalarT> dcm;
 
     dcm(0, 0) = ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3);
@@ -486,8 +485,8 @@ Eigen::Matrix3<ScalarT> epToDcm(const Eigen::Vector4<ScalarT>& ep) {
  * @param ep
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> epToMrp(const Eigen::Vector4<ScalarT>& ep) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> epToMrp(Eigen::Vector4<ScalarT> const &ep) {
     if (ep(0) >= 0.0) {
         return ep.template tail<3>() / (1.0 + ep(0));
     } else {
@@ -500,15 +499,19 @@ Eigen::Vector3<ScalarT> epToMrp(const Eigen::Vector4<ScalarT>& ep) {
  * @param ep
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> epToEulerAngles321(const Eigen::Vector4<ScalarT>& ep) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> epToEulerAngles321(Eigen::Vector4<ScalarT> const &ep) {
     Eigen::Vector3<ScalarT> euler321;
 
-    euler321(0) = std::atan2(2.0 * (ep(1) * ep(2) + ep(0) * ep(3)),
-                             ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3));
+    euler321(0) = std::atan2(
+        2.0 * (ep(1) * ep(2) + ep(0) * ep(3)),
+        ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3)
+    );
     euler321(1) = std::asin(-2.0 * (ep(1) * ep(3) - ep(0) * ep(2)));
-    euler321(2) = std::atan2(2.0 * (ep(2) * ep(3) + ep(0) * ep(1)),
-                             ep(0) * ep(0) - ep(1) * ep(1) - ep(2) * ep(2) + ep(3) * ep(3));
+    euler321(2) = std::atan2(
+        2.0 * (ep(2) * ep(3) + ep(0) * ep(1)),
+        ep(0) * ep(0) - ep(1) * ep(1) - ep(2) * ep(2) + ep(3) * ep(3)
+    );
 
     return euler321;
 }
@@ -518,8 +521,8 @@ Eigen::Vector3<ScalarT> epToEulerAngles321(const Eigen::Vector4<ScalarT>& ep) {
  * @param vector
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> tildeMatrix(const Eigen::Vector3<ScalarT>& vector) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> tildeMatrix(Eigen::Vector3<ScalarT> const &vector) {
     Eigen::Matrix3<ScalarT> tilde;
     tilde << ScalarT(0), -vector(2), vector(1), vector(2), ScalarT(0), -vector(0), -vector(1), vector(0), ScalarT(0);
     return tilde;
@@ -530,8 +533,8 @@ Eigen::Matrix3<ScalarT> tildeMatrix(const Eigen::Vector3<ScalarT>& vector) {
  * @param mrp
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> mrpToDcm(const Eigen::Vector3<ScalarT>& mrp) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> mrpToDcm(Eigen::Vector3<ScalarT> const &mrp) {
     Eigen::Matrix3<ScalarT> dcm;
 
     Eigen::Matrix3<ScalarT> t = tildeMatrix(mrp);
@@ -546,8 +549,8 @@ Eigen::Matrix3<ScalarT> mrpToDcm(const Eigen::Vector3<ScalarT>& mrp) {
  * @param mrp
  * @return Eigen::Vector4d
  */
-template <typename ScalarT>
-Eigen::Vector4<ScalarT> mrpToEp(const Eigen::Vector3<ScalarT>& mrp) {
+template<typename ScalarT>
+Eigen::Vector4<ScalarT> mrpToEp(Eigen::Vector3<ScalarT> const &mrp) {
     Eigen::Vector4<ScalarT> ep;
     ScalarT dotVal = mrp.dot(mrp);
 
@@ -562,12 +565,10 @@ Eigen::Vector4<ScalarT> mrpToEp(const Eigen::Vector3<ScalarT>& mrp) {
  * @param mrp
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> mrpToPrv(const Eigen::Vector3<ScalarT>& mrp, ScalarT localEps = ScalarT(1e-10)) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> mrpToPrv(Eigen::Vector3<ScalarT> const &mrp, ScalarT localEps = ScalarT(1e-10)) {
     ScalarT norm = mrp.norm();
-    if (norm < localEps) {
-        return Eigen::Vector3<ScalarT>::Zero();
-    }
+    if (norm < localEps) { return Eigen::Vector3<ScalarT>::Zero(); }
     return (mrp / norm) * (4.0 * std::atan(norm));
 }
 
@@ -576,8 +577,8 @@ Eigen::Vector3<ScalarT> mrpToPrv(const Eigen::Vector3<ScalarT>& mrp, ScalarT loc
  * @param mrp
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> mrpToEulerAngles321(const Eigen::Vector3<ScalarT>& mrp) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> mrpToEulerAngles321(Eigen::Vector3<ScalarT> const &mrp) {
     return epToEulerAngles321(mrpToEp(mrp));
 }
 
@@ -586,13 +587,11 @@ Eigen::Vector3<ScalarT> mrpToEulerAngles321(const Eigen::Vector3<ScalarT>& mrp) 
  * @param prv
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> prvToDcm(const Eigen::Vector3<ScalarT>& prv) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> prvToDcm(Eigen::Vector3<ScalarT> const &prv) {
     ScalarT angle = prv.norm();
 
-    if (angle < Types<ScalarT>::eps) {
-        return Eigen::Matrix3<ScalarT>::Identity();
-    }
+    if (angle < Types<ScalarT>::eps) { return Eigen::Matrix3<ScalarT>::Identity(); }
 
     Eigen::Vector3<ScalarT> u = prv / angle;
     ScalarT c = std::cos(angle);
@@ -618,8 +617,8 @@ Eigen::Matrix3<ScalarT> prvToDcm(const Eigen::Vector3<ScalarT>& prv) {
  * @param prv
  * @return Eigen::Vector4d
  */
-template <typename ScalarT>
-Eigen::Vector4<ScalarT> prvToEp(const Eigen::Vector3<ScalarT>& prv) {
+template<typename ScalarT>
+Eigen::Vector4<ScalarT> prvToEp(Eigen::Vector3<ScalarT> const &prv) {
     ScalarT angle = prv.norm();
     Eigen::Vector<ScalarT, 4> ep;
 
@@ -642,12 +641,10 @@ Eigen::Vector4<ScalarT> prvToEp(const Eigen::Vector3<ScalarT>& prv) {
  * @param prv
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> prvToMrp(const Eigen::Vector3<ScalarT>& prv) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> prvToMrp(Eigen::Vector3<ScalarT> const &prv) {
     constexpr ScalarT localEps = ScalarT(1e-12);
-    if (ScalarT norm = prv.norm(); norm > localEps) {
-        return prv.normalized() * std::tan(norm / ScalarT(4));
-    }
+    if (ScalarT norm = prv.norm(); norm > localEps) { return prv.normalized() * std::tan(norm / ScalarT(4)); }
     return Eigen::Vector3<ScalarT>::Zero();
 }
 
@@ -656,8 +653,8 @@ Eigen::Vector3<ScalarT> prvToMrp(const Eigen::Vector3<ScalarT>& prv) {
  * @param prv
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> prvToEulerAngles321(const Eigen::Vector3<ScalarT>& prv) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> prvToEulerAngles321(Eigen::Vector3<ScalarT> const &prv) {
     return epToEulerAngles321(prvToEp(prv));
 }
 
@@ -666,8 +663,8 @@ Eigen::Vector3<ScalarT> prvToEulerAngles321(const Eigen::Vector3<ScalarT>& prv) 
  * @param euler321
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> eulerAngles321ToDcm(const Eigen::Vector3<ScalarT>& euler321) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> eulerAngles321ToDcm(Eigen::Vector3<ScalarT> const &euler321) {
     ScalarT sin1 = std::sin(euler321(0));
     ScalarT sin2 = std::sin(euler321(1));
     ScalarT sin3 = std::sin(euler321(2));
@@ -687,8 +684,8 @@ Eigen::Matrix3<ScalarT> eulerAngles321ToDcm(const Eigen::Vector3<ScalarT>& euler
  * @param euler321
  * @return Eigen::Vector4d
  */
-template <typename ScalarT>
-Eigen::Vector4<ScalarT> eulerAngles321ToEp(const Eigen::Vector3<ScalarT>& euler321) {
+template<typename ScalarT>
+Eigen::Vector4<ScalarT> eulerAngles321ToEp(Eigen::Vector3<ScalarT> const &euler321) {
     ScalarT half0 = euler321(0) / 2.0;
     ScalarT half1 = euler321(1) / 2.0;
     ScalarT half2 = euler321(2) / 2.0;
@@ -714,8 +711,8 @@ Eigen::Vector4<ScalarT> eulerAngles321ToEp(const Eigen::Vector3<ScalarT>& euler3
  * @param euler321
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> eulerAngles321ToMrp(const Eigen::Vector3<ScalarT>& euler321) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> eulerAngles321ToMrp(Eigen::Vector3<ScalarT> const &euler321) {
     return epToMrp(eulerAngles321ToEp(euler321));
 }
 
@@ -724,8 +721,8 @@ Eigen::Vector3<ScalarT> eulerAngles321ToMrp(const Eigen::Vector3<ScalarT>& euler
  * @param euler321
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> eulerAngles321ToPrv(const Eigen::Vector3<ScalarT>& euler321) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> eulerAngles321ToPrv(Eigen::Vector3<ScalarT> const &euler321) {
     return epToPrv(eulerAngles321ToEp(euler321));
 }
 
@@ -735,8 +732,8 @@ Eigen::Vector3<ScalarT> eulerAngles321ToPrv(const Eigen::Vector3<ScalarT>& euler
  * @param ep2 Eigen::Vector4d
  * @return Eigen::Vector4d
  */
-template <typename ScalarT>
-Eigen::Vector4<ScalarT> addEp(const Eigen::Vector4<ScalarT>& ep1, const Eigen::Vector4<ScalarT>& ep2) {
+template<typename ScalarT>
+Eigen::Vector4<ScalarT> addEp(Eigen::Vector4<ScalarT> const &ep1, Eigen::Vector4<ScalarT> const &ep2) {
     Eigen::Vector4<ScalarT> ep;
 
     ep(0) = ep2(0) * ep1(0) - ep2(1) * ep1(1) - ep2(2) * ep1(2) - ep2(3) * ep1(3);
@@ -753,9 +750,9 @@ Eigen::Vector4<ScalarT> addEp(const Eigen::Vector4<ScalarT>& ep1, const Eigen::V
  * @param euler3212 Eigen::Vector3d
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> addEulerAngles321(const Eigen::Vector3<ScalarT>& euler3211,
-                                          const Eigen::Vector3<ScalarT>& euler3212) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT>
+addEulerAngles321(Eigen::Vector3<ScalarT> const &euler3211, Eigen::Vector3<ScalarT> const &euler3212) {
     return dcmToEulerAngles321((eulerAngles321ToDcm(euler3212) * eulerAngles321ToDcm(euler3211)).eval());
 }
 
@@ -765,11 +762,9 @@ Eigen::Vector3<ScalarT> addEulerAngles321(const Eigen::Vector3<ScalarT>& euler32
  * @param prv2 Eigen::Vector3d
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> addPrv(const Eigen::Vector3<ScalarT>& prv1, const Eigen::Vector3<ScalarT>& prv2) {
-    if (prv1.norm() < ScalarT(1.0E-7) || prv2.norm() < ScalarT(1.0E-7)) {
-        return prv1 + prv2;
-    }
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> addPrv(Eigen::Vector3<ScalarT> const &prv1, Eigen::Vector3<ScalarT> const &prv2) {
+    if (prv1.norm() < ScalarT(1.0E-7) || prv2.norm() < ScalarT(1.0E-7)) { return prv1 + prv2; }
 
     ScalarT phi1 = prv1.norm() / 2.0;
     ScalarT phi2 = prv2.norm() / 2.0;
@@ -789,12 +784,10 @@ Eigen::Vector3<ScalarT> addPrv(const Eigen::Vector3<ScalarT>& prv1, const Eigen:
 
     ScalarT angle = 2.0 * std::acos(realPart);
 
-    if (std::abs(angle) < ScalarT(1.0E-13)) {
-        return Eigen::Vector3<ScalarT>::Zero();
-    }
+    if (std::abs(angle) < ScalarT(1.0E-13)) { return Eigen::Vector3<ScalarT>::Zero(); }
 
-    Eigen::Vector3<ScalarT> vectorPart = cosPhi1 * sinPhi2 * unitVector2 + cosPhi2 * sinPhi1 * unitVector1 +
-                                         sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
+    Eigen::Vector3<ScalarT> vectorPart = cosPhi1 * sinPhi2 * unitVector2 + cosPhi2 * sinPhi1 * unitVector1
+                                       + sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
 
     return vectorPart * angle / std::sin(angle / 2.0);
 }
@@ -805,8 +798,8 @@ Eigen::Vector3<ScalarT> addPrv(const Eigen::Vector3<ScalarT>& prv1, const Eigen:
  * @param mrp2 Eigen::Vector3d
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> addMrp(const Eigen::Vector3<ScalarT>& mrp1, const Eigen::Vector3<ScalarT>& mrp2) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> addMrp(Eigen::Vector3<ScalarT> const &mrp1, Eigen::Vector3<ScalarT> const &mrp2) {
     Eigen::Vector3<ScalarT> sigma1 = mrp1;
     ScalarT denominator = 1.0 + mrp1.dot(mrp1) * mrp2.dot(mrp2) - 2.0 * mrp1.dot(mrp2);
 
@@ -834,8 +827,8 @@ Eigen::Vector3<ScalarT> addMrp(const Eigen::Vector3<ScalarT>& mrp1, const Eigen:
  * @param ep2
  * @return Eigen::Vector4d
  */
-template <typename ScalarT>
-Eigen::Vector4<ScalarT> subEp(const Eigen::Vector4<ScalarT>& ep1, const Eigen::Vector4<ScalarT>& ep2) {
+template<typename ScalarT>
+Eigen::Vector4<ScalarT> subEp(Eigen::Vector4<ScalarT> const &ep1, Eigen::Vector4<ScalarT> const &ep2) {
     Eigen::Vector4<ScalarT> ep;
 
     ep(0) = ep2(0) * ep1(0) + ep2(1) * ep1(1) + ep2(2) * ep1(2) + ep2(3) * ep1(3);
@@ -852,8 +845,8 @@ Eigen::Vector4<ScalarT> subEp(const Eigen::Vector4<ScalarT>& ep1, const Eigen::V
  * @param mrp2
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> subMrp(const Eigen::Vector3<ScalarT>& mrp1, const Eigen::Vector3<ScalarT>& mrp2) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> subMrp(Eigen::Vector3<ScalarT> const &mrp1, Eigen::Vector3<ScalarT> const &mrp2) {
     Eigen::Vector3<ScalarT> mrp1Shadow(mrp1);
     ScalarT denominator = ScalarT(1) + mrp2.dot(mrp2) * mrp1.dot(mrp1) + ScalarT(2) * mrp2.dot(mrp1);
     if (std::abs(denominator) < ScalarT(0.1)) {
@@ -862,8 +855,8 @@ Eigen::Vector3<ScalarT> subMrp(const Eigen::Vector3<ScalarT>& mrp1, const Eigen:
     }
     assert(std::abs(denominator) > Types<ScalarT>::eps);
     Eigen::Vector3<ScalarT> numerator;
-    numerator = (ScalarT(1) - mrp2.dot(mrp2)) * mrp1Shadow - (ScalarT(1) - mrp1Shadow.dot(mrp1Shadow)) * mrp2 +
-                ScalarT(2) * mrp1Shadow.cross(mrp2);
+    numerator = (ScalarT(1) - mrp2.dot(mrp2)) * mrp1Shadow - (ScalarT(1) - mrp1Shadow.dot(mrp1Shadow)) * mrp2
+              + ScalarT(2) * mrp1Shadow.cross(mrp2);
     Eigen::Vector3<ScalarT> mrp = numerator / denominator;
     /* map mrp to inner set */
     mrp = mrpSwitch(mrp, ScalarT(1));
@@ -878,8 +871,8 @@ Eigen::Vector3<ScalarT> subMrp(const Eigen::Vector3<ScalarT>& mrp1, const Eigen:
  * @param prv2
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> subPrv(const Eigen::Vector3<ScalarT>& prv1, const Eigen::Vector3<ScalarT>& prv2) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT> subPrv(Eigen::Vector3<ScalarT> const &prv1, Eigen::Vector3<ScalarT> const &prv2) {
     if (constexpr ScalarT threshold = ScalarT(1.0E-7); prv1.norm() < threshold || prv2.norm() < threshold) {
         return prv1 - prv2;
     }
@@ -902,12 +895,10 @@ Eigen::Vector3<ScalarT> subPrv(const Eigen::Vector3<ScalarT>& prv1, const Eigen:
 
     ScalarT angle = ScalarT(2) * std::acos(acosArg);
 
-    if (std::abs(angle) < ScalarT(1.0E-13)) {
-        return Eigen::Vector3<ScalarT>::Zero();
-    }
+    if (std::abs(angle) < ScalarT(1.0E-13)) { return Eigen::Vector3<ScalarT>::Zero(); }
 
-    Eigen::Vector3<ScalarT> prv = cosPhi2 * sinPhi1 * unitVector1 - cosPhi1 * sinPhi2 * unitVector2 +
-                                  sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
+    Eigen::Vector3<ScalarT> prv = cosPhi2 * sinPhi1 * unitVector1 - cosPhi1 * sinPhi2 * unitVector2
+                                + sinPhi1 * sinPhi2 * unitVector1.cross(unitVector2);
 
     return prv * angle / std::sin(angle / ScalarT(2));
 }
@@ -918,9 +909,9 @@ Eigen::Vector3<ScalarT> subPrv(const Eigen::Vector3<ScalarT>& prv1, const Eigen:
  * @param euler3212
  * @return Eigen::Vector3d
  */
-template <typename ScalarT>
-Eigen::Vector3<ScalarT> subEulerAngles321(const Eigen::Vector3<ScalarT>& euler3211,
-                                          const Eigen::Vector3<ScalarT>& euler3212) {
+template<typename ScalarT>
+Eigen::Vector3<ScalarT>
+subEulerAngles321(Eigen::Vector3<ScalarT> const &euler3211, Eigen::Vector3<ScalarT> const &euler3212) {
     Eigen::Matrix3<ScalarT> dcm1 = eulerAngles321ToDcm(euler3211);
     Eigen::Matrix3<ScalarT> dcm2 = eulerAngles321ToDcm(euler3212);
     Eigen::Matrix3<ScalarT> dcmDiff = dcm1 * dcm2.transpose();
@@ -934,8 +925,8 @@ Eigen::Vector3<ScalarT> subEulerAngles321(const Eigen::Vector3<ScalarT>& euler32
  * @param axis_number
  * @return Eigen::Matrix3d
  */
-template <typename ScalarT>
-Eigen::Matrix3<ScalarT> rotationMatrix(const ScalarT angle, const int axis_number) {
+template<typename ScalarT>
+Eigen::Matrix3<ScalarT> rotationMatrix(ScalarT const angle, int const axis_number) {
     assert(axis_number > 0 && axis_number < 4);
     Eigen::Matrix3<ScalarT> dcm;
 
