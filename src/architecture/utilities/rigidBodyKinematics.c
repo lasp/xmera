@@ -9,9 +9,21 @@
 #include "safeMath.h"
 
 #include <assert.h>
+#include <math.h>
 #include <string.h>
 
 #define nearZero 0.0000000000001
+
+/*
+ * v3StableNorm(V) returns the length of the 3 vector V.
+ * hypot scales its terms before it squares them. Thus the length of a vector
+ * whose terms are near the smallest double is not zero, which the square of
+ * such a term would be. The angle recovery below divides by this length and
+ * must therefore know that it is zero only for the zero vector.
+ */
+static double v3StableNorm(double* v) {
+    return hypot(hypot(v[0], v[1]), v[2]);
+}
 
 /*
  * Q = addEP(B1,B2) provides the Euler parameter vector
@@ -273,15 +285,21 @@ void addMRP(double* q1, double* q2, double* result) {
 
     /* map MRP to inner set */
     mag = v3Dot(result, result);
-    if (mag > 1.0) {
-        v3Scale(-1. / mag, result, result);
-    }
+    if (mag > 1.0) { v3Scale(-1. / mag, result, result); }
 }
 
 /*
  * addPRV(Q1,Q2,Q) provides the principal rotation vector
  * which corresponds to performing to successive
  * prinicipal rotations Q1 and Q2.
+ *
+ * The function calculates the angle as 2*atan2(|vector part|, real part). It does not use
+ * 2*acos(real part). The code calculates the vector part of the composed quaternion first, because
+ * atan2 must have its magnitude, which is equal to sin(angle/2).
+ *
+ * When the two rotations almost cancel, the real part becomes equal to 1 and acos gives 0. The
+ * previous code thus discarded a net rotation of less than a few times 1e-8 radians. atan2 also
+ * accepts a real part that is more than 1, and safeAcos is no longer necessary to clamp it.
  */
 void addPRV(double* qq1, double* qq2, double* result) {
     double e1[3];
@@ -306,19 +324,23 @@ void addPRV(double* qq1, double* qq2, double* result) {
     v3Set(q1[1], q1[2], q1[3], e1);
     v3Set(q2[1], q2[2], q2[3], e2);
 
-    double p = 2 * safeAcos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
-    if (fabs(p) < 1.0E-13) {
-        v3SetZero(result);
-        return;
-    }
-    double sp = sin(p / 2.);
+    double realPart = cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2);
+
+    // vector part of the composed quaternion (magnitude == sin(phi/2))
     v3Scale(cp1 * sp2, e2, q1);
     v3Scale(cp2 * sp1, e1, q2);
     v3Add(q1, q2, result);
     v3Cross(e1, e2, q1);
     v3Scale(sp1 * sp2, q1, q2);
     v3Add(result, q2, result);
-    v3Scale(p / sp, result, result);
+
+    double vecNorm = v3StableNorm(result);
+    if (vecNorm == 0.0) {
+        v3SetZero(result);
+        return;
+    }
+    double p = 2 * atan2(vecNorm, realPart);
+    v3Scale(p / vecNorm, result, result);
 }
 
 /*
@@ -1124,42 +1146,42 @@ void C2EP(double C[3][3], double b[4]) {
     }
 
     switch (i) {
-        case 0:
-            b[0] = sqrt(b2[0]);
-            b[1] = (C[1][2] - C[2][1]) / 4 / b[0];
-            b[2] = (C[2][0] - C[0][2]) / 4 / b[0];
-            b[3] = (C[0][1] - C[1][0]) / 4 / b[0];
-            break;
-        case 1:
-            b[1] = sqrt(b2[1]);
-            b[0] = (C[1][2] - C[2][1]) / 4 / b[1];
-            if (b[0] < 0) {
-                b[1] = -b[1];
-                b[0] = -b[0];
-            }
-            b[2] = (C[0][1] + C[1][0]) / 4 / b[1];
-            b[3] = (C[2][0] + C[0][2]) / 4 / b[1];
-            break;
-        case 2:
-            b[2] = sqrt(b2[2]);
-            b[0] = (C[2][0] - C[0][2]) / 4 / b[2];
-            if (b[0] < 0) {
-                b[2] = -b[2];
-                b[0] = -b[0];
-            }
-            b[1] = (C[0][1] + C[1][0]) / 4 / b[2];
-            b[3] = (C[1][2] + C[2][1]) / 4 / b[2];
-            break;
-        case 3:
-            b[3] = sqrt(b2[3]);
-            b[0] = (C[0][1] - C[1][0]) / 4 / b[3];
-            if (b[0] < 0) {
-                b[3] = -b[3];
-                b[0] = -b[0];
-            }
-            b[1] = (C[2][0] + C[0][2]) / 4 / b[3];
-            b[2] = (C[1][2] + C[2][1]) / 4 / b[3];
-            break;
+    case 0:
+        b[0] = sqrt(b2[0]);
+        b[1] = (C[1][2] - C[2][1]) / 4 / b[0];
+        b[2] = (C[2][0] - C[0][2]) / 4 / b[0];
+        b[3] = (C[0][1] - C[1][0]) / 4 / b[0];
+        break;
+    case 1:
+        b[1] = sqrt(b2[1]);
+        b[0] = (C[1][2] - C[2][1]) / 4 / b[1];
+        if (b[0] < 0) {
+            b[1] = -b[1];
+            b[0] = -b[0];
+        }
+        b[2] = (C[0][1] + C[1][0]) / 4 / b[1];
+        b[3] = (C[2][0] + C[0][2]) / 4 / b[1];
+        break;
+    case 2:
+        b[2] = sqrt(b2[2]);
+        b[0] = (C[2][0] - C[0][2]) / 4 / b[2];
+        if (b[0] < 0) {
+            b[2] = -b[2];
+            b[0] = -b[0];
+        }
+        b[1] = (C[0][1] + C[1][0]) / 4 / b[2];
+        b[3] = (C[1][2] + C[2][1]) / 4 / b[2];
+        break;
+    case 3:
+        b[3] = sqrt(b2[3]);
+        b[0] = (C[0][1] - C[1][0]) / 4 / b[3];
+        if (b[0] < 0) {
+            b[3] = -b[3];
+            b[0] = -b[0];
+        }
+        b[1] = (C[2][0] + C[0][2]) / 4 / b[3];
+        b[2] = (C[1][2] + C[2][1]) / 4 / b[3];
+        break;
     }
 }
 
@@ -1266,10 +1288,16 @@ void C2Euler313(double C[3][3], double* q) {
 /*
  * C2Euler321(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (3-2-1) Euler angle set.
+ *
+ * The function calculates the pitch with atan2(sin(pitch), cos(pitch)). It does not use
+ * asin(sin(pitch)). The cosine comes from the norm of the two other entries of row 0. This keeps
+ * more precision when the pitch is almost +/-90 degrees. safeAsin is also no longer necessary to
+ * clamp a -C[0][2] that rounding makes more than 1. The other Euler sequences in this file still
+ * calculate their middle angle with safeAcos or safeAsin.
  */
 void C2Euler321(double C[3][3], double* q) {
     q[0] = atan2(C[0][1], C[0][0]);
-    q[1] = safeAsin(-C[0][2]);
+    q[1] = atan2(-C[0][2], sqrt(C[0][0] * C[0][0] + C[0][1] * C[0][1]));
     q[2] = atan2(C[1][2], C[2][2]);
 }
 
@@ -1340,9 +1368,7 @@ void dEP(double* q, double* w, double* dq) {
     m33MultV3(B, w, dq);
     for (int i = 0; i < 4; i++) {
         dq[i] = 0.;
-        for (int j = 0; j < 3; j++) {
-            dq[i] += B[i][j] * w[j];
-        }
+        for (int j = 0; j < 3; j++) { dq[i] += B[i][j] * w[j]; }
     }
     v3Scale(.5, dq, dq);
     dq[3] = 0.5 * dq[3];
@@ -1578,9 +1604,7 @@ void ddMRP(double* q, double* dq, double* w, double* dw, double* ddq) {
     BdotmatMRP(q, dq, Bdot);
     m33MultV3(B, dw, s1);
     m33MultV3(Bdot, w, s2);
-    for (int i = 0; i < 3; i++) {
-        ddq[i] = 0.25 * (s1[i] + s2[i]);
-    }
+    for (int i = 0; i < 3; i++) { ddq[i] = 0.25 * (s1[i] + s2[i]); }
 }
 
 /*
@@ -1601,9 +1625,7 @@ void ddMRP2dOmega(double* q, double* dq, double* ddq, double* dw) {
     BdotmatMRP(q, dq, Bdot);
     m33MultV3(B, dq, s1);
     m33MultV3(Bdot, s1, s2);
-    for (int i = 0; i < 3; i++) {
-        s3[i] = ddq[i] - s2[i];
-    }
+    for (int i = 0; i < 3; i++) { s3[i] = ddq[i] - s2[i]; }
     m33MultV3(B, s3, dw);
     v3Scale(4, dw, dw);
 }
@@ -1805,6 +1827,11 @@ void EP2Euler313(double* q, double* e) {
 /*
  * EP2Euler321(Q,E) translates the Euler parameter vector
  * Q into the corresponding (3-2-1) Euler angle set.
+ *
+ * The function calculates the pitch with atan2(sin(pitch), cos(pitch)) and not asin(sin(pitch)).
+ * Refer to C2Euler321 for the reasons. The code calculates the three row 0 terms of the direction
+ * cosine matrix one time and then uses them again. The norm of the first two terms is the cosine of
+ * the pitch.
  */
 void EP2Euler321(double* q, double* e) {
     double q0 = q[0];
@@ -1812,8 +1839,12 @@ void EP2Euler321(double* q, double* e) {
     double q2 = q[2];
     double q3 = q[3];
 
-    e[0] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
-    e[1] = safeAsin(-2 * (q1 * q3 - q0 * q2));
+    double r00 = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3;
+    double r01 = 2 * (q1 * q2 + q0 * q3);
+    double r02 = 2 * (q1 * q3 - q0 * q2);
+
+    e[0] = atan2(r01, r00);
+    e[1] = atan2(-r02, sqrt(r00 * r00 + r01 * r01));
     e[2] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
 }
 
@@ -1860,19 +1891,28 @@ void EP2MRP(double* q1, double* q) {
 /*
  * EP2PRV(Q1,Q) translates the Euler parameter vector Q1
  * into the principal rotation vector Q.
+ *
+ * The function calculates the angle as 2*atan2(|Q1[1..3]|, Q1[0]). It does not use 2*acos(Q1[0]).
+ * For a unit quaternion, the magnitude of the vector part is sin(angle/2). Thus atan2 receives the
+ * sine and the cosine of the half angle.
+ *
+ * For a rotation of less than approximately 2e-8 radians, Q1[0] becomes equal to 1. Then acos gives
+ * 0 and the previous code gave a zero vector. atan2 also accepts a Q1[0] that is more than 1, and
+ * safeAcos is no longer necessary to clamp it. A decode step or a normalize step can make such a
+ * value.
  */
 void EP2PRV(double* q1, double* q) {
-    double p = 2 * safeAcos(q1[0]);
-    double sp = sin(p / 2);
-    if (fabs(sp) < nearZero) {
+    double vecNorm = v3StableNorm(&(q1[1]));
+    if (vecNorm == 0.0) {
         q[0] = 0.0;
         q[1] = 0.0;
         q[2] = 0.0;
         return;
     }
-    q[0] = q1[1] / sp * p;
-    q[1] = q1[2] / sp * p;
-    q[2] = q1[3] / sp * p;
+    double p = 2 * atan2(vecNorm, q1[0]);
+    q[0] = q1[1] / vecNorm * p;
+    q[1] = q1[2] / vecNorm * p;
+    q[2] = q1[3] / vecNorm * p;
 }
 
 /*
@@ -2965,7 +3005,9 @@ void Gibbs2Euler323(double* q, double* e) {
  * Gibbs2MRP(Q1,Q) translates the Gibbs vector Q1
  * into the MRP vector Q.
  */
-void Gibbs2MRP(double* q1, double* q) { v3Scale(1.0 / (1 + sqrt(1 + v3Dot(q1, q1))), q1, q); }
+void Gibbs2MRP(double* q1, double* q) {
+    v3Scale(1.0 / (1 + sqrt(1 + v3Dot(q1, q1))), q1, q);
+}
 
 /*
  * Gibbs2PRV(Q1,Q) translates the Gibbs vector Q1
@@ -3157,7 +3199,9 @@ void MRP2Euler323(double* q, double* e) {
  * MRP2Gibbs(Q1,Q) translates the MRP vector Q1
  * into the Gibbs vector Q.
  */
-void MRP2Gibbs(double* q1, double* q) { v3Scale(2. / (1. - v3Dot(q1, q1)), q1, q); }
+void MRP2Gibbs(double* q1, double* q) {
+    v3Scale(2. / (1. - v3Dot(q1, q1)), q1, q);
+}
 
 /*
  * MRP2PRV(Q1,Q) translates the MRP vector Q1
@@ -3202,13 +3246,9 @@ void MRPshadow(double* qIn, double* qOut) {
 double wrapToPi(double x) {
     double q = x;
 
-    if (x > M_PI) {
-        q = x - 2 * M_PI;
-    }
+    if (x > M_PI) { q = x - 2 * M_PI; }
 
-    if (x < -M_PI) {
-        q = x + 2 * M_PI;
-    }
+    if (x < -M_PI) { q = x + 2 * M_PI; }
 
     return q;
 }
@@ -3679,15 +3719,21 @@ void subMRP(double* q1, double* q2, double* q) {
 
     /* map MRP to inner set */
     mag = v3Dot(q, q);
-    if (mag > 1.0) {
-        v3Scale(-1. / mag, q, q);
-    }
+    if (mag > 1.0) { v3Scale(-1. / mag, q, q); }
 }
 
 /*
  * subPRV(Q1,Q2,Q) provides the prinipal rotation vector
  * which corresponds to relative principal rotation from Q2
  * to Q1.
+ *
+ * The function calculates the angle as 2*atan2(|vector part|, real part). It does not use
+ * 2*acos(real part). The code calculates the vector part of the relative quaternion first, because
+ * atan2 must have its magnitude, which is equal to sin(angle/2).
+ *
+ * This has the most effect when the function measures a small attitude error. When the two rotations
+ * are almost the same, the real part becomes equal to 1 and acos gives 0. The previous code thus
+ * gave a zero result for a relative rotation of less than a few times 1e-8 radians.
  */
 void subPRV(double* q10, double* q20, double* q) {
     double q1[4];
@@ -3704,16 +3750,23 @@ void subPRV(double* q10, double* q20, double* q) {
     v3Copy(&(q1[1]), e1);
     v3Copy(&(q2[1]), e2);
 
-    double p = 2. * safeAcos(cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2));
-    double sp = sin(p / 2.);
+    double realPart = cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2);
 
+    // vector part of the relative quaternion (magnitude == sin(phi/2))
     v3Cross(e1, e2, q1);
     v3Scale(sp1 * sp2, q1, q);
     v3Scale(cp2 * sp1, e1, q1);
     v3Add(q1, q, q);
     v3Scale(cp1 * sp2, e2, q1);
     v3Subtract(q, q1, q);
-    v3Scale(p / sp, q, q);
+
+    double vecNorm = v3StableNorm(q);
+    if (vecNorm == 0.0) {
+        v3SetZero(q);
+        return;
+    }
+    double p = 2. * atan2(vecNorm, realPart);
+    v3Scale(p / vecNorm, q, q);
 }
 
 /*
@@ -3725,44 +3778,43 @@ void Mi(double theta, int a, double C[3][3]) {
     double s = sin(theta);
 
     switch (a) {
-        case 1:
-            C[0][0] = 1.;
-            C[0][1] = 0.;
-            C[0][2] = 0.;
-            C[1][0] = 0.;
-            C[1][1] = c;
-            C[1][2] = s;
-            C[2][0] = 0.;
-            C[2][1] = -s;
-            C[2][2] = c;
-            break;
+    case 1:
+        C[0][0] = 1.;
+        C[0][1] = 0.;
+        C[0][2] = 0.;
+        C[1][0] = 0.;
+        C[1][1] = c;
+        C[1][2] = s;
+        C[2][0] = 0.;
+        C[2][1] = -s;
+        C[2][2] = c;
+        break;
 
-        case 2:
-            C[0][0] = c;
-            C[0][1] = 0.;
-            C[0][2] = -s;
-            C[1][0] = 0.;
-            C[1][1] = 1.;
-            C[1][2] = 0.;
-            C[2][0] = s;
-            C[2][1] = 0.;
-            C[2][2] = c;
-            break;
+    case 2:
+        C[0][0] = c;
+        C[0][1] = 0.;
+        C[0][2] = -s;
+        C[1][0] = 0.;
+        C[1][1] = 1.;
+        C[1][2] = 0.;
+        C[2][0] = s;
+        C[2][1] = 0.;
+        C[2][2] = c;
+        break;
 
-        case 3:
-            C[0][0] = c;
-            C[0][1] = s;
-            C[0][2] = 0.;
-            C[1][0] = -s;
-            C[1][1] = c;
-            C[1][2] = 0.;
-            C[2][0] = 0.;
-            C[2][1] = 0.;
-            C[2][2] = 1.;
-            break;
+    case 3:
+        C[0][0] = c;
+        C[0][1] = s;
+        C[0][2] = 0.;
+        C[1][0] = -s;
+        C[1][1] = c;
+        C[1][2] = 0.;
+        C[2][0] = 0.;
+        C[2][1] = 0.;
+        C[2][2] = 1.;
+        break;
 
-        default:
-            assert("Mi() error: axis selected not either 1, 2, or 3.");
+    default: assert("Mi() error: axis selected not either 1, 2, or 3.");
     }
 }
 
