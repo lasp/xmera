@@ -7,7 +7,7 @@
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/gauss_markov.h>
 #include <architecture/utilities/macroDefinitions.h>
-#include <architecture/utilities/rigidBodyKinematics.h>
+#include <architecture/utilities/rigidBodyKinematics.hpp>
 
 #include <inttypes.h>
 
@@ -219,16 +219,11 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime) {
     spacecraft output message and passed through to theother IMU functions which add noise, etc.
  */
 void ImuSensor::computePlatformDR() {
-    double dcm_P2P1_cArray[9];  // dcm_P2P1 as cArray for C2PRV conversion
-    double prv_PN_cArray[3];    // cArray of PRV
-
     // Calculated time averaged cumulative rotation
     Eigen::Matrix3d dcm_P2P1;  // direction cosine matrix from P at time 1 to P at time 2
     dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose()
              * (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
-    eigenMatrixToCArray(dcm_P2P1, dcm_P2P1_cArray);         // makes a 9x1
-    C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray);        // makes it back into a 3x3
-    this->prv_PN_out = cArrayToEigenVector(prv_PN_cArray);  // writes it back to the variable to be passed along.
+    this->prv_PN_out = dcmToPrv(dcm_P2P1);
 
     // calculate "instantaneous" angular rate
     this->omega_PN_P_out = this->dcm_PB * this->current_omega_BN_B;
