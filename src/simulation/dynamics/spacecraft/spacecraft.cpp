@@ -8,7 +8,7 @@
 #include <architecture/utilities/eigenSupport.h>
 #include <architecture/utilities/macroDefinitions.h>
 
-#include <simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h>
+#include <simulation/dynamics/_GeneralModuleFiles/Rk4Integrator.h>
 
 #include <iostream>
 
@@ -26,7 +26,7 @@ Spacecraft::Spacecraft() {
     this->dvAccum_CN_N.setZero();
 
     // - Set integrator as RK4 by default
-    this->integrator = new svIntegratorRK4(this);
+    this->integrator = new Rk4Integrator();
 }
 
 /*! This is the destructor, nothing to report here */

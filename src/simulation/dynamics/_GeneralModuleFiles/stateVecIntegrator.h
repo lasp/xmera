@@ -4,18 +4,18 @@
 #ifndef stateVecIntegrator_h
 #define stateVecIntegrator_h
 
-#include <vector>
-
 class DynamicObject;
 
 /*! @brief state vector integrator class */
-class StateVecIntegrator {
-   public:
-    StateVecIntegrator(DynamicObject* dynIn);
-    virtual ~StateVecIntegrator(void);
-    virtual void integrate(double currentTime, double timeStep) = 0;  //!< class method
-    std::vector<DynamicObject*>
-        dynPtrs;  //!< This is an object that contains the method equationsOfMotion(), also known as the F function.
+struct StateVecIntegrator {
+    virtual ~StateVecIntegrator() = default;
+
+    /*! Advances the states of the given dynamic object one time step.
+        @param dyn dynamic object whose states are advanced
+        @param currentTime [s] time at the start of the step
+        @param timeStep [s] length of the step
+     */
+    virtual void integrate(DynamicObject &dyn, double currentTime, double timeStep) = 0;
 };
 
 #endif /* StateVecIntegrator_h */

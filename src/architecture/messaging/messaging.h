@@ -146,12 +146,6 @@ public:
         this->headerPointer->timeWritten = callTime;
         this->headerPointer->moduleID = moduleID;
     }
-#ifndef SWIG
-    [[deprecated("pass the payload by reference: outMsg.write(payload, moduleID, callTime)")]]
-    void operator()(const messageType* payload, int64_t moduleID, uint64_t callTime) {
-        (*this)(*payload, moduleID, callTime);
-    }
-#endif
 };
 
 /*!

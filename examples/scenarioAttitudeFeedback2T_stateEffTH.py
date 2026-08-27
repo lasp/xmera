@@ -13,9 +13,6 @@ and results should be nearly identical to the original scenario, with the small 
 have an on-off behavior, but instead behave like a first-order filter. For more information on the scenario setup, see
 :ref:`scenarioAttitudeFeedback2T_TH`.
 
-To show that the :ref:`thrusterStateEffector` thruster module works with variable time step integrators, this scenario
-uses an RKF78 integrator instead of the usual RK4.
-
 Illustration of Simulation Results
 ----------------------------------
 
@@ -95,7 +92,6 @@ from xmera.simulation import extForceTorque
 from xmera.simulation import simpleNav
 # import simulation related support
 from xmera.simulation import spacecraft
-from xmera.simulation import svIntegrators
 from xmera.simulation import thrusterStateEffector
 # import general simulation support files
 from xmera.utilities import SimulationBaseClass
@@ -394,10 +390,6 @@ def run(show_plots, useDVThrusters):
     # create the set of thruster in the dynamics task
     thrusterSet = thrusterStateEffector.ThrusterStateEffector()
     scSim.AddModelToTask(dynTaskName, thrusterSet)
-
-    # set the integrator to a variable time step of 7th-8th order
-    integratorObject = svIntegrators.svIntegratorRKF78(scObject)
-    scObject.setIntegrator(integratorObject)
 
     # Make a fresh thruster factory instance, this is critical to run multiple times
     thFactory = simIncludeThruster.thrusterFactory()

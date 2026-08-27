@@ -21,7 +21,6 @@ CLASS_NAME_MAP = {
     "stateData": "StateData",
     "stateEffector": "StateEffector",
     "stateVecIntegrator": "StateVecIntegrator",
-    "svIntegratorRK4": "svIntegratorRK4",
     "atmosphereBase": "AtmosphereBase",
     "magneticFieldBase": "MagneticFieldBase",
     "dataNodeBase": "DataNodeBase",
@@ -35,6 +34,13 @@ CLASS_NAME_MAP = {
     "srukfInterface": "SRukfInterface",
     "stateModels": "State",
     "sys_model": "SysModel",
+}
+
+# Names in CLASS_NAME_MAP that Doxygen records as a struct rather than a class.
+# Breathe filters on the compound kind, so these need the doxygenstruct directive.
+STRUCT_NAMES = {
+    "StateVecIntegrator",
+    "Rk4Integrator",
 }
 
 
@@ -55,7 +61,8 @@ def generate_base_class_rst(rst_source_path, class_name, output_dir):
     content = f".. _{label}:\n\n{title}\n{underline}\n\n"
     if source_content:
         content += source_content + "\n\n"
-    content += f".. doxygenclass:: {class_name}\n   :members:\n"
+    directive = "doxygenstruct" if class_name in STRUCT_NAMES else "doxygenclass"
+    content += f".. {directive}:: {class_name}\n   :members:\n"
 
     output_path = os.path.join(output_dir, f"{basename}.rst")
     with open(output_path, "w") as f:
