@@ -99,11 +99,6 @@ public:
      *  the period. Hence, it is safest to invoke this method at the same simulation
      *  time as (but causally after) an update occurs.
      *
-     *  @important
-     *    This method does not inform any containing `SysProcess` of the new
-     *    next update time. If this task has been added to a running `SysProcess`,
-     *    the `SysProcess::changeTaskPeriod()` method must be used instead.
-     *
      *  @param[in] updatePeriodNanos
      *    The new interval of nanoseconds that should elapse between updates
      */
@@ -165,10 +160,7 @@ public:
 
     //! Whether the task's modules will be updated at subsequent update times
     /*!
-     *  @todo
-     *    Either this field should be made `private` and a getter method added,
-     *    or this field should be made `public` and the `enable()` and `disable()`
-     *    methods removed. (I vote for the latter.)
+     *  @todo This field should be made `private` with a public getter method.
      */
     bool taskActive = true;
 
@@ -197,10 +189,6 @@ private:
  *  An instance of `SysProcess` (a "process") is a collection of tasks, each
  *  with its own update cadence. If two tasks update at the same time, ties are
  *  broken by a task-level priority, where higher-priority tasks go first.
- *
- *  In principle, a process is a reasonably self-contained and internally consistent
- *  model of simulation. A χmera simulation with multiple processes may be thought
- *  of as an integrated multi-model simulation.
  */
 class SysProcess final {
     friend class SimModel;
@@ -260,7 +248,6 @@ public:
     }
 
     //! Determine whether the process is currently participating in simulation
-    /*! @todo The field is already public. Remove this getter. */
     bool isEnabled() const {
         return this->enabled;
     }
@@ -297,12 +284,6 @@ public:
      *  processes of lower priority. *Intra*-process priority is still dictated
      *  by the individual priority associated to each task in the same process.
      *  In contrast, processes across different threads are effectively unordered.
-     *
-     *  @todo
-     *    Process priority should really be owned by whichever container tracks
-     *    this process (`SimModel` in single-threaded simulations). Nothing in
-     *    this class uses this field except a transparent setter (which is redundant
-     *    for a *public* field).
      */
     int64_t const processPriority = -1;
 
@@ -430,11 +411,6 @@ public:
     }
 
     //! Get the time at which the simulation will next be stepped
-    /*!
-     *  This method should only be used during a simulation. If called before
-     *  a simulation begins, or after adding new processes, its value will be
-     *  unreliable.
-     */
     uint64_t getNextTaskTime() const {
         this->ensureHeap();
 
@@ -444,11 +420,6 @@ public:
     }
 
     //! Get the priority of the next process to be updated
-    /*!
-     *  This method should only be used during a simulation. If called before
-     *  a simulation begins, or after adding new processes, its value will be
-     *  unreliable.
-     */
     int64_t getNextProcPriority() const {
         this->ensureHeap();
 
@@ -475,7 +446,7 @@ private:
     //! The time at which the simulation was last updated or reset
     uint64_t lastUpdateNanos = 0;
 
-    //! The collection of processes to be simulated, in priority order
+    //! The collection of processes to be simulated
     std::vector<std::unique_ptr<SysProcess>> processList = {};
 
     //! A prioritized heap of simulation jobs
