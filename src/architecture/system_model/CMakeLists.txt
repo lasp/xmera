@@ -18,7 +18,7 @@ target_link_libraries(architecture.sim_model PRIVATE
 
 
 add_executable(test.xmera_simulator
-  tests/test_sys_model_task.cpp
+  tests/test_sys_model.cpp
   tests/test_sim_model.cpp
 )
 target_link_libraries(test.xmera_simulator PRIVATE
