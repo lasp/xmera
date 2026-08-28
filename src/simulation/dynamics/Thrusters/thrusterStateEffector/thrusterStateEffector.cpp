@@ -31,7 +31,7 @@ ThrusterStateEffector::ThrusterStateEffector() {
 /*! The destructor. */
 ThrusterStateEffector::~ThrusterStateEffector() {
     // Free memory to avoid errors
-    for (long unsigned int c = 0; c < this->thrusterOutMsgs.size(); c++) { free(this->thrusterOutMsgs.at(c)); }
+    for (long unsigned int c = 0; c < this->thrusterOutMsgs.size(); c++) { delete this->thrusterOutMsgs.at(c); }
 }
 
 /*! This method is used to reset the module.
