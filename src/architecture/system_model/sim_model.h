@@ -47,14 +47,15 @@ struct ModelPriorityPair final {
 class SysModelTask final {
     friend class SimModel;
     friend class SysProcess;
+
     struct Passkey {};
 
 public:
-    SysModelTask(SysModelTask const&) = delete;
-    SysModelTask& operator=(SysModelTask const&) = delete;
+    SysModelTask(SysModelTask const &) = delete;
+    SysModelTask &operator=(SysModelTask const &) = delete;
 
-    SysModelTask(SysModelTask&&) = delete;
-    SysModelTask& operator=(SysModelTask&&) = delete;
+    SysModelTask(SysModelTask &&) = delete;
+    SysModelTask &operator=(SysModelTask &&) = delete;
 
     //! Obtain an empty task with a given update period and start time
     /*!
@@ -69,12 +70,12 @@ public:
         uint64_t updatePeriodNanos = 100,
         uint64_t firstUpdateNanos = 0,
         int64_t priority = -1
-    ) : priority(priority)
-      , owner(owner)
-      , nextUpdateNanos(firstUpdateNanos)
-      , updatePeriodNanos(updatePeriodNanos)
-      , firstUpdateNanos(firstUpdateNanos)
-    {}
+    )
+        : priority(priority)
+        , owner(owner)
+        , nextUpdateNanos(firstUpdateNanos)
+        , updatePeriodNanos(updatePeriodNanos)
+        , firstUpdateNanos(firstUpdateNanos) {}
 
     //! Insert a module into the task's sequence of modules with a given priority
     /*!
@@ -192,14 +193,15 @@ private:
  */
 class SysProcess final {
     friend class SimModel;
+
     struct Passkey {};
 
 public:
-    SysProcess(SysProcess const&) = delete;
-    SysProcess& operator=(SysProcess const&) = delete;
+    SysProcess(SysProcess const &) = delete;
+    SysProcess &operator=(SysProcess const &) = delete;
 
-    SysProcess(SysProcess&&) = delete;
-    SysProcess& operator=(SysProcess&&) = delete;
+    SysProcess(SysProcess &&) = delete;
+    SysProcess &operator=(SysProcess &&) = delete;
 
     //! Obtain an empty simulation process
     /*!
@@ -212,7 +214,8 @@ public:
         size_t processId,
         std::string name = "",
         int64_t priority = -1
-    ) : processName{name}, processPriority{priority}, owner{owner}, processId{processId} {}
+    )
+        : processName{name}, processPriority{priority}, owner{owner}, processId{processId} {}
 
     //! Add a new task with the given update schedule and priority
     /*!
@@ -318,37 +321,37 @@ class SimModel final {
         //! The creation-ordered ID of the task
         size_t task_id;
 
-        //! Determine whether this job is schedule for no later than the given threshold time.
+        //! Determine whether this job is schedule for no later than the given threshold time
         bool noLaterThan(uint64_t nanos, int64_t priority) const {
             return (this->task->getNextStartTime() < nanos) ? true
                  : (this->task->getNextStartTime() > nanos) ? false
-                 : (this->process->processPriority >= priority);
+                                                            : (this->process->processPriority >= priority);
         }
 
-        //! Compare two jobs lexicographically by their next update time, their inter-process priority, and their inter-process priority
+        //! Compare two jobs lexicographically by next update time, inter-process priority, and inter-process priority
         std::weak_ordering operator<=>(Job const &other) const {
             return (other.task->getNextStartTime() < this->task->getNextStartTime()) ? std::weak_ordering::less
                  : (other.task->getNextStartTime() > this->task->getNextStartTime()) ? std::weak_ordering::greater
                  : (this->process->processPriority < other.process->processPriority) ? std::weak_ordering::less
                  : (this->process->processPriority > other.process->processPriority) ? std::weak_ordering::greater
-                 : (other.process_id < this->process_id) ? std::weak_ordering::less
-                 : (other.process_id > this->process_id) ? std::weak_ordering::greater
-                 : (this->task->priority < other.task->priority) ? std::weak_ordering::less
-                 : (this->task->priority > other.task->priority) ? std::weak_ordering::greater
-                 : (other.task_id < this->task_id) ? std::weak_ordering::less
-                 : (other.task_id > this->task_id) ? std::weak_ordering::greater
-                 : std::weak_ordering::equivalent;
+                 : (other.process_id < this->process_id)                             ? std::weak_ordering::less
+                 : (other.process_id > this->process_id)                             ? std::weak_ordering::greater
+                 : (this->task->priority < other.task->priority)                     ? std::weak_ordering::less
+                 : (this->task->priority > other.task->priority)                     ? std::weak_ordering::greater
+                 : (other.task_id < this->task_id)                                   ? std::weak_ordering::less
+                 : (other.task_id > this->task_id)                                   ? std::weak_ordering::greater
+                                                                                     : std::weak_ordering::equivalent;
         }
     };
 
 public:
     SimModel() = default;
 
-    SimModel(SimModel const&) = delete;
-    SimModel& operator=(SimModel const&) = delete;
+    SimModel(SimModel const &) = delete;
+    SimModel &operator=(SimModel const &) = delete;
 
-    SimModel(SimModel&&) = delete;
-    SimModel& operator=(SimModel&&) = delete;
+    SimModel(SimModel &&) = delete;
+    SimModel &operator=(SimModel &&) = delete;
 
     //! Add a new process to be simulated
     /*!
@@ -403,7 +406,7 @@ public:
      *  @param[in] stopPriority
      *    The least priority at which processes should be updated
      */
-    void stepUntilStop(uint64_t stopNanos, int64_t stopPriority  = -1);
+    void stepUntilStop(uint64_t stopNanos, int64_t stopPriority = -1);
 
     //! Get the time at which the simulation was last stepped or reset
     uint64_t getCurrentNanos() const {
@@ -414,18 +417,16 @@ public:
     uint64_t getNextTaskTime() const {
         this->ensureHeap();
 
-        return (!this->jobHeap.empty())
-            ? jobHeap.front().task->getNextStartTime()
-            : std::numeric_limits<uint64_t>::max();
+        return (!this->jobHeap.empty()) ? jobHeap.front().task->getNextStartTime()
+                                        : std::numeric_limits<uint64_t>::max();
     }
 
     //! Get the priority of the next process to be updated
     int64_t getNextProcPriority() const {
         this->ensureHeap();
 
-        return (!this->jobHeap.empty())
-            ? jobHeap.front().process->processPriority
-            : std::numeric_limits<int64_t>::min();
+        return (!this->jobHeap.empty()) ? jobHeap.front().process->processPriority
+                                        : std::numeric_limits<int64_t>::min();
     }
 
     //! Get an immutable view on the list of processes in this simulation

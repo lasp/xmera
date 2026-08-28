@@ -49,16 +49,12 @@ void SysModelTask::setPeriod(uint64_t updatePeriodNanos) {
     this->owner.isHeap = false;
 }
 
-
 SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
     auto task_id = this->processTasks.size();
-    auto &task = this->processTasks.emplace_back(std::make_unique<SysModelTask>(
-        SysModelTask::Passkey{},
-        this->owner,
-        updatePeriodNanos,
-        firstUpdateNanos,
-        priority
-    ));
+    auto &task = this->processTasks.emplace_back(
+        std::make_unique<
+            SysModelTask>(SysModelTask::Passkey{}, this->owner, updatePeriodNanos, firstUpdateNanos, priority)
+    );
 
     // Mark the heap for re-heaping according to the new task's update time.
     this->owner.isHeap = false;
@@ -84,7 +80,6 @@ bool SysProcess::changeTaskPeriod(std::string const &taskName, uint64_t newPerio
     return false;
 }
 
-
 void SimModel::ensureHeap() const {
     if (this->isHeap) { return; }
 
@@ -94,13 +89,9 @@ void SimModel::ensureHeap() const {
 
 SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
     auto processId = this->processList.size();
-    auto &ptr = this->processList.emplace_back(std::make_unique<SysProcess>(
-        SysProcess::Passkey{},
-        *this,
-        processId,
-        name,
-        priority
-    ));
+    auto &ptr = this->processList.emplace_back(
+        std::make_unique<SysProcess>(SysProcess::Passkey{}, *this, processId, name, priority)
+    );
     return *ptr.get();
 }
 
@@ -111,9 +102,7 @@ void SimModel::resetSimulation() {
     for (auto &process : this->processList) {
         for (auto &task : process->processTasks) {
             task->nextUpdateNanos = task->firstUpdateNanos;
-            for (auto const &modelPair : task->TaskModels) {
-                modelPair.ModelPtr->reset(this->lastUpdateNanos);
-            }
+            for (auto const &modelPair : task->TaskModels) { modelPair.ModelPtr->reset(this->lastUpdateNanos); }
         }
     }
 
@@ -154,9 +143,7 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
 
         // Execute the job.
         if (job.process->enabled && job.task->taskActive) {
-            for (auto &modelPair : job.task->TaskModels) {
-                modelPair.ModelPtr->updateState(this->lastUpdateNanos);
-            }
+            for (auto &modelPair : job.task->TaskModels) { modelPair.ModelPtr->updateState(this->lastUpdateNanos); }
         }
 
         // On the off chance that the task mucked with task timings,
