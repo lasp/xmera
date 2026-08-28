@@ -23,12 +23,16 @@ inline uint64_t SysModelTask::projectToCurrentSchedule(uint64_t time) {
 
 void SysModelTask::addModel(SysModel* module, int32_t priority) {
     // Find the index separating lower priorities from higher priorities.
-    auto it = this->TaskModels.begin();
-    for (; it != this->TaskModels.end(); ++it) {
-        if (priority > it->CurrentModelPriority) { break; }
-    }
+    auto it = std::lower_bound(
+        this->TaskModels.begin(),
+        this->TaskModels.end(),
+        priority,
+        [](auto const& model, auto const& threshold) {
+            return (threshold <= model.CurrentModelPriority);
+        }
+    );
 
-    // Insert the module at this index. (It's okay if it's the end() iterator.)
+    // Insert the module at this index.
     this->TaskModels.insert(it, {.CurrentModelPriority = priority, .ModelPtr = module});
 }
 
@@ -51,9 +55,21 @@ void SysModelTask::setPeriod(uint64_t updatePeriodNanos) {
 
 SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
     auto task_id = this->processTasks.size();
-    auto &task = this->processTasks.emplace_back(
-        std::make_unique<
-            SysModelTask>(SysModelTask::Passkey{}, this->owner, updatePeriodNanos, firstUpdateNanos, priority)
+
+    // Find the index separating lower priorities from higher priorities.
+    auto it = std::lower_bound(
+        this->processTasks.begin(),
+        this->processTasks.end(),
+        priority,
+        [](auto const& task, auto const& threshold) {
+            return (threshold <= task->priority);
+        }
+    );
+
+    // Insert the module at this index.
+    it = this->processTasks.emplace(
+        it,
+        std::make_unique<SysModelTask>(SysModelTask::Passkey{}, this->owner, updatePeriodNanos, firstUpdateNanos, priority)
     );
 
     // Mark the heap for re-heaping according to the new task's update time.
@@ -61,11 +77,11 @@ SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpda
     this->owner.jobHeap.push_back({
         .process = this,
         .process_id = this->processId,
-        .task = task.get(),
+        .task = it->get(),
         .task_id = task_id,
     });
 
-    return *task.get();
+    return *it->get();
 }
 
 bool SysProcess::changeTaskPeriod(std::string const &taskName, uint64_t newPeriod) {
@@ -89,10 +105,27 @@ void SimModel::ensureHeap() const {
 
 SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
     auto processId = this->processList.size();
-    auto &ptr = this->processList.emplace_back(
-        std::make_unique<SysProcess>(SysProcess::Passkey{}, *this, processId, name, priority)
+
+    // Find the index separating lower priorities from higher priorities.
+    auto it = std::lower_bound(
+        this->processList.begin(),
+        this->processList.end(),
+        priority,
+        [](auto const& process, auto const& threshold) {
+            return (threshold <= process->processPriority);
+        }
     );
-    return *ptr.get();
+
+    // Insert the module at this index.
+    it = this->processList.emplace(it, std::make_unique<SysProcess>(
+        SysProcess::Passkey{},
+        *this,
+        processId,
+        name,
+        priority
+    ));
+
+    return *it->get();
 }
 
 void SimModel::resetSimulation() {
@@ -111,7 +144,10 @@ void SimModel::resetSimulation() {
 }
 
 void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
-    if (this->jobHeap.empty()) { return; }
+    if (this->jobHeap.empty()) {
+        this->lastUpdateNanos = stopNanos;
+        return;
+    }
 
     // We reserve UINT64_MAX as the "end of time" sentinel.
     // Hence, UINT64_MAX - 1 is the last accessible simulation instant.
@@ -150,4 +186,6 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
         // make sure the heap is still a heap.
         this->ensureHeap();
     }
+
+    this->lastUpdateNanos = stopNanos;
 }

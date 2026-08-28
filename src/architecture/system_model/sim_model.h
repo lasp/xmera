@@ -300,7 +300,7 @@ private:
     //! The creation-order ID of this process
     size_t const processId;
 
-    //! The collection of tasks performed by this process
+    //! The collection of tasks performed by this process, in priority order
     std::vector<std::unique_ptr<SysModelTask>> processTasks = {};
 };
 
@@ -447,7 +447,7 @@ private:
     //! The time at which the simulation was last updated or reset
     uint64_t lastUpdateNanos = 0;
 
-    //! The collection of processes to be simulated
+    //! The collection of processes to be simulated, in priority order
     std::vector<std::unique_ptr<SysProcess>> processList = {};
 
     //! A prioritized heap of simulation jobs
