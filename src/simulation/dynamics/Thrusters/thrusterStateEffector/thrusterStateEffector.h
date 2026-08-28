@@ -85,7 +85,6 @@ class ThrusterStateEffector : public StateEffector, public SysModel {
     std::vector<BodyToHubInfo> bodyToHubInfo;
 
     double prevCommandTime;      //!< [s] -- Time for previous valid thruster firing
-    static uint64_t effectorID;  //!< [] ID number of this panel
 };
 
 #endif /* THRUSTER_STATE_EFFECTOR_H */

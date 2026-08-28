@@ -295,11 +295,9 @@ class FuelTank : public StateEffector, public SysModel {
     FuelTankModel* fuelTankModel{};  //!< -- style of tank to simulate
     Eigen::Matrix3d ITankPntT_B;
     Eigen::Vector3d r_TcB_B;
-    static uint64_t effectorID;  //!< [] ID number of this fuel tank effector
 
    public:
     FuelTank();
-    ~FuelTank();
     void writeOutputMessages(uint64_t currentClock);
     void updateState(uint64_t currentSimNanos) override;
     void setTankModel(FuelTankModel* model);

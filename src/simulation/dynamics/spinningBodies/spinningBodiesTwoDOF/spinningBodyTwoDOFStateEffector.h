@@ -72,7 +72,6 @@ public:
     };  //!< (optional) vector of spinning body reference input messages
 
     SpinningBodyTwoDOFStateEffector();                     //!< -- Contructor
-    ~SpinningBodyTwoDOFStateEffector();                    //!< -- Destructor
     void reset(uint64_t CurrentClock);                     //!< -- Method for reset
     void writeOutputStateMessages(uint64_t CurrentClock);  //!< -- Method for writing the output messages
     void updateState(uint64_t currentSimNanos);            //!< -- Method for updating information
@@ -104,7 +103,6 @@ public:
     BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
-    static uint64_t effectorID;  //!< [] ID number of this panel
     double u1 = 0.0;             //!< [N-m] optional motor torque for first axis
     double u2 = 0.0;             //!< [N-m] optional motor torque for second axis
     int lockFlag1 = 0;           //!< [] flag for locking the first rotation axis

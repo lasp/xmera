@@ -43,7 +43,6 @@ class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
     BSKLogger bskLogger;                                         //!< -- BSK Logging
 
    private:
-    static uint64_t effectorID;  //!< [] ID number of this panel
     double theta;                //!< [rad] hinged rigid body angle
     double thetaDot;             //!< [rad/s] hinged rigid body angle rate
     double cTheta;               //!< -- term needed for back substitution
@@ -84,7 +83,6 @@ class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
 
    public:
     HingedRigidBodyStateEffector();   //!< -- Contructor
-    ~HingedRigidBodyStateEffector();  //!< -- Destructor
     void writeOutputStateMessages(uint64_t CurrentClock);
     void updateState(uint64_t currentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states

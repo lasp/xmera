@@ -49,7 +49,6 @@ public:
         spinningBodyRefInMsg;  //!< -- (optional) spinning body reference input message name
 
     SpinningBodyOneDOFStateEffector();                              //!< -- Contructor
-    ~SpinningBodyOneDOFStateEffector() override;                    //!< -- Destructor
     void reset(uint64_t CurrentClock) override;                     //!< -- Method for reset
     void writeOutputStateMessages(uint64_t CurrentClock) override;  //!< -- Method for writing the output messages
     void updateState(uint64_t currentSimNanos) override;            //!< -- Method for updating information
@@ -83,7 +82,6 @@ public:
     BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
-    static uint64_t effectorID;  //!< [] ID number of this panel
     double u = 0.0;              //!< [N-m] optional motor torque
     int lockFlag = 0;            //!< [] flag for locking the rotation axis
     double thetaRef = 0.0;       //!< [rad] spinning body reference angle

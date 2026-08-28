@@ -12,14 +12,7 @@ FuelTank::FuelTank() {
     this->ITankPntT_B = Eigen::Matrix3d::Identity();
     this->r_TcB_B.setZero();
 
-    this->effectorID++;
-    this->nameOfMassState = "fuelTankMass" + std::to_string(this->effectorID);
-}
-
-uint64_t FuelTank::effectorID = 1;
-
-FuelTank::~FuelTank() {
-    FuelTank::effectorID = 1;
+    this->nameOfMassState = "fuelTankMass" + std::to_string(this->moduleID);
 }
 
 void FuelTank::setNameOfMassState(std::string const nameOfMassState) {

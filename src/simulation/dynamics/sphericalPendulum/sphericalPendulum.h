@@ -63,11 +63,9 @@ class SphericalPendulum : public StateEffector, public SysModel, public FuelSlos
     StateData* sigmaState;       //!< -- state data for the hubs sigma_BN
     StateData* velocityState;    //!< -- state data for the hubs rDot_BN_N
     Eigen::Matrix3d dcm_B_P0;    // Rotation matrix from P0 to B frame
-    static uint64_t effectorID;  //!< [] ID number of this panel
 
    public:
     SphericalPendulum();                             //!< -- Contructor
-    ~SphericalPendulum();                            //!< -- Destructor
     void registerStates(DynParamManager& states);    //!< -- Method for FSP to register its states
     void linkInStates(DynParamManager& states);      //!< -- Method for FSP to get access of other states
     void updateEffectorMassProps(double integTime);  //!< -- Method for FSP to add its contributions to mass props

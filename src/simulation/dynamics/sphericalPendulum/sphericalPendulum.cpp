@@ -28,22 +28,11 @@ SphericalPendulum::SphericalPendulum() {
     this->thetaInit = 0.0;
     this->thetaDotInit = 0.0;
     this->massInit = 1.0;
-    this->nameOfPhiState = "sphericalPendulumPhi" + std::to_string(this->effectorID);
-    this->nameOfPhiDotState = "sphericalPendulumPhiDot" + std::to_string(this->effectorID);
-    this->nameOfThetaState = "sphericalPendulumTheta" + std::to_string(this->effectorID);
-    this->nameOfThetaDotState = "sphericalPendulumThetaDot" + std::to_string(this->effectorID);
-    this->nameOfMassState = "sphericalPendulumMass" + std::to_string(this->effectorID);
-    this->effectorID++;
-
-    return;
-}
-
-uint64_t SphericalPendulum::effectorID = 1;
-
-/*! This is the destructor, nothing to report here */
-SphericalPendulum::~SphericalPendulum() {
-    this->effectorID = 1; /* reset the panel ID*/
-    return;
+    this->nameOfPhiState = "sphericalPendulumPhi" + std::to_string(this->moduleID);
+    this->nameOfPhiDotState = "sphericalPendulumPhiDot" + std::to_string(this->moduleID);
+    this->nameOfThetaState = "sphericalPendulumTheta" + std::to_string(this->moduleID);
+    this->nameOfThetaDotState = "sphericalPendulumThetaDot" + std::to_string(this->moduleID);
+    this->nameOfMassState = "sphericalPendulumMass" + std::to_string(this->moduleID);
 }
 
 /*! Method for spherical pendulum to access the states that it needs. It needs gravity and the hub states */

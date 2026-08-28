@@ -19,7 +19,6 @@
 class PrescribedMotionStateEffector : public StateEffector, public SysModel {
    public:
     PrescribedMotionStateEffector();   //!< Constructor
-    ~PrescribedMotionStateEffector();  //!< Destructor
 
     void setMass(const double mass);                                   //!< Setter method for the effector mass
     void setIPntFc_F(const Eigen::Matrix3d IPntFc_F);                  //!< Setter method for IPntFc_F
@@ -165,7 +164,6 @@ class PrescribedMotionStateEffector : public StateEffector, public SysModel {
 
     double currentSimTimeSec;         //!< [s] Current simulation time, updated at the dynamics time step
     std::string nameOfsigma_FMState;  //!< Identifier for the effector MRP attitude sigma_FM state data container
-    static uint64_t effectorID;       //!< Effector ID
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */

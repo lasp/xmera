@@ -78,7 +78,6 @@ class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
         dualHingedRigidBodyConfigLogOutMsgs;  //!< panel state config log message vector for all panels
 
    private:
-    static uint64_t effectorID;   //!< [] ID number of this panel
     Eigen::Vector3d r_H1P_P;      //!< [m] vector pointing from primary body frame P origin to Hinge 1 location.  If a
                                   //!< single spacecraft body is modeled than P is the same as B
     Eigen::Matrix3d dcm_H1P;      //!< -- DCM from primary body frame to hinge 1 frame

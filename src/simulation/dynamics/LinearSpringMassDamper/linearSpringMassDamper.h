@@ -46,11 +46,9 @@ class LinearSpringMassDamper : public StateEffector, public SysModel, public Fue
     StateData* omegaState;              //!< -- state data for the hubs omega_BN_B
     StateData* sigmaState;              //!< -- state data for the hubs sigma_BN
     StateData* velocityState;           //!< -- state data for the hubs rDot_BN_N
-    static uint64_t effectorID;         //!< [] ID number of this panel
 
    public:
     LinearSpringMassDamper();                      //!< -- Contructor
-    ~LinearSpringMassDamper();                     //!< -- Destructor
     void registerStates(DynParamManager& states);  //!< -- Method for SMD to register its states
     void linkInStates(DynParamManager& states);    //!< -- Method for SMD to get access of other states
     void retrieveMassValue(double integTime);

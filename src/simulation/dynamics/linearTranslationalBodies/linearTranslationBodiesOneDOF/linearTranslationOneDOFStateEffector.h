@@ -29,7 +29,6 @@ public:
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;  //!< (optional) lock flag input message
 
     linearTranslationOneDOFStateEffector();   //!< Constructor
-    ~linearTranslationOneDOFStateEffector();  //!< Destructor
 
     /** setter for `mass` property */
     void setMass(double mass);
@@ -174,7 +173,6 @@ private:
         nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty =
         nullptr;                 //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
-    static uint64_t effectorID;  //!< ID number of this panel
 
     Eigen::Vector3d r_FcN_N = Eigen::Vector3d::Zero();  //!< [m] position vector of translating body's center of mass Fc
                                                         //!< relative to the inertial frame origin N

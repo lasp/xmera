@@ -20,27 +20,18 @@ ThrusterStateEffector::ThrusterStateEffector() {
     // initialize internal variables
     this->prevCommandTime = -1.0;  // initialize to a negative number to allow an onTime command at t=0
     this->mDotTotal = 0.0;
-    this->nameOfKappaState = "kappaState" + std::to_string(this->effectorID);
-    this->effectorID++;
+    this->nameOfKappaState = "kappaState" + std::to_string(this->moduleID);
 
     // clear all vectors
     this->thrusterData.clear();
     this->thrusterOutMsgs.clear();
     this->NewThrustCmds.clear();
-
-    return;
 }
-
-uint64_t ThrusterStateEffector::effectorID = 1;
 
 /*! The destructor. */
 ThrusterStateEffector::~ThrusterStateEffector() {
     // Free memory to avoid errors
     for (long unsigned int c = 0; c < this->thrusterOutMsgs.size(); c++) { free(this->thrusterOutMsgs.at(c)); }
-
-    this->effectorID = 1; /* reset the panel ID*/
-
-    return;
 }
 
 /*! This method is used to reset the module.

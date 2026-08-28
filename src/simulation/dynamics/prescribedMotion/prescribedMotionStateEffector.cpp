@@ -36,16 +36,7 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector() {
     this->omegaEpoch_FM_F.setZero();
 
     // Set the effector's hub-relative sigma_FM MRP attitude state name
-    this->nameOfsigma_FMState = "prescribedMotionsigma_FM" + std::to_string(this->effectorID);
-
-    PrescribedMotionStateEffector::effectorID++;
-}
-
-uint64_t PrescribedMotionStateEffector::effectorID = 1;
-
-/*! This is the destructor. */
-PrescribedMotionStateEffector::~PrescribedMotionStateEffector() {
-    PrescribedMotionStateEffector::effectorID = 1;
+    this->nameOfsigma_FMState = "prescribedMotionsigma_FM" + std::to_string(this->moduleID);
 }
 
 /*! This method is used to reset the module.

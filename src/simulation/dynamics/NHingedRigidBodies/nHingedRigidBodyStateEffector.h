@@ -72,11 +72,9 @@ class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
     StateData* hubOmega;                 //!< -- state manager access to the hubs omegaBN_B state
     StateData* hubVelocity;              //!< -- state manager access to the hubs rDotBN_N state
     Eigen::MatrixXd* g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
-    static uint64_t effectorID;          //!< [] ID number of this panel
 
    public:
     NHingedRigidBodyStateEffector();   //!< -- Contructor
-    ~NHingedRigidBodyStateEffector();  //!< -- Destructor
     double HeaviFunc(double cond);     //!< -- Heaviside function used for matrix contributions
     void WriteOutputMessages(uint64_t CurrentClock);
     void updateState(uint64_t currentSimNanos);

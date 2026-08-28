@@ -15,7 +15,6 @@
 class StateSpaceStateEffector : public StateEffector, public SysModel {
    public:
     explicit StateSpaceStateEffector(int n);
-    ~StateSpaceStateEffector() override;
     void registerStates(DynParamManager& statesIn) override;
     void linkInStates(DynParamManager& states) override;
     void updateEffectorMassProps(double integTime) override;
@@ -50,8 +49,6 @@ class StateSpaceStateEffector : public StateEffector, public SysModel {
     Eigen::Vector3d r_ScS_F = Eigen::Vector3d::Zero();
 
    private:
-    static uint64_t effectorID;
-
     int sizeOfStateSpace;
     Eigen::VectorXd X;
     Eigen::VectorXd XDot;
