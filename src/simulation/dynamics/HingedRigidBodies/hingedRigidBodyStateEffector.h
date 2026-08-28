@@ -6,21 +6,23 @@
 #define HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/eigenMRP.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
-#include <Eigen/Dense>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
-
 #include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+
+#include <Eigen/Dense>
 
 /*! @brief hinged rigid body state effector class */
-class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
-   public:
+class HingedRigidBodyStateEffector
+    : public StateEffector
+    , public SysModel {
+public:
     double mass;                      //!< [kg] mass of hinged rigid body
     double d;                         //!< [m] distance from hinge point H to hinged rigid body center of mass S
     double k;                         //!< [N-m/rad] torsional spring constant of hinge
@@ -42,11 +44,11 @@ class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
     HingedRigidBodyMsgPayload HRBoutputStates;                   //!< instance of messaging system message struct
     BSKLogger bskLogger;                                         //!< -- BSK Logging
 
-   private:
-    double theta;                //!< [rad] hinged rigid body angle
-    double thetaDot;             //!< [rad/s] hinged rigid body angle rate
-    double cTheta;               //!< -- term needed for back substitution
-    double u;                    //!< [N-m] optional motor torque
+private:
+    double theta;            //!< [rad] hinged rigid body angle
+    double thetaDot;         //!< [rad/s] hinged rigid body angle rate
+    double cTheta;           //!< -- term needed for back substitution
+    double u;                //!< [N-m] optional motor torque
     Eigen::Vector3d r_HP_P;  //!< [m] vector pointing from primary body frame P origin to Hinge location.  If a single
                              //!< spacecraft body is modeled than P is the same as B
     Eigen::Matrix3d dcm_HP;  //!< -- DCM from primary body frame to hinge frame
@@ -81,31 +83,39 @@ class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
 
     Eigen::MatrixXd* cPrime_B;  //!< [m/s] Body time derivative of vector c_B in B frame components
 
-   public:
-    HingedRigidBodyStateEffector();   //!< -- Contructor
+public:
+    HingedRigidBodyStateEffector();  //!< -- Contructor
     void writeOutputStateMessages(uint64_t CurrentClock);
     void updateState(uint64_t currentSimNanos);
-    void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
-    void linkInStates(DynParamManager& states);      //!< -- Method for getting access to other states
-    void updateContributions(double integTime,
-                             BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
-                             Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N);  //!< -- Method for back-sub contributions
-    void computeDerivatives(double integTime,
-                            Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN);  //!< -- Method for HRB to compute its derivatives
+    void registerStates(DynParamManager &statesIn);  //!< -- Method for registering the HRB states
+    void linkInStates(DynParamManager &states);      //!< -- Method for getting access to other states
+    void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N
+    );  //!< -- Method for back-sub contributions
+    void computeDerivatives(
+        double integTime,
+        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::Vector3d sigma_BN
+    );                                               //!< -- Method for HRB to compute its derivatives
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
-    void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B);  //!< -- Computing energy and momentum for HRBs
-    void calcForceTorqueOnBody(double integTime,
-                               Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to HRBs
-    void prependSpacecraftNameToStates();                    //!< class method
+    void updateEnergyMomContributions(
+        double integTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    );  //!< -- Computing energy and momentum for HRBs
+    void calcForceTorqueOnBody(
+        double integTime,
+        Eigen::Vector3d omega_BN_B
+    );                                     //!< -- Force and torque on s/c due to HRBs
+    void prependSpacecraftNameToStates();  //!< class method
 
-   private:
+private:
     void computePanelInertialStates();
 };
 

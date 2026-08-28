@@ -103,14 +103,14 @@ public:
     BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
-    double u1 = 0.0;             //!< [N-m] optional motor torque for first axis
-    double u2 = 0.0;             //!< [N-m] optional motor torque for second axis
-    int lockFlag1 = 0;           //!< [] flag for locking the first rotation axis
-    int lockFlag2 = 0;           //!< [] flag for locking the second rotation axis
-    double theta1DotRef = 0.0;   //!< [rad] spinning body reference angle rate
-    double theta2Ref = 0.0;      //!< [rad] spinning body reference angle
-    double theta2DotRef = 0.0;   //!< [rad] spinning body reference angle rate
-    double mass = 1.0;           //!< [kg] mass of the spinner system
+    double u1 = 0.0;            //!< [N-m] optional motor torque for first axis
+    double u2 = 0.0;            //!< [N-m] optional motor torque for second axis
+    int lockFlag1 = 0;          //!< [] flag for locking the first rotation axis
+    int lockFlag2 = 0;          //!< [] flag for locking the second rotation axis
+    double theta1DotRef = 0.0;  //!< [rad] spinning body reference angle rate
+    double theta2Ref = 0.0;     //!< [rad] spinning body reference angle
+    double theta2DotRef = 0.0;  //!< [rad] spinning body reference angle rate
+    double mass = 1.0;          //!< [kg] mass of the spinner system
 
     // Terms needed for back substitution
     Eigen::Matrix<double, 2, 3> ATheta;  //!< -- rDDot_BN term for back substitution

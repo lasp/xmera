@@ -8,12 +8,16 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
+
 #include <simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 
 /*! @brief linear spring mass damper state effector class */
-class LinearSpringMassDamper : public StateEffector, public SysModel, public FuelSlosh {
-   public:
+class LinearSpringMassDamper
+    : public StateEffector
+    , public SysModel
+    , public FuelSlosh {
+public:
     double k;                       //!< [N/m] linear spring constant for spring mass damper
     double c;                       //!< [N-s/m] linear damping term for spring mass damper
     double rhoInit;                 //!< [m] Initial value for spring mass damper particle offset
@@ -27,7 +31,7 @@ class LinearSpringMassDamper : public StateEffector, public SysModel, public Fue
     StateData* massState;           //!< -- state data for the particles mass
     BSKLogger bskLogger;            //!< -- BSK Logging
 
-   private:
+private:
     double cRho;                        //!< -- Term needed for back-sub method
     double rho;                         //!< [m] spring mass damper displacement from equilibrium
     double rhoDot;                      //!< [m/s] time derivative of displacement from equilibrium
@@ -47,28 +51,35 @@ class LinearSpringMassDamper : public StateEffector, public SysModel, public Fue
     StateData* sigmaState;              //!< -- state data for the hubs sigma_BN
     StateData* velocityState;           //!< -- state data for the hubs rDot_BN_N
 
-   public:
+public:
     LinearSpringMassDamper();                      //!< -- Contructor
-    void registerStates(DynParamManager& states);  //!< -- Method for SMD to register its states
-    void linkInStates(DynParamManager& states);    //!< -- Method for SMD to get access of other states
+    void registerStates(DynParamManager &states);  //!< -- Method for SMD to register its states
+    void linkInStates(DynParamManager &states);    //!< -- Method for SMD to get access of other states
     void retrieveMassValue(double integTime);
     void calcForceTorqueOnBody(
         double integTime,
-        Eigen::Vector3d omega_BN_B);                 //!< -- Force and torque on s/c due to linear spring mass damper
+        Eigen::Vector3d omega_BN_B
+    );                                               //!< -- Force and torque on s/c due to linear spring mass damper
     void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
-    void updateContributions(double integTime,
-                             BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
-                             Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N);  //!< -- Back-sub contributions
-    void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-    void computeDerivatives(double integTime,
-                            Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
+    void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N
+    );  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(
+        double integTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    );  //!< -- Energy and momentum calculations
+    void computeDerivatives(
+        double integTime,
+        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::Vector3d sigma_BN
+    );  //!< -- Method for each stateEffector to calculate derivatives
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */

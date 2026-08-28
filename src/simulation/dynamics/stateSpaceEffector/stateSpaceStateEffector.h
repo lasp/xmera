@@ -8,29 +8,39 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
+
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+
 #include <Eigen/Dense>
 
-class StateSpaceStateEffector : public StateEffector, public SysModel {
-   public:
+class StateSpaceStateEffector
+    : public StateEffector
+    , public SysModel {
+public:
     explicit StateSpaceStateEffector(int n);
-    void registerStates(DynParamManager& statesIn) override;
-    void linkInStates(DynParamManager& states) override;
+    void registerStates(DynParamManager &statesIn) override;
+    void linkInStates(DynParamManager &states) override;
     void updateEffectorMassProps(double integTime) override;
-    void updateContributions(double integTime,
-                             BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
-                             Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N) override;
-    void computeDerivatives(double integTime,
-                            Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) override;
-    void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B) override;
+    void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N
+    ) override;
+    void computeDerivatives(
+        double integTime,
+        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::Vector3d sigma_BN
+    ) override;
+    void updateEnergyMomContributions(
+        double integTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    ) override;
     void prependSpacecraftNameToStates() override;
 
     Eigen::VectorXd XInit;
@@ -48,7 +58,7 @@ class StateSpaceStateEffector : public StateEffector, public SysModel {
     Eigen::Vector3d r_FB_B = Eigen::Vector3d::Zero();
     Eigen::Vector3d r_ScS_F = Eigen::Vector3d::Zero();
 
-   private:
+private:
     int sizeOfStateSpace;
     Eigen::VectorXd X;
     Eigen::VectorXd XDot;

@@ -82,10 +82,10 @@ public:
     BSKLogger bskLogger;  //!< -- BSK Logging
 
 private:
-    double u = 0.0;              //!< [N-m] optional motor torque
-    int lockFlag = 0;            //!< [] flag for locking the rotation axis
-    double thetaRef = 0.0;       //!< [rad] spinning body reference angle
-    double thetaDotRef = 0.0;    //!< [rad] spinning body reference angle rate
+    double u = 0.0;            //!< [N-m] optional motor torque
+    int lockFlag = 0;          //!< [] flag for locking the rotation axis
+    double thetaRef = 0.0;     //!< [rad] spinning body reference angle
+    double thetaDotRef = 0.0;  //!< [rad] spinning body reference angle rate
 
     // Terms needed for back substitution
     Eigen::Vector3d aTheta{0.0, 0.0, 0.0};  //!< -- rDDot_BN term for back substitution

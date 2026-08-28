@@ -12,41 +12,44 @@
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
 #include <architecture/utilities/eigenMRP.h>
 #include <architecture/utilities/eigenSupport.h>
+
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
 
 /*! @brief Prescribed motion state effector class */
-class PrescribedMotionStateEffector : public StateEffector, public SysModel {
-   public:
-    PrescribedMotionStateEffector();   //!< Constructor
+class PrescribedMotionStateEffector
+    : public StateEffector
+    , public SysModel {
+public:
+    PrescribedMotionStateEffector();  //!< Constructor
 
-    void setMass(const double mass);                                   //!< Setter method for the effector mass
-    void setIPntFc_F(const Eigen::Matrix3d IPntFc_F);                  //!< Setter method for IPntFc_F
-    void setR_FcF_F(const Eigen::Vector3d r_FcF_F);                    //!< Setter method for r_FcF_F
-    void setR_FM_M(const Eigen::Vector3d r_FM_M);                      //!< Setter method for r_FM_M
-    void setRPrime_FM_M(const Eigen::Vector3d rPrime_FM_M);            //!< Setter method for rPrime_FM_M
-    void setRPrimePrime_FM_M(const Eigen::Vector3d rPrimePrime_FM_M);  //!< Setter method for rPrimePrime_FM_M
-    void setOmega_FM_F(const Eigen::Vector3d omega_FM_F);              //!< Setter method for omega_FM_F
-    void setOmegaPrime_FM_F(const Eigen::Vector3d omegaPrime_FM_F);    //!< Setter method for omegaPrime_FM_F
-    void setSigma_FM(const Eigen::MRPd sigma_FM);                      //!< Setter method for sigma_FM
-    void setR_MB_B(const Eigen::Vector3d r_MB_B);                      //!< Setter method for r_MB_B
-    void setOmega_MB_M(const Eigen::Vector3d omega_MB_M);              //!< Setter method omega_MB_M
-    void setOmegaPrime_MB_B(const Eigen::Vector3d omegaPrime_MB_B);    //!< Setter method for omegaPrime_MB_B
-    void setSigma_MB(const Eigen::MRPd sigma_MB);                      //!< Setter method for sigma_MB
+    void setMass(double const mass);                                   //!< Setter method for the effector mass
+    void setIPntFc_F(Eigen::Matrix3d const IPntFc_F);                  //!< Setter method for IPntFc_F
+    void setR_FcF_F(Eigen::Vector3d const r_FcF_F);                    //!< Setter method for r_FcF_F
+    void setR_FM_M(Eigen::Vector3d const r_FM_M);                      //!< Setter method for r_FM_M
+    void setRPrime_FM_M(Eigen::Vector3d const rPrime_FM_M);            //!< Setter method for rPrime_FM_M
+    void setRPrimePrime_FM_M(Eigen::Vector3d const rPrimePrime_FM_M);  //!< Setter method for rPrimePrime_FM_M
+    void setOmega_FM_F(Eigen::Vector3d const omega_FM_F);              //!< Setter method for omega_FM_F
+    void setOmegaPrime_FM_F(Eigen::Vector3d const omegaPrime_FM_F);    //!< Setter method for omegaPrime_FM_F
+    void setSigma_FM(Eigen::MRPd const sigma_FM);                      //!< Setter method for sigma_FM
+    void setR_MB_B(Eigen::Vector3d const r_MB_B);                      //!< Setter method for r_MB_B
+    void setOmega_MB_M(Eigen::Vector3d const omega_MB_M);              //!< Setter method omega_MB_M
+    void setOmegaPrime_MB_B(Eigen::Vector3d const omegaPrime_MB_B);    //!< Setter method for omegaPrime_MB_B
+    void setSigma_MB(Eigen::MRPd const sigma_MB);                      //!< Setter method for sigma_MB
 
     double getMass() const;                             //!< Getter method for the effector mass
-    const Eigen::Matrix3d getIPntFc_F() const;          //!< Getter method for IPntFc_F
-    const Eigen::Vector3d getR_FcF_F() const;           //!< Getter method for r_FcF_F
-    const Eigen::Vector3d getR_FM_M() const;            //!< Getter method for r_FM_M
-    const Eigen::Vector3d getRPrime_FM_M() const;       //!< Getter method for rPrime_FM_M
-    const Eigen::Vector3d getRPrimePrime_FM_M() const;  //!< Getter method for rPrimePrime_FM_M
-    const Eigen::Vector3d getOmega_FM_F() const;        //!< Getter method for omega_FM_F
-    const Eigen::Vector3d getOmegaPrime_FM_F() const;   //!< Getter method for omegaPrime_FM_F
-    const Eigen::MRPd getSigma_FM() const;              //!< Getter method for sigma_FM
-    const Eigen::Vector3d getR_MB_B() const;            //!< Getter method for r_MB_B
-    const Eigen::Vector3d getOmega_MB_M() const;        //!< Getter method omega_MB_M
-    const Eigen::Vector3d getOmegaPrime_MB_B() const;   //!< Getter method for omegaPrime_MB_B
-    const Eigen::MRPd getSigma_MB() const;              //!< Getter method for sigma_MB
+    Eigen::Matrix3d const getIPntFc_F() const;          //!< Getter method for IPntFc_F
+    Eigen::Vector3d const getR_FcF_F() const;           //!< Getter method for r_FcF_F
+    Eigen::Vector3d const getR_FM_M() const;            //!< Getter method for r_FM_M
+    Eigen::Vector3d const getRPrime_FM_M() const;       //!< Getter method for rPrime_FM_M
+    Eigen::Vector3d const getRPrimePrime_FM_M() const;  //!< Getter method for rPrimePrime_FM_M
+    Eigen::Vector3d const getOmega_FM_F() const;        //!< Getter method for omega_FM_F
+    Eigen::Vector3d const getOmegaPrime_FM_F() const;   //!< Getter method for omegaPrime_FM_F
+    Eigen::MRPd const getSigma_FM() const;              //!< Getter method for sigma_FM
+    Eigen::Vector3d const getR_MB_B() const;            //!< Getter method for r_MB_B
+    Eigen::Vector3d const getOmega_MB_M() const;        //!< Getter method omega_MB_M
+    Eigen::Vector3d const getOmegaPrime_MB_B() const;   //!< Getter method for omegaPrime_MB_B
+    Eigen::MRPd const getSigma_MB() const;              //!< Getter method for sigma_MB
 
     void reset(uint64_t callTime) override;        //!< Reset method
     void updateState(uint64_t callTime) override;  //!< Method for updating the effector's states
@@ -54,24 +57,28 @@ class PrescribedMotionStateEffector : public StateEffector, public SysModel {
         double callTime,
         Eigen::Vector3d rDDot_BN_N,
         Eigen::Vector3d omegaDot_BN_B,
-        Eigen::Vector3d sigma_BN) override;  //!< Method for computing the effector's MRP attitude state derivative
+        Eigen::Vector3d sigma_BN
+    ) override;  //!< Method for computing the effector's MRP attitude state derivative
     void computePrescribedMotionInertialStates();             //!< Method for computing the effector's inertial states
-    void linkInStates(DynParamManager& states) override;      //!< Method for giving the effector access to hub states
-    void registerStates(DynParamManager& statesIn) override;  //!< Method for registering the effector's states
+    void linkInStates(DynParamManager &states) override;      //!< Method for giving the effector access to hub states
+    void registerStates(DynParamManager &statesIn) override;  //!< Method for registering the effector's states
     void updateContributions(
         double callTime,
-        BackSubMatrices& backSubContr,
+        BackSubMatrices &backSubContr,
         Eigen::Vector3d sigma_BN,
         Eigen::Vector3d omega_BN_B,
-        Eigen::Vector3d g_N) override;  //!< Method for computing the effector's backsubstitution contributions
+        Eigen::Vector3d g_N
+    ) override;  //!< Method for computing the effector's backsubstitution contributions
     void updateEffectorMassProps(
-        double callTime) override;  //!< Method for providing the effector's contributions to the mass properties and
-                                    //!< mass property rates of the spacecraft
-    void updateEnergyMomContributions(double callTime,
-                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B)
-        override;  //!< Method for computing the effector's contributions to the energy and momentum of the spacecraft
+        double callTime
+    ) override;  //!< Method for providing the effector's contributions to the mass properties and
+                 //!< mass property rates of the spacecraft
+    void updateEnergyMomContributions(
+        double callTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    ) override;  //!< Method for computing the effector's contributions to the energy and momentum of the spacecraft
     void writeOutputStateMessages(uint64_t callTime) override;  //!< Method for writing the module's output messages
 
     ReadFunctor<PrescribedRotationMsgPayload>
@@ -86,7 +93,7 @@ class PrescribedMotionStateEffector : public StateEffector, public SysModel {
     Message<SCStatesMsgPayload>
         prescribedMotionConfigLogOutMsg;  //!< Output config log message for the effector's inertial states
 
-   private:
+private:
     // User-configurable module variables
     double mass;               //!< [kg] Effector mass
     Eigen::Matrix3d IPntFc_F;  //!< [kg-m^2] Effector's inertia matrix about its center of mass point Fc expressed in F

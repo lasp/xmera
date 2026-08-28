@@ -28,7 +28,7 @@ public:
         translatingBodyRefInMsg;                              //!< (optional) reference state input message
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;  //!< (optional) lock flag input message
 
-    linearTranslationOneDOFStateEffector();   //!< Constructor
+    linearTranslationOneDOFStateEffector();  //!< Constructor
 
     /** setter for `mass` property */
     void setMass(double mass);
@@ -172,7 +172,7 @@ private:
     Eigen::MatrixXd* inertialPositionProperty =
         nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty =
-        nullptr;                 //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+        nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
     Eigen::Vector3d r_FcN_N = Eigen::Vector3d::Zero();  //!< [m] position vector of translating body's center of mass Fc
                                                         //!< relative to the inertial frame origin N
