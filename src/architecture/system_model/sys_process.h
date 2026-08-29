@@ -110,9 +110,6 @@ private:
     //! Insert a scheduled task entry into the ordered list of tasks in this process
     void scheduleTask(SysModelTask* task);
 
-    //! Index the task with the soonest next update time
-    std::vector<SysModelTask*>::iterator getNextTask();
-
 public:
     //! A configurable, human-readable name for this process
     std::string processName = "";

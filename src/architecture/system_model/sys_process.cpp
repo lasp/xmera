@@ -9,19 +9,6 @@
 #include <iostream>
 #include <utility>
 
-std::vector<SysModelTask*>::iterator SysProcess::getNextTask() {
-    auto nextTaskIt = this->processTasks.begin();
-
-    for (auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
-        auto currentUpdateTime = SimInstant::atNanos((*it)->getNextStartTime()).atPriority((*it)->priority);
-        auto earliestUpdateTime = SimInstant::atNanos((*nextTaskIt)->getNextStartTime()).atPriority((*nextTaskIt)->priority);
-
-        if (currentUpdateTime < earliestUpdateTime) { nextTaskIt = it; }
-    }
-
-    return nextTaskIt;
-}
-
 SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
     auto &task = this->allocatedTasks.emplace_back(std::make_unique<SysModelTask>(
         updatePeriodNanos,
