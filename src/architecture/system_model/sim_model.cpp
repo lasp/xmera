@@ -68,6 +68,14 @@ bool SysProcess::changeTaskPeriod(std::string const &taskName, uint64_t newPerio
     return false;
 }
 
+
+void SimModel::ensureHeap() const {
+    if (this->isHeap) { return; }
+
+    std::make_heap(this->jobHeap.begin(), this->jobHeap.end());
+    this->isHeap = true;
+}
+
 SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
     // Find the index separating lower priorities from higher priorities.
     auto it = this->processList.begin();
@@ -128,10 +136,7 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
     // If reprioritizations or other heap-invalidating modifications have occurred, re-heap the heap.
     // Delaying heapification to this point allows us to amortize the impact of a series of independent,
     // uncorrelated modifications by re-heaping just once before we require the heap property again.
-    if (!this->isHeap) {
-        std::make_heap(this->jobHeap.begin(), this->jobHeap.end());
-        this->isHeap = true;
-    }
+    this->ensureHeap();
 
     while (this->jobHeap.front().noLaterThan(stopNanos, stopPriority)) {
         // Extract the front element from the heap (moving it to the back).
