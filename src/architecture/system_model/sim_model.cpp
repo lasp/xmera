@@ -129,6 +129,13 @@ void SimModel::resetSimulation() {
 void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
     if (this->jobHeap.empty()) { return; }
 
+    // We reserve UINT64_MAX as the "end of time" sentinel.
+    // Hence, UINT64_MAX - 1 is the last accessible simulation instant.
+    if (stopNanos == std::numeric_limits<uint64_t>::max()) {
+        stopNanos -= 1;
+        stopPriority = std::numeric_limits<int64_t>::min();
+    }
+
     // If reprioritizations or other heap-invalidating modifications have occurred, re-heap the heap.
     // Delaying heapification to this point allows us to amortize the impact of a series of independent,
     // uncorrelated modifications by re-heaping just once before we require the heap property again.
@@ -147,7 +154,6 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
 
             // Advance the simulation clock to the time of this job.
             this->CurrentNanos = job.task->nextUpdateNanos;
-            if (this->CurrentNanos == SimInstant::endOfTime().realNanos) { return; }
 
             // Re-schedule the job in the future (using saturating addition).
             job.task->nextUpdateNanos += job.task->updatePeriodNanos;
