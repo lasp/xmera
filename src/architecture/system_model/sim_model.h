@@ -6,7 +6,6 @@
 #define XMAheader_sim_model
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/system_model/sim_instant.h>
 
 #include <stdint.h>
 
@@ -418,7 +417,9 @@ public:
     uint64_t getNextTaskTime() const {
         this->ensureHeap();
 
-        return (!this->jobHeap.empty()) ? jobHeap.front().task->getNextStartTime() : SimInstant::endOfTime().realNanos;
+        return (!this->jobHeap.empty())
+            ? jobHeap.front().task->getNextStartTime()
+            : std::numeric_limits<uint64_t>::max();
     }
 
     //! Get the priority of the next process to be updated
@@ -430,7 +431,9 @@ public:
     int64_t getNextProcPriority() const {
         this->ensureHeap();
 
-        return (!this->jobHeap.empty()) ? jobHeap.front().process->processPriority : SimInstant::endOfTime().causalPriority;
+        return (!this->jobHeap.empty())
+            ? jobHeap.front().process->processPriority
+            : std::numeric_limits<int64_t>::min();
     }
 
     //! Get an immutable view on the list of processes in this simulation

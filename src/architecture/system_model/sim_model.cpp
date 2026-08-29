@@ -150,7 +150,7 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
         // Re-schedule the job in the future (using saturating addition).
         job.task->nextUpdateNanos += job.task->updatePeriodNanos;
         if (job.task->nextUpdateNanos < job.task->updatePeriodNanos) {
-            job.task->nextUpdateNanos = SimInstant::endOfTime().realNanos;
+            job.task->nextUpdateNanos = std::numeric_limits<uint64_t>::max();
         }
         std::push_heap(this->jobHeap.begin(), this->jobHeap.end());
 
