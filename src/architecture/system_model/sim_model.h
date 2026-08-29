@@ -221,9 +221,10 @@ public:
     explicit SysProcess(
         SysProcess::Passkey _ignored,
         SimModel &owner,
+        size_t processId,
         std::string name = "",
         int64_t priority = -1
-    ) : processName{name}, processPriority{priority}, owner{owner} {}
+    ) : processName{name}, processPriority{priority}, owner{owner}, processId{processId} {}
 
     //! Add a new task with the given update schedule and priority
     /*!
@@ -311,6 +312,9 @@ private:
 
     //! Whether the process is currently participating in simulation at all
     bool enabled = true;
+
+    //! The creation-order ID of this process
+    size_t const processId;
 
     //! The collection of tasks performed by this process
     std::vector<std::unique_ptr<SysModelTask>> processTasks = {};
