@@ -44,6 +44,8 @@ struct ModelPriorityPair final {
  */
 class SysModelTask final {
     friend class SimModel;
+    friend class SysProcess;
+    struct Passkey {};
 
 public:
     SysModelTask(SysModelTask const&) = delete;
@@ -60,6 +62,7 @@ public:
      *    The time at which the task should be first updated
      */
     explicit SysModelTask(
+        SysModelTask::Passkey _ignored,
         uint64_t updatePeriodNanos = 100,
         uint64_t firstUpdateNanos = 0,
         int64_t priority = -1

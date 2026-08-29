@@ -49,6 +49,7 @@ void SysModelTask::setPeriod(uint64_t updatePeriodNanos) {
 
 SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
     auto &task = this->processTasks.emplace_back(std::make_unique<SysModelTask>(
+        SysModelTask::Passkey{},
         updatePeriodNanos,
         firstUpdateNanos,
         priority
