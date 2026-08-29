@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+class SimModel;
+
 //! A module paired with its priority among modules within its containing task
 struct ModelPriorityPair final {
     //! The priority of this module among others within its containing task
@@ -63,10 +65,12 @@ public:
      */
     explicit SysModelTask(
         SysModelTask::Passkey _ignored,
+        SimModel &owner,
         uint64_t updatePeriodNanos = 100,
         uint64_t firstUpdateNanos = 0,
         int64_t priority = -1
     ) : priority(priority)
+      , owner(owner)
       , nextUpdateNanos(firstUpdateNanos)
       , updatePeriodNanos(updatePeriodNanos)
       , firstUpdateNanos(firstUpdateNanos)
@@ -172,6 +176,9 @@ public:
     int32_t const priority;
 
 private:
+    //! The `SimModel` that contains this task.
+    SimModel &owner;
+
     //! The next time (in nanoseconds) at which the task's modules will be updated
     uint64_t nextUpdateNanos;
 
@@ -213,9 +220,10 @@ public:
      */
     explicit SysProcess(
         SysProcess::Passkey _ignored,
+        SimModel &owner,
         std::string name = "",
         int64_t priority = -1
-    ) : processName{name}, processPriority{priority} {}
+    ) : processName{name}, processPriority{priority}, owner{owner} {}
 
     //! Add a new task with the given update schedule and priority
     /*!
@@ -298,6 +306,9 @@ public:
     int64_t const processPriority = -1;
 
 private:
+    //! The `SimModel` that contains this process.
+    SimModel &owner;
+
     //! Whether the process is currently participating in simulation at all
     bool enabled = true;
 

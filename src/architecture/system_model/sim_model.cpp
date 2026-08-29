@@ -50,6 +50,7 @@ void SysModelTask::setPeriod(uint64_t updatePeriodNanos) {
 SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
     auto &task = this->processTasks.emplace_back(std::make_unique<SysModelTask>(
         SysModelTask::Passkey{},
+        this->owner,
         updatePeriodNanos,
         firstUpdateNanos,
         priority
@@ -84,7 +85,7 @@ SysProcess &SimModel::addNewProcess(std::string name, int64_t priority) {
         if (priority > (*it)->processPriority) { break; }
     }
 
-    it = this->processList.emplace(it, std::make_unique<SysProcess>(SysProcess::Passkey{}, name, priority));
+    it = this->processList.emplace(it, std::make_unique<SysProcess>(SysProcess::Passkey{}, *this, name, priority));
 
     return *it->get();
 }
