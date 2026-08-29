@@ -137,12 +137,7 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
         this->isHeap = true;
     }
 
-    auto stopTime =
-        (stopNanos == std::numeric_limits<uint64_t>::max())
-            ? SimInstant::atNanos(std::numeric_limits<uint64_t>::max() - 1).atPriority(std::numeric_limits<int64_t>::min())
-            : SimInstant::atNanos(stopNanos).atPriority(stopPriority);
-
-    while (this->jobHeap.front().nextProcessTime() <= stopTime) {
+    while (this->jobHeap.front().noLaterThan(stopNanos, stopPriority)) {
         // Extract the front element from the heap (moving it to the back).
         std::pop_heap(this->jobHeap.begin(), this->jobHeap.end());
 

@@ -321,9 +321,11 @@ class SimModel final {
         //! The creation-ordered ID of the task
         size_t task_id;
 
-        //! Get the time at which this job should be performed relative to those of other processes
-        SimInstant nextProcessTime() const {
-            return SimInstant::atNanos(this->task->getNextStartTime()).atPriority(this->process->processPriority);
+        //! Determine whether this job is schedule for no later than the given threshold time.
+        bool noLaterThan(uint64_t nanos, int64_t priority) const {
+            return (this->task->getNextStartTime() < nanos) ? true
+                 : (this->task->getNextStartTime() > nanos) ? false
+                 : (this->process->processPriority >= priority);
         }
 
         //! Compare two jobs lexicographically by their next update time, their inter-process priority, and their inter-process priority
