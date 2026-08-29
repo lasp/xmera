@@ -277,10 +277,6 @@ public:
         return this->processTasks;
     }
 
-private:
-    //! Insert a scheduled task entry into the ordered list of tasks in this process
-    void scheduleTask(SysModelTask* task);
-
 public:
     //! A configurable, human-readable name for this process
     std::string processName = "";
