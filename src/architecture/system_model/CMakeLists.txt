@@ -1,8 +1,6 @@
 add_library(xmera_simulator STATIC)
 target_sources(xmera_simulator PRIVATE
   sim_model.cpp
-  sys_model_task.cpp
-  sys_process.cpp
 )
 target_link_libraries(xmera_simulator PUBLIC
   Xmera::Core

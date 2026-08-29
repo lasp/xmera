@@ -64,8 +64,6 @@ namespace std {
 %ignore SysProcess::SysProcess;
 
 %include "cSysModel.i"
-%include "sys_model_task.h"
-%include "sys_process.h"
 %include "sim_model.h"
 %include "architecture/utilities/bskLogging.h"
 

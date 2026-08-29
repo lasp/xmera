@@ -2,7 +2,6 @@
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/system_model/sys_model_task.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
