@@ -417,6 +417,8 @@ public:
      *  unreliable.
      */
     uint64_t getNextTaskTime() const {
+        this->ensureHeap();
+
         return (!this->jobHeap.empty()) ? jobHeap.front().task->getNextStartTime() : SimInstant::endOfTime().realNanos;
     }
 
@@ -427,6 +429,8 @@ public:
      *  unreliable.
      */
     int64_t getNextProcPriority() const {
+        this->ensureHeap();
+
         return (!this->jobHeap.empty()) ? jobHeap.front().process->processPriority : SimInstant::endOfTime().causalPriority;
     }
 

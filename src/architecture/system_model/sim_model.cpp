@@ -165,5 +165,9 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
 
         // Insert the rescheduled job back into the heap.
         std::push_heap(this->jobHeap.begin(), this->jobHeap.end());
+
+        // On the off chance that the task mucked with task timings,
+        // make sure the heap is still a heap.
+        this->ensureHeap();
     }
 }
