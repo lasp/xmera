@@ -191,7 +191,7 @@ class SimBaseClass:
         for processData in self. TotalSim.processList:
             print(f"{processColor}Process Name: {endColor}" + processData.processName +
                   " , " + processColor + "priority: " + endColor + str(processData.processPriority))
-            for task in processData.processTasks:
+            for task in processData.getTaskPointers():
                 print(f"{taskColor}Task Name: {endColor}" + task.TaskName +
                       ", " + taskColor + "priority: " + endColor + str(task.priority) +
                       ", " + taskColor + "TaskPeriod: " + endColor + str(task.getTaskPeriod()/1.0e9) + "s")
@@ -208,7 +208,7 @@ class SimBaseClass:
         processList = OrderedDict()
         for processData in self. TotalSim.processList:
             taskList = OrderedDict()
-            for task in processData.processTasks:
+            for task in processData.getTaskPointers():
                 moduleList = []
                 for module in task.TaskModels:
                     moduleList.append(module.ModelPtr.modelTag + " (" + str(module.CurrentModelPriority) + ")")

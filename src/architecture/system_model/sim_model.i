@@ -62,6 +62,7 @@ namespace std {
 %rename("_SysModel") SysModel;
 
 %ignore SysProcess::SysProcess;
+%ignore SysProcess::getTasks;
 
 %include "cSysModel.i"
 %include "sim_model.h"
@@ -73,11 +74,17 @@ namespace std {
     self_->getProcesses()
 );
 
-%attribute_readonly(SysProcess, std::vector<SysModelTask*> const&,
-    processTasks,
-    getTasks,
-    self_->getTasks()
-);
+%extend SysProcess {
+    std::vector<SysModelTask*> getTaskPointers() const {
+        auto const &tasks = $self->getTasks();
+
+        std::vector<SysModelTask*> taskPointers = {};
+        taskPointers.reserve(tasks.size());
+        for (auto const &task : tasks) { taskPointers.push_back(task.get()); }
+
+        return taskPointers;
+    }
+}
 
 %attribute_readonly(SysModelTask, std::vector<ModelPriorityPair> const&,
     TaskModels,

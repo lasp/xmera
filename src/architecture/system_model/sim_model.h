@@ -273,7 +273,7 @@ public:
      *  themselves. It is perfectly legal to mutate one of the tasks obtained
      *  from this method, so long as no other protocol of use is violated.
      */
-    std::vector<SysModelTask*> const &getTasks() const {
+    std::vector<std::unique_ptr<SysModelTask>> const &getTasks() const {
         return this->processTasks;
     }
 
@@ -300,11 +300,8 @@ private:
     //! Whether the process is currently participating in simulation at all
     bool enabled = true;
 
-    //! The schedule of tasks being performed by this process
-    std::vector<SysModelTask*> processTasks = {};
-
-    //! The collection of tasks in this process, sans scheduling information
-    std::vector<std::unique_ptr<SysModelTask>> allocatedTasks = {};
+    //! The collection of tasks performed by this process
+    std::vector<std::unique_ptr<SysModelTask>> processTasks = {};
 };
 
 //! The top-level container for an entire simulation

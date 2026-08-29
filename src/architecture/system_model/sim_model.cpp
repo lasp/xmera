@@ -48,22 +48,11 @@ void SysModelTask::setPeriod(uint64_t updatePeriodNanos) {
 
 
 SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
-    auto &task = this->allocatedTasks.emplace_back(std::make_unique<SysModelTask>(
+    auto &task = this->processTasks.emplace_back(std::make_unique<SysModelTask>(
         updatePeriodNanos,
         firstUpdateNanos,
         priority
     ));
-
-    // Find the index separating higher priority tasks from lower priority tasks.
-    // Modules will be reset in this order, and modules that update at the same
-    // time will be tie-broken by this order.
-    auto it = this->processTasks.begin();
-    for (; it != this->processTasks.end(); ++it) {
-        if (task->priority > (*it)->priority) { break; }
-    }
-
-    // Insert the module at this index. (It's okay if it's the end() iterator.)
-    this->processTasks.insert(it, task.get());
 
     return *task.get();
 }
@@ -115,7 +104,7 @@ void SimModel::resetSimulation() {
             this->jobHeap.push_back({
                 .process = process.get(),
                 .process_id = process_id,
-                .task = task,
+                .task = task.get(),
                 .task_id = task_id,
             });
 
