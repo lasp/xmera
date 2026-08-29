@@ -7,7 +7,6 @@
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/system_model/sim_instant.h>
-#include <architecture/utilities/bskLogging.h>
 
 #include <stdint.h>
 
