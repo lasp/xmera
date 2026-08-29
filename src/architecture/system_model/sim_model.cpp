@@ -12,16 +12,16 @@ SimInstant SimModel::stepProcessUpTo(SysProcess &process, SimInstant stopTime) {
 
     while (true) {
         auto nextTaskIt = process.getNextTask();
-        auto nextTaskTime = SimInstant::atNanos(nextTaskIt->TaskPtr->nextUpdateNanos).atPriority(process.processPriority);
+        auto nextTaskTime = SimInstant::atNanos((*nextTaskIt)->nextUpdateNanos).atPriority(process.processPriority);
         process.nextTaskTime = nextTaskTime.realNanos;
 
         if (stopTime < nextTaskTime) { return nextTaskTime; }
         if (nextTaskTime.realNanos == SimInstant::endOfTime().realNanos) { return nextTaskTime; }
 
         // Update the next task, and record when it wants to be updated again
-        nextTaskIt->TaskPtr->nextUpdateNanos += nextTaskIt->TaskPtr->updatePeriodNanos;
-        if (nextTaskIt->TaskPtr->taskActive) {
-            for (auto &modelPair : nextTaskIt->TaskPtr->TaskModels) {
+        (*nextTaskIt)->nextUpdateNanos += (*nextTaskIt)->updatePeriodNanos;
+        if ((*nextTaskIt)->taskActive) {
+            for (auto &modelPair : (*nextTaskIt)->TaskModels) {
                 modelPair.ModelPtr->updateState(stopTime.realNanos);
             }
         }
@@ -84,12 +84,12 @@ void SimModel::resetSimulation() {
     for (auto &process : this->processList) {
         auto nextTaskNanos = std::numeric_limits<uint64_t>::max();
         for (auto &task : process->processTasks) {
-            task.TaskPtr->nextUpdateNanos = task.TaskPtr->firstUpdateNanos;
-            for (auto const &modelPair : task.TaskPtr->TaskModels) {
+            task->nextUpdateNanos = task->firstUpdateNanos;
+            for (auto const &modelPair : task->TaskModels) {
                 modelPair.ModelPtr->reset(this->CurrentNanos);
             }
 
-            nextTaskNanos = std::min(nextTaskNanos, task.TaskPtr->nextUpdateNanos);
+            nextTaskNanos = std::min(nextTaskNanos, task->nextUpdateNanos);
         }
 
         process->nextTaskTime = nextTaskNanos;
@@ -102,6 +102,7 @@ void SimModel::resetSimulation() {
 
         auto nextProcTime = SimInstant::atNanos(process->nextTaskTime).atPriority(process->processPriority);
         nextTaskTime = std::min(nextTaskTime, nextProcTime);
+
     }
     this->NextTaskTime = nextTaskTime.realNanos;
     this->nextProcPriority = nextTaskTime.causalPriority;

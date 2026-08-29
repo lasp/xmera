@@ -52,8 +52,15 @@ public:
      *  @param[in] firstUpdateNanos
      *    The time at which the task should be first updated
      */
-    explicit SysModelTask(uint64_t updatePeriodNanos = 100, uint64_t firstUpdateNanos = 0)
-        : nextUpdateNanos(firstUpdateNanos), updatePeriodNanos(updatePeriodNanos), firstUpdateNanos(firstUpdateNanos) {}
+    explicit SysModelTask(
+        uint64_t updatePeriodNanos = 100,
+        uint64_t firstUpdateNanos = 0,
+        int64_t priority = -1
+    ) : priority(priority)
+      , nextUpdateNanos(firstUpdateNanos)
+      , updatePeriodNanos(updatePeriodNanos)
+      , firstUpdateNanos(firstUpdateNanos)
+    {}
 
     //! Insert a module into the task's sequence of modules with a given priority
     /*!
@@ -150,6 +157,9 @@ public:
      *    methods removed. (I vote for the latter.)
      */
     bool taskActive = true;
+
+    //! The priority of this task among others within its containing process
+    int32_t const priority;
 
 private:
     //! The next time (in nanoseconds) at which the task's modules will be updated

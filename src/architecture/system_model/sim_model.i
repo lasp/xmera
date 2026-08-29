@@ -36,7 +36,7 @@ namespace std {
    %template() std::pair<int64_t, int64_t>;
    %template(exchangeSet) set<pair<long int, long int>>;
    %template(modelPriPair) vector<ModelPriorityPair, allocator<ModelPriorityPair> >;
-   %template(procSchedList) vector<ModelScheduleEntry, allocator<ModelScheduleEntry> >;
+   %template(procSchedList) vector<SysModelTask*, allocator<SysModelTask*> >;
    %template(simProcList) vector<SysProcess *, allocator<SysProcess *> >;
 }
 
@@ -73,7 +73,7 @@ namespace std {
     self_->getProcesses()
 );
 
-%attribute_readonly(SysProcess, std::vector<ModelScheduleEntry> const&,
+%attribute_readonly(SysProcess, std::vector<SysModelTask*> const&,
     processTasks,
     getTasks,
     self_->getTasks()

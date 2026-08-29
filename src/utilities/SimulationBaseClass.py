@@ -192,10 +192,10 @@ class SimBaseClass:
             print(f"{processColor}Process Name: {endColor}" + processData.processName +
                   " , " + processColor + "priority: " + endColor + str(processData.processPriority))
             for task in processData.processTasks:
-                print(f"{taskColor}Task Name: {endColor}" + task.TaskPtr.TaskName +
-                      ", " + taskColor + "priority: " + endColor + str(task.taskPriority) +
-                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.TaskPtr.getTaskPeriod()/1.0e9) + "s")
-                for module in task.TaskPtr.TaskModels:
+                print(f"{taskColor}Task Name: {endColor}" + task.TaskName +
+                      ", " + taskColor + "priority: " + endColor + str(task.priority) +
+                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.getTaskPeriod()/1.0e9) + "s")
+                for module in task.TaskModels:
                     print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.modelTag +
                           ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
             print("")
@@ -210,9 +210,9 @@ class SimBaseClass:
             taskList = OrderedDict()
             for task in processData.processTasks:
                 moduleList = []
-                for module in task.TaskPtr.TaskModels:
+                for module in task.TaskModels:
                     moduleList.append(module.ModelPtr.modelTag + " (" + str(module.CurrentModelPriority) + ")")
-                taskList[task.TaskPtr.TaskName + " (" + str(task.taskPriority) + ", " + str(task.TaskPtr.TaskPeriod/1.0e9) + "s)"] = moduleList
+                taskList[task.TaskName + " (" + str(task.priority) + ", " + str(task.TaskPeriod/1.0e9) + "s)"] = moduleList
             processList[processData.processName + " (" + str(processData.processPriority) + ")"] = taskList
 
         fig = plt.figure()

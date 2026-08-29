@@ -13,15 +13,6 @@
 #include <memory>
 #include <vector>
 
-//! A task paired with its priority among tasks within its containing process
-struct ModelScheduleEntry final {
-    //! The priority of this task among others within its containing process
-    int32_t taskPriority;
-
-    //! A non-owning pointer to a task
-    SysModelTask* TaskPtr;
-};
-
 //! A collection of concurrent tasks to be updated on independent schedules
 /*!
  *  An instance of `SysProcess` (a "process") is a collection of tasks, each
@@ -85,13 +76,13 @@ public:
     //! Invoke `SysModelTask::disable` on every task in the module
     /*! @todo Remove this; clients should be able to iterate over tasks directly. */
     void disableTasks() {
-        for (auto const &entry : this->processTasks) { entry.TaskPtr->disable(); }
+        for (auto const &entry : this->processTasks) { entry->disable(); }
     }
 
     //! Invoke `SysModelTask::enable` on every task in the module
     /*! @todo Remove this; clients should be able to iterate over tasks directly. */
     void enableTasks() {
-        for (auto const &entry : this->processTasks) { entry.TaskPtr->enable(); }
+        for (auto const &entry : this->processTasks) { entry->enable(); }
     }
 
     //! Determine the next update time of the next-soonest task to update
@@ -105,20 +96,16 @@ public:
      *  themselves. It is perfectly legal to mutate one of the tasks obtained
      *  from this method, so long as no other protocol of use is violated.
      */
-    std::vector<ModelScheduleEntry> const &getTasks() const {
+    std::vector<SysModelTask*> const &getTasks() const {
         return this->processTasks;
     }
 
 private:
     //! Insert a scheduled task entry into the ordered list of tasks in this process
-    /*!
-     *  @param[in] scheduleEntry
-     *    A descriptor containing a task to schedule and its start time and period.
-     */
-    void scheduleTask(ModelScheduleEntry const &scheduleEntry);
+    void scheduleTask(SysModelTask* task);
 
     //! Index the task with the soonest next update time
-    std::vector<ModelScheduleEntry>::iterator getNextTask();
+    std::vector<SysModelTask*>::iterator getNextTask();
 
 public:
     //! A configurable, human-readable name for this process
@@ -147,7 +134,7 @@ private:
     bool enabled = true;
 
     //! The schedule of tasks being performed by this process
-    std::vector<ModelScheduleEntry> processTasks = {};
+    std::vector<SysModelTask*> processTasks = {};
 
     //! The collection of tasks in this process, sans scheduling information
     std::vector<std::unique_ptr<SysModelTask>> allocatedTasks = {};
