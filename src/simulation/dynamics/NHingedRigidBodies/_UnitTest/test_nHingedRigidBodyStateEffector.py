@@ -17,6 +17,7 @@ splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
+import xmera.architecture.messaging
 from xmera.utilities import SimulationBaseClass
 from xmera.utilities import unitTestSupport
 from xmera.simulation import spacecraft

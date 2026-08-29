@@ -13,6 +13,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
+import xmera.architecture.messaging
 from xmera.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk, pythonVariableLogger
 from xmera.simulation import spacecraft, stateSpaceStateEffector
 
