@@ -138,33 +138,28 @@ void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {
     // uncorrelated modifications by re-heaping just once before we require the heap property again.
     this->ensureHeap();
 
+    // Pump the job queue until the next job is beyond our stopping threshold.
     while (this->jobHeap.front().noLaterThan(stopNanos, stopPriority)) {
         // Extract the front element from the heap (moving it to the back).
         std::pop_heap(this->jobHeap.begin(), this->jobHeap.end());
+        auto job = this->jobHeap.back();
 
-        // Act on the soonest job (now at the back of the vector).
-        {
-            auto &job = this->jobHeap.back();
+        // Advance the simulation clock to the time of this job.
+        this->CurrentNanos = job.task->nextUpdateNanos;
 
-            // Advance the simulation clock to the time of this job.
-            this->CurrentNanos = job.task->nextUpdateNanos;
+        // Re-schedule the job in the future (using saturating addition).
+        job.task->nextUpdateNanos += job.task->updatePeriodNanos;
+        if (job.task->nextUpdateNanos < job.task->updatePeriodNanos) {
+            job.task->nextUpdateNanos = SimInstant::endOfTime().realNanos;
+        }
+        std::push_heap(this->jobHeap.begin(), this->jobHeap.end());
 
-            // Re-schedule the job in the future (using saturating addition).
-            job.task->nextUpdateNanos += job.task->updatePeriodNanos;
-            if (job.task->nextUpdateNanos < job.task->updatePeriodNanos) {
-                job.task->nextUpdateNanos = SimInstant::endOfTime().realNanos;
-            }
-
-            // Execute the job.
-            if (job.process->enabled && job.task->taskActive) {
-                for (auto &modelPair : job.task->TaskModels) {
-                    modelPair.ModelPtr->updateState(this->CurrentNanos);
-                }
+        // Execute the job.
+        if (job.process->enabled && job.task->taskActive) {
+            for (auto &modelPair : job.task->TaskModels) {
+                modelPair.ModelPtr->updateState(this->CurrentNanos);
             }
         }
-
-        // Insert the rescheduled job back into the heap.
-        std::push_heap(this->jobHeap.begin(), this->jobHeap.end());
 
         // On the off chance that the task mucked with task timings,
         // make sure the heap is still a heap.
