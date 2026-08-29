@@ -257,13 +257,13 @@ public:
     //! Invoke `SysModelTask::disable` on every task in the module
     /*! @todo Remove this; clients should be able to iterate over tasks directly. */
     void disableTasks() {
-        for (auto const &entry : this->processTasks) { entry->disable(); }
+        for (auto &entry : this->processTasks) { entry->disable(); }
     }
 
     //! Invoke `SysModelTask::enable` on every task in the module
     /*! @todo Remove this; clients should be able to iterate over tasks directly. */
     void enableTasks() {
-        for (auto const &entry : this->processTasks) { entry->enable(); }
+        for (auto &entry : this->processTasks) { entry->enable(); }
     }
 
     //! Get an immutable view on the list of tasks in this process
