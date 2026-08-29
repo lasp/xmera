@@ -44,10 +44,14 @@ void SysModelTask::setPeriod(uint64_t updatePeriodNanos) {
         // our first update time.
         this->updatePeriodNanos = updatePeriodNanos;
     }
+
+    // Mark the heap for re-heaping according to the task's new update time.
+    this->owner.isHeap = false;
 }
 
 
 SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpdateNanos, int32_t priority) {
+    auto task_id = this->processTasks.size();
     auto &task = this->processTasks.emplace_back(std::make_unique<SysModelTask>(
         SysModelTask::Passkey{},
         this->owner,
@@ -55,6 +59,15 @@ SysModelTask &SysProcess::addTask(uint64_t updatePeriodNanos, uint64_t firstUpda
         firstUpdateNanos,
         priority
     ));
+
+    // Mark the heap for re-heaping according to the new task's update time.
+    this->owner.isHeap = false;
+    this->owner.jobHeap.push_back({
+        .process = this,
+        .process_id = this->processId,
+        .task = task.get(),
+        .task_id = task_id,
+    });
 
     return *task.get();
 }
@@ -64,6 +77,7 @@ bool SysProcess::changeTaskPeriod(std::string const &taskName, uint64_t newPerio
         if (entry->TaskName != taskName) { continue; }
 
         entry->setPeriod(newPeriod);
+
         return true;
     }
 
@@ -104,26 +118,8 @@ void SimModel::resetSimulation() {
         }
     }
 
-    // Gather all simulation jobs.
-    //! @todo Move this responsibility into `SysProcess::addTask`.
-    this->jobHeap.clear();
+    // Mark the heap for re-heaping according to the tasks' new update times.
     this->isHeap = false;
-    size_t process_id = 0;
-    size_t task_id = 0;
-    for (auto const &process : this->processList) {
-        for (auto const &task : process->processTasks) {
-            this->jobHeap.push_back({
-                .process = process.get(),
-                .process_id = process_id,
-                .task = task.get(),
-                .task_id = task_id,
-            });
-
-            task_id += 1;
-        }
-
-        process_id += 1;
-    }
 }
 
 void SimModel::stepUntilStop(uint64_t stopNanos, int64_t stopPriority) {

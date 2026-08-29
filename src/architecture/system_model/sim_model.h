@@ -322,6 +322,9 @@ private:
 
 //! The top-level container for an entire simulation
 class SimModel final {
+    friend class SysProcess;
+    friend class SysModelTask;
+
     //! A record of a job to be performed during simulation
     // A "job" is just a task paired with its containing process, made comparable for priority queueing.
     struct Job final {
