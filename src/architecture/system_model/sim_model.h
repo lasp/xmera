@@ -451,6 +451,9 @@ private:
     //! The time at which the simulation was last updated or reset
     uint64_t CurrentNanos = 0;
 
+    //! The collection of processes to be simulated, in priority order
+    std::vector<std::unique_ptr<SysProcess>> processList = {};
+
     //! A prioritized heap of simulation jobs
     // This is `mutable` so that the heap invariant can remain broken until the last moment,
     // allowing re-heapification to occur during logically const queries.
@@ -458,9 +461,6 @@ private:
 
     //! Whether the `jobHeap` field currently has the heap property
     mutable bool isHeap = false;
-
-    //! The collection of processes to be simulated, in priority order
-    std::vector<std::unique_ptr<SysProcess>> processList = {};
 };
 
 #endif
