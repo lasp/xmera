@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: ISC
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
-#include <architecture/_GeneralModuleFiles/sys_model.h>
+#include <architecture/system_model/sim_model.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
