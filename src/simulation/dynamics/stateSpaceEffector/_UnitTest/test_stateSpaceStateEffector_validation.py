@@ -154,7 +154,7 @@ def test_flexiblePaneTestFunction(show_plots, frequency):
     scSim.AddModelToTask(dynTaskName, datLog)
     energyMomLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     scSim.AddModelToTask(dynTaskName, energyMomLog)
-    stateLog = pythonVariableLogger.PythonVariableLogger({"X": lambda _: scObject.dynManager.getStateObject("X1").getState()})
+    stateLog = pythonVariableLogger.PythonVariableLogger({"X": lambda _: scObject.dynManager.getStateObject(stateSpace.nameOfXState).getState()})
     scSim.AddModelToTask(dynTaskName, stateLog)
     datLog2 = scObjectUnified.scStateOutMsg.recorder()
     scSim.AddModelToTask(dynTaskName, datLog2)

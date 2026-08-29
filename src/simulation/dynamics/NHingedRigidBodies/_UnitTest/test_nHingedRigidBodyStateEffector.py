@@ -157,8 +157,8 @@ def nHingedRigidBody(show_plots, testCase):
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject(f'nHingedRigidBody1Theta').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject(f'nHingedRigidBody2Theta').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.effector1.nameOfThetaState).getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.effector2.nameOfThetaState).getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 

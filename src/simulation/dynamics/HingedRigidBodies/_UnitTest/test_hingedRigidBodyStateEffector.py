@@ -698,8 +698,8 @@ def test_hingedRigidBodyThetaSS(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta2').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel1.nameOfThetaState).getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel2.nameOfThetaState).getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
@@ -879,8 +879,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta2').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel1.nameOfThetaState).getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel2.nameOfThetaState).getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
@@ -1370,8 +1370,8 @@ def test_hingedRigidBodyLagrangVsXmera(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('hingedRigidBodyTheta2').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel1.nameOfThetaState).getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel2.nameOfThetaState).getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
