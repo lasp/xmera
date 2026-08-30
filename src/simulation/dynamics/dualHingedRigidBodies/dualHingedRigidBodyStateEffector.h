@@ -6,48 +6,57 @@
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/utilities/bskLogging.h>
-#include <architecture/utilities/eigenMRP.h>
-#include <architecture/utilities/eigenSupport.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
-#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
-#include <Eigen/Dense>
-
 #include <architecture/messaging/messaging.h>
 #include <architecture/msgPayloadDef/ArrayMotorTorqueMsgPayload.h>
 #include <architecture/msgPayloadDef/HingedRigidBodyMsgPayload.h>
 #include <architecture/msgPayloadDef/SCStatesMsgPayload.h>
+#include <architecture/utilities/bskLogging.h>
+#include <architecture/utilities/eigenMRP.h>
+#include <architecture/utilities/eigenSupport.h>
+
+#include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
+#include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+
+#include <Eigen/Dense>
 
 /*! @brief dual hinged rigid body state effector */
-class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
-   public:
+class DualHingedRigidBodyStateEffector
+    : public StateEffector
+    , public SysModel {
+public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();
-    void registerStates(DynParamManager& statesIn);  //!< class method
-    void linkInStates(DynParamManager& states);      //!< class method
+    void registerStates(DynParamManager &statesIn);  //!< class method
+    void linkInStates(DynParamManager &states);      //!< class method
     void updateEffectorMassProps(double integTime);  //!< class method
-    void updateContributions(double integTime,
-                             BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
-                             Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N);  //!< -- Back-sub contributions
-    void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-    void computeDerivatives(double integTime,
-                            Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
+    void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N
+    );  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(
+        double integTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    );  //!< -- Energy and momentum calculations
+    void computeDerivatives(
+        double integTime,
+        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::Vector3d sigma_BN
+    );  //!< -- Method for each stateEffector to calculate derivatives
     void reset(uint64_t currentSimNanos);
     void updateState(uint64_t currentSimNanos);
     void writeOutputStateMessages(uint64_t CurrentClock);
 
-   private:
+private:
     void computePanelInertialStates();
     void prependSpacecraftNameToStates();  //!< class method
 
-   public:
+public:
     double mass1;                      //!< [kg] mass of 1st hinged rigid body
     double mass2;                      //!< [kg] mass of 2nd hinged rigid body
     double d1;                         //!< [m] distance from hinge point H1 to hinged rigid body center of mass S1
@@ -77,8 +86,7 @@ class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
     std::vector<Message<SCStatesMsgPayload>*>
         dualHingedRigidBodyConfigLogOutMsgs;  //!< panel state config log message vector for all panels
 
-   private:
-    static uint64_t effectorID;   //!< [] ID number of this panel
+private:
     Eigen::Vector3d r_H1P_P;      //!< [m] vector pointing from primary body frame P origin to Hinge 1 location.  If a
                                   //!< single spacecraft body is modeled than P is the same as B
     Eigen::Matrix3d dcm_H1P;      //!< -- DCM from primary body frame to hinge 1 frame

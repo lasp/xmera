@@ -8,16 +8,8 @@
 #include <architecture/utilities/rigidBodyKinematics.hpp>
 
 linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector() {
-    this->nameOfRhoState = "linearTranslationRho" + std::to_string(linearTranslationOneDOFStateEffector::effectorID);
-    this->nameOfRhoDotState =
-        "linearTranslationRhoDot" + std::to_string(linearTranslationOneDOFStateEffector::effectorID);
-    linearTranslationOneDOFStateEffector::effectorID++;
-}
-
-uint64_t linearTranslationOneDOFStateEffector::effectorID = 1;
-
-linearTranslationOneDOFStateEffector::~linearTranslationOneDOFStateEffector() {
-    linearTranslationOneDOFStateEffector::effectorID = 1;
+    this->nameOfRhoState = "linearTranslationRho" + std::to_string(this->moduleID);
+    this->nameOfRhoDotState = "linearTranslationRhoDot" + std::to_string(this->moduleID);
 }
 
 void linearTranslationOneDOFStateEffector::reset(uint64_t CurrentClock) {}

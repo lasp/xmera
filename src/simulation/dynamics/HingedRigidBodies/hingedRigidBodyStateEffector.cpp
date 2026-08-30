@@ -24,19 +24,8 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector() {
     this->IPntS_S.Identity();
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
-    this->nameOfThetaState = "hingedRigidBodyTheta" + std::to_string(this->effectorID);
-    this->nameOfThetaDotState = "hingedRigidBodyThetaDot" + std::to_string(this->effectorID);
-    this->effectorID++;
-
-    return;
-}
-
-uint64_t HingedRigidBodyStateEffector::effectorID = 1;
-
-/*! This is the destructor, nothing to report here */
-HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector() {
-    this->effectorID = 1; /* reset the panel ID*/
-    return;
+    this->nameOfThetaState = "hingedRigidBodyTheta" + std::to_string(this->moduleID);
+    this->nameOfThetaDotState = "hingedRigidBodyThetaDot" + std::to_string(this->moduleID);
 }
 
 /*! This method takes the computed theta states and outputs them to the m

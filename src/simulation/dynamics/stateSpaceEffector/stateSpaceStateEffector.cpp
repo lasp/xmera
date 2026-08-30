@@ -17,15 +17,8 @@ StateSpaceStateEffector::StateSpaceStateEffector(int n) : sizeOfStateSpace(n) {
     this->BEff = Eigen::MatrixXd::Zero(sizeOfStateSpace, 3);
     this->CEff = Eigen::VectorXd::Zero(sizeOfStateSpace);
 
-    this->nameOfXState = "X" + std::to_string(StateSpaceStateEffector::effectorID);
-    this->nameOfXDotState = "XDot" + std::to_string(StateSpaceStateEffector::effectorID);
-    StateSpaceStateEffector::effectorID++;
-}
-
-uint64_t StateSpaceStateEffector::effectorID = 1;
-
-StateSpaceStateEffector::~StateSpaceStateEffector() {
-    StateSpaceStateEffector::effectorID--;
+    this->nameOfXState = "X" + std::to_string(this->moduleID);
+    this->nameOfXDotState = "XDot" + std::to_string(this->moduleID);
 }
 
 void StateSpaceStateEffector::prependSpacecraftNameToStates() {

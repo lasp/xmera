@@ -34,11 +34,10 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector() {
     this->r_H1B_B.setZero();
     this->dcm_H1B.setIdentity();
     this->thetaH2S1 = 0.0;
-    this->nameOfTheta1State = "DualHingedRigidBodyStateEffectorTheta1" + std::to_string(this->effectorID);
-    this->nameOfTheta1DotState = "DualHingedRigidBodyStateEffectorTheta1Dot" + std::to_string(this->effectorID);
-    this->nameOfTheta2State = "DualHingedRigidBodyStateEffectorTheta2" + std::to_string(this->effectorID);
-    this->nameOfTheta2DotState = "DualHingedRigidBodyStateEffectorTheta2Dot" + std::to_string(this->effectorID);
-    this->effectorID++;
+    this->nameOfTheta1State = "DualHingedRigidBodyStateEffectorTheta1" + std::to_string(this->moduleID);
+    this->nameOfTheta1DotState = "DualHingedRigidBodyStateEffectorTheta1Dot" + std::to_string(this->moduleID);
+    this->nameOfTheta2State = "DualHingedRigidBodyStateEffectorTheta2" + std::to_string(this->moduleID);
+    this->nameOfTheta2DotState = "DualHingedRigidBodyStateEffectorTheta2Dot" + std::to_string(this->moduleID);
 
     Message<HingedRigidBodyMsgPayload>* panelMsg;
     Message<SCStatesMsgPayload>* scMsg;
@@ -50,20 +49,13 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector() {
     }
 
     this->modelTag = "";
-
-    return;
 }
-
-uint64_t DualHingedRigidBodyStateEffector::effectorID = 1;
 
 DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector() {
     for (int c = 0; c < 2; c++) {
         free(this->dualHingedRigidBodyOutMsgs.at(c));
         free(this->dualHingedRigidBodyConfigLogOutMsgs.at(c));
     }
-
-    this->effectorID = 1; /* reset the panel ID*/
-    return;
 }
 
 /*! This method is used to reset the module.

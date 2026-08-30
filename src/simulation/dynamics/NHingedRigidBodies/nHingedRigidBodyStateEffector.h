@@ -8,8 +8,10 @@
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/utilities/bskLogging.h>
 #include <architecture/utilities/eigenMRP.h>
+
 #include <simulation/dynamics/_GeneralModuleFiles/stateData.h>
 #include <simulation/dynamics/_GeneralModuleFiles/stateEffector.h>
+
 #include <Eigen/Dense>
 
 /*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of
@@ -40,17 +42,23 @@ struct HingedPanel {
 };
 
 /*! @brief NHingedRigidBodyStateEffector class */
-class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
-   public:
+class NHingedRigidBodyStateEffector
+    : public StateEffector
+    , public SysModel {
+public:
     std::string nameOfThetaState;     //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState;  //!< -- Identifier for the thetaDot state data container
     Eigen::Vector3d r_HB_B;           //!< [m] vector pointing from body frame origin to the first Hinge location
     Eigen::Matrix3d rTilde_HB_B;      //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_HB;           //!< -- DCM from body frame to hinge frame
-    void addHingedPanel(HingedPanel NewPanel) { PanelVec.push_back(NewPanel); }  //!< class method
-    BSKLogger bskLogger;                                                         //!< -- BSK Logging
 
-   private:
+    void addHingedPanel(HingedPanel NewPanel) {
+        PanelVec.push_back(NewPanel);
+    }  //!< class method
+
+    BSKLogger bskLogger;  //!< -- BSK Logging
+
+private:
     double totalMass;                    //!< [kg] Total mass of effector
     StateData* thetaState;               //!< -- state manager of theta for hinged rigid body
     StateData* thetaDotState;            //!< -- state manager of thetaDot for hinged rigid body
@@ -72,31 +80,35 @@ class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
     StateData* hubOmega;                 //!< -- state manager access to the hubs omegaBN_B state
     StateData* hubVelocity;              //!< -- state manager access to the hubs rDotBN_N state
     Eigen::MatrixXd* g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
-    static uint64_t effectorID;          //!< [] ID number of this panel
 
-   public:
-    NHingedRigidBodyStateEffector();   //!< -- Contructor
-    ~NHingedRigidBodyStateEffector();  //!< -- Destructor
-    double HeaviFunc(double cond);     //!< -- Heaviside function used for matrix contributions
+public:
+    NHingedRigidBodyStateEffector();  //!< -- Contructor
+    double HeaviFunc(double cond);    //!< -- Heaviside function used for matrix contributions
     void WriteOutputMessages(uint64_t CurrentClock);
     void updateState(uint64_t currentSimNanos);
-    void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
-    void linkInStates(DynParamManager& states);      //!< -- Method for getting access to other states
+    void registerStates(DynParamManager &statesIn);  //!< -- Method for registering the HRB states
+    void linkInStates(DynParamManager &states);      //!< -- Method for getting access to other states
     void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
-    void updateContributions(double integTime,
-                             BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
-                             Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N);  //!< -- Back-sub contributions
-    void updateEnergyMomContributions(double integTime,
-                                      Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-    void computeDerivatives(double integTime,
-                            Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
-    void readInputMessages();                           //!< -- method to read input messages
+    void updateContributions(
+        double integTime,
+        BackSubMatrices &backSubContr,
+        Eigen::Vector3d sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N
+    );  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(
+        double integTime,
+        Eigen::Vector3d &rotAngMomPntCContr_B,
+        double &rotEnergyContr,
+        Eigen::Vector3d omega_BN_B
+    );  //!< -- Energy and momentum calculations
+    void computeDerivatives(
+        double integTime,
+        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::Vector3d sigma_BN
+    );                         //!< -- Method for each stateEffector to calculate derivatives
+    void readInputMessages();  //!< -- method to read input messages
 };
 
 #endif /* N_HINGED_RIGID_BODY_STATE_EFFECTOR_H */

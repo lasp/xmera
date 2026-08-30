@@ -24,16 +24,8 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector() {
     this->dcm_BN.setIdentity();
     this->IPntSc_B.setIdentity();
 
-    this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
-    this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
-    SpinningBodyOneDOFStateEffector::effectorID++;
-}
-
-uint64_t SpinningBodyOneDOFStateEffector::effectorID = 1;
-
-/*! This is the destructor, nothing to report here */
-SpinningBodyOneDOFStateEffector::~SpinningBodyOneDOFStateEffector() {
-    SpinningBodyOneDOFStateEffector::effectorID = 1;
+    this->nameOfThetaState = "spinningBodyTheta" + std::to_string(this->moduleID);
+    this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(this->moduleID);
 }
 
 /*! This method is used to reset the module. */

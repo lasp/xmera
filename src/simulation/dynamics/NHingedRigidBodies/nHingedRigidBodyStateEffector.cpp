@@ -12,19 +12,8 @@
 NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector() {
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
-    this->nameOfThetaState = "nHingedRigidBody" + std::to_string(this->effectorID) + "Theta";
-    this->nameOfThetaDotState = "nHingedRigidBody" + std::to_string(this->effectorID) + "ThetaDot";
-    this->effectorID++;
-
-    return;
-}
-
-uint64_t NHingedRigidBodyStateEffector::effectorID = 1;
-
-/*! This is the destructor, nothing to report here */
-NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector() {
-    this->effectorID = 1; /* reset the panel ID*/
-    return;
+    this->nameOfThetaState = "nHingedRigidBody" + std::to_string(this->moduleID) + "Theta";
+    this->nameOfThetaDotState = "nHingedRigidBody" + std::to_string(this->moduleID) + "ThetaDot";
 }
 
 /*! This method reads necessary input messages

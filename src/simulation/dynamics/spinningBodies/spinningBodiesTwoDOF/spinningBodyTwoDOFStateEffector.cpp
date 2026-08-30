@@ -31,18 +31,10 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector() {
     this->IPrimeS1PntSc1_B.setZero();
     this->IPrimeS2PntSc2_B.setZero();
 
-    this->nameOfTheta1State = "spinningBodyTheta1" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfTheta1DotState = "spinningBodyTheta1Dot" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfTheta2State = "spinningBodyTheta2" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfTheta2DotState = "spinningBodyTheta2Dot" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    SpinningBodyTwoDOFStateEffector::effectorID++;
-}
-
-uint64_t SpinningBodyTwoDOFStateEffector::effectorID = 1;
-
-/*! This is the destructor, nothing to report here */
-SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector() {
-    SpinningBodyTwoDOFStateEffector::effectorID--; /* reset the panel ID*/
+    this->nameOfTheta1State = "spinningBodyTheta1" + std::to_string(this->moduleID);
+    this->nameOfTheta1DotState = "spinningBodyTheta1Dot" + std::to_string(this->moduleID);
+    this->nameOfTheta2State = "spinningBodyTheta2" + std::to_string(this->moduleID);
+    this->nameOfTheta2DotState = "spinningBodyTheta2Dot" + std::to_string(this->moduleID);
 }
 
 /*! This method is used to reset the module. */

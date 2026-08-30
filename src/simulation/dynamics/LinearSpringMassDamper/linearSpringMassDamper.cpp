@@ -17,20 +17,9 @@ LinearSpringMassDamper::LinearSpringMassDamper() {
     this->rhoInit = 0.0;
     this->rhoDotInit = 0.0;
     this->massInit = 0.0;
-    this->nameOfRhoState = "linearSpringMassDamperRho" + std::to_string(this->effectorID);
-    this->nameOfRhoDotState = "linearSpringMassDamperRhoDot" + std::to_string(this->effectorID);
-    this->nameOfMassState = "linearSpringMassDamperMass" + std::to_string(this->effectorID);
-    this->effectorID++;
-
-    return;
-}
-
-uint64_t LinearSpringMassDamper::effectorID = 1;
-
-/*! This is the destructor, nothing to report here */
-LinearSpringMassDamper::~LinearSpringMassDamper() {
-    this->effectorID = 1; /* reset the panel ID*/
-    return;
+    this->nameOfRhoState = "linearSpringMassDamperRho" + std::to_string(this->moduleID);
+    this->nameOfRhoDotState = "linearSpringMassDamperRhoDot" + std::to_string(this->moduleID);
+    this->nameOfMassState = "linearSpringMassDamperMass" + std::to_string(this->moduleID);
 }
 
 /*! Method for spring mass damper particle to access the states that it needs. It needs gravity and the hub states */
