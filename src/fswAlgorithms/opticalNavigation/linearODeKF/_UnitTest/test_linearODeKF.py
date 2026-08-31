@@ -255,7 +255,7 @@ def state_update_flyby(show_plots, filter_type, constant_velocity, errors):
             input_data.covar_N = [noise_std**2/np.linalg.norm(expected[i, 1:4])**2, 0., 0.,
                                   0., noise_std**2/np.linalg.norm(expected[i, 1:4])**2, 0.,
                                   0., 0., noise_std**2/np.linalg.norm(expected[i, 1:4])**2]
-            opnav_input_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+            opnav_input_msg.write(input_data, unit_test_sim.getCurrentNanos())
         noise[i, :] = np.diagonal(np.array(input_data.covar_N).reshape([3,3]))
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unit_test_sim.ExecuteSimulation()
@@ -287,7 +287,7 @@ def state_update_flyby(show_plots, filter_type, constant_velocity, errors):
             input_data.covar_N = [noise_std**2/np.linalg.norm(expected[i, 1:4])**2, 0., 0.,
                                   0., noise_std**2/np.linalg.norm(expected[i, 1:4])**2, 0.,
                                   0., 0., noise_std**2/np.linalg.norm(expected[i, 1:4])**2]
-            opnav_input_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+            opnav_input_msg.write(input_data, unit_test_sim.getCurrentNanos())
         noise[i, :] = np.diagonal(np.array(input_data.covar_N).reshape([3,3]))
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unit_test_sim.ExecuteSimulation()

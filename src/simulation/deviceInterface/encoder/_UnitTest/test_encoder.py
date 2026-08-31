@@ -130,18 +130,18 @@ def encoderTest(show_plots, accuracy):
     numSteps = 0
 
     # run the sim
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
     numSteps += 1
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
     numSteps += 1
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
     numSteps += 1
 
     # update the encoder to be OFF
     wheelSpeedEncoder.rwSignalState = [encoder.SIGNAL_OFF]*numRW
 
     # run the sim
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
     numSteps += 1
 
     # update the wheel speeds
@@ -151,7 +151,7 @@ def encoderTest(show_plots, accuracy):
     wheelSpeedEncoder.rwSignalState = [encoder.SIGNAL_NOMINAL] * numRW
 
     # run the sim
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
     numSteps += 1
 
     # change the wheel speeds but make the encoder stuck
@@ -161,7 +161,7 @@ def encoderTest(show_plots, accuracy):
     wheelSpeedEncoder.rwSignalState = [encoder.SIGNAL_STUCK] * numRW
 
     # run the sim
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
     numSteps += 1
 
     #

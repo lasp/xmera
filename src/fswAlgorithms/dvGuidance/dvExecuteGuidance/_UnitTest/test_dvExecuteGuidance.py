@@ -117,10 +117,10 @@ def test_dvExecuteGuidance(show_plots, p1_dv, p2_tmin, p3_tmax, p4_tstart):
     for i in range(0, numTimeSteps):
         if updateRate * i > p4_tstart:
             navTransMsgData.vehAccumDV = acceleration_N * (updateRate * i - p4_tstart)
-        navTransMsg.write(navTransMsgData, unitTestSim.TotalSim.getCurrentNanos())
+        navTransMsg.write(navTransMsgData, unitTestSim.getCurrentNanos())
 
         # thrusters nominally on, module needs to overwrite and zero if necessary
-        onTimeCmdMsg.write(onTimeCmdMsgData, unitTestSim.TotalSim.getCurrentNanos())
+        onTimeCmdMsg.write(onTimeCmdMsgData, unitTestSim.getCurrentNanos())
 
         unitTestSim.ConfigureStopTime(i * testProcessRate)
         unitTestSim.ExecuteSimulation()

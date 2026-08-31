@@ -263,8 +263,8 @@ def stateUpdateInertialAttitude(show_plots):
         if i > 21:
             stMessage1.timeTag = int(i*0.5*1E9)
             stMessage2.timeTag = int(i*0.5*1E9)
-            st1InMsg.write(stMessage1, unitTestSim.TotalSim.getCurrentNanos())
-            st2InMsg.write(stMessage2, unitTestSim.TotalSim.getCurrentNanos())
+            st1InMsg.write(stMessage1, unitTestSim.getCurrentNanos())
+            st2InMsg.write(stMessage2, unitTestSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
@@ -294,8 +294,8 @@ def stateUpdateInertialAttitude(show_plots):
         if i > 20:
             stMessage1.timeTag = int((i+20000)*0.25*1E9)
             stMessage2.timeTag = int((i+20000)*0.5*1E9)
-            st1InMsg.write(stMessage1, unitTestSim.TotalSim.getCurrentNanos())
-            st2InMsg.write(stMessage2, unitTestSim.TotalSim.getCurrentNanos())
+            st1InMsg.write(stMessage1, unitTestSim.getCurrentNanos())
+            st2InMsg.write(stMessage2, unitTestSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+20000+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
@@ -499,8 +499,8 @@ def stateUpdateRWInertialAttitude(show_plots):
         if i > 20:
             stMessage1.timeTag = int(i * 0.5 * 1E9)
             stMessage2.timeTag = int(i * 0.5 * 1E9)
-            st1InMsg.write(stMessage1, unitTestSim.TotalSim.getCurrentNanos())
-            st2InMsg.write(stMessage2, unitTestSim.TotalSim.getCurrentNanos())
+            st1InMsg.write(stMessage1, unitTestSim.getCurrentNanos())
+            st2InMsg.write(stMessage2, unitTestSim.getCurrentNanos())
 
         if i==10000:
             rwSpeedIntMsg.wheelSpeeds = [0.5, 0.1, 0.05]
@@ -534,8 +534,8 @@ def stateUpdateRWInertialAttitude(show_plots):
         if i > 20:
             stMessage1.timeTag = int((i + 20000) * 0.25 * 1E9)
             stMessage2.timeTag = int((i + 20000) * 0.5 * 1E9)
-            st1InMsg.write(stMessage1, unitTestSim.TotalSim.getCurrentNanos())
-            st2InMsg.write(stMessage2, unitTestSim.TotalSim.getCurrentNanos())
+            st1InMsg.write(stMessage1, unitTestSim.getCurrentNanos())
+            st2InMsg.write(stMessage2, unitTestSim.getCurrentNanos())
 
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 20000 + 1) * 0.5))
         unitTestSim.ExecuteSimulation()

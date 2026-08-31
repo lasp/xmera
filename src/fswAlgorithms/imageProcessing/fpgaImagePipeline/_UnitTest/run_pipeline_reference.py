@@ -316,7 +316,7 @@ def main():
     sim.AddModelToTask("refTask", mod)
     sim.AddModelToTask("refTask", log_roi_out_msg)
     sim.InitializeSimulation()
-    sim.TotalSim.singleStepProcesses()
+    sim.singleStepProcesses()
 
     # --- Extract ---
     raw    = _extract_raw(mod, W, H)

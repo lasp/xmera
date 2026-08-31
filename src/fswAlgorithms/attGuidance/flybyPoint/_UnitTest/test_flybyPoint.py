@@ -94,7 +94,7 @@ def test_flybyPoint_diagnostic_collinearity(
         input_data.timeTag = macros.sec2nano(i * sim_dt)
         input_data.r_BN_N = position_data[i]
         input_data.v_BN_N = velocity_data[i]
-        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        filter_msg.write(input_data, unit_test_sim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
         unit_test_sim.ExecuteSimulation()
 
@@ -157,7 +157,7 @@ def test_flybyPoint_maxrate(
         input_data.timeTag = macros.sec2nano(i * sim_dt)
         input_data.r_BN_N = position_data[i]
         input_data.v_BN_N = velocity_data[i]
-        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        filter_msg.write(input_data, unit_test_sim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
         unit_test_sim.ExecuteSimulation()
 
@@ -221,7 +221,7 @@ def test_flybyPoint_maxacc(
         input_data.timeTag = macros.sec2nano(i * sim_dt)
         input_data.r_BN_N = position_data[i]
         input_data.v_BN_N = velocity_data[i]
-        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        filter_msg.write(input_data, unit_test_sim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
         unit_test_sim.ExecuteSimulation()
 
@@ -284,7 +284,7 @@ def test_flybyPoint_diagnostic_positionknowledge(
         input_data.timeTag = macros.sec2nano(i * sim_dt)
         input_data.r_BN_N = position_data[i]
         input_data.v_BN_N = velocity_data[i]
-        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        filter_msg.write(input_data, unit_test_sim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
         unit_test_sim.ExecuteSimulation()
 
@@ -335,7 +335,7 @@ def flybyPointTestFunction(show_plots, initial_position, initial_velocity, filte
         velocity_data.append(np.array(initial_velocity))
         input_data.timeTag = macros.sec2nano(i * sim_dt)
         input_data.r_BN_N = position_data[i]
-        filter_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
+        filter_msg.write(input_data, unit_test_sim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * sim_dt) - 1)
         unit_test_sim.ExecuteSimulation()
 

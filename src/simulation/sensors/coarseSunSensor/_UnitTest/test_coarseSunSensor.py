@@ -237,8 +237,8 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     # Execute the simulation for one time step
     for i in range(len(sigmas)):
         satelliteStateMsg.sigma_BN = [0.0, 0.0, sigmas[i]]
-        scMsg.write(satelliteStateMsg, unitTestSim.TotalSim.getCurrentNanos() + testTaskRate)
-        unitTestSim.TotalSim.singleStepProcesses()
+        scMsg.write(satelliteStateMsg, unitTestSim.getCurrentNanos() + testTaskRate)
+        unitTestSim.singleStepProcesses()
 
     #
     #   Constellation Outputs and plots

@@ -149,7 +149,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     # This pulls the actual data log from the simulation run.
     tamData = dataLog.tam_S

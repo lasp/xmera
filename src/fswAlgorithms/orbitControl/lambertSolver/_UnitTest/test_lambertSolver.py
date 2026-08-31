@@ -167,7 +167,7 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
     unitTestSim.AddModelToTask(unitTaskName, lambertPerformanceOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     # pull module data
     v1 = lambertSolutionOutMsgRec.v1[0]

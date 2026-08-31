@@ -88,7 +88,7 @@ def test_stepper_motor_nominal(show_plots,
     motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
     motor_step_command_msg_data.stepsCommanded = steps_commanded_2
     motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data,
-                                                                   test_sim.TotalSim.getCurrentNanos())
+                                                                   test_sim.getCurrentNanos())
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
     # Run the simulation
@@ -231,7 +231,7 @@ def test_stepper_motor_interrupt(show_plots, steps_commanded_1, steps_commanded_
     motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
     motor_step_command_msg_data.stepsCommanded = steps_commanded_2
     motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data,
-                                                                   test_sim.TotalSim.getCurrentNanos())
+                                                                   test_sim.getCurrentNanos())
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
     # Run the second simulation chunk
@@ -552,7 +552,7 @@ def test_stepper_motor_rapid_commands(show_plots, steps_commanded_1, steps_comma
     motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
     motor_step_command_msg_data.stepsCommanded = steps_commanded_2
     motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data,
-                                                                   test_sim.TotalSim.getCurrentNanos())
+                                                                   test_sim.getCurrentNanos())
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
     # Run 2 steps of the second command then interrupt
@@ -564,7 +564,7 @@ def test_stepper_motor_rapid_commands(show_plots, steps_commanded_1, steps_comma
     motor_step_command_msg_data = messaging.MotorStepCommandMsgPayload()
     motor_step_command_msg_data.stepsCommanded = steps_commanded_3
     motor_step_command_msg = messaging.MotorStepCommandMsg().write(motor_step_command_msg_data,
-                                                                   test_sim.TotalSim.getCurrentNanos())
+                                                                   test_sim.getCurrentNanos())
     stepper_motor.motorStepCommandInMsg.subscribeTo(motor_step_command_msg)
 
     # Run until third command completes

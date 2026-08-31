@@ -161,7 +161,7 @@ def etSphericalControlTestFunction(show_plots, accuracy):
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     # This pulls the actual data log from the simulation run.
     forceInertialOutput = dataLogInertial.forceRequestInertial

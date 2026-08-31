@@ -151,12 +151,12 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    # Initialize the simulation
-    unitTestSim.InitializeSimulation()
-
     # Add states to log
     thetaData = spinningBody.spinningBodyOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, thetaData)
+
+    # Initialize the simulation
+    unitTestSim.InitializeSimulation()
 
     # Setup and run the simulation
     stopTime = 25000 * testProcessRate

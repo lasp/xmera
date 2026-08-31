@@ -156,7 +156,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
 
     # This pulls the actual data log from the simulation run and converts to nano-Tesla
     mag0Data = dataLog0.magField_N*1e9

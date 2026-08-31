@@ -287,7 +287,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
     else:
         time =  500
     for i in range(time):
-        cssDataInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
+        cssDataInMsg.write(inputData, unitTestSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
@@ -326,7 +326,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     for i in range(time):
         if i > 20:
-            cssDataInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
+            cssDataInMsg.write(inputData, unitTestSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+time+1)*0.5))
         unitTestSim.ExecuteSimulation()
 

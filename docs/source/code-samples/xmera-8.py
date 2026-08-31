@@ -32,19 +32,19 @@ def run():
     scSim.InitializeSimulation()
 
     # execute BSK for a single step
-    scSim.TotalSim.singleStepProcesses()
+    scSim.singleStepProcesses()
 
     dynProcess.disableTasks()
     print("all tasks disabled")
-    scSim.TotalSim.singleStepProcesses()
+    scSim.singleStepProcesses()
     print("BSK executed a single simulation step")
 
     scSim.enableTask("task2")
-    scSim.TotalSim.singleStepProcesses()
+    scSim.singleStepProcesses()
     print("BSK executed a single simulation step")
 
     scSim.disableTask("task2")
-    scSim.TotalSim.singleStepProcesses()
+    scSim.singleStepProcesses()
     print("BSK executed a single simulation step")
 
     return

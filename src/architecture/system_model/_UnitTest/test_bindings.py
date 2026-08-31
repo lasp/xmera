@@ -15,8 +15,3 @@ def test_SimModel_bindings():
     assert type(sim.getNextTaskTime()) is int
     assert type(sim.getCurrentNanos()) is int
     assert type(sim.getNextProcPriority()) is int
-
-    assert type(len(sim.processList)) is int
-    assert type(sim.processList[0]) is sim_model.SysProcess
-    for p in sim.processList:
-        assert type(p) is sim_model.SysProcess

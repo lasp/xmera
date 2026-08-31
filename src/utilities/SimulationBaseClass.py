@@ -2,15 +2,8 @@
 # Copyright (c) 2023, Autonomous Vehicle System Lab, University of Colorado at Boulder
 # Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
-
-import array
 import inspect
 
-# Import some architectural stuff that we will probably always use
-import os
-import sys
-import warnings
-import xml.etree.ElementTree as ET
 from collections import OrderedDict
 
 import matplotlib.pyplot as plt
@@ -19,15 +12,6 @@ from xmera.architecture import sim_model
 from xmera.utilities import deprecated, simulationArchTypes
 from xmera.utilities.pythonVariableLogger import PythonVariableLogger
 from xmera.utilities.simulationProgessBar import SimulationProgressBar
-
-# Point the path to the module storage area
-
-
-# define ASCI color codes
-processColor = '\u001b[32m'
-taskColor = '\u001b[33m'
-moduleColor = '\u001b[36m'
-endColor = '\u001b[0m'
 
 class EventHandlerClass:
     """Event Handler Class"""
@@ -78,10 +62,10 @@ class EventHandlerClass:
         if self.eventActive == False:
             return(nextTime)
         nextTime = self.prevTime + self.eventRate - (self.prevTime%self.eventRate)
-        if self.prevTime < 0 or (parentSim.TotalSim.getCurrentNanos()%self.eventRate == 0):
-            nextTime = parentSim.TotalSim.getCurrentNanos() + self.eventRate
+        if self.prevTime < 0 or (parentSim.getCurrentNanos()%self.eventRate == 0):
+            nextTime = parentSim.getCurrentNanos() + self.eventRate
             eventCount = self.checkCall(parentSim)
-            self.prevTime = parentSim.TotalSim.getCurrentNanos()
+            self.prevTime = parentSim.getCurrentNanos()
             if eventCount > 0:
                 self.eventActive = False
                 self.operateCall(parentSim)
@@ -90,92 +74,24 @@ class EventHandlerClass:
                     parentSim.terminate = True
         return(nextTime)
 
-
-class StructDocData:
-    """Structure data documentation class"""
-    class StructElementDef:
-        def __init__(self, type, name, argstring, desc=''):
-            self.type = type
-            self.name = name
-            self.argstring = argstring
-            self.desc = desc
-
-    def __init__(self, strName):
-        self.strName = strName
-        self.structPopulated = False
-        self.structElements = {}
-
-    def clearItem(self):
-        self.structPopulated = False
-        self.structElements = {}
-
-    def populateElem(self, xmlSearchPath):
-        if self.structPopulated == True:
-            return
-        xmlFileUse = xmlSearchPath + '/' + self.strName + '.xml'
-        try:
-            xmlData = ET.parse(xmlFileUse)
-        except:
-            print("Failed to parse the XML structure for: " + self.strName)
-            print("This file does not exist most likely: " + xmlFileUse)
-            return
-        root = xmlData.getroot()
-        validElement = root.find("./compounddef[@id='" + self.strName + "']")
-        for newVariable in validElement.findall(".//memberdef[@kind='variable']"):
-            typeUse = newVariable.find('type').text if newVariable.find('type') is not None else \
-                None
-            nameUse = newVariable.find('name').text if newVariable.find('type') is not None else \
-                None
-            argstringUse = newVariable.find('argsstring').text if newVariable.find('argsstring') is not None else \
-                None
-            descUse = newVariable.find('./detaileddescription/para').text if newVariable.find(
-                './detaileddescription/para') is not None else \
-                None
-            if descUse == None:
-                descUse = newVariable.find('./briefdescription/para').text if newVariable.find(
-                    './briefdescription/para') is not None else \
-                    None
-            newElement = StructDocData.StructElementDef(typeUse, nameUse, argstringUse, descUse)
-            self.structElements.update({nameUse: newElement})
-            self.structPopulated = True
-
-    def printElem(self):
-        print("    " + self.strName + " Structure Elements:")
-        for key, value in self.structElements.items():
-            outputString = ''
-            outputString += value.type + " " + value.name
-            outputString += value.argstring if value.argstring is not None else ''
-            outputString += ': ' + value.desc if value.desc is not None else ''
-        print("      " + outputString)
-
-class DataPairClass:
-    def __init__(self):
-        self.outputMessages = set([])
-        self.inputMessages = set([])
-        self.name = ""
-        self.outputDict = {}
-
 class SimBaseClass:
     """Simulation Base Class"""
     def __init__(self):
-        self.TotalSim = sim_model.SimModel()
+        self.TotalSim = None
         self.TaskList = []
         self.procList = []
         self.StopTime = 0
         self.nextEventTime = 0
+        self.lastUpdateTime = 0
         self.terminate = False
         self.oldSyntaxVariableLog = {}
         self.multiProcessVariableLoggers = {}
         self.allModels = []
         self.eventMap = {}
-        self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
-        self.dataStructIndex = self.simBasePath + '/xml/index.xml'
-        self.indexParsed = False
         self.simulationInitialized = False
         self.simulationFinished = False
         self.bskLogger = sim_model.BSKLogger()
         self.showProgressBar = False
-        self.allModules = set()
 
     def SetProgressBar(self, value):
         """
@@ -187,33 +103,38 @@ class SimBaseClass:
         """
         Shows in what order the Xmera processes, task lists and modules are executed
         """
+        processLine = (
+            "\u001b[32mProcess Name:\u001b[0m {name} , "
+            "\u001b[32mpriority:\u001b[0m {priority}" )
+        taskLine = (
+            "\u001b[33mTask Name:\u001b[0m  {name}, "
+            "\u001b[33mpriority:\u001b[0m {priority}, "
+            "\u001b[33mTaskPeriod:\u001b[0m {period}s" )
+        moduleLine = (
+            "\u001b[36mModuleTag:\u001b[0m {name}, "
+            "\u001b[36mpriority:\u001b[0m {priority}" )
 
-        for processData in self. TotalSim.processList:
-            print(f"{processColor}Process Name: {endColor}" + processData.processName +
-                  " , " + processColor + "priority: " + endColor + str(processData.processPriority))
-            for task in processData.processTasks:
-                print(f"{taskColor}Task Name: {endColor}" + task.TaskPtr.TaskName +
-                      ", " + taskColor + "priority: " + endColor + str(task.taskPriority) +
-                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.TaskPtr.getTaskPeriod()/1.0e9) + "s")
-                for module in task.TaskPtr.TaskModels:
-                    print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.modelTag +
-                          ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
+        for process in sorted(self.procList, key = lambda p: p.priority, reverse=True):
+            print(processLine.format(name = process.Name, priority = process.priority))
+            for task in sorted(process.tasks, key = lambda t: t.priority, reverse=True):
+                print(taskLine.format(name = task.Name, priority = task.priority, period = task.period/1.0e9))
+                for module in sorted(task.models, key = lambda m: m.CurrentModelPriority, reverse=True):
+                    print(moduleLine.format(name = module.ModelPtr.modelTag, priority = module.CurrentModelPriority))
             print("")
-
 
     def ShowExecutionFigure(self, show_plots=False):
         """
         Shows in what order the Xmera processes, task lists and modules are executed
         """
         processList = OrderedDict()
-        for processData in self. TotalSim.processList:
+        for process in sorted(self.procList, key = lambda p: p.priority, reverse=True):
             taskList = OrderedDict()
-            for task in processData.processTasks:
+            for task in sorted(process.tasks, key = lambda t: t.priority, reverse=True):
                 moduleList = []
-                for module in task.TaskPtr.TaskModels:
+                for module in task.models:
                     moduleList.append(module.ModelPtr.modelTag + " (" + str(module.CurrentModelPriority) + ")")
-                taskList[task.TaskPtr.TaskName + " (" + str(task.taskPriority) + ", " + str(task.TaskPtr.TaskPeriod/1.0e9) + "s)"] = moduleList
-            processList[processData.processName + " (" + str(processData.processPriority) + ")"] = taskList
+                taskList[task.Name + " (" + str(task.priority) + ", " + str(task.period/1.0e9) + "s)"] = moduleList
+            processList[process.Name + " (" + str(process.priority) + ")"] = taskList
 
         fig = plt.figure()
         plt.rcParams.update({'font.size': 8})
@@ -290,8 +211,13 @@ class SimBaseClass:
 
         for Task in self.TaskList:
             if Task.Name == TaskName:
-                Task.TaskData.addModel(NewModel, ModelPriority)
+                pair = sim_model.ModelPriorityPair()
+                pair.CurrentModelPriority = ModelPriority
+                pair.ModelPtr = NewModel
+
+                Task.models.append(pair)
                 self.allModels.append((NewModel, ModelData, Task) )
+
                 if ModelData is not None:
                     try:
                         ModelData.bskLogger = self.bskLogger
@@ -315,7 +241,7 @@ class SimBaseClass:
         :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return: simulationArchTypes.ProcessBaseClass object
         """
-        return simulationArchTypes.ProcessBaseClass(self, self.TotalSim.addNewProcess(procName, priority))
+        return simulationArchTypes.ProcessBaseClass(self, procName, priority)
 
     # When this method is removed, remember to delete the 'oldSyntaxVariableLog' and
     # 'allModels' attributes (as well as any mention of them) as they are no longer needed
@@ -411,18 +337,33 @@ class SimBaseClass:
 
         self.multiProcessVariableLoggers[VarName] = logger
 
-    def reset(self, taskName):
-        for Task in self.TaskList:
-            if Task.Name == taskName:
-                Task.reset(self.TotalSim.getCurrentNanos())
-
     def InitializeSimulation(self):
         """
         Initialize the BSK simulation.  This runs the reset() method on each module.
         """
-        self.TotalSim.resetSimulation()
-        self.simulationInitialized = True
+        self.TotalSim = sim_model.simulation()
+        for process in self.procList:
+            process.processData = self.TotalSim.add_task_group(process.priority)
 
+            for task in process.tasks:
+                step_list = sim_model.task_step_list()
+                for model in sorted(task.models, key = lambda m: m.CurrentModelPriority, reverse=True):
+                    step_list.push_back(model.ModelPtr)
+
+                description = sim_model.task_description(step_list)
+                description.first_update_nanos = task.start
+                description.update_period_nanos = task.period
+                description.group = process.processData
+                description.priority = process.priority
+
+                task.TaskData = self.TotalSim.add_task(description)
+
+                if not task.enabled:
+                    self.TotalSim.disable(task.TaskData)
+
+        self.TotalSim.reset()
+        self.lastUpdateTime = 0
+        self.simulationInitialized = True
 
     def ConfigureStopTime(self, TimeStop):
         """
@@ -430,11 +371,8 @@ class SimBaseClass:
         """
         self.StopTime = TimeStop
 
-    @deprecated.deprecated("2024/09/06",
-        "Calling 'RecordLogVars' is deprecated and unnecessary."
-    )
-    def RecordLogVars(self):
-        pass
+    def getCurrentNanos(self):
+        return self.lastUpdateTime
 
     def ExecuteSimulation(self):
         """
@@ -442,23 +380,30 @@ class SimBaseClass:
         """
         self.initializeEventChecks()
 
-        nextStopTime = self.TotalSim.getNextTaskTime()
+        nextStopTime = self.TotalSim.next_update()
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
-        while self.TotalSim.getNextTaskTime() <= self.StopTime and not self.terminate:
-            if self.TotalSim.getCurrentNanos() >= self.nextEventTime >= 0:
+        while self.TotalSim.next_update() <= self.StopTime and not self.terminate:
+            if 0 <= self.nextEventTime <= self.lastUpdateTime:
                 self.nextEventTime = self.checkEvents()
-                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
+                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.next_update() else self.TotalSim.next_update()
             if 0 <= self.nextEventTime < nextStopTime:
                 nextStopTime = self.nextEventTime
+
             if self.terminate:
                 break
-            self.TotalSim.stepUntilStop(nextStopTime)
-            progressBar.update(self.TotalSim.getNextTaskTime())
+
+            self.lastUpdateTime = self.TotalSim.next_update()
+            sim_model.step_until(self.TotalSim, nextStopTime)
+            progressBar.update(self.lastUpdateTime)
+
             nextStopTime = self.StopTime
-            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
+            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.next_update() else self.TotalSim.next_update()
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()
+
+    def singleStepProcesses(self):
+        sim_model.step_next_update(self.TotalSim)
 
     # @deprecated.deprecated("2024/09/06",
     #     "Deprecated way to access logged variables."
@@ -503,20 +448,6 @@ class SimBaseClass:
         for Task in self.TaskList:
             if Task.Name == TaskName:
                 Task.enable()
-
-    def parseDataIndex(self):
-        self.dataStructureDictionary = {}
-        try:
-            xmlData = ET.parse(self.dataStructIndex)
-        except:
-            print("Failed to parse the XML index.  Likely that it isn't present")
-            return
-        root = xmlData.getroot()
-        for child in root:
-            newStruct = StructDocData(child.attrib['refid'])
-            self.dataStructureDictionary.update({child.find('name').text:
-                                                     newStruct})
-        self.indexParsed = True
 
     def createNewEvent(self, eventName, eventRate=int(1E9), eventActive=False,
                        conditionList=[], actionList=[], terminal=False):
@@ -567,60 +498,3 @@ class SimBaseClass:
                         self.eventMap[eventName].eventActive = activityCommand
                 else:
                     self.eventMap[eventName].eventActive = activityCommand
-
-
-def SetCArray(InputList, VarType, ArrayPointer):
-    setitem = getattr(sim_model, VarType + "Array_setitem")
-
-    for (CurrIndex, CurrElem) in enumerate(InputList):
-        setitem(ArrayPointer, CurrIndex, CurrElem)
-
-
-def getCArray(varType, arrayPointer, arraySize):
-    getitem = getattr(sim_model, varType + "Array_getitem")
-
-    return [
-        getitem(arrayPointer, currIndex)
-        for currIndex in range(arraySize)
-    ]
-
-def synchronizeTimeHistories(arrayList):
-    timeCounter = 0
-    for i in range(len(arrayList)):
-        while arrayList[i][0,0] > arrayList[0][timeCounter,0]:
-            timeCounter += 1
-    for i in range(len(arrayList)):
-        while(arrayList[i][1,0] < arrayList[0][timeCounter,0]):
-            arrayList[i] = np.delete(arrayList[i], 0, 0)
-
-    timeCounter = -1
-    for i in range(len(arrayList)):
-        while arrayList[i][-1,0] < arrayList[0][timeCounter,0]:
-                timeCounter -= 1
-    for i in range(len(arrayList)):
-        while(arrayList[i][-2,0] > arrayList[0][timeCounter,0]):
-            arrayList[i] = np.delete(arrayList[i], -1, 0)
-
-    timeNow = arrayList[0][0,0] #Desirement is to have synched arrays match primary time
-    indexPrev = [0]*len(arrayList)
-
-    outputArrayList = [[]]*len(arrayList)
-    outputArrayList[0] = arrayList[0][0:-2, :]
-
-    for i in range(1, arrayList[0].shape[0]-1):
-        for j in range(1, len(arrayList)):
-            while(arrayList[j][indexPrev[j]+1,0] < arrayList[0][i,0]):
-                indexPrev[j] += 1
-
-            dataProp = arrayList[j][indexPrev[j]+1,1:] - arrayList[j][indexPrev[j],1:]
-            dataProp *= (timeNow - arrayList[j][indexPrev[j],0])/(arrayList[j][indexPrev[j]+1,0] - arrayList[j][indexPrev[j],0])
-            dataProp += arrayList[j][indexPrev[j],1:]
-            dataRow = [timeNow]
-            dataRow.extend(dataProp.tolist())
-            outputArrayList[j].append(dataRow)
-        timeNow = arrayList[0][i,0]
-
-    for j in range(1, len(arrayList)):
-        outputArrayList[j] = np.array(outputArrayList[j])
-
-    return outputArrayList

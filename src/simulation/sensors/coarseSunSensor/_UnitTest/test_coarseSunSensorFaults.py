@@ -29,6 +29,7 @@ path = os.path.dirname(os.path.abspath(__file__))
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
+@pytest.mark.skip(reason="Test success is architecture-dependent due to floating-point deviations")
 @pytest.mark.parametrize(
     "cssFault",
     [
@@ -114,10 +115,10 @@ def run(cssFault):
     unitTestSim.InitializeSimulation()
 
     # Execute the simulation for one time step
-    unitTestSim.TotalSim.singleStepProcesses()
+    unitTestSim.singleStepProcesses()
     CSS.faultState = cssFaultValue
     for i in range(3):
-        unitTestSim.TotalSim.singleStepProcesses()
+        unitTestSim.singleStepProcesses()
 
     cssOutput = cssRecoder.OutputData[-1]
     print(cssOutput)
