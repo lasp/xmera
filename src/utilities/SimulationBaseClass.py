@@ -77,11 +77,12 @@ class EventHandlerClass:
 class SimBaseClass:
     """Simulation Base Class"""
     def __init__(self):
-        self.TotalSim = sim_model.SimModel()
+        self.TotalSim = None
         self.TaskList = []
         self.procList = []
         self.StopTime = 0
         self.nextEventTime = 0
+        self.lastUpdateTime = 0
         self.terminate = False
         self.oldSyntaxVariableLog = {}
         self.multiProcessVariableLoggers = {}
@@ -112,11 +113,11 @@ class SimBaseClass:
             "\u001b[36mModuleTag:\u001b[0m {name}, "
             "\u001b[36mpriority:\u001b[0m {priority}" )
 
-        for processData in self.TotalSim.processList:
-            print(processLine.format(name = processData.processName, priority = processData.processPriority))
-            for task in processData.processTasks:
-                print(taskLine.format(name = task.TaskPtr.TaskName, priority = task.taskPriority, period = task.TaskPtr.getTaskPeriod()/1.0e9))
-                for module in task.TaskPtr.TaskModels:
+        for process in sorted(self.procList, key = lambda p: p.priority, reverse=True):
+            print(processLine.format(name = process.Name, priority = process.priority))
+            for task in sorted(process.tasks, key = lambda t: t.priority, reverse=True):
+                print(taskLine.format(name = task.Name, priority = task.priority, period = task.period/1.0e9))
+                for module in sorted(task.models, key = lambda m: m.CurrentModelPriority, reverse=True):
                     print(moduleLine.format(name = module.ModelPtr.modelTag, priority = module.CurrentModelPriority))
             print("")
 
@@ -125,14 +126,14 @@ class SimBaseClass:
         Shows in what order the Xmera processes, task lists and modules are executed
         """
         processList = OrderedDict()
-        for processData in self.TotalSim.processList:
+        for process in sorted(self.procList, key = lambda p: p.priority, reverse=True):
             taskList = OrderedDict()
-            for task in processData.processTasks:
+            for task in sorted(process.tasks, key = lambda t: t.priority, reverse=True):
                 moduleList = []
-                for module in task.TaskPtr.TaskModels:
+                for module in task.models:
                     moduleList.append(module.ModelPtr.modelTag + " (" + str(module.CurrentModelPriority) + ")")
-                taskList[task.TaskPtr.TaskName + " (" + str(task.taskPriority) + ", " + str(task.TaskPtr.TaskPeriod/1.0e9) + "s)"] = moduleList
-            processList[processData.processName + " (" + str(processData.processPriority) + ")"] = taskList
+                taskList[task.Name + " (" + str(task.priority) + ", " + str(task.period/1.0e9) + "s)"] = moduleList
+            processList[process.Name + " (" + str(process.priority) + ")"] = taskList
 
         fig = plt.figure()
         plt.rcParams.update({'font.size': 8})
@@ -209,8 +210,13 @@ class SimBaseClass:
 
         for Task in self.TaskList:
             if Task.Name == TaskName:
-                Task.TaskData.addModel(NewModel, ModelPriority)
+                pair = sim_model.ModelPriorityPair()
+                pair.CurrentModelPriority = ModelPriority
+                pair.ModelPtr = NewModel
+
+                Task.models.append(pair)
                 self.allModels.append((NewModel, ModelData, Task) )
+
                 if ModelData is not None:
                     Task.TaskModels.append(ModelData)
                 else:
@@ -226,7 +232,7 @@ class SimBaseClass:
         :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
         :return: simulationArchTypes.ProcessBaseClass object
         """
-        return simulationArchTypes.ProcessBaseClass(self, self.TotalSim.addNewProcess(procName, priority))
+        return simulationArchTypes.ProcessBaseClass(self, procName, priority)
 
     # When this method is removed, remember to delete the 'oldSyntaxVariableLog' and
     # 'allModels' attributes (as well as any mention of them) as they are no longer needed
@@ -326,9 +332,29 @@ class SimBaseClass:
         """
         Initialize the BSK simulation.  This runs the reset() method on each module.
         """
-        self.TotalSim.resetSimulation()
-        self.simulationInitialized = True
+        self.TotalSim = sim_model.simulation()
+        for process in self.procList:
+            process.processData = self.TotalSim.add_task_group(process.priority)
 
+            for task in process.tasks:
+                step_list = sim_model.task_step_list()
+                for model in sorted(task.models, key = lambda m: m.CurrentModelPriority, reverse=True):
+                    step_list.push_back(model.ModelPtr)
+
+                description = sim_model.task_description(step_list)
+                description.first_update_nanos = task.start
+                description.update_period_nanos = task.period
+                description.group = process.processData
+                description.priority = process.priority
+
+                task.TaskData = self.TotalSim.add_task(description)
+
+                if not task.enabled:
+                    self.TotalSim.disable(task.TaskData)
+
+        self.TotalSim.reset()
+        self.lastUpdateTime = 0
+        self.simulationInitialized = True
 
     def ConfigureStopTime(self, TimeStop):
         """
@@ -337,7 +363,7 @@ class SimBaseClass:
         self.StopTime = TimeStop
 
     def getCurrentNanos(self):
-        return self.TotalSim.getCurrentNanos()
+        return self.lastUpdateTime
 
     def ExecuteSimulation(self):
         """
@@ -345,26 +371,30 @@ class SimBaseClass:
         """
         self.initializeEventChecks()
 
-        nextStopTime = self.TotalSim.getNextTaskTime()
+        nextStopTime = self.TotalSim.next_update()
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
-        while self.TotalSim.getNextTaskTime() <= self.StopTime and not self.terminate:
-            if self.TotalSim.getCurrentNanos() >= self.nextEventTime >= 0:
+        while self.TotalSim.next_update() <= self.StopTime and not self.terminate:
+            if 0 <= self.nextEventTime <= self.lastUpdateTime:
                 self.nextEventTime = self.checkEvents()
-                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
+                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.next_update() else self.TotalSim.next_update()
             if 0 <= self.nextEventTime < nextStopTime:
                 nextStopTime = self.nextEventTime
+
             if self.terminate:
                 break
-            self.TotalSim.stepUntilStop(nextStopTime)
-            progressBar.update(self.TotalSim.getNextTaskTime())
+
+            self.lastUpdateTime = self.TotalSim.next_update()
+            sim_model.step_until(self.TotalSim, nextStopTime)
+            progressBar.update(self.lastUpdateTime)
+
             nextStopTime = self.StopTime
-            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
+            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.next_update() else self.TotalSim.next_update()
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()
 
     def singleStepProcesses(self):
-        self.TotalSim.singleStepProcesses()
+        sim_model.step_next_update(self.TotalSim)
 
     # @deprecated.deprecated("2024/09/06",
     #     "Deprecated way to access logged variables."

@@ -2,7 +2,6 @@
 // Copyright (c) 2026, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
 #include <architecture/_GeneralModuleFiles/sys_model.h>
-#include <architecture/system_model/sys_model_task.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -104,57 +103,4 @@ TEST(LifecycleCheckModuleTest, nonmonotonicUpdateFails) {
     EXPECT_ANY_THROW(module.updateState(0));
     module.updateState(15);
     EXPECT_ANY_THROW(module.updateState(0));
-}
-
-TEST(SysModelTaskTest, normalLifecycleSucceeds) {
-    RecordProperty("description", "Normal usage of a task upholds the lifecycle contract of its modules");
-
-    auto module = LifecycleCheckModule{};
-
-    auto task = SysModelTask(100, 0);
-    task.addModel(&module);
-
-    // Run the task through some number of simulations at its scheduled cadence,
-    // with each simulation starting at a different time.
-    for (auto initialTime = 0; initialTime < 30; initialTime += 10) {
-        // The initial time should be passed directly to the module.
-        task.reset(initialTime);
-        EXPECT_THAT(module.hasBeenReset, IsTrue());
-        EXPECT_THAT(module.lastUpdateTime, Eq(initialTime));
-
-        for (auto i = 0; i < 10; ++i) {
-            auto nextUpdateTime = task.getNextStartTime();
-
-            // The update time should be passed directly to the module.
-            task.executeModels(nextUpdateTime);
-            EXPECT_THAT(module.hasBeenReset, IsTrue());
-            EXPECT_THAT(module.lastUpdateTime, Eq(nextUpdateTime));
-        }
-    }
-}
-
-TEST(SysModelTaskTest, resetBeforeFirstUpdateKeepsFirstUpdateTime) {
-    RecordProperty("description", "A reset before the first update time schedules the first update at that time");
-
-    auto task = SysModelTask(200, 150);
-
-    task.reset(0);
-    EXPECT_THAT(task.getNextStartTime(), Eq(150u));
-
-    task.executeModels(task.getNextStartTime());
-    EXPECT_THAT(task.getNextStartTime(), Eq(350u));
-}
-
-TEST(SysModelTaskTest, resetAfterFirstUpdateFollowsSchedule) {
-    RecordProperty("description", "A reset after the first update time schedules the next update on the schedule");
-
-    auto task = SysModelTask(200, 150);
-
-    // 400 is between the scheduled updates at 350 and 550.
-    task.reset(400);
-    EXPECT_THAT(task.getNextStartTime(), Eq(550u));
-
-    // A reset on a scheduled update keeps that update.
-    task.reset(750);
-    EXPECT_THAT(task.getNextStartTime(), Eq(750u));
 }
