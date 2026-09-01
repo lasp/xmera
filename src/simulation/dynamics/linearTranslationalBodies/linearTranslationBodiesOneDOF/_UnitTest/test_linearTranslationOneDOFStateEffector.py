@@ -151,12 +151,12 @@ def translatingBodyNoInput(show_plots):
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    # Initialize the simulation
-    unitTestSim.InitializeSimulation()
-
     # Add states to log
     rhoData = translatingBody.translatingBodyOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, rhoData)
+
+    # Initialize the simulation
+    unitTestSim.InitializeSimulation()
 
     # Setup and run the simulation
     stopTime = 25000 * testProcessRate
@@ -335,12 +335,12 @@ def translatingBodyLockFlag(show_plots):
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    # Initialize the simulation
-    unitTestSim.InitializeSimulation()
-
     # Add states to log
     rhoData = translatingBody.translatingBodyOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, rhoData)
+
+    # Initialize the simulation
+    unitTestSim.InitializeSimulation()
 
     # Setup and run the simulation
     stopTime = 25000 * testProcessRate
@@ -519,12 +519,12 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    # Initialize the simulation
-    unitTestSim.InitializeSimulation()
-
     # Add states to log
     rhoData = translatingBody.translatingBodyOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, rhoData)
+
+    # Initialize the simulation
+    unitTestSim.InitializeSimulation()
 
     # Setup and run the simulation
     stopTime = 25000 * testProcessRate
@@ -693,12 +693,12 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    # Initialize the simulation
-    unitTestSim.InitializeSimulation()
-
     # Add states to log
     rhoData = translatingBody.translatingBodyOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, rhoData)
+
+    # Initialize the simulation
+    unitTestSim.InitializeSimulation()
 
     # Setup and run the simulation
     stopTime = 25000 * testProcessRate
