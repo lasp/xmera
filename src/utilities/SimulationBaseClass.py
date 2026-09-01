@@ -13,15 +13,6 @@ from xmera.utilities import deprecated, simulationArchTypes
 from xmera.utilities.pythonVariableLogger import PythonVariableLogger
 from xmera.utilities.simulationProgessBar import SimulationProgressBar
 
-# Point the path to the module storage area
-
-
-# define ASCI color codes
-processColor = '\u001b[32m'
-taskColor = '\u001b[33m'
-moduleColor = '\u001b[36m'
-endColor = '\u001b[0m'
-
 class EventHandlerClass:
     """Event Handler Class"""
     def __init__(self, eventName, eventRate=int(1E9), eventActive=False,
@@ -110,17 +101,23 @@ class SimBaseClass:
         """
         Shows in what order the Xmera processes, task lists and modules are executed
         """
+        processLine = (
+            "\u001b[32mProcess Name:\u001b[0m {name} , "
+            "\u001b[32mpriority:\u001b[0m {priority}" )
+        taskLine = (
+            "\u001b[33mTask Name:\u001b[0m  {name}, "
+            "\u001b[33mpriority:\u001b[0m {priority}, "
+            "\u001b[33mTaskPeriod:\u001b[0m {period}s" )
+        moduleLine = (
+            "\u001b[36mModuleTag:\u001b[0m {name}, "
+            "\u001b[36mpriority:\u001b[0m {priority}" )
 
-        for processData in self. TotalSim.processList:
-            print(f"{processColor}Process Name: {endColor}" + processData.processName +
-                  " , " + processColor + "priority: " + endColor + str(processData.processPriority))
+        for processData in self.TotalSim.processList:
+            print(processLine.format(name = processData.processName, priority = processData.processPriority))
             for task in processData.processTasks:
-                print(f"{taskColor}Task Name: {endColor}" + task.TaskPtr.TaskName +
-                      ", " + taskColor + "priority: " + endColor + str(task.taskPriority) +
-                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.TaskPtr.getTaskPeriod()/1.0e9) + "s")
+                print(taskLine.format(name = task.TaskPtr.TaskName, priority = task.taskPriority, period = task.TaskPtr.getTaskPeriod()/1.0e9))
                 for module in task.TaskPtr.TaskModels:
-                    print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.modelTag +
-                          ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
+                    print(moduleLine.format(name = module.ModelPtr.modelTag, priority = module.CurrentModelPriority))
             print("")
 
     def ShowExecutionFigure(self, show_plots=False):
@@ -128,7 +125,7 @@ class SimBaseClass:
         Shows in what order the Xmera processes, task lists and modules are executed
         """
         processList = OrderedDict()
-        for processData in self. TotalSim.processList:
+        for processData in self.TotalSim.processList:
             taskList = OrderedDict()
             for task in processData.processTasks:
                 moduleList = []
